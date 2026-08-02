@@ -318,6 +318,48 @@ class MultiHopChain:
         }
         return mags, (W_out, b_out)
 
+    # ---- DECOLLE per-layer LOCAL credit (ADDITIVE alternative to `train`'s top-down chained credit) -------------
+    def train_decolle(self, drive0_batch, pre0_mat, y, k, epochs, lr_ff, lr_out, seed):
+        """DECOLLE (Kaiser 2020, Front Neurosci 10.3389/fnins.2020.00424) on the real-spikes chain: attach a
+        FIXED-RANDOM LOCAL readout G_l to EACH plastic layer + a LOCAL classification loss over that layer's
+        standardized margin read, and train each layer's forward weights by the gradient of ITS OWN local loss --
+        sigma'(v-theta)-gated and TRANSPORT-FREE (G_l is fixed-random, never reads any forward weight; there is NO
+        descending credit between layers). Contrast `train`, whose e_u1 = (e_u2 @ Y2).sigma' routes the TOP readout
+        error DOWN to the deep layer -- the 2026-08-02 located wall was that a top-down signal to the deep layer is
+        free-ridden past by a readout that reads the fixed reservoir. Here each layer is pushed DIRECTLY toward
+        LOCAL classifiability by a label-DEPENDENT local loss AT the layer.
+          per layer l:  z_l = M_ln @ G_l ; e_read_l = softmax(z_l) - onehot ; e_l = (e_read_l @ G_l^T) . sigma'_l
+                        dW_l = -lr_ff * (e_l^T @ input_l) / N   (input_0 = feature spikes; input_1 = cols0 margins M0)
+        G_l is fixed-random (never assigned after init -> _decolle_G_fixed proves it); lr_ff=0 => frozen; the caller
+        passes shuffled y for the permuted anti-cheat. Returns (mags, (G0,G1))."""
+        g_rng = np.random.default_rng(seed * 31 + 17)
+        G0 = g_rng.standard_normal((self.L0.NC, k)) / np.sqrt(self.L0.NC)   # FIXED-random local readout, layer 0 (deep)
+        G1 = g_rng.standard_normal((self.L1.NC, k)) / np.sqrt(self.L1.NC)   # FIXED-random local readout, layer 1 (top)
+        G0_0, G1_0 = G0.copy(), G1.copy()                                   # snapshots to PROVE the readouts never move
+        onehot = np.eye(k)[y]; N = len(drive0_batch)
+        mags = []
+        for _ in range(epochs):
+            (M0, M1), (S0, S1) = self.forward(drive0_batch)                # both layers, CURRENT weights (real spikes)
+            if lr_ff > 0.0:
+                S0n = S0 / (S0.mean() + 1e-9); S1n = S1 / (S1.mean() + 1e-9)
+                M0n = (M0 - M0.mean(0)) / (M0.std(0) + 1e-6)               # per-layer standardized LOCAL read
+                M1n = (M1 - M1.mean(0)) / (M1.std(0) + 1e-6)
+                # LOCAL loss, layer 0 (deep): fixed-random G0 -> local error back-projected by G0^T, sigma'_0-gated
+                e0 = (_softmax(M0n @ G0) - onehot) / N                     # (N,k) local readout error at cols0
+                e_u0 = (e0 @ G0.T) * S0n                                   # (N,NC0) reads G0 (fixed-random), NOT any weight
+                dW0 = -lr_ff * (e_u0.T @ pre0_mat) / N                     # layer-0 update; input activity = feature spikes
+                self.L0.apply_dW(dW0)
+                # LOCAL loss, layer 1 (top): fixed-random G1 -> local error back-projected by G1^T, sigma'_1-gated
+                e1 = (_softmax(M1n @ G1) - onehot) / N                     # (N,k) local readout error at cols1
+                e_u1 = (e1 @ G1.T) * S1n                                   # (N,NC1) reads G1 (fixed-random), NOT any weight
+                dW1 = -lr_ff * (e_u1.T @ M0) / N                          # layer-1 update; input activity = cols0 margins M0
+                self.L1.apply_dW(dW1)
+                mags.append([float(np.mean(np.abs(dW0))), float(np.mean(np.abs(dW1)))])
+            else:
+                mags.append([0.0, 0.0])
+        self._decolle_G_fixed = bool(np.allclose(G0, G0_0) and np.allclose(G1, G1_0))  # G never moved (by construction)
+        return mags, (G0, G1)
+
 
 def _cos(a, b):
     na = np.linalg.norm(a); nb = np.linalg.norm(b)
@@ -336,6 +378,26 @@ def _chain_eval(chain, drive0_tr, ytr, drive0_te, yte, k):
     grad_tr = float(np.mean(clf_g((Mtr - mu) / sd) == ytr)); grad_ho = float(np.mean(clf_g((Mte - mu) / sd) == yte))
     return {"codon_train": codon_tr, "codon_heldout": codon_ho, "graded_train": grad_tr,
             "graded_heldout": grad_ho}, Ctr
+
+
+def _chain_eval_perlayer(chain, drive0_tr, ytr, drive0_te, yte, k):
+    """Held-out classifiability of EACH layer's margin read (M0 at cols0 = the DEEP layer; M1 at cols1 = the FINAL
+    read) under the CURRENT weights -- graded (standardized top-margin, fit_lin) + codon (binary). DECOLLE's thesis
+    is that per-layer LOCAL losses make EACH layer more classifiable; measuring per layer makes the deep-layer
+    purchase (or its absence -- the free-ride the top-down oracle showed) visible directly, not only via the final
+    read. The classifier is FRESHLY FIT (optimal linear read), so this measures general separability, not just
+    separability by the fixed random local head DECOLLE trained against."""
+    (M0tr, M1tr), _ = chain.forward(drive0_tr)
+    (M0te, M1te), _ = chain.forward(drive0_te)
+    res = {}
+    for tag, Mtr, Mte in (("L0", M0tr, M0te), ("L1", M1tr, M1te)):
+        Ctr = (Mtr > 0).astype(np.float64); Cte = (Mte > 0).astype(np.float64)
+        clf_c = fit_lin(Ctr, ytr, k)
+        res[f"{tag}_codon"] = float(np.mean(clf_c(Cte) == yte))
+        mu = Mtr.mean(0); sd = Mtr.std(0) + 1e-6
+        clf_g = fit_lin((Mtr - mu) / sd, ytr, k)
+        res[f"{tag}_graded"] = float(np.mean(clf_g((Mte - mu) / sd) == yte))
+    return res
 
 
 def _single_eval(exp, af_tr, ytr, af_te, yte, k):
@@ -409,7 +471,7 @@ def measure_read_cv(layer, drive_batch, lowcv):
 
 def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub, hidden, oracle_epochs, oracle_lr,
              oracle_batch, drive_pa, drive_pa2, n_steps, beta, feedback, kp_lr, kp_decay, couple_topk, task_kwargs,
-             margin_go, lowcv=None, verbose=True):
+             margin_go, lowcv=None, decolle=False, verbose=True):
     (Xtr, ytr, _), (Xte, yte, _), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     n_in = Xtr.shape[1]; k = meta["k_classes"]; inh = idx["inh_idx"]
     srng = np.random.default_rng(seed * 13 + 1); keep = srng.permutation(len(Xtr))[:min(n_sub, len(Xtr))]
@@ -591,6 +653,59 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
                                     and "dense_forward_weight" not in train_body and ".W0" not in train_body
                                     and "W_out.T" not in train_body and oracle_guarded and y_assign_ok)
 
+    # ============================================================================================================
+    # DECOLLE arm table (ADDITIVE; only when --decolle). Kaiser 2020's per-layer LOCAL readouts + LOCAL losses:
+    # each plastic layer is trained DIRECTLY toward local classifiability by its OWN fixed-random readout, with NO
+    # top-down descending credit -- the NAMED surpass for the 2026-08-02 located wall (a top-down credit signal to
+    # the deep layer was free-ridden past by a readout reading the fixed reservoir; oracle-permuted ~ 0). Decisive
+    # comparison, PER LAYER + FINAL: DECOLLE-local vs FROZEN vs PERMUTED(DECOLLE) vs the top-down ORACLE (computed
+    # above -> directed_oracle_graded / directed_kp_graded). Anti-cheats: permuted-label -> ~frozen; layer LESION ->
+    # floor; no-transport asserted (G fixed-random); reproducibility. Everything above is byte-identical when decolle
+    # is False; this whole block is skipped and no decolle_* key is written (asserted at the end of run_seed).
+    # ============================================================================================================
+    if decolle:
+        # FROZEN per-layer read (both layers fixed) -- the DECOLLE baseline for L0 (deep) AND L1 (final)
+        ch.restore_frozen()
+        dfz = _chain_eval_perlayer(ch, drive0_b, yb, drive0_h, yh, k)
+        # DECOLLE (correct labels): BOTH layers plastic via per-layer LOCAL losses, NO descending credit
+        ch.restore_frozen()
+        dmags, _ = ch.train_decolle(drive0_b, pre0_b, yb, k, epochs, lr_ff, lr_out, seed)
+        dcr = _chain_eval_perlayer(ch, drive0_b, yb, drive0_h, yh, k)
+        out["decolle_G_fixed"] = bool(getattr(ch, "_decolle_G_fixed", False))
+        out["decolle_update_mag_first_last"] = [dmags[0], dmags[-1]]
+        out["decolle_reproducibility"] = _chain_reproducibility(ch, drive0_b)
+        # DECOLLE permuted-label anti-cheat (same LOCAL rule, shuffled targets -> local losses are uninformative)
+        ch.restore_frozen()
+        ch.train_decolle(drive0_b, pre0_b, yperm, k, epochs, lr_ff, lr_out, seed)
+        dpe = _chain_eval_perlayer(ch, drive0_b, yb, drive0_h, yh, k)
+        # DECOLLE apical/plateau LESION anti-cheat (both layers) -> floor
+        dlex = mk_chain(lesion=True)
+        pre0_dl = np.asarray([dlex.L0.feat_spike_counts(a) for a in af_b])
+        dlex.restore_frozen(); dlex.calibrate_coupling(drive0_b)
+        dlex.train_decolle(drive0_b, pre0_dl, yb, k, epochs, lr_ff, lr_out, seed)
+        dle = _chain_eval_perlayer(dlex, drive0_b, yb, drive0_h, yh, k)
+        # per-layer heldout for each arm + the DIRECTED deltas (decolle - frozen, decolle - permuted), per layer
+        for tag in ("L0", "L1"):
+            out[f"decolle_{tag}_graded_heldout"] = dcr[f"{tag}_graded"]
+            out[f"decolle_{tag}_codon_heldout"] = dcr[f"{tag}_codon"]
+            out[f"decolle_frozen_{tag}_graded_heldout"] = dfz[f"{tag}_graded"]
+            out[f"decolle_permuted_{tag}_graded_heldout"] = dpe[f"{tag}_graded"]
+            out[f"decolle_lesion_{tag}_graded_heldout"] = dle[f"{tag}_graded"]
+            out[f"decolle_minus_frozen_{tag}"] = float(dcr[f"{tag}_graded"] - dfz[f"{tag}_graded"])
+            out[f"decolle_minus_permuted_{tag}"] = float(dcr[f"{tag}_graded"] - dpe[f"{tag}_graded"])
+        # FINAL read = L1; the DEEP-layer purchase = L0 (the quantity the top-down oracle could not move)
+        out["decolle_final_graded_heldout"] = dcr["L1_graded"]
+        out["decolle_minus_frozen_final"] = out["decolle_minus_frozen_L1"]
+        out["decolle_minus_permuted_final"] = out["decolle_minus_permuted_L1"]
+        # NO-TRANSPORT (code): train_decolle reads NO forward/coincidence weight; G's assigned ONLY from g_rng (fixed)
+        src_dec = inspect.getsource(MultiHopChain.train_decolle).replace(MultiHopChain.train_decolle.__doc__ or "", "")
+        dec_body = src_dec.split("self._decolle_G_fixed")[0]
+        g_assign_ok = all(("g_rng" in ln) for ln in dec_body.splitlines()
+                          if ("G0 =" in ln or "G1 =" in ln) and "G0_0" not in ln and "G1_0" not in ln)
+        out["decolle_no_transport_code"] = bool("dense_forward_weight" not in dec_body and ".W0" not in dec_body
+                                                 and "W_out" not in dec_body and "self.W" not in dec_body
+                                                 and g_assign_ok and out["decolle_G_fixed"])
+
     if verbose:
         al = out["per_layer_alignment"]
         print(f"  [seed {seed}] n_in={n_in} k={k} chance={chance:.3f} n_ho={len(yh)} NC0={n_col} NC1={n_col2} "
@@ -613,6 +728,17 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
         print(f"    [ISOLATION codon ] frozen {out['frozen_codon_heldout']:.3f} permuted {out['permuted_codon_heldout']:.3f} "
               f"KP {out['credit_codon_heldout']:.3f} ORACLE {out['oracle_directed_codon_heldout']:.3f} || "
               f"directed: oracle-perm {out['directed_oracle_codon']:+.3f} KP-perm {out['directed_kp_codon']:+.3f}", flush=True)
+        if decolle and "decolle_final_graded_heldout" in out:
+            print(f"    [DECOLLE graded heldout] L0(deep) frozen {out['decolle_frozen_L0_graded_heldout']:.3f} "
+                  f"decolle {out['decolle_L0_graded_heldout']:.3f} permuted {out['decolle_permuted_L0_graded_heldout']:.3f} "
+                  f"|| L1(final) frozen {out['decolle_frozen_L1_graded_heldout']:.3f} decolle "
+                  f"{out['decolle_L1_graded_heldout']:.3f} permuted {out['decolle_permuted_L1_graded_heldout']:.3f}", flush=True)
+            print(f"    [DECOLLE directed] L0: dec-frozen {out['decolle_minus_frozen_L0']:+.3f} dec-permuted "
+                  f"{out['decolle_minus_permuted_L0']:+.3f} | L1/final: dec-frozen {out['decolle_minus_frozen_L1']:+.3f} "
+                  f"dec-permuted {out['decolle_minus_permuted_L1']:+.3f} || TOP-DOWN oracle-perm "
+                  f"{out['directed_oracle_graded']:+.3f} KP-perm {out['directed_kp_graded']:+.3f} | lesion L1 "
+                  f"{out['decolle_lesion_L1_graded_heldout']:.3f} | G_fixed {out['decolle_G_fixed']} no-transport "
+                  f"{out['decolle_no_transport_code']} reprod {out['decolle_reproducibility']:.3f}", flush=True)
         if lowcv is not None and "read_cv" in out:
             rc = out["read_cv"]
             print(f"    [LOWCV read-CV] repeat_maxabs cur {rc['current']['repeat_maxabs']:.2e} low {rc['lowcv']['repeat_maxabs']:.2e} "
@@ -628,6 +754,8 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
             print(f"    [DIRECTED oracle-perm]  CURRENT {out['directed_oracle_graded']:+.3f}  ->  LOWCV "
                   f"{out['lowcv_directed_oracle_graded']:+.3f}   (did the lower-CV read surface directed credit?)",
                   flush=True)
+    if not decolle:                                                     # byte-identical-when-off: DECOLLE writes NOTHING
+        assert not any(str(kk).startswith("decolle_") for kk in out), "byte-identical-off VIOLATED: decolle_* key leaked"
     return out
 
 
@@ -670,6 +798,13 @@ def main():
     # ---- LOWER-CV READ (additive, default OFF -> byte-identical). The NAMED surpass for the 2026-08-02 located
     #      wall: a plateau-locked exponential eligibility (longer effective integration over the informative band)
     #      + ensemble pooling of the sigma' gate. See measure_read_cv / ChainLayer.forward_drive. ----
+    # ---- DECOLLE per-layer LOCAL readout arm (additive, default OFF -> byte-identical). The named surpass for the
+    #      2026-08-02 located wall: attach a FIXED-RANDOM local readout + local loss to EACH plastic layer so each
+    #      deep layer is trained DIRECTLY toward local classifiability, instead of routing top-down credit. ----
+    ap.add_argument("--decolle", action="store_true",
+                    help="ADD the DECOLLE per-layer LOCAL-readout arm (Kaiser 2020): each plastic layer gets a "
+                         "fixed-random local readout + local loss, trained transport-free with NO top-down credit. "
+                         "Decisive vs frozen/permuted/top-down-oracle, PER LAYER + final. OFF => byte-identical.")
     ap.add_argument("--lowcv-read", action="store_true",
                     help="ADD a lower-CV read arm table {frozen,oracle,KP,permuted} + the read-CV before/after; OFF => byte-identical")
     ap.add_argument("--lowcv-nsteps", type=int, default=60, help="integration steps for the lowcv read (>= --n-steps)")
@@ -688,6 +823,7 @@ def main():
         lowcv = dict(nsteps=int(a.lowcv_nsteps), warmup=int(a.lowcv_warmup), sigma_hi=int(a.lowcv_sigma_hi),
                      elig_tau=float(a.lowcv_elig_tau), ensemble=int(a.lowcv_ensemble),
                      margin_hi=int(a.lowcv_margin_hi), beta=float(a.lowcv_beta))
+    decolle = bool(a.decolle)
     task_kwargs = dict(n_super=a.n_super, n_members=a.n_members, held_per_super=a.held_per_super, n_prop=a.n_prop,
                        member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise)
     t0 = time.time(); per = []; err = None
@@ -696,7 +832,7 @@ def main():
             per.append(run_seed(s, a.n_col, a.n_col2, a.epochs, a.lr_ff, a.lr_out, a.w0, a.jitter, a.k_th, a.n_sub,
                                 a.hidden, a.oracle_epochs, a.oracle_lr, a.oracle_batch, a.drive_pa, a.drive_pa2,
                                 a.n_steps, a.beta, a.feedback, a.kp_lr, a.kp_decay, a.couple_topk, task_kwargs,
-                                a.margin_go, lowcv=lowcv))
+                                a.margin_go, lowcv=lowcv, decolle=decolle))
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
@@ -792,6 +928,48 @@ def main():
                 lagg["lowcv_verdict"] = ("DEEPER REDESIGN -- the lower-CV read does NOT make oracle beat permuted "
                                          "(oracle still ~ permuted); the wall is not read-CV (task/read redesign needed)")
             summary["lowcv_aggregate"] = lagg
+        # ---- DECOLLE aggregate (only when --decolle): per-layer + FINAL directed lift vs the top-down oracle/KP ----
+        if decolle and all("decolle_final_graded_heldout" in p for p in per):
+            dk = ["decolle_L0_graded_heldout", "decolle_L1_graded_heldout", "decolle_frozen_L0_graded_heldout",
+                  "decolle_frozen_L1_graded_heldout", "decolle_permuted_L0_graded_heldout",
+                  "decolle_permuted_L1_graded_heldout", "decolle_lesion_L1_graded_heldout",
+                  "decolle_minus_frozen_L0", "decolle_minus_frozen_L1", "decolle_minus_permuted_L0",
+                  "decolle_minus_permuted_L1", "decolle_reproducibility"]
+            dagg = {kk: _m(kk) for kk in dk}
+            dagg["current_directed_oracle_graded"] = agg["directed_oracle_graded"]
+            dagg["current_directed_kp_graded"] = agg["directed_kp_graded"]
+            # GO: the FINAL read (L1) beats BOTH frozen AND permuted by the margin on `need` seeds, AND the DEEP layer
+            # L0 shows a directed lift (decolle L0 > permuted L0) on `need` seeds -- the PURCHASE the top-down oracle
+            # could not make (oracle-permuted ~ 0). Anti-cheats: permuted -> ~frozen; lesion -> floor; G fixed; reprod.
+            dec_final_beats_frozen = sum(1 for p in per if p["decolle_minus_frozen_L1"] >= a.margin_go)
+            dec_final_beats_perm = sum(1 for p in per if p["decolle_minus_permuted_L1"] >= a.margin_go)
+            dec_deep_beats_perm = sum(1 for p in per if p["decolle_minus_permuted_L0"] > 0)
+            dec_anti = (all(p["decolle_no_transport_code"] for p in per)
+                        and all(p["decolle_G_fixed"] for p in per)
+                        and all(p["decolle_reproducibility"] >= 0.8 for p in per)
+                        and all(p["decolle_permuted_L1_graded_heldout"] <= p["decolle_frozen_L1_graded_heldout"] + a.margin_go
+                                for p in per)
+                        and all(p["decolle_lesion_L1_graded_heldout"] <= p["decolle_frozen_L1_graded_heldout"] + 0.05
+                                for p in per))
+            dec_go = bool(dec_final_beats_frozen >= need and dec_final_beats_perm >= need
+                          and dec_deep_beats_perm >= need and dec_anti)
+            if dec_go:
+                dec_verdict = ("DECOLLE GO -- per-layer LOCAL readouts give the deep layer directed-credit PURCHASE "
+                               "(decolle > frozen AND > permuted, DEEP layer included) where top-down credit could not")
+            elif dec_final_beats_perm >= need and dec_final_beats_frozen >= need:
+                dec_verdict = ("DECOLLE PROMISING -- final beats frozen+permuted but the DEEP layer L0 directed lift is "
+                               "not on `need` seeds (or an anti-cheat unclean); inspect decolle_minus_permuted_L0")
+            elif dec_final_beats_frozen >= need:
+                dec_verdict = ("DECOLLE LABEL-AGNOSTIC -- final beats frozen but NOT permuted: generic plasticity, not "
+                               "directed local credit (the SAME free-ride the top-down arm showed)")
+            else:
+                dec_verdict = ("DECOLLE NEGATIVE -- final does not beat frozen by the margin; local per-layer losses do "
+                               "not shape the read the final classifier uses (deep layer still free-ridden)")
+            dagg.update({"decolle_final_beats_frozen": dec_final_beats_frozen,
+                         "decolle_final_beats_permuted": dec_final_beats_perm,
+                         "decolle_deep_L0_beats_permuted": dec_deep_beats_perm, "seeds_needed": need,
+                         "decolle_anti_cheats_clean": bool(dec_anti), "decolle_verdict": dec_verdict})
+            summary["decolle_aggregate"] = dagg; summary["DECOLLE_GO"] = dec_go
         common = (f"oracle {agg['oracle_heldout']:.3f}, rate-res {agg['rate_reservoir_heldout']:.3f}. "
                   f"MULTIHOP graded FROZEN {agg['frozen_graded_heldout']:.3f} CREDIT {agg['credit_graded_heldout']:.3f} "
                   f"(dcs {agg['dcs_multihop_graded']:+.3f}) vs SINGLE dcs {agg['dcs_single_graded']:+.3f}. "
@@ -842,8 +1020,25 @@ def main():
                   f"-> LOWCV {la['lowcv_directed_oracle_graded']:+.3f} ({la['lowcv_oracle_directed_positive']}/"
                   f"{ag['n_seeds']}>margin) | KP-perm LOWCV {la['lowcv_directed_kp_graded']:+.3f}", flush=True)
             print(f"[LOWCV | {task_lbl}] VERDICT => {la['lowcv_verdict']}", flush=True)
+        if "decolle_aggregate" in summary:
+            da = summary["decolle_aggregate"]
+            print("-" * 100, flush=True)
+            print(f"[DECOLLE | {task_lbl}] per-layer graded heldout -- L0(deep) frozen "
+                  f"{da['decolle_frozen_L0_graded_heldout']:.3f} decolle {da['decolle_L0_graded_heldout']:.3f} "
+                  f"permuted {da['decolle_permuted_L0_graded_heldout']:.3f} || L1(final) frozen "
+                  f"{da['decolle_frozen_L1_graded_heldout']:.3f} decolle {da['decolle_L1_graded_heldout']:.3f} "
+                  f"permuted {da['decolle_permuted_L1_graded_heldout']:.3f} | lesion L1 "
+                  f"{da['decolle_lesion_L1_graded_heldout']:.3f}", flush=True)
+            print(f"[DECOLLE | {task_lbl}] DIRECTED -- L0(deep) dec-frozen {da['decolle_minus_frozen_L0']:+.3f} "
+                  f"dec-permuted {da['decolle_minus_permuted_L0']:+.3f} ({da['decolle_deep_L0_beats_permuted']}/"
+                  f"{ag['n_seeds']}>0) | L1(final) dec-frozen {da['decolle_minus_frozen_L1']:+.3f} dec-permuted "
+                  f"{da['decolle_minus_permuted_L1']:+.3f} ({da['decolle_final_beats_permuted']}/{ag['n_seeds']}>margin) "
+                  f"|| TOP-DOWN oracle-perm {da['current_directed_oracle_graded']:+.3f} KP-perm "
+                  f"{da['current_directed_kp_graded']:+.3f}", flush=True)
+            print(f"[DECOLLE | {task_lbl}] anti-cheats_clean={da['decolle_anti_cheats_clean']} DECOLLE_GO="
+                  f"{summary['DECOLLE_GO']} => {da['decolle_verdict']}", flush=True)
     print(f"[gap4-realspikes-multihop] backend={summary['backend']} wrote {a.out}\n" + "=" * 100, flush=True)
-    return 0 if summary.get("GO") else 1
+    return 0 if (summary.get("GO") or summary.get("DECOLLE_GO")) else 1
 
 
 if __name__ == "__main__":

@@ -82,3 +82,26 @@ extracts what it needs, and top-down credit to the deep layer has no purchase (t
 credit at the layer), instead of routing a top-down credit signal the output readout free-rides past. That is
 the field's proven approach for exactly this "top-down credit has no purchase on spikes" wall, and it is the
 next mechanism. (The rate overturn is unaffected; this refines the spiking-side surpass.)
+
+## Update 2 (2026-08-02) — DECOLLE local readouts ALSO give the deep layer ZERO purchase: THREE instruments now agree the wall is the SUBSTRATE, not the credit signal
+
+<!--derived-->
+Built + tested the DECOLLE surpass (additive `--decolle`: each plastic spiking layer gets its OWN fixed-random
+local readout + a label-dependent local classification loss, transport-free, no descending credit). Artifacts:
+`decolle_smoke_seed42.json` (easy) + `decolle_smoke_hard_seed42.json` (hard). The DECISIVE metric — the deep
+layer's directed purchase `decolle_minus_permuted_L0` — is **0.0 on BOTH tasks** (verdict LABEL-AGNOSTIC on
+easy, NEGATIVE on hard; the final read beats frozen only by the label-agnostic amount, ≤+0.056, and does NOT
+beat permuted). So even a label-dependent gradient applied DIRECTLY at the deep layer (not routed top-down) gives
+the deep layer NO directed purchase. **THREE independent instruments now agree** the deep spiking layer's
+held-out contribution is label-INDEPENDENT regardless of the training signal: (1) a perfect W⊤ top-down oracle,
+(2) a lower-CV read, (3) DECOLLE local per-layer losses — all give `directed = 0`. This is the R3 reservoir
+reframe on spikes, CONFIRMED as tightly as it can be.
+**⇒ The wall is the SUBSTRATE, not the credit signal.** The root cause is one of two substrate properties (the
+next thing to isolate): (a) the readout free-rides on the fixed reservoir, so the deep layer is REDUNDANT even
+where the reservoir fails (hard task); or (b) the coincidence-plateau plasticity (max(0)-excitatory + L2-renorm-
+to-init) is too CONSTRAINED to reshape the deep layer's representation, so no credit signal — however directed —
+can move it. **Next mechanism (named, not deferred):** relax the plasticity constraint (widen the reshape range;
+signed/two-sided updates; drop the renorm-to-init) and/or a substrate where the deep layer is NOT reservoir-
+redundant (a bottleneck the readout must route through), then re-run the oracle isolation. This is a deep,
+well-characterized substrate boundary — the field's directed-credit mechanisms (top-down + local) are exhausted
+ON THIS SUBSTRATE; the surpass is now a SUBSTRATE change, not a credit-rule change. The rate overturn stands.
