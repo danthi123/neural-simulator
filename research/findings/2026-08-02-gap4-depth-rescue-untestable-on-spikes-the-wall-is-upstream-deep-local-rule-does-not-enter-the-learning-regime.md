@@ -149,3 +149,17 @@ next test. It also reframes the KP-vs-fixed-FA question: KP repairs the CHAIN's 
 the chain entirely — so on spikes the more decisive comparison at depth may be chained-FA vs chained-KP vs DFA, with DFA
 the a-priori favourite (it already trains depth-2). The crux CORE (chained-FA at the required depth-2, single hop, 6/6)
 is untouched by this correction.
+
+## Update 2 (2026-08-02) — CORRECTION: the "task-construction wall" is WEAKER than stated (the nested-XOR is fittable via GROKKING, not unoptimizable); the deep-spiking-training wall STANDS as the primary leg
+
+<!--derived-->
+A 9-agent adversarial-verification workflow (artifact `research/findings/raw/gap4/realspikes/verify/crux_verification_workflow.json`)
+refuted this finding's "nested-XOR = unoptimizable parity" leg. The depth-3 backprop oracle DOES fit + generalize the
+nested-XOR — at 1000 epochs (vs the 250 I tested), seed 42 groks to train 1.0 / held-out 1.0 on 1434 unseen patterns
+(an abrupt delayed-generalization transition). So the "task-construction wall" of this finding is really "the depth-3
+oracle needs ~4x the epochs and the grok is seed-fragile (1/2 seeds)", NOT "parity is unoptimizable". The hier3
+0/17-config leg still holds (no config separated depth-2 from depth-3 GENERALIZATION), so building a ROBUST depth-3
+instrument remains hard — but it is a practicality wall, not an impossibility. **The PRIMARY leg of this finding is
+UNAFFECTED:** the alignment measurement showing the CHAINED multi-hop FA (+ KP) does not enter the learning regime at
+N>=3 stands, and the refined next mechanism (does the project's DIRECT-feedback DFA e-prop scale to N>=3?) is unchanged.
+The correction narrows the task-construction argument; it does not touch the deep-spiking-training result.

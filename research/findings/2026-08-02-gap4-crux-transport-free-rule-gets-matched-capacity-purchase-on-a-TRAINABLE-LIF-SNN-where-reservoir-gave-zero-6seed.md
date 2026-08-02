@@ -177,3 +177,47 @@ backprop oracle CAN fit+clear (l3_train high, l2 underfits held-out) so the ceil
 works on a trainable spiking substrate at the required depth-2 (6/6, beats reservoirs, matches/exceeds BPTT); this
 refines the OPEN edge (does KP's depth-rescue hold on spikes) by correcting a test design, and the correction is
 itself a finding about how the depth test must be posed.
+
+## Update 4 (2026-08-02) — ADVERSARIAL-VERIFICATION CORRECTIONS (a 9-agent verify workflow refuted/re-scoped two committed sub-claims; the CORE beats-reservoir leg STRENGTHENED)
+
+<!--derived-->
+A 9-agent adversarial-verification workflow (4 probes + skeptics + synthesis; artifact
+`research/findings/raw/gap4/realspikes/verify/crux_verification_workflow.json`) re-tested this finding's load-bearing
+claims. Two require correction; the core leg strengthened.
+
+<!--derived-->
+**⛔ CORRECTION 1 (Update 3's parity claim is REFUTED as stated).** Update 3 (and the sibling finding
+`2026-08-02-gap4-crux-transport-free-rule-...-ILL-POSED` framing) declared the nested-XOR depth-3 task "UNDEFINED /
+unfittable — a parity OPTIMIZATION wall, no depth-3 ceiling exists" from a 250-epoch stage0. That was UNDER-TRAINING,
+not a wall: at the SAME width (96), lr (0.3), batch (128), seed (42), extending 250->1000 epochs takes the depth-3
+oracle from chance (0.502) to a PERFECT fit AND perfect held-out generalization (train 1.0, held-out 1.0 on 1434 unseen
+disjoint patterns) via an abrupt grokking-style transition (250=0.502, 500=0.520, 750=0.528, 1000=1.000). So the
+nested-XOR IS a valid depth-3 ceiling GIVEN a 1000-epoch budget. HONEST residual scope: the grok is SEED-FRAGILE — 1/2
+seeds (seed 43 H96/1000ep = 0.519, did not grok) and 0/? at H=256/512 — so it is a marginal, not robust, instrument.
+The `nestedxor_stage0_confirm_*.json` self-declared `below_chance=true / UNDEFINED_task_unfittable` verdict is correct
+FOR 250 EPOCHS but its word "unfittable" is void — read it as "not-fitted-at-250-epochs (groks by 1000)". The parity
+GRADIENTS-vanish citation (Shalev-Shwartz 2017) is a real phenomenon but does NOT bound THIS task at THIS scale.
+
+<!--derived-->
+**⛔ CORRECTION 2 (the "exceeds surrogate-BPTT" margin is INFLATED; drop the 6/6 per-seed headline).** Update 1's XOR
+result claimed chained_fa (0.839) EXCEEDS the valid BPTT ceiling (0.782) by +0.057, 6/6 (bptt_fraction 1.26). A
+BPTT-tuning sweep (probe C, bptt_train=1.000 in every config, so NOT under-tuned) puts the best-tuned BPTT at 0.808
+(best single seed 0.822): the like-for-like margin is only **+0.011** (3-seed chained_fa 0.819 vs best-tuned BPTT
+0.808), i.e. ~80% of the committed lead was BPTT under-tuning. The DIRECTION survives (chained_fa >= best-tuned BPTT)
+but the MAGNITUDE and the 6/6 per-seed dominance do NOT — at the best-tuned BPTT, FA>BPTT is only 2/3 (seed 42: BPTT
+0.802 > FA 0.749). ⇒ re-scope the claim to "chained_fa MATCHES / marginally exceeds a well-tuned BPTT (+0.011
+like-for-like)"; the 6/6 per-seed headline is WITHDRAWN pending a full 6-seed re-run vs the tuned BPTT (bh256/be400).
+
+<!--derived-->
+**CAVEAT 3 (knob sensitivity, probe D).** chained_fa's XOR result is robust DOWNWARD in the FA learning rate (lr_fa=0.02
+-> 0.881, even better) and to removing sigma-norm (-> 0.764, still > reservoir 0.689, GO 6/6), but KNIFE-EDGE on the
+high side (lr_fa=0.10 -> 0.589 collapse). lr_fa is a load-bearing knob; the committed 0.839 sits on the safe side.
+
+<!--derived-->
+**✓ STRENGTHENED (probe A, the CORE leg).** The beats-reservoir claim is the most robust: the optimally-read frozen
+reservoir SATURATES in a 0.65-0.73 band across W256->W2048 (0.689/0.655/0.714/0.726), per-doubling gain decelerating to
++0.012, and NO single reservoir seed at any tested width (max 0.760) reaches chained_fa 0.839 — directed transport-free
+credit beats an optimally-read nonlinear reservoir of every tested width on XOR. Caveat preserved: the reservoir is a
+partial ELM (~0.65-0.73 >> chance 0.524), so this is "width-saturates-below", near-categorical, not "reservoir provably
+at chance". (W4096/8192 extreme-width points running to close the argument.) **Net: the crux CORE direction stands and
+its beats-reservoir leg strengthened; the exceeds-BPTT magnitude and the parity-wall sub-claim are corrected here.**
