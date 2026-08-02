@@ -1,0 +1,35 @@
+{
+ "run_id": "1785636464-4052294",
+ "runner": "research/runners/_gap4_realspikes_sigmaprime_credit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_realspikes_sigmaprime_credit_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--feedback",
+  "fixed",
+  "--epochs",
+  "20",
+  "--n-col",
+  "200",
+  "--out",
+  "research/findings/raw/gap4/realspikes/sigmaprime_6seed_fixed.json"
+ ],
+ "git_sha": "81864654b",
+ "git_dirty": true,
+ "started": "2026-08-01T22:07:44",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1325.6,
+ "corpus_check_query": "dual-route past-tense morphology distinct populations regular rule generalization to novel stems",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/realspikes/sigmaprime_6seed_learned.json"
+}

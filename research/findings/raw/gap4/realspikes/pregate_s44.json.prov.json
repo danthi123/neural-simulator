@@ -1,0 +1,30 @@
+{
+ "run_id": "1785618345-3850684",
+ "runner": "research/runners/_gap4_realspikes_pregate_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_realspikes_pregate_probe.py",
+  "--seed",
+  "44",
+  "--drive-pa",
+  "1200",
+  "--n-steps",
+  "30",
+  "--fw-scale",
+  "1.0",
+  "--out",
+  "research/findings/raw/gap4/realspikes/pregate_s44.json"
+ ],
+ "git_sha": "29f4bef5e",
+ "git_dirty": true,
+ "started": "2026-08-01T17:05:45",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 719.3,
+ "corpus_check_query": "on-bridge spiking unsupervised local plateau coincidence credit rule movable hidden layer",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/realspikes/pregate_s44.json"
+}

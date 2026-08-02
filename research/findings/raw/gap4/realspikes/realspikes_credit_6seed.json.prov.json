@@ -1,0 +1,31 @@
+{
+ "run_id": "1785618809-3855761",
+ "runner": "research/runners/_gap4_realspikes_credit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_realspikes_credit_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--lr",
+  "0.02",
+  "--out",
+  "research/findings/raw/gap4/realspikes/realspikes_credit_6seed.json"
+ ],
+ "git_sha": "3bb9c508a",
+ "git_dirty": true,
+ "started": "2026-08-01T17:13:29",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1294.7,
+ "corpus_check_query": "on-bridge spiking unsupervised local plateau coincidence credit rule movable hidden layer",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/realspikes/realspikes_credit_6seed.json"
+}

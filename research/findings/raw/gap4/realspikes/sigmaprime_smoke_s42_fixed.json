@@ -1,0 +1,85 @@
+{
+ "probe": "gap4_realspikes_sigmaprime_credit",
+ "seeds": [
+  42
+ ],
+ "backend": "numpy",
+ "config": {
+  "n_col": 200,
+  "epochs": 20,
+  "lr_ff": 0.05,
+  "lr_out": 0.1,
+  "beta": 1.0,
+  "feedback": "fixed",
+  "kp_lr": 0.2,
+  "kp_decay": 0.0001,
+  "drive_pa": 1200.0,
+  "n_steps": 30,
+  "task": {
+   "n_super": 24,
+   "n_members": 8,
+   "held_per_super": 3,
+   "n_prop": 3,
+   "member_id_dim": 3,
+   "n_obs": 14,
+   "noise": 0.02
+  },
+  "margin_go": 0.05
+ },
+ "elapsed_seconds": 30.0,
+ "per_seed": [
+  {
+   "seed": 42,
+   "n_in": 9,
+   "k": 9,
+   "chance": 0.16666666666666666,
+   "n_train_sub": 176,
+   "n_heldout_inherit": 54,
+   "drive_pa": 1200.0,
+   "n_steps": 30,
+   "beta": 1.0,
+   "feedback": "fixed",
+   "oracle_train": 1.0,
+   "oracle_heldout": 1.0,
+   "rate_reservoir_train": 1.0,
+   "rate_reservoir_heldout": 0.09552845528455285,
+   "frozen_plateau_train": 0.5056818181818182,
+   "frozen_plateau_heldout": 0.3333333333333333,
+   "credit_plateau_train": 0.5227272727272727,
+   "credit_plateau_heldout": 0.35185185185185186,
+   "credit_head_heldout": 0.46296296296296297,
+   "credit_update_mag_first_last": [
+    0.000508,
+    4.2e-05
+   ],
+   "Y_moved": false,
+   "deep_credit_share": 0.027777777777777814,
+   "reproducibility": 1.0,
+   "permuted_heldout": 0.2962962962962963,
+   "wrong_sign_heldout": 0.4074074074074074,
+   "lesion_heldout": 0.1111111111111111,
+   "no_transport_code": true
+  }
+ ],
+ "aggregate": {
+  "oracle_heldout": 1.0,
+  "rate_reservoir_heldout": 0.09552845528455285,
+  "frozen_plateau_heldout": 0.3333333333333333,
+  "credit_plateau_heldout": 0.35185185185185186,
+  "deep_credit_share": 0.027777777777777814,
+  "reproducibility": 1.0,
+  "permuted_heldout": 0.2962962962962963,
+  "wrong_sign_heldout": 0.4074074074074074,
+  "lesion_heldout": 0.1111111111111111,
+  "chance": 0.16666666666666666,
+  "credit_plateau_train": 0.5227272727272727,
+  "n_seeds": 1,
+  "credit_beats_frozen_by_margin": 0,
+  "seeds_needed": 1,
+  "dcs_positive": 1,
+  "anti_cheats_clean": true,
+  "margin_go": 0.05,
+  "promising": true
+ },
+ "PROMISING": true
+}

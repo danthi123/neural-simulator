@@ -1,0 +1,19 @@
+{
+  "seed": 44,
+  "drive_pa": 1200.0,
+  "n_steps": 30,
+  "fw_scale": 1.0,
+  "n_inputs": 12,
+  "feat_spike_std_across_inputs": 2.28561,
+  "col_margin_std_across_inputs": 11.34223,
+  "col_spike_std_across_inputs": 0.0,
+  "mean_feat_rate_per_step": 0.07407,
+  "mean_col_margin": 37.06193,
+  "frac_cols_ever_active": 1.0,
+  "reproducibility_codon_corr": 1.0,
+  "input_dependent_firing": true,
+  "reliable_repro_ge_0p8": true,
+  "PREGATE_PASS": true,
+  "elapsed_seconds": 0.0,
+  "backend": "numpy"
+}

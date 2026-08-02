@@ -1,0 +1,76 @@
+{
+ "probe": "gap4_realspikes_credit",
+ "seeds": [
+  42
+ ],
+ "backend": "numpy",
+ "config": {
+  "n_col": 200,
+  "epochs": 30,
+  "lr": 0.02,
+  "w0": 0.35,
+  "jitter": 0.15,
+  "drive_pa": 1200.0,
+  "n_steps": 30,
+  "task": {
+   "n_super": 24,
+   "n_members": 8,
+   "held_per_super": 3,
+   "n_prop": 3,
+   "member_id_dim": 3,
+   "n_obs": 14,
+   "noise": 0.02
+  },
+  "margin_go": 0.05
+ },
+ "elapsed_seconds": 19.1,
+ "per_seed": [
+  {
+   "seed": 42,
+   "n_in": 9,
+   "k": 9,
+   "chance": 0.16666666666666666,
+   "n_train_sub": 176,
+   "n_heldout_inherit": 54,
+   "drive_pa": 1200.0,
+   "n_steps": 30,
+   "oracle_train": 1.0,
+   "oracle_heldout": 1.0,
+   "rate_reservoir_train": 1.0,
+   "rate_reservoir_heldout": 0.09552845528455285,
+   "frozen_plateau_train": 0.5056818181818182,
+   "frozen_plateau_heldout": 0.3333333333333333,
+   "frozen_codon_diversity": 0.07847445667500638,
+   "credit_plateau_train": 0.4602272727272727,
+   "credit_plateau_heldout": 0.2962962962962963,
+   "credit_codon_diversity": 0.11278317075714586,
+   "credit_update_mag_first_last": [
+    0.079522,
+    0.104054
+   ],
+   "deep_credit_share": -0.055555555555555546,
+   "reproducibility": 1.0,
+   "permuted_readout_heldout": 0.16666666666666666,
+   "lesion_heldout": 0.1111111111111111,
+   "no_transport_code": true
+  }
+ ],
+ "aggregate": {
+  "oracle_heldout": 1.0,
+  "rate_reservoir_heldout": 0.09552845528455285,
+  "frozen_plateau_heldout": 0.3333333333333333,
+  "credit_plateau_heldout": 0.2962962962962963,
+  "deep_credit_share": -0.055555555555555546,
+  "reproducibility": 1.0,
+  "permuted_readout_heldout": 0.16666666666666666,
+  "lesion_heldout": 0.1111111111111111,
+  "chance": 0.16666666666666666,
+  "credit_plateau_train": 0.4602272727272727,
+  "n_seeds": 1,
+  "credit_beats_frozen_by_margin": 0,
+  "seeds_needed": 1,
+  "dcs_positive": 0,
+  "anti_cheats_clean": true,
+  "margin_go": 0.05
+ }
+}
