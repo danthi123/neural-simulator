@@ -137,7 +137,9 @@ with the MAJORITY inserted between the two XOR levels specifically to break the 
 tree collapses to a wide parity = depth-1; MAJ != parity, so the three ops cannot be folded). The construction is
 correct — label perfectly balanced (chance 0.504), a linear read of the raw bits sits at chance (0.490), the
 three ops genuinely stack. **But the stage0 depth-genuineness gate FAILS, and the failure is diagnostic, not a
-tuning miss.** Artifact: `research/findings/raw/gap4/realspikes/nestedxor_stage0_confirm_seed42.json`.
+tuning miss — 6/6 seeds (l3_train 0.502-0.512, all at chance; depth3_requiring 0/6).** Artifacts:
+`nestedxor_stage0_confirm_seed42.json`, `nestedxor_stage0_confirm_6seed.json` (both under
+`research/findings/raw/gap4/realspikes/`).
 
 <!--derived-->
 | stage0 oracle (DendriticMLP, hidden 96, 250 epochs, lr 0.3) | held-out | TRAIN |

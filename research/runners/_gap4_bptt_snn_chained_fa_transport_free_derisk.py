@@ -132,6 +132,55 @@ def make_task_xor(seed):
 
 
 # ============================================================================================================
+# THE DEPTH-3 OBLIGATORY task (--task-nestedxor, ADDITIVE, default OFF) -- the CLEAN KP-depth-rescue test the XOR
+# depth-sweep could NOT do. XOR only REQUIRES depth-2, so at --n-hidden-layers 3/4 layers 3-4 are REDUNDANT (credit
+# degrades through redundant hops; NOT a test of KP's obligatory-depth rescue). This task genuinely REQUIRES 3
+# STACKED nonlinear layers so that at N>=3 the depth is OBLIGATORY, not redundant:
+#     L1  p_j    = XOR(b_{2j}, b_{2j+1})                          j in 0..NX_N_PAIRS-1     (nonlinear: pair-XOR)
+#     L2  g_m    = MAJORITY(p over disjoint group m of NX_GROUP)  m in 0..NX_N_GROUPS-1    (nonlinear: threshold)
+#     L3  label  = XOR over the NX_N_GROUPS group-majorities g_m                            (nonlinear: top XOR)
+# WHY IT DOES NOT COLLAPSE (the trap a pure nested-XOR falls into): XOR(XOR(...)) folds to a WIDE parity, which a
+# single hidden layer represents -> a nested-XOR tree is depth-1, NOT depth-3. Inserting a MAJORITY between the XOR
+# levels breaks the parity algebra (MAJ != parity), so the three operations cannot be folded: computing g_m needs
+# XOR (L1) THEN threshold (L2); XORing the g_m needs a THIRD nonlinearity. Expectation on the stage0 probe: the
+# depth-2 oracle UNDERFITS held-out (l2 ~ chance) while the depth-3 oracle CLEARS it (l3 >= 0.80) -> depth3_requiring.
+# ============================================================================================================
+NX_N_BITS = 12                         # 2^12 = 4096 patterns (enumerable; same order as the emerge1 XOR task's 2^10)
+NX_N_PAIRS = NX_N_BITS // 2            # = 6  level-1 pair-XORs (XOR of adjacent bit pairs)
+NX_GROUP = 3                          # level-2 MAJORITY over disjoint groups of 3 pair-XORs (odd -> non-degenerate)
+NX_N_GROUPS = NX_N_PAIRS // NX_GROUP  # = 2  group-majorities; level-3 = XOR over these
+
+
+def make_task_nestedxor(seed):
+    """DEPTH-3 nested task: bits -> pair-XORs (L1) -> group-MAJORITIES (L2) -> XOR-over-groups (L3 = label). Enumerate
+    all 2^NX_N_BITS patterns; three STACKED non-collapsing nonlinear operations (a MAJORITY between the two XOR levels
+    prevents the parity fold that would make a nested-XOR tree depth-1). A depth-2 net should be UNABLE to fit it while
+    a depth-3 net can -- confirm via stage0 (l2 ~ chance, l3 solves). Same 4-tuple interface as make_task_xor: X in
+    +/-1 (rate-coded as constant current over T, exactly as the XOR task's X is), y in {0,1} (k=2); the WHOLE held-out
+    set (UNSEEN bit patterns) is the 'inherit' generalization set; latents reported = the level-1 pair-XORs (non-gating)."""
+    rng = np.random.default_rng(seed)
+    n = 1 << NX_N_BITS
+    bits = ((np.arange(n)[:, None] >> np.arange(NX_N_BITS)[None, :]) & 1).astype(np.float64)     # (n, N_BITS) {0,1}
+    pair_xor = np.logical_xor(bits[:, 0::2].astype(bool), bits[:, 1::2].astype(bool))            # (n, N_PAIRS) bool
+    thr = (NX_GROUP + 1) // 2                                                                    # majority >= ceil(G/2)
+    groups = pair_xor.reshape(n, NX_N_GROUPS, NX_GROUP)                                          # (n, M, G)
+    g_maj = (groups.sum(axis=2) >= thr)                                                          # (n, M) bool -- L2
+    label = np.bitwise_xor.reduce(g_maj.astype(np.int64), axis=1).astype(np.int64)              # (n,) {0,1} -- L3
+    X = bits * 2.0 - 1.0                                                                         # +/-1
+    idx = rng.permutation(n)
+    cut = int(0.65 * n)
+    tr, te = idx[:cut], idx[cut:]
+    Ltr = pair_xor[tr].astype(np.float64); Lte = pair_xor[te].astype(np.float64)                 # level-1 latents
+    inh_idx = np.arange(len(te), dtype=np.int64)                                                 # whole held-out set
+    meta = {"task": "nestedxor_depth3", "k_classes": 2, "n_bits": int(NX_N_BITS),
+            "n_pairs": int(NX_N_PAIRS), "n_groups": int(NX_N_GROUPS), "group_size": int(NX_GROUP),
+            "n_features": int(X.shape[1]), "n_train": int(len(tr)), "n_heldout": int(len(te)),
+            "n_inherit_heldout": int(len(inh_idx))}
+    idxd = {"inh_idx": inh_idx, "memctrl_idx": np.array([], dtype=np.int64)}
+    return (X[tr], label[tr], Ltr), (X[te], label[te], Lte), meta, idxd
+
+
+# ============================================================================================================
 # The CHAINED multi-hop TRANSPORT-FREE feedback-alignment credit -- the rate-overturn rule ported to the LIF SNN.
 # Per timestep, descend the output error hop-by-hop through the stack (top -> bottom):
 #     e_{L-1} = output_grad[t]                              # output error (target access; the top layer)
@@ -342,8 +391,11 @@ def _train_snn_arm(Xtr, ytr, sizes, T, epochs, lr, lr_fa, in_gain, seed, mode, b
 
 def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs, n_hidden_layers=2,
              sigma_norm=True, kp_lr=0.2, kp_decay=1e-4, check_depth=True,
-             task_xor=False, bptt_hidden=None, bptt_epochs=None, bptt_lr=None, wide_hidden=256):
-    if task_xor:
+             task_xor=False, task_nestedxor=False, bptt_hidden=None, bptt_epochs=None, bptt_lr=None,
+             wide_hidden=256):
+    if task_nestedxor:
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_nestedxor(seed)
+    elif task_xor:
         (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_xor(seed)
     else:
         (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
@@ -358,10 +410,20 @@ def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs
     _train_oracle(onet, Xtr, ytr, 250, 0.3, 128, seed)
     oracle_inh = _acc_on(onet, Xte, yte, inh_idx)
     depth_sep = None
+    s0_l0 = s0_l1 = s0_l2 = s0_l3 = s0_gap = None
+    depth3_requiring = None
     if check_depth:
         s0 = stage0_depth_genuineness(((Xtr, ytr, Ltr), (Xte, yte, Lte)), idx, k, hidden=96, epochs=250,
                                       lr=0.3, batch=128, seed=seed)
         depth_sep = bool(s0.get("depth_separating"))
+        s0_l0 = s0.get("linear_inherit_heldout"); s0_l1 = s0.get("l1_inherit_heldout")
+        s0_l2 = s0.get("l2_inherit_heldout"); s0_l3 = s0.get("l3_inherit_heldout")
+        s0_gap = s0.get("depth_gap")
+        # DEPTH-3 GATE (the confirm read the XOR sweep could not make): depth-2 oracle ~ chance AND depth-3 oracle
+        # solves it AND a clear 2->3 jump. This is STRICTER than `depth_separating` (which fires on max(l2,l3), so it
+        # is True even for a depth-2 task); depth3_requiring is what validates the task as OBLIGATORY-depth-3.
+        if not np.isnan(chance) and s0_l2 is not None and s0_l3 is not None:
+            depth3_requiring = bool(s0_l2 <= chance + 0.06 and s0_l3 >= 0.80 and (s0_l3 - s0_l2) >= 0.15)
 
     if subsample is not None and len(Xtr) > subsample:
         srng = np.random.default_rng(seed + 13)
@@ -434,8 +496,13 @@ def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs
 
     return {
         "seed": seed, "chance": chance, "n_in": n_in, "k": k, "sizes": sizes,
-        "task": ("xor" if task_xor else "inheritance"),
+        "task": ("nestedxor" if task_nestedxor else ("xor" if task_xor else "inheritance")),
+        "n_hidden_layers": int(n_hidden_layers),
         "depth_separating": depth_sep, "oracle_inherit": oracle_inh,
+        # ---- stage0 depth-genuineness surfaced (the DEPTH-3 confirm read) ----
+        "stage0_linear_inherit": s0_l0, "stage0_l1_inherit": s0_l1,
+        "stage0_l2_inherit": s0_l2, "stage0_l3_inherit": s0_l3, "stage0_depth_gap": s0_gap,
+        "depth3_requiring": depth3_requiring,
         "bptt_inherit": bptt["inherit"], "bptt_train": bptt["train"], "bptt_sizes": bptt_sizes,
         "frozen_reservoir_inherit": frozen["inherit"], "frozen_reservoir_train": frozen["train"],
         "chained_fa_inherit": chained["inherit"], "chained_fa_train": chained["train"],
@@ -485,6 +552,10 @@ def _agg(results):
     return {
         "n_seeds": n,
         "mean_chance": _m("chance"),
+        # ---- stage0 depth-3 confirm (the gate for the OBLIGATORY-depth-3 task) ----
+        "mean_stage0_l2_inherit": _m("stage0_l2_inherit"),
+        "mean_stage0_l3_inherit": _m("stage0_l3_inherit"),
+        "depth3_requiring_seeds": f"{_count('depth3_requiring')}/{n}",
         "mean_oracle_inherit": _m("oracle_inherit"),
         "mean_bptt_inherit": _m("bptt_inherit"),
         "mean_frozen_reservoir_inherit": _m("frozen_reservoir_inherit"),
@@ -534,6 +605,15 @@ def main():
     ap.add_argument("--task-xor", action="store_true",
                     help="use the depth-2 XOR->threshold RATE-OVERTURN task (NOT linearly reservoir-decodable) instead "
                          "of the semantic-inheritance task; default OFF => inheritance task byte-identical to the crux run.")
+    # ---- ADDITIVE (default-OFF): the DEPTH-3 OBLIGATORY task -- the clean KP-depth-rescue test the XOR sweep could not do ----
+    ap.add_argument("--task-nestedxor", action="store_true",
+                    help="use the DEPTH-3 nested task (bits->pair-XORs->group-MAJORITIES->XOR-over-groups; genuinely "
+                         "REQUIRES 3 nonlinear layers so at --n-hidden-layers>=3 the depth is OBLIGATORY, not redundant) "
+                         "instead of the inheritance/xor task; default OFF. CONFIRM the depth-3 requirement via the stage0 "
+                         "probe (l2 ~ chance, l3 solves => depth3_requiring) BEFORE reading the depth sweep.")
+    ap.add_argument("--stage0-only", action="store_true",
+                    help="run ONLY the stage0 depth-genuineness probe (0/1/2/3-hidden oracles) + the depth3 gate and exit "
+                         "-- the cheap CONFIRM path (no SNN arms). Use to validate a task gates at depth-3 before sweeping.")
     ap.add_argument("--wide-hidden", type=int, default=256,
                     help="width of the WIDE frozen-reservoir optimal-readout control (the categorical control: on XOR a "
                          "fixed random reservoir CANNOT decode at ANY width, so wide-frozen-optimal should sit at chance).")
@@ -559,6 +639,64 @@ def main():
                    "held_per_super": args.held_per_super, "n_prop": args.n_prop,
                    "member_id_dim": args.member_id_dim, "n_obs": args.n_obs,
                    "noise": args.noise, "feature_seed": args.feature_seed}
+    task_name = "nestedxor" if args.task_nestedxor else ("xor" if args.task_xor else "inheritance")
+
+    # ---- CHEAP CONFIRM PATH: the stage0 depth-genuineness probe ALONE (no SNN arms). Validates a task's OBLIGATORY
+    #      depth: depth3_requiring = (l2 ~ chance) AND (l3 >= 0.80) AND (l3 - l2 >= 0.15). Run this BEFORE the sweep. ----
+    if args.stage0_only:
+        s0_results = []
+        for sd in args.seeds:
+            if args.task_nestedxor:
+                (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_nestedxor(sd)
+            elif args.task_xor:
+                (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_xor(sd)
+            else:
+                (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(sd, **task_kwargs)
+            k = meta["k_classes"]; inh = idx["inh_idx"]
+            chance = (float(max(np.mean(yte[inh] == c) for c in np.unique(yte[inh])))
+                      if len(inh) else float("nan"))
+            s0 = stage0_depth_genuineness(((Xtr, ytr, Ltr), (Xte, yte, Lte)), idx, k, hidden=96, epochs=250,
+                                          lr=0.3, batch=128, seed=sd)
+            l2 = s0["l2_inherit_heldout"]; l3 = s0["l3_inherit_heldout"]
+            depth3 = bool((not np.isnan(chance)) and l2 <= chance + 0.06 and l3 >= 0.80 and (l3 - l2) >= 0.15)
+            s0["seed"] = sd; s0["depth3_requiring"] = depth3
+            s0_results.append(s0)
+            print(f"[seed {sd}] chance {chance:.3f} | l0 {s0['linear_inherit_heldout']:.3f} "
+                  f"l1 {s0['l1_inherit_heldout']:.3f} l2 {l2:.3f} l3 {l3:.3f} => depth3_requiring={depth3} "
+                  f"(depth_separating={s0['depth_separating']})", flush=True)
+        n = len(s0_results)
+        # Below-chance / UNDEFINED self-declaration (silent-failure discipline: UNDEFINED, not a NO-GO). A stage0
+        # confirm whose DEEPEST oracle cannot fit TRAIN measures NOTHING about depth-genuineness -- the task is
+        # UNFITTABLE, so no depth ceiling exists to gate a depth-rescue test against (e.g. a parity task: backprop
+        # cannot fit deep XOR -- Shalev-Shwartz 2017). The artifact must OWN that status so downstream reads never
+        # mistake "0/N depth3_requiring" (which could also mean "fittable but shallow-solvable") for a real NO-GO.
+        def _mean(key):
+            vals = [r[key] for r in s0_results if isinstance(r.get(key), (int, float))]
+            return sum(vals) / len(vals) if vals else float("nan")
+        n_go = sum(bool(r['depth3_requiring']) for r in s0_results)
+        mean_l3_train = _mean("l3_train"); mean_chance = _mean("chance")
+        # "unfittable" = the confirm did not gate AND the depth-3 oracle sits at/below chance ON TRAIN (cannot even
+        # memorize) -> the deepest ceiling does not exist. Robust to per-seed noise (uses the cross-seed mean).
+        unfittable = bool(n_go == 0 and not (mean_l3_train != mean_l3_train)  # not NaN
+                          and mean_l3_train <= mean_chance + 0.05)
+        verdict = ("UNDEFINED_task_unfittable (depth-3 oracle cannot fit TRAIN: mean l3_train "
+                   f"{mean_l3_train:.3f} <= chance {mean_chance:.3f} -> NO depth-3 ceiling exists; a boolean-"
+                   "obligatory-depth task on stacked parity is not backprop-optimizable (Shalev-Shwartz 2017), so it "
+                   "cannot gate a depth-rescue test)" if unfittable
+                   else (f"DEPTH3_REQUIRING ({n_go}/{n})" if n_go else
+                         f"NOT_DEPTH3 ({n_go}/{n}: task fittable but does not obligate depth-3)"))
+        out = {"probe": "gap4_bptt_snn_chained_fa_transport_free__STAGE0_ONLY", "task": task_name,
+               "seeds": args.seeds, "stage0": s0_results,
+               "depth3_requiring_seeds": f"{n_go}/{n}", "below_chance": unfittable, "verdict": verdict,
+               "mean_l3_train": mean_l3_train, "mean_chance": mean_chance,
+               "gate": "depth3_requiring = (l2 <= chance+0.06) AND (l3 >= 0.80) AND (l3 - l2 >= 0.15)"}
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        with open(args.out, "w") as f:
+            json.dump(out, f, indent=2)
+        print(f"\nstage0-only [{task_name}]: depth3_requiring {out['depth3_requiring_seeds']}. "
+              f"Gate: l2<=chance+0.06 AND l3>=0.80 AND l3-l2>=0.15.")
+        return
+
     t0 = time.time()
     results = []
     for sd in args.seeds:
@@ -567,13 +705,16 @@ def main():
                          args.train_subsample, task_kwargs, n_hidden_layers=args.n_hidden_layers,
                          sigma_norm=args.sigma_norm, kp_lr=args.kp_lr, kp_decay=args.kp_decay,
                          check_depth=not args.no_depth_check, task_xor=args.task_xor,
+                         task_nestedxor=args.task_nestedxor,
                          bptt_hidden=args.bptt_hidden, bptt_epochs=args.bptt_epochs, bptt_lr=args.bptt_lr,
                          wide_hidden=args.wide_hidden)
         except Exception as e:
             r = {"seed": sd, "error": repr(e), "traceback": traceback.format_exc()}
         results.append(r)
         if "error" not in r:
-            print(f"[seed {sd}] chained_fa {r['chained_fa_inherit']:.3f} (kp {r['chained_fa_kp_inherit']:.3f}, "
+            print(f"[seed {sd}] [N={r.get('n_hidden_layers')}h depth3_req={r.get('depth3_requiring')} "
+                  f"l2={r.get('stage0_l2_inherit')} l3={r.get('stage0_l3_inherit')}] "
+                  f"chained_fa {r['chained_fa_inherit']:.3f} (kp {r['chained_fa_kp_inherit']:.3f}, "
                   f"kp-over-fa {r['kp_over_fixed_fa']:+.3f}) "
                   f"vs frozen {r['frozen_reservoir_inherit']:.3f} vs permuted {r['permuted_inherit']:.3f} | "
                   f"BPTT ceiling {r['bptt_inherit']:.3f} (train {r['bptt_train']:.3f}), oracle {r['oracle_inherit']:.3f}, "
@@ -587,16 +728,28 @@ def main():
 
     agg = _agg(results)
     out = {"probe": "gap4_bptt_snn_chained_fa_transport_free",
-           "task": ("xor" if args.task_xor else "inheritance"), "seeds": args.seeds,
+           "task": task_name, "seeds": args.seeds,
            "config": {"hidden": args.hidden, "n_hidden_layers": args.n_hidden_layers, "T": args.timesteps,
                       "epochs": args.epochs, "lr": args.lr, "lr_fa": lr_fa, "in_gain": args.in_gain,
                       "sigma_norm": args.sigma_norm, "kp_lr": args.kp_lr, "kp_decay": args.kp_decay,
                       "train_subsample": args.train_subsample, "task_xor": bool(args.task_xor),
+                      "task_nestedxor": bool(args.task_nestedxor),
                       "wide_hidden": args.wide_hidden, "bptt_hidden": args.bptt_hidden,
                       "bptt_epochs": args.bptt_epochs, "bptt_lr": args.bptt_lr, "task": task_kwargs},
            "elapsed_seconds": round(time.time() - t0, 1), "results": results, "aggregate": agg}
     if agg:
         _cat = agg.get("CATEGORICAL_UNLOCK_seeds", "0/0")
+        # DEPTH-3 SWEEP read (nestedxor): depth3_requiring confirms the task gates at depth-3; the KP-depth-rescue
+        # signature is kp_over_fixed_fa GROWING with --n-hidden-layers while fixed-FA purchase_over_frozen collapses
+        # toward 0 at N>=3 and KP holds. Compare these across the N=2,3,4 runs.
+        out["depth3_sweep_read"] = (
+            f"[{out['task']}] N={args.n_hidden_layers}h: depth3_requiring {agg.get('depth3_requiring_seeds')} "
+            f"(stage0 l2 {agg.get('mean_stage0_l2_inherit')} vs l3 {agg.get('mean_stage0_l3_inherit')}, chance "
+            f"{agg['mean_chance']:.3f}); kp_over_fixed_fa {agg.get('mean_kp_over_fixed_fa')}; fixed-FA "
+            f"purchase_over_frozen {agg.get('mean_purchase_over_frozen')} vs KP purchase_over_frozen "
+            f"{agg.get('mean_kp_purchase_over_frozen')}; GO_fixed {agg['GO_fixed_seeds']} GO_kp {agg['GO_kp_seeds']}. "
+            f"Sweep signature (read across N=2,3,4): kp_over_fixed_fa GROWS + fixed-FA purchase collapses to ~0 at "
+            f"N>=3 while KP holds => KP rescues OBLIGATORY depth on spikes.")
         out["verdict"] = (
             f"[{out['task']}] transport-free chained-FA on the TRAINABLE LIF SNN: chained_fa "
             f"{agg['mean_chained_fa_inherit']:.3f} (kp {agg['mean_chained_fa_kp_inherit']:.3f}) vs frozen-local "

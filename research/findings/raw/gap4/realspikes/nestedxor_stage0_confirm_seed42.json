@@ -24,5 +24,9 @@
     }
   ],
   "depth3_requiring_seeds": "0/1",
+  "below_chance": true,
+  "verdict": "UNDEFINED_task_unfittable (depth-3 oracle cannot fit TRAIN: mean l3_train 0.502 <= chance 0.504 -> NO depth-3 ceiling exists; a boolean-obligatory-depth task on stacked parity is not backprop-optimizable (Shalev-Shwartz 2017), so it cannot gate a depth-rescue test)",
+  "mean_l3_train": 0.5022539444027048,
+  "mean_chance": 0.50418410041841,
   "gate": "depth3_requiring = (l2 <= chance+0.06) AND (l3 >= 0.80) AND (l3 - l2 >= 0.15)"
 }
