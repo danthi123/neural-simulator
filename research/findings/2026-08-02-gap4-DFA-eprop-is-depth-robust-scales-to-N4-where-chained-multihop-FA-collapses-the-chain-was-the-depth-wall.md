@@ -83,3 +83,15 @@ is the same depth-3-instrument-construction problem (hard: parity groks only see
 separate depth-2 from depth-3 generalization across 17 configs).** The crux CORE (chained-FA at required depth-2, single
 hop, beats reservoirs) and the RATE overturn stand; this closes the "does anything transport-free train DEEP spiking
 nets" question — yes, DFA does.
+
+## Update 1 (2026-08-02) — CROSS-CONFIG control closes residual (b): chained-FA collapses at N>=3 even from its STRONG config
+
+<!--derived-->
+Ran the named residual (b) — chained-FA and DFA at hidden-32 (where chained-FA is strong), inheritance, depth sweep.
+Artifacts `chainedfa_inherit_h32_N{2,3,4}.json` (3-seed) + `dfa_h32_N{2,3,4}_s42.json` (seed 42). chained-FA @ h32:
+N2=0.914 -> N3=0.333 -> N4=0.333 (EXACT chance); chained-KP: 0.988 -> 0.309 -> 0.333. So chained-FA collapses to chance
+at N>=3 EVEN from a STRONG N=2 (0.914) — the depth-collapse is config-robust (same collapse at h64 from a weak 0.469).
+DFA @ h32 (seed 42): N2=1.000, N3=0.704, N4=0.926 — stays well above chance at all depths (a minor N3 dip at this
+narrower width, single-seed noise; NOT the chained-FA collapse). ⇒ the contrast is confirmed across configs: chained
+multi-hop FA is DEPTH-FRAGILE (collapses to chance at N>=3 regardless of N=2 strength), DFA is DEPTH-ROBUST. This
+removes the "N=2 weak-config" caveat: the chained-FA collapse is not a weak-config artifact.
