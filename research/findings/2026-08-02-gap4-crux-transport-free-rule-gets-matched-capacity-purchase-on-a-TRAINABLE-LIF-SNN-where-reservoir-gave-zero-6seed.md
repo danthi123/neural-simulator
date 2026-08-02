@@ -219,5 +219,5 @@ reservoir SATURATES in a 0.65-0.73 band across W256->W2048 (0.689/0.655/0.714/0.
 +0.012, and NO single reservoir seed at any tested width (max 0.760) reaches chained_fa 0.839 — directed transport-free
 credit beats an optimally-read nonlinear reservoir of every tested width on XOR. Caveat preserved: the reservoir is a
 partial ELM (~0.65-0.73 >> chance 0.524), so this is "width-saturates-below", near-categorical, not "reservoir provably
-at chance". (W4096/8192 extreme-width points running to close the argument.) **Net: the crux CORE direction stands and
+at chance". (extreme-width CLOSED: W4096=0.757, W8192=0.773 — the optimally-read reservoir saturates and NEVER crosses chained_fa 0.839 up to 32x width.) **Net: the crux CORE direction stands and
 its beats-reservoir leg strengthened; the exceeds-BPTT magnitude and the parity-wall sub-claim are corrected here.**
