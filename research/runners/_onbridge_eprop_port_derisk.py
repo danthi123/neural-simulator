@@ -90,6 +90,13 @@ import numpy as np  # noqa: E402
 from research.runners._semantic_inheritance_onbridge_spiking_derisk import OnBridgeBDSPNet  # noqa: E402
 from research.runners._semantic_inheritance_deep_credit_derisk import (  # noqa: E402
     make_task_semantic_inheritance, stage0_depth_genuineness, _train_oracle, _acc_on)
+# --task-xor (ADDITIVE, default OFF): the NON-reservoir-decodable depth-2 XOR->threshold task, reused-by-import as the
+# EXACT wrapper the rate/BPTT crux used (`make_task_xor` wraps emerge1's `make_task`: pair-XOR level-1 latents ->
+# threshold-over-XORs level-2). XOR is provably NOT linearly decodable from a fixed random projection, so a frozen-hidden
+# reservoir MUST underperform trained hidden layers IF the credit is real -- the task on which `deep_credit_share` can
+# rise off the ~0 it reads on the linearly-reservoir-decodable inheritance task. Same 4-tuple interface as
+# make_task_semantic_inheritance (Xtr,ytr,Ltr),(Xte,yte,Lte),meta,idx; idx["inh_idx"] = the whole held-out set.
+from research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk import make_task_xor  # noqa: E402
 from sim.dendritic_mlp import DendriticMLP  # noqa: E402
 from sim.bptt_snn_gpu import atan_surrogate  # noqa: E402 -- the SAME surrogate the validated e-prop uses
 
@@ -433,8 +440,12 @@ def _train_eprop(net, Xtr, ytr, epochs, batch, seed, shuffle_dfa=False):
 def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr=0.5, eps_leak=0.9,
                      surrogate="atan_vt", alpha_surr=0.15, beta_surr=1.0, logit_source="leaky_readout",
                      epochs=200, batch=20, hp=None, n_hidden_layers=1, w_clip=4000.0,
-                     ou_noise=False, cond_noise=False, stp=False):
-    (Xtr, ytr, _Ltr), _te, meta, _idx = make_task_semantic_inheritance(seed, **task_kwargs)
+                     ou_noise=False, cond_noise=False, stp=False, task_xor=False):
+    # same ADDITIVE default-off task selector as run_seed, so --task-xor --poscontrol-only fits the XOR train set.
+    if task_xor:
+        (Xtr, ytr, _Ltr), _te, meta, _idx = make_task_xor(seed)
+    else:
+        (Xtr, ytr, _Ltr), _te, meta, _idx = make_task_semantic_inheritance(seed, **task_kwargs)
     k = meta["k_classes"]; n_in = Xtr.shape[1]
     srng = np.random.default_rng(seed + 31)
     keep = srng.permutation(len(Xtr))[:n_pos]
@@ -462,8 +473,16 @@ def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr
 # ============================================================================================================
 def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate, alpha_surr, beta_surr,
              logit_source, w_clip, train_subsample, task_kwargs, hp=None, n_hidden_layers=2, pool_k=1, reservoir_control=True,
-             ou_noise=False, cond_noise=False, stp=False):
-    (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
+             ou_noise=False, cond_noise=False, stp=False, task_xor=False):
+    # TASK SELECTOR (ADDITIVE, default OFF => byte-identical): swap ONLY the task. task_xor=True uses the
+    # NON-reservoir-decodable depth-2 XOR->threshold task (make_task_xor); everything downstream -- stage0 depth gate,
+    # oracle, e-prop arm, permuted, shuffle-DFA, AND the reservoir_control/deep_credit_share machinery -- is UNCHANGED.
+    # The whole point: on a task a fixed random reservoir CANNOT shortcut, does deep_credit_share become clearly
+    # positive (training the hidden FF pathways is load-bearing), where inheritance gave ~0?
+    if task_xor:
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_xor(seed)
+    else:
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     k = meta["k_classes"]; n_in = Xtr.shape[1]
     inh_idx = idx["inh_idx"]
     # STAGE-0 depth gate (rate oracle; FULL train set) -- validates the TASK CONFIG is genuinely depth-required.
@@ -613,6 +632,15 @@ def main():
     ap.add_argument("--in-bias-pA", type=float, default=300.0)
     ap.add_argument("--hidden-lr-scale", type=float, default=5.0)
     ap.add_argument("--pbar-alpha", type=float, default=0.05)
+    # TASK SELECTOR (additive, default OFF => byte-identical to the banked inheritance runs). --task-xor swaps in the
+    # NON-reservoir-decodable depth-2 XOR->threshold task (reuse-by-import of make_task_xor). On this task a fixed random
+    # reservoir CANNOT shortcut the label, so if deep_credit_share becomes clearly positive here (where it read ~0 on the
+    # linearly-reservoir-decodable inheritance task) then training the hidden FF pathways is LOAD-BEARING on the
+    # production Izhikevich bridge. The --n-super/--n-members/... knobs below are ignored when --task-xor is set.
+    ap.add_argument("--task-xor", action="store_true",
+                    help="use the non-reservoir-decodable depth-2 XOR->threshold task (emerge1 make_task via "
+                         "make_task_xor) instead of the semantic-inheritance task; the deep_credit_share test on a "
+                         "task a frozen reservoir cannot shortcut. Additive, default off = byte-identical.")
     # task knobs (the onbridge-derisk 5-class depth-separating smoke default)
     ap.add_argument("--n-super", type=int, default=12)
     ap.add_argument("--n-members", type=int, default=8)
@@ -641,7 +669,7 @@ def main():
                                       alpha_surr=a.alpha_surr, beta_surr=a.beta_surr, logit_source=a.logit_source,
                                       epochs=a.pos_epochs, batch=a.pos_batch, hp=hp,
                                       n_hidden_layers=a.pos_hidden_layers, w_clip=a.w_clip,
-                                      ou_noise=a.ou_noise, cond_noise=a.cond_noise, stp=a.stp)
+                                      ou_noise=a.ou_noise, cond_noise=a.cond_noise, stp=a.stp, task_xor=a.task_xor)
                 pcs.append(pc)
                 print(f"[POS-CTRL seed {s}] surrogate={a.surrogate} alpha={a.alpha_surr} logit={a.logit_source} lr={a.eprop_lr} "
                       f"| fit-{pc['n_pos']} train {pc['train_acc_before']:.2f}->{pc['train_acc_after']:.2f} "
@@ -653,6 +681,7 @@ def main():
                "config": {"hidden": a.hidden, "settle": a.settle_steps, "surrogate": a.surrogate,
                           "alpha_surr": a.alpha_surr, "logit_source": a.logit_source, "eprop_lr": a.eprop_lr,
                           "eps_leak": a.eps_leak, "pos_epochs": a.pos_epochs, "task": task_kwargs,
+                          "task_xor": bool(a.task_xor),
                           "ou_noise": bool(a.ou_noise), "cond_noise": bool(a.cond_noise), "stp": bool(a.stp)},
                "elapsed_seconds": round(time.time() - t0, 1), "positive_control": pcs,
                "error": err, "PASSES": bool(pcs and all(p["passes"] for p in pcs))}
@@ -667,7 +696,7 @@ def main():
             r = run_seed(s, a.hidden, a.settle_steps, a.epochs, a.batch, a.eprop_lr, a.eps_leak, a.surrogate,
                          a.alpha_surr, a.beta_surr, a.logit_source, a.w_clip, a.train_subsample, task_kwargs, hp=hp,
                          n_hidden_layers=a.n_hidden_layers, pool_k=a.pool_k,
-                         ou_noise=a.ou_noise, cond_noise=a.cond_noise, stp=a.stp)
+                         ou_noise=a.ou_noise, cond_noise=a.cond_noise, stp=a.stp, task_xor=a.task_xor)
             per.append(r)
             # PER-SEED CHECKPOINT (2026-07-16): previously --out was written ONCE, after ALL seeds (line ~701), so
             # any interruption -- a reboot, an OOM, a kill -- destroyed the entire arm's work. A 3-seed arm is ~3h
@@ -706,7 +735,7 @@ def main():
                           "epochs": a.epochs, "batch": a.batch, "eprop_lr": a.eprop_lr, "eps_leak": a.eps_leak,
                           "surrogate": a.surrogate, "alpha_surr": a.alpha_surr, "logit_source": a.logit_source,
                           "w_clip": a.w_clip, "train_subsample": a.train_subsample, "task": task_kwargs,
-                          "pool_k": a.pool_k, "freeze_hidden": bool(a.freeze_hidden),
+                          "pool_k": a.pool_k, "freeze_hidden": bool(a.freeze_hidden), "task_xor": bool(a.task_xor),
                           "ou_noise": bool(a.ou_noise), "cond_noise": bool(a.cond_noise), "stp": bool(a.stp),
                           "reservoir_control": True, "hidden_lr_scale": a.hidden_lr_scale,
                           "no_bdsp": bool(a.no_bdsp), "bdsp_wmax": a.bdsp_wmax,
