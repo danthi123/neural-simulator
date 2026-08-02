@@ -333,8 +333,12 @@ def main():
     ap.add_argument("--dt-ms", type=float, default=1.0)
     ap.add_argument("--n-steps", type=int, default=3000,
                     help="steps per driver block (>= a few mood taus)")
-    ap.add_argument("--warmup", type=int, default=200,
-                    help="steps to skip before measuring the block response")
+    ap.add_argument("--warmup", type=int, default=1500,
+                    help="steps to skip before measuring the block response. MUST exceed ~3x the surprise "
+                         "reward-expectation window (window_ms=500 => >=1500 steps) so the expectation EMA has "
+                         "CONVERGED before the block is scored; otherwise a fully-EXPECTED sustained stream still "
+                         "reads as surprising (a decaying transient) and the arousal axis fails own-is-max. The "
+                         "first-attempt 200 was a measurement artifact, NOT a wrong 500ms biology (2026-08-02).")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 

@@ -1,0 +1,28 @@
+{
+ "run_id": "1785688692-455889",
+ "runner": "research/runners/_neuromodulator_affect_axes_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_neuromodulator_affect_axes_derisk.py",
+  "--seeds",
+  "102",
+  "--warmup",
+  "1500",
+  "--n-steps",
+  "4000",
+  "--out",
+  "research/findings/raw/lanes/affect/affect_warmup1500_s102.json"
+ ],
+ "git_sha": "366d6e99e",
+ "git_dirty": true,
+ "started": "2026-08-02T12:38:12",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 39.2,
+ "corpus_check_query": "trace-rule temporal-continuity learning fails to build position-invariant IT object representations; STDP V2/IT stays at chance",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/affect/affect_warmup1500_s42.json"
+}
