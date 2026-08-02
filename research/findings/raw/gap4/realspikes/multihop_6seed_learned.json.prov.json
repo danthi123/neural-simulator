@@ -1,0 +1,30 @@
+{
+ "run_id": "1785640000-4089946",
+ "runner": "research/runners/_productive_morphology_two_pool_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_productive_morphology_two_pool_derisk.py",
+  "--seed",
+  "42",
+  "--n-seeds",
+  "1",
+  "--inhib-strength",
+  "3.0",
+  "--cyc-rule",
+  "100",
+  "--out",
+  "research/findings/raw/lanes/morph/two_pool_inhib3_cyc100_s42.json"
+ ],
+ "git_sha": "d24136182",
+ "git_dirty": true,
+ "started": "2026-08-01T23:06:40",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5149.3,
+ "corpus_check_query": "dual-route past-tense morphology distinct populations regular rule generalization to novel stems",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/realspikes/multihop_6seed_learned.json"
+}
