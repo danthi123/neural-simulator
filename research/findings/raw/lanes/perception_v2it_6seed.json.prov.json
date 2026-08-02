@@ -1,10 +1,10 @@
 {
- "run_id": "1785610119-3756817",
+ "run_id": "1785609340-3747467",
  "runner": "research/runners/_gap4_supervised_plateau_credit_derisk.py",
  "argv": [
   "/home/dant123/Projects/sim/research/runners/_gap4_supervised_plateau_credit_derisk.py",
   "--seeds",
-  "43",
+  "42",
   "--epochs",
   "30",
   "--oracle-epochs",
@@ -24,19 +24,19 @@
   "--n-sub",
   "400",
   "--out",
-  "research/findings/raw/gap4/supervised_plateau/tasksize/sizeB_6seed/np_s43.json"
+  "research/findings/raw/gap4/supervised_plateau/tasksize/sizeB_np4_ns48_smoke_s42.json"
  ],
  "git_sha": "3e09c2bb3",
  "git_dirty": true,
- "started": "2026-08-01T14:48:39",
+ "started": "2026-08-01T14:35:40",
  "env": {
   "SIM_BACKEND": "cupy"
  },
  "sim_backend": "cupy",
  "sim_backend_requested": "cupy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 432.1,
- "corpus_check_query": "language productive morphology construction",
+ "corpus_check_age_s": 1587.5,
+ "corpus_check_query": "spiking gamma phase-gated recombination replay per-synapse potentiated subset shared hub discrimination",
  "corpus_check_fresh": true,
- "artifact": "research/findings/raw/lanes/curiosity_omission_veto_s42.json"
+ "artifact": "research/findings/raw/lanes/perception_v2it_6seed.json"
 }

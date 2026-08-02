@@ -21,7 +21,6 @@
   "backend": "numpy",
   "chance_partA": 0.25,
   "chance_partB": 0.5,
-  "verdict": "GO",
   "n_go": 6,
   "n_seeds": 6,
   "moat_intact": true,

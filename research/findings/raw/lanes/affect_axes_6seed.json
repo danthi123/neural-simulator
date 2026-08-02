@@ -1,0 +1,505 @@
+{
+  "runner": "_neuromodulator_affect_axes_derisk",
+  "axes": {
+    "mood": "5-HT/from_reward/tau2000",
+    "arousal": "NA/from_surprise+tonic",
+    "learning_eagerness": "ACh/from_novelty"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "dt_ms": 1.0,
+  "n_steps": 3000,
+  "warmup": 200,
+  "per_seed": [
+    {
+      "seed": 42,
+      "response_matrix": {
+        "mood": {
+          "sustained": 5.0,
+          "surprise": 4.233551061064341,
+          "novelty": 0.0
+        },
+        "arousal": {
+          "sustained": 2.0653220516034803,
+          "surprise": 1.23365769230488,
+          "novelty": 0.0
+        },
+        "learning_eagerness": {
+          "sustained": 0.0,
+          "surprise": 0.0,
+          "novelty": 5.0
+        }
+      },
+      "own_is_max_count": 2,
+      "row_argmax": {
+        "mood": "sustained",
+        "arousal": "sustained",
+        "learning_eagerness": "novelty"
+      },
+      "G1_domain_dissociation": false,
+      "permuted": {
+        "identity": "sustained|surprise|novelty",
+        "identity_score": 2,
+        "others_max_score": 2,
+        "unique_perfect": false,
+        "all_scores": {
+          "sustained|surprise|novelty": 2,
+          "sustained|novelty|surprise": 1,
+          "surprise|sustained|novelty": 2,
+          "surprise|novelty|sustained": 0,
+          "novelty|sustained|surprise": 1,
+          "novelty|surprise|sustained": 0
+        }
+      },
+      "G2_permuted_selectivity": false,
+      "lesion": {
+        "mood": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "arousal": {
+          "intact": 1.23365769230488,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "learning_eagerness": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        }
+      },
+      "G3_lesion_collapse": true,
+      "timescale": {
+        "mood": {
+          "peak": 5.0,
+          "retention": 0.7784114800137513
+        },
+        "da_phasic": {
+          "peak": 5.0,
+          "retention": 0.006670903306255456
+        },
+        "mood_lags_da": true,
+        "ratio": 116.68755003483072
+      },
+      "G4_mood_lags_da": true,
+      "GO": false
+    },
+    {
+      "seed": 43,
+      "response_matrix": {
+        "mood": {
+          "sustained": 5.0,
+          "surprise": 4.189418392482199,
+          "novelty": 0.0
+        },
+        "arousal": {
+          "sustained": 2.0562660020355463,
+          "surprise": 1.2200357067185799,
+          "novelty": 0.0
+        },
+        "learning_eagerness": {
+          "sustained": 0.0,
+          "surprise": 0.0,
+          "novelty": 5.0
+        }
+      },
+      "own_is_max_count": 2,
+      "row_argmax": {
+        "mood": "sustained",
+        "arousal": "sustained",
+        "learning_eagerness": "novelty"
+      },
+      "G1_domain_dissociation": false,
+      "permuted": {
+        "identity": "sustained|surprise|novelty",
+        "identity_score": 2,
+        "others_max_score": 2,
+        "unique_perfect": false,
+        "all_scores": {
+          "sustained|surprise|novelty": 2,
+          "sustained|novelty|surprise": 1,
+          "surprise|sustained|novelty": 2,
+          "surprise|novelty|sustained": 0,
+          "novelty|sustained|surprise": 1,
+          "novelty|surprise|sustained": 0
+        }
+      },
+      "G2_permuted_selectivity": false,
+      "lesion": {
+        "mood": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "arousal": {
+          "intact": 1.2200357067185799,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "learning_eagerness": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        }
+      },
+      "G3_lesion_collapse": true,
+      "timescale": {
+        "mood": {
+          "peak": 5.0,
+          "retention": 0.7784114800137513
+        },
+        "da_phasic": {
+          "peak": 5.0,
+          "retention": 0.006670903306255456
+        },
+        "mood_lags_da": true,
+        "ratio": 116.68755003483072
+      },
+      "G4_mood_lags_da": true,
+      "GO": false
+    },
+    {
+      "seed": 44,
+      "response_matrix": {
+        "mood": {
+          "sustained": 5.0,
+          "surprise": 4.233125447308859,
+          "novelty": 0.0
+        },
+        "arousal": {
+          "sustained": 2.0227058740060415,
+          "surprise": 1.2523328940961795,
+          "novelty": 0.0
+        },
+        "learning_eagerness": {
+          "sustained": 0.0,
+          "surprise": 0.0,
+          "novelty": 5.0
+        }
+      },
+      "own_is_max_count": 2,
+      "row_argmax": {
+        "mood": "sustained",
+        "arousal": "sustained",
+        "learning_eagerness": "novelty"
+      },
+      "G1_domain_dissociation": false,
+      "permuted": {
+        "identity": "sustained|surprise|novelty",
+        "identity_score": 2,
+        "others_max_score": 2,
+        "unique_perfect": false,
+        "all_scores": {
+          "sustained|surprise|novelty": 2,
+          "sustained|novelty|surprise": 1,
+          "surprise|sustained|novelty": 2,
+          "surprise|novelty|sustained": 0,
+          "novelty|sustained|surprise": 1,
+          "novelty|surprise|sustained": 0
+        }
+      },
+      "G2_permuted_selectivity": false,
+      "lesion": {
+        "mood": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "arousal": {
+          "intact": 1.2523328940961795,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "learning_eagerness": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        }
+      },
+      "G3_lesion_collapse": true,
+      "timescale": {
+        "mood": {
+          "peak": 5.0,
+          "retention": 0.7784114800137513
+        },
+        "da_phasic": {
+          "peak": 5.0,
+          "retention": 0.006670903306255456
+        },
+        "mood_lags_da": true,
+        "ratio": 116.68755003483072
+      },
+      "G4_mood_lags_da": true,
+      "GO": false
+    },
+    {
+      "seed": 100,
+      "response_matrix": {
+        "mood": {
+          "sustained": 5.0,
+          "surprise": 4.258600528743015,
+          "novelty": 0.0
+        },
+        "arousal": {
+          "sustained": 2.0477292634742685,
+          "surprise": 1.2323109650869615,
+          "novelty": 0.0
+        },
+        "learning_eagerness": {
+          "sustained": 0.0,
+          "surprise": 0.0,
+          "novelty": 5.0
+        }
+      },
+      "own_is_max_count": 2,
+      "row_argmax": {
+        "mood": "sustained",
+        "arousal": "sustained",
+        "learning_eagerness": "novelty"
+      },
+      "G1_domain_dissociation": false,
+      "permuted": {
+        "identity": "sustained|surprise|novelty",
+        "identity_score": 2,
+        "others_max_score": 2,
+        "unique_perfect": false,
+        "all_scores": {
+          "sustained|surprise|novelty": 2,
+          "sustained|novelty|surprise": 1,
+          "surprise|sustained|novelty": 2,
+          "surprise|novelty|sustained": 0,
+          "novelty|sustained|surprise": 1,
+          "novelty|surprise|sustained": 0
+        }
+      },
+      "G2_permuted_selectivity": false,
+      "lesion": {
+        "mood": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "arousal": {
+          "intact": 1.2323109650869615,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "learning_eagerness": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        }
+      },
+      "G3_lesion_collapse": true,
+      "timescale": {
+        "mood": {
+          "peak": 5.0,
+          "retention": 0.7784114800137513
+        },
+        "da_phasic": {
+          "peak": 5.0,
+          "retention": 0.006670903306255456
+        },
+        "mood_lags_da": true,
+        "ratio": 116.68755003483072
+      },
+      "G4_mood_lags_da": true,
+      "GO": false
+    },
+    {
+      "seed": 101,
+      "response_matrix": {
+        "mood": {
+          "sustained": 5.0,
+          "surprise": 4.2058297650366745,
+          "novelty": 0.0
+        },
+        "arousal": {
+          "sustained": 2.028653339636819,
+          "surprise": 1.2191389374689514,
+          "novelty": 0.0
+        },
+        "learning_eagerness": {
+          "sustained": 0.0,
+          "surprise": 0.0,
+          "novelty": 5.0
+        }
+      },
+      "own_is_max_count": 2,
+      "row_argmax": {
+        "mood": "sustained",
+        "arousal": "sustained",
+        "learning_eagerness": "novelty"
+      },
+      "G1_domain_dissociation": false,
+      "permuted": {
+        "identity": "sustained|surprise|novelty",
+        "identity_score": 2,
+        "others_max_score": 2,
+        "unique_perfect": false,
+        "all_scores": {
+          "sustained|surprise|novelty": 2,
+          "sustained|novelty|surprise": 1,
+          "surprise|sustained|novelty": 2,
+          "surprise|novelty|sustained": 0,
+          "novelty|sustained|surprise": 1,
+          "novelty|surprise|sustained": 0
+        }
+      },
+      "G2_permuted_selectivity": false,
+      "lesion": {
+        "mood": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "arousal": {
+          "intact": 1.2191389374689514,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "learning_eagerness": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        }
+      },
+      "G3_lesion_collapse": true,
+      "timescale": {
+        "mood": {
+          "peak": 5.0,
+          "retention": 0.7784114800137513
+        },
+        "da_phasic": {
+          "peak": 5.0,
+          "retention": 0.006670903306255456
+        },
+        "mood_lags_da": true,
+        "ratio": 116.68755003483072
+      },
+      "G4_mood_lags_da": true,
+      "GO": false
+    },
+    {
+      "seed": 102,
+      "response_matrix": {
+        "mood": {
+          "sustained": 5.0,
+          "surprise": 4.195530734241441,
+          "novelty": 0.0
+        },
+        "arousal": {
+          "sustained": 2.0988207316250214,
+          "surprise": 1.2160816972954536,
+          "novelty": 0.0
+        },
+        "learning_eagerness": {
+          "sustained": 0.0,
+          "surprise": 0.0,
+          "novelty": 5.0
+        }
+      },
+      "own_is_max_count": 2,
+      "row_argmax": {
+        "mood": "sustained",
+        "arousal": "sustained",
+        "learning_eagerness": "novelty"
+      },
+      "G1_domain_dissociation": false,
+      "permuted": {
+        "identity": "sustained|surprise|novelty",
+        "identity_score": 2,
+        "others_max_score": 2,
+        "unique_perfect": false,
+        "all_scores": {
+          "sustained|surprise|novelty": 2,
+          "sustained|novelty|surprise": 1,
+          "surprise|sustained|novelty": 2,
+          "surprise|novelty|sustained": 0,
+          "novelty|sustained|surprise": 1,
+          "novelty|surprise|sustained": 0
+        }
+      },
+      "G2_permuted_selectivity": false,
+      "lesion": {
+        "mood": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "arousal": {
+          "intact": 1.2160816972954536,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        },
+        "learning_eagerness": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "attributable_to_rule": 1.0,
+          "collapsed": true
+        }
+      },
+      "G3_lesion_collapse": true,
+      "timescale": {
+        "mood": {
+          "peak": 5.0,
+          "retention": 0.7784114800137513
+        },
+        "da_phasic": {
+          "peak": 5.0,
+          "retention": 0.006670903306255456
+        },
+        "mood_lags_da": true,
+        "ratio": 116.68755003483072
+      },
+      "G4_mood_lags_da": true,
+      "GO": false
+    }
+  ],
+  "n_go": 0,
+  "n_seeds": 6,
+  "GO_ALL": false,
+  "gate": "G1 own-is-max 3/3 & G2 unique-perfect-permutation & G3 lesion<=0.10x intact & G4 mood-retention>=3x DA; 6/6 seeds"
+}

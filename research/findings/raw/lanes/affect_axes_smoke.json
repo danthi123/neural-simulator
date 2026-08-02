@@ -1,0 +1,97 @@
+{
+  "runner": "_neuromodulator_affect_axes_derisk",
+  "axes": {
+    "mood": "5-HT/from_reward/tau2000",
+    "arousal": "NA/from_surprise+tonic",
+    "learning_eagerness": "ACh/from_novelty"
+  },
+  "seeds": [
+    42
+  ],
+  "dt_ms": 1.0,
+  "n_steps": 800,
+  "warmup": 200,
+  "per_seed": [
+    {
+      "seed": 42,
+      "response_matrix": {
+        "mood": {
+          "sustained": 5.0,
+          "surprise": 2.510939873068681,
+          "novelty": 0.0
+        },
+        "arousal": {
+          "sustained": 4.799587580305793,
+          "surprise": 1.0550273332085696,
+          "novelty": 0.0
+        },
+        "learning_eagerness": {
+          "sustained": 0.0,
+          "surprise": 0.0,
+          "novelty": 5.0
+        }
+      },
+      "own_is_max_count": 2,
+      "row_argmax": {
+        "mood": "sustained",
+        "arousal": "sustained",
+        "learning_eagerness": "novelty"
+      },
+      "G1_domain_dissociation": false,
+      "permuted": {
+        "identity": "sustained|surprise|novelty",
+        "identity_score": 2,
+        "others_max_score": 2,
+        "unique_perfect": false,
+        "all_scores": {
+          "sustained|surprise|novelty": 2,
+          "sustained|novelty|surprise": 1,
+          "surprise|sustained|novelty": 2,
+          "surprise|novelty|sustained": 0,
+          "novelty|sustained|surprise": 1,
+          "novelty|surprise|sustained": 0
+        }
+      },
+      "G2_permuted_selectivity": false,
+      "lesion": {
+        "mood": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "collapsed": true
+        },
+        "arousal": {
+          "intact": 1.0550273332085696,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "collapsed": true
+        },
+        "learning_eagerness": {
+          "intact": 5.0,
+          "lesioned": 0.0,
+          "ratio": 0.0,
+          "collapsed": true
+        }
+      },
+      "G3_lesion_collapse": true,
+      "timescale": {
+        "mood": {
+          "peak": 5.0,
+          "retention": 0.7784114800137513
+        },
+        "da_phasic": {
+          "peak": 5.0,
+          "retention": 0.006670903306255456
+        },
+        "mood_lags_da": true,
+        "ratio": 116.68755003483072
+      },
+      "G4_mood_lags_da": true,
+      "GO": false
+    }
+  ],
+  "n_go": 0,
+  "n_seeds": 1,
+  "GO_ALL": false,
+  "gate": "G1 own-is-max 3/3 & G2 unique-perfect-permutation & G3 lesion<=0.10x intact & G4 mood-retention>=3x DA; 6/6 seeds"
+}

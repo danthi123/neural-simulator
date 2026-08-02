@@ -1,0 +1,27 @@
+{
+ "run_id": "1785680365-353539",
+ "runner": "research/runners/_second_order_metacog_monitor_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_second_order_metacog_monitor_derisk.py",
+  "--smoke",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/_second_order_metacog_smoke.json",
+  "--backend",
+  "numpy"
+ ],
+ "git_sha": "3a2719a5b",
+ "git_dirty": true,
+ "started": "2026-08-02T10:19:25",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 21456.2,
+ "corpus_check_query": "construct a task where GENERALIZATION (not just fitting) obligatorily requires depth-3 composition, backprop-optimizable and reservoir-non-decodable, to test KP depth-credit-rescue on spikes",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/perception_v2it_trace_rule_smoke.json"
+}
