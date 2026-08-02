@@ -1,0 +1,36 @@
+{
+ "run_id": "1785685901-352346",
+ "runner": "research/runners/_gap4_representable_forward_plus_credit_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_gap4_representable_forward_plus_credit_derisk.py",
+  "--measure-fa-convergence",
+  "--learned-feedback",
+  "--task-xor",
+  "--act-th",
+  "3",
+  "--mode",
+  "expander",
+  "--epochs",
+  "60",
+  "--train-subsample",
+  "160",
+  "--fa-eval-every",
+  "5",
+  "--seeds",
+  "100",
+  "--out",
+  "research/findings/raw/gap4/kp_faconv_izh_s100.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": false,
+ "started": "2026-08-02T11:51:41",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/gap4/kp_faconv_izh_s100.json"
+}

@@ -182,10 +182,11 @@ positive cos rise (+0.237) and I nearly banked "learned feedback fixes the align
 FULL 60-epoch / 160-subsample operating point that matches the headline REFUTED it: KP FA-convergence is 0/3 (peaks -0.298,
 +0.167, +0.094; finals -0.106, -0.004, +0.092), and inherit stays at chance (0.451-0.476). The smoke's positive was a
 transient at a smaller op-point that does not survive the matched config — caught only because a surprising single-seed
-smoke was re-run at 3 seeds + full epochs before being claimed (artifacts `research/findings/raw/gap4/kp_faconv_izh_s42.json`;
-pool-extended to seeds 100/101/102 for a 6-seed firm). So **learned feedback does NOT restore FA-convergence on Izhikevich
-either** — the alignment failure is AGNOSTIC to whether the feedback matrix is fixed-random (headline) or learned toward W
-(KP). Both feedback-alignment routes fail on the Izhikevich forward.
+smoke was re-run at 3 seeds + full epochs before being claimed. **FIRMED to 6 seeds: KP FA-convergence is 0/6** (rises
+-0.139, +0.040, -0.232, -0.106, -0.004, +0.092; artifacts `research/findings/raw/gap4/kp_faconv_izh_s42.json`), exactly
+matching the fixed-B headline (0/6). So **learned feedback does NOT restore FA-convergence on Izhikevich either** — the
+alignment failure is AGNOSTIC to whether the feedback matrix is fixed-random (headline) or learned toward W (KP). Both
+feedback-alignment routes fail on the Izhikevich forward.
 
 <!--derived-->
 **What this leaves, and the unification.** Two of the three named surpasses are now closed by measurement (plateau
