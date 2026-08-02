@@ -109,3 +109,22 @@ crux headline is now strong: transport-free deep credit works on a TRAINABLE spi
 reservoirs on hard tasks and matching/exceeding surrogate-BPTT (6/6) — the reservoir substrate was the wall.**
 Next for the strict-categorical form: a task no NONLINEAR reservoir can decode (deeper composition), + real depth
 where KP's rescue widens.
+
+## Update 2 (2026-08-02) — DEPTH scope: the strong result holds at the REQUIRED depth (2); adding REDUNDANT depth (3/4) COLLAPSES both FA and KP below frozen — KP's depth-rescue is UNTESTED on spikes (the XOR sweep is confounded by redundant depth)
+
+<!--derived-->
+Ran the depth sweep (N = 2/3/4 hidden layers, XOR task, seed 42) to test whether KP's rate-result depth-rescue
+(fixed-FA collapses at depth-4, KP recovers) holds on the trainable LIF SNN. Artifacts:
+`bptt_snn_chained_fa_XOR_depth{3,4}_seed42.json`. Result: at N=2 the strong result holds (FA 0.839, KP 0.867);
+at **N=3 and N=4 BOTH FA and KP COLLAPSE to 0.451 (identical), BELOW the frozen reservoir (0.546/0.515) —
+purchase-over-frozen goes NEGATIVE**, and KP-over-fixed-FA = 0.0 (no rescue). **But this does NOT cleanly test
+KP's obligatory-depth rescue** — the confound the build agent flagged and this confirms: the XOR→threshold task
+only REQUIRES depth-2 (level-1 pair-XOR → level-2 threshold), so hidden layers 3-4 are REDUNDANT capacity, not
+obligatory credit hops. The transport-free credit degrades through the redundant spiking hops (both arms fall
+below frozen), and KP doesn't rescue redundant depth. **The clean test of KP's depth-rescue on spikes needs a
+task whose REQUIRED depth is 3-4** (the spiking analog of the rate MNIST-depth-4 result), where the deeper layers
+are obligatory — untested. **Honest scope correction to the headline:** transport-free deep credit works on a
+trainable spiking substrate AT THE REQUIRED DEPTH (depth-2, robust 6/6, beats reservoirs on XOR, matches/exceeds
+BPTT); it does NOT yet scale to deeper spiking nets (redundant depth collapses it), and the KP-depth-rescue that
+carried the rate result is UNTESTED on spikes. NEXT: a required-depth-3-4 spiking task (obligatory hops) — the
+clean KP-depth-rescue test.

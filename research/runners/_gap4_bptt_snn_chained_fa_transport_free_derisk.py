@@ -457,6 +457,11 @@ def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs
         "kp_directed_over_permuted": kp_directed_over_permuted,
         "kp_purchase_over_frozen": kp_purchase_over_frozen,
         "kp_bptt_fraction_captured": _frac(chained_kp["inherit"]),
+        # THE DEPTH-SWEEP DECISIVE metric: the KP-LEARNED-over-FIXED-random-FA margin. The rate depth-rescue signature
+        # is this margin GROWING with n_hidden_layers (fixed FA degrades faster than KP as depth grows); read it at
+        # N=2,3,4 across runs. Derivable from chained_fa_kp_inherit - chained_fa_inherit; emitted explicitly here so the
+        # cross-depth read needs no per-file arithmetic.
+        "kp_over_fixed_fa": float(chained_kp["inherit"] - chained["inherit"]),
         "GO_fixed": go_fixed, "GO_kp": go_kp,
         # anti-cheats
         "no_transport_chained_fa": bool(chained["no_transport"]),
@@ -500,6 +505,8 @@ def _agg(results):
         "mean_bptt_fraction_captured": _m("bptt_fraction_captured"),
         "mean_kp_directed_over_permuted": _m("kp_directed_over_permuted"),
         "mean_kp_purchase_over_frozen": _m("kp_purchase_over_frozen"),
+        # the depth-sweep decisive metric aggregated: mean KP-over-fixed-FA margin (compare across N=2,3,4).
+        "mean_kp_over_fixed_fa": _m("kp_over_fixed_fa"),
         "GO_fixed_seeds": f"{sum(bool(r.get('GO_fixed')) for r in ok)}/{n}",
         "GO_kp_seeds": f"{sum(bool(r.get('GO_kp')) for r in ok)}/{n}",
         "no_transport_all": bool(all(r.get("no_transport_chained_fa") and r.get("no_transport_chained_kp")
@@ -566,7 +573,8 @@ def main():
             r = {"seed": sd, "error": repr(e), "traceback": traceback.format_exc()}
         results.append(r)
         if "error" not in r:
-            print(f"[seed {sd}] chained_fa {r['chained_fa_inherit']:.3f} (kp {r['chained_fa_kp_inherit']:.3f}) "
+            print(f"[seed {sd}] chained_fa {r['chained_fa_inherit']:.3f} (kp {r['chained_fa_kp_inherit']:.3f}, "
+                  f"kp-over-fa {r['kp_over_fixed_fa']:+.3f}) "
                   f"vs frozen {r['frozen_reservoir_inherit']:.3f} vs permuted {r['permuted_inherit']:.3f} | "
                   f"BPTT ceiling {r['bptt_inherit']:.3f} (train {r['bptt_train']:.3f}), oracle {r['oracle_inherit']:.3f}, "
                   f"chance {r['chance']:.3f} | frozen-OPTIMAL matched {r['frozen_optimal_matched_inherit']:.3f} / "
