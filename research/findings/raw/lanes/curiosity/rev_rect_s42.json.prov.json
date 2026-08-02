@@ -1,0 +1,11 @@
+{
+  "runner": "scratchpad/rev_omission_veto_rectified.py (env-gated faithful copy of research/runners/_curiosity_reward_omission_veto_derisk.py; tracked runner UNCHANGED)",
+  "script": "rev_omission_veto_rectified.py",
+  "seeds": [
+    42
+  ],
+  "note": "lane B iteration (agent a8b8c04a): seed-42 scout of rectified-reserve vs control; produced in scratchpad, materialized for the finding 2026-08-02-laneB-curiosity-reserve-rescue-REFUTED-...",
+  "backend": "numpy",
+  "argv": "REV_RECTIFY_RESERVE=1 SIM_BACKEND=numpy .venv/bin/python -u scratchpad/rev_omission_veto_rectified.py --reserve --seeds 42 --out scratchpad/rev_rect_s42.json",
+  "cmd": "REV_RECTIFY_RESERVE=1 SIM_BACKEND=numpy .venv/bin/python -u scratchpad/rev_omission_veto_rectified.py --reserve --seeds 42 --out scratchpad/rev_rect_s42.json"
+}
