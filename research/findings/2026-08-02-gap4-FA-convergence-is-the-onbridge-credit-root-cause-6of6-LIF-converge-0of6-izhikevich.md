@@ -98,6 +98,12 @@ on the inheritance task AND the chance-level e-prop on representable XOR.
 ## The named next mechanism (no-defer) — the credit-factor variance hypothesis and its dendritic surpass
 
 <!--derived-->
+**⚠️ REFUTED SAME-CYCLE by direct measurement — see "Update 1" below. The hypothesis in this section (credit-factor
+variance / reset jitter → dendritic plateau averaging) is WRONG: the per-example credit is measured to be CONSISTENT
+(low within-seed variance), not noisy. The measured FA-convergence result above STANDS; only this speculative cause is
+retracted. The section is kept as the honest hypothesis-that-was-tested; the corrected residual is in Update 1.**
+
+<!--derived-->
 FA-convergence requires the per-example forward-weight updates to be CONSISTENT enough across examples to ACCUMULATE
 alignment; if each update points a different way, W random-walks instead of rotating toward B. The leading hypothesis for
 why Izhikevich fails where LIF succeeds is **credit-factor VARIANCE**: the Izhikevich spike-reset (the discontinuous
@@ -131,3 +137,31 @@ outcome: LIF converges and trains deep credit; Izhikevich neither), not a single
 same-harness confirmation (a LIF-vs-Izhikevich neuron flag inside one runner) is a named follow-up. This does NOT close
 gap#4 on the production bridge — it LOCATES the residual mechanistically (FA-convergence) and names the surpass; the crux
 CORE (transport-free directed credit beats an optimally-read reservoir on LIF, 6-seed) stands unchanged.
+
+## Update 1 (2026-08-02, same-cycle) — the VARIANCE hypothesis is REFUTED; the credit is consistent-but-MISALIGNED, and W anti-rotates
+
+<!--derived-->
+Ran the credit-factor probe (`--measure-credit-factor`, 6 seeds, fd_batch 64, same act-th-3 XOR expander codon at the
+FA-convergence operating point; artifact `research/findings/raw/gap4/cf_variance_izh_s42.json`) which reports the
+per-example alignment of the on-bridge DFA credit factor with the finite-difference backprop oracle, its MEAN and its STD
+across examples. The variance hypothesis predicted a HIGH per-example std (noisy credit). **The measurement REFUTES it:
+the within-seed cos(credit, oracle) STD is TINY (0.002-0.047 across the 6 seeds), SNR |mean|/std = 0.4-40 — the
+per-example credit direction is CONSISTENT, not noisy.** What is variable is the ACROSS-SEED alignment MEAN
+(-0.509, -0.169, -0.066, +0.017, +0.052, +0.158; mean -0.086, sign-random) — i.e. per seed the credit points a
+well-defined but MIS-aligned (often anti-aligned) direction, set by the random feedback B relative to the init forward W,
+and it does not improve. So temporal averaging / a dendritic plateau (which reduces per-example jitter) has NO jitter to
+average away — the named surpass in the section above does not address the measured defect.
+
+<!--derived-->
+Two further reads triangulate the corrected residual. **(a) The surrogate psi is EXONERATED:** the credit WITHOUT psi
+(`cos_lsig_vs_oracle` = delta@B alone) is ALSO misaligned (|cos_lsig| mean 0.117 ~= |cos_bridge| 0.162 across seeds;
+`surrogate_degrades_alignment` true on only 2/6) — so the misalignment lives in the DFA signal delta@B itself, not in the
+Izhikevich membrane surrogate. **(b) W MOVES but the WRONG way:** the headline FA-convergence table shows 4/6 Izhikevich
+seeds go cos(W,B) NEGATIVE over training (anti-align), so it is not that W fails to move (weak learning) — the FA update
+actively ANTI-ROTATES W on Izhikevich, the opposite of the LIF rotation. **Corrected residual: the FA weight-update DIRECTION
+is mis-directed on the Izhikevich forward — a structural property of its credit dynamics, not noise (refuted here), not the
+surrogate (exonerated here), not weak learning (W moves).** An interventional settle-steps sweep (more temporal integration
+per example) is running as the direct confirmation that averaging does not help; a corrected next mechanism is a LEARNED
+feedback (Kolen-Pollack / weight-mirror rotates B toward W instead of relying on W rotating to a fixed B) re-tested at THIS
+operating point, and/or a two-compartment dendritic credit with a different FA fixed-point structure. This Update is the
+workflow working as intended: a hypothesis was named, DIRECTLY MEASURED, and refuted same-cycle before it could propagate.
