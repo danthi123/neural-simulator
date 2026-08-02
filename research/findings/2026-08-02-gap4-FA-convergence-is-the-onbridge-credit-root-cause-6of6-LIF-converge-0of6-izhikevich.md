@@ -190,13 +190,50 @@ alignment failure is AGNOSTIC to whether the feedback matrix is fixed-random (he
 feedback-alignment routes fail on the Izhikevich forward.
 
 <!--derived-->
-**What this leaves, and the unification.** Two of the three named surpasses are now closed by measurement (plateau
-averaging: refuted; learned feedback: refuted), leaving the **two-compartment dendritic credit** — a fundamentally
-DIFFERENT credit computation (apical-basal segregation, not delta@B feedback-alignment) with a different fixed-point
-structure — as the standing candidate. And the result UNIFIES with the project's long-standing reservoir reframe: the
-Izhikevich forward's credit-dynamics do not support feedback-alignment credit regardless of feedback type, and separately
-its representational ceiling caps a trained readout below the oracle — so on this substrate the accuracy value is a trained
-read-out over a fixed/reservoir hidden, not feedback-alignment credit-training of the hidden. gap#4's production-bridge
-residual is now characterized to the mechanism (FA-alignment fails on the Izhikevich forward, both feedback types, not
-noise/surrogate/averaging), with the one remaining biological surpass (dendritic two-compartment credit) named — a
-deprioritized parallel frontier per the 2026-07-10 steer, with the crux CORE (LIF) standing.
+**What this leaves, and the unification.** Two named surpasses are now closed by measurement (plateau averaging:
+refuted; learned feedback: refuted). **⚠️ For the "remaining surpass" I first wrote here (a two-compartment dendritic
+credit), see Update 3 — that claim is RETRACTED: dendritic/two-compartment credit is already tested-and-negative in our
+own record, and naming it was a re-proposal-from-memory, not a research-gated candidate.** The measured result stands and
+UNIFIES with the project's long-standing reservoir reframe: the Izhikevich forward's credit-dynamics do not support
+feedback-alignment credit regardless of feedback type, and separately its representational ceiling caps a trained readout
+below the oracle — so on this substrate the accuracy value is a trained read-out over a fixed/reservoir hidden, not
+feedback-alignment credit-training of the hidden. gap#4's production-bridge residual is now characterized to the mechanism
+(FA-alignment fails on the Izhikevich forward, both feedback types, not noise/surrogate/averaging) — a deprioritized
+parallel frontier per the 2026-07-10 steer, with the crux CORE (LIF) standing.
+
+## Update 3 (2026-08-02, owner-prompted) — RETRACTING the "dendritic surpass": the record shows dendrites are already tested-and-NEGATIVE; the real untested candidates + the strategic re-anchor
+
+<!--derived-->
+The owner flagged that I keep reaching for "dendrites" as the answer while forgetting we have tested them for many
+things. Running the research gate I skipped (`bash tools/before_you_build.sh` + corpus RAG) confirms the flag: the
+"remaining surpass = two-compartment dendritic credit" written above (and propagated to the board + both roadmaps) is
+REFUTED by our own corpus. Two-compartment / dendritic / BDSP / burstprop deep credit for hidden credit assignment on
+spikes is tested-and-NEGATIVE repeatedly — Urbanczik-Senn two-compartment + fixed-random feedback
+(`2026-05-17-dendritic-credit-assignment-NEGATIVE`, an explicit "did NOT do hidden credit assignment"),
+BDSP/burstprop/microcircuit 6-seed negatives, coincidence-gated BDSP on real spikes
+(`2026-08-01-gap4-coincidence-gated-BDSP-ties-reservoir-...-6seed-NEGATIVE`), the FA-family-exhausted gate
+(`2026-07-12-deep-credit-on-spikes-FA-family-exhausted-BurstCCN-mechanism-gate`), AND a finding titled outright
+`2026-07-22-gap4-real-issue-NOT-dendrites` — whose verdict is that the dendrite TOPOLOGY is faithful and the load-bearing
+cause is the FROZEN fixed-random feedback SIGNAL that never zeroes when correct. That is EXACTLY the fixed-random B this
+finding measured as non-aligning: my FA-convergence result is a fresh measurement OF the 2026-07-22 cause, not a new
+call for dendrites. This session's own elimination (e) also tested the Sacramento two-compartment microcircuit (at its
+fixed point it reduces to fixed-DFA).
+
+<!--derived-->
+**The genuinely-untested candidates the record actually names (NOT dendrites):** (1) BurstCCN's STP-based demux of the
+burst/event streams (`2026-07-12` mechanism #2 — its preset-baseline #1 was already tested NEGATIVE); (2) a
+DENSE-REDUNDANT (MNIST-like) task probe — every spiking deep-credit negative here is on the project's XOR/inheritance
+task structure, and BurstCCN trains on MNIST; whether FA-convergence behaves differently off that structure is un-run;
+(3) a fresh mechanism-class gate. **The strategic re-anchor, from the record's own conclusion:** deep-credit-on-spikes
+is a THOROUGHLY-MAPPED, DEPRIORITIZED boundary — the mission-critical emergence engine (stream cortex + reservoir /
+shallow-readout + learned input) needs NO deep-credit rule (`2026-07-12` Update 2, `2026-07-22` corrections). So the
+honest "next" is NOT to keep drilling this frontier; it is mapped, and effort belongs on the emergence engine and the
+breadth faculties.
+
+<!--derived-->
+**Process fix (the lapse was gate-visible in hindsight):** none of the gates caught the re-proposal — `corpus_check_required`
+exempts <1h cheap runs (this whole arc), `boundary_verdict_external_check` fires only on LOUD-boundary titles (this was
+framed upbeat), and the claim gates check numbers not forward mechanism-claims. A new gate `gates/refuted_mechanism_reproposal`
+(logged in `research/FAILURE_LOG.md`) now BLOCKS naming a refuted-register mechanism (dendritic/two-compartment/BDSP/
+burstprop) as a next/remaining surpass unless the doc cites its refuting finding — the mechanical form of the self-check
+I skipped.
