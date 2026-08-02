@@ -534,7 +534,7 @@ def measure_read_cv(layer, drive_batch, lowcv):
 
 def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub, hidden, oracle_epochs, oracle_lr,
              oracle_batch, drive_pa, drive_pa2, n_steps, beta, feedback, kp_lr, kp_decay, couple_topk, task_kwargs,
-             margin_go, lowcv=None, decolle=False, relax=None, verbose=True):
+             margin_go, lowcv=None, decolle=False, relax=None, bottleneck=None, verbose=True):
     (Xtr, ytr, _), (Xte, yte, _), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     n_in = Xtr.shape[1]; k = meta["k_classes"]; inh = idx["inh_idx"]
     srng = np.random.default_rng(seed * 13 + 1); keep = srng.permutation(len(Xtr))[:min(n_sub, len(Xtr))]
@@ -730,6 +730,68 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
         out["relax_blew_up"] = bool(rcr_stats["blew_up"] or rorc_stats["blew_up"])
         ch.set_relax(None); ch.restore_frozen()                         # restore OFF for the static/decolle checks below
 
+    # ============================================================================================================
+    # BOTTLENECK arm table (ADDITIVE; only when --bottleneck). The 2026-08-02 located wall's ROOT CAUSE (a):
+    # RESERVOIR-REDUNDANCY -- the trained final readout free-rides on the fixed top reservoir (the rich cols1), so
+    # the deep layer's (cols0) directed credit is redundant (even a perfect W^T oracle == permuted). NAMED surpass =
+    # a BOTTLENECK that removes the free-ride: make cols1 NARROW (bn_ncol2 << the base n_col2, ~k columns) so the
+    # readout CANNOT free-ride on a rich reservoir -- it MUST route through the narrow top, whose class-information
+    # depends on cols0's directed signal (dW1) and the L0->L1 projection (dW2). CLEANEST CUT (option ii, not i):
+    # narrowing cols1 KEEPS the 2-hop chain intact (features->cols0->NARROW cols1->readout) so BOTH directed updates
+    # stay load-bearing and the multihop credit test is preserved -- whereas reading cols0 directly (option i)
+    # bypasses L1 and DEGENERATES to the already-negative single-layer case. L0 is IDENTICAL to the base chain (same
+    # seed/params); ONLY cols1 is narrowed, isolating the bottleneck to the read the finding named. Re-runs
+    # {frozen, oracle(W^T ceiling), KP(transport-free), permuted} on the SAME task/anti-cheats.
+    # DECISIVE READ: does directed = oracle - permuted go clearly POSITIVE (>= margin) with the bottleneck?
+    #   YES => the bottleneck removes the free-ride, directed deep credit gets PURCHASE (the substrate-architecture
+    #          surpass WORKS).
+    #   ~0  => reservoir-redundancy is ARCHITECTURE-INVARIANT on this coincidence-plateau substrate (even a narrow
+    #          bottleneck is a reservoir whose readout free-rides) => THIS movable-plateau expander fundamentally
+    #          does not benefit from credit-training (the honest R3 reservoir-on-spikes terminus); the surpass is a
+    #          fundamentally different TRAINABLE spiking substrate (surrogate-BPTT), not this expander.
+    # HEADROOM GUARD (else a null directed result is UNINTERPRETABLE, per the finding's own logic): report the
+    # frozen bottleneck reservoir heldout vs the rate-MLP (oracle_heldout). There is room for directed credit ONLY
+    # if the frozen narrow reservoir FAILS while the rate-MLP SOLVES the task (a real gap to fill). oracle-vs-frozen
+    # gap under the bottleneck is reported alongside = whether directed credit actually FILLED any of that room.
+    # Byte-identical when bottleneck is None: skipped, no bottleneck_* key (asserted at the end of run_seed).
+    # ============================================================================================================
+    if bottleneck is not None:
+        def mk_chain_bn(lesion=False):
+            L0b = _mk_layer(n_in, n_col, seed, w0, jitter, k_th, drive_pa, n_steps, beta, feedback, kp_lr, kp_decay, lesion)
+            L1b = _mk_layer(n_col, int(bottleneck), seed * 100003 + 7, w0, jitter, k_th, drive_pa2, n_steps, beta,
+                            feedback, kp_lr, kp_decay, lesion)          # NARROW cols1 = the bottleneck (L0b == base L0)
+            return MultiHopChain([L0b, L1b], feedback, kp_lr, kp_decay, couple_topk=couple_topk)
+        chb = mk_chain_bn()
+        pre0_bn = np.asarray([chb.L0.feat_spike_counts(a) for a in af_b])   # L0 identical to base -> weight-independent
+        chb.restore_frozen()
+        out["bottleneck_coupling"] = chb.calibrate_coupling(drive0_b)       # recalibrate inter-layer gain for narrow cols1
+        chb.restore_frozen()
+        bfz, _ = _chain_eval(chb, drive0_b, yb, drive0_h, yh, k)            # FROZEN narrow-bottleneck reservoir
+        chb.restore_frozen()
+        chb.train(drive0_b, pre0_bn, yb, k, epochs, lr_ff, lr_out, seed, mode="credit")
+        bcr, _ = _chain_eval(chb, drive0_b, yb, drive0_h, yh, k)            # KP transport-free credit (bottleneck)
+        chb.restore_frozen()
+        chb.train(drive0_b, pre0_bn, yperm, k, epochs, lr_ff, lr_out, seed, mode="credit")
+        bpe, _ = _chain_eval(chb, drive0_b, yb, drive0_h, yh, k)            # PERMUTED (bottleneck)
+        chb.restore_frozen()
+        chb.train(drive0_b, pre0_bn, yb, k, epochs, lr_ff, lr_out, seed, mode="oracle")
+        borc, _ = _chain_eval(chb, drive0_b, yb, drive0_h, yh, k)          # ORACLE W^T ceiling (bottleneck)
+        out["bottleneck_ncol2"] = int(bottleneck)
+        out["bottleneck_reproducibility"] = _chain_reproducibility(chb, drive0_b)
+        for tag, dd in (("frozen", bfz), ("credit", bcr), ("permuted", bpe), ("oracle", borc)):
+            out[f"bottleneck_{tag}_graded_heldout"] = dd["graded_heldout"]
+            out[f"bottleneck_{tag}_codon_heldout"] = dd["codon_heldout"]
+        out["bottleneck_directed_oracle_graded"] = float(borc["graded_heldout"] - bpe["graded_heldout"])
+        out["bottleneck_directed_kp_graded"] = float(bcr["graded_heldout"] - bpe["graded_heldout"])
+        out["bottleneck_directed_oracle_codon"] = float(borc["codon_heldout"] - bpe["codon_heldout"])
+        out["bottleneck_directed_kp_codon"] = float(bcr["codon_heldout"] - bpe["codon_heldout"])
+        # HEADROOM: the frozen narrow reservoir must FAIL while the rate-MLP (oracle_heldout) SOLVES the task, else
+        # a null directed result is uninterpretable (no room to fill). oracle-vs-frozen = did directed credit fill it.
+        out["bottleneck_frozen_vs_rateMLP_gap"] = float(out["oracle_heldout"] - bfz["graded_heldout"])
+        out["bottleneck_oracle_vs_frozen_gap"] = float(borc["graded_heldout"] - bfz["graded_heldout"])
+        out["bottleneck_headroom_ok"] = bool(out["oracle_heldout"] >= 0.80
+                                             and out["bottleneck_frozen_vs_rateMLP_gap"] >= 0.15)
+
     # ---- ANTI-CHEAT: NO-TRANSPORT (code, docstrings stripped) -- per layer / per feedback ----
     tsig = set(inspect.signature(MultiHopChain.train).parameters)
     kp_fn = SigmaPrimeCreditExpander._kp_update
@@ -871,10 +933,24 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
             print(f"    [DIRECTED oracle-perm]  CURRENT {out['directed_oracle_graded']:+.3f}  ->  RELAX "
                   f"{out['relax_directed_oracle_graded']:+.3f}   (did relaxing the plasticity give directed purchase? "
                   f"YES=>root cause b, ~0=>root cause a)", flush=True)
+        if bottleneck is not None and "bottleneck_directed_oracle_graded" in out:
+            print(f"    [BOTTLENECK ncol2={bottleneck} graded] frozen {out['bottleneck_frozen_graded_heldout']:.3f} "
+                  f"permuted {out['bottleneck_permuted_graded_heldout']:.3f} KP {out['bottleneck_credit_graded_heldout']:.3f} "
+                  f"ORACLE {out['bottleneck_oracle_graded_heldout']:.3f} || directed: oracle-perm "
+                  f"{out['bottleneck_directed_oracle_graded']:+.3f} KP-perm {out['bottleneck_directed_kp_graded']:+.3f} "
+                  f"(reprod {out['bottleneck_reproducibility']:.3f})", flush=True)
+            print(f"    [BOTTLENECK headroom] frozen-bn {out['bottleneck_frozen_graded_heldout']:.3f} vs rate-MLP "
+                  f"{out['oracle_heldout']:.3f} (gap {out['bottleneck_frozen_vs_rateMLP_gap']:+.3f}) | oracle-vs-frozen "
+                  f"{out['bottleneck_oracle_vs_frozen_gap']:+.3f} | headroom_ok {out['bottleneck_headroom_ok']}", flush=True)
+            print(f"    [DIRECTED oracle-perm]  BASE(wide) {out['directed_oracle_graded']:+.3f}  ->  BOTTLENECK(narrow) "
+                  f"{out['bottleneck_directed_oracle_graded']:+.3f}   (did the bottleneck give directed purchase? "
+                  f"YES=>surpass works, ~0=>reservoir-redundancy architecture-invariant)", flush=True)
     if not decolle:                                                     # byte-identical-when-off: DECOLLE writes NOTHING
         assert not any(str(kk).startswith("decolle_") for kk in out), "byte-identical-off VIOLATED: decolle_* key leaked"
     if relax is None:                                                   # byte-identical-when-off: RELAX writes NOTHING
         assert not any(str(kk).startswith("relax_") for kk in out), "byte-identical-off VIOLATED: relax_* key leaked"
+    if bottleneck is None:                                              # byte-identical-when-off: BOTTLENECK writes NOTHING
+        assert not any(str(kk).startswith("bottleneck_") for kk in out), "byte-identical-off VIOLATED: bottleneck_* key leaked"
     return out
 
 
@@ -939,6 +1015,21 @@ def main():
                     help="per-synapse magnitude clip for the relaxed rule (numeric safety net; ~29x the ~0.35 init weight)")
     ap.add_argument("--relax-cap-mult", type=float, default=8.0,
                     help="per-column norm may grow up to this x the INIT norm before being pulled down (0 => no norm cap, per-syn clip only)")
+    # ---- BOTTLENECK arm (additive, default OFF -> byte-identical). The named surpass for the 2026-08-02 located
+    #      wall root cause (a) RESERVOIR-REDUNDANCY: narrow cols1 (the top reservoir) to ~k columns so the readout
+    #      CANNOT free-ride on a rich reservoir -- it MUST route through the narrow top, whose class-info depends on
+    #      cols0's directed signal. Keeps the 2-hop chain (does NOT degenerate to single-layer); L0 == base. ----
+    ap.add_argument("--bottleneck", action="store_true",
+                    help="ADD a NARROW-cols1 bottleneck arm table {frozen,oracle,KP,permuted}: re-run the oracle "
+                         "isolation with a narrow top layer (n_col2 = --bottleneck-ncol2) so the readout MUST route "
+                         "through cols0's directed signal (removes the rich-reservoir free-ride). DECISIVE: does "
+                         "directed = oracle-permuted go POSITIVE? YES => the bottleneck gives directed deep credit "
+                         "purchase (surpass works); ~0 => reservoir-redundancy is architecture-invariant on this "
+                         "substrate (the R3-on-spikes terminus). Reports the headroom (frozen-bn vs rate-MLP). "
+                         "OFF => byte-identical.")
+    ap.add_argument("--bottleneck-ncol2", type=int, default=12,
+                    help="width of the narrow cols1 bottleneck the readout routes through (default 12, ~k on the hard "
+                         "task); narrower removes more free-ride but risks capping the oracle (watch the headroom guard)")
     ap.add_argument("--lowcv-read", action="store_true",
                     help="ADD a lower-CV read arm table {frozen,oracle,KP,permuted} + the read-CV before/after; OFF => byte-identical")
     ap.add_argument("--lowcv-nsteps", type=int, default=60, help="integration steps for the lowcv read (>= --n-steps)")
@@ -961,6 +1052,7 @@ def main():
     relax = None
     if a.relax_plasticity:
         relax = dict(signed=bool(a.relax_signed), w_abs_cap=float(a.relax_w_abs_cap), cap_mult=float(a.relax_cap_mult))
+    bottleneck = int(a.bottleneck_ncol2) if a.bottleneck else None
     task_kwargs = dict(n_super=a.n_super, n_members=a.n_members, held_per_super=a.held_per_super, n_prop=a.n_prop,
                        member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise)
     t0 = time.time(); per = []; err = None
@@ -969,7 +1061,7 @@ def main():
             per.append(run_seed(s, a.n_col, a.n_col2, a.epochs, a.lr_ff, a.lr_out, a.w0, a.jitter, a.k_th, a.n_sub,
                                 a.hidden, a.oracle_epochs, a.oracle_lr, a.oracle_batch, a.drive_pa, a.drive_pa2,
                                 a.n_steps, a.beta, a.feedback, a.kp_lr, a.kp_decay, a.couple_topk, task_kwargs,
-                                a.margin_go, lowcv=lowcv, decolle=decolle, relax=relax))
+                                a.margin_go, lowcv=lowcv, decolle=decolle, relax=relax, bottleneck=bottleneck))
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
@@ -979,7 +1071,7 @@ def main():
                           "lr_out": a.lr_out, "beta": a.beta, "feedback": a.feedback, "kp_lr": a.kp_lr,
                           "kp_decay": a.kp_decay, "couple_topk": a.couple_topk, "drive_pa": a.drive_pa,
                           "drive_pa2": a.drive_pa2, "n_steps": a.n_steps, "task": task_kwargs,
-                          "margin_go": a.margin_go, "lowcv": lowcv, "relax": relax},
+                          "margin_go": a.margin_go, "lowcv": lowcv, "relax": relax, "bottleneck": bottleneck},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
     if err is None and per:
         def _m(kk):
@@ -1101,6 +1193,46 @@ def main():
                                          "ARCHITECTURE (a deep layer the readout MUST route through), not a plasticity change"
                                          + (" [note: weights BLEW UP -- inconclusive, retighten cap]" if ragg["relax_any_blew_up"] else ""))
             summary["relax_aggregate"] = ragg
+        # ---- BOTTLENECK aggregate (only when --bottleneck): the decisive base(wide)-vs-bottleneck(narrow) directed
+        #      isolation. SURPASS WORKS = the narrow bottleneck makes oracle-permuted go POSITIVE (directed deep credit
+        #      gets purchase); ARCHITECTURE-INVARIANT = it stays ~0 (reservoir-redundancy survives the bottleneck, the
+        #      R3-on-spikes terminus). HEADROOM-guarded: a null is only interpretable if the frozen narrow reservoir
+        #      FAILS while the rate-MLP solves the task. ----
+        if bottleneck is not None and all("bottleneck_directed_oracle_graded" in p for p in per):
+            bkeys = ["bottleneck_frozen_graded_heldout", "bottleneck_credit_graded_heldout",
+                     "bottleneck_permuted_graded_heldout", "bottleneck_oracle_graded_heldout",
+                     "bottleneck_directed_oracle_graded", "bottleneck_directed_kp_graded",
+                     "bottleneck_directed_oracle_codon", "bottleneck_directed_kp_codon",
+                     "bottleneck_reproducibility", "bottleneck_frozen_vs_rateMLP_gap",
+                     "bottleneck_oracle_vs_frozen_gap"]
+            bagg = {kk: _m(kk) for kk in bkeys}
+            bagg["bottleneck_ncol2"] = int(a.bottleneck_ncol2)
+            bagg["current_directed_oracle_graded"] = agg["directed_oracle_graded"]
+            bagg["current_directed_kp_graded"] = agg["directed_kp_graded"]
+            bagg["bottleneck_headroom_ok_seeds"] = sum(1 for p in per if p["bottleneck_headroom_ok"])
+            bagg["bottleneck_oracle_directed_positive"] = sum(1 for p in per if p["bottleneck_directed_oracle_graded"] > a.margin_go)
+            bagg["bottleneck_kp_directed_positive"] = sum(1 for p in per if p["bottleneck_directed_kp_graded"] > a.margin_go)
+            bo_dir = bagg["bottleneck_directed_oracle_graded"]; cur_dir = agg["directed_oracle_graded"]
+            headroom_all = bagg["bottleneck_headroom_ok_seeds"] >= need
+            if not headroom_all:
+                bagg["bottleneck_verdict"] = ("UNINTERPRETABLE -- NO HEADROOM: the frozen narrow reservoir does NOT "
+                    "clearly FAIL while the rate-MLP solves the task on `need` seeds, so a null directed result is not "
+                    "a fair test. Narrow the bottleneck further (--bottleneck-ncol2) or harden the task, then re-run")
+            elif bo_dir > a.margin_go:
+                bagg["bottleneck_verdict"] = ("SURPASS WORKS -- the bottleneck removes the free-ride: the W^T oracle "
+                    "beats permuted by the margin (directed deep credit gets PURCHASE once the readout must route "
+                    "through the narrow top). The substrate-ARCHITECTURE change is the surpass")
+            elif bo_dir > cur_dir + 0.02:
+                bagg["bottleneck_verdict"] = ("PARTIAL -- the bottleneck moves oracle-permuted upward vs the base wide "
+                    "reservoir but not past the margin; a narrower bottleneck / more epochs may be needed")
+            else:
+                bagg["bottleneck_verdict"] = ("ARCHITECTURE-INVARIANT -- even with a narrow cols1 bottleneck (with "
+                    "headroom: frozen fails, rate-MLP solves) the W^T oracle does NOT beat permuted (oracle ~ permuted): "
+                    "reservoir-redundancy is ARCHITECTURE-INVARIANT on this coincidence-plateau substrate -- even a "
+                    "bottleneck layer is a reservoir whose readout free-rides. THIS movable-plateau expander does not "
+                    "benefit from credit-training (the honest R3 reservoir-on-spikes terminus); the surpass is a "
+                    "fundamentally different TRAINABLE spiking substrate (surrogate-BPTT), not this expander")
+            summary["bottleneck_aggregate"] = bagg
         # ---- DECOLLE aggregate (only when --decolle): per-layer + FINAL directed lift vs the top-down oracle/KP ----
         if decolle and all("decolle_final_graded_heldout" in p for p in per):
             dk = ["decolle_L0_graded_heldout", "decolle_L1_graded_heldout", "decolle_frozen_L0_graded_heldout",
@@ -1225,6 +1357,22 @@ def main():
                   f"{da['current_directed_kp_graded']:+.3f}", flush=True)
             print(f"[DECOLLE | {task_lbl}] anti-cheats_clean={da['decolle_anti_cheats_clean']} DECOLLE_GO="
                   f"{summary['DECOLLE_GO']} => {da['decolle_verdict']}", flush=True)
+        if "bottleneck_aggregate" in summary:
+            ba = summary["bottleneck_aggregate"]
+            print("-" * 100, flush=True)
+            print(f"[BOTTLENECK ncol2={ba['bottleneck_ncol2']} | {task_lbl}] graded heldout means -- frozen "
+                  f"{ba['bottleneck_frozen_graded_heldout']:.3f} | permuted {ba['bottleneck_permuted_graded_heldout']:.3f} | "
+                  f"KP {ba['bottleneck_credit_graded_heldout']:.3f} | ORACLE(W^T) {ba['bottleneck_oracle_graded_heldout']:.3f} | "
+                  f"reprod {ba['bottleneck_reproducibility']:.3f}", flush=True)
+            print(f"[BOTTLENECK | {task_lbl}] HEADROOM: frozen-bn vs rate-MLP gap {ba['bottleneck_frozen_vs_rateMLP_gap']:+.3f} "
+                  f"| oracle-vs-frozen {ba['bottleneck_oracle_vs_frozen_gap']:+.3f} | headroom_ok "
+                  f"{ba['bottleneck_headroom_ok_seeds']}/{ag['n_seeds']} (need {need})", flush=True)
+            print(f"[BOTTLENECK | {task_lbl}] DIRECTED oracle-permuted: BASE(wide) {ba['current_directed_oracle_graded']:+.3f} "
+                  f"-> BOTTLENECK(narrow) {ba['bottleneck_directed_oracle_graded']:+.3f} "
+                  f"({ba['bottleneck_oracle_directed_positive']}/{ag['n_seeds']}>margin) | KP-perm "
+                  f"{ba['bottleneck_directed_kp_graded']:+.3f} ({ba['bottleneck_kp_directed_positive']}/{ag['n_seeds']}>margin)",
+                  flush=True)
+            print(f"[BOTTLENECK | {task_lbl}] VERDICT => {ba['bottleneck_verdict']}", flush=True)
     print(f"[gap4-realspikes-multihop] backend={summary['backend']} wrote {a.out}\n" + "=" * 100, flush=True)
     return 0 if (summary.get("GO") or summary.get("DECOLLE_GO")) else 1
 

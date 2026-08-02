@@ -124,3 +124,28 @@ on this real-spikes substrate directed deep credit has no purchase because the d
 BOTTLENECK — the final read must route THROUGH the deep layer (a narrow layer, or a readout that reads only the
 deep layer, so the reservoir alone cannot be read out and the deep layer's directed credit becomes load-bearing),
 then re-run the oracle isolation. This is the next mechanism; the rate overturn is the session's standing result.
+
+## Update 4 (2026-08-02) — the BOTTLENECK is ARCHITECTURE-INVARIANT (with headroom): the TERMINUS — this substrate does not benefit from credit-training; the surpass is a different TRAINABLE spiking substrate
+
+<!--derived-->
+Built + tested the named bottleneck surpass (additive `--bottleneck`: narrow the top reservoir cols1 to 12
+columns, keeping the 2-hop chain, so the readout cannot free-ride on a rich reservoir; the deep-only-readout
+option was rejected — it degenerates to the already-negative single-layer case). Artifact:
+`multihop_bottleneck_hard_seed42.json`. Result (hard task, cols1=12): the headroom guard PASSES —
+`frozen_vs_rateMLP_gap = 0.74` (the narrow frozen reservoir fails badly while the rate-MLP solves the task, so
+the test is interpretable, maximal room for directed credit). Yet the W⊤ oracle STILL does not beat permuted:
+`bottleneck_directed_oracle_graded = −0.074` (and does not even beat frozen). VERDICT:
+**ARCHITECTURE-INVARIANT.** Removing the reservoir free-ride does NOT give directed credit purchase — because
+the narrow bottleneck columns are read through the SAME finite-spike σ′(v−θ) gate (they still never somatically
+spike), so the directed signal has the same reason to sit below the read floor. **This is the TERMINUS for this
+substrate: FIVE independent controls now agree** directed deep credit has no purchase — perfect W⊤ oracle,
+lower-CV read, DECOLLE local losses, relaxed plasticity, AND a headroom-satisfied bottleneck. The wall is not the
+credit rule, not the feedback, not the task, not the read-CV, not the plasticity, and not the architecture — it
+is the movable-plateau **SUBSTRATE** itself (a coincidence-plateau reservoir whose graded read carries no
+credit-usable per-column selectivity). **NAMED SURPASS (the honest, exhaustively-earned next direction):** a
+fundamentally different, genuinely TRAINABLE spiking substrate — surrogate-gradient BPTT over a spiking net
+whose hidden layers are trained (not a fixed movable-plateau reservoir) with a low-CV many-spike read, as the
+field's working deep-spiking trainers do (e-prop, DECOLLE, SuperSpike). That is a substrate build, not a
+credit-rule de-risk. **The rate overturn (transport-free deep credit works AT RATE) stands as the session's
+result; the spiking-credit wall on the movable-plateau substrate is now exhaustively characterized + its surpass
+precisely named.**
