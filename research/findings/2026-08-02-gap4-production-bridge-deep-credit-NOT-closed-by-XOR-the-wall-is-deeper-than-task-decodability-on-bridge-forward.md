@@ -85,3 +85,16 @@ this finding). Same task, same class of transport-free directed rule, DIFFERENT 
 FORWARD specifically, not the credit rule** (the LIF depth-scaling finding independently shows the DFA credit rule is
 depth-robust). The crux CORE (LIF/rate) stands; this precisely relocates the PRODUCTION-bridge residual to the
 Izhikevich forward, and the highest-value next build is the PlateauExpander (representable) forward + e-prop credit.
+
+## Update (2026-08-02) — the "wall is the FORWARD" framing is INCOMPLETE: a REPRESENTABLE forward still fails (superseded by the representable-forward finding)
+
+<!--derived-->
+Ran the named next build — the PlateauExpander (representable) forward + e-prop credit on XOR
+(`2026-08-02-gap4-representable-forward-does-NOT-let-eprop-train-on-a-dense-codon-...md`). Result: the PlateauExpander
+codon MAKES XOR representable (a backprop oracle on the codon reaches 0.99), but on-bridge e-prop STILL does not train
+(eprop ≈ chance) on the DENSE codon (sparsity 0.499). ⇒ this finding's "the wall is the Izhikevich FORWARD, not the
+credit rule" is INCOMPLETE: a representable Izhikevich forward is NOT sufficient — the on-bridge e-prop credit cannot
+find the weights the oracle finds on a dense representable code. The residual is narrowed to "on-bridge e-prop
+weight-finding on a dense codon"; the clean sparse-codon test (expose ACT_TH -> sparser representable codon) is the
+untested decisive next step. The LIF-vs-Izhikevich contrast still holds (LIF works, Izhikevich fails on XOR) — but the
+Izhikevich failure is not purely the forward's representability.
