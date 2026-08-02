@@ -1,0 +1,98 @@
+{
+ "probe": "two_pool_dual_route_oppoint_map",
+ "seed": 42,
+ "backend": "numpy",
+ "n_oppoints": 12,
+ "single_pool_baseline": {
+  "reg_acc_cap": 0.25,
+  "irr_acc": 0.857,
+  "note": "routes compete in one WTA"
+ },
+ "oppoints": [
+  {
+   "cyc_rule": 40,
+   "inhib": 0.5,
+   "reg_acc": 0.75,
+   "irr_acc": 0.7143
+  },
+  {
+   "cyc_rule": 40,
+   "inhib": 1.0,
+   "reg_acc": 0.75,
+   "irr_acc": 0.7143
+  },
+  {
+   "cyc_rule": 40,
+   "inhib": 2.0,
+   "reg_acc": 0.75,
+   "irr_acc": 0.7143
+  },
+  {
+   "cyc_rule": 40,
+   "inhib": 3.0,
+   "reg_acc": 0.75,
+   "irr_acc": 0.8571
+  },
+  {
+   "cyc_rule": 40,
+   "inhib": 4.0,
+   "reg_acc": 0.75,
+   "irr_acc": 0.8571
+  },
+  {
+   "cyc_rule": 60,
+   "inhib": 3.0,
+   "reg_acc": 1.0,
+   "irr_acc": 0.5714
+  },
+  {
+   "cyc_rule": 80,
+   "inhib": 3.0,
+   "reg_acc": 0.875,
+   "irr_acc": 0.5714
+  },
+  {
+   "cyc_rule": 100,
+   "inhib": 3.0,
+   "reg_acc": 1.0,
+   "irr_acc": 0.7143
+  },
+  {
+   "cyc_rule": 120,
+   "inhib": 3.0,
+   "reg_acc": 1.0,
+   "irr_acc": 0.7143
+  },
+  {
+   "cyc_rule": 100,
+   "inhib": 5.0,
+   "reg_acc": 1.0,
+   "irr_acc": 0.5714
+  },
+  {
+   "cyc_rule": 100,
+   "inhib": 6.0,
+   "reg_acc": 0.875,
+   "irr_acc": 0.5714
+  },
+  {
+   "cyc_rule": 100,
+   "inhib": 8.0,
+   "reg_acc": 0.875,
+   "irr_acc": 0.7143
+  }
+ ],
+ "max_reg_acc": {
+  "cyc_rule": 60,
+  "inhib": 3.0,
+  "reg_acc": 1.0,
+  "irr_acc": 0.5714
+ },
+ "max_irr_acc": {
+  "cyc_rule": 40,
+  "inhib": 3.0,
+  "reg_acc": 0.75,
+  "irr_acc": 0.8571
+ },
+ "n_joint_both_gates": 0
+}
