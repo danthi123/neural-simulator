@@ -194,8 +194,13 @@ class MultiHopChain:
 
     # ---- chained transport-free credit ----
     def train(self, drive0_batch, pre0_mat, y, k, epochs, lr_ff, lr_out, seed, mode="credit"):
-        """Chained sigma'-gated transport-free credit over 2 plastic layers. Single variable = lr_ff (0 = frozen).
-        NO-TRANSPORT: e_u2 reads Y_out (not W_out); e_u1 reads Y2 (not W2); Y's move only via `_kp_update`."""
+        """Chained sigma'-gated credit over 2 plastic layers. Single variable = lr_ff (0 = frozen).
+        modes: credit|permuted|wrong_sign = TRANSPORT-FREE (e_u2 reads Y_out not W_out; e_u1 reads Y2 not W2; Y's
+        move only via `_kp_update`). mode='oracle' = the W^T TRANSPORT CEILING diagnostic (NOT shippable, clearly
+        labeled): each epoch Y_out<-W_out^T and Y2<-the TRUE layer-1 forward weight, so the descending learning
+        signal is the EXACT loss gradient routed by the forward weights (Bellec e-prop's L_j = dE/dz_j with perfect
+        transport) x the same sigma'(v-theta) eligibility. It bounds how much DIRECTED credit this real-spikes read
+        regime can carry AT ALL; the KP arm is the shippable transport-free candidate measured against it."""
         rng = np.random.default_rng(seed * 7 + 3)
         W_out = 0.01 * rng.standard_normal((self.L1.NC, k)); b_out = np.zeros(k)
         y_rng = np.random.default_rng(seed + 9973)
@@ -216,6 +221,10 @@ class MultiHopChain:
                 e_out = -e_out
             if lr_ff > 0.0:
                 S1n = S1 / (S1.mean() + 1e-9); S0n = S0 / (S0.mean() + 1e-9)
+                if mode == "oracle":
+                    # ORACLE-TRANSPORT-CEILING (begin) -- W^T routing = the EXACT-backprop ceiling (NOT shippable)
+                    Y_out = W_out.T.copy(); Y2 = self.L1.dense_forward_weight()   # TRUE forward weights, re-read each epoch
+                    # ORACLE-TRANSPORT-CEILING (end)
                 e_u2 = (e_out @ Y_out) * S1n                             # error at cols1  (reads Y_out, NOT W_out)
                 dW2 = -lr_ff * (e_u2.T @ M0) / N                         # layer-1 update; input activity = M0
                 self.L1.apply_dW(dW2)
@@ -383,6 +392,27 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
     le, _ = _chain_eval(lex, drive0_b, yb, drive0_h, yh, k)
     out["lesion_codon_heldout"] = le["codon_heldout"]; out["lesion_graded_heldout"] = le["graded_heldout"]
 
+    # ---- ORACLE-DIRECTED arm (the W^T TRANSPORT CEILING for directed credit on THIS real-spikes read regime; NOT
+    #      shippable, clearly labeled): each epoch the descending learning signal is the EXACT loss gradient routed by
+    #      the TRUE forward weights (Y_out=W_out^T, Y2=layer-1 forward weight) x the SAME sigma'(v-theta) eligibility as
+    #      the KP arm. This ISOLATES the wall: on the CURRENT task, oracle==permuted => the read regime carries no
+    #      DIRECTED signal (or none is NEEDED = generic plasticity already solves it); if oracle-permuted OPENS on the
+    #      harder task where frozen fails, directed credit IS measurable there; where KP sits (==oracle vs ==permuted)
+    #      then says whether transport-free feedback works or the alignment is the wall. Uses the same `ch` + coupling. ----
+    ch.restore_frozen()
+    ch.train(drive0_b, pre0_b, yb, k, epochs, lr_ff, lr_out, seed, mode="oracle")
+    orc, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)
+    out["oracle_directed_codon_heldout"] = orc["codon_heldout"]
+    out["oracle_directed_graded_heldout"] = orc["graded_heldout"]
+    out["oracle_directed_alignment"] = getattr(ch, "_align", {})           # Y==W by construction => ~1.0 (sanity)
+    # DIRECTED-CREDIT isolation (both reads): the lift ATTRIBUTABLE TO CORRECT LABELS = arm - permuted (a label shuffle
+    # keeping the SAME plasticity dynamics). oracle-permuted = the CEILING for directed credit; kp-permuted = the
+    # shippable candidate's directed lift. > 0 => that arm routes CORRECT-label error beyond label-agnostic plasticity.
+    out["directed_oracle_graded"] = float(orc["graded_heldout"] - pe["graded_heldout"])
+    out["directed_oracle_codon"] = float(orc["codon_heldout"] - pe["codon_heldout"])
+    out["directed_kp_graded"] = float(cr["graded_heldout"] - pe["graded_heldout"])
+    out["directed_kp_codon"] = float(cr["codon_heldout"] - pe["codon_heldout"])
+
     # ---- ANTI-CHEAT: NO-TRANSPORT (code, docstrings stripped) -- per layer / per feedback ----
     tsig = set(inspect.signature(MultiHopChain.train).parameters)
     kp_fn = SigmaPrimeCreditExpander._kp_update
@@ -390,17 +420,24 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
     src_train = inspect.getsource(MultiHopChain.train).replace(MultiHopChain.train.__doc__ or "", "")
     # The training LOOP (everything BEFORE the post-hoc alignment diagnostic) is the credit path. The forward weight
     # is read ONLY in the diagnostic (dense_forward_weight, after the loop) -- exactly like reading W_out for eval.
-    train_body = src_train.split("# per-layer credit-alignment")[0]
+    # The mode=='oracle' branch DELIBERATELY routes error by W^T transport as the labeled CEILING; it is gated by
+    # `if mode == "oracle"` and NEVER runs for the shippable credit/KP path. Excise that guarded, sentinel-delimited
+    # block before the transport scan (as the post-loop alignment diagnostic is already excised), and PROVE the guard
+    # is present -> then scan the transport-FREE remainder for any forward-weight read.
+    ob0 = src_train.find("# ORACLE-TRANSPORT-CEILING (begin)"); ob1 = src_train.find("# ORACLE-TRANSPORT-CEILING (end)")
+    oracle_guarded = bool(ob0 > 0 and ob1 > ob0 and 'if mode == "oracle":' in src_train[max(0, ob0 - 160):ob0])
+    src_tf = (src_train[:ob0] + src_train[ob1:]) if (ob0 > 0 and ob1 > ob0) else src_train   # transport-free path only
+    train_body = src_tf.split("# per-layer credit-alignment")[0]
     # (a) the feedbacks Y_out/Y2 are assigned ONLY by _kp_update (init lines carry `y_rng`; snapshots carry `0`).
-    y_assign_ok = all(("_kp_update" in ln) for ln in src_train.splitlines()
+    y_assign_ok = all(("_kp_update" in ln) for ln in train_body.splitlines()
                       if ("Y_out =" in ln or "Y2 =" in ln) and "y_rng" not in ln and "Y_out0" not in ln)
-    # (b) the credit path never reads a forward/coincidence weight (no dense_forward_weight / .W0 in the loop),
-    #     and (c) the update kernel _kp_update holds no self.W / W_out. W_out in the loop = the readout head fit
-    #     (legitimate target access, exactly as the parent single-layer runner permits).
+    # (b) the transport-free path never reads a forward/coincidence weight (no dense_forward_weight / .W0 / W_out.T in
+    #     the loop), and (c) the update kernel _kp_update holds no self.W / W_out. W_out in the loop = the readout head
+    #     fit (legitimate target access, exactly as the parent single-layer runner permits).
     out["no_transport_code"] = bool(tsig.isdisjoint({"W_out", "readout", "clf", "Wout", "Wt"})
                                     and "W_out" not in src_kp and "self.W" not in src_kp
                                     and "dense_forward_weight" not in train_body and ".W0" not in train_body
-                                    and y_assign_ok)
+                                    and "W_out.T" not in train_body and oracle_guarded and y_assign_ok)
 
     if verbose:
         al = out["per_layer_alignment"]
@@ -418,6 +455,12 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
         print(f"    [anti-cheat] reprod {out['reproducibility']:.3f} | permuted codon {out['permuted_codon_heldout']:.3f} "
               f"| wrong_sign {out['wrong_sign_codon_heldout']:.3f} | lesion {out['lesion_codon_heldout']:.3f} | "
               f"no-transport {out['no_transport_code']}", flush=True)
+        print(f"    [ISOLATION graded] frozen {out['frozen_graded_heldout']:.3f} permuted {out['permuted_graded_heldout']:.3f} "
+              f"KP {out['credit_graded_heldout']:.3f} ORACLE {out['oracle_directed_graded_heldout']:.3f} || "
+              f"directed: oracle-perm {out['directed_oracle_graded']:+.3f} KP-perm {out['directed_kp_graded']:+.3f}", flush=True)
+        print(f"    [ISOLATION codon ] frozen {out['frozen_codon_heldout']:.3f} permuted {out['permuted_codon_heldout']:.3f} "
+              f"KP {out['credit_codon_heldout']:.3f} ORACLE {out['oracle_directed_codon_heldout']:.3f} || "
+              f"directed: oracle-perm {out['directed_oracle_codon']:+.3f} KP-perm {out['directed_kp_codon']:+.3f}", flush=True)
     return out
 
 
@@ -453,8 +496,14 @@ def main():
     ap.add_argument("--n-obs", type=int, default=14)
     ap.add_argument("--noise", type=float, default=0.02)
     ap.add_argument("--margin-go", type=float, default=0.05)
+    ap.add_argument("--task-hard", action="store_true",
+                    help="HARDER task where the frozen reservoir FAILS (n_super=48, n_prop=4 => k=17; per b65e2cb3). "
+                         "Overrides --n-super/--n-prop. The isolation reads only OPEN UP if directed credit becomes "
+                         "measurable when the reservoir has room; the easy default (n_prop=3, k=9) is where frozen ~ oracle.")
     ap.add_argument("--out", default="research/findings/raw/gap4/realspikes/multihop_chained_credit.json")
     a = ap.parse_args()
+    if a.task_hard:
+        a.n_super = 48; a.n_prop = 4                          # k = 2^4 + 1 = 17, the reservoir-fails regime
     task_kwargs = dict(n_super=a.n_super, n_members=a.n_members, held_per_super=a.held_per_super, n_prop=a.n_prop,
                        member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise)
     t0 = time.time(); per = []; err = None
@@ -483,7 +532,9 @@ def main():
                 "dcs_single_codon", "dcs_single_graded", "dcs_directed_graded", "reproducibility",
                 "permuted_graded_heldout", "wrong_sign_graded_heldout", "lesion_graded_heldout",
                 "credit_vs_permuted_graded", "credit_vs_wrongsign_graded", "permuted_codon_heldout",
-                "wrong_sign_codon_heldout", "lesion_codon_heldout", "chance"]
+                "wrong_sign_codon_heldout", "lesion_codon_heldout", "chance",
+                "oracle_directed_graded_heldout", "oracle_directed_codon_heldout",
+                "directed_oracle_graded", "directed_oracle_codon", "directed_kp_graded", "directed_kp_codon"]
         agg = {kk: _m(kk) for kk in keys}
         n = len(per); need = int(np.ceil(0.834 * n))
         # PRIMARY read for GO = the graded top-margin refit (the faithful somatic read; the columns never spike, so
@@ -505,10 +556,31 @@ def main():
         beats_single = bool(agg["dcs_multihop_graded"] > agg["dcs_single_graded"] + 0.02)
         promising = bool((not go) and directed >= need and dcs_pos == n
                          and agg["credit_graded_heldout"] > agg["frozen_graded_heldout"])
+        # ---- ORACLE-DIRECTED ISOLATION (the diagnostic this runner adds): per read, per seed, does the CEILING
+        #      (oracle) route directed credit above generic plasticity (permuted)? and does the shippable KP arm? ----
+        orc_dir_g = sum(1 for p in per if p["directed_oracle_graded"] > 0)
+        kp_dir_g = sum(1 for p in per if p["directed_kp_graded"] > 0)
+        orc_dir_c = sum(1 for p in per if p["directed_oracle_codon"] > 0)
+        # WHERE is the wall? oracle~=permuted (dir<=margin on the graded read) => TASK/READ-REGIME carries no directed
+        # signal; oracle clearly>permuted while KP~=permuted => FEEDBACK-alignment wall (transport is the missing piece).
+        oracle_directed_positive = bool(agg["directed_oracle_graded"] > a.margin_go)
+        kp_directed_positive = bool(agg["directed_kp_graded"] > a.margin_go)
+        if not oracle_directed_positive:
+            isolation = ("READ-REGIME/TASK -- even the W^T oracle ceiling does NOT beat permuted by the margin "
+                         "(directed signal is absent or not needed on this task)")
+        elif not kp_directed_positive:
+            isolation = ("FEEDBACK -- the oracle ceiling DOES carry directed credit (oracle>permuted) but the "
+                         "transport-free KP arm does NOT (KP~=permuted): the feedback alignment is the wall, not the read regime")
+        else:
+            isolation = ("NONE OF THE WALLS BIND HERE -- both the oracle ceiling AND the transport-free KP arm carry "
+                         "directed credit above permuted (transport-free credit works in this regime)")
         agg.update({"n_seeds": n, "credit_beats_frozen_by_margin_graded": beats, "seeds_needed": need,
                     "dcs_positive_graded": dcs_pos, "directed_credit_beats_permuted": directed,
                     "credit_beats_wrongsign": beats_wrongsign, "anti_cheats_clean": bool(anti_ok),
-                    "margin_go": a.margin_go, "multihop_beats_single_graded": beats_single, "promising": promising})
+                    "margin_go": a.margin_go, "multihop_beats_single_graded": beats_single, "promising": promising,
+                    "oracle_directed_positive_graded": orc_dir_g, "kp_directed_positive_graded": kp_dir_g,
+                    "oracle_directed_positive_codon": orc_dir_c, "task_hard": bool(a.task_hard),
+                    "isolation_verdict": isolation})
         summary["aggregate"] = agg; summary["GO"] = go; summary["PROMISING"] = promising
         common = (f"oracle {agg['oracle_heldout']:.3f}, rate-res {agg['rate_reservoir_heldout']:.3f}. "
                   f"MULTIHOP graded FROZEN {agg['frozen_graded_heldout']:.3f} CREDIT {agg['credit_graded_heldout']:.3f} "
@@ -535,6 +607,17 @@ def main():
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
     print("\n" + "=" * 100, flush=True)
     print(f"[gap4-realspikes-multihop] {summary['verdict']}", flush=True)
+    if err is None and per and "aggregate" in summary:
+        ag = summary["aggregate"]
+        task_lbl = "HARD (n_prop=4,k=17)" if ag.get("task_hard") else "EASY (n_prop=3,k=9)"
+        print(f"[ISOLATION | {task_lbl}] graded heldout means -- frozen {ag['frozen_graded_heldout']:.3f} | "
+              f"permuted {ag['permuted_graded_heldout']:.3f} | KP {ag['credit_graded_heldout']:.3f} | "
+              f"ORACLE(W^T) {ag['oracle_directed_graded_heldout']:.3f} | oracle_host {ag['oracle_heldout']:.3f} | "
+              f"rate-res {ag['rate_reservoir_heldout']:.3f}", flush=True)
+        print(f"[ISOLATION | {task_lbl}] directed credit (arm-permuted) -- oracle-perm {ag['directed_oracle_graded']:+.3f} "
+              f"({ag['oracle_directed_positive_graded']}/{ag['n_seeds']}>0) | KP-perm {ag['directed_kp_graded']:+.3f} "
+              f"({ag['kp_directed_positive_graded']}/{ag['n_seeds']}>0)", flush=True)
+        print(f"[ISOLATION | {task_lbl}] WALL => {ag['isolation_verdict']}", flush=True)
     print(f"[gap4-realspikes-multihop] backend={summary['backend']} wrote {a.out}\n" + "=" * 100, flush=True)
     return 0 if summary.get("GO") else 1
 

@@ -1,0 +1,31 @@
+{
+ "run_id": "1785644017-4137539",
+ "runner": "research/runners/_gap4_realspikes_multihop_chained_credit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_realspikes_multihop_chained_credit_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--epochs",
+  "40",
+  "--out",
+  "research/findings/raw/gap4/realspikes/multihop_oracle_easy_6seed.json"
+ ],
+ "git_sha": "61fced727",
+ "git_dirty": true,
+ "started": "2026-08-02T00:13:37",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2657.8,
+ "corpus_check_query": "di-synaptic feedforward inhibition GABAergic interneuron dual-route morphology blocking scales with whole-form retrieval",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/realspikes/multihop_oracle_hard_6seed.json"
+}
