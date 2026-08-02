@@ -105,3 +105,22 @@ signed/two-sided updates; drop the renorm-to-init) and/or a substrate where the 
 redundant (a bottleneck the readout must route through), then re-run the oracle isolation. This is a deep,
 well-characterized substrate boundary — the field's directed-credit mechanisms (top-down + local) are exhausted
 ON THIS SUBSTRATE; the surpass is now a SUBSTRATE change, not a credit-rule change. The rate overturn stands.
+
+## Update 3 (2026-08-02) — root cause ISOLATED: (a) RESERVOIR-REDUNDANCY, not the plasticity — the surpass is a BOTTLENECK architecture
+
+<!--derived-->
+The two candidate root causes were tested directly with a `--relax-plasticity` control (drop the max(0)-
+excitatory clamp → signed weights; replace the L2-renorm-to-init with a loose norm cap; blow-up telemetry).
+Artifact: `multihop_relax_plasticity_s42.json`. Result (hard task): with the plasticity relaxed, `directed =
+oracle − permuted` moved from 0.0 only to **+0.019 (still below the 0.05 margin)**, weights did NOT blow up
+(colnorm ratio 1.35, 0 at cap, no NaN) — the loosening engaged cleanly and still did not open the directed gap.
+VERDICT: **ROOT CAUSE (a) — the deep spiking layer is RESERVOIR-REDUNDANT.** Relaxing what the deep layer CAN
+learn does not help, because the trained final readout free-rides on the fixed reservoir (the rich top layer)
+regardless of the deep layer's representation or its plasticity. It is NOT (b) a plasticity-constraint wall.
+**The crux's spiking side is now fully characterized:** transport-free deep credit works AT RATE (the overturn);
+on this real-spikes substrate directed deep credit has no purchase because the deep layer is reservoir-redundant
+— confirmed by FOUR controls (perfect W⊤ oracle, lower-CV read, DECOLLE local losses, relaxed plasticity), all
+`directed ≈ 0`. **NAMED SURPASS (a substrate-ARCHITECTURE change, not a credit rule or plasticity):** a
+BOTTLENECK — the final read must route THROUGH the deep layer (a narrow layer, or a readout that reads only the
+deep layer, so the reservoir alone cannot be read out and the deep layer's directed credit becomes load-bearing),
+then re-run the oracle isolation. This is the next mechanism; the rate overturn is the session's standing result.

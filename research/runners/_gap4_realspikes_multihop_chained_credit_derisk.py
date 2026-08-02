@@ -168,15 +168,46 @@ class ChainLayer(SigmaPrimeCreditExpander):
             return margin, sigmap, SPcap, APcap
         return margin, sigmap
 
+    # ---- RELAXED PLASTICITY (additive, default OFF; byte-identical when self._relax is None) -------------------
+    # The 2026-08-02 located wall isolation asks: is the constrained apply_dW itself the wall (root cause b), or is
+    # the deep layer reservoir-REDUNDANT so the readout free-rides regardless (root cause a)? configure_relax loosens
+    # apply_dW along the two axes the parent's local homeostasis pins: (i) SIGNED weights (drop the max(0) excitatory
+    # clamp -> two-sided reshape, the column can encode "feature A but NOT B", the full sphere not just the positive
+    # orthant); (ii) DROP the L2-renorm-TO-INIT magnitude pin (columns free to grow/shrink) -> replaced by a LOOSE
+    # per-column norm CAP (pull DOWN only if the column BLOWS UP past cap_mult*init; no pull toward init below it) plus
+    # a per-synapse magnitude clip, so relaxing the clamp cannot let weights run away numerically. Blow-up is REPORTED
+    # (relax_weight_stats), not assumed away. Byte-identical when OFF: the `relax is None` branch is the ORIGINAL code.
+    def configure_relax(self, relax):
+        """relax: dict{signed,w_abs_cap,cap_mult} or None (OFF -> original constrained apply_dW). Returns self."""
+        self._relax = dict(relax) if relax is not None else None
+        return self
+
     def apply_dW(self, dW):
         """Add credit delta dW (shape (NC, NF)) to the coincidence weights, then max(0) + per-column L2-renorm to
-        the initial norm (the parent's local homeostasis). Mirrors train_credit's write block."""
+        the initial norm (the parent's local homeostasis). Mirrors train_credit's write block.
+        RELAXED variant (self._relax set via configure_relax): SIGNED weights + a loose norm CAP instead of the
+        excitatory clamp + renorm-to-init (see configure_relax). Byte-identical to the original when self._relax is None."""
+        relax = getattr(self, "_relax", None)
         data = self._get_data()
         data = data + dW[self.syn_col, self.syn_feat]
-        np.maximum(data, 0.0, out=data)
-        cur = np.sqrt(np.array([np.sum(data[self.syn_col == c] ** 2) for c in range(self.NC)]))
-        scale = np.where(cur > 1e-9, self.col_norm0 / (cur + 1e-12), 1.0)
-        data = data * scale[self.syn_col]
+        if relax is None:
+            # ---- ORIGINAL constrained homeostasis (byte-identical when relax OFF) ----
+            np.maximum(data, 0.0, out=data)                                  # excitatory clamp
+            cur = np.sqrt(np.array([np.sum(data[self.syn_col == c] ** 2) for c in range(self.NC)]))
+            scale = np.where(cur > 1e-9, self.col_norm0 / (cur + 1e-12), 1.0)
+            data = data * scale[self.syn_col]                               # L2-renorm-TO-INIT
+        else:
+            # ---- RELAXED: (i) signed (drop max(0)); (ii) loose norm CAP not renorm-to-init; (iii) per-syn clip ----
+            if not bool(relax.get("signed", True)):
+                np.maximum(data, 0.0, out=data)                             # config can keep it excitatory-only
+            wcap = float(relax.get("w_abs_cap", 10.0))                      # per-synapse magnitude clip (numeric safety)
+            np.clip(data, -wcap, wcap, out=data)
+            cap_mult = float(relax.get("cap_mult", 8.0))                    # per-column norm may grow up to cap_mult*init
+            if cap_mult > 0:
+                cur = np.sqrt(np.array([np.sum(data[self.syn_col == c] ** 2) for c in range(self.NC)]))
+                capn = cap_mult * self.col_norm0                           # pull DOWN only columns past the cap
+                scale = np.where(cur > capn + 1e-12, capn / (cur + 1e-12), 1.0)
+                data = data * scale[self.syn_col]
         self._set_data(data)
 
     def dense_forward_weight(self):
@@ -215,6 +246,38 @@ class MultiHopChain:
         for L in self.layers:
             L.configure_lowcv(lowcv)
         return self
+
+    def set_relax(self, relax):
+        """Toggle RELAXED plasticity on BOTH layers' apply_dW (None = off -> original constrained homeostasis).
+        Stores the config on the chain for the blow-up report. Returns self."""
+        self._relax_cfg = dict(relax) if relax is not None else None
+        for L in self.layers:
+            L.configure_relax(relax)
+        return self
+
+    def relax_weight_stats(self):
+        """Read the CURRENT weight state of BOTH layers and report whether the relaxed dynamics BLEW UP: per-column
+        norm ratio vs init (colnorm_ratio_max ~ cap_mult => the cap is binding = runaway held only by the cap), the
+        fraction of synapses pinned at the per-synapse clip (frac_at_cap), the fraction gone NEGATIVE (the two-sided
+        reshape actually used), max|w|, and a NaN guard. Post-hoc from the weights => per-arm, no accumulation."""
+        cfg = getattr(self, "_relax_cfg", None) or {}
+        wcap = float(cfg.get("w_abs_cap", 10.0))
+        stats = {}
+        for tag, L in (("L0", self.L0), ("L1", self.L1)):
+            data = L._get_data()
+            cur = np.sqrt(np.array([np.sum(data[L.syn_col == c] ** 2) for c in range(L.NC)]))
+            ratio = cur / (L.col_norm0 + 1e-12)
+            stats[f"{tag}_w_maxabs"] = float(np.max(np.abs(data)))
+            stats[f"{tag}_w_meanabs"] = float(np.mean(np.abs(data)))
+            stats[f"{tag}_frac_negative"] = float(np.mean(data < 0.0))
+            stats[f"{tag}_frac_at_cap"] = float(np.mean(np.abs(data) >= wcap - 1e-9))
+            stats[f"{tag}_colnorm_ratio_max"] = float(np.max(ratio))
+            stats[f"{tag}_colnorm_ratio_mean"] = float(np.mean(ratio))
+            stats[f"{tag}_w_has_nan"] = bool(np.any(~np.isfinite(data)))
+        stats["blew_up"] = bool(any(stats[f"{t}_frac_at_cap"] > 0.02 or stats[f"{t}_w_has_nan"]
+                                    or stats[f"{t}_colnorm_ratio_max"] >= float(cfg.get("cap_mult", 8.0)) - 1e-6
+                                    for t in ("L0", "L1")))
+        return stats
 
     # ---- forward ----
     def _couple(self, m0):
@@ -471,7 +534,7 @@ def measure_read_cv(layer, drive_batch, lowcv):
 
 def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub, hidden, oracle_epochs, oracle_lr,
              oracle_batch, drive_pa, drive_pa2, n_steps, beta, feedback, kp_lr, kp_decay, couple_topk, task_kwargs,
-             margin_go, lowcv=None, decolle=False, verbose=True):
+             margin_go, lowcv=None, decolle=False, relax=None, verbose=True):
     (Xtr, ytr, _), (Xte, yte, _), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     n_in = Xtr.shape[1]; k = meta["k_classes"]; inh = idx["inh_idx"]
     srng = np.random.default_rng(seed * 13 + 1); keep = srng.permutation(len(Xtr))[:min(n_sub, len(Xtr))]
@@ -627,6 +690,46 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
         out["lowcv_directed_kp_codon"] = float(lcr["codon_heldout"] - lpe["codon_heldout"])
         ch.set_lowcv(None)                                               # restore OFF for the static checks below
 
+    # ============================================================================================================
+    # RELAXED-PLASTICITY arm table (ADDITIVE; only when --relax-plasticity). Re-runs the KEY arms
+    # {frozen, oracle(W^T ceiling), KP(transport-free), permuted} on the SAME reservoir + SAME task split + SAME
+    # anti-cheats, but with the LOOSENED apply_dW (SIGNED weights + NO renorm-to-init, loose cap; see
+    # ChainLayer.configure_relax). The READ is UNCHANGED, so the inter-layer coupling calibrated on the frozen
+    # reservoir still holds (reused; no recalibration). DECISIVE READ: does directed = oracle - permuted go clearly
+    # POSITIVE with relaxed plasticity? YES => root cause (b): the plasticity constraint WAS the wall -- relaxing it
+    # lets DIRECTED credit reshape the deep layer (the substrate change IS the surpass). STILL ~0 => root cause (a):
+    # the deep layer is reservoir-REDUNDANT -- the readout free-rides regardless of plasticity, so the surpass must be
+    # a bottleneck ARCHITECTURE (a deep layer the readout MUST route through), not a plasticity change. Weight blow-up
+    # is REPORTED per arm (relax_weight_stats). Byte-identical when relax is None: skipped, no relax_* key (asserted).
+    # ============================================================================================================
+    if relax is not None:
+        ch.set_relax(relax); ch.restore_frozen()
+        rfz, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)          # FROZEN (== main frozen; lr_ff=0 -> apply_dW never called)
+        ch.restore_frozen()
+        ch.train(drive0_b, pre0_b, yb, k, epochs, lr_ff, lr_out, seed, mode="credit")
+        rcr, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)          # KP transport-free credit (RELAXED plasticity)
+        rcr_stats = ch.relax_weight_stats()                             # blow-up telemetry for the KP arm
+        ch.restore_frozen()
+        ch.train(drive0_b, pre0_b, yperm, k, epochs, lr_ff, lr_out, seed, mode="credit")
+        rpe, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)          # PERMUTED (RELAXED plasticity)
+        ch.restore_frozen()
+        ch.train(drive0_b, pre0_b, yb, k, epochs, lr_ff, lr_out, seed, mode="oracle")
+        rorc, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)         # ORACLE W^T ceiling (RELAXED plasticity)
+        rorc_stats = ch.relax_weight_stats()                           # blow-up telemetry for the oracle arm
+        out["relax_config"] = dict(relax)
+        out["relax_reproducibility"] = _chain_reproducibility(ch, drive0_b)
+        for tag, dd in (("frozen", rfz), ("credit", rcr), ("permuted", rpe), ("oracle", rorc)):
+            out[f"relax_{tag}_graded_heldout"] = dd["graded_heldout"]
+            out[f"relax_{tag}_codon_heldout"] = dd["codon_heldout"]
+        out["relax_directed_oracle_graded"] = float(rorc["graded_heldout"] - rpe["graded_heldout"])
+        out["relax_directed_kp_graded"] = float(rcr["graded_heldout"] - rpe["graded_heldout"])
+        out["relax_directed_oracle_codon"] = float(rorc["codon_heldout"] - rpe["codon_heldout"])
+        out["relax_directed_kp_codon"] = float(rcr["codon_heldout"] - rpe["codon_heldout"])
+        out["relax_weight_stats_kp"] = rcr_stats
+        out["relax_weight_stats_oracle"] = rorc_stats
+        out["relax_blew_up"] = bool(rcr_stats["blew_up"] or rorc_stats["blew_up"])
+        ch.set_relax(None); ch.restore_frozen()                         # restore OFF for the static/decolle checks below
+
     # ---- ANTI-CHEAT: NO-TRANSPORT (code, docstrings stripped) -- per layer / per feedback ----
     tsig = set(inspect.signature(MultiHopChain.train).parameters)
     kp_fn = SigmaPrimeCreditExpander._kp_update
@@ -754,8 +857,24 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
             print(f"    [DIRECTED oracle-perm]  CURRENT {out['directed_oracle_graded']:+.3f}  ->  LOWCV "
                   f"{out['lowcv_directed_oracle_graded']:+.3f}   (did the lower-CV read surface directed credit?)",
                   flush=True)
+        if relax is not None and "relax_directed_oracle_graded" in out:
+            ks = out["relax_weight_stats_kp"]; os_ = out["relax_weight_stats_oracle"]
+            print(f"    [RELAX graded]  frozen {out['relax_frozen_graded_heldout']:.3f} permuted "
+                  f"{out['relax_permuted_graded_heldout']:.3f} KP {out['relax_credit_graded_heldout']:.3f} ORACLE "
+                  f"{out['relax_oracle_graded_heldout']:.3f} || directed: oracle-perm "
+                  f"{out['relax_directed_oracle_graded']:+.3f} KP-perm {out['relax_directed_kp_graded']:+.3f} "
+                  f"(reprod {out['relax_reproducibility']:.3f})", flush=True)
+            print(f"    [RELAX weights] KP L0 negfrac {ks['L0_frac_negative']:.2f} colnorm x{ks['L0_colnorm_ratio_max']:.2f} "
+                  f"capfrac {ks['L0_frac_at_cap']:.3f} | ORACLE L0 negfrac {os_['L0_frac_negative']:.2f} colnorm "
+                  f"x{os_['L0_colnorm_ratio_max']:.2f} capfrac {os_['L0_frac_at_cap']:.3f} | BLEW_UP {out['relax_blew_up']}",
+                  flush=True)
+            print(f"    [DIRECTED oracle-perm]  CURRENT {out['directed_oracle_graded']:+.3f}  ->  RELAX "
+                  f"{out['relax_directed_oracle_graded']:+.3f}   (did relaxing the plasticity give directed purchase? "
+                  f"YES=>root cause b, ~0=>root cause a)", flush=True)
     if not decolle:                                                     # byte-identical-when-off: DECOLLE writes NOTHING
         assert not any(str(kk).startswith("decolle_") for kk in out), "byte-identical-off VIOLATED: decolle_* key leaked"
+    if relax is None:                                                   # byte-identical-when-off: RELAX writes NOTHING
+        assert not any(str(kk).startswith("relax_") for kk in out), "byte-identical-off VIOLATED: relax_* key leaked"
     return out
 
 
@@ -805,6 +924,21 @@ def main():
                     help="ADD the DECOLLE per-layer LOCAL-readout arm (Kaiser 2020): each plastic layer gets a "
                          "fixed-random local readout + local loss, trained transport-free with NO top-down credit. "
                          "Decisive vs frozen/permuted/top-down-oracle, PER LAYER + final. OFF => byte-identical.")
+    # ---- RELAXED PLASTICITY arm (additive, default OFF -> byte-identical). Isolates the 2026-08-02 located wall's TWO
+    #      remaining root causes: (b) the constrained apply_dW (max(0) excitatory clamp + L2-renorm-to-init) is too
+    #      constrained to reshape the deep layer, vs (a) the deep layer is reservoir-REDUNDANT (readout free-rides).
+    #      Loosens apply_dW to SIGNED weights + a loose norm CAP (no renorm-to-init) and re-runs the oracle isolation. ----
+    ap.add_argument("--relax-plasticity", action="store_true",
+                    help="ADD a relaxed-plasticity arm table {frozen,oracle,KP,permuted} with SIGNED weights + no "
+                         "renorm-to-init (loose cap) apply_dW, on the SAME reservoir/task/anti-cheats. Decisive: does "
+                         "directed=oracle-permuted go POSITIVE? YES=>root cause b (plasticity was the wall), ~0=>root "
+                         "cause a (deep layer reservoir-redundant). Reports weight blow-up. OFF => byte-identical.")
+    ap.add_argument("--relax-signed", type=int, default=1,
+                    help="1 => two-sided weights (drop the max(0) excitatory clamp); 0 => keep excitatory-only (isolate the renorm axis)")
+    ap.add_argument("--relax-w-abs-cap", type=float, default=10.0,
+                    help="per-synapse magnitude clip for the relaxed rule (numeric safety net; ~29x the ~0.35 init weight)")
+    ap.add_argument("--relax-cap-mult", type=float, default=8.0,
+                    help="per-column norm may grow up to this x the INIT norm before being pulled down (0 => no norm cap, per-syn clip only)")
     ap.add_argument("--lowcv-read", action="store_true",
                     help="ADD a lower-CV read arm table {frozen,oracle,KP,permuted} + the read-CV before/after; OFF => byte-identical")
     ap.add_argument("--lowcv-nsteps", type=int, default=60, help="integration steps for the lowcv read (>= --n-steps)")
@@ -824,6 +958,9 @@ def main():
                      elig_tau=float(a.lowcv_elig_tau), ensemble=int(a.lowcv_ensemble),
                      margin_hi=int(a.lowcv_margin_hi), beta=float(a.lowcv_beta))
     decolle = bool(a.decolle)
+    relax = None
+    if a.relax_plasticity:
+        relax = dict(signed=bool(a.relax_signed), w_abs_cap=float(a.relax_w_abs_cap), cap_mult=float(a.relax_cap_mult))
     task_kwargs = dict(n_super=a.n_super, n_members=a.n_members, held_per_super=a.held_per_super, n_prop=a.n_prop,
                        member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise)
     t0 = time.time(); per = []; err = None
@@ -832,7 +969,7 @@ def main():
             per.append(run_seed(s, a.n_col, a.n_col2, a.epochs, a.lr_ff, a.lr_out, a.w0, a.jitter, a.k_th, a.n_sub,
                                 a.hidden, a.oracle_epochs, a.oracle_lr, a.oracle_batch, a.drive_pa, a.drive_pa2,
                                 a.n_steps, a.beta, a.feedback, a.kp_lr, a.kp_decay, a.couple_topk, task_kwargs,
-                                a.margin_go, lowcv=lowcv, decolle=decolle))
+                                a.margin_go, lowcv=lowcv, decolle=decolle, relax=relax))
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
@@ -842,7 +979,7 @@ def main():
                           "lr_out": a.lr_out, "beta": a.beta, "feedback": a.feedback, "kp_lr": a.kp_lr,
                           "kp_decay": a.kp_decay, "couple_topk": a.couple_topk, "drive_pa": a.drive_pa,
                           "drive_pa2": a.drive_pa2, "n_steps": a.n_steps, "task": task_kwargs,
-                          "margin_go": a.margin_go, "lowcv": lowcv},
+                          "margin_go": a.margin_go, "lowcv": lowcv, "relax": relax},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
     if err is None and per:
         def _m(kk):
@@ -928,6 +1065,42 @@ def main():
                 lagg["lowcv_verdict"] = ("DEEPER REDESIGN -- the lower-CV read does NOT make oracle beat permuted "
                                          "(oracle still ~ permuted); the wall is not read-CV (task/read redesign needed)")
             summary["lowcv_aggregate"] = lagg
+        # ---- RELAXED-PLASTICITY aggregate (only when --relax-plasticity): the decisive current-vs-relaxed isolation.
+        #      root cause (b) = relaxing apply_dW gives DIRECTED purchase (oracle-permuted > margin); root cause (a) =
+        #      it stays ~0 (deep layer reservoir-redundant, readout free-rides). Reports weight blow-up. ----
+        if relax is not None and all("relax_directed_oracle_graded" in p for p in per):
+            rkeys = ["relax_frozen_graded_heldout", "relax_credit_graded_heldout", "relax_permuted_graded_heldout",
+                     "relax_oracle_graded_heldout", "relax_directed_oracle_graded", "relax_directed_kp_graded",
+                     "relax_directed_oracle_codon", "relax_directed_kp_codon", "relax_reproducibility"]
+            ragg = {kk: _m(kk) for kk in rkeys}
+            ragg["current_directed_oracle_graded"] = agg["directed_oracle_graded"]
+            ragg["current_directed_kp_graded"] = agg["directed_kp_graded"]
+            ragg["relax_oracle_L0_negfrac_mean"] = float(np.mean([p["relax_weight_stats_oracle"]["L0_frac_negative"] for p in per]))
+            ragg["relax_oracle_L0_colnorm_ratio_max"] = float(np.max([p["relax_weight_stats_oracle"]["L0_colnorm_ratio_max"] for p in per]))
+            ragg["relax_oracle_L0_frac_at_cap_max"] = float(np.max([p["relax_weight_stats_oracle"]["L0_frac_at_cap"] for p in per]))
+            ragg["relax_kp_L0_colnorm_ratio_max"] = float(np.max([p["relax_weight_stats_kp"]["L0_colnorm_ratio_max"] for p in per]))
+            ragg["relax_any_blew_up"] = bool(any(p["relax_blew_up"] for p in per))
+            ragg["relax_any_nan"] = bool(any(p["relax_weight_stats_oracle"][f"{t}_w_has_nan"]
+                                             or p["relax_weight_stats_kp"][f"{t}_w_has_nan"]
+                                             for p in per for t in ("L0", "L1")))
+            ro_dir = ragg["relax_directed_oracle_graded"]; cur_dir = agg["directed_oracle_graded"]
+            ragg["relax_oracle_directed_positive"] = sum(1 for p in per if p["relax_directed_oracle_graded"] > a.margin_go)
+            ragg["relax_kp_directed_positive"] = sum(1 for p in per if p["relax_directed_kp_graded"] > a.margin_go)
+            if ro_dir > a.margin_go:
+                ragg["relax_verdict"] = ("ROOT CAUSE (b) -- relaxing the plasticity makes the W^T oracle beat permuted "
+                                         "(directed credit reshapes the deep layer); the plasticity constraint WAS the "
+                                         "wall. The substrate change is the surpass" + (" [BLEW UP -- retighten the cap and re-verify]"
+                                         if ragg["relax_any_blew_up"] else ""))
+            elif ro_dir > cur_dir + 0.02:
+                ragg["relax_verdict"] = ("PARTIAL -- relaxing plasticity moves oracle-permuted upward but not past the "
+                                         "margin; a looser cap / more epochs may be needed" + (" [BLEW UP]" if ragg["relax_any_blew_up"] else ""))
+            else:
+                ragg["relax_verdict"] = ("ROOT CAUSE (a) -- relaxing the plasticity does NOT give directed purchase "
+                                         "(oracle still ~ permuted): the deep layer is reservoir-REDUNDANT, the readout "
+                                         "free-rides regardless of plasticity => the surpass must be a bottleneck "
+                                         "ARCHITECTURE (a deep layer the readout MUST route through), not a plasticity change"
+                                         + (" [note: weights BLEW UP -- inconclusive, retighten cap]" if ragg["relax_any_blew_up"] else ""))
+            summary["relax_aggregate"] = ragg
         # ---- DECOLLE aggregate (only when --decolle): per-layer + FINAL directed lift vs the top-down oracle/KP ----
         if decolle and all("decolle_final_graded_heldout" in p for p in per):
             dk = ["decolle_L0_graded_heldout", "decolle_L1_graded_heldout", "decolle_frozen_L0_graded_heldout",
@@ -1020,6 +1193,21 @@ def main():
                   f"-> LOWCV {la['lowcv_directed_oracle_graded']:+.3f} ({la['lowcv_oracle_directed_positive']}/"
                   f"{ag['n_seeds']}>margin) | KP-perm LOWCV {la['lowcv_directed_kp_graded']:+.3f}", flush=True)
             print(f"[LOWCV | {task_lbl}] VERDICT => {la['lowcv_verdict']}", flush=True)
+        if "relax_aggregate" in summary:
+            ra = summary["relax_aggregate"]
+            print("-" * 100, flush=True)
+            print(f"[RELAX | {task_lbl}] graded heldout means -- frozen {ra['relax_frozen_graded_heldout']:.3f} | "
+                  f"permuted {ra['relax_permuted_graded_heldout']:.3f} | KP {ra['relax_credit_graded_heldout']:.3f} | "
+                  f"ORACLE(W^T) {ra['relax_oracle_graded_heldout']:.3f} | reprod {ra['relax_reproducibility']:.3f}", flush=True)
+            print(f"[RELAX | {task_lbl}] DIRECTED oracle-permuted: CURRENT {ra['current_directed_oracle_graded']:+.3f} "
+                  f"-> RELAX {ra['relax_directed_oracle_graded']:+.3f} ({ra['relax_oracle_directed_positive']}/"
+                  f"{ag['n_seeds']}>margin) | KP-perm RELAX {ra['relax_directed_kp_graded']:+.3f} "
+                  f"({ra['relax_kp_directed_positive']}/{ag['n_seeds']}>margin)", flush=True)
+            print(f"[RELAX | {task_lbl}] weights (ORACLE arm, deep L0): negfrac {ra['relax_oracle_L0_negfrac_mean']:.2f} | "
+                  f"colnorm ratio max x{ra['relax_oracle_L0_colnorm_ratio_max']:.2f} | frac_at_cap max "
+                  f"{ra['relax_oracle_L0_frac_at_cap_max']:.3f} | BLEW_UP {ra['relax_any_blew_up']} NaN {ra['relax_any_nan']}",
+                  flush=True)
+            print(f"[RELAX | {task_lbl}] VERDICT => {ra['relax_verdict']}", flush=True)
         if "decolle_aggregate" in summary:
             da = summary["decolle_aggregate"]
             print("-" * 100, flush=True)
