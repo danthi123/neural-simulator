@@ -94,6 +94,11 @@ if _REPO not in sys.path:
 # reuse-by-import: the project's REAL deployed front end + backend helpers (NO sim/ edit)
 from sim.visual_cortex import apply_v1_gabor_weights, image_to_retina_drive  # noqa: E402
 from sim.backend import get_backend, to_host  # noqa: E402
+# reuse-by-import: the Földiák (1991) trace / temporal-continuity hyper-parameters (bout_len, trace_decay)
+# + the mechanism the --trace-rule mode ports here (EMERGE-50). NO sim/ edit; the mode is default-OFF.
+from research.runners._emerge50_trace_rule_derisk import (  # noqa: E402
+    BOUT_LEN as _TRACE_BOUT_LEN, TRACE_DECAY as _TRACE_DECAY,
+)
 
 REGIONS_READ = ["cortex_v1_complex", "cortex_v2", "cortex_it"]
 _V_REST = -65.0   # Izhikevich resting potential; depolarization above this = graded response
@@ -399,6 +404,75 @@ def train_v2it(bridge, xp, idxmap, N, images, cat_labels, a):
 
 
 # ============================================================================
+# 4b. FÖLDIÁK (1991) TRACE / temporal-continuity training curriculum (--trace-rule, default OFF).
+#   Ports the EMERGE-50 mechanism (research/runners/_emerge50_trace_rule_derisk.py) to this on-bridge
+#   DiCarlo harness. Instead of blank-separated random scenes, each category's object is presented across
+#   a SEQUENCE of NEARBY retinal positions in a contiguous BOUT, with NO blank between within-bout scenes,
+#   so the SUBSTRATE's own STDP pre-synaptic trace (the biological eligibility trace) carries the
+#   V1_complex pre-activity across positions; a host-side slow-decaying retinal-DRIVE trace additionally
+#   smooths the pre-activity over the bout. STDP potentiation then binds V2/IT columns to the POSITION-
+#   INVARIANT category identity (invariance learned from temporal continuity, the DiCarlo/Földiák claim).
+#   The blank BETWEEN bouts resets the trace (bout boundary), exactly like EMERGE-50 resets each pass.
+# ============================================================================
+def _build_trace_bouts(images, cat_labels, pos_labels, a, epoch, shuffle_temporal):
+    """Return a list of bouts (each a list of image indices). GROUPED (default) = each bout is one
+    category swept across NEARBY positions (position-sorted -> a smooth spatial trajectory) so the
+    decaying trace links the SAME category across positions. SHUFFLED-TEMPORAL (the LOAD-BEARING control)
+    = the SAME bout structure (count, length, between-bout blanking, trace) but each bout is a RANDOM mix
+    of categories/positions -> consecutive scenes are NOT same-category-nearby-position -> the trace can
+    no longer bind a category across positions. The ONLY difference is within-bout ORDER/composition, so
+    a trace benefit that survives here (but collapses under shuffle) proves temporal continuity did it."""
+    rng = np.random.default_rng(a.seed_base * 131 + epoch)
+    n_img = images.shape[0]
+    n_bouts = max(1, int(math.ceil(n_img / max(1, a.bout_len))))
+    if shuffle_temporal:
+        allidx = rng.permutation(n_img)
+        bouts, ptr = [], 0
+        for _ in range(n_bouts):
+            bouts.append([int(allidx[(ptr + j) % n_img]) for j in range(min(a.bout_len, n_img))])
+            ptr += a.bout_len
+        return bouts
+    n_cat = a.n_categories
+    by_cat = {c: np.where(cat_labels == c)[0] for c in range(n_cat)}
+    bouts = []
+    for _ in range(n_bouts):
+        c = int(rng.integers(n_cat))
+        idxs = by_cat[c]
+        if idxs.size == 0:
+            continue
+        seq = idxs[np.argsort(pos_labels[idxs], kind="stable")]   # nearby-position trajectory for cat c
+        start = int(rng.integers(len(seq)))
+        bouts.append([int(seq[(start + j) % len(seq)]) for j in range(min(a.bout_len, len(seq)))])
+    return bouts
+
+
+def train_v2it_trace(bridge, xp, idxmap, N, images, cat_labels, pos_labels, a, shuffle_temporal=False):
+    """Földiák temporal-continuity curriculum (see 4b). Records first-scene per-stage firing (diagnostic)."""
+    diag = {r: 0 for r in ["retina", "cortex_v1_simple", "cortex_v1_complex", "cortex_v2", "cortex_it"]}
+    n_retina = 2 * a.image_size * a.image_size
+    first = True
+    for ep in range(a.train_epochs):
+        bouts = _build_trace_bouts(images, cat_labels, pos_labels, a, ep, shuffle_temporal)
+        for bout in bouts:
+            _blank(bridge, xp, N, a.settle_steps)                 # blank BETWEEN bouts -> reset the trace
+            drive_trace = np.zeros(n_retina, np.float32)          # host eligibility trace over retinal drive
+            for k in bout:
+                cur = image_to_retina_drive(images[k], drive_max_pA=float(a.drive))
+                drive_trace = np.clip(drive_trace * a.trace_decay + cur, 0.0, float(a.drive))
+                _set_input(bridge, xp, N, idxmap["retina"], drive_trace)
+                for _ in range(a.scene_steps):
+                    bridge._run_one_simulation_step()             # NO within-bout blank -> substrate trace carries
+                    if first:
+                        fs = np.asarray(to_host(bridge.cp_firing_states)).astype(np.int64)
+                        for r in diag:
+                            diag[r] += int(fs[idxmap[r]].sum())
+                first = False
+    bridge.cp_external_input_current[:] = xp.asarray(np.zeros(N, np.float32)) if xp is not None \
+        else np.zeros(N, np.float32)
+    return diag
+
+
+# ============================================================================
 # 5. Metric suite for one code-set (spike codes), per region.
 # ============================================================================
 def region_metrics(train_codes, train_cat, held_codes, held_cat, held_images,
@@ -487,8 +561,8 @@ def run_seed(seed, a):
         "position split degenerate -- increase image_size or reduce positions/bar_len_frac"
 
     # --- build the three test sets (identity DECOUPLED from position; held positions are held out) ---
-    train_imgs, train_cat, _ = build_object_set(categories_theta, train_positions, a.n_ex,
-                                                 a.image_size, a.bar_len_frac, seed * 101 + 1)
+    train_imgs, train_cat, train_pos = build_object_set(categories_theta, train_positions, a.n_ex,
+                                                        a.image_size, a.bar_len_frac, seed * 101 + 1)
     held_imgs, held_cat, _ = build_object_set(categories_theta, held_positions, a.n_ex,
                                               a.image_size, a.bar_len_frac, seed * 101 + 2)
     scr_imgs = scramble_images(held_imgs, seed * 101 + 3)
@@ -515,7 +589,11 @@ def run_seed(seed, a):
     out["n_neurons_total"] = N
     out["n_gabor_synapses"] = int(n_gabor)
 
-    diag = train_v2it(bt, xp, idxmap, N, train_imgs, train_cat, a)
+    if a.trace_rule:
+        diag = train_v2it_trace(bt, xp, idxmap, N, train_imgs, train_cat, train_pos, a,
+                                shuffle_temporal=False)
+    else:
+        diag = train_v2it(bt, xp, idxmap, N, train_imgs, train_cat, a)
     out["train_firing_diag_first_scene"] = diag
 
     tr_spk, tr_dep = read_set(bt, xp, idxmap, N, train_imgs, a)
@@ -587,6 +665,32 @@ def run_seed(seed, a):
     out["no_learning"] = frozen_metrics
     del bf
 
+    # ===== ARM: SHUFFLED-TEMPORAL (--trace-rule only; the LOAD-BEARING domain dissociation) =====
+    # Same trace MECHANISM (bouts, between-bout blank, decaying drive trace, STDP on) but within-bout
+    # ORDER randomized so the trace can no longer bind a category across nearby positions. If the trace
+    # benefit is real (temporal continuity, not just "more training"), IT here collapses toward V1/frozen.
+    if a.trace_rule:
+        bsh, idxmap_sh, _ = build_visual_bridge(seed, a, learn=True)
+        Nsh = int(bsh.cp_firing_states.shape[0])
+        train_v2it_trace(bsh, xp, idxmap_sh, Nsh, train_imgs, train_cat, train_pos, a,
+                         shuffle_temporal=True)
+        tr_spk_sh, tr_dep_sh = read_set(bsh, xp, idxmap_sh, Nsh, train_imgs, a)
+        hd_spk_sh, hd_dep_sh = read_set(bsh, xp, idxmap_sh, Nsh, held_imgs, a)
+        sc_spk_sh, sc_dep_sh = read_set(bsh, xp, idxmap_sh, Nsh, scr_imgs, a)
+
+        def pick_sh(spk, dep, r):
+            return spk[r] if read_mode[r] == "spikes" else dep[r]
+
+        shuffled_metrics = {}
+        for r in REGIONS_READ:
+            m = region_metrics(pick_sh(tr_spk_sh, tr_dep_sh, r), train_cat,
+                               pick_sh(hd_spk_sh, hd_dep_sh, r), held_cat, held_imgs,
+                               pick_sh(sc_spk_sh, sc_dep_sh, r), scr_cat, scr_imgs, n_cat)
+            m["read_mode"] = read_mode[r]
+            shuffled_metrics[r] = m
+        out["shuffled_temporal"] = shuffled_metrics
+        del bsh
+
     # ========================= per-seed VALIDATE / RETIRE decision =========================
     # A LEARNED stage (V2 or IT) VALIDATES if it develops position-invariant category codes beating the
     # retinotopic V1_complex AND a frozen counterpart, with lesion/scramble/RSA collapsing. VALIDATE =
@@ -610,6 +714,22 @@ def run_seed(seed, a):
 
     out["decision"] = dict(
         it_stage=it_check, v2_stage=v2_check, it_fires=it_fires, v2_fires=v2_fires, verdict=verdict)
+
+    # --- TRACE-RULE GO gate (only when --trace-rule): the base DiCarlo validate for IT (invariance above
+    # chance, adds over V1_complex AND frozen IT, per-image scramble collapses, RSA tracks pixels, lesion
+    # collapses) PLUS the domain dissociation: IT must beat the SHUFFLED-TEMPORAL arm by add_delta (i.e.
+    # temporal continuity, not extra training, produced the position-invariant code). ---
+    if a.trace_rule:
+        sh_it = out["shuffled_temporal"]["cortex_it"]["heldpos_decode"]
+        beats_shuffled = bool(it_t["heldpos_decode"] >= sh_it + a.add_delta)
+        trace_go = bool(it_check["validate"] and beats_shuffled and it_fires)
+        out["decision"]["shuffled_temporal_it_heldpos_decode"] = round(float(sh_it), 4)
+        out["decision"]["trace_beats_shuffled"] = beats_shuffled
+        out["decision"]["trace_go"] = trace_go
+        out["decision"]["verdict"] = "TRACE-GO" if trace_go else "TRACE-NOGO"
+        print(f"  [seed {seed}] TRACE-RULE: IT heldpos {it_t['heldpos_decode']:.2f} vs shuffled-temporal "
+              f"{sh_it:.2f} (beats+{a.add_delta}={beats_shuffled}); base-validate {it_check['validate']}; "
+              f"IT fires {it_fires} ==> {'TRACE-GO' if trace_go else 'TRACE-NOGO'}", flush=True)
     print(f"  [seed {seed}] heldpos-decode(train->held pos): IT {it_t['heldpos_decode']:.2f}"
           f"[{read_mode['cortex_it']}] | V2 {trained_metrics['cortex_v2']['heldpos_decode']:.2f}"
           f"[{read_mode['cortex_v2']}] | V1_complex {v1_t['heldpos_decode']:.2f} | frozen-IT "
@@ -661,6 +781,20 @@ def main():
     p.add_argument("--dt", type=float, default=1.0)
     p.add_argument("--stdp-w-max", type=float, default=6.0)
     p.add_argument("--enable-ou", action="store_true", help="OU background noise (default OFF for clean reads)")
+    # --- FÖLDIÁK TRACE / temporal-continuity training mode (default OFF -> byte-identical to the base run) ---
+    p.add_argument("--trace-rule", action="store_true",
+                   help="Földiák (1991) temporal-continuity curriculum (ports EMERGE-50): present each "
+                        "category across a SEQUENCE of NEARBY retinal positions in contiguous bouts (no "
+                        "within-bout blank -> the substrate STDP pre-trace carries across positions) with a "
+                        "slow-decaying retinal-DRIVE eligibility trace over V1_complex pre-activity fed into "
+                        "STDP potentiation, so V2/IT learn POSITION-INVARIANT category codes from temporal "
+                        "continuity. Adds the SHUFFLED-TEMPORAL control arm + a TRACE-GO/NOGO verdict.")
+    p.add_argument("--bout-len", type=int, default=_TRACE_BOUT_LEN,
+                   help="temporal-grouping window: # consecutive same-category nearby-position scenes per "
+                        "bout (reuse-by-import: EMERGE-50 default)")
+    p.add_argument("--trace-decay", type=float, default=_TRACE_DECAY,
+                   help="slow eligibility-trace decay on the retinal drive across a bout "
+                        "(reuse-by-import: EMERGE-50 default)")
     # verdict thresholds (recorded)
     p.add_argument("--inert-floor", type=float, default=0.02,
                    help="IT mean spikes/neuron below this = inert")
@@ -741,6 +875,31 @@ def main():
             "(standardize grounding on the V1->pooler codon)."),
         knobs=vars(a),
     )
+
+    # --- TRACE-RULE summary + GO gate (only when --trace-rule) ---
+    if a.trace_rule:
+        trace_go_flags = [bool(r["decision"].get("trace_go", False)) for r in rows]
+        sh_heldpos = col(lambda r: r["shuffled_temporal"]["cortex_it"]["heldpos_decode"])
+        n_trace_go = sum(trace_go_flags)
+        if n_trace_go == len(rows):
+            trace_overall = "TRACE-GO"
+        elif n_trace_go == 0:
+            trace_overall = "TRACE-NOGO"
+        else:
+            trace_overall = f"TRACE-PARTIAL-{n_trace_go}/{len(rows)}"
+        summary["trace_rule"] = dict(
+            enabled=True, bout_len=a.bout_len, trace_decay=a.trace_decay,
+            trace_overall=trace_overall, per_seed_trace_go=trace_go_flags, n_trace_go=n_trace_go,
+            it_heldpos_decode_mean=round(float(np.mean(it_heldpos)), 4),
+            shuffled_temporal_it_heldpos_decode_mean=round(float(np.mean(sh_heldpos)), 4),
+            go_gate=("TRACE-GO (all seeds) requires, per seed: trained IT (via the Földiák temporal-"
+                     "continuity curriculum) heldpos-decode >= chance+decode_margin AND >= V1_complex"
+                     "+add_delta AND >= frozen-IT+add_delta AND per-image scramble collapses AND RSA "
+                     "tracks pixels AND the v1c->v2 lesion collapses it (the base DiCarlo validate) AND "
+                     ">= SHUFFLED-TEMPORAL IT+add_delta (temporal continuity, not extra training, did it) "
+                     "AND IT fires above inert_floor."),
+        )
+
     out = dict(summary=summary, per_seed=rows)
     outp = os.path.join(_REPO, a.out)
     os.makedirs(os.path.dirname(outp), exist_ok=True)
@@ -751,7 +910,10 @@ def main():
     print(json.dumps(summary, indent=2, default=str))
     print(f"{'='*100}")
     print(f"[written] {outp}\nTotal elapsed: {time.time()-t0:.1f}s", flush=True)
-    # exit code: 0 VALIDATE, 1 RETIRE, 2 anything in between (honest tri-state)
+    # exit code (honest tri-state). --trace-rule: 0 TRACE-GO, 1 TRACE-NOGO, 2 partial. Base run: 0
+    # VALIDATE, 1 RETIRE, 2 in between.
+    if a.trace_rule:
+        raise SystemExit(0 if trace_overall == "TRACE-GO" else (1 if trace_overall == "TRACE-NOGO" else 2))
     raise SystemExit(0 if overall == "VALIDATE" else (1 if overall in ("RETIRE", "RETIRE-MAJORITY") else 2))
 
 
