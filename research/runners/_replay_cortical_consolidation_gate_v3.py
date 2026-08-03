@@ -139,16 +139,23 @@ def validate_phase(phase: str) -> str:
     return checked
 
 
+def validate_calibration_seed(seed: int) -> int:
+    checked = int(seed)
+    if checked not in CALIBRATION_SEEDS:
+        raise ValueError(
+            f"This bounded v3 runner accepts individual fresh calibration seeds "
+            f"from {CALIBRATION_SEEDS} only; refusing reserved seed {checked}."
+        )
+    return checked
+
+
 def validate_calibration_seeds(seeds: Iterable[int]) -> tuple[int, ...]:
     checked = tuple(int(seed) for seed in seeds)
-    invalid = [seed for seed in checked if seed not in CALIBRATION_SEEDS]
-    if invalid:
+    if checked != CALIBRATION_SEEDS:
         raise ValueError(
-            f"This bounded v3 runner accepts fresh calibration seeds "
-            f"{CALIBRATION_SEEDS} only; refusing reserved seeds {invalid}."
+            f"Calibration requires the exact ordered fresh calibration seed partition "
+            f"{CALIBRATION_SEEDS}; refusing {checked}."
         )
-    if not checked:
-        raise ValueError("At least one calibration seed is required.")
     return checked
 
 
@@ -646,7 +653,7 @@ def run_condition(
     if smoke:
         validate_smoke_seed(seed)
     else:
-        validate_calibration_seeds([seed])
+        validate_calibration_seed(seed)
     cfg = config or GateConfig()
     bridge, handles = build_bridge(seed, cfg)
     bridge_ids = [id(bridge)]
@@ -929,7 +936,7 @@ def _calibration_verdict(conditions: dict[str, dict]) -> dict:
 
 
 def run_seed(seed: int, config: GateConfig | None = None) -> dict:
-    validate_calibration_seeds([seed])
+    validate_calibration_seed(seed)
     cfg = config or GateConfig()
     conditions = {condition: run_condition(seed, condition, cfg) for condition in CONDITIONS}
     verdict = _calibration_verdict(conditions)

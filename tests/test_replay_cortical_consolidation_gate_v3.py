@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
+os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 
 from research.runners import _replay_cortical_consolidation_gate_v3 as gate  # noqa: E402
 
@@ -22,17 +23,34 @@ def test_fresh_seed_policy_and_phase_lock_keep_reserved_work_untouched():
     )
     assert gate.validate_phase("calibration") == "calibration"
     assert gate.validate_calibration_seeds(gate.CALIBRATION_SEEDS) == gate.CALIBRATION_SEEDS
+    for seed in gate.CALIBRATION_SEEDS:
+        assert gate.validate_calibration_seed(seed) == seed
     assert gate.validate_smoke_seed(gate.SMOKE_SEED) == gate.SMOKE_SEED
     with pytest.raises(ValueError, match="opens.*calibration"):
         gate.validate_phase("development")
-    with pytest.raises(ValueError, match="fresh calibration seeds"):
-        gate.validate_calibration_seeds([gate.SMOKE_SEED])
-    for seed in gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS:
-        with pytest.raises(ValueError, match="fresh calibration seeds"):
-            gate.validate_calibration_seeds([seed])
+    for seed in (gate.SMOKE_SEED,) + gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS:
+        with pytest.raises(ValueError, match="individual fresh calibration seeds"):
+            gate.validate_calibration_seed(seed)
     for seed in gate.CALIBRATION_SEEDS + gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS:
         with pytest.raises(ValueError, match="non-scientific seed"):
             gate.validate_smoke_seed(seed)
+
+
+@pytest.mark.parametrize(
+    "seeds",
+    [
+        (),
+        (gate.CALIBRATION_SEEDS[0],),
+        (gate.CALIBRATION_SEEDS[1],),
+        (gate.CALIBRATION_SEEDS[0], gate.CALIBRATION_SEEDS[0]),
+        tuple(reversed(gate.CALIBRATION_SEEDS)),
+        (gate.SMOKE_SEED,) + gate.CALIBRATION_SEEDS,
+        gate.CALIBRATION_SEEDS + (gate.DEVELOPMENT_SEEDS[0],),
+    ],
+)
+def test_aggregate_calibration_requires_exact_ordered_seed_partition(seeds):
+    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
+        gate.validate_calibration_seeds(seeds)
 
 
 def test_cli_resolution_separates_smoke_from_every_scientific_partition():
@@ -53,12 +71,37 @@ def test_cli_resolution_separates_smoke_from_every_scientific_partition():
         )
     with pytest.raises(ValueError, match="requires --smoke"):
         gate.resolve_cli_request(smoke=False, phase="smoke", seeds=None)
-    with pytest.raises(ValueError, match="fresh calibration seeds"):
+    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
         gate.resolve_cli_request(
             smoke=False,
             phase="calibration",
             seeds=(gate.SMOKE_SEED,),
         )
+
+
+@pytest.mark.parametrize(
+    "seeds",
+    [
+        (gate.CALIBRATION_SEEDS[0],),
+        (gate.CALIBRATION_SEEDS[1],),
+        tuple(reversed(gate.CALIBRATION_SEEDS)),
+        (gate.CALIBRATION_SEEDS[0], gate.CALIBRATION_SEEDS[0]),
+    ],
+)
+def test_cli_rejects_incomplete_duplicate_or_reordered_calibration_partition(seeds):
+    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
+        gate.resolve_cli_request(smoke=False, phase="calibration", seeds=seeds)
+
+
+def test_run_calibration_rejects_partial_partition_before_running_seed(monkeypatch):
+    monkeypatch.setattr(
+        gate,
+        "run_seed",
+        lambda *_args, **_kwargs: pytest.fail("invalid aggregate must not run a seed"),
+    )
+
+    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
+        gate.run_calibration((gate.CALIBRATION_SEEDS[0],), gate.smoke_config())
 
 
 def test_smoke_payload_is_marked_non_scientific_and_skips_calibration_verdict(monkeypatch):
