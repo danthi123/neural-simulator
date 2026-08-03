@@ -32,7 +32,7 @@ program trying to grow one grounded, continuously learning conversational brain.
 |---|---|
 | Navigation and action | Spiking loops for visual/gridworld navigation, action selection, motor output, and reward learning exist. Treat older headline scores cautiously because several were later corrected. |
 | Simple conversation | The system can store simple facts, parse basic questions, answer from memory, and decline when no matching memory exists. This is narrow grounded dialogue, not open conversation. |
-| Language production | Bounded spiking speech paths and larger recurrent language experiments exist. Fluent open-ended language is still unfinished and partly scaffolded by conventional training. |
+| Language production | Bounded spiking speech paths and larger recurrent language experiments exist. A mature 267M-parameter WKV checkpoint now has six-seed RF spiking-forward parity under the current test. Fluent open-ended language is still unfinished and partly scaffolded by conventional training. |
 | Word and category learning | Local learning experiments show word-meaning structure, categories, taxonomies, inheritance, and exceptions at small scale. The strongest versions still need deeper sensory/action grounding. |
 | Memory and replay | Episodic memory, completion, replay, consolidation, and directional replay reading have substantial tested support. The production path still has database-like pieces to replace. |
 | Reward and value | Dopamine-like reward prediction and value signals are among the better grounded pieces. They can drive action learning and interact with other regions. |

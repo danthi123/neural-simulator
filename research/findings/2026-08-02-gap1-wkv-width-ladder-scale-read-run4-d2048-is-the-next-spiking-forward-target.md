@@ -9,9 +9,11 @@ artifacts:
   - research/findings/raw/wkv_spiking_forward/run3_rf_6seed.json
   - research/findings/raw/wkv_spiking_forward/run4_rf_2seed_cheap.json
   - research/findings/raw/wkv_spiking_forward/run4_rf_2seed_cheap.json.prov.json
+  - research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json
+  - research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json.prov.json
 ---
 
-# gap#1 WKV scale ladder: width still buys fluency, and run4 d2048 clears the cheap-first RF spiking-forward gate
+# gap#1 WKV scale ladder: width buys fluency, and run4 d2048 clears the six-seed RF spiking-forward gate
 
 <!--derived-->
 **One-line verdict.** The WKV scale ladder now has a clean CPU-side read from existing training logs: at the matched
@@ -20,9 +22,9 @@ artifacts:
 3.8213 / ppl 45.66 at 6.988B tokens, clearly ahead of `run3_d1024` best NLL 3.987 / ppl 53.89. This supports the
 board's current "scale the WKV cortex" frontier. These training-log measurements are captured in
 `research/findings/raw/wkv_spiking_forward/wkv_scale_ladder_run4_d2048_summary.json`. After the unsandboxed relaunch,
-the 267M run4 RF spiking-forward cheap-first gate also cleared 2/2 seeds on the RTX 3090: mean ppl_ratio
-0.9999999963, mean logit-fidelity Spearman 0.99999999997, max RF read error < 7.7e-6. The GPU-dependent next is now
-the six-seed promotion of the same checkpoint, not another 83M reproduction.
+the 267M run4 RF spiking-forward gate cleared the full six-seed promotion on the local RTX 3090: mean ppl_ratio
+0.9999999974, mean logit-fidelity Spearman 0.99999999997, max RF read error 7.66e-6. This promotes the 267M/d2048 WKV
+checkpoint as RF-spiking-forward faithful under the current parity test.
 
 ## What changed since the 2026-07-23 launch spec
 
@@ -79,22 +81,53 @@ Result: **GO 2/2**. Seed 42 had ANN ppl 26.810050 vs spiking ppl 26.810050, ppl_
 0.9999999984, logit-fidelity Spearman 0.999999999969, RF max read error 7.66e-6. Seed 43 had ANN ppl 38.286565 vs
 spiking ppl 38.286564, ppl_ratio 0.9999999941, logit-fidelity Spearman 0.999999999972, RF max read error 7.55e-6.
 
-## Exact next action
+## Run4 RF spiking-forward six-seed promotion
 
 <!--derived-->
-Promote the existing six-seed command, which is now actively running on the local RTX 3090:
+The six-seed promotion completed on the local RTX 3090:
 
 ```bash
-.venv/bin/python -m research.runners._wkv_spiking_forward_derisk --mode full --ckpt bridges/lmtrain/run4_d2048/ckpt/best.pt --backend rf-bridge --seeds 42 43 44 100 101 102 --n-windows 16 --nsteps 8 --block-size 256 --n-logit-pos 16 --out <run4_rf_6seed_output>
+.venv/bin/python -u -m research.runners._wkv_spiking_forward_derisk --mode full \
+  --ckpt bridges/lmtrain/run4_d2048/ckpt/best.pt --backend rf-bridge \
+  --seeds 42 43 44 100 101 102 --n-windows 16 --nsteps 8 \
+  --block-size 256 --n-logit-pos 16 \
+  --out research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json
 ```
 
 <!--derived-->
-Resource note: the previous Codex sandbox had no visible NVIDIA driver, but after relaunch `nvidia-smi` and CuPy both
-see the RTX 3090 and the RF-bridge runner is using it.
+Result: **GO 6/6**.
+
+<!--derived-->
+| metric | result |
+|---|---:|
+| checkpoint params | 266.98M |
+| seeds | 6 |
+| windows per seed | 16 |
+| mean ppl ratio | 0.9999999974 |
+| mean logit-fidelity Spearman | 0.99999999997 |
+| max RF read error | 7.66e-6 |
+| elapsed | 9166.4 s |
+
+<!--derived-->
+Per seed:
+
+| seed | ANN ppl | RF-spiking ppl | ppl ratio | logit Spearman | RF max read error |
+|---:|---:|---:|---:|---:|---:|
+| 42 | 31.481553 | 31.481553 | 1.0000000010 | 0.999999999969 | 7.60e-6 |
+| 43 | 39.232326 | 39.232325 | 0.9999999897 | 0.999999999971 | 7.47e-6 |
+| 44 | 35.538272 | 35.538272 | 1.0000000066 | 0.999999999972 | 7.33e-6 |
+| 100 | 40.171848 | 40.171848 | 0.9999999966 | 0.999999999971 | 7.42e-6 |
+| 101 | 30.749478 | 30.749478 | 0.9999999902 | 0.999999999971 | 7.47e-6 |
+| 102 | 35.441583 | 35.441583 | 1.0000000007 | 0.999999999971 | 7.66e-6 |
 
 ## Honest scope
 
 <!--derived-->
-This finding claims only the two-seed cheap-first run4 RF spiking-forward GO. It does not claim six-seed promotion
-until the `run4_rf_6seed` artifact exists and validates. The 83M port is already landed; the next real information is
-whether the same RF spiking-graded-read conversion holds robustly at 267M/d2048 across six seeds.
+This finding claims RF-spiking-forward parity for the mature 267M/d2048 WKV checkpoint under the current readout
+fidelity test. It does not claim the language system is grounded, conversationally sufficient, or learned by a
+biological local rule. The checkpoint is still trained by conventional sequence training; the RF bridge result says the
+forward computation can be carried through the RF/spiking read path without measurable degradation.
+
+The next language-frontier step is not another RF parity repeat. It is to use this larger faithful language-circuit
+scaffold inside the grounded speech-action plan while continuing to burn down corpus-training and host-side phrasing
+scaffolds.

@@ -8,18 +8,17 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT — 2026-08-03 00:26 EDT (read first; below this is history)
+## STATE OF THE PROJECT — 2026-08-03 01:02 EDT (read first; below this is history)
 
 **Public documentation realigned:** `README.md`, `ROADMAP.md`, `docs/CURRENT-STATE.md`, `QUICKSTART.md`, and
 `docs/INDEX.md` have been rewritten as the plain-language front door. New `docs/SCAFFOLD-LEDGER.md` is the public
 shortcut/burn-down tracker. Dense lab history remains in `research/findings/`; this board remains the autonomous work
 anchor.
 
-**GPU exact-next is now running, not blocked:** local RTX 3090/CUDA access is available. Run4 RF spiking-forward
-six-seed promotion is active in session 48264:
-`research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json`. Do NOT claim the promotion until the artifact exists
-and the WKV finding is updated. Last observed progress before this state note: seeds 42/43/44/100 printed perfect
-cheap RF fidelity and the GPU was ~90% utilized.
+**GPU lane completed:** local RTX 3090/CUDA access is available, and the run4/d2048 267M RF spiking-forward six-seed
+promotion is **GO**: `research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json` has mean ppl_ratio 0.9999999974,
+mean logit-fidelity Spearman 0.99999999997, max RF read error 7.66e-6, and 6/6 seeds. The WKV finding is updated:
+`research/findings/2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md`.
 
 **CPU Lane C advanced:** `source_consistency_floor` exact metadata scaffold is superseded for current safety experiments
 by `neural_source_consistency`, an independent RF source-memory echo. Six-seed stressed known-fact battery is **GO**:
@@ -28,10 +27,9 @@ abstains preserved, and 0 added false accepts. Honest scope: this is a source-mo
 biological honesty, because the echo is engineered at store time. Next Lane C step is learned/plastic source monitoring
 feeding dynamic ACC/aPFC and self-schema.
 
-**EXACT NEXT:** while the GPU run continues, finish documentation/finding sync, run focused tests and gates, commit and
-push to GitHub + Gitea. When the WKV artifact lands, validate it with `jq`, update
-`research/findings/2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md`,
-then commit/push that promotion separately if it is clean.
+**EXACT NEXT:** finish WKV validation/gates, commit and push the WKV artifact/finding update separately. After that,
+next highest-value CPU work is learned/plastic source monitoring feeding dynamic ACC/aPFC and self-schema, or the
+minimal grounded speech-action loop that uses the larger WKV path only as a ledgered fluency scaffold.
 
 ---
 

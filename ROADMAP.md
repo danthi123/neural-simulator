@@ -116,8 +116,9 @@ Current assets:
 - concept-pool to word-output pathways;
 - basic question parsing and fact answering;
 - early contingent-teacher learning experiments;
-- larger recurrent language checkpoints used to test local spiking-forward
-  fidelity.
+- a 267M-parameter recurrent language checkpoint whose RF spiking-forward path
+  now matches the ANN forward pass across six seeds under the current parity
+  test.
 
 Main risk: a corpus-trained generator can look like progress while still being
 ungrounded. It can remain as a scaffold only when clearly named.
@@ -232,9 +233,9 @@ not because a giant static model was preallocated.
 
 ## Highest Priority Work Now
 
-1. **Finish the large language-circuit spiking-forward promotion.** Complete the
-   multi-seed RF spiking-forward check for the local recurrent language
-   checkpoint and update the finding only when the artifact exists.
+1. **Use the larger language-circuit scaffold carefully.** The 267M WKV
+   checkpoint now has six-seed RF spiking-forward parity. Use it only as a
+   ledgered fluency scaffold while building grounded speech-as-action.
 2. **Burn down the honesty scaffold.** The production self-schema hook is safe,
    and the independent source-memory echo is a strong interim step. The next
    work is learned/plastic source-monitoring that feeds the self-schema without
