@@ -1,0 +1,2399 @@
+{
+  "probe": "vocal_action_selector_gate_a",
+  "selector_version": "v2",
+  "seeds": [
+    7
+  ],
+  "rows": [
+    {
+      "seed": 7,
+      "config": {
+        "n_practice": 24,
+        "n_proposal": 60,
+        "n_striatum": 36,
+        "n_gpe": 16,
+        "n_gpi": 20,
+        "n_stn": 20,
+        "n_thalamus": 24,
+        "n_commit": 30,
+        "n_commit_fs": 16,
+        "n_motor": 30,
+        "n_reset": 20,
+        "ou_sigma_pA": 40.0,
+        "practice_pA": 1000.0,
+        "reset_pA": 1200.0,
+        "gpi_tonic_pA": 1000.0,
+        "thalamus_tonic_pA": 900.0,
+        "arousal_to_proposal_weight": 1.0,
+        "proposal_to_fsi_weight": 100.0,
+        "fsi_to_msn_weight": 10.0,
+        "proposal_to_msn_density": 1.0,
+        "proposal_to_msn_weight": 400.0,
+        "d1_to_gpi_weight": 15.0,
+        "gpi_to_thalamus_weight": 12.0,
+        "thalamus_to_commit_weight": 40.0,
+        "commit_to_fsi_weight": 30.0,
+        "commit_fsi_cross_weight": 40.0,
+        "commit_to_motor_weight": 80.0,
+        "warmup_steps": 80,
+        "action_steps": 600,
+        "reset_steps": 35,
+        "washout_steps": 100,
+        "commit_threshold_spikes": 12,
+        "clean_loser_ratio": 0.25,
+        "enable_striatal_fsi": false
+      },
+      "main": {
+        "seed": 7,
+        "trials": 20,
+        "arousal": true,
+        "direct_path": true,
+        "clean_commit_rate": 1.0,
+        "winner_counts": {
+          "0": 13,
+          "1": 7
+        },
+        "minimum_channel_share": 0.35,
+        "loser_ratio_p95": 0.0,
+        "rows": [
+          {
+            "winner": 1,
+            "first_crossing": 1,
+            "decision_step": 137,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              0,
+              12
+            ],
+            "thalamus_spikes": [
+              12,
+              50
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 475,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 8,
+              "str_d1_0": 36,
+              "str_d2_0": 38,
+              "gpe_0": 0,
+              "gpi_0": 407,
+              "thal_0": 12,
+              "commit_0": 0,
+              "commit_fs_0": 0,
+              "motor_0": 0,
+              "proposal_1": 7,
+              "str_d1_1": 36,
+              "str_d2_1": 36,
+              "gpe_1": 0,
+              "gpi_1": 383,
+              "thal_1": 50,
+              "commit_1": 32,
+              "commit_fs_1": 0,
+              "motor_1": 12
+            }
+          },
+          {
+            "winner": 1,
+            "first_crossing": 1,
+            "decision_step": 242,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              0,
+              14
+            ],
+            "thalamus_spikes": [
+              0,
+              28
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 823,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 15,
+              "str_d1_0": 0,
+              "str_d2_0": 5,
+              "gpe_0": 0,
+              "gpi_0": 773,
+              "thal_0": 0,
+              "commit_0": 0,
+              "commit_fs_0": 0,
+              "motor_0": 0,
+              "proposal_1": 15,
+              "str_d1_1": 27,
+              "str_d2_1": 22,
+              "gpe_1": 0,
+              "gpi_1": 730,
+              "thal_1": 28,
+              "commit_1": 30,
+              "commit_fs_1": 0,
+              "motor_1": 14
+            }
+          },
+          {
+            "winner": 1,
+            "first_crossing": 1,
+            "decision_step": 172,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              0,
+              13
+            ],
+            "thalamus_spikes": [
+              0,
+              49
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 593,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 6,
+              "str_d1_0": 0,
+              "str_d2_0": 1,
+              "gpe_0": 0,
+              "gpi_0": 547,
+              "thal_0": 0,
+              "commit_0": 0,
+              "commit_fs_0": 0,
+              "motor_0": 0,
+              "proposal_1": 12,
+              "str_d1_1": 40,
+              "str_d2_1": 40,
+              "gpe_1": 0,
+              "gpi_1": 492,
+              "thal_1": 49,
+              "commit_1": 31,
+              "commit_fs_1": 0,
+              "motor_1": 13
+            }
+          },
+          {
+            "winner": 1,
+            "first_crossing": 1,
+            "decision_step": 149,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              0,
+              23
+            ],
+            "thalamus_spikes": [
+              0,
+              50
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 513,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 9,
+              "str_d1_0": 17,
+              "str_d2_0": 17,
+              "gpe_0": 0,
+              "gpi_0": 460,
+              "thal_0": 0,
+              "commit_0": 0,
+              "commit_fs_0": 0,
+              "motor_0": 0,
+              "proposal_1": 12,
+              "str_d1_1": 36,
+              "str_d2_1": 36,
+              "gpe_1": 0,
+              "gpi_1": 423,
+              "thal_1": 50,
+              "commit_1": 34,
+              "commit_fs_1": 1,
+              "motor_1": 23
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 102,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              14,
+              0
+            ],
+            "thalamus_spikes": [
+              49,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 355,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 6,
+              "str_d1_0": 36,
+              "str_d2_0": 37,
+              "gpe_0": 0,
+              "gpi_0": 280,
+              "thal_0": 49,
+              "commit_0": 33,
+              "commit_fs_0": 0,
+              "motor_0": 14,
+              "proposal_1": 2,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 324,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 1,
+            "first_crossing": 1,
+            "decision_step": 196,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              0,
+              14
+            ],
+            "thalamus_spikes": [
+              0,
+              54
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 670,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 12,
+              "str_d1_0": 2,
+              "str_d2_0": 3,
+              "gpe_0": 0,
+              "gpi_0": 626,
+              "thal_0": 0,
+              "commit_0": 0,
+              "commit_fs_0": 0,
+              "motor_0": 0,
+              "proposal_1": 14,
+              "str_d1_1": 58,
+              "str_d2_1": 58,
+              "gpe_1": 0,
+              "gpi_1": 546,
+              "thal_1": 54,
+              "commit_1": 32,
+              "commit_fs_1": 0,
+              "motor_1": 14
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 108,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              13,
+              0
+            ],
+            "thalamus_spikes": [
+              37,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 373,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 5,
+              "str_d1_0": 26,
+              "str_d2_0": 23,
+              "gpe_0": 0,
+              "gpi_0": 310,
+              "thal_0": 37,
+              "commit_0": 30,
+              "commit_fs_0": 0,
+              "motor_0": 13,
+              "proposal_1": 5,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 340,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 1,
+            "first_crossing": 1,
+            "decision_step": 106,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              0,
+              13
+            ],
+            "thalamus_spikes": [
+              0,
+              49
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 367,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 7,
+              "str_d1_0": 36,
+              "str_d2_0": 36,
+              "gpe_0": 0,
+              "gpi_0": 312,
+              "thal_0": 0,
+              "commit_0": 0,
+              "commit_fs_0": 0,
+              "motor_0": 0,
+              "proposal_1": 6,
+              "str_d1_1": 37,
+              "str_d2_1": 36,
+              "gpe_1": 0,
+              "gpi_1": 290,
+              "thal_1": 49,
+              "commit_1": 31,
+              "commit_fs_1": 0,
+              "motor_1": 13
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 140,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              26,
+              0
+            ],
+            "thalamus_spikes": [
+              52,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 481,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 12,
+              "str_d1_0": 53,
+              "str_d2_0": 53,
+              "gpe_0": 0,
+              "gpi_0": 383,
+              "thal_0": 52,
+              "commit_0": 35,
+              "commit_fs_0": 2,
+              "motor_0": 26,
+              "proposal_1": 7,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 441,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 180,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              17,
+              0
+            ],
+            "thalamus_spikes": [
+              24,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 617,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 11,
+              "str_d1_0": 18,
+              "str_d2_0": 16,
+              "gpe_0": 0,
+              "gpi_0": 557,
+              "thal_0": 24,
+              "commit_0": 30,
+              "commit_fs_0": 0,
+              "motor_0": 17,
+              "proposal_1": 7,
+              "str_d1_1": 1,
+              "str_d2_1": 1,
+              "gpe_1": 0,
+              "gpi_1": 565,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 192,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              14,
+              0
+            ],
+            "thalamus_spikes": [
+              47,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 655,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 8,
+              "str_d1_0": 35,
+              "str_d2_0": 40,
+              "gpe_0": 0,
+              "gpi_0": 566,
+              "thal_0": 47,
+              "commit_0": 30,
+              "commit_fs_0": 0,
+              "motor_0": 14,
+              "proposal_1": 14,
+              "str_d1_1": 13,
+              "str_d2_1": 16,
+              "gpe_1": 0,
+              "gpi_1": 593,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 183,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              13,
+              0
+            ],
+            "thalamus_spikes": [
+              52,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 626,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 18,
+              "str_d1_0": 83,
+              "str_d2_0": 90,
+              "gpe_0": 0,
+              "gpi_0": 501,
+              "thal_0": 52,
+              "commit_0": 34,
+              "commit_fs_0": 0,
+              "motor_0": 13,
+              "proposal_1": 12,
+              "str_d1_1": 3,
+              "str_d2_1": 5,
+              "gpe_1": 0,
+              "gpi_1": 577,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 157,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              26,
+              0
+            ],
+            "thalamus_spikes": [
+              49,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 537,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 10,
+              "str_d1_0": 41,
+              "str_d2_0": 46,
+              "gpe_0": 0,
+              "gpi_0": 455,
+              "thal_0": 49,
+              "commit_0": 35,
+              "commit_fs_0": 2,
+              "motor_0": 26,
+              "proposal_1": 7,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 495,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 1,
+            "first_crossing": 1,
+            "decision_step": 177,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              0,
+              19
+            ],
+            "thalamus_spikes": [
+              0,
+              24
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 604,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 16,
+              "str_d1_0": 0,
+              "str_d2_0": 3,
+              "gpe_0": 0,
+              "gpi_0": 566,
+              "thal_0": 0,
+              "commit_0": 0,
+              "commit_fs_0": 0,
+              "motor_0": 0,
+              "proposal_1": 10,
+              "str_d1_1": 13,
+              "str_d2_1": 16,
+              "gpe_1": 0,
+              "gpi_1": 542,
+              "thal_1": 24,
+              "commit_1": 30,
+              "commit_fs_1": 1,
+              "motor_1": 19
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 127,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              17,
+              0
+            ],
+            "thalamus_spikes": [
+              53,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 439,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 13,
+              "str_d1_0": 93,
+              "str_d2_0": 97,
+              "gpe_0": 0,
+              "gpi_0": 326,
+              "thal_0": 53,
+              "commit_0": 35,
+              "commit_fs_0": 0,
+              "motor_0": 17,
+              "proposal_1": 7,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 400,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 94,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              22,
+              0
+            ],
+            "thalamus_spikes": [
+              53,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 326,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 7,
+              "str_d1_0": 60,
+              "str_d2_0": 63,
+              "gpe_0": 0,
+              "gpi_0": 229,
+              "thal_0": 53,
+              "commit_0": 35,
+              "commit_fs_0": 0,
+              "motor_0": 22,
+              "proposal_1": 2,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 295,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 147,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              14,
+              0
+            ],
+            "thalamus_spikes": [
+              42,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 505,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 8,
+              "str_d1_0": 29,
+              "str_d2_0": 26,
+              "gpe_0": 0,
+              "gpi_0": 436,
+              "thal_0": 42,
+              "commit_0": 30,
+              "commit_fs_0": 0,
+              "motor_0": 14,
+              "proposal_1": 5,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 466,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 139,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              26,
+              0
+            ],
+            "thalamus_spikes": [
+              49,
+              24
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 478,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 11,
+              "str_d1_0": 48,
+              "str_d2_0": 48,
+              "gpe_0": 0,
+              "gpi_0": 382,
+              "thal_0": 49,
+              "commit_0": 32,
+              "commit_fs_0": 2,
+              "motor_0": 26,
+              "proposal_1": 6,
+              "str_d1_1": 19,
+              "str_d2_1": 20,
+              "gpe_1": 0,
+              "gpi_1": 414,
+              "thal_1": 24,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 129,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              28,
+              0
+            ],
+            "thalamus_spikes": [
+              49,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 442,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 11,
+              "str_d1_0": 55,
+              "str_d2_0": 55,
+              "gpe_0": 0,
+              "gpi_0": 363,
+              "thal_0": 49,
+              "commit_0": 36,
+              "commit_fs_0": 2,
+              "motor_0": 28,
+              "proposal_1": 7,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 407,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          },
+          {
+            "winner": 0,
+            "first_crossing": 0,
+            "decision_step": 104,
+            "simultaneous_crossing": false,
+            "motor_spikes": [
+              28,
+              0
+            ],
+            "thalamus_spikes": [
+              27,
+              0
+            ],
+            "loser_ratio": 0.0,
+            "region_spikes": {
+              "practice_arousal": 362,
+              "selector_stn": 0,
+              "selector_reset": 0,
+              "proposal_0": 6,
+              "str_d1_0": 24,
+              "str_d2_0": 27,
+              "gpe_0": 0,
+              "gpi_0": 301,
+              "thal_0": 27,
+              "commit_0": 30,
+              "commit_fs_0": 2,
+              "motor_0": 28,
+              "proposal_1": 4,
+              "str_d1_1": 0,
+              "str_d2_1": 0,
+              "gpe_1": 0,
+              "gpi_1": 327,
+              "thal_1": 0,
+              "commit_1": 0,
+              "commit_fs_1": 0,
+              "motor_1": 0
+            }
+          }
+        ]
+      },
+      "controls": {
+        "no_arousal": {
+          "seed": 7,
+          "trials": 20,
+          "arousal": false,
+          "direct_path": true,
+          "clean_commit_rate": 0.0,
+          "winner_counts": {
+            "0": 0,
+            "1": 0
+          },
+          "minimum_channel_share": 0.0,
+          "loser_ratio_p95": null,
+          "rows": [
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 1,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 1,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1881,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 1,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1911,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1881,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 1,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 1,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1916,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 1,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 1,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1915,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 0,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 0,
+                "str_d1_0": 0,
+                "str_d2_0": 0,
+                "gpe_0": 0,
+                "gpi_0": 1917,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 0,
+                "str_d1_1": 0,
+                "str_d2_1": 0,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            }
+          ]
+        },
+        "no_direct_path": {
+          "seed": 7,
+          "trials": 20,
+          "arousal": true,
+          "direct_path": false,
+          "clean_commit_rate": 0.0,
+          "winner_counts": {
+            "0": 0,
+            "1": 0
+          },
+          "minimum_channel_share": 0.0,
+          "loser_ratio_p95": null,
+          "rows": [
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 55,
+                "str_d1_0": 182,
+                "str_d2_0": 187,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 50,
+                "str_d1_1": 147,
+                "str_d2_1": 143,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 63,
+                "str_d1_0": 264,
+                "str_d2_0": 283,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 57,
+                "str_d1_1": 266,
+                "str_d2_1": 257,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 52,
+                "str_d1_0": 149,
+                "str_d2_0": 150,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 52,
+                "str_d1_1": 216,
+                "str_d2_1": 208,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 60,
+                "str_d1_0": 223,
+                "str_d2_0": 223,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 54,
+                "str_d1_1": 160,
+                "str_d2_1": 157,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 54,
+                "str_d1_0": 190,
+                "str_d2_0": 208,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 42,
+                "str_d1_1": 135,
+                "str_d2_1": 130,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 66,
+                "str_d1_0": 245,
+                "str_d2_0": 254,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 51,
+                "str_d1_1": 202,
+                "str_d2_1": 199,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 61,
+                "str_d1_0": 272,
+                "str_d2_0": 283,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 44,
+                "str_d1_1": 105,
+                "str_d2_1": 105,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 57,
+                "str_d1_0": 306,
+                "str_d2_0": 321,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 42,
+                "str_d1_1": 113,
+                "str_d2_1": 115,
+                "gpe_1": 0,
+                "gpi_1": 1881,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 61,
+                "str_d1_0": 219,
+                "str_d2_0": 220,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 49,
+                "str_d1_1": 188,
+                "str_d2_1": 174,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 56,
+                "str_d1_0": 221,
+                "str_d2_0": 226,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 49,
+                "str_d1_1": 160,
+                "str_d2_1": 162,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 51,
+                "str_d1_0": 211,
+                "str_d2_0": 222,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 42,
+                "str_d1_1": 54,
+                "str_d2_1": 56,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 62,
+                "str_d1_0": 200,
+                "str_d2_0": 218,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 47,
+                "str_d1_1": 111,
+                "str_d2_1": 112,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 50,
+                "str_d1_0": 200,
+                "str_d2_0": 198,
+                "gpe_0": 0,
+                "gpi_0": 1911,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 48,
+                "str_d1_1": 159,
+                "str_d2_1": 162,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 53,
+                "str_d1_0": 232,
+                "str_d2_0": 240,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 46,
+                "str_d1_1": 178,
+                "str_d2_1": 182,
+                "gpe_1": 0,
+                "gpi_1": 1881,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 58,
+                "str_d1_0": 303,
+                "str_d2_0": 303,
+                "gpe_0": 0,
+                "gpi_0": 1913,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 46,
+                "str_d1_1": 125,
+                "str_d2_1": 131,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 50,
+                "str_d1_0": 150,
+                "str_d2_0": 157,
+                "gpe_0": 0,
+                "gpi_0": 1912,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 49,
+                "str_d1_1": 175,
+                "str_d2_1": 172,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 45,
+                "str_d1_0": 121,
+                "str_d2_0": 124,
+                "gpe_0": 0,
+                "gpi_0": 1914,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 53,
+                "str_d1_1": 248,
+                "str_d2_1": 247,
+                "gpe_1": 0,
+                "gpi_1": 1878,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 48,
+                "str_d1_0": 168,
+                "str_d2_0": 177,
+                "gpe_0": 0,
+                "gpi_0": 1916,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 39,
+                "str_d1_1": 118,
+                "str_d2_1": 118,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 56,
+                "str_d1_0": 239,
+                "str_d2_0": 239,
+                "gpe_0": 0,
+                "gpi_0": 1915,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 36,
+                "str_d1_1": 41,
+                "str_d2_1": 46,
+                "gpe_1": 0,
+                "gpi_1": 1880,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            },
+            {
+              "winner": null,
+              "first_crossing": null,
+              "decision_step": null,
+              "simultaneous_crossing": false,
+              "motor_spikes": [
+                0,
+                0
+              ],
+              "thalamus_spikes": [
+                0,
+                0
+              ],
+              "loser_ratio": null,
+              "region_spikes": {
+                "practice_arousal": 2019,
+                "selector_stn": 0,
+                "selector_reset": 0,
+                "proposal_0": 54,
+                "str_d1_0": 180,
+                "str_d2_0": 191,
+                "gpe_0": 0,
+                "gpi_0": 1917,
+                "thal_0": 0,
+                "commit_0": 0,
+                "commit_fs_0": 0,
+                "motor_0": 0,
+                "proposal_1": 51,
+                "str_d1_1": 155,
+                "str_d2_1": 146,
+                "gpe_1": 0,
+                "gpi_1": 1879,
+                "thal_1": 0,
+                "commit_1": 0,
+                "commit_fs_1": 0,
+                "motor_1": 0
+              }
+            }
+          ]
+        }
+      },
+      "checks": {
+        "clean_single_channel_commit": true,
+        "both_channels_explored": true,
+        "loser_suppressed": true,
+        "arousal_is_load_bearing": true,
+        "direct_path_is_load_bearing": true,
+        "no_host_channel_input_or_argmax_fallback": true
+      },
+      "go": true
+    }
+  ],
+  "n_go": 1,
+  "all_go": true,
+  "backend": "cupy",
+  "topology": {
+    "neurons": 600,
+    "declared_pathways": 36
+  },
+  "performance": {
+    "elapsed_seconds": 23.613886286999332,
+    "total_trials": 60,
+    "wall_ms_per_trial": 393.5647714499889,
+    "device": "NVIDIA GeForce RTX 3090",
+    "memory_pool_used_bytes_after_run": 0,
+    "memory_pool_reserved_bytes_after_run": 1612288
+  }
+}

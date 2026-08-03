@@ -19,7 +19,7 @@ They do not imply human-level versions of the named ability.
 | Demonstrated result | Evidence and boundary |
 |---|---|
 | **Spiking simulation substrate** | The repository supports NumPy CPU and CuPy/NVIDIA GPU execution, multiple neuron models, sparse region-to-region wiring, continuous stepping, checkpoints, local plasticity, reward modulation, and configurable neuromodulators. Tests cover the shared simulation network, plasticity isolation, checkpoint behavior, and modulatory dynamics. |
-| **Grounded communication learning** | One six-seed experiment joins a learned food percept, hunger, request, consequence, and satiety. A second six-seed experiment learns an external two-intent by two-referent raw vocal convention from contingent listener responses and correctly composes both combinations withheld from training. Fresh brains also learn a swapped convention; no-consequence, unrelated-reward, dopamine-lesion, context-lesion, and perception-lesion controls fail as predicted. The validated path still uses injected motor babbling, fixed channels, and a host listener/readout. A first intrinsic-exploration and same-brain reversal follow-up passed only 1/4 development seeds and is a recorded NO-GO. These are preverbal causal loops, not natural language. See the [single-request finding](../research/findings/2026-08-03-grounded-speech-action-loop-6seed-GO.md), [learned-convention finding](../research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md), and [intrinsic-reversal negative](../research/findings/2026-08-03-intrinsic-vocal-reversal-4seed-NO-GO.md). |
+| **Grounded communication learning** | One six-seed experiment joins a learned food percept, hunger, request, consequence, and satiety. A second six-seed experiment learns an external two-intent by two-referent raw vocal convention from contingent listener responses and correctly composes both combinations withheld from training. Fresh brains also learn a swapped convention; no-consequence, unrelated-reward, dopamine-lesion, context-lesion, and perception-lesion controls fail as predicted. The validated path still uses injected motor babbling, fixed channels, and a host listener/readout. A first intrinsic-exploration and same-brain reversal follow-up passed only 1/4 development seeds. An isolated neural selector now passes its fixed four-seed physiology gate without host channel choice or fallback, but local reward credit is not yet implemented. These are preverbal causal loops, not natural language. See the [single-request finding](../research/findings/2026-08-03-grounded-speech-action-loop-6seed-GO.md), [learned-convention finding](../research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md), [intrinsic-reversal negative](../research/findings/2026-08-03-intrinsic-vocal-reversal-4seed-NO-GO.md), and [selector finding](../research/findings/2026-08-03-neural-vocal-selector-gateA-v2-4seed-GO.md). |
 | **Learned source-support signal** | A separate spiking memory can learn that a complete proposition was paired with an external experience and can reduce confidence for unsupported recalls. Its six-seed production test removed all 46 stressed wrong assertions while preserving the hard unknown-answer boundary, at the cost of unnecessarily downgrading 5 of 133 correct recalls. Proposition codes, source events, normalization, and final routing remain partly host-defined. See the [source-memory finding](../research/findings/2026-08-03-laneC-plastic-source-memory-GO-learned-source-support-production-wirein.md). |
 | **Memory and replay components** | The repository contains tested episodic storage, pattern completion, replay, reconsolidation, and wake/sleep integration experiments. A six-seed shared-network sleep-cycle experiment shows that these parts can coexist in a bounded setup. This does not establish general autobiographical memory or lifelong consolidation. See the [sleep-cycle finding](../research/findings/2026-07-25-gap5-onebrain-production-sleepcycle-merge-6seed-GO.md). |
 | **Reward, affect, and curiosity components** | Dopamine-like reward prediction, persistent affect-like state, separable modulatory axes, active affect clearing, and curiosity-related circuits have passed narrow causal tests. Some curiosity and appraisal quantities are still computed by host code, and the parts do not yet form a developing emotional life. See the [affect-axis result](../research/findings/2026-08-02-laneA-affect-axes-DISSOCIATE-6seed-GO-first-attempt-negative-was-a-measurement-artifact.md), [affect-clear result](../research/findings/2026-08-01-affect-BRAIN-BASED-active-clear-spiking-quench-fs-gate-6seed-GO-operating-region-mapped.md), and [learning-progress result](../research/findings/2026-08-02-laneB-curiosity-learning-progress-slope-CPU-proxy-6seed-GO-next-onbridge-realization.md). |
@@ -77,19 +77,19 @@ They do not imply human-level versions of the named ability.
 
 ## Highest-Value Work
 
-The immediate priority is a neural vocal action selector that cleanly separates
-the executed action from losing candidates and leaves local reward eligibility
-only on the executed route. The first isolated selector made both shared
-arousal and basal-ganglia disinhibition causally necessary, produced balanced
-choices, and passed three of four development seeds. Seed 42 committed on 92%
-of trials against a fixed 95% requirement, so Gate A remains a recorded NO-GO.
-The next version must prevent bilateral striatal suppression without adding a
-host decision. After the selector passes physiology and local-credit gates, it should return to
-same-brain reversal and then expand to more needs, percepts, intents, and
-consequences. In parallel, learned source signals should move into the same
-network as confidence, self-monitoring, and speech selection. A larger language
-circuit is useful only after the brain has selected a grounded message,
-certainty, and decision to speak.
+The immediate priority is executed-action-local reward credit. A corrected
+600-neuron vocal selector now passes Gate A in all four development seeds: it
+makes balanced choices, commits cleanly on 98-100% of trials, and stops when
+shared arousal or its direct basal-ganglia route is lesioned. Gate B must now
+show that only the winning route retains eligibility for a later global
+dopamine signal, that contingent reward changes later choices, and that yoked
+reward, action-collateral lesions, and dopamine lesions do not teach the same
+preference. Held-out seeds stay untouched until later gates. After local credit
+passes, the selector should return to same-brain reversal and then expand to
+more needs, percepts, intents, and consequences. In parallel, learned source
+signals should move into the same network as confidence, self-monitoring, and
+speech selection. A larger language circuit is useful only after the brain has
+selected a grounded message, certainty, and decision to speak.
 
 This order tests the central project claim early: whether a small integrated
 spiking brain can learn to say something because of what it perceives, needs,

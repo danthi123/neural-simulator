@@ -125,6 +125,13 @@ reduces the probe from 632 to 600 neurons and from 44 to 36 declared pathways.
 The full v2 evidence must rerun all 100 main, 100 no-arousal, and 100
 direct-path-lesion trials for every development seed before Gate A can pass.
 
+**Gate A v2 result, 2026-08-03:** GO. All four development seeds passed the
+unchanged criteria with 98-100% clean commits, at least 32.7% of commits from
+the smaller channel, zero losing motor spikes at commitment, and zero commits
+under either lesion. Gate B is unlocked for development seeds 42, 43, 44, and
+100. Held-out seeds 101 and 102 remain locked until Gate C. See the
+[`Gate A v2 finding`](../../research/findings/2026-08-03-neural-vocal-selector-gateA-v2-4seed-GO.md).
+
 ### Gate B: Local Credit
 
 Add plastic cue-to-striatum routes and delay the consequence beyond action

@@ -1,0 +1,30 @@
+{
+ "run_id": "1785768827-986950",
+ "runner": "research/runners/_vocal_action_selector_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_vocal_action_selector_gate.py",
+  "--selector-version",
+  "v2",
+  "--seeds",
+  "100",
+  "--trials",
+  "100",
+  "--lesion-trials",
+  "100",
+  "--output",
+  "research/findings/raw/vocal_action_selector_gate_v2/seed100.json"
+ ],
+ "git_sha": "5ff2bd439",
+ "git_dirty": true,
+ "started": "2026-08-03T10:53:47",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 25296.4,
+ "corpus_check_query": "a shared spiking brain must learn at least two communicative intents and two grounded referents from contingent social interaction, select them from internal state plus perception, and emit raw vocal ",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/vocal_action_selector_gate_v2/seed100.json"
+}
