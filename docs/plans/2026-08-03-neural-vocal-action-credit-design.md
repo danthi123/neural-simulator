@@ -1,0 +1,167 @@
+---
+type: plan
+status: proposed
+date: 2026-08-03
+---
+
+# Neural Vocal Action Selection And Credit
+
+## Purpose
+
+The immediate blocker is not vocabulary size. The brain cannot yet reliably
+tell which of several self-generated vocal actions should receive credit from a
+later social consequence. Until that works, adding words or a larger language
+circuit would scale an unstable learning loop.
+
+This increment will build a small, fully neural selector whose executed action
+is distinct from losing candidates and whose local synapses alone retain
+eligibility for a later dopamine signal. It must work before it is connected to
+the full two-intent by two-referent reversal task.
+
+## Observed Boundary
+
+The first shared-arousal implementation passed only one of four development
+seeds. Its recorded decision events showed near-universal co-firing of both
+competitors in each factor bank. Three conclusions follow:
+
+1. More exploration current cannot solve the attribution problem.
+2. Global dopamine is usable only when recent synaptic eligibility is local to
+   the action that actually won.
+3. A host-selected action, channel-specific reward injection, or Python latch
+   would hide the missing brain mechanism and is forbidden.
+
+## Biological Basis
+
+- A dedicated anterior forebrain pathway generates vocal variability in young
+  songbirds; silencing its LMAN output sharply reduces exploratory song
+  variability ([Olveczky, Andalman & Fee 2005](https://doi.org/10.1371/journal.pbio.0030153)).
+- The same broad circuit can alter vocal output moment by moment, supporting a
+  separation between exploratory variability and the stable motor pathway
+  ([Kao, Doupe & Brainard 2005](https://doi.org/10.1038/nature03127)).
+- Contingent reinforcement can shape naturally occurring vocal variation,
+  whereas non-contingent feedback does not produce the same adaptation
+  ([Tumer & Brainard 2007](https://doi.org/10.1038/nature06390)).
+- Area-X-projecting dopamine neurons encode better- and worse-than-expected
+  vocal outcomes at the relevant moment
+  ([Gadagkar et al. 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC5464363/)).
+- Manipulating VTA input to the song basal ganglia is sufficient to guide
+  syllable-specific learning
+  ([Hisey et al. 2018](https://pubmed.ncbi.nlm.nih.gov/29483664/);
+  [Xiao et al. 2018](https://pubmed.ncbi.nlm.nih.gov/29551492/)).
+- Corticostriatal synapses can retain a silent, seconds-long local eligibility
+  trace that later dopamine converts into plasticity
+  ([Shindou et al. 2019](https://doi.org/10.1111/ejn.13921)).
+
+These studies constrain the design; they do not establish that the exact
+proposed simulator circuit exists as written in an animal brain.
+
+## Proposed Circuit
+
+Keep the existing shared arousal population as a practice-state signal. Replace
+its direct drive into vocal outputs with three parallel two-channel selection
+loops: speak/silence, intent 0/1, and referent 0/1.
+
+Each channel contains:
+
+```text
+state or perception cortex + variable premotor input
+    -> D1 and D2 striatal populations
+    -> GPe / STN / GPi competition
+    -> thalamic disinhibition of one channel
+    -> vocal motor output
+    -> action collateral back to that channel's local eligibility population
+```
+
+The direct and indirect pathways provide selection and suppression. The
+thalamic return sustains the winner long enough to commit an action. Only the
+winning vocal output sends an action collateral to its own channel. State or
+perception synapses onto that channel can then carry a strong local eligibility
+trace. The listener's consequence remains a sensory event that changes the
+shared SNc/RMTg dopamine signal; it never identifies the desired channel.
+
+The three selectors remain factorized so a learned intent and referent can form
+combinations absent from training. The host may present the world, deliver the
+listener's real consequence, and measure spikes. It may not choose a channel,
+reset a winner, inject output current, or scope dopamine by the answer.
+
+## Cheap-First Gates
+
+### Gate A: Selection Physiology
+
+Build one isolated two-channel selector on the production bridge and run seeds
+42, 43, 44, and 100 before any convention learning.
+
+GO requires all of the following at every seed:
+
+- exactly one thalamic/motor channel commits on at least 95% of trials;
+- loser motor spikes are at most 25% of winner spikes on at least 95% of
+  committed trials;
+- each channel wins at least 25% of 100 target-independent exploration trials;
+- removing shared arousal sharply reduces exploration;
+- removing GPi-to-thalamus disinhibition prevents commitment;
+- no host channel input, host argmax decision, or output current is present.
+
+If this fails, stop at the selector. Do not add the language task or tune on
+held-out seeds.
+
+### Gate B: Local Credit
+
+Add plastic cue-to-striatum routes and delay the consequence beyond action
+commitment.
+
+GO requires all of the following at every development seed:
+
+- executed-route eligibility exceeds the losing route by at least 10:1 before
+  dopamine arrives on at least 90% of rewarded trials;
+- the rewarded action becomes more likely while a yoked reward schedule does
+  not produce the same preference;
+- an action-collateral lesion preserves initial selection but removes the
+  learned preference;
+- dopamine lesion preserves selection but removes learning;
+- changed synapses remain within declared corticostriatal vocal routes.
+
+If eligibility remains nonlocal, revise the circuit rather than masking
+synapses from Python.
+
+### Gate C: Same-Brain Convention Reversal
+
+Only after Gates A and B pass all four development seeds, connect three copies
+to the existing grounded listener loop. Use the existing identity convention,
+negative-only extinction, swapped convention, held-out cross-combinations, and
+old-convention evaluation.
+
+Development GO requires all four seeds to reach:
+
+- initial joint and held-out accuracy 1.00;
+- reversed joint and held-out accuracy 1.00 in the same brain;
+- old-convention accuracy 0.00 after reversal;
+- all four composite vocal actions explored;
+- zero changed synapses outside declared vocal-learning routes.
+
+Only then unlock untouched seeds 101 and 102 and run the six-seed promotion
+battery: no consequence, yoked reward, dopamine lesion, arousal lesion, RMTg
+error-path lesion, action-collateral lesion, context lesion, perception lesion,
+and no-reason silence.
+
+## Performance Boundary
+
+The selector should use small sparse populations and reuse existing basal
+ganglia neuron presets and pathway helpers. Record added neurons, synapses,
+milliseconds per trial, peak GPU memory, and two-run concurrency throughput.
+Reject a design that relies on dense all-to-all growth or makes the current
+30,000-neuron bridge impractical on a 24 GB consumer GPU without a measured
+scientific benefit.
+
+Two concurrent GPU seeds are allowed after the gate is fixed; prior measurement
+showed that four concurrent copies reduce sparse-matrix throughput. CPU and
+mini-PC work should be limited to independent tests, artifact checks, or small
+selector probes that do not require the full CuPy bridge.
+
+## Stop Conditions
+
+- Do not tune against seeds 101 or 102 before promotion.
+- Do not proceed from physiology to learning after a failed gate.
+- Do not call a one-seed success a capability.
+- Do not substitute target-aware host logic for missing neural attribution.
+- Record a negative result when the fixed gate fails; preserve useful generic
+  simulator improvements in separate commits.

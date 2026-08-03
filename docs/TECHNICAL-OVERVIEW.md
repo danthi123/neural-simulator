@@ -78,7 +78,7 @@ findings and raw artifacts. At a high level:
 | Perception, navigation, and action | Working in constrained visual and grid-world experiments. Results do not yet amount to general embodied intelligence. |
 | Reward and learning | Local plasticity, eligibility traces, value learning, and dopamine-like modulation have working cases. Credit assignment across deep, changing spiking circuits remains difficult. |
 | Memory | Episodic storage, completion, replay, consolidation, and persistent state have tested components. Some production paths still resemble host-managed records or use engineered codes. |
-| Grounded communication | A six-seed experiment learned one visual food association and joined hunger, request-or-silence activity, food delivery, and satiety. A six-seed successor learned an externally defined two-intent by two-referent raw vocal convention through consequence-gated local plasticity, including both untrained cross-combinations and a fresh swapped convention. Withheld consequences, unrelated rewards, dopamine lesions, and sensory/state lesions broke learning or action as predicted. Injected motor babbling, fixed channels, and host listener/readout remain; this is preverbal communication learning, not natural language. |
+| Grounded communication | A six-seed experiment learned one visual food association and joined hunger, request-or-silence activity, food delivery, and satiety. A six-seed successor learned an externally defined two-intent by two-referent raw vocal convention through consequence-gated local plasticity, including both untrained cross-combinations and a fresh swapped convention. Withheld consequences, unrelated rewards, dopamine lesions, and sensory/state lesions broke learning or action as predicted. A first intrinsic-exploration and same-brain reversal follow-up passed only 1/4 development seeds because competing channels did not receive clean action-specific credit. Injected motor babbling, fixed channels, and host listener/readout remain; this is preverbal communication learning, not natural language. |
 | Language | Simple question answering, bounded spiking production, and larger sequence experiments exist. Some fluent paths depend on conventional training, host parsing, fixed roles, or constrained rendering. Free-flowing grounded conversation has not been achieved. |
 | Affect and motivation | Reward, drive, mood-like persistence, curiosity, and several modulatory axes have narrow positive results. Rich emotions that develop from experience and jointly shape perception, memory, learning, speech, and action are not complete. |
 | Self-monitoring | Confidence, attention, authorship, and learned source-support experiments exist. Important representations and routing remain engineered or separate from the main lived loop. |
@@ -200,19 +200,21 @@ it.
 
 The highest-value sequence is:
 
-1. broaden the grounded lived loop across several needs, percepts, actions,
+1. make neural action selection and local reward eligibility reliable enough to
+   remove injected babbling and pass same-brain convention reversal;
+2. broaden the grounded lived loop across several needs, percepts, actions,
    intents, and contingent social outcomes;
-2. learn grounded concepts that are shared by perception, action, memory,
+3. learn grounded concepts that are shared by perception, action, memory,
    affect, comprehension, and production;
-3. develop persistent, graded affect and curiosity that causally change the
+4. develop persistent, graded affect and curiosity that causally change the
    same decisions and memories;
-4. integrate source memory, confidence, and self-monitoring with speech
+5. integrate source memory, confidence, and self-monitoring with speech
    selection;
-5. support continual learning, replay, and safe structural growth over long
+6. support continual learning, replay, and safe structural growth over long
    interaction histories;
-6. scale brain-native message formation and word production toward natural,
+7. scale brain-native message formation and word production toward natural,
    open-ended conversation;
-7. optimize the integrated system within a high-end consumer hardware envelope.
+8. optimize the integrated system within a high-end consumer hardware envelope.
 
 The [Project Charter](PROJECT-CHARTER.md) defines why these constraints are
 non-negotiable. The [Scaffold Ledger](SCAFFOLD-LEDGER.md) records current

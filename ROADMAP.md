@@ -56,8 +56,10 @@ rewards do not teach it; the result repeats across random seeds.
 This is the highest-priority capability. The single food-request result closes
 the smallest loop. A newer six-seed experiment learns two intent channels and
 two referent channels from contingent listener responses and composes the two
-combinations withheld from training. The next gates are intrinsic neural
-exploration, same-brain adaptation when a listener changes convention, broader
+combinations withheld from training. A first intrinsic-exploration and
+same-brain reversal attempt passed only one of four development seeds. The next
+gate is therefore a neural action selector with executed-action-local reward
+eligibility. Once that is reliable, return to same-brain adaptation, broader
 meanings and contexts, and removal of the fixed raw-channel decoder.
 
 ### 2. Turn Internal Messages Into Natural Speech
