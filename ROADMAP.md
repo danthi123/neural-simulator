@@ -67,9 +67,12 @@ is therefore complete. Gate B's first local reward-credit circuit learned under
 both contingent and unrelated delayed reward, exposing arbitrary action bias
 rather than useful credit. A second version added competing spiking action-value
 populations, but clean calibration still saturated under unrelated reward: one
-seed chose each arbitrary action. A preregistered third version now adds a
-spiking expected-omission pathway through LHb- and RMTg-like populations plus
-local critic normalization; all of its scientific seeds remain untouched.
+seed chose each arbitrary action. A third version added a spiking
+expected-omission pathway through LHb- and RMTg-like populations plus local
+critic normalization. Both clean GPU calibration seeds still learned the
+rewarded action under unrelated reward, while the intact omission pathway stayed
+silent. The next design must preserve a bounded learned expectation until
+outcome time without removing the load-bearing normalization.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
@@ -108,8 +111,14 @@ The first co-resident learned source pathway passed calibration but only two of
 three development seeds. Adding local inhibitory competition kept all three
 source margins above the fixed floor on two fresh calibration seeds, but one
 seed slightly weakened an already strong source and failed the preregistered
-no-harm control. Before another version runs, the acceptable biological
-tradeoff must be specified from source monitoring's role in the whole brain.
+no-harm control. A third version preregistered a bounded tradeoff and added
+source-local intrinsic threshold homeostasis. Both fresh seeds failed: the
+weakest source did not improve, one source weakened, and one seed also lost
+inherited causal attribution. A fourth version now uses local inhibitory STDP
+on FS-to-rival-source routes. Its real source-to-FS rehearsal circuit passes
+CPU/GPU smoke with per-pool and per-route checks, and a final independent audit
+cleared state matching, checkpoint, rule-isolation, and trace-lifecycle guards.
+Formal `601/607` remain untouched and are next from one immutable revision.
 
 ### 4. Build A Lived, Reconstructive Memory
 
@@ -131,7 +140,11 @@ Local fast-spiking competition greatly reduced false recall on one fresh seed,
 but recovery of the second memory and the advantage of learned replay order and
 target identity did not repeat. Development remains locked while the next
 mechanism focuses on selective CA1-to-cortex reinstatement rather than another
-global learning-rate sweep.
+global learning-rate sweep. A learned index-relay successor was invalid on both
+fresh seeds because the required intact sleep relay and inhibitory loops did
+not activate. Diagnose that missing state on smoke seed `216`; any corrected
+mechanism needs a new preregistration and fresh seeds. A first target-plateau
+candidate was retired at smoke because it suppressed cortical target firing.
 
 ### 5. Develop Emotion, Motivation, And Curiosity
 

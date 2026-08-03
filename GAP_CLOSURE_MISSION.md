@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 14:10 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 15:25 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -23,29 +23,48 @@ Gate B v1 local delayed reward credit is NO-GO because unrelated yoked reward
 still creates arbitrary preference. Gate B v2's spiking action-value critic is
 also NO-GO on two clean calibration seeds: contingent behavior reached 100%,
 but yoked behavior saturated toward opposite arbitrary actions across seeds.
-Gate B v3 is preregistered with a spiking LHb-RMTg expected-omission path,
-reward veto, and local critic normalization. Its scientific seeds are untouched.
+Gate B v3 is also NO-GO on two clean GPU calibration seeds. Contingent learning
+reached 100%, but yoked reward again reached 100%; intact critic normalization
+left the expected-omission LHb/RMTg path silent. The path fired only after a
+normalization lesion caused extreme critic activity, localizing the next design
+to bounded persistence of learned expectation at outcome time. Later seeds stay
+locked.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
 development seeds. V2 local fast-spiking competition cleared all absolute
 source margins on two fresh calibration seeds, but one seed slightly weakened
-an already strong source and failed the preregistered no-harm control. No
-development or held-out seed is open.
+an already strong source. V3 preregistered a bounded tradeoff and added local
+threshold homeostasis, but both fresh seeds failed without improving the
+weakest source; one seed also lost inherited causal attribution. No development
+or held-out seed is open. V4 replaces threshold tuning with local plastic
+FS-to-rival inhibition. Its CPU and GPU smoke pass, and post-learning state,
+routing, checkpoint, trace-lifecycle, and fast-path audit defects are repaired.
+A final independent re-audit cleared every prior blocker. Formal seeds
+`601/607` remain untouched and are now the exact next CPU-pool run.
 
 **Replay consolidation:** V1 proved that uncued hippocampal replay can change
 cortical weights on one bridge, but useful hippocampus-independent recall was
 weak and inaccurate. V2 local opponent inhibition sharply improved specificity
 on one seed but did not repeat on the other and did not reliably beat the
-learned-target-index or replay-order controls. Development remains locked.
+learned-target-index or replay-order controls. V3's learned index relay was
+UNDEFINED on both fresh seeds because its required intact sleep relay and
+inhibitory loops never activated; recovery was zero. Development remains locked.
+V4's added target plateau suppressed the intact target instead of recruiting
+it on smoke seed `216`, so that candidate was retired before scientific execution.
 
 **Visual identity:** host feature top-k selection has been removed and replaced
-by spike-latency competition. The selector and lesion controls work, but both
-fresh calibration seeds failed invariant identity decoding. The next change
-belongs in locally learned representations, not another selector threshold.
+by spike-latency competition. A temporal-binding successor failed both fresh
+seeds: intact decoding stayed below threshold, learning-off matched or beat
+intact, and fast-spiking competition was not consistently causal. A
+hierarchical V2-part to trace-bound-IT successor now passes smoke without
+host first-K selection. It discloses identity-pure track boundaries and a fixed
+V2 inhibitory afferent current as scaffolds. Formal seeds `503/509` remain
+untouched pending final re-audit.
 
-**Compute and repositories:** CUDA/CuPy access to the RTX 3090 is verified. Two
-formal GPU processes saturate compute while using about 3 GB of 24 GB VRAM. SSH
+**Compute and repositories:** CUDA/CuPy access to the RTX 3090 is verified. One
+full Gate B v3 calibration used the GPU successfully; focused CuPy substrate
+and source-monitor tests also pass. SSH
 access to `pool40`, `pool41`, and `pool42` is verified; the dispatcher now
 rejects malformed or stale-source work and records exact source provenance.
 GitHub and Gitea are both configured and synchronized after each coherent
@@ -53,10 +72,14 @@ evidence or workflow commit.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Run Gate B v3 calibration without opening later phases.
-2. Run replay v3 learned-index calibration under its fixed order/content controls.
-3. Run source v3 local-homeostasis calibration under its bounded tradeoff rule.
-4. Run visual temporal-binding calibration with labels restricted to scoring.
+1. Design a fresh action-credit successor that gives bounded learned expectation
+   a persistent effect at outcome time; do not tune Gate B v3 seeds.
+2. Replace replay v4's failed target-plateau candidate with a different
+   mechanism; do not reopen v3 or v4 scientific seeds.
+3. Run source-monitor v4 calibration seeds `601/607` from the same immutable
+   revision on separate mini PCs, then aggregate only the exact pair.
+4. If the final audit clears hierarchical visual identity, run exact calibration
+   seeds `503/509` on separate mini PCs.
 5. Merge only cleared mechanisms into the persistent develop-loop; do not scale
    the conventional language scaffold ahead of grounded message selection.
 

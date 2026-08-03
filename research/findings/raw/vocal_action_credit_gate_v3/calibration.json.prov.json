@@ -1,0 +1,29 @@
+{
+ "run_id": "1785781381-1310481",
+ "runner": "research/runners/_vocal_action_credit_gate_v3.py",
+ "argv": [
+  "/tmp/sim-gateb-v3-49f84fcb-20260803T1424/research/runners/_vocal_action_credit_gate_v3.py",
+  "--phase",
+  "calibration",
+  "--seeds",
+  "401",
+  "409",
+  "--output",
+  "research/findings/raw/vocal_action_credit_gate_v3/calibration.json"
+ ],
+ "git_sha": "49f84fcbb0ea967af7fc6a78f077644d9f0e741a",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "ebe4fe3e7f5873496a76d74d6563dbb7666c2126e44fb9202b6574068bbeb59f",
+ "started": "2026-08-03T14:23:01",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2504.0,
+ "corpus_check_query": "Gate B v3 omission error and local critic normalization; v1 and v2 failed yoked neutrality",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/vocal_action_credit_gate_v3/calibration.json"
+}
