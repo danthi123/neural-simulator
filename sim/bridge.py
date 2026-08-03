@@ -392,6 +392,11 @@ class SimulationBridge:
         # when the global flag is off. Built like cp_nmda_neuron_mask in
         # _initialize_simulation_data after region init.
         self.cp_homeostasis_neuron_mask = None
+        # Optional runtime scope for intrinsic-threshold adaptation. The
+        # existing homeostasis mask controls which neurons USE adapted spike
+        # thresholds; this narrower mask controls which thresholds UPDATE.
+        # None preserves the legacy all-neuron update exactly.
+        self.cp_homeostasis_update_neuron_mask = None
         # Per-region parameter HETEROGENEITY mask (2026-06-18): bool per-neuron,
         # True for neurons in regions with BrainRegion.enable_heterogeneity=True,
         # else False. Built like cp_nmda_neuron_mask / cp_homeostasis_neuron_mask
@@ -8947,15 +8952,34 @@ class SimulationBridge:
                                    or self.cp_homeostasis_neuron_mask is not None)
             if _homeostasis_gated and _homeostasis_active and self.cp_neuron_firing_thresholds is not None:
                 if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
-                    self.cp_neuron_activity_ema, self.cp_neuron_firing_thresholds = fused_homeostasis_update(
+                    updated_activity, updated_thresholds = fused_homeostasis_update(
                         self.cp_neuron_activity_ema, fired_this_step.astype(cp.float32),
                         cfg.homeostasis_target_rate, cfg.homeostasis_ema_alpha, cfg.homeostasis_threshold_adapt_rate,
                         self.cp_neuron_firing_thresholds,
                         cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max
                     )
+                    update_mask = self.cp_homeostasis_update_neuron_mask
+                    if update_mask is None:
+                        self.cp_neuron_activity_ema = updated_activity
+                        self.cp_neuron_firing_thresholds = updated_thresholds
+                    else:
+                        self.cp_neuron_activity_ema = cp.where(
+                            update_mask, updated_activity, self.cp_neuron_activity_ema)
+                        self.cp_neuron_firing_thresholds = cp.where(
+                            update_mask, updated_thresholds,
+                            self.cp_neuron_firing_thresholds)
                 elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
-                     self.cp_neuron_activity_ema = (1.0 - cfg.homeostasis_ema_alpha) * self.cp_neuron_activity_ema + \
-                                               cfg.homeostasis_ema_alpha * fired_this_step.astype(cp.float32)
+                    updated_activity = ((1.0 - cfg.homeostasis_ema_alpha)
+                                        * self.cp_neuron_activity_ema
+                                        + cfg.homeostasis_ema_alpha
+                                        * fired_this_step.astype(cp.float32))
+                    update_mask = self.cp_homeostasis_update_neuron_mask
+                    if update_mask is None:
+                        self.cp_neuron_activity_ema = updated_activity
+                    else:
+                        self.cp_neuron_activity_ema = cp.where(
+                            update_mask, updated_activity,
+                            self.cp_neuron_activity_ema)
 
             # 5b. Synaptic scaling (Turrigiano 2008) — works for all neuron models
             # Multiplicatively scales excitatory synaptic weights to maintain target firing rate.
