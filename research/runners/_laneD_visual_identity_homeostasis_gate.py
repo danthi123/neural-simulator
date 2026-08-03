@@ -86,6 +86,7 @@ from sim.bridge import SimulationBridge  # noqa: E402
 from sim.config import CoreSimConfig, GPUConfig, RuntimeState, VisualizationConfig  # noqa: E402
 from sim.enums import NeuronModel, NeuronType  # noqa: E402
 from sim.regions import BrainRegion, RegionPathway  # noqa: E402
+from tools.verdict import Verdict  # noqa: E402
 
 
 CALIBRATION_SEEDS = (212, 213)
@@ -797,6 +798,54 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         ),
     }
     calibration_ready = bool(all(diagnostics.values()))
+    stream_checks = {
+        "same_multiset_after_temporal_shuffle": (
+            sorted(index for track in ordered_indices for index in track)
+            == sorted(index for track in shuffled_indices for index in track)
+        ),
+        "labels_enter_training_or_inference": False,
+        "inference_inputs": ["V1-complex active feature indices"],
+        "pooler_winners_read_from": "first-spike timing in cp_firing_states",
+        "host_top_k_determines_pooler_winners": False,
+        "remaining_selection_scaffolds": [
+            "host overlap-to-current max normalization",
+            "host first-spike-time readout",
+            "host seeded drive-independent same-step tie break",
+            "host V1 feature sparsification",
+        ],
+    }
+    earned = Verdict("visual identity spike-latency calibration readiness", chance=0.25)
+    earned.require(
+        "training and held-out transforms are disjoint",
+        set(dataset.train_transforms).isdisjoint(set(dataset.held_transforms)),
+        expect=True,
+    )
+    earned.require(
+        "temporal shuffle preserves the exact frame multiset",
+        stream_checks["same_multiset_after_temporal_shuffle"],
+        expect=True,
+    )
+    earned.require(
+        "labels do not enter learning or inference",
+        stream_checks["labels_enter_training_or_inference"],
+        expect=False,
+    )
+    earned.require(
+        "pooler winners come from first-spike timing rather than host top-k drive ranking",
+        not stream_checks["host_top_k_determines_pooler_winners"],
+        expect=True,
+    )
+    earned.require(
+        "all scored arm measurements are finite",
+        all(
+            np.isfinite(value)
+            for arm in list(arms.values()) + [pixel_scramble]
+            for key, value in arm.items()
+            if key not in {"usage", "mechanism"}
+        ),
+        expect=True,
+    )
+    decided = earned.decide(go=calibration_ready, verbose=False)
     return {
         "seed": seed,
         "chance": 0.25,
@@ -809,22 +858,11 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         "selection_telemetry": intact_pooler.latency_selector.metrics(),
         "diagnostics": diagnostics,
         "calibration_status": "CANDIDATE" if calibration_ready else "NEEDS-REVISION",
+        "preconditions": decided["preconditions"],
+        "undefined_reasons": decided["undefined_reasons"],
+        "calibration_readiness_verdict": decided["status"],
         "formal_verdict": "NOT-RUN-CALIBRATION-ONLY",
-        "stream_checks": {
-            "same_multiset_after_temporal_shuffle": (
-                sorted(index for track in ordered_indices for index in track)
-                == sorted(index for track in shuffled_indices for index in track)
-            ),
-            "labels_enter_training_or_inference": False,
-            "inference_inputs": ["V1-complex active feature indices"],
-            "pooler_winners_read_from": "first-spike timing in cp_firing_states",
-            "host_top_k_determines_pooler_winners": False,
-            "remaining_selection_scaffolds": [
-                "host overlap-to-current max normalization",
-                "host first-spike-time readout",
-                "host seeded drive-independent same-step tie break",
-            ],
-        },
+        "stream_checks": stream_checks,
     }
 
 

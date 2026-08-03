@@ -180,6 +180,8 @@ def test_tiny_cpu_smoke_builds_every_control(tmp_path):
     assert row["neural_selection"]["neural_drive_lesion_winners"] == []
     assert len(row["neural_selection"]["graded_winners"]) == 2
     assert row["n_objects"] == 4
+    assert row["preconditions"]
+    assert all(check["ok"] for check in row["preconditions"])
     for arm in row["arms"].values():
         assert 0.0 <= arm["heldout_identity_decode"] <= 1.0
         assert arm["mean_code_activity"] == pytest.approx(2 / 16, abs=1e-4)
