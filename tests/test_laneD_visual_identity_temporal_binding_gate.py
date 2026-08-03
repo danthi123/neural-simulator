@@ -90,6 +90,23 @@ def test_seed_partitions_are_fresh_disjoint_and_smoke_is_reserved():
     )
 
 
+def test_formal_verdict_helpers_keep_smoke_separate_and_require_both_seeds():
+    assert gate.formal_verdict_for_phase("smoke") == "NOT-SCIENTIFIC-SMOKE"
+    assert gate.formal_verdict_for_phase("calibration", "GO") == "GO"
+    with pytest.raises(ValueError, match="earned GO"):
+        gate.formal_verdict_for_phase("calibration")
+    assert gate.aggregate_formal_verdict("smoke", []) == "NOT-SCIENTIFIC-SMOKE"
+    assert gate.aggregate_formal_verdict(
+        "calibration", [{"formal_verdict": "GO"}, {"formal_verdict": "GO"}]
+    ) == "GO"
+    assert gate.aggregate_formal_verdict(
+        "calibration", [{"formal_verdict": "GO"}, {"formal_verdict": "NO-GO"}]
+    ) == "NO-GO"
+    assert gate.aggregate_formal_verdict(
+        "calibration", [{"formal_verdict": "GO"}, {"formal_verdict": "UNDEFINED"}]
+    ) == "UNDEFINED"
+
+
 def test_run_seed_rejects_smoke_seed_as_calibration_before_building(monkeypatch, tmp_path):
     args = _tiny_args(tmp_path)
     args.phase = "calibration"

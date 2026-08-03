@@ -79,7 +79,7 @@ from research.runners._laneD_visual_identity_homeostasis_gate import (  # noqa: 
     score_codes,
     shuffled_track_indices,
 )
-from tools.verdict import Verdict  # noqa: E402
+from tools.verdict import GO, NO_GO, UNDEFINED, Verdict  # noqa: E402
 
 
 SMOKE_SEED = 220
@@ -168,8 +168,23 @@ def validate_seed_partition(phase: str, seeds: Sequence[int]) -> None:
         )
 
 
-def formal_verdict_for_phase(phase: str) -> str:
-    return "NOT-SCIENTIFIC-SMOKE" if phase == "smoke" else "NOT-RUN-CALIBRATION-ONLY"
+def formal_verdict_for_phase(phase: str, decided_status: str | None = None) -> str:
+    if phase == "smoke":
+        return "NOT-SCIENTIFIC-SMOKE"
+    if decided_status not in {GO, NO_GO, UNDEFINED}:
+        raise ValueError("calibration requires an earned GO, NO-GO, or UNDEFINED verdict")
+    return str(decided_status)
+
+
+def aggregate_formal_verdict(phase: str, rows: Sequence[dict]) -> str:
+    if phase == "smoke":
+        return "NOT-SCIENTIFIC-SMOKE"
+    statuses = [row["formal_verdict"] for row in rows]
+    if any(status == UNDEFINED for status in statuses):
+        return UNDEFINED
+    if statuses and all(status == GO for status in statuses):
+        return GO
+    return NO_GO
 
 
 def dense_v1_activity(
@@ -693,7 +708,7 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         ],
     }
 
-    earned = Verdict("visual identity temporal-binding calibration readiness", chance=0.25)
+    earned = Verdict("visual identity temporal-binding calibration", chance=0.25)
     earned.require(
         "successor seed partitions are fresh",
         stream_checks["fresh_seed_partitions"],
@@ -754,14 +769,18 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         "calibration_status": (
             "SMOKE-ONLY"
             if args.phase == "smoke"
-            else ("CANDIDATE" if calibration_ready else "NEEDS-REVISION")
+            else (
+                "UNDEFINED"
+                if decided["status"] == UNDEFINED
+                else "CALIBRATION_PASS" if decided["go"] else "CALIBRATION_FAIL"
+            )
         ),
         "preconditions": decided["preconditions"],
         "undefined_reasons": decided["undefined_reasons"],
         "calibration_readiness_verdict": (
             "NOT-SCIENTIFIC-SMOKE" if args.phase == "smoke" else decided["status"]
         ),
-        "formal_verdict": formal_verdict_for_phase(args.phase),
+        "formal_verdict": formal_verdict_for_phase(args.phase, decided["status"]),
         "stream_checks": stream_checks,
     }
 
@@ -835,16 +854,18 @@ def main() -> int:
             flush=True,
         )
 
+    aggregate_verdict = aggregate_formal_verdict(args.phase, rows)
+
     output = {
         "summary": {
             "probe": "laneD_visual_identity_temporal_binding_gate",
             "phase": args.phase,
             "seeds": args.seeds,
-            "formal_gate_run": False,
-            "formal_verdict": formal_verdict_for_phase(args.phase),
+            "formal_gate_run": args.phase == "calibration",
+            "formal_verdict": aggregate_verdict,
             "scientific_evidence": args.phase != "smoke",
-            "candidate_seeds": sum(
-                row["calibration_status"] == "CANDIDATE" for row in rows
+            "passing_seeds": sum(
+                row["calibration_status"] == "CALIBRATION_PASS" for row in rows
             ),
             "seed_partitions": {
                 name: list(values) for name, values in SEED_PARTITIONS.items()

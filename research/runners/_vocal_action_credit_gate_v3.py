@@ -27,12 +27,10 @@ import numpy as np
 from research.runners._vocal_action_credit_gate import (
     ACTION_COLLATERAL_GATE,
     CREDIT_CUE,
-    CREDIT_PLASTICITY_GATE,
     DOPAMINE_PATH_GATE,
     OUTCOME_ONSET,
     REWARD_US,
     SNC,
-    VALUE_PLASTICITY_GATE,
     VALUE_TO_SNC_GATE,
     CALIBRATION_SEEDS as V1_V2_CALIBRATION_SEEDS,
     DEVELOPMENT_SEEDS as V1_V2_DEVELOPMENT_SEEDS,
@@ -43,7 +41,6 @@ from research.runners._vocal_action_credit_gate import (
     _core_updates,
     _credit_pathways,
     _credit_regions,
-    _cue_led_rate,
     _eligibility_means,
     _preference,
     _route_change,
@@ -842,6 +839,7 @@ def run_condition(
     yoked_schedule=None,
     config: VocalCreditConfigV3 | None = None,
 ) -> dict:
+    validate_phase_seeds("calibration", [seed])
     if mode not in {"contingent", *CONTROL_MODES}:
         raise ValueError(mode)
     if mode in YOKED_MODES and yoked_schedule is None:
@@ -1229,6 +1227,7 @@ def run_seed(
     evaluation_trials: int = 40,
     config: VocalCreditConfigV3 | None = None,
 ) -> dict:
+    validate_phase_seeds("calibration", [seed])
     config = config or v3_config()
     contingent = run_condition(
         seed,

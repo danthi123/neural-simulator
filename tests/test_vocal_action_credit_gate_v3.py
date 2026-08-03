@@ -24,6 +24,8 @@ from research.runners._vocal_action_credit_gate_v3 import (
     _structural_preconditions,
     build_v3_bridge,
     schema_smoke,
+    run_condition,
+    run_seed,
     v3_config,
     validate_phase_seeds,
 )
@@ -61,6 +63,35 @@ def test_v3_calibration_only_lock_rejects_reserved_seeds_and_phases():
             assert "is locked" in str(error)
         else:
             raise AssertionError(f"locked phase {phase} was accepted")
+
+
+def test_v3_direct_execution_rejects_smoke_and_reserved_seeds_before_build(monkeypatch):
+    def fail_build(*_args, **_kwargs):
+        raise AssertionError("brain construction happened before seed validation")
+
+    monkeypatch.setattr(
+        "research.runners._vocal_action_credit_gate_v3.build_v3_bridge",
+        fail_build,
+    )
+    for seed in (SMOKE_SEED, DEVELOPMENT_SEEDS[0], HELD_OUT_SEEDS[0]):
+        try:
+            run_seed(seed, training_trials=1, baseline_trials=1, evaluation_trials=1)
+        except ValueError as error:
+            assert "accepts calibration seeds" in str(error)
+        else:
+            raise AssertionError(f"direct run_seed accepted reserved seed {seed}")
+        try:
+            run_condition(
+                seed,
+                mode="contingent",
+                training_trials=1,
+                baseline_trials=1,
+                evaluation_trials=1,
+            )
+        except ValueError as error:
+            assert "accepts calibration seeds" in str(error)
+        else:
+            raise AssertionError(f"direct run_condition accepted reserved seed {seed}")
 
 
 def test_v3_keeps_v2_gabab_operating_point_and_adds_new_mechanisms():
