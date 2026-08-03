@@ -113,6 +113,18 @@ thalamus. Revise that competition as a new version and rerun all four
 development seeds. Gates B and C and held-out seeds 101/102 remain locked. See
 [`research/findings/2026-08-03-neural-vocal-selector-gateA-4seed-NO-GO.md`](../../research/findings/2026-08-03-neural-vocal-selector-gateA-4seed-NO-GO.md).
 
+**Gate A v2 preregistration:** remove the two striatal FSI populations and their
+proposal, cross-MSN, and reset pathways. Keep every current, remaining weight,
+population size, decision rule, threshold, duration, seed, and GO criterion
+unchanged. V1 showed that when both candidate channels recruited their FSI
+pools, both D1 routes could be suppressed and no action occurred. V2 tests the
+narrow hypothesis that downstream commit competition is sufficient and that
+the extra striatal competition is counterproductive at this scale. The runner
+preserves v1 and exposes v2 through `--selector-version v2`; the topology change
+reduces the probe from 632 to 600 neurons and from 44 to 36 declared pathways.
+The full v2 evidence must rerun all 100 main, 100 no-arousal, and 100
+direct-path-lesion trials for every development seed before Gate A can pass.
+
 ### Gate B: Local Credit
 
 Add plastic cue-to-striatum routes and delay the consequence beyond action

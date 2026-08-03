@@ -64,6 +64,15 @@ class SelectorConfig:
     washout_steps: int = 100
     commit_threshold_spikes: int = 12
     clean_loser_ratio: float = 0.25
+    enable_striatal_fsi: bool = True
+
+
+def selector_config(version: str) -> SelectorConfig:
+    if version == "v1":
+        return SelectorConfig()
+    if version == "v2":
+        return SelectorConfig(enable_striatal_fsi=False)
+    raise ValueError(f"unknown selector version: {version}")
 
 
 def _region(name, n, *, exc_fraction, neuron_type, internal_density=0.0,
@@ -126,11 +135,16 @@ def build_selector_bridge(seed: int, config: SelectorConfig = SelectorConfig()):
                 neuron_type=fs),
     ]
     for channel in CHANNELS:
-        regions.extend([
+        channel_regions = [
             _region(f"proposal_{channel}", config.n_proposal,
                     exc_fraction=1.0, neuron_type=rs),
-            _region(f"str_fsi_{channel}", config.n_commit_fs,
-                    exc_fraction=0.0, neuron_type=fs),
+        ]
+        if config.enable_striatal_fsi:
+            channel_regions.append(_region(
+                f"str_fsi_{channel}", config.n_commit_fs,
+                exc_fraction=0.0, neuron_type=fs,
+            ))
+        channel_regions.extend([
             _region(f"str_d1_{channel}", config.n_striatum,
                     exc_fraction=0.0, neuron_type=d1),
             _region(f"str_d2_{channel}", config.n_striatum,
@@ -150,19 +164,21 @@ def build_selector_bridge(seed: int, config: SelectorConfig = SelectorConfig()):
             _region(f"motor_{channel}", config.n_motor,
                     exc_fraction=1.0, neuron_type=rs),
         ])
+        regions.extend(channel_regions)
 
     pathways = []
     for channel in CHANNELS:
         other = 1 - channel
-        pathways.extend([
-            RegionPathway(
-                from_region="practice_arousal",
-                to_region=f"proposal_{channel}",
-                density=1.0,
-                weight_mean=config.arousal_to_proposal_weight,
-                weight_jitter=0.0,
-                plastic=False,
-            ),
+        pathways.append(RegionPathway(
+            from_region="practice_arousal",
+            to_region=f"proposal_{channel}",
+            density=1.0,
+            weight_mean=config.arousal_to_proposal_weight,
+            weight_jitter=0.0,
+            plastic=False,
+        ))
+        if config.enable_striatal_fsi:
+            pathways.extend([
             RegionPathway(
                 from_region=f"proposal_{channel}",
                 to_region=f"str_fsi_{channel}",
@@ -189,6 +205,8 @@ def build_selector_bridge(seed: int, config: SelectorConfig = SelectorConfig()):
                 plastic=False,
                 receptor="gaba_a",
             ),
+            ])
+        pathways.extend([
             RegionPathway(
                 from_region=f"proposal_{channel}",
                 to_region=f"str_d1_{channel}",
@@ -281,15 +299,17 @@ def build_selector_bridge(seed: int, config: SelectorConfig = SelectorConfig()):
                 plastic=False,
             ),
         ])
-        for target in (
+        reset_targets = [
             f"proposal_{channel}",
-            f"str_fsi_{channel}",
             f"str_d1_{channel}",
             f"str_d2_{channel}",
             f"thal_{channel}",
             f"commit_{channel}",
             f"motor_{channel}",
-        ):
+        ]
+        if config.enable_striatal_fsi:
+            reset_targets.append(f"str_fsi_{channel}")
+        for target in reset_targets:
             pathways.append(RegionPathway(
                 from_region="selector_reset",
                 to_region=target,
@@ -361,7 +381,6 @@ def _run_trial(bridge, config, *, arousal=True):
     for channel in CHANNELS:
         diagnostic_regions.extend([
             f"proposal_{channel}",
-            f"str_fsi_{channel}",
             f"str_d1_{channel}",
             f"str_d2_{channel}",
             f"gpe_{channel}",
@@ -371,6 +390,8 @@ def _run_trial(bridge, config, *, arousal=True):
             f"commit_fs_{channel}",
             f"motor_{channel}",
         ])
+        if config.enable_striatal_fsi:
+            diagnostic_regions.append(f"str_fsi_{channel}")
     region_indices = {
         name: _indices(bridge, name) for name in diagnostic_regions
     }
@@ -509,20 +530,26 @@ def main(argv=None):
     parser.add_argument("--trials", type=int, default=100)
     parser.add_argument("--lesion-trials", type=int, default=100)
     parser.add_argument(
+        "--selector-version", choices=("v1", "v2"), default="v1"
+    )
+    parser.add_argument(
         "--output",
         default="research/findings/raw/vocal_action_selector_gate.json",
     )
     args = parser.parse_args(argv)
+    config = selector_config(args.selector_version)
     rows = [
         run_seed(
             seed,
             trials=args.trials,
             lesion_trials=args.lesion_trials,
+            config=config,
         )
         for seed in args.seeds
     ]
     result = {
         "probe": "vocal_action_selector_gate_a",
+        "selector_version": args.selector_version,
         "seeds": list(args.seeds),
         "rows": rows,
         "n_go": int(sum(row["go"] for row in rows)),

@@ -10,6 +10,7 @@ from research.runners._vocal_action_selector_gate import (
     SelectorConfig,
     build_selector_bridge,
     run_condition,
+    selector_config,
 )
 from sim.backend import to_host
 
@@ -76,6 +77,20 @@ def test_selector_has_no_cross_channel_excitatory_shortcut():
         assert not _pathways(bridge, f"proposal_{channel}", f"str_d1_{other}")
         assert not _pathways(bridge, f"thal_{channel}", f"commit_{other}")
         assert not _pathways(bridge, f"commit_{channel}", f"motor_{other}")
+
+
+def test_v2_removes_counterproductive_striatal_fsi_branch():
+    bridge = build_selector_bridge(seed=13, config=selector_config("v2"))
+    region_names = {region.name for region in bridge.region_manager.regions()}
+
+    assert bridge.core_config.num_neurons == 600
+    assert len(bridge.core_config.region_pathways) == 36
+    assert not any(name.startswith("str_fsi_") for name in region_names)
+    assert not any(
+        pathway.from_region.startswith("str_fsi_")
+        or pathway.to_region.startswith("str_fsi_")
+        for pathway in bridge.core_config.region_pathways
+    )
 
 
 def test_selector_smoke_records_neural_threshold_without_argmax():
