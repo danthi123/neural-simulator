@@ -1,0 +1,98 @@
+{
+  "artifact_schema_version": 1,
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "seed": 0,
+  "scientific_seed_executed": false,
+  "verdict": "DYNAMICS_FAIL",
+  "failure_reason": "zero pre-outcome expectation spikes at every preregistered route weight",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "reserved smoke seed only",
+      "ok": true,
+      "detail": "seed=0; scientific_seed_executed=false",
+      "note": "No formal v6 seed was assigned."
+    },
+    {
+      "kind": "require",
+      "name": "authoritative GPU backend engaged",
+      "ok": true,
+      "detail": "backend=cupy; device=NVIDIA GeForce RTX 3090",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "engagement probe isolated from learning",
+      "ok": true,
+      "detail": "plasticity_frozen=true",
+      "note": "The diagnostic tests whether the active trace can drive the expectation population."
+    },
+    {
+      "kind": "require",
+      "name": "complete preregistered ladder measured",
+      "ok": true,
+      "detail": "weights=0.1,1.0,2.0,4.0; four of four completed",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "presynaptic trace engaged during every delay",
+      "ok": true,
+      "detail": "delay trace spikes were 27/251 at every point",
+      "note": "A silent trace cannot explain the zero postsynaptic expectation result."
+    }
+  ],
+  "config": {
+    "trace_cells_per_channel": 24,
+    "expectation_cells_per_channel": 24,
+    "reward_delay_steps": 100,
+    "plasticity_frozen": true,
+    "tested_weights": [0.1, 1.0, 2.0, 4.0]
+  },
+  "measurements": [
+    {
+      "weight": 0.1,
+      "winner": 1,
+      "delay_trace_spikes": [27, 251],
+      "delay_expectation_spikes": [0, 0],
+      "outcome_expectation_spikes": [14, 9]
+    },
+    {
+      "weight": 1.0,
+      "winner": 1,
+      "delay_trace_spikes": [27, 251],
+      "delay_expectation_spikes": [0, 0],
+      "outcome_expectation_spikes": [14, 19]
+    },
+    {
+      "weight": 2.0,
+      "winner": 1,
+      "delay_trace_spikes": [27, 251],
+      "delay_expectation_spikes": [0, 0],
+      "outcome_expectation_spikes": [14, 24]
+    },
+    {
+      "weight": 4.0,
+      "winner": 1,
+      "delay_trace_spikes": [27, 251],
+      "delay_expectation_spikes": [0, 0],
+      "outcome_expectation_spikes": [14, 24]
+    }
+  ],
+  "checks": {
+    "trace_active_during_delay": true,
+    "expectation_active_during_delay": false,
+    "bounded_ladder_exhausted": true,
+    "formal_execution_remains_sealed": true
+  },
+  "provenance": {
+    "runner": "inline diagnostic using research.runners._vocal_action_credit_gate_v5_learning",
+    "source_commit": "d2f713471",
+    "command": "SIM_BACKEND=cupy SIM_NO_PROVENANCE=1 inline Python four-point frozen-plasticity engagement ladder",
+    "git_worktree_note": "only the standing provenance and corpus-check logs were dirty before this diagnostic",
+    "corpus_check_query": "persistent pre-reward expectation activity failed striatal MSN D1 trace reward expectation mechanism",
+    "corpus_check_fresh": true,
+    "recorded_at": "2026-08-03T19:36:40-04:00"
+  }
+}

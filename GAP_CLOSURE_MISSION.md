@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 18:26 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 19:40 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -35,17 +35,24 @@ controlled the action-tag duration after detecting the winner, and the exact
 CuPy run fired at `45.833 Hz/cell`. Instrumentation traced the backend difference
 to late motor activity driving different always-open FS normalizers. Every v4
 scientific seed remains unused and sealed.
-Gate B v5 now replaces the host-timed route with commit/arousal dendritic
+Gate B v5 replaced the host-timed route with commit/arousal dendritic
 coincidence during one fixed action epoch and symmetric outcome-linked
 excitation plus feed-forward inhibition. Its frozen-dynamics reserved seed-zero
 battery passes on NumPy and the RTX 3090 with one configuration (`18.06` and
 `17.36 Hz/cell`), zero changed weights, and explicit rejection of bilateral
-commit and outcome state. This is a qualified mechanism smoke, not learned
-credit. An independent audit found the corrected artifacts, controls, route
-confinement, and zero-weight-change claim clear. The learning preregistration is
-committed and live. Formal phases remain sealed while a deterministic seed
-manifest is committed and the reserved-seed learning implementation is built
-and audited.
+commit and outcome state. This was a qualified mechanism smoke, not learned
+credit. Its reserved learning runner then learned the action-local
+trace-to-expectation route on NumPy and CuPy with zero plastic leakage, but
+repeated expected reward suppressed dopamine by only `5.56%` and `8.86%`, below
+the fixed `20%` minimum, and omission recruited neither LHb-like nor RMTg-like
+neurons. The repaired RAG index recovered the prior June critic diagnosis:
+direct GABA-A is weak at these dopamine cells, and GABA-B needs an expectation
+signal that starts before and overlaps reward. A preregistered v6 four-point
+route-weight ladder still produced zero pre-outcome expectation spikes (`0.1`,
+`1.0`, `2.0`, `4.0`) and was retired without a runner or scientific seeds. V7
+is preregistered to test the prior evidence-backed remedy: dense convergent
+neural action context into the same MSN-D1 expectation cells. Formal phases
+remain sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -92,11 +99,11 @@ enforce evidence gates and refresh the main-branch index automatically.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Commit a collision-checked Gate B v5 learning seed manifest, then implement
-   and audit the reserved seed-zero learning smoke. The independent frozen-
-   dynamics audit is clear and the learning preregistration is live, but do not
-   open a formal seed until the smoke passes its structural, contingent/yoked,
-   omission, permutation, lesion, and plasticity-isolation checks.
+1. Implement and structurally audit Gate B v7's reserved seed-zero dense-
+   convergence ladder. Stop at the first preregistered trace size that creates
+   learned pre-outcome expectation, then test graded GABA-B suppression and the
+   LHb/RMTg omission path on NumPy and CuPy. Do not assign or open formal seeds
+   unless the complete smoke and independent audit pass.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a

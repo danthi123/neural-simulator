@@ -68,7 +68,7 @@ both contingent and unrelated delayed reward, exposing arbitrary action bias
 rather than useful credit. A second version added competing spiking action-value
 populations, but clean calibration still saturated under unrelated reward: one
 seed chose each arbitrary action. A third version added a spiking
-expected-omission pathway through LHb- and RMTg-like populations plus local
+    expected-omission pathway through LHb- and RMTg-like populations plus local
 critic normalization. Both clean GPU calibration seeds still learned the
 rewarded action under unrelated reward, while the intact omission pathway stayed
 silent. The next design must preserve a bounded learned expectation until
@@ -82,11 +82,18 @@ during a fixed action epoch and symmetric outcome-linked feed-forward
 normalization. Its reserved smoke passes on NumPy and CuPy with one
 configuration, changes no weights, rejects bilateral commit and outcome state,
 and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
-and a learning preregistration now requires actual local learning, yoked
-neutrality, contingent acquisition, omission activity, permutation, and all
-lesions. This remains only a qualified mechanism smoke. Formal seeds stay
-sealed while a collision-checked seed manifest and reserved-seed learning
-implementation are committed and audited.
+    and a reserved learning runner learned a separate action-local expectation
+    on both backends without unintended weight changes. Its output still failed:
+    expected reward reduced dopamine by only `5.56%/8.86%`, and omission did not
+    recruit the LHb/RMTg path. The repaired project search recovered the prior
+    requirement that expectation fire before reward and overlap it. A
+    preregistered four-point increase in sparse trace-route weight did not create
+    any pre-outcome expectation spikes, so that route is retired. The current v7
+    successor tests dense convergent action-context input into the same MSN-D1
+    expectation cells, following an earlier project diagnostic of this exact
+    firing boundary. Formal seeds remain sealed until reserved smoke shows
+    learned pre-outcome expectation, graded GABA-B suppression, causal omission,
+    cross-backend agreement, and an independent audit.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

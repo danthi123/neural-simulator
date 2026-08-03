@@ -1,6 +1,6 @@
 ---
 type: preregistration
-status: live
+status: retired
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v6-persistent-expectation
 runner: research/runners/_vocal_action_credit_gate_v6_persistent_expectation.py
@@ -11,6 +11,12 @@ runner: research/runners/_vocal_action_credit_gate_v6_persistent_expectation.py
 **Filed before the v6 runner exists.** This is a reserved-seed implementation
 smoke, not formal calibration. Seed `0` is the only executable seed. No v6
 formal seed is assigned, and every formal entry point must remain sealed.
+
+**Retired 2026-08-03 before a runner was built.** The preregistered four-point
+trace-to-expectation engagement ladder was executed directly against the v5
+bridge with learning frozen. Weights `0.1`, `1.0`, `2.0`, and `4.0` all produced
+zero expectation spikes during the delay. See
+`2026-08-03-neural-vocal-credit-gateB-v6-engagement-NO-GO.md`.
 
 ## Why v5 stopped
 
