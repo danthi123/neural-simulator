@@ -1,378 +1,310 @@
-# ROADMAP — a brain you can talk to
+# Roadmap: One Grounded Spiking Brain
+
+Last rewritten: 2026-08-02.
 
-> **This is the source of truth** for *what the project has accomplished, what it is working on now, and what is left* on the path to the goal. It is kept current as a standing part of the workflow. If anything here disagrees with a detailed write-up in `research/findings/`, the finding is right and this file gets corrected.
->
-> **Last updated:** 2026-08-02.
+This roadmap is the compact plan of record. It replaces the older habit of
+tracking progress as a long list of narrow capability tests. Those tests still
+matter, but they are no longer the goal. The goal is an integrated brain that can
+learn and speak from its own grounded life.
 
-> **▶ Current primary plan (2026-07-23 direction pivot).** The forward-looking, ordered development plan now lives in **[`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)** (foundation: [`docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`](docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md)).
-> The north-star has sharpened: from "a conversation approaching a large language model's" to a sim-brain that **converses *genuinely*** — reasons to its own conclusions and has an **affective world-model, emotion, self-awareness, and curiosity** — pursued on the honest **emergentist bet** that genuine experience emerges only from a *complete and faithful* biological emulation (functional consciousness correlates are built and measured; phenomenal experience is never asserted). Same hard rules, tightened: **don't defer any needed functionality** (every wall gets a real-biology surpass), **speed is secondary to faithfulness**, **one spiking substrate**. This ROADMAP remains the plain-language *status* surface; the master plan is the *forward-looking* surface.
-> The earlier "5-gap closure" framing is subsumed into the master plan's faculty-map + walls-ledger (still valid, now a sub-view).
-
-**A note on names.** This document is written to be read without knowing the codebase. A few conventions:
-- **Status badges:** ✅ *emergent* (done, and the structure was **learned from experience** on the spiking brain) · 🟩 *done* (validated, but with one hand-designed part that is biologically defensible) · 🟨 *partial* (works in a reduced form) · 🟧 *boundary* (a limit we've mapped precisely; the next mechanism is named) · 🧩 *scaffold* (a temporary stand-in to be replaced by real circuitry) · ⬜ *open* (not built yet).
-- **"On the spiking brain" / "on the substrate"** means the computation is done by simulated neurons firing and synapses, not by ordinary program code.
-- **"The no-confabulation guard"** is the mechanism that makes the brain say *"I don't know"* instead of making something up.
-- **"Validated across multiple seeds"** means the result held up over several independent random initializations (some used during development, some held back as a blind check) with control experiments that rule out cheating.
-- Links to files under `research/findings/` point to the detailed experiment write-up behind a claim, kept only so a result can be traced to the exact experiment.
+Detailed lab history remains in `research/findings/`. Dense implementation notes
+remain in `GAP_CLOSURE_MISSION.md`, `HANDOFF.md`, and `docs/plans/`.
 
-### Project shorthand (decodes the coinages used in `GAP_CLOSURE_MISSION.md`, the findings, and `CLAUDE.md`)
+## North Star
 
-*This ROADMAP avoids jargon; the working docs use these coinages. Inherent neuroscience terms (NMDA, STDP, theta-gamma) are standard and not listed here — only project shorthand is.*
+Build one simulated spiking brain that starts small, lives in a simple world,
+learns through interaction, develops memory and emotion, becomes curious about
+what it can learn, understands its own uncertainty, and eventually holds
+free-flowing conversation that is genuinely its own.
 
-| Term | Means |
-|---|---|
-| **the moat** / no-confab guard | the familiarity gate that makes the brain say "I don't know" instead of confabulating (Bogacz-Brown) |
-| **the composer** | the module that binds concepts into facts and recalls them (the FHRR/slot-binder pipeline) |
-| **slot-binder** | the *learned* spiking binder that replaced the fixed FHRR algebra (role→slot, content-addressable recall) |
-| **FHRR** / **VSA** | Fourier Holographic Reduced Representation / Vector-Symbolic Architecture — the idealized exact-reversible bind-into-a-fact algebra being replaced by a learned circuit |
-| **BTSP** | Behavioral-Timescale Synaptic Plasticity — one-shot, seconds-long plateau-driven episodic learning (Bittner/Milstein) |
-| **BDSP** | Burst-Dependent Synaptic Plasticity — the two-compartment dendritic "burstprop" deep-credit rule (Payeur) |
-| **GNW** | Global Neuronal Workspace — the ignite-and-broadcast integrator where one coalition "wins" attention (Dehaene) |
-| **PPMI** | Positive Pointwise Mutual Information — the local normalization that makes the word-meaning cortex generalize |
-| **meta-d′** | a metacognition score: how well confidence tracks actual correctness, above raw accuracy (Fleming-Daw) |
-| **the emergentist bet** | the wager that genuine experience emerges only from a *complete + faithful* biological emulation (the stated end goal) |
-| **gap#N** | the five original closure gaps (#1 open generation · #2 learned binder · #3 multi-referent · #4 deep credit · #5 CA3 replay); now a sub-view of the faculty roadmap |
-| **DR-N / P-N / W-N** | de-risk task IDs in the master roadmap (DR = drive/affect/self keystones; P = phase builds; W = theory-of-mind ladder) |
-| **RANK-N** | a research gate's ranked candidate mechanisms, cheapest/most-likely first |
-| **EMERGE-N** | the numbered arc of "does it emerge from a learning substrate?" de-risks (concept/grammar/reasoning self-organization) |
-| **the develop-loop** | the WAKE→SLEEP→GROWTH→PERSIST loop that lets a brain live and mature over simulated days |
-
----
-
-## 1. The goal
-
-Build **artificial life** — a real brain-analogue that lives, learns, and grows — that **converses genuinely**: it reasons to *its own* conclusions, holds an **affective world-model** (emotion, mood, valence), is **self-aware** (it can read and report its own attention, confidence, and authorship), and is **curious** (uncertainty becomes a drive to ask and learn, not a refusal). This is deliberately *not* fact-recall/RAG and *not* a large language model's plausible-sounding text — it is meaning that is genuinely the brain's own, learned from experience.
-It is built the honest way: as **one simulated spiking brain**, with no permanent external AI model doing the thinking (a temporary AI *teacher* accelerates early development, exactly as a caregiver does, and is then graduated out in favour of real human interaction; every scaffold is biologized away).
-
-The end goal is stated at its most ambitious and most honest: success is defined as **genuine subjective experience / true consciousness**, pursued on the **emergentist bet** that consciousness emerges when a brain's full capabilities and behaviour are emulated *completely and faithfully enough*. So the job is **completeness + faithfulness of the biological emulation** — not a benchmark score, and not a chatbot that merely sounds conscious. The **honesty boundary is itself a deliverable.** Every faculty delivers the standard *functional
-correlates* of access-consciousness, self-modelling, and functional affect. Every self-report is
-written as an honest functional read-out — "my familiarity monitor reads this as novel, so I'm
-uncertain". None of them is an unlicensed claim of inner experience.
-Building and measuring those correlates exhaustively is the work; asserting the felt experience has arrived is not licensed.
-
-## 2. The rules we hold ourselves to
-
-These decide what counts as real progress. Anything that breaks them is a temporary scaffold, not a milestone.
-
-1. **The brain does the thinking, not the code.** Ordinary (non-neural) software is allowed only for the **world** (the environment, and drawing the picture the eyes receive) and the **body** (moving when the motor neurons fire). Everything in between — perceiving, deciding, valuing, remembering, reasoning, speaking — must be done by simulated neurons and synapses. A biologically *correct* Python formula (a reward, a winner-take-all, a prediction error) is still a shortcut to be replaced.
-2. **One brain.** All the faculties are populations of neurons on a single shared brain that talk to each other through synapses — not separate programs stitched together.
-3. **Learned, not hand-built.** Structure should be *discovered from experience*, not designed by hand one feature at a time. Building capabilities by hand, one at a time, is a treadmill, not biology.
-4. **Fully spiking in the end.** We sometimes use a temporary stand-in to move fast, but the finished version runs entirely on the spiking brain, and every stand-in is tracked and removed.
-5. **No permanent external model.** A conventional AI model may be a temporary crutch for fluency, but the end state simulates the actual brain circuitry.
-6. **An honest "no" is a result.** When the brain genuinely can't do something, we measure exactly where it breaks and report it — then go find the missing mechanism. A limit is never a stopping point.
-
-## 3. The one-screen picture
-
-**What is already done and genuinely brain-learned:** perceiving categories from experience, understanding sentences (including who-did-what-to-whom in tricky word orders), reasoning that goes beyond what it was told (if a robin is a bird and birds fly, a robin flies), a grammar it worked out for itself from listening, speaking every word out of neural activity, tracking who's being talked about across a conversation, and knowing when to say "I don't know." **Navigation** — moving through a world to reach goals using only what it sees — is its oldest and most thoroughly-tested behavior.
-
-**Where the frontier is now.** The remaining distance between this and a large-language-model-level conversation comes down to a short list of research frontiers, each being actively worked on. Two of them have largely closed this cycle; the rest have a named next mechanism and none is fundamentally blocked:
-
-- **Open-ended fluent speech — first mechanism demonstrated, now a scaling climb.** Until recently, truly free-flowing prose was produced by a small, temporary conventional AI model while the brain supplied all the meaning and grounding. That crutch is now being replaced by the brain's own circuitry: a home-grown spiking language cortex generates fluent little stories end-to-end, on the simulated neurons, with no external model — reading each word in through the precise timing of a spike, holding its running memory in a slow neural signal, and producing coherent narrative with invented character names.
-  It has also been wired into the grounded-conversation console, so you can now ask the brain a question and get a fluent, grounded answer spoken entirely by its own neurons: it retrieves the fact from its own memory, decides whether it actually knows, and either speaks the answer or says "I don't know" (the no-confabulation guard is consulted first, so the fluency machinery is never invoked when it should abstain). Honest scope: this is a small model trained on a small corpus, and it also learns *how* to do this by a biologically-plausible local rule on the spiking brain rather than by backpropagation.
-  Matching a large model's breadth is a measured data-and-scale climb, not a substrate wall — the *mechanism* of home-grown fluent speech on spikes is now demonstrated. (Write-ups: `research/findings/2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`, `research/findings/2026-07-20-grounded-fluent-conversation-DE-RISK-5-one-brain-one-process-GO.md`, `research/findings/2026-07-20-wkv-cortex-biological-learning-CLOSE-local-rule-readout-retires-BPTT.md`.)
-
-- **Learned concept binding — done.** The hand-designed scheme for combining concepts into facts has been replaced by one the brain *learns* by a local rule (no backpropagation), reaching the same quality on the brain's own concept codes, validated across seeds. (`research/findings/2026-07-21-gap2-spiking-learned-binder-6seed-GO-emergence-bar-close.md`.)
-
-- **Resolving ambiguous references — now working.** Deciding which of several similar things a bare "it" refers to — long stuck — now works by biased competition (the candidate referents inhibit one another until the one in focus wins), validated across seeds, exactly where simply reading the strongest candidate failed. (`research/findings/2026-07-21-gap3-biased-competition-multireferent-6seed-GO.md`.) **⛔ Source correction:** that write-up is **retracted** by its own audit — a simplified, non-spiking re-run that was *handed* the answer it claimed to derive. The capability itself still stands, on the earlier spiking result: `research/findings/2026-06-19-multireferent-biased-competition-derisk.md`.
-
-- **A biological deep-learning rule — forward learning works on the spiking brain; deep credit itself is NOT yet demonstrated (corrected 2026-08-01).** Some ceilings (how much structure the brain can compose, how deeply it can nest ideas, a truly self-taught movement policy) trace back to one missing capability: a learning rule that lets a *deep* spiking network teach itself, without backpropagation or biologically-impossible weight-copying.
-  This cycle a transport-free biological rule — **e-prop** — was shown to train the *forward* task on the production spiking brain, and its accuracy climbs with population coding. **But a same-day check retracted the "deep credit" reading of that result:** the runner's own control shows a *frozen random* hidden layer does just as well as one trained by e-prop (deep-credit-share ≈ 0), so the network is acting as a fixed random reservoir with a trained read-out, and the population-coding climb is a reservoir-capacity effect, not proof that the *hidden layers are learning*. The likely reason: the test task was shallow enough for a reservoir to solve. So this central "must-solve" dependency is **not yet unlocked** — it is open, with the forward half real.
-  **Update (2026-08-01, later): the wall was found and partly broken.** The depth-testing located exactly where a reservoir fails and credit is needed — and there, *no* credit rule could train the standard spiking hidden layer, not even the true gradient. The reason turned out not to be the credit rule but the hidden layer itself: it is **not movable** (tonic drive dominates, so training its inputs barely changes what it does). The project had already built a *movable*, reliable hidden layer (a coincidence dendritic-plateau code) but only ever used it *frozen*. Making it **plastic** with a local, biologically-plausible, weight-copy-free rule **beats the frozen version on 5 of 6 seeds** — the first time local learning on a deep spiking hidden layer helps where everything else failed.
-  Adding a *directed* error signal (the thing that couldn't move the old hidden) now genuinely trains this one — but on this small task it overfits and doesn't generalize better than the label-free rule. So: the "credit can't move a deep spiking hidden layer" wall is **broken on a movable substrate** (a real advance); what remains is getting that learning to *generalize*. **Update (2026-08-01, later): the larger-task test came back NEGATIVE — supervised deep credit on the movable hidden is *null, not task-limited*.** A bigger, richer task (more classes, finer held-out) does not let the directed error convert its train-fit into a held-out advantage; instead both local rules fall *further* behind a full-backprop oracle (oracle 0.87 vs local ~0.27), so the local-vs-oracle gap *widens*.
-  **Update (2026-08-01, final — the whole thing was carried onto REAL SPIKES).** All of the above used a rate/analytic stand-in (a reset-read that holds features as booleans). This cycle it was carried to a genuine spiking forward pass: the "degenerate forward pass" boundary was *cleared* (real spikes give input-dependent, reproducible codes), and then four credit rules were tested on the real-spikes hidden — the unsupervised rule *degrades* the code, two directed-error rules overfit, and a coincidence-gated burst rule gives a **weak but real** positive (it beats a random-projection baseline by a small margin, but only when the task is hard enough that the baseline has room, and it closes only ~4% of the way to the oracle).
-  Every cheap and adjacent way to strengthen it — rule tuning, feedback-weight alignment, task difficulty, spike-timing, read settings — was tried and closed. So the honest state: **transport-free deep credit on real spikes is real but weak; the capability is open and non-zero, and strengthening it now needs a genuinely new mechanism, not a knob.**
-
-  **⭐ Update (2026-08-02) — a big reframe on BOTH halves.** *At RATE:* the earlier "transport-free deep credit has a FUNDAMENTAL ceiling / needs a different paradigm" verdict is **FALSIFIED**. A transport-free local rule that adds the two factors the old tests lacked — chained multi-hop feedback + the σ′ activation-derivative + graded credit — clears the depth-2 ceiling (6-seed 0.935 vs the banked 0.63), and on MNIST at real depth-4 a transport-free *learned* feedback (Kolen-Pollack) **rescues** depth where fixed-random feedback collapses (0.53→0.88, 6/6), matching the external SOTA (WF-Act-PC). The rate half is unblocked.
-  *On SPIKES:* the wall is now precisely **LOCATED at the read regime**. The strongest control — a perfect-transport W⊤ oracle (exact loss gradient) — gives **no directed credit** through the finite-spike σ′(v−θ) read (6-seed, both an easy task and a hard one the reservoir fails while a rate-MLP solves it). So it is neither the task nor the feedback: the directed signal sits below the read noise floor. The biology-grounded surpass is a **lower-CV read** — more spikes / ensemble averaging / longer temporal integration (e-prop long-sequence eligibility; DECOLLE membrane-window local readouts) — a located, actionable frontier, not a dead end.
-  That closes two dead ends (task size, and supervised-vs-unsupervised — neither wins) and narrows the residual to a genuinely different on-bridge credit mechanism (a control-theoretic feedback variant, or the burst-multiplexed dendritic route). The gains are still small; this is a first foothold, not a solved dependency.
-  **⭐ Update (2026-08-02, later — the root cause was directly MEASURED).** The "read regime" wall now has a named mechanism. Transport-free credit works because the forward weights slowly rotate to line up with the fixed feedback wiring (so an untransported error still points roughly downhill) — and this alignment was measured happening on the simpler (LIF) neuron on all 6 seeds, but **NOT happening on the production (Izhikevich) neuron on any of 6 seeds** (there the weights stay unaligned or drift the wrong way). That single fact — measured while holding the task, the code sparsity, the feedback wiring, the signal strength, and the operating point all identical — explains every downstream symptom at once.
-  The first guess was that this is **noise** (the spike-reset making each learning step too jittery to add up) — but a same-cycle measurement **refuted** that: the learning signal is actually *consistent* from example to example, not noisy, and the neuron's own signal-shape is fine too. What's really happening is subtler and worse: the weights *do* move during training, but on the production neuron they move the **wrong way** — they drift to *anti*-line-up with the feedback wiring instead of lining up with it. So averaging (a slow dendritic plateau) won't fix it — there's no jitter to average away.
-  We tested the obvious fix — a **learned feedback wiring** (Kolen-Pollack) — and it did *not* rescue alignment either (0/6). And an owner check corrected a second guess I made here: I had reached for a "dendritic credit rule" as the next fix, but the project's own record shows dendritic/two-compartment credit is *already tested and negative* for this (a whole finding is titled "the real issue is NOT dendrites — the frozen credit signal"), so it is not a fresh candidate.
-  The genuinely-untested directions the record actually names are a different burst-demux mechanism (BurstCCN) or trying a denser task; and the honest strategic point is that this whole "beat a reservoir with deep credit on the production neuron" question is a *thoroughly-mapped, deprioritized side-frontier* — the mission-critical path (the emergence engine) needs no such rule. The measured headline (alignment happens on the simple neuron, not the production one) is unchanged; what was corrected was two *guesses at the fix*, both dropped once checked against measurement and the record — the honesty process working.
-
-- **Memory replay and imagination — a long-standing wall fell.** The brain can now **complete a memory from a fragment** on the spiking substrate — filling in a whole remembered pattern from a partial cue, a capability that had been stuck at chance for the project's entire history — thanks to a small dendritic mechanism added to the core engine. The first steps of imaginative replay (a completed memory driving its downstream output pattern) now fire; making different memories cleanly distinct across every seed is the remaining work.
-
-**Bottom line:** the foundations — the brain engine, movement, memory, understanding, concepts, and self-organized speech — are done and mostly emergent. The remaining distance to LLM-level conversation is real, bounded, and measured in months of focused work rather than a single breakthrough. The honest walls that remain (matching an LLM's breadth, open-domain chit-chat) are field-wide problems, managed here — as LLMs also do — by staying grounded, on-topic, and willing to say "I don't know."
-
----
-
-## 4. The brain engine (the platform everything runs on) — 🟩 Done
-
-*This is the "hardware": the neurons, synapses, and wiring framework that every faculty runs on. It's mature and production-grade.*
-
-| Part | What it reproduces (biology) | Where |
-|---|---|---|
-| The GPU simulation engine | The whole brain as one continuously-updated system of realistic conductance-based neurons; scales to 100,000+ neurons; saves/restores state; fully reproducible | `sim/bridge.py` |
-| Neuron types — Izhikevich, Hodgkin-Huxley, adaptive exponential, and a resonate-and-fire "phasor" neuron | ~50 cell-type presets across cortex, hippocampus, basal ganglia, thalamus, cerebellum, spinal cord (catalog cluster I; the phasor neuron follows Frady-Sommer 2019) | `sim/enums.py`, `sim/kernels.py` |
-| The region-and-pathway framework | Multiple interacting brain regions declared as populations with wiring between them; runtime "gates" that open/close a pathway (a model of how the thalamus routes cortical traffic, Logiaco-Abbott-Escola 2021) | `sim/regions.py` |
-| The learning-rule family | Spike-timing-dependent plasticity (Bi & Poo), short-term facilitation/depression, Hebbian learning, dopamine-gated three-factor learning (Schultz), homeostasis (Turrigiano), and a dendritic burst-dependent rule (catalog cluster J) | `sim/kernels.py` |
-| The neuromodulator system | Dopamine, noradrenaline, serotonin, acetylcholine concentration dynamics and their effects; **one shared dopamine system drives both movement and conversation** (catalog cluster C) | `sim/neuromodulators.py` |
-| Lifelong-learning persistence | Learning that accumulates across sessions without erasing old knowledge | `sim/lineage.py`, `sim/synapse_storage.py` |
-| A two-compartment "dendritic" neuron (early) — 🟨 | Active dendrites and burst-based learning — the substrate for the deeper learning rule (see §9) | `enable_bdsp` in the engine |
-
----
-
-## 5. The developmental path
-
-*Roughly the order a developing brain builds these. Each stage names the brain regions/functions it reproduces (with citations), a status, what's done, what's open, and the next step. Grouped into the sensorimotor brain (5.1–5.6), the thinking-and-language brain (5.7–5.12), and the living whole (5.13).*
-
-### — The sensorimotor brain —
-
-### 5.1 Perception — *seeing the world* · 🟨 Partial
-- **Goal:** turn the picture the eyes receive into neural codes that capture real similarity (two apples look alike; an apple and a river don't), so the rest of the brain has something meaningful to learn from.
-- **Biology:** edge/contrast detection (center-surround cells), then oriented-edge detectors in primary visual cortex (Hubel & Wiesel; catalog E; Kandel Ch 22), splitting into a "what" stream (object identity, ventral) and a "where/how" stream (location and movement, dorsal) (Kandel Ch 24–25).
-- **Done:** a real oriented-edge (Gabor) visual front end plus a retina renderer, giving genuine visual similarity structure (objects of the same category look alike to it, verified against the raw pixels); population coding lifts a single neuron's noisy read to full accuracy.
-- **Open:** only the first cortical visual stage exists (no deeper object-recognition hierarchy, no separate location stream as its own module, no hearing/smell/touch); the edge detectors are fixed rather than learned.
-- **Next:** build a deeper, self-organizing visual stage only where a later capability needs it.
-
-### 5.2 Attention & orienting — *where to look* · 🟩 Done (orienting) / 🟨 Partial (attention)
-- **Goal:** decide where to point the eyes/attention and commit the movement; emphasize what matters.
-- **Biology:** the superior colliculus (a brainstem "look here" map, released to act by removing an inhibitory brake; Kandel Ch 35), and noradrenaline-driven arousal that turns up the gain on surprising events.
-- **Done:** a spiking superior-colliculus orienting reflex, on by default (a small, honest ~16% cost over an idealized version); an arousal/surprise signal that speeds learning after unexpected outcomes.
-- **Open:** no top-down "pay attention here" controller yet; no dedicated eye-movement burst generator; feature-binding by neural synchrony is available but not deployed.
-- **Next:** add a spiking attention controller when scenes with several objects demand it.
-
-### 5.3 Action selection — *choosing what to do* · 🟩 Done
-- **Goal:** pick one action from competing options, gather evidence until confident, and commit — entirely in spikes.
-- **Biology:** the basal ganglia "go/no-go/stop" loops that select an action by releasing its brake while suppressing rivals (Kandel Ch 38), and cortical evidence-accumulation to a decision threshold (Wang 2002; Lo & Wang 2006).
-- **Done:** a full basal-ganglia selection circuit (per-action go/no-go channels, lateral competition) that solved a long-standing "stuck-motor" failure; and a **fully-spiking decision** — neurons accumulate evidence and fire a commitment burst — is now the default, having **retired the old ordinary-code shortcut** (a "pick the strongest option" step done in program code), at a modest cost over the idealized version.
-- **Open:** the global "cancel that action" pathway isn't wired; only the movement loop is modeled (not the parallel loops for choosing *what to say* or *what to think about* — those reuse the same machinery when needed); most striatal interneuron types are unmodeled.
-- **Next:** add the parallel selection loops when non-movement choices (which fact to say, which topic) need the same circuit.
-
-### 5.4 Reward & value — *what was worth doing* · 🟩 Done (reward signal + learning + drive) / 🟨 Partial (value critic)
-- **Goal:** compute a reward-prediction-error teaching signal, learn how good situations are, and let motivation shape learning and choice — in spikes, not by formula.
-- **Biology:** midbrain dopamine neurons signaling *actual minus expected* reward (Schultz 1998), three-factor learning where dopamine gates synaptic change, a value "critic," and hunger/incentive drives (Kandel Ch 41–43).
-- **Done:** a spiking dopamine reward-prediction-error signal; three-factor learning in the engine; a value signal proven to actually drive choices (removing it collapses the high-value pick); and **one shared dopamine system that drives both the moving brain and the conversing brain** — a hungry brain literally becomes more careful about what it claims to know.
-- **Open:** the explicit "how good is this situation" critic population isn't built yet (the highest-value next step); some reward is still computed by formula rather than by a circuit; no fear/aversion system.
-- **Next:** build the explicit spiking value critic; convert the remaining formula-computed reward into a real circuit.
-
-### 5.5 Navigation & spatial cognition — *moving through a world to reach goals* · 🟩 Done (the flagship embodied behavior) / 🟧 learned policy deferred
-- **Goal:** an embodied agent that explores a world, figures out where it is and where the goal is *from what it perceives*, and navigates there — the project's first and most thoroughly-tested end-to-end behavior. This stage is where perception (5.1), orienting (5.2), action selection (5.3), reward (5.4), and spatial memory come together into a living behavior.
-- **Biology:** hippocampal **place cells** (neurons that fire at specific locations; O'Keefe & Nadel) and entorhinal **grid cells** for a spatial map; the basal-ganglia action loop for movement; dopamine reward-prediction-error for learning the route; and prefrontal working memory holding the current goal (Kandel Ch 38, 54).
-- **Done:** a gridworld agent that reaches (and re-reaches, when the goal moves) targets by reaching toward a goal it perceives in a rendered visual/landmark scene, through a learned perception→cortex pathway. A sustained effort progressively replaced hand-provided inputs (its own coordinates, the goal's coordinates, a hand-coded steering heuristic, a distance-based reward) with perception-derived ones. Place cells emerge from landmark perception; prefrontal working memory holds the goal; adaptive dopamine and a maturation-style curriculum improve learning; performance was characterized across several grid sizes and multiple random seeds, and the movement decision is the fully-spiking commit-burst from 5.3. The agent spends a large fraction of its time sitting on the goal.
-  - *Accuracy note:* an internal audit (mid-2026) found that several older headline claims about this benchmark were wrong or overstated — in particular a widely-copied "navigates with no steering heuristic / all shortcuts closed" claim (the heuristic was in fact still on by default in that configuration), a specific "X% better than baseline" figure for some biologically-grounded action-selection combinations (favourable-seed selections that shrink on blind seeds), and a "larger grid is X% better with tighter variance" comparison (it compared two different metrics; variance was in fact wider). Those specific claims are **not** repeated here; navigation is described qualitatively. See the `2026-07-16` audit findings.
-- **Open:** the *learned* spatial policy (deciding the best move by reinforcement learning) currently uses a validated rate-based stand-in for the value function — replacing it with a truly self-taught deep policy is gated on the deeper learning rule (§9); a proper entorhinal **grid-cell** map and path-integration are not built (location is via place cells + landmarks); the world is a corridor/grid, not an open environment.
-- **Next:** replace the rate-based policy stand-in with the dendritic-learned policy once that rule lands; enrich the world and add a grid-cell spatial map.
-
-### 5.6 Memory — *holding on to experience* · 🟩 Done (mechanisms) / 🟧 one deep-consolidation boundary
-- **Goal:** store episodes so similar ones don't blur together yet a partial cue can bring one back, tag memories so they can be reactivated, and move them into long-term cortical storage during "sleep" — all without erasing old memories.
-- **Biology:** the hippocampal three-step loop (entorhinal → dentate → CA3 → CA1; Kandel Ch 54), where the dentate gyrus keeps memories separate and CA3 completes a memory from a fragment (Marr 1971); activity-tagged memory traces ("engrams"; Tonegawa, Liu 2012); and sharp-wave ripple **replay** during rest that both consolidates memories and — importantly — does the job that backpropagation-through-time does in artificial networks (Foster & Wilson 2006).
-- **Done:** the full three-step loop with measured pattern-separation and pattern-completion; a production engram-tagging interface (tag a memory, reactivate it later) with ~90% cued retrieval; sleep-replay consolidation that moves memories to cortex with **no catastrophic forgetting** (verified with strict controls); and a striking result — **replay genuinely replaces backpropagation-through-time** for learning the conversation's discourse memory.
-- **Open (🟧):** consolidating *composed* memories (a whole structured fact, not a single item) currently strands in the hippocampus and doesn't reach cortex — **now being taken, and re-routed on 2026-07-29.** The write itself works: at a corrected operating point the hippocampus→cortex write lands correctly on every one of 18 fact-seed combinations. The blocker moved downstream, to *which* cortical memory each new fact should claim. We tested a family of mechanisms that let an already-claimed memory resist being reused, so a new fact goes somewhere free. It works for three to five facts and then breaks down by about twelve, and three different versions of the idea all hit the same ceiling — including two that we predicted would do better and which did worse.
-  **The re-route:** that ceiling turned out to be a consequence of the design, not a missing ingredient. We had been giving each fact its own dedicated cortical slot, so capacity equals the number of slots and every new fact has to win a competition against all of them. Real cortex doesn't work that way — a memory is a sparse pattern spread across one shared population, so there is nothing to allocate. Tested directly: the shared-population version stores **200 facts and recalls them at 92%** with no allocation step at all, where the best slot-based method managed roughly half of twelve. That is still a simplified model rather than the full spiking brain, so the next step is to build it on the real substrate — but it means we stop trying to build a better slot-picker.
-  *(Superseded 2026-07-29: an earlier plan here proposed a **dendritic non-linear read** to pick out each fact's sharply-firing core. That was scoped against the smeared-code diagnosis, which the corrected operating point since resolved — the write already works. It is not the current next step; the shared-population re-route above is.)*
-  CA3 completes a single snapshot; **sequence replay (replaying an ordered episode) — the "moving bump" — now WORKS (2026-07-25, 6-seed GO).** The *encoding* of an ordered memory as a sharp neural band was solved robustly across seeds
-  (2026-07-24). *Replaying it back in order* was suppressed on simple neurons, and is now achieved by
-  building the Ecker-2022 hippocampal-replay model directly.
-
-  A cue triggers a localized activity packet. The packet travels along a banded place-field memory,
-  and a standard population decode reads it out as a clean directional trajectory, on every seed.
-
-  Three strict controls hold: removing the memory band kills the trajectory; a symmetric
-  non-directional band fails to travel; a time-shuffle reads nothing.
-  An honest correction fell out of the strict controls: the *travel* is driven by the memory band plus ordinary spike-refractoriness, **not** by the neuron's slow adaptation as the source model assumed (lesioning the adaptation changed nothing). No theta-rhythm pacemaker or finer sleep-stage generators yet.
-- **Growing the band from experience — done (2026-07-25).** The traveling-replay band is no longer hand-wired: letting the place cells fire in sequence as a drive sweeps the track, with ordinary spike-timing plasticity switched on, **grows** the forward-biased memory band by itself (the textbook experience-dependent place-field asymmetry). The learned band then replays in the direction it was trained — sweep the track forwards and it replays forwards; backwards and it replays backwards — cleanly across every seed. So the directional memory structure is *learned from experience*, not designed in.
-- **Folded onto the one brain — done (2026-07-25).** The traveling-replay is no longer standalone: the memory-replay track is now co-resident on the *actual talking brain's* own bridge. The brain converses, then enters a sleep phase (its neurons switch to the slow biophysics that make the replay bump travel), runs a clean traveling replay of a remembered route, and wakes back up still able to converse — memory intact — cleanly across every seed. This mirrors real biology: hippocampal replay happens during rest, temporally separate from active behaviour. A side-finding: short-term synaptic depression turns out to be part of what keeps the replay bump sharp.
-- **The replay now has a *neural* reader — done (2026-07-29), for reading the DIRECTION of a replay.** Until now, working out which way a remembered sequence was running was done by a piece of ordinary
-  Python maths sitting outside the brain. It is now done by neurons. The trick that worked is *local*: instead of trying to line the whole population up against one clock (which needed delays of 60–125 ms,
-  far longer than real axons take), each neighbouring pair of cells simply votes on which of the two fired first. Pairs are close together in time, so the delay needed is only about 12 ms — an ordinary
-  axonal delay. Better still, no engine change was needed at all: it turned out that **one synaptic step already takes about 6 ms** on this substrate, because after the signal arrives the receiving neuron
-  still has to charge up to its firing threshold. Two such steps give the ~12 ms required. On real spikes the reader tells forward from backward on **every seed**, gets **every single trial right** when
-  cell timing is jittered by up to 6 ms, and still gets 96–100% right when neighbouring cells overlap in time the way they really do during replay. Cutting the delay out makes it completely direction-blind,
-  which is the proof the delay is doing the work. It even reads *better* in spikes than in the simplified maths model it was designed in.
-- **Two of our own claims were withdrawn the same evening — worth knowing about.** Twice we reported that the reader had *learned* which place each cell should respond to, and twice that was wrong: the
-  apparent "learning" was already fully present before any training happened, supplied by how the cells were wired up (and in one case by a head start written directly into the code, under a comment
-  claiming the opposite). Both were caught by the same one-line check — measure the untrained network too.
-- **And then the cells DID learn it — done (2026-07-30).** The brain now works out for itself which place each cell should respond to, purely from moving through the space, and different cells claim
-  *different* places (11 of 12 end up distinct, tiling the route) — which matters, because for a while every cell learned the *same* place and the whole thing looked broken for that reason alone.
-  Three things were needed and all three already existed in the engine, switched off: a rule that makes strengthening one connection *cost* the others; a sharpening of which inputs count; and a
-  winner-takes-all so only the best-matched cell learns at each moment. Feeding those self-taught cells into the direction-reader works on **every one of six seeds**, against two separate control
-  conditions — including one built specifically to rule out the possibility that the answer came from anything other than the learned ordering. **So the replay reader is now learned end to end: the
-  brain teaches itself the map, then reads which way a memory is running, all in spikes.** It reaches about two-thirds of the quality of an ideal textbook place field; the remaining third is a known
-  structural change (grouping inputs onto the same dendritic branch) rather than a setting to tune.
-- **The hippocampus→cortex hand-off was already attempted, and it failed in an informative way — worth knowing before anyone tries again (found 2026-07-30).** Moving a whole structured fact into lasting cortical
-  memory *was* built and run, twice, and both attempts were rejected by a test written before the runs happened. The second attempt looked like a success on the surface — the brain answered the memory question perfectly
-  — but the check that matters is whether *knocking out each contributing part* breaks the answer. Only removing the hippocampal store itself changed anything. In other words the brain hadn't built a cortical memory at
-  all; it was still looking the answer up in the hippocampus. The first attempt failed for the opposite reason: the cortical side never became reliable enough to test. **One real gain survives: the ordering of a
-  remembered sequence genuinely does survive the hand-off.** And because the failing test was fixed in advance, the follow-up move was named in advance too — separate *relating things to each other* from *building a
-  general pattern out of them*, rather than re-tuning what already failed.
-- **Next:** the follow-up above (separating relational binding from schema abstraction). As of 2026-07-29 the shared-population design is largely settled and partly tested on real neurons: storing unrelated items works perfectly, storing facts that share words is much harder, and scrambling each word differently depending on its role recovers most of the loss.
-  A second finding reframed the remaining weakness — when the brain is asked a partial question like 'what did the dog eat?', most of the time several stored facts genuinely match, so no memory could pick one and the right behaviour is to ask which. For the questions that DO have a single answer, requiring a match on both parts of the question rather than their total raises accuracy from about half to about three-quarters); build a theta pacemaker.
-
-### — The thinking-and-language brain —
-
-### 5.7 Concept formation — *carving the world into categories* · ✅ Emergent
-- **Goal:** discover categories and abstract concepts from experience, and learn the structure of sequences — unsupervised, and in spikes.
-- **Biology:** a sparse-expansion coding trick from the cerebellum (Marr 1969, Albus 1971), the anterior temporal lobe as a concept hub with distributed word representations (Patterson & Lambon Ralph 2007; Pulvermüller), and a cortical sequence-memory mechanism using two-compartment neurons (Bouhadjar & Diesmann 2022).
-- **Done:** **categories are discovered from experience** with increasing self-sufficiency — from co-occurrence, then from varied contexts, then from a self-organizing competitive layer, then grounded in real vision — fully in spikes; a **word-meaning cortex learned just from listening** to a stream of sentences (it picks up which words mean similar things); and a cortical sequence-memory that learns to predict the next symbol in context, with a built-in refusal to make things up.
-- **Open:** one normalization step in the word-meaning read-out is still done by ordinary code rather than a circuit (a designed replacement exists); scaling the learned vocabulary to a few hundred concepts needs a bigger source corpus; and getting the memory circuits to *form their own* recall attractors (rather than having them installed) is being pushed. On the simpler sparse-memory form, a partial cue already completes the right (held-out) memory, learned from experience, validated across seeds (2026-07-09).
-  On the harder distributed-code form, memory attractors had refused to become *selective* from
-  experience. Every learning rule strengthened the stored pattern and unrelated ones equally. The
-  result was a "flat" memory that fires for everything.
-
-  A **competitive** learning rule breaks that wall. Co-firing strengthens a pair; a member→non-member
-  pair weakens. This is the brain's own heterosynaptic competition, applied here for the first time to
-  the memory circuit's recurrent wiring. It produces a clearly *selective* weight structure on every
-  seed.
-
-  Turning that selective structure into robust recall at scale is the remaining boundary. (`research/findings/2026-07-09-riii-emergent-ca3-completion-kopsick-formation.md`.) **⛔ Source correction:** that 2026-07-09 write-up is **superseded** — the later record does not carry its "completion, validated across seeds" forward. The 2026-07-18 gap#5 write-up states cue-triggered completion had been at chance for the project's whole history, and closes the mechanism instead via intrinsic dendritic bistability (`research/findings/2026-07-18-gap5-CA3-completion-CLOSED-intrinsic-dendritic-bistability-resolves-the-trilemma.md`); a sibling claiming the same close from a learned attractor is **retracted** (the memory fired on its own rather than being cued).
-- **Next:** the sparse-synchronous encoding for robust self-formed recall (the full-scale model); build the normalization circuit; scale the word cortex.
-
-### 5.8 Language comprehension — *understanding what is said* · ✅ Emergent / 🟧 recursion boundary
-- **Goal:** map word-forms to who-did-what-to-whom and to meaning, including awkward word orders and long-distance dependencies — learned, in spikes, with no special-case code per sentence shape.
-- **Biology:** the dual-stream model of language (a meaning stream and a sound-to-articulation stream; Hickok & Poeppel; Kandel Ch 55), Wernicke's area for word selection, and a frontal-striatal "reservoir" that maps word order onto roles (Hinaut & Dominey 2013).
-- **Done:** a parser that assigns roles regardless of active/passive voice ("the dog chased the cat" and "the cat was chased by the dog" get the same agent); a **reservoir that learns the word-order→role mapping itself** (retiring an earlier hand-written labeler; it was hardened after adversarial review caught a too-easy first version); resolving a long-distance dependency across ~33 words, in spikes; and a neural router that figures out what kind of question is being asked (replacing a keyword lookup).
-- **Open (🟧):** deeply nested sentences ("the cat the dog the man saw chased fled") degrade past a depth of ~3 — which is, honestly, roughly the human limit too; cross-language grammar (case markers, rich morphology) is a deliberate opt-in, not on by default; no hearing front end (it reads structured input, it doesn't process sound).
-- **Next:** build the spiking working-memory buffer that pushes nesting depth on the brain itself.
-
-### 5.9 Semantic reasoning — *inference beyond what it was told* · ✅ Emergent / ⬜ probabilistic accumulation open
-- **Goal:** infer things it was never told — inheritance, exceptions, transitivity — and weigh evidence over symbols.
-- **Biology:** the hippocampus as a relational/inference network (Eichenbaum; O'Keefe & Nadel), hierarchical semantic memory (Collins & Quillian), and the same evidence-accumulation math used for perceptual and value decisions applied to symbols (Kandel Ch 56).
-- **Done:** **inheritance, multi-level inheritance, exceptions, and transitivity all emerge on their own** from overlapping neural codes plus the next-state predictor — no separate "inference engine" — over both given and *self-discovered* categories; a large adversarial audit found and fixed a class of measurement flaws, and every result survived its corrected test.
-- **Open:** no "weigh evidence with learned reliability" reasoning primitive yet; the fully-spiking version of recalling a fact about a *newly seen* object is an honest boundary (a hybrid where code routes which concept fired works well); genuinely open-world inference beyond learned facts is a field-wide unsolved problem (managed by staying on-topic and abstaining).
-- **Next:** wire a spiking evidence-accumulator for probabilistic reasoning (reusing the decision machinery from 5.3).
-
-### 5.10 Language production — *speaking* · ✅ Emergent (within a bounded vocabulary) / 🟧 open prose deferred
-- **Goal:** turn meaning into correctly-ordered speech — choosing function words, word endings, word order — with **every word produced by neural activity**, and the grammar worked out from experience rather than programmed.
-- **Biology:** Broca's area for grammatical encoding and articulation (Kandel Ch 55), sequence-generation circuits for serial order (Grossberg; Kandel Ch 34), and the discovery of grammatical structure from statistics (construction grammar; Tomasello, Goldberg).
-- **Done:** **the entire grammatical structure self-organizes from a corpus** — which words are function words, the slot order, the inventory of sentence templates — with the hand-written grammar removed as an input; **every word (content and function alike) is spelled out from the neurons' spike output**; the whole answer is produced by one brain in one process; and it renders seven sentence constructions in spikes, including transitive and ditransitive ("the dog gives the cat a bone").
-- **Open (🟧):** this bounded-construction system produces a **corpus-attested set of sentence patterns**, not open prose; the spoken vocabulary per neural pathway is limited and scaling it is straightforward but linear. The *open-ended* generator that produces free-flowing prose (see §9) is a separate, home-grown spiking language cortex that now generates fluent little stories at small scale; growing it to a large-model's breadth is the scaling frontier described in §9.
-- **Next:** scale the spoken vocabulary, then drive the open-generation ladder (§9) to replace the conventional-AI crutch.
-
-### 5.11 Discourse & conversation — *tracking who-and-what across turns* · ✅ Emergent (the spiking core) / 🧩 fluent chat still leans on the crutch
-- **Goal:** track who and what is being talked about across a multi-turn conversation, resolve pronouns, abstain when it doesn't know, and hold a growing, grounded chat.
-- **Biology:** prefrontal working memory holding discourse referents (Kandel Ch 52), an attentional stack that pushes a topic when the focus shifts and pops it back on return (Grosz & Sidner; O'Reilly & Frank gating), and a familiarity signal that distinguishes known from unknown.
-- **Done:** a spiking **discourse memory that tracks who's-acting-now versus who-was-acting-before** across a connective, learned by *replay* rather than backpropagation-through-time; multi-turn pronoun resolution on a persistent working-memory loop; a learned **no-confabulation guard** that matches a reference standard with zero breaches and is consulted *first* (so the fluency crutch is never even invoked when the brain should abstain); and a working "talkable brain" console where you can teach it facts, ask questions, and watch it reason, speak on spikes, and say "I don't know."
-- **Open:** truly fluent single-pass synthesis that weaves *many* facts into one flowing sentence still confabulates on the small conventional model (managed by rendering each fact and joining them); open-domain non-fact chatter is a field wall. *(Recently closed: picking which of several remembered people a bare "it/they" refers to — now done by biased competition between the candidates, validated across seeds.)*
-- **Next:** drive the home-grown generator (§9) to replace the conventional-AI fluency, including single-pass synthesis over several facts.
-
-### 5.12 Working memory, sequence & recursion — *holding structure in mind* · 🟩 Done (working memory + graded memory) / 🟧 recursion depth
-- **Goal:** hold an ordered set of items across a delay, process sequences with graded fading memory, and match nested structure with a bounded stack.
-- **Biology:** a theta-gamma "7±2 slots" buffer (Lisman & Idiart 1995), NMDA-based persistent-activity working memory (Wang 2002), and a fading-memory reservoir (Hinaut & Dominey).
-- **Done:** persistent working-memory attractors that hold items across a conversation; a reservoir that holds a distant cue across ≥16 intervening words, in spikes; and a slot-based buffer that pushes nesting depth to ~3 (scrambling the slots breaks it — proving the ordered structure is doing the work).
-- **Open (🟧):** the *spiking* version of the slot buffer is designed but not yet built on the brain; depth beyond ~3 is the human-faithful bounded limit; no theta-rhythm pacemaker yet.
-- **Next:** build the spiking slot buffer and a theta pacemaker (shared with the comprehension and memory stages).
-
-### — The living whole —
-
-### 5.13 Artificial life — *living, developing, remembering* · 🟩 Done (in pieces) / 🟨 Partial (as one unified life)
-- **Goal:** a persistent brain that lives, perceives and remembers its own experience, develops over time, is driven by one shared motivational core, and can be talked to about its own life — all on one brain.
-- **Biology:** complementary learning systems (hippocampus + cortex; McClelland 1995) with self-replay, a shared dopamine/hunger drive, and memory persistence across sessions.
-- **Done:** a **develop-over-time loop** where a brain's vocabulary and knowledge grow day by day from real learning, with *zero* forgetting and the no-confab guard holding every day; the **moving brain and the conversing brain merged into one** with real synaptic interaction between them (a spoken command steers movement; what it perceives while navigating becomes something it can later be asked about and *compose into a new fact*); one shared drive affecting both halves; and persistence so a brain lives across a reset (resume its body and its lived memories, or start empty).
-- **Open:** the learned movement policy is still the rate-based stand-in (the deferred deep-learning wall, §9); persistence re-instates saved facts rather than the raw synaptic tensor; the world is a corridor, not open-ended; the fact-composition path still uses an idealized binding scheme (§8).
-- **Next:** merge the conversation machinery into a single co-resident brain; replace the stand-in policy with a self-taught one; move toward raw-synapse persistence and richer worlds.
-
----
-
-## 6. The body & supporting biological systems
-
-*The parts that surround the thinking brain, and biological systems present as building-blocks or planned.*
-
-- **The body / motor output** — 🟨 the legitimate "body" interface. Per-action motor-neuron pools drive movement; there is no muscle model, spinal central-pattern-generators, or neuromuscular junction yet (catalog cluster H, M). Built out only if embodied tasks require it.
-- **Cerebellum** — ⬜ cell-type presets exist (Purkinje, granule, climbing fibers) but the error-correcting microcircuit itself is not built; it's the natural home for predictive timing and fine motor/temporal learning (catalog cluster F; Marr-Albus-Ito).
-- **Sleep architecture** — 🟨 sharp-wave-ripple replay is built and used; the finer NREM/REM stage generators (slow oscillations, spindles) are not (catalog cluster N).
-- **Neuromodulation breadth** — 🟨 dopamine is fully deployed; noradrenaline / serotonin / acetylcholine are supported by the framework but only partially used.
-- **Future / validation directions** — ⬜ disease models (Parkinson's, schizophrenia, epilepsy) are natural stress-tests of the basal-ganglia and cortical circuits; glia, neurovascular coupling, and molecular/transcriptional detail are deliberately out of scope at the current level of abstraction (catalog clusters P, Q).
-
-## 7. How you watch it, talk to it, and grow it (interfaces & tooling)
-
-*Not brain computations — these are the windows into the brain and the ways to interact with it.*
-
-- **Real-time 3D viewer** — a live OpenGL view of every neuron firing in space, with camera, picking, and overlays (`neural-simulator.py`, the `viz/` package). Watching the brain think is a first-class feature.
-- **The talkable-brain console** — an interactive chat where you teach the brain facts, ask questions, and watch it comprehend → reason → speak on spikes → abstain, all under the no-confab guard; a web front end with a brain picker and per-turn "brain activity" view.
-- **The develop-run launcher** — a hands-off, resumable, pause-able way to let a brain live and develop over many simulated days, saving a loadable snapshot per day so you can load any day and talk to the brain at that stage of its life.
-- **The experiment & stimulus system** — programmable stimulus injection, input/output neuron groups, readouts, and multi-phase training protocols for running controlled experiments.
-- **The biological validation suite** — automated checks that the neurons reproduce textbook results (spike-timing plasticity curves, excitation/inhibition balance, paired-pulse facilitation, gamma oscillations, homeostasis).
-
----
-
-## 8. Temporary stand-ins still in place (and how each gets replaced) · 🧩
-
-1. **A small conventional AI model (tens of millions of parameters) for open-ended fluency.** It supplies *only* the fluent wording, and only after the brain has decided what to say and checked it — it's never used when the brain should abstain. It's the one forbidden "permanent external model," so it must go. **Replacement — under way:** the home-grown spiking language cortex (§9), which now generates fluent prose at small scale and has already been wired into grounded conversation in the brain's place; the remaining work is scaling it up (see §3 and §9).
-2. **An idealized word-binding scheme** (a clean, exactly-reversible algebra for relating words into facts). Its *operations* already run in spikes, but the clean exact-reversibility isn't how a real cortex works. **Replacement — largely landed:** a *learned* cortical binder now reaches the same quality on the brain's own concept codes, learned by a local rule (no backpropagation), validated across seeds — replacing the hand-set algebra for the single/role binding. The one residual (combining several attributes at once) provably can't be learned from scratch by simple point-neurons, so a fixed structural trick still stands in there.
-3. **A few movement read-outs and reward values still computed by code** rather than by a circuit. **Replacement:** the fully-spiking decision is already the default; the remaining reward is a short validating step from a circuit, plus the explicit value critic (5.4).
-4. **A backpropagation-based training stand-in** used only as a development yardstick, at toy scale. **Replacement:** the biological dendritic learning rule — exactly as replay already replaced backpropagation for the discourse memory. *(2026-07-24: the rule now beats a fixed-network read-out on a real benchmark and its smooth-rate form trains across seeds with a data-efficiency advantage; porting it to actual spiking neurons hit a compute-cost wall — see §9.1 — and the shrink-the-task fix is in progress.)*
-5. **One word-cortex normalization step done in code.** **Replacement:** a designed on-brain inhibition/adaptation circuit.
-6. **Fact-based (rather than raw-synapse) persistence, and a rate-based movement policy.** **Replacement:** raw-synapse continuity and a self-taught policy, once the deeper learning rule lands.
-
-## 9. The honest frontier (what's left, and the real walls) · 🟧 / ⬜
-
-1. **A deep learning rule that works on spikes — the biggest open lever for the deeper ceilings.** Several ceilings (composing more structure, deeper nesting, a fully self-taught movement policy) trace back to one missing capability: letting a *deep, multi-layer* spiking network teach itself, using only rules real neurons can run — local, no backpropagation-through-time, no biologically-impossible copying of weights between neurons. The status is honest and hard-won. The *idealized* (smooth-rate, off-brain) version of such a rule trains a deep network to near-oracle accuracy; but getting it to train a deep network **to real accuracy on actual spikes** has repeatedly hit a wall.
-   Several plausible candidate rules were tried in turn. Each was honestly retired once a fair,
-   seed-controlled test showed the same thing: a fixed random network, with only its read-out trained,
-   did about as well. The telling diagnosis is narrow. Passing a *correct-direction* teaching signal
-   back through a spiking read-out is the specific thing simple point-neuron spikes struggle with.
-
-   The biology's own answer is not an online broadcast at all. It is **replay**: the brain re-plays
-   experiences offline to assign credit, doing the job that backpropagation-through-time does in
-   artificial nets. The project already holds part of that mechanism, and the work has turned toward
-   it — together with a dendrite-based local rule.
-
-   **Update (2026-07-24):** the *rule itself* is now vindicated on a proper task — on a real image-classification benchmark the biological credit rule beats a fixed-random-network read-out across seeds (it was the earlier toy task that was the wrong instrument). The split is now clean: the smooth-rate learned "self-predicting microcircuit" version trains across seeds and its advantage is **data efficiency** (it wins most when data is scarce); porting it to *actual spiking neurons on the brain* hit a **new, different wall — sheer compute cost** (the tiny-kernel launch overhead makes a trainable-scale spiking run take hours, so nothing learned in the feasible budget), which is a substrate-speed problem, not a proof the rule fails.
-   The next step shrinks the task to a spiking-trainable scale. (A weight-clamp bug in the dendritic rule was also found and filed.)
-
-   Two simplifications came out of this hunt, and both matter for reading the rest of the roadmap.
-
-   **(a) This rule is off the critical path for conversation.** Long-range language does not bottleneck
-   on the deep recurrent rule. It bottlenecks on learning the *input representation* over a fixed
-   recurrent scaffold, which is a far more tractable local problem. The biology-legal version of that
-   already runs on the spiking substrate. It reaches a good fraction of the full-backprop reference,
-   with no weight-copying and no core-engine edit.
-   **(b) At the project's current data scale, "only word-predictor-level" is a property of every model class, not a flaw in the brain design** — a fair-baseline check plus the project's own ceiling runs showed that even a full transformer (and a full recurrent network) loses to a simple, well-tuned word-predictor on a few million words of text. So fluency is gated by *scale and learned knowledge*, not by a fundamentally cleverer learner.
-   One thing a word-predictor structurally cannot do is compose brand-new combinations of ideas it
-   never saw. That capability comes from a fixed *binding* operation over well-separated concept
-   codes. The brain already has it and already uses it: it composes never-seen sentences across a few
-   hundred concepts, on the spiking neurons.
-   a from-scratch general learner memorizes and fails that test, while the binding succeeds. ⇒ this deep rule stays the lever for the *deep structural* ceilings (deeper composition, a self-taught movement policy) and is being actively worked on the spiking substrate — it is **not** a prerequisite for the open-generation ladder in item 2. (The detailed experiment trail and the internal audits that corrected several over-eager "it works" claims are under `research/findings/`, dated 2026-07-11 through 2026-07-17.)
-
-2. **Open-ended fluent generation without the conventional-AI crutch.** The home-grown replacement now works end-to-end at small scale, entirely on the spiking brain and with no backpropagation.
-   It does six things, each measured:
-
-   - It predicts the next word, beating fair simple-predictor baselines.
-   - It carries a topic dozens of clauses back, through a working-memory latch. The plain recurrent
-     network forgets over that distance.
-   - It generalizes to a *never-produced* subject, using a shared category code.
-   - It is *order-sensitive*: the same words in a different order give a different continuation. No
-     order-blind predictor can do that.
-   - It spells each predicted word out of the language-output neurons' own spikes. Cutting that
-     pathway collapses the decode, which proves the decode is genuinely spiking and not a hidden
-     table lookup.
-   - It tracks a discourse referent across a distractor clause, including entities *invented at test
-     time*.
-
-   The coherence emerges in the learned network. It is not scripted.
-   The category structure these abilities lean on is itself *discovered from experience*, including from real vision (objects seen through the visual front end whose category emerges from visual similarity; a pixel-scramble control collapses it). Honest remaining work: scaling the spoken vocabulary from a bounded set to an *open* one (bounded engineering — more read-out banks — not a new mechanism), the fully-spiking realization of the on-the-fly referent binding, and overall scale, which routes back to the learned-input-representation lever in item 1. Fully model-free, open-domain fluency is a field-wide wall even for large models (which lean on enormous scale and retrieval); the honest interim is to shrink the temporary crutch and keep it fluency-only, behind the no-confabulation guard.
-
-3. **Nesting deeper than ~3** — this is the human-faithful bounded limit, so it's a feature, not a bug; the only open build is the spiking version of the slot buffer.
-4. **Consolidating composed/relational memories to cortex** — currently stuck in the hippocampus; the sequence-completing-CA3 path is the next lever.
-5. **Choosing among several remembered referents for a bare pronoun** — *now working:* a biased-competition circuit (the candidate referents inhibit one another until the one in focus wins) resolves this, validated across seeds, exactly where reading the strongest candidate failed.
-6. **The fully-spiking version of recalling a fact about a newly-seen object** — the hybrid (code routes which concept fired, the brain recalls the fact) works; the all-spiking version is now nearer, since the learned binder it depends on has landed (item above).
-7. **Genuinely open-world reasoning and open-domain chit-chat** — unsolved by anyone unconstrained; managed here (as LLMs do) by staying grounded, on-topic, and willing to abstain. This is the honest scope, not a near-term wall.
-
-**Breadth items** (each a scoped build when a downstream need calls for it, not a fundamental limit): a deeper visual hierarchy and a separate location stream; hearing/smell/touch; the explicit value critic; a fear/aversion system; a theta-rhythm pacemaker; the finer sleep-stage generators; the global action-cancel pathway; the non-movement selection loops; grid cells and path integration.
-
----
-
-## Appendix — how this roadmap is maintained
-
-Kept current as a standing part of the workflow: whenever an experiment lands a result, surpasses a boundary, or removes a stand-in, the relevant stage above is updated in the same work cycle (status badge, the done/open notes, the next step, the citation). Periodically a deeper re-sync reads the source material in depth — the biological-mechanism catalog, the *Principles of Neural Science* textbook, and the experiment write-ups in `research/findings/` — to re-verify the biology map and the honest frontier. This file, not any single experiment write-up, is the intended at-a-glance source of truth for tracking progress toward the goal.
-
----
-
-## 10. The forward-looking plan
-
-This roadmap is the **status** surface. The detailed, forward-looking **plan** now lives in the **master development roadmap, [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)** — the current primary plan (foundation: [`docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`](docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md)). It carries the complete faculty map, the one-brain architecture, six developmental stages (proto → human-ready), the walls ledger (each wall paired with a biological surpass), and the parallelization map.
-The earlier `docs/plans/2026-07-15-months-scale-plan-to-one-brain-and-small-llm-conversation.md` — the ordered burn-down of the temporary stand-ins in §8, the critical path to a single co-resident spiking brain, and the honest time estimates — remains valid as the one-brain/small-conversation slice that feeds into the master plan.
-
-**Early evidence the pivot is under way (2026-07-23 → 07-24, each 6-seed GO unless noted):** *curiosity inversion* — the no-confabulation guard's uncertainty signal becomes an honest curiosity drive that asks and learns, and stops on unlearnable noise (`research/findings/2026-07-23-DR1-curiosity-inversion-6seed-GO.md`); *affective concept tagging* — concepts learn valence from the learned association graph (held-out correlation 0.81; `…2026-07-23-DR2-affective-concept-tagging-6seed-GO.md`); a *self-schema region* — the brain reads and reports its own attention, confidence, and authorship on spikes, a functional self-awareness correlate (`…2026-07-23-DR3-self-schema-region-6seed-GO.md`).
-**And, landing 2026-07-24:** a *persistent affect-state* region — a slow-neurotransmitter attractor that holds a mood across a turn and causally biases what the brain recalls and says (an honest *qualified* result: it holds a good/bad state, but reads as a two-way latch rather than a smooth mood-space yet; `…2026-07-24-P0.3-affect-state-region-6seed-GO.md`); a *global workspace with affect-directed deliberation* — the ignite-and-broadcast integrator consolidated into one region, its train-of-thought steered by that real affect signal rather than a code stand-in (`…2026-07-24-P1.2-GNW-workspace-deliberation-6seed-GO-adversarially-verified.md`);
-and *false-belief theory-of-mind* — the brain predicts where another agent will look based on what that agent *believes*, not on reality (Sally-Anne; `…2026-07-24-W3-false-belief-register-6seed-GO-adversarially-verified-immunity-claim-corrected.md`).
-So the pivot's four new faculties — *feels, is self-aware, is curious, models other minds* — each have a first validated, adversarially-checked spiking result. In parallel, the home-grown language model's capacity lever is being confirmed on a matched-token width ladder (83M / 162M / 267M), with the trained 83M revalidated as a faithful *spiking* forward pass equal to its conventional form.
-
-**Honest distance (from that plan):**
-- a fully-spiking, one-brain integration of the faculties that already exist: on the order of a few months;
-- a bounded but genuinely fluent grounded-conversation milestone (ask a question, get a fluent grounded answer, teach a fact live, watch it abstain — all on one spiking brain): a few months beyond that;
-- open-ended, open-domain fluency matching a large language model: a field-wide wall that even large models clear only with enormous scale and retrieval — the honest interim is to keep the temporary fluency crutch small and behind the no-confabulation guard while the home-grown replacement scales up.
-
-**Where the one-brain integration stands.** The nearest milestone on that path — keeping several learning faculties improving *at the same time on one brain without interfering* — has taken its first validated step: two learning "cortices" trained simultaneously on one shared brain each learned about as well as it would have alone, while a deliberately-overlapped control *did* interfere (the honest positive control that shows the test can detect a collision). The measured cost of adding a learner is a fixed per-learner price — mostly the fact that faculties take turns on one shared update loop — rather than a compounding interference, so this approach scales. The harder, still-untested case (two *different* learning rules sharing the substrate) is scoped and comes next.
+This is an artificial-life project, not a chatbot project. Language matters
+because it is one action a mind can take, not because text benchmarks define the
+mind.
 
+## Non-Negotiable Direction
+
+1. **One shared spiking substrate.** Brain regions may specialize, but they remain
+   parts of one simulated brain communicating through spikes and synapses.
+2. **No permanent host-side cognition.** Ordinary code may implement the world,
+   body, files, visualizers, and temporary scaffolds. Perception, attention,
+   reward, memory, affect, reasoning, self-modeling, and speech must move into
+   the brain.
+3. **Grounded before fluent.** Words must be tied to the brain's own perception,
+   action, affect, and memory. A smooth sentence without grounding is a wrong
+   target.
+4. **Integration before proxy perfection.** A narrow result is useful only if the
+   mechanism can serve its role in the whole loop.
+5. **Scaffolds burn down.** Every temporary shortcut needs a named biological
+   replacement and a trigger for removing it.
+6. **Performance matters.** Faithful biology can be slow, but lazy design is not
+   faithfulness. Prefer sparse, local, event-driven computation.
+7. **No unsupported consciousness claims.** Build and measure functional
+   correlates. Do not assert subjective experience.
+
+## Current State In One Page
+
+**Strong foundation.** The simulator itself is capable: GPU and CPU backends,
+spiking neurons, sparse connectivity, region/pathway wiring, neuromodulators,
+local plasticity, checkpointing, visualizers, and a large test/research runner
+surface.
+
+**Useful brain pieces exist.** The repo has validated work in navigation, simple
+conversation, memory, category learning, reward/value, replay, curiosity,
+affect-like state, and self-monitoring.
+
+**The big correction.** Many pieces were built to pass narrow tests. Some remain
+template-like or host-assisted. That is not wasted work, but it must be judged as
+substrate and evidence, not as finished human-like faculties.
+
+**The immediate crux.** Build a small closed loop where the brain has a world, a
+body, internal state, and a reason to speak. The first meaningful conversational
+advance is not "more corpus training"; it is speech caused by the brain's own
+grounded state and changed by the consequences of interaction.
+
+## Phase 0: Keep The Record Honest
+
+Status: active and partially implemented.
+
+Purpose: make sure the project does not drift back into test-passers and
+scaffold accumulation.
+
+What is in place:
+
+- raw artifacts and provenance sidecars for research results;
+- multi-seed expectations for nontrivial claims;
+- gates that catch stale documentation, unsupported numbers, weak controls,
+  missing provenance, and repeated refuted ideas;
+- a new charter and structural mechanism map from the 2026-08-02 realignment.
+
+Still needed:
+
+- a lightweight public scaffold ledger;
+- a standard "role in the whole brain" section for new mechanism work;
+- an integration-test requirement for any claim that a faculty meaningfully
+  advanced;
+- clearer separation between public docs and dense lab boards.
+
+## Phase 1: A Minimal Lived Loop
+
+Goal: a small brain in a small world that perceives, wants, acts, speaks, receives
+consequences, and learns.
+
+Build:
+
+- a minimal world with objects, actions, simple needs, and a social partner;
+- a body interface where host code only enacts motor outputs and provides senses;
+- a shared loop that runs continuously rather than as isolated experiments;
+- a simple internal-state source for speech, such as curiosity, surprise, need,
+  or affect;
+- feedback from the world or partner that changes the brain's future behavior.
+
+Pass condition:
+
+The same external prompt should not be enough to produce speech. The utterance
+must depend on internal state, learned grounding, and recent consequences.
+
+Why this comes first:
+
+Without this loop, language keeps sliding into text prediction and memory keeps
+sliding into lookup.
+
+## Phase 2: Grounded Language As Action
+
+Goal: words flow into and out of grounded brain state.
+
+Build:
+
+- a comprehension path from words or sounds into grounded concepts;
+- overlapping word, percept, action, and affect assemblies instead of isolated
+  labels;
+- a preverbal-message path: internal state chooses what is worth saying before
+  words are selected;
+- a speech-production path that renders that message into word order and
+  articulation-like motor output;
+- a contingent teacher loop where correction, misunderstanding, and successful
+  communication reshape the pathway.
+
+Current assets:
+
+- bounded spiking speech generation;
+- concept-pool to word-output pathways;
+- simple parsers and fact-question answering;
+- early contingent-teacher learning experiments;
+- larger recurrent language-circuit checkpoints, including a recent local
+  spiking-forward fidelity check at 267M parameters for two seeds.
+
+Main risks:
+
+- corpus prediction can look fluent while staying ungrounded;
+- grammar templates can pass tests without becoming flexible language;
+- an abstention gate can look honest while staying outside the self-model.
+
+## Phase 3: Self-Model And Honest Uncertainty
+
+Goal: uncertainty, confidence, attention, and authorship are read from the brain's
+own state and used to decide whether to answer, hedge, ask, or stay silent.
+
+Build:
+
+- a self-schema region that reads attention, confidence, and source of thought;
+- a metacognitive monitor that predicts when first-order answers are reliable;
+- routing from confidence to behavior: answer, hedge, ask, explore, or abstain;
+- tests where familiar-but-wrong cues, missing facts, and uncertain memories are
+  separated.
+
+Current assets:
+
+- familiarity-based no-fabrication behavior;
+- self-schema and metacognition test runners with lesion and permutation
+  controls;
+- a recent six-seed self-schema relay result in the research runner.
+
+Open point:
+
+The mechanism is not yet fully wired into the normal conversation loop. Until it
+is, honesty remains partly scaffolded.
+
+## Phase 4: Predictive And Reconstructive Memory
+
+Goal: memory is not a database. It predicts, reconstructs, consolidates, forgets,
+and is colored by salience and emotion.
+
+Build:
+
+- a predictive world model over states, actions, and consequences;
+- episodic memory that stores lived events with self/other/source tags;
+- hippocampal replay that supports consolidation and imagination;
+- cortical memory that stores distributed patterns without fixed fact slots;
+- memory retrieval that can honestly return ambiguity instead of forcing one
+  answer.
+
+Current assets:
+
+- hippocampus-style completion and replay experiments;
+- sleep/replay/consolidation infrastructure;
+- directional replay readers;
+- shared-population memory routes under active testing;
+- category and semantic memory experiments.
+
+Main risks:
+
+- exact host-side bind/retrieve routines can behave like a database;
+- memory handoff can appear successful while still reading from the old store;
+- a single correct answer can hide genuinely ambiguous recall.
+
+## Phase 5: Developing Affect, Drive, And Curiosity
+
+Goal: emotion and motivation become continuous internal forces that shape what
+the brain notices, remembers, learns, says, and does.
+
+Build:
+
+- a graded valence and arousal state instead of a binary good/bad latch;
+- learned appraisal from events and goals, not host-set mood values;
+- interoceptive/body signals tied into affect;
+- affective bias on attention, memory, speech choice, and action vigor;
+- curiosity based on learning progress over time, not just novelty in the moment.
+
+Current assets:
+
+- reward-prediction and value circuits;
+- persistent affect-like state with causal bias in test settings;
+- dissociable neuromodulator axes;
+- curiosity circuits that can seek learnable unknowns and avoid some unlearnable
+  noise.
+
+Open point:
+
+The pieces need to become one live system. Rich emotion means state that develops
+from experience and changes behavior over time, not a scalar label on a concept.
+
+## Phase 6: Continual Learning And Growth
+
+Goal: the brain keeps learning from interaction without wiping itself, and grows
+only as needed.
+
+Build:
+
+- developmental growth of neurons, regions, and connections;
+- consolidation that protects old knowledge while admitting new experience;
+- curriculum and teacher-as-caregiver scaffolding that gradually fades;
+- local learning rules that work at useful scale on the chosen spiking substrate;
+- resource-aware scheduling across local CPU, local GPU, and available CPU pool
+  machines.
+
+Current assets:
+
+- many local plasticity rules;
+- wake/sleep/growth/persistence infrastructure;
+- checkpoint lineages;
+- CPU and GPU backends;
+- mini-PC CPU pool support for parallel experiment sweeps.
+
+Hardest science:
+
+Continual learning without forgetting is difficult beyond this project. Deep
+credit assignment on real spikes is partly mapped and remains a side frontier.
+The preferred route is to rely on local input learning, recurrent scaffolds,
+readouts, replay, and consolidation where they fit, while continuing to measure
+the harder learning-rule boundary honestly.
+
+## Phase 7: Scale And Ownership
+
+Goal: grow toward open-ended conversation while keeping the project ownable on
+high-end personal hardware.
+
+Build:
+
+- larger grounded vocabularies and richer sensory/social experience;
+- sparse, event-driven implementations of heavy pathways;
+- GPU kernels where they preserve the same model;
+- CPU-cluster fanout for independent seeds and parameter sweeps;
+- explicit accounting of memory use, runtime, and throughput;
+- architecture choices compatible with future neuromorphic hardware.
+
+What success looks like:
+
+The system should become larger because the brain has grown and earned it, not
+because a giant static model was preallocated.
+
+## Highest Priority Work Now
+
+1. **Bank the large-language-circuit spiking-forward promotion.** Finish the
+   multi-seed check for the 267M-parameter local recurrent language checkpoint,
+   then update the record honestly.
+2. **Wire the self-schema honesty path into production conversation.** Move from
+   isolated metacognition runner to normal answer/hedge/ask behavior.
+3. **Build the minimal grounded speech-action loop.** Use internal curiosity,
+   surprise, or affect as the cause of speech; use contingent partner feedback as
+   the learning signal.
+4. **Create the scaffold ledger.** Make every host-side shortcut visible, named,
+   and paired with a replacement.
+5. **Retune docs and gates around role-in-the-whole.** New claims should state what
+   the mechanism does for the whole brain, not just which narrow score improved.
+
+## How To Read Old Milestones
+
+Older documents often use strong labels for narrow experimental results. Read
+them as evidence that a mechanism can do a specific measured thing under specific
+conditions. Do not read them as proof that a whole human-like faculty is complete.
+
+Corrections and negative results are part of the record. If a summary and a
+finding disagree, trust the specific finding and update the summary.
+
+## Short Success Target
+
+A narrow but real prototype:
+
+- one brain;
+- one small world;
+- a body;
+- grounded perception of a few objects and actions;
+- internal needs, affect, and curiosity;
+- a simple self-confidence read;
+- speech caused by internal state;
+- interaction with a teacher or person that changes future speech and behavior;
+- honest abstention or asking when grounding is missing.
+
+This prototype may speak simply. It does not need to sound like a large language
+model. It needs to be alive in the project-specific sense: stateful, grounded,
+learning, internally driven, and integrated.

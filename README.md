@@ -1,287 +1,171 @@
 # Neural Simulator
 
-**A GPU-accelerated simulator for biologically realistic spiking neural networks —
-and a research program building one brain out of them.**
+Neural Simulator is a research codebase for building a simulated brain from
+spiking neurons and synapses. The long-term aim is not to wrap a chatbot in
+brain-themed code. The aim is to grow one integrated, biologically grounded
+system that can eventually perceive, act, remember, develop emotions, learn from
+people, and speak from its own internal state.
 
-Networks are made of model neurons that communicate with discrete pulses ("spikes")
-over time, the way real neurons do. Learning is local: connections change from
-spike timing (Hebb 1949) and from a dopamine-like reward signal (Schultz 1998).
-There is no backpropagation, no supervised label, no symbolic optimizer. It runs on
-CUDA via CuPy, or on any CPU via NumPy, with an optional real-time 3D view.
+The project is active research. Some pieces are strong and well tested. Some are
+temporary scaffolds. Some earlier results are useful but were aimed at narrower
+tests than the current goal. This README is the plain-language front door; the
+detailed experiment record lives in [`research/findings/`](research/findings/).
 
-**The north-star:** a *single* simulated brain that navigates a world **and**
-converses genuinely — reasoning to its own conclusions, with an emotionally
-coloured world-model and a working sense of what it does and does not know. The
-long-range wager is the emergentist one: mind emerges from emulating a brain
-completely and faithfully enough. So progress is measured by the faithfulness of
-the biology, not by a benchmark score. Everything between sensing and acting must
-be neurons and synapses; ordinary code is allowed only for the world and the body.
+## The Goal
 
-**One caveat governs every claim below.** Where this project reports "emotion" or
-"self-awareness", it means a *measured functional correlate*. It never claims the
-brain feels anything.
+Build one simulated spiking brain that:
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.11-blue.svg)
-![Backend](https://img.shields.io/badge/backend-CuPy%20(CUDA)%20%2F%20NumPy%20(CPU)-orange.svg)
-![Status](https://img.shields.io/badge/status-active%20research-yellow.svg)
+- lives in a small world through sensors and a body;
+- learns from interaction instead of only from prewritten text;
+- forms grounded concepts tied to perception, action, memory, and affect;
+- develops persistent emotional state that changes attention, memory, speech,
+  and behavior;
+- has curiosity as a drive to learn what is learnable;
+- can read parts of its own state, including attention, confidence, and
+  authorship;
+- says "I do not know" or asks when its grounding is weak instead of fabricating;
+- grows over time while keeping earlier memories and skills.
 
-**Jump to:** [What it can do](#what-it-can-do-today) ·
-[What it can't do](#what-it-cant-do-yet) ·
-[How to run it](#how-to-run-it) ·
-[Architecture](#architecture) ·
-[Limitations](#known-limitations) ·
-[Further reading](#further-reading)
+The end state is one fully spiking brain on a shared substrate. Dedicated brain
+regions are fine, because real brains are organized that way. The important rule
+is that perception, attention, value, memory, emotion, reasoning, self-modeling,
+and language must be computed by the simulated neurons and synapses, not by
+ordinary host-side shortcuts. Host code is allowed for the world, the body, file
+I/O, visualization, and temporary training scaffolds that are explicitly tracked.
 
----
+The project does not claim consciousness or felt emotion. It builds and measures
+functional correlates: access to information, self-report, confidence, affective
+bias, learning drive, and integrated behavior. Whether subjective experience has
+appeared is treated as the long-horizon wager, not as a claim we can casually
+assert.
 
-## What "works" means here
+## Why This Is Not Just An LLM
 
-Claims below are deliberately unflattering. Unless a row says otherwise, a
-capability has been reproduced across **six random seeds**, with control conditions
-designed to break it — if switching the mechanism off doesn't damage the result,
-the result doesn't count. Several once-headline claims here were withdrawn by
-exactly those controls, and the withdrawals are stated inline rather than quietly
-removed.
+A large language model learns statistical patterns in text and generates likely
+continuations. This project is trying to build the process underneath language:
+a world-facing brain that has something to perceive, want, remember, feel,
+question, and express.
 
-Nothing below is a finished feature. This is active research code, and the honest
-caveats are part of the result.
+The current lesson of the project is blunt: passing a narrow test can produce
+template-like behavior even when the mechanism is spiking and learned. A language
+network trained only to predict a corpus is still a corpus predictor. A
+no-fabrication rule bolted on at the edge is still a rule. The roadmap has been
+realigned around the closed loop: senses, internal state, action or speech,
+consequence, learning, and back again.
 
----
+## What Exists Today
 
-## What it can do today
-
-| Capability | Where it stands |
+| Area | Current state |
 |---|---|
-| **The engine** — spiking dynamics, region/pathway framework, plasticity rules, checkpointing, 3D view, GPU **and** CPU backends | **Mature.** 43 modules / 22,759 lines; 478 test modules; 47 region profiles. A 2026-07-31 sweep fixed 10 confirmed defects, two long-standing: spatial networks above 15,000 neurons raised `NameError` and had never run, and `set_plasticity_gate()` addressed the wrong synapses after a connectivity rebuild. Regression 53/53 on CuPy afterwards. |
-| **Vision-based navigation to a moving goal** | **Works — but the widely-quoted description of it was withdrawn.** With every shortcut closed (the agent is given no goal coordinates, no coordinates of its own, no hand-written steering rule, and no reward computed from distance) it scores 4.08 ± 0.49 across 6 seeds, 30.6% above baseline. The more-quoted "visual cortex only" figures of 2.97 / 2.57 were actually measured with that hand-written steering rule still switched on at full strength, so that description was retracted in July 2026 and the visual pathway's own contribution is currently unmeasured. Which way to move is decided by competing populations of neurons racing each other to fire, not by picking the largest number in code. |
-| **Answering questions about things it was told** | **Works within a narrow scope.** It parses active and passive sentences into who-did-what-to-whom, remembers facts, answers *who*/*what* and yes/no questions including negatives, and infers properties down a category hierarchy with exceptions — all at 6 seeds. Three related abilities are weaker: transitive inference ("A > B, B > C, so A > C"), chaining several facts together, and tracking pronouns across turns each hold at only 3 seeds, which is below this project's own bar. |
-| **Saying "I don't know" instead of making something up** | **Works, at 3 seeds.** A learned familiarity signal decides whether the brain actually knows something. It matched the correct decision on all 168 test cues with no failures, and the separation disappears when the learned part is removed — so it is really doing the work. The language generator is never invoked when the brain declines to answer. |
-| **Remembering new words and concepts without forgetting old ones** | **Works at a few hundred concepts**, 6 seeds, with previously learned facts still intact as new ones arrive. |
-| **Learning categories and word meanings from experience** | **Works, 6 seeds.** Word meanings come from which words occur together; categories and simple hierarchies are discovered without being told; and category structure also forms from *seeing* objects, which collapses if the images are scrambled. Recalling a fact about a newly *seen* object still passes partly through ordinary code rather than staying entirely in neurons. |
-| **Emotional colouring of concepts** | **Partly working, and one summary claim was corrected.** Tagging concepts with emotional value works at 6 seeds when done in ordinary code. Doing it inside the simulated brain is weaker — it fails on 2 of 6 seeds, and an internal note describing it as a clean 6-seed result was corrected on 2026-07-31. Its mood also only ever goes *up*: on 3 of 3 seeds it rises and never returns to baseline, because the mechanism that should bring it back down is not implemented yet. |
-| **Reporting on its own internal state** | **6 seeds, but only on the CPU backend and outside the main loop.** A small region reads and reports where the brain's attention is, how confident it is, and whether a thought originated internally; cut its access to the real internal state and the reports fall apart. Not yet wired into the running system, and not yet reproduced on GPU. |
-| **Curiosity** | **6 of 6 seeds inside the simulated brain**, with every control condition collapsing as it should — it asks about things it can actually learn from, and declines to chase noise it cannot learn. Holds within a stated scope. |
-| **Reading the *direction* of memory replay from spikes** | **Complete; one related headline was withdrawn the same month.** It recovers whether a remembered sequence is replaying forwards or backwards on a single trial at 0.969 accuracy (chance 0.500), 6 seeds, with the bypass control at chance. Separately, a place-cell headline from the same arc turned out to be measuring how *concentrated* the synaptic changes were rather than *where* they were — shuffling the positions barely moved it (1.3%, p=0.42) — so that claim was withdrawn. A different configuration survived the stricter test at 5.05× and stands. |
-| **Fluent English phrasing** | **A temporary external scaffold — and the project's biggest open gap.** A ~21M-parameter locally-trained transformer supplies *wording only*, behind the abstention gate; the brain decides what is true and whether to answer. An 88.6M model's forward pass has been re-run as spiking neurons matching the conventional version at perplexity ratio 0.9999999 — validated, and deliberately not deployed. Nothing in the cloud is in the runtime loop. |
+| Spiking simulation engine | Mature research infrastructure. It supports GPU via CuPy and CPU via NumPy, sparse connectivity, multiple neuron models, neuromodulators, plasticity, checkpointing, and visualization. |
+| Brain-region framework | Regions and pathways can be declared and wired into one shared simulation loop. This supports navigation, conversation, memory, reward, and combined-brain experiments. |
+| Navigation | The system has spiking visual, decision, basal-ganglia, motor, and reward loops for gridworld navigation. Older shortcut-closed claims were audited; use current findings before quoting old numbers. |
+| Grounded question answering | The brain can store and retrieve simple facts, parse basic who/what and yes/no questions, handle some grammar variants, and abstain when the matching memory is absent. |
+| Word and category learning | Several experiments show local, experience-driven formation of word meaning, categories, simple taxonomies, and inheritance with exceptions. These are promising but still small-scale. |
+| Memory and replay | The repo contains hippocampus-style episodic memory, replay, consolidation, directional replay readers, and several tested routes for moving memory toward cortical storage. Some older memory claims were corrected or retired. |
+| Affect and drive | Reward prediction, value, persistent mood-like state, dissociable neuromodulator axes, and basic curiosity circuits exist. Rich graded emotion, appraisal, and speech coloring remain open. |
+| Self-monitoring | Separate test runners show circuits that can report confidence, attention, and self-related state with lesion controls. These are not yet fully integrated into the production conversation loop. |
+| Language generation | There are bounded spiking speech generators and larger local language-circuit experiments. Fluent open-ended conversation is still the largest gap. A conventional generator remains a temporary phrasing scaffold in some demos. |
 
----
+Current repo scale, measured in this checkout: 43 `sim/` modules, 489 test
+files, 1389 research runners, 1938 dated finding docs, and 46 saved simulation
+profiles.
 
-## What it can't do yet
+## The Main Open Problems
 
-Stated plainly, because in each case a specific approach was tried and documented as
-having failed:
+1. **Close the whole loop.** The project has many validated pieces, but the next
+   step is making a small brain live continuously: perceive, form internal state,
+   speak or act, receive consequences, and learn from them.
+2. **Make language an action.** Speech should come from an internal reason to
+   communicate, not from a query string or text-completion objective.
+3. **Ground meaning in lived experience.** Words need to point to the same neural
+   assemblies used for seeing, acting, remembering, and valuing.
+4. **Move honesty into the self-model.** "I do not know" should emerge from
+   confidence and grounding signals inside the brain, not remain a separate
+   host-side guard.
+5. **Make affect richer and developmental.** The current mood/value machinery must
+   become graded, learned, embodied, and able to shape speech and behavior.
+6. **Support continual learning and growth.** The brain must learn from a stream of
+   interaction without overwriting earlier knowledge, using consolidation and
+   developmental growth.
+7. **Scale without becoming datacenter-only.** The target is high-end consumer
+   hardware, with sparse, local, event-driven computation and a long-term path
+   toward neuromorphic hardware.
 
-- **Writing open-ended fluent prose from its own circuitry.** The biggest gap. At
-  this amount of training data the problem is field-wide, not specific to this
-  project: a from-scratch spiking language model *and* a conventional transformer
-  both lose to a simple well-tuned word-predictor on a few million words.
-- **Learning across many layers of neurons.** A smoothed, non-spiking version of the
-  learning rule trains fine at 6 seeds. The spiking version does not learn at all,
-  and the cause is measured: the correction signal shrinks by roughly 1600× as it
-  passes back through the layers, and the middle layers stop changing.
-- **Learning to combine several properties of an object at once.** Binding one
-  property works in spiking neurons. Learning to bundle several from scratch does
-  not — 0.19 and 0.06 against 0.99 for the hand-written rule it would replace.
-- **Working out which of several remembered things a bare "it" refers to.** Our own
-  record disagrees with itself here: one spiking experiment reaches 5 of 6 seeds
-  with clean controls, a later write-up meant to confirm it was retracted (the
-  re-run quietly answered the question in ordinary code instead of deriving it), and
-  an audit still lists the ability as absent because it missed the first result.
-  Treat this as unsettled.
-- **Recalling a whole memory from a fragment**, the way the hippocampus is thought
-  to. The claimed result was withdrawn — it turned out to be an artefact of how the
-  neurons were driven. Recall by content works another way, so conversation is not
-  blocked by this.
-- **Moving assembled memories into long-term cortical storage.** One approach —
-  allocating memories to slots — is retired: it stops scaling past 8–12 facts across
-  three different formulations. The capability is not abandoned, only that method;
-  work has moved to a distributed store.
-- **Growing orientation-selective vision cells on their own.** The apparent negative
-  result is void rather than informative: it was measured on a population of neurons
-  that never actually fired.
+## Temporary Scaffolds
 
----
+Scaffolds are allowed when they help develop the real brain, but they are not the
+product. They must be tracked and replaced.
 
-## What's being worked on now
+Current important scaffolds include:
 
-The main effort is getting learning to work across many layers of spiking neurons —
-almost everything else depends on it. Alongside that: giving the emotional state a
-way to come back down, and moving assembled memories into long-term storage by a
-method that scales.
+- conventional language-model training used by some language experiments;
+- host-side parsing and discourse planning in older conversation paths;
+- host-computed novelty, appraisal, or confidence signals in some probes;
+- hand-designed concept codes, weights, grammar frames, and memory layouts;
+- the AI teacher used as an early social environment.
 
-### A note on how results are checked
+The replacement direction is the same in each case: move the computation into the
+spiking brain, ground it in perception/action/affect/memory, and test it in the
+whole loop.
 
-Because the most expensive mistake in a project like this is believing a result that
-isn't real, correctness here is enforced by automated checks that block a change
-rather than by care alone. They refuse claims whose numbers don't appear in the
-underlying data, experiments whose control condition was accidentally identical to
-the test condition, and results reported from a single random seed. On their first
-run over this repository they rejected eight things written by their own author, and
-found a wrong number in an already-published table.
-
-Contributors: see [CONTRIBUTING.md](CONTRIBUTING.md) for how this works in practice.
-
----
-
-## How to run it
+## Running It
 
 ```bash
 git clone https://github.com/danthi123/neural-simulator
 cd neural-simulator
-pip install -r requirements.txt        # CuPy + DearPyGUI + PyOpenGL + h5py + scipy
-pip install -r requirements-dev.txt    # optional: pytest and friends
-python neural-simulator.py             # GUI with live 3D visualization
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+python neural-simulator.py
 ```
 
-Full setup and troubleshooting: [QUICKSTART.md](QUICKSTART.md).
-
-**No NVIDIA GPU?** One environment variable swaps CuPy for NumPy — slower, same
-numbers:
+Use the CPU backend when CUDA is unavailable:
 
 ```bash
 SIM_BACKEND=numpy python -m research.runners.chat_demo --seed 43
 ```
 
-**Talk to it.** An interactive shell that saves its trained brain so the next
-session loads in seconds:
+Interactive conversation demo:
 
 ```bash
-# First time: train, then save (~6-20 min depending on vocabulary)
 python -m research.runners.chat_repl --mode tier1 --seed 43 \
-    --save-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
-
-# Later: load and chat (~30 sec)
-python -m research.runners.chat_repl --mode tier1 --seed 43 \
-    --load-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
+  --save-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
 ```
 
-```
-> remember the dog is big
-  OK, I'll remember dog is big.
-> is the apple small?
-  I don't know. I haven't been told.
-> who ate the apple?
-  Dog did.
-```
-
-Every conversational demo: [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md).
-
-**Watch it navigate.** This is the shortcut-closed configuration — the one whose
-4.08 ± 0.49 is quoted above. It has no goal coordinates, no agent coordinates, no
-hand-coded heuristic, and no distance-based reward:
-
-```bash
-python -m research.runners.g11_bg_runner --moving-goal \
-    --enable-place-goal-readout --learned-perception --enable-dlpfc-wm \
-    --beacon-perception --beacon-replaces-goal \
-    --cue-reflex --cue-reflex-replaces-heuristic \
-    --enable-landmark-sensor --landmarks-replace-place \
-    --sensed-reward --enable-msn-lateral-inhibition \
-    --adaptive-da --adaptive-da-ema-decay-negative 0.7 \
-    --curriculum --curriculum-warmup-steps 600 \
-    --seed 42 --n-steps 1800
-```
-
-Drop the four shortcut-closing flag groups and `--heuristic-strength` returns to
-its default of 1.0, which drives the motor cortex directly from a goal-coordinate
-comparison. Check the flags before quoting a score.
-
-**Tests, benchmarks, sweeps:**
+Run tests:
 
 ```bash
 pytest tests/ -v
-python benchmark.py --quick                       # GPU throughput
-python run_benchmarks.py --benchmark stdp-timing  # biological validation (Bi & Poo)
-python -m research.experiment_runner experiments/biology_sweep.yaml
-python -m research.result_aggregator --config biology
 ```
 
----
+More setup detail is in [QUICKSTART.md](QUICKSTART.md).
 
-## Architecture
+## Repository Map
 
-The GUI thread and the simulation thread are isolated and talk over lock-free
-queues. The central object is the **`SimulationBridge`**, which owns all neuron and
-synapse state as GPU arrays and advances the network one step at a time: synaptic
-currents → noise → neuron-model update → plasticity → visualization → recording.
-Connectivity is sparse, so memory grows with actual synapses, not neurons-squared.
-Regions and the pathways between them are *declared as data* and wired
-automatically.
-
-| Package | What's in it |
+| Path | Purpose |
 |---|---|
-| `sim/` | The engine — bridge, neuron/plasticity kernels, region framework, neuromodulators, connectivity, checkpointing |
-| `viz/` · `ui/` | OpenGL 3D renderer; DearPyGUI panels and the config round-trip |
-| `experiment/` | Stimulus injection, neuron groups, readout, training protocols |
-| `research/runners/` | 1,332 headless experiment scripts |
-| `research/findings/` | 1,845 dated write-ups — negative results included, by design |
-| `tools/gates/` | 16 gate modules — the checks that refuse a bad result at commit or dispatch |
-| `webapp/` | Web dashboard for launching runs and watching them live |
+| `sim/` | Core simulation engine: bridge, neurons, synapses, plasticity, regions, neuromodulators, checkpointing. |
+| `experiment/` | Stimuli, readouts, training utilities, and reusable experiment helpers. |
+| `research/runners/` | Headless experiment scripts. Most scientific work enters here before being promoted into shared code. |
+| `research/findings/` | Dated experiment writeups, including negative and corrected results. This is the audit trail. |
+| `docs/` | Current state, biology notes, diagrams, plans, and historical docs. |
+| `tools/gates/` | Automated checks that block unsupported claims, stale documentation, missing provenance, weak controls, and other known failure modes. |
+| `ui/`, `viz/`, `webapp/` | Desktop and web visualization/control surfaces. |
 
-Measured on one RTX 3090 (24 GB): 1K–10K neurons runs anywhere including CPU;
-10K–100K is the everyday research range; 100K+ needs ~20 GB VRAM. The GPU path is
-roughly 4–50× the CPU path and numerically equivalent. Time step is 0.5 ms, tightened
-automatically to 0.05 ms for full Hodgkin–Huxley biophysics.
+## How Progress Is Judged
 
-Diagrams: [overview](docs/diagrams/brain_architecture_current.md) ·
-[every region and pathway](docs/diagrams/brain_architecture_detailed.md).
+The project values honest, reproducible progress over impressive phrasing.
 
-### Known limitations
+- Results should run across multiple random seeds when practical.
+- Claims need raw artifacts and provenance.
+- Controls should remove, lesion, scramble, or permute the mechanism being
+  credited.
+- A passed isolated test is a floor, not proof that a human-like faculty exists.
+- Every mechanism needs a short statement of its role in the whole brain.
+- Every scaffold needs a named biological replacement and a burn-down trigger.
 
-- **Not a large language model**, and not trying to be. The contribution is
-  integrity — no shortcuts between sensing and acting, no fabrication,
-  self-contained at runtime — not fluency parity.
-- **Doing everything in neurons costs speed.** A fully-spiking conversation is much
-  slower than the same pipeline with the retired ordinary-code shortcuts.
-- **Scale.** Thousands of neurons per region against far more in biology, and far
-  fewer training examples than a developing brain sees.
-- **Simplifications.** No developmental pruning or cortical-layer formation; no
-  protein-synthesis-dependent slow consolidation tier; no per-pathway conduction
-  delays.
-- **Research software.** APIs change. Not peer-reviewed, and not for clinical use.
-
----
-
-## Further reading
-
-**Start here**
-
-| You want… | Read |
-|---|---|
-| Install, prerequisites, first run | [QUICKSTART.md](QUICKSTART.md) |
-| The biology being modelled, in plain language | [`docs/biology.md`](docs/biology.md) |
-| Where the project is heading, stage by stage | [`ROADMAP.md`](ROADMAP.md) |
-| The conversational demos | [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) |
-| How to contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| What changed and when | [CHANGELOG.md](CHANGELOG.md) |
-
-**Working on the research itself**
-
-Individual experiments live in `research/findings/`, dated, with negative and
-withdrawn results kept rather than deleted — each declares its own status, and
-[`docs/RETRACTED.md`](docs/RETRACTED.md) lists what died and what replaced it. The
-detailed engineering plan is
-[`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md),
-the automated checks are described in
-[`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md), and the earlier
-development narrative is in
-[`docs/project-history-archive.md`](docs/project-history-archive.md).
-
----
-
-## Cite
-
-```bibtex
-@software{neural_simulator,
-  title  = {Neural Simulator: a GPU-accelerated biologically realistic
-            spiking neural network simulator with real-time 3D visualization},
-  author = {Thiberge, Daniel},
-  year   = {2026},
-  url    = {https://github.com/danthi123/neural-simulator}
-}
-```
-
-MIT — see [LICENSE](LICENSE). Mirrors:
-[GitHub](https://github.com/danthi123/neural-simulator) ·
-[Gitea](https://git.dant123.com/dant123/neural-simulator).
+Start with [ROADMAP.md](ROADMAP.md) for the plan,
+[docs/CURRENT-STATE.md](docs/CURRENT-STATE.md) for capability status, and
+[HANDOFF.md](HANDOFF.md) for the development workflow.
