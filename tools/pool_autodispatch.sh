@@ -105,8 +105,10 @@ pop_job() {
   # in the same bash -c). Six w0 jobs were dispatched into that and produced nothing; the dispatch log said
   # "dispatched" six times. Caught because the results never appeared AND job_status.log stayed empty -- the
   # exit-status capture failing was itself the clue that the wrapper, not the job, was broken.
+  local checked_reason="${job#*#checked:}"
   job="${job%%#checked:*}"
   job=$(printf '%s' "$job" | sed 's/[[:space:]]*$//')
+  job="POOL_CHECKED_REASON=$(printf '%q' "$checked_reason") $job"
   printf '%s' "$job"
 }
 

@@ -252,6 +252,8 @@ def _stamp_outputs(rec):
             with open(p + ".prov.json", "w") as fh:
                 json.dump({"run_id": rec["run_id"], "runner": rec.get("runner", "unknown"),
                            "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
+                           "source_kind": rec.get("source_kind"),
+                           "source_manifest_sha256": rec.get("source_manifest_sha256"),
                            "started": rec["started"], "env": rec["env"],
                            **_resolved_backend(), **_corpus_check_state(),
                            "artifact": os.path.relpath(p, _ROOT)}, fh, indent=1)

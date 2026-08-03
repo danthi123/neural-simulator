@@ -44,7 +44,7 @@ POOL_QUEUE_PATH="$T/pool.queue" bash tools/queue_add.sh \
   pool 'printf pool-format-ok' selftest >/dev/null 2>&1
 POP=$(POOL_QUEUE_PATH="$T/pool.queue" POOL_RUNNING_PATH="$T/pool.running" \
   bash tools/pool_autodispatch.sh --pop-once 2>"$T/pop.err")
-if [ "$POP" = "printf pool-format-ok" ] && \
+if [ "$POP" = "POOL_CHECKED_REASON=selftest printf pool-format-ok" ] && \
    grep -q 'printf pool-format-ok  #checked:selftest' "$T/pool.queue.claims"; then
   ok "generic pool enqueue, dispatcher, and claim record agree on format"
 else bad "pool producer/consumer mismatch: dispatcher recovered [$POP]"; fi
