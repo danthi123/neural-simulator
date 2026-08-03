@@ -73,9 +73,13 @@ critic normalization. Both clean GPU calibration seeds still learned the
 rewarded action under unrelated reward, while the intact omission pathway stayed
 silent. The next design must preserve a bounded learned expectation until
 outcome time without removing the load-bearing normalization. A first
-dendritic-expectation successor passes seed-zero NumPy physiology, but the exact
-CuPy run fires at `45.833 Hz/cell`, above its fixed `20` limit. Resolve that
-cross-backend discrepancy before opening any scientific seed.
+dendritic-expectation successor produced a real, causal local trace on NumPy,
+but it is retired before formal testing: its original selectivity checks were
+partly tautological, Python controlled the action-tag duration after observing
+the winner, and late motor activity drove different inhibitory channels across
+CPU and GPU. The next smoke must use a neural commit event, infer selectivity
+from neural state, and remain bounded on both backends before receiving formal
+seeds.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

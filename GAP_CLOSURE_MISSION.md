@@ -28,9 +28,13 @@ reached 100%, but yoked reward again reached 100%; intact critic normalization
 left the expected-omission LHb/RMTg path silent. The path fired only after a
 normalization lesion caused extreme critic activity, localizing the next design
 to bounded persistence of learned expectation at outcome time. Later seeds stay
-locked. A research-grounded v4 dendritic-expectation successor passes seed-zero
-NumPy smoke but fails the identical CuPy smoke because outcome-time value firing
-is `45.833 Hz/cell`, above the fixed `20` limit. Its scientific phases are sealed.
+locked. A research-grounded v4 dendritic-expectation successor produced a real,
+causal local trace on seed-zero NumPy, but adversarial audit retired it before
+formal execution. Its channel checks could accept bilateral activity, Python
+controlled the action-tag duration after detecting the winner, and the exact
+CuPy run fired at `45.833 Hz/cell`. Instrumentation traced the backend difference
+to late motor activity driving different always-open FS normalizers. Every v4
+scientific seed remains unused and sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -71,12 +75,16 @@ and source-monitor tests also pass. SSH
 access to `pool40`, `pool41`, and `pool42` is verified; the dispatcher now
 rejects malformed or stale-source work and records exact source provenance.
 GitHub and Gitea are both configured and synchronized after each coherent
-evidence or workflow commit.
+evidence or workflow commit. The canonical RAG catalog and project-history
+index now resolve from linked worktrees; executable pre/post-commit hooks
+enforce evidence gates and refresh the main-branch index automatically.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Resolve Gate B v4's NumPy/CuPy firing-rate disagreement on seed-zero smoke
-   without backend-specific tuning; all scientific v4 seeds remain sealed.
+1. Build a fresh Gate B smoke around the selector's neural commit populations,
+   with no host winner/timing latch, neural-state selectivity checks that reject
+   bilateral activity, and generic outcome-linked feed-forward normalization.
+   Pass NumPy and CuPy smoke before assigning or opening any formal seed.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a

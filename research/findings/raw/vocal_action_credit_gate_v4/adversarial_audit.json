@@ -1,0 +1,81 @@
+{
+  "probe": "vocal_action_credit_gate_b_v4_adversarial_audit",
+  "date": "2026-08-03",
+  "runner": "research/runners/_vocal_action_credit_gate_v4.py",
+  "seed": 0,
+  "backend": "numpy+cupy",
+  "device": "local CPU + NVIDIA GeForce RTX 3090",
+  "preconditions": [
+    {
+      "name": "both exact seed-zero smoke artifacts parsed",
+      "ok": true
+    },
+    {
+      "name": "no calibration, development, or held-out seed executed",
+      "ok": true
+    },
+    {
+      "name": "construction identity compared before simulation",
+      "ok": true
+    }
+  ],
+  "config": {
+    "smoke_seed": 0,
+    "formal_phases_open": [],
+    "bilateral_mutation_is_diagnostic_only": true
+  },
+  "verdict": "NO_GO_RETIRED_BEFORE_FORMAL",
+  "science_seed_executed": false,
+  "source_artifacts": [
+    "research/findings/raw/vocal_action_credit_gate_v4/smoke_numpy.json",
+    "research/findings/raw/vocal_action_credit_gate_v4/smoke_cupy.json"
+  ],
+  "backend_results": {
+    "numpy": {
+      "status": "SMOKE_PASS",
+      "winner": 0,
+      "motor_spikes": [24, 0],
+      "plateau_before_outcome": [83.32902526855469, 0.0],
+      "outcome_value_rate_hz_per_cell": [9.375, 0.0],
+      "load_value_fs_spikes": [49, 0],
+      "changed_actor_synapses": 576,
+      "changed_expectation_synapses": 270
+    },
+    "cupy": {
+      "status": "SMOKE_FAIL",
+      "winner": 0,
+      "motor_spikes": [15, 0],
+      "plateau_before_outcome": [52.60997772216797, 0.0],
+      "outcome_value_rate_hz_per_cell": [45.83333333333333, 0.0],
+      "load_value_fs_spikes": [28, 40],
+      "changed_actor_synapses": 768,
+      "changed_expectation_synapses": 720
+    }
+  },
+  "construction_identity": {
+    "synapse_count": 38881,
+    "csr_indices_sha256": "7bb7e12e0c94eff128647d79866ad0cc8b0da762cab5192b8af5669b695ce07a",
+    "csr_indptr_sha256": "d67cc5d26ddb034a007a3340b06ebdbd620a712264d6e2cba4dca3c72de505ce",
+    "weights_sha256": "2acfd16fc48bfaf124da64a804a1f9cb702a14e1a662771cf5689e0c0dc69c2f",
+    "coincidence_mask_sha256": "6f65e746fbe663a328008f1bb849f26f78fdb081e77dd70b03cf72fb0112b29b",
+    "initial_membrane_sha256": "286ad18d87a0df3938652bad8a8573395ea36228053bd49cea81471b42a57a3b",
+    "all_equal_across_numpy_and_cupy": true
+  },
+  "pre_outcome_normalization_localization": {
+    "numpy_selected_value_mean_g_i": 19.57746,
+    "cupy_selected_value_mean_g_i": 0.90843,
+    "interpretation": "The always-open motor-to-FS route followed different late motor trajectories after commitment. On NumPy it inhibited the selected value channel; on CuPy it predominantly drove the other channel's FS pool."
+  },
+  "pre_fix_bilateral_mutation": {
+    "mutation": "Set intact and permuted plateau and outcome vectors to equal bilateral values while retaining host-derived expected_value_channel labels.",
+    "plateau_vector": [83.32902526855469, 83.32902526855469],
+    "outcome_rate_vector_hz_per_cell": [9.375, 9.375],
+    "all_pre_fix_smoke_checks_passed": true,
+    "conclusion": "The old checks certified host label arithmetic rather than neural channel selectivity."
+  },
+  "host_boundary": {
+    "winner_detected_from_host_accumulated_motor_counts": true,
+    "host_closes_expectation_route_after_commit": true,
+    "timing_is_load_bearing": true
+  }
+}

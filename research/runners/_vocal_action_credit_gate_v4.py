@@ -49,6 +49,7 @@ from sim.regions import RegionPathway
 
 
 OPEN_PHASES: tuple[str, ...] = ()
+RETIRED = True
 SMOKE_SEED = 0
 CALIBRATION_SEEDS = (70001, 70003)
 DEVELOPMENT_SEEDS = (70009, 70019, 70039, 70051)
@@ -81,7 +82,8 @@ SMOKE_CONTROLS = (
 HOST_BOUNDARY = {
     **v3.HOST_BOUNDARY,
     "host_expected_value_state": False,
-    "host_action_winner_latch": False,
+    "host_action_winner_latch": True,
+    "host_action_timed_transmission_window": True,
     "shared_outcome_afferent_identical_across_channels": True,
 }
 
@@ -628,8 +630,22 @@ def _smoke_checks(rows: dict[str, dict]) -> dict[str, bool]:
             and all(row["action"]["winner"] == winner for row in rows.values())
         ),
         "intact_action_tag_maps_to_executed_channel": bool(expected == winner),
+        "intact_action_tag_is_neurally_channel_selective": bool(
+            expected is not None
+            and intact["plateau_before_outcome"][expected]
+            > intact["plateau_before_outcome"][1 - expected]
+            and intact["outcome_value_rate_hz_per_cell"][expected]
+            > intact["outcome_value_rate_hz_per_cell"][1 - expected]
+        ),
         "permutation_moves_tag_to_opposite_value_channel": bool(
             winner is not None and permuted_expected == 1 - winner
+        ),
+        "permuted_action_tag_is_neurally_channel_selective": bool(
+            permuted_expected is not None
+            and permuted["plateau_before_outcome"][permuted_expected]
+            > permuted["plateau_before_outcome"][1 - permuted_expected]
+            and permuted["outcome_value_rate_hz_per_cell"][permuted_expected]
+            > permuted["outcome_value_rate_hz_per_cell"][1 - permuted_expected]
         ),
         "intact_plateau_persists_to_outcome": bool(
             expected is not None and intact["plateau_before_outcome"][expected] > 0.0
@@ -696,9 +712,51 @@ def run_smoke(config: VocalCreditConfigV4 | None = None) -> dict:
             and all(np.isfinite(value) for value in response_by_gap)
         ),
     })
+    xp, backend_name = get_backend()
+    if backend_name == "cupy":
+        properties = xp.cuda.runtime.getDeviceProperties(0)
+        device_name = properties["name"]
+        if isinstance(device_name, bytes):
+            device_name = device_name.decode("utf-8", errors="replace")
+    else:
+        device_name = "CPU (NumPy)"
+    preconditions = [
+        {
+            "name": "reserved non-scientific seed zero only",
+            "ok": all(
+                row["seed"] == SMOKE_SEED
+                and row["scientific_seed_executed"] is False
+                for row in rows.values()
+            ),
+        },
+        {
+            "name": "all structural anatomy and scope checks measured",
+            "ok": all(
+                all(row["structural_preconditions"].values())
+                for row in rows.values()
+            ),
+        },
+        {
+            "name": "all smoke measurements finite",
+            "ok": all(
+                np.isfinite(row["plateau_before_outcome"]).all()
+                and np.isfinite(row["outcome_value_rate_hz_per_cell"]).all()
+                for row in rows.values()
+            ),
+        },
+    ]
     return {
         "probe": "vocal_action_credit_gate_b_v4",
         "version": "v4-smoke-only",
+        "backend": backend_name,
+        "device": str(device_name),
+        "preconditions": preconditions,
+        "retired": RETIRED,
+        "retirement_reasons": [
+            "load-bearing host winner latch controls expectation-tag duration",
+            "CuPy outcome firing exceeds the locked physiology ceiling",
+            "late motor activity can drive the wrong value-FS microchannel",
+        ],
         "status": "SMOKE_PASS" if all(checks.values()) else "SMOKE_FAIL",
         "science_seed_executed": False,
         "smoke_seed": SMOKE_SEED,

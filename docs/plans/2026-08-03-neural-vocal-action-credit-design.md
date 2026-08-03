@@ -186,14 +186,18 @@ active. Gate B therefore requires an action-conditioned spiking value critic
 that subtracts expected value at SNc before development seeds are opened. See
 the [Gate B v1 finding](../../research/findings/2026-08-03-neural-vocal-credit-gateB-v1-yoked-NO-GO.md).
 
-**Gate B v4 smoke successor, 2026-08-03:** Gate B v3 subsequently localized
+**Gate B v4 smoke result, 2026-08-03:** Gate B v3 subsequently localized
 the remaining failure to bounded action value not persisting to outcome time.
-The sealed v4 successor reuses v3 and the existing graded dendritic-plateau
+The sealed v4 candidate reused v3 and the existing graded dendritic-plateau
 substrate to test an action-local expectation trace plus a symmetric generic
-outcome read. Its biology evidence, limitations, fresh locked partitions,
-exact operating point, controls, and seed-zero-only protocol are preregistered
-in the [v4 smoke plan](2026-08-03-neural-vocal-action-credit-gateB-v4-smoke.md).
-No v4 scientific seed is open.
+outcome read. The dendritic state was real and causal, but adversarial review
+found a load-bearing Python winner/timing latch and label-derived selectivity
+checks; the CuPy smoke also exceeded the firing ceiling because late motor
+activity normalized a different value channel. V4 is retired, every formal
+seed remains unused and sealed, and the successor must use a neural commit
+event plus independently measured neural selectivity. See the
+[v4 smoke plan](2026-08-03-neural-vocal-action-credit-gateB-v4-smoke.md) and
+[NO-GO finding](../../research/findings/2026-08-03-neural-vocal-credit-gateB-v4-smoke-NO-GO.md).
 
 ### Gate C: Same-Brain Convention Reversal
 

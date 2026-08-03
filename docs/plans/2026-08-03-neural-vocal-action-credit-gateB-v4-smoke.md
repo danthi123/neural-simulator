@@ -1,6 +1,6 @@
 ---
 type: plan
-status: active
+status: retired
 date: 2026-08-03
 ---
 
@@ -36,8 +36,11 @@ V4 reconstructs the v3 bridge unchanged except for two additions:
 
 The v3 local FS loop, action-value-to-SNc GABA-B route, reward veto,
 omission-gate/LHb/RMTg chain, collateral and reward lesions, and actor/critic
-plasticity scope remain. There is no Python winner latch or expected-value
-array. The plateau conductance is simulator state.
+plasticity scope remain. There is no host expected-value array, and the plateau
+conductance is simulator state. Python does, however, observe the committed
+motor channel and close the expectation route after one additional step. That
+winner-dependent timing is a load-bearing scaffold and was incorrectly
+described as absent in the original plan.
 
 ## Source-to-design map
 
@@ -111,6 +114,27 @@ zero, but intact outcome firing was `45.833 Hz/cell`. No backend-specific
 configuration was introduced. Cross-backend excitability is therefore an open
 physiology/implementation issue, and this smoke is not a universal substrate
 pass.
+
+## Adversarial audit and retirement
+
+V4 is retired before formal execution. The original action-channel assertions
+used a Python-derived expected-channel label and did not require the neural
+state itself to be selective. Equal bilateral plateau and outcome vectors could
+pass every old check. Explicit selectivity checks and a regression test now
+prevent that false pass, but they do not rescue the candidate's evidential
+status.
+
+Instrumentation also localized the CPU/GPU firing difference to the always-open
+motor-to-FS route: late motor activity after commitment drove the selected FS
+pool on NumPy but predominantly the other FS pool on CuPy. The host had closed
+only the expectation route, so the selected value pool reached outcome with
+substantially different inhibition.
+
+All named formal seeds remain unused and sealed. The successor must derive its
+action tag from a brief neural commit event without host winner timing, score
+selectivity from neural state rather than label arithmetic, and couple the
+generic outcome read to matched feed-forward inhibition. See the
+[v4 NO-GO finding](../../research/findings/2026-08-03-neural-vocal-credit-gateB-v4-smoke-NO-GO.md).
 
 ## Interpretation limit
 

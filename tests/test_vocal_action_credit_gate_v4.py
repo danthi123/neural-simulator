@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from dataclasses import asdict, replace
 import os
 
@@ -92,7 +93,9 @@ def test_v4_preserves_every_inherited_v3_setting_and_preregisters_controls():
         "action_channel_permutation",
     } <= set(gate.FORMAL_CONTROLS)
     assert gate.HOST_BOUNDARY["host_expected_value_state"] is False
-    assert gate.HOST_BOUNDARY["host_action_winner_latch"] is False
+    assert gate.HOST_BOUNDARY["host_action_winner_latch"] is True
+    assert gate.HOST_BOUNDARY["host_action_timed_transmission_window"] is True
+    assert gate.RETIRED is True
 
 
 def test_intact_build_preserves_v3_circuit_and_scopes_plateau_to_value_routes():
@@ -187,3 +190,17 @@ def test_smoke_frozen_route_permutation_and_gap_decay_are_causal(smoke_result):
     plateaus = smoke_result["gap_decay"]["plateau_expected_channel"]
     assert plateaus[0] > plateaus[1] > plateaus[2] >= 0.0
     assert smoke_result["gap_decay"]["gaps_steps"] == [60, 100, 160]
+
+
+def test_channel_selectivity_checks_reject_bilateral_neural_state(smoke_result):
+    rows = copy.deepcopy(smoke_result["conditions"])
+    for name in ("intact", "action_channel_permutation"):
+        rows[name]["plateau_before_outcome"] = [83.329, 83.329]
+        rows[name]["outcome_value_rate_hz_per_cell"] = [9.375, 9.375]
+
+    checks = gate._smoke_checks(rows)
+
+    assert checks["intact_action_tag_maps_to_executed_channel"]
+    assert checks["permutation_moves_tag_to_opposite_value_channel"]
+    assert not checks["intact_action_tag_is_neurally_channel_selective"]
+    assert not checks["permuted_action_tag_is_neurally_channel_selective"]

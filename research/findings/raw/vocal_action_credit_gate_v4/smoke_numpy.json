@@ -1,0 +1,1585 @@
+{
+  "probe": "vocal_action_credit_gate_b_v4",
+  "version": "v4-smoke-only",
+  "backend": "numpy",
+  "device": "CPU (NumPy)",
+  "preconditions": [
+    {
+      "name": "reserved non-scientific seed zero only",
+      "ok": true
+    },
+    {
+      "name": "all structural anatomy and scope checks measured",
+      "ok": true
+    },
+    {
+      "name": "all smoke measurements finite",
+      "ok": true
+    }
+  ],
+  "retired": true,
+  "retirement_reasons": [
+    "load-bearing host winner latch controls expectation-tag duration",
+    "CuPy outcome firing exceeds the locked physiology ceiling",
+    "late motor activity can drive the wrong value-FS microchannel"
+  ],
+  "status": "SMOKE_PASS",
+  "science_seed_executed": false,
+  "smoke_seed": 0,
+  "config": {
+    "n_cue": 24,
+    "n_actor": 24,
+    "n_reward_us": 24,
+    "n_outcome": 24,
+    "n_snc": 20,
+    "n_value": 24,
+    "cue_pA": 6000.0,
+    "reward_pA": 1000.0,
+    "outcome_pA": 1000.0,
+    "cue_to_actor_weight": 0.1,
+    "motor_to_actor_weight": 20.0,
+    "actor_to_gpi_weight": 60.0,
+    "reward_to_snc_weight": 100.0,
+    "motor_to_value_weight": 20.0,
+    "value_to_snc_weight": 10.0,
+    "cue_lead_steps": 100,
+    "collateral_steps": 30,
+    "reward_delay_steps": 100,
+    "reward_steps": 40,
+    "post_reward_steps": 500,
+    "reward_learning_rate": 0.06,
+    "actor_plasticity_gain": 0.3,
+    "eligibility_tau_ms": 300.0,
+    "coactivity_trace_tau_ms": 80.0,
+    "coactivity_threshold": 0.001,
+    "coactivity_scale": 20.0,
+    "weight_max": 80.0,
+    "dopamine_decay_tau_ms": 30.0,
+    "dopamine_window_ms": 20.0,
+    "dopamine_sensitivity": 40.0,
+    "enable_action_value_critic": true,
+    "snc_tonic_pA": 350.0,
+    "snc_tonic_calibration_steps": 1000,
+    "gabab_propagation_strength": 4e-05,
+    "gabab_tau_decay_ms": 150.0,
+    "ach_decay_tau_ms": 20.0,
+    "ach_window_ms": 5.0,
+    "ach_pause_sensitivity": -1000.0,
+    "n_value_fs": 12,
+    "n_omission_gate": 20,
+    "n_lhb": 24,
+    "n_reward_veto": 16,
+    "n_rmtg": 20,
+    "motor_to_value_fs_weight": 20.0,
+    "value_fs_to_value_weight": 12.0,
+    "value_to_omission_gate_weight": 8.0,
+    "omission_gate_tonic_pA": 350.0,
+    "omission_gate_to_lhb_weight": 16.0,
+    "outcome_to_lhb_weight": 16.0,
+    "reward_to_veto_weight": 20.0,
+    "reward_veto_to_lhb_weight": 20.0,
+    "lhb_to_rmtg_weight": 18.0,
+    "rmtg_to_snc_weight": 18.0,
+    "outcome_to_value_weight": 18.0,
+    "expectation_plateau_center": 400.0,
+    "expectation_plateau_slope": 0.025,
+    "expectation_plateau_strength": 900.0,
+    "expectation_plateau_tau_decay_ms": 500.0,
+    "expectation_plateau_tau_rise_ms": 2.0,
+    "smoke_warmup_steps": 120,
+    "smoke_action_steps": 100,
+    "smoke_load_steps": 30,
+    "smoke_outcome_steps": 40,
+    "smoke_gap_steps": [
+      60,
+      100,
+      160
+    ]
+  },
+  "seed_policy": {
+    "open_phases": [],
+    "calibration_sealed": [
+      70001,
+      70003
+    ],
+    "development_sealed": [
+      70009,
+      70019,
+      70039,
+      70051
+    ],
+    "held_out_sealed": [
+      70061,
+      70067
+    ]
+  },
+  "formal_controls_preregistered": [
+    "contingent",
+    "reward_count_matched_shifted_yoked",
+    "collateral_lesion",
+    "reward_to_snc_lesion",
+    "critic_output_lesion",
+    "omission_path_lesion",
+    "normalization_lesion",
+    "frozen_expectation_route",
+    "plateau_lesion",
+    "shared_outcome_read_lesion",
+    "action_channel_permutation"
+  ],
+  "host_boundary": {
+    "generic_cue_timing": true,
+    "generic_outcome_timing": true,
+    "sensory_reward_presence": true,
+    "desired_channel_current": false,
+    "host_eligibility_assignment": false,
+    "host_initializes_dopamine_baseline": true,
+    "host_calibrates_tonic_production_threshold": true,
+    "host_trialwise_dopamine_assignment": false,
+    "host_prediction_error_calculation": false,
+    "host_weight_update": false,
+    "host_expected_value_state": false,
+    "host_action_winner_latch": true,
+    "host_action_timed_transmission_window": true,
+    "shared_outcome_afferent_identical_across_channels": true
+  },
+  "checks": {
+    "all_anatomy_and_scope_checks_pass": true,
+    "shared_selector_commits_without_host_channel_drive": true,
+    "intact_action_tag_maps_to_executed_channel": true,
+    "intact_action_tag_is_neurally_channel_selective": true,
+    "permutation_moves_tag_to_opposite_value_channel": true,
+    "permuted_action_tag_is_neurally_channel_selective": true,
+    "intact_plateau_persists_to_outcome": true,
+    "plateau_lesion_removes_dendritic_state": true,
+    "shared_outcome_afferent_is_active": true,
+    "intact_value_firing_is_bounded_1_to_20_hz_per_cell": true,
+    "delay_value_firing_is_near_zero": true,
+    "plateau_is_load_bearing_for_outcome_read": true,
+    "shared_outcome_read_is_load_bearing": true,
+    "frozen_expectation_route_preserves_actor_scope": true,
+    "plateau_state_decays_across_preregistered_gaps": true,
+    "outcome_read_response_is_recorded_at_every_gap": true
+  },
+  "conditions": {
+    "intact": {
+      "control": "intact",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "gap_steps": 100,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "outcome_to_value_weight": 18.0,
+        "expectation_plateau_center": 400.0,
+        "expectation_plateau_slope": 0.025,
+        "expectation_plateau_strength": 900.0,
+        "expectation_plateau_tau_decay_ms": 500.0,
+        "expectation_plateau_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_load_steps": 30,
+        "smoke_outcome_steps": 40,
+        "smoke_gap_steps": [
+          60,
+          100,
+          160
+        ]
+      },
+      "action": {
+        "winner": 0,
+        "motor_spikes": [
+          24,
+          0
+        ],
+        "load_value_spikes": [
+          3,
+          0
+        ],
+        "load_value_fs_spikes": [
+          49,
+          0
+        ],
+        "plateau_after_load": [
+          101.77841186523438,
+          0.0
+        ]
+      },
+      "expected_value_channel": 0,
+      "plateau_before_outcome": [
+        83.32902526855469,
+        0.0
+      ],
+      "delay_value_spikes": [
+        0,
+        0
+      ],
+      "delay_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "outcome_onset_spikes": 138,
+      "outcome_value_spikes": [
+        9,
+        0
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        9.375,
+        0.0
+      ],
+      "route_telemetry_before_action": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "route_telemetry_after_outcome": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "shared_outcome_read_gain": 1.0,
+      "expectation_plasticity_gain": 1.0,
+      "actor_plasticity_gain": 0.3,
+      "changed_synapses": 846,
+      "changed_actor_synapses": 576,
+      "changed_expectation_synapses": 270,
+      "changed_outside_declared_routes": 0,
+      "structural_preconditions": {
+        "all_v3_populations_share_one_bridge": true,
+        "only_actor_and_critic_routes_are_plastic": true,
+        "v2_value_to_snc_gabab_gain_is_unchanged": true,
+        "action_value_reaches_omission_comparator": true,
+        "generic_outcome_reaches_lhb": true,
+        "reward_recruits_neural_lhb_veto": true,
+        "lhb_rmtg_path_inhibits_snc": true,
+        "v3_seed_partitions_are_disjoint_and_fresh": true,
+        "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+        "local_fs_normalization_follows_each_action_value_microchannel": true,
+        "graded_plateau_uses_only_plastic_action_value_routes": true,
+        "all_or_none_plateau_contribution_is_zero": true,
+        "graded_plateau_state_is_on_substrate": true,
+        "fresh_formal_partitions_are_disjoint_and_sealed": true
+      },
+      "host_expected_value_state": false
+    },
+    "frozen_expectation_route": {
+      "control": "frozen_expectation_route",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "gap_steps": 100,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "outcome_to_value_weight": 18.0,
+        "expectation_plateau_center": 400.0,
+        "expectation_plateau_slope": 0.025,
+        "expectation_plateau_strength": 900.0,
+        "expectation_plateau_tau_decay_ms": 500.0,
+        "expectation_plateau_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_load_steps": 30,
+        "smoke_outcome_steps": 40,
+        "smoke_gap_steps": [
+          60,
+          100,
+          160
+        ]
+      },
+      "action": {
+        "winner": 0,
+        "motor_spikes": [
+          24,
+          0
+        ],
+        "load_value_spikes": [
+          3,
+          0
+        ],
+        "load_value_fs_spikes": [
+          49,
+          0
+        ],
+        "plateau_after_load": [
+          101.77841186523438,
+          0.0
+        ]
+      },
+      "expected_value_channel": 0,
+      "plateau_before_outcome": [
+        83.32902526855469,
+        0.0
+      ],
+      "delay_value_spikes": [
+        0,
+        0
+      ],
+      "delay_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "outcome_onset_spikes": 138,
+      "outcome_value_spikes": [
+        9,
+        0
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        9.375,
+        0.0
+      ],
+      "route_telemetry_before_action": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "route_telemetry_after_outcome": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "shared_outcome_read_gain": 1.0,
+      "expectation_plasticity_gain": 0.0,
+      "actor_plasticity_gain": 0.3,
+      "changed_synapses": 576,
+      "changed_actor_synapses": 576,
+      "changed_expectation_synapses": 0,
+      "changed_outside_declared_routes": 0,
+      "structural_preconditions": {
+        "all_v3_populations_share_one_bridge": true,
+        "only_actor_and_critic_routes_are_plastic": true,
+        "v2_value_to_snc_gabab_gain_is_unchanged": true,
+        "action_value_reaches_omission_comparator": true,
+        "generic_outcome_reaches_lhb": true,
+        "reward_recruits_neural_lhb_veto": true,
+        "lhb_rmtg_path_inhibits_snc": true,
+        "v3_seed_partitions_are_disjoint_and_fresh": true,
+        "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+        "local_fs_normalization_follows_each_action_value_microchannel": true,
+        "graded_plateau_uses_only_plastic_action_value_routes": true,
+        "all_or_none_plateau_contribution_is_zero": true,
+        "graded_plateau_state_is_on_substrate": true,
+        "fresh_formal_partitions_are_disjoint_and_sealed": true
+      },
+      "host_expected_value_state": false
+    },
+    "plateau_lesion": {
+      "control": "plateau_lesion",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "gap_steps": 100,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "outcome_to_value_weight": 18.0,
+        "expectation_plateau_center": 400.0,
+        "expectation_plateau_slope": 0.025,
+        "expectation_plateau_strength": 900.0,
+        "expectation_plateau_tau_decay_ms": 500.0,
+        "expectation_plateau_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_load_steps": 30,
+        "smoke_outcome_steps": 40,
+        "smoke_gap_steps": [
+          60,
+          100,
+          160
+        ]
+      },
+      "action": {
+        "winner": 0,
+        "motor_spikes": [
+          24,
+          0
+        ],
+        "load_value_spikes": [
+          0,
+          0
+        ],
+        "load_value_fs_spikes": [
+          49,
+          0
+        ],
+        "plateau_after_load": [
+          0.0,
+          0.0
+        ]
+      },
+      "expected_value_channel": 0,
+      "plateau_before_outcome": [
+        0.0,
+        0.0
+      ],
+      "delay_value_spikes": [
+        0,
+        0
+      ],
+      "delay_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "outcome_onset_spikes": 138,
+      "outcome_value_spikes": [
+        0,
+        0
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "route_telemetry_before_action": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 0
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 0
+          }
+        },
+        "total": 1440,
+        "enabled": 0,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "route_telemetry_after_outcome": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 0
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 0
+          }
+        },
+        "total": 1440,
+        "enabled": 0,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "shared_outcome_read_gain": 1.0,
+      "expectation_plasticity_gain": 1.0,
+      "actor_plasticity_gain": 0.3,
+      "changed_synapses": 576,
+      "changed_actor_synapses": 576,
+      "changed_expectation_synapses": 0,
+      "changed_outside_declared_routes": 0,
+      "structural_preconditions": {
+        "all_v3_populations_share_one_bridge": true,
+        "only_actor_and_critic_routes_are_plastic": true,
+        "v2_value_to_snc_gabab_gain_is_unchanged": true,
+        "action_value_reaches_omission_comparator": true,
+        "generic_outcome_reaches_lhb": true,
+        "reward_recruits_neural_lhb_veto": true,
+        "lhb_rmtg_path_inhibits_snc": true,
+        "v3_seed_partitions_are_disjoint_and_fresh": true,
+        "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+        "local_fs_normalization_follows_each_action_value_microchannel": true,
+        "graded_plateau_uses_only_plastic_action_value_routes": true,
+        "all_or_none_plateau_contribution_is_zero": true,
+        "graded_plateau_state_is_on_substrate": true,
+        "fresh_formal_partitions_are_disjoint_and_sealed": true
+      },
+      "host_expected_value_state": false
+    },
+    "shared_outcome_read_lesion": {
+      "control": "shared_outcome_read_lesion",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "gap_steps": 100,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "outcome_to_value_weight": 18.0,
+        "expectation_plateau_center": 400.0,
+        "expectation_plateau_slope": 0.025,
+        "expectation_plateau_strength": 900.0,
+        "expectation_plateau_tau_decay_ms": 500.0,
+        "expectation_plateau_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_load_steps": 30,
+        "smoke_outcome_steps": 40,
+        "smoke_gap_steps": [
+          60,
+          100,
+          160
+        ]
+      },
+      "action": {
+        "winner": 0,
+        "motor_spikes": [
+          24,
+          0
+        ],
+        "load_value_spikes": [
+          3,
+          0
+        ],
+        "load_value_fs_spikes": [
+          49,
+          0
+        ],
+        "plateau_after_load": [
+          101.77841186523438,
+          0.0
+        ]
+      },
+      "expected_value_channel": 0,
+      "plateau_before_outcome": [
+        83.32902526855469,
+        0.0
+      ],
+      "delay_value_spikes": [
+        0,
+        0
+      ],
+      "delay_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "outcome_onset_spikes": 138,
+      "outcome_value_spikes": [
+        0,
+        0
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "route_telemetry_before_action": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "route_telemetry_after_outcome": {
+        "by_source": {
+          "0": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "shared_outcome_read_gain": 0.0,
+      "expectation_plasticity_gain": 1.0,
+      "actor_plasticity_gain": 0.3,
+      "changed_synapses": 666,
+      "changed_actor_synapses": 576,
+      "changed_expectation_synapses": 90,
+      "changed_outside_declared_routes": 0,
+      "structural_preconditions": {
+        "all_v3_populations_share_one_bridge": true,
+        "only_actor_and_critic_routes_are_plastic": true,
+        "v2_value_to_snc_gabab_gain_is_unchanged": true,
+        "action_value_reaches_omission_comparator": true,
+        "generic_outcome_reaches_lhb": true,
+        "reward_recruits_neural_lhb_veto": true,
+        "lhb_rmtg_path_inhibits_snc": true,
+        "v3_seed_partitions_are_disjoint_and_fresh": true,
+        "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+        "local_fs_normalization_follows_each_action_value_microchannel": true,
+        "graded_plateau_uses_only_plastic_action_value_routes": true,
+        "all_or_none_plateau_contribution_is_zero": true,
+        "graded_plateau_state_is_on_substrate": true,
+        "fresh_formal_partitions_are_disjoint_and_sealed": true
+      },
+      "host_expected_value_state": false
+    },
+    "action_channel_permutation": {
+      "control": "action_channel_permutation",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "gap_steps": 100,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "outcome_to_value_weight": 18.0,
+        "expectation_plateau_center": 400.0,
+        "expectation_plateau_slope": 0.025,
+        "expectation_plateau_strength": 900.0,
+        "expectation_plateau_tau_decay_ms": 500.0,
+        "expectation_plateau_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_load_steps": 30,
+        "smoke_outcome_steps": 40,
+        "smoke_gap_steps": [
+          60,
+          100,
+          160
+        ]
+      },
+      "action": {
+        "winner": 0,
+        "motor_spikes": [
+          24,
+          0
+        ],
+        "load_value_spikes": [
+          0,
+          2
+        ],
+        "load_value_fs_spikes": [
+          0,
+          52
+        ],
+        "plateau_after_load": [
+          0.0,
+          101.77841186523438
+        ]
+      },
+      "expected_value_channel": 1,
+      "plateau_before_outcome": [
+        0.0,
+        83.32902526855469
+      ],
+      "delay_value_spikes": [
+        0,
+        0
+      ],
+      "delay_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "outcome_onset_spikes": 138,
+      "outcome_value_spikes": [
+        0,
+        2
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        2.083333333333333
+      ],
+      "route_telemetry_before_action": {
+        "by_source": {
+          "0": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "route_telemetry_after_outcome": {
+        "by_source": {
+          "0": {
+            "target": 1,
+            "total": 720,
+            "plateau_enabled": 720
+          },
+          "1": {
+            "target": 0,
+            "total": 720,
+            "plateau_enabled": 720
+          }
+        },
+        "total": 1440,
+        "enabled": 1440,
+        "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+      },
+      "shared_outcome_read_gain": 1.0,
+      "expectation_plasticity_gain": 1.0,
+      "actor_plasticity_gain": 0.3,
+      "changed_synapses": 636,
+      "changed_actor_synapses": 576,
+      "changed_expectation_synapses": 60,
+      "changed_outside_declared_routes": 0,
+      "structural_preconditions": {
+        "all_v3_populations_share_one_bridge": true,
+        "only_actor_and_critic_routes_are_plastic": true,
+        "v2_value_to_snc_gabab_gain_is_unchanged": true,
+        "action_value_reaches_omission_comparator": true,
+        "generic_outcome_reaches_lhb": true,
+        "reward_recruits_neural_lhb_veto": true,
+        "lhb_rmtg_path_inhibits_snc": true,
+        "v3_seed_partitions_are_disjoint_and_fresh": true,
+        "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+        "local_fs_normalization_follows_each_action_value_microchannel": true,
+        "graded_plateau_uses_only_plastic_action_value_routes": true,
+        "all_or_none_plateau_contribution_is_zero": true,
+        "graded_plateau_state_is_on_substrate": true,
+        "fresh_formal_partitions_are_disjoint_and_sealed": true
+      },
+      "host_expected_value_state": false
+    }
+  },
+  "gap_decay": {
+    "gaps_steps": [
+      60,
+      100,
+      160
+    ],
+    "plateau_expected_channel": [
+      90.269287109375,
+      83.32902526855469,
+      73.90619659423828
+    ],
+    "outcome_rate_expected_channel_hz_per_cell": [
+      16.666666666666664,
+      9.375,
+      0.0
+    ],
+    "rows": {
+      "60": {
+        "control": "intact",
+        "seed": 0,
+        "scientific_seed_executed": false,
+        "gap_steps": 60,
+        "config": {
+          "n_cue": 24,
+          "n_actor": 24,
+          "n_reward_us": 24,
+          "n_outcome": 24,
+          "n_snc": 20,
+          "n_value": 24,
+          "cue_pA": 6000.0,
+          "reward_pA": 1000.0,
+          "outcome_pA": 1000.0,
+          "cue_to_actor_weight": 0.1,
+          "motor_to_actor_weight": 20.0,
+          "actor_to_gpi_weight": 60.0,
+          "reward_to_snc_weight": 100.0,
+          "motor_to_value_weight": 20.0,
+          "value_to_snc_weight": 10.0,
+          "cue_lead_steps": 100,
+          "collateral_steps": 30,
+          "reward_delay_steps": 100,
+          "reward_steps": 40,
+          "post_reward_steps": 500,
+          "reward_learning_rate": 0.06,
+          "actor_plasticity_gain": 0.3,
+          "eligibility_tau_ms": 300.0,
+          "coactivity_trace_tau_ms": 80.0,
+          "coactivity_threshold": 0.001,
+          "coactivity_scale": 20.0,
+          "weight_max": 80.0,
+          "dopamine_decay_tau_ms": 30.0,
+          "dopamine_window_ms": 20.0,
+          "dopamine_sensitivity": 40.0,
+          "enable_action_value_critic": true,
+          "snc_tonic_pA": 350.0,
+          "snc_tonic_calibration_steps": 1000,
+          "gabab_propagation_strength": 4e-05,
+          "gabab_tau_decay_ms": 150.0,
+          "ach_decay_tau_ms": 20.0,
+          "ach_window_ms": 5.0,
+          "ach_pause_sensitivity": -1000.0,
+          "n_value_fs": 12,
+          "n_omission_gate": 20,
+          "n_lhb": 24,
+          "n_reward_veto": 16,
+          "n_rmtg": 20,
+          "motor_to_value_fs_weight": 20.0,
+          "value_fs_to_value_weight": 12.0,
+          "value_to_omission_gate_weight": 8.0,
+          "omission_gate_tonic_pA": 350.0,
+          "omission_gate_to_lhb_weight": 16.0,
+          "outcome_to_lhb_weight": 16.0,
+          "reward_to_veto_weight": 20.0,
+          "reward_veto_to_lhb_weight": 20.0,
+          "lhb_to_rmtg_weight": 18.0,
+          "rmtg_to_snc_weight": 18.0,
+          "outcome_to_value_weight": 18.0,
+          "expectation_plateau_center": 400.0,
+          "expectation_plateau_slope": 0.025,
+          "expectation_plateau_strength": 900.0,
+          "expectation_plateau_tau_decay_ms": 500.0,
+          "expectation_plateau_tau_rise_ms": 2.0,
+          "smoke_warmup_steps": 120,
+          "smoke_action_steps": 100,
+          "smoke_load_steps": 30,
+          "smoke_outcome_steps": 40,
+          "smoke_gap_steps": [
+            60,
+            100,
+            160
+          ]
+        },
+        "action": {
+          "winner": 0,
+          "motor_spikes": [
+            24,
+            0
+          ],
+          "load_value_spikes": [
+            3,
+            0
+          ],
+          "load_value_fs_spikes": [
+            49,
+            0
+          ],
+          "plateau_after_load": [
+            101.77841186523438,
+            0.0
+          ]
+        },
+        "expected_value_channel": 0,
+        "plateau_before_outcome": [
+          90.269287109375,
+          0.0
+        ],
+        "delay_value_spikes": [
+          0,
+          0
+        ],
+        "delay_value_rate_hz_per_cell": [
+          0.0,
+          0.0
+        ],
+        "outcome_onset_spikes": 138,
+        "outcome_value_spikes": [
+          16,
+          0
+        ],
+        "outcome_value_rate_hz_per_cell": [
+          16.666666666666664,
+          0.0
+        ],
+        "route_telemetry_before_action": {
+          "by_source": {
+            "0": {
+              "target": 0,
+              "total": 720,
+              "plateau_enabled": 720
+            },
+            "1": {
+              "target": 1,
+              "total": 720,
+              "plateau_enabled": 720
+            }
+          },
+          "total": 1440,
+          "enabled": 1440,
+          "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+        },
+        "route_telemetry_after_outcome": {
+          "by_source": {
+            "0": {
+              "target": 0,
+              "total": 720,
+              "plateau_enabled": 720
+            },
+            "1": {
+              "target": 1,
+              "total": 720,
+              "plateau_enabled": 720
+            }
+          },
+          "total": 1440,
+          "enabled": 1440,
+          "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+        },
+        "shared_outcome_read_gain": 1.0,
+        "expectation_plasticity_gain": 1.0,
+        "actor_plasticity_gain": 0.3,
+        "changed_synapses": 1056,
+        "changed_actor_synapses": 576,
+        "changed_expectation_synapses": 480,
+        "changed_outside_declared_routes": 0,
+        "structural_preconditions": {
+          "all_v3_populations_share_one_bridge": true,
+          "only_actor_and_critic_routes_are_plastic": true,
+          "v2_value_to_snc_gabab_gain_is_unchanged": true,
+          "action_value_reaches_omission_comparator": true,
+          "generic_outcome_reaches_lhb": true,
+          "reward_recruits_neural_lhb_veto": true,
+          "lhb_rmtg_path_inhibits_snc": true,
+          "v3_seed_partitions_are_disjoint_and_fresh": true,
+          "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+          "local_fs_normalization_follows_each_action_value_microchannel": true,
+          "graded_plateau_uses_only_plastic_action_value_routes": true,
+          "all_or_none_plateau_contribution_is_zero": true,
+          "graded_plateau_state_is_on_substrate": true,
+          "fresh_formal_partitions_are_disjoint_and_sealed": true
+        },
+        "host_expected_value_state": false
+      },
+      "100": {
+        "control": "intact",
+        "seed": 0,
+        "scientific_seed_executed": false,
+        "gap_steps": 100,
+        "config": {
+          "n_cue": 24,
+          "n_actor": 24,
+          "n_reward_us": 24,
+          "n_outcome": 24,
+          "n_snc": 20,
+          "n_value": 24,
+          "cue_pA": 6000.0,
+          "reward_pA": 1000.0,
+          "outcome_pA": 1000.0,
+          "cue_to_actor_weight": 0.1,
+          "motor_to_actor_weight": 20.0,
+          "actor_to_gpi_weight": 60.0,
+          "reward_to_snc_weight": 100.0,
+          "motor_to_value_weight": 20.0,
+          "value_to_snc_weight": 10.0,
+          "cue_lead_steps": 100,
+          "collateral_steps": 30,
+          "reward_delay_steps": 100,
+          "reward_steps": 40,
+          "post_reward_steps": 500,
+          "reward_learning_rate": 0.06,
+          "actor_plasticity_gain": 0.3,
+          "eligibility_tau_ms": 300.0,
+          "coactivity_trace_tau_ms": 80.0,
+          "coactivity_threshold": 0.001,
+          "coactivity_scale": 20.0,
+          "weight_max": 80.0,
+          "dopamine_decay_tau_ms": 30.0,
+          "dopamine_window_ms": 20.0,
+          "dopamine_sensitivity": 40.0,
+          "enable_action_value_critic": true,
+          "snc_tonic_pA": 350.0,
+          "snc_tonic_calibration_steps": 1000,
+          "gabab_propagation_strength": 4e-05,
+          "gabab_tau_decay_ms": 150.0,
+          "ach_decay_tau_ms": 20.0,
+          "ach_window_ms": 5.0,
+          "ach_pause_sensitivity": -1000.0,
+          "n_value_fs": 12,
+          "n_omission_gate": 20,
+          "n_lhb": 24,
+          "n_reward_veto": 16,
+          "n_rmtg": 20,
+          "motor_to_value_fs_weight": 20.0,
+          "value_fs_to_value_weight": 12.0,
+          "value_to_omission_gate_weight": 8.0,
+          "omission_gate_tonic_pA": 350.0,
+          "omission_gate_to_lhb_weight": 16.0,
+          "outcome_to_lhb_weight": 16.0,
+          "reward_to_veto_weight": 20.0,
+          "reward_veto_to_lhb_weight": 20.0,
+          "lhb_to_rmtg_weight": 18.0,
+          "rmtg_to_snc_weight": 18.0,
+          "outcome_to_value_weight": 18.0,
+          "expectation_plateau_center": 400.0,
+          "expectation_plateau_slope": 0.025,
+          "expectation_plateau_strength": 900.0,
+          "expectation_plateau_tau_decay_ms": 500.0,
+          "expectation_plateau_tau_rise_ms": 2.0,
+          "smoke_warmup_steps": 120,
+          "smoke_action_steps": 100,
+          "smoke_load_steps": 30,
+          "smoke_outcome_steps": 40,
+          "smoke_gap_steps": [
+            60,
+            100,
+            160
+          ]
+        },
+        "action": {
+          "winner": 0,
+          "motor_spikes": [
+            24,
+            0
+          ],
+          "load_value_spikes": [
+            3,
+            0
+          ],
+          "load_value_fs_spikes": [
+            49,
+            0
+          ],
+          "plateau_after_load": [
+            101.77841186523438,
+            0.0
+          ]
+        },
+        "expected_value_channel": 0,
+        "plateau_before_outcome": [
+          83.32902526855469,
+          0.0
+        ],
+        "delay_value_spikes": [
+          0,
+          0
+        ],
+        "delay_value_rate_hz_per_cell": [
+          0.0,
+          0.0
+        ],
+        "outcome_onset_spikes": 138,
+        "outcome_value_spikes": [
+          9,
+          0
+        ],
+        "outcome_value_rate_hz_per_cell": [
+          9.375,
+          0.0
+        ],
+        "route_telemetry_before_action": {
+          "by_source": {
+            "0": {
+              "target": 0,
+              "total": 720,
+              "plateau_enabled": 720
+            },
+            "1": {
+              "target": 1,
+              "total": 720,
+              "plateau_enabled": 720
+            }
+          },
+          "total": 1440,
+          "enabled": 1440,
+          "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+        },
+        "route_telemetry_after_outcome": {
+          "by_source": {
+            "0": {
+              "target": 0,
+              "total": 720,
+              "plateau_enabled": 720
+            },
+            "1": {
+              "target": 1,
+              "total": 720,
+              "plateau_enabled": 720
+            }
+          },
+          "total": 1440,
+          "enabled": 1440,
+          "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+        },
+        "shared_outcome_read_gain": 1.0,
+        "expectation_plasticity_gain": 1.0,
+        "actor_plasticity_gain": 0.3,
+        "changed_synapses": 846,
+        "changed_actor_synapses": 576,
+        "changed_expectation_synapses": 270,
+        "changed_outside_declared_routes": 0,
+        "structural_preconditions": {
+          "all_v3_populations_share_one_bridge": true,
+          "only_actor_and_critic_routes_are_plastic": true,
+          "v2_value_to_snc_gabab_gain_is_unchanged": true,
+          "action_value_reaches_omission_comparator": true,
+          "generic_outcome_reaches_lhb": true,
+          "reward_recruits_neural_lhb_veto": true,
+          "lhb_rmtg_path_inhibits_snc": true,
+          "v3_seed_partitions_are_disjoint_and_fresh": true,
+          "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+          "local_fs_normalization_follows_each_action_value_microchannel": true,
+          "graded_plateau_uses_only_plastic_action_value_routes": true,
+          "all_or_none_plateau_contribution_is_zero": true,
+          "graded_plateau_state_is_on_substrate": true,
+          "fresh_formal_partitions_are_disjoint_and_sealed": true
+        },
+        "host_expected_value_state": false
+      },
+      "160": {
+        "control": "intact",
+        "seed": 0,
+        "scientific_seed_executed": false,
+        "gap_steps": 160,
+        "config": {
+          "n_cue": 24,
+          "n_actor": 24,
+          "n_reward_us": 24,
+          "n_outcome": 24,
+          "n_snc": 20,
+          "n_value": 24,
+          "cue_pA": 6000.0,
+          "reward_pA": 1000.0,
+          "outcome_pA": 1000.0,
+          "cue_to_actor_weight": 0.1,
+          "motor_to_actor_weight": 20.0,
+          "actor_to_gpi_weight": 60.0,
+          "reward_to_snc_weight": 100.0,
+          "motor_to_value_weight": 20.0,
+          "value_to_snc_weight": 10.0,
+          "cue_lead_steps": 100,
+          "collateral_steps": 30,
+          "reward_delay_steps": 100,
+          "reward_steps": 40,
+          "post_reward_steps": 500,
+          "reward_learning_rate": 0.06,
+          "actor_plasticity_gain": 0.3,
+          "eligibility_tau_ms": 300.0,
+          "coactivity_trace_tau_ms": 80.0,
+          "coactivity_threshold": 0.001,
+          "coactivity_scale": 20.0,
+          "weight_max": 80.0,
+          "dopamine_decay_tau_ms": 30.0,
+          "dopamine_window_ms": 20.0,
+          "dopamine_sensitivity": 40.0,
+          "enable_action_value_critic": true,
+          "snc_tonic_pA": 350.0,
+          "snc_tonic_calibration_steps": 1000,
+          "gabab_propagation_strength": 4e-05,
+          "gabab_tau_decay_ms": 150.0,
+          "ach_decay_tau_ms": 20.0,
+          "ach_window_ms": 5.0,
+          "ach_pause_sensitivity": -1000.0,
+          "n_value_fs": 12,
+          "n_omission_gate": 20,
+          "n_lhb": 24,
+          "n_reward_veto": 16,
+          "n_rmtg": 20,
+          "motor_to_value_fs_weight": 20.0,
+          "value_fs_to_value_weight": 12.0,
+          "value_to_omission_gate_weight": 8.0,
+          "omission_gate_tonic_pA": 350.0,
+          "omission_gate_to_lhb_weight": 16.0,
+          "outcome_to_lhb_weight": 16.0,
+          "reward_to_veto_weight": 20.0,
+          "reward_veto_to_lhb_weight": 20.0,
+          "lhb_to_rmtg_weight": 18.0,
+          "rmtg_to_snc_weight": 18.0,
+          "outcome_to_value_weight": 18.0,
+          "expectation_plateau_center": 400.0,
+          "expectation_plateau_slope": 0.025,
+          "expectation_plateau_strength": 900.0,
+          "expectation_plateau_tau_decay_ms": 500.0,
+          "expectation_plateau_tau_rise_ms": 2.0,
+          "smoke_warmup_steps": 120,
+          "smoke_action_steps": 100,
+          "smoke_load_steps": 30,
+          "smoke_outcome_steps": 40,
+          "smoke_gap_steps": [
+            60,
+            100,
+            160
+          ]
+        },
+        "action": {
+          "winner": 0,
+          "motor_spikes": [
+            24,
+            0
+          ],
+          "load_value_spikes": [
+            3,
+            0
+          ],
+          "load_value_fs_spikes": [
+            49,
+            0
+          ],
+          "plateau_after_load": [
+            101.77841186523438,
+            0.0
+          ]
+        },
+        "expected_value_channel": 0,
+        "plateau_before_outcome": [
+          73.90619659423828,
+          0.0
+        ],
+        "delay_value_spikes": [
+          0,
+          0
+        ],
+        "delay_value_rate_hz_per_cell": [
+          0.0,
+          0.0
+        ],
+        "outcome_onset_spikes": 138,
+        "outcome_value_spikes": [
+          0,
+          0
+        ],
+        "outcome_value_rate_hz_per_cell": [
+          0.0,
+          0.0
+        ],
+        "route_telemetry_before_action": {
+          "by_source": {
+            "0": {
+              "target": 0,
+              "total": 720,
+              "plateau_enabled": 720
+            },
+            "1": {
+              "target": 1,
+              "total": 720,
+              "plateau_enabled": 720
+            }
+          },
+          "total": 1440,
+          "enabled": 1440,
+          "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+        },
+        "route_telemetry_after_outcome": {
+          "by_source": {
+            "0": {
+              "target": 0,
+              "total": 720,
+              "plateau_enabled": 720
+            },
+            "1": {
+              "target": 1,
+              "total": 720,
+              "plateau_enabled": 720
+            }
+          },
+          "total": 1440,
+          "enabled": 1440,
+          "all_enabled_coincidence_synapses_belong_to_expectation_route": true
+        },
+        "shared_outcome_read_gain": 1.0,
+        "expectation_plasticity_gain": 1.0,
+        "actor_plasticity_gain": 0.3,
+        "changed_synapses": 666,
+        "changed_actor_synapses": 576,
+        "changed_expectation_synapses": 90,
+        "changed_outside_declared_routes": 0,
+        "structural_preconditions": {
+          "all_v3_populations_share_one_bridge": true,
+          "only_actor_and_critic_routes_are_plastic": true,
+          "v2_value_to_snc_gabab_gain_is_unchanged": true,
+          "action_value_reaches_omission_comparator": true,
+          "generic_outcome_reaches_lhb": true,
+          "reward_recruits_neural_lhb_veto": true,
+          "lhb_rmtg_path_inhibits_snc": true,
+          "v3_seed_partitions_are_disjoint_and_fresh": true,
+          "shared_outcome_read_is_fixed_symmetric_and_action_agnostic": true,
+          "local_fs_normalization_follows_each_action_value_microchannel": true,
+          "graded_plateau_uses_only_plastic_action_value_routes": true,
+          "all_or_none_plateau_contribution_is_zero": true,
+          "graded_plateau_state_is_on_substrate": true,
+          "fresh_formal_partitions_are_disjoint_and_sealed": true
+        },
+        "host_expected_value_state": false
+      }
+    }
+  },
+  "interpretation_limit": "Seed-zero smoke checks mechanism engagement and falsifiers only; it is not evidence of learned vocal credit or a Gate B verdict."
+}
