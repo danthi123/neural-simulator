@@ -1,22 +1,24 @@
 {
- "run_id": "1785730058-193495",
+ "run_id": "1785729738-186994",
  "runner": "research/runners/_laneC_self_schema_honesty_wirein_derisk.py",
  "argv": [
   "/home/dant123/Projects/sim/research/runners/_laneC_self_schema_honesty_wirein_derisk.py",
+  "--confidence-source-mode",
+  "source_consistency_floor",
   "--json",
-  "research/findings/raw/lanes/metacog/laneC_self_schema_honesty_wirein_6seed.json"
+  "research/findings/raw/lanes/metacog/laneC_self_schema_source_consistency_floor_6seed.json"
  ],
  "git_sha": "cce4ee819",
  "git_dirty": true,
- "started": "2026-08-03T00:07:38",
+ "started": "2026-08-03T00:02:18",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 1069.9,
+ "corpus_check_age_s": 747.4,
  "corpus_check_query": "LaneC_fact_recall_dynamic_correctness production self-schema honesty correctness signal for known-fact recall",
  "corpus_check_fresh": true,
- "artifact": "research/findings/raw/lanes/metacog/laneC_self_schema_honesty_wirein_6seed.json"
+ "artifact": "research/findings/raw/lanes/metacog/laneC_self_schema_source_consistency_floor_6seed.json"
 }

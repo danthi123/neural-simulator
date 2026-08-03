@@ -84,3 +84,12 @@ composer is confidently wrong, the self-schema relay receives a strong confidenc
 Do not promote this as production honesty. The next Lane C step is to feed the self-schema from a calibrated or learned
 correctness-confidence signal, probably the dynamic ACC/aPFC monitor already validated in the isolated runner, plus a
 per-domain calibration window. The production hook can stay default-off as the seam for that signal.
+
+## 2026-08-03 Follow-Up
+
+A named `source_consistency_floor` scaffold now catches the observed high-confidence wrong recalls by requiring the
+matched composer source metadata to agree with both the asked cue and decoded answer. That six-seed artifact is GO
+(`research/findings/raw/lanes/metacog/laneC_self_schema_source_consistency_floor_6seed.json`: 46/46 wrong recalls
+downgraded, 0 wrong assertions, 0 added false accepts), but it is explicitly not the final biological mechanism because
+it reads exact source metadata. Finding:
+`research/findings/2026-08-03-laneC-source-consistency-floor-scaffold-GO-production-safety-not-biological-honesty.md`.

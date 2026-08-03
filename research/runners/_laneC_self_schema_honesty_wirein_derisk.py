@@ -40,6 +40,7 @@ if str(_REPO) not in sys.path:
 from research.runners._communicable_turn_stageA_derisk import CommunicableTurn
 from research.runners._fluidconv_graded_hedging import _build_stressed
 from research.runners.brain_conversational_agent import BrainConversationalAgent
+from research.runners.self_schema_honesty import CONFIDENCE_SOURCE_CHOICES, CONFIDENCE_SOURCE_TRACE
 
 
 def _agent(seed, comp, *, enable_self_schema_honesty, **config):
@@ -117,9 +118,14 @@ def _default_off_identity(seed, D, n_facts, vocab_mode):
     }
 
 
-def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff):
+def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff, confidence_source_mode):
     comp, facts, unknown = _build_stressed(seed, D, n_facts, vocab_mode=vocab_mode)
-    ag = _agent(seed, comp, enable_self_schema_honesty=True)
+    ag = _agent(
+        seed,
+        comp,
+        enable_self_schema_honesty=True,
+        confidence_source_mode=confidence_source_mode,
+    )
 
     matched = []
     for a, v, gold in facts:
@@ -146,6 +152,8 @@ def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff):
             "certain": bool(rec["certain"]),
             "band": rec["band"],
             "confidence_source": rec.get("confidence_source"),
+            "confidence_source_mode": rec.get("confidence_source_mode"),
+            "confidence_evidence": rec.get("confidence_evidence"),
             "self_schema_rate": ss.get("self_schema_rate"),
             "assert_rate_threshold": ss.get("assert_rate_threshold"),
             "hedge_rate_threshold": ss.get("hedge_rate_threshold"),
@@ -179,6 +187,15 @@ def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff):
     wrong_assert = [r for r in wrong if r["band"] == "assert"]
     low_wrong_downgraded = [r for r in low_wrong if r["band"] != "assert" and not r["certain"]]
     correct_assert = [r for r in correct if r["band"] == "assert" and r["certain"]]
+    source_mismatch_wrong = [
+        r for r in wrong if (r.get("confidence_evidence") or {}).get("source_consistent") is False
+    ]
+    source_mismatch_correct = [
+        r for r in correct if (r.get("confidence_evidence") or {}).get("source_consistent") is False
+    ]
+    source_mismatch_wrong_downgraded = [
+        r for r in source_mismatch_wrong if r["band"] != "assert" and not r["certain"]
+    ]
 
     conf = [r["confidence_source"] for r in matched if r.get("confidence_source") is not None]
     rates = [r["self_schema_rate"] for r in matched if r.get("confidence_source") is not None]
@@ -232,6 +249,9 @@ def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff):
             "wrong_assert": len(wrong_assert),
             "low_conf_wrong": len(low_wrong),
             "low_conf_wrong_downgraded": len(low_wrong_downgraded),
+            "source_mismatch_wrong": len(source_mismatch_wrong),
+            "source_mismatch_wrong_downgraded": len(source_mismatch_wrong_downgraded),
+            "source_mismatch_correct": len(source_mismatch_correct),
             "correct_assert": len(correct_assert),
             "hard_moat_off": hard_off,
             "hard_moat_on": hard_on,
@@ -248,6 +268,7 @@ def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff):
         "band_counts": band_counts,
         "communicable_path": communicable,
         "sample_wrong_asserts": wrong_assert[:5],
+        "sample_source_mismatch_wrong": source_mismatch_wrong[:5],
         "sample_low_conf_wrong": low_wrong[:5],
         "seed_core_ok": seed_core_ok,
         "low_conf_wrong_ok": low_wrong_ok,
@@ -262,6 +283,12 @@ def main():
     ap.add_argument("--vocab-mode", choices=["synthetic", "themed"], default="synthetic")
     ap.add_argument("--low-conf-cutoff", type=float, default=0.48)
     ap.add_argument(
+        "--confidence-source-mode",
+        choices=CONFIDENCE_SOURCE_CHOICES,
+        default=CONFIDENCE_SOURCE_TRACE,
+        help="Lane C confidence source fed into the self-schema relay.",
+    )
+    ap.add_argument(
         "--json",
         default="research/findings/raw/lanes/metacog/laneC_self_schema_honesty_wirein_6seed.json",
     )
@@ -269,12 +296,20 @@ def main():
 
     print(
         "[laneC-wire] production self_schema honesty wire-in | "
-        f"seeds={args.seeds} D={args.D} n_facts={args.n_facts} vocab={args.vocab_mode}",
+        f"seeds={args.seeds} D={args.D} n_facts={args.n_facts} vocab={args.vocab_mode} "
+        f"confidence_source_mode={args.confidence_source_mode}",
         flush=True,
     )
     t0 = time.time()
     per_seed = [
-        evaluate_seed(s, args.D, args.n_facts, args.vocab_mode, args.low_conf_cutoff)
+        evaluate_seed(
+            s,
+            args.D,
+            args.n_facts,
+            args.vocab_mode,
+            args.low_conf_cutoff,
+            args.confidence_source_mode,
+        )
         for s in args.seeds
     ]
 
@@ -292,6 +327,12 @@ def main():
         low_conf_measured and totals["low_conf_wrong_downgraded"] == totals["low_conf_wrong"]
     )
     high_conf_errors_remain = totals["wrong_assert"] > 0
+    source_mismatch_measured = totals["source_mismatch_wrong"] > 0
+    source_mismatch_all_downgraded = bool(
+        source_mismatch_measured
+        and totals["source_mismatch_wrong_downgraded"] == totals["source_mismatch_wrong"]
+        and totals["source_mismatch_correct"] == 0
+    )
 
     low_conf_some_downgraded = totals["low_conf_wrong_downgraded"] > 0
 
@@ -309,6 +350,9 @@ def main():
         "low_conf_familiar_wrong_measured": low_conf_measured,
         "low_conf_familiar_wrong_some_downgraded": low_conf_some_downgraded,
         "low_conf_familiar_wrong_all_downgraded": low_conf_all_downgraded,
+        "source_mismatch_wrong_measured": source_mismatch_measured,
+        "source_mismatch_wrong_all_downgraded": source_mismatch_all_downgraded,
+        "source_mismatch_correct_false_positive_zero": totals["source_mismatch_correct"] == 0,
         "wrong_asserts_absent_for_full_go": not high_conf_errors_remain,
     }
     preconditions = [
@@ -338,8 +382,13 @@ def main():
         "core_ok": core_ok,
         "low_conf_measured": low_conf_measured,
         "low_conf_all_downgraded": low_conf_all_downgraded,
+        "source_mismatch_measured": source_mismatch_measured,
+        "source_mismatch_all_downgraded": source_mismatch_all_downgraded,
         "high_conf_errors_remain": high_conf_errors_remain,
         "wrong_assert_rate": (totals["wrong_assert"] / totals["wrong"]) if totals["wrong"] else None,
+        "source_mismatch_wrong_downgrade_rate": (
+            totals["source_mismatch_wrong_downgraded"] / totals["source_mismatch_wrong"]
+        ) if totals["source_mismatch_wrong"] else None,
         "low_conf_wrong_downgrade_rate": (
             totals["low_conf_wrong_downgraded"] / totals["low_conf_wrong"]
         ) if totals["low_conf_wrong"] else None,
@@ -357,6 +406,7 @@ def main():
         "n_facts": int(args.n_facts),
         "vocab_mode": args.vocab_mode,
         "low_conf_cutoff": float(args.low_conf_cutoff),
+        "confidence_source_mode": args.confidence_source_mode,
         "verdict": verdict,
         "aggregate": aggregate,
         "success_components": success_components,
@@ -366,7 +416,8 @@ def main():
             "Production wire-in is built and default-off. The moat remains first, and low-confidence familiar-wrong "
             "recalls are downgraded. High-confidence wrong recalls still assert, so this is not a solved honesty "
             "mechanism; the next step needs a learned/calibrated correctness confidence signal rather than trace "
-            "confidence alone."
+            "confidence alone. The source_consistency_floor mode is a named scaffold over composer source metadata, "
+            "not an end-state biological correctness mechanism."
         ),
         "elapsed_seconds": round(time.time() - t0, 2),
     }

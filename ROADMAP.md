@@ -160,13 +160,17 @@ Current assets:
 - a six-seed self-schema relay result in the research runner;
 - a default-off production conversation hook that preserves the hard moat and
   downgrades low-confidence familiar-wrong recalls in the current stressed
-  battery.
+  battery;
+- a named source-consistency safety scaffold that catches the current RF
+  source/answer mismatch failure mode, while remaining marked for burn-down.
 
 Open point:
 
 The hook is wired, but the signal is not yet strong enough: raw trace confidence
-still asserts some wrong recalls. The next step is a calibrated or learned
-correctness-confidence signal from the metacognitive monitor.
+still asserts some wrong recalls. The source-consistency floor prevents those
+assertions in the current production wrapper, but it reads exact composer source
+metadata. The next step is a neural source-monitoring or learned correctness
+signal from the metacognitive monitor.
 
 ## Phase 4: Predictive And Reconstructive Memory
 
@@ -277,8 +281,9 @@ because a giant static model was preallocated.
    multi-seed check for the 267M-parameter local recurrent language checkpoint,
    then update the record honestly.
 2. **Strengthen the self-schema honesty signal.** The production hook exists and
-   is moat-safe; now feed it with calibrated learned correctness confidence
-   instead of raw trace confidence.
+   is moat-safe. A source-consistency scaffold catches the current mismatch
+   failures; now burn that down into calibrated learned correctness confidence
+   instead of exact composer metadata or raw trace confidence.
 3. **Build the minimal grounded speech-action loop.** Use internal curiosity,
    surprise, or affect as the cause of speech; use contingent partner feedback as
    the learning signal.

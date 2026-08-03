@@ -444,21 +444,43 @@ class RFPhasorComposer:
         return int(idx[0]) if len(idx) else None
 
     # --- (B3) READ-ONLY per-turn trace helpers (only invoked on the trace path; default OFF = byte-identical) ---
-    def _cleanup_all_scored(self, rec, words=None):
+    def _cleanup_all_score_stats(self, rec, words=None):
         """Like `_cleanup_all` but ALSO returns each row's top normalized cleanup score (the decided concept's
         match confidence in [0,1]). sims = Re(rec_phasor @ conj(codebook)ᵀ)/D (the mean-cos the cleanup argmax uses);
         the score = max_j sims[i,j] (== mean cos in [-1,1], clipped to [0,1] for display). Read-only of the SAME
         matched-filter the cleanup already computes -- no new resonate, only the per-row max is extra arithmetic.
-        Returns (words[list], scores[list])."""
+        Returns per-row dicts with the winner plus runner-up/margin conflict evidence for trace-only consumers."""
         words = words if words is not None else self.words
         if len(rec) == 0:
-            return [], []
+            return []
         rec_z = np.exp(2j * np.pi * np.asarray(rec))                         # (K, D)
         cb = np.stack([np.exp(2j * np.pi * self.concepts[w]) for w in words])  # (V, D)
         sims = (rec_z @ self._cleanup_conj(cb).T).real / float(self.D)       # (K, V) mean-cos
-        j = np.argmax(sims, axis=1)
-        decoded = [words[int(jj)] for jj in j]
-        scores = [float(np.clip(sims[i, int(j[i])], 0.0, 1.0)) for i in range(len(rec))]
+        order = np.argsort(sims, axis=1)
+        out = []
+        for i in range(len(rec)):
+            top = int(order[i, -1])
+            runner = int(order[i, -2]) if len(words) > 1 else top
+            top_raw = float(sims[i, top])
+            runner_raw = float(sims[i, runner])
+            confidence = float(np.clip(top_raw, 0.0, 1.0))
+            runner_conf = float(np.clip(runner_raw, 0.0, 1.0))
+            out.append({
+                "word": words[top],
+                "confidence": confidence,
+                "winner_score_raw": top_raw,
+                "runner_word": words[runner],
+                "runner_confidence": runner_conf,
+                "runner_score_raw": runner_raw,
+                "margin": float(top_raw - runner_raw),
+                "conflict": float(runner_conf / (confidence + runner_conf + 1e-9)),
+            })
+        return out
+
+    def _cleanup_all_scored(self, rec, words=None):
+        stats = self._cleanup_all_score_stats(rec, words=words)
+        decoded = [s["word"] for s in stats]
+        scores = [s["confidence"] for s in stats]
         return decoded, scores
 
     def _rf_gauge(self):
@@ -507,14 +529,20 @@ class RFPhasorComposer:
             comp = comps[idx]
             for role in cue_roles:
                 rec = self._unbind_phases(comp, role)
-                _w, _s = self._cleanup_all_scored(np.asarray(rec)[None, :])
-                cue_decoded[role] = (_w[0], _s[0]) if _w else (None, None)
+                stats = self._cleanup_all_score_stats(np.asarray(rec)[None, :])
+                cue_decoded[role] = stats[0] if stats else {"word": None, "confidence": None}
         for role, asserted in cue_roles.items():
-            word, conf = cue_decoded.get(role, (asserted, None))
-            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": True,
-                              "asserted": asserted})
-        for role, (word, conf) in (answer_roles or {}).items():
-            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": False})
+            stats = dict(cue_decoded.get(role, {"word": asserted, "confidence": None}))
+            stats.update({"role": role, "cue": True, "asserted": asserted})
+            roles_out.append(stats)
+        for role, payload in (answer_roles or {}).items():
+            if isinstance(payload, dict):
+                stats = dict(payload)
+            else:
+                word, conf = payload
+                stats = {"word": word, "confidence": conf}
+            stats.update({"role": role, "cue": False})
+            roles_out.append(stats)
         self.last_trace = {
             "roles": roles_out,
             "matched_fact_index": (int(idx) if idx is not None else None),
@@ -523,6 +551,8 @@ class RFPhasorComposer:
             "rf": self._rf_gauge(),
             "composer": "rf",
         }
+        if idx is not None:
+            self.last_trace["source_fact"] = dict(self.kb[int(idx)][0])
 
     # --- conversational API (mirrors CoreSimComposer; the no-confab moat preserved) ---
     def store(self, agent, action, patient, polarity=None):
@@ -670,8 +700,13 @@ class RFPhasorComposer:
             i = self._scan_first_match(action=action, patient=patient)
             ans = self.unbind(self.kb[i][1], "agent") if i is not None else None
             if self.trace:
+                ans_roles = {}
+                if i is not None:
+                    rec = self._unbind_phases(self.kb[i][1], "agent")
+                    stats = self._cleanup_all_score_stats(np.asarray(rec)[None, :])
+                    ans_roles = {"agent": stats[0] if stats else {"word": ans, "confidence": None}}
                 self._trace_scan({"action": action, "patient": patient}, i,
-                                 {"agent": (ans, None)} if i is not None else {})
+                                 ans_roles)
             return ans
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "action") == action and self.unbind(comp, "patient") == patient:
@@ -700,13 +735,13 @@ class RFPhasorComposer:
             if self.trace:
                 # the patient role's decoded word + confidence (read-only over the matched block)
                 rec = self._unbind_phases(comp, "patient")
-                _w, _s = self._cleanup_all_scored(np.asarray(rec)[None, :])
-                ans_roles = {"patient": (_w[0] if _w else noun, _s[0] if _s else None)}
+                stats = self._cleanup_all_score_stats(np.asarray(rec)[None, :])
+                ans_roles = {"patient": stats[0] if stats else {"word": noun, "confidence": None}}
                 for r in ("attribute", "attribute2"):
                     if r in fact:
                         rr = self._unbind_phases(comp, r)
-                        _wa, _sa = self._cleanup_all_scored(np.asarray(rr)[None, :])
-                        ans_roles[r] = (_wa[0] if _wa else None, _sa[0] if _sa else None)
+                        st = self._cleanup_all_score_stats(np.asarray(rr)[None, :])
+                        ans_roles[r] = st[0] if st else {"word": None, "confidence": None}
                 self._trace_scan({"agent": agent, "action": action}, i, ans_roles)
             return ans
         for fact, comp in self._iter_facts():
@@ -812,8 +847,10 @@ class RFPhasorComposer:
                 return "unknown"
             pol = self.unbind(self.kb[i][1], "polarity", self.pol_words)
             if self.trace:
+                rec = self._unbind_phases(self.kb[i][1], "polarity")
+                stats = self._cleanup_all_score_stats(np.asarray(rec)[None, :], words=self.pol_words)
                 self._trace_scan({"agent": agent, "action": action, "patient": patient}, i,
-                                 {"polarity": (pol, None)})
+                                 {"polarity": stats[0] if stats else {"word": pol, "confidence": None}})
             return "yes" if pol == "AFFIRM" else "no"
         for fact, comp in self._iter_facts():
             if (self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action

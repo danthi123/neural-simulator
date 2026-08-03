@@ -777,12 +777,23 @@ class BrainConversationalAgent:
             }
 
         from research.runners.self_schema_honesty import (
+            CONFIDENCE_SOURCE_TRACE,
+            known_fact_confidence_record,
             self_schema_hedge_text,
             self_schema_soft_abstain_text,
-            trace_confidence,
         )
         kind = "what_does" if len(cue) == 2 else "yes_no"
-        source_conf = trace_confidence(trace)
+        source_mode = (self._self_schema_honesty_config or {}).get(
+            "confidence_source_mode", CONFIDENCE_SOURCE_TRACE
+        )
+        confidence_evidence = known_fact_confidence_record(
+            trace,
+            kind=kind,
+            cue=cue,
+            raw_answer=raw_answer,
+            mode=source_mode,
+        )
+        source_conf = confidence_evidence["selected_confidence"]
         self_schema = self._ensure_self_schema_honesty().read(source_conf, familiar=True)
         band = self_schema["band"]
         if band == "assert":
@@ -809,6 +820,8 @@ class BrainConversationalAgent:
             "self_schema_invoked": True,
             "self_schema": self_schema,
             "confidence_source": source_conf,
+            "confidence_source_mode": source_mode,
+            "confidence_evidence": confidence_evidence,
         }
 
     def reason_chain(self, cue, actions):

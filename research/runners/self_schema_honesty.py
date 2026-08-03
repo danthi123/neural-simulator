@@ -25,6 +25,14 @@ from research.runners._gnw_rung1_ignition_curve_derisk import _restore_state, _s
 from tools.lab import attributable_to
 
 
+CONFIDENCE_SOURCE_TRACE = "trace"
+CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR = "source_consistency_floor"
+CONFIDENCE_SOURCE_CHOICES = (
+    CONFIDENCE_SOURCE_TRACE,
+    CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR,
+)
+
+
 @dataclass(frozen=True)
 class SelfSchemaHonestyConfig:
     """Operating point for the small production self-schema confidence readout."""
@@ -38,6 +46,7 @@ class SelfSchemaHonestyConfig:
     confidence_assert: float = 0.55
     confidence_hedge: float = 0.38
     require_source_floor: bool = True
+    confidence_source_mode: str = CONFIDENCE_SOURCE_TRACE
 
 
 def self_schema_hedge_text(kind: str, answer: Any, *, cue: tuple[Any, ...] | None = None) -> str:
@@ -86,6 +95,139 @@ def trace_confidence(last_trace: Mapping[str, Any] | None, preferred_role: str =
         if ch.get("confidence") is not None
     ]
     return float(min(any_conf)) if any_conf else None
+
+
+def recall_trace_evidence(
+    last_trace: Mapping[str, Any] | None,
+    *,
+    preferred_role: str = "patient",
+) -> dict[str, Any]:
+    """Extract read-only evidence from a composer recall trace.
+
+    The fields are the recall process's own cleanup/conflict values. `source_fact`
+    is optional trace metadata from composer scaffolds and must be treated as a
+    source-provenance scaffold, not as a final biological mechanism.
+    """
+    raw_conf = trace_confidence(last_trace, preferred_role=preferred_role)
+    if not last_trace:
+        return {
+            "raw_trace_confidence": raw_conf,
+            "answer_confidence": None,
+            "answer_margin": None,
+            "answer_conflict": None,
+            "cue_min_confidence": None,
+            "cue_min_margin": None,
+            "matched_fact_index": None,
+            "source_fact": None,
+        }
+    roles = list(last_trace.get("roles", []))
+    answer = None
+    for ch in roles:
+        if ch.get("role") == preferred_role and not ch.get("cue", False):
+            answer = ch
+            break
+    if answer is None:
+        for ch in roles:
+            if not ch.get("cue", False):
+                answer = ch
+                break
+    cue_conf = [
+        float(ch["confidence"])
+        for ch in roles
+        if ch.get("cue", False) and ch.get("confidence") is not None
+    ]
+    cue_margin = [
+        float(ch["margin"])
+        for ch in roles
+        if ch.get("cue", False) and ch.get("margin") is not None
+    ]
+    return {
+        "raw_trace_confidence": raw_conf,
+        "answer_confidence": (
+            None if answer is None or answer.get("confidence") is None else float(answer["confidence"])
+        ),
+        "answer_margin": None if answer is None or answer.get("margin") is None else float(answer["margin"]),
+        "answer_conflict": None if answer is None or answer.get("conflict") is None else float(answer["conflict"]),
+        "cue_min_confidence": float(min(cue_conf)) if cue_conf else None,
+        "cue_min_margin": float(min(cue_margin)) if cue_margin else None,
+        "matched_fact_index": last_trace.get("matched_fact_index"),
+        "source_fact": last_trace.get("source_fact"),
+    }
+
+
+def _source_expected_answer(kind: str, source_fact: Mapping[str, Any] | None) -> Any:
+    if not source_fact:
+        return None
+    if kind == "what_does":
+        patient = source_fact.get("patient")
+        attrs = [
+            source_fact[r]
+            for r in ("attribute", "attribute2")
+            if r in source_fact and source_fact.get(r) is not None
+        ]
+        return " ".join([str(x) for x in attrs + [patient]]) if attrs else patient
+    if kind == "yes_no":
+        return "no" if source_fact.get("polarity") == "NEGATE" else "yes"
+    return None
+
+
+def _source_cue_matches(kind: str, cue: tuple[Any, ...], source_fact: Mapping[str, Any] | None) -> bool | None:
+    if not source_fact:
+        return None
+    if kind == "what_does" and len(cue) == 2:
+        ag, ac = cue
+        return bool(source_fact.get("agent") == ag and source_fact.get("action") == ac)
+    if kind == "yes_no" and len(cue) == 3:
+        ag, ac, pt = cue
+        return bool(
+            source_fact.get("agent") == ag
+            and source_fact.get("action") == ac
+            and source_fact.get("patient") == pt
+        )
+    return None
+
+
+def known_fact_confidence_record(
+    last_trace: Mapping[str, Any] | None,
+    *,
+    kind: str,
+    cue: tuple[Any, ...],
+    raw_answer: Any,
+    mode: str = CONFIDENCE_SOURCE_TRACE,
+) -> dict[str, Any]:
+    """Choose the confidence scalar used by the self-schema relay.
+
+    Default mode is the previous raw trace confidence. `source_consistency_floor`
+    is an explicitly named scaffold: it lets an exact source fact attached to the
+    trace veto a cleanup-decoded answer that disagrees with that source record.
+    It is useful as a production safety floor but should be burned down into a
+    neural source-memory/readout consistency signal.
+    """
+    if mode not in CONFIDENCE_SOURCE_CHOICES:
+        raise ValueError(f"unknown Lane C confidence_source_mode={mode!r}")
+    evidence = recall_trace_evidence(last_trace)
+    confidence = evidence["raw_trace_confidence"]
+    source_answer = _source_expected_answer(kind, evidence.get("source_fact"))
+    if source_answer is None:
+        source_matches = None
+    else:
+        source_matches = bool(source_answer == raw_answer)
+    source_cue_matches = _source_cue_matches(kind, tuple(cue), evidence.get("source_fact"))
+    source_consistent = None
+    if source_matches is not None or source_cue_matches is not None:
+        source_consistent = bool(source_matches is not False and source_cue_matches is not False)
+    if mode == CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR and source_consistent is False:
+        confidence = 0.0
+    evidence.update({
+        "mode": mode,
+        "selected_confidence": None if confidence is None else float(confidence),
+        "source_expected_answer": source_answer,
+        "source_answer_matches": source_matches,
+        "source_cue_matches": source_cue_matches,
+        "source_consistent": source_consistent,
+        "scaffold": bool(mode == CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR),
+    })
+    return evidence
 
 
 def self_read_attribution(intact_rate: float, lesioned_rate: float) -> float | None:

@@ -41,6 +41,27 @@ def test_rf_phasor_composer_negation_yesno(seed):
     assert comp.ask_yes_no("dog", "go", "south") == "unknown"
 
 
+def test_rf_trace_exposes_cleanup_margin_and_source_fact():
+    comp = RFPhasorComposer(seed=42, D=64, period=200, trace=True)
+    comp.store("dog", "go", "north", polarity="AFFIRM")
+
+    assert comp.query_patient("dog", "go") == "north"
+    tr = comp.last_trace
+    assert tr["matched_fact_index"] == 0
+    assert tr["source_fact"]["patient"] == "north"
+    patient = next(ch for ch in tr["roles"] if ch["role"] == "patient" and not ch["cue"])
+    assert patient["word"] == "north"
+    assert patient["confidence"] is not None
+    assert patient["runner_word"] != "north"
+    assert patient["margin"] >= 0.0
+    assert 0.0 <= patient["conflict"] <= 1.0
+
+    assert comp.ask_yes_no("dog", "go", "north") == "yes"
+    pol = next(ch for ch in comp.last_trace["roles"] if ch["role"] == "polarity")
+    assert pol["word"] in {"AFFIRM", "NEGATE"}
+    assert pol["margin"] >= 0.0
+
+
 @pytest.mark.parametrize("seed", [42, 43, 44])
 def test_rf_phasor_composer_one_attribute(seed):
     """b.3a: a 1-attribute entity ('big apple') -- the ATTRIBUTE role-tag binding RESOLVES (adjective + noun both

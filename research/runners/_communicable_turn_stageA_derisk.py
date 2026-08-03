@@ -412,6 +412,8 @@ class CommunicableTurn:
                 "band": rec["band"],
                 "soft_abstain": bool(rec["soft_abstain"]),
                 "confidence_source": rec.get("confidence_source"),
+                "confidence_source_mode": rec.get("confidence_source_mode"),
+                "confidence_evidence": rec.get("confidence_evidence"),
                 "self_schema": rec.get("self_schema"),
                 "self_schema_invoked": bool(rec["self_schema_invoked"]),
             }

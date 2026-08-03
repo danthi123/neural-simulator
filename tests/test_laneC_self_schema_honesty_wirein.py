@@ -111,6 +111,44 @@ def test_familiar_but_wrong_recall_is_downgraded_not_claimed():
     assert hard_on == hard_off
 
 
+def test_source_consistency_floor_downgrades_high_trace_wrong_recall():
+    comp, facts, unknown = _build_stressed(seed=44, D=16, n_facts=48, vocab_mode="synthetic")
+    ag = _agent(
+        enable_self_schema_honesty=True,
+        composer=comp,
+        vocab=comp.words,
+        confidence_source_mode="source_consistency_floor",
+    )
+
+    high_trace_wrong = []
+    source_false_positive = []
+    for a, v, gold in facts:
+        rec = ag.known_fact_record((a, v))
+        if rec["hard_abstain"]:
+            continue
+        ev = rec["confidence_evidence"]
+        if rec["raw_answer"] == gold and ev["source_consistent"] is False:
+            source_false_positive.append(rec)
+        if (
+            rec["raw_answer"] != gold
+            and ev["raw_trace_confidence"] is not None
+            and ev["raw_trace_confidence"] >= 0.55
+        ):
+            high_trace_wrong.append(rec)
+
+    assert high_trace_wrong
+    assert not source_false_positive
+    assert all(rec["confidence_source"] == 0.0 for rec in high_trace_wrong)
+    assert all(rec["band"] != "assert" and not rec["certain"] for rec in high_trace_wrong)
+    assert all(rec["confidence_evidence"]["scaffold"] is True for rec in high_trace_wrong)
+    assert all(rec["confidence_evidence"]["source_consistent"] is False for rec in high_trace_wrong)
+
+    hard_cue = next(cue for cue in unknown if comp.query_patient(*cue) is None)
+    hard = ag.known_fact_record(hard_cue)
+    assert hard["band"] == "MOAT"
+    assert hard["self_schema_invoked"] is False
+
+
 def test_communicable_known_channel_uses_laneC_record_when_enabled():
     comp, facts, unknown = _build_stressed(seed=100, D=16, n_facts=48, vocab_mode="synthetic")
     ag = _agent(enable_self_schema_honesty=True, composer=comp, vocab=comp.words)

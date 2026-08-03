@@ -226,6 +226,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+> ## STATE OF THE PROJECT — 2026-08-03 00:05 (read first; below the next anchor is HISTORY)
+> **GPU lane still active:** run4/d2048 267M RF spiking-forward full six-seed promotion remains in flight on the local RTX 3090. Do not claim the result until `research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json` exists and validates.
+> **CPU lane C production scaffold advanced:** the normal conversation known-fact path now has a default-off
+> self-schema honesty hook with selectable confidence source. Trace-only remains **PARTIAL**
+> (`laneC_self_schema_honesty_wirein_6seed.json`): 475/475 hard-moat abstains preserved, 0 added false accepts,
+> 32/32 low-confidence wrong recalls downgraded, but 4/46 wrong recalls still asserted at high trace confidence. The
+> named `source_consistency_floor` scaffold is **GO** (`laneC_self_schema_source_consistency_floor_6seed.json`):
+> 46/46 wrong recalls downgraded, 0/46 wrong assertions, 0/133 correct source-mismatch false positives, 475/475
+> hard-moat abstains preserved, and 0 self-schema invocations on hard-moat misses. This is a production safety floor
+> over composer source metadata, NOT final biological honesty.
+> **CPU lane B (curiosity) unchanged:** learning-progress-slope differentiator remains a CPU proxy **GO 6/6** and first on-bridge LP-slope smoke remains **LP_SLOPE_GO**. Substrate-memory promotion is **NEGATIVE/PARTIAL 1/6**; do not continue Lane B by larger-task threshold tuning without a genuinely better matched non-saturating no-read control.
+> **CPU lane D (perception) unchanged:** corrected V1->OnSubstratePooler trace route default remains **TRACE-ROUTED-NOGO 0/3**. Sidecar y-axis/local-orientation-divisive operating point is **PARTIAL 2/3**; next needs normalization/homeostasis or a stronger held-position task before promotion.
+> **EXACT NEXT:** keep monitoring the full WKV run4 RF six-seed promotion on the GPU. CPU/highest-value next is Lane C scaffold burn-down: replace `source_consistency_floor`'s exact composer metadata read with a neural source-memory/source-monitoring consistency signal, likely feeding the existing dynamic ACC/aPFC -> self-schema path. Secondary CPU fallback remains Lane D normalization/homeostasis; Lane B waits for a proper causal control window.
+>
 > ## STATE OF THE PROJECT — 2026-08-02 23:35 (read first; below the next anchor is HISTORY)
 > **GPU lane still active:** run4/d2048 267M RF spiking-forward full six-seed promotion remains in flight on the local RTX 3090. Do not claim the result until `research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json` exists and validates.
 > **CPU lane C production wire-in built, but only PARTIAL:** the normal conversation known-fact path now has a default-off self-schema honesty hook. Six-seed stressed artifact `research/findings/raw/lanes/metacog/laneC_self_schema_honesty_wirein_6seed.json` records **PARTIAL**: default-off identity preserved, 475/475 hard-moat abstains preserved, 0 added false accepts, and 0 self-schema invocations on hard moat misses. A monotonic source-confidence floor now downgrades 32/32 low-confidence familiar-wrong recalls, but 4/46 total wrong recalls still asserted when trace confidence was high. The production seam is good; trace confidence alone is not a sufficient truth signal.

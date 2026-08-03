@@ -1,6 +1,6 @@
 # Current State
 
-Last rewritten: 2026-08-02.
+Last rewritten: 2026-08-03.
 
 This document is the concise status snapshot. It describes what the project can
 currently do, what remains scaffolded, and what is still open. For the plan, read
@@ -42,7 +42,7 @@ runners, 1938 finding documents, and 46 simulation profiles.
 | Reward and value | Dopamine-like reward prediction and value signals are among the better grounded pieces. They can drive action learning and interact with other regions. |
 | Affect | Persistent mood-like state and neuromodulator axes exist. Rich, graded, learned emotion that changes perception, memory, speech, and behavior remains open. |
 | Curiosity | Basic novelty/learning-drive circuits exist and can avoid some unlearnable noise. Learning-progress tracking over time is still being strengthened. |
-| Self-monitoring | Separate circuits can read confidence, attention, and self-related state in test runners. A default-off production hook now preserves the hard moat and downgrades low-confidence wrong recalls in the current stressed battery, but high-confidence wrong recalls still need a learned correctness signal. |
+| Self-monitoring | Separate circuits can read confidence, attention, and self-related state in test runners. A default-off production hook now preserves the hard moat and downgrades low-confidence wrong recalls. A named source-consistency scaffold catches the current high-confidence mismatch failures, but the final version still needs a brain-native learned correctness/source-monitoring signal. |
 | One-brain integration | Several merged-brain demos show navigation, conversation, memory, and shared modulation co-residing. The next step is a continuously running lived loop, not just a combined demo. |
 
 ## What Is Still Scaffolded
@@ -54,6 +54,8 @@ These are useful stand-ins, not final biology:
   conversation paths;
 - host-computed novelty, appraisal, confidence, or learning-progress scalars in
   some experiments;
+- exact composer source metadata used as a temporary safety floor for known-fact
+  honesty;
 - hand-designed concept codes, grammar frames, memory slots, or pathway weights;
 - teacher/assistant systems used as an early social environment;
 - measurement scripts that read internal state for evaluation.
@@ -70,8 +72,9 @@ thing doing cognition.
 3. **A complete live loop.** The project needs a small but continuous world/body/
    speech/learning loop where consequences change the brain.
 4. **Self-based honesty.** Abstention and hedging are partly wired into the
-   self-model now, but the confidence signal still needs to predict correctness
-   rather than mere recall strength.
+   self-model now. A scaffold can catch source mismatches, but the confidence
+   signal still needs to predict correctness from brain activity rather than
+   exact metadata.
 5. **Developing emotion.** Current affect is useful but too narrow. The target is
    graded, learned, embodied affect that shapes behavior and speech.
 6. **Continual learning without forgetting.** The project has consolidation pieces,
