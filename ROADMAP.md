@@ -58,9 +58,13 @@ the smallest loop. A newer six-seed experiment learns two intent channels and
 two referent channels from contingent listener responses and composes the two
 combinations withheld from training. A first intrinsic-exploration and
 same-brain reversal attempt passed only one of four development seeds. The next
-gate is therefore a neural action selector with executed-action-local reward
-eligibility. Once that is reliable, return to same-brain adaptation, broader
-meanings and contexts, and removal of the fixed raw-channel decoder.
+step isolated neural action selection before learning. That selector passed
+three of four development seeds with balanced choices and complete arousal and
+direct-path lesion effects, but seed 42 reached 92% clean commits against the
+fixed 95% gate. Revise bilateral striatal suppression and rerun Gate A before
+adding executed-action-local reward eligibility. Once selection and local
+credit are reliable, return to same-brain adaptation, broader meanings and
+contexts, and removal of the fixed raw-channel decoder.
 
 ### 2. Turn Internal Messages Into Natural Speech
 

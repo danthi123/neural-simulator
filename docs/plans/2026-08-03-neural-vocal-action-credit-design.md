@@ -1,6 +1,6 @@
 ---
 type: plan
-status: proposed
+status: active
 date: 2026-08-03
 ---
 
@@ -103,6 +103,15 @@ GO requires all of the following at every seed:
 
 If this fails, stop at the selector. Do not add the language task or tune on
 held-out seeds.
+
+**Gate A v1 result, 2026-08-03:** NO-GO. Seeds 43, 44, and 100 passed; seed 42
+produced 92% clean commits against the fixed 95% requirement. Choices were
+balanced, loser spikes were zero at commit, and both the arousal and direct-path
+lesions reduced commits to zero in every seed. Seed 42's omissions showed
+bilateral striatal-interneuron activity with too little D1 activity to release
+thalamus. Revise that competition as a new version and rerun all four
+development seeds. Gates B and C and held-out seeds 101/102 remain locked. See
+[`research/findings/2026-08-03-neural-vocal-selector-gateA-4seed-NO-GO.md`](../../research/findings/2026-08-03-neural-vocal-selector-gateA-4seed-NO-GO.md).
 
 ### Gate B: Local Credit
 

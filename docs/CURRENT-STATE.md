@@ -79,9 +79,12 @@ They do not imply human-level versions of the named ability.
 
 The immediate priority is a neural vocal action selector that cleanly separates
 the executed action from losing candidates and leaves local reward eligibility
-only on the executed route. The first shared-arousal attempt showed that adding
-intrinsic activity without action-specific credit is unreliable. After this
-selector passes physiology and local-credit gates, it should return to
+only on the executed route. The first isolated selector made both shared
+arousal and basal-ganglia disinhibition causally necessary, produced balanced
+choices, and passed three of four development seeds. Seed 42 committed on 92%
+of trials against a fixed 95% requirement, so Gate A remains a recorded NO-GO.
+The next version must prevent bilateral striatal suppression without adding a
+host decision. After the selector passes physiology and local-credit gates, it should return to
 same-brain reversal and then expand to more needs, percepts, intents, and
 consequences. In parallel, learned source signals should move into the same
 network as confidence, self-monitoring, and speech selection. A larger language
