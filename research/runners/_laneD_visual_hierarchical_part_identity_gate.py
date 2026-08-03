@@ -780,9 +780,12 @@ def formal_provenance_ready() -> bool:
         return False
     if record.get("git_dirty") is not False or record.get("git_sha") in {None, "", "unknown"}:
         return False
+    verification = provenance.verify_immutable_source_manifest()
     return bool(
         record.get("source_kind") == "git_archive"
         and record.get("source_manifest_sha256")
+        and record.get("source_manifest_verified") is True
+        and verification.get("source_manifest_verified") is True
     )
 
 

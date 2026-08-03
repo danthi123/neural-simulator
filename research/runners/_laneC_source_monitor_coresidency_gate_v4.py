@@ -146,13 +146,25 @@ def formal_provenance_ready() -> bool:
     import research.runners as provenance
 
     record = getattr(provenance, "_REC", None)
+    verification = provenance.verify_immutable_source_manifest()
     return bool(
         isinstance(record, dict)
         and record.get("git_dirty") is False
         and record.get("git_sha") not in {None, "", "unknown"}
         and record.get("source_kind") == "git_archive"
         and record.get("source_manifest_sha256")
+        and record.get("source_manifest_verified") is True
+        and verification.get("source_manifest_verified") is True
     )
+
+
+def recall_interface_is_source_blind(recall_callable) -> bool:
+    """A bound recall method may accept lesions, but never a source label."""
+    return list(inspect.signature(recall_callable).parameters) == [
+        "episode_pattern",
+        "source_path_lesion",
+        "acc_lesion",
+    ]
 
 
 class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
@@ -933,9 +945,8 @@ def evaluate_calibration_seed(seed: int) -> dict:
     preconditions = {
         "matched_arms_begin_identical": initial_arms_match,
         "expected_regions_share_one_bridge": expected_regions.issubset(region_names),
-        "recall_accepts_no_source_metadata": bool(
-            recall_parameters
-            == ["self", "episode_pattern", "source_path_lesion", "acc_lesion"]
+        "recall_accepts_no_source_metadata": recall_interface_is_source_blind(
+            intact.recall
         ),
         "episode_patterns_are_disjoint_and_fit_population": bool(
             len(set().union(*(set(pattern.tolist()) for pattern in patterns)))

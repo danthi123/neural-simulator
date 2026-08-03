@@ -59,6 +59,11 @@ for h in "${NODES[@]}"; do
     echo "  MANIFEST FAIL local=$MANIFEST_SHA remote=$REMOTE_MANIFEST" >&2
     continue
   fi
+  ssh "$h" "cd ~/$REMOTE_ROOT && sha256sum -c .source_manifest.sha256 >/dev/null" || {
+    echo "  SOURCE FILE VERIFY FAIL" >&2
+    continue
+  }
+  ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | while IFS= read -r path; do chmod a-w -- \"\$path\"; done && chmod a-w .source_manifest.sha256 .source_revision"
   echo "  source git=$SOURCE_SHA manifest=$MANIFEST_SHA excluded_worktree_paths=$EXCLUDED_DIRTY"
   echo "  done $h"
 done

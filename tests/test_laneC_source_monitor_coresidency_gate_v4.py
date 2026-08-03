@@ -39,6 +39,7 @@ from research.runners._laneC_source_monitor_coresidency_gate_v4 import (
     _restore_post_rehearsal_state,
     _snapshot_post_rehearsal_state,
     adaptive_inhibition_assessment,
+    recall_interface_is_source_blind,
     run_smoke,
     validate_individual_seed,
     validate_phase_seeds,
@@ -84,10 +85,32 @@ def test_formal_execution_requires_immutable_archive_provenance(monkeypatch):
         raising=False,
     )
     assert gate_module.formal_provenance_ready() is False
+    monkeypatch.setattr(
+        provenance,
+        "verify_immutable_source_manifest",
+        lambda: {"source_manifest_verified": True},
+    )
     provenance._REC.update(
-        source_kind="git_archive", source_manifest_sha256="manifest"
+        source_kind="git_archive",
+        source_manifest_sha256="manifest",
+        source_manifest_verified=True,
     )
     assert gate_module.formal_provenance_ready() is True
+
+
+def test_recall_interface_guard_handles_bound_methods_and_rejects_source_labels():
+    class Interface:
+        def recall(self, episode_pattern, source_path_lesion=False, acc_lesion=False):
+            return episode_pattern
+
+        def leaked_recall(
+            self, episode_pattern, source, source_path_lesion=False, acc_lesion=False
+        ):
+            return episode_pattern, source
+
+    interface = Interface()
+    assert recall_interface_is_source_blind(interface.recall)
+    assert not recall_interface_is_source_blind(interface.leaked_recall)
 
 
 def test_v4_inherits_v2_and_freezes_operating_point_and_rule():

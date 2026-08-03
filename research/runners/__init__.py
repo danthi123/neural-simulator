@@ -33,6 +33,7 @@ SAFETY, because this executes before EVERY run and must never be why one dies:
 from __future__ import annotations
 
 import atexit
+import hashlib
 import json
 import os
 import subprocess
@@ -63,6 +64,70 @@ def _source_snapshot():
         return values
     except Exception:
         return {}
+
+
+def verify_immutable_source_manifest(snapshot=None):
+    """Verify an exported source tree against its complete provisioned manifest."""
+    snapshot = dict(snapshot or _source_snapshot())
+    result = {
+        "source_manifest_verified": False,
+        "source_manifest_verification_error": None,
+    }
+    if snapshot.get("source_kind") != "git_archive":
+        result["source_manifest_verification_error"] = "source is not a Git archive"
+        return result
+    expected_manifest_hash = snapshot.get("source_manifest_sha256")
+    if not expected_manifest_hash:
+        result["source_manifest_verification_error"] = "source manifest digest is missing"
+        return result
+    manifest_path = os.path.join(_ROOT, ".source_manifest.sha256")
+    try:
+        with open(manifest_path, "rb") as fh:
+            manifest_bytes = fh.read()
+        actual_manifest_hash = hashlib.sha256(manifest_bytes).hexdigest()
+        if actual_manifest_hash != expected_manifest_hash:
+            raise ValueError("manifest file digest does not match .source_revision")
+
+        expected_files = {}
+        for raw_line in manifest_bytes.decode("utf-8").splitlines():
+            digest, separator, relative_path = raw_line.partition("  ")
+            if not separator or len(digest) != 64 or not relative_path:
+                raise ValueError("manifest contains a malformed line")
+            int(digest, 16)
+            normalized = os.path.normpath(relative_path)
+            if normalized != relative_path or os.path.isabs(normalized) or normalized.startswith(".." + os.sep):
+                raise ValueError("manifest contains an unsafe path")
+            if normalized in expected_files:
+                raise ValueError("manifest contains a duplicate path")
+            expected_files[normalized] = digest
+
+        actual_files = set()
+        for relative_root in ("sim", "research/runners", "experiment", "tools"):
+            root = os.path.join(_ROOT, relative_root)
+            for dirpath, dirnames, filenames in os.walk(root):
+                dirnames[:] = [name for name in dirnames if name != "__pycache__"]
+                for filename in filenames:
+                    if not filename.endswith((".py", ".sh")):
+                        continue
+                    path = os.path.join(dirpath, filename)
+                    relative_path = os.path.relpath(path, _ROOT)
+                    actual_files.add(relative_path)
+        if actual_files != set(expected_files):
+            missing = sorted(set(expected_files) - actual_files)[:3]
+            extra = sorted(actual_files - set(expected_files))[:3]
+            raise ValueError(f"source file set differs from manifest; missing={missing}, extra={extra}")
+
+        for relative_path, expected_digest in expected_files.items():
+            hasher = hashlib.sha256()
+            with open(os.path.join(_ROOT, relative_path), "rb") as fh:
+                for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+                    hasher.update(chunk)
+            if hasher.hexdigest() != expected_digest:
+                raise ValueError(f"source digest mismatch: {relative_path}")
+        result["source_manifest_verified"] = True
+    except Exception as exc:
+        result["source_manifest_verification_error"] = str(exc)
+    return result
 
 
 def _git_head():
@@ -100,6 +165,8 @@ def _record_start():
         "env": {k: v for k, v in os.environ.items()
                 if k.startswith(("SIM_", "GAP5_", "HEBB_", "POOL_", "GAP4_")) or k == "CUDA_VISIBLE_DEVICES"},
     }
+    if snapshot.get("source_kind") == "git_archive":
+        rec.update(verify_immutable_source_manifest(snapshot))
     os.makedirs(_PROV_DIR, exist_ok=True)
     with open(os.path.join(_PROV_DIR, "runs.jsonl"), "a") as fh:
         fh.write(json.dumps(rec) + "\n")
@@ -247,6 +314,14 @@ def _stamp_outputs(rec):
     declared, explicit_paths = _declared_output_paths(rec)
     candidates = explicit_paths if declared else _fresh_output_paths()
     made = []
+    exit_verification = (
+        verify_immutable_source_manifest()
+        if rec.get("source_kind") == "git_archive"
+        else {
+            "source_manifest_verified": None,
+            "source_manifest_verification_error": None,
+        }
+    )
     for p in candidates:
         try:
             with open(p + ".prov.json", "w") as fh:
@@ -254,6 +329,10 @@ def _stamp_outputs(rec):
                            "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
                            "source_kind": rec.get("source_kind"),
                            "source_manifest_sha256": rec.get("source_manifest_sha256"),
+                           "source_manifest_verified_at_start": rec.get("source_manifest_verified"),
+                           "source_manifest_start_error": rec.get("source_manifest_verification_error"),
+                           "source_manifest_verified_at_exit": exit_verification["source_manifest_verified"],
+                           "source_manifest_exit_error": exit_verification["source_manifest_verification_error"],
                            "started": rec["started"], "env": rec["env"],
                            **_resolved_backend(), **_corpus_check_state(),
                            "artifact": os.path.relpath(p, _ROOT)}, fh, indent=1)

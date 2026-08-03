@@ -181,8 +181,15 @@ def test_formal_config_is_exactly_locked_and_only_archive_provenance_is_accepted
         raising=False,
     )
     assert gate.formal_provenance_ready() is False
+    monkeypatch.setattr(
+        provenance,
+        "verify_immutable_source_manifest",
+        lambda: {"source_manifest_verified": True},
+    )
     provenance._REC.update(
-        source_kind="git_archive", source_manifest_sha256="manifest"
+        source_kind="git_archive",
+        source_manifest_sha256="manifest",
+        source_manifest_verified=True,
     )
     assert gate.formal_provenance_ready() is True
     args.phase = "smoke"
