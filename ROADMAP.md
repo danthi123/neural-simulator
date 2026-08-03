@@ -63,11 +63,12 @@ three of four development seeds. A preregistered second version removed the
 counterproductive bilateral striatal-interneuron branch and passed all four:
 98-100% clean commits, balanced choices, no losing motor spikes at commitment,
 and zero actions when shared arousal or the direct pathway was lesioned. Gate A
-is therefore complete. The immediate work is Gate B: make only the executed
-route retain eligibility for delayed dopamine, then show contingent learning
-that disappears under action-collateral and dopamine lesions. After local
-credit is reliable, return to same-brain adaptation, broader meanings and
-contexts, and removal of the fixed raw-channel decoder.
+is therefore complete. Gate B's first local reward-credit circuit learned under
+both contingent and unrelated delayed reward, exposing arbitrary action bias
+rather than useful credit. A second version adds competing spiking action-value
+populations and is still in calibration; development and held-out seeds remain
+locked. After local credit is reliable, return to same-brain adaptation,
+broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
 ### 2. Turn Internal Messages Into Natural Speech
 
@@ -100,6 +101,13 @@ recalls remain usable; unknowns do not become assertions; source swaps change
 the report in the predicted direction; lesions to source or confidence pathways
 remove the effect; no symbolic source lookup is used during retrieval.
 
+The first co-resident learned source pathway passed calibration but only two of
+three development seeds. Adding local inhibitory competition kept all three
+source margins above the fixed floor on two fresh calibration seeds, but one
+seed slightly weakened an already strong source and failed the preregistered
+no-harm control. Before another version runs, the acceptable biological
+tradeoff must be specified from source monitoring's role in the whole brain.
+
 ### 4. Build A Lived, Reconstructive Memory
 
 **Outcome:** episodes are stored with context and source, later reconstructed,
@@ -114,6 +122,13 @@ older learning.
 update rather than duplicate indefinitely; replay causally improves later
 behavior; interference tests show retention; novel combinations are inferred
 without an answer table.
+
+The first shared-bridge replay-transfer calibration was weak and inaccurate.
+Local fast-spiking competition greatly reduced false recall on one fresh seed,
+but recovery of the second memory and the advantage of learned replay order and
+target identity did not repeat. Development remains locked while the next
+mechanism focuses on selective CA1-to-cortex reinstatement rather than another
+global learning-rate sweep.
 
 ### 5. Develop Emotion, Motivation, And Curiosity
 

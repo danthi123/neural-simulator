@@ -1,0 +1,26 @@
+{
+ "run_id": "1785778412-475885",
+ "runner": "research/runners/_laneC_source_monitor_coresidency_gate_v2.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneC_source_monitor_coresidency_gate_v2.py",
+  "--seed",
+  "217",
+  "--json",
+  "research/findings/raw/parallel_gates/source_monitor_coresidency_v2_calibration_seed217.json"
+ ],
+ "git_sha": "7e925b766819bcb9f0b02fa08acfd3cf3c8479d5",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "9b386c19ac6e69c6faf2f47a5f2f1d7bbb1ec118297a7c09769728bfabcadf6e",
+ "started": "2026-08-03T13:33:32",
+ "env": {
+  "POOL_CHECKED_REASON": "source-monitor v2 calibration seed 217: independent fresh-seed stabilization control, no development or held-out access",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/parallel_gates/source_monitor_coresidency_v2_calibration_seed217.json"
+}
