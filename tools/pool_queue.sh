@@ -59,7 +59,7 @@ case "${1:-list}" in
            esac; fi
          if [ -n "$MOD" ]; then
            FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
-           HELP=$(cd "$ROOT" && timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
+           HELP=$(cd "$ROOT" && SIM_NO_PROVENANCE=1 timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)
            if [ $? -ne 0 ] && ! printf '%s' "$HELP" | grep -q "usage:"; then
              echo "⛔ REFUSED: $MOD does not even import/parse. Fix it before queueing." >&2
              printf '%s\n' "$HELP" | tail -5 >&2; exit 2
@@ -84,7 +84,7 @@ case "${1:-list}" in
            NODE_BAD=""
            for n in pool40 pool41 pool42; do
              if ! timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
-                  "cd ~/derisk-pool/sim && SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
+                  "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
                   >/dev/null 2>&1; then NODE_BAD="$NODE_BAD $n"; fi
            done
            if [ -n "$NODE_BAD" ]; then
