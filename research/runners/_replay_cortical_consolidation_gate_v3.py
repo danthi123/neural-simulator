@@ -25,9 +25,10 @@ current are host-scheduled; host code reads activity and known assemblies only
 for measurement; and the fixed anatomy and rate-window Hebbian rule remain
 simplified biological stand-ins.
 
-This runner is calibration-only. Fresh calibration seeds 216/217 are open;
-development seeds 218/219/314 and held-out seeds 315/316/317 are mechanically
-rejected.
+The scientific verdict path is calibration-only. Seed 216 is reserved solely
+for non-scientific smoke tests and is outside every scientific partition.
+Untouched calibration seeds 228/229 are open; development seeds 230/231/326
+and held-out seeds 327/328/329 are mechanically rejected.
 """
 from __future__ import annotations
 
@@ -52,9 +53,10 @@ from tools.verdict import UNDEFINED, Verdict  # noqa: E402
 
 
 OPEN_PHASES = ("calibration",)
-CALIBRATION_SEEDS = (216, 217)
-DEVELOPMENT_SEEDS = (218, 219, 314)
-HELD_OUT_SEEDS = (315, 316, 317)
+SMOKE_SEED = 216
+CALIBRATION_SEEDS = (228, 229)
+DEVELOPMENT_SEEDS = (230, 231, 326)
+HELD_OUT_SEEDS = (327, 328, 329)
 CONDITIONS = (
     "intact",
     "no_sleep",
@@ -147,6 +149,16 @@ def validate_calibration_seeds(seeds: Iterable[int]) -> tuple[int, ...]:
         )
     if not checked:
         raise ValueError("At least one calibration seed is required.")
+    return checked
+
+
+def validate_smoke_seed(seed: int) -> int:
+    checked = int(seed)
+    if checked != SMOKE_SEED:
+        raise ValueError(
+            f"Smoke execution accepts non-scientific seed {SMOKE_SEED} only; "
+            f"refusing seed {checked}."
+        )
     return checked
 
 
@@ -622,10 +634,19 @@ def _sleep(bridge, handles: dict, condition: str, seed: int, config: GateConfig)
     }
 
 
-def run_condition(seed: int, condition: str, config: GateConfig | None = None) -> dict:
+def run_condition(
+    seed: int,
+    condition: str,
+    config: GateConfig | None = None,
+    *,
+    smoke: bool = False,
+) -> dict:
     if condition not in CONDITIONS:
         raise ValueError(f"Unknown condition {condition!r}; expected one of {CONDITIONS}.")
-    validate_calibration_seeds([seed])
+    if smoke:
+        validate_smoke_seed(seed)
+    else:
+        validate_calibration_seeds([seed])
     cfg = config or GateConfig()
     bridge, handles = build_bridge(seed, cfg)
     bridge_ids = [id(bridge)]
@@ -675,6 +696,8 @@ def run_condition(seed: int, condition: str, config: GateConfig | None = None) -
 
     return {
         "seed": int(seed),
+        "seed_partition": "smoke" if smoke else "calibration",
+        "scientific_partition": not smoke,
         "condition": condition,
         "config": asdict(cfg),
         "phase_trace": phase_trace,
@@ -912,6 +935,8 @@ def run_seed(seed: int, config: GateConfig | None = None) -> dict:
     verdict = _calibration_verdict(conditions)
     return {
         "seed": int(seed),
+        "seed_partition": "calibration",
+        "scientific_partition": True,
         "conditions": conditions,
         "calibration": verdict,
         "calibration_status": verdict["calibration_status"],
@@ -933,6 +958,7 @@ def run_calibration(seeds: Iterable[int], config: GateConfig | None = None) -> d
     return {
         "gate": "replay_cortical_consolidation_v3",
         "phase": "calibration",
+        "scientific_partition": True,
         "calibration_status": aggregate_status,
         "seeds": list(checked),
         "reserved_seeds_inspected": False,
@@ -948,15 +974,84 @@ def run_calibration(seeds: Iterable[int], config: GateConfig | None = None) -> d
     }
 
 
+def run_smoke(config: GateConfig | None = None) -> dict:
+    """Exercise control plumbing without opening a scientific seed or verdict."""
+    seed = validate_smoke_seed(SMOKE_SEED)
+    cfg = config or smoke_config()
+    started = time.time()
+    conditions = {
+        condition: run_condition(seed, condition, cfg, smoke=True)
+        for condition in CONDITIONS
+    }
+    return {
+        "gate": "replay_cortical_consolidation_v3",
+        "phase": "smoke",
+        "seed": seed,
+        "seed_partition": "smoke",
+        "scientific_partition": False,
+        "calibration_verdict_computed": False,
+        "conditions": conditions,
+        "structural_checks": {
+            "all_conditions_executed": set(conditions) == set(CONDITIONS),
+            "fixed_phase_sequence": all(
+                row["phase_trace"] == ["encode_A", "encode_B", "sleep", "retest"]
+                for row in conditions.values()
+            ),
+            "single_bridge_persisted": all(
+                row["single_bridge_persisted"] for row in conditions.values()
+            ),
+            "no_scientific_seed_used": all(
+                row["seed_partition"] == "smoke"
+                and row["scientific_partition"] is False
+                for row in conditions.values()
+            ),
+        },
+        "elapsed_seconds": time.time() - started,
+    }
+
+
+def resolve_cli_request(
+    *,
+    smoke: bool,
+    phase: str | None,
+    seeds: Iterable[int] | None,
+) -> tuple[str, tuple[int, ...]]:
+    """Resolve CLI intent without constructing or executing a brain."""
+    requested_phase = phase or ("smoke" if smoke else "calibration")
+    requested_seeds = None if seeds is None else tuple(int(seed) for seed in seeds)
+    if smoke:
+        if requested_phase != "smoke":
+            raise ValueError("--smoke cannot be combined with --phase calibration")
+        checked = (SMOKE_SEED,) if requested_seeds is None else requested_seeds
+        if checked != (SMOKE_SEED,):
+            raise ValueError(f"--smoke accepts --seeds {SMOKE_SEED} only")
+        return "smoke", checked
+    if requested_phase == "smoke":
+        raise ValueError("--phase smoke requires --smoke")
+    validate_phase(requested_phase)
+    checked = CALIBRATION_SEEDS if requested_seeds is None else requested_seeds
+    return "calibration", validate_calibration_seeds(checked)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--phase", choices=OPEN_PHASES, default="calibration")
-    parser.add_argument("--seeds", type=int, nargs="+", default=list(CALIBRATION_SEEDS))
+    parser.add_argument("--phase", choices=("calibration", "smoke"), default=None)
+    parser.add_argument("--seeds", type=int, nargs="+", default=None)
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
-    validate_phase(args.phase)
-    payload = run_calibration(args.seeds, smoke_config() if args.smoke else GateConfig())
+    try:
+        requested_phase, seeds = resolve_cli_request(
+            smoke=args.smoke,
+            phase=args.phase,
+            seeds=args.seeds,
+        )
+    except ValueError as exc:
+        parser.error(str(exc))
+    if requested_phase == "smoke":
+        payload = run_smoke(smoke_config())
+    else:
+        payload = run_calibration(seeds, GateConfig())
     rendered = json.dumps(payload, indent=2, sort_keys=True)
     print(rendered)
     if args.out is not None:

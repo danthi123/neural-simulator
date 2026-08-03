@@ -13,14 +13,88 @@ from research.runners import _replay_cortical_consolidation_gate_v3 as gate  # n
 
 
 def test_fresh_seed_policy_and_phase_lock_keep_reserved_work_untouched():
-    assert gate.CALIBRATION_SEEDS == (216, 217)
+    assert gate.SMOKE_SEED == 216
+    assert gate.CALIBRATION_SEEDS == (228, 229)
+    assert gate.DEVELOPMENT_SEEDS == (230, 231, 326)
+    assert gate.HELD_OUT_SEEDS == (327, 328, 329)
+    assert gate.SMOKE_SEED not in (
+        gate.CALIBRATION_SEEDS + gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS
+    )
     assert gate.validate_phase("calibration") == "calibration"
     assert gate.validate_calibration_seeds(gate.CALIBRATION_SEEDS) == gate.CALIBRATION_SEEDS
+    assert gate.validate_smoke_seed(gate.SMOKE_SEED) == gate.SMOKE_SEED
     with pytest.raises(ValueError, match="opens.*calibration"):
         gate.validate_phase("development")
+    with pytest.raises(ValueError, match="fresh calibration seeds"):
+        gate.validate_calibration_seeds([gate.SMOKE_SEED])
     for seed in gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS:
         with pytest.raises(ValueError, match="fresh calibration seeds"):
             gate.validate_calibration_seeds([seed])
+    for seed in gate.CALIBRATION_SEEDS + gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS:
+        with pytest.raises(ValueError, match="non-scientific seed"):
+            gate.validate_smoke_seed(seed)
+
+
+def test_cli_resolution_separates_smoke_from_every_scientific_partition():
+    assert gate.resolve_cli_request(smoke=True, phase=None, seeds=None) == (
+        "smoke",
+        (gate.SMOKE_SEED,),
+    )
+    assert gate.resolve_cli_request(
+        smoke=False,
+        phase=None,
+        seeds=None,
+    ) == ("calibration", gate.CALIBRATION_SEEDS)
+    with pytest.raises(ValueError, match="accepts --seeds"):
+        gate.resolve_cli_request(
+            smoke=True,
+            phase="smoke",
+            seeds=gate.CALIBRATION_SEEDS,
+        )
+    with pytest.raises(ValueError, match="requires --smoke"):
+        gate.resolve_cli_request(smoke=False, phase="smoke", seeds=None)
+    with pytest.raises(ValueError, match="fresh calibration seeds"):
+        gate.resolve_cli_request(
+            smoke=False,
+            phase="calibration",
+            seeds=(gate.SMOKE_SEED,),
+        )
+
+
+def test_smoke_payload_is_marked_non_scientific_and_skips_calibration_verdict(monkeypatch):
+    calls = []
+
+    def fake_condition(seed, condition, config, *, smoke=False):
+        calls.append((seed, condition, smoke))
+        return {
+            "seed_partition": "smoke",
+            "scientific_partition": False,
+            "phase_trace": ["encode_A", "encode_B", "sleep", "retest"],
+            "single_bridge_persisted": True,
+        }
+
+    monkeypatch.setattr(gate, "run_condition", fake_condition)
+    monkeypatch.setattr(
+        gate,
+        "_calibration_verdict",
+        lambda _conditions: pytest.fail("smoke must not compute a calibration verdict"),
+    )
+    payload = gate.run_smoke(gate.smoke_config())
+
+    assert payload["phase"] == "smoke"
+    assert payload["seed"] == gate.SMOKE_SEED
+    assert payload["seed_partition"] == "smoke"
+    assert payload["scientific_partition"] is False
+    assert payload["calibration_verdict_computed"] is False
+    assert payload["structural_checks"] == {
+        "all_conditions_executed": True,
+        "fixed_phase_sequence": True,
+        "single_bridge_persisted": True,
+        "no_scientific_seed_used": True,
+    }
+    assert calls == [
+        (gate.SMOKE_SEED, condition, True) for condition in gate.CONDITIONS
+    ]
 
 
 def test_condition_set_retains_v2_controls_and_adds_relay_and_balance_lesions():
@@ -36,14 +110,19 @@ def test_condition_set_retains_v2_controls_and_adds_relay_and_balance_lesions():
         "index_balance_lesion",
     )
     with pytest.raises(ValueError, match="Unknown condition"):
-        gate.run_condition(216, "not_a_condition", gate.smoke_config())
+        gate.run_condition(
+            gate.SMOKE_SEED,
+            "not_a_condition",
+            gate.smoke_config(),
+            smoke=True,
+        )
 
 
 def test_temporal_control_preserves_exact_event_content_and_changes_only_order():
     cfg = gate.smoke_config()
     ca3 = np.arange(cfg.n_ca3, dtype=np.int64)
-    intact = gate.v2._ordered_sleep_events(216, cfg, ca3, shuffle=False)
-    shuffled = gate.v2._ordered_sleep_events(216, cfg, ca3, shuffle=True)
+    intact = gate.v2._ordered_sleep_events(gate.SMOKE_SEED, cfg, ca3, shuffle=False)
+    shuffled = gate.v2._ordered_sleep_events(gate.SMOKE_SEED, cfg, ca3, shuffle=True)
 
     assert gate.v2._event_digest(intact, order_sensitive=False) == gate.v2._event_digest(
         shuffled, order_sensitive=False,
@@ -56,7 +135,7 @@ def test_temporal_control_preserves_exact_event_content_and_changes_only_order()
 
 def test_bridge_uses_neutral_learned_index_and_two_local_inhibitory_loops():
     cfg = gate.smoke_config()
-    bridge, handles = gate.build_bridge(216, cfg)
+    bridge, handles = gate.build_bridge(gate.SMOKE_SEED, cfg)
 
     assert set(handles["regions"]) == {
         "ca3",
@@ -86,13 +165,13 @@ def test_bridge_uses_neutral_learned_index_and_two_local_inhibitory_loops():
 
 
 def test_target_index_shuffle_preserves_weights_but_breaks_learned_assignment():
-    bridge, _ = gate.build_bridge(216, gate.smoke_config())
+    bridge, _ = gate.build_bridge(gate.SMOKE_SEED, gate.smoke_config())
     indices = bridge._plasticity_gate_indices_gpu[gate.INDEX_TARGET_GATE]
     learned = np.linspace(0.1, 20.0, len(indices), dtype=np.float32)
     bridge.cp_connections.data[indices] = learned
     before = np.asarray(bridge.cp_connections.data[indices]).copy()
 
-    changed = gate.v1._shuffle_target_index(bridge, 216)
+    changed = gate.v1._shuffle_target_index(bridge, gate.SMOKE_SEED)
     after = np.asarray(bridge.cp_connections.data[indices]).copy()
 
     assert changed == len(indices)
@@ -102,7 +181,7 @@ def test_target_index_shuffle_preserves_weights_but_breaks_learned_assignment():
 
 def test_local_slow_feedback_is_recruited_by_its_own_index_assembly():
     cfg = gate.smoke_config()
-    bridge, handles = gate.build_bridge(216, cfg)
+    bridge, handles = gate.build_bridge(gate.SMOKE_SEED, cfg)
     bridge.set_transmission_gate(gate.INDEX_BALANCE_GATE, 1.0)
     index_a = handles["device_patterns"]["A"]["index"]
     index_b = handles["patterns"]["B"]["index"]
@@ -123,9 +202,16 @@ def test_local_slow_feedback_is_recruited_by_its_own_index_assembly():
 
 
 def test_intact_default_condition_uses_synaptic_relay_without_host_selected_sleep_drive():
-    row = gate.run_condition(216, "intact", gate.GateConfig())
+    row = gate.run_condition(
+        gate.SMOKE_SEED,
+        "intact",
+        gate.GateConfig(),
+        smoke=True,
+    )
 
     assert row["phase_trace"] == ["encode_A", "encode_B", "sleep", "retest"]
+    assert row["seed_partition"] == "smoke"
+    assert row["scientific_partition"] is False
     assert row["single_bridge_persisted"] is True
     assert row["neutral_index_fan_in"] is True
     assert row["encode_A"]["index_host_driven"] is False
