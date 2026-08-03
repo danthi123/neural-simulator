@@ -45,6 +45,13 @@ def test_trace_and_expectation_are_distinct_populations(gate):
         assert gate._trace(channel) in names
         assert gate._expectation(channel) in names
         assert gate._trace(channel) != gate._expectation(channel)
+        trace = next(region for region in regions if region.name == gate._trace(channel))
+        expectation = next(
+            region for region in regions
+            if region.name == gate._expectation(channel)
+        )
+        assert trace.exc_fraction == 1.0
+        assert expectation.exc_fraction == 0.0
 
 
 def test_pathway_contract_removes_trace_critic_shortcut(gate):
@@ -82,6 +89,8 @@ def test_pathway_contract_removes_trace_critic_shortcut(gate):
         assert len(outputs) == 2
         assert all(not p.plastic for p in outputs)
         assert all(p.transmission_gate == gate.EXPECTATION_OUTPUT_GATE for p in outputs)
+        snc_output = next(p for p in outputs if p.to_region == gate.SNC)
+        assert snc_output.receptor == "gaba_a"
 
 
 def test_outcome_afferents_are_symmetric_and_host_boundary_is_fixed(gate):
@@ -158,3 +167,19 @@ def test_numpy_construction_smoke(gate):
     result = gate.run_construction_smoke()
     assert result["science_seed_executed"] is False
     assert result["status"] == "CONSTRUCTION_PASS", result["checks"]
+
+
+def test_dynamics_cli_rejects_nonreserved_seed(gate):
+    with pytest.raises(ValueError):
+        gate.main(["--dynamics", "--seed", "1"])
+
+
+def test_reward_burst_summary_requires_four_rewards(gate):
+    condition = {
+        "rows": [
+            {"reward_delivered": True, "dopamine_burst_depth": value}
+            for value in (0.08, 0.07, 0.06)
+        ]
+    }
+    summary = gate._reward_burst_summary(condition)
+    assert summary["relative_early_to_late_reduction"] is None
