@@ -31,8 +31,23 @@ if echo "$changed" | grep -qE '^(research/findings/|docs/|CLAUDE\.md|ROADMAP\.md
     exit 0
   fi
   # Sleep briefly so a burst of commits collapses into one update (the lock+manifest gate does the rest), then update.
-  # The delay override exists for deterministic hook integration tests.
-  ( sleep "${SIM_RAG_REFRESH_DELAY:-45}"; SIM_REPO="$REPO" "$PY" "$UPD" >> "$LOG" 2>&1 ) >/dev/null 2>&1 &
-  disown 2>/dev/null || true
+  # nohup protects against a non-interactive parent sending SIGHUP; detached stdin and a new session keep the updater
+  # independent of the committing terminal/process group. The delay override exists for deterministic integration tests.
+  DELAY=${SIM_RAG_REFRESH_DELAY:-45}
+  DETACH=()
+  command -v setsid >/dev/null 2>&1 && DETACH=(setsid --fork)
+  printf '[post-commit] START: branch=%s source=%s delay=%ss\n' "$BRANCH" "$REPO" "$DELAY" >> "$LOG"
+  nohup "${DETACH[@]}" sh -c '
+    delay=$1
+    repo=$2
+    python=$3
+    updater=$4
+    log=$5
+    sleep "$delay"
+    SIM_REPO="$repo" "$python" "$updater"
+    status=$?
+    printf "[post-commit] EXIT: status=%s source=%s\n" "$status" "$repo" >> "$log"
+    exit "$status"
+  ' rag-refresh "$DELAY" "$REPO" "$PY" "$UPD" "$LOG" </dev/null >> "$LOG" 2>&1 &
 fi
 exit 0

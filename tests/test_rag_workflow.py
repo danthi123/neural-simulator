@@ -131,7 +131,11 @@ def test_repo_post_commit_hook_logs_every_nonrefresh_path():
     assert "BLOCKED: RAG interpreter missing" in hook
     assert "SKIP: branch=" in hook
     assert "BLOCKED: legacy/missing index schema" in hook
-    assert 'SIM_REPO="$REPO"' in hook
+    assert 'SIM_REPO="$repo"' in hook
+    assert "nohup" in hook
+    assert "</dev/null" in hook
+    assert "START: branch=" in hook
+    assert "EXIT: status=" in hook
 
 
 def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path):
@@ -140,6 +144,7 @@ def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path
     rag_root = tmp_path / "rag_index"
     fake_python = tmp_path / "fake-rag-python"
     refresh_log = tmp_path / "refresh.log"
+    release = tmp_path / "release-refresh"
 
     subprocess.run(
         ["git", "init", "--initial-branch=main", str(canonical)], check=True,
@@ -179,7 +184,14 @@ def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path
         json.dumps({"document_id_schema": "repo-relative-v1"}), encoding="utf-8"
     )
     fake_python.write_text(
-        "#!/bin/sh\nprintf '%s|%s\\n' \"$SIM_REPO\" \"$*\" >> \"$RAG_TEST_LOG\"\n",
+        "#!/bin/sh\n"
+        "attempt=0\n"
+        "while [ ! -e \"$RAG_TEST_RELEASE\" ] && [ \"$attempt\" -lt 500 ]; do\n"
+        "  sleep 0.01\n"
+        "  attempt=$((attempt + 1))\n"
+        "done\n"
+        "[ -e \"$RAG_TEST_RELEASE\" ] || exit 99\n"
+        "printf '%s|%s\\n' \"$SIM_REPO\" \"$*\" >> \"$RAG_TEST_LOG\"\n",
         encoding="utf-8",
     )
     fake_python.chmod(0o755)
@@ -192,6 +204,7 @@ def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path
         "SIM_RAG_PYTHON": str(fake_python),
         "SIM_RAG_REFRESH_BRANCH": "topic",
         "SIM_RAG_REFRESH_DELAY": "0",
+        "RAG_TEST_RELEASE": str(release),
         "RAG_TEST_LOG": str(refresh_log),
     }
     committed = subprocess.run(
@@ -199,7 +212,9 @@ def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path
         check=True, capture_output=True, text=True,
     )
     assert "ignored because it's not set as executable" not in committed.stderr
-    for _ in range(100):
+    assert not refresh_log.exists(), "marker ran before the hook parent exited"
+    release.write_text("parent exited\n", encoding="utf-8")
+    for _ in range(150):
         if refresh_log.exists():
             break
         time.sleep(0.02)
@@ -207,6 +222,9 @@ def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path
     source_repo, updater_arg = line.split("|", 1)
     assert Path(source_repo) == topic.resolve()
     assert Path(updater_arg) == (topic / "tools/rag/update_indexes.py").resolve()
+    autoupdate_log = (rag_root / "_autoupdate.log").read_text(encoding="utf-8")
+    assert "[post-commit] START:" in autoupdate_log
+    assert "[post-commit] EXIT: status=0" in autoupdate_log
     count = subprocess.run(
         ["git", "rev-list", "--count", "HEAD"], cwd=topic, check=True,
         capture_output=True, text=True,
