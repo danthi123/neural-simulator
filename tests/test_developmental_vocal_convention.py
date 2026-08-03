@@ -11,7 +11,7 @@ from research.runners._developmental_vocal_convention_derisk import (
     VocalConvention,
 )
 from research.runners._homeostatic_spiking_reward_plasticity_derisk import build_bridge
-from sim.backend import get_backend
+from sim.backend import get_backend, to_host
 from research.runners.nav_conv_merged_bridge import (
     GEN_PERCEPTION,
     VOCAL_INTENT_PREFIX,
@@ -72,7 +72,7 @@ def test_deferred_stdp_tags_eligibility_but_waits_for_reward(branchless):
     cfg.reward_learning_rate = 1.0
     cfg.current_reward_signal = 0.0
     cfg.enable_ou_process = False
-    before = np.asarray(bridge.cp_connections.data).copy()
+    before = np.asarray(to_host(bridge.cp_connections.data)).copy()
 
     def step():
         bridge._run_one_simulation_step()
@@ -89,15 +89,17 @@ def test_deferred_stdp_tags_eligibility_but_waits_for_reward(branchless):
             bridge.cp_external_input_current[motor_x] = 350.0
             step()
 
-    tagged = np.asarray(bridge.cp_eligibility_trace[: bridge.cp_connections.nnz])
-    after_tag = np.asarray(bridge.cp_connections.data)
+    tagged = np.asarray(to_host(
+        bridge.cp_eligibility_trace[: bridge.cp_connections.nnz]
+    ))
+    after_tag = np.asarray(to_host(bridge.cp_connections.data))
     assert np.any(np.abs(tagged) > 0.0)
     np.testing.assert_array_equal(after_tag, before)
 
     cfg.current_reward_signal = 1.0
     bridge.cp_external_input_current[:] = 0.0
     step()
-    after_reward = np.asarray(bridge.cp_connections.data)
+    after_reward = np.asarray(to_host(bridge.cp_connections.data))
     assert np.any(np.abs(after_reward - before) > 0.0)
 
 
@@ -108,8 +110,8 @@ def test_coactivity_eligibility_requires_reward_for_weight_change():
     cue = np.asarray(bridge.region_manager.indices("cue"), dtype=np.int64)
     motor = np.asarray(bridge.region_manager.indices("motor"), dtype=np.int64)
     coo = bridge.cp_connections.tocoo(copy=False)
-    rows = np.asarray(coo.row)
-    cols = np.asarray(coo.col)
+    rows = np.asarray(to_host(coo.row))
+    cols = np.asarray(to_host(coo.col))
     route = np.flatnonzero(np.isin(rows, cue) & np.isin(cols, motor))
     route_x = xp.asarray(route, dtype=xp.int64)
     cue_x = xp.asarray(cue)
@@ -131,7 +133,7 @@ def test_coactivity_eligibility_requires_reward_for_weight_change():
     )
     bridge.cp_reward_eligibility_synapse_indices = route_x
     bridge.cp_connections.data[route_x] = xp.float32(0.0)
-    before = np.asarray(bridge.cp_connections.data).copy()
+    before = np.asarray(to_host(bridge.cp_connections.data)).copy()
 
     def step():
         bridge._run_one_simulation_step()
@@ -143,14 +145,16 @@ def test_coactivity_eligibility_requires_reward_for_weight_change():
         bridge.cp_external_input_current[motor_x] = 350.0
         step()
 
-    tagged = np.asarray(bridge.cp_eligibility_trace[route_x])
+    tagged = np.asarray(to_host(bridge.cp_eligibility_trace[route_x]))
     assert np.any(tagged > 0.0)
-    np.testing.assert_array_equal(np.asarray(bridge.cp_connections.data), before)
+    np.testing.assert_array_equal(
+        np.asarray(to_host(bridge.cp_connections.data)), before
+    )
 
     cfg.current_reward_signal = 1.0
     bridge.cp_external_input_current[:] = 0.0
     step()
-    after_reward = np.asarray(bridge.cp_connections.data)
+    after_reward = np.asarray(to_host(bridge.cp_connections.data))
     assert np.any(after_reward[route] > before[route])
     outside = np.ones(after_reward.size, dtype=bool)
     outside[route] = False
@@ -170,4 +174,6 @@ def test_coactivity_eligibility_requires_reward_for_weight_change():
         bridge.cp_external_input_current[:] = 0.0
         bridge.cp_external_input_current[cue_x] = 400.0
         step()
-    assert not np.any(np.asarray(bridge.cp_eligibility_trace[route_x]) > 0.0)
+    assert not np.any(
+        np.asarray(to_host(bridge.cp_eligibility_trace[route_x])) > 0.0
+    )
