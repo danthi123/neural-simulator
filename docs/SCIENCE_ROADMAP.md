@@ -1,5 +1,11 @@
 # Science Roadmap
 
+> **Historical reference, not the current plan.** This July 2026 document
+> records an earlier project framing and contains claims that should not be
+> used as the present capability summary. Read [Current State](CURRENT-STATE.md)
+> for demonstrated boundaries and the [Roadmap](../ROADMAP.md) for current
+> priorities.
+
 **The full project plan — past, present, and the path to the end.**
 
 This is the project's living plan, written for three readers at once: a
@@ -10,7 +16,7 @@ detail and the linked write-up follow.
 
 **Last updated:** 2026-07-23
 
-> **▶ Current primary plan.** The ordered, forward-looking plan of record is the
+> **Earlier primary plan.** The ordered, forward-looking plan at the time was the
 > **master development roadmap,
 > [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)**
 > (foundation:

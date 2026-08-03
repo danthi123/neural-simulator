@@ -38,10 +38,18 @@ wrong-object controls all collapse to silence. With consequence disabled, the hu
 boundary: this is a single conceptual `request apple` action with explicit caregiver pairing, fixed coincidence/WTA
 wiring, fixed thresholds, and a host decoder. It is not fluent language.
 
-**EXACT NEXT:** generalize the grounded loop to multiple learned referents and intents and let contingent interaction
-change later choices, while burning down the fixed `request apple` decoder and hand-set operating point. In parallel,
-move the learned source populations onto the same bridge and connect their spikes directly through dynamic ACC/aPFC
-and self-schema. Use the 267M WKV only after the brain chooses message, referent, certainty, and whether to speak.
+**Developmental vocal convention completed:** the next shared-bridge rung is **GO 6/6** on the RTX 3090. Fresh brains
+learn an external two-intent by two-referent raw vocal convention from contingent listener consequences, compose both
+combinations withheld from training, and learn a freshly swapped convention. Withholding consequences, yoking reward,
+lesioning dopamine, or removing the causal state/percept prevents the result. Honest boundary: exploration is still
+host-injected and balanced; intent/referent channels, listener semantics, architecture, currents, and readout are fixed;
+the positive-only learning rule has not passed same-brain reversal. Finding:
+`research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md`.
+
+**EXACT NEXT:** replace injected babbling with intrinsic spiking exploration, add omission/prediction-error-dependent
+depression, and pass same-brain convention reversal before broadening the world and meanings. In parallel, move the
+learned source populations onto this bridge and connect their spikes through dynamic ACC/aPFC and self-schema. Use the
+267M WKV only after the brain chooses message, referent, certainty, and whether to speak.
 
 ---
 

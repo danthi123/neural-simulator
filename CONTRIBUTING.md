@@ -1,476 +1,191 @@
-# Contributing to GPU-Accelerated Neural Network Simulator
+# Contributing
 
-Thank you for considering contributing to this project! This document provides guidelines and instructions for contributors.
+Neural Simulator is both a software project and an experimental neuroscience
+project. A useful contribution must be sound code and must support an honest
+claim about the integrated simulated brain.
 
-This is a GPU-accelerated simulator for biologically realistic spiking neural
-networks, with a real-time 3-D view of the neurons firing. It is an active
-research codebase — some capabilities are shipped and robust, others are
-research-stage; the docs try to be clear about which is which.
+## Start Here
 
-## Getting oriented
+1. Read the [README](README.md), [Current State](docs/CURRENT-STATE.md), and
+   [Roadmap](ROADMAP.md).
+2. Follow the [Quickstart](QUICKSTART.md) for CPU or NVIDIA GPU setup.
+3. Check the [Scaffold Ledger](docs/SCAFFOLD-LEDGER.md) before adding a shortcut
+   that may already have a planned replacement.
+4. Search the code, tests, and [`research/findings/`](research/findings/) for
+   earlier attempts, negative results, and corrections.
 
-Before diving in, skim these:
+The repository has no `pyproject.toml` or package installer. Run commands from
+the repository root.
 
-- [`README.md`](README.md) — what the project is, in plain language.
-- [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)
-  — **the current primary development plan.** As of the 2026-07-23 direction
-  pivot the north-star is a sim-brain that **converses genuinely** — reasons to
-  its own conclusions and has an affective world-model, emotion, self-awareness,
-  and curiosity — not fact-recall/RAG and not large-language-model plausible
-  text. The master roadmap lays out the complete faculty map, the one-brain
-  architecture, the six developmental stages, and a 14-wall ledger (each wall
-  paired with a biological surpass). The earlier "5-gap closure" framing is
-  subsumed as a sub-view (the faculty-map + walls-ledger) and remains valid.
-  Its foundation is
-  [`docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`](docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md).
-- [`ROADMAP.md`](ROADMAP.md) — the plain-language **status** source of truth
-  (what's done / in progress / open) that pairs with the master plan above.
-- [`docs/INDEX.md`](docs/INDEX.md) — the full documentation map.
-- [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) — what works today, with technical detail.
-- [`docs/diagrams/brain_architecture_current.md`](docs/diagrams/brain_architecture_current.md)
-  and [`brain_architecture_detailed.md`](docs/diagrams/brain_architecture_detailed.md) —
-  live Mermaid flowcharts of the brain architecture (render on GitHub).
-- [`CLAUDE.md`](CLAUDE.md) — deep technical gotchas (STDP soft bounds, Hebbian
-  decay, NMDA configuration, seeding) worth knowing before you touch the engine.
+## Choose A Clear Scope
 
-## Development Setup
+For a simulator or tooling change, state the behavior being fixed or added and
+which callers may be affected.
 
-### Prerequisites
+For a brain mechanism, write down these points before implementation:
 
-- Python 3.10+
-- NVIDIA GPU with CUDA 11.x or 12.x (optional — the engine also runs on
-  CPU via NumPy; set `SIM_BACKEND=numpy`)
-- CUDA Toolkit installed (only needed for the GPU path)
-- Git
+- the role the mechanism must serve in the whole brain;
+- the biological process or evidence motivating it;
+- its neural inputs, outputs, learning signals, and expected time scale;
+- how it connects to perception, action, memory, value, affect, or language;
+- what observable behavior should change when it is present;
+- what control should fail when the mechanism is removed or disrupted;
+- every temporary host-side calculation or hand-designed representation;
+- the condition under which each temporary shortcut can be removed;
+- the expected memory, runtime, and hardware cost.
 
-### Installation
+This prevents a narrow test from becoming the objective. Passing an isolated
+unit test is necessary, but a cognitive mechanism is not complete until it
+performs its intended role in an integrated behavior.
 
-1. Clone the repository:
+## Architecture Expectations
+
+The long-term system is one shared spiking brain. Specialized regions and
+pathways are expected, but cognition should move toward neural activity and
+synaptic state rather than host-side parsing, lookup, routing, or answer logic.
+
+Host code is appropriate for the external world, body and sensor interfaces,
+file input/output, visualization, experiment control, and measurement. A
+temporary cognitive shortcut is acceptable only when it is explicit, bounded,
+recorded in the scaffold ledger, and paired with a replacement plan.
+
+Prefer existing simulator abstractions and local learning rules. Do not create a
+new subsystem when the same behavior belongs in an existing region, pathway, or
+shared simulation step.
+
+## Implementation Standards
+
+- Keep changes focused. Do not mix unrelated cleanup with a behavioral change.
+- Follow the surrounding Python style; no repository-wide formatter is pinned.
+- Preserve CPU and GPU behavior unless the change is explicitly backend-specific.
+- Select the backend explicitly with `SIM_BACKEND=numpy` or
+  `SIM_BACKEND=cupy` in tests and recorded commands.
+- Keep random seeds configurable. Do not hide randomness in module-level state.
+- Validate configuration and fail visibly. Silent fallback can invalidate an
+  experiment while leaving the process apparently healthy.
+- Add comments only where the reason or biological mapping is not evident from
+  the code.
+- Avoid copying production logic into a test; test observable behavior and the
+  important intermediate signal independently.
+
+## Biological And Integration Evidence
+
+A neuroscience name is not evidence. Cite the source that motivates a mechanism
+and explain which part is modeled, simplified, or omitted. Use primary papers or
+standard neuroscience references when practical.
+
+Test at two levels:
+
+1. **Mechanism:** confirm the expected dynamics, learning rule, timing, sign,
+   bounds, or state transition.
+2. **Whole behavior:** confirm the mechanism changes the integrated brain in the
+   way its stated role predicts.
+
+Use causal controls where the claim requires them. Examples include removing the
+pathway, withholding the consequence, permuting labels, changing the relevant
+internal drive, or replaying the same reward without the required experience.
+Verify that a disruption is still active at the moment of measurement; a pathway
+that regrows during the test is not a valid removal control.
+
+Controls must distinguish the proposed explanation from easier alternatives.
+A high score alone does not show which mechanism caused it.
+
+## Reproducible Results
+
+Every reported research result should make another contributor able to rerun it.
+Record:
+
+- the exact command and repository commit;
+- Python and important dependency versions;
+- selected backend, device, and relevant hardware;
+- all seeds and configuration overrides;
+- input data or checkpoint identity;
+- wall time and important resource use;
+- raw output path and provenance sidecar;
+- failed runs, exclusions, and analysis decisions.
+
+Use more than one seed before making a general capability claim when runtime
+allows. Report per-seed values as well as summaries. A smoke run proves that a
+path executes; it does not prove that the behavior is reliable.
+
+Store durable experiment evidence under `research/findings/raw/` and write a
+dated report under `research/findings/`. Keep negative and corrected results.
+Do not promote a result from an uncommitted scratch file or from memory.
+
+For a new or changed finding, run:
+
 ```bash
-git clone https://github.com/danthi123/neural-simulator.git
-cd neural-simulator
+python tools/finding_lint.py --include-untracked research/findings/<finding>.md
+python tools/claim_check.py research/findings/<finding>.md
+python tools/finding_status.py --check research/findings/<finding>.md
 ```
 
-2. Install dependencies:
-```bash
-# For CUDA 12.x
-pip install cupy-cuda12x
+These checks help with provenance, stale claims, controls, and unsupported
+measurements. They do not replace reading the artifact or checking the
+experiment's measurement code.
 
-# For CUDA 11.x
-pip install cupy-cuda11x
+## Performance Evidence
 
-# Other dependencies
-pip install numpy h5py dearpygui PyOpenGL PyOpenGL-accelerate
+Performance is part of the architecture because the target should remain usable
+on high-end consumer hardware.
 
-# Development dependencies
-pip install pytest pytest-cov
-```
+- Measure a baseline and the changed version with the same seed, configuration,
+  backend, and device.
+- Synchronize GPU work before timing it.
+- Report wall time, simulated steps per second, peak memory, and problem size
+  when relevant.
+- Prefer sparse, local, event-driven work and avoid unnecessary host-device
+  transfers or per-step synchronization.
+- Keep a correct reference path when optimizing shared numerical behavior.
+- Test numerical and behavioral equivalence within an explicitly justified
+  tolerance.
 
-3. Verify installation:
-```bash
-python -c "import cupy; print(f'CuPy version: {cupy.__version__}')"
-python -c "import cupy; print(f'GPU devices: {cupy.cuda.runtime.getDeviceCount()}')"
-```
-
-## Development Workflow
-
-### Branching Strategy
-
-- `main`: Stable, tested code
-- `feature/*`: New features
-- `bugfix/*`: Bug fixes
-- `perf/*`: Performance improvements
-
-### Making Changes
-
-1. Create a feature branch:
-```bash
-git checkout -b feature/your-feature-name
-```
-
-2. Make your changes, following the coding style below
-
-3. Run tests:
-```bash
-pytest tests/ -v
-```
-
-4. Run benchmarks (if performance-related):
-```bash
-python benchmark.py --quick
-```
-
-5. Commit with descriptive messages:
-```bash
-git commit -m "Add feature X: brief description
-
-- Detailed point 1
-- Detailed point 2"
-```
-
-6. Push and create pull request
-
-## Coding Standards
-
-### Python Style
-
-- Follow PEP 8 style guide
-- Use descriptive variable names
-- Maximum line length: 120 characters
-- Use type hints where helpful
-
-### GPU Code
-
-- Minimize CPU↔GPU transfers
-- Use fused kernels for multiple operations
-- Profile GPU memory usage for new features
-- Document any CuPy kernel magic
-
-### Documentation
-
-- Add docstrings to all public methods
-- Use NumPy-style docstrings
-- Update README.md for user-facing features
-- Comment complex algorithms
-
-### Example:
-```python
-def update_network_activity(self, bridge: SimulationBridge) -> dict:
-    """Monitor and update network activity based on firing states.
-
-    Args:
-        bridge: The SimulationBridge instance managing simulation
-
-    Returns:
-        Dictionary with activity statistics
-
-    Notes:
-        This method accesses GPU arrays directly via SimulationBridge
-        to compute network metrics without CPU-GPU transfers.
-    """
-    # Access GPU firing states directly
-    firing_states = bridge.cp_firing_states  # Boolean array (num_neurons,)
-    spike_counts = cp.count_nonzero(firing_states)
-
-    # Run a simulation step and retrieve results
-    bridge._run_one_simulation_step()
-    membrane_potentials = bridge.cp_membrane_potential_v
-
-    return {
-        'spike_count': int(spike_counts),
-        'mean_voltage': float(cp.mean(membrane_potentials)),
-        'firing_rate': float(spike_counts / bridge.core_config.num_neurons)
-    }
-```
+Biological fidelity can be expensive. That does not excuse avoidable dense work,
+duplicate computation, or an unmeasured performance regression.
 
 ## Testing
 
-### Running Tests
+Install development dependencies with:
 
 ```bash
-# All tests
-pytest tests/ -v
-
-# Specific test file
-pytest tests/test_determinism.py -v
-
-# Specific test
-pytest tests/test_determinism.py::TestDeterministicSpikes::test_izhikevich_deterministic_spikes -v
-
-# With coverage
-pytest tests/ --cov=sim --cov=experiment --cov-report=html
+python -m pip install -r requirements-dev.txt
 ```
 
-### Writing Tests
-
-When adding new features:
-
-1. **Determinism tests** - If feature involves randomness:
-```python
-def test_new_feature_deterministic(self):
-    """Same seed produces same results."""
-    config = CoreSimConfig(seed=42, ...)
-    sim1 = SimulationBridge(core_config=config)
-    # Run and capture results
-    
-    sim2 = SimulationBridge(core_config=config)
-    # Run and compare
-    assert results1 == results2
-```
-
-2. **Correctness tests** - Validate expected behavior:
-```python
-def test_new_feature_correctness(self):
-    """Feature produces expected output."""
-    sim = SimulationBridge(...)
-    result = sim.new_feature()
-    assert result meets_expected_criteria
-```
-
-3. **Performance tests** - For optimization work:
-```python
-def test_new_feature_performance(self):
-    """Feature meets performance target."""
-    import time
-    start = time.time()
-    # Run feature
-    elapsed = time.time() - start
-    assert elapsed < TARGET_TIME
-```
-
-### Test Guidelines
-
-- Keep tests fast (<30s each)
-- Use small network sizes for unit tests
-- Clean up GPU memory after tests
-- Make tests reproducible (fixed seeds)
-
-## Performance Contributions
-
-### Before Making Changes
-
-1. Run baseline benchmarks:
-```bash
-python benchmark.py --output benchmarks/baseline_before.json
-```
-
-2. Profile if needed:
-```python
-gpu_config = GPUConfig(enable_profiling=True, profiling_detailed=True)
-sim = SimulationBridge(gpu_config=gpu_config)
-# ... run simulation ...
-sim.export_profiling_report("profile_before.json")
-```
-
-### After Making Changes
-
-1. Run benchmarks again:
-```bash
-python benchmark.py --output benchmarks/after_optimization.json
-```
-
-2. Compare:
-```bash
-python benchmark.py --compare benchmarks/baseline_before.json
-```
-
-3. Document performance improvements in PR:
-   - What was optimized
-   - Performance gains (%, absolute time)
-   - Any trade-offs made
-   - Benchmark results
-
-### Performance Guidelines
-
-- Profile before optimizing
-- Measure actual improvements
-- Don't sacrifice correctness for speed
-- Document any precision trade-offs
-- Test on multiple GPU architectures if possible
-
-## Pull Request Process
-
-### Before Submitting
-
-- [ ] All tests pass locally
-- [ ] Benchmarks run (for performance changes)
-- [ ] Documentation updated
-- [ ] Commit messages are clear
-- [ ] Code follows style guidelines
-- [ ] No debugging print statements left
-
-### PR Description Template
-
-```markdown
-## Description
-Brief summary of changes
-
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Performance improvement
-- [ ] Documentation update
-- [ ] Breaking change
-
-## Testing
-Describe testing performed
-
-## Performance Impact
-For performance-related changes:
-- Benchmark results
-- Memory usage changes
-- Any trade-offs
-
-## Checklist
-- [ ] Tests pass
-- [ ] Documentation updated
-- [ ] Follows coding standards
-```
-
-### Review Process
-
-1. Automated checks run (tests, linting)
-2. Code review by maintainer
-3. Address feedback
-4. Merge after approval
-
-## Areas for Contribution
-
-### High Priority
-
-- Additional neuron models (LIF, multi-compartment)
-- Network analysis tools
-- Export formats (SONATA, NeuroML)
-- Performance optimizations
-- Test coverage improvements
-
-### Medium Priority
-
-- UI improvements
-- Additional plasticity rules
-- Documentation enhancements
-- Example notebooks
-- Tutorial content
-
-### Advanced
-
-- Multi-GPU support
-- AMD ROCm/HIP port
-- Mixed precision training
-- Differentiable simulation modes
-
-## Getting Help
-
-- **Questions**: Open a GitHub Discussion
-- **Bugs**: Open a GitHub Issue with reproduction steps
-- **Features**: Open a GitHub Issue describing the use case
-- **Code**: Tag maintainer in PR comments
-
-## Code of Conduct
-
-- Be respectful and constructive
-- Focus on the code, not the person
-- Help others learn
-- Assume good intentions
-- Report harassment to maintainers
-
-## License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
-
----
-
-## Quick Reference
-
-### Common Commands
+Run the smallest relevant tests while iterating:
 
 ```bash
-# Run all tests
-pytest tests/ -v
-
-# Quick benchmark
-python benchmark.py --quick
-
-# Full benchmark
-python benchmark.py --output benchmarks/results.json
-
-# Run a navigation research runner (basal-ganglia action selection)
-python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800
-
-# Run a static probe of the action-selection circuit
-python -m research.runners.g11_bg_runner --probe-action W
-
-# Check GPU memory
-nvidia-smi
-
-# Format code (if using black)
-black neural-simulator.py sim/ experiment/ tests/
+SIM_BACKEND=numpy python -m pytest tests/test_strict_step_errors.py -q
+SIM_BACKEND=numpy python -m pytest tests/<affected_test>.py -q
 ```
 
-### File Structure
+Run GPU-specific tests with an explicit GPU backend on a suitable machine:
 
-```
-neural-simulator.py            # GUI host + main entry point (~2.2K lines)
-sim/                           # Core engine package (43 modules, ~15.9K lines of code)
-  __init__.py                  # public API: SimulationBridge, configs, enums
-  bridge.py                    # SimulationBridge — GPU state + step loop (largest module)
-  config.py                    # @dataclass configs (CoreSimConfig etc.)
-  enums.py                     # NeuronType, NeuronModel, preset managers
-  connectivity.py              # spatial / small-world / motif generators (CuPy/NumPy)
-  kernels.py                   # fused Izhikevich/HH/AdEx + plasticity kernels
-  profiles.py                  # NEURAL_STRUCTURE_PROFILES dict (region presets)
-  regions.py                   # BrainRegion, RegionPathway, RegionManager
-  neuromodulators.py           # declarative dopamine / norepinephrine / serotonin subsystem
-  backend.py                   # CuPy/NumPy backend abstraction (SIM_BACKEND)
-  data_bus.py                  # DataChannel pub/sub
-  replicas.py                  # replicated wiring (multi-network support)
-  text_embeddings.py           # token embeddings for language regions
-  visual_cortex.py             # Gabor/V1 receptive fields + retina rendering
-  lineage.py                   # continuous-learning state across sessions
-  progress.py                  # universal [PROGRESS] {json} event format
-  # ... plus ~28 more modules (synapse storage, tokenizers, learning rules, etc.)
-viz/                           # OpenGL renderer / camera / picker / overlays
-ui/                            # DearPyGUI panels / callbacks / layout / plots
-experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
-experiments/                   # YAML configs for headless parameter sweeps
-research/
-  runners/                     # ~1,270 headless experiment scripts (navigation, conversation/chat, memory consolidation, the word-meaning-learning experiments, the language generator, …); each runs via `python -m research.runners.<name>`
-  findings/                    # session-by-session research notes (~1,780 markdown docs, incl. negative results)
-  findings/raw/                # raw JSON output per experiment run
-  datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
-  experiment_runner.py         # YAML-driven sweep orchestrator
-  result_aggregator.py         # cross-condition rollup + pass/fail summary
-docs/
-  INDEX.md                     # documentation map — start here to navigate the docs
-  CURRENT-STATE.md             # what works today, technical details
-  SCIENCE_ROADMAP.md           # long-term scientific direction + results table
-  biology.md                   # neuroscience tour in plain language
-  diagrams/                    # live Mermaid architecture flowcharts (current + detailed)
-  plans/                       # per-feature design docs (paired with findings); current primary plan: 2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md
-webapp/                        # FastAPI dashboard (server.py + static/)
-tests/                         # 472 test files (mostly CPU-only)
-  test_determinism.py          # RNG determinism (init + step)
-  test_kernels_cpu.py          # CPU validation of fused kernels
-  test_experiment_system.py    # experiment engine + stimulus manager
-  test_neuromodulators.py      # neuromodulator subsystem
-  test_regions.py              # brain-region framework + plasticity gates
-  test_data_bus.py             # data-bus pub/sub
-  test_backend.py              # CuPy/NumPy backend parity
-  test_g{1,2,3,5,6,8,9}_runner_smoke.py  # per-runner smoke tests
-  test_g11_bg_runner_flags.py  # navigation runner flag tests
-  test_plastic_mask.py         # per-synapse plastic freeze
-  test_plastic_mask_checkpoint.py  # plastic mask survives checkpoints
-  test_progress.py             # universal [PROGRESS] event format
-  test_experiment_runner.py    # YAML sweep runner
-  test_result_aggregator.py    # cross-condition aggregator
-  ...
-benchmark.py                   # GPU throughput benchmark runner
-viz_benchmark.py               # visualization performance benchmark
-run_benchmarks.py              # biological validation suite (STDP timing, E/I balance, STP, gamma)
-run_experiment_headless.py     # run a built-in experiment preset without GUI
-run_parameter_sweep.py         # grid/zip parameter sweep with t-test + Cohen's d
-simulation_profiles/           # 47 brain-region JSON profiles + auto-tune cache
-simulation_checkpoints_h5/     # saved simulation state
-simulation_recordings_h5/      # frame-by-frame recordings
+```bash
+SIM_BACKEND=cupy python -m pytest tests/<affected_test>.py -q
 ```
 
-### Common Imports
+Broaden testing when changing `sim/bridge.py`, shared configuration, checkpoint
+formats, backend behavior, or cross-region integration. State which tests were
+not run and why.
 
-The engine exposes its public API through `sim/__init__.py`:
+For public-document changes, run:
 
-```python
-from sim import (
-    SimulationBridge, CoreSimConfig, VisualizationConfig,
-    RuntimeState, GPUConfig, NeuronModel, NeuronType,
-)
+```bash
+python tools/check_docs.py
 ```
 
-For research runners and brain-region work:
+## Pull Request Checklist
 
-```python
-from sim.regions import BrainRegion, RegionPathway
-from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
-from sim.enums import DefaultIzhikevichParamsManager, DefaultHodgkinHuxleyParams
-```
+- The change has one clear purpose.
+- Existing work and negative findings were checked first.
+- The whole-brain role and biological basis are explained when relevant.
+- New scaffolds are named, bounded, and assigned a removal condition.
+- Unit, integration, and causal-control evidence match the claim.
+- Commands, seeds, backend, artifacts, and hardware are recorded.
+- Performance was measured when the changed path is performance-sensitive.
+- Public status documents were updated only when committed evidence supports the
+  new wording.
+- No current document silently relies on a retracted or superseded result.
 
-Thank you for contributing! 🚀
+In the pull request description, separate what the code does, what the evidence
+shows, what remains uncertain, and what is still temporary.

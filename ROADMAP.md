@@ -1,284 +1,180 @@
-# Roadmap: One Grounded Spiking Brain
+# Roadmap
+
+This roadmap is organized around abilities the whole simulated brain must show.
+A working component is useful evidence, but it is not a completed capability
+until it changes the behavior of the same continuously running brain.
+
+## Destination
+
+Build a developing, fully spiking brain that can learn from a body, a world, and
+other people. It should form memories, needs, emotions, beliefs, and language as
+parts of one system; speak because of its own state; express uncertainty when
+its evidence is weak; and keep learning without requiring a datacenter.
+
+The target is not a text model wrapped in brain terminology. Computation that a
+biological brain would perform must ultimately be carried by neurons, synapses,
+local signals, and activity on the shared simulation substrate. The host
+computer may provide the body, world, sensory input, motor effects, storage,
+and measurement.
+
+## Design Constraints
+
+- **One brain:** perception, memory, motivation, action, and language must
+  interact through the same evolving spiking system.
+- **Grounded learning:** words and concepts must be learned through perception,
+  action, internal state, memory, and social consequences.
+- **Local mechanisms:** final learning and decision pathways must not depend on
+  an external answer key, symbolic controller, or host-side cognitive rule.
+- **Development:** the system should start small, add useful structure and
+  capacity as it learns, and consolidate experience without erasing older
+  learning.
+- **Ownable compute:** the practical target is high-end consumer hardware.
+  Sparse, event-driven, and local mechanisms should remain compatible with
+  future neuromorphic hardware.
+- **Visible scaffolding:** temporary shortcuts are allowed for research only
+  when their purpose, replacement, and removal test are recorded in the
+  [scaffold ledger](docs/SCAFFOLD-LEDGER.md).
+
+## Capability Roadmap
+
+### 1. Communicate For A Grounded Reason
+
+**Outcome:** the brain chooses whether to communicate, what kind of message to
+send, and what it refers to because of its perception, body state, memory, and
+expected social result.
+
+Build toward multiple needs, objects, and message types in a continuous world.
+The brain must learn the useful vocal action from contingent interaction rather
+than receive a desired output pattern from the host. A listener's response must
+change later neural activity and behavior.
+
+**Evidence required:** novel combinations of learned intent and referent work;
+removing the relevant need, perception, learned pathway, dopamine-like teaching
+signal, or social consequence removes the behavior; shuffled or unrelated
+rewards do not teach it; the result repeats across random seeds.
+
+This is the highest-priority capability. The single food-request result closes
+the smallest loop. A newer six-seed experiment learns two intent channels and
+two referent channels from contingent listener responses and composes the two
+combinations withheld from training. The next gates are intrinsic neural
+exploration, same-brain adaptation when a listener changes convention, broader
+meanings and contexts, and removal of the fixed raw-channel decoder.
+
+### 2. Turn Internal Messages Into Natural Speech
+
+**Outcome:** once the brain has decided to speak, a neural production pathway
+turns its message, certainty, affect, and conversational context into variable,
+coherent language.
+
+Near-term work can use a conventionally trained language circuit as a recorded
+scaffold downstream of the brain's message decision. In parallel, grounded
+word, sequence, and speech-motor learning must replace fixed concept labels,
+grammar frames, and host rendering.
+
+**Evidence required:** phrasing varies while meaning remains grounded; speech
+changes appropriately with memory, affect, and uncertainty; new words and
+constructions can be learned through interaction; removing message or grounding
+inputs changes or prevents the utterance.
+
+### 3. Know The Source And Strength Of Its Knowledge
+
+**Outcome:** confidence and honesty arise from the brain's own memory and
+decision state. It can answer, hedge, ask, or remain silent without consulting a
+host fact table or expected answer.
+
+Source memory must distinguish experienced, heard, self-generated, inferred,
+imagined, and uncertain content. Confidence and conflict signals must directly
+influence speech selection through the shared spiking network.
+
+**Evidence required:** familiar but incorrect recalls are downgraded; correct
+recalls remain usable; unknowns do not become assertions; source swaps change
+the report in the predicted direction; lesions to source or confidence pathways
+remove the effect; no symbolic source lookup is used during retrieval.
+
+### 4. Build A Lived, Reconstructive Memory
+
+**Outcome:** episodes are stored with context and source, later reconstructed,
+used to predict, and gradually consolidated into distributed knowledge.
+
+The brain needs pattern completion, replay, correction of old memories, and a
+controlled way to combine prior experience without turning memory into fixed
+database slots. Replay must train useful cortical pathways while preserving
+older learning.
 
-Last rewritten: 2026-08-03.
+**Evidence required:** partial cues recover appropriate episodes; changed facts
+update rather than duplicate indefinitely; replay causally improves later
+behavior; interference tests show retention; novel combinations are inferred
+without an answer table.
 
-This is the compact plan of record. It keeps the project aimed at the actual
-goal: one integrated spiking brain that learns from lived interaction and can
-eventually speak from its own grounded internal state.
+### 5. Develop Emotion, Motivation, And Curiosity
 
-The detailed experiment record lives in `research/findings/`. The dense live lab
-board lives in `GAP_CLOSURE_MISSION.md`. This document is for orientation and
-priorities.
+**Outcome:** changing internal states continuously influence attention, memory,
+learning, speech, and action. Emotion should be learned and graded, not a label
+or binary mood switch.
 
-## North Star
+Develop interoceptive body signals, appraisal of events relative to needs and
+relationships, persistent valence and arousal, and curiosity based on learning
+progress. These signals must participate in the same action and communication
+loops as perception and memory.
 
-Build a simulated brain that starts small, runs on ownable hardware, lives in a
-simple world, learns through interaction, develops memory and emotion, becomes
-curious about learnable unknowns, understands its own uncertainty, and grows
-toward open-ended conversation.
+**Evidence required:** internal-state changes alter several faculties; matched
+lesions remove the predicted effects; the brain distinguishes learnable novelty
+from noise; affect develops from history and can recover or change when
+conditions change.
 
-This is an artificial-life and neuroscience-engineering project, not a chatbot
-project. Language matters because it is one action a mind can take.
+### 6. Learn Continually And Grow
 
-## Rules That Keep Us Pointed Correctly
+**Outcome:** natural interaction produces durable learning throughout operation,
+old abilities survive new experience, and capacity expands only when needed.
 
-1. **One shared spiking brain.** Specialized regions are fine; separate programs
-   pretending to be regions are not the end state.
-2. **Host code is not cognition.** The host may run the outside world, the body
-   interface, files, visualization, and explicit scaffolds. Perception, memory,
-   value, affect, reasoning, self-modeling, and speech should move into neurons
-   and synapses.
-3. **Grounding before polish.** A simple grounded sentence is worth more than a
-   fluent sentence with no lived reference.
-4. **Integration before proxy scores.** A mechanism is useful when it serves its
-   role in the whole brain, not merely when it passes a narrow test.
-5. **Scaffolds must burn down.** Every shortcut needs a name, a reason, a
-   biological replacement, and a removal trigger.
-6. **Performance matters.** Faithful biology may be slow, but lazy slow code is
-   not faithfulness. Prefer sparse, local, event-driven computation.
-7. **Be honest about claims.** Build and measure functional correlates of mind;
-   do not assert subjective experience.
+This requires local credit assignment over useful time spans, replay-based
+consolidation, homeostatic stability, activity-dependent wiring, and explicit
+growth and pruning. External teaching should fade from structured caregiver
+interaction toward ordinary human interaction.
 
-## Where The Project Is Now
+**Evidence required:** learning continues after initial training; delayed
+consequences credit the right pathways; new learning does not erase established
+skills; added neurons or connections improve a measured capacity limit; the
+same behavior survives removal of oracle-like teaching.
 
-The simulator is strong enough to support real work: CPU and GPU backends, sparse
-spiking networks, brain-region wiring, neuromodulators, local plasticity,
-checkpointing, visualizers, many tests, and a large research harness.
+Deep credit assignment on real spikes is still an open research problem in this
+repository and must be treated as such.
 
-The brain pieces are real but incomplete. Navigation, memory, replay, reward,
-curiosity, affect-like state, simple conversation, and self-monitoring all have
-validated results. The correction is that many were validated in narrow settings
-or with scaffolds. They are building blocks, not finished human-like faculties.
+### 7. Scale Without Changing The Scientific Claim
 
-The immediate crux is a minimal lived loop:
+**Outcome:** richer worlds, memories, and language run efficiently on accessible
+hardware while preserving the same neural mechanisms.
 
-```text
-small world + body + internal state + speech/action + consequence + learning
-```
+Use the local GPU for large coupled simulations and the available CPU pool for
+independent trials and parameter searches. Improve sparse kernels, memory use,
+checkpointing, and workload scheduling before increasing scale.
 
-Without that loop, language keeps sliding back into text prediction and memory
-keeps sliding back into lookup.
+**Evidence required:** report wall time, memory, neuron and synapse counts, and
+energy-relevant activity; optimized and reference implementations agree; larger
+systems retain causal controls; normal development remains practical on
+consumer hardware.
 
-## Phase 0: Keep The Record Honest
-
-Goal: make drift hard.
-
-Build and maintain:
-
-- concise public docs for goal, status, and roadmap;
-- a scaffold ledger that names temporary shortcuts and their replacements;
-- finding templates that require role-in-the-whole, artifacts, provenance, and
-  controls;
-- gates that catch stale summaries, unsupported claims, missing artifacts, and
-  re-proposed dead ends;
-- clear separation between public orientation docs and dense lab boards.
-
-Current status: partially in place. The README, roadmap, current-state snapshot,
-and scaffold ledger are the public spine. The gates and finding workflow exist,
-but they still need stricter role-in-the-whole enforcement.
+## Near-Term Success Target
 
-## Phase 1: Build The Minimal Lived Loop
+The next meaningful prototype is a small continuously running brain in a simple
+world that can:
 
-Goal: one small brain runs continuously in a simple environment.
+- perceive several objects and body conditions;
+- learn which outcomes satisfy which needs;
+- learn at least two communicative intents and several referents;
+- choose speech or silence from internal state;
+- remember the source of a small set of experiences;
+- let uncertainty, affect, and curiosity alter what it does;
+- change future behavior after interaction with a person or caregiver;
+- retain earlier learning across continued experience.
 
-Build:
+Its speech may be simple. Success is an integrated, causal, developing system,
+not surface fluency.
 
-- a small world with objects, actions, simple needs, and a social partner;
-- a body interface where host code only enacts motor outputs and provides
-  sensory input;
-- a continuous shared loop rather than isolated experiment calls;
-- internal causes for speech, such as curiosity, surprise, uncertainty, need, or
-  affect;
-- feedback from the world or partner that changes future behavior.
+## How Progress Is Accepted
 
-Pass condition:
-
-The same external prompt should not be enough to determine the utterance. Speech
-must depend on internal state, recent experience, and learned grounding.
-
-Current rung:
-
-A first six-seed loop now joins learned food perception, an AgRP/POMC-inspired
-hunger/satiety drive, a neural request-versus-silence choice, and a world
-consequence on one bridge. A hungry brain requests the learned food; receiving
-it changes body state; the unchanged scene then produces silence. Lesioning the
-drive, perception, or learned association removes the request. This is one
-preverbal request with fixed teaching and decoding, not general conversation.
-
-## Phase 2: Make Language A Grounded Action
-
-Goal: words flow into and out of grounded brain state.
-
-Build:
-
-- comprehension from words or sounds into grounded concepts;
-- overlapping word, percept, action, and affect assemblies;
-- a preverbal-message path where internal state chooses what is worth saying;
-- a speech-production path that turns that message into ordered words and later
-  articulation-like motor output;
-- a contingent teacher loop where success, correction, and misunderstanding
-  reshape language.
-
-Current assets:
-
-- a six-seed grounded food-request loop in which internal need and learned
-  perception jointly determine whether the brain communicates;
-- bounded spiking speech paths;
-- concept-pool to word-output pathways;
-- basic question parsing and fact answering;
-- early contingent-teacher learning experiments;
-- a 267M-parameter recurrent language checkpoint whose RF spiking-forward path
-  now matches the ANN forward pass across six seeds under the current parity
-  test.
-
-Main risk: a corpus-trained generator can look like progress while still being
-ungrounded. It can remain as a scaffold only when clearly named.
-
-## Phase 3: Make Uncertainty Brain-Native
-
-Goal: the brain answers, hedges, asks, or abstains because its own self-model and
-source-monitoring state support that behavior.
-
-Build:
-
-- a self-schema region that reads attention, confidence, and authorship;
-- metacognitive monitors that predict whether first-order answers are reliable;
-- source-monitoring that distinguishes self-generated, heard, remembered, and
-  uncertain content;
-- routing from confidence/source state into speech behavior;
-- tests with missing facts, familiar-but-wrong facts, source mismatches, and
-  ambiguous memories.
-
-Current assets:
-
-- familiarity-based no-fabrication behavior;
-- self-schema, attention, authorship, and metacognition runners with lesion and
-  permutation controls;
-- a default-off production conversation hook that can hedge matched answers
-  without weakening the hard unknown-fact moat;
-- an exact source-metadata floor that caught the current mismatch failure mode;
-- a newer independent RF source-memory echo that catches the same six-seed
-  stressed failures without reading the exact source fact;
-- a plastic spiking source memory that learns proposition-to-external-source
-  support and feeds the production self-schema path. It removed the expected-
-  answer lookup at inference and passed the six-seed safety battery, with a
-  measured 3.8% correct-recall false-mismatch cost.
-
-Open point:
-
-The first learned source circuit is still separate from the rest of the brain.
-Its proposition code and source event are host-defined, and ACC-like monitoring,
-self-schema relay, and speech thresholds are not yet one learned co-resident
-pathway. That integration is the next honesty step.
-
-## Phase 4: Make Memory Predictive And Reconstructive
-
-Goal: memory behaves like memory, not like a database.
-
-Build:
-
-- episodic memory for lived events with self/other/source tags;
-- hippocampal completion and replay for consolidation and imagination;
-- cortical memory that stores distributed patterns without fixed fact slots;
-- reconsolidation so corrected memories update rather than duplicate;
-- retrieval that can return ambiguity instead of forcing one answer.
-
-Current assets:
-
-- pattern completion, replay, consolidation, and directional replay experiments;
-- wake/sleep round-trip infrastructure;
-- category and semantic-memory experiments;
-- known boundaries where exact stores or frozen reads were too scaffolded.
-
-## Phase 5: Develop Affect, Drive, And Curiosity
-
-Goal: emotion and motivation become continuous internal forces that shape what
-the brain notices, remembers, learns, says, and does.
-
-Build:
-
-- graded valence and arousal rather than a binary mood latch;
-- learned appraisal from events, goals, social feedback, and body state;
-- interoceptive/body signals tied into affect;
-- affective bias on attention, memory, speech choice, and action vigor;
-- curiosity based on learning progress over time, not raw novelty alone.
-
-Current assets:
-
-- dopamine-like reward prediction and value circuits;
-- persistent affect-like state with causal behavior effects in test settings;
-- dissociable neuromodulator axes;
-- curiosity circuits that can prefer learnable unknowns and avoid some
-  unlearnable noise.
-
-## Phase 6: Support Continual Learning And Growth
-
-Goal: the brain keeps learning from interaction without wiping itself, and grows
-only as it needs capacity.
-
-Build:
-
-- developmental growth of neurons, regions, and connections;
-- consolidation that protects old knowledge while admitting new experience;
-- local learning rules that work at useful scale on the chosen spiking substrate;
-- teacher-as-caregiver scaffolding that fades over time;
-- resource-aware scheduling across local CPU, local GPU, and available CPU pool
-  machines.
-
-Hardest science:
-
-Deep local credit assignment on real spikes remains a frontier. The practical
-route is to use local input learning, recurrent reservoirs, shallow readouts,
-one-shot memory, replay, and consolidation where they work, while continuing to
-measure the deeper learning-rule boundary honestly.
-
-## Phase 7: Scale While Staying Ownable
-
-Goal: grow toward richer conversation without becoming datacenter-only.
-
-Build:
-
-- larger grounded vocabularies and richer sensory/social experience;
-- sparse and event-driven implementations of heavy pathways;
-- GPU kernels that preserve the model rather than changing it;
-- CPU-pool fanout for independent seeds and parameter sweeps;
-- explicit memory/runtime/throughput accounting;
-- design choices compatible with future neuromorphic hardware.
-
-Success means the brain becomes larger because experience and growth require it,
-not because a giant static model was preallocated.
-
-## Highest Priority Work Now
-
-1. **Generalize the grounded speech-action loop.** Learn several referents and
-   intents from contingent interaction, add another internal cause such as
-   curiosity or uncertainty, and remove the fixed apple-request decoder.
-2. **Finish the honesty integration.** Move the learned source populations onto
-   the shared brain and connect their spikes directly through ACC-like monitoring
-   and self-schema to speech certainty.
-3. **Use the larger language-circuit scaffold carefully.** The 267M WKV
-   checkpoint has six-seed RF spiking-forward parity. Use it only as a ledgered
-   fluency scaffold after the brain has chosen a grounded message and whether to
-   speak.
-4. **Keep the scaffold ledger current.** New shortcuts should never enter the
-   repo unnamed.
-5. **Use compute in parallel.** Keep the GPU on the highest-value long run while
-   CPU lanes handle independent seeds, tests, docs, and smaller de-risking work.
-
-## Short Success Target
-
-A narrow but real prototype:
-
-- one brain;
-- one small world;
-- a body;
-- grounded perception of a few objects and actions;
-- internal needs, affect, and curiosity;
-- a simple self-confidence/source read;
-- speech caused by internal state;
-- interaction with a teacher or person that changes future speech and behavior;
-- honest abstention or asking when grounding is missing.
-
-This prototype may speak simply. It does not need to sound like a large language
-model yet. It needs to be stateful, grounded, learning, internally driven, and
-integrated.
+A capability claim should include a reproducible artifact, multiple random
+seeds when practical, matched controls, and a test showing that the named neural
+mechanism is necessary. Results that depend on fixed labels, host decisions, or
+external training remain valuable experiments, but stay marked as partial until
+their scaffolds pass the removal conditions in the ledger.

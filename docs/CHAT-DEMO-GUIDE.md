@@ -1,5 +1,10 @@
 # Chat demo guide — talking to the biology-grounded conversational brain
 
+> **Historical demo guide.** These interfaces remain useful research examples,
+> but the descriptions below overstate how much cognition is learned and
+> brain-native. Read [Current State](CURRENT-STATE.md) before interpreting a
+> demo, and use the [User Guide](../USER_GUIDE.md) for current workflows.
+
 A guide to running and understanding the conversational demos, from the
 **grounded conversational agent** (the whole pipeline running on one spiking
 brain) through the newer research-stage capabilities (discovering categories,

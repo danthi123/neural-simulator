@@ -1,50 +1,47 @@
 # Scaffold Ledger
 
-Last rewritten: 2026-08-03.
+A scaffold is host code, fixed structure, external training, or privileged
+information that helps build or test a capability but is not part of the target
+biological mechanism. Scaffolds are acceptable only while they remain visible,
+have a replacement path, and do not silently become the claimed intelligence.
 
-This ledger names temporary shortcuts that are useful for research but are not
-the final brain. A scaffold is allowed only when it helps us build or measure the
-real mechanism and when its replacement path is visible.
+`Active` means a current path depends on it. `Comparison` means a newer path
+exists but the scaffold remains for safety or measurement. `Instrument` means
+it may observe a run but must never choose the brain's behavior. Ownership dates
+and statuses are left `TBD` or `Unknown` where the repository does not establish
+them.
 
-## Rule
+## Actionable Ledger
 
-Every scaffold needs:
+| Scaffold | Why it exists | Owner / area | Introduced | Biological replacement | Removal gate | Status |
+|---|---|---|---|---|---|---|
+| Conventionally trained recurrent language circuit | Supplies enough sequence fluency to test whether a large trained computation can execute through a spiking read path. | TBD / language | Unknown; spiking-forward runner present by 2026-07-23 | Grounded cortical language and speech-motor circuits learned through perception, action, social feedback, local plasticity, and replay. | A shared brain learns new words and constructions through interaction and produces coherent phrasing from its own message without the pretrained circuit. | Active research scaffold; keep downstream of message choice. |
+| Host query parser and discourse planner | Makes constrained conversation demos usable and routes questions to existing memories and renderers. | TBD / conversation | Unknown; conversational agent present by 2026-06-04 | Learned sensory-language comprehension, working memory, action selection, and cortical speech planning on the shared substrate. | Basic grounded dialogue still works when host parsing and planning are disabled, including unfamiliar combinations and causal lesions. | Active in conversation demos. |
+| Host abstention and confidence rules | Prevent unsupported answers in current production paths with fixed thresholds and Python decisions. | TBD / honesty and speech policy | Present by 2026-05-17 | Learned anterior-prefrontal and conflict-monitoring populations, source memory, and speech inhibition/action selection connected by spikes. | Familiar-but-wrong, unknown, ambiguous, and correct cases pass across seeds while host thresholds and expected-answer access are disabled. | Active safety scaffold. |
+| Fixed single food-request decoder and explicit pairing | Establishes the smallest closed chain from perception and hunger to communication, consequence, and satiety. | TBD / grounded communication | 2026-08-03 | Locally learned perception-body-intent-referent policies, competing action populations, and learned message-to-speech pathways. | The brain learns several intents and referents from consequences, handles unseen combinations, and adapts within the same brain to a changed listener convention without new decoder rules. | Comparison prototype. A two-by-two raw convention now learns in a separate validated experiment, but words and same-brain adaptation remain open. |
+| Balanced injected vocal motor babbling | Ensures an early brain tries every raw speak, intent, and referent channel often enough for contingent consequences to provide a learning signal; the schedule never reads the desired action or listener mapping. | TBD / grounded communication | 2026-08-03 | Intrinsically generated exploration from drive, novelty, and motor variability, with caregiver responses arriving through ordinary sensory pathways. | Multi-intent and multi-referent learning remains reliable when runner-injected motor current and the balanced schedule are removed. | Active validated scaffold in the developmental-vocal result. |
+| Exact source-fact lookup | Catches a recalled answer that disagrees with the stored Python fact record. | TBD / source monitoring | 2026-08-03 | Episodic source assemblies and metacognitive confidence derived from lived neural activity. | The co-resident learned source path matches or exceeds the safety battery without reading the exact source fact. | Comparison and emergency safety scaffold. |
+| Engineered independent source-memory echo | Provides a separate distributed trace against which a recalled proposition can be checked. | TBD / source monitoring | 2026-08-03 | Source representations learned from sensory context, corollary discharge, and episodic binding rather than written as a second memory by construction. | Learned co-resident source memory passes source-class, permutation, lesion, and retention tests without the engineered echo. | Comparison scaffold. |
+| Host-coded proposition and explicit source event in the plastic source monitor | Lets a spiking pathway learn whether a complete proposition was paired with external evidence. | TBD / source monitoring | 2026-08-03 | Distributed proposition and source assemblies formed during lived perception, recall, inference, imagination, and self-generated action. | One shared network distinguishes external, self-generated, inferred, imagined, and uncertain sources without host hashes, symbolic events, normalization, or scalar routing. | Active, default-off research scaffold. |
+| Hand-designed concept, role, and memory codes | Makes binding, recall, category, and language experiments tractable at small scale. | TBD / representation and memory | Unknown | Overlapping sensory, motor, interoceptive, affective, and lexical assemblies formed by experience and local plasticity. | A novel concept is acquired from interaction, stored, composed, recalled, and used in behavior without allocating a host-defined code or slot. | Active and widespread. |
+| Fixed grammar frames and text renderers | Produce readable bounded utterances and isolate content-selection experiments. | TBD / speech production | Unknown | Learned temporal language sequencing and speech-motor control driven by a preverbal neural message. | Coherent simple speech survives removal of templates; wording responds causally to message, context, affect, and certainty. | Active in several demos. |
+| Host-computed novelty, appraisal, confidence, or learning-progress values | Provides candidate psychological signals while their neural mechanisms are tested. | TBD / affect, curiosity, and metacognition | Unknown | Spiking familiarity, prediction error, interoception, appraisal, and fast-versus-slow learning-progress circuits feeding local modulatory pathways. | Each host value is replaced by a lesionable neural signal that preserves behavior across seeds and in the integrated live loop. | Active in selected experiments. |
+| Hand-set weights, thresholds, and fixed regional wiring | Establishes operating points and tests whether proposed circuit anatomy can support a behavior. | TBD / simulator-wide mechanisms | Unknown | Activity-dependent wiring, local plasticity, homeostasis, development, growth, and pruning. | The claimed behavior develops from an allowed initial condition and survives seed, scale, and perturbation tests without task-specific weight or threshold tuning. | Active and widespread. |
+| AI teacher or scripted caregiver | Supplies early demonstrations, correction, curriculum, and contingent social consequences. | TBD / developmental environment | Unknown | Ordinary sensory and social experience with human feedback; the brain's own local learning determines the change. | Structured teaching can be reduced or removed while the brain continues to learn useful behavior from natural interaction. | Active in selected developmental experiments. |
+| Measurement readouts, snapshots, scoring scripts, and artifact tools | Make internal activity, causal controls, repeatability, and regressions observable. | TBD / research infrastructure | Unknown | No biological replacement is needed for an external scientific instrument. | Keep permanently only if production behavior is unchanged when the instrument is absent and no measured value is fed back as a hidden decision signal. | Instrument; permitted for observation only. |
 
-- a plain name;
-- what it currently helps with;
-- why it is not final;
-- the biological or brain-native replacement;
-- a trigger for removing or demoting it.
+## Required Workflow
 
-Evaluation tools are allowed to inspect the brain from the outside. The problem
-is when an evaluation tool or host helper becomes the thing doing cognition.
+Before a scaffolded result is described as a capability:
 
-## Current Scaffolds
+1. Add or update its row, including an owner or `TBD`.
+2. Link the code and evidence that depend on it.
+3. Turn the removal gate into a reproducible test with matched controls.
+4. Show that the replacement performs the cognitive work on the spiking
+   substrate.
+5. Remove, demote, or retain the scaffold only as an external instrument or
+   clearly labeled safety comparison.
 
-| Scaffold | What it helps with | Why it is not final | Replacement path | Burn-down trigger |
-|---|---|---|---|---|
-| Conventional language-model training | Gives language experiments enough sequence structure to test larger circuits. | It learns text continuation outside grounded lived interaction. | Grounded speech-as-action learned from perception, action, affect, memory, and contingent social feedback. | A brain-native language path can choose and render simple utterances from internal state in the live loop. |
-| Host-side query parsing and discourse planning | Makes current conversation demos usable and testable. | The host decides much of what the brain should interpret or say. | Neural comprehension, preverbal message formation, and speech planning on the shared substrate. | Removing the parser/planner does not collapse basic grounded dialogue in the live loop. |
-| Single grounded food-request prototype | Tests the first closed need-to-communication-to-consequence loop. | A caregiver explicitly pairs apple perception with food; need/cue competition, one `request apple` decoder, thresholds, and major pathway weights are fixed. Counterfactual snapshots are evaluation instruments. | Learn several need-object-intent associations and message outputs through contingent interaction, local plasticity, homeostasis, and development. | The live brain acquires a new referent and intent from interaction, chooses among them, and adapts after consequences without adding host decoder rules. |
-| Exact source metadata floor | Prevents current known-fact recalls from confidently asserting answers that disagree with the exact stored source fact. | It reads a Python fact record, which is database-like source access. | Learned source-monitoring tied to self-schema confidence. | Met: the plastic source path covers the six-seed safety battery without exact source metadata. Retain this only as a comparison and emergency safety scaffold. |
-| Independent RF source-memory echo | Gives the honesty hook a separate RF/FHRR memory trace to check whether a candidate answer fits the cue. | The echo is deliberately written at store time with engineered codes; it is not learned developmental source monitoring. | Plastic source tags feeding ACC/aPFC and self-schema on the shared brain. | Met for the first learned rung. Demote the echo from preferred research mode; retain it as a comparison while the learned path is made co-resident. |
-| Plastic proposition-to-source monitor | Learns whether a complete candidate proposition was paired with an external experience, then lowers self-schema confidence when support is absent. | Sparse proposition codes are host-hashed, the source event is explicit, the circuit uses a dedicated bridge, and host code normalizes spikes and routes a scalar. | Source assemblies formed by lived sensory/corollary-discharge activity, co-resident with learned ACC/aPFC and self-schema pathways. | A shared-brain lived-loop gate distinguishes heard, seen, self-generated, inferred, and uncertain content without symbolic source events or host confidence routing. |
-| Hand-designed concept and role codes | Makes binding, recall, and early language experiments tractable. | The code geometry is assigned by the host instead of learned from perception/action/affect. | Self-organized grounded assemblies with overlapping sensory, motor, affective, and word representations. | New concepts can be acquired from interaction and used by memory/language without manually assigned codes. |
-| Fixed grammar frames and render templates | Allows simple SVO-style speech and question answering. | Word order and phrasing are supplied by host structure rather than emerging from a language circuit. | Neural message-to-word-order production and later articulation-like motor output. | Simple speech remains coherent after templates are removed or used only as evaluation labels. |
-| Host-computed novelty, appraisal, confidence, or learning-progress scalars | Speeds de-risking of curiosity, affect, and honesty circuits. | The host computes the psychological signal instead of the brain. | Spiking familiarity, prediction-error, appraisal, and metacognitive circuits feeding neuromodulators and self-schema. | Lesionable brain signals replace the host scalar and preserve behavior across seeds. |
-| Hand-set pathway weights or fixed region wiring | Lets us test whether a circuit shape is worth pursuing. | Development should tune and wire useful pathways through local learning and growth. | Local plasticity, developmental wiring rules, homeostasis, replay, and growth. | The same behavior survives with learned/self-organized weights and appropriate collapse controls. |
-| AI teacher/caregiver | Provides early social interaction, correction, and curriculum. | The teacher is an external scaffold and may smuggle intelligence into training. | Gradual handoff to human interaction and simpler world feedback, with the brain's own learning doing the work. | The brain continues learning useful language/behavior from natural interaction after teacher support is reduced. |
-| Measurement readouts and artifact scripts | Make science auditable. | They are outside observers and should not drive behavior unless explicitly modeled as sensory feedback. | Keep them as instruments only; move behavioral decisions into neural circuits. | Reports and gates can observe the brain, but production behavior no longer depends on the measurement script. |
-
-## Workflow
-
-When adding or promoting a mechanism:
-
-1. State its role in the whole brain.
-2. Name any scaffold it introduces or relies on.
-3. Add or update the ledger entry.
-4. Define the replacement and burn-down trigger.
-5. Run tests that would fail if the scaffold silently became the capability.
-
-This file is intentionally compact. The detailed evidence remains in
-`research/findings/`.
+The key distinction is causal: external tools may create the world and measure
+the brain, but they must not decide what the brain perceives, believes, learns,
+or says while the project claims that the brain did so.

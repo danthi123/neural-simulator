@@ -1,133 +1,142 @@
 # Quickstart
 
-This gets the repo installed and gives you a few safe first runs. The project is
-large, so the goal here is orientation, not a full research workflow.
+This guide gets a fresh checkout to a verified CPU or NVIDIA GPU setup. Run all
+commands from the repository root; this project does not currently install as a
+Python package.
 
 ## Requirements
 
-- Python 3.10 or newer.
-- Linux, Windows, or macOS for the CPU backend.
-- NVIDIA GPU plus a matching CuPy package for GPU runs.
-- `git`, `pip`, and enough disk for research artifacts.
+- Python 3.10 or newer. Python 3.11 is used for current development.
+- Git and `pip`.
+- For GPU use: a supported NVIDIA GPU, working NVIDIA driver, and a CuPy package
+  compatible with the CUDA runtime you intend to use.
 
-The project is developed day to day on Linux with NVIDIA hardware. CPU mode is
-slower but is the right default for quick tests and many research runners.
-
-## Install
+## Create An Environment
 
 ```bash
-git clone https://github.com/danthi123/neural-simulator
+git clone https://github.com/danthi123/neural-simulator.git
 cd neural-simulator
-
 python -m venv .venv
 source .venv/bin/activate
-
 python -m pip install --upgrade pip
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
 ```
 
-On Windows PowerShell:
+On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1` instead.
 
-```powershell
-py -3.11 -m venv .venv
-.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+## CPU-Only Setup
+
+Do **not** install `requirements.txt` on a CPU-only machine. That file currently
+includes `cupy-cuda12x` and is a full NVIDIA/CUDA 12 environment, not a portable
+base manifest.
+
+Install the headless CPU dependencies:
+
+```bash
+python -m pip install numpy scipy h5py pyyaml
 ```
 
-## Choose A Backend
+Install test dependencies when developing:
 
-CPU mode:
+```bash
+python -m pip install -r requirements-dev.txt
+```
+
+Verify that NumPy and SciPy are selected:
+
+```bash
+SIM_BACKEND=numpy python - <<'PY'
+from sim.backend import get_backend, get_sparse_module
+
+_, name = get_backend()
+print("backend:", name)
+print("sparse module:", get_sparse_module().__name__)
+PY
+```
+
+Expected output includes `backend: numpy` and `scipy.sparse`. Then run a focused
+CPU smoke test:
 
 ```bash
 SIM_BACKEND=numpy python -m pytest tests/test_strict_step_errors.py -q
 ```
 
-GPU mode:
+The desktop GUI and several older headless launchers still import CuPy directly.
+CPU-only users should use backend-compatible tests and research modules, checking
+each module's header before running it.
+
+## NVIDIA GPU Setup
+
+First confirm that the driver can see the GPU:
 
 ```bash
-python - <<'PY'
-from sim.backend import xp
-print(xp.__name__)
+nvidia-smi
+```
+
+Install the simulator and desktop dependencies:
+
+```bash
+python -m pip install numpy scipy h5py pyyaml
+python -m pip install dearpygui PyOpenGL PyOpenGL-accelerate psutil hdf5plugin
+```
+
+Then install the CuPy wheel matching your CUDA environment. The repository's
+current full manifest uses the CUDA 12 wheel:
+
+```bash
+python -m pip install cupy-cuda12x
+```
+
+Use a different official CuPy wheel when your CUDA runtime requires it; do not
+install more than one CuPy package in the same environment.
+
+Verify the GPU backend:
+
+```bash
+SIM_BACKEND=cupy python - <<'PY'
+from sim.backend import get_backend, get_device_properties
+
+_, name = get_backend()
+print("backend:", name)
+print("device:", get_device_properties().get("name"))
 PY
 ```
 
-If the GPU path is active, this should print a CuPy module name. If you want to
-force CPU mode for a command, prefix it with `SIM_BACKEND=numpy`.
-
-## First Runs
-
-Run a short CPU conversation demo:
+Launch the desktop simulator:
 
 ```bash
-SIM_BACKEND=numpy python -m research.runners.chat_demo --seed 43
+SIM_BACKEND=cupy python neural-simulator.py
 ```
 
-Run the GUI on a CUDA-capable machine:
+## Optional Components
+
+Tests and coverage:
 
 ```bash
-python neural-simulator.py
+python -m pip install -r requirements-dev.txt
 ```
 
-Run the test suite:
+Research dashboard:
 
 ```bash
-pytest tests/ -q
+python -m pip install -r webapp/requirements.txt
+SIM_BACKEND=numpy python -m uvicorn webapp.server:app --port 8765
 ```
 
-Run a focused test while developing:
+Open `http://127.0.0.1:8765`. Use `SIM_BACKEND=cupy` instead when launching
+GPU research runs from the dashboard.
 
-```bash
-SIM_BACKEND=numpy python -m pytest tests/test_laneC_self_schema_honesty_wirein.py -q
-```
+## Backend Rules
 
-## Working With Research Runs
+- Set `SIM_BACKEND=numpy` for CPU work.
+- Set `SIM_BACKEND=cupy` for NVIDIA GPU work.
+- Leaving it unset auto-detects CuPy first, but explicit selection makes research
+  runs reproducible and prevents an unnoticed device change.
+- In PowerShell, set it with `$env:SIM_BACKEND="numpy"` or
+  `$env:SIM_BACKEND="cupy"` before the Python command.
 
-Most experiments live in `research/runners/` and write raw results into
-`research/findings/raw/`. A good research run should usually produce:
+## Next Steps
 
-- a raw JSON artifact;
-- a provenance sidecar;
-- a dated finding in `research/findings/`;
-- controls or lesion/permutation tests when claiming a mechanism works.
-
-Before starting new research work, use the repo's preflight:
-
-```bash
-tools/before_you_build.sh <short_name> "<plain description of the work>"
-```
-
-After writing a finding, run the relevant docs and claim gates:
-
-```bash
-python tools/check_docs.py
-python tools/finding_status.py --check research/findings/<finding>.md
-python tools/claim_check.py research/findings/<finding>.md
-```
-
-## Troubleshooting
-
-**CuPy import fails.** Install the CuPy package matching your CUDA stack, for
-example `cupy-cuda12x` for CUDA 12.
-
-**A run is too slow.** Force CPU only for small tests with `SIM_BACKEND=numpy`,
-or use the GPU for large single runs. For independent seeds, prefer parallel CPU
-workers.
-
-**CUDA runs out of memory.** Use smaller model/run settings, reduce batch/step
-counts, or switch that smoke test to CPU.
-
-**Windows line endings or long paths cause noisy diffs.** Use
-`git diff --ignore-cr-at-eol` for inspection and enable long paths if checkout
-fails.
-
-## Where To Go Next
-
-- [README.md](README.md) - project overview.
-- [ROADMAP.md](ROADMAP.md) - current plan and priorities.
-- [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md) - honest capability status.
-- [docs/SCAFFOLD-LEDGER.md](docs/SCAFFOLD-LEDGER.md) - temporary shortcuts and
-  replacement paths.
-- [research/findings/](research/findings/) - detailed evidence record.
+- [User Guide](USER_GUIDE.md): working interfaces and workflows.
+- [Current State](docs/CURRENT-STATE.md): what the project can and cannot do.
+- [Roadmap](ROADMAP.md): current priorities.
+- [Contributing](CONTRIBUTING.md): engineering and research expectations.
