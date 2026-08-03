@@ -397,6 +397,11 @@ class SimulationBridge:
         # thresholds; this narrower mask controls which thresholds UPDATE.
         # None preserves the legacy all-neuron update exactly.
         self.cp_homeostasis_update_neuron_mask = None
+        # Optional runtime scope for Ornstein-Uhlenbeck background current.
+        # The OU state and RNG stream still update for every neuron; this mask
+        # only controls which neurons receive that current. None preserves the
+        # legacy all-neuron behavior exactly.
+        self.cp_ou_neuron_mask = None
         # Per-region parameter HETEROGENEITY mask (2026-06-18): bool per-neuron,
         # True for neurons in regions with BrainRegion.enable_heterogeneity=True,
         # else False. Built like cp_nmda_neuron_mask / cp_homeostasis_neuron_mask
@@ -1937,7 +1942,7 @@ class SimulationBridge:
                         inh_indices_concat.extend(self.region_manager.inhibitory_indices(region.name))
                     self.inject_explicit_wiring(
                         plan,
-                        output_inhibitory_indices=inh_indices_concat or None,
+                        output_inhibitory_indices=inh_indices_concat,
                     )
                 else:
                     self._log_console("Generating connections (3D)...")
@@ -2625,9 +2630,11 @@ class SimulationBridge:
             pre_indices, post_indices, initial_weights, plastic (bool),
             conn_type (string, informational).
 
-        If `output_inhibitory_indices` is non-empty, those neurons' trait is
-        set to 1 (inhibitory) so their outgoing synapses route through the
-        inhibitory conductance channel. Used for G1's lateral-inhibition layer.
+        If `output_inhibitory_indices` is provided, those neurons receive the
+        configured inhibitory trait and every other neuron receives a
+        non-inhibitory trait. This makes explicit population polarity
+        authoritative instead of leaving nominally excitatory neurons with
+        random inhibitory traits. Passing None preserves legacy traits.
 
         Side effects:
             - rebuilds self.cp_connections from the explicit edges
@@ -2998,16 +3005,36 @@ class SimulationBridge:
         else:
             self.cp_synapse_action_tag = None
 
-        # Flip output trait to inhibitory if requested (enables lateral inhibition).
-        if output_inhibitory_indices:
-            inh_idx_cp = cp.asarray(np.asarray(output_inhibitory_indices, dtype=np.int32))
+        # Explicit population polarity is authoritative when supplied. The
+        # generic profile initializes random traits, which otherwise makes a
+        # fraction of every nominally excitatory region transmit inhibition.
+        if output_inhibitory_indices is not None:
+            inhibitory_trait = int(getattr(
+                self.core_config, "inhibitory_trait_index", 1
+            ))
+            configured_inhibitory = set(int(v) for v in getattr(
+                self.core_config, "inhibitory_trait_indices", []
+            ))
+            configured_inhibitory.add(inhibitory_trait)
+            excitatory_trait = 0
+            while excitatory_trait in configured_inhibitory:
+                excitatory_trait += 1
+            if self.core_config.num_traits <= excitatory_trait:
+                self.core_config.num_traits = excitatory_trait + 1
             if self.cp_traits is None:
-                self.cp_traits = cp.zeros(n, dtype=cp.int32)
-            self.cp_traits[inh_idx_cp] = 1
-            if 1 not in self.core_config.inhibitory_trait_indices:
-                self.core_config.inhibitory_trait_indices = list(
-                    set(list(self.core_config.inhibitory_trait_indices) + [1])
+                self.cp_traits = cp.full(
+                    n, excitatory_trait, dtype=cp.int32
                 )
+            else:
+                self.cp_traits[:] = cp.int32(excitatory_trait)
+            if len(output_inhibitory_indices) > 0:
+                inh_idx_cp = cp.asarray(np.asarray(
+                    output_inhibitory_indices, dtype=np.int32
+                ))
+                self.cp_traits[inh_idx_cp] = cp.int32(inhibitory_trait)
+            self.core_config.inhibitory_trait_indices = sorted(
+                configured_inhibitory
+            )
 
         # Invalidate any caches that depend on connections or traits.
         self._invalidate_coo_cache()
@@ -6408,6 +6435,12 @@ class SimulationBridge:
                 + self.ou_noise_std * noise_samples
             )
             ou_current = self.cp_ou_current
+            if self.cp_ou_neuron_mask is not None:
+                ou_current = cp.where(
+                    self.cp_ou_neuron_mask,
+                    ou_current,
+                    cp.float32(0.0),
+                )
         else:
             ou_current = self._step_megakernel_scratch_zeros()
 
@@ -6615,6 +6648,12 @@ class SimulationBridge:
                 + self.ou_noise_std * noise_samples
             )
             ou_current = self.cp_ou_current
+            if self.cp_ou_neuron_mask is not None:
+                ou_current = cp.where(
+                    self.cp_ou_neuron_mask,
+                    ou_current,
+                    cp.float32(0.0),
+                )
         else:
             ou_current = self._step_megakernel_scratch_zeros()
 
@@ -7513,9 +7552,16 @@ class SimulationBridge:
                     self.ou_mean * (1.0 - self.ou_decay_factor) +
                     self.ou_noise_std * noise_samples
                 )
-                
+
                 # Add OU current to total input
-                total_input_current_pA = total_input_current_pA + self.cp_ou_current
+                ou_current = self.cp_ou_current
+                if self.cp_ou_neuron_mask is not None:
+                    ou_current = cp.where(
+                        self.cp_ou_neuron_mask,
+                        ou_current,
+                        cp.float32(0.0),
+                    )
+                total_input_current_pA = total_input_current_pA + ou_current
 
             if _profiling: _backend_synchronize(); _prof['t_syn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 3. Neuron Model Dynamics Update ---
