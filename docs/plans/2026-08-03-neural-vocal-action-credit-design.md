@@ -186,6 +186,15 @@ active. Gate B therefore requires an action-conditioned spiking value critic
 that subtracts expected value at SNc before development seeds are opened. See
 the [Gate B v1 finding](../../research/findings/2026-08-03-neural-vocal-credit-gateB-v1-yoked-NO-GO.md).
 
+**Gate B v4 smoke successor, 2026-08-03:** Gate B v3 subsequently localized
+the remaining failure to bounded action value not persisting to outcome time.
+The sealed v4 successor reuses v3 and the existing graded dendritic-plateau
+substrate to test an action-local expectation trace plus a symmetric generic
+outcome read. Its biology evidence, limitations, fresh locked partitions,
+exact operating point, controls, and seed-zero-only protocol are preregistered
+in the [v4 smoke plan](2026-08-03-neural-vocal-action-credit-gateB-v4-smoke.md).
+No v4 scientific seed is open.
+
 ### Gate C: Same-Brain Convention Reversal
 
 Only after Gates A and B pass all four development seeds, connect three copies
