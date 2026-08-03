@@ -1,0 +1,26 @@
+{
+ "run_id": "1785777330-479182",
+ "runner": "research/runners/_replay_cortical_consolidation_gate.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_replay_cortical_consolidation_gate.py",
+  "--seeds",
+  "213",
+  "--out",
+  "research/findings/raw/parallel_gates/replay_cortical_consolidation_calibration_seed213.json"
+ ],
+ "git_sha": "3e81de8103a2c7e1df2aaff5c937393d4f8c825a",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "a754df9859cfb23c7b2d77b278416fdb49bf175c22b04aaf3eaec512bf2d184c",
+ "started": "2026-08-03T13:15:30",
+ "env": {
+  "POOL_CHECKED_REASON": "replay calibration evidence refresh: preserve measured no-go while adding machine-readable validity preconditions from exact committed runner",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/parallel_gates/replay_cortical_consolidation_calibration_seed213.json"
+}

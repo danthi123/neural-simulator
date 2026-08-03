@@ -1,0 +1,879 @@
+{
+  "gate": "replay_cortical_consolidation_calibration_v1",
+  "seed_policy": {
+    "calibration": [
+      212,
+      213
+    ],
+    "development_reserved": [
+      214,
+      215,
+      310
+    ],
+    "held_out_reserved": [
+      311,
+      312,
+      313
+    ]
+  },
+  "config": {
+    "n_ca3": 72,
+    "n_ca1": 48,
+    "n_cue": 48,
+    "n_target": 48,
+    "ca3_assembly": 24,
+    "ca3_overlap": 0,
+    "ca1_assembly": 16,
+    "cue_assembly": 16,
+    "cue_overlap": 6,
+    "target_assembly": 16,
+    "encode_a_events": 14,
+    "encode_b_events": 20,
+    "encode_on_steps": 12,
+    "encode_off_steps": 8,
+    "sleep_events": 24,
+    "sleep_noise_cells": 12,
+    "sleep_noise_steps": 15,
+    "sleep_free_steps": 15,
+    "probe_steps": 45,
+    "probe_cue_fraction": 0.5,
+    "encode_drive_pA": 1100.0,
+    "sleep_drive_pA": 1500.0,
+    "probe_drive_pA": 1250.0,
+    "ca3_initial_weight": 0.05,
+    "ca3_to_ca1_weight": 18.0,
+    "index_initial_weight": 0.05,
+    "cortical_initial_weight": 0.05,
+    "cortical_target_recurrent_weight": 1.0,
+    "hebbian_learning_rate": 0.025,
+    "cortical_sleep_learning_rate": 2.0,
+    "hebbian_max_weight": 90.0,
+    "hebbian_coactivity_decay": 0.9,
+    "hebbian_coactivity_thresh": 0.01,
+    "propagation_strength": 0.12
+  },
+  "results": [
+    {
+      "seed": 213,
+      "conditions": {
+        "intact": {
+          "seed": 213,
+          "condition": "intact",
+          "config": {
+            "n_ca3": 72,
+            "n_ca1": 48,
+            "n_cue": 48,
+            "n_target": 48,
+            "ca3_assembly": 24,
+            "ca3_overlap": 0,
+            "ca1_assembly": 16,
+            "cue_assembly": 16,
+            "cue_overlap": 6,
+            "target_assembly": 16,
+            "encode_a_events": 14,
+            "encode_b_events": 20,
+            "encode_on_steps": 12,
+            "encode_off_steps": 8,
+            "sleep_events": 24,
+            "sleep_noise_cells": 12,
+            "sleep_noise_steps": 15,
+            "sleep_free_steps": 15,
+            "probe_steps": 45,
+            "probe_cue_fraction": 0.5,
+            "encode_drive_pA": 1100.0,
+            "sleep_drive_pA": 1500.0,
+            "probe_drive_pA": 1250.0,
+            "ca3_initial_weight": 0.05,
+            "ca3_to_ca1_weight": 18.0,
+            "index_initial_weight": 0.05,
+            "cortical_initial_weight": 0.05,
+            "cortical_target_recurrent_weight": 1.0,
+            "hebbian_learning_rate": 0.025,
+            "cortical_sleep_learning_rate": 2.0,
+            "hebbian_max_weight": 90.0,
+            "hebbian_coactivity_decay": 0.9,
+            "hebbian_coactivity_thresh": 0.01,
+            "propagation_strength": 0.12
+          },
+          "phase_trace": [
+            "encode_A",
+            "encode_B",
+            "sleep",
+            "retest"
+          ],
+          "single_bridge_persisted": true,
+          "wiring_counts": {
+            "ca3_recurrent": 1104,
+            "ca3_to_ca1": 768,
+            "ca1_to_cortical_cue": 512,
+            "ca1_to_cortical_target": 512,
+            "cortical_association": 2304,
+            "cortical_target_recurrent": 480
+          },
+          "encode_A": {
+            "memory": "A",
+            "events": 14,
+            "spikes": {
+              "ca3": 517,
+              "ca1": 204,
+              "cue": 347,
+              "target": 319
+            }
+          },
+          "encode_B": {
+            "memory": "B",
+            "events": 20,
+            "spikes": {
+              "ca3": 603,
+              "ca1": 274,
+              "cue": 430,
+              "target": 500
+            }
+          },
+          "sleep": {
+            "events": 24,
+            "event_winners": [
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "B",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B"
+            ],
+            "reactivated_events": 24,
+            "replayed_A": 15,
+            "replayed_B": 9,
+            "spikes": {
+              "ca3": 1331,
+              "ca1": 739,
+              "cortical_cue": 99,
+              "cortical_target": 101
+            },
+            "shuffled_edges": 0
+          },
+          "recall": {
+            "A": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.004166666666666667,
+              "wrong_rate": 0.001388888888888889,
+              "background_rate": 0.0,
+              "margin": 0.0027777777777777775,
+              "selectivity": 0.4999999100000161,
+              "false_recall_fraction": 0.25,
+              "total_target_spikes": 4
+            },
+            "B": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            }
+          },
+          "weight_deltas": {
+            "ca3_during_encode_A": 2.232986530052849,
+            "ca3_during_encode_B": 2.392098517062655,
+            "ca3_during_sleep": 0.0,
+            "index_cue_during_wake": 4.244219716165389,
+            "index_target_during_wake": 4.802194668685843,
+            "index_cue_during_sleep": 0.0,
+            "index_target_during_sleep": 0.0,
+            "cortical_during_wake": 0.0,
+            "cortical_during_sleep": 0.06933873112332851
+          }
+        },
+        "no_sleep": {
+          "seed": 213,
+          "condition": "no_sleep",
+          "config": {
+            "n_ca3": 72,
+            "n_ca1": 48,
+            "n_cue": 48,
+            "n_target": 48,
+            "ca3_assembly": 24,
+            "ca3_overlap": 0,
+            "ca1_assembly": 16,
+            "cue_assembly": 16,
+            "cue_overlap": 6,
+            "target_assembly": 16,
+            "encode_a_events": 14,
+            "encode_b_events": 20,
+            "encode_on_steps": 12,
+            "encode_off_steps": 8,
+            "sleep_events": 24,
+            "sleep_noise_cells": 12,
+            "sleep_noise_steps": 15,
+            "sleep_free_steps": 15,
+            "probe_steps": 45,
+            "probe_cue_fraction": 0.5,
+            "encode_drive_pA": 1100.0,
+            "sleep_drive_pA": 1500.0,
+            "probe_drive_pA": 1250.0,
+            "ca3_initial_weight": 0.05,
+            "ca3_to_ca1_weight": 18.0,
+            "index_initial_weight": 0.05,
+            "cortical_initial_weight": 0.05,
+            "cortical_target_recurrent_weight": 1.0,
+            "hebbian_learning_rate": 0.025,
+            "cortical_sleep_learning_rate": 2.0,
+            "hebbian_max_weight": 90.0,
+            "hebbian_coactivity_decay": 0.9,
+            "hebbian_coactivity_thresh": 0.01,
+            "propagation_strength": 0.12
+          },
+          "phase_trace": [
+            "encode_A",
+            "encode_B",
+            "sleep",
+            "retest"
+          ],
+          "single_bridge_persisted": true,
+          "wiring_counts": {
+            "ca3_recurrent": 1104,
+            "ca3_to_ca1": 768,
+            "ca1_to_cortical_cue": 512,
+            "ca1_to_cortical_target": 512,
+            "cortical_association": 2304,
+            "cortical_target_recurrent": 480
+          },
+          "encode_A": {
+            "memory": "A",
+            "events": 14,
+            "spikes": {
+              "ca3": 517,
+              "ca1": 204,
+              "cue": 347,
+              "target": 319
+            }
+          },
+          "encode_B": {
+            "memory": "B",
+            "events": 20,
+            "spikes": {
+              "ca3": 603,
+              "ca1": 274,
+              "cue": 430,
+              "target": 500
+            }
+          },
+          "sleep": {
+            "events": 24,
+            "event_winners": [
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none"
+            ],
+            "reactivated_events": 0,
+            "replayed_A": 0,
+            "replayed_B": 0,
+            "spikes": {
+              "ca3": 0,
+              "ca1": 0,
+              "cortical_cue": 0,
+              "cortical_target": 0
+            },
+            "shuffled_edges": 0
+          },
+          "recall": {
+            "A": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            },
+            "B": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            }
+          },
+          "weight_deltas": {
+            "ca3_during_encode_A": 2.232986530052849,
+            "ca3_during_encode_B": 2.392098517062655,
+            "ca3_during_sleep": 0.0,
+            "index_cue_during_wake": 4.244219716165389,
+            "index_target_during_wake": 4.802194668685843,
+            "index_cue_during_sleep": 0.0,
+            "index_target_during_sleep": 0.0,
+            "cortical_during_wake": 0.0,
+            "cortical_during_sleep": 0.0
+          }
+        },
+        "shuffled_target_index": {
+          "seed": 213,
+          "condition": "shuffled_target_index",
+          "config": {
+            "n_ca3": 72,
+            "n_ca1": 48,
+            "n_cue": 48,
+            "n_target": 48,
+            "ca3_assembly": 24,
+            "ca3_overlap": 0,
+            "ca1_assembly": 16,
+            "cue_assembly": 16,
+            "cue_overlap": 6,
+            "target_assembly": 16,
+            "encode_a_events": 14,
+            "encode_b_events": 20,
+            "encode_on_steps": 12,
+            "encode_off_steps": 8,
+            "sleep_events": 24,
+            "sleep_noise_cells": 12,
+            "sleep_noise_steps": 15,
+            "sleep_free_steps": 15,
+            "probe_steps": 45,
+            "probe_cue_fraction": 0.5,
+            "encode_drive_pA": 1100.0,
+            "sleep_drive_pA": 1500.0,
+            "probe_drive_pA": 1250.0,
+            "ca3_initial_weight": 0.05,
+            "ca3_to_ca1_weight": 18.0,
+            "index_initial_weight": 0.05,
+            "cortical_initial_weight": 0.05,
+            "cortical_target_recurrent_weight": 1.0,
+            "hebbian_learning_rate": 0.025,
+            "cortical_sleep_learning_rate": 2.0,
+            "hebbian_max_weight": 90.0,
+            "hebbian_coactivity_decay": 0.9,
+            "hebbian_coactivity_thresh": 0.01,
+            "propagation_strength": 0.12
+          },
+          "phase_trace": [
+            "encode_A",
+            "encode_B",
+            "sleep",
+            "retest"
+          ],
+          "single_bridge_persisted": true,
+          "wiring_counts": {
+            "ca3_recurrent": 1104,
+            "ca3_to_ca1": 768,
+            "ca1_to_cortical_cue": 512,
+            "ca1_to_cortical_target": 512,
+            "cortical_association": 2304,
+            "cortical_target_recurrent": 480
+          },
+          "encode_A": {
+            "memory": "A",
+            "events": 14,
+            "spikes": {
+              "ca3": 517,
+              "ca1": 204,
+              "cue": 347,
+              "target": 319
+            }
+          },
+          "encode_B": {
+            "memory": "B",
+            "events": 20,
+            "spikes": {
+              "ca3": 603,
+              "ca1": 274,
+              "cue": 430,
+              "target": 500
+            }
+          },
+          "sleep": {
+            "events": 24,
+            "event_winners": [
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "B",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B"
+            ],
+            "reactivated_events": 24,
+            "replayed_A": 15,
+            "replayed_B": 9,
+            "spikes": {
+              "ca3": 1331,
+              "ca1": 739,
+              "cortical_cue": 99,
+              "cortical_target": 11
+            },
+            "shuffled_edges": 512
+          },
+          "recall": {
+            "A": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            },
+            "B": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            }
+          },
+          "weight_deltas": {
+            "ca3_during_encode_A": 2.232986530052849,
+            "ca3_during_encode_B": 2.392098517062655,
+            "ca3_during_sleep": 0.0,
+            "index_cue_during_wake": 4.244219716165389,
+            "index_target_during_wake": 4.802194668685843,
+            "index_cue_during_sleep": 0.0,
+            "index_target_during_sleep": 0.0,
+            "cortical_during_wake": 0.0,
+            "cortical_during_sleep": 0.0033656828923590686
+          }
+        },
+        "ca3_ca1_lesion": {
+          "seed": 213,
+          "condition": "ca3_ca1_lesion",
+          "config": {
+            "n_ca3": 72,
+            "n_ca1": 48,
+            "n_cue": 48,
+            "n_target": 48,
+            "ca3_assembly": 24,
+            "ca3_overlap": 0,
+            "ca1_assembly": 16,
+            "cue_assembly": 16,
+            "cue_overlap": 6,
+            "target_assembly": 16,
+            "encode_a_events": 14,
+            "encode_b_events": 20,
+            "encode_on_steps": 12,
+            "encode_off_steps": 8,
+            "sleep_events": 24,
+            "sleep_noise_cells": 12,
+            "sleep_noise_steps": 15,
+            "sleep_free_steps": 15,
+            "probe_steps": 45,
+            "probe_cue_fraction": 0.5,
+            "encode_drive_pA": 1100.0,
+            "sleep_drive_pA": 1500.0,
+            "probe_drive_pA": 1250.0,
+            "ca3_initial_weight": 0.05,
+            "ca3_to_ca1_weight": 18.0,
+            "index_initial_weight": 0.05,
+            "cortical_initial_weight": 0.05,
+            "cortical_target_recurrent_weight": 1.0,
+            "hebbian_learning_rate": 0.025,
+            "cortical_sleep_learning_rate": 2.0,
+            "hebbian_max_weight": 90.0,
+            "hebbian_coactivity_decay": 0.9,
+            "hebbian_coactivity_thresh": 0.01,
+            "propagation_strength": 0.12
+          },
+          "phase_trace": [
+            "encode_A",
+            "encode_B",
+            "sleep",
+            "retest"
+          ],
+          "single_bridge_persisted": true,
+          "wiring_counts": {
+            "ca3_recurrent": 1104,
+            "ca3_to_ca1": 768,
+            "ca1_to_cortical_cue": 512,
+            "ca1_to_cortical_target": 512,
+            "cortical_association": 2304,
+            "cortical_target_recurrent": 480
+          },
+          "encode_A": {
+            "memory": "A",
+            "events": 14,
+            "spikes": {
+              "ca3": 517,
+              "ca1": 204,
+              "cue": 347,
+              "target": 319
+            }
+          },
+          "encode_B": {
+            "memory": "B",
+            "events": 20,
+            "spikes": {
+              "ca3": 603,
+              "ca1": 274,
+              "cue": 430,
+              "target": 500
+            }
+          },
+          "sleep": {
+            "events": 24,
+            "event_winners": [
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "B",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B"
+            ],
+            "reactivated_events": 24,
+            "replayed_A": 15,
+            "replayed_B": 9,
+            "spikes": {
+              "ca3": 1331,
+              "ca1": 0,
+              "cortical_cue": 0,
+              "cortical_target": 0
+            },
+            "shuffled_edges": 0
+          },
+          "recall": {
+            "A": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            },
+            "B": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            }
+          },
+          "weight_deltas": {
+            "ca3_during_encode_A": 2.232986530052849,
+            "ca3_during_encode_B": 2.392098517062655,
+            "ca3_during_sleep": 0.0,
+            "index_cue_during_wake": 4.244219716165389,
+            "index_target_during_wake": 4.802194668685843,
+            "index_cue_during_sleep": 0.0,
+            "index_target_during_sleep": 0.0,
+            "cortical_during_wake": 0.0,
+            "cortical_during_sleep": 0.0
+          }
+        },
+        "cortical_plasticity_off": {
+          "seed": 213,
+          "condition": "cortical_plasticity_off",
+          "config": {
+            "n_ca3": 72,
+            "n_ca1": 48,
+            "n_cue": 48,
+            "n_target": 48,
+            "ca3_assembly": 24,
+            "ca3_overlap": 0,
+            "ca1_assembly": 16,
+            "cue_assembly": 16,
+            "cue_overlap": 6,
+            "target_assembly": 16,
+            "encode_a_events": 14,
+            "encode_b_events": 20,
+            "encode_on_steps": 12,
+            "encode_off_steps": 8,
+            "sleep_events": 24,
+            "sleep_noise_cells": 12,
+            "sleep_noise_steps": 15,
+            "sleep_free_steps": 15,
+            "probe_steps": 45,
+            "probe_cue_fraction": 0.5,
+            "encode_drive_pA": 1100.0,
+            "sleep_drive_pA": 1500.0,
+            "probe_drive_pA": 1250.0,
+            "ca3_initial_weight": 0.05,
+            "ca3_to_ca1_weight": 18.0,
+            "index_initial_weight": 0.05,
+            "cortical_initial_weight": 0.05,
+            "cortical_target_recurrent_weight": 1.0,
+            "hebbian_learning_rate": 0.025,
+            "cortical_sleep_learning_rate": 2.0,
+            "hebbian_max_weight": 90.0,
+            "hebbian_coactivity_decay": 0.9,
+            "hebbian_coactivity_thresh": 0.01,
+            "propagation_strength": 0.12
+          },
+          "phase_trace": [
+            "encode_A",
+            "encode_B",
+            "sleep",
+            "retest"
+          ],
+          "single_bridge_persisted": true,
+          "wiring_counts": {
+            "ca3_recurrent": 1104,
+            "ca3_to_ca1": 768,
+            "ca1_to_cortical_cue": 512,
+            "ca1_to_cortical_target": 512,
+            "cortical_association": 2304,
+            "cortical_target_recurrent": 480
+          },
+          "encode_A": {
+            "memory": "A",
+            "events": 14,
+            "spikes": {
+              "ca3": 517,
+              "ca1": 204,
+              "cue": 347,
+              "target": 319
+            }
+          },
+          "encode_B": {
+            "memory": "B",
+            "events": 20,
+            "spikes": {
+              "ca3": 603,
+              "ca1": 274,
+              "cue": 430,
+              "target": 500
+            }
+          },
+          "sleep": {
+            "events": 24,
+            "event_winners": [
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "B",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "A",
+              "A",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B",
+              "A",
+              "B"
+            ],
+            "reactivated_events": 24,
+            "replayed_A": 15,
+            "replayed_B": 9,
+            "spikes": {
+              "ca3": 1331,
+              "ca1": 739,
+              "cortical_cue": 99,
+              "cortical_target": 100
+            },
+            "shuffled_edges": 0
+          },
+          "recall": {
+            "A": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            },
+            "B": {
+              "partial_cue_cells": 8,
+              "correct_rate": 0.0,
+              "wrong_rate": 0.0,
+              "background_rate": 0.0,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.0,
+              "total_target_spikes": 0
+            }
+          },
+          "weight_deltas": {
+            "ca3_during_encode_A": 2.232986530052849,
+            "ca3_during_encode_B": 2.392098517062655,
+            "ca3_during_sleep": 0.0,
+            "index_cue_during_wake": 4.244219716165389,
+            "index_target_during_wake": 4.802194668685843,
+            "index_cue_during_sleep": 0.0,
+            "index_target_during_sleep": 0.0,
+            "cortical_during_wake": 0.0,
+            "cortical_during_sleep": 0.0
+          }
+        }
+      },
+      "verdict": {
+        "status": "CALIBRATION_NOT_YET_CLEAN",
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "one bridge persists through every phase and condition",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "all conditions execute the fixed phase sequence",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "both wake episodes recruit hippocampal and cortical populations",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "intact sleep contains uncued replay events",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "no-sleep control remains quiescent",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "cortical-plasticity-off control holds cortical weights fixed",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP, reward modulation, homeostasis, short-term plasticity, and structural plasticity",
+            "why": "this rung isolates rate-window Hebbian replay transfer on fixed anatomy"
+          }
+        ],
+        "undefined_reasons": [],
+        "checks": {
+          "single_bridge_all_conditions": true,
+          "both_memories_replayed": true,
+          "cortical_weights_changed_only_in_intact_sleep": true,
+          "intact_partial_recovery": false,
+          "both_memories_recovered": false,
+          "false_recall_bounded": true,
+          "intact_beats_no_sleep": false,
+          "learned_target_index_beats_shuffle": false,
+          "schaffer_path_is_load_bearing": false,
+          "cortical_plasticity_is_load_bearing": false
+        },
+        "intact_mean_recovery": 0.0020833333333333333,
+        "intact_mean_margin": 0.0013888888888888887,
+        "intact_mean_false_recall": 0.125,
+        "control_mean_recovery": {
+          "no_sleep": 0.0,
+          "shuffled_target_index": 0.0,
+          "ca3_ca1_lesion": 0.0,
+          "cortical_plasticity_off": 0.0
+        },
+        "attributable_fraction": {
+          "no_sleep": 1.0,
+          "shuffled_target_index": 1.0,
+          "ca3_ca1_lesion": 1.0,
+          "cortical_plasticity_off": 1.0
+        }
+      }
+    }
+  ],
+  "elapsed_seconds": 1.9363455772399902
+}
