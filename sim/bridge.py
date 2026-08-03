@@ -96,6 +96,8 @@ from sim.kernels import (
                          fused_stp_decay_recovery,
                          fused_homeostasis_update,
                          fused_stdp_weight_update,
+                         fused_inhibitory_stdp_trace_update,
+                         fused_inhibitory_stdp_weight_update,
                          fused_bdsp_update,
                          fused_btsp_update,
                          fused_btsp_hetero_update,
@@ -464,6 +466,7 @@ class SimulationBridge:
         self.cp_neuron_activity_ema = None
         self.cp_hebb_coactivity_trace = None       # per-neuron decaying firing trace for the RATE-WINDOW Hebbian (None unless cfg.hebbian_rate_window)
         self.cp_reward_coactivity_trace = None     # per-neuron presynaptic trace for optional three-factor coactivity eligibility
+        self.cp_inhibitory_stdp_trace = None       # per-neuron local spike trace for opt-in Vogels-style inhibitory STDP
         self.cp_dendritic_source_activity = None   # per-source firing EMA for the dendritic divisive gain (None unless enable_dendritic_divisive_gain)
 
         # Per-neuron GABA_A reversal potential (mV). Defaults to a uniform
@@ -837,6 +840,105 @@ class SimulationBridge:
         # NOTE: _mock_total_plasticity_events (a diagnostic host int) is intentionally NOT maintained here -- computing
         # the active count would re-introduce a device->host sync, defeating the purpose. It is not byte-guaranteed
         # under this flag (the byte-identity test checks cp_connections.data + firing raster, not this counter).
+
+    def _apply_inhibitory_stdp(self, fired_this_step, *, plasticity_gated=True):
+        """Apply local Vogels-style plasticity to eligible GABA-A synapses.
+
+        Eligibility is anatomical and local: the presynaptic neuron must be
+        inhibitory, the route must be GABA-A, the synapse must be plastic, and
+        its pathway plasticity gain must be positive. The gain scales the
+        local weight delta, so a closed pathway gate is exactly inert.
+        """
+
+        cfg = self.core_config
+        trace = self.cp_inhibitory_stdp_trace
+        if trace is None:
+            return
+
+        decay = cp.float32(math.exp(-cfg.dt_ms / cfg.inhibitory_stdp_tau_ms))
+        fired_float = fired_this_step.astype(cp.float32)
+        trace = fused_inhibitory_stdp_trace_update(trace, fired_float, decay)
+        self.cp_inhibitory_stdp_trace = trace
+
+        if (
+            not plasticity_gated
+            or self.cp_connections is None
+            or self.cp_connections.nnz == 0
+        ):
+            return
+
+        coo = self._get_cached_coo()
+        if coo is None:
+            return
+
+        if self._cached_inhibitory_mask is None:
+            inhibitory_indices = getattr(cfg, "inhibitory_trait_indices", None)
+            if inhibitory_indices:
+                inhibitory_indices_cp = cp.asarray(inhibitory_indices, dtype=cp.int32)
+                self._cached_inhibitory_mask = cp.isin(
+                    self.cp_traits, inhibitory_indices_cp
+                )
+            else:
+                self._cached_inhibitory_mask = (
+                    self.cp_traits == cfg.inhibitory_trait_index
+                )
+
+        pre_fired = fired_this_step[coo.row]
+        post_fired = fired_this_step[coo.col]
+        eligible = self._cached_inhibitory_mask[coo.row] & (pre_fired | post_fired)
+
+        if self.cp_gabab_synapse_mask is not None:
+            gabab = self._ensure_gate_capacity(
+                "cp_gabab_synapse_mask",
+                self.cp_connections.nnz,
+                fill=False,
+                dtype=cp.bool_,
+            )[: self.cp_connections.nnz]
+            eligible &= ~gabab
+
+        if self.cp_synapse_plastic_mask is not None:
+            plastic = self._ensure_gate_capacity(
+                "cp_synapse_plastic_mask",
+                self.cp_connections.nnz,
+                fill=False,
+                dtype=cp.bool_,
+            )[: self.cp_connections.nnz]
+            eligible &= plastic
+
+        if self.cp_plasticity_rate_gain is not None:
+            gain = self._ensure_gate_capacity(
+                "cp_plasticity_rate_gain", self.cp_connections.nnz
+            )[: self.cp_connections.nnz]
+            eligible &= gain > 0.0
+        else:
+            gain = None
+
+        active = cp.where(eligible)[0]
+        if active.size == 0:
+            return
+
+        rows = coo.row[active]
+        cols = coo.col[active]
+        current = self.cp_connections.data[active]
+        tau_steps = cfg.inhibitory_stdp_tau_ms / cfg.dt_ms
+        alpha = cp.float32(
+            2.0 * cfg.inhibitory_stdp_target_rate_per_step * tau_steps
+        )
+        updated = fused_inhibitory_stdp_weight_update(
+            current,
+            trace[rows],
+            trace[cols],
+            pre_fired[active],
+            post_fired[active],
+            cp.float32(cfg.inhibitory_stdp_eta),
+            alpha,
+            cp.float32(cfg.inhibitory_stdp_w_min),
+            cp.float32(cfg.inhibitory_stdp_w_max),
+        )
+        if gain is not None:
+            updated = current + (updated - current) * gain[active]
+        self.cp_connections.data[active] = updated
+        self._mock_total_plasticity_events += active.size
 
     def _apply_branchless_hebbian(self, coo, cfg, fired_this_step):
         """Branchless (compaction-free) Hebbian POTENTIATION (opt-in via cfg.enable_branchless_plasticity).
@@ -1258,6 +1360,8 @@ class SimulationBridge:
         Returns:
             The actual seed used (for reproducibility tracking)
         """
+        if isinstance(seed, np.integer):
+            seed = int(seed)
         if seed == -1:
             # Generate random seed from current time
             seed = int(time.time() * 1000) % (2**31)
@@ -2022,6 +2126,10 @@ class SimulationBridge:
                 self.cp_last_spike_time = cp.full(n, -1000.0, dtype=cp.float32)
             else:
                 self.cp_last_spike_time = None
+            if getattr(cfg, "enable_inhibitory_stdp", False) and n > 0:
+                self.cp_inhibitory_stdp_trace = cp.zeros(n, dtype=cp.float32)
+            else:
+                self.cp_inhibitory_stdp_trace = None
             
             # C3: Initialize structural plasticity state
             if cfg.enable_structural_plasticity:
@@ -2582,6 +2690,7 @@ class SimulationBridge:
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
+            'cp_inhibitory_stdp_trace',
             'cp_syn_reversal_potential_i_per_neuron',
             'cp_stp_u','cp_stp_x',
             'cp_ou_current'  # OU process state for background noise
@@ -8153,6 +8262,16 @@ class SimulationBridge:
 
                             self._mock_total_plasticity_events += stdp_active_indices.size
 
+            # --- 4b-i. Homeostatic inhibitory STDP (Vogels et al. 2011) ---
+            # Fully opt-in. With the default flag off the trace remains None,
+            # this call is unreachable, and the historical step path is
+            # numerically unchanged.
+            if getattr(cfg, "enable_inhibitory_stdp", False):
+                self._apply_inhibitory_stdp(
+                    fired_this_step,
+                    plasticity_gated=_plasticity_gated,
+                )
+
             # --- 4b'. BDSP / Burstprop (Burst-Dependent Synaptic Plasticity, D1 build 2026-07-07) ---
             # Payeur-Naud 2021 (Nat Neurosci 10.1038/s41593-021-00857-x) + Greedy-Naud 2022 (BurstCCN). The spiking,
             # LOCAL, three-factor deep-credit rule: the feedforward synapses learn by dw = eta*Etilde_j*(B_i-Pbar_i*E_i),
@@ -9216,6 +9335,17 @@ class SimulationBridge:
                     state_group.create_dataset("cp_last_spike_time", data=_backend_to_host(self.cp_last_spike_time), compression="gzip")
                 elif self.cp_last_spike_time is not None:
                     state_group.attrs["cp_last_spike_time_is_empty"] = True
+                if (
+                    self.cp_inhibitory_stdp_trace is not None
+                    and self.cp_inhibitory_stdp_trace.size > 0
+                ):
+                    state_group.create_dataset(
+                        "cp_inhibitory_stdp_trace",
+                        data=_backend_to_host(self.cp_inhibitory_stdp_trace),
+                        compression="gzip",
+                    )
+                elif self.cp_inhibitory_stdp_trace is not None:
+                    state_group.attrs["cp_inhibitory_stdp_trace_is_empty"] = True
 
                 # G3: Save per-synapse plastic mask if present (research runners).
                 # Sized to cp_connections.nnz, not the pre-allocated capacity.
@@ -9449,6 +9579,13 @@ class SimulationBridge:
                         lambda s: cp.full(s, -1000.0, dtype=cp.float32))
                 else:
                     self.cp_last_spike_time = None
+                if getattr(self.core_config, "enable_inhibitory_stdp", False) and n > 0:
+                    self.cp_inhibitory_stdp_trace = _load_cp_array_from_h5(
+                        "cp_inhibitory_stdp_trace",
+                        lambda s: cp.zeros(s, dtype=cp.float32),
+                    )
+                else:
+                    self.cp_inhibitory_stdp_trace = None
 
                 # G3: Load per-synapse plastic mask if present in checkpoint.
                 # Absent → leave as None (all plastic, back-compat).

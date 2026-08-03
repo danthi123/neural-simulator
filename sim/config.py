@@ -623,6 +623,17 @@ class CoreSimConfig:
     stdp_w_min: float = 0.0                # Minimum synaptic weight
     stdp_w_max: float = 2.0                # Maximum synaptic weight
     stdp_only_nearest_spike: bool = True   # Use only nearest spike pairs (more efficient)
+    # Homeostatic inhibitory STDP (Vogels et al. 2011). This is a distinct,
+    # disabled-by-default rule for plastic GABA-A synapses emitted by
+    # inhibitory neurons. Positive weights remain inhibitory conductance
+    # magnitudes; the bridge scopes updates by receptor, cell polarity, the
+    # per-synapse plastic mask, and the pathway plasticity gate.
+    enable_inhibitory_stdp: bool = False
+    inhibitory_stdp_tau_ms: float = 20.0
+    inhibitory_stdp_target_rate_per_step: float = 0.02
+    inhibitory_stdp_eta: float = 0.001
+    inhibitory_stdp_w_min: float = 0.0
+    inhibitory_stdp_w_max: float = 6.0
     # Performance: fast spike-reset path that avoids the GPU-CPU sync at
     # `if fired_indices.size > 0`. Uses cp.where masked-update instead of
     # fancy-index assignment. Numerically equivalent for the Izhikevich
@@ -924,12 +935,33 @@ class CoreSimConfig:
             errors.append(f"stdp_a_plus cannot be negative, got {self.stdp_a_plus}")
         if self.stdp_a_minus < 0:
             errors.append(f"stdp_a_minus cannot be negative, got {self.stdp_a_minus}")
+        if self.inhibitory_stdp_tau_ms <= 0:
+            errors.append(
+                "inhibitory_stdp_tau_ms must be positive, got "
+                f"{self.inhibitory_stdp_tau_ms}"
+            )
+        if not 0.0 <= self.inhibitory_stdp_target_rate_per_step <= 1.0:
+            errors.append(
+                "inhibitory_stdp_target_rate_per_step must be in [0, 1], got "
+                f"{self.inhibitory_stdp_target_rate_per_step}"
+            )
+        if self.inhibitory_stdp_eta < 0:
+            errors.append(
+                "inhibitory_stdp_eta cannot be negative, got "
+                f"{self.inhibitory_stdp_eta}"
+            )
 
         # Weight bounds
         if self.hebbian_min_weight > self.hebbian_max_weight:
             errors.append(f"hebbian_min_weight ({self.hebbian_min_weight}) > hebbian_max_weight ({self.hebbian_max_weight})")
         if self.stdp_w_min > self.stdp_w_max:
             errors.append(f"stdp_w_min ({self.stdp_w_min}) > stdp_w_max ({self.stdp_w_max})")
+        if self.inhibitory_stdp_w_min > self.inhibitory_stdp_w_max:
+            errors.append(
+                "inhibitory_stdp_w_min "
+                f"({self.inhibitory_stdp_w_min}) > inhibitory_stdp_w_max "
+                f"({self.inhibitory_stdp_w_max})"
+            )
 
         # Plasticity parameters
         if self.stp_U < 0 or self.stp_U > 1:

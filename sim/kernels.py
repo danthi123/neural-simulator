@@ -468,6 +468,38 @@ def fused_stdp_weight_update(delta_t, w_current, A_plus, A_minus, tau_plus, tau_
     w_new_clipped = cp.clip(w_new, w_min, w_max)
     return w_new_clipped
 
+
+@fuse()
+def fused_inhibitory_stdp_trace_update(trace, fired, decay):
+    """Decay a local spike trace and add the current binary spike event."""
+
+    return trace * decay + fired
+
+
+@fuse()
+def fused_inhibitory_stdp_weight_update(
+    w_current,
+    pre_trace,
+    post_trace,
+    pre_fired,
+    post_fired,
+    eta,
+    alpha,
+    w_min,
+    w_max,
+):
+    """Vogels-style homeostatic iSTDP for positive GABA conductances.
+
+    Traces are updated before this kernel is called. An inhibitory
+    presynaptic spike contributes ``eta * (post_trace - alpha)`` and a
+    postsynaptic spike contributes ``eta * pre_trace``. The caller performs
+    anatomical and pathway-gate scoping before invoking this fused update.
+    """
+
+    pre_update = cp.where(pre_fired, eta * (post_trace - alpha), 0.0)
+    post_update = cp.where(post_fired, eta * pre_trace, 0.0)
+    return cp.clip(w_current + pre_update + post_update, w_min, w_max)
+
 @fuse()
 def fused_htm_permanence_update(w, pre_last, post_now, hfac_post, lam_pot, lam_dep, w_min, w_max):
     """Bouhadjar-Diesmann 2022 three-term HTM Temporal-Memory permanence update, per coincidence-routed distal
