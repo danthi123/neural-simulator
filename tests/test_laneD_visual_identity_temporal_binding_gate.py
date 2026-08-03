@@ -13,9 +13,9 @@ def _tiny_args(tmp_path):
     return gate.build_parser().parse_args(
         [
             "--phase",
-            "calibration",
+            "smoke",
             "--seeds",
-            "220",
+            str(gate.SMOKE_SEED),
             "--epochs",
             "1",
             "--train-frames",
@@ -48,7 +48,7 @@ def _tiny_args(tmp_path):
     )
 
 
-def _small_pooler(seed=220, persistence_gain=3.0):
+def _small_pooler(seed=gate.SMOKE_SEED, persistence_gain=3.0):
     return gate.TemporalBindingPooler(
         seed=seed,
         n_in=8,
@@ -65,29 +65,46 @@ def _small_pooler(seed=220, persistence_gain=3.0):
     )
 
 
-def test_seed_partitions_are_fresh_disjoint_and_calibration_only():
+def test_seed_partitions_are_fresh_disjoint_and_smoke_is_reserved():
     partitions = [set(values) for values in gate.SEED_PARTITIONS.values()]
     assert partitions[0].isdisjoint(partitions[1])
     assert partitions[0].isdisjoint(partitions[2])
     assert partitions[1].isdisjoint(partitions[2])
     prior = {seed for values in gate.PRIOR_SEED_PARTITIONS.values() for seed in values}
     assert set().union(*partitions).isdisjoint(prior)
-    assert gate.build_parser().parse_args([]).seeds == [220, 221]
-    gate.validate_seed_partition("calibration", [220, 221])
+    assert gate.SMOKE_SEED not in set().union(*partitions)
+    assert gate.build_parser().parse_args([]).seeds == [224, 225]
+    gate.validate_seed_partition("smoke", [gate.SMOKE_SEED])
+    gate.validate_seed_partition("calibration", [224, 225])
     with pytest.raises(ValueError, match="cannot use seeds"):
-        gate.validate_seed_partition("calibration", [222])
+        gate.validate_seed_partition("calibration", [gate.SMOKE_SEED])
+    with pytest.raises(ValueError, match="requires only reserved"):
+        gate.validate_seed_partition("smoke", [224])
     with pytest.raises(ValueError, match="is not open"):
-        gate.validate_seed_partition("development", [222])
+        gate.validate_seed_partition("development", [226])
     with pytest.raises(ValueError, match="is not open"):
-        gate.validate_seed_partition("heldout", [319])
+        gate.validate_seed_partition("heldout", [323])
     assert gate.build_parser()._option_string_actions["--phase"].choices == (
+        "smoke",
         "calibration",
     )
 
 
+def test_run_seed_rejects_smoke_seed_as_calibration_before_building(monkeypatch, tmp_path):
+    args = _tiny_args(tmp_path)
+    args.phase = "calibration"
+
+    def fail_dataset_build(*_args, **_kwargs):
+        raise AssertionError("dataset construction happened before seed validation")
+
+    monkeypatch.setattr(gate, "build_visual_dataset", fail_dataset_build)
+    with pytest.raises(ValueError, match="cannot use seeds"):
+        gate.run_seed(gate.SMOKE_SEED, args)
+
+
 def test_v1_encoder_selects_from_spikes_without_host_activation_top_k(monkeypatch):
     encoder = gate.SpikingV1Encoder(
-        seed=220,
+        seed=gate.SMOKE_SEED,
         n_features=16,
         k_active=2,
         n_fs=4,
@@ -142,7 +159,7 @@ def test_local_pre_post_learning_changes_substrate_permanences():
         trace_enabled=True,
         persistence_enabled=True,
         homeostasis_mode="slow",
-        seed=220,
+        seed=gate.SMOKE_SEED,
     )
     after = pooler.feedforward_permanences()
 
@@ -169,11 +186,16 @@ def test_controls_keep_temporal_and_mechanistic_lesions_distinct():
 
 
 def test_tiny_cpu_smoke_builds_controls_and_machine_preconditions(tmp_path):
-    row = gate.run_seed(220, _tiny_args(tmp_path))
+    row = gate.run_seed(gate.SMOKE_SEED, _tiny_args(tmp_path))
 
     assert set(row["arms"]) == set(gate.ARM_SPECS)
-    assert row["formal_verdict"] == "NOT-RUN-CALIBRATION-ONLY"
+    assert row["phase"] == "smoke"
+    assert row["scientific_evidence"] is False
+    assert row["calibration_status"] == "SMOKE-ONLY"
+    assert row["calibration_readiness_verdict"] == "NOT-SCIENTIFIC-SMOKE"
+    assert row["formal_verdict"] == "NOT-SCIENTIFIC-SMOKE"
     assert row["stream_checks"]["fresh_seed_partitions"] is True
+    assert row["stream_checks"]["smoke_seed_outside_scientific_partitions"] is True
     assert row["stream_checks"]["same_multiset_after_temporal_shuffle"] is True
     assert row["stream_checks"]["labels_enter_learning_or_inference"] is False
     assert row["stream_checks"]["host_top_k_determines_v1_spikes"] is False

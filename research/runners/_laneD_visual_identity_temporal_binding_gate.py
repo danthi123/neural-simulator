@@ -20,14 +20,15 @@ scaffolds, not claimed biological completions. The gate keeps them visible and
 lesionable. It also retains temporal shuffle, trace, homeostasis, pixel
 scramble, neural-drive, flat-drive, and fast-spiking pathway controls.
 
-Only fresh calibration seeds 220/221 are open. Development seeds 222/223/318
-and held-out seeds 319/320/321 are locked.
+Seed 220 is reserved for smoke/unit testing and is outside every scientific
+partition. Fresh calibration seeds 224/225 are open. Development seeds
+226/227/322 and held-out seeds 323/324/325 are locked.
 
 Cheap smoke::
 
   SIM_BACKEND=numpy python -u -m \
     research.runners._laneD_visual_identity_temporal_binding_gate \
-    --phase calibration --seeds 220 --epochs 1 --train-frames 3 \
+    --phase smoke --seeds 220 --epochs 1 --train-frames 3 \
     --tracks-per-object 1 --held-frames 2 --image-size 16 --n-pos 4 \
     --v1-k-active 8 --n-col 16 --k-win 2 --latency-steps 40 \
     --out /tmp/visual_identity_temporal_binding_smoke.json
@@ -81,15 +82,17 @@ from research.runners._laneD_visual_identity_homeostasis_gate import (  # noqa: 
 from tools.verdict import Verdict  # noqa: E402
 
 
-CALIBRATION_SEEDS = (220, 221)
-DEVELOPMENT_SEEDS = (222, 223, 318)
-HELDOUT_SEEDS = (319, 320, 321)
+SMOKE_SEED = 220
+CALIBRATION_SEEDS = (224, 225)
+DEVELOPMENT_SEEDS = (226, 227, 322)
+HELDOUT_SEEDS = (323, 324, 325)
 SEED_PARTITIONS = {
     "calibration": CALIBRATION_SEEDS,
     "development": DEVELOPMENT_SEEDS,
     "heldout": HELDOUT_SEEDS,
 }
 OPEN_PHASES = ("calibration",)
+CLI_PHASES = ("smoke",) + OPEN_PHASES
 
 ARM_SPECS = {
     "intact": {
@@ -144,6 +147,14 @@ OUT = Path(
 
 def validate_seed_partition(phase: str, seeds: Sequence[int]) -> None:
     """Keep every successor seed fresh and later decision phases locked."""
+    if phase == "smoke":
+        supplied = tuple(int(seed) for seed in seeds)
+        if supplied != (SMOKE_SEED,):
+            raise ValueError(
+                f"smoke phase requires only reserved SMOKE_SEED={SMOKE_SEED}; "
+                f"received {list(supplied)}"
+            )
+        return
     if phase not in OPEN_PHASES:
         raise ValueError(
             f"phase {phase!r} is not open; this successor is calibration-only and "
@@ -155,6 +166,10 @@ def validate_seed_partition(phase: str, seeds: Sequence[int]) -> None:
         raise ValueError(
             f"{phase} phase cannot use seeds {unexpected}; allowed seeds are {sorted(allowed)}"
         )
+
+
+def formal_verdict_for_phase(phase: str) -> str:
+    return "NOT-SCIENTIFIC-SMOKE" if phase == "smoke" else "NOT-RUN-CALIBRATION-ONLY"
 
 
 def dense_v1_activity(
@@ -480,6 +495,7 @@ def _all_numeric_values_finite(value: object) -> bool:
 
 
 def run_seed(seed: int, args: argparse.Namespace) -> dict:
+    validate_seed_partition(args.phase, [seed])
     dataset = build_visual_dataset(
         seed=seed,
         image_size=args.image_size,
@@ -649,6 +665,7 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
     }
     stream_checks = {
         "fresh_seed_partitions": successor_seeds.isdisjoint(prior_seeds),
+        "smoke_seed_outside_scientific_partitions": SMOKE_SEED not in successor_seeds,
         "same_multiset_after_temporal_shuffle": (
             sorted(index for track in ordered_indices for index in track)
             == sorted(index for track in shuffled_indices for index in track)
@@ -680,6 +697,11 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
     earned.require(
         "successor seed partitions are fresh",
         stream_checks["fresh_seed_partitions"],
+        expect=True,
+    )
+    earned.require(
+        "smoke seed is outside every scientific partition",
+        stream_checks["smoke_seed_outside_scientific_partitions"],
         expect=True,
     )
     earned.require(
@@ -727,18 +749,26 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         "v1_selection_telemetry": v1_encoder.metrics(),
         "identity_selection_telemetry": intact_pooler.latency_selector.metrics(),
         "diagnostics": diagnostics,
-        "calibration_status": "CANDIDATE" if calibration_ready else "NEEDS-REVISION",
+        "phase": args.phase,
+        "scientific_evidence": args.phase != "smoke",
+        "calibration_status": (
+            "SMOKE-ONLY"
+            if args.phase == "smoke"
+            else ("CANDIDATE" if calibration_ready else "NEEDS-REVISION")
+        ),
         "preconditions": decided["preconditions"],
         "undefined_reasons": decided["undefined_reasons"],
-        "calibration_readiness_verdict": decided["status"],
-        "formal_verdict": "NOT-RUN-CALIBRATION-ONLY",
+        "calibration_readiness_verdict": (
+            "NOT-SCIENTIFIC-SMOKE" if args.phase == "smoke" else decided["status"]
+        ),
+        "formal_verdict": formal_verdict_for_phase(args.phase),
         "stream_checks": stream_checks,
     }
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--phase", choices=OPEN_PHASES, default="calibration")
+    parser.add_argument("--phase", choices=CLI_PHASES, default="calibration")
     parser.add_argument("--seeds", type=int, nargs="+", default=list(CALIBRATION_SEEDS))
     parser.add_argument("--train-frames", type=int, default=12)
     parser.add_argument("--tracks-per-object", type=int, default=2)
@@ -811,13 +841,16 @@ def main() -> int:
             "phase": args.phase,
             "seeds": args.seeds,
             "formal_gate_run": False,
-            "formal_verdict": "NOT-RUN-CALIBRATION-ONLY",
+            "formal_verdict": formal_verdict_for_phase(args.phase),
+            "scientific_evidence": args.phase != "smoke",
             "candidate_seeds": sum(
                 row["calibration_status"] == "CANDIDATE" for row in rows
             ),
             "seed_partitions": {
                 name: list(values) for name, values in SEED_PARTITIONS.items()
             },
+            "smoke_seed": SMOKE_SEED,
+            "smoke_seed_is_scientific_evidence": False,
             "controls": list(ARM_SPECS)
             + [
                 "pixel_scramble",
