@@ -79,7 +79,13 @@ def test_output_sidecar_carries_snapshot_identity(tmp_path, monkeypatch):
 
 
 def test_archive_manifest_verification_rejects_tampering_and_extra_source(tmp_path, monkeypatch):
-    _write_archive_snapshot(tmp_path, {"research/runners/example.py": "VALUE = 1\n"})
+    snapshot_hash = _write_archive_snapshot(
+        tmp_path,
+        {
+            "research/__init__.py": "\n",
+            "research/runners/example.py": "VALUE = 1\n",
+        },
+    )
     monkeypatch.setattr(provenance, "_ROOT", str(tmp_path))
     assert provenance.verify_immutable_source_manifest()["source_manifest_verified"] is True
 
@@ -94,3 +100,24 @@ def test_archive_manifest_verification_rejects_tampering_and_extra_source(tmp_pa
     result = provenance.verify_immutable_source_manifest()
     assert result["source_manifest_verified"] is False
     assert "file set differs" in result["source_manifest_verification_error"]
+
+    (tmp_path / "tools/extra.py").unlink()
+    (tmp_path / "research/__init__.py").write_text("MUTATED = True\n", encoding="utf-8")
+    result = provenance.verify_immutable_source_manifest()
+    assert result["source_manifest_verified"] is False
+    assert "research/__init__.py" in result["source_manifest_verification_error"]
+
+    captured = {
+        "source_kind": "git_archive",
+        "source_manifest_sha256": snapshot_hash,
+    }
+    _write_archive_snapshot(
+        tmp_path,
+        {
+            "research/__init__.py": "REPLACED = True\n",
+            "research/runners/example.py": "VALUE = 3\n",
+        },
+    )
+    result = provenance.verify_immutable_source_manifest(captured)
+    assert result["source_manifest_verified"] is False
+    assert "manifest file digest" in result["source_manifest_verification_error"]

@@ -184,7 +184,7 @@ def test_formal_config_is_exactly_locked_and_only_archive_provenance_is_accepted
     monkeypatch.setattr(
         provenance,
         "verify_immutable_source_manifest",
-        lambda: {"source_manifest_verified": True},
+        lambda snapshot=None: {"source_manifest_verified": True},
     )
     provenance._REC.update(
         source_kind="git_archive",

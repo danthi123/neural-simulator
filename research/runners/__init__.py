@@ -68,7 +68,7 @@ def _source_snapshot():
 
 def verify_immutable_source_manifest(snapshot=None):
     """Verify an exported source tree against its complete provisioned manifest."""
-    snapshot = dict(snapshot or _source_snapshot())
+    snapshot = dict(_source_snapshot() if snapshot is None else snapshot)
     result = {
         "source_manifest_verified": False,
         "source_manifest_verification_error": None,
@@ -112,6 +112,9 @@ def verify_immutable_source_manifest(snapshot=None):
                     path = os.path.join(dirpath, filename)
                     relative_path = os.path.relpath(path, _ROOT)
                     actual_files.add(relative_path)
+        research_init = os.path.join(_ROOT, "research", "__init__.py")
+        if os.path.isfile(research_init):
+            actual_files.add("research/__init__.py")
         if actual_files != set(expected_files):
             missing = sorted(set(expected_files) - actual_files)[:3]
             extra = sorted(actual_files - set(expected_files))[:3]
@@ -315,7 +318,12 @@ def _stamp_outputs(rec):
     candidates = explicit_paths if declared else _fresh_output_paths()
     made = []
     exit_verification = (
-        verify_immutable_source_manifest()
+        verify_immutable_source_manifest(
+            {
+                "source_kind": rec.get("source_kind"),
+                "source_manifest_sha256": rec.get("source_manifest_sha256"),
+            }
+        )
         if rec.get("source_kind") == "git_archive"
         else {
             "source_manifest_verified": None,

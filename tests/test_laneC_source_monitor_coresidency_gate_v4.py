@@ -88,7 +88,7 @@ def test_formal_execution_requires_immutable_archive_provenance(monkeypatch):
     monkeypatch.setattr(
         provenance,
         "verify_immutable_source_manifest",
-        lambda: {"source_manifest_verified": True},
+        lambda snapshot=None: {"source_manifest_verified": True},
     )
     provenance._REC.update(
         source_kind="git_archive",

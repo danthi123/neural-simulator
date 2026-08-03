@@ -146,7 +146,14 @@ def formal_provenance_ready() -> bool:
     import research.runners as provenance
 
     record = getattr(provenance, "_REC", None)
-    verification = provenance.verify_immutable_source_manifest()
+    verification = provenance.verify_immutable_source_manifest(
+        {
+            "source_kind": record.get("source_kind") if isinstance(record, dict) else None,
+            "source_manifest_sha256": (
+                record.get("source_manifest_sha256") if isinstance(record, dict) else None
+            ),
+        }
+    )
     return bool(
         isinstance(record, dict)
         and record.get("git_dirty") is False
