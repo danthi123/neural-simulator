@@ -1,12 +1,18 @@
 ---
 type: preregistration
-status: live
+status: superseded
 date: 2026-08-03
 mechanism: replay-driven-cortical-consolidation-v4
 runner: research/runners/_replay_cortical_consolidation_gate_v4.py
 ---
 
 # Replay consolidation v4: dendritic target reinstatement
+
+**Retired before scientific execution.** The fixed full-size smoke produced a
+large target plateau but no target or target-FS spikes; removing the plateau
+restored weak target firing. This candidate therefore failed its required
+non-scientific dynamics check. Calibration seeds `451` and `457` were never
+run and are not open.
 
 **The initial v4 preregistration was filed before any v4 execution.** Seed
 `216` is reserved for non-scientific construction and dynamics checks. It is
@@ -52,14 +58,13 @@ change their weights, or alter the CA1-to-index coincidence route.
 ## Seed and phase lock
 
 - Non-scientific smoke only: `216`.
-- Calibration, currently open: `451`, `457`.
+- Calibration, named but never opened: `451`, `457`.
 - Development, locked: `461`, `463`, `467`.
 - Held out, locked: `479`, `487`, `491`.
 
-The calibration interface accepts only the exact ordered tuple `(451, 457)`.
-Direct condition and seed calls accept only one member of that calibration
-tuple. A calibration failure stops the gate and leaves later partitions
-closed.
+All scientific entry points now reject every seed, including `(451, 457)`.
+Only smoke seed `216` remains executable so the negative dynamics boundary can
+be reproduced.
 
 ## Fixed protocol
 
@@ -128,5 +133,5 @@ dendritic NMDA spikes; Poirazi, Brannon, and Mel's two-layer pyramidal-cell
 model; and Branco, Clark, and Hausser's work on dendritic temporal
 discrimination. V4 does not claim full dendritic compartment anatomy.
 
-If calibration fails, file the result and retire these calibration seeds. Do
-not tune against them or open development.
+No calibration may run from this retired design. A successor needs a different
+mechanism and a fresh preregistration rather than a retuned target plateau.

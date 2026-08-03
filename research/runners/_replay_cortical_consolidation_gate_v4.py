@@ -11,8 +11,8 @@ coincidence mask during sleep. All v3 weights, thresholds, plateau dynamics,
 timing, populations, controls, and scientific criteria are retained.
 
 Seed 216 is construction/dynamics smoke only and can never produce a
-scientific verdict. Calibration requires the exact ordered tuple (451, 457);
-development and held-out partitions are mechanically closed.
+scientific verdict. Its dynamics check failed before formal execution, so all
+scientific phases and named seed partitions are mechanically closed.
 """
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ from research.runners import _replay_cortical_consolidation_gate_v3 as v3  # noq
 from tools.verdict import UNDEFINED, Verdict  # noqa: E402
 
 
-OPEN_PHASES = ("calibration",)
+OPEN_PHASES = ()
 SMOKE_SEED = 216
 CALIBRATION_SEEDS = (451, 457)
 DEVELOPMENT_SEEDS = (461, 463, 467)
@@ -72,22 +72,18 @@ def validate_phase(phase: str) -> str:
 
 def validate_calibration_seed(seed: int) -> int:
     checked = int(seed)
-    if checked not in CALIBRATION_SEEDS:
-        raise ValueError(
-            "This bounded v4 runner accepts individual fresh calibration seeds "
-            f"from {CALIBRATION_SEEDS} only; refusing reserved seed {checked}."
-        )
-    return checked
+    raise ValueError(
+        "Replay v4 was retired after its smoke dynamics check; all scientific "
+        f"seeds are locked, including requested seed {checked}."
+    )
 
 
 def validate_calibration_seeds(seeds: Iterable[int]) -> tuple[int, ...]:
     checked = tuple(int(seed) for seed in seeds)
-    if checked != CALIBRATION_SEEDS:
-        raise ValueError(
-            "Calibration requires the exact ordered fresh calibration seed partition "
-            f"{CALIBRATION_SEEDS}; refusing {checked}."
-        )
-    return checked
+    raise ValueError(
+        "Replay v4 was retired after its smoke dynamics check; the named "
+        f"calibration partition {CALIBRATION_SEEDS} is locked, received {checked}."
+    )
 
 
 def validate_smoke_seed(seed: int) -> int:
