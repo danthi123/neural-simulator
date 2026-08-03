@@ -68,11 +68,16 @@ whether a sensory reward occurred, observe a neural motor threshold crossing,
 and record spikes. The reward contingency is an environmental consequence of
 the emitted action; it is never injected into an action channel.
 
-The host may not stimulate a desired channel, assign eligibility, set
-dopamine, choose a neural winner by argmax, calculate a prediction error, or
-write a synaptic update. Actor and critic eligibility must arise from local
-coactivity. The positive and negative teaching signals must arise from the
-spiking SNc and LHb-RMTg circuits.
+Before trials, the host measures tonic SNc firing, calibrates the neuromodulator
+production threshold and signed-rate state to that measured tonic rate, and
+resets dopamine to its configured baseline. This is an explicit initialization
+and tonic-calibration scaffold. It may not assign dopamine or calculate a
+prediction error during a trial.
+
+The host may not stimulate a desired channel, assign eligibility, choose a
+neural winner by argmax, or write a synaptic update. Actor and critic eligibility
+must arise from local coactivity. After initialization, the positive and
+negative teaching signals must arise from the spiking SNc and LHb-RMTg circuits.
 
 ## Seed lock
 
@@ -98,12 +103,16 @@ Each calibration seed runs separate, identically initialized brains for:
 6. LHb-RMTg omission-path lesion; and
 7. local critic-normalization lesion.
 
-All arms use 20 frozen baseline trials, 40 training trials, two frozen outcome
+All arms use exactly 20 frozen baseline trials, 40 training trials, two frozen outcome
 probes (rewarded and omitted), and 40 frozen evaluation trials. The yoked,
 critic-lesion, and omission-lesion arms receive exactly the contingent arm's
 reward count with the same fixed schedule rotation. Do not tune between seeds,
 drop a failed seed, or inspect development or held-out seeds after a calibration
 failure.
+
+The critic-output lesion cuts only the two declared critic output pathways.
+Actor and critic plasticity remain enabled under the same training schedule as
+the intact and yoked arms.
 
 ## Fixed validity preconditions
 
@@ -122,7 +131,8 @@ of these:
 8. SNc tonic calibration is finite and positive; generic outcome and neural
    reward-veto populations spike in their declared probe windows.
 9. Every requested lesion gate is actually cut and plasticity-scope telemetry
-   is present.
+   is present. The critic-output lesion must retain measurable critic-route
+   learning, confirming that it did not silently disable critic plasticity.
 
 ## Fixed scientific criteria
 
@@ -157,8 +167,9 @@ seeds locked.
 
 ## Honest scope and successor rule
 
-The fixed connectivity, host-defined trial boundaries, global plasticity-gate
-windows, and environmental reward rule remain scaffolds. The new circuit only
+The fixed connectivity, host-defined trial boundaries, tonic dopamine
+initialization/calibration, global plasticity-gate windows, and environmental
+reward rule remain scaffolds. The new circuit only
 tests whether a small spiking actor-critic can distinguish contingent from
 yoked consequences with a causally attributable omission dip. It does not
 establish natural vocal learning, social understanding, language, or general

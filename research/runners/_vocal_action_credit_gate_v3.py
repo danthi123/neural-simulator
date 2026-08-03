@@ -83,6 +83,9 @@ CALIBRATION_SEEDS = (401, 409)
 DEVELOPMENT_SEEDS = (419, 421, 431, 433)
 HELD_OUT_SEEDS = (439, 443)
 SMOKE_SEED = 0
+BASELINE_TRIALS = 20
+TRAINING_TRIALS = 40
+EVALUATION_TRIALS = 40
 OTHER_LANE_FORMAL_SEEDS = (
     224, 225, 226, 227,  # visual calibration/development
     228, 229, 230, 231,  # replay calibration/development
@@ -112,6 +115,18 @@ CONTROL_MODES = (
     "omission_path_lesion",
     "normalization_lesion",
 )
+HOST_BOUNDARY = {
+    "generic_cue_timing": True,
+    "generic_outcome_timing": True,
+    "sensory_reward_presence": True,
+    "desired_channel_current": False,
+    "host_eligibility_assignment": False,
+    "host_initializes_dopamine_baseline": True,
+    "host_calibrates_tonic_production_threshold": True,
+    "host_trialwise_dopamine_assignment": False,
+    "host_prediction_error_calculation": False,
+    "host_weight_update": False,
+}
 
 
 @dataclass(frozen=True)
@@ -323,6 +338,17 @@ def build_v3_bridge(seed: int, config: VocalCreditConfigV3 | None = None):
     return bridge, routes
 
 
+def validate_calibration_seed(seed: int) -> int:
+    checked = int(seed)
+    if checked not in CALIBRATION_SEEDS:
+        raise ValueError(
+            f"Gate B v3 accepts calibration seeds {CALIBRATION_SEEDS} only; "
+            f"development={DEVELOPMENT_SEEDS}, held_out={HELD_OUT_SEEDS}, "
+            f"rejected={[checked]}"
+        )
+    return checked
+
+
 def validate_phase_seeds(phase: str, seeds) -> tuple[int, ...]:
     phase = str(phase)
     checked = tuple(int(seed) for seed in seeds)
@@ -330,16 +356,37 @@ def validate_phase_seeds(phase: str, seeds) -> tuple[int, ...]:
         raise ValueError(
             f"Gate B v3 phase {phase!r} is locked; open phases={OPEN_PHASES}"
         )
-    if not checked:
-        raise ValueError("at least one calibration seed is required")
-    invalid = [seed for seed in checked if seed not in CALIBRATION_SEEDS]
-    if invalid:
+    if checked != CALIBRATION_SEEDS:
         raise ValueError(
-            f"Gate B v3 accepts calibration seeds {CALIBRATION_SEEDS} only; "
-            f"development={DEVELOPMENT_SEEDS}, held_out={HELD_OUT_SEEDS}, "
-            f"rejected={invalid}"
+            "Gate B v3 calibration requires the complete ordered seed "
+            f"partition {CALIBRATION_SEEDS}; received {checked}. Subsets, "
+            "duplicates, and reordered seeds cannot produce an aggregate."
         )
     return checked
+
+
+def validate_protocol_counts(
+    *, training_trials: int, baseline_trials: int, evaluation_trials: int
+) -> tuple[int, int, int]:
+    observed = (
+        int(baseline_trials),
+        int(training_trials),
+        int(evaluation_trials),
+    )
+    expected = (BASELINE_TRIALS, TRAINING_TRIALS, EVALUATION_TRIALS)
+    if observed != expected:
+        raise ValueError(
+            "Gate B v3 requires the preregistered baseline/training/evaluation "
+            f"trial counts {expected}; received {observed}."
+        )
+    return observed
+
+
+def _training_learning_gates(mode: str) -> tuple[bool, bool]:
+    if mode not in {"contingent", *CONTROL_MODES}:
+        raise ValueError(mode)
+    # Lesions alter only declared transmission pathways; both plastic routes learn.
+    return True, True
 
 
 def _pathway_matches(
@@ -839,7 +886,12 @@ def run_condition(
     yoked_schedule=None,
     config: VocalCreditConfigV3 | None = None,
 ) -> dict:
-    validate_phase_seeds("calibration", [seed])
+    validate_calibration_seed(seed)
+    validate_protocol_counts(
+        training_trials=training_trials,
+        baseline_trials=baseline_trials,
+        evaluation_trials=evaluation_trials,
+    )
     if mode not in {"contingent", *CONTROL_MODES}:
         raise ValueError(mode)
     if mode in YOKED_MODES and yoked_schedule is None:
@@ -869,11 +921,12 @@ def run_condition(
         _run_trial(bridge, routes, selector, config)
         for _ in range(int(baseline_trials))
     ]
+    actor_enabled, value_enabled = _training_learning_gates(mode)
     _set_learning_gates(
         bridge,
         config,
-        actor_enabled=True,
-        value_enabled=mode != "critic_lesion",
+        actor_enabled=actor_enabled,
+        value_enabled=value_enabled,
     )
 
     training = []
@@ -1177,6 +1230,18 @@ def _calibration_verdict(row: dict) -> dict:
         all(_lesion_telemetry_matches(condition) for condition in conditions),
         expect=True,
     )
+    earned.require(
+        "critic-output lesion preserves load-bearing critic-route learning",
+        any(
+            abs(
+                critic_lesion["weights"]["final_value_route_means"][str(channel)]
+                - critic_lesion["weights"]["initial_value_route_means"][str(channel)]
+            )
+            > 1e-6
+            for channel in CHANNELS
+        ),
+        expect=True,
+    )
     decided = earned.decide(go=all(checks.values()), verbose=False)
     status = (
         "UNDEFINED"
@@ -1222,12 +1287,17 @@ def _calibration_verdict(row: dict) -> dict:
 def run_seed(
     seed: int,
     *,
-    training_trials: int = 40,
-    baseline_trials: int = 20,
-    evaluation_trials: int = 40,
+    training_trials: int = TRAINING_TRIALS,
+    baseline_trials: int = BASELINE_TRIALS,
+    evaluation_trials: int = EVALUATION_TRIALS,
     config: VocalCreditConfigV3 | None = None,
 ) -> dict:
-    validate_phase_seeds("calibration", [seed])
+    validate_calibration_seed(seed)
+    validate_protocol_counts(
+        training_trials=training_trials,
+        baseline_trials=baseline_trials,
+        evaluation_trials=evaluation_trials,
+    )
     config = config or v3_config()
     contingent = run_condition(
         seed,
@@ -1257,6 +1327,21 @@ def run_seed(
     }
     row["verdict"] = _calibration_verdict(row)
     return row
+
+
+def aggregate_calibration_status(rows) -> str:
+    observed = tuple(int(row["seed"]) for row in rows)
+    if observed != CALIBRATION_SEEDS:
+        raise ValueError(
+            "Gate B v3 aggregate requires one result for each calibration seed "
+            f"in order {CALIBRATION_SEEDS}; received {observed}."
+        )
+    statuses = [row["verdict"]["status"] for row in rows]
+    if any(status == "UNDEFINED" for status in statuses):
+        return "UNDEFINED"
+    if all(status == "CALIBRATION_PASS" for status in statuses):
+        return "CALIBRATION_PASS"
+    return "CALIBRATION_FAIL"
 
 
 def schema_smoke() -> dict:
@@ -1293,15 +1378,7 @@ def schema_smoke() -> dict:
             "development_reserved": list(DEVELOPMENT_SEEDS),
             "held_out_reserved": list(HELD_OUT_SEEDS),
         },
-        "host_boundary": {
-            "generic_cue_timing": True,
-            "generic_outcome_timing": True,
-            "sensory_reward_presence": True,
-            "desired_channel_current": False,
-            "host_eligibility_assignment": False,
-            "host_dopamine_assignment": False,
-            "host_weight_update": False,
-        },
+        "host_boundary": dict(HOST_BOUNDARY),
     }
     del bridge
     return result
@@ -1319,9 +1396,9 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--seeds", type=int, nargs="+", default=list(CALIBRATION_SEEDS)
     )
-    parser.add_argument("--training-trials", type=int, default=40)
-    parser.add_argument("--baseline-trials", type=int, default=20)
-    parser.add_argument("--evaluation-trials", type=int, default=40)
+    parser.add_argument("--training-trials", type=int, default=TRAINING_TRIALS)
+    parser.add_argument("--baseline-trials", type=int, default=BASELINE_TRIALS)
+    parser.add_argument("--evaluation-trials", type=int, default=EVALUATION_TRIALS)
     parser.add_argument("--schema-smoke", action="store_true")
     parser.add_argument(
         "--output",
@@ -1338,6 +1415,11 @@ def main(argv=None) -> int:
         return 0 if all(smoke["structural_preconditions"].values()) else 1
 
     seeds = validate_phase_seeds(args.phase, args.seeds)
+    validate_protocol_counts(
+        training_trials=args.training_trials,
+        baseline_trials=args.baseline_trials,
+        evaluation_trials=args.evaluation_trials,
+    )
     config = v3_config()
     rows = [
         run_seed(
@@ -1355,6 +1437,13 @@ def main(argv=None) -> int:
         "phase": args.phase,
         "seeds": list(seeds),
         "backend": get_backend()[1],
+        "host_boundary": dict(HOST_BOUNDARY),
+        "fixed_protocol": {
+            "baseline_trials": BASELINE_TRIALS,
+            "training_trials": TRAINING_TRIALS,
+            "evaluation_trials": EVALUATION_TRIALS,
+            "outcome_probes": ["omission", "rewarded"],
+        },
         "seed_policy": {
             "open_phases": list(OPEN_PHASES),
             "calibration": list(CALIBRATION_SEEDS),
@@ -1373,6 +1462,7 @@ def main(argv=None) -> int:
             "all_checks_required_per_seed": True,
         },
         "rows": rows,
+        "aggregate_status": aggregate_calibration_status(rows),
     }
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -1381,6 +1471,7 @@ def main(argv=None) -> int:
         "phase": result["phase"],
         "seeds": result["seeds"],
         "statuses": [row["verdict"]["status"] for row in rows],
+        "aggregate_status": result["aggregate_status"],
         "output": str(output),
     }, indent=2))
     return 0

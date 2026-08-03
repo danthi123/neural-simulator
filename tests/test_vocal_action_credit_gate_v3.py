@@ -2,32 +2,39 @@ import inspect
 import os
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
+os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 
 from research.runners._vocal_action_credit_gate import credit_config
 from research.runners._vocal_action_credit_gate_v3 import (
     ACTION_COLLATERAL_GATE,
+    BASELINE_TRIALS,
     CALIBRATION_SEEDS,
     CONTROL_MODES,
     CRITIC_NORMALIZATION_GATE,
     DEVELOPMENT_SEEDS,
     DOPAMINE_PATH_GATE,
+    EVALUATION_TRIALS,
     EXPECTATION_TO_OMISSION_GATE,
     HELD_OUT_SEEDS,
     OMISSION_PATH_GATE,
     OTHER_LANE_FORMAL_SEEDS,
     REWARD_VETO_GATE,
     SMOKE_SEED,
+    TRAINING_TRIALS,
     VALUE_TO_SNC_GATE,
     _lesion_gate_values,
     _lesion_telemetry_matches,
     _set_trial_current_v3,
     _structural_preconditions,
+    _training_learning_gates,
+    aggregate_calibration_status,
     build_v3_bridge,
     schema_smoke,
     run_condition,
     run_seed,
     v3_config,
     validate_phase_seeds,
+    validate_protocol_counts,
 )
 
 
@@ -53,7 +60,7 @@ def test_v3_calibration_only_lock_rejects_reserved_seeds_and_phases():
         try:
             validate_phase_seeds("calibration", [seed])
         except ValueError as error:
-            assert "accepts calibration seeds" in str(error)
+            assert "complete ordered seed partition" in str(error)
         else:
             raise AssertionError(f"reserved seed {seed} was accepted")
     for phase in ("development", "held_out"):
@@ -63,6 +70,19 @@ def test_v3_calibration_only_lock_rejects_reserved_seeds_and_phases():
             assert "is locked" in str(error)
         else:
             raise AssertionError(f"locked phase {phase} was accepted")
+
+    for incomplete in (
+        (),
+        (CALIBRATION_SEEDS[0],),
+        CALIBRATION_SEEDS[::-1],
+        (CALIBRATION_SEEDS[0], CALIBRATION_SEEDS[0]),
+    ):
+        try:
+            validate_phase_seeds("calibration", incomplete)
+        except ValueError as error:
+            assert "complete ordered seed partition" in str(error)
+        else:
+            raise AssertionError(f"incomplete aggregate seeds {incomplete} were accepted")
 
 
 def test_v3_direct_execution_rejects_smoke_and_reserved_seeds_before_build(monkeypatch):
@@ -92,6 +112,64 @@ def test_v3_direct_execution_rejects_smoke_and_reserved_seeds_before_build(monke
             assert "accepts calibration seeds" in str(error)
         else:
             raise AssertionError(f"direct run_condition accepted reserved seed {seed}")
+
+
+def test_v3_fixed_trial_counts_are_checked_before_build(monkeypatch):
+    def fail_build(*_args, **_kwargs):
+        raise AssertionError("brain construction happened before protocol validation")
+
+    monkeypatch.setattr(
+        "research.runners._vocal_action_credit_gate_v3.build_v3_bridge",
+        fail_build,
+    )
+    validate_protocol_counts(
+        training_trials=TRAINING_TRIALS,
+        baseline_trials=BASELINE_TRIALS,
+        evaluation_trials=EVALUATION_TRIALS,
+    )
+    for function, kwargs in (
+        (run_seed, {}),
+        (run_condition, {"mode": "contingent"}),
+    ):
+        try:
+            function(
+                CALIBRATION_SEEDS[0],
+                training_trials=1,
+                baseline_trials=BASELINE_TRIALS,
+                evaluation_trials=EVALUATION_TRIALS,
+                **kwargs,
+            )
+        except ValueError as error:
+            assert "preregistered" in str(error)
+        else:
+            raise AssertionError("non-preregistered trial counts were accepted")
+
+
+def test_v3_critic_output_lesion_preserves_both_learning_routes():
+    assert _training_learning_gates("critic_lesion") == (True, True)
+    assert all(
+        _training_learning_gates(mode) == (True, True)
+        for mode in ("contingent", *CONTROL_MODES)
+    )
+
+
+def test_v3_aggregate_requires_both_seeds_and_combines_statuses():
+    passed = [
+        {"seed": seed, "verdict": {"status": "CALIBRATION_PASS"}}
+        for seed in CALIBRATION_SEEDS
+    ]
+    assert aggregate_calibration_status(passed) == "CALIBRATION_PASS"
+    passed[1]["verdict"]["status"] = "CALIBRATION_FAIL"
+    assert aggregate_calibration_status(passed) == "CALIBRATION_FAIL"
+    passed[1]["verdict"]["status"] = "UNDEFINED"
+    assert aggregate_calibration_status(passed) == "UNDEFINED"
+    for incomplete in (passed[:1], passed[::-1], [passed[0], passed[0]]):
+        try:
+            aggregate_calibration_status(incomplete)
+        except ValueError as error:
+            assert "each calibration seed" in str(error)
+        else:
+            raise AssertionError("incomplete aggregate rows were accepted")
 
 
 def test_v3_keeps_v2_gabab_operating_point_and_adds_new_mechanisms():
@@ -182,4 +260,7 @@ def test_v3_schema_smoke_builds_seed_zero_without_science_execution():
     assert all(smoke["structural_preconditions"].values())
     assert set(smoke["required_controls"]) == set(CONTROL_MODES)
     assert smoke["host_boundary"]["desired_channel_current"] is False
-    assert smoke["host_boundary"]["host_dopamine_assignment"] is False
+    assert smoke["host_boundary"]["host_initializes_dopamine_baseline"] is True
+    assert smoke["host_boundary"]["host_calibrates_tonic_production_threshold"] is True
+    assert smoke["host_boundary"]["host_trialwise_dopamine_assignment"] is False
+    assert smoke["host_boundary"]["host_prediction_error_calculation"] is False
