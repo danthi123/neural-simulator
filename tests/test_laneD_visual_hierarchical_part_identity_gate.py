@@ -82,6 +82,31 @@ def test_part_layer_creates_only_local_synapses_and_preserves_scramble_fanin():
     assert local_metrics["fan_in_preserved"] is True
     assert scramble_metrics["actual_feedforward_synapses"] == local_metrics["actual_feedforward_synapses"]
     assert scramble_metrics["nonlocal_synapses"] > 0
+    assert gate.receptive_field_control_matches(
+        local.local_fields, scramble.wired_fields, 2, 4
+    ) is True
+
+
+def test_rf_scramble_preserves_orientation_counts_and_pairwise_overlaps():
+    local = gate.retinotopic_feature_sets(8, 8, 4, 3)
+    scrambled = gate.scrambled_feature_sets(local, 8, 8, 222)
+    assert gate.receptive_field_control_matches(local, scrambled, 8, 8)
+    n_spatial = 8 * 8
+    for left, right in zip(local, scrambled):
+        assert [sum(index // n_spatial == ori for index in left) for ori in range(8)] == [
+            sum(index // n_spatial == ori for index in right) for ori in range(8)
+        ]
+
+
+def test_v1_all_fired_readout_does_not_use_selector_first_k():
+    encoder = gate.SpikingV1Encoder(
+        seed=222, n_features=16, k_active=2, n_fs=2, n_steps=40,
+        wta_enabled=False,
+    )
+    fired = encoder.encode_all_fired(np.ones(16, dtype=np.float64))
+    assert len(fired) > encoder.k_active
+    assert fired == set(range(16))
+    assert encoder.metrics()["all_fired_matches_deadline_telemetry"] is True
 
 
 def test_v2_readout_returns_every_fired_cell_without_top_k_truncation(monkeypatch):
@@ -132,6 +157,37 @@ def test_control_set_and_no_label_learning_signatures_are_fixed():
     assert "label" not in inspect.signature(gate.RetinotopicPartLayer.learn).parameters
     assert "label" not in inspect.signature(gate.TraceIdentityLayer.learn).parameters
     assert "label" not in inspect.signature(gate._infer_codes).parameters
+    assert gate.explicit_label_isolation_check()["explicit_identity_labels_absent"]
+    assert gate._code_mentions_explicit_labels(
+        (lambda object_ids: object_ids).__code__
+    )
+
+
+def test_formal_config_is_exactly_locked_and_only_archive_provenance_is_accepted(monkeypatch):
+    args = gate.build_parser().parse_args(
+        ["--phase", "calibration", "--seeds", "503", "509"]
+    )
+    gate.validate_config(args)
+    args.epochs = 1
+    with pytest.raises(ValueError, match="exact preregistered configuration"):
+        gate.validate_config(args)
+    assert gate.formal_provenance_ready() is False
+    import research.runners as provenance
+
+    monkeypatch.setattr(
+        provenance,
+        "_REC",
+        {"git_dirty": False, "git_sha": "abc123", "source_kind": None},
+        raising=False,
+    )
+    assert gate.formal_provenance_ready() is False
+    provenance._REC.update(
+        source_kind="git_archive", source_manifest_sha256="manifest"
+    )
+    assert gate.formal_provenance_ready() is True
+    args.phase = "smoke"
+    args.epochs = 1
+    gate.validate_config(args)
 
 
 def test_scientific_diagnostics_require_both_stages_fs_and_zero_no_learning():
@@ -141,6 +197,7 @@ def test_scientific_diagnostics_require_both_stages_fs_and_zero_no_learning():
         "v2_learning": {"changed_synapses": 3},
         "it_learning": {"changed_synapses": 4},
         "v2_selection": {"mean_fired_fraction": 0.20},
+        "it_selection": {"mean_fired_fraction": 0.20},
     }
     arms = {name: dict(base) for name in gate.ARM_SPECS}
     arms["all_learning_off"] = {
@@ -154,6 +211,10 @@ def test_scientific_diagnostics_require_both_stages_fs_and_zero_no_learning():
         **base, "heldout_identity_decode": 0.50,
         "v2_selection": {"mean_fired_fraction": 0.40},
     }
+    arms["it_fs_lesion"] = {
+        **base, "heldout_identity_decode": 0.50,
+        "it_selection": {"mean_fired_fraction": 0.40},
+    }
     arms["receptive_field_scramble"] = {**base, "heldout_identity_decode": 0.30}
     diagnostics = gate.scientific_diagnostics(
         arms, {"heldout_identity_decode": 0.30}
@@ -163,6 +224,11 @@ def test_scientific_diagnostics_require_both_stages_fs_and_zero_no_learning():
     assert gate.scientific_diagnostics(
         arms, {"heldout_identity_decode": 0.30}
     )["no_learning_changes_zero"] is False
+    arms["all_learning_off"]["it_learning"]["changed_synapses"] = 0
+    arms["it_fs_lesion"]["it_selection"]["mean_fired_fraction"] = 0.39
+    assert gate.scientific_diagnostics(
+        arms, {"heldout_identity_decode": 0.30}
+    )["it_fs_raises_density"] is False
 
 
 def test_tiny_smoke_is_non_scientific_and_checks_plumbing(tmp_path):
@@ -173,9 +239,19 @@ def test_tiny_smoke_is_non_scientific_and_checks_plumbing(tmp_path):
     assert row["calibration_status"] == "SMOKE-ONLY"
     assert set(row["arms"]) == set(gate.ARM_SPECS)
     assert row["stream_checks"]["temporal_shuffle_preserves_exact_frame_multiset"] is True
-    assert row["stream_checks"]["labels_enter_encoding_or_learning"] is False
+    assert row["stream_checks"]["explicit_identity_labels_enter_encoding_or_learning"] is False
+    assert row["stream_checks"]["synthetic_identity_pure_track_boundaries_used"] is True
     assert row["stream_checks"]["postsynaptic_persistence_present"] is False
+    assert row["stream_checks"]["v1_host_top_k_or_first_k_truncation"] is False
     assert row["stream_checks"]["v2_host_top_k_or_first_k_truncation"] is False
+    assert row["stream_checks"]["it_host_top_k_or_first_k_truncation"] is False
+    assert row["stream_checks"]["v1_code_uses_all_fired_cells"] is True
+    assert row["stream_checks"]["v2_code_uses_all_fired_cells"] is True
+    assert row["stream_checks"]["it_code_uses_all_fired_cells"] is True
+    assert row["stream_checks"]["rf_scramble_matches_orientation_and_overlap_statistics"] is True
+    assert row["stream_checks"]["rf_scramble_changes_wiring"] is True
+    assert row["stream_checks"]["rf_scramble_creates_nonlocal_synapses"] is True
+    assert row["stream_checks"]["numeric_measurements_are_finite"] is True
     assert row["arms"]["intact"]["v2_connectivity"]["nonlocal_synapses"] == 0
     assert row["arms"]["all_learning_off"]["v2_learning"]["changed_synapses"] == 0
     assert row["arms"]["all_learning_off"]["it_learning"]["changed_synapses"] == 0
@@ -184,4 +260,7 @@ def test_tiny_smoke_is_non_scientific_and_checks_plumbing(tmp_path):
     assert row["smoke_checks"]["it_permanences_change"] is True
     assert row["smoke_checks"]["prior_frame_trace_affects_it_update"] is True
     assert row["smoke_checks"]["v2_fs_lesion_increases_density"] is True
-    assert row["smoke_checks"]["labels_absent"] is True
+    assert row["smoke_checks"]["it_fs_lesion_increases_density"] is True
+    assert row["smoke_checks"]["explicit_identity_labels_absent"] is True
+    assert row["smoke_checks"]["v1_all_fired_readout"] is True
+    assert row["smoke_checks"]["it_all_fired_readout"] is True

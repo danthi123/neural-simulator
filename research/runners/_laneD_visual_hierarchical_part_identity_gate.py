@@ -19,6 +19,7 @@ import os
 import sys
 import time
 from pathlib import Path
+from types import CodeType
 from typing import Sequence
 
 import numpy as np
@@ -99,6 +100,44 @@ OUT = Path(
     "visual_hierarchical_part_identity_calibration.json"
 )
 
+CALIBRATION_CONFIG = {
+    "train_frames": 12,
+    "tracks_per_object": 2,
+    "held_frames": 8,
+    "image_size": 32,
+    "pixel_noise": 0.025,
+    "n_orientations": 8,
+    "n_frequencies": 2,
+    "n_pos": 8,
+    "gabor_rf_radius": 4,
+    "complex_norm": "local_orient_div",
+    "v1_active": 32,
+    "v1_fs_cells": 12,
+    "v1_latency_steps": 20,
+    "v1_col_fs_weight": 40.0,
+    "v1_fs_col_weight": 90.0,
+    "v2_grid": 4,
+    "rf_width": 3,
+    "v2_part_cells": 12,
+    "v2_fs_cells": 4,
+    "v2_col_fs_weight": 40.0,
+    "v2_fs_col_weight": 90.0,
+    "v2_fs_feedforward_pA": 65.0,
+    "v2_latency_steps": 20,
+    "it_cells": 128,
+    "it_expected_active": 12,
+    "it_fs_cells": 8,
+    "it_col_fs_weight": 40.0,
+    "it_fs_col_weight": 90.0,
+    "epochs": 10,
+    "trace_decay": TRACE_DECAY,
+    "v2_lr_pot": 0.05,
+    "v2_lr_depress": 0.01,
+    "it_lr_pot": 0.05,
+    "it_lr_depress": 0.01,
+    "latency_steps": 40,
+}
+
 
 def validate_individual_seed(phase: str, seed: int) -> int:
     supplied = int(seed)
@@ -178,18 +217,60 @@ def retinotopic_feature_sets(
 
 
 def scrambled_feature_sets(
-    local_fields: Sequence[Sequence[int]], n_in: int, seed: int
+    local_fields: Sequence[Sequence[int]],
+    n_orientations: int,
+    n_pos: int,
+    seed: int,
 ) -> tuple[tuple[int, ...], ...]:
-    """Destroy spatial locality while preserving every hypercolumn's fan-in."""
+    """Destroy retinotopy with one spatial permutation shared by orientations."""
     rng = np.random.default_rng(seed)
-    scrambled = []
+    n_spatial = n_pos * n_pos
+    permutation = rng.permutation(n_spatial)
+    if np.array_equal(permutation, np.arange(n_spatial)):
+        permutation = np.roll(permutation, 1)
+    scrambled: list[tuple[int, ...]] = []
     for field in local_fields:
-        local = tuple(int(index) for index in field)
-        candidate = tuple(sorted(int(index) for index in rng.choice(n_in, len(local), replace=False)))
-        if set(candidate) == set(local):
-            candidate = tuple((index + 1) % n_in for index in candidate)
-        scrambled.append(candidate)
+        mapped = []
+        for feature in field:
+            orientation, spatial = divmod(int(feature), n_spatial)
+            if not 0 <= orientation < n_orientations:
+                raise ValueError("feature index is outside the declared orientation grid")
+            mapped.append(orientation * n_spatial + int(permutation[spatial]))
+        scrambled.append(tuple(sorted(mapped)))
     return tuple(scrambled)
+
+
+def receptive_field_control_matches(
+    local_fields: Sequence[Sequence[int]],
+    scrambled_fields: Sequence[Sequence[int]],
+    n_orientations: int,
+    n_pos: int,
+) -> bool:
+    """Require exact fan-in, orientation counts, and pairwise overlap statistics."""
+    if len(local_fields) != len(scrambled_fields):
+        return False
+    n_spatial = n_pos * n_pos
+
+    def orientation_counts(field: Sequence[int]) -> tuple[int, ...]:
+        return tuple(
+            sum(int(feature) // n_spatial == orientation for feature in field)
+            for orientation in range(n_orientations)
+        )
+
+    if any(
+        len(local) != len(scrambled)
+        or orientation_counts(local) != orientation_counts(scrambled)
+        for local, scrambled in zip(local_fields, scrambled_fields)
+    ):
+        return False
+    local_sets = [set(field) for field in local_fields]
+    scrambled_sets = [set(field) for field in scrambled_fields]
+    return all(
+        len(local_sets[i] & local_sets[j])
+        == len(scrambled_sets[i] & scrambled_sets[j])
+        for i in range(len(local_sets))
+        for j in range(len(local_sets))
+    )
 
 
 class RetinotopicPartLayer:
@@ -208,6 +289,9 @@ class RetinotopicPartLayer:
         latency_steps: int,
         lp: float,
         ld_wi: float,
+        col_fs_weight: float = 40.0,
+        fs_col_weight: float = 90.0,
+        fs_feedforward_pA: float = 65.0,
         fs_enabled: bool = True,
         receptive_field_scramble: bool = False,
     ) -> None:
@@ -224,7 +308,9 @@ class RetinotopicPartLayer:
             n_orientations, n_pos, v2_grid, rf_width
         )
         self.wired_fields = (
-            scrambled_feature_sets(self.local_fields, self.n_in, seed * 31 + 7)
+            scrambled_feature_sets(
+                self.local_fields, n_orientations, n_pos, seed * 31 + 7
+            )
             if receptive_field_scramble
             else self.local_fields
         )
@@ -284,11 +370,15 @@ class RetinotopicPartLayer:
                 n_fs=fs_cells,
                 n_steps=latency_steps,
                 wta_enabled=self.fs_enabled,
+                col_fs_weight=col_fs_weight,
+                fs_col_weight=fs_col_weight,
+                fs_feedforward_pA=fs_feedforward_pA,
             )
             for tile in range(self.n_hypercolumns)
         )
         self.selection_calls = 0
         self.total_fired = 0
+        self.all_fired_readout_matches = True
 
     def feedforward_permanences(self) -> np.ndarray:
         return np.asarray(_host(self.b.cp_connections.data), dtype=np.float64)[
@@ -310,8 +400,16 @@ class RetinotopicPartLayer:
         fired: set[int] = set()
         for tile, selector in enumerate(self.selectors):
             start = tile * self.part_cells
-            selector.select(drive[start : start + self.part_cells])
-            local_fired = np.flatnonzero(selector.last_first_spike <= selector.n_steps)
+            local_fired = selector.select_all_fired(
+                drive[start : start + self.part_cells]
+            )
+            expected = set(
+                int(cell)
+                for cell in np.flatnonzero(
+                    selector.last_first_spike <= selector.n_steps
+                )
+            )
+            self.all_fired_readout_matches &= local_fired == expected
             fired.update(start + int(cell) for cell in local_fired)
         self.selection_calls += 1
         self.total_fired += len(fired)
@@ -346,7 +444,7 @@ class RetinotopicPartLayer:
             self.b.xp.asarray(updated) if hasattr(self.b, "xp") else updated
         )
 
-    def locality_metrics(self) -> dict[str, int | bool]:
+    def locality_metrics(self) -> dict[str, object]:
         violations = 0
         for feature, column in zip(self.ff_feat, self.ff_col):
             tile = int(column) // self.part_cells
@@ -357,12 +455,16 @@ class RetinotopicPartLayer:
             "actual_feedforward_synapses": int(len(self.ff_pos)),
             "nonlocal_synapses": int(violations),
             "fan_in_preserved": int(len(self.ff_pos)) == expected,
+            "wired_fields": self.wired_fields,
         }
 
     def selection_metrics(self) -> dict[str, float | bool | str]:
         return {
             "readout": "all V2 excitatory cells firing by fixed deadline",
-            "host_top_k_or_first_k_truncation": False,
+            "host_top_k_or_first_k_truncation": any(
+                selector.ranked_selection_calls > 0 for selector in self.selectors
+            ),
+            "all_fired_readout_matches_deadline_telemetry": self.all_fired_readout_matches,
             "local_fs_pathways_enabled": self.fs_enabled,
             "mean_fired_fraction": round(
                 self.total_fired / max(self.selection_calls * self.n_out, 1), 6
@@ -384,6 +486,8 @@ class TraceIdentityLayer(TraceV1Pooler):
         latency_steps: int,
         lp: float,
         ld_wi: float,
+        col_fs_weight: float = 40.0,
+        fs_col_weight: float = 90.0,
         fs_enabled: bool = True,
     ) -> None:
         super().__init__(seed, n_in, n_col, expected_active, lp=lp, ld_wi=ld_wi)
@@ -394,12 +498,15 @@ class TraceIdentityLayer(TraceV1Pooler):
             n_fs=fs_cells,
             n_steps=latency_steps,
             wta_enabled=fs_enabled,
+            col_fs_weight=col_fs_weight,
+            fs_col_weight=fs_col_weight,
         )
         self.trace = np.zeros(n_in, dtype=np.float64)
         self.trace_only_update_synapses = 0
         self.fs_enabled = bool(fs_enabled)
         self.selection_calls = 0
         self.total_fired = 0
+        self.all_fired_readout_matches = True
 
     def feedforward_permanences(self) -> np.ndarray:
         return np.asarray(_host(self.b.cp_connections.data), dtype=np.float64)[
@@ -410,13 +517,14 @@ class TraceIdentityLayer(TraceV1Pooler):
         self.trace.fill(0.0)
 
     def encode_all_fired(self, features: set[int]) -> set[int]:
-        self.selector.select(super()._drive(features))
-        fired = set(
+        fired = self.selector.select_all_fired(super()._drive(features))
+        expected = set(
             int(cell)
             for cell in np.flatnonzero(
                 self.selector.last_first_spike <= self.selector.n_steps
             )
         )
+        self.all_fired_readout_matches &= fired == expected
         self.selection_calls += 1
         self.total_fired += len(fired)
         return fired
@@ -450,7 +558,10 @@ class TraceIdentityLayer(TraceV1Pooler):
     def selection_metrics(self) -> dict[str, float | bool | str | int]:
         return {
             "readout": "all IT excitatory cells firing by fixed deadline",
-            "host_top_k_or_first_k_truncation": False,
+            "host_top_k_or_first_k_truncation": (
+                self.selector.ranked_selection_calls > 0
+            ),
+            "all_fired_readout_matches_deadline_telemetry": self.all_fired_readout_matches,
             "fs_pathways_enabled": self.fs_enabled,
             "postsynaptic_persistence_present": False,
             "trace_only_update_synapses": self.trace_only_update_synapses,
@@ -479,9 +590,12 @@ def _build_layers(seed: int, args: argparse.Namespace, spec: dict):
         rf_width=args.rf_width,
         part_cells=args.v2_part_cells,
         fs_cells=args.v2_fs_cells,
-        latency_steps=args.latency_steps,
+        latency_steps=args.v2_latency_steps,
         lp=args.v2_lr_pot,
         ld_wi=args.v2_lr_depress,
+        col_fs_weight=args.v2_col_fs_weight,
+        fs_col_weight=args.v2_fs_col_weight,
+        fs_feedforward_pA=args.v2_fs_feedforward_pA,
         fs_enabled=bool(spec.get("v2_fs", True)),
         receptive_field_scramble=bool(spec.get("rf_scramble", False)),
     )
@@ -494,6 +608,8 @@ def _build_layers(seed: int, args: argparse.Namespace, spec: dict):
         latency_steps=args.latency_steps,
         lp=args.it_lr_pot,
         ld_wi=args.it_lr_depress,
+        col_fs_weight=args.it_col_fs_weight,
+        fs_col_weight=args.it_fs_col_weight,
         fs_enabled=bool(spec.get("it_fs", True)),
     )
     return v2, it
@@ -548,6 +664,7 @@ def scientific_diagnostics(arms: dict, pixel_scramble: dict) -> dict[str, bool]:
     trace_off = arms["it_trace_off"]
     shuffled = arms["temporal_shuffle"]
     v2_fs = arms["v2_local_fs_lesion"]
+    it_fs = arms["it_fs_lesion"]
     rf_scramble = arms["receptive_field_scramble"]
     return {
         "intact_decode_at_least_0_60": intact["heldout_identity_decode"] >= 0.60,
@@ -571,6 +688,13 @@ def scientific_diagnostics(arms: dict, pixel_scramble: dict) -> dict[str, bool]:
         "v2_fs_costs_decode": (
             intact["heldout_identity_decode"] >= v2_fs["heldout_identity_decode"] + 0.10
         ),
+        "it_fs_raises_density": (
+            it_fs["it_selection"]["mean_fired_fraction"]
+            >= intact["it_selection"]["mean_fired_fraction"] + 0.20
+        ),
+        "it_fs_costs_decode": (
+            intact["heldout_identity_decode"] >= it_fs["heldout_identity_decode"] + 0.10
+        ),
         "rf_scramble_at_most_0_35": rf_scramble["heldout_identity_decode"] <= 0.35,
         "rf_scramble_costs_0_20": (
             intact["heldout_identity_decode"] >= rf_scramble["heldout_identity_decode"] + 0.20
@@ -590,8 +714,86 @@ def scientific_diagnostics(arms: dict, pixel_scramble: dict) -> dict[str, bool]:
     }
 
 
+def _all_numeric_measurements_finite(value) -> bool:
+    if isinstance(value, dict):
+        return all(_all_numeric_measurements_finite(item) for item in value.values())
+    if isinstance(value, (list, tuple)):
+        return all(_all_numeric_measurements_finite(item) for item in value)
+    if isinstance(value, np.ndarray):
+        return bool(np.isfinite(value).all())
+    if isinstance(value, (int, float, np.integer, np.floating)) and not isinstance(
+        value, (bool, np.bool_)
+    ):
+        return bool(np.isfinite(value))
+    return True
+
+
+_EXPLICIT_LABEL_TOKENS = frozenset(
+    {"label", "labels", "object_id", "object_ids", "identity_label", "identity_labels"}
+)
+
+
+def _code_mentions_explicit_labels(code: CodeType) -> bool:
+    tokens = set(code.co_names) | set(code.co_varnames) | set(code.co_freevars)
+    if any(str(token).lower() in _EXPLICIT_LABEL_TOKENS for token in tokens):
+        return True
+    return any(
+        _code_mentions_explicit_labels(value)
+        for value in code.co_consts
+        if isinstance(value, CodeType)
+    )
+
+
+def explicit_label_isolation_check() -> dict[str, object]:
+    """Audit every callable in the encoding, inference, and learning path."""
+    callables = (
+        dense_v1_activity,
+        SpikingV1Encoder.encode_all_fired,
+        SpikingV1Encoder.encode_many_all_fired,
+        RetinotopicPartLayer.encode_all_fired,
+        RetinotopicPartLayer.learn,
+        TraceIdentityLayer.encode_all_fired,
+        TraceIdentityLayer.learn,
+        _infer_codes,
+        _train_arm,
+    )
+    offenders = [
+        f"{function.__module__}.{function.__qualname__}"
+        for function in callables
+        if _code_mentions_explicit_labels(function.__code__)
+    ]
+    return {
+        "audited_callables": [
+            f"{function.__module__}.{function.__qualname__}" for function in callables
+        ],
+        "offenders": offenders,
+        "explicit_identity_labels_absent": not offenders,
+    }
+
+
+def formal_provenance_ready() -> bool:
+    """Formal evidence requires a clean Git tree or immutable exported archive."""
+    import research.runners as provenance
+
+    record = getattr(provenance, "_REC", None)
+    if not isinstance(record, dict):
+        return False
+    if record.get("git_dirty") is not False or record.get("git_sha") in {None, "", "unknown"}:
+        return False
+    return bool(
+        record.get("source_kind") == "git_archive"
+        and record.get("source_manifest_sha256")
+    )
+
+
 def run_seed(seed: int, args: argparse.Namespace) -> dict:
+    validate_config(args)
     validate_individual_seed(args.phase, seed)
+    if args.phase != "smoke" and not formal_provenance_ready():
+        raise RuntimeError(
+            "formal calibration requires enabled provenance from a clean Git tree "
+            "or immutable git archive"
+        )
     dataset = build_visual_dataset(
         seed=seed,
         image_size=args.image_size,
@@ -618,11 +820,13 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         n_features=n_v1,
         k_active=args.v1_active,
         n_fs=args.v1_fs_cells,
-        n_steps=args.latency_steps,
+        n_steps=args.v1_latency_steps,
+        col_fs_weight=args.v1_col_fs_weight,
+        fs_col_weight=args.v1_fs_col_weight,
     )
-    train_v1 = v1_encoder.encode_many(train_activity)
-    held_v1 = v1_encoder.encode_many(held_activity)
-    scrambled_v1 = v1_encoder.encode_many(scrambled_activity)
+    train_v1 = v1_encoder.encode_many_all_fired(train_activity)
+    held_v1 = v1_encoder.encode_many_all_fired(held_activity)
+    scrambled_v1 = v1_encoder.encode_many_all_fired(scrambled_activity)
     shuffled = shuffled_track_indices(dataset.train_tracks, seed * 101 + 83)
 
     arms: dict[str, dict] = {}
@@ -676,6 +880,7 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         dataset.held_object_ids,
     )
     diagnostics = scientific_diagnostics(arms, pixel_scramble)
+    label_isolation = explicit_label_isolation_check()
 
     exact_frame_multiset = sorted(
         index for track in dataset.train_tracks for index in track
@@ -689,9 +894,35 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
             for right in list(SEED_PARTITIONS.values())[i + 1 :]
         ),
         "temporal_shuffle_preserves_exact_frame_multiset": exact_frame_multiset,
-        "labels_enter_encoding_or_learning": False,
-        "v2_code_uses_all_fired_cells": True,
-        "v2_host_top_k_or_first_k_truncation": False,
+        "explicit_identity_labels_enter_encoding_or_learning": not label_isolation[
+            "explicit_identity_labels_absent"
+        ],
+        "explicit_label_isolation": label_isolation,
+        "synthetic_identity_pure_track_boundaries_used": True,
+        "v1_code_uses_all_fired_cells": (
+            v1_encoder.metrics()["all_fired_calls"]
+            == len(train_activity) + len(held_activity) + len(scrambled_activity)
+            and v1_encoder.metrics()["all_fired_matches_deadline_telemetry"]
+        ),
+        "v1_host_top_k_or_first_k_truncation": v1_encoder.metrics()[
+            "host_first_k_used_for_returned_code"
+        ],
+        "v2_code_uses_all_fired_cells": all(
+            arm["v2_selection"]["all_fired_readout_matches_deadline_telemetry"]
+            for arm in arms.values()
+        ),
+        "it_code_uses_all_fired_cells": all(
+            arm["it_selection"]["all_fired_readout_matches_deadline_telemetry"]
+            for arm in arms.values()
+        ),
+        "v2_host_top_k_or_first_k_truncation": any(
+            arm["v2_selection"]["host_top_k_or_first_k_truncation"]
+            for arm in arms.values()
+        ),
+        "it_host_top_k_or_first_k_truncation": any(
+            arm["it_selection"]["host_top_k_or_first_k_truncation"]
+            for arm in arms.values()
+        ),
         "postsynaptic_persistence_present": False,
         "intact_v2_has_no_nonlocal_synapses": (
             arms["intact"]["v2_connectivity"]["nonlocal_synapses"] == 0
@@ -702,12 +933,38 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
                 "actual_feedforward_synapses"
             ]
         ),
+        "rf_scramble_matches_orientation_and_overlap_statistics": (
+            receptive_field_control_matches(
+                intact_v2.local_fields,
+                arms["receptive_field_scramble"]["v2_connectivity"]["wired_fields"],
+                args.n_orientations,
+                args.n_pos,
+            )
+        ),
+        "rf_scramble_changes_wiring": (
+            tuple(int(index) for field in intact_v2.local_fields for index in field)
+            != tuple(
+                int(index)
+                for field in arms["receptive_field_scramble"]["v2_connectivity"][
+                    "wired_fields"
+                ]
+                for index in field
+            )
+        ),
+        "rf_scramble_creates_nonlocal_synapses": (
+            arms["receptive_field_scramble"]["v2_connectivity"]["nonlocal_synapses"]
+            > 0
+        ),
+        "numeric_measurements_are_finite": _all_numeric_measurements_finite(
+            {"arms": arms, "pixel_scramble": pixel_scramble}
+        ),
         "fixed_scaffolds": [
             "fixed Gabor filters",
             "host V1 normalization and overlap-to-current scaling",
             "fixed V2 receptive-field topology",
+            "fixed host-supplied V2 FS/PV feedforward afferent current",
             "host-maintained presynaptic IT trace",
-            "synthetic track boundaries",
+            "synthetic identity-pure track boundaries (weak supervision)",
             "host spike-deadline readout",
             "labels used only for scoring",
         ],
@@ -724,10 +981,18 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         ),
         "v2_fs_lesion_increases_density": (
             arms["v2_local_fs_lesion"]["v2_selection"]["mean_fired_fraction"]
-            > arms["intact"]["v2_selection"]["mean_fired_fraction"]
+            >= arms["intact"]["v2_selection"]["mean_fired_fraction"] + 0.20
         ),
-        "labels_absent": not stream_checks["labels_enter_encoding_or_learning"],
+        "it_fs_lesion_increases_density": (
+            arms["it_fs_lesion"]["it_selection"]["mean_fired_fraction"]
+            > arms["intact"]["it_selection"]["mean_fired_fraction"]
+        ),
+        "explicit_identity_labels_absent": not stream_checks[
+            "explicit_identity_labels_enter_encoding_or_learning"
+        ],
+        "v1_all_fired_readout": stream_checks["v1_code_uses_all_fired_cells"],
         "v2_all_fired_readout": stream_checks["v2_code_uses_all_fired_cells"],
+        "it_all_fired_readout": stream_checks["it_code_uses_all_fired_cells"],
     }
 
     validity = Verdict("visual hierarchical part identity", chance=0.25)
@@ -747,13 +1012,44 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         expect=True,
     )
     validity.require(
-        "labels do not enter encoding or learning",
-        stream_checks["labels_enter_encoding_or_learning"],
+        "explicit identity labels do not enter encoding or learning",
+        stream_checks["explicit_identity_labels_enter_encoding_or_learning"],
         expect=False,
     )
     validity.require(
         "intact V2 contains no nonlocal feedforward synapses",
         stream_checks["intact_v2_has_no_nonlocal_synapses"],
+        expect=True,
+    )
+    validity.require(
+        "receptive-field scramble preserves exact synapse count",
+        stream_checks["rf_scramble_preserves_synapse_count"],
+        expect=True,
+    )
+    validity.require(
+        "receptive-field scramble matches orientation and overlap statistics",
+        stream_checks["rf_scramble_matches_orientation_and_overlap_statistics"],
+        expect=True,
+    )
+    validity.require(
+        "receptive-field scramble actually disrupts retinotopy",
+        stream_checks["rf_scramble_changes_wiring"]
+        and stream_checks["rf_scramble_creates_nonlocal_synapses"],
+        expect=True,
+    )
+    validity.require(
+        "V1, V2, and IT readouts use every cell firing by deadline",
+        stream_checks["v1_code_uses_all_fired_cells"]
+        and stream_checks["v2_code_uses_all_fired_cells"]
+        and stream_checks["it_code_uses_all_fired_cells"]
+        and not stream_checks["v1_host_top_k_or_first_k_truncation"]
+        and not stream_checks["v2_host_top_k_or_first_k_truncation"]
+        and not stream_checks["it_host_top_k_or_first_k_truncation"],
+        expect=True,
+    )
+    validity.require(
+        "all numeric measurements are finite",
+        stream_checks["numeric_measurements_are_finite"],
         expect=True,
     )
     decided = validity.decide(go=all(diagnostics.values()), verbose=False)
@@ -800,13 +1096,22 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--complex-norm", default="local_orient_div")
     parser.add_argument("--v1-active", type=int, default=32)
     parser.add_argument("--v1-fs-cells", type=int, default=12)
+    parser.add_argument("--v1-latency-steps", type=int, default=20)
+    parser.add_argument("--v1-col-fs-weight", type=float, default=40.0)
+    parser.add_argument("--v1-fs-col-weight", type=float, default=90.0)
     parser.add_argument("--v2-grid", type=int, default=4)
     parser.add_argument("--rf-width", type=int, default=3)
     parser.add_argument("--v2-part-cells", type=int, default=12)
     parser.add_argument("--v2-fs-cells", type=int, default=4)
+    parser.add_argument("--v2-col-fs-weight", type=float, default=40.0)
+    parser.add_argument("--v2-fs-col-weight", type=float, default=90.0)
+    parser.add_argument("--v2-fs-feedforward-pA", type=float, default=65.0)
+    parser.add_argument("--v2-latency-steps", type=int, default=20)
     parser.add_argument("--it-cells", type=int, default=128)
     parser.add_argument("--it-expected-active", type=int, default=12)
     parser.add_argument("--it-fs-cells", type=int, default=8)
+    parser.add_argument("--it-col-fs-weight", type=float, default=40.0)
+    parser.add_argument("--it-fs-col-weight", type=float, default=90.0)
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--trace-decay", type=float, default=TRACE_DECAY)
     parser.add_argument("--v2-lr-pot", type=float, default=0.05)
@@ -826,8 +1131,37 @@ def validate_config(args: argparse.Namespace) -> None:
         raise ValueError("rf-width and v2-grid must be in [1, n-pos]")
     if not 0 < args.it_expected_active < args.it_cells:
         raise ValueError("it-expected-active must be between zero and it-cells")
-    if min(args.v2_part_cells, args.v2_fs_cells, args.it_fs_cells, args.latency_steps) < 1:
+    if min(
+        args.v1_latency_steps,
+        args.v2_part_cells,
+        args.v2_fs_cells,
+        args.v2_latency_steps,
+        args.it_fs_cells,
+        args.latency_steps,
+    ) < 1:
         raise ValueError("population sizes and latency steps must be positive")
+    if min(
+        args.v1_col_fs_weight,
+        args.v1_fs_col_weight,
+        args.v2_col_fs_weight,
+        args.v2_fs_col_weight,
+        args.it_col_fs_weight,
+        args.it_fs_col_weight,
+    ) <= 0.0:
+        raise ValueError("FS pathway weights must be positive")
+    if args.v2_fs_feedforward_pA < 0.0:
+        raise ValueError("V2 FS feedforward current must be non-negative")
+    if args.phase == "calibration":
+        changed = {
+            name: (getattr(args, name), expected)
+            for name, expected in CALIBRATION_CONFIG.items()
+            if getattr(args, name) != expected
+        }
+        if changed:
+            raise ValueError(
+                "calibration requires the exact preregistered configuration; "
+                f"changed fields: {changed}"
+            )
 
 
 def main() -> int:

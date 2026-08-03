@@ -247,9 +247,16 @@ class SpikingV1Encoder:
         n_fs: int,
         n_steps: int,
         wta_enabled: bool = True,
+        col_fs_weight: float | None = None,
+        fs_col_weight: float | None = None,
     ) -> None:
         self.n_features = int(n_features)
         self.k_active = int(k_active)
+        selector_kwargs = {}
+        if col_fs_weight is not None:
+            selector_kwargs["col_fs_weight"] = col_fs_weight
+        if fs_col_weight is not None:
+            selector_kwargs["fs_col_weight"] = fs_col_weight
         self.selector = SpikeLatencySelector(
             seed=seed,
             n_col=self.n_features,
@@ -257,7 +264,10 @@ class SpikingV1Encoder:
             n_fs=n_fs,
             n_steps=n_steps,
             wta_enabled=wta_enabled,
+            **selector_kwargs,
         )
+        self.all_fired_calls = 0
+        self.all_fired_matches_deadline_telemetry = True
 
     def encode(self, activity: np.ndarray, neural_drive_enabled: bool = True) -> set[int]:
         values = np.asarray(activity, dtype=np.float64)
@@ -271,11 +281,42 @@ class SpikingV1Encoder:
         rows = np.asarray(activity, dtype=np.float64)
         return [self.encode(row) for row in rows]
 
+    def encode_all_fired(
+        self, activity: np.ndarray, neural_drive_enabled: bool = True
+    ) -> set[int]:
+        values = np.asarray(activity, dtype=np.float64)
+        if values.shape != (self.n_features,):
+            raise ValueError(
+                f"V1 activity must have shape ({self.n_features},), got {values.shape}"
+            )
+        fired = self.selector.select_all_fired(
+            values, neural_drive_enabled=neural_drive_enabled
+        )
+        expected = set(
+            int(column)
+            for column in np.flatnonzero(
+                self.selector.last_first_spike <= self.selector.n_steps
+            )
+        )
+        self.all_fired_calls += 1
+        self.all_fired_matches_deadline_telemetry &= fired == expected
+        return fired
+
+    def encode_many_all_fired(self, activity: np.ndarray) -> list[set[int]]:
+        rows = np.asarray(activity, dtype=np.float64)
+        return [self.encode_all_fired(row) for row in rows]
+
     def metrics(self) -> dict[str, float | int | bool | str]:
         return {
             **self.selector.metrics(),
             "representation_stage": "graded V1-complex to V1 spike assembly",
-            "host_top_k_used": False,
+            "host_first_k_used_for_returned_code": (
+                self.selector.ranked_selection_calls > 0
+            ),
+            "all_fired_calls": self.all_fired_calls,
+            "all_fired_matches_deadline_telemetry": (
+                self.all_fired_matches_deadline_telemetry
+            ),
         }
 
 

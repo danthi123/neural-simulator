@@ -337,6 +337,9 @@ class SpikeLatencySelector:
         n_fs: int,
         n_steps: int,
         wta_enabled: bool = True,
+        col_fs_weight: float = LATENCY_COL_FS_WEIGHT,
+        fs_col_weight: float = LATENCY_FS_COL_WEIGHT,
+        fs_feedforward_pA: float = 0.0,
     ) -> None:
         self.seed = int(seed)
         self.n_col = int(n_col)
@@ -344,12 +347,20 @@ class SpikeLatencySelector:
         self.n_fs = int(n_fs)
         self.n_steps = int(n_steps)
         self.wta_enabled = bool(wta_enabled)
+        self.col_fs_weight = float(col_fs_weight)
+        self.fs_col_weight = float(fs_col_weight)
+        self.fs_feedforward_pA = float(fs_feedforward_pA)
         if self.n_col < 2 or not 0 < self.k_win < self.n_col:
             raise ValueError("selector requires 0 < k_win < n_col")
-        if self.n_fs < 1 or self.n_steps < 1:
+        if self.n_fs < 1 or self.n_steps < 1 or self.fs_feedforward_pA < 0.0:
             raise ValueError("selector n_fs and n_steps must be positive")
         self.bridge = self._build_bridge()
         self.column_indices = np.asarray(self.bridge.region_manager.indices("latency_columns"), dtype=np.int64)
+        self.fs_indices = (
+            np.asarray(self.bridge.region_manager.indices("latency_fs"), dtype=np.int64)
+            if self.wta_enabled
+            else np.empty(0, dtype=np.int64)
+        )
         self._tie_rng = np.random.default_rng(self.seed * 101 + 17)
         self._initial_state = {
             name: getattr(self.bridge, name).copy()
@@ -357,6 +368,8 @@ class SpikeLatencySelector:
             if getattr(self.bridge, name, None) is not None
         }
         self.selection_calls = 0
+        self.ranked_selection_calls = 0
+        self.all_fired_selection_calls = 0
         self.total_fired = 0
         self.last_first_spike = np.full(self.n_col, self.n_steps + 1, dtype=np.int64)
         self.last_fired_count = 0
@@ -393,7 +406,7 @@ class SpikeLatencySelector:
                         from_region="latency_columns",
                         to_region="latency_fs",
                         density=1.0,
-                        weight_mean=LATENCY_COL_FS_WEIGHT,
+                        weight_mean=self.col_fs_weight,
                         weight_jitter=0.0,
                         plastic=False,
                     ),
@@ -401,7 +414,7 @@ class SpikeLatencySelector:
                         from_region="latency_fs",
                         to_region="latency_columns",
                         density=1.0,
-                        weight_mean=LATENCY_FS_COL_WEIGHT,
+                        weight_mean=self.fs_col_weight,
                         weight_jitter=0.0,
                         plastic=False,
                     ),
@@ -449,7 +462,9 @@ class SpikeLatencySelector:
         self.bridge.runtime_state.current_time_ms = 0.0
         self.bridge.runtime_state.current_time_step = 0
 
-    def select(self, drive: np.ndarray, neural_drive_enabled: bool = True) -> set[int]:
+    def _run_window(
+        self, drive: np.ndarray, neural_drive_enabled: bool = True
+    ) -> np.ndarray:
         values = np.asarray(drive, dtype=np.float64)
         if values.shape != (self.n_col,):
             raise ValueError(f"drive must have shape ({self.n_col},), got {values.shape}")
@@ -462,6 +477,8 @@ class SpikeLatencySelector:
         current = np.zeros(self.bridge.cp_external_input_current.shape[0], dtype=np.float32)
         if neural_drive_enabled:
             current[self.column_indices] = (LATENCY_DRIVE_GAIN * scaled).astype(np.float32)
+            if self.fs_indices.size and self.fs_feedforward_pA > 0.0:
+                current[self.fs_indices] = self.fs_feedforward_pA
         self.bridge.cp_external_input_current[:] = current
 
         first_spike = np.full(self.n_col, self.n_steps + 1, dtype=np.int64)
@@ -477,11 +494,24 @@ class SpikeLatencySelector:
         self.last_first_spike = first_spike
         self.last_fired_count = int(fired.size)
         self.total_fired += int(fired.size)
+        return fired
+
+    def select(self, drive: np.ndarray, neural_drive_enabled: bool = True) -> set[int]:
+        fired = self._run_window(drive, neural_drive_enabled=neural_drive_enabled)
+        self.ranked_selection_calls += 1
         if fired.size == 0:
             return set()
         tie_break = self._tie_rng.random(fired.size)
-        order = fired[np.lexsort((tie_break, first_spike[fired]))]
+        order = fired[np.lexsort((tie_break, self.last_first_spike[fired]))]
         return set(int(column) for column in order[: self.k_win])
+
+    def select_all_fired(
+        self, drive: np.ndarray, neural_drive_enabled: bool = True
+    ) -> set[int]:
+        """Return every column firing by the deadline without host ranking."""
+        fired = self._run_window(drive, neural_drive_enabled=neural_drive_enabled)
+        self.all_fired_selection_calls += 1
+        return set(int(column) for column in fired)
 
     def metrics(self) -> dict[str, float | int | bool | str]:
         mean_fired = self.total_fired / max(self.selection_calls, 1)
@@ -491,6 +521,8 @@ class SpikeLatencySelector:
             "host_drive_ranking_used_for_winners": False,
             "host_spike_time_readout": True,
             "host_same_step_tie_break": "seeded drive-independent key",
+            "ranked_selection_calls": self.ranked_selection_calls,
+            "all_fired_selection_calls": self.all_fired_selection_calls,
             "fs_pathways_enabled": self.wta_enabled,
             "selection_calls": self.selection_calls,
             "mean_columns_fired_per_window": round(float(mean_fired), 4),
