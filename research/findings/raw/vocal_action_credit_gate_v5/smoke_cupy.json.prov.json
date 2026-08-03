@@ -1,0 +1,28 @@
+{
+ "run_id": "1785794566-1662360",
+ "runner": "research/runners/_vocal_action_credit_gate_v5.py",
+ "argv": [
+  "/tmp/sim-v5-cupy-clean-70a6/research/runners/_vocal_action_credit_gate_v5.py",
+  "--output",
+  "research/findings/raw/vocal_action_credit_gate_v5/smoke_cupy.json"
+ ],
+ "git_sha": "70a623c23",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-03T18:02:46",
+ "env": {
+  "SIM_LOG_LEVEL": "ERROR",
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/vocal_action_credit_gate_v5/smoke_cupy.json"
+}

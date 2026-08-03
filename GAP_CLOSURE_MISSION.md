@@ -35,6 +35,14 @@ controlled the action-tag duration after detecting the winner, and the exact
 CuPy run fired at `45.833 Hz/cell`. Instrumentation traced the backend difference
 to late motor activity driving different always-open FS normalizers. Every v4
 scientific seed remains unused and sealed.
+Gate B v5 now replaces the host-timed route with commit/arousal dendritic
+coincidence during one fixed action epoch and symmetric outcome-linked
+excitation plus feed-forward inhibition. Its frozen-dynamics reserved seed-zero
+battery passes on NumPy and the RTX 3090 with one configuration (`18.06` and
+`17.36 Hz/cell`), zero changed weights, and explicit rejection of bilateral
+commit and outcome state. This is a qualified mechanism smoke, not learned
+credit; formal phases remain sealed pending adversarial re-audit and a fresh
+preregistration.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -81,10 +89,10 @@ enforce evidence gates and refresh the main-branch index automatically.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Build a fresh Gate B smoke around the selector's neural commit populations,
-   with no host winner/timing latch, neural-state selectivity checks that reject
-   bilateral activity, and generic outcome-linked feed-forward normalization.
-   Pass NumPy and CuPy smoke before assigning or opening any formal seed.
+1. Adversarially audit the cross-backend Gate B v5 smoke, then preregister fresh
+   formal partitions for actual local learning, contingent acquisition, yoked
+   neutrality, omission activity, permutation, and lesions. Do not assign or
+   open a formal seed until the audit and preregistration are committed.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a

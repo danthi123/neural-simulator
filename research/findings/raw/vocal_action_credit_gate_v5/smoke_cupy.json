@@ -1,0 +1,1758 @@
+{
+  "artifact_schema_version": 1,
+  "probe": "vocal_action_credit_gate_b_v5",
+  "version": "v5-smoke-only",
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "config_sha256": "6cfbccc819de422def928cb97a8f3dc4b8d25568b890da5bdd1875fb927f4def",
+  "preconditions": [
+    {
+      "name": "reserved_smoke_seed_only",
+      "ok": true,
+      "observed": 0,
+      "expected": 0
+    },
+    {
+      "name": "formal_phases_sealed",
+      "ok": true,
+      "observed": [],
+      "expected": []
+    },
+    {
+      "name": "default_config_selected",
+      "ok": true,
+      "observed_sha256": "6cfbccc819de422def928cb97a8f3dc4b8d25568b890da5bdd1875fb927f4def",
+      "expected_sha256": "6cfbccc819de422def928cb97a8f3dc4b8d25568b890da5bdd1875fb927f4def"
+    }
+  ],
+  "science_seed_executed": false,
+  "open_phases": [],
+  "host_boundary": {
+    "generic_cue_timing": true,
+    "generic_outcome_timing": true,
+    "sensory_reward_presence": true,
+    "desired_channel_current": false,
+    "host_eligibility_assignment": false,
+    "host_initializes_dopamine_baseline": true,
+    "host_calibrates_tonic_production_threshold": true,
+    "host_trialwise_dopamine_assignment": false,
+    "host_prediction_error_calculation": false,
+    "host_weight_update": false,
+    "host_expected_value_state": false,
+    "host_action_winner_latch": false,
+    "host_action_timed_transmission_window": false,
+    "fixed_action_epoch": true,
+    "shared_outcome_afferent_identical_across_channels": true
+  },
+  "attribution": {
+    "action_tag_to_arousal_coincidence": 0.9993866385904638,
+    "outcome_window_activity_to_plateau": 0.36,
+    "outcome_window_activity_to_excitation": 0.12,
+    "outcome_suppression_to_feedforward_inhibition": 0.5901639344262295
+  },
+  "checks": {
+    "default_config_selected": true,
+    "reserved_smoke_seed_only": true,
+    "no_host_winner_or_timing_latch": true,
+    "coincidence_is_confined_to_declared_tag_routes": true,
+    "smoke_weights_are_frozen": true,
+    "selector_commits": true,
+    "coincidence_adds_selected_plateau": true,
+    "arousal_is_load_bearing_for_tag": true,
+    "commit_is_load_bearing_for_tag": true,
+    "tag_is_channel_selective": true,
+    "permutation_moves_neural_tag": true,
+    "plateau_lesion_removes_tag": true,
+    "plateau_is_load_bearing_for_outcome_window_activity": true,
+    "generic_outcome_drives_both_fs_pools": true,
+    "outcome_excitation_is_load_bearing": true,
+    "outcome_event_materially_modulates_tagged_population": true,
+    "outcome_inhibition_is_load_bearing": true,
+    "intact_outcome_is_channel_selective": true,
+    "permutation_outcome_is_channel_selective": true,
+    "selected_outcome_rate_is_bounded_1_to_20_hz_per_cell": true
+  },
+  "status": "SMOKE_PASS",
+  "conditions": {
+    "intact": {
+      "control": "intact",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 1,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 326,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          18,
+          99
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 10,
+        "commit": [
+          0,
+          373
+        ],
+        "motor": [
+          0,
+          534
+        ],
+        "value": [
+          0,
+          103
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          217
+        ],
+        "motor": [
+          0,
+          317
+        ],
+        "value": [
+          0,
+          25
+        ],
+        "value_fs": [
+          61,
+          66
+        ]
+      },
+      "plateau_before_action": [
+        0.11397753655910492,
+        0.0012404359877109528
+      ],
+      "plateau_after_action": [
+        0.09331686049699783,
+        1.7095839977264404
+      ],
+      "plateau_before_outcome": [
+        0.07640135288238525,
+        1.3996886014938354
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        17.361111111111114
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_0": 720,
+          "commit_1->vocal_credit_value_1": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 1.0,
+        "outcome_inhibition": 1.0
+      }
+    },
+    "arousal_lesion": {
+      "control": "arousal_lesion",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 1,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 0,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          0,
+          1
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 0,
+        "commit": [
+          0,
+          316
+        ],
+        "motor": [
+          0,
+          491
+        ],
+        "value": [
+          0,
+          57
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          218
+        ],
+        "motor": [
+          0,
+          316
+        ],
+        "value": [
+          0,
+          26
+        ],
+        "value_fs": [
+          61,
+          66
+        ]
+      },
+      "plateau_before_action": [
+        0.11397753655910492,
+        0.0012404359877109528
+      ],
+      "plateau_after_action": [
+        0.09331686049699783,
+        0.0010485928505659103
+      ],
+      "plateau_before_outcome": [
+        0.07640135288238525,
+        0.0008587180636823177
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        18.055555555555554
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_0": 720,
+          "commit_1->vocal_credit_value_1": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 1.0,
+        "outcome_inhibition": 1.0
+      }
+    },
+    "commit_lesion": {
+      "control": "commit_lesion",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 1,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 326,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 10,
+        "commit": [
+          0,
+          373
+        ],
+        "motor": [
+          0,
+          534
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          217
+        ],
+        "motor": [
+          0,
+          317
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          61,
+          66
+        ]
+      },
+      "plateau_before_action": [
+        0.0,
+        0.0
+      ],
+      "plateau_after_action": [
+        1.0283011150479665e-13,
+        1.0283011150479665e-13
+      ],
+      "plateau_before_outcome": [
+        8.419106340903926e-14,
+        8.419106340903926e-14
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        0.0
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_0": 720,
+          "commit_1->vocal_credit_value_1": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 1.0,
+        "outcome_inhibition": 1.0
+      }
+    },
+    "plateau_lesion": {
+      "control": "plateau_lesion",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 1,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 326,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          17,
+          95
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 10,
+        "commit": [
+          0,
+          373
+        ],
+        "motor": [
+          0,
+          534
+        ],
+        "value": [
+          0,
+          102
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          217
+        ],
+        "motor": [
+          0,
+          317
+        ],
+        "value": [
+          0,
+          16
+        ],
+        "value_fs": [
+          61,
+          66
+        ]
+      },
+      "plateau_before_action": [
+        0.0,
+        0.0
+      ],
+      "plateau_after_action": [
+        0.0,
+        0.0
+      ],
+      "plateau_before_outcome": [
+        0.0,
+        0.0
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        11.11111111111111
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_0": 720,
+          "commit_1->vocal_credit_value_1": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 1.0,
+        "outcome_inhibition": 1.0
+      }
+    },
+    "no_outcome": {
+      "control": "no_outcome",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 1,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 326,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          18,
+          99
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 10,
+        "commit": [
+          0,
+          373
+        ],
+        "motor": [
+          0,
+          534
+        ],
+        "value": [
+          0,
+          103
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          217
+        ],
+        "motor": [
+          0,
+          317
+        ],
+        "value": [
+          0,
+          54
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "plateau_before_action": [
+        0.11397753655910492,
+        0.0012404359877109528
+      ],
+      "plateau_after_action": [
+        0.09331686049699783,
+        1.7095839977264404
+      ],
+      "plateau_before_outcome": [
+        0.07640135288238525,
+        1.3996886014938354
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        37.5
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_0": 720,
+          "commit_1->vocal_credit_value_1": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 1.0,
+        "outcome_inhibition": 1.0
+      }
+    },
+    "outcome_excitation_lesion": {
+      "control": "outcome_excitation_lesion",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 1,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 326,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          18,
+          99
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 10,
+        "commit": [
+          0,
+          373
+        ],
+        "motor": [
+          0,
+          534
+        ],
+        "value": [
+          0,
+          103
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          217
+        ],
+        "motor": [
+          0,
+          317
+        ],
+        "value": [
+          0,
+          22
+        ],
+        "value_fs": [
+          61,
+          66
+        ]
+      },
+      "plateau_before_action": [
+        0.11397753655910492,
+        0.0012404359877109528
+      ],
+      "plateau_after_action": [
+        0.09331686049699783,
+        1.7095839977264404
+      ],
+      "plateau_before_outcome": [
+        0.07640135288238525,
+        1.3996886014938354
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        15.277777777777779
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_0": 720,
+          "commit_1->vocal_credit_value_1": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 0.0,
+        "outcome_inhibition": 1.0
+      }
+    },
+    "outcome_inhibition_lesion": {
+      "control": "outcome_inhibition_lesion",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 1,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 326,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          18,
+          99
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 10,
+        "commit": [
+          0,
+          373
+        ],
+        "motor": [
+          0,
+          534
+        ],
+        "value": [
+          0,
+          103
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          217
+        ],
+        "motor": [
+          0,
+          317
+        ],
+        "value": [
+          0,
+          61
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "plateau_before_action": [
+        0.11397753655910492,
+        0.0012404359877109528
+      ],
+      "plateau_after_action": [
+        0.09331686049699783,
+        1.7095839977264404
+      ],
+      "plateau_before_outcome": [
+        0.07640135288238525,
+        1.3996886014938354
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        0.0,
+        42.36111111111111
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_0": 720,
+          "commit_1->vocal_credit_value_1": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 1.0,
+        "outcome_inhibition": 0.0
+      }
+    },
+    "action_channel_permutation": {
+      "control": "action_channel_permutation",
+      "seed": 0,
+      "scientific_seed_executed": false,
+      "config": {
+        "n_cue": 24,
+        "n_actor": 24,
+        "n_reward_us": 24,
+        "n_outcome": 24,
+        "n_snc": 20,
+        "n_value": 24,
+        "cue_pA": 6000.0,
+        "reward_pA": 1000.0,
+        "outcome_pA": 1000.0,
+        "cue_to_actor_weight": 0.1,
+        "motor_to_actor_weight": 20.0,
+        "actor_to_gpi_weight": 60.0,
+        "reward_to_snc_weight": 100.0,
+        "motor_to_value_weight": 20.0,
+        "value_to_snc_weight": 10.0,
+        "cue_lead_steps": 100,
+        "collateral_steps": 30,
+        "reward_delay_steps": 100,
+        "reward_steps": 40,
+        "post_reward_steps": 500,
+        "reward_learning_rate": 0.06,
+        "actor_plasticity_gain": 0.3,
+        "eligibility_tau_ms": 300.0,
+        "coactivity_trace_tau_ms": 80.0,
+        "coactivity_threshold": 0.001,
+        "coactivity_scale": 20.0,
+        "weight_max": 80.0,
+        "dopamine_decay_tau_ms": 30.0,
+        "dopamine_window_ms": 20.0,
+        "dopamine_sensitivity": 40.0,
+        "enable_action_value_critic": true,
+        "snc_tonic_pA": 350.0,
+        "snc_tonic_calibration_steps": 1000,
+        "gabab_propagation_strength": 4e-05,
+        "gabab_tau_decay_ms": 150.0,
+        "ach_decay_tau_ms": 20.0,
+        "ach_window_ms": 5.0,
+        "ach_pause_sensitivity": -1000.0,
+        "n_value_fs": 12,
+        "n_omission_gate": 20,
+        "n_lhb": 24,
+        "n_reward_veto": 16,
+        "n_rmtg": 20,
+        "motor_to_value_fs_weight": 20.0,
+        "value_fs_to_value_weight": 12.0,
+        "value_to_omission_gate_weight": 8.0,
+        "omission_gate_tonic_pA": 350.0,
+        "omission_gate_to_lhb_weight": 16.0,
+        "outcome_to_lhb_weight": 16.0,
+        "reward_to_veto_weight": 20.0,
+        "reward_veto_to_lhb_weight": 20.0,
+        "lhb_to_rmtg_weight": 18.0,
+        "rmtg_to_snc_weight": 18.0,
+        "commit_to_value_weight": 22.0,
+        "arousal_to_value_weight": 18.0,
+        "outcome_to_value_weight": 2.0,
+        "outcome_to_value_fs_weight": 18.0,
+        "action_tag_center": 300.0,
+        "action_tag_slope": 0.2,
+        "action_tag_strength": 2.0,
+        "action_tag_max_loser_ratio": 0.1,
+        "min_plateau_outcome_fraction": 0.2,
+        "min_outcome_excitation_fraction": 0.1,
+        "min_outcome_event_fraction": 0.1,
+        "min_outcome_inhibition_fraction": 0.2,
+        "max_outcome_loser_ratio": 0.1,
+        "action_tag_tau_decay_ms": 500.0,
+        "action_tag_tau_rise_ms": 2.0,
+        "smoke_warmup_steps": 120,
+        "smoke_action_steps": 100,
+        "smoke_gap_steps": 100,
+        "smoke_outcome_steps": 60
+      },
+      "winner_observed_after_fixed_action_epoch": 1,
+      "expected_value_channel": 0,
+      "warmup": {
+        "arousal": 0,
+        "commit": [
+          121,
+          132
+        ],
+        "motor": [
+          206,
+          230
+        ],
+        "value": [
+          0,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "action": {
+        "arousal": 326,
+        "commit": [
+          15,
+          145
+        ],
+        "motor": [
+          111,
+          283
+        ],
+        "value": [
+          95,
+          15
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "delay": {
+        "arousal": 10,
+        "commit": [
+          0,
+          373
+        ],
+        "motor": [
+          0,
+          534
+        ],
+        "value": [
+          105,
+          0
+        ],
+        "value_fs": [
+          0,
+          0
+        ]
+      },
+      "outcome": {
+        "arousal": 0,
+        "commit": [
+          0,
+          217
+        ],
+        "motor": [
+          0,
+          317
+        ],
+        "value": [
+          24,
+          0
+        ],
+        "value_fs": [
+          61,
+          66
+        ]
+      },
+      "plateau_before_action": [
+        0.0012404359877109528,
+        0.11397753655910492
+      ],
+      "plateau_after_action": [
+        1.7095839977264404,
+        0.09331686049699783
+      ],
+      "plateau_before_outcome": [
+        1.3996886014938354,
+        0.07640135288238525
+      ],
+      "outcome_value_rate_hz_per_cell": [
+        16.666666666666668,
+        0.0
+      ],
+      "host_boundary": {
+        "generic_cue_timing": true,
+        "generic_outcome_timing": true,
+        "sensory_reward_presence": true,
+        "desired_channel_current": false,
+        "host_eligibility_assignment": false,
+        "host_initializes_dopamine_baseline": true,
+        "host_calibrates_tonic_production_threshold": true,
+        "host_trialwise_dopamine_assignment": false,
+        "host_prediction_error_calculation": false,
+        "host_weight_update": false,
+        "host_expected_value_state": false,
+        "host_action_winner_latch": false,
+        "host_action_timed_transmission_window": false,
+        "fixed_action_epoch": true,
+        "shared_outcome_afferent_identical_across_channels": true
+      },
+      "coincidence_route_audit": {
+        "enabled_synapses": 2592,
+        "intended_synapses": 2592,
+        "enabled_outside_intended_routes": 0,
+        "disabled_inside_intended_routes": 0,
+        "route_counts": {
+          "commit_0->vocal_credit_value_1": 720,
+          "commit_1->vocal_credit_value_0": 720,
+          "practice_arousal->vocal_credit_value_0": 576,
+          "practice_arousal->vocal_credit_value_1": 576
+        }
+      },
+      "weight_change_audit": {
+        "changed_synapses": 0,
+        "max_abs_delta": 0.0
+      },
+      "route_gains": {
+        "outcome_excitation": 1.0,
+        "outcome_inhibition": 1.0
+      }
+    }
+  }
+}

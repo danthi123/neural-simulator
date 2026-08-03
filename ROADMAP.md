@@ -77,9 +77,14 @@ dendritic-expectation successor produced a real, causal local trace on NumPy,
 but it is retired before formal testing: its original selectivity checks were
 partly tautological, Python controlled the action-tag duration after observing
 the winner, and late motor activity drove different inhibitory channels across
-CPU and GPU. The next smoke must use a neural commit event, infer selectivity
-from neural state, and remain bounded on both backends before receiving formal
-seeds.
+CPU and GPU. A fifth version now uses commit/arousal dendritic coincidence
+during a fixed action epoch and symmetric outcome-linked feed-forward
+normalization. Its reserved smoke passes on NumPy and CuPy with one
+configuration, changes no weights, rejects bilateral commit and outcome state,
+and stays below 20 Hz/cell. This is only a qualified mechanism smoke. Formal
+seeds remain sealed until adversarial re-review and a fresh preregistration
+require actual local learning, yoked neutrality, contingent acquisition,
+omission activity, permutation, and all lesions.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
