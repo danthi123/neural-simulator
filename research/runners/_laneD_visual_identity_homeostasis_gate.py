@@ -96,6 +96,7 @@ SEED_PARTITIONS = {
     "development": DEVELOPMENT_SEEDS,
     "heldout": HELDOUT_SEEDS,
 }
+OPEN_PHASES = ("calibration",)
 
 ARM_SPECS = {
     "intact": {"trace": True, "homeostasis": "slow", "shuffle": False, "learning": True},
@@ -159,6 +160,11 @@ OBJECT_SEGMENTS: tuple[tuple[tuple[float, float, float, float], ...], ...] = (
 
 def validate_seed_partition(phase: str, seeds: Sequence[int]) -> None:
     """Prevent calibration from consuming seeds reserved for later decisions."""
+    if phase not in OPEN_PHASES:
+        raise ValueError(
+            f"phase {phase!r} is not open; this runner is calibration-only and "
+            "development/held-out seeds remain locked"
+        )
     allowed = set(SEED_PARTITIONS[phase])
     unexpected = sorted(set(int(seed) for seed in seeds) - allowed)
     if unexpected:
@@ -824,7 +830,7 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--phase", choices=tuple(SEED_PARTITIONS), default="calibration")
+    parser.add_argument("--phase", choices=OPEN_PHASES, default="calibration")
     parser.add_argument("--seeds", type=int, nargs="+", default=list(CALIBRATION_SEEDS))
     parser.add_argument("--train-frames", type=int, default=12)
     parser.add_argument("--tracks-per-object", type=int, default=2)

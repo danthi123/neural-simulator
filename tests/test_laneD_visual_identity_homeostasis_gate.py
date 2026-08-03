@@ -18,6 +18,11 @@ def test_seed_partitions_are_disjoint_and_calibration_is_default():
     gate.validate_seed_partition("calibration", [212, 213])
     with pytest.raises(ValueError, match="cannot use seeds"):
         gate.validate_seed_partition("calibration", [214])
+    with pytest.raises(ValueError, match="is not open"):
+        gate.validate_seed_partition("development", [214])
+    with pytest.raises(ValueError, match="is not open"):
+        gate.validate_seed_partition("heldout", [311])
+    assert gate.build_parser()._option_string_actions["--phase"].choices == ("calibration",)
 
 
 def test_dataset_has_four_continuous_objects_and_disjoint_held_transforms():
