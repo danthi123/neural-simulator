@@ -157,12 +157,15 @@ Current assets:
 - familiarity-based no-fabrication behavior;
 - self-schema and metacognition test runners with lesion and permutation
   controls;
-- a recent six-seed self-schema relay result in the research runner.
+- a six-seed self-schema relay result in the research runner;
+- a default-off production conversation hook that preserves the hard moat and
+  downgrades most low-confidence familiar-wrong recalls.
 
 Open point:
 
-The mechanism is not yet fully wired into the normal conversation loop. Until it
-is, honesty remains partly scaffolded.
+The hook is wired, but the signal is not yet strong enough: raw trace confidence
+still asserts some wrong recalls. The next step is a calibrated or learned
+correctness-confidence signal from the metacognitive monitor.
 
 ## Phase 4: Predictive And Reconstructive Memory
 
@@ -272,8 +275,9 @@ because a giant static model was preallocated.
 1. **Bank the large-language-circuit spiking-forward promotion.** Finish the
    multi-seed check for the 267M-parameter local recurrent language checkpoint,
    then update the record honestly.
-2. **Wire the self-schema honesty path into production conversation.** Move from
-   isolated metacognition runner to normal answer/hedge/ask behavior.
+2. **Strengthen the self-schema honesty signal.** The production hook exists and
+   is moat-safe; now feed it with calibrated learned correctness confidence
+   instead of raw trace confidence.
 3. **Build the minimal grounded speech-action loop.** Use internal curiosity,
    surprise, or affect as the cause of speech; use contingent partner feedback as
    the learning signal.

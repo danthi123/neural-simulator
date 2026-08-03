@@ -397,6 +397,25 @@ class CommunicableTurn:
     def _known_fact_channel(self, cue):
         """The hard-gated KNOWN-fact channel: cue = (agent, action) for a what-does, or (agent, action, patient)
         for a yes/no.  Returns a structured record; abstains (the no-confab moat) when nothing matches."""
+        if getattr(self.agent, "enable_self_schema_honesty", False):
+            rec = self.agent.known_fact_record(cue)
+            if rec["hard_abstain"]:
+                out = {"channel": "known", "certain": True, "abstained": True,
+                       "answer": "I don't know about that.", "recalled_svo": None}
+            else:
+                out = {"channel": "known", "certain": bool(rec["certain"]), "abstained": False,
+                       "answer": rec["answer_text"], "recalled_svo": rec["recalled_svo"]}
+            if len(cue) == 3:
+                out["yesno"] = rec.get("yesno")
+            out["laneC_self_schema"] = {
+                "enabled": True,
+                "band": rec["band"],
+                "soft_abstain": bool(rec["soft_abstain"]),
+                "confidence_source": rec.get("confidence_source"),
+                "self_schema": rec.get("self_schema"),
+                "self_schema_invoked": bool(rec["self_schema_invoked"]),
+            }
+            return out
         if len(cue) == 2:
             ag, ac = cue
             patient = self.agent.what_does(ag, ac)

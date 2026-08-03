@@ -181,7 +181,8 @@ class BrainConversationalAgent:
                  enable_embedded_clause=False, embedded_nouns=None, embedded_verbs=None,
                  embedded_relativizers=None, embedded_readout_redundancy=3,
                  defer_parser=False, communicable_mode=False, communicable_draw="spiking",
-                 communicable_config=None, speak_value_Q=None, D=128):
+                 communicable_config=None, speak_value_Q=None, D=128,
+                 enable_self_schema_honesty=False, self_schema_honesty_config=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -438,6 +439,15 @@ class BrainConversationalAgent:
         self._communicable_seed_Q = dict(speak_value_Q) if speak_value_Q else None
         self._communicable = None        # the built CommunicableTurn (lazy); None until first converse()
         self._communicable_brain = None  # the build_communicable_brain() result dict (the value object lives here)
+        # (Lane C production wire-in, opt-in, default OFF = byte-identical) known-fact answers can be passed through
+        # a self_schema confidence read-out before they are rendered as certain. The hard moat remains FIRST:
+        # a None/"unknown" from the existing retrieval path never builds or invokes the self-schema monitor. When the
+        # answer exists, the composer's read-only trace supplies an answer-process confidence scalar, which drives a
+        # fixed meta_schema -> self_schema confidence relay. The relay can only downgrade: assert -> hedge ->
+        # soft-abstain. It never upgrades an abstain into an answer.
+        self.enable_self_schema_honesty = bool(enable_self_schema_honesty)
+        self._self_schema_honesty_config = dict(self_schema_honesty_config) if self_schema_honesty_config else None
+        self._self_schema_honesty = None
 
     def _ensure_parser(self):
         """Lazily build + train the comprehension `BridgeParser` (BRAIN-LOAD SPEEDUP: deferred so a LOADED Q&A-only
@@ -678,6 +688,128 @@ class BrainConversationalAgent:
 
     def is_it_true(self, agent, action, patient):
         return self.composer.ask_yes_no(agent, action, patient)
+
+    def _ensure_self_schema_honesty(self):
+        if self._self_schema_honesty is None:
+            from research.runners.self_schema_honesty import SelfSchemaHonestyMonitor
+            self._self_schema_honesty = SelfSchemaHonestyMonitor(
+                seed=self.seed,
+                config=self._self_schema_honesty_config,
+            )
+        return self._self_schema_honesty
+
+    def _query_with_optional_trace(self, fn):
+        comp = self.composer
+        has_trace = hasattr(comp, "trace")
+        old_trace = getattr(comp, "trace", False)
+        if self.enable_self_schema_honesty and has_trace:
+            comp.trace = True
+        try:
+            ans = fn()
+            trace = getattr(comp, "last_trace", None) if has_trace else None
+        finally:
+            if self.enable_self_schema_honesty and has_trace and not old_trace:
+                comp.trace = old_trace
+        return ans, trace
+
+    def _hard_known_record(self, kind, cue, answer, recalled_svo=None, yesno=None):
+        rec = {
+            "query": kind,
+            "cue": list(cue),
+            "raw_answer": answer,
+            "answer": answer,
+            "answer_text": "I don't know about that.",
+            "recalled_svo": recalled_svo,
+            "yesno": yesno,
+            "hard_abstain": True,
+            "soft_abstain": False,
+            "certain": True,
+            "band": "MOAT",
+            "self_schema_invoked": False,
+            "self_schema": None,
+            "confidence_source": None,
+        }
+        return rec
+
+    def known_fact_record(self, cue):
+        """Structured known-fact answer with optional Lane C self-schema honesty.
+
+        The raw public methods (`what_does`, `who_does`, `is_it_true`, `describe`) keep their historical return
+        contracts. This wrapper is for conversation surfaces that need certainty/hedge metadata. Retrieval happens
+        first; if the existing moat abstains, the self-schema path is not invoked.
+        """
+        cue = tuple(cue)
+        if len(cue) == 2:
+            ag, ac = cue
+            patient, trace = self._query_with_optional_trace(lambda: self.what_does(ag, ac))
+            if patient is None:
+                return self._hard_known_record("what_does", cue, None, recalled_svo=None)
+            raw_text = f"{ag} {ac} {patient}."
+            recalled_svo = [ag, ac, patient]
+            raw_answer = patient
+        elif len(cue) == 3:
+            ag, ac, pt = cue
+            yn, trace = self._query_with_optional_trace(lambda: self.is_it_true(ag, ac, pt))
+            if yn == "unknown":
+                return self._hard_known_record("yes_no", cue, "unknown", recalled_svo=None, yesno="unknown")
+            raw_text = "Yes." if yn == "yes" else "No."
+            recalled_svo = [ag, ac, pt]
+            raw_answer = yn
+        else:
+            raise ValueError("known_fact_record expects a 2-item what-does cue or 3-item yes/no cue")
+
+        if not self.enable_self_schema_honesty:
+            return {
+                "query": "what_does" if len(cue) == 2 else "yes_no",
+                "cue": list(cue),
+                "raw_answer": raw_answer,
+                "answer": raw_answer,
+                "answer_text": raw_text,
+                "recalled_svo": recalled_svo,
+                "yesno": raw_answer if len(cue) == 3 else None,
+                "hard_abstain": False,
+                "soft_abstain": False,
+                "certain": True,
+                "band": "assert",
+                "self_schema_invoked": False,
+                "self_schema": None,
+                "confidence_source": None,
+            }
+
+        from research.runners.self_schema_honesty import (
+            self_schema_hedge_text,
+            self_schema_soft_abstain_text,
+            trace_confidence,
+        )
+        kind = "what_does" if len(cue) == 2 else "yes_no"
+        source_conf = trace_confidence(trace)
+        self_schema = self._ensure_self_schema_honesty().read(source_conf, familiar=True)
+        band = self_schema["band"]
+        if band == "assert":
+            answer_text = raw_text
+            soft_abstain = False
+        elif band == "soft_abstain":
+            answer_text = self_schema_soft_abstain_text(kind, raw_answer, cue=cue)
+            soft_abstain = True
+        else:
+            answer_text = self_schema_hedge_text(kind, raw_answer, cue=cue)
+            soft_abstain = False
+        return {
+            "query": kind,
+            "cue": list(cue),
+            "raw_answer": raw_answer,
+            "answer": raw_answer,
+            "answer_text": answer_text,
+            "recalled_svo": recalled_svo,
+            "yesno": raw_answer if len(cue) == 3 else None,
+            "hard_abstain": False,
+            "soft_abstain": bool(soft_abstain),
+            "certain": bool(band == "assert"),
+            "band": band,
+            "self_schema_invoked": True,
+            "self_schema": self_schema,
+            "confidence_source": source_conf,
+        }
 
     def reason_chain(self, cue, actions):
         """Multi-hop relational reasoning: chain stored facts, each hop's patient becoming the next hop's agent

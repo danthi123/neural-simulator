@@ -42,7 +42,7 @@ runners, 1938 finding documents, and 46 simulation profiles.
 | Reward and value | Dopamine-like reward prediction and value signals are among the better grounded pieces. They can drive action learning and interact with other regions. |
 | Affect | Persistent mood-like state and neuromodulator axes exist. Rich, graded, learned emotion that changes perception, memory, speech, and behavior remains open. |
 | Curiosity | Basic novelty/learning-drive circuits exist and can avoid some unlearnable noise. Learning-progress tracking over time is still being strengthened. |
-| Self-monitoring | Separate circuits can read confidence, attention, and self-related state in test runners. They need production integration so honesty emerges from the brain's own self-model. |
+| Self-monitoring | Separate circuits can read confidence, attention, and self-related state in test runners. A default-off production hook now preserves the hard moat and downgrades most low-confidence wrong recalls, but high-confidence wrong recalls still need a learned correctness signal. |
 | One-brain integration | Several merged-brain demos show navigation, conversation, memory, and shared modulation co-residing. The next step is a continuously running lived loop, not just a combined demo. |
 
 ## What Is Still Scaffolded
@@ -69,8 +69,9 @@ thing doing cognition.
    circuitry with what the brain sees, does, wants, and remembers.
 3. **A complete live loop.** The project needs a small but continuous world/body/
    speech/learning loop where consequences change the brain.
-4. **Self-based honesty.** Abstention and hedging should be driven by the
-   self-model and confidence state inside the brain.
+4. **Self-based honesty.** Abstention and hedging are partly wired into the
+   self-model now, but the confidence signal still needs to predict correctness
+   rather than mere recall strength.
 5. **Developing emotion.** Current affect is useful but too narrow. The target is
    graded, learned, embodied affect that shapes behavior and speech.
 6. **Continual learning without forgetting.** The project has consolidation pieces,

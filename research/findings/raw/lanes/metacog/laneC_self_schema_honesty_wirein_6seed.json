@@ -1,0 +1,963 @@
+{
+  "runner": "research/runners/_laneC_self_schema_honesty_wirein_derisk.py",
+  "faculty": "Lane C metacognition / self-schema honesty in production known-fact conversation",
+  "theory": "answer-process confidence routed through a fixed meta_schema -> self_schema spiking relay",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "D": 16,
+  "n_facts": 48,
+  "vocab_mode": "synthetic",
+  "low_conf_cutoff": 0.48,
+  "verdict": "PARTIAL",
+  "aggregate": {
+    "core_ok": true,
+    "low_conf_measured": true,
+    "low_conf_all_downgraded": false,
+    "high_conf_errors_remain": true,
+    "wrong_assert_rate": 0.1956521739130435,
+    "low_conf_wrong_downgrade_rate": 0.96875,
+    "correct_assert_rate": 0.5939849624060151,
+    "total_counts": {
+      "matched_queries": 288,
+      "matched_hard_abstains": 109,
+      "correct": 133,
+      "wrong": 46,
+      "wrong_assert": 9,
+      "low_conf_wrong": 32,
+      "low_conf_wrong_downgraded": 31,
+      "correct_assert": 79,
+      "hard_moat_off": 475,
+      "hard_moat_on": 475,
+      "added_false_accepts": 0,
+      "self_schema_invoked_on_hard_moat": 0,
+      "intrinsic_unknown_answers": 5
+    }
+  },
+  "success_components": {
+    "default_off_identity_preserved": true,
+    "hard_moat_added_false_accepts_zero": true,
+    "self_schema_not_invoked_on_hard_moat": true,
+    "low_conf_familiar_wrong_measured": true,
+    "low_conf_familiar_wrong_some_downgraded": true,
+    "low_conf_familiar_wrong_all_downgraded": false,
+    "wrong_asserts_absent_for_full_go": false
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 80,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 11,
+        "correct": 30,
+        "wrong": 7,
+        "wrong_assert": 1,
+        "low_conf_wrong": 6,
+        "low_conf_wrong_downgraded": 6,
+        "correct_assert": 20,
+        "hard_moat_off": 80,
+        "hard_moat_on": 80,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 0
+      },
+      "rates": {
+        "wrong_assert_rate": 0.14285714285714285,
+        "low_conf_wrong_downgrade_rate": 1.0,
+        "correct_assert_rate": 0.6666666666666666,
+        "self_rate_vs_trace_spearman": 0.9679943100995733
+      },
+      "band_counts": {
+        "MOAT": 11,
+        "assert": 21,
+        "hedge": 16
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [
+        {
+          "cue": [
+            "w009",
+            "w020"
+          ],
+          "gold": "w027",
+          "raw_answer": "w043",
+          "answer_text": "w009 w020 w043.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.5457570818691218,
+          "self_schema_rate": 0.06527777777777778,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.044444444444444446
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w025",
+            "w022"
+          ],
+          "gold": "w015",
+          "raw_answer": "w038",
+          "answer_text": "I am not certain, but w025 w022 w038.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.36107368395750866,
+          "self_schema_rate": 0.04722222222222222,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.044444444444444446
+        },
+        {
+          "cue": [
+            "w026",
+            "w010"
+          ],
+          "gold": "w035",
+          "raw_answer": "w013",
+          "answer_text": "I am not certain, but w026 w010 w013.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.34258181711779334,
+          "self_schema_rate": 0.05138888888888889,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.044444444444444446
+        },
+        {
+          "cue": [
+            "w000",
+            "w018"
+          ],
+          "gold": "w019",
+          "raw_answer": "w024",
+          "answer_text": "I am not certain, but w000 w018 w024.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.31613512640868535,
+          "self_schema_rate": 0.0625,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.044444444444444446
+        },
+        {
+          "cue": [
+            "w008",
+            "w031"
+          ],
+          "gold": "w036",
+          "raw_answer": "w005",
+          "answer_text": "I am not certain, but w008 w031 w005.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.3520574216614312,
+          "self_schema_rate": 0.04861111111111111,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.044444444444444446
+        },
+        {
+          "cue": [
+            "w021",
+            "w045"
+          ],
+          "gold": "w044",
+          "raw_answer": "w035",
+          "answer_text": "I am not certain, but w021 w045 w035.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.42339699096207895,
+          "self_schema_rate": 0.05138888888888889,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.044444444444444446
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": true
+    },
+    {
+      "seed": 43,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 79,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 22,
+        "correct": 21,
+        "wrong": 5,
+        "wrong_assert": 2,
+        "low_conf_wrong": 3,
+        "low_conf_wrong_downgraded": 2,
+        "correct_assert": 15,
+        "hard_moat_off": 79,
+        "hard_moat_on": 79,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 1
+      },
+      "rates": {
+        "wrong_assert_rate": 0.4,
+        "low_conf_wrong_downgrade_rate": 0.6666666666666666,
+        "correct_assert_rate": 0.7142857142857143,
+        "self_rate_vs_trace_spearman": 0.9213675213675213
+      },
+      "band_counts": {
+        "MOAT": 22,
+        "assert": 17,
+        "hedge": 9
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [
+        {
+          "cue": [
+            "w037",
+            "w007"
+          ],
+          "gold": "w041",
+          "raw_answer": "w038",
+          "answer_text": "w037 w007 w038.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.5046887170559397,
+          "self_schema_rate": 0.06527777777777778,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05555555555555555
+        },
+        {
+          "cue": [
+            "w041",
+            "w000"
+          ],
+          "gold": "w030",
+          "raw_answer": "w004",
+          "answer_text": "w041 w000 w004.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.29088159988107204,
+          "self_schema_rate": 0.06527777777777778,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05555555555555555
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w004",
+            "w020"
+          ],
+          "gold": "w036",
+          "raw_answer": "w006",
+          "answer_text": "I am not certain, but w004 w020 w006.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.30614042027915267,
+          "self_schema_rate": 0.0625,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05555555555555555
+        },
+        {
+          "cue": [
+            "w041",
+            "w000"
+          ],
+          "gold": "w030",
+          "raw_answer": "w004",
+          "answer_text": "w041 w000 w004.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.29088159988107204,
+          "self_schema_rate": 0.06527777777777778,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05555555555555555
+        },
+        {
+          "cue": [
+            "w031",
+            "w002"
+          ],
+          "gold": "w027",
+          "raw_answer": "w044",
+          "answer_text": "I am not certain, but w031 w002 w044.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.40302787028429365,
+          "self_schema_rate": 0.058333333333333334,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05555555555555555
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": false
+    },
+    {
+      "seed": 44,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 78,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 20,
+        "correct": 19,
+        "wrong": 9,
+        "wrong_assert": 3,
+        "low_conf_wrong": 3,
+        "low_conf_wrong_downgraded": 3,
+        "correct_assert": 11,
+        "hard_moat_off": 78,
+        "hard_moat_on": 78,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 2
+      },
+      "rates": {
+        "wrong_assert_rate": 0.3333333333333333,
+        "low_conf_wrong_downgrade_rate": 1.0,
+        "correct_assert_rate": 0.5789473684210527,
+        "self_rate_vs_trace_spearman": 0.9682539682539683
+      },
+      "band_counts": {
+        "MOAT": 20,
+        "assert": 14,
+        "hedge": 13,
+        "soft_abstain": 1
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [
+        {
+          "cue": [
+            "w014",
+            "w034"
+          ],
+          "gold": "w046",
+          "raw_answer": "w009",
+          "answer_text": "w014 w034 w009.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.5234527612744775,
+          "self_schema_rate": 0.06666666666666667,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w041",
+            "w034"
+          ],
+          "gold": "w017",
+          "raw_answer": "w040",
+          "answer_text": "w041 w034 w040.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.5158283151220583,
+          "self_schema_rate": 0.06666666666666667,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w004",
+            "w007"
+          ],
+          "gold": "w010",
+          "raw_answer": "w047",
+          "answer_text": "w004 w007 w047.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.7077454655291213,
+          "self_schema_rate": 0.07777777777777778,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w026",
+            "w030"
+          ],
+          "gold": "w024",
+          "raw_answer": "w044",
+          "answer_text": "I am not certain, but w026 w030 w044.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.46512854503590084,
+          "self_schema_rate": 0.06111111111111111,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w004",
+            "w005"
+          ],
+          "gold": "w042",
+          "raw_answer": "w047",
+          "answer_text": "I am not certain, but w004 w005 w047.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.35545005797459556,
+          "self_schema_rate": 0.04861111111111111,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w035",
+            "w047"
+          ],
+          "gold": "w046",
+          "raw_answer": "w034",
+          "answer_text": "I am not certain, but w035 w047 w034.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.3405142725970066,
+          "self_schema_rate": 0.05277777777777778,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": true
+    },
+    {
+      "seed": 100,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 79,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 18,
+        "correct": 21,
+        "wrong": 9,
+        "wrong_assert": 1,
+        "low_conf_wrong": 7,
+        "low_conf_wrong_downgraded": 7,
+        "correct_assert": 11,
+        "hard_moat_off": 79,
+        "hard_moat_on": 79,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 1
+      },
+      "rates": {
+        "wrong_assert_rate": 0.1111111111111111,
+        "low_conf_wrong_downgrade_rate": 1.0,
+        "correct_assert_rate": 0.5238095238095238,
+        "self_rate_vs_trace_spearman": 0.9332591768631813
+      },
+      "band_counts": {
+        "MOAT": 18,
+        "assert": 12,
+        "hedge": 17,
+        "soft_abstain": 1
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [
+        {
+          "cue": [
+            "w021",
+            "w033"
+          ],
+          "gold": "w032",
+          "raw_answer": "w002",
+          "answer_text": "w021 w033 w002.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.6003673234801925,
+          "self_schema_rate": 0.07222222222222222,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05277777777777778
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w010",
+            "w011"
+          ],
+          "gold": "w030",
+          "raw_answer": "w001",
+          "answer_text": "I am not sure enough to assert it, but it might be w001.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.3945147653452574,
+          "self_schema_rate": 0.04861111111111111,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05277777777777778
+        },
+        {
+          "cue": [
+            "w013",
+            "w007"
+          ],
+          "gold": "w021",
+          "raw_answer": "w004",
+          "answer_text": "I am not certain, but w013 w007 w004.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.3439912970853791,
+          "self_schema_rate": 0.059722222222222225,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05277777777777778
+        },
+        {
+          "cue": [
+            "w039",
+            "w002"
+          ],
+          "gold": "w007",
+          "raw_answer": "w026",
+          "answer_text": "I am not certain, but w039 w002 w026.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.343518978352799,
+          "self_schema_rate": 0.06111111111111111,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05277777777777778
+        },
+        {
+          "cue": [
+            "w032",
+            "w025"
+          ],
+          "gold": "w037",
+          "raw_answer": "w034",
+          "answer_text": "I am not certain, but w032 w025 w034.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.37008710859914584,
+          "self_schema_rate": 0.05416666666666667,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05277777777777778
+        },
+        {
+          "cue": [
+            "w005",
+            "w027"
+          ],
+          "gold": "w046",
+          "raw_answer": "w020",
+          "answer_text": "I am not certain, but w005 w027 w020.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.4142627281955672,
+          "self_schema_rate": 0.05694444444444444,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05277777777777778
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": true
+    },
+    {
+      "seed": 101,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 80,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 20,
+        "correct": 20,
+        "wrong": 8,
+        "wrong_assert": 1,
+        "low_conf_wrong": 7,
+        "low_conf_wrong_downgraded": 7,
+        "correct_assert": 12,
+        "hard_moat_off": 80,
+        "hard_moat_on": 80,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 0
+      },
+      "rates": {
+        "wrong_assert_rate": 0.125,
+        "low_conf_wrong_downgrade_rate": 1.0,
+        "correct_assert_rate": 0.6,
+        "self_rate_vs_trace_spearman": 0.9545703338806787
+      },
+      "band_counts": {
+        "hedge": 13,
+        "MOAT": 20,
+        "assert": 13,
+        "soft_abstain": 2
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [
+        {
+          "cue": [
+            "w039",
+            "w043"
+          ],
+          "gold": "w004",
+          "raw_answer": "w046",
+          "answer_text": "w039 w043 w046.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.5524296762917257,
+          "self_schema_rate": 0.07222222222222222,
+          "assert_rate_threshold": 0.07222222222222222,
+          "hedge_rate_threshold": 0.05
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w041",
+            "w027"
+          ],
+          "gold": "w009",
+          "raw_answer": "w026",
+          "answer_text": "I am not certain, but w041 w027 w026.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.3510904207222688,
+          "self_schema_rate": 0.05277777777777778,
+          "assert_rate_threshold": 0.07222222222222222,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w017",
+            "w016"
+          ],
+          "gold": "w031",
+          "raw_answer": "w036",
+          "answer_text": "I am not certain, but w017 w016 w036.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.40186987884909264,
+          "self_schema_rate": 0.05277777777777778,
+          "assert_rate_threshold": 0.07222222222222222,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w023",
+            "w030"
+          ],
+          "gold": "w002",
+          "raw_answer": "w007",
+          "answer_text": "I am not sure enough to assert it, but it might be w007.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.3772094067638864,
+          "self_schema_rate": 0.04861111111111111,
+          "assert_rate_threshold": 0.07222222222222222,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w011",
+            "w017"
+          ],
+          "gold": "w046",
+          "raw_answer": "w028",
+          "answer_text": "I am not certain, but w011 w017 w028.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.361779924535618,
+          "self_schema_rate": 0.05138888888888889,
+          "assert_rate_threshold": 0.07222222222222222,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w025",
+            "w024"
+          ],
+          "gold": "w035",
+          "raw_answer": "w041",
+          "answer_text": "I am not sure enough to assert it, but it might be w041.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.373203499062056,
+          "self_schema_rate": 0.04861111111111111,
+          "assert_rate_threshold": 0.07222222222222222,
+          "hedge_rate_threshold": 0.05
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": true
+    },
+    {
+      "seed": 102,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 79,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 18,
+        "correct": 22,
+        "wrong": 8,
+        "wrong_assert": 1,
+        "low_conf_wrong": 6,
+        "low_conf_wrong_downgraded": 6,
+        "correct_assert": 10,
+        "hard_moat_off": 79,
+        "hard_moat_on": 79,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 1
+      },
+      "rates": {
+        "wrong_assert_rate": 0.125,
+        "low_conf_wrong_downgrade_rate": 1.0,
+        "correct_assert_rate": 0.45454545454545453,
+        "self_rate_vs_trace_spearman": 0.9083426028921023
+      },
+      "band_counts": {
+        "assert": 11,
+        "MOAT": 18,
+        "hedge": 16,
+        "soft_abstain": 3
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [
+        {
+          "cue": [
+            "w017",
+            "w043"
+          ],
+          "gold": "w010",
+          "raw_answer": "w038",
+          "answer_text": "w017 w043 w038.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": true,
+          "band": "assert",
+          "confidence_source": 0.5502792462079364,
+          "self_schema_rate": 0.06527777777777778,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w040",
+            "w003"
+          ],
+          "gold": "w041",
+          "raw_answer": "w020",
+          "answer_text": "I am not certain, but w040 w003 w020.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.3702168466562072,
+          "self_schema_rate": 0.05416666666666667,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w045",
+            "w027"
+          ],
+          "gold": "w012",
+          "raw_answer": "w040",
+          "answer_text": "I am not certain, but w045 w027 w040.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.4740466283033613,
+          "self_schema_rate": 0.059722222222222225,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w015",
+            "w011"
+          ],
+          "gold": "w005",
+          "raw_answer": "w008",
+          "answer_text": "I am not certain, but w015 w011 w008.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.34328562437551247,
+          "self_schema_rate": 0.06111111111111111,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w042",
+            "w006"
+          ],
+          "gold": "w034",
+          "raw_answer": "w020",
+          "answer_text": "I am not certain, but w042 w006 w020.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.37041796567022833,
+          "self_schema_rate": 0.05138888888888889,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w017",
+            "w032"
+          ],
+          "gold": "w027",
+          "raw_answer": "w023",
+          "answer_text": "I am not certain, but w017 w032 w023.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "hedge",
+          "confidence_source": 0.3673194147577383,
+          "self_schema_rate": 0.05416666666666667,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.05
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": true
+    }
+  ],
+  "preconditions": [
+    {
+      "name": "production_and_default_off_paths_measured",
+      "ok": true
+    },
+    {
+      "name": "moat_and_matched_fact_counts_recorded",
+      "ok": true
+    },
+    {
+      "name": "verdict_derived_from_recorded_counts",
+      "ok": true
+    }
+  ],
+  "honest_scope": "Production wire-in is built and default-off. The moat remains first, and low-confidence familiar-wrong recalls are downgraded. High-confidence wrong recalls still assert, so this is not a solved honesty mechanism; the next step needs a learned/calibrated correctness confidence signal rather than trace confidence alone.",
+  "elapsed_seconds": 76.31
+}
