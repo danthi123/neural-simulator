@@ -68,10 +68,12 @@ def test_self_schema_monitor_tracks_input_confidence_and_lesions_collapse():
     high = intact.read(0.75, familiar=True)
     low_lesion = lesion.read(0.30, familiar=True)
     high_lesion = lesion.read(0.75, familiar=True)
+    very_low = intact.read(0.29, familiar=True)
 
     assert high["self_schema_rate"] > low["self_schema_rate"]
     assert high["band"] == "assert"
     assert low["band"] in {"hedge", "soft_abstain"}
+    assert very_low["band"] != "assert"
     assert high_lesion["self_schema_rate"] == low_lesion["self_schema_rate"] == 0.0
 
 

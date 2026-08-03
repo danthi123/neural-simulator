@@ -159,7 +159,8 @@ Current assets:
   controls;
 - a six-seed self-schema relay result in the research runner;
 - a default-off production conversation hook that preserves the hard moat and
-  downgrades most low-confidence familiar-wrong recalls.
+  downgrades low-confidence familiar-wrong recalls in the current stressed
+  battery.
 
 Open point:
 

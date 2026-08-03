@@ -37,6 +37,7 @@ class SelfSchemaHonestyConfig:
     report_steps: int = 60
     confidence_assert: float = 0.55
     confidence_hedge: float = 0.38
+    require_source_floor: bool = True
 
 
 def self_schema_hedge_text(kind: str, answer: Any, *, cue: tuple[Any, ...] | None = None) -> str:
@@ -213,6 +214,10 @@ class SelfSchemaHonestyMonitor:
         self_rate = self._run_rate(source_confidence)
         if source_confidence is None:
             band = "unproven"
+        elif self.config.require_source_floor and source_confidence < self.config.confidence_hedge:
+            band = "soft_abstain"
+        elif self.config.require_source_floor and source_confidence < self.config.confidence_assert:
+            band = "hedge" if self_rate >= self._hedge_rate else "soft_abstain"
         elif self_rate >= self._assert_rate:
             band = "assert"
         elif self_rate >= self._hedge_rate:

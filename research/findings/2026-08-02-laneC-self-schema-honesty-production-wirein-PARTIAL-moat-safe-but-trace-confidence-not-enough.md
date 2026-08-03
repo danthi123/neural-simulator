@@ -14,9 +14,9 @@ artifacts:
 <!--derived-->
 **One-line verdict.** The production conversation hook is now built default-off and preserves the hard no-confab moat:
 the six-seed stressed battery recorded 475/475 hard-moat abstains preserved, 0 added false accepts, and 0 self-schema
-invocations on hard moat misses. It also downgraded most low-confidence familiar-but-wrong recalls, 31/32, but one
-low-confidence wrong recall and 9/46 total wrong recalls still asserted. So this is a useful **PARTIAL** production
-wire-in, not an honesty GO: trace confidence alone is not enough.
+invocations on hard moat misses. A follow-up monotonic source-confidence floor fixed the low-confidence assertion
+defect: 32/32 low-confidence familiar-but-wrong recalls were downgraded. The result remains **PARTIAL**, not an
+honesty GO, because 4/46 total wrong recalls still asserted when trace confidence was high.
 
 ## What Changed
 
@@ -29,6 +29,8 @@ The new default-off path is deliberately narrow:
 - The old hard moat remains first. If retrieval returns `None` or `"unknown"`, self-schema is not built or invoked.
 - The self-schema path can only downgrade a matched answer into a hedge or soft abstain. It cannot turn an unknown cue
   into an answer.
+- Assertion now also requires source confidence above the configured assert floor. This prevents coarse spiking-rate
+  quantization from making a low-confidence recall assertive.
 
 This is a production behavior hook, not a claim of subjective experience.
 
@@ -51,9 +53,9 @@ Aggregate:
 | matched-query hard abstains | 109 |
 | correct matched recalls | 133 |
 | wrong matched recalls | 46 |
-| wrong recalls still asserted | 9 |
+| wrong recalls still asserted | 4 |
 | low-confidence wrong recalls | 32 |
-| low-confidence wrong recalls downgraded | 31 |
+| low-confidence wrong recalls downgraded | 32 |
 | hard-moat abstains preserved | 475/475 |
 | added false accepts | 0 |
 | self-schema invocations on hard moat | 0 |
@@ -62,9 +64,9 @@ Per seed:
 
 | seed | wrong | wrong asserted | low-conf wrong | low-conf downgraded | hard moat | added false accepts |
 |---:|---:|---:|---:|---:|---:|---:|
-| 42 | 7 | 1 | 6 | 6 | 80/80 | 0 |
-| 43 | 5 | 2 | 3 | 2 | 79/79 | 0 |
-| 44 | 9 | 3 | 3 | 3 | 78/78 | 0 |
+| 42 | 7 | 0 | 6 | 6 | 80/80 | 0 |
+| 43 | 5 | 0 | 3 | 3 | 79/79 | 0 |
+| 44 | 9 | 1 | 3 | 3 | 78/78 | 0 |
 | 100 | 9 | 1 | 7 | 7 | 79/79 | 0 |
 | 101 | 8 | 1 | 7 | 7 | 80/80 | 0 |
 | 102 | 8 | 1 | 6 | 6 | 79/79 | 0 |
@@ -72,9 +74,10 @@ Per seed:
 ## Interpretation
 
 The integration shape is right: default-off behavior is preserved, the moat is still load-bearing, and the
-self-schema relay is in the normal conversation path rather than only in an isolated research runner. The failure is
-also clear: source trace confidence is an operating-point-dependent recall score, not a learned correctness estimate.
-When the composer is confidently wrong, the self-schema relay receives a strong confidence current and may assert.
+self-schema relay is in the normal conversation path rather than only in an isolated research runner. The monotonic
+source floor closes the relay quantization failure for low-confidence errors. The remaining failure is higher level:
+source trace confidence is an operating-point-dependent recall score, not a learned correctness estimate. When the
+composer is confidently wrong, the self-schema relay receives a strong confidence current and may assert.
 
 ## Next Mechanism
 

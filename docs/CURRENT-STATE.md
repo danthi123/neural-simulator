@@ -42,7 +42,7 @@ runners, 1938 finding documents, and 46 simulation profiles.
 | Reward and value | Dopamine-like reward prediction and value signals are among the better grounded pieces. They can drive action learning and interact with other regions. |
 | Affect | Persistent mood-like state and neuromodulator axes exist. Rich, graded, learned emotion that changes perception, memory, speech, and behavior remains open. |
 | Curiosity | Basic novelty/learning-drive circuits exist and can avoid some unlearnable noise. Learning-progress tracking over time is still being strengthened. |
-| Self-monitoring | Separate circuits can read confidence, attention, and self-related state in test runners. A default-off production hook now preserves the hard moat and downgrades most low-confidence wrong recalls, but high-confidence wrong recalls still need a learned correctness signal. |
+| Self-monitoring | Separate circuits can read confidence, attention, and self-related state in test runners. A default-off production hook now preserves the hard moat and downgrades low-confidence wrong recalls in the current stressed battery, but high-confidence wrong recalls still need a learned correctness signal. |
 | One-brain integration | Several merged-brain demos show navigation, conversation, memory, and shared modulation co-residing. The next step is a continuously running lived loop, not just a combined demo. |
 
 ## What Is Still Scaffolded
