@@ -142,6 +142,27 @@ remaining generalization requires intrinsic exploration, adaptation within the
 same brain, broader meanings and contexts, and neural message-to-word
 production.
 
+## Practical Interaction Boundary
+
+The intended user-facing body does not require a physical robot. Available
+interaction can combine webcam pixels, microphone audio, speaker output, and a
+2D or 3D virtual body that can move, orient, point, select, or manipulate
+virtual objects. This is enough to provide continuous perception, action,
+social consequence, and a shared environment for early development.
+
+The host may convert devices and virtual-world events into sensory streams and
+carry neural motor output back into sound or virtual action. Object
+recognition, speech understanding, intent selection, appraisal, and learning
+must remain brain functions rather than hidden services in that interface.
+
+Simulated biological needs are mechanism tests, not necessarily deployment
+requirements. Hunger can test persistent interoception and drive reduction,
+but practical development should emphasize pressures the system can genuinely
+encounter: uncertainty, learning progress, social response, unresolved goals,
+prediction conflict, consolidation demand, sensory overload, communication
+success, and real system-health signals. Human-like names should be used only
+when the resulting state has the claimed persistence and causal reach.
+
 ## Emotion, Curiosity, And Honesty
 
 The project treats these as coupled control systems:

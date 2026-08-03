@@ -126,6 +126,15 @@ relationships, persistent valence and arousal, and curiosity based on learning
 progress. These signals must participate in the same action and communication
 loops as perception and memory.
 
+Literal biological hunger is a useful laboratory task for drive persistence,
+satiation, and competing priorities, but it is not a primary deployment goal
+for a system that does not eat. Prioritize pressures grounded in the system's
+actual life: uncertainty and learning progress, social engagement, unresolved
+goals, prediction conflict, memory consolidation, sensory overload,
+communication outcomes, and real operating constraints. Do not label a scalar
+as a feeling unless it develops, persists, and causally changes the wider
+brain.
+
 **Evidence required:** internal-state changes alter several faculties; matched
 lesions remove the predicted effects; the brain distinguishes learnable novelty
 from noise; affect develops from history and can recover or change when
