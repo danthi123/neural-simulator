@@ -32,6 +32,16 @@ SOMA_BUNDLE = os.path.join(_SOMA_ROOT, "sim_kb")
 SOMA_MANIFEST = os.path.join(_SOMA_ROOT, ".soma_kb_manifest.json")
 # evolving source types SOMA covers (Kandel excluded — static)
 SOMA_TYPES = {"finding", "plan", "doc", "catalog"}
+PROJECT_PROSE_PATHS = [
+    ":(glob)research/findings/*.md",
+    ":(glob)research/findings/**/*.md",
+    ":(glob)docs/*.md",
+    ":(glob)docs/plans/*.md",
+    "CLAUDE.md",
+    "ROADMAP.md",
+    "README.md",
+    "GAP_CLOSURE_MISSION.md",
+]
 
 
 def persist_candidate(index):
@@ -85,6 +95,28 @@ def manifest_hash():
         except OSError:
             pass
     return h.hexdigest()
+
+
+def project_prose_dirty():
+    """True when indexing would expose project claims that are not committed."""
+    commands = [
+        ["git", "diff", "--quiet", "--", *PROJECT_PROSE_PATHS],
+        ["git", "diff", "--cached", "--quiet", "--", *PROJECT_PROSE_PATHS],
+    ]
+    for command in commands:
+        result = subprocess.run(command, cwd=B.SIM)
+        if result.returncode == 1:
+            return True
+        if result.returncode != 0:
+            raise RuntimeError("could not verify committed RAG project sources")
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard", "--", *PROJECT_PROSE_PATHS],
+        cwd=B.SIM,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return bool(untracked.stdout.strip())
 
 
 def acquire_lock():
@@ -229,6 +261,14 @@ def main():
     ap.add_argument("--force", action="store_true", help="update even if the manifest is unchanged")
     args = ap.parse_args()
 
+    if project_prose_dirty():
+        print(
+            "[update-indexes] BLOCKED: indexed project prose has uncommitted changes; "
+            "commit or restore it before refreshing.",
+            flush=True,
+        )
+        return 2
+
     os.makedirs(RAG, exist_ok=True)
     cur = manifest_hash()
     prev = None
@@ -238,10 +278,10 @@ def main():
         except Exception:
             prev = None
     if (not args.force) and (not args.rebuild) and prev == cur:
-        print("[update-indexes] no evolving-doc change since last update; skip.", flush=True); return
+        print("[update-indexes] no evolving-doc change since last update; skip.", flush=True); return 0
 
     if not acquire_lock():
-        print("[update-indexes] another update is running; skip (it will pick up these changes).", flush=True); return
+        print("[update-indexes] another update is running; skip (it will pick up these changes).", flush=True); return 0
     try:
         t0 = time.time()
         while True:
@@ -278,7 +318,8 @@ def main():
             os.remove(LOCK)
         except OSError:
             pass
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

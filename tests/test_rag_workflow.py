@@ -151,6 +151,78 @@ def test_repo_post_commit_hook_logs_every_nonrefresh_path():
     assert "</dev/null" in hook
     assert "START: branch=" in hook
     assert "EXIT: status=" in hook
+    assert "DEFER: indexed project prose has uncommitted changes" in hook
+
+
+def test_periodic_refresh_finds_main_worktree_and_logs_outcome(tmp_path):
+    canonical = tmp_path / "sim"
+    topic = tmp_path / "sim-worktrees" / "topic"
+    rag_root = tmp_path / "rag_index"
+    fake_python = tmp_path / "fake-rag-python"
+    capture = tmp_path / "capture"
+    subprocess.run(
+        ["git", "init", "--initial-branch=main", str(canonical)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "RAG Test"], cwd=canonical, check=True
+    )
+    subprocess.run(
+        ["git", "config", "user.email", "rag@example.invalid"],
+        cwd=canonical,
+        check=True,
+    )
+    (canonical / "tracked").write_text("initial\n", encoding="utf-8")
+    subprocess.run(["git", "add", "tracked"], cwd=canonical, check=True)
+    subprocess.run(
+        ["git", "commit", "-m", "initial"], cwd=canonical, check=True,
+        capture_output=True, text=True,
+    )
+    topic.parent.mkdir()
+    subprocess.run(
+        ["git", "worktree", "add", "-b", "topic", str(topic)],
+        cwd=canonical,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    updater = canonical / "tools/rag/update_indexes.py"
+    updater.parent.mkdir(parents=True)
+    updater.write_text("# intercepted by fake interpreter\n", encoding="utf-8")
+    fake_python.write_text(
+        "#!/bin/sh\nprintf '%s|%s' \"$SIM_REPO\" \"$*\" > \"$RAG_TEST_CAPTURE\"\n",
+        encoding="utf-8",
+    )
+    fake_python.chmod(0o755)
+    env = {
+        **os.environ,
+        "SIM_CANONICAL_REPO": str(canonical),
+        "SIM_RAG_ROOT": str(rag_root),
+        "SIM_RAG_PYTHON": str(fake_python),
+        "SIM_RAG_UPDATER": str(updater),
+        "RAG_TEST_CAPTURE": str(capture),
+    }
+    subprocess.run(
+        ["bash", "tools/rag/periodic_update.sh"], env=env, check=True
+    )
+    source_repo, updater_arg = capture.read_text(encoding="utf-8").split("|", 1)
+    assert Path(source_repo) == canonical.resolve()
+    assert Path(updater_arg) == updater.resolve()
+    log = (rag_root / "_autoupdate.log").read_text(encoding="utf-8")
+    assert "[periodic] START: branch=main" in log
+    assert "[periodic] EXIT: status=0" in log
+
+
+def test_periodic_timer_is_bounded_and_persistent():
+    checker = Path("tools/rag/check_workflow.py").read_text(encoding="utf-8")
+    helper = Path("tools/rag/periodic_update.sh").read_text(encoding="utf-8")
+    assert "OnUnitActiveSec=5min" in checker
+    assert "Persistent=true" in checker
+    assert "update_indexes.py" in helper
+    assert "SIM_RAG_REFRESH_BRANCH" in helper
+    assert "worktree list --porcelain" in helper
 
 
 def test_retrieval_keeps_a_broad_hybrid_rerank_window():
@@ -207,6 +279,8 @@ def test_index_refresh_runs_the_quality_floor():
     assert "SIM_RAG_SKIP_QUALITY" not in updater
     assert 'max(0.90, float(os.environ.get("SIM_RAG_MIN_MRR"' in updater
     assert "corpus changed during refresh; repeating" in updater
+    assert "def project_prose_dirty" in updater
+    assert "indexed project prose has uncommitted changes" in updater
 
 
 def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path):

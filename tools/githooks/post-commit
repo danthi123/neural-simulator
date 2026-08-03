@@ -44,6 +44,21 @@ if echo "$changed" | grep -qE '^(research/findings/|docs/|CLAUDE\.md|ROADMAP\.md
     updater=$4
     log=$5
     sleep "$delay"
+    if ! git -C "$repo" diff --quiet -- \
+        ":(glob)research/findings/*.md" ":(glob)research/findings/**/*.md" \
+        ":(glob)docs/*.md" ":(glob)docs/plans/*.md" \
+        CLAUDE.md ROADMAP.md README.md GAP_CLOSURE_MISSION.md \
+      || ! git -C "$repo" diff --cached --quiet -- \
+        ":(glob)research/findings/*.md" ":(glob)research/findings/**/*.md" \
+        ":(glob)docs/*.md" ":(glob)docs/plans/*.md" \
+        CLAUDE.md ROADMAP.md README.md GAP_CLOSURE_MISSION.md \
+      || [ -n "$(git -C "$repo" ls-files --others --exclude-standard -- \
+        ":(glob)research/findings/*.md" ":(glob)research/findings/**/*.md" \
+        ":(glob)docs/*.md" ":(glob)docs/plans/*.md" \
+        CLAUDE.md ROADMAP.md README.md GAP_CLOSURE_MISSION.md)" ]; then
+      printf "[post-commit] DEFER: indexed project prose has uncommitted changes: %s\n" "$repo" >> "$log"
+      exit 0
+    fi
     SIM_REPO="$repo" "$python" "$updater"
     status=$?
     printf "[post-commit] EXIT: status=%s source=%s\n" "$status" "$repo" >> "$log"
