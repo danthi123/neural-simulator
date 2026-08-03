@@ -850,6 +850,7 @@ class SimulationBridge:
         local weight delta, so a closed pathway gate is exactly inert.
         """
 
+        self._validate_inhibitory_stdp_composability()
         cfg = self.core_config
         trace = self.cp_inhibitory_stdp_trace
         if trace is None:
@@ -939,6 +940,26 @@ class SimulationBridge:
             updated = current + (updated - current) * gain[active]
         self.cp_connections.data[active] = updated
         self._mock_total_plasticity_events += active.size
+
+    def _validate_inhibitory_stdp_composability(self):
+        """Reject plasticity-rule overlap that can double-update inhibitory edges."""
+        cfg = self.core_config
+        if not getattr(cfg, "enable_inhibitory_stdp", False):
+            return
+        conflicts = []
+        if cfg.enable_stdp:
+            conflicts.append("ordinary STDP")
+        if cfg.enable_hebbian_learning:
+            conflicts.append("ordinary Hebbian learning")
+        if cfg.enable_reward_modulation:
+            conflicts.append("reward modulation")
+        if conflicts:
+            raise ValueError(
+                "Inhibitory STDP cannot run with "
+                + " and ".join(conflicts)
+                + "; those rules are not receptor-isolated and could update "
+                "the same inhibitory synapse"
+            )
 
     def _apply_branchless_hebbian(self, coo, cfg, fired_this_step):
         """Branchless (compaction-free) Hebbian POTENTIATION (opt-in via cfg.enable_branchless_plasticity).
@@ -2857,8 +2878,12 @@ class SimulationBridge:
         # graded read below uses t[8]; the destructuring reads add one more trailing `_`.)
         # (stp_disabled appended 2026-07-21 for the per-pathway STP-disable mask -- the index-based read
         # below uses t[9]; the destructuring reads add one more trailing `_`.)
+        inhibitory_stdp_enabled = bool(
+            getattr(self.core_config, "enable_inhibitory_stdp", False)
+        )
         if (any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow
-                or any_coincidence or any_graded or any_stp_disabled):
+                or any_coincidence or any_graded or any_stp_disabled
+                or inhibitory_stdp_enabled):
             keyed = sorted(
                 zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates,
                     all_receptors, all_exc_receptors, all_coincidence, all_graded,
@@ -2868,7 +2893,7 @@ class SimulationBridge:
         else:
             keyed = None
 
-        if any_fixed:
+        if any_fixed or inhibitory_stdp_enabled:
             sorted_plastic = np.asarray([p for _, _, p, _, _, _, _, _, _, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
@@ -2943,12 +2968,19 @@ class SimulationBridge:
         # GABA_B -> GIRK per-synapse routing mask (2026-06-08). True for synapses of any
         # pathway tagged receptor=="gaba_b"; the per-step GABA_B block (B4) feeds ONLY
         # these synapses into the slow K+ conductance. Aligned with cp_connections.data
-        # order via the same (pre, post)-sorted `keyed` list as the gate maps. Built only
-        # when enable_gabab AND at least one pathway is GABA_B (else None -> the step block
-        # is unreached and routing is byte-identical). Capacity-sized to match the other
-        # per-synapse arrays; new (grown) synapses default to False = GABA_A. The post
+        # order via the same (pre, post)-sorted `keyed` list as the gate maps. Inhibitory
+        # STDP also allocates this mask, including an explicit all-false GABA-A-only mask,
+        # so checkpoint restoration cannot reinterpret receptor identity. Capacity-sized
+        # to match the other per-synapse arrays; new (grown) synapses default to False =
+        # GABA_A. The post
         # neurons of GABA_B synapses also get their E_gabab set to the configured K+
         # reversal (-90 mV) so the additive current hyperpolarizes them.
+        if inhibitory_stdp_enabled and keyed is not None:
+            sorted_receptors = [t[5] for t in keyed]
+            gb_mask_host = np.fromiter(
+                (rc == "gaba_b" for rc in sorted_receptors), dtype=np.bool_, count=nnz)
+            self.cp_gabab_synapse_mask = cp.asarray(gb_mask_host)
+
         if getattr(self.core_config, "enable_gabab", False) and any_gabab and keyed is not None:
             # keyed is (pre, post, plastic, gate, trans_gate, receptor) in the SAME
             # (pre,post)-sorted order as cp_connections.data — so the mask aligns
@@ -2957,8 +2989,11 @@ class SimulationBridge:
             sorted_receptors = [t[5] for t in keyed]
             gb_mask_host = np.fromiter(
                 (rc == "gaba_b" for rc in sorted_receptors), dtype=np.bool_, count=nnz)
-            self.cp_gabab_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
-            self.cp_gabab_synapse_mask[:nnz] = cp.asarray(gb_mask_host)
+            if self.cp_gabab_synapse_mask is None:
+                self.cp_gabab_synapse_mask = cp.zeros(
+                    self._synapse_capacity, dtype=cp.bool_
+                )
+                self.cp_gabab_synapse_mask[:nnz] = cp.asarray(gb_mask_host)
             # Set E_gabab = -90 mV on the POST neurons of GABA_B synapses. Allocate the
             # per-neuron reversal here if the guarded init alloc didn't (e.g. enable_gabab
             # toggled after init); default-fill with the configured reversal first.
@@ -6436,7 +6471,8 @@ class SimulationBridge:
         # READ-ONLY regime (mirrors the _read_only_fast_step guard set exactly).
         if (cfg.enable_hebbian_learning or cfg.enable_short_term_plasticity
                 or cfg.enable_homeostasis or cfg.enable_stdp
-                or cfg.enable_structural_plasticity or cfg.enable_reward_modulation):
+                or cfg.enable_structural_plasticity or cfg.enable_reward_modulation
+                or getattr(cfg, "enable_inhibitory_stdp", False)):
             return False
         if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
             return False
@@ -6829,6 +6865,7 @@ class SimulationBridge:
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
+        self._validate_inhibitory_stdp_composability()
         try:
             n_neurons = self.core_config.num_neurons; cfg = self.core_config; dt = cfg.dt_ms
 
@@ -6871,6 +6908,7 @@ class SimulationBridge:
                 and not cfg.enable_hebbian_learning and not cfg.enable_short_term_plasticity
                 and not cfg.enable_homeostasis and not cfg.enable_stdp
                 and not cfg.enable_structural_plasticity and not cfg.enable_reward_modulation
+                and not getattr(cfg, "enable_inhibitory_stdp", False)
                 and not (self.experiment_engine is not None and self.experiment_engine.is_experiment_running))
             _prev_any = True if _read_only_fast_step else bool(self.cp_prev_firing_states.any())
 
@@ -9347,6 +9385,98 @@ class SimulationBridge:
                 elif self.cp_inhibitory_stdp_trace is not None:
                     state_group.attrs["cp_inhibitory_stdp_trace_is_empty"] = True
 
+                # Routing is part of the learned state. In particular,
+                # inhibitory STDP must not reopen a closed plasticity route or
+                # reinterpret a GABA-B edge as GABA-A after a checkpoint load.
+                has_routing_state = (
+                    getattr(self.core_config, "enable_inhibitory_stdp", False)
+                    or self.cp_plasticity_rate_gain is not None
+                    or self.cp_transmission_gain is not None
+                    or self.cp_gabab_synapse_mask is not None
+                    or bool(getattr(self, "_plasticity_gate_to_synapses", {}))
+                    or bool(getattr(self, "_transmission_gate_to_synapses", {}))
+                )
+                if has_routing_state:
+                    routing_group = state_group.create_group("synapse_routing_state")
+                    routing_group.attrs["format_version"] = 2
+                    routing_nnz = (
+                        int(self.cp_connections.nnz)
+                        if self.cp_connections is not None else 0
+                    )
+                    for routing_attr, routing_dtype in (
+                        ("cp_plasticity_rate_gain", None),
+                        ("cp_transmission_gain", None),
+                        ("cp_gabab_synapse_mask", np.bool_),
+                    ):
+                        routing_array = getattr(self, routing_attr, None)
+                        if routing_array is not None:
+                            active = _backend_to_host(routing_array[:routing_nnz])
+                            if routing_dtype is not None:
+                                active = active.astype(routing_dtype)
+                            routing_group.create_dataset(
+                                routing_attr, data=active, compression="gzip"
+                            )
+                        elif (
+                            getattr(
+                                self.core_config, "enable_inhibitory_stdp", False
+                            )
+                            and routing_attr
+                            in (
+                                "cp_plasticity_rate_gain",
+                                "cp_transmission_gain",
+                            )
+                        ):
+                            routing_group.create_dataset(
+                                routing_attr,
+                                data=np.ones(routing_nnz, dtype=np.float32),
+                                compression="gzip",
+                            )
+                        elif (
+                            routing_attr == "cp_gabab_synapse_mask"
+                            and getattr(
+                                self.core_config, "enable_inhibitory_stdp", False
+                            )
+                        ):
+                            routing_group.create_dataset(
+                                routing_attr,
+                                data=np.zeros(routing_nnz, dtype=np.bool_),
+                                compression="gzip",
+                            )
+
+                    def _save_gate_family(group_name, index_map, value_map):
+                        family = routing_group.create_group(group_name)
+                        for order, gate_name in enumerate(sorted(index_map)):
+                            indices = np.asarray(index_map[gate_name], dtype=np.int32)
+                            dataset = family.create_dataset(
+                                f"gate_{order}", data=indices, compression="gzip"
+                            )
+                            dataset.attrs["name"] = str(gate_name)
+                            dataset.attrs["value"] = float(value_map[gate_name])
+
+                    _save_gate_family(
+                        "plasticity_gates",
+                        getattr(self, "_plasticity_gate_to_synapses", {}) or {},
+                        getattr(self, "_plasticity_gate_values", {}) or {},
+                    )
+                    _save_gate_family(
+                        "transmission_gates",
+                        getattr(self, "_transmission_gate_to_synapses", {}) or {},
+                        getattr(self, "_transmission_gate_values", {}) or {},
+                    )
+                    coords_group = routing_group.create_group("plasticity_gate_coords")
+                    for order, gate_name in enumerate(
+                        sorted(getattr(self, "_plasticity_gate_to_coords", {}) or {})
+                    ):
+                        rows, cols = self._plasticity_gate_to_coords[gate_name]
+                        gate_group = coords_group.create_group(f"gate_{order}")
+                        gate_group.attrs["name"] = str(gate_name)
+                        gate_group.create_dataset(
+                            "rows", data=np.asarray(rows, dtype=np.int64), compression="gzip"
+                        )
+                        gate_group.create_dataset(
+                            "cols", data=np.asarray(cols, dtype=np.int64), compression="gzip"
+                        )
+
                 # G3: Save per-synapse plastic mask if present (research runners).
                 # Sized to cp_connections.nnz, not the pre-allocated capacity.
                 if self.cp_synapse_plastic_mask is not None and self.cp_synapse_plastic_mask.size > 0:
@@ -9355,6 +9485,13 @@ class SimulationBridge:
                     state_group.create_dataset("cp_synapse_plastic_mask",
                                                data=_backend_to_host(mask_active).astype(np.bool_),
                                                compression="gzip")
+                elif getattr(self.core_config, "enable_inhibitory_stdp", False):
+                    nnz = self.cp_connections.nnz if self.cp_connections is not None else 0
+                    state_group.create_dataset(
+                        "cp_synapse_plastic_mask",
+                        data=np.ones(nnz, dtype=np.bool_),
+                        compression="gzip",
+                    )
                 
                 if self.cp_eligibility_trace is not None and self.cp_eligibility_trace.size > 0:
                     active_traces = self.cp_eligibility_trace[:synapse_count] if synapse_count else self.cp_eligibility_trace
@@ -9560,6 +9697,165 @@ class SimulationBridge:
                 
                 num_synapses_loaded = self.cp_connections.nnz
 
+                routing_group = state_group.get("synapse_routing_state")
+                if (
+                    routing_group is not None
+                    and int(routing_group.attrs.get("format_version", -1)) != 2
+                ):
+                    raise ValueError("Unsupported synapse routing checkpoint format")
+                if (
+                    getattr(self.core_config, "enable_inhibitory_stdp", False)
+                    and routing_group is None
+                ):
+                    raise ValueError(
+                        "Checkpoint enables inhibitory STDP but has no versioned "
+                        "synapse routing state"
+                    )
+                if getattr(self.core_config, "enable_inhibitory_stdp", False):
+                    required_state = (
+                        "cp_inhibitory_stdp_trace",
+                        "cp_synapse_plastic_mask",
+                    )
+                    missing_state = [
+                        name for name in required_state if name not in state_group
+                    ]
+                    if missing_state:
+                        raise ValueError(
+                            "Checkpoint enables inhibitory STDP but is missing "
+                            + ", ".join(missing_state)
+                        )
+                    if "cp_gabab_synapse_mask" not in routing_group:
+                        raise ValueError(
+                            "Checkpoint enables inhibitory STDP but is missing "
+                            "cp_gabab_synapse_mask"
+                        )
+                    for routing_name in (
+                        "cp_plasticity_rate_gain",
+                        "cp_transmission_gain",
+                    ):
+                        if routing_name not in routing_group:
+                            raise ValueError(
+                                "Checkpoint enables inhibitory STDP but is missing "
+                                + routing_name
+                            )
+
+                def _load_routing_array(name, dtype):
+                    if routing_group is None or name not in routing_group:
+                        return None
+                    array = cp.asarray(routing_group[name][:], dtype=dtype)
+                    if int(array.size) != int(num_synapses_loaded):
+                        raise ValueError(
+                            f"Checkpoint routing array {name!r} has {array.size} "
+                            f"entries for {num_synapses_loaded} synapses"
+                        )
+                    return array
+
+                def _load_gate_family(group_name):
+                    if routing_group is None or group_name not in routing_group:
+                        return {}, {}, {}
+                    family = routing_group[group_name]
+                    host_map = {}
+                    gpu_map = {}
+                    values = {}
+                    for dataset_name in sorted(family):
+                        dataset = family[dataset_name]
+                        gate_name = str(dataset.attrs.get("name", ""))
+                        if not gate_name or gate_name in host_map:
+                            raise ValueError(
+                                f"Checkpoint routing group {group_name!r} has an "
+                                "empty or duplicate gate name"
+                            )
+                        indices = np.asarray(dataset[:], dtype=np.int64)
+                        if indices.ndim != 1 or (
+                            indices.size > 0
+                            and (indices.min() < 0 or indices.max() >= num_synapses_loaded)
+                        ):
+                            raise ValueError(
+                                f"Checkpoint routing group {group_name!r} has invalid "
+                                f"indices for gate {gate_name!r}"
+                            )
+                        host_map[str(gate_name)] = indices.astype(np.int32).tolist()
+                        gpu_map[str(gate_name)] = cp.asarray(indices, dtype=cp.int32)
+                        values[str(gate_name)] = float(dataset.attrs.get("value", np.nan))
+                    if not all(np.isfinite(value) for value in values.values()):
+                        raise ValueError(
+                            f"Checkpoint routing values in {group_name!r} are not finite"
+                        )
+                    return host_map, gpu_map, values
+
+                self.cp_plasticity_rate_gain = _load_routing_array(
+                    "cp_plasticity_rate_gain", cp.float32
+                )
+                self.cp_transmission_gain = _load_routing_array(
+                    "cp_transmission_gain", cp.float32
+                )
+                self.cp_gabab_synapse_mask = _load_routing_array(
+                    "cp_gabab_synapse_mask", cp.bool_
+                )
+                (
+                    self._plasticity_gate_to_synapses,
+                    self._plasticity_gate_indices_gpu,
+                    self._plasticity_gate_values,
+                ) = _load_gate_family("plasticity_gates")
+                (
+                    self._transmission_gate_to_synapses,
+                    self._transmission_gate_indices_gpu,
+                    self._transmission_gate_values,
+                ) = _load_gate_family("transmission_gates")
+                if (
+                    self._plasticity_gate_to_synapses
+                    and self.cp_plasticity_rate_gain is None
+                ):
+                    raise ValueError(
+                        "Checkpoint has plasticity gate mappings without pathway gains"
+                    )
+                if (
+                    self._transmission_gate_to_synapses
+                    and self.cp_transmission_gain is None
+                ):
+                    raise ValueError(
+                        "Checkpoint has transmission gate mappings without routing gains"
+                    )
+
+                self._plasticity_gate_to_coords = {}
+                if routing_group is not None and "plasticity_gate_coords" in routing_group:
+                    coords_group = routing_group["plasticity_gate_coords"]
+                    for entry_name in sorted(coords_group):
+                        entry = coords_group[entry_name]
+                        gate_name = str(entry.attrs.get("name", ""))
+                        if not gate_name or gate_name in self._plasticity_gate_to_coords:
+                            raise ValueError(
+                                "Checkpoint plasticity gate coordinates have an "
+                                "empty or duplicate gate name"
+                            )
+                        rows = np.asarray(entry["rows"][:], dtype=np.int64)
+                        cols = np.asarray(entry["cols"][:], dtype=np.int64)
+                        if rows.ndim != 1 or cols.ndim != 1 or rows.size != cols.size:
+                            raise ValueError(
+                                "Checkpoint plasticity gate coordinates are malformed "
+                                f"for gate {gate_name!r}"
+                            )
+                        self._plasticity_gate_to_coords[str(gate_name)] = (rows, cols)
+
+                for gate_name, indices in self._plasticity_gate_to_synapses.items():
+                    expected = self._plasticity_gate_values[gate_name]
+                    actual = np.asarray(
+                        _backend_to_host(self.cp_plasticity_rate_gain[indices])
+                    )
+                    if not np.all(actual == np.float32(expected)):
+                        raise ValueError(
+                            f"Checkpoint plasticity gain disagrees with gate {gate_name!r}"
+                        )
+                for gate_name, indices in self._transmission_gate_to_synapses.items():
+                    expected = self._transmission_gate_values[gate_name]
+                    actual = np.asarray(
+                        _backend_to_host(self.cp_transmission_gain[indices])
+                    )
+                    if not np.all(actual == np.float32(expected)):
+                        raise ValueError(
+                            f"Checkpoint transmission gain disagrees with gate {gate_name!r}"
+                        )
+
                 self.cp_stp_u = _load_cp_array_from_h5("cp_stp_u", 
                     lambda s: cp.full(s, self.core_config.stp_U, dtype=cp.float32) if self.core_config.enable_short_term_plasticity and num_synapses_loaded > 0 and s > 0 else (cp.array([],dtype=cp.float32) if s==0 else None))
                 self.cp_stp_x = _load_cp_array_from_h5("cp_stp_x", 
@@ -9584,6 +9880,12 @@ class SimulationBridge:
                         "cp_inhibitory_stdp_trace",
                         lambda s: cp.zeros(s, dtype=cp.float32),
                     )
+                    if int(self.cp_inhibitory_stdp_trace.size) != int(n):
+                        raise ValueError(
+                            "Checkpoint inhibitory STDP trace has "
+                            f"{self.cp_inhibitory_stdp_trace.size} entries for "
+                            f"{n} neurons"
+                        )
                 else:
                     self.cp_inhibitory_stdp_trace = None
 
@@ -9593,6 +9895,14 @@ class SimulationBridge:
                     self.cp_synapse_plastic_mask = cp.asarray(
                         state_group["cp_synapse_plastic_mask"][:]
                     ).astype(cp.bool_)
+                    if int(self.cp_synapse_plastic_mask.size) != int(
+                        num_synapses_loaded
+                    ):
+                        raise ValueError(
+                            "Checkpoint plastic mask has "
+                            f"{self.cp_synapse_plastic_mask.size} entries for "
+                            f"{num_synapses_loaded} synapses"
+                        )
                 else:
                     self.cp_synapse_plastic_mask = None
                 

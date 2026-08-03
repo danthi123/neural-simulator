@@ -950,6 +950,24 @@ class CoreSimConfig:
                 "inhibitory_stdp_eta cannot be negative, got "
                 f"{self.inhibitory_stdp_eta}"
             )
+        if self.enable_inhibitory_stdp and self.enable_stdp:
+            errors.append(
+                "enable_inhibitory_stdp cannot be combined with enable_stdp: "
+                "ordinary STDP is not receptor-isolated and could update the "
+                "same inhibitory synapse"
+            )
+        if self.enable_inhibitory_stdp and self.enable_hebbian_learning:
+            errors.append(
+                "enable_inhibitory_stdp cannot be combined with "
+                "enable_hebbian_learning: ordinary Hebbian learning is not "
+                "receptor-isolated and could update the same inhibitory synapse"
+            )
+        if self.enable_inhibitory_stdp and self.enable_reward_modulation:
+            errors.append(
+                "enable_inhibitory_stdp cannot be combined with "
+                "enable_reward_modulation: reward learning is not "
+                "receptor-isolated and could update the same inhibitory synapse"
+            )
 
         # Weight bounds
         if self.hebbian_min_weight > self.hebbian_max_weight:
