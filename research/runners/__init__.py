@@ -50,19 +50,40 @@ _START = time.time()
 _OUTPUT_FLAGS = frozenset(("--out", "--output", "--json"))
 
 
+def _source_snapshot():
+    """Read identity for a clean exported tree that intentionally has no .git."""
+    path = os.path.join(_ROOT, ".source_revision")
+    try:
+        values = {}
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                key, sep, value = line.strip().partition("=")
+                if sep and key:
+                    values[key] = value
+        return values
+    except Exception:
+        return {}
+
+
 def _git_head():
     try:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=_ROOT,
                              capture_output=True, text=True, timeout=5).stdout.strip() or "unknown"
         dirty = subprocess.run(["git", "status", "--porcelain"], cwd=_ROOT,
                                capture_output=True, text=True, timeout=15).stdout.strip() != ""
-        return sha, dirty
+        if sha != "unknown":
+            return sha, dirty
     except Exception:
-        return "unknown", None
+        pass
+    snapshot = _source_snapshot()
+    if snapshot.get("git_sha"):
+        return snapshot["git_sha"], False
+    return "unknown", None
 
 
 def _record_start():
     sha, dirty = _git_head()
+    snapshot = _source_snapshot()
     rec = {
         "run_id": "%d-%d" % (int(_START), os.getpid()),
         "started": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(_START)),
@@ -70,6 +91,8 @@ def _record_start():
         "cwd": os.getcwd(),
         "git_sha": sha,
         "git_dirty": dirty,
+        "source_kind": snapshot.get("source_kind"),
+        "source_manifest_sha256": snapshot.get("source_manifest_sha256"),
         "python": sys.executable,
         "pid": os.getpid(),
         # The env vars that have silently changed results here before: SIM_BACKEND made `SIM_BACKEND=numpy` run

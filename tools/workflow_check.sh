@@ -210,8 +210,14 @@ printf "%b" "$POOL_LINES"
 # test below silently errors instead of firing. This is the SAME defect I fixed for pgrep earlier in this file
 # tonight and then reintroduced here verbatim -- take the first line and default it.
 QDEPTH=$(bash "$ROOT/tools/pool_queue.sh" depth 2>/dev/null | head -1); QDEPTH=${QDEPTH:-0}
+QMALFORMED=$(bash "$ROOT/tools/pool_queue.sh" malformed-depth 2>/dev/null | head -1); QMALFORMED=${QMALFORMED:-0}
 DISPATCH=$(pgrep -fc '[p]ool_autodispatch' 2>/dev/null | head -1); DISPATCH=${DISPATCH:-0}
 echo "  queue depth=$QDEPTH  dispatcher=$([ "${DISPATCH:-0}" -gt 0 ] && echo LIVE || echo DEAD)"
+if [ "${QMALFORMED:-0}" -gt 0 ]; then
+  echo "  ⛔ $QMALFORMED MALFORMED POOL QUEUE RECORD(S) — monitoring will not count unexecutable work."
+  echo "     They will be preserved in pool.queue.malformed; requeue via tools/pool_queue.sh."
+  FAIL=1
+fi
 if [ "${QDEPTH:-0}" -eq 0 ]; then
   echo "  ⛔ POOL QUEUE EMPTY — nothing is staged, so the next free node will idle by default."
   echo "     Stage work:  bash tools/pool_queue.sh add '<command run from ~/derisk-pool/sim>'"

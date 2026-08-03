@@ -20,7 +20,11 @@ ROOT=/home/dant123/Projects/sim
 LANE="${1:?usage: queue_add.sh <gpu|pool> \"<command>\" [reason]}"
 CMD="${2:?need the command}"
 REASON="${3:-}"
-Q="$ROOT/research/queue/${LANE}.queue"
+case "$LANE" in
+  gpu|pool) ;;
+  *) echo "⛔ REFUSED: unknown lane '$LANE' (expected gpu or pool)." >&2; exit 2 ;;
+esac
+Q="${POOL_QUEUE_PATH:-$ROOT/research/queue/${LANE}.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 
 # INTERPRETER GUARD (2026-08-01, see pool_queue.sh + dispatcher_selftest.sh). Every research runner must go
@@ -57,6 +61,10 @@ if [ -n "$HITS" ]; then
 else
   echo "  ✔ no prior findings mention this runner — genuinely new work"
   REASON="${REASON:-new}"
+fi
+
+if [ "$LANE" = "pool" ]; then
+  exec bash "$ROOT/tools/pool_queue.sh" add "$CMD" --checked "$REASON"
 fi
 
 printf '%s  #checked:%s\n' "$CMD" "$REASON" >> "$Q"

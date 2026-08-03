@@ -37,4 +37,27 @@ if bash -n tools/lane_dispatch.sh && grep -q "DISPATCHER SELF-CHECK FAILED" tool
   ok "lane_dispatch parses + carries the startup self-check"
 else bad "lane_dispatch missing its startup self-check or fails to parse"; fi
 
+# (d) Generic pool enqueue must emit the timestamped format consumed by the
+# pool dispatcher. This previously emitted a GPU-style bare command.
+T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+POOL_QUEUE_PATH="$T/pool.queue" bash tools/queue_add.sh \
+  pool 'printf pool-format-ok' selftest >/dev/null 2>&1
+POP=$(POOL_QUEUE_PATH="$T/pool.queue" POOL_RUNNING_PATH="$T/pool.running" \
+  bash tools/pool_autodispatch.sh --pop-once 2>"$T/pop.err")
+if [ "$POP" = "printf pool-format-ok" ] && \
+   grep -q 'printf pool-format-ok  #checked:selftest' "$T/pool.queue.claims"; then
+  ok "generic pool enqueue, dispatcher, and claim record agree on format"
+else bad "pool producer/consumer mismatch: dispatcher recovered [$POP]"; fi
+
+# (e) A malformed direct edit must be preserved and refused rather than
+# counting forever as work in transit while every node remains idle.
+printf '%s\n' 'printf never-dispatch  #checked:selftest' > "$T/pool.queue"
+POP=$(POOL_QUEUE_PATH="$T/pool.queue" POOL_RUNNING_PATH="$T/pool.running" \
+  bash tools/pool_autodispatch.sh --pop-once 2>"$T/malformed.err")
+if [ -z "$POP" ] && [ ! -s "$T/pool.queue" ] && \
+   grep -q 'never-dispatch' "$T/pool.queue.malformed" && \
+   grep -q 'BLOCKED + quarantined' "$T/malformed.err"; then
+  ok "malformed pool records fail loudly and are preserved"
+else bad "malformed pool record was lost, hidden, or dispatchable"; fi
+
 [ "$FAIL" = 0 ] && { echo "DISPATCHER SELFTEST PASS"; exit 0; } || { echo "DISPATCHER SELFTEST FAIL"; exit 1; }

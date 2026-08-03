@@ -7,8 +7,20 @@
 # actual defect. "Pool idle" is only its symptom, and alarming on the symptom caps utilisation at my reaction time.
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-Q=/home/dant123/Projects/sim/research/queue/pool.queue
+Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
+
+valid_depth() {
+  awk -F'\t' '$1 ~ /^[0-9]+$/ && NF > 1 {n++} END {print n+0}' "$Q"
+}
+
+malformed_depth() {
+  awk -F'\t' '
+    $0 !~ /^[[:space:]]*(#|$)/ && !($1 ~ /^[0-9]+$/ && NF > 1) {n++}
+    END {print n+0}
+  ' "$Q"
+}
+
 case "${1:-list}" in
   add)   [ -n "${2:-}" ] || { echo "usage: pool_queue.sh add '<command>' --checked '<what the record says>'" >&2; exit 2; }
          # THE RECORD-CHECK GATE. --checked forces a sentence about what the existing record says BEFORE compute
@@ -69,17 +81,16 @@ case "${1:-list}" in
          # validator's world and the executor's world. Measured: _affect_eviction_derisk was queued, gated,
          # dispatched, and exited rc=1 on all three nodes.
          if [ -n "$MOD" ]; then
-           NODE_OK=""
+           NODE_BAD=""
            for n in pool40 pool41 pool42; do
-             if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+             if ! timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
                   "cd ~/derisk-pool/sim && SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
-                  >/dev/null 2>&1; then NODE_OK="$n"; break; fi
+                  >/dev/null 2>&1; then NODE_BAD="$NODE_BAD $n"; fi
            done
-           if [ -z "$NODE_OK" ]; then
-             echo "⛔ REFUSED: $MOD imports LOCALLY but on NO reachable pool node." >&2
-             echo "   The nodes carry an rsync'd copy, not a checkout — a new runner must be shipped first:" >&2
-             echo "   for n in pool40 pool41 pool42; do rsync -az --include='*/' --include='*.py' --exclude='*' \\" >&2
-             echo "       research/runners/ \$n:~/derisk-pool/sim/research/runners/; done" >&2
+           if [ -n "$NODE_BAD" ]; then
+             echo "⛔ REFUSED: $MOD is not runnable on every dispatch target:$NODE_BAD" >&2
+             echo "   The dispatcher may choose any node; synchronize all three first:" >&2
+             echo "   bash tools/pool_provision.sh pool40 pool41 pool42" >&2
              exit 2
            fi
          fi
@@ -105,9 +116,12 @@ case "${1:-list}" in
            exit 2
          fi
          printf '%s\t%s  #checked:%s\n' "$(date +%s)" "$2" "$CHECKED" >> "$Q"
-         echo "queued (depth now $(grep -cvE '^\s*(#|$)' "$Q"))" ;;
-  depth) grep -cvE '^\s*(#|$)' "$Q" ;;
-  list)  echo "depth: $(grep -cvE '^\s*(#|$)' "$Q")"
+         echo "queued (depth now $(valid_depth))" ;;
+  depth) valid_depth ;;
+  malformed-depth) malformed_depth ;;
+  list)  echo "depth: $(valid_depth)"
+         BAD=$(malformed_depth)
+         [ "$BAD" -eq 0 ] || echo "malformed: $BAD (will be quarantined by dispatcher)"
          awk -F'\t' -v now="$(date +%s)" 'NF>1 {printf "  %4.1fh old  %s\n", (now-$1)/3600, substr($2,1,110)}' "$Q" ;;
-  *)     echo "usage: pool_queue.sh {add|list|depth}" >&2; exit 2 ;;
+  *)     echo "usage: pool_queue.sh {add|list|depth|malformed-depth}" >&2; exit 2 ;;
 esac

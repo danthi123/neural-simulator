@@ -18,8 +18,8 @@
 # A job line is a command run on the node, from ~/derisk-pool/sim. Lines starting with # are ignored.
 set -uo pipefail
 ROOT=/home/dant123/Projects/sim
-QUEUE="$ROOT/research/queue/pool.queue"
-CLAIMED="$ROOT/research/queue/pool.running"
+QUEUE="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
+CLAIMED="${POOL_RUNNING_PATH:-${QUEUE%.queue}.running}"
 POLL="${POOL_DISPATCH_POLL:-60}"
 NODES="${POOL_NODES:-pool40 pool41 pool42}"
 
@@ -42,6 +42,27 @@ pop_job() {
   local job=""
   exec 9>"$QUEUE.lock"
   flock 9 || return 1
+  # A generic queue producer once wrote GPU-style command-only lines into this
+  # timestamped pool queue. Monitoring counted them, while this consumer could
+  # never select them. Preserve such records for diagnosis and remove them from
+  # the live queue so malformed work cannot masquerade as work in transit.
+  local malformed_count
+  malformed_count=$(awk -F'\t' '
+    $0 !~ /^[[:space:]]*(#|$)/ && !($1 ~ /^[0-9]+$/ && NF > 1) {n++}
+    END {print n+0}
+  ' "$QUEUE")
+  if [ "${malformed_count:-0}" -gt 0 ]; then
+    awk -F'\t' '
+      $0 !~ /^[[:space:]]*(#|$)/ && !($1 ~ /^[0-9]+$/ && NF > 1)
+    ' "$QUEUE" | while IFS= read -r line; do
+      printf '%s\t%s\n' "$(date +%s)" "$line"
+    done >> "$QUEUE.malformed"
+    awk -F'\t' '
+      $0 ~ /^[[:space:]]*(#|$)/ || ($1 ~ /^[0-9]+$/ && NF > 1)
+    ' "$QUEUE" > "$QUEUE.tmp"
+    mv "$QUEUE.tmp" "$QUEUE"
+    echo "[pool-dispatch] BLOCKED + quarantined $malformed_count malformed queue record(s); use tools/pool_queue.sh" >&2
+  fi
   # STALENESS GUARD: an entry older than MAX_AGE is debris, not staged work. Learned immediately -- the first
   # dispatcher run found 69 jobs from an opsweep abandoned days earlier and launched three of them.
   local now cutoff
@@ -55,8 +76,8 @@ pop_job() {
   # pre-commit hook and this gate. Unchecked lines are SET ASIDE, never silently dropped.
   case "$job" in
     ""|*"#checked:"*) ;;
-    *) echo "[pool-dispatch] BLOCKED unchecked job -- requeue via: bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'"
-       echo "                $(echo "$job" | cut -c1-96)"
+    *) echo "[pool-dispatch] BLOCKED unchecked job -- requeue via: bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'" >&2
+       echo "                $(echo "$job" | cut -c1-96)" >&2
        grep -vF "	$job" "$QUEUE" > "$QUEUE.tmp" 2>/dev/null || true
        mv "$QUEUE.tmp" "$QUEUE"
        printf '%s\t%s\n' "$(date +%s)" "$job" >> "$QUEUE.unchecked"
@@ -64,8 +85,12 @@ pop_job() {
   esac
   local stale
   stale=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 < c' "$QUEUE" | wc -l)
-  [ "${stale:-0}" -gt 0 ] && echo "[pool-dispatch] SKIPPING $stale stale entr(ies) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h"
+  [ "${stale:-0}" -gt 0 ] && echo "[pool-dispatch] SKIPPING $stale stale entr(ies) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h" >&2
   if [ -z "$job" ]; then flock -u 9; printf ''; return 0; fi
+  # Keep the full timestamped record, including the checked reason, before the
+  # execution copy strips queue metadata. Artifact collection uses this claim
+  # to reconstruct the exact command and rationale.
+  printf '%s\t%s\n' "$(date +%s)" "$job" >> "$QUEUE.claims"
   if true; then
     grep -vF "	$job" "$QUEUE" > "$QUEUE.tmp" 2>/dev/null || true
     mv "$QUEUE.tmp" "$QUEUE"          # unconditional: grep -v exits 1 when it filters everything, and a
@@ -81,8 +106,14 @@ pop_job() {
   # "dispatched" six times. Caught because the results never appeared AND job_status.log stayed empty -- the
   # exit-status capture failing was itself the clue that the wrapper, not the job, was broken.
   job="${job%%#checked:*}"
+  job=$(printf '%s' "$job" | sed 's/[[:space:]]*$//')
   printf '%s' "$job"
 }
+
+if [ "${1:-}" = "--pop-once" ]; then
+  pop_job
+  exit $?
+fi
 
 # SINGLETON GUARD (2026-07-31): repeated restarts during testing left THREE dispatchers polling at once. flock
 # in pop_job stops two of them claiming the same job, so correctness was safe -- but three pollers triple the ssh
