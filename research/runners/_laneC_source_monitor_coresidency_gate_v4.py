@@ -67,20 +67,50 @@ ISTDP_ETA = 0.001
 ISTDP_WEIGHT_MIN = 0.0
 ISTDP_WEIGHT_MAX = 6.0
 ISTDP_INITIAL_WEIGHT = 3.0
-INHIBITORY_REHEARSAL_STEPS = 5000
+SOURCE_TO_INTERNEURON_WEIGHT = 2.2
+INHIBITORY_REHEARSAL_MIN_ELAPSED_STEPS = 5000
+INHIBITORY_REHEARSAL_ELAPSED_STEPS = 5200
+INHIBITORY_REHEARSAL_PLASTICITY_OPEN_STEPS = 1040
 SMOKE_PAIR_STEPS = 80
+
+POST_REHEARSAL_STATE_ARRAYS = (
+    "cp_membrane_potential_v",
+    "cp_recovery_variable_u",
+    "cp_conductance_g_e",
+    "cp_conductance_g_i",
+    "cp_conductance_g_nmda",
+    "cp_conductance_g_nmda_rise",
+    "cp_external_input_current",
+    "cp_firing_states",
+    "cp_prev_firing_states",
+    "cp_refractory_timers",
+    "cp_viz_activity_timers",
+    "cp_neuron_activity_ema",
+    "cp_neuron_firing_thresholds",
+    "cp_inhibitory_stdp_trace",
+    "cp_last_spike_time",
+    "cp_eligibility_trace",
+    "cp_stp_u",
+    "cp_stp_x",
+    "cp_ou_current",
+    "cp_synapse_pulse_timers",
+    "cp_synapse_pulse_progress",
+    "cp_plasticity_rate_gain",
+    "cp_transmission_gain",
+)
 
 
 @dataclass(frozen=True)
 class SourceMonitorConfigV4(SourceMonitorConfigV2):
-    """Frozen v2 operating point plus local inhibitory plasticity."""
+    """V2 circuit with a smoke-frozen FS afferent and local inhibitory plasticity."""
 
+    source_to_interneuron_weight: float = SOURCE_TO_INTERNEURON_WEIGHT
     inhibitory_stdp_tau_ms: float = ISTDP_TAU_MS
     inhibitory_stdp_target_rate_per_step: float = ISTDP_TARGET_RATE_PER_STEP
     inhibitory_stdp_eta: float = ISTDP_ETA
     inhibitory_stdp_w_min: float = ISTDP_WEIGHT_MIN
     inhibitory_stdp_w_max: float = ISTDP_WEIGHT_MAX
-    inhibitory_rehearsal_steps: int = INHIBITORY_REHEARSAL_STEPS
+    inhibitory_rehearsal_elapsed_steps: int = INHIBITORY_REHEARSAL_ELAPSED_STEPS
 
 
 def validate_individual_seed(seed: int, phase: str) -> int:
@@ -111,6 +141,20 @@ def validate_phase_seeds(phase: str, seeds: Sequence[int]) -> tuple[int, ...]:
     return checked
 
 
+def formal_provenance_ready() -> bool:
+    """Formal evidence must run from an immutable Git archive with a manifest."""
+    import research.runners as provenance
+
+    record = getattr(provenance, "_REC", None)
+    return bool(
+        isinstance(record, dict)
+        and record.get("git_dirty") is False
+        and record.get("git_sha") not in {None, "", "unknown"}
+        and record.get("source_kind") == "git_archive"
+        and record.get("source_manifest_sha256")
+    )
+
+
 class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
     """V2 source circuit with plastic FS-to-rival GABA-A inhibition."""
 
@@ -136,6 +180,8 @@ class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
             expected = getattr(v2, field_name)
             if field_name == "interneuron_to_rival_weight":
                 expected = ISTDP_INITIAL_WEIGHT
+            elif field_name == "source_to_interneuron_weight":
+                expected = SOURCE_TO_INTERNEURON_WEIGHT
             if getattr(c, field_name) != expected:
                 raise ValueError(
                     f"v4 freezes inherited v2 field {field_name!r} at {expected!r}"
@@ -146,7 +192,7 @@ class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
             "inhibitory_stdp_eta": ISTDP_ETA,
             "inhibitory_stdp_w_min": ISTDP_WEIGHT_MIN,
             "inhibitory_stdp_w_max": ISTDP_WEIGHT_MAX,
-            "inhibitory_rehearsal_steps": INHIBITORY_REHEARSAL_STEPS,
+            "inhibitory_rehearsal_elapsed_steps": INHIBITORY_REHEARSAL_ELAPSED_STEPS,
         }
         for field_name, expected in frozen.items():
             if getattr(c, field_name) != expected:
@@ -251,7 +297,7 @@ class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
         cfg.inhibitory_stdp_eta = float(c.inhibitory_stdp_eta)
         cfg.inhibitory_stdp_w_min = float(c.inhibitory_stdp_w_min)
         cfg.inhibitory_stdp_w_max = float(c.inhibitory_stdp_w_max)
-        cfg.enable_hebbian_learning = True
+        cfg.enable_hebbian_learning = False
         cfg.hebbian_symmetric = True
         cfg.hebbian_learning_rate = float(c.hebbian_learning_rate)
         cfg.hebbian_max_weight = float(c.hebbian_max_weight)
@@ -271,6 +317,25 @@ class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
         )
         bridge._initialize_simulation_data(called_from_playback_init=False)
         return bridge
+
+    def experience(self, *args, **kwargs) -> dict:
+        """Learn episode routes with inhibitory plasticity disabled."""
+
+        cfg = self.bridge.core_config
+        prior_hebbian = bool(cfg.enable_hebbian_learning)
+        prior_inhibitory = bool(cfg.enable_inhibitory_stdp)
+        trace = self.bridge.cp_inhibitory_stdp_trace
+        if trace is not None:
+            trace[:] = 0.0
+        cfg.enable_inhibitory_stdp = False
+        cfg.enable_hebbian_learning = True
+        try:
+            return super().experience(*args, **kwargs)
+        finally:
+            cfg.enable_hebbian_learning = prior_hebbian
+            cfg.enable_inhibitory_stdp = prior_inhibitory
+            if trace is not None:
+                trace[:] = 0.0
 
     def inhibitory_synapse_indices(self) -> np.ndarray:
         return np.asarray(
@@ -313,6 +378,107 @@ class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
                 means[source][rival] = float(weights[route].mean())
         return means
 
+    def inhibitory_route_validation(self) -> dict[str, object]:
+        """Mechanically verify the complete declared inhibitory route."""
+
+        bridge = self.bridge
+        coo = bridge.cp_connections.tocoo(copy=False)
+        rows = np.asarray(to_host(coo.row), dtype=np.int64)
+        cols = np.asarray(to_host(coo.col), dtype=np.int64)
+        nnz = int(coo.data.size)
+
+        inhibitory_expected = np.zeros(nnz, dtype=bool)
+        competition_expected = np.zeros(nnz, dtype=bool)
+        route_counts: dict[str, int] = {}
+        for source in SOURCES:
+            source_to_fs = np.isin(rows, self._source_memory_indices[source]) & np.isin(
+                cols, self._competition_indices[source]
+            )
+            competition_expected |= source_to_fs
+            for rival in SOURCES:
+                if rival == source:
+                    continue
+                route = np.isin(rows, self._competition_indices[source]) & np.isin(
+                    cols, self._source_memory_indices[rival]
+                )
+                route_counts[f"{source}_to_{rival}"] = int(route.sum())
+                inhibitory_expected |= route
+                competition_expected |= route
+
+        inhibitory_expected_indices = np.flatnonzero(inhibitory_expected)
+        competition_expected_indices = np.flatnonzero(competition_expected)
+        inhibitory_gate_indices = np.sort(self.inhibitory_synapse_indices())
+        competition_gate_indices = np.sort(
+            np.asarray(
+                bridge._transmission_gate_to_synapses[SOURCE_COMPETITION_GATE],
+                dtype=np.int64,
+            )
+        )
+        episode_gate_indices = np.asarray(
+            bridge._plasticity_gate_to_synapses[SOURCE_LEARNING_GATE], dtype=np.int64
+        )
+
+        plastic = np.asarray(to_host(bridge.cp_synapse_plastic_mask), dtype=bool)[:nnz]
+        expected_plastic = np.zeros(nnz, dtype=bool)
+        expected_plastic[episode_gate_indices] = True
+        expected_plastic[inhibitory_expected_indices] = True
+        plasticity_gain = np.asarray(
+            to_host(bridge.cp_plasticity_rate_gain), dtype=np.float64
+        )[:nnz]
+        transmission_gain = np.asarray(
+            to_host(bridge.cp_transmission_gain), dtype=np.float64
+        )[:nnz]
+        traits = np.asarray(to_host(bridge.cp_traits), dtype=np.int64)
+        inhibitory_traits = tuple(
+            bridge.core_config.inhibitory_trait_indices
+            or (bridge.core_config.inhibitory_trait_index,)
+        )
+        gabab = bridge.cp_gabab_synapse_mask
+        inhibitory_routes_are_gabaa = bool(
+            gabab is None
+            or not np.asarray(to_host(gabab), dtype=bool)[
+                inhibitory_expected_indices
+            ].any()
+        )
+        expected_route_size = int(
+            self.config.n_source_interneuron * self.config.n_source_memory
+        )
+        checks = {
+            "all_six_routes_have_exact_declared_count": bool(
+                len(route_counts) == len(SOURCES) * (len(SOURCES) - 1)
+                and all(count == expected_route_size for count in route_counts.values())
+            ),
+            "plasticity_gate_maps_exactly_to_inhibitory_routes": bool(
+                np.array_equal(inhibitory_gate_indices, inhibitory_expected_indices)
+            ),
+            "competition_gate_maps_exactly_to_declared_routes": bool(
+                np.array_equal(competition_gate_indices, competition_expected_indices)
+            ),
+            "plastic_mask_matches_declared_plastic_routes": bool(
+                np.array_equal(plastic, expected_plastic)
+            ),
+            "inhibitory_routes_have_inhibitory_presynaptic_cells": bool(
+                np.isin(traits[rows[inhibitory_expected]], inhibitory_traits).all()
+            ),
+            "inhibitory_routes_are_gaba_a": inhibitory_routes_are_gabaa,
+            "inhibitory_learning_gate_is_closed": bool(
+                bridge._plasticity_gate_values[INHIBITORY_LEARNING_GATE] == 0.0
+                and np.all(plasticity_gain[inhibitory_expected_indices] == 0.0)
+            ),
+            "competition_transmission_gate_is_open": bool(
+                bridge._transmission_gate_values[SOURCE_COMPETITION_GATE] == 1.0
+                and np.all(transmission_gain[competition_expected_indices] == 1.0)
+            ),
+        }
+        return {
+            "checks": checks,
+            "route_counts": route_counts,
+            "expected_route_count": len(SOURCES) * (len(SOURCES) - 1),
+            "expected_synapses_per_route": expected_route_size,
+            "inhibitory_synapse_count": int(inhibitory_expected_indices.size),
+            "competition_synapse_count": int(competition_expected_indices.size),
+        }
+
     def rehearse_inhibitory_competition(
         self,
         episode_patterns: Sequence[Sequence[int]],
@@ -327,14 +493,33 @@ class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
         c = self.config
         block_steps = int(c.training_steps) + int(c.rest_steps)
         cycles = int(
-            math.ceil(c.inhibitory_rehearsal_steps / (len(patterns) * block_steps))
+            math.ceil(
+                c.inhibitory_rehearsal_elapsed_steps
+                / (len(patterns) * block_steps)
+            )
         )
         before_i = self.inhibitory_weight_vector()
+        before_routes = self.inhibitory_route_means()
         before_e = self.excitatory_weight_vector()
         before_t = self.threshold_vector()
         prior_hebbian = bool(self.bridge.core_config.enable_hebbian_learning)
+        prior_inhibitory = bool(self.bridge.core_config.enable_inhibitory_stdp)
         self.bridge.core_config.enable_hebbian_learning = False
+        self.bridge.core_config.enable_inhibitory_stdp = True
         self.bridge.set_plasticity_gate(SOURCE_LEARNING_GATE, 0.0)
+        xp, _ = get_backend()
+        source_indices = xp.asarray(
+            np.stack(tuple(self._source_memory_indices.values())),
+            dtype=xp.int64,
+        )
+        competition_indices = xp.asarray(
+            np.stack(tuple(self._competition_indices.values())),
+            dtype=xp.int64,
+        )
+        source_spikes = xp.zeros(len(SOURCES), dtype=xp.int64)
+        competition_spikes = xp.zeros(len(SOURCES), dtype=xp.int64)
+        if self.bridge.cp_inhibitory_stdp_trace is not None:
+            self.bridge.cp_inhibitory_stdp_trace[:] = 0.0
         try:
             for _ in range(cycles):
                 for pattern in patterns:
@@ -344,19 +529,45 @@ class SourceMonitorCoresidencyGateV4(SourceMonitorCoresidencyGateV2):
                     self._drive(self._episode_global_indices(pattern))
                     for _ in range(int(c.training_steps)):
                         self.bridge._run_one_simulation_step()
+                        fired = self.bridge.cp_firing_states
+                        source_spikes += fired[source_indices].sum(axis=1)
+                        competition_spikes += fired[competition_indices].sum(axis=1)
                     self.bridge.set_plasticity_gate(INHIBITORY_LEARNING_GATE, 0.0)
                     self._rest()
         finally:
             self.bridge.set_plasticity_gate(INHIBITORY_LEARNING_GATE, 0.0)
             self.bridge.core_config.enable_hebbian_learning = prior_hebbian
+            self.bridge.core_config.enable_inhibitory_stdp = prior_inhibitory
             self.bridge.cp_external_input_current[:] = 0.0
         after_i = self.inhibitory_weight_vector()
+        after_routes = self.inhibitory_route_means()
         after_e = self.excitatory_weight_vector()
         after_t = self.threshold_vector()
+        source_spike_counts = np.asarray(to_host(source_spikes), dtype=np.int64)
+        competition_spike_counts = np.asarray(
+            to_host(competition_spikes), dtype=np.int64
+        )
+        route_delta_l1 = {
+            source: {
+                rival: abs(after_routes[source][rival] - before_routes[source][rival])
+                for rival in after_routes[source]
+            }
+            for source in SOURCES
+        }
         return {
             "learning_enabled": bool(learning_enabled),
             "cycles": cycles,
-            "executed_steps": cycles * len(patterns) * block_steps,
+            "elapsed_steps": cycles * len(patterns) * block_steps,
+            "plasticity_open_steps": cycles * len(patterns) * int(c.training_steps),
+            "source_memory_spikes_during_plasticity": {
+                source: int(source_spike_counts[index])
+                for index, source in enumerate(SOURCES)
+            },
+            "competition_fs_spikes_during_plasticity": {
+                source: int(competition_spike_counts[index])
+                for index, source in enumerate(SOURCES)
+            },
+            "inhibitory_route_delta_l1": route_delta_l1,
             "inhibitory_weight_delta_l1": float(np.abs(after_i - before_i).sum()),
             "excitatory_weights_unchanged": bool(np.array_equal(before_e, after_e)),
             "thresholds_unchanged": bool(np.array_equal(before_t, after_t)),
@@ -382,6 +593,94 @@ def _recall_standard(
         "heard": gate.recall(patterns[1]),
         "self_generated": gate.recall(patterns[2]),
     }
+
+
+def _snapshot_post_rehearsal_state(
+    gate: SourceMonitorCoresidencyGateV4,
+) -> dict[str, object]:
+    """Capture all mutable state used by recall for exact matched arms."""
+
+    bridge = gate.bridge
+    arrays = {}
+    for name in POST_REHEARSAL_STATE_ARRAYS:
+        value = getattr(bridge, name, None)
+        if value is not None:
+            arrays[name] = value.copy()
+    return {
+        "arrays": arrays,
+        "connections_data": bridge.cp_connections.data.copy(),
+        "plasticity_gate_values": dict(bridge._plasticity_gate_values),
+        "transmission_gate_values": dict(bridge._transmission_gate_values),
+        "current_time_ms": float(bridge.runtime_state.current_time_ms),
+        "current_time_step": int(bridge.runtime_state.current_time_step),
+        "hebbian_learning_enabled": bool(bridge.core_config.enable_hebbian_learning),
+    }
+
+
+def _restore_post_rehearsal_state(
+    gate: SourceMonitorCoresidencyGateV4,
+    snapshot: Mapping[str, object],
+) -> None:
+    """Restore the exact post-rehearsal neural and routing state."""
+
+    bridge = gate.bridge
+    for name, value in snapshot["arrays"].items():
+        getattr(bridge, name)[:] = value
+    bridge.cp_connections.data[:] = snapshot["connections_data"]
+    for name, value in snapshot["plasticity_gate_values"].items():
+        bridge.set_plasticity_gate(name, float(value))
+    for name, value in snapshot["transmission_gate_values"].items():
+        bridge.set_transmission_gate(name, float(value))
+    bridge.runtime_state.current_time_ms = float(snapshot["current_time_ms"])
+    bridge.runtime_state.current_time_step = int(snapshot["current_time_step"])
+    bridge.core_config.enable_hebbian_learning = bool(
+        snapshot["hebbian_learning_enabled"]
+    )
+
+
+def _post_rehearsal_state_matches(
+    gate: SourceMonitorCoresidencyGateV4,
+    snapshot: Mapping[str, object],
+) -> bool:
+    bridge = gate.bridge
+    for name, expected in snapshot["arrays"].items():
+        actual = getattr(bridge, name)
+        if not np.array_equal(to_host(actual), to_host(expected)):
+            return False
+    if not np.array_equal(
+        to_host(bridge.cp_connections.data), to_host(snapshot["connections_data"])
+    ):
+        return False
+    return bool(
+        bridge._plasticity_gate_values == snapshot["plasticity_gate_values"]
+        and bridge._transmission_gate_values == snapshot["transmission_gate_values"]
+        and bridge.runtime_state.current_time_ms == snapshot["current_time_ms"]
+        and bridge.runtime_state.current_time_step == snapshot["current_time_step"]
+        and bridge.core_config.enable_hebbian_learning
+        == snapshot["hebbian_learning_enabled"]
+    )
+
+
+def _recall_standard_from_matched_state(
+    gate: SourceMonitorCoresidencyGateV4,
+    patterns: Sequence[Sequence[int]],
+    snapshot: Mapping[str, object],
+    *,
+    competition_enabled: bool,
+) -> tuple[dict[str, dict], dict[str, bool]]:
+    """Run each source recall from the same verified post-rehearsal state."""
+
+    records = {}
+    state_matches = {}
+    for source, pattern in zip(SOURCES, patterns[:3]):
+        _restore_post_rehearsal_state(gate, snapshot)
+        state_matches[source] = _post_rehearsal_state_matches(gate, snapshot)
+        gate.bridge.set_transmission_gate(
+            SOURCE_COMPETITION_GATE, 1.0 if competition_enabled else 0.0
+        )
+        records[source] = gate.recall(pattern)
+    _restore_post_rehearsal_state(gate, snapshot)
+    return records, state_matches
 
 
 def _rival_spike_burden(records: Mapping[str, Mapping]) -> float:
@@ -482,9 +781,17 @@ def evaluate_calibration_seed(seed: int) -> dict:
     _train_standard_sources(intact, patterns)
     _train_standard_sources(learning_lesion, patterns)
     learned = intact.weight_summary()
+    intact_pre_rehearsal_i = intact.inhibitory_weight_vector()
+    lesion_pre_rehearsal_i = learning_lesion.inhibitory_weight_vector()
+    intact_pre_rehearsal_e = intact.excitatory_weight_vector()
+    lesion_pre_rehearsal_e = learning_lesion.excitatory_weight_vector()
     learned_weights_match = np.array_equal(
-        intact.excitatory_weight_vector(), learning_lesion.excitatory_weight_vector()
+        intact_pre_rehearsal_e, lesion_pre_rehearsal_e
     )
+    pre_rehearsal_inhibitory_weights_match = np.array_equal(
+        intact_pre_rehearsal_i, lesion_pre_rehearsal_i
+    )
+    route_validation = intact.inhibitory_route_validation()
     intact_rehearsal = intact.rehearse_inhibitory_competition(
         patterns[:4], learning_enabled=True
     )
@@ -492,18 +799,29 @@ def evaluate_calibration_seed(seed: int) -> dict:
         patterns[:4], learning_enabled=False
     )
 
-    intact_records = _recall_standard(intact, patterns)
-    learning_lesion_records = _recall_standard(learning_lesion, patterns)
+    post_rehearsal_state = _snapshot_post_rehearsal_state(intact)
+    intact_records, intact_state_matches = _recall_standard_from_matched_state(
+        intact, patterns, post_rehearsal_state, competition_enabled=True
+    )
+    learning_lesion_state = _snapshot_post_rehearsal_state(learning_lesion)
+    learning_lesion_records, learning_lesion_state_matches = (
+        _recall_standard_from_matched_state(
+            learning_lesion,
+            patterns,
+            learning_lesion_state,
+            competition_enabled=True,
+        )
+    )
+    expression_lesion_records, expression_state_matches = (
+        _recall_standard_from_matched_state(
+            intact, patterns, post_rehearsal_state, competition_enabled=False
+        )
+    )
+    _restore_post_rehearsal_state(intact, post_rehearsal_state)
     mixed = intact.recall(patterns[3])
     unseen = intact.recall(patterns[4])
     source_lesion = intact.recall(patterns[0], source_path_lesion=True)
     acc_lesion = intact.recall(patterns[0], acc_lesion=True)
-    intact.bridge.set_transmission_gate(SOURCE_COMPETITION_GATE, 0.0)
-    try:
-        expression_lesion_records = _recall_standard(intact, patterns)
-    finally:
-        intact.bridge.set_transmission_gate(SOURCE_COMPETITION_GATE, 1.0)
-
     swapped = SourceMonitorCoresidencyGateV4(seed=seed + 10000, config=c)
     swapped.experience(patterns[0], auditory_activity=True)
     swapped.experience(patterns[1], visual_activity=True)
@@ -602,7 +920,7 @@ def evaluate_calibration_seed(seed: int) -> dict:
             and np.array_equal(initial_i, lesion_i)
         ),
         "episode_weights_match_before_inhibitory_rehearsal": bool(
-            learned_weights_match
+            learned_weights_match and pre_rehearsal_inhibitory_weights_match
         ),
         "rehearsal_preserves_excitatory_weights_and_thresholds": bool(
             intact_rehearsal["excitatory_weights_unchanged"]
@@ -623,7 +941,17 @@ def evaluate_calibration_seed(seed: int) -> dict:
             len(set().union(*(set(pattern.tolist()) for pattern in patterns)))
             == len(patterns) * c.episode_pattern_size
         ),
-        "inhibitory_pathway_gate_reaches_synapses": bool(initial_i.size > 0),
+        "inhibitory_routes_match_declared_anatomy_and_gates": bool(
+            all(route_validation["checks"].values())
+        ),
+        "matched_arms_have_equal_weights_immediately_before_rehearsal": bool(
+            learned_weights_match and pre_rehearsal_inhibitory_weights_match
+        ),
+        "matched_post_rehearsal_state_restored_before_each_comparison": bool(
+            all(intact_state_matches.values())
+            and all(learning_lesion_state_matches.values())
+            and all(expression_state_matches.values())
+        ),
         "learning_lesion_keeps_inhibitory_weights_fixed": bool(
             np.array_equal(initial_i, lesion_i)
         ),
@@ -633,9 +961,41 @@ def evaluate_calibration_seed(seed: int) -> dict:
             and intact_rehearsal["thresholds_unchanged"]
             and lesion_rehearsal["thresholds_unchanged"]
         ),
-        "rehearsal_budget_reached": bool(
-            intact_rehearsal["executed_steps"] >= INHIBITORY_REHEARSAL_STEPS
-            and lesion_rehearsal["executed_steps"] >= INHIBITORY_REHEARSAL_STEPS
+        "rehearsal_budget_is_exact": bool(
+            intact_rehearsal["elapsed_steps"]
+            == INHIBITORY_REHEARSAL_ELAPSED_STEPS
+            and lesion_rehearsal["elapsed_steps"]
+            == INHIBITORY_REHEARSAL_ELAPSED_STEPS
+            and intact_rehearsal["plasticity_open_steps"]
+            == INHIBITORY_REHEARSAL_PLASTICITY_OPEN_STEPS
+            and lesion_rehearsal["plasticity_open_steps"]
+            == INHIBITORY_REHEARSAL_PLASTICITY_OPEN_STEPS
+        ),
+        "real_rehearsal_circuit_engages_source_and_fs_spikes": bool(
+            all(
+                count > 0
+                for count in intact_rehearsal[
+                    "source_memory_spikes_during_plasticity"
+                ].values()
+            )
+            and all(
+                count > 0
+                for count in intact_rehearsal[
+                    "competition_fs_spikes_during_plasticity"
+                ].values()
+            )
+            and all(
+                count > 0
+                for count in lesion_rehearsal[
+                    "source_memory_spikes_during_plasticity"
+                ].values()
+            )
+            and all(
+                count > 0
+                for count in lesion_rehearsal[
+                    "competition_fs_spikes_during_plasticity"
+                ].values()
+            )
         ),
         "all_scored_values_are_finite": bool(
             _all_finite(assessment)
@@ -657,6 +1017,12 @@ def evaluate_calibration_seed(seed: int) -> dict:
         "components": components,
         "assessment": assessment,
         "rehearsal": {"intact": intact_rehearsal, "learning_lesion": lesion_rehearsal},
+        "route_validation": route_validation,
+        "state_matching": {
+            "intact": intact_state_matches,
+            "learning_lesion": learning_lesion_state_matches,
+            "expression_lesion": expression_state_matches,
+        },
         "records": {
             "intact": intact_records,
             "learning_lesion": learning_lesion_records,
@@ -738,10 +1104,47 @@ def _apply_smoke_pair(
 
 
 def run_smoke(seed: int = SMOKE_SEED) -> dict:
-    """Run only the preregistered non-scientific activity-routing smoke."""
+    """Run the reserved real-circuit smoke plus a synthetic rule-scope diagnostic."""
 
     if int(seed) != SMOKE_SEED:
         raise ValueError(f"smoke seed must be exactly {SMOKE_SEED}")
+    config = SourceMonitorConfigV4()
+    patterns = make_episode_patterns(seed, 5, config)
+    real_intact_gate = SourceMonitorCoresidencyGateV4(seed=seed, config=config)
+    real_lesion_gate = SourceMonitorCoresidencyGateV4(seed=seed, config=config)
+    _train_standard_sources(real_intact_gate, patterns)
+    _train_standard_sources(real_lesion_gate, patterns)
+    real_pre_weights_match = bool(
+        np.array_equal(
+            real_intact_gate.excitatory_weight_vector(),
+            real_lesion_gate.excitatory_weight_vector(),
+        )
+        and np.array_equal(
+            real_intact_gate.inhibitory_weight_vector(),
+            real_lesion_gate.inhibitory_weight_vector(),
+        )
+    )
+    real_intact = real_intact_gate.rehearse_inhibitory_competition(
+        patterns[:4], learning_enabled=True
+    )
+    real_lesion = real_lesion_gate.rehearse_inhibitory_competition(
+        patterns[:4], learning_enabled=False
+    )
+    real_intact_state = _snapshot_post_rehearsal_state(real_intact_gate)
+    _, real_intact_state_matches = _recall_standard_from_matched_state(
+        real_intact_gate,
+        patterns,
+        real_intact_state,
+        competition_enabled=True,
+    )
+    real_lesion_state = _snapshot_post_rehearsal_state(real_lesion_gate)
+    _, real_lesion_state_matches = _recall_standard_from_matched_state(
+        real_lesion_gate,
+        patterns,
+        real_lesion_state,
+        competition_enabled=True,
+    )
+
     heard = _apply_smoke_pair(
         SourceMonitorCoresidencyGateV4(seed=seed),
         inhibitory_source="seen",
@@ -761,6 +1164,67 @@ def run_smoke(seed: int = SMOKE_SEED) -> dict:
         learning_enabled=False,
     )
     checks = {
+        "real_arms_match_before_rehearsal": real_pre_weights_match,
+        "real_source_memory_activity_reaches_rehearsal": bool(
+            all(
+                count > 0
+                for count in real_intact[
+                    "source_memory_spikes_during_plasticity"
+                ].values()
+            )
+            and all(
+                count > 0
+                for count in real_lesion[
+                    "source_memory_spikes_during_plasticity"
+                ].values()
+            )
+        ),
+        "real_source_activity_recruits_every_fs_pool": bool(
+            all(
+                count > 0
+                for count in real_intact[
+                    "competition_fs_spikes_during_plasticity"
+                ].values()
+            )
+            and all(
+                count > 0
+                for count in real_lesion[
+                    "competition_fs_spikes_during_plasticity"
+                ].values()
+            )
+        ),
+        "real_rehearsal_changes_every_intact_route_only": bool(
+            real_intact["inhibitory_weight_delta_l1"] > 0.0
+            and real_lesion["inhibitory_weight_delta_l1"] == 0.0
+            and all(
+                delta > 0.0
+                for routes in real_intact["inhibitory_route_delta_l1"].values()
+                for delta in routes.values()
+            )
+            and all(
+                delta == 0.0
+                for routes in real_lesion["inhibitory_route_delta_l1"].values()
+                for delta in routes.values()
+            )
+        ),
+        "real_rehearsal_budget_is_exact": bool(
+            real_intact["elapsed_steps"]
+            == real_lesion["elapsed_steps"]
+            == INHIBITORY_REHEARSAL_ELAPSED_STEPS
+            and real_intact["plasticity_open_steps"]
+            == real_lesion["plasticity_open_steps"]
+            == INHIBITORY_REHEARSAL_PLASTICITY_OPEN_STEPS
+        ),
+        "real_rehearsal_preserves_noninhibitory_state": bool(
+            real_intact["excitatory_weights_unchanged"]
+            and real_lesion["excitatory_weights_unchanged"]
+            and real_intact["thresholds_unchanged"]
+            and real_lesion["thresholds_unchanged"]
+        ),
+        "real_recall_arms_restore_matched_post_rehearsal_state": bool(
+            all(real_intact_state_matches.values())
+            and all(real_lesion_state_matches.values())
+        ),
         "coactive_rival_changes_more_than_silent_rival": bool(
             heard["coactive_delta"] > heard["silent_delta"]
         ),
@@ -789,18 +1253,32 @@ def run_smoke(seed: int = SMOKE_SEED) -> dict:
         "scientific_verdict": None,
         "checks": checks,
         "records": {
+            "real_circuit": {
+                "intact": real_intact,
+                "learning_lesion": real_lesion,
+                "state_matching": {
+                    "intact": real_intact_state_matches,
+                    "learning_lesion": real_lesion_state_matches,
+                },
+            },
             "heard_coactive": heard,
             "self_generated_coactive": self_generated,
             "learning_lesion": lesion,
         },
         "warning": (
-            "Synthetic population spikes test rule scope and activity routing only. "
-            "This smoke result is not scientific evidence and cannot open development."
+            "Reserved seed 600 tests real rehearsal engagement; synthetic population "
+            "spikes separately test rule scope. This smoke is not scientific evidence "
+            "and cannot open development."
         ),
     }
 
 
 def run_calibration(seeds: Sequence[int]) -> dict:
+    if not formal_provenance_ready():
+        raise RuntimeError(
+            "formal calibration requires enabled provenance from an immutable "
+            "Git archive with a source manifest"
+        )
     checked = validate_phase_seeds("calibration", seeds)
     rows = [evaluate_calibration_seed(seed) for seed in checked]
     if any(row["status"] == "UNDEFINED" for row in rows):

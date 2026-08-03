@@ -8,9 +8,22 @@ runner: research/runners/_laneC_source_monitor_coresidency_gate_v4.py
 
 # Source monitoring v4: adaptive inhibitory competition
 
-**Filed before any scientific v4 seed was run.** Seed `600` is reserved for a
-synthetic-spike wiring smoke test. It cannot produce scientific evidence or a
+**Filed before any scientific v4 seed was run.** Seed `600` is reserved for
+non-scientific mechanism smoke. It cannot produce scientific evidence or a
 formal verdict.
+
+**Pre-formal amendment after independent audit.** The original synthetic-spike
+smoke proved that the local rule could update the declared route, but an audit
+then ran the real rehearsal circuit and found that its fast-spiking populations
+never fired. No calibration, development, or held-out seed had been run. The
+real reserved-seed circuit was therefore added as a mandatory smoke condition,
+and the source-memory-to-FS afferent was mapped on seed `600` only. The inherited
+weight `1.0` was silent. Aggregate activity initially hid that values through
+`2.1` could leave one FS pool silent. Per-pool and per-route telemetry identified
+that boundary; `2.2` was frozen as the first mapped value that recruited all
+three FS pools and changed all six routes on both CPU and GPU. This amendment changes
+the operating point before formal evidence rather than treating synthetic
+spikes as proof that the biological route operates.
 
 ## Functional requirement
 
@@ -23,9 +36,11 @@ source.
 ## Mechanism under test
 
 V4 inherits v2's co-resident episode, source-memory, fast-spiking, aPFC, and ACC
-populations. It does not inherit v3's threshold homeostasis. The only new
+populations. It does not inherit v3's threshold homeostasis. Its adaptive
 mechanism is homeostatic inhibitory spike-timing-dependent plasticity on
-fast-spiking-to-rival-source GABA-A synapses.
+fast-spiking-to-rival-source GABA-A synapses. The source-memory-to-FS afferent is
+fixed at `2.2` rather than v2's silent `1.0` operating point so the tested route
+actually carries source activity.
 
 Each neuron keeps a local spike trace. Every step first decays that trace and
 adds the current spike. On an inhibitory presynaptic spike, the local update is
@@ -46,9 +61,19 @@ inhibitory-plasticity family in
 - Learning rate: `0.001`. <!--derived-->
 - Inhibitory weight bounds: `0.0` through `6.0`.
 - Initial inhibitory weight: `3.0`, inherited from v2.
-- Balanced rehearsal budget: at least `5,000` simulation steps, cycling equally
-  through three single-source episodes and one mixed-source episode.
-- Episode-to-source Hebbian learning is frozen during inhibitory rehearsal.
+- Source-memory-to-FS afferent weight: `2.2`, selected on smoke seed `600` only.
+- Balanced rehearsal budget: a minimum design budget of `5,000` elapsed
+  simulation steps, cycling
+  equally through three single-source episodes and one mixed-source episode.
+  Each block has `20` plasticity-open drive steps and `80` plasticity-closed rest
+  steps. The executed protocol is exactly `13` cycles, `5,200` elapsed steps,
+  and `1,040` plasticity-open steps per arm. The `5,000` value records the design
+  minimum; validity requires the exact executed counts.
+- Episode-to-source Hebbian learning runs only while inhibitory STDP is disabled.
+  Inhibitory rehearsal runs only while ordinary Hebbian learning is disabled.
+- Inhibitory traces are cleared when entering and leaving the host-separated
+  episode-learning phase and before inhibitory rehearsal. This prevents recent
+  activity from one learning rule becoming stale eligibility for the other.
 - Firing thresholds remain fixed; intrinsic homeostasis is disabled.
 
 The substrate updates a synapse only when it is plastic, uses GABA-A, is emitted
@@ -64,15 +89,25 @@ presynaptic or postsynaptic spike on that step. A closed gain is exactly inert.
 
 The aggregate runner rejects incomplete, duplicate, or reordered calibration
 partitions. Both calibration seeds must pass every primary criterion with no
-parameter changes. Any failure keeps later phases closed.
+parameter changes. Formal execution requires enabled provenance from an
+immutable Git archive with a source manifest. Any failure keeps later phases
+closed.
 
 ## Matched arms and controls
 
 The intact and inhibitory-learning-lesion arms begin with identical networks,
 receive identical source learning, and receive the same balanced rehearsal.
-Only the intact arm opens the inhibitory-plasticity gate. The expression lesion
-loads the intact learned weights and then closes cross-source inhibitory
-transmission during recall.
+Their excitatory and inhibitory weights are compared again immediately before
+rehearsal. Only the intact arm opens the inhibitory-plasticity gate.
+
+Immediately after intact and learning-lesion rehearsal, the runner snapshots synaptic weights,
+membrane and recovery variables, conductances, spike and refractory state,
+inhibitory traces, thresholds, input currents, pathway gains, and simulation
+time. Before every intact, learning-lesion, and expression-lesion recall, it
+restores and verifies the corresponding exact post-rehearsal state. It then
+changes only cross-source inhibitory transmission for the expression lesion.
+Thus each source comparison begins from its arm's matched learned neural state
+rather than from state left by an earlier recall trial.
 
 The inherited controls remain mandatory: episode-route lesion, ACC-route
 lesion, full competition-expression lesion, source-afferent swap, mixed-source
@@ -83,10 +118,20 @@ activity without source metadata.
 
 A result is `UNDEFINED` if the exact calibration partition is absent, any seed
 is reused from smoke or an earlier gate, matched arms do not begin with equal
-episode and inhibitory weights, non-inhibitory weights or firing thresholds
-change during inhibitory rehearsal, the learning lesion changes inhibitory
-weights, a pathway gate fails to reach its declared synapses, or any scored
-numeric value is non-finite.
+episode and inhibitory weights, those weights differ immediately before
+rehearsal, non-inhibitory weights or firing thresholds change during inhibitory
+rehearsal, the learning lesion changes inhibitory weights, or any intact or
+expression recall fails exact post-rehearsal restoration. A result is also
+`UNDEFINED` unless the inhibitory route is exactly the six declared
+FS-to-rival-source routes. That check enforces per-route count, plastic and
+transmission gate membership, the complete plastic mask, inhibitory
+presynaptic identity, GABA-A routing, and current learning/transmission gains.
+Any non-finite scored value is also `UNDEFINED`.
+The real rehearsal must also contain source-memory activity in every source
+population and fast-spiking activity in every corresponding FS pool in both
+matched arms, execute exactly `5,200` elapsed and `1,040` plasticity-open steps,
+change all six inhibitory routes in the intact arm, and change none in the
+learning lesion.
 
 ## Fixed scientific criteria
 
@@ -110,17 +155,21 @@ Every item must pass on both calibration seeds:
 
 ## Smoke boundary
 
-The smoke test supplies synthetic population spike events to one fast-spiking
-pool and one rival source pool. It checks that the larger weight change follows
-the coactive rival when activity is swapped, the silent rival differs, the
-learning lesion remains bit-identical, and excitatory weights and thresholds do
-not move. This diagnoses rule scope and wiring only; it does not assess recall,
-behavior, or scientific acceptance.
+The mandatory smoke first trains the real episode-to-source routes, then runs
+the exact balanced rehearsal on matched intact and learning-lesion brains. Both
+must show activity in every source-memory and fast-spiking pool; all six intact
+inhibitory routes must change while every lesion route stays fixed; excitatory
+weights and thresholds must remain identical.
+A separate synthetic-spike diagnostic checks rule scope by swapping the
+coactive rival and requiring the larger local change to follow it. Together
+these diagnose circuit engagement and update scope only; they do not assess
+recall, behavior, or scientific acceptance.
 
 ## Host boundary and remaining scaffolds
 
 The host still supplies sparse episode assemblies, source-afferent activity,
-rehearsal order and timing, learning-window boundaries, rest boundaries, spike
+rehearsal order and timing, learning-window boundaries, phase-boundary trace
+clearing, rest boundaries, spike
 count readout, lesion switches, and scoring. Source anatomy and initial
 inhibitory weights are predefined. V4 tests adaptive neural competition within
 that bounded circuit; it does not claim natural episode formation, language,
