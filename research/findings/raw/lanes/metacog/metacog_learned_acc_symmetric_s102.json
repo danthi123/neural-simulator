@@ -1,0 +1,204 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition (LANE C second-order METACOGNITION MONITOR, slow-NMDA meta_schema)",
+  "theory": "Maniscalco & Lau type-2 SDT / meta-d' + balance-of-evidence confidence (Vickers) read by a slow-NMDA downstream monitor (Wang persistent-activity NMDA) -- FUNCTIONAL correlate only",
+  "seeds": [
+    102
+  ],
+  "n_trials": 160,
+  "backend": "numpy",
+  "confidence_read": "learned_acc",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "verdict": "NEGATIVE",
+  "n_go": 0,
+  "n_seeds": 1,
+  "aggregate": {
+    "mean_type1_accuracy": 0.675,
+    "mean_d1": 0.9042789904962517,
+    "mean_type2_auc": 0.4153311965811966,
+    "mean_meta_d": 0.0,
+    "mean_m_ratio": 0.0,
+    "all_in_window": true,
+    "all_meta_lesion_collapse": true,
+    "all_domain_dissociation": true,
+    "all_permuted_collapse": true,
+    "all_within_class_ok": false
+  },
+  "per_seed": [
+    {
+      "seed": 102,
+      "n_trials": 160,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.675,
+        "d1": 0.9042789904962517,
+        "c1": -0.2886459693693076,
+        "hr": 0.7705882352941177,
+        "far": 0.43506493506493504,
+        "type2_auc": 0.4153311965811966,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "conf_correct_mean": 0.07970975783475785,
+        "conf_error_mean": 0.0871671597633136,
+        "conf_vs_signal_spearman": -0.2863266143208719,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.3770260747004933,
+          "1": 0.4352226720647773
+        },
+        "min_per_class_type2_auc": 0.3770260747004933,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.675,
+        "d1": 0.9042789904962517,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": null,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5036502849002849,
+        "meta_d": 0.022695611609691458,
+        "meta_d_attributable": null,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": false
+      },
+      "go": false,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 96,
+        "calibration_accuracy": 0.71875,
+        "calibration_errors": 27,
+        "calibration_type2_auc": 0.6312399355877617,
+        "calibration_conf_correct_mean": 0.49871197425910446,
+        "calibration_conf_error_mean": 0.36664168234467037,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "balance_classes": false,
+        "symmetric_features": true,
+        "active_feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate"
+        ],
+        "feature_mask": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false
+        ],
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.05524479166666666,
+          0.052558593750000014,
+          0.0026861979166666675,
+          0.029197997793190145,
+          0.48540099642698364,
+          0.10780338541666672,
+          0.0004466145833333332,
+          0.2708333333333333
+        ],
+        "feature_scale": [
+          0.0031543887182406503,
+          0.006241816338177874,
+          0.005065135463431585,
+          0.07871021945687753,
+          0.039355110144508335,
+          0.00849501509755598,
+          0.005715924415557878,
+          0.96262625434566
+        ],
+        "weights": [
+          -0.2441913450340803,
+          -0.5663727562809662,
+          0.14528187294269082,
+          -0.833914955926522,
+          0.8339149543114303,
+          -1.2329155325305365,
+          0.0,
+          0.0
+        ],
+        "bias": -0.1375461621046397,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    }
+  ],
+  "honest_scope": "A functional metacognition correlate: a slow-NMDA meta_schema region reads the brain's OWN first-order 2AFC competition (the WTA winning margin = balance-of-evidence) and emits a graded confidence rate that predicts whether the first-order decision was CORRECT (meta-d' >0, M-ratio near the metacognitive ideal). The monitor is DISSOCIABLE from first-order sensitivity (meta-lesion collapses meta-d' while d' is unchanged) and collapses under a permuted confidence. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable).",
+  "learned_monitor_config": {
+    "calib_trials": 96,
+    "epochs": 12,
+    "lr": 0.18,
+    "l2": 0.002,
+    "w_max": 3.0,
+    "conf_min_pa": 150.0,
+    "conf_max_pa": 750.0,
+    "report_steps": 40,
+    "balance_classes": false,
+    "symmetric_features": true
+  },
+  "preconditions": [
+    {
+      "name": "type1_task_measured",
+      "ok": true,
+      "detail": "Primary task accuracy/d-prime values are recorded."
+    },
+    {
+      "name": "learned_acc_apfc_monitor_measured",
+      "ok": true,
+      "detail": "Learned ACC/aPFC confidence readout metrics are recorded for the run."
+    },
+    {
+      "name": "control_or_balance_condition_recorded",
+      "ok": true,
+      "detail": "Balance, response homeostasis, dynamic monitor, or aggregate control context is recorded in the artifact fields."
+    },
+    {
+      "name": "verdict_derived_from_recorded_thresholds",
+      "ok": true,
+      "detail": "The stored verdict follows the recorded thresholds/metrics; no result values changed during schema backfill."
+    }
+  ],
+  "schema_backfill": "2026-08-02 Codex schema backfill for verdict-preconditions gate; metrics and verdict values unchanged."
+}

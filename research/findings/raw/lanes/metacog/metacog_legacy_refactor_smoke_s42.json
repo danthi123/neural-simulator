@@ -1,0 +1,111 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition (LANE C second-order METACOGNITION MONITOR, slow-NMDA meta_schema)",
+  "theory": "Maniscalco & Lau type-2 SDT / meta-d' + balance-of-evidence confidence (Vickers) read by a slow-NMDA downstream monitor (Wang persistent-activity NMDA) -- FUNCTIONAL correlate only",
+  "seeds": [
+    42
+  ],
+  "n_trials": 48,
+  "backend": "numpy",
+  "confidence_read": "meta_rate",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "verdict": "NEGATIVE",
+  "n_go": 0,
+  "n_seeds": 1,
+  "aggregate": {
+    "mean_type1_accuracy": 0.8333333333333334,
+    "mean_d1": 1.8246758861178831,
+    "mean_type2_auc": 0.5015625,
+    "mean_meta_d": 0.01021847678732602,
+    "mean_m_ratio": 0.0056001599325491685,
+    "all_in_window": true,
+    "all_meta_lesion_collapse": true,
+    "all_domain_dissociation": true,
+    "all_permuted_collapse": false,
+    "all_within_class_ok": false
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 48,
+      "confidence_read": "meta_rate",
+      "intact": {
+        "type1_accuracy": 0.8333333333333334,
+        "d1": 1.8246758861178831,
+        "c1": 0.05508362359575847,
+        "hr": 0.8043478260869565,
+        "far": 0.16666666666666666,
+        "type2_auc": 0.5015625,
+        "meta_d": 0.01021847678732602,
+        "m_ratio": 0.0056001599325491685,
+        "conf_correct_mean": 0.03149621212121212,
+        "conf_error_mean": 0.031818181818181815,
+        "conf_vs_signal_spearman": 0.27865827181936603,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.3068181818181818,
+          "1": 0.7222222222222222
+        },
+        "min_per_class_type2_auc": 0.3068181818181818,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.8333333333333334,
+        "d1": 1.8246758861178831,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.59375,
+        "meta_d": 0.5620647808461394,
+        "meta_d_attributable": -54.004751935559376,
+        "collapsed": false
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": false,
+        "within_class_correctness": false
+      },
+      "go": false
+    }
+  ],
+  "honest_scope": "A functional metacognition correlate: a slow-NMDA meta_schema region reads the brain's OWN first-order 2AFC competition (the WTA winning margin = balance-of-evidence) and emits a graded confidence rate that predicts whether the first-order decision was CORRECT (meta-d' >0, M-ratio near the metacognitive ideal). The monitor is DISSOCIABLE from first-order sensitivity (meta-lesion collapses meta-d' while d' is unchanged) and collapses under a permuted confidence. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable).",
+  "preconditions": [
+    {
+      "name": "required_metrics_recorded",
+      "ok": true,
+      "detail": "Artifact includes the metrics used to derive the recorded verdict."
+    },
+    {
+      "name": "controls_recorded_or_marked",
+      "ok": true,
+      "detail": "Control outcomes are present when this run type defines controls, otherwise the artifact is an exploratory/tuning run."
+    },
+    {
+      "name": "verdict_derived_from_recorded_values",
+      "ok": true,
+      "detail": "The recorded verdict was computed from the stored metrics/thresholds; this backfill did not alter metric or verdict values."
+    }
+  ],
+  "schema_backfill": "2026-08-02 Codex schema backfill for verdict-preconditions gate; metrics and verdict values unchanged."
+}

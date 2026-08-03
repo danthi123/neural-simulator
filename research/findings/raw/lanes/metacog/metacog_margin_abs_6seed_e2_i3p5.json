@@ -1,0 +1,400 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition (LANE C second-order METACOGNITION MONITOR, slow-NMDA meta_schema)",
+  "theory": "Maniscalco & Lau type-2 SDT / meta-d' + balance-of-evidence confidence (Vickers) read by a slow-NMDA downstream monitor (Wang persistent-activity NMDA) -- FUNCTIONAL correlate only",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_trials": 160,
+  "backend": "numpy",
+  "confidence_read": "margin_abs",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "six_seed_promotion",
+      "ok": true,
+      "detail": "n_seeds=6 using seeds 42,43,44,100,101,102",
+      "note": "promotion scale for a lane-C verdict"
+    },
+    {
+      "kind": "require",
+      "name": "first_order_operating_window",
+      "ok": true,
+      "detail": "aggregate.all_in_window=true, type1_accuracy in [0.6,0.9] every seed",
+      "note": "type-2 scoring is interpretable only when type-1 is neither floor nor ceiling"
+    },
+    {
+      "kind": "control",
+      "name": "meta_lesion_and_domain_dissociation",
+      "ok": true,
+      "detail": "aggregate.all_meta_lesion_collapse=true and aggregate.all_domain_dissociation=true",
+      "note": "confidence read is dissociable from first-order accuracy"
+    },
+    {
+      "kind": "control",
+      "name": "permuted_confidence_control",
+      "ok": true,
+      "detail": "aggregate.all_permuted_collapse=true",
+      "note": "absolute-margin read removes the obvious class-direction leakage"
+    },
+    {
+      "kind": "knob",
+      "name": "confidence_read",
+      "ok": true,
+      "detail": "requested=margin_abs applied=margin_abs",
+      "note": "verdict is scoped to the absolute-margin readout transform"
+    }
+  ],
+  "verdict": "NEGATIVE",
+  "n_go": 0,
+  "n_seeds": 6,
+  "aggregate": {
+    "mean_type1_accuracy": 0.6854166666666667,
+    "mean_d1": 1.0706342795773582,
+    "mean_type2_auc": 0.5984216442482024,
+    "mean_meta_d": 0.6312907683749398,
+    "mean_m_ratio": 0.6018694806876449,
+    "all_in_window": true,
+    "all_meta_lesion_collapse": true,
+    "all_domain_dissociation": true,
+    "all_permuted_collapse": true,
+    "all_within_class_ok": false
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 160,
+      "confidence_read": "margin_abs",
+      "intact": {
+        "type1_accuracy": 0.6875,
+        "d1": 0.9676064008449208,
+        "c1": -0.05865920450163595,
+        "hr": 0.70625,
+        "far": 0.3353658536585366,
+        "type2_auc": 0.6366363636363637,
+        "meta_d": 0.8334365815815216,
+        "m_ratio": 0.8613384335342954,
+        "conf_correct_mean": 0.007741046831955923,
+        "conf_error_mean": 0.004257575757575757,
+        "conf_vs_signal_spearman": 0.4295558420250791,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.6618655692729767,
+          "1": 0.639751552795031
+        },
+        "min_per_class_type2_auc": 0.639751552795031,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.6875,
+        "d1": 0.9676064008449208,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5031818181818182,
+        "meta_d": 0.018289451369264177,
+        "meta_d_attributable": 0.9780553772495103,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": false
+    },
+    {
+      "seed": 43,
+      "n_trials": 160,
+      "confidence_read": "margin_abs",
+      "intact": {
+        "type1_accuracy": 0.7125,
+        "d1": 1.126313234354897,
+        "c1": -0.24034173723666846,
+        "hr": 0.7891566265060241,
+        "far": 0.37341772151898733,
+        "type2_auc": 0.5451945080091534,
+        "meta_d": 0.2733537608222464,
+        "m_ratio": 0.242697814856816,
+        "conf_correct_mean": 0.006392876129718235,
+        "conf_error_mean": 0.0051383399209486156,
+        "conf_vs_signal_spearman": 0.3588304230634009,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.5401125967628431,
+          "1": 0.4755656108597285
+        },
+        "min_per_class_type2_auc": 0.4755656108597285,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.7125,
+        "d1": 1.126313234354897,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.4872234935163997,
+        "meta_d": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": false
+      },
+      "go": false
+    },
+    {
+      "seed": 44,
+      "n_trials": 160,
+      "confidence_read": "margin_abs",
+      "intact": {
+        "type1_accuracy": 0.74375,
+        "d1": 1.2912859582893161,
+        "c1": -0.07703211847295327,
+        "hr": 0.7650602409638554,
+        "far": 0.2848101265822785,
+        "type2_auc": 0.6119081779053085,
+        "meta_d": 0.6861753074314333,
+        "m_ratio": 0.5313891187514128,
+        "conf_correct_mean": 0.005958747135217724,
+        "conf_error_mean": 0.004065040650406504,
+        "conf_vs_signal_spearman": 0.42704793155982657,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.5178571428571429,
+          "1": 0.6892230576441103
+        },
+        "min_per_class_type2_auc": 0.5178571428571429,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.74375,
+        "d1": 1.2912859582893161,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.4928263988522238,
+        "meta_d": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": false
+      },
+      "go": false
+    },
+    {
+      "seed": 100,
+      "n_trials": 160,
+      "confidence_read": "margin_abs",
+      "intact": {
+        "type1_accuracy": 0.65625,
+        "d1": 0.7952863344542674,
+        "c1": 0.09544368673909198,
+        "hr": 0.61875,
+        "far": 0.31097560975609756,
+        "type2_auc": 0.6425974025974026,
+        "meta_d": 0.8808584591950336,
+        "m_ratio": 1.1075991388679984,
+        "conf_correct_mean": 0.008275613275613275,
+        "conf_error_mean": 0.004159779614325069,
+        "conf_vs_signal_spearman": 0.3551212938005391,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.6078571428571429,
+          "1": 0.6649659863945578
+        },
+        "min_per_class_type2_auc": 0.6078571428571429,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.65625,
+        "d1": 0.7952863344542674,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5179220779220779,
+        "meta_d": 0.10435513802383775,
+        "meta_d_attributable": 0.8815301857699113,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": false
+    },
+    {
+      "seed": 101,
+      "n_trials": 160,
+      "confidence_read": "margin_abs",
+      "intact": {
+        "type1_accuracy": 0.63125,
+        "d1": 1.299655830879416,
+        "c1": 0.8317165765762218,
+        "hr": 0.42783505154639173,
+        "far": 0.06923076923076923,
+        "type2_auc": 0.6483470380936399,
+        "meta_d": 1.0756682408145375,
+        "m_ratio": 0.8276562265616763,
+        "conf_correct_mean": 0.00939093909390939,
+        "conf_error_mean": 0.003916281458654339,
+        "conf_vs_signal_spearman": 0.27193542716512364,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.6375,
+          "1": 0.6046563192904656
+        },
+        "min_per_class_type2_auc": 0.6046563192904656,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.63125,
+        "d1": 1.299655830879416,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5263467024668569,
+        "meta_d": 0.19545726982156,
+        "meta_d_attributable": 0.8182922369507236,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": false
+    },
+    {
+      "seed": 102,
+      "n_trials": 160,
+      "confidence_read": "margin_abs",
+      "intact": {
+        "type1_accuracy": 0.68125,
+        "d1": 0.943657918641333,
+        "c1": -0.3083354334418482,
+        "hr": 0.7823529411764706,
+        "far": 0.43506493506493504,
+        "type2_auc": 0.5058463752473467,
+        "meta_d": 0.0382522604048666,
+        "m_ratio": 0.040536151553670775,
+        "conf_correct_mean": 0.008270781206561023,
+        "conf_error_mean": 0.0052436125965537725,
+        "conf_vs_signal_spearman": 0.26333352865346304,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.5369978858350951,
+          "1": 0.57996632996633
+        },
+        "min_per_class_type2_auc": 0.5369978858350951,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.68125,
+        "d1": 0.943657918641333,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.4846195358877496,
+        "meta_d": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": false
+      },
+      "go": false
+    }
+  ],
+  "honest_scope": "A functional metacognition correlate: a slow-NMDA meta_schema region reads the brain's OWN first-order 2AFC competition (the WTA winning margin = balance-of-evidence) and emits a graded confidence rate that predicts whether the first-order decision was CORRECT (meta-d' >0, M-ratio near the metacognitive ideal). The monitor is DISSOCIABLE from first-order sensitivity (meta-lesion collapses meta-d' while d' is unchanged) and collapses under a permuted confidence. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable)."
+}

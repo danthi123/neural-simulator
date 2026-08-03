@@ -1,0 +1,191 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition (LANE C second-order METACOGNITION MONITOR, slow-NMDA meta_schema)",
+  "theory": "Maniscalco & Lau type-2 SDT / meta-d' + balance-of-evidence confidence (Vickers) read by a slow-NMDA downstream monitor (Wang persistent-activity NMDA) -- FUNCTIONAL correlate only",
+  "seeds": [
+    42
+  ],
+  "n_trials": 64,
+  "backend": "numpy",
+  "confidence_read": "learned_acc",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "verdict": "GO",
+  "n_go": 1,
+  "n_seeds": 1,
+  "aggregate": {
+    "mean_type1_accuracy": 0.859375,
+    "mean_d1": 2.105066097553019,
+    "mean_type2_auc": 0.795959595959596,
+    "mean_meta_d": 1.9772170294405533,
+    "mean_m_ratio": 0.9392660077224746,
+    "all_in_window": true,
+    "all_meta_lesion_collapse": true,
+    "all_domain_dissociation": true,
+    "all_permuted_collapse": true,
+    "all_within_class_ok": true
+  },
+  "preconditions": [
+    {
+      "name": "smoke_scope",
+      "ok": true,
+      "detail": "one-seed smoke only; six-seed promotion is recorded separately"
+    },
+    {
+      "name": "first_order_operating_window",
+      "ok": true,
+      "detail": "type1_accuracy in registered 0.6..0.9 window"
+    },
+    {
+      "name": "type2_sensitivity",
+      "ok": true,
+      "detail": "type2_auc >= 0.65 and m_ratio >= 0.6"
+    },
+    {
+      "name": "meta_lesion_and_domain_dissociation",
+      "ok": true,
+      "detail": "meta lesion collapses meta-d while first-order d1 is unchanged within threshold"
+    },
+    {
+      "name": "permuted_confidence_control",
+      "ok": true,
+      "detail": "permuted confidence collapses the type-2 signal"
+    },
+    {
+      "name": "within_class_correctness",
+      "ok": true,
+      "detail": "both stimulus classes clear within-class type2 AUC floor"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 64,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.859375,
+        "d1": 2.105066097553019,
+        "c1": -0.13928312227633655,
+        "hr": 0.8833333333333333,
+        "far": 0.18055555555555555,
+        "type2_auc": 0.795959595959596,
+        "meta_d": 1.9772170294405533,
+        "m_ratio": 0.9392660077224746,
+        "conf_correct_mean": 0.09603146853146852,
+        "conf_error_mean": 0.07286324786324785,
+        "conf_vs_signal_spearman": 0.5516025641025641,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.7959770114942529,
+          "1": 0.7948717948717948
+        },
+        "min_per_class_type2_auc": 0.7948717948717948,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.859375,
+        "d1": 2.105066097553019,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5121212121212121,
+        "meta_d": 0.07425352958410388,
+        "meta_d_attributable": 0.9624454329097532,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": true,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": true,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 64,
+        "calibration_accuracy": 0.78125,
+        "calibration_errors": 14,
+        "calibration_type2_auc": 0.7685714285714286,
+        "calibration_conf_correct_mean": 0.6888555028575832,
+        "calibration_conf_error_mean": 0.4938798055381489,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.053390625,
+          0.04681054687499999,
+          0.0065800781249999996,
+          0.10087715426625038,
+          0.44956141769510616,
+          0.10020117187500001,
+          -0.00013867187499999904,
+          -0.0625
+        ],
+        "feature_scale": [
+          0.0029804457117392704,
+          0.014370481494118513,
+          0.014019123504057644,
+          0.2520439945071822,
+          0.1260219984275207,
+          0.015305285564302091,
+          0.015485929809482183,
+          0.998044963916957
+        ],
+        "weights": [
+          1.1731063706853708,
+          -1.059364717810011,
+          1.3353160716014705,
+          0.7125408588931184,
+          -0.7125408579642843,
+          -0.7662190405803376,
+          -0.09038871550592877,
+          -0.1057852325423085
+        ],
+        "bias": 1.9864051262378988,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    }
+  ],
+  "honest_scope": "A functional metacognition correlate: a slow-NMDA meta_schema region reads the brain's OWN first-order 2AFC competition (the WTA winning margin = balance-of-evidence) and emits a graded confidence rate that predicts whether the first-order decision was CORRECT (meta-d' >0, M-ratio near the metacognitive ideal). The monitor is DISSOCIABLE from first-order sensitivity (meta-lesion collapses meta-d' while d' is unchanged) and collapses under a permuted confidence. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable).",
+  "learned_monitor_config": {
+    "calib_trials": 64,
+    "epochs": 12,
+    "lr": 0.18,
+    "l2": 0.002,
+    "w_max": 3.0,
+    "conf_min_pa": 150.0,
+    "conf_max_pa": 750.0,
+    "report_steps": 40
+  }
+}

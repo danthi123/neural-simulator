@@ -1,0 +1,38 @@
+{
+  "run_id": "1785718869-2",
+  "runner": "research/runners/_laneC_self_schema_metacog_integration_derisk.py",
+  "argv": [
+    "/home/dant123/Projects/sim/research/runners/_laneC_self_schema_metacog_integration_derisk.py",
+    "--seed",
+    "101",
+    "--n-trials",
+    "160",
+    "--learned-report-steps",
+    "80",
+    "--response1-tonic-pa",
+    "200",
+    "--backend",
+    "numpy",
+    "--json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_s101_report80_resp1plus200.json"
+  ],
+  "git_sha": "9930383c5",
+  "git_dirty": true,
+  "started": "2026-08-02T21:01:09",
+  "env": {
+    "SIM_BACKEND": "numpy"
+  },
+  "sim_backend": "numpy",
+  "sim_backend_requested": "numpy",
+  "sim_backend_cupy_importable": true,
+  "corpus_check_age_s": 17515.4,
+  "corpus_check_query": "lane C learned ACC aPFC error conflict monitor",
+  "corpus_check_fresh": true,
+  "artifact": "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_s101_report80_resp1plus200.json",
+  "schema_backfill": {
+    "at": "2026-08-03T02:56:14+00:00",
+    "reason": "verdict-preconditions gate requires new artifacts with top-level verdicts to carry earned-check metadata",
+    "metrics_changed": false,
+    "verdict_changed": false
+  }
+}

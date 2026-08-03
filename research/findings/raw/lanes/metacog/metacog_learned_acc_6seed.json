@@ -1,0 +1,709 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition (LANE C second-order METACOGNITION MONITOR, slow-NMDA meta_schema)",
+  "theory": "Maniscalco & Lau type-2 SDT / meta-d' + balance-of-evidence confidence (Vickers) read by a slow-NMDA downstream monitor (Wang persistent-activity NMDA) -- FUNCTIONAL correlate only",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_trials": 160,
+  "backend": "numpy",
+  "confidence_read": "learned_acc",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "verdict": "PARTIAL",
+  "n_go": 2,
+  "n_seeds": 6,
+  "aggregate": {
+    "mean_type1_accuracy": 0.7177083333333334,
+    "mean_d1": 1.248151361703417,
+    "mean_type2_auc": 0.682523857074904,
+    "mean_meta_d": 1.2829603101697373,
+    "mean_m_ratio": 0.9961316135151811,
+    "all_in_window": true,
+    "all_meta_lesion_collapse": true,
+    "all_domain_dissociation": true,
+    "all_permuted_collapse": false,
+    "all_within_class_ok": false
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 160,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.78125,
+        "d1": 1.5298052310640085,
+        "c1": -0.011519144792637936,
+        "hr": 0.78125,
+        "far": 0.22560975609756098,
+        "type2_auc": 0.7228571428571429,
+        "meta_d": 1.4127554884388613,
+        "m_ratio": 0.9234871601636917,
+        "conf_correct_mean": 0.08674615384615383,
+        "conf_error_mean": 0.06818681318681319,
+        "conf_vs_signal_spearman": 0.16590003515762333,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.7641093474426808,
+          "1": 0.6869070208728653
+        },
+        "min_per_class_type2_auc": 0.6869070208728653,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.78125,
+        "d1": 1.5298052310640085,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.4657142857142857,
+        "meta_d": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": true,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": true,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 96,
+        "calibration_accuracy": 0.84375,
+        "calibration_errors": 15,
+        "calibration_type2_auc": 0.8580246913580247,
+        "calibration_conf_correct_mean": 0.6516044315728758,
+        "calibration_conf_error_mean": 0.2669582020328488,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.053572916666666644,
+          0.04892578125,
+          0.004647135416666667,
+          0.06312434506481006,
+          0.46843782247426363,
+          0.10249869791666666,
+          0.00047265624999999993,
+          0.020833333333333332
+        ],
+        "feature_scale": [
+          0.0037787382612748163,
+          0.01070636094825089,
+          0.009735833638570059,
+          0.17535597004240597,
+          0.0876779858989026,
+          0.01276806949248772,
+          0.010777704778295144,
+          0.9997829625584859
+        ],
+        "weights": [
+          1.8469383225901321,
+          -1.4155487041014256,
+          2.27349589295755,
+          1.2647800446753095,
+          -1.2647800373736968,
+          -0.6403692324014401,
+          -0.33072543188770986,
+          -0.29436603491509644
+        ],
+        "bias": 1.9766732814171275,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    },
+    {
+      "seed": 43,
+      "n_trials": 160,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.75,
+        "d1": 1.491904930804679,
+        "c1": -0.5219878160919391,
+        "hr": 0.8975903614457831,
+        "far": 0.41139240506329117,
+        "type2_auc": 0.7342708333333333,
+        "meta_d": 1.6577865014935718,
+        "m_ratio": 1.11118776221178,
+        "conf_correct_mean": 0.09514423076923076,
+        "conf_error_mean": 0.08117788461538461,
+        "conf_vs_signal_spearman": 0.2444773233329427,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.7472826086956522,
+          "1": 0.6908783783783784
+        },
+        "min_per_class_type2_auc": 0.6908783783783784,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.75,
+        "d1": 1.491904930804679,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.6125,
+        "meta_d": 0.7556504568371591,
+        "meta_d_attributable": 0.5441810775052391,
+        "collapsed": false
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": true,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": false,
+        "within_class_correctness": true
+      },
+      "go": false,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 96,
+        "calibration_accuracy": 0.78125,
+        "calibration_errors": 21,
+        "calibration_type2_auc": 0.7822222222222223,
+        "calibration_conf_correct_mean": 0.6903881613738422,
+        "calibration_conf_error_mean": 0.47731110984872027,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.05440755208333336,
+          0.04894010416666666,
+          0.005467447916666666,
+          0.07174766358712668,
+          0.4641261632641323,
+          0.10334765625000002,
+          0.0034361979166666664,
+          0.2708333333333333
+        ],
+        "feature_scale": [
+          0.004035254986960221,
+          0.011487977456054479,
+          0.011609830559585583,
+          0.19503962965683727,
+          0.09751981559587067,
+          0.012717140089616035,
+          0.012364210295091466,
+          0.9626262543456598
+        ],
+        "weights": [
+          1.4413021923616718,
+          -1.5725164435879946,
+          2.0569684622090216,
+          1.1389011837974818,
+          -1.1389011798331852,
+          -0.9631891689053141,
+          0.16683740940184716,
+          -0.17758235647720993
+        ],
+        "bias": 2.3200898894448483,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    },
+    {
+      "seed": 44,
+      "n_trials": 160,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.71875,
+        "d1": 1.2075870549336365,
+        "c1": -0.37982887815641797,
+        "hr": 0.8373493975903614,
+        "far": 0.41139240506329117,
+        "type2_auc": 0.6189371980676328,
+        "meta_d": 0.7842643280782807,
+        "m_ratio": 0.6494474455271304,
+        "conf_correct_mean": 0.08102842809364547,
+        "conf_error_mean": 0.07262820512820513,
+        "conf_vs_signal_spearman": -0.042933317707722955,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.6328125,
+          "1": 0.5557413600891862
+        },
+        "min_per_class_type2_auc": 0.5557413600891862,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.71875,
+        "d1": 1.2075870549336365,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.4896618357487923,
+        "meta_d": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": false,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 96,
+        "calibration_accuracy": 0.78125,
+        "calibration_errors": 21,
+        "calibration_type2_auc": 0.6558730158730158,
+        "calibration_conf_correct_mean": 0.4711415663124117,
+        "calibration_conf_error_mean": 0.32783059108073576,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.054328125000000005,
+          0.050197916666666675,
+          0.0041302083333333356,
+          0.05175099862477995,
+          0.4741244958298479,
+          0.10452604166666662,
+          0.00023177083333333353,
+          0.2708333333333333
+        ],
+        "feature_scale": [
+          0.003601226371697333,
+          0.009542729880720132,
+          0.009298453414095121,
+          0.15238482408087897,
+          0.07619241267608895,
+          0.011027411936583182,
+          0.01017183066373253,
+          0.9626262543456601
+        ],
+        "weights": [
+          0.23279712209611972,
+          -0.9526726680577183,
+          1.067820356116631,
+          0.893952074911603,
+          -0.8939520746267604,
+          -0.7483969886961209,
+          -0.39184844429436533,
+          -0.08725060007962167
+        ],
+        "bias": 0.5598215289851562,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    },
+    {
+      "seed": 100,
+      "n_trials": 160,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.7,
+        "d1": 1.0534013852217907,
+        "c1": -0.16758988293201127,
+        "hr": 0.75625,
+        "far": 0.3597560975609756,
+        "type2_auc": 0.7803199404761905,
+        "meta_d": 1.8813561246458312,
+        "m_ratio": 1.7859822011243291,
+        "conf_correct_mean": 0.09439388736263736,
+        "conf_error_mean": 0.07201522435897435,
+        "conf_vs_signal_spearman": 0.16299953123168873,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.9426392572944297,
+          "1": 0.5675438596491228
+        },
+        "min_per_class_type2_auc": 0.5675438596491228,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.7,
+        "d1": 1.0534013852217907,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.49962797619047616,
+        "meta_d": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": true,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": true,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 96,
+        "calibration_accuracy": 0.8229166666666666,
+        "calibration_errors": 17,
+        "calibration_type2_auc": 0.8212956068503351,
+        "calibration_conf_correct_mean": 0.6333345806447583,
+        "calibration_conf_error_mean": 0.315507678170974,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.05344010416666664,
+          0.04893880208333331,
+          0.004501302083333333,
+          0.05920040920262474,
+          0.47039979041593444,
+          0.10237890625,
+          -0.00022526041666666658,
+          0.0625
+        ],
+        "feature_scale": [
+          0.0037415259795725033,
+          0.009948614637245345,
+          0.009146192122180085,
+          0.16535523219541562,
+          0.08267761690232299,
+          0.011928749698800273,
+          0.010191359503321092,
+          0.998044963916957
+        ],
+        "weights": [
+          1.3301687214979943,
+          -1.8757849912641855,
+          2.5843996317628406,
+          1.2473901880463183,
+          -1.2473901854842018,
+          -1.147194931342462,
+          0.754376131681056,
+          -0.7090945449659504
+        ],
+        "bias": 2.025836323944822,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    },
+    {
+      "seed": 101,
+      "n_trials": 160,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.68125,
+        "d1": 1.301930577700135,
+        "c1": 0.5474144127141901,
+        "hr": 0.5412371134020618,
+        "far": 0.11538461538461539,
+        "type2_auc": 0.7695628710199676,
+        "meta_d": 1.9615994183618788,
+        "m_ratio": 1.5066851120641556,
+        "conf_correct_mean": 0.09133733239237828,
+        "conf_error_mean": 0.07279411764705883,
+        "conf_vs_signal_spearman": 0.2999560529708192,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.2769423558897243,
+          "1": 0.9549825174825175
+        },
+        "min_per_class_type2_auc": 0.2769423558897243,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.68125,
+        "d1": 1.301930577700135,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5013491635186185,
+        "meta_d": 0.009638584802316181,
+        "meta_d_attributable": 0.9950863643656842,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": true,
+        "meta": true,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": false
+      },
+      "go": false,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 96,
+        "calibration_accuracy": 0.6979166666666666,
+        "calibration_errors": 29,
+        "calibration_type2_auc": 0.6389603705609882,
+        "calibration_conf_correct_mean": 0.5314603092744311,
+        "calibration_conf_error_mean": 0.4142489170380652,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.05508593750000001,
+          0.05198828125,
+          0.0030976562500000006,
+          0.03543668115901554,
+          0.48228165468644324,
+          0.10707421875,
+          -0.0018085937500000005,
+          -0.3333333333333333
+        ],
+        "feature_scale": [
+          0.0044067417168009455,
+          0.007677501927579163,
+          0.006224170667359566,
+          0.10672584405091559,
+          0.053362922532602206,
+          0.010862159836640765,
+          0.006713029374808682,
+          0.9428090415820628
+        ],
+        "weights": [
+          0.816063442408163,
+          -0.4875341820056392,
+          1.1774563142563799,
+          0.7482823432607646,
+          -0.7482823371714454,
+          -0.015279812951865234,
+          1.1211740603028102,
+          0.347103130586373
+        ],
+        "bias": 0.22303862861796644,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    },
+    {
+      "seed": 102,
+      "n_trials": 160,
+      "confidence_read": "learned_acc",
+      "intact": {
+        "type1_accuracy": 0.675,
+        "d1": 0.9042789904962517,
+        "c1": -0.2886459693693076,
+        "hr": 0.7705882352941177,
+        "far": 0.43506493506493504,
+        "type2_auc": 0.4691951566951567,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "conf_correct_mean": 0.08290598290598289,
+        "conf_error_mean": 0.08359837278106509,
+        "conf_vs_signal_spearman": -0.27104183757178013,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.6553911205073996,
+          "1": 0.28825910931174087
+        },
+        "min_per_class_type2_auc": 0.28825910931174087,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.675,
+        "d1": 0.9042789904962517,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": null,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5186075498575499,
+        "meta_d": 0.1126653558664253,
+        "meta_d_attributable": null,
+        "collapsed": true
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": false
+      },
+      "go": false,
+      "learned_monitor": {
+        "mechanism": "learned_acc_apfc_error_conflict_monitor",
+        "calibration_trials": 96,
+        "calibration_accuracy": 0.71875,
+        "calibration_errors": 27,
+        "calibration_type2_auc": 0.6709608158883521,
+        "calibration_conf_correct_mean": 0.5078557537010583,
+        "calibration_conf_error_mean": 0.3586997131024969,
+        "learned_lr": 0.18,
+        "learned_epochs": 12,
+        "learned_l2": 0.002,
+        "learned_w_max": 3.0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign"
+        ],
+        "feature_mean": [
+          0.05524479166666666,
+          0.052558593750000014,
+          0.0026861979166666675,
+          0.029197997793190145,
+          0.48540099642698364,
+          0.10780338541666672,
+          0.0004466145833333332,
+          0.2708333333333333
+        ],
+        "feature_scale": [
+          0.0031543887182406503,
+          0.006241816338177874,
+          0.005065135463431585,
+          0.07871021945687753,
+          0.039355110144508335,
+          0.00849501509755598,
+          0.005715924415557878,
+          0.96262625434566
+        ],
+        "weights": [
+          -0.1964921652560741,
+          -0.8586347480430481,
+          0.7869286241803984,
+          -0.6957644835066068,
+          0.6957644804503248,
+          -0.9735749098793833,
+          -1.2526586501345904,
+          -0.05522932229180588
+        ],
+        "bias": 0.02559485138037807,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      }
+    }
+  ],
+  "honest_scope": "A functional metacognition correlate: a slow-NMDA meta_schema region reads the brain's OWN first-order 2AFC competition (the WTA winning margin = balance-of-evidence) and emits a graded confidence rate that predicts whether the first-order decision was CORRECT (meta-d' >0, M-ratio near the metacognitive ideal). The monitor is DISSOCIABLE from first-order sensitivity (meta-lesion collapses meta-d' while d' is unchanged) and collapses under a permuted confidence. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable).",
+  "learned_monitor_config": {
+    "calib_trials": 96,
+    "epochs": 12,
+    "lr": 0.18,
+    "l2": 0.002,
+    "w_max": 3.0,
+    "conf_min_pa": 150.0,
+    "conf_max_pa": 750.0,
+    "report_steps": 40
+  }
+}

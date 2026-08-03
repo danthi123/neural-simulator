@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "manual-aggregate",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s42.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s43.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s44.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s100.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s101.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s102.json",
+    "--out",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_fanout_aggregate.json"
+  ],
+  "artifact": "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_fanout_aggregate.json",
+  "created_at_utc": "2026-08-03T02:34:13.609291+00:00",
+  "derived_from_fanout": true,
+  "git_dirty": true,
+  "git_sha": "9930383c570d79a34ab570d2c7280538cb892bae",
+  "source_artifacts": [
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s42.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s43.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s44.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s100.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s101.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s102.json"
+  ],
+  "source_provenance": [
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s42.json.prov.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s43.json.prov.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s44.json.prov.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s100.json.prov.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s101.json.prov.json",
+    "research/findings/raw/lanes/metacog/metacog_self_schema_dynamic_integration_6seed_report80_resp1plus200_s102.json.prov.json"
+  ],
+  "tool": "codex-python-aggregate"
+}

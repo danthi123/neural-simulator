@@ -51,6 +51,7 @@ from sim.config import CoreSimConfig
 from sim.enums import NeuronModel
 from sim.regions import BrainRegion, RegionPathway
 from sim.backend import get_backend, to_host
+from tools.lab import attributable_to
 
 
 # ── constants (mirror the validated dlPFC attractor weight) ───────────────────────────────────────────────
@@ -216,8 +217,13 @@ def build_ignition_bridge(seed: int = 42, attractor_weight: float = DEFAULT_ATTR
 # the full dynamical-state arrays that a persisting limit-cycle latch pollutes -> must ALL be restored to make a
 # reset return to the fresh quiescent state (the adversarial-verify found v/u/firing were the leaked ones).
 _STATE_ARRAYS = (
-    "cp_membrane_potential_v", "cp_recovery_variable_u", "cp_firing_states",
+    "cp_membrane_potential_v", "cp_recovery_variable_u", "cp_firing_states", "cp_prev_firing_states",
+    "cp_refractory_timers",
     "cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise",
+    "cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise",
+    "cp_conductance_g_gabab", "cp_conductance_g_gabab_slow",
+    "cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise",
+    "cp_conductance_g_graded_plateau", "cp_conductance_g_graded_plateau_rise",
 )
 
 
@@ -391,6 +397,12 @@ def main():
             a_star_ignite = float(A); break
 
     lesion_plateau = float(np.asarray(lesion_late, dtype=np.float64).max())
+    recurrence_attribution = attributable_to(
+        "GNW recurrence sustained plateau",
+        plateau,
+        lesion_plateau,
+        warn_below=0.8,
+    )
 
     # (1) a real ignited state exists: >=1 amplitude latches a sustained plateau that is a genuine rate.
     ignites = bool(n_ignited >= 1 and plateau >= 0.05)
@@ -450,6 +462,26 @@ def main():
             "offstate_max_over_plateau": (offstate_max / plateau) if plateau > 0 else None,
             "lesion_plateau_over_plateau": (lesion_plateau / plateau) if plateau > 0 else None,
         },
+        "attribution": {
+            "label": "GNW recurrence sustained plateau",
+            "treatment": "intact_plateau",
+            "control": "lesion_plateau",
+            "fraction_attributable_to_recurrence": recurrence_attribution,
+        },
+        "preconditions": [
+            {
+                "name": "intact_and_lesion_sweeps_recorded_for_same_amplitudes",
+                "ok": len(intact_late) == len(lesion_late) == len(amplitudes),
+            },
+            {
+                "name": "settled_late_window_is_primary_metric",
+                "ok": True,
+            },
+            {
+                "name": "recurrence_attribution_computed",
+                "ok": recurrence_attribution is not None,
+            },
+        ],
     }
 
     os.makedirs(os.path.dirname(os.path.abspath(args.json)), exist_ok=True)

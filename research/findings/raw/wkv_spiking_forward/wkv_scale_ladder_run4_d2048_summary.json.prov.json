@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "wkv-scale-summary",
+    "bridges/lmtrain/run3/progress.jsonl",
+    "bridges/lmtrain/run4_d2048/progress.jsonl",
+    "bridges/lmtrain/run5_d1536/progress.jsonl",
+    "--out",
+    "research/findings/raw/wkv_spiking_forward/wkv_scale_ladder_run4_d2048_summary.json"
+  ],
+  "artifact": "research/findings/raw/wkv_spiking_forward/wkv_scale_ladder_run4_d2048_summary.json",
+  "backend": "training-log-summary",
+  "created_at_utc": "2026-08-03T02:42:22.282985+00:00",
+  "device": "host-cpu:dant123-wk",
+  "git_dirty": true,
+  "git_sha": "9930383c570d79a34ab570d2c7280538cb892bae",
+  "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+  "source_artifacts": [
+    "bridges/lmtrain/run3/progress.jsonl",
+    "bridges/lmtrain/run4_d2048/progress.jsonl",
+    "bridges/lmtrain/run5_d1536/progress.jsonl"
+  ],
+  "tool": "codex-python-wkv-scale-summary"
+}
