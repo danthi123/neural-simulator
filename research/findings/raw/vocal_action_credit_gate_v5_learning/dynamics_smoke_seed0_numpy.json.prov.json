@@ -1,0 +1,31 @@
+{
+ "run_id": "1785799474-525052",
+ "runner": "research/runners/_vocal_action_credit_gate_v5_learning.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_vocal_action_credit_gate_v5_learning.py",
+  "--dynamics",
+  "--seed",
+  "0",
+  "--out",
+  "research/findings/raw/vocal_action_credit_gate_v5_learning/dynamics_smoke_seed0_numpy.json"
+ ],
+ "git_sha": "4504143cdb0e6da972dd62d0b6e00cd9f1e15438",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "d4d5892dda4e6776de26697b389c3fa381c02fb57ba35e2db94b83d4f650f261",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-03T19:24:34",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3142.7,
+ "corpus_check_query": "Gate B v5 local vocal action credit separate action trace reward expectation yoked neutrality dopamine prediction error omission LHb RMTg",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/vocal_action_credit_gate_v5_learning/dynamics_smoke_seed0_numpy.json"
+}

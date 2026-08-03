@@ -1,0 +1,31 @@
+{
+ "run_id": "1785799264-1776257",
+ "runner": "research/runners/_vocal_action_credit_gate_v5_learning.py",
+ "argv": [
+  "/tmp/sim-gateb-v5-TDHQk6/research/runners/_vocal_action_credit_gate_v5_learning.py",
+  "--dynamics",
+  "--seed",
+  "0",
+  "--out",
+  "research/findings/raw/vocal_action_credit_gate_v5_learning/dynamics_smoke_seed0_cupy.json"
+ ],
+ "git_sha": "11868b252",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-03T19:21:04",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2968.9,
+ "corpus_check_query": "Gate B v5 local vocal action credit separate action trace reward expectation yoked neutrality dopamine prediction error omission LHb RMTg",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/vocal_action_credit_gate_v5_learning/dynamics_smoke_seed0_cupy.json"
+}
