@@ -2,10 +2,12 @@
 
 The retired V2/IT stack is deliberately not used. Images pass through the
 existing Gabor/V1-complex encoder into the competitive OnSubstratePooler used by
-the successful EMERGE-50 trace experiment. The candidate mechanism adds a slow
-column-usage state that changes each column's competitive gain, allowing rarely
-used assemblies to participate while repeatedly winning assemblies become less
-excitable.
+the successful EMERGE-50 trace experiment. The inherited host top-k winner read
+is replaced in both learning and inference by EMERGE-41's spiking rank-order
+route: graded column drive becomes current, and the first K columns to spike are
+the winners. The candidate mechanism also adds a slow column-usage state that
+changes each column's competitive gain, allowing rarely used assemblies to
+participate while repeatedly winning assemblies become less excitable.
 
 Four synthetic objects are viewed along continuous position, scale, and modest
 lighting trajectories. Object identity is never passed to the pooler or to
@@ -69,11 +71,21 @@ from research.runners._emerge50_trace_rule_derisk import (  # noqa: E402
     TRACE_DECAY,
     _apply_traced_potentiation,
 )
+from research.runners._emerge41_fs_wta_kwinners_derisk import (  # noqa: E402
+    COL_FS_W as LATENCY_COL_FS_WEIGHT,
+    DRIVE_GAIN as LATENCY_DRIVE_GAIN,
+    FS_COL_W as LATENCY_FS_COL_WEIGHT,
+    N_STEPS as LATENCY_STEPS,
+)
 from research.runners._genfrontier_optionB_visual_similarity_derisk import (  # noqa: E402
     build_gabor_response_matrix,
     encode_v1,
     pool_v1_to_complex,
 )
+from sim.bridge import SimulationBridge  # noqa: E402
+from sim.config import CoreSimConfig, GPUConfig, RuntimeState, VisualizationConfig  # noqa: E402
+from sim.enums import NeuronModel, NeuronType  # noqa: E402
+from sim.regions import BrainRegion, RegionPathway  # noqa: E402
 
 
 CALIBRATION_SEEDS = (212, 213)
@@ -95,6 +107,24 @@ ARM_SPECS = {
 }
 
 OUT = Path("research/findings/raw/lanes/perception/visual_identity_homeostasis_calibration.json")
+
+LATENCY_DRIVE_RANGE = 6.0
+LATENCY_STATE_ARRAYS = (
+    "cp_membrane_potential_v",
+    "cp_recovery_variable_u",
+    "cp_conductance_g_e",
+    "cp_conductance_g_i",
+    "cp_conductance_g_nmda",
+    "cp_conductance_g_nmda_rise",
+    "cp_external_input_current",
+    "cp_firing_states",
+    "cp_prev_firing_states",
+    "cp_refractory_timers",
+    "cp_neuron_activity_ema",
+    "cp_viz_activity_timers",
+    "cp_synapse_pulse_timers",
+    "cp_synapse_pulse_progress",
+)
 
 
 @dataclass(frozen=True)
@@ -283,10 +313,196 @@ def homeostatic_gain(usage: np.ndarray, target: float, strength: float) -> np.nd
     return np.clip(np.exp(strength * (target - np.asarray(usage))), 0.20, 5.0)
 
 
+class SpikeLatencySelector:
+    """Generalized EMERGE-41 first-spike selector with reusable clean windows.
+
+    The host computes the graded dendritic drive from the pooler's on-substrate
+    permanences, then only reads spike timing. It never ranks that drive to pick
+    winners. Sorting is restricted to first-spike times, with a seeded,
+    drive-independent key for same-step ties.
+    """
+
+    def __init__(
+        self,
+        seed: int,
+        n_col: int,
+        k_win: int,
+        n_fs: int,
+        n_steps: int,
+        wta_enabled: bool = True,
+    ) -> None:
+        self.seed = int(seed)
+        self.n_col = int(n_col)
+        self.k_win = int(k_win)
+        self.n_fs = int(n_fs)
+        self.n_steps = int(n_steps)
+        self.wta_enabled = bool(wta_enabled)
+        if self.n_col < 2 or not 0 < self.k_win < self.n_col:
+            raise ValueError("selector requires 0 < k_win < n_col")
+        if self.n_fs < 1 or self.n_steps < 1:
+            raise ValueError("selector n_fs and n_steps must be positive")
+        self.bridge = self._build_bridge()
+        self.column_indices = np.asarray(self.bridge.region_manager.indices("latency_columns"), dtype=np.int64)
+        self._tie_rng = np.random.default_rng(self.seed * 101 + 17)
+        self._initial_state = {
+            name: getattr(self.bridge, name).copy()
+            for name in LATENCY_STATE_ARRAYS
+            if getattr(self.bridge, name, None) is not None
+        }
+        self.selection_calls = 0
+        self.total_fired = 0
+        self.last_first_spike = np.full(self.n_col, self.n_steps + 1, dtype=np.int64)
+        self.last_fired_count = 0
+
+    def _build_bridge(self) -> SimulationBridge:
+        excitatory = dict(
+            exc_fraction=1.0,
+            internal_density=0.0,
+            exc_weight_mean=0.0,
+            inh_weight_mean=0.0,
+            weight_jitter=0.0,
+            plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        )
+        regions = [BrainRegion(name="latency_columns", n_neurons=self.n_col, **excitatory)]
+        pathways: list[RegionPathway] = []
+        if self.wta_enabled:
+            regions.append(
+                BrainRegion(
+                    name="latency_fs",
+                    n_neurons=self.n_fs,
+                    exc_fraction=0.0,
+                    internal_density=0.0,
+                    exc_weight_mean=0.0,
+                    inh_weight_mean=0.0,
+                    weight_jitter=0.0,
+                    plastic_internal=False,
+                    izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                )
+            )
+            pathways.extend(
+                (
+                    RegionPathway(
+                        from_region="latency_columns",
+                        to_region="latency_fs",
+                        density=1.0,
+                        weight_mean=LATENCY_COL_FS_WEIGHT,
+                        weight_jitter=0.0,
+                        plastic=False,
+                    ),
+                    RegionPathway(
+                        from_region="latency_fs",
+                        to_region="latency_columns",
+                        density=1.0,
+                        weight_mean=LATENCY_FS_COL_WEIGHT,
+                        weight_jitter=0.0,
+                        plastic=False,
+                    ),
+                )
+            )
+
+        config = CoreSimConfig()
+        config.seed = config.heterogeneity_seed = config.ou_seed = self.seed
+        config.dt_ms = 1.0
+        config.num_traits = 1
+        config.neuron_model_type = NeuronModel.IZHIKEVICH.name
+        config.neural_profile_name = "GENERIC_UNSTRUCTURED"
+        config.connections_per_neuron = 0
+        config.enable_brain_region_framework = True
+        config.brain_regions = regions
+        config.region_pathways = pathways
+        config.enable_stdp = False
+        config.enable_hebbian_learning = False
+        config.enable_nmda = False
+        config.fast_spike_reset = True
+        for field in (
+            "enable_homeostasis",
+            "enable_short_term_plasticity",
+            "enable_ou_process",
+            "enable_conductance_noise",
+            "enable_parameter_heterogeneity",
+            "enable_structural_plasticity",
+        ):
+            setattr(config, field, False)
+        config.enable_coincidence_detection = False
+        bridge = SimulationBridge(
+            core_config=config,
+            viz_config=VisualizationConfig(),
+            runtime_state=RuntimeState(),
+            gpu_config=GPUConfig(),
+        )
+        bridge.runtime_state.max_delay_steps = int(config.max_synaptic_delay_ms / config.dt_ms)
+        bridge.runtime_state.actual_seed_used = self.seed
+        bridge._initialize_simulation_data(called_from_playback_init=False)
+        return bridge
+
+    def _reset_window(self) -> None:
+        for name, initial in self._initial_state.items():
+            getattr(self.bridge, name)[:] = initial
+        self.bridge.runtime_state.current_time_ms = 0.0
+        self.bridge.runtime_state.current_time_step = 0
+
+    def select(self, drive: np.ndarray, neural_drive_enabled: bool = True) -> set[int]:
+        values = np.asarray(drive, dtype=np.float64)
+        if values.shape != (self.n_col,):
+            raise ValueError(f"drive must have shape ({self.n_col},), got {values.shape}")
+        if not np.isfinite(values).all() or np.any(values < 0.0):
+            raise ValueError("drive must be finite and non-negative")
+
+        self._reset_window()
+        peak = float(values.max()) if values.size else 0.0
+        scaled = values * (LATENCY_DRIVE_RANGE / peak) if peak > 0.0 else values
+        current = np.zeros(self.bridge.cp_external_input_current.shape[0], dtype=np.float32)
+        if neural_drive_enabled:
+            current[self.column_indices] = (LATENCY_DRIVE_GAIN * scaled).astype(np.float32)
+        self.bridge.cp_external_input_current[:] = current
+
+        first_spike = np.full(self.n_col, self.n_steps + 1, dtype=np.int64)
+        for step in range(self.n_steps):
+            self.bridge._run_one_simulation_step()
+            fired_now = np.asarray(self.bridge.cp_firing_states)[self.column_indices].astype(bool)
+            newly = fired_now & (first_spike > self.n_steps)
+            first_spike[newly] = step
+        self.bridge.cp_external_input_current[:] = 0.0
+
+        fired = np.flatnonzero(first_spike <= self.n_steps)
+        self.selection_calls += 1
+        self.last_first_spike = first_spike
+        self.last_fired_count = int(fired.size)
+        self.total_fired += int(fired.size)
+        if fired.size == 0:
+            return set()
+        tie_break = self._tie_rng.random(fired.size)
+        order = fired[np.lexsort((tie_break, first_spike[fired]))]
+        return set(int(column) for column in order[: self.k_win])
+
+    def metrics(self) -> dict[str, float | int | bool | str]:
+        mean_fired = self.total_fired / max(self.selection_calls, 1)
+        return {
+            "selection_route": "first_spike_latency",
+            "winner_source": "cp_firing_states timing",
+            "host_drive_ranking_used_for_winners": False,
+            "host_spike_time_readout": True,
+            "host_same_step_tie_break": "seeded drive-independent key",
+            "fs_pathways_enabled": self.wta_enabled,
+            "selection_calls": self.selection_calls,
+            "mean_columns_fired_per_window": round(float(mean_fired), 4),
+            "last_columns_fired": self.last_fired_count,
+        }
+
+
 class HomeostaticTracePooler(TraceV1Pooler):
     """Trace pooler with slow, online column-usage homeostasis."""
 
-    def __init__(self, *args, homeostasis_rate: float, homeostasis_strength: float, **kwargs):
+    def __init__(
+        self,
+        *args,
+        homeostasis_rate: float,
+        homeostasis_strength: float,
+        latency_fs_neurons: int,
+        latency_steps: int,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self.homeostasis_rate = float(homeostasis_rate)
         self.homeostasis_strength = float(homeostasis_strength)
@@ -294,6 +510,17 @@ class HomeostaticTracePooler(TraceV1Pooler):
         self.usage = np.full(self.n_col, self.target_usage, dtype=np.float64)
         self.selection_counts = np.zeros(self.n_col, dtype=np.int64)
         self.inference_gain = np.ones(self.n_col, dtype=np.float64)
+        self.latency_selector = SpikeLatencySelector(
+            seed=int(kwargs["seed"]) * 17 + 5,
+            n_col=self.n_col,
+            k_win=self.k_win,
+            n_fs=latency_fs_neurons,
+            n_steps=latency_steps,
+        )
+
+    def _winners(self, features: set[int], boost: np.ndarray | None = None) -> set[int]:
+        """Select pooler columns only from the latency selector's spike times."""
+        return self.latency_selector.select(self._drive(features, boost))
 
     def train_tracks(
         self,
@@ -420,7 +647,47 @@ def _make_pooler(seed: int, n_in: int, args: argparse.Namespace) -> HomeostaticT
         ld_wi=args.pool_lr_depress,
         homeostasis_rate=args.homeostasis_rate,
         homeostasis_strength=args.homeostasis_strength,
+        latency_fs_neurons=args.latency_fs_neurons,
+        latency_steps=args.latency_steps,
     )
+
+
+def selection_controls(
+    pooler: HomeostaticTracePooler,
+    features: set[int],
+    seed: int,
+    args: argparse.Namespace,
+) -> dict[str, float | int | bool | list[int]]:
+    """Lesion the neural input and flatten its ranking signal on one fixed drive."""
+    drive = pooler._drive(features, pooler.inference_gain)
+    selector = pooler.latency_selector
+    graded_winners = selector.select(drive)
+    graded_fired_count = selector.last_fired_count
+    host_reference = set(int(column) for column in np.argsort(-drive)[: pooler.k_win])
+    flat_winners = selector.select(np.full(pooler.n_col, float(np.mean(drive))))
+    silent_winners = selector.select(drive, neural_drive_enabled=False)
+
+    fs_lesion = SpikeLatencySelector(
+        seed=seed,
+        n_col=pooler.n_col,
+        k_win=pooler.k_win,
+        n_fs=args.latency_fs_neurons,
+        n_steps=args.latency_steps,
+        wta_enabled=False,
+    )
+    lesion_winners = fs_lesion.select(drive)
+    denominator = max(pooler.k_win, 1)
+    return {
+        "graded_winners": sorted(graded_winners),
+        "graded_host_reference_overlap": round(len(graded_winners & host_reference) / denominator, 4),
+        "flat_drive_overlap_with_graded": round(len(flat_winners & graded_winners) / denominator, 4),
+        "flat_drive_winners": sorted(flat_winners),
+        "neural_drive_lesion_winners": sorted(silent_winners),
+        "fs_lesion_winner_overlap": round(len(lesion_winners & graded_winners) / denominator, 4),
+        "fs_intact_columns_fired": graded_fired_count,
+        "fs_lesion_columns_fired": fs_lesion.last_fired_count,
+        "pooler_host_drive_ranking_used_for_winners": False,
+    }
 
 
 def run_seed(seed: int, args: argparse.Namespace) -> dict:
@@ -485,6 +752,12 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         scrambled_codes,
         dataset.held_object_ids,
     )
+    neural_selection = selection_controls(
+        intact_pooler,
+        held_features[0],
+        seed=pool_seed * 17 + 5,
+        args=args,
+    )
 
     intact = arms["intact"]
     shuffled = arms["temporal_shuffle"]
@@ -503,6 +776,19 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
             intact["usage"]["usage_cv"] < homeostasis_lesion["usage"]["usage_cv"]
         ),
         "pixel_scramble_at_or_below_half": pixel_scramble["heldout_identity_decode"] <= 0.50,
+        "neural_selection_produces_k_winners": (
+            len(neural_selection["graded_winners"]) == args.k_win
+        ),
+        "neural_drive_lesion_silences_selection": (
+            len(neural_selection["neural_drive_lesion_winners"]) == 0
+        ),
+        "latency_tracks_graded_drive": (
+            neural_selection["graded_host_reference_overlap"] >= 0.80
+        ),
+        "flat_drive_destroys_rank_signal": (
+            neural_selection["flat_drive_overlap_with_graded"]
+            <= args.k_win / args.n_col + 0.25
+        ),
     }
     calibration_ready = bool(all(diagnostics.values()))
     return {
@@ -513,6 +799,8 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
         "n_heldout_images": int(len(dataset.held_images)),
         "arms": arms,
         "pixel_scramble": pixel_scramble,
+        "neural_selection": neural_selection,
+        "selection_telemetry": intact_pooler.latency_selector.metrics(),
         "diagnostics": diagnostics,
         "calibration_status": "CANDIDATE" if calibration_ready else "NEEDS-REVISION",
         "formal_verdict": "NOT-RUN-CALIBRATION-ONLY",
@@ -523,6 +811,13 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
             ),
             "labels_enter_training_or_inference": False,
             "inference_inputs": ["V1-complex active feature indices"],
+            "pooler_winners_read_from": "first-spike timing in cp_firing_states",
+            "host_top_k_determines_pooler_winners": False,
+            "remaining_selection_scaffolds": [
+                "host overlap-to-current max normalization",
+                "host first-spike-time readout",
+                "host seeded drive-independent same-step tie break",
+            ],
         },
     }
 
@@ -554,6 +849,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--pool-lr-depress", type=float, default=0.01)
     parser.add_argument("--homeostasis-rate", type=float, default=0.01)
     parser.add_argument("--homeostasis-strength", type=float, default=6.0)
+    parser.add_argument("--latency-fs-neurons", type=int, default=8)
+    parser.add_argument("--latency-steps", type=int, default=LATENCY_STEPS)
     parser.add_argument("--out", default=str(OUT))
     return parser
 
@@ -565,6 +862,8 @@ def main() -> int:
         raise ValueError("t_active exceeds the V1-complex feature count")
     if args.k_win >= args.n_col:
         raise ValueError("k_win must be smaller than n_col")
+    if args.latency_fs_neurons < 1 or args.latency_steps < 1:
+        raise ValueError("latency-fs-neurons and latency-steps must be positive")
     started = time.time()
     rows = []
     for seed in args.seeds:
@@ -588,16 +887,26 @@ def main() -> int:
             "formal_verdict": "NOT-RUN-CALIBRATION-ONLY",
             "candidate_seeds": sum(row["calibration_status"] == "CANDIDATE" for row in rows),
             "seed_partitions": {name: list(values) for name, values in SEED_PARTITIONS.items()},
-            "controls": list(ARM_SPECS) + ["pixel_scramble"],
+            "controls": list(ARM_SPECS) + [
+                "pixel_scramble",
+                "flat_latency_drive",
+                "neural_drive_lesion",
+                "fs_pathway_lesion",
+            ],
             "mechanism": (
                 "Gabor/V1-complex activity drives competitive OnSubstratePooler assemblies. "
-                "Foldiak traces update cp_connections through committed learning kernels; an online "
-                "EMA of each column's wins changes its intrinsic competitive gain."
+                "Foldiak traces update cp_connections through committed learning kernels; graded "
+                "column drive is converted to current and first-spike latency selects every training "
+                "and inference winner; an online EMA of each column's wins changes its intrinsic gain."
             ),
             "honest_scope": (
-                "Pooler permanences and learning use the shared simulation substrate. Winner selection "
-                "retains the inherited host top-k calibration scaffold; labels are evaluator-only and "
-                "never enter training or inference."
+                "Pooler permanences, learning, and winner selection use the simulation substrate. The "
+                "host still computes dendritic overlap from substrate permanences, max-normalizes it into "
+                "the calibrated current range, reads first-spike times, and breaks same-step ties with a "
+                "seeded drive-independent key. No host ranking of the graded drive chooses winners. FS "
+                "inhibition sparsifies later firing, while EMERGE-41 established that rank-order latency "
+                "selects the winners. V1 feature sparsification and evaluator labels remain host-side; "
+                "labels never enter learning or inference."
             ),
             "config": vars(args),
             "elapsed_seconds": round(time.time() - started, 2),

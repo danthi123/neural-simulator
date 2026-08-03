@@ -67,6 +67,70 @@ def test_slow_homeostasis_suppresses_overused_columns_without_labels():
     assert "object" not in inspect.signature(gate.infer_codes).parameters
 
 
+def test_latency_selector_uses_spikes_resets_state_and_obeys_neural_lesions():
+    selector = gate.SpikeLatencySelector(
+        seed=212,
+        n_col=16,
+        k_win=2,
+        n_fs=8,
+        n_steps=40,
+    )
+    graded = np.linspace(0.2, 6.0, 16)
+    first = selector.select(graded)
+    first_latency = selector.last_first_spike.copy()
+    first_fired = selector.last_fired_count
+    repeated = selector.select(graded)
+
+    assert first == repeated == {14, 15}
+    assert np.array_equal(first_latency, selector.last_first_spike)
+    assert first_fired == selector.last_fired_count >= 2
+    assert max(first_latency[list(first)]) < min(first_latency[:12])
+
+    flat = selector.select(np.full(16, graded.mean()))
+    assert len(flat) == 2
+    assert len(flat & first) / 2 <= 2 / 16 + 0.25
+    assert selector.select(graded, neural_drive_enabled=False) == set()
+    assert selector.last_fired_count == 0
+
+
+def test_fs_lesion_preserves_latency_winners_but_releases_later_spiking():
+    graded = np.linspace(0.2, 6.0, 16)
+    intact = gate.SpikeLatencySelector(212, 16, 2, 8, 40, wta_enabled=True)
+    lesioned = gate.SpikeLatencySelector(212, 16, 2, 8, 40, wta_enabled=False)
+    intact_winners = intact.select(graded)
+    lesioned_winners = lesioned.select(graded)
+
+    assert intact_winners == lesioned_winners == {14, 15}
+    assert lesioned.last_fired_count > intact.last_fired_count
+
+
+def test_pooler_winner_selection_never_calls_host_drive_top_k(monkeypatch):
+    pooler = gate.HomeostaticTracePooler(
+        seed=212,
+        n_in=8,
+        n_col=16,
+        k_win=2,
+        lp=0.05,
+        ld_wi=0.01,
+        homeostasis_rate=0.01,
+        homeostasis_strength=6.0,
+        latency_fs_neurons=8,
+        latency_steps=40,
+    )
+
+    def fail_host_ranking(*_args, **_kwargs):
+        raise AssertionError("host drive top-k was called")
+
+    monkeypatch.setattr(gate.np, "argsort", fail_host_ranking)
+    monkeypatch.setattr(gate.np, "argpartition", fail_host_ranking)
+    winners = pooler._winners({0, 1, 2, 3})
+    assert len(winners) == 2
+    assert pooler.latency_selector.selection_calls == 1
+    source = inspect.getsource(gate.HomeostaticTracePooler._winners)
+    assert "latency_selector.select" in source
+    assert "argsort" not in source and "argpartition" not in source
+
+
 def test_controls_are_mechanistically_distinct():
     assert set(gate.ARM_SPECS) == {
         "intact",
@@ -105,6 +169,11 @@ def test_tiny_cpu_smoke_builds_every_control(tmp_path):
     assert row["formal_verdict"] == "NOT-RUN-CALIBRATION-ONLY"
     assert row["stream_checks"]["same_multiset_after_temporal_shuffle"] is True
     assert row["stream_checks"]["labels_enter_training_or_inference"] is False
+    assert row["stream_checks"]["host_top_k_determines_pooler_winners"] is False
+    assert row["selection_telemetry"]["selection_route"] == "first_spike_latency"
+    assert row["selection_telemetry"]["host_drive_ranking_used_for_winners"] is False
+    assert row["neural_selection"]["neural_drive_lesion_winners"] == []
+    assert len(row["neural_selection"]["graded_winners"]) == 2
     assert row["n_objects"] == 4
     for arm in row["arms"].values():
         assert 0.0 <= arm["heldout_identity_decode"] <= 1.0
