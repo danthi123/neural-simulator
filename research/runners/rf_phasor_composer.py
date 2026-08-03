@@ -62,7 +62,9 @@ class RFPhasorComposer:
     def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
                  enable_substrate_store=False, grounded_codes=None, enable_rf_cudagraph=False,
                  encoding_gain_fn=None, local_reciprocal_unbind=False, trace=False,
-                 enable_source_monitor=False, source_monitor_D=None, source_monitor_seed_offset=1000003):
+                 enable_source_monitor=False, source_monitor_D=None, source_monitor_seed_offset=1000003,
+                 enable_plastic_source_monitor=False, plastic_source_config=None,
+                 plastic_source_seed_offset=0):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -87,6 +89,20 @@ class RFPhasorComposer:
         self.enable_source_monitor = bool(enable_source_monitor)
         self.source_monitor_D = int(source_monitor_D) if source_monitor_D is not None else max(int(D), 64)
         self.source_monitor_seed_offset = int(source_monitor_seed_offset)
+        # (Lane C plastic-source rung, opt-in, DEFAULT-OFF) a source tag is learned only when an explicit
+        # `observe_source_event` co-activates a complete proposition and an external-source population. `store` alone
+        # does not teach it. Query-time evidence reads only learned synapses for the live recalled candidate. Its
+        # BLAKE2 proposition namespace is independent from the composer's NumPy RF codebook, so the validated seed can
+        # be reused without coupling the representations through an arbitrary unvalidated seed offset.
+        self.enable_plastic_source_monitor = bool(enable_plastic_source_monitor)
+        self.plastic_source_seed_offset = int(plastic_source_seed_offset)
+        self._plastic_source_memory = None
+        if self.enable_plastic_source_monitor:
+            from research.runners.plastic_source_memory import PlasticSourceMemory
+            self._plastic_source_memory = PlasticSourceMemory(
+                seed=self.seed + self.plastic_source_seed_offset,
+                config=plastic_source_config,
+            )
         # (Tier-2 #6, opt-in, DEFAULT-OFF = byte-identical) DOPAMINE-GATED ENCODING STRENGTH (Lisman-Grace
         # hippocampal-VTA loop; Kandel D.16 -- dopamine gates the entry of information into LONG-TERM memory, making a
         # trace STABLE vs degradable). encoding_gain_fn: an optional callable () -> float read AT STORE TIME (the
@@ -466,6 +482,46 @@ class RFPhasorComposer:
         ]
         out["source_confidence"] = float(min(conf_vals)) if conf_vals else None
         return out
+
+    def observe_source_event(self, *, kind, cue, candidate, learning_enabled=True):
+        """Teach that a proposition was externally experienced.
+
+        This event is deliberately separate from `store`: placing a fact in the
+        primary memory is not by itself evidence about where that fact came from.
+        """
+        if self._plastic_source_memory is None:
+            return {
+                "observed": False,
+                "available": False,
+                "source": "plastic_hebbian_proposition_source",
+            }
+        rec = self._plastic_source_memory.observe(
+            kind=str(kind),
+            cue=tuple(cue),
+            candidate=str(candidate),
+            learning_enabled=bool(learning_enabled),
+        )
+        return {
+            "observed": True,
+            "available": True,
+            "source": "plastic_hebbian_proposition_source",
+            **rec,
+        }
+
+    def plastic_source_consistency_record(self, *, kind, cue, raw_answer):
+        """Read learned source support without consulting the primary fact table."""
+        if self._plastic_source_memory is None:
+            return {
+                "available": False,
+                "source": "plastic_hebbian_proposition_source",
+                "source_consistent": None,
+                "source_confidence": None,
+            }
+        return self._plastic_source_memory.support(
+            kind=str(kind),
+            cue=tuple(cue),
+            candidate=str(raw_answer),
+        )
 
     def _render(self, comp_phases, role, stored, order_fn=None):
         """Render `role`'s filler from a composite, FROM THE RF UNBIND. `stored` (a word or Clause) ROUTES

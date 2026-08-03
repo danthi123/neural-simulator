@@ -222,6 +222,43 @@ def test_neural_source_consistency_fails_closed_without_echo():
     assert rec["confidence_evidence"]["source_consistent"] is False
 
 
+def test_plastic_source_consistency_requires_learning_and_feeds_self_schema():
+    comp = RFPhasorComposer(
+        seed=42,
+        D=64,
+        vocab=VOCAB,
+        trace=True,
+        enable_plastic_source_monitor=True,
+        plastic_source_config={
+            "n_banks": 4,
+            "proposition_neurons_per_bank": 2048,
+            "support_threshold": 0.25,
+        },
+    )
+    comp.store("dog", "go", "north", polarity="AFFIRM")
+    ag = _agent(
+        enable_self_schema_honesty=True,
+        composer=comp,
+        vocab=comp.words,
+        confidence_source_mode="plastic_source_consistency",
+    )
+
+    before = ag.known_fact_record(("dog", "go"))
+    comp.observe_source_event(kind="what_does", cue=("dog", "go"), candidate="north")
+    after = ag.known_fact_record(("dog", "go"))
+
+    assert before["raw_answer"] == "north"
+    assert before["confidence_source"] == 0.0
+    assert before["band"] != "assert"
+    assert after["confidence_evidence"]["source_consistent"] is True
+    assert after["confidence_evidence"]["learned_source_association"] is True
+    assert (
+        after["confidence_evidence"]["selected_consistency_source"]
+        == "plastic_hebbian_proposition_source"
+    )
+    assert after["confidence_source"] == after["confidence_evidence"]["raw_trace_confidence"]
+
+
 def test_communicable_known_channel_uses_laneC_record_when_enabled():
     comp, facts, unknown = _build_stressed(seed=100, D=16, n_facts=48, vocab_mode="synthetic")
     ag = _agent(enable_self_schema_honesty=True, composer=comp, vocab=comp.words)

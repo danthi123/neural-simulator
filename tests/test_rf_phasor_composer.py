@@ -85,6 +85,42 @@ def test_rf_source_monitor_echo_checks_candidate_without_source_fact():
     assert "source_fact" not in ok
 
 
+def test_plastic_source_monitor_requires_experience_and_checks_live_candidate():
+    comp = RFPhasorComposer(
+        seed=42,
+        D=64,
+        period=200,
+        trace=True,
+        enable_plastic_source_monitor=True,
+        plastic_source_config={
+            "n_banks": 4,
+            "proposition_neurons_per_bank": 2048,
+            "support_threshold": 0.25,
+        },
+    )
+    comp.store("dog", "go", "north", polarity="AFFIRM")
+
+    before = comp.plastic_source_consistency_record(
+        kind="what_does", cue=("dog", "go"), raw_answer="north"
+    )
+    comp.observe_source_event(kind="what_does", cue=("dog", "go"), candidate="north")
+    learned = comp.plastic_source_consistency_record(
+        kind="what_does", cue=("dog", "go"), raw_answer="north"
+    )
+    wrong = comp.plastic_source_consistency_record(
+        kind="what_does", cue=("dog", "go"), raw_answer="south"
+    )
+
+    assert before["available"] is False
+    assert before["source_consistent"] is None
+    assert learned["available"] is True
+    assert learned["source_consistent"] is True
+    assert wrong["source_consistent"] is False
+    assert learned["support"] > wrong["support"] + 0.10
+    assert "source_expected_answer" not in learned
+    assert "matched_source_index" not in learned
+
+
 @pytest.mark.parametrize("seed", [42, 43, 44])
 def test_rf_phasor_composer_one_attribute(seed):
     """b.3a: a 1-attribute entity ('big apple') -- the ATTRIBUTE role-tag binding RESOLVES (adjective + noun both

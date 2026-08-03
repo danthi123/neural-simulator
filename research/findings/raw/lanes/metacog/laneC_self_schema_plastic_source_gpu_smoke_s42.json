@@ -1,0 +1,982 @@
+{
+  "runner": "research/runners/_laneC_self_schema_honesty_wirein_derisk.py",
+  "faculty": "Lane C metacognition / self-schema honesty in production known-fact conversation",
+  "theory": "answer-process confidence routed through a fixed meta_schema -> self_schema spiking relay",
+  "backend": "cupy",
+  "seeds": [
+    42
+  ],
+  "D": 16,
+  "n_facts": 48,
+  "vocab_mode": "synthetic",
+  "low_conf_cutoff": 0.48,
+  "confidence_source_mode": "plastic_source_consistency",
+  "source_monitor_D": 64,
+  "plastic_source_neurons_per_bank": 16384,
+  "plastic_source_threshold": 0.34,
+  "verdict": "GO",
+  "aggregate": {
+    "core_ok": true,
+    "low_conf_measured": true,
+    "low_conf_all_downgraded": true,
+    "source_mismatch_measured": true,
+    "source_mismatch_all_downgraded": true,
+    "high_conf_errors_remain": false,
+    "wrong_assert_rate": 0.0,
+    "source_mismatch_wrong_downgrade_rate": 1.0,
+    "low_conf_wrong_downgrade_rate": 1.0,
+    "correct_assert_rate": 0.5666666666666667,
+    "total_counts": {
+      "matched_queries": 48,
+      "matched_hard_abstains": 11,
+      "correct": 30,
+      "wrong": 7,
+      "wrong_assert": 0,
+      "low_conf_wrong": 7,
+      "low_conf_wrong_downgraded": 7,
+      "source_mismatch_wrong": 7,
+      "source_mismatch_wrong_downgraded": 7,
+      "source_mismatch_correct": 0,
+      "correct_assert": 17,
+      "hard_moat_off": 80,
+      "hard_moat_on": 80,
+      "added_false_accepts": 0,
+      "self_schema_invoked_on_hard_moat": 0,
+      "intrinsic_unknown_answers": 0
+    }
+  },
+  "success_components": {
+    "default_off_identity_preserved": true,
+    "hard_moat_added_false_accepts_zero": true,
+    "self_schema_not_invoked_on_hard_moat": true,
+    "low_conf_familiar_wrong_measured": true,
+    "low_conf_familiar_wrong_some_downgraded": true,
+    "low_conf_familiar_wrong_all_downgraded": true,
+    "source_mismatch_wrong_measured": true,
+    "source_mismatch_wrong_all_downgraded": true,
+    "source_mismatch_correct_false_positive_zero": true,
+    "wrong_asserts_absent_for_full_go": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 80,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 11,
+        "correct": 30,
+        "wrong": 7,
+        "wrong_assert": 0,
+        "low_conf_wrong": 7,
+        "low_conf_wrong_downgraded": 7,
+        "source_mismatch_wrong": 7,
+        "source_mismatch_wrong_downgraded": 7,
+        "source_mismatch_correct": 0,
+        "correct_assert": 17,
+        "hard_moat_off": 80,
+        "hard_moat_on": 80,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 0
+      },
+      "rates": {
+        "wrong_assert_rate": 0.0,
+        "low_conf_wrong_downgrade_rate": 1.0,
+        "correct_assert_rate": 0.5666666666666667,
+        "self_rate_vs_trace_spearman": 0.9893314366998578
+      },
+      "band_counts": {
+        "MOAT": 11,
+        "soft_abstain": 8,
+        "assert": 17,
+        "hedge": 12
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [],
+      "sample_source_mismatch_wrong": [
+        {
+          "cue": [
+            "w009",
+            "w020"
+          ],
+          "gold": "w027",
+          "raw_answer": "w043",
+          "answer_text": "I am not sure enough to assert it, but it might be w043.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.5457570818691218,
+            "answer_confidence": 0.5457570818691218,
+            "answer_margin": 0.025365808889586394,
+            "answer_conflict": 0.48810399615098815,
+            "cue_min_confidence": 0.4394832065229415,
+            "cue_min_margin": 0.08955833376448435,
+            "matched_fact_index": 2,
+            "source_fact": {
+              "agent": "w009",
+              "action": "w020",
+              "patient": "w027"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w027",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.27963364230969867,
+              "support": 0.27963364230969867,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.5384615384615384,
+                0.431924882629108,
+                0.0,
+                0.14814814814814814
+              ],
+              "source_spikes": [
+                147.0,
+                92.0,
+                0.0,
+                32.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w025",
+            "w022"
+          ],
+          "gold": "w015",
+          "raw_answer": "w038",
+          "answer_text": "I am not sure enough to assert it, but it might be w038.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.36107368395750866,
+            "answer_confidence": 0.36107368395750866,
+            "answer_margin": 0.009511401333575753,
+            "answer_conflict": 0.4933266051909675,
+            "cue_min_confidence": 0.5254117842229569,
+            "cue_min_margin": 0.21653916933937267,
+            "matched_fact_index": 7,
+            "source_fact": {
+              "agent": "w025",
+              "action": "w022",
+              "patient": "w015"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w015",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.23145556893974367,
+              "support": 0.23145556893974367,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.4945054945054945,
+                0.1784037558685446,
+                0.09550561797752809,
+                0.1574074074074074
+              ],
+              "source_spikes": [
+                135.0,
+                38.0,
+                17.0,
+                34.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w026",
+            "w010"
+          ],
+          "gold": "w035",
+          "raw_answer": "w013",
+          "answer_text": "I am not sure enough to assert it, but it might be w013.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.34258181711779334,
+            "answer_confidence": 0.34258181711779334,
+            "answer_margin": 0.0006507585123819992,
+            "answer_conflict": 0.4995246550251201,
+            "cue_min_confidence": 0.5167920791243772,
+            "cue_min_margin": 0.18642851660644094,
+            "matched_fact_index": 15,
+            "source_fact": {
+              "agent": "w026",
+              "action": "w010",
+              "patient": "w035"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w035",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.14182892981951378,
+              "support": 0.14182892981951378,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.23443223443223443,
+                0.13615023474178403,
+                0.03932584269662921,
+                0.1574074074074074
+              ],
+              "source_spikes": [
+                64.0,
+                29.0,
+                7.0,
+                34.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w000",
+            "w018"
+          ],
+          "gold": "w019",
+          "raw_answer": "w024",
+          "answer_text": "I am not sure enough to assert it, but it might be w024.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.31613512640868535,
+            "answer_confidence": 0.31613512640868535,
+            "answer_margin": 0.04446927210125862,
+            "answer_conflict": 0.4621731891537264,
+            "cue_min_confidence": 0.5231104588714427,
+            "cue_min_margin": 0.06539630471933233,
+            "matched_fact_index": 25,
+            "source_fact": {
+              "agent": "w000",
+              "action": "w018",
+              "patient": "w019"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w019",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.1839123468040227,
+              "support": 0.1839123468040227,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.24175824175824176,
+                0.08450704225352113,
+                0.011235955056179775,
+                0.39814814814814814
+              ],
+              "source_spikes": [
+                66.0,
+                18.0,
+                2.0,
+                86.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w008",
+            "w031"
+          ],
+          "gold": "w036",
+          "raw_answer": "w005",
+          "answer_text": "I am not sure enough to assert it, but it might be w005.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.3520574216614312,
+            "answer_confidence": 0.3520574216614312,
+            "answer_margin": 0.01585181501416838,
+            "answer_conflict": 0.4884841874841873,
+            "cue_min_confidence": 0.6308379142642756,
+            "cue_min_margin": 0.1887471114473498,
+            "matched_fact_index": 30,
+            "source_fact": {
+              "agent": "w008",
+              "action": "w031",
+              "patient": "w036"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w036",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.2300010448748382,
+              "support": 0.2300010448748382,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.2564102564102564,
+                0.23943661971830985,
+                0.17415730337078653,
+                0.25
+              ],
+              "source_spikes": [
+                70.0,
+                51.0,
+                31.0,
+                54.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w009",
+            "w020"
+          ],
+          "gold": "w027",
+          "raw_answer": "w043",
+          "answer_text": "I am not sure enough to assert it, but it might be w043.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.5457570818691218,
+            "answer_confidence": 0.5457570818691218,
+            "answer_margin": 0.025365808889586394,
+            "answer_conflict": 0.48810399615098815,
+            "cue_min_confidence": 0.4394832065229415,
+            "cue_min_margin": 0.08955833376448435,
+            "matched_fact_index": 2,
+            "source_fact": {
+              "agent": "w009",
+              "action": "w020",
+              "patient": "w027"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w027",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.27963364230969867,
+              "support": 0.27963364230969867,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.5384615384615384,
+                0.431924882629108,
+                0.0,
+                0.14814814814814814
+              ],
+              "source_spikes": [
+                147.0,
+                92.0,
+                0.0,
+                32.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w025",
+            "w022"
+          ],
+          "gold": "w015",
+          "raw_answer": "w038",
+          "answer_text": "I am not sure enough to assert it, but it might be w038.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.36107368395750866,
+            "answer_confidence": 0.36107368395750866,
+            "answer_margin": 0.009511401333575753,
+            "answer_conflict": 0.4933266051909675,
+            "cue_min_confidence": 0.5254117842229569,
+            "cue_min_margin": 0.21653916933937267,
+            "matched_fact_index": 7,
+            "source_fact": {
+              "agent": "w025",
+              "action": "w022",
+              "patient": "w015"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w015",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.23145556893974367,
+              "support": 0.23145556893974367,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.4945054945054945,
+                0.1784037558685446,
+                0.09550561797752809,
+                0.1574074074074074
+              ],
+              "source_spikes": [
+                135.0,
+                38.0,
+                17.0,
+                34.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w026",
+            "w010"
+          ],
+          "gold": "w035",
+          "raw_answer": "w013",
+          "answer_text": "I am not sure enough to assert it, but it might be w013.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.34258181711779334,
+            "answer_confidence": 0.34258181711779334,
+            "answer_margin": 0.0006507585123819992,
+            "answer_conflict": 0.4995246550251201,
+            "cue_min_confidence": 0.5167920791243772,
+            "cue_min_margin": 0.18642851660644094,
+            "matched_fact_index": 15,
+            "source_fact": {
+              "agent": "w026",
+              "action": "w010",
+              "patient": "w035"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w035",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.14182892981951378,
+              "support": 0.14182892981951378,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.23443223443223443,
+                0.13615023474178403,
+                0.03932584269662921,
+                0.1574074074074074
+              ],
+              "source_spikes": [
+                64.0,
+                29.0,
+                7.0,
+                34.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w000",
+            "w018"
+          ],
+          "gold": "w019",
+          "raw_answer": "w024",
+          "answer_text": "I am not sure enough to assert it, but it might be w024.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.31613512640868535,
+            "answer_confidence": 0.31613512640868535,
+            "answer_margin": 0.04446927210125862,
+            "answer_conflict": 0.4621731891537264,
+            "cue_min_confidence": 0.5231104588714427,
+            "cue_min_margin": 0.06539630471933233,
+            "matched_fact_index": 25,
+            "source_fact": {
+              "agent": "w000",
+              "action": "w018",
+              "patient": "w019"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w019",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.1839123468040227,
+              "support": 0.1839123468040227,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.24175824175824176,
+                0.08450704225352113,
+                0.011235955056179775,
+                0.39814814814814814
+              ],
+              "source_spikes": [
+                66.0,
+                18.0,
+                2.0,
+                86.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        },
+        {
+          "cue": [
+            "w008",
+            "w031"
+          ],
+          "gold": "w036",
+          "raw_answer": "w005",
+          "answer_text": "I am not sure enough to assert it, but it might be w005.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "plastic_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.3520574216614312,
+            "answer_confidence": 0.3520574216614312,
+            "answer_margin": 0.01585181501416838,
+            "answer_conflict": 0.4884841874841873,
+            "cue_min_confidence": 0.6308379142642756,
+            "cue_min_margin": 0.1887471114473498,
+            "matched_fact_index": 30,
+            "source_fact": {
+              "agent": "w008",
+              "action": "w031",
+              "patient": "w036"
+            },
+            "mode": "plastic_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w036",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "plastic_hebbian_proposition_source",
+              "source_consistent": false,
+              "source_confidence": 0.2300010448748382,
+              "support": 0.2300010448748382,
+              "support_threshold": 0.34,
+              "bank_support": [
+                0.2564102564102564,
+                0.23943661971830985,
+                0.17415730337078653,
+                0.25
+              ],
+              "source_spikes": [
+                70.0,
+                51.0,
+                31.0,
+                54.0
+              ],
+              "source_liveness_spikes": [
+                273.0,
+                213.0,
+                178.0,
+                216.0
+              ],
+              "observed_events": 48,
+              "lesion": false,
+              "config": {
+                "n_banks": 4,
+                "proposition_neurons_per_bank": 16384,
+                "proposition_pattern_size": 16,
+                "source_neurons_per_bank": 8,
+                "training_cycles": 3,
+                "training_steps": 20,
+                "rest_steps": 10,
+                "read_steps": 80,
+                "drive_pA": 5000.0,
+                "support_threshold": 0.34,
+                "hebbian_learning_rate": 0.2,
+                "hebbian_max_weight": 160.0
+              }
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "plastic_hebbian_proposition_source",
+            "source_consistent": false,
+            "scaffold": false,
+            "learned_source_association": true
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.07083333333333333,
+          "hedge_rate_threshold": 0.05
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": true
+    }
+  ],
+  "preconditions": [
+    {
+      "name": "production_and_default_off_paths_measured",
+      "ok": true
+    },
+    {
+      "name": "moat_and_matched_fact_counts_recorded",
+      "ok": true
+    },
+    {
+      "name": "verdict_derived_from_recorded_counts",
+      "ok": true
+    }
+  ],
+  "honest_scope": "Production wire-in is built and default-off. The moat remains first, and low-confidence familiar-wrong recalls are downgraded. High-confidence wrong recalls still assert, so this is not a solved honesty mechanism; the next step needs a learned/calibrated correctness confidence signal rather than trace confidence alone. The source_consistency_floor mode is a named scaffold over composer source metadata, not an end-state biological correctness mechanism. The neural_source_consistency mode uses a separate RF source-memory echo, not the exact trace source dict; it remains a bounded source-monitor burn-down step. The plastic_source_consistency mode learns proposition-to-source support in zero-initialized Hebbian synapses from explicit experience events; its sparse proposition hash, separate bridge, and external source-teaching event remain scaffolds.",
+  "elapsed_seconds": 127.69
+}

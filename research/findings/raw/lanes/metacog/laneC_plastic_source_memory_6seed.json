@@ -1,0 +1,2112 @@
+{
+  "runner": "research/runners/_laneC_plastic_source_memory_derisk.py",
+  "faculty": "Lane C episodic source monitoring for honesty",
+  "mechanism": "gated symmetric Hebbian proposition-to-external-source association on a spiking bridge",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_facts": 48,
+  "n_controls": 12,
+  "config": {
+    "n_banks": 4,
+    "proposition_neurons_per_bank": 16384,
+    "proposition_pattern_size": 16,
+    "source_neurons_per_bank": 8,
+    "training_cycles": 3,
+    "training_steps": 20,
+    "rest_steps": 10,
+    "read_steps": 80,
+    "drive_pA": 5000.0,
+    "support_threshold": 0.34,
+    "hebbian_learning_rate": 0.2,
+    "hebbian_max_weight": 160.0
+  },
+  "verdict": "GO",
+  "aggregate": {
+    "all_seed_components_pass": true,
+    "mean_seen_accept_rate": 0.9930555555555555,
+    "min_seen_accept_rate": 0.9583333333333334,
+    "max_wrong_answer_false_accept_rate": 0.0,
+    "max_unknown_false_accept_rate": 0.0,
+    "max_lesion_accept_rate": 0.0,
+    "min_worst_case_seen_wrong_margin": 0.019187603985876545,
+    "retrieval_weights_frozen_all_seeds": true,
+    "min_source_path_attribution": 0.9986791380731546
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "components": {
+        "weights_start_zero": true,
+        "learning_gate_off_keeps_weights_zero": true,
+        "no_learning_accept_rate_zero": true,
+        "learning_grows_synaptic_weights": true,
+        "retrieval_keeps_learned_weights_frozen": true,
+        "seen_accept_rate_at_least_0_95": true,
+        "wrong_answer_false_accept_rate_zero": true,
+        "unknown_proposition_false_accept_rate_zero": true,
+        "seen_wrong_worst_case_margin_positive": true,
+        "source_path_lesion_accept_rate_zero": true,
+        "permuted_teaching_is_followed": true,
+        "permuted_original_is_rejected": true
+      },
+      "metrics": {
+        "seen_accept_rate": 1.0,
+        "wrong_answer_false_accept_rate": 0.0,
+        "unknown_false_accept_rate": 0.0,
+        "lesion_accept_rate": 0.0,
+        "permuted_taught_accept_rate": 1.0,
+        "permuted_original_accept_rate": 0.0,
+        "seen_support_min": 0.48028486059798514,
+        "seen_support_mean": 0.7437362213070076,
+        "wrong_support_max": 0.31657955302525587,
+        "wrong_support_mean": 0.15425191286617004,
+        "no_learning_support_mean": 0.0,
+        "lesion_support_mean": 0.0007638888888888889,
+        "permuted_taught_support_mean": 0.435280862493995,
+        "permuted_original_support_mean": 0.03333686575413077,
+        "worst_case_seen_wrong_margin": 0.16370530757272928,
+        "retrieval_weight_l1_delta": 0.0,
+        "source_path_attribution": 0.998972903474371
+      },
+      "weights": {
+        "initial": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learning_disabled": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learned": {
+          "n_synapses": 524288,
+          "nonzero": 20016,
+          "mean": 3.560575932788197,
+          "max": 159.99974060058594,
+          "l1": 1866767.2346496582
+        }
+      },
+      "samples": {
+        "seen": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.6882515191892274,
+            "source_consistent": true,
+            "bank_support": [
+              0.6160337552742616,
+              0.5933014354066986,
+              0.8270042194092827,
+              0.7166666666666667
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.6389712918660286,
+            "source_consistent": true,
+            "bank_support": [
+              0.540084388185654,
+              0.5358851674641149,
+              0.7932489451476793,
+              0.6866666666666666
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.5695334423515637,
+            "source_consistent": true,
+            "bank_support": [
+              0.5063291139240507,
+              0.3827751196172249,
+              0.45569620253164556,
+              0.9333333333333333
+            ]
+          }
+        ],
+        "wrong": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.19672299275230654,
+            "source_consistent": false,
+            "bank_support": [
+              0.1729957805907173,
+              0.10047846889952153,
+              0.20675105485232068,
+              0.30666666666666664
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.10443037974683544,
+            "source_consistent": false,
+            "bank_support": [
+              0.20675105485232068,
+              0.0,
+              0.2109704641350211,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.16746835443037977,
+            "source_consistent": false,
+            "bank_support": [
+              0.2489451476793249,
+              0.0,
+              0.2742616033755274,
+              0.14666666666666667
+            ]
+          }
+        ],
+        "unknown": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_0",
+              "unknown_action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.22440928270042193,
+            "source_consistent": false,
+            "bank_support": [
+              0.33755274261603374,
+              0.0,
+              0.540084388185654,
+              0.02
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_1",
+              "unknown_action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.12130801687763712,
+            "source_consistent": false,
+            "bank_support": [
+              0.1350210970464135,
+              0.0,
+              0.350210970464135,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_2",
+              "unknown_action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.09177215189873417,
+            "source_consistent": false,
+            "bank_support": [
+              0.27848101265822783,
+              0.0,
+              0.08860759493670886,
+              0.0
+            ]
+          }
+        ],
+        "lesion": [
+          {
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.009166666666666667,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false
+          }
+        ],
+        "permuted_taught": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.4675936094338443,
+            "source_consistent": true,
+            "bank_support": [
+              0.6814159292035398,
+              0.45930232558139533,
+              0.24742268041237114,
+              0.48223350253807107
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.4391569751421506,
+            "source_consistent": true,
+            "bank_support": [
+              0.7079646017699115,
+              0.46511627906976744,
+              0.31958762886597936,
+              0.2639593908629442
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.42677562955926496,
+            "source_consistent": true,
+            "bank_support": [
+              0.5929203539823009,
+              0.46511627906976744,
+              0.28865979381443296,
+              0.3604060913705584
+            ]
+          }
+        ],
+        "permuted_original": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.14648702750873066,
+            "source_consistent": false,
+            "bank_support": [
+              0.1592920353982301,
+              0.14534883720930233,
+              0.13917525773195877,
+              0.14213197969543148
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.04215116279069767,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.1686046511627907,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.03717093613504899,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.011627906976744186,
+              0.0,
+              0.13705583756345177
+            ]
+          }
+        ]
+      },
+      "elapsed_seconds": 194.74
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "components": {
+        "weights_start_zero": true,
+        "learning_gate_off_keeps_weights_zero": true,
+        "no_learning_accept_rate_zero": true,
+        "learning_grows_synaptic_weights": true,
+        "retrieval_keeps_learned_weights_frozen": true,
+        "seen_accept_rate_at_least_0_95": true,
+        "wrong_answer_false_accept_rate_zero": true,
+        "unknown_proposition_false_accept_rate_zero": true,
+        "seen_wrong_worst_case_margin_positive": true,
+        "source_path_lesion_accept_rate_zero": true,
+        "permuted_teaching_is_followed": true,
+        "permuted_original_is_rejected": true
+      },
+      "metrics": {
+        "seen_accept_rate": 1.0,
+        "wrong_answer_false_accept_rate": 0.0,
+        "unknown_false_accept_rate": 0.0,
+        "lesion_accept_rate": 0.0,
+        "permuted_taught_accept_rate": 1.0,
+        "permuted_original_accept_rate": 0.0,
+        "seen_support_min": 0.5640827364755507,
+        "seen_support_mean": 0.8032076739550223,
+        "wrong_support_max": 0.27642341796381287,
+        "wrong_support_mean": 0.1322668397826868,
+        "no_learning_support_mean": 0.0,
+        "lesion_support_mean": 0.001060926435877262,
+        "permuted_taught_support_mean": 0.5310940499717675,
+        "permuted_original_support_mean": 0.03601580419205982,
+        "worst_case_seen_wrong_margin": 0.28765931851173787,
+        "retrieval_weight_l1_delta": 0.0,
+        "source_path_attribution": 0.9986791380731546
+      },
+      "weights": {
+        "initial": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learning_disabled": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learned": {
+          "n_synapses": 524288,
+          "nonzero": 18974,
+          "mean": 3.125161229807418,
+          "max": 159.99974060058594,
+          "l1": 1638484.5308532715
+        }
+      },
+      "samples": {
+        "seen": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.6393369026392748,
+            "source_consistent": true,
+            "bank_support": [
+              0.6653225806451613,
+              0.5739910313901345,
+              0.5756097560975609,
+              0.7424242424242424
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.6143029451101818,
+            "source_consistent": true,
+            "bank_support": [
+              0.7338709677419355,
+              0.600896860986547,
+              0.5365853658536586,
+              0.5858585858585859
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.5640827364755507,
+            "source_consistent": true,
+            "bank_support": [
+              0.75,
+              0.49327354260089684,
+              0.4878048780487805,
+              0.5252525252525253
+            ]
+          }
+        ],
+        "wrong": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.27425222583022224,
+            "source_consistent": false,
+            "bank_support": [
+              0.40725806451612906,
+              0.24663677130044842,
+              0.18048780487804877,
+              0.26262626262626265
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0876705696787515,
+            "source_consistent": false,
+            "bank_support": [
+              0.04838709677419355,
+              0.04035874439461883,
+              0.01951219512195122,
+              0.24242424242424243
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.2143574540107407,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.26905829596412556,
+              0.2146341463414634,
+              0.37373737373737376
+            ]
+          }
+        ],
+        "unknown": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_0",
+              "unknown_action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.04254804379507572,
+            "source_consistent": false,
+            "bank_support": [
+              0.0967741935483871,
+              0.008968609865470852,
+              0.03414634146341464,
+              0.030303030303030304
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_1",
+              "unknown_action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.1152131066765213,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.1073170731707317,
+              0.35353535353535354
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_2",
+              "unknown_action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.227744835265969,
+            "source_consistent": false,
+            "bank_support": [
+              0.4435483870967742,
+              0.2556053811659193,
+              0.15121951219512195,
+              0.06060606060606061
+            ]
+          }
+        ],
+        "lesion": [
+          {
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.012731117230527144,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false
+          }
+        ],
+        "permuted_taught": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.5088810773184836,
+            "source_consistent": true,
+            "bank_support": [
+              0.5911330049261084,
+              0.6719367588932806,
+              0.352,
+              0.42045454545454547
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.5098277176346891,
+            "source_consistent": true,
+            "bank_support": [
+              0.5911330049261084,
+              0.5533596837944664,
+              0.588,
+              0.3068181818181818
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.5444772581241847,
+            "source_consistent": true,
+            "bank_support": [
+              0.5320197044334976,
+              0.49407114624505927,
+              0.72,
+              0.4318181818181818
+            ]
+          }
+        ],
+        "permuted_original": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.1216276845343562,
+            "source_consistent": false,
+            "bank_support": [
+              0.19704433497536947,
+              0.15810276679841898,
+              0.12,
+              0.011363636363636364
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0049261083743842365,
+            "source_consistent": false,
+            "bank_support": [
+              0.019704433497536946,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0009881422924901185,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.003952569169960474,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      "elapsed_seconds": 193.75
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "components": {
+        "weights_start_zero": true,
+        "learning_gate_off_keeps_weights_zero": true,
+        "no_learning_accept_rate_zero": true,
+        "learning_grows_synaptic_weights": true,
+        "retrieval_keeps_learned_weights_frozen": true,
+        "seen_accept_rate_at_least_0_95": true,
+        "wrong_answer_false_accept_rate_zero": true,
+        "unknown_proposition_false_accept_rate_zero": true,
+        "seen_wrong_worst_case_margin_positive": true,
+        "source_path_lesion_accept_rate_zero": true,
+        "permuted_teaching_is_followed": true,
+        "permuted_original_is_rejected": true
+      },
+      "metrics": {
+        "seen_accept_rate": 1.0,
+        "wrong_answer_false_accept_rate": 0.0,
+        "unknown_false_accept_rate": 0.0,
+        "lesion_accept_rate": 0.0,
+        "permuted_taught_accept_rate": 1.0,
+        "permuted_original_accept_rate": 0.0,
+        "seen_support_min": 0.4878570116599576,
+        "seen_support_mean": 0.6763506973568411,
+        "wrong_support_max": 0.28713121873835773,
+        "wrong_support_mean": 0.14249746346930456,
+        "no_learning_support_mean": 0.0,
+        "lesion_support_mean": 0.0007295719844357977,
+        "permuted_taught_support_mean": 0.5865005699987441,
+        "permuted_original_support_mean": 0.053773018831695794,
+        "worst_case_seen_wrong_margin": 0.20072579292159987,
+        "retrieval_weight_l1_delta": 0.0,
+        "source_path_attribution": 0.9989213111078514
+      },
+      "weights": {
+        "initial": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learning_disabled": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learned": {
+          "n_synapses": 524288,
+          "nonzero": 19693,
+          "mean": 3.4556482781044906,
+          "max": 159.99974060058594,
+          "l1": 1811754.9244308472
+        }
+      },
+      "samples": {
+        "seen": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.5650389051466682,
+            "source_consistent": true,
+            "bank_support": [
+              0.6264591439688716,
+              0.6217391304347826,
+              0.3978494623655914,
+              0.6141078838174274
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.491082788107776,
+            "source_consistent": true,
+            "bank_support": [
+              0.7315175097276264,
+              0.4956521739130435,
+              0.43010752688172044,
+              0.3070539419087137
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.5757443881034826,
+            "source_consistent": true,
+            "bank_support": [
+              0.8482490272373541,
+              0.6391304347826087,
+              0.3010752688172043,
+              0.5145228215767634
+            ]
+          }
+        ],
+        "wrong": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.28390634013993754,
+            "source_consistent": false,
+            "bank_support": [
+              0.3735408560311284,
+              0.2,
+              0.17204301075268819,
+              0.3900414937759336
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.20626479852248183,
+            "source_consistent": false,
+            "bank_support": [
+              0.46303501945525294,
+              0.20434782608695654,
+              0.0,
+              0.15767634854771784
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.28713121873835773,
+            "source_consistent": false,
+            "bank_support": [
+              0.2529182879377432,
+              0.4391304347826087,
+              0.23655913978494625,
+              0.21991701244813278
+            ]
+          }
+        ],
+        "unknown": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_0",
+              "unknown_action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.20041596694609898,
+            "source_consistent": false,
+            "bank_support": [
+              0.4669260700389105,
+              0.043478260869565216,
+              0.25806451612903225,
+              0.03319502074688797
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_1",
+              "unknown_action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.2198670570737765,
+            "source_consistent": false,
+            "bank_support": [
+              0.04669260700389105,
+              0.0,
+              0.3763440860215054,
+              0.45643153526970953
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_2",
+              "unknown_action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.18628107442991865,
+            "source_consistent": false,
+            "bank_support": [
+              0.2178988326848249,
+              0.19130434782608696,
+              0.053763440860215055,
+              0.2821576763485477
+            ]
+          }
+        ],
+        "lesion": [
+          {
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.008754863813229572,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false
+          }
+        ],
+        "permuted_taught": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.47237142422398054,
+            "source_consistent": true,
+            "bank_support": [
+              0.3686635944700461,
+              0.3416666666666667,
+              0.49047619047619045,
+              0.6886792452830188
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.4874811610584587,
+            "source_consistent": true,
+            "bank_support": [
+              0.16129032258064516,
+              0.7,
+              0.3952380952380952,
+              0.6933962264150944
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.5818996717676723,
+            "source_consistent": true,
+            "bank_support": [
+              0.4055299539170507,
+              0.6625,
+              0.5142857142857142,
+              0.7452830188679245
+            ]
+          }
+        ],
+        "permuted_original": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.23673647943657072,
+            "source_consistent": false,
+            "bank_support": [
+              0.1152073732718894,
+              0.4583333333333333,
+              0.08095238095238096,
+              0.29245283018867924
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.047619047619047616,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.19047619047619047,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.007142857142857143,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.02857142857142857,
+              0.0
+            ]
+          }
+        ]
+      },
+      "elapsed_seconds": 180.01
+    },
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "components": {
+        "weights_start_zero": true,
+        "learning_gate_off_keeps_weights_zero": true,
+        "no_learning_accept_rate_zero": true,
+        "learning_grows_synaptic_weights": true,
+        "retrieval_keeps_learned_weights_frozen": true,
+        "seen_accept_rate_at_least_0_95": true,
+        "wrong_answer_false_accept_rate_zero": true,
+        "unknown_proposition_false_accept_rate_zero": true,
+        "seen_wrong_worst_case_margin_positive": true,
+        "source_path_lesion_accept_rate_zero": true,
+        "permuted_teaching_is_followed": true,
+        "permuted_original_is_rejected": true
+      },
+      "metrics": {
+        "seen_accept_rate": 1.0,
+        "wrong_answer_false_accept_rate": 0.0,
+        "unknown_false_accept_rate": 0.0,
+        "lesion_accept_rate": 0.0,
+        "permuted_taught_accept_rate": 1.0,
+        "permuted_original_accept_rate": 0.0,
+        "seen_support_min": 0.5029484557444256,
+        "seen_support_mean": 0.6760732720151811,
+        "wrong_support_max": 0.2838735642981342,
+        "wrong_support_mean": 0.11069735101351119,
+        "no_learning_support_mean": 0.0,
+        "lesion_support_mean": 0.000779116634870759,
+        "permuted_taught_support_mean": 0.5283374786361393,
+        "permuted_original_support_mean": 0.03695241722651199,
+        "worst_case_seen_wrong_margin": 0.2190748914462914,
+        "retrieval_weight_l1_delta": 0.0,
+        "source_path_attribution": 0.9988475855101497
+      },
+      "weights": {
+        "initial": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learning_disabled": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learned": {
+          "n_synapses": 524288,
+          "nonzero": 19914,
+          "mean": 3.2878530432644766,
+          "max": 159.99974060058594,
+          "l1": 1723781.896347046
+        }
+      },
+      "samples": {
+        "seen": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.6213861208446236,
+            "source_consistent": true,
+            "bank_support": [
+              0.6390977443609023,
+              0.9701492537313433,
+              0.43820224719101125,
+              0.4380952380952381
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.6086800201072865,
+            "source_consistent": true,
+            "bank_support": [
+              0.6578947368421053,
+              1.044776119402985,
+              0.24157303370786518,
+              0.49047619047619045
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.6507360027605489,
+            "source_consistent": true,
+            "bank_support": [
+              0.6165413533834586,
+              1.044776119402985,
+              0.4606741573033708,
+              0.48095238095238096
+            ]
+          }
+        ],
+        "wrong": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.20628893317479507,
+            "source_consistent": false,
+            "bank_support": [
+              0.15037593984962405,
+              0.20522388059701493,
+              0.33146067415730335,
+              0.1380952380952381
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.04249119570685896,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.11940298507462686,
+              0.05056179775280899,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.24838970434639338,
+            "source_consistent": false,
+            "bank_support": [
+              0.09022556390977443,
+              0.5671641791044776,
+              0.11235955056179775,
+              0.22380952380952382
+            ]
+          }
+        ],
+        "unknown": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_0",
+              "unknown_action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.061867607136237374,
+            "source_consistent": false,
+            "bank_support": [
+              0.011278195488721804,
+              0.022388059701492536,
+              0.028089887640449437,
+              0.18571428571428572
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_1",
+              "unknown_action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.08282179328919313,
+            "source_consistent": false,
+            "bank_support": [
+              0.06390977443609022,
+              0.23880597014925373,
+              0.0,
+              0.02857142857142857
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_2",
+              "unknown_action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.07272238431900648,
+            "source_consistent": false,
+            "bank_support": [
+              0.06015037593984962,
+              0.07835820895522388,
+              0.0,
+              0.1523809523809524
+            ]
+          }
+        ],
+        "lesion": [
+          {
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.009349399618449107,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false
+          }
+        ],
+        "permuted_taught": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.45693902274868764,
+            "source_consistent": true,
+            "bank_support": [
+              0.7,
+              0.6652173913043479,
+              0.16842105263157894,
+              0.29411764705882354
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.5268569732865062,
+            "source_consistent": true,
+            "bank_support": [
+              0.7565217391304347,
+              0.7608695652173914,
+              0.22105263157894736,
+              0.3689839572192513
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.5112296405976577,
+            "source_consistent": true,
+            "bank_support": [
+              0.7130434782608696,
+              0.6956521739130435,
+              0.34210526315789475,
+              0.29411764705882354
+            ]
+          }
+        ],
+        "permuted_original": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.2121048960462071,
+            "source_consistent": false,
+            "bank_support": [
+              0.6043478260869565,
+              0.02608695652173913,
+              0.07894736842105263,
+              0.13903743315508021
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.003260869565217391,
+            "source_consistent": false,
+            "bank_support": [
+              0.013043478260869565,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      "elapsed_seconds": 179.67
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "components": {
+        "weights_start_zero": true,
+        "learning_gate_off_keeps_weights_zero": true,
+        "no_learning_accept_rate_zero": true,
+        "learning_grows_synaptic_weights": true,
+        "retrieval_keeps_learned_weights_frozen": true,
+        "seen_accept_rate_at_least_0_95": true,
+        "wrong_answer_false_accept_rate_zero": true,
+        "unknown_proposition_false_accept_rate_zero": true,
+        "seen_wrong_worst_case_margin_positive": true,
+        "source_path_lesion_accept_rate_zero": true,
+        "permuted_teaching_is_followed": true,
+        "permuted_original_is_rejected": true
+      },
+      "metrics": {
+        "seen_accept_rate": 1.0,
+        "wrong_answer_false_accept_rate": 0.0,
+        "unknown_false_accept_rate": 0.0,
+        "lesion_accept_rate": 0.0,
+        "permuted_taught_accept_rate": 1.0,
+        "permuted_original_accept_rate": 0.0,
+        "seen_support_min": 0.5080453469269658,
+        "seen_support_mean": 0.7231560935856901,
+        "wrong_support_max": 0.2431878621894102,
+        "wrong_support_mean": 0.10745567157759255,
+        "no_learning_support_mean": 0.0,
+        "lesion_support_mean": 0.0009337766206961253,
+        "permuted_taught_support_mean": 0.5585684247699865,
+        "permuted_original_support_mean": 0.02579639210178171,
+        "worst_case_seen_wrong_margin": 0.2648574847375556,
+        "retrieval_weight_l1_delta": 0.0,
+        "source_path_attribution": 0.9987087481817845
+      },
+      "weights": {
+        "initial": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learning_disabled": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learned": {
+          "n_synapses": 524288,
+          "nonzero": 19015,
+          "mean": 2.972976914665196,
+          "max": 159.99974060058594,
+          "l1": 1558696.1206359863
+        }
+      },
+      "samples": {
+        "seen": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.5758342441659284,
+            "source_consistent": true,
+            "bank_support": [
+              0.6832579185520362,
+              0.5133689839572193,
+              0.5087719298245614,
+              0.5979381443298969
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.6558411924961828,
+            "source_consistent": true,
+            "bank_support": [
+              0.7873303167420814,
+              0.5347593582887701,
+              0.4868421052631579,
+              0.8144329896907216
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.6215219940124985,
+            "source_consistent": true,
+            "bank_support": [
+              0.8416289592760181,
+              0.41711229946524064,
+              0.5263157894736842,
+              0.7010309278350515
+            ]
+          }
+        ],
+        "wrong": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.21172215789168647,
+            "source_consistent": false,
+            "bank_support": [
+              0.2398190045248869,
+              0.13903743315508021,
+              0.2412280701754386,
+              0.2268041237113402
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.07367165844592355,
+            "source_consistent": false,
+            "bank_support": [
+              0.01809954751131222,
+              0.0,
+              0.039473684210526314,
+              0.23711340206185566
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.028350515463917526,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.0,
+              0.1134020618556701
+            ]
+          }
+        ],
+        "unknown": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_0",
+              "unknown_action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.08603499728703201,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.06578947368421052,
+              0.27835051546391754
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_1",
+              "unknown_action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.03148761487148388,
+            "source_consistent": false,
+            "bank_support": [
+              0.09502262443438914,
+              0.0,
+              0.0,
+              0.030927835051546393
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_2",
+              "unknown_action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.2661937181901435,
+            "source_consistent": false,
+            "bank_support": [
+              0.2850678733031674,
+              0.0,
+              0.3157894736842105,
+              0.4639175257731959
+            ]
+          }
+        ],
+        "lesion": [
+          {
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.011205319448353504,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false
+          }
+        ],
+        "permuted_taught": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.3762147083097379,
+            "source_consistent": true,
+            "bank_support": [
+              0.2786885245901639,
+              0.4791666666666667,
+              0.3804878048780488,
+              0.3665158371040724
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.468130329881622,
+            "source_consistent": true,
+            "bank_support": [
+              0.24043715846994534,
+              0.4895833333333333,
+              0.4682926829268293,
+              0.6742081447963801
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.5979297100918306,
+            "source_consistent": true,
+            "bank_support": [
+              0.4207650273224044,
+              0.5625,
+              0.8292682926829268,
+              0.579185520361991
+            ]
+          }
+        ],
+        "permuted_original": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.17198683733520165,
+            "source_consistent": false,
+            "bank_support": [
+              0.1092896174863388,
+              0.13020833333333334,
+              0.13170731707317074,
+              0.3167420814479638
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      "elapsed_seconds": 176.82
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "components": {
+        "weights_start_zero": true,
+        "learning_gate_off_keeps_weights_zero": true,
+        "no_learning_accept_rate_zero": true,
+        "learning_grows_synaptic_weights": true,
+        "retrieval_keeps_learned_weights_frozen": true,
+        "seen_accept_rate_at_least_0_95": true,
+        "wrong_answer_false_accept_rate_zero": true,
+        "unknown_proposition_false_accept_rate_zero": true,
+        "seen_wrong_worst_case_margin_positive": true,
+        "source_path_lesion_accept_rate_zero": true,
+        "permuted_teaching_is_followed": true,
+        "permuted_original_is_rejected": true
+      },
+      "metrics": {
+        "seen_accept_rate": 0.9583333333333334,
+        "wrong_answer_false_accept_rate": 0.0,
+        "unknown_false_accept_rate": 0.0,
+        "lesion_accept_rate": 0.0,
+        "permuted_taught_accept_rate": 1.0,
+        "permuted_original_accept_rate": 0.0,
+        "seen_support_min": 0.229564042731981,
+        "seen_support_mean": 0.49255235724402163,
+        "wrong_support_max": 0.21037643874610445,
+        "wrong_support_mean": 0.06490623367256354,
+        "no_learning_support_mean": 0.0,
+        "lesion_support_mean": 0.000628140703517588,
+        "permuted_taught_support_mean": 0.5247271195940274,
+        "permuted_original_support_mean": 0.08906391777594896,
+        "worst_case_seen_wrong_margin": 0.019187603985876545,
+        "retrieval_weight_l1_delta": 0.0,
+        "source_path_attribution": 0.9987247229776095
+      },
+      "weights": {
+        "initial": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learning_disabled": {
+          "n_synapses": 524288,
+          "nonzero": 0,
+          "mean": 0.0,
+          "max": 0.0,
+          "l1": 0.0
+        },
+        "learned": {
+          "n_synapses": 524288,
+          "nonzero": 19242,
+          "mean": 2.864133041279274,
+          "max": 159.99974060058594,
+          "l1": 1501630.583946228
+        }
+      },
+      "samples": {
+        "seen": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.5250846069336439,
+            "source_consistent": true,
+            "bank_support": [
+              0.4472361809045226,
+              0.3786407766990291,
+              0.4052631578947368,
+              0.869198312236287
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.5063844271539995,
+            "source_consistent": true,
+            "bank_support": [
+              0.6030150753768844,
+              0.3786407766990291,
+              0.2,
+              0.8438818565400844
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.42232620019865874,
+            "source_consistent": true,
+            "bank_support": [
+              0.4321608040201005,
+              0.3786407766990291,
+              0.08947368421052632,
+              0.7890295358649789
+            ]
+          }
+        ],
+        "wrong": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.21037643874610445,
+            "source_consistent": false,
+            "bank_support": [
+              0.19095477386934673,
+              0.3058252427184466,
+              0.1,
+              0.24472573839662448
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.018596982246341636,
+            "source_consistent": false,
+            "bank_support": [
+              0.03015075376884422,
+              0.0,
+              0.031578947368421054,
+              0.012658227848101266
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.03290460081628429,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.014563106796116505,
+              0.015789473684210527,
+              0.10126582278481013
+            ]
+          }
+        ],
+        "unknown": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_0",
+              "unknown_action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.0024271844660194173,
+            "source_consistent": false,
+            "bank_support": [
+              0.0,
+              0.009708737864077669,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_1",
+              "unknown_action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.05109768044680409,
+            "source_consistent": false,
+            "bank_support": [
+              0.1457286432160804,
+              0.02912621359223301,
+              0.0,
+              0.029535864978902954
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "unknown_agent_2",
+              "unknown_action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.14834107142158706,
+            "source_consistent": false,
+            "bank_support": [
+              0.34673366834170855,
+              0.014563106796116505,
+              0.0,
+              0.2320675105485232
+            ]
+          }
+        ],
+        "lesion": [
+          {
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.007537688442211055,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.0,
+            "source_consistent": false
+          },
+          {
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.0,
+            "source_consistent": false
+          }
+        ],
+        "permuted_taught": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_1",
+            "support": 0.4604069190823411,
+            "source_consistent": true,
+            "bank_support": [
+              0.32524271844660196,
+              0.6265560165975104,
+              0.4238095238095238,
+              0.46601941747572817
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_2",
+            "support": 0.46928616509650234,
+            "source_consistent": true,
+            "bank_support": [
+              0.4563106796116505,
+              0.5560165975103735,
+              0.46190476190476193,
+              0.4029126213592233
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_3",
+            "support": 0.5767990707542735,
+            "source_consistent": true,
+            "bank_support": [
+              0.5825242718446602,
+              0.6224066390041494,
+              0.7333333333333333,
+              0.36893203883495146
+            ]
+          }
+        ],
+        "permuted_original": [
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_0",
+              "action_0"
+            ],
+            "candidate": "patient_0",
+            "support": 0.20364480522096443,
+            "source_consistent": false,
+            "bank_support": [
+              0.14563106796116504,
+              0.3941908713692946,
+              0.1,
+              0.17475728155339806
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_1",
+              "action_1"
+            ],
+            "candidate": "patient_1",
+            "support": 0.028048583974539743,
+            "source_consistent": false,
+            "bank_support": [
+              0.05825242718446602,
+              0.05394190871369295,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "kind": "what_does",
+            "cue": [
+              "agent_2",
+              "action_2"
+            ],
+            "candidate": "patient_2",
+            "support": 0.22822895624833345,
+            "source_consistent": false,
+            "bank_support": [
+              0.1262135922330097,
+              0.47717842323651455,
+              0.30952380952380953,
+              0.0
+            ]
+          }
+        ]
+      },
+      "elapsed_seconds": 177.09
+    }
+  ],
+  "preconditions": [
+    {
+      "name": "all_source_runs_report_go",
+      "ok": true
+    },
+    {
+      "name": "all_runner_preconditions_pass",
+      "ok": true
+    },
+    {
+      "name": "verdict_matches_all_seed_components",
+      "ok": true
+    }
+  ],
+  "honest_scope": "The proposition-to-source association is learned in zero-initialized spiking-bridge synapses and retrieval receives no expected answer or stored proposition table. Proposition hashing, the explicit external-source teaching event, and the dedicated bridge remain scaffolds. This gate does not claim co-residency with the full brain or a learned ACC/aPFC confidence circuit.",
+  "source_artifact_count": 6
+}

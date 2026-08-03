@@ -43,6 +43,7 @@ from research.runners.brain_conversational_agent import BrainConversationalAgent
 from research.runners.self_schema_honesty import (
     CONFIDENCE_SOURCE_CHOICES,
     CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY,
+    CONFIDENCE_SOURCE_PLASTIC_SOURCE_CONSISTENCY,
     CONFIDENCE_SOURCE_TRACE,
 )
 
@@ -128,12 +129,30 @@ def _default_off_identity(seed, D, n_facts, vocab_mode, composer_kwargs=None):
     }
 
 
-def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff, confidence_source_mode, source_monitor_D):
+def evaluate_seed(
+    seed,
+    D,
+    n_facts,
+    vocab_mode,
+    low_conf_cutoff,
+    confidence_source_mode,
+    source_monitor_D,
+    plastic_source_neurons_per_bank,
+    plastic_source_threshold,
+):
     composer_kwargs = {}
     if confidence_source_mode == CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY:
         composer_kwargs = {
             "enable_source_monitor": True,
             "source_monitor_D": int(source_monitor_D),
+        }
+    elif confidence_source_mode == CONFIDENCE_SOURCE_PLASTIC_SOURCE_CONSISTENCY:
+        composer_kwargs = {
+            "enable_plastic_source_monitor": True,
+            "plastic_source_config": {
+                "proposition_neurons_per_bank": int(plastic_source_neurons_per_bank),
+                "support_threshold": float(plastic_source_threshold),
+            },
         }
     comp, facts, unknown = _build_stressed(
         seed,
@@ -142,6 +161,13 @@ def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff, confidence_sour
         vocab_mode=vocab_mode,
         composer_kwargs=composer_kwargs,
     )
+    if confidence_source_mode == CONFIDENCE_SOURCE_PLASTIC_SOURCE_CONSISTENCY:
+        for agent, action, patient in facts:
+            comp.observe_source_event(
+                kind="what_does",
+                cue=(agent, action),
+                candidate=patient,
+            )
     ag = _agent(
         seed,
         comp,
@@ -317,6 +343,18 @@ def main():
         help="neural_source_consistency only: phasor dimension of the independent source-memory echo.",
     )
     ap.add_argument(
+        "--plastic-source-neurons-per-bank",
+        type=int,
+        default=16384,
+        help="plastic_source_consistency only: sparse proposition neurons in each of four banks.",
+    )
+    ap.add_argument(
+        "--plastic-source-threshold",
+        type=float,
+        default=0.34,
+        help="plastic_source_consistency only: learned source-support threshold.",
+    )
+    ap.add_argument(
         "--json",
         default="research/findings/raw/lanes/metacog/laneC_self_schema_honesty_wirein_6seed.json",
     )
@@ -338,6 +376,8 @@ def main():
             args.low_conf_cutoff,
             args.confidence_source_mode,
             args.source_monitor_D,
+            args.plastic_source_neurons_per_bank,
+            args.plastic_source_threshold,
         )
         for s in args.seeds
     ]
@@ -437,6 +477,8 @@ def main():
         "low_conf_cutoff": float(args.low_conf_cutoff),
         "confidence_source_mode": args.confidence_source_mode,
         "source_monitor_D": int(args.source_monitor_D),
+        "plastic_source_neurons_per_bank": int(args.plastic_source_neurons_per_bank),
+        "plastic_source_threshold": float(args.plastic_source_threshold),
         "verdict": verdict,
         "aggregate": aggregate,
         "success_components": success_components,
@@ -449,6 +491,9 @@ def main():
             "confidence alone. The source_consistency_floor mode is a named scaffold over composer source metadata, "
             "not an end-state biological correctness mechanism. The neural_source_consistency mode uses a separate "
             "RF source-memory echo, not the exact trace source dict; it remains a bounded source-monitor burn-down step."
+            " The plastic_source_consistency mode learns proposition-to-source support in zero-initialized Hebbian "
+            "synapses from explicit experience events; its sparse proposition hash, separate bridge, and external "
+            "source-teaching event remain scaffolds."
         ),
         "elapsed_seconds": round(time.time() - t0, 2),
     }

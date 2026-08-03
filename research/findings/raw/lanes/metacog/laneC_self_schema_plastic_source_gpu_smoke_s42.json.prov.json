@@ -1,0 +1,26 @@
+{
+ "run_id": "1785736565-332060",
+ "runner": "research/runners/_laneC_self_schema_honesty_wirein_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_laneC_self_schema_honesty_wirein_derisk.py",
+  "--seeds",
+  "42",
+  "--confidence-source-mode",
+  "plastic_source_consistency",
+  "--json",
+  "research/findings/raw/lanes/metacog/laneC_self_schema_plastic_source_gpu_smoke_s42.json"
+ ],
+ "git_sha": "a6367dfd5",
+ "git_dirty": true,
+ "started": "2026-08-03T01:56:05",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3070.6,
+ "corpus_check_query": "the independent RF source-memory echo is engineered at store time; source tags must be learned plastically and feed ACC/aPFC self-schema honesty without gold/source metadata at inference",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/metacog/laneC_self_schema_plastic_source_gpu_smoke_s42.json"
+}

@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT — 2026-08-03 01:02 EDT (read first; below this is history)
+## STATE OF THE PROJECT — 2026-08-03 01:59 EDT (read first; below this is history)
 
 **Public documentation realigned:** `README.md`, `ROADMAP.md`, `docs/CURRENT-STATE.md`, `QUICKSTART.md`, and
 `docs/INDEX.md` have been rewritten as the plain-language front door. New `docs/SCAFFOLD-LEDGER.md` is the public
@@ -20,16 +20,21 @@ promotion is **GO**: `research/findings/raw/wkv_spiking_forward/run4_rf_6seed.js
 mean logit-fidelity Spearman 0.99999999997, max RF read error 7.66e-6, and 6/6 seeds. The WKV finding is updated:
 `research/findings/2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md`.
 
-**CPU Lane C advanced:** `source_consistency_floor` exact metadata scaffold is superseded for current safety experiments
-by `neural_source_consistency`, an independent RF source-memory echo. Six-seed stressed known-fact battery is **GO**:
-46/46 wrong recalls downgraded, 0 wrong assertions, 0 correct source-mismatch false positives, 475/475 hard-moat
-abstains preserved, and 0 added false accepts. Honest scope: this is a source-monitoring burn-down, not final
-biological honesty, because the echo is engineered at store time. Next Lane C step is learned/plastic source monitoring
-feeding dynamic ACC/aPFC and self-schema.
+**CPU/GPU Lane C advanced:** `plastic_source_consistency` now learns complete-proposition to external-source support in
+zero-initialized gated Hebbian synapses. The isolated source gate is **GO 6/6**: 286/288 learned propositions accepted,
+0/288 wrong-answer accepts, 0/72 unknown accepts, no-learning and lesion both 0/72, permutation followed 72/72, and
+retrieval leaves weights frozen. The production stressed battery is also **GO 6/6**: 46/46 wrong recalls downgraded,
+0 wrong assertions, 475/475 hard-moat abstains preserved, and 0 added false accepts. Honest boundary: the learned source
+signal itself detected 45/46 wrong candidates and falsely marked 5/133 correct recalls; proposition hashing, the explicit
+source event, separate bridge, host-normalized readout, fixed meta-to-self relay, and host speech thresholds remain.
+GPU seed-42 parity is GO. Finding:
+`research/findings/2026-08-03-laneC-plastic-source-memory-GO-learned-source-support-production-wirein.md`.
 
-**EXACT NEXT:** finish WKV validation/gates, commit and push the WKV artifact/finding update separately. After that,
-next highest-value CPU work is learned/plastic source monitoring feeding dynamic ACC/aPFC and self-schema, or the
-minimal grounded speech-action loop that uses the larger WKV path only as a ledgered fluency scaffold.
+**EXACT NEXT:** build the minimal grounded speech-action loop: internal need plus grounded perception causes a
+brain-selected request, the social/world consequence changes internal state, and the same scene produces silence after
+the need is met. In parallel, move the learned source populations onto the shared brain and connect their spikes
+directly through dynamic ACC/aPFC and self-schema. The 267M WKV may render a brain-chosen message only as a named
+fluency scaffold; do not scale it as an ungrounded text predictor.
 
 ---
 

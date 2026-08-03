@@ -778,6 +778,7 @@ class BrainConversationalAgent:
 
         from research.runners.self_schema_honesty import (
             CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY,
+            CONFIDENCE_SOURCE_PLASTIC_SOURCE_CONSISTENCY,
             CONFIDENCE_SOURCE_TRACE,
             known_fact_confidence_record,
             self_schema_hedge_text,
@@ -790,6 +791,14 @@ class BrainConversationalAgent:
         source_monitor_evidence = None
         if source_mode == CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY:
             source_monitor = getattr(self.composer, "source_consistency_record", None)
+            if callable(source_monitor):
+                source_monitor_evidence = source_monitor(
+                    kind=kind,
+                    cue=cue,
+                    raw_answer=raw_answer,
+                )
+        elif source_mode == CONFIDENCE_SOURCE_PLASTIC_SOURCE_CONSISTENCY:
+            source_monitor = getattr(self.composer, "plastic_source_consistency_record", None)
             if callable(source_monitor):
                 source_monitor_evidence = source_monitor(
                     kind=kind,

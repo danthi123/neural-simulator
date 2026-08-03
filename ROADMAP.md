@@ -147,12 +147,18 @@ Current assets:
   without weakening the hard unknown-fact moat;
 - an exact source-metadata floor that caught the current mismatch failure mode;
 - a newer independent RF source-memory echo that catches the same six-seed
-  stressed failures without reading the exact source fact.
+  stressed failures without reading the exact source fact;
+- a plastic spiking source memory that learns proposition-to-external-source
+  support and feeds the production self-schema path. It removed the expected-
+  answer lookup at inference and passed the six-seed safety battery, with a
+  measured 3.8% correct-recall false-mismatch cost.
 
 Open point:
 
-The RF source echo is still engineered and written at store time. The next step
-is a learned, plastic source-monitoring circuit feeding the self-schema.
+The first learned source circuit is still separate from the rest of the brain.
+Its proposition code and source event are host-defined, and ACC-like monitoring,
+self-schema relay, and speech thresholds are not yet one learned co-resident
+pathway. That integration is the next honesty step.
 
 ## Phase 4: Make Memory Predictive And Reconstructive
 
@@ -233,15 +239,15 @@ not because a giant static model was preallocated.
 
 ## Highest Priority Work Now
 
-1. **Use the larger language-circuit scaffold carefully.** The 267M WKV
-   checkpoint now has six-seed RF spiking-forward parity. Use it only as a
-   ledgered fluency scaffold while building grounded speech-as-action.
-2. **Burn down the honesty scaffold.** The production self-schema hook is safe,
-   and the independent source-memory echo is a strong interim step. The next
-   work is learned/plastic source-monitoring that feeds the self-schema without
-   exact source labels or engineered echoes.
-3. **Build the minimal grounded speech-action loop.** Let curiosity, surprise,
+1. **Build the minimal grounded speech-action loop.** Let curiosity, surprise,
    need, or affect cause a simple utterance; feed the result back into learning.
+2. **Finish the honesty integration.** Move the learned source populations onto
+   the shared brain and connect their spikes directly through ACC-like monitoring
+   and self-schema to speech certainty.
+3. **Use the larger language-circuit scaffold carefully.** The 267M WKV
+   checkpoint has six-seed RF spiking-forward parity. Use it only as a ledgered
+   fluency scaffold after the brain has chosen a grounded message and whether to
+   speak.
 4. **Keep the scaffold ledger current.** New shortcuts should never enter the
    repo unnamed.
 5. **Use compute in parallel.** Keep the GPU on the highest-value long run while
