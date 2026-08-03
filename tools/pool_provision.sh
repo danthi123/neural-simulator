@@ -29,11 +29,12 @@ for h in "${NODES[@]}"; do
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1; }"
   # 3. venv + numpy + scipy (idempotent: recreate if the prior broken attempt left a pip-less venv)
   ssh "$h" "cd ~/$REMOTE_ROOT && \
-    { test -x ~/simvenv/bin/pip || { rm -rf ~/simvenv; python3 -m venv ~/simvenv; }; } && \
-    ~/simvenv/bin/pip -q install --upgrade pip >/dev/null 2>&1; \
-    ~/simvenv/bin/pip -q install numpy scipy h5py pyyaml 2>&1 | tail -1; \
-    echo -n '  numpy/scipy=' ; ~/simvenv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
-    echo -n '  sim imports=' ; SIM_BACKEND=numpy ~/simvenv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1"
+    { test -x .venv/bin/python && .venv/bin/python -m pip --version >/dev/null 2>&1 || \
+      { rm -rf .venv; python3 -m venv .venv; }; } && \
+    .venv/bin/python -m pip -q install --upgrade pip >/dev/null 2>&1; \
+    .venv/bin/python -m pip -q install numpy scipy h5py pyyaml 2>&1 | tail -1; \
+    echo -n '  numpy/scipy=' ; .venv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
+    echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1"
   echo "  done $h"
 done
 echo "ALL PROVISION DONE"

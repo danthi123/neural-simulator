@@ -232,6 +232,11 @@ def run_registry(paths):
     return results
 
 
+def _blocking_gate_status(blocking_gate):
+    """Read status from either a direct gate result or its report wrapper."""
+    return blocking_gate.get("status", blocking_gate.get("gate", {}).get("status"))
+
+
 # ---------------------------------------------------------------------------------------------------
 # scaffolding — concrete fixes, printed; the safe mechanical ones applied only under --fix
 # ---------------------------------------------------------------------------------------------------
@@ -532,7 +537,7 @@ def lint_one(finding_path, extra_paths, do_fix, quiet, include_untracked):
         elif g["name"] == "below-chance":
             emit("    FIX: a cited cell is at/below chance — do not read a verdict off it; mark it or drop "
                  "the claim. (If the collapse IS the result, say so and flag the cell, as the reference does.)")
-        elif g["status"] in ("broken", "selftest_failed", "crashed"):
+        elif _blocking_gate_status(g) in ("broken", "selftest_failed", "crashed"):
             emit("    NOTE: this gate is itself broken — its verdict is not trusted until its selftest passes.")
 
     if warn_gates and not quiet:

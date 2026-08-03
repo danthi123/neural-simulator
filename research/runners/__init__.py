@@ -21,8 +21,8 @@ first, every time. So provenance is captured here, automatically, for runners no
 WHAT IT DOES
   1. On import: stamp a run record (argv, cwd, git SHA, dirty flag, python, relevant env, pid, start) into
      research/findings/raw/_provenance/runs.jsonl, and export SIM_RUN_ID.
-  2. At exit: write an `<artifact>.prov.json` sidecar for every file created under research/findings/raw/ during
-     this run, naming the run id and the exact argv. Nothing to remember; no runner edited.
+  2. At exit: write an `<artifact>.prov.json` sidecar for the output path declared by `--out`, `--output`, or
+     `--json`. Runners without one of those arguments use a guarded fresh-file fallback.
 
 SAFETY, because this executes before EVERY run and must never be why one dies:
   * everything wrapped -- a provenance failure warns and is never fatal;
@@ -47,6 +47,7 @@ _PROV_DIR = os.path.join(_ROOT, "research", "findings", "raw", "_provenance")
 _RAW_DIR = os.path.join(_ROOT, "research", "findings", "raw")
 _ENABLED = os.environ.get("SIM_NO_PROVENANCE", "") != "1"
 _START = time.time()
+_OUTPUT_FLAGS = frozenset(("--out", "--output", "--json"))
 
 
 def _git_head():
@@ -156,10 +157,46 @@ def _resolved_backend():
         return {}
 
 
-def _stamp_outputs(rec):
-    """Sidecar every artifact this run created. mtime-bounded, so it can never claim another run's files."""
-    _resolve_argv(rec)
-    made = []
+def _declared_output_paths(rec):
+    """Return (output_flag_seen, existing artifacts under raw named by argv).
+
+    A fresh-file scan cannot establish ownership when several runners overlap:
+    every process can see every peer's new artifact. Explicit output arguments
+    are the stronger ownership record and are used whenever present.
+    """
+    argv = list(rec.get("argv") or ())
+    cwd = rec.get("cwd") or os.getcwd()
+    raw = os.path.realpath(_RAW_DIR)
+    seen = False
+    values = []
+    for i, arg in enumerate(argv):
+        value = None
+        if arg in _OUTPUT_FLAGS:
+            seen = True
+            if i + 1 < len(argv):
+                value = argv[i + 1]
+        else:
+            for flag in _OUTPUT_FLAGS:
+                prefix = flag + "="
+                if arg.startswith(prefix):
+                    seen = True
+                    value = arg[len(prefix):]
+                    break
+        if not value:
+            continue
+        candidate = os.path.realpath(os.path.join(cwd, os.path.expanduser(value)))
+        try:
+            inside_raw = os.path.commonpath((raw, candidate)) == raw
+        except ValueError:
+            inside_raw = False
+        if (inside_raw and os.path.isfile(candidate)
+                and not candidate.endswith(".prov.json")):
+            values.append(candidate)
+    return seen, list(dict.fromkeys(values))
+
+
+def _fresh_output_paths():
+    paths = []
     for dirpath, dirnames, filenames in os.walk(_RAW_DIR):
         if os.path.basename(dirpath) == "_provenance":
             dirnames[:] = []
@@ -171,18 +208,33 @@ def _stamp_outputs(rec):
             try:
                 if os.path.getmtime(p) < _START:
                     continue
+                sidecar = p + ".prov.json"
+                if (os.path.exists(sidecar)
+                        and os.path.getmtime(sidecar) >= os.path.getmtime(p)):
+                    continue
             except OSError:
                 continue
-            try:
-                with open(p + ".prov.json", "w") as fh:
-                    json.dump({"run_id": rec["run_id"], "runner": rec.get("runner", "unknown"),
-                               "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
-                               "started": rec["started"], "env": rec["env"],
-                               **_resolved_backend(), **_corpus_check_state(),
-                               "artifact": os.path.relpath(p, _ROOT)}, fh, indent=1)
-                made.append(p)
-            except OSError:
-                pass
+            paths.append(p)
+    return paths
+
+
+def _stamp_outputs(rec):
+    """Sidecar artifacts owned by this run without claiming concurrent outputs."""
+    _resolve_argv(rec)
+    declared, explicit_paths = _declared_output_paths(rec)
+    candidates = explicit_paths if declared else _fresh_output_paths()
+    made = []
+    for p in candidates:
+        try:
+            with open(p + ".prov.json", "w") as fh:
+                json.dump({"run_id": rec["run_id"], "runner": rec.get("runner", "unknown"),
+                           "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
+                           "started": rec["started"], "env": rec["env"],
+                           **_resolved_backend(), **_corpus_check_state(),
+                           "artifact": os.path.relpath(p, _ROOT)}, fh, indent=1)
+            made.append(p)
+        except OSError:
+            pass
     return made
 
 
