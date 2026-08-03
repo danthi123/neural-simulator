@@ -40,6 +40,7 @@ from typing import Iterable
 import numpy as np
 
 from tools.lab import attributable_to
+from tools.verdict import UNDEFINED, Verdict
 
 _REPO = Path(__file__).resolve().parents[2]
 if str(_REPO) not in sys.path:
@@ -701,8 +702,60 @@ def _calibration_verdict(conditions: dict[str, dict]) -> dict:
         "schaffer_path_is_load_bearing": intact_recovery >= control_recovery["ca3_ca1_lesion"] + 0.015,
         "cortical_plasticity_is_load_bearing": intact_recovery >= control_recovery["cortical_plasticity_off"] + 0.015,
     }
+    earned = Verdict("replay-driven cortical consolidation calibration")
+    earned.require(
+        "one bridge persists through every phase and condition",
+        all(row["single_bridge_persisted"] for row in conditions.values()),
+        expect=True,
+    )
+    earned.require(
+        "all conditions execute the fixed phase sequence",
+        all(
+            row["phase_trace"] == ["encode_A", "encode_B", "sleep", "retest"]
+            for row in conditions.values()
+        ),
+        expect=True,
+    )
+    earned.require(
+        "both wake episodes recruit hippocampal and cortical populations",
+        all(
+            row[f"encode_{memory}"]["spikes"][region] > 0
+            for row in conditions.values()
+            for memory in ("A", "B")
+            for region in ("ca3", "ca1", "cue", "target")
+        ),
+        expect=True,
+    )
+    earned.require(
+        "intact sleep contains uncued replay events",
+        intact["sleep"]["reactivated_events"] > 0,
+        expect=True,
+    )
+    earned.require(
+        "no-sleep control remains quiescent",
+        no_sleep["sleep"]["reactivated_events"] == 0
+        and sum(no_sleep["sleep"]["spikes"].values()) == 0,
+        expect=True,
+    )
+    earned.require(
+        "cortical-plasticity-off control holds cortical weights fixed",
+        abs(plastic_off["weight_deltas"]["cortical_during_sleep"]) < 1e-7,
+        expect=True,
+    )
+    earned.disabled(
+        "STDP, reward modulation, homeostasis, short-term plasticity, and structural plasticity",
+        why="this rung isolates rate-window Hebbian replay transfer on fixed anatomy",
+    )
+    decided = earned.decide(go=all(checks.values()), verbose=False)
     return {
-        "status": "CALIBRATION_PROMISING" if all(checks.values()) else "CALIBRATION_NOT_YET_CLEAN",
+        "status": (
+            "UNDEFINED"
+            if decided["status"] == UNDEFINED
+            else "CALIBRATION_PROMISING" if decided["go"] else "CALIBRATION_NOT_YET_CLEAN"
+        ),
+        "preconditions": decided["preconditions"],
+        "disabled_processes": decided["disabled_processes"],
+        "undefined_reasons": decided["undefined_reasons"],
         "checks": checks,
         "intact_mean_recovery": intact_recovery,
         "intact_mean_margin": intact_margin,

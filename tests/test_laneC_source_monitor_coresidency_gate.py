@@ -14,6 +14,8 @@ from research.runners._laneC_source_monitor_coresidency_gate import (
     APFC_GATE,
     CALIBRATION_SEEDS,
     DEVELOPMENT_SEEDS,
+    DEVELOPMENT_MIN_ATTRIBUTION_FRACTION,
+    DEVELOPMENT_MIN_SOURCE_MARGIN,
     HELD_OUT_SEEDS,
     SOURCE_AFFERENT_GATE,
     SOURCE_LEARNING_GATE,
@@ -21,6 +23,7 @@ from research.runners._laneC_source_monitor_coresidency_gate import (
     SOURCES,
     SourceMonitorCoresidencyGate,
     evaluate_calibration_seed,
+    validate_phase_seed,
     make_episode_patterns,
 )
 
@@ -86,6 +89,8 @@ def test_calibration_learns_all_sources_and_follows_source_swap(calibration_resu
     assert components["heard_source_recalled"]
     assert components["self_source_recalled"]
     assert components["source_swap_follows_afferent_activity"]
+    assert calibration_result["preconditions"]
+    assert all(check["ok"] for check in calibration_result["preconditions"])
 
 
 def test_mixed_source_and_neural_monitor_controls(calibration_result):
@@ -111,3 +116,24 @@ def test_learning_off_control_changes_neither_weights_nor_recall(calibration_res
 def test_reserved_seeds_are_rejected_by_calibration_evaluator(seed):
     with pytest.raises(ValueError, match="is not a calibration seed"):
         evaluate_calibration_seed(seed)
+
+
+@pytest.mark.parametrize("seed", DEVELOPMENT_SEEDS)
+def test_development_phase_accepts_only_development_seeds(seed):
+    assert validate_phase_seed(seed, "development") == seed
+
+
+@pytest.mark.parametrize("seed", CALIBRATION_SEEDS + HELD_OUT_SEEDS)
+def test_development_phase_rejects_other_seed_sets(seed):
+    with pytest.raises(ValueError, match="is not a development seed"):
+        validate_phase_seed(seed, "development")
+
+
+def test_held_out_phase_remains_mechanically_locked():
+    with pytest.raises(ValueError, match="is not open"):
+        validate_phase_seed(HELD_OUT_SEEDS[0], "held-out")
+
+
+def test_development_thresholds_are_frozen_above_calibration_presence_checks():
+    assert DEVELOPMENT_MIN_SOURCE_MARGIN == 0.15
+    assert DEVELOPMENT_MIN_ATTRIBUTION_FRACTION == 0.90

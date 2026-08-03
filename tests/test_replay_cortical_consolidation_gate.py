@@ -19,6 +19,7 @@ from research.runners._replay_cortical_consolidation_gate import (  # noqa: E402
     INDEX_TARGET_GATE,
     SCHAFFER_GATE,
     _path_weights,
+    _calibration_verdict,
     _shuffle_target_index,
     build_bridge,
     run_condition,
@@ -83,3 +84,12 @@ def test_condition_names_are_closed():
     )
     with pytest.raises(ValueError, match="Unknown condition"):
         run_condition(212, "not_a_condition", smoke_config())
+
+
+def test_smoke_verdict_carries_measured_preconditions():
+    cfg = smoke_config()
+    conditions = {condition: run_condition(212, condition, cfg) for condition in CONDITIONS}
+    verdict = _calibration_verdict(conditions)
+
+    assert verdict["preconditions"]
+    assert all(check["ok"] is not None for check in verdict["preconditions"])

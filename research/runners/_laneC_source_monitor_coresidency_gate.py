@@ -34,11 +34,15 @@ from sim.bridge import SimulationBridge
 from sim.config import CoreSimConfig, GPUConfig, RuntimeState, VisualizationConfig
 from sim.regions import BrainRegion, RegionPathway
 from tools.lab import attributable_to
+from tools.verdict import UNDEFINED, Verdict
 
 
 CALIBRATION_SEEDS = (212, 213)
 DEVELOPMENT_SEEDS = (214, 215, 310)
 HELD_OUT_SEEDS = (311, 312, 313)
+
+DEVELOPMENT_MIN_SOURCE_MARGIN = 0.15
+DEVELOPMENT_MIN_ATTRIBUTION_FRACTION = 0.90
 
 SOURCES = ("seen", "heard", "self_generated")
 SOURCE_AFFERENT = {
@@ -431,19 +435,37 @@ def _source_margin(record: Mapping, expected: str) -> float:
     return float(rates[expected]) - max(alternatives)
 
 
-def evaluate_calibration_seed(
+def validate_phase_seed(seed: int, phase: str) -> int:
+    """Keep calibration, development, and still-locked held-out seeds separate."""
+
+    seed = int(seed)
+    allowed = {
+        "calibration": CALIBRATION_SEEDS,
+        "development": DEVELOPMENT_SEEDS,
+    }
+    if phase not in allowed:
+        raise ValueError(
+            f"phase {phase!r} is not open; held-out seeds {HELD_OUT_SEEDS} remain locked"
+        )
+    if seed not in allowed[phase]:
+        raise ValueError(
+            f"seed {seed} is not a {phase} seed; allowed={allowed[phase]}, "
+            f"held_out={HELD_OUT_SEEDS}"
+        )
+    return seed
+
+
+def evaluate_source_monitor_seed(
     seed: int,
+    *,
+    phase: str,
     config: SourceMonitorConfig | None = None,
 ) -> dict:
-    """Run the bounded controls without consuming development or held-out seeds."""
+    """Run the controls for one explicitly opened seed phase."""
 
-    if int(seed) not in CALIBRATION_SEEDS:
-        raise ValueError(
-            f"seed {seed} is not a calibration seed; allowed={CALIBRATION_SEEDS}, "
-            f"development_reserved={DEVELOPMENT_SEEDS}, held_out={HELD_OUT_SEEDS}"
-        )
+    seed = validate_phase_seed(seed, phase)
     c = config or SourceMonitorConfig()
-    patterns = make_episode_patterns(seed, 4, c)
+    patterns = make_episode_patterns(seed, 5 if phase == "development" else 4, c)
     t0 = time.time()
 
     intact = SourceMonitorCoresidencyGate(seed=seed, config=c)
@@ -457,6 +479,7 @@ def evaluate_calibration_seed(
     heard = intact.recall(patterns[1])
     self_generated = intact.recall(patterns[2])
     mixed = intact.recall(patterns[3])
+    unseen = intact.recall(patterns[4]) if phase == "development" else None
     source_lesion = intact.recall(patterns[0], source_path_lesion=True)
     acc_lesion = intact.recall(patterns[0], acc_lesion=True)
 
@@ -513,9 +536,84 @@ def evaluate_calibration_seed(
             seen["apfc_source_spikes"]["seen"] > 0.0 and seen["acc_spikes"] > 0.0
         ),
     }
+    if phase == "development":
+        components.update(
+            {
+                "all_source_margins_meet_frozen_floor": bool(
+                    min(
+                        _source_margin(seen, "seen"),
+                        _source_margin(heard, "heard"),
+                        _source_margin(self_generated, "self_generated"),
+                    )
+                    >= DEVELOPMENT_MIN_SOURCE_MARGIN
+                ),
+                "source_path_attribution_meets_frozen_floor": bool(
+                    source_path_fraction >= DEVELOPMENT_MIN_ATTRIBUTION_FRACTION
+                ),
+                "acc_path_attribution_meets_frozen_floor": bool(
+                    acc_path_fraction >= DEVELOPMENT_MIN_ATTRIBUTION_FRACTION
+                ),
+                "unseen_episode_has_no_source_recall": bool(
+                    unseen is not None and sum(unseen["source_spikes"].values()) == 0.0
+                ),
+            }
+        )
+    region_names = {region.name for region in intact.bridge.region_manager.regions()}
+    expected_regions = {EPISODE_REGION, ACC_REGION}
+    expected_regions.update(SOURCE_AFFERENT.values())
+    expected_regions.update(SOURCE_MEMORY.values())
+    expected_regions.update(APFC_SOURCE.values())
+    recall_parameters = list(inspect.signature(SourceMonitorCoresidencyGate.recall).parameters)
+    earned = Verdict(f"source-monitor co-residency {phase}")
+    earned.require(
+        "episode, source, aPFC, and ACC populations share one bridge",
+        expected_regions.issubset(region_names),
+        expect=True,
+    )
+    earned.require(
+        "recall interface carries episode activity without source metadata",
+        recall_parameters == ["self", "episode_pattern", "source_path_lesion", "acc_lesion"],
+        expect=True,
+    )
+    earned.knob(
+        "Hebbian learning rate",
+        requested=c.hebbian_learning_rate,
+        applied=intact.bridge.core_config.hebbian_learning_rate,
+    )
+    earned.require(
+        "episode patterns are disjoint and fit the declared population",
+        len(set().union(*(set(pattern.tolist()) for pattern in patterns)))
+        == len(patterns) * c.episode_pattern_size,
+        expect=True,
+    )
+    earned.reaches(
+        "episode-to-source transmission lesion",
+        before=intact_source_total,
+        after=lesioned_source_total,
+    )
+    earned.reaches(
+        "source-to-ACC transmission lesion",
+        before=float(seen["acc_spikes"]),
+        after=float(acc_lesion["acc_spikes"]),
+    )
+    earned.disabled(
+        "STDP, reward modulation, homeostasis, short-term plasticity, and structural plasticity",
+        why="this bounded rung isolates zero-initialized Hebbian episode-to-source association",
+    )
+    decided = earned.decide(go=all(components.values()), verbose=False)
+    status_prefix = phase.upper()
+    status = (
+        "UNDEFINED"
+        if decided["status"] == UNDEFINED
+        else f"{status_prefix}_PASS" if decided["go"] else f"{status_prefix}_FAIL"
+    )
     return {
         "seed": int(seed),
-        "status": "CALIBRATION_PASS" if all(components.values()) else "NEEDS_TUNING",
+        "phase": phase,
+        "status": status,
+        "preconditions": decided["preconditions"],
+        "disabled_processes": decided["disabled_processes"],
+        "undefined_reasons": decided["undefined_reasons"],
         "components": components,
         "metrics": {
             "seen_margin": _source_margin(seen, "seen"),
@@ -554,6 +652,7 @@ def evaluate_calibration_seed(
             "swap_pattern_zero": swap_zero,
             "swap_pattern_one": swap_one,
             "learning_off": off_recall,
+            **({"unseen": unseen} if unseen is not None else {}),
         },
         "weights": {
             "initial": initial,
@@ -562,7 +661,7 @@ def evaluate_calibration_seed(
             "learning_off_after": off_after,
         },
         "interface_guards": {
-            "recall_parameters": list(inspect.signature(SourceMonitorCoresidencyGate.recall).parameters),
+            "recall_parameters": recall_parameters,
             "no_source_argument_at_inference": "source" not in inspect.signature(
                 SourceMonitorCoresidencyGate.recall
             ).parameters,
@@ -575,6 +674,12 @@ def evaluate_calibration_seed(
             "development_reserved": list(DEVELOPMENT_SEEDS),
             "held_out": list(HELD_OUT_SEEDS),
         },
+        "frozen_development_criteria": {
+            "minimum_source_margin": DEVELOPMENT_MIN_SOURCE_MARGIN,
+            "minimum_attribution_fraction": DEVELOPMENT_MIN_ATTRIBUTION_FRACTION,
+            "unseen_source_spikes": 0,
+            "all_structural_and_lesion_components_required": True,
+        },
         "honest_scope": (
             "The co-resident bridge learns source from sparse episode activity plus physical visual, auditory, "
             "or corollary-discharge afferents and propagates recall into neural aPFC/ACC populations. Sparse "
@@ -586,18 +691,29 @@ def evaluate_calibration_seed(
     }
 
 
+def evaluate_calibration_seed(
+    seed: int,
+    config: SourceMonitorConfig | None = None,
+) -> dict:
+    """Compatibility wrapper for the bounded calibration phase."""
+
+    return evaluate_source_monitor_seed(seed, phase="calibration", config=config)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Run one bounded source-monitor co-residency calibration seed."
+        description="Run one bounded source-monitor co-residency gate seed."
     )
-    parser.add_argument("--seed", type=int, choices=CALIBRATION_SEEDS, default=CALIBRATION_SEEDS[0])
+    parser.add_argument("--phase", choices=("calibration", "development"), default="calibration")
+    parser.add_argument("--seed", type=int, default=CALIBRATION_SEEDS[0])
     parser.add_argument("--json", default=None)
     args = parser.parse_args()
 
-    row = evaluate_calibration_seed(int(args.seed))
+    row = evaluate_source_monitor_seed(int(args.seed), phase=args.phase)
     print(
         "[source-monitor-coresidency] "
-        f"seed={row['seed']} status={row['status']} components={row['components']}",
+        f"phase={row['phase']} seed={row['seed']} status={row['status']} "
+        f"components={row['components']}",
         flush=True,
     )
     if args.json:
@@ -605,7 +721,7 @@ def main() -> int:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json.dumps(row, indent=2))
         print(f"[source-monitor-coresidency] wrote {out_path}", flush=True)
-    return 0 if row["status"] == "CALIBRATION_PASS" else 1
+    return 0 if row["status"].endswith("_PASS") else 1
 
 
 if __name__ == "__main__":
