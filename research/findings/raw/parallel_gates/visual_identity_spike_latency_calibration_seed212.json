@@ -1,0 +1,346 @@
+{
+  "summary": {
+    "probe": "laneD_visual_identity_homeostasis_gate",
+    "phase": "calibration",
+    "seeds": [
+      212
+    ],
+    "formal_gate_run": false,
+    "formal_verdict": "NOT-RUN-CALIBRATION-ONLY",
+    "candidate_seeds": 0,
+    "seed_partitions": {
+      "calibration": [
+        212,
+        213
+      ],
+      "development": [
+        214,
+        215,
+        310
+      ],
+      "heldout": [
+        311,
+        312,
+        313
+      ]
+    },
+    "controls": [
+      "intact",
+      "trace_only",
+      "temporal_shuffle",
+      "no_learning",
+      "trace_lesion",
+      "homeostasis_lesion",
+      "pixel_scramble",
+      "flat_latency_drive",
+      "neural_drive_lesion",
+      "fs_pathway_lesion"
+    ],
+    "mechanism": "Gabor/V1-complex activity drives competitive OnSubstratePooler assemblies. Foldiak traces update cp_connections through committed learning kernels; graded column drive is converted to current and first-spike latency selects every training and inference winner; an online EMA of each column's wins changes its intrinsic gain.",
+    "honest_scope": "Pooler permanences, learning, and winner selection use the simulation substrate. The host still computes dendritic overlap from substrate permanences, max-normalizes it into the calibrated current range, reads first-spike times, and breaks same-step ties with a seeded drive-independent key. No host ranking of the graded drive chooses winners. FS inhibition sparsifies later firing, while EMERGE-41 established that rank-order latency selects the winners. V1 feature sparsification and evaluator labels remain host-side; labels never enter learning or inference.",
+    "config": {
+      "phase": "calibration",
+      "seeds": [
+        212
+      ],
+      "train_frames": 12,
+      "tracks_per_object": 2,
+      "held_frames": 8,
+      "image_size": 32,
+      "pixel_noise": 0.025,
+      "n_orientations": 8,
+      "n_frequencies": 2,
+      "n_pos": 8,
+      "rf_radius": 4,
+      "complex_norm": "local_orient_div",
+      "t_active": 32,
+      "n_col": 240,
+      "k_win": 12,
+      "epochs": 10,
+      "trace_decay": 0.8,
+      "pool_lr_pot": 0.05,
+      "pool_lr_depress": 0.01,
+      "homeostasis_rate": 0.01,
+      "homeostasis_strength": 6.0,
+      "latency_fs_neurons": 8,
+      "latency_steps": 40,
+      "out": "research/findings/raw/parallel_gates/visual_identity_spike_latency_calibration_seed212.json"
+    },
+    "elapsed_seconds": 40.4
+  },
+  "per_seed": [
+    {
+      "seed": 212,
+      "chance": 0.25,
+      "n_objects": 4,
+      "n_train_images": 96,
+      "n_heldout_images": 32,
+      "arms": {
+        "intact": {
+          "heldout_identity_decode": 0.3125,
+          "held_to_train_same_cosine": 0.0706,
+          "held_to_train_cross_cosine": 0.052,
+          "held_to_train_cosine_margin": 0.0186,
+          "held_within_object_jaccard": 0.0831,
+          "held_cross_object_jaccard": 0.0773,
+          "held_jaccard_margin": 0.0058,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 145,
+            "dead_column_fraction": 0.3958,
+            "usage_cv": 0.9053,
+            "normalized_usage_entropy": 0.894,
+            "max_to_mean_usage": 2.3827
+          },
+          "mechanism": {
+            "trace": true,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "trace_only": {
+          "heldout_identity_decode": 0.2812,
+          "held_to_train_same_cosine": 0.1414,
+          "held_to_train_cross_cosine": 0.1043,
+          "held_to_train_cosine_margin": 0.0372,
+          "held_within_object_jaccard": 0.0905,
+          "held_cross_object_jaccard": 0.0916,
+          "held_jaccard_margin": -0.0011,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 91,
+            "dead_column_fraction": 0.6208,
+            "usage_cv": 1.5748,
+            "normalized_usage_entropy": 0.7763,
+            "max_to_mean_usage": 3.9593
+          },
+          "mechanism": {
+            "trace": true,
+            "homeostasis": "epoch",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "temporal_shuffle": {
+          "heldout_identity_decode": 0.4062,
+          "held_to_train_same_cosine": 0.0784,
+          "held_to_train_cross_cosine": 0.0625,
+          "held_to_train_cosine_margin": 0.0159,
+          "held_within_object_jaccard": 0.0421,
+          "held_cross_object_jaccard": 0.0583,
+          "held_jaccard_margin": -0.0162,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 137,
+            "dead_column_fraction": 0.4292,
+            "usage_cv": 0.9709,
+            "normalized_usage_entropy": 0.8815,
+            "max_to_mean_usage": 2.2134
+          },
+          "mechanism": {
+            "trace": true,
+            "homeostasis": "slow",
+            "shuffle": true,
+            "learning": true
+          }
+        },
+        "no_learning": {
+          "heldout_identity_decode": 0.3125,
+          "held_to_train_same_cosine": 0.0778,
+          "held_to_train_cross_cosine": 0.0726,
+          "held_to_train_cosine_margin": 0.0053,
+          "held_within_object_jaccard": 0.0318,
+          "held_cross_object_jaccard": 0.0435,
+          "held_jaccard_margin": -0.0117,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 0,
+            "dead_column_fraction": 1.0,
+            "usage_cv": 0.0,
+            "normalized_usage_entropy": 0.0,
+            "max_to_mean_usage": 0.0
+          },
+          "mechanism": {
+            "trace": false,
+            "homeostasis": "none",
+            "shuffle": false,
+            "learning": false
+          }
+        },
+        "trace_lesion": {
+          "heldout_identity_decode": 0.3125,
+          "held_to_train_same_cosine": 0.0228,
+          "held_to_train_cross_cosine": 0.0073,
+          "held_to_train_cosine_margin": 0.0155,
+          "held_within_object_jaccard": 0.0738,
+          "held_cross_object_jaccard": 0.0842,
+          "held_jaccard_margin": -0.0105,
+          "mean_code_activity": 0.0484,
+          "usage": {
+            "active_columns": 190,
+            "dead_column_fraction": 0.2083,
+            "usage_cv": 0.7622,
+            "normalized_usage_entropy": 0.9319,
+            "max_to_mean_usage": 2.4553
+          },
+          "mechanism": {
+            "trace": false,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "homeostasis_lesion": {
+          "heldout_identity_decode": 0.3125,
+          "held_to_train_same_cosine": 0.3439,
+          "held_to_train_cross_cosine": 0.2967,
+          "held_to_train_cosine_margin": 0.0472,
+          "held_within_object_jaccard": 0.2446,
+          "held_cross_object_jaccard": 0.2607,
+          "held_jaccard_margin": -0.0161,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 91,
+            "dead_column_fraction": 0.6208,
+            "usage_cv": 2.5299,
+            "normalized_usage_entropy": 0.6684,
+            "max_to_mean_usage": 11.7946
+          },
+          "mechanism": {
+            "trace": true,
+            "homeostasis": "none",
+            "shuffle": false,
+            "learning": true
+          }
+        }
+      },
+      "pixel_scramble": {
+        "heldout_identity_decode": 0.4062,
+        "held_to_train_same_cosine": 0.0693,
+        "held_to_train_cross_cosine": 0.0372,
+        "held_to_train_cosine_margin": 0.0322,
+        "held_within_object_jaccard": 0.0704,
+        "held_cross_object_jaccard": 0.0667,
+        "held_jaccard_margin": 0.0037,
+        "mean_code_activity": 0.0496
+      },
+      "neural_selection": {
+        "graded_winners": [
+          7,
+          56,
+          98,
+          107,
+          161,
+          185,
+          200,
+          203,
+          218,
+          226,
+          230,
+          231
+        ],
+        "graded_host_reference_overlap": 1.0,
+        "flat_drive_overlap_with_graded": 0.0833,
+        "flat_drive_winners": [
+          7,
+          32,
+          48,
+          49,
+          99,
+          106,
+          140,
+          163,
+          175,
+          191,
+          214,
+          233
+        ],
+        "neural_drive_lesion_winners": [],
+        "fs_lesion_winner_overlap": 1.0,
+        "fs_intact_columns_fired": 21,
+        "fs_lesion_columns_fired": 176,
+        "pooler_host_drive_ranking_used_for_winners": false
+      },
+      "selection_telemetry": {
+        "selection_route": "first_spike_latency",
+        "winner_source": "cp_firing_states timing",
+        "host_drive_ranking_used_for_winners": false,
+        "host_spike_time_readout": true,
+        "host_same_step_tie_break": "seeded drive-independent key",
+        "fs_pathways_enabled": true,
+        "selection_calls": 1123,
+        "mean_columns_fired_per_window": 169.3517,
+        "last_columns_fired": 0
+      },
+      "diagnostics": {
+        "decode_above_chance": false,
+        "identity_margin_positive": true,
+        "trace_directional_vs_shuffle": true,
+        "trace_directional_vs_lesion": true,
+        "homeostasis_reduces_usage_cv": true,
+        "pixel_scramble_at_or_below_half": true,
+        "neural_selection_produces_k_winners": true,
+        "neural_drive_lesion_silences_selection": true,
+        "latency_tracks_graded_drive": true,
+        "flat_drive_destroys_rank_signal": true
+      },
+      "calibration_status": "NEEDS-REVISION",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "training and held-out transforms are disjoint",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "temporal shuffle preserves the exact frame multiset",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "labels do not enter learning or inference",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "pooler winners come from first-spike timing rather than host top-k drive ranking",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "all scored arm measurements are finite",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": [],
+      "calibration_readiness_verdict": "NO-GO",
+      "formal_verdict": "NOT-RUN-CALIBRATION-ONLY",
+      "stream_checks": {
+        "same_multiset_after_temporal_shuffle": true,
+        "labels_enter_training_or_inference": false,
+        "inference_inputs": [
+          "V1-complex active feature indices"
+        ],
+        "pooler_winners_read_from": "first-spike timing in cp_firing_states",
+        "host_top_k_determines_pooler_winners": false,
+        "remaining_selection_scaffolds": [
+          "host overlap-to-current max normalization",
+          "host first-spike-time readout",
+          "host seeded drive-independent same-step tie break",
+          "host V1 feature sparsification"
+        ]
+      }
+    }
+  ]
+}

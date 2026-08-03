@@ -1,0 +1,28 @@
+{
+ "run_id": "1785777936-482900",
+ "runner": "research/runners/_laneD_visual_identity_homeostasis_gate.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneD_visual_identity_homeostasis_gate.py",
+  "--phase",
+  "calibration",
+  "--seeds",
+  "212",
+  "--out",
+  "research/findings/raw/parallel_gates/visual_identity_spike_latency_calibration_seed212.json"
+ ],
+ "git_sha": "ea3f516542392e092dff5799b7ea69388e82c0b5",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "2d8caeacc2b8dec5bc44d63555df6fd88d56ed0f6d989c6ff54b959dbee40505",
+ "started": "2026-08-03T13:25:36",
+ "env": {
+  "POOL_CHECKED_REASON": "visual calibration seed 212: preserve spike-latency scaffold-removal result with reserved phases mechanically locked and artifact validity preconditions",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/parallel_gates/visual_identity_spike_latency_calibration_seed212.json"
+}
