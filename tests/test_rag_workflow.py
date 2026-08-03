@@ -221,8 +221,36 @@ def test_periodic_timer_is_bounded_and_persistent():
     assert "OnUnitActiveSec=5min" in checker
     assert "Persistent=true" in checker
     assert "update_indexes.py" in helper
+    assert "extract_reference_pdfs.py" in helper
     assert "SIM_RAG_REFRESH_BRANCH" in helper
     assert "worktree list --porcelain" in helper
+
+
+def test_periodic_status_rejects_a_stale_installed_helper(tmp_path, monkeypatch):
+    repository_helper = tmp_path / "tools/rag/periodic_update.sh"
+    repository_helper.parent.mkdir(parents=True)
+    repository_helper.write_text("current\n", encoding="utf-8")
+    installed = tmp_path / "installed-helper"
+    installed.write_text("stale\n", encoding="utf-8")
+    installed.chmod(0o755)
+    unit_dir = tmp_path / "systemd"
+    unit_dir.mkdir()
+    for name in (
+        check_workflow.PERIODIC_SERVICE,
+        check_workflow.PERIODIC_TIMER,
+    ):
+        (unit_dir / name).write_text("unit\n", encoding="utf-8")
+    monkeypatch.setattr(check_workflow, "_installed_helper", lambda: installed)
+    monkeypatch.setattr(check_workflow, "_user_systemd_dir", lambda: unit_dir)
+    monkeypatch.setattr(check_workflow.shutil, "which", lambda name: None)
+
+    status = {name: ok for name, ok, _ in check_workflow.periodic_status(tmp_path)}
+    assert status["periodic-refresh-files"] is True
+    assert status["periodic-refresh-helper-current"] is False
+
+    installed.write_text("current\n", encoding="utf-8")
+    status = {name: ok for name, ok, _ in check_workflow.periodic_status(tmp_path)}
+    assert status["periodic-refresh-helper-current"] is True
 
 
 def test_retrieval_keeps_a_broad_hybrid_rerank_window():

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import filecmp
 import json
 import os
 import shutil
@@ -40,7 +41,7 @@ def _installed_helper() -> Path:
     return Path.home() / ".local" / "libexec" / "sim-rag-autoupdate"
 
 
-def periodic_status() -> list[tuple[str, bool, str]]:
+def periodic_status(repo: Path) -> list[tuple[str, bool, str]]:
     """Report whether non-Git catalog changes have a live refresh trigger."""
     unit_dir = _user_systemd_dir()
     helper = _installed_helper()
@@ -48,6 +49,12 @@ def periodic_status() -> list[tuple[str, bool, str]]:
     files_ready = all(
         (unit_dir / name).is_file() for name in (PERIODIC_SERVICE, PERIODIC_TIMER)
     ) and os.access(helper, os.X_OK)
+    repository_helper = repo / "tools" / "rag" / "periodic_update.sh"
+    helper_current = bool(
+        helper.is_file()
+        and repository_helper.is_file()
+        and filecmp.cmp(helper, repository_helper, shallow=False)
+    )
     enabled = active = False
     detail = "systemctl unavailable"
     if systemctl:
@@ -66,6 +73,11 @@ def periodic_status() -> list[tuple[str, bool, str]]:
         detail = f"enabled={enabled_result.stdout.strip() or 'no'}, active={active_result.stdout.strip() or 'no'}"
     return [
         ("periodic-refresh-files", files_ready, str(unit_dir)),
+        (
+            "periodic-refresh-helper-current",
+            helper_current,
+            f"installed={helper}, repository={repository_helper}",
+        ),
         ("periodic-refresh-timer", bool(systemctl) and enabled and active, detail),
     ]
 
@@ -118,7 +130,7 @@ def workflow_status(
         ),
     ]
     if include_periodic:
-        checks.extend(periodic_status())
+        checks.extend(periodic_status(repo))
     return checks
 
 

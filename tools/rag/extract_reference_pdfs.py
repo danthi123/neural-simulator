@@ -1,69 +1,82 @@
-"""Extract a .txt sibling for every reference PDF under sim-catalog/references/textbooks/, so the specialty
-TEXTS/PAPERS/BOOKS enter the RAG corpus as source_type="paper" (build_llamaindex_full.SOURCES).
+"""Create missing searchable text siblings for reference PDFs.
 
-Why: the research gate cites these by name (Marr 1969, Albus 1971, Buzsaki "Rhythms of the Brain", O'Keefe-Nadel
-"The Hippocampus as a Cognitive Map", Schultz, Sutton-Barto, the Tepper/Bolam BG reviews) and the skill's step (a)
-says READ THE ORIGINAL SOURCE IN DEPTH -- but only Kandel's full-book.txt was ever indexed, so a-1 could not LOCATE
-a passage in any of the others. Extraction makes them locatable; the discipline is still to open the cited PDF and
-read the load-bearing passage (a rerank hit is a pointer, not a paraphrase).
-
-Idempotent: a PDF whose .txt sibling already exists is skipped, so this is safe to re-run when new PDFs are added
-(several already shipped with hand-made .txt siblings -- those are preserved, never overwritten).
-
-Run with the isolated RAG venv (has pypdf):
-    .venv-rag/bin/python tools/rag/extract_reference_pdfs.py [--force]
-
-Then rebuild/refresh the index:  .venv-rag/bin/python tools/rag/update_indexes.py --rebuild
+Existing text files are preserved. New text is published atomically only when
+the PDF yields enough readable content to be useful to retrieval.
 """
-import os, sys, glob
+
+from __future__ import annotations
+
+import argparse
+import os
+import sys
+from pathlib import Path
+
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import build_llamaindex_full as B   # CAT (portable, env-resolved)
-
-MIN_YIELD = 500   # chars; below this a PDF is almost certainly scanned images with no text layer -> flag it loudly
+import build_llamaindex_full as B  # noqa: E402
 
 
-def main():
-    force = "--force" in sys.argv
+MIN_YIELD = 500
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--quiet", action="store_true")
+    args = parser.parse_args(argv)
     try:
         from pypdf import PdfReader
     except ImportError:
-        print("pypdf missing. Install into the RAG venv:  .venv-rag/bin/pip install pypdf")
-        raise SystemExit(2)
+        print(
+            "pypdf missing; install it in the isolated RAG environment",
+            file=sys.stderr,
+        )
+        return 2
 
-    pdfs = sorted(glob.glob(os.path.join(B.CAT, "textbooks", "*", "*.pdf")))
+    root = Path(B.CAT) / "textbooks"
+    pdfs = sorted(root.rglob("*.pdf"))
     if not pdfs:
-        print(f"no PDFs under {B.CAT}/textbooks/ -- is sim-catalog present? (see $SIM_CATALOG)")
-        raise SystemExit(1)
+        print(f"no PDFs under {root}; check SIM_CATALOG", file=sys.stderr)
+        return 1
 
-    done = skipped = failed = low = 0
+    extracted = skipped = failed = low_yield = 0
     for pdf in pdfs:
-        txt = pdf[:-4] + ".txt"
-        base = os.path.basename(pdf)
-        if os.path.exists(txt) and not force:
-            print(f"  skip (txt exists): {base}"); skipped += 1; continue
+        target = pdf.with_suffix(".txt")
+        if target.exists() and not args.force:
+            skipped += 1
+            continue
         try:
             reader = PdfReader(pdf)
-            parts = []
-            for page in reader.pages:
-                try:
-                    parts.append(page.extract_text() or "")
-                except Exception:
-                    parts.append("")           # one unparseable page must not lose the rest of the book
-            body = "\n".join(parts)
+            body = "\n".join(
+                page.extract_text() or "" for page in reader.pages
+            )
             if len(body.strip()) < MIN_YIELD:
-                print(f"  !! LOW-YIELD ({len(body.strip())} chars) -- likely scanned, no text layer: {base}")
-                low += 1
-            open(txt, "w", encoding="utf-8").write(body)
-            print(f"  OK {len(body):>9,} chars  {len(reader.pages):>4} pages  {base}")
-            done += 1
-        except Exception as e:
-            print(f"  FAIL {base}: {type(e).__name__}: {e}"); failed += 1
+                print(
+                    f"LOW-YIELD ({len(body.strip())} chars): {pdf}",
+                    file=sys.stderr,
+                )
+                low_yield += 1
+                continue
+            temporary = target.with_suffix(target.suffix + f".tmp-{os.getpid()}")
+            temporary.write_text(body, encoding="utf-8")
+            temporary.replace(target)
+            extracted += 1
+            if not args.quiet:
+                print(
+                    f"extracted {len(body):,} chars from {len(reader.pages)} "
+                    f"pages: {pdf.name}"
+                )
+        except Exception as exc:
+            print(f"FAILED {pdf}: {type(exc).__name__}: {exc}", file=sys.stderr)
+            failed += 1
 
-    print(f"\nextracted {done}, skipped {skipped}, failed {failed}, low-yield {low}")
-    if low:
-        print("LOW-YIELD files need OCR before they carry any retrievable content -- they are NOT searchable as-is.")
+    if not args.quiet or extracted or failed or low_yield:
+        print(
+            f"extracted={extracted} skipped={skipped} "
+            f"failed={failed} low_yield={low_yield}"
+        )
+    return 1 if failed or low_yield else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

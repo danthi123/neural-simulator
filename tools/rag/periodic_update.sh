@@ -34,6 +34,7 @@ fi
 
 PY=${SIM_RAG_PYTHON:-$CANONICAL/.venv-rag/bin/python}
 UPD=${SIM_RAG_UPDATER:-$repo/tools/rag/update_indexes.py}
+EXTRACTOR=${SIM_RAG_EXTRACTOR:-$repo/tools/rag/extract_reference_pdfs.py}
 if [ ! -x "$PY" ]; then
   printf '[periodic] BLOCKED: RAG interpreter missing: %s\n' "$PY" >> "$LOG"
   exit 1
@@ -41,6 +42,15 @@ fi
 if [ ! -f "$UPD" ]; then
   printf '[periodic] BLOCKED: updater missing: %s\n' "$UPD" >> "$LOG"
   exit 1
+fi
+
+if [ -f "$EXTRACTOR" ]; then
+  printf '[periodic] EXTRACT: source=%s\n' "$EXTRACTOR" >> "$LOG"
+  if ! SIM_REPO="$repo" "$PY" "$EXTRACTOR" --quiet >> "$LOG" 2>&1; then
+    printf '[periodic] BLOCKED: reference PDF extraction failed: %s\n' \
+      "$EXTRACTOR" >> "$LOG"
+    exit 1
+  fi
 fi
 
 if ! git -C "$repo" diff --quiet -- \
