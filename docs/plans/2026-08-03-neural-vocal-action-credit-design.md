@@ -137,6 +137,31 @@ under either lesion. Gate B is unlocked for development seeds 42, 43, 44, and
 Add plastic cue-to-striatum routes and delay the consequence beyond action
 commitment.
 
+**Gate B v1 calibration boundary:** calibration may use seeds 7 and 11 only.
+Add one shared cortical cue, one D1 actor/eligibility population per action, a
+local motor-to-actor collateral, fixed actor-to-GPi direct routes, and a
+reward-US-to-SNc pathway producing one shared dopamine broadcast. Only the two
+cue-to-actor pathways are plastic. Cue input is identical for both actions;
+the host may respond to an observed motor action but may not inject, tag, or
+reward a neural channel directly. Tune population sizes, weights, and time
+constants on calibration seeds, then freeze them before running development
+seeds 42, 43, 44, and 100. Do not inspect seeds 101 or 102.
+
+The causal comparison uses four separately initialized conditions with the
+same seed: contingent reward for action 0, the contingent run's reward schedule
+circularly shifted by one third of training so its count and temporal pattern
+are preserved but trial-level action contingency is broken, action-collateral
+lesion, and dopamine-path lesion.
+The lesions must preserve initial selector physiology. Record eligibility
+immediately before delayed reward and compare all synapses in the executed and
+losing cue-to-actor routes; do not clear or assign traces by channel from the
+host.
+
+Warmup is followed by the same neural reset and washout used between trials
+before any baseline measurement. Record motor and actor spikes during the cue
+lead separately from the action period so startup activity or an early motor
+commit cannot be mistaken for learned cue-driven bias.
+
 GO requires all of the following at every development seed:
 
 - executed-route eligibility exceeds the losing route by at least 10:1 before
@@ -150,6 +175,16 @@ GO requires all of the following at every development seed:
 
 If eligibility remains nonlocal, revise the circuit rather than masking
 synapses from Python.
+
+**Gate B v1 calibration result, 2026-08-03:** NO-GO. Contingent reward produced
+fully local eligibility, action-0 preference 1.00, and zero outside-route
+changes on calibration seeds 7 and 11. Collateral and dopamine-path lesions
+preserved selection but prevented weight change. The yoked schedule also
+produced action-0 preference 1.00 on seed 11, however, because every raw reward
+remained a positive dopamine event and reinforced whichever route was locally
+active. Gate B therefore requires an action-conditioned spiking value critic
+that subtracts expected value at SNc before development seeds are opened. See
+the [Gate B v1 finding](../../research/findings/2026-08-03-neural-vocal-credit-gateB-v1-yoked-NO-GO.md).
 
 ### Gate C: Same-Brain Convention Reversal
 

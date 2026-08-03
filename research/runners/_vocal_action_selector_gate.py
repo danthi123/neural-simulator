@@ -113,7 +113,14 @@ def _region(name, n, *, exc_fraction, neuron_type, internal_density=0.0,
     )
 
 
-def build_selector_bridge(seed: int, config: SelectorConfig = SelectorConfig()):
+def build_selector_bridge(
+    seed: int,
+    config: SelectorConfig = SelectorConfig(),
+    *,
+    extra_regions=(),
+    extra_pathways=(),
+    core_config_updates=None,
+):
     from sim import CoreSimConfig, GPUConfig, RuntimeState, SimulationBridge
     from sim import VisualizationConfig
 
@@ -341,6 +348,12 @@ def build_selector_bridge(seed: int, config: SelectorConfig = SelectorConfig()):
                 receptor="gaba_a",
             ))
 
+    regions.extend(list(extra_regions))
+    pathways.extend(list(extra_pathways))
+    for name, value in (core_config_updates or {}).items():
+        if not hasattr(cfg, name):
+            raise AttributeError(f"CoreSimConfig has no field {name!r}")
+        setattr(cfg, name, value)
     cfg.brain_regions = regions
     cfg.region_pathways = pathways
     bridge = SimulationBridge(

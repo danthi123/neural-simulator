@@ -14,6 +14,8 @@ from research.runners._vocal_action_selector_gate import (
     selector_config,
 )
 from sim.backend import to_host
+from sim.enums import NeuronType
+from sim.regions import BrainRegion, RegionPathway
 
 
 def _pathways(bridge, source, target):
@@ -105,6 +107,36 @@ def test_selector_versions_preserve_v1_and_reduce_v2_topology():
         "neurons": 600,
         "declared_pathways": 36,
     }
+
+
+def test_selector_builder_can_add_declared_learning_regions_and_settings():
+    bridge = build_selector_bridge(
+        seed=17,
+        config=selector_config("v2"),
+        extra_regions=[BrainRegion(
+            name="test_credit",
+            n_neurons=4,
+            exc_fraction=1.0,
+            internal_density=0.0,
+            plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            enable_homeostasis=False,
+        )],
+        extra_pathways=[RegionPathway(
+            from_region="practice_arousal",
+            to_region="test_credit",
+            density=1.0,
+            weight_mean=1.0,
+            weight_jitter=0.0,
+            plastic=False,
+        )],
+        core_config_updates={"enable_reward_modulation": True},
+    )
+
+    assert bridge.core_config.num_neurons == 604
+    assert bridge.core_config.enable_reward_modulation is True
+    assert len(bridge.core_config.region_pathways) == 37
+    assert len(bridge.region_manager.indices("test_credit")) == 4
 
 
 def test_selector_smoke_records_neural_threshold_without_argmax():
