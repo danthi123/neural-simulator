@@ -95,9 +95,12 @@ Reserved-seed operating-point work before the clean run found the boundary
 rather than a hidden passing setting. These observations are implementation
 diagnostics, not formal evidence:
 
-- The inherited postsynaptic GABA-B expectation-to-SNc path was nearly inert.
-  Raising its propagation strength produced only small suppression and became
-  nonmonotonic at larger values, including rebound-like increases in firing.
+- The inherited postsynaptic GABA-B expectation-to-SNc path was nearly inert
+  under this circuit's timing. Raising its propagation strength produced only
+  small suppression and became nonmonotonic at larger values, including
+  rebound-like increases in firing. This does not establish that GABA-B/GIRK
+  itself is ineffective; the record reconciliation below identifies missing
+  pre-outcome engagement as the more specific defect.
 - Fast GABA-A output produced a stronger and monotonic direct effect. Weights
   `80` and `160` remained learnable but stayed below the 20% criterion; weight
   `320` disrupted action and expectation separation.
@@ -111,6 +114,35 @@ diagnostics, not formal evidence:
 Do not repeat a larger direct-output weight sweep. The stable region has been
 measured, and stronger direct inhibition degrades the circuit before it reaches
 the required prediction-error behavior.
+
+## Prior-record reconciliation
+
+After this verdict, the repaired RAG workflow surfaced three June findings on
+the same substrate mechanism that were unavailable during the initial build.
+They sharpen the localization and prevent another repeat:
+
+- `2026-06-08-spiking-snc-stageB-critic-derisk.md` already showed that a neural
+  striosome value learns while direct GABA-A subtraction at the SNc membrane is
+  weak or sign-sensitive because dopamine neurons use a depolarized chloride
+  reversal.
+- `2026-06-08-gabab-girk-stageB-derisk-GO.md` then showed a GABA-B/GIRK value
+  route can create a state-specific SNc gap on three seeds when prediction
+  activity precedes and overlaps reward. Its successful regime was often an
+  all-or-none clamp rather than a graded subtraction.
+- `2026-06-09-N9-SNc-rV-subtraction-research.md` localized later failures to
+  critic engagement, conductance reset, timing, and the narrow graded operating
+  range. It explicitly states that the expectation signal must build before
+  reward and overlap it; more GABA-B is not the answer.
+
+The current artifact confirms the missing engagement directly: the intact
+CuPy expectation populations emit zero spikes throughout every pre-outcome
+delay. They begin firing only after the generic outcome input arrives. A slow
+GABA-B/GIRK conductance therefore has no lead time, while fast GABA-A can only
+shunt the already-started reward response. The immediate successor should make
+the learned expectation fire during the fixed delay, restore the source-backed
+GABA-B/GIRK output, reset its slow conductance between trials, and target a
+graded rather than clamped reward-response shift. The same pre-outcome signal
+may also disinhibit the LHb-like omission path in time for the outcome event.
 
 ## Biological grounding
 
@@ -153,10 +185,10 @@ Do not open calibration seeds `76405` and `71409`, development seeds `79696`,
 
 Keep the fixed action trace, separate expectation populations, local
 trace-to-expectation plasticity, executed-action scoring correction, and strict
-plasticity ownership. Retire the current direct expectation-output operating
-point. The successor must model the missing local inhibitory/disinhibitory
-balance around dopamine output and establish an active LHb-to-RMTg negative
-path before another dynamics smoke. It must retain the same 20% reward
-suppression, omission, lesion, action-validity, and zero-leakage checks. Formal
-contingent/yoked testing remains downstream of that smoke, not a substitute for
-it.
+plasticity ownership. Retire the current simultaneous fast-output operating
+point. The successor must first establish learned, action-local expectation
+spiking before reward, then use the already implemented GABA-B/GIRK route in a
+graded regime and establish an active LHb-to-RMTg negative path. It must retain
+the same 20% reward suppression, omission, lesion, action-validity, and
+zero-leakage checks. Formal contingent/yoked testing remains downstream of that
+smoke, not a substitute for it.

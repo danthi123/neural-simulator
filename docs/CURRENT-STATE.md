@@ -84,10 +84,11 @@ under yoked reward and the first dendritic successor was retired for host-
 timing and backend defects. Its corrected v5 replacement has an audited CPU/GPU
 action trace and learns a separate action-local reward expectation. The current
 output circuit nevertheless fails before formal calibration: reward suppression
-is too weak and the omission path is silent. The next step is a source-guided
-local inhibitory/disinhibitory dopamine-output successor that preserves the
-working trace and expectation learning. Formal seeds remain sealed until its
-reserved-seed dynamics smoke passes.
+is too weak and the omission path is silent. The repaired evidence search
+localized the next step: make learned expectation fire before reward, then use
+the existing slow GABA-B/GIRK output in a graded regime so prediction overlaps
+the outcome. Formal seeds remain sealed until that reserved-seed dynamics smoke
+passes.
 
 In parallel, replay needs a different mechanism after its first target-plateau
 correction failed smoke seed `216` and was retired. Source-monitor v4 is retired
