@@ -19,9 +19,9 @@ They do not imply human-level versions of the named ability.
 | Demonstrated result | Evidence and boundary |
 |---|---|
 | **Spiking simulation substrate** | The repository supports NumPy CPU and CuPy/NVIDIA GPU execution, multiple neuron models, sparse region-to-region wiring, continuous stepping, checkpoints, local plasticity, reward modulation, and configurable neuromodulators. Tests cover the shared simulation network, plasticity isolation, checkpoint behavior, and modulatory dynamics. |
-| **Grounded communication learning** | One six-seed experiment joins a learned food percept, hunger, request, consequence, and satiety. A second six-seed experiment learns an external two-intent by two-referent raw vocal convention from contingent listener responses and correctly composes both combinations withheld from training. Fresh brains also learn a swapped convention; no-consequence, unrelated-reward, dopamine-lesion, context-lesion, and perception-lesion controls fail as predicted. The validated path still uses injected motor babbling, fixed channels, and a host listener/readout. A first intrinsic-exploration and same-brain reversal follow-up passed only 1/4 development seeds. An isolated neural selector now passes its fixed four-seed physiology gate without host channel choice or fallback, but local reward credit is not yet implemented. These are preverbal causal loops, not natural language. See the [single-request finding](../research/findings/2026-08-03-grounded-speech-action-loop-6seed-GO.md), [learned-convention finding](../research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md), [intrinsic-reversal negative](../research/findings/2026-08-03-intrinsic-vocal-reversal-4seed-NO-GO.md), and [selector finding](../research/findings/2026-08-03-neural-vocal-selector-gateA-v2-4seed-GO.md). |
-| **Learned source-support signal** | A separate spiking memory can learn that a complete proposition was paired with an external experience and can reduce confidence for unsupported recalls. Its six-seed production test removed all 46 stressed wrong assertions while preserving the hard unknown-answer boundary, at the cost of unnecessarily downgrading 5 of 133 correct recalls. Proposition codes, source events, normalization, and final routing remain partly host-defined. See the [source-memory finding](../research/findings/2026-08-03-laneC-plastic-source-memory-GO-learned-source-support-production-wirein.md). |
-| **Memory and replay components** | The repository contains tested episodic storage, pattern completion, replay, reconsolidation, and wake/sleep integration experiments. A six-seed shared-network sleep-cycle experiment shows that these parts can coexist in a bounded setup. This does not establish general autobiographical memory or lifelong consolidation. See the [sleep-cycle finding](../research/findings/2026-07-25-gap5-onebrain-production-sleepcycle-merge-6seed-GO.md). |
+| **Grounded communication learning** | One six-seed experiment joins a learned food percept, hunger, request, consequence, and satiety. A second learns a two-intent by two-referent vocal convention from listener consequences, including combinations withheld from training. An isolated neural selector now passes its four-seed physiology gate without host channel choice. Its first local reward-credit circuit failed the yoked-reward control; a spiking action-value critic is in calibration but has not yet solved that failure. Injected exploration, fixed channels, and a host listener/readout remain. These are preverbal causal loops, not natural language. See the [learned-convention finding](../research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md), [selector finding](../research/findings/2026-08-03-neural-vocal-selector-gateA-v2-4seed-GO.md), and [credit no-go](../research/findings/2026-08-03-neural-vocal-credit-gateB-v1-yoked-NO-GO.md). |
+| **Learned source-support signal** | A zero-initialized spiking pathway can learn whether episode activity was seen, heard, or self-generated and propagate recalled source activity into neural aPFC and ACC populations on the same bridge. Both calibration seeds passed every causal control, but one of three preregistered development seeds missed the fixed source-margin floor, so held-out testing remains locked. Episode allocation, source-afferent identity, and the learning window are still scaffolded. See the [calibration finding](../research/findings/2026-08-03-source-monitor-coresidency-calibration-GO.md) and [development no-go](../research/findings/2026-08-03-source-monitor-coresidency-development-NO-GO.md). |
+| **Memory and replay components** | The repository contains tested episodic storage, pattern completion, replay, reconsolidation, and wake/sleep integration experiments. A new one-bridge calibration showed that uncued hippocampal replay can causally change cortical weights, but hippocampus-independent recall was weak, seed-fragile, and sometimes inaccurate; development seeds remain locked. This does not establish general autobiographical memory or lifelong consolidation. See the [sleep-cycle finding](../research/findings/2026-07-25-gap5-onebrain-production-sleepcycle-merge-6seed-GO.md) and [replay-transfer no-go](../research/findings/2026-08-03-replay-cortical-consolidation-calibration-NO-GO.md). |
 | **Reward, affect, and curiosity components** | Dopamine-like reward prediction, persistent affect-like state, separable modulatory axes, active affect clearing, and curiosity-related circuits have passed narrow causal tests. Some curiosity and appraisal quantities are still computed by host code, and the parts do not yet form a developing emotional life. See the [affect-axis result](../research/findings/2026-08-02-laneA-affect-axes-DISSOCIATE-6seed-GO-first-attempt-negative-was-a-measurement-artifact.md), [affect-clear result](../research/findings/2026-08-01-affect-BRAIN-BASED-active-clear-spiking-quench-fs-gate-6seed-GO-operating-region-mapped.md), and [learning-progress result](../research/findings/2026-08-02-laneB-curiosity-learning-progress-slope-CPU-proxy-6seed-GO-next-onbridge-realization.md). |
 | **Large language-circuit forward execution** | A conventionally trained 267-million-parameter recurrent language checkpoint matched its non-spiking reference output through the tested resonate-and-fire spiking read path across six GPU seeds. This demonstrates numerical forward-path fidelity, not grounded language learning, biological training, or conversational ability. See the [language-circuit finding](../research/findings/2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md). |
 
@@ -32,7 +32,7 @@ They do not imply human-level versions of the named ability.
 | **A shared brain** | Several experiments place perception, memory, drives, action selection, and communication-related regions in one simulation network. | Most validated faculties were developed and tested in separate runners. They do not yet operate together as one continuous developing agent. |
 | **Conversation** | Demos can parse constrained questions, retrieve simple stored facts, render bounded answers, and abstain on unknown cues. | Host parsing, fixed data structures, templates, confidence thresholds, and conventionally trained language components still perform important work. Dialogue is narrow and prompted rather than autonomous and open-ended. |
 | **Grounded language** | Preverbal experiments now show one fixed request loop and learned selection among two intent and two referent channels from consequences. The tiny learned factors compose in combinations absent from training. Other experiments connect words with visual or conceptual patterns. | The learned signals are raw channels rather than words. Motor exploration, regional structure, perception currents, listener semantics, and readout remain scaffolded. The first intrinsic same-brain reversal attempt failed repeatability. Natural input, sequence learning, and conversation are unvalidated. |
-| **Honest uncertainty** | Familiarity, decision confidence, self-monitoring, authorship, and learned source-support mechanisms exist, with lesion and permutation controls in bounded tests. | They are not one co-resident learned pathway from lived sensory experience through speech choice. Production still uses host-side thresholds and source representations. The brain is not a general truth checker. |
+| **Honest uncertainty** | Familiarity, decision confidence, self-monitoring, authorship, and learned source-support mechanisms exist. Episode, source, aPFC, and ACC activity now coexist on one tested bridge. | Source strength missed its first development repeatability gate and is not yet connected from lived sensory experience through speech choice. Production still uses host-side thresholds. The brain is not a general truth checker. |
 | **Memory-guided behavior** | Episodic storage, completion, replay, consolidation, and correction mechanisms work in small controlled tasks. | Some memories use engineered codes or slots; replay has known write/selectivity limits; retention and useful transfer have not been shown over an open-ended lifetime. |
 | **Emotion and motivation** | Body-drive, reward, mood-like persistence, modulatory axes, and affect clearing can causally alter selected behaviors. | Appraisal is not broadly learned from lived social history, emotional state is not richly integrated with language and memory, and current tests should not be interpreted as human-like emotion. |
 | **Curiosity** | Narrow circuits can favor learnable novelty and suppress some unproductive exploration. | Learning progress and action selection still rely partly on host arithmetic and task policy. Curiosity does not yet autonomously choose questions and sustain learning in the full brain. |
@@ -65,9 +65,9 @@ They do not imply human-level versions of the named ability.
 3. **Language fluency and biological learning are disconnected.** The largest
    language circuit was trained conventionally; grounded loops remain small and
    template-like.
-4. **Self-monitoring is not in the production path end to end.** Useful
-   confidence and source signals exist, but host code still joins them to the
-   final answer policy.
+4. **Self-monitoring is not yet robust or end to end.** Co-resident learned
+   source activity passed calibration but missed one of three development
+   seeds, and host code still joins monitoring signals to the answer policy.
 5. **Memory, affect, and curiosity are components rather than a life history.**
    Their tests are informative but too bounded to establish an enduring person-
    like state.
@@ -77,19 +77,19 @@ They do not imply human-level versions of the named ability.
 
 ## Highest-Value Work
 
-The immediate priority is executed-action-local reward credit. A corrected
-600-neuron vocal selector now passes Gate A in all four development seeds: it
-makes balanced choices, commits cleanly on 98-100% of trials, and stops when
-shared arousal or its direct basal-ganglia route is lesioned. Gate B must now
-show that only the winning route retains eligibility for a later global
-dopamine signal, that contingent reward changes later choices, and that yoked
-reward, action-collateral lesions, and dopamine lesions do not teach the same
-preference. Held-out seeds stay untouched until later gates. After local credit
-passes, the selector should return to same-brain reversal and then expand to
-more needs, percepts, intents, and consequences. In parallel, learned source
-signals should move into the same network as confidence, self-monitoring, and
-speech selection. A larger language circuit is useful only after the brain has
-selected a grounded message, certainty, and decision to speak.
+The immediate priority is still executed-action-local reward credit. The
+selector itself is reliable, but raw delayed dopamine reinforced arbitrary
+actions under yoked reward. The current bounded correction adds a spiking
+action-value critic and must show that expected outcomes suppress false
+teaching without weakening contingent learning. Held-out seeds stay untouched.
+
+In parallel, source monitoring needs a local stabilizer that clears its fixed
+margin on fresh seeds; replay consolidation needs selective, repeatable
+CA1-to-cortex reinstatement with a true temporal-order control; and visual
+identity learning needs invariant representations after host top-k selection
+was replaced by spike-latency competition. A larger language circuit is useful
+only after the brain has selected a grounded message, certainty, and decision
+to speak.
 
 This order tests the central project claim early: whether a small integrated
 spiking brain can learn to say something because of what it perceives, needs,

@@ -1,0 +1,28 @@
+{
+ "run_id": "1785777501-480499",
+ "runner": "research/runners/_laneC_source_monitor_coresidency_gate.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneC_source_monitor_coresidency_gate.py",
+  "--phase",
+  "development",
+  "--seed",
+  "214",
+  "--json",
+  "research/findings/raw/parallel_gates/source_monitor_coresidency_development_seed214.json"
+ ],
+ "git_sha": "f2c310a0c89112ea5fd819fdd1a385e4354096c5",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "a754df9859cfb23c7b2d77b278416fdb49bf175c22b04aaf3eaec512bf2d184c",
+ "started": "2026-08-03T13:18:21",
+ "env": {
+  "POOL_CHECKED_REASON": "preregistered source-monitor development seed 214: fixed criteria committed before run; no tuning or held-out access",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/parallel_gates/source_monitor_coresidency_development_seed214.json"
+}

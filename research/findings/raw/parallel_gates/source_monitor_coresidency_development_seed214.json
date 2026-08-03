@@ -1,0 +1,429 @@
+{
+  "seed": 214,
+  "phase": "development",
+  "status": "DEVELOPMENT_FAIL",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "episode, source, aPFC, and ACC populations share one bridge",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "recall interface carries episode activity without source metadata",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "knob",
+      "name": "Hebbian learning rate",
+      "ok": true,
+      "detail": "requested=0.2 applied=0.2",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "episode patterns are disjoint and fit the declared population",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "episode-to-source transmission lesion",
+      "ok": true,
+      "detail": "before=278 after=0 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "source-to-ACC transmission lesion",
+      "ok": true,
+      "detail": "before=304 after=0 moved=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP, reward modulation, homeostasis, short-term plasticity, and structural plasticity",
+      "why": "this bounded rung isolates zero-initialized Hebbian episode-to-source association"
+    }
+  ],
+  "undefined_reasons": [],
+  "components": {
+    "learned_routes_start_zero": true,
+    "experience_changes_synaptic_weights": true,
+    "seen_source_recalled": true,
+    "heard_source_recalled": true,
+    "self_source_recalled": true,
+    "source_swap_follows_afferent_activity": true,
+    "mixed_source_reinstates_both": true,
+    "source_path_lesion_collapses_recall": true,
+    "acc_lesion_preserves_source_and_silences_acc": true,
+    "learning_off_keeps_weights_zero": true,
+    "learning_off_has_no_source_recall": true,
+    "source_spikes_reach_apfc_and_acc": true,
+    "all_source_margins_meet_frozen_floor": false,
+    "source_path_attribution_meets_frozen_floor": true,
+    "acc_path_attribution_meets_frozen_floor": true,
+    "unseen_episode_has_no_source_recall": true
+  },
+  "metrics": {
+    "seen_margin": 0.23166666666666666,
+    "heard_margin": 0.11,
+    "self_generated_margin": 0.23333333333333334,
+    "intact_source_spikes": 278.0,
+    "source_lesion_spikes": 0.0,
+    "intact_acc_spikes": 304.0,
+    "acc_lesion_spikes": 0.0,
+    "mixed_seen_spikes": 279.0,
+    "mixed_heard_spikes": 135.0
+  },
+  "attribution": {
+    "source_recall_path": {
+      "intact_source_spikes": 278.0,
+      "lesioned_source_spikes": 0.0,
+      "lesion_delta": 278.0,
+      "attributable_to": "episode_to_source_recall",
+      "attributable_fraction": 1.0
+    },
+    "acc_output_path": {
+      "intact_acc_spikes": 304.0,
+      "lesioned_acc_spikes": 0.0,
+      "lesion_delta": 304.0,
+      "attributable_to": "source_to_acc_transmission",
+      "attributable_fraction": 1.0
+    }
+  },
+  "records": {
+    "seen": {
+      "source_spikes": {
+        "seen": 278.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.23166666666666666,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 209.0,
+        "heard": 4.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.17416666666666666,
+        "heard": 0.0033333333333333335,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 304.0,
+      "acc_rate": 0.19,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    },
+    "heard": {
+      "source_spikes": {
+        "seen": 0.0,
+        "heard": 132.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.0,
+        "heard": 0.11,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 9.0,
+        "heard": 212.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.0075,
+        "heard": 0.17666666666666667,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 200.0,
+      "acc_rate": 0.125,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    },
+    "self_generated": {
+      "source_spikes": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 280.0
+      },
+      "source_rates": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.23333333333333334
+      },
+      "apfc_source_spikes": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 233.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.19416666666666665
+      },
+      "acc_spikes": 374.0,
+      "acc_rate": 0.23375,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    },
+    "mixed": {
+      "source_spikes": {
+        "seen": 279.0,
+        "heard": 135.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.2325,
+        "heard": 0.1125,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 228.0,
+        "heard": 216.0,
+        "self_generated": 9.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.19,
+        "heard": 0.18,
+        "self_generated": 0.0075
+      },
+      "acc_spikes": 322.0,
+      "acc_rate": 0.20125,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    },
+    "source_path_lesion": {
+      "source_spikes": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 0.0,
+      "acc_rate": 0.0,
+      "source_path_lesion": true,
+      "acc_lesion": false
+    },
+    "acc_lesion": {
+      "source_spikes": {
+        "seen": 278.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.23166666666666666,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 226.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.18833333333333332,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 0.0,
+      "acc_rate": 0.0,
+      "source_path_lesion": false,
+      "acc_lesion": true
+    },
+    "swap_pattern_zero": {
+      "source_spikes": {
+        "seen": 0.0,
+        "heard": 249.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.0,
+        "heard": 0.2075,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 4.0,
+        "heard": 193.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.0033333333333333335,
+        "heard": 0.16083333333333333,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 218.0,
+      "acc_rate": 0.13625,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    },
+    "swap_pattern_one": {
+      "source_spikes": {
+        "seen": 241.0,
+        "heard": 1.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.20083333333333334,
+        "heard": 0.0008333333333333334,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 218.0,
+        "heard": 6.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.18166666666666667,
+        "heard": 0.005,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 173.0,
+      "acc_rate": 0.108125,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    },
+    "learning_off": {
+      "source_spikes": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 1.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.0008333333333333334,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 6.0,
+      "acc_rate": 0.00375,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    },
+    "unseen": {
+      "source_spikes": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "source_rates": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_spikes": {
+        "seen": 6.0,
+        "heard": 4.0,
+        "self_generated": 0.0
+      },
+      "apfc_source_rates": {
+        "seen": 0.005,
+        "heard": 0.0033333333333333335,
+        "self_generated": 0.0
+      },
+      "acc_spikes": 12.0,
+      "acc_rate": 0.0075,
+      "source_path_lesion": false,
+      "acc_lesion": false
+    }
+  },
+  "weights": {
+    "initial": {
+      "n_synapses": 6912,
+      "nonzero": 0,
+      "mean": 0.0,
+      "max": 0.0,
+      "l1": 0.0
+    },
+    "learned": {
+      "n_synapses": 6912,
+      "nonzero": 604,
+      "mean": 6.285124963080442,
+      "max": 159.93508911132812,
+      "l1": 43442.78374481201
+    },
+    "learning_off_initial": {
+      "n_synapses": 6912,
+      "nonzero": 0,
+      "mean": 0.0,
+      "max": 0.0,
+      "l1": 0.0
+    },
+    "learning_off_after": {
+      "n_synapses": 6912,
+      "nonzero": 0,
+      "mean": 0.0,
+      "max": 0.0,
+      "l1": 0.0
+    }
+  },
+  "interface_guards": {
+    "recall_parameters": [
+      "self",
+      "episode_pattern",
+      "source_path_lesion",
+      "acc_lesion"
+    ],
+    "no_source_argument_at_inference": true,
+    "episode_activity_is_caller_supplied": true,
+    "host_confidence_scalar": false,
+    "host_response_decision": false
+  },
+  "seed_policy": {
+    "calibration": [
+      212,
+      213
+    ],
+    "development_reserved": [
+      214,
+      215,
+      310
+    ],
+    "held_out": [
+      311,
+      312,
+      313
+    ]
+  },
+  "frozen_development_criteria": {
+    "minimum_source_margin": 0.15,
+    "minimum_attribution_fraction": 0.9,
+    "unseen_source_spikes": 0,
+    "all_structural_and_lesion_components_required": true
+  },
+  "honest_scope": "The co-resident bridge learns source from sparse episode activity plus physical visual, auditory, or corollary-discharge afferents and propagates recall into neural aPFC/ACC populations. Sparse episode activity is supplied by the test world; source afferent identity and the plasticity window remain developmental scaffolds. Population counts are host-read for evaluation only. There is no language integration, confidence scalar, speech policy, or claim that source monitoring is solved.",
+  "elapsed_seconds": 1.158
+}
