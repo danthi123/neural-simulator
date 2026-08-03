@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import io
 import os
+import re
 import time
 from contextlib import redirect_stderr
 try:
@@ -20,6 +21,42 @@ def node_source(node_with_score) -> str:
     node = node_with_score.node
     metadata = node.metadata or {}
     return metadata.get("source") or os.path.basename(str(node.ref_doc_id or ""))
+
+
+def _source_intent(query: str, node_with_score) -> int:
+    """Prefer a named source when the user explicitly includes its distinctive name."""
+    query_terms = set(re.findall(r"[a-z]{4,}", query.lower()))
+    source_terms = set(re.findall(r"[a-z]{4,}", node_source(node_with_score).lower()))
+    generic = {"book", "full", "paper", "review", "finding", "gate", "smoke"}
+    return len(query_terms & (source_terms - generic))
+
+
+def node_locator(node_with_score, cache: dict[str, str] | None = None) -> str:
+    """Return an actionable source path and best-effort line for a retrieved chunk."""
+    metadata = node_with_score.node.metadata or {}
+    path = metadata.get("path")
+    if not path:
+        return node_source(node_with_score)
+    contents = cache if cache is not None else {}
+    if path not in contents:
+        try:
+            with open(path, encoding="utf-8", errors="replace") as handle:
+                contents[path] = handle.read()
+        except OSError:
+            contents[path] = ""
+    source_text = contents[path]
+    chunk = node_with_score.node.get_content() or ""
+    offset = -1
+    for probe in (line.strip() for line in chunk.splitlines()):
+        if len(probe) >= 32:
+            offset = source_text.find(probe)
+            if offset >= 0:
+                break
+    if offset < 0 and len(chunk) >= 32:
+        offset = source_text.find(chunk[: min(120, len(chunk))])
+    if offset < 0:
+        return path
+    return f"{path}:{source_text.count(chr(10), 0, offset) + 1}"
 
 
 class RagRetriever:
@@ -58,7 +95,7 @@ class RagRetriever:
             self._fusion_by_corpus = {}
             self._reranker = SentenceTransformerRerank(
                 model="cross-encoder/ms-marco-MiniLM-L-6-v2",
-                top_n=top_k,
+                top_n=self._candidate_count,
             )
 
     @property
@@ -106,5 +143,13 @@ class RagRetriever:
             nodes = self._reranker.postprocess_nodes(
                 candidates,
                 query_str=query,
-            )[: self.top_k]
+            )
+            nodes.sort(
+                key=lambda node: (
+                    _source_intent(query, node),
+                    float(node.score if node.score is not None else float("-inf")),
+                ),
+                reverse=True,
+            )
+            nodes = nodes[: self.top_k]
         return nodes, (time.time() - started) * 1000.0

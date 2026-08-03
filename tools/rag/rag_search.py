@@ -25,7 +25,7 @@ os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from rag_paths import resolve_paths
-from retrieval import RagRetriever, node_source
+from retrieval import RagRetriever, node_locator, node_source
 
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PATHS = resolve_paths(_REPO)
@@ -53,13 +53,15 @@ nodes, latency_ms = engine.retrieve(query)
 
 buf = io.StringIO()
 buf.write(f'Q: {query}   ({latency_ms / 1000.0:.2f}s, top {top_k}, corpus={corpus}, index={engine.persist})\n')
+source_cache = {}
 for i, n in enumerate(nodes):
     md = n.node.metadata or {}
     stype = md.get("source_type", "?")
     src = node_source(n)
     txt = " ".join((n.node.get_content() or "")[:220].split())
     score = round(n.score, 3) if n.score is not None else ""
-    buf.write(f"  [{i+1}] {score}  ({stype}) {src}\n      {txt}\n")
+    locator = node_locator(n, source_cache)
+    buf.write(f"  [{i+1}] {score}  ({stype}) {src}\n      at {locator}\n      {txt}\n")
 if not nodes:
     buf.write("  (no hits" + (f" in corpus '{corpus}'" if corpus != "all" else "") + ")\n")
 sys.stdout.buffer.write(buf.getvalue().encode("utf-8", "replace"))

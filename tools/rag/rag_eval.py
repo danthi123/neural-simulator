@@ -44,24 +44,29 @@ def load_queries():
     return qs
 
 
-def _first_relevant_rank(basenames, relevant):
-    """1-based rank of the first hit whose basename contains any `relevant` substring; 0 if none in the list."""
+def _first_relevant_rank(hits, relevant, must_contain=(), must_not_contain=()):
+    """Return the first source-and-passage match, not merely a matching filename."""
     rl = [r.lower() for r in relevant]
-    for i, b in enumerate(basenames):
-        bl = (b or "").lower()
-        if any(r in bl for r in rl):
+    required = [term.lower() for term in must_contain]
+    forbidden = [term.lower() for term in must_not_contain]
+    for i, hit in enumerate(hits):
+        source = (hit.get("source") or "").lower()
+        passage = (hit.get("text") or "").lower()
+        if (not rl or any(r in source for r in rl)) \
+                and all(term in passage for term in required) \
+                and not any(term in passage for term in forbidden):
             return i + 1
     return 0
 
 
-def score_one(basenames, relevant, top_k):
-    rank = _first_relevant_rank(basenames, relevant)
+def score_one(hits, relevant, top_k, must_contain=(), must_not_contain=()):
+    rank = _first_relevant_rank(hits, relevant, must_contain, must_not_contain)
     return {"first_rel_rank": rank,
             "hit@1": int(rank == 1),
             "hit@3": int(1 <= rank <= 3),
             "hit@5": int(1 <= rank <= min(5, top_k)),
             "rr": (1.0 / rank) if rank else 0.0,
-            "top": basenames[:3]}
+            "top": [hit.get("source", "") for hit in hits[:3]]}
 
 
 # ------------------------- engines (production retrieval paths) -------------------------
@@ -71,8 +76,11 @@ def build_llamaindex(top_k):
 
     def run(query, corpus="finding"):
         nodes, dt = engine.retrieve(query, corpus=corpus)
-        names = [node_source(node) for node in nodes]
-        return names, dt
+        hits = [
+            {"source": node_source(node), "text": node.node.get_content() or ""}
+            for node in nodes
+        ]
+        return hits, dt
     return run, engine.node_count
 
 
@@ -90,13 +98,14 @@ def build_soma(top_k):
     def run(query):
         with redirect_stderr(io.StringIO()):
             t0 = time.time()
-            hits = mem.retrieve(query, k=top_k)
+            raw_hits = mem.retrieve(query, k=top_k)
             dt = (time.time() - t0) * 1000.0
-        names = []
-        for h in hits:
+        hits = []
+        for h in raw_hits:
             md = getattr(h, "metadata", None) or {}
-            names.append(md.get("path") or (os.path.basename(md.get("src", "")) if md.get("src") else ""))
-        return names, dt
+            source = md.get("path") or (os.path.basename(md.get("src", "")) if md.get("src") else "")
+            hits.append({"source": source, "text": getattr(h, "text", "") or ""})
+        return hits, dt
     return run, n_chunks
 
 
@@ -122,6 +131,8 @@ def main():
     ap.add_argument("--no-write", action="store_true", help="score without appending history")
     ap.add_argument("--min-hit3", type=float, default=1.0,
                     help="fail if LlamaIndex hit@3 is below this floor (default: 1.0)")
+    ap.add_argument("--min-mrr", type=float, default=0.90,
+                    help="fail if LlamaIndex MRR is below this floor (default: 0.90)")
     args = ap.parse_args()
     ts = args.ts or datetime.now().isoformat(timespec="seconds")
 
@@ -145,12 +156,23 @@ def main():
 
     for q in queries:
         corpus = q.get("corpus", "finding")
-        entry = {"q": q["q"], "corpus": corpus, "relevant": q["relevant"]}
+        entry = {
+            "q": q["q"],
+            "corpus": corpus,
+            "relevant": q["relevant"],
+            "required_rank": q.get("required_rank", 3),
+        }
         for name, (run, size) in engines.items():
             if name == "soma" and corpus != "finding":
                 continue
-            names, dt = run(q["q"], corpus) if name == "llamaindex" else run(q["q"])
-            sc = score_one(names, q["relevant"], args.top_k)
+            hits, dt = run(q["q"], corpus) if name == "llamaindex" else run(q["q"])
+            sc = score_one(
+                hits,
+                q["relevant"],
+                args.top_k,
+                q.get("must_contain", ()),
+                q.get("must_not_contain", ()),
+            )
             entry[name] = {"score": sc, "latency_ms": round(dt, 1)}
             per_engine_rows[name].append({"score": sc, "latency_ms": dt})
         result["per_query"].append(entry)
@@ -181,17 +203,33 @@ def main():
             print(f"MISS@3 ({entry['corpus']}): {entry['q']}")
             print(f"  expected: {entry['relevant']}")
             print(f"  returned: {llama_entry['score']['top']}")
+        elif llama_entry and not llama_entry["score"]["hit@1"]:
+            print(f"RANK>1 ({entry['corpus']}): {entry['q']}")
+            print(f"  first relevant rank: {llama_entry['score']['first_rel_rank']}")
+            print(f"  returned: {llama_entry['score']['top']}")
 
     if not args.no_write:
         _append_md_row(ts, args.top_k, len(queries), n_findings, result, args.note)
         print(f"\n[rag_eval] appended -> {os.path.relpath(HISTORY_JSONL, SIM)} + {os.path.relpath(HISTORY_MD, SIM)}")
 
     llama = result["engines"].get("llamaindex")
-    if llama is None or llama["hit@3"] < args.min_hit3:
-        actual = "unavailable" if llama is None else llama["hit@3"]
-        print(f"RAG_QUALITY_BLOCKED: llamaindex hit@3={actual}, required={args.min_hit3}", file=sys.stderr)
+    rank_violations = []
+    for entry in result["per_query"]:
+        scored = entry.get("llamaindex", {}).get("score", {})
+        rank = scored.get("first_rel_rank", 0)
+        if not rank or rank > entry["required_rank"]:
+            rank_violations.append((entry["q"], rank, entry["required_rank"]))
+    if llama is None or llama["hit@3"] < args.min_hit3 \
+            or llama["mrr"] < args.min_mrr or rank_violations:
+        actual_hit3 = "unavailable" if llama is None else llama["hit@3"]
+        actual_mrr = "unavailable" if llama is None else llama["mrr"]
+        print(
+            f"RAG_QUALITY_BLOCKED: hit@3={actual_hit3} required={args.min_hit3}; "
+            f"MRR={actual_mrr} required={args.min_mrr}; rank_violations={rank_violations}",
+            file=sys.stderr,
+        )
         return 1
-    print(f"RAG_QUALITY_READY: llamaindex hit@3={llama['hit@3']}")
+    print(f"RAG_QUALITY_READY: hit@3={llama['hit@3']} MRR={llama['mrr']}")
     return 0
 
 

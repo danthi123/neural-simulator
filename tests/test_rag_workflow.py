@@ -16,6 +16,7 @@ from tools.rag.rag_paths import (
     stable_document_id,
 )
 from tools.rag.retrieval import candidate_count
+from tools.rag.rag_eval import score_one
 
 
 def _layout(tmp_path: Path) -> RagPaths:
@@ -157,20 +158,43 @@ def test_retrieval_keeps_a_broad_hybrid_rerank_window():
     assert candidate_count(10) == 60
 
 
+def test_scientific_eval_requires_the_labeled_passage_not_just_the_source():
+    hits = [
+        {"source": "feature-catalog.md", "text": "SABI normally inhibits another interneuron."},
+        {"source": "feature-catalog.md", "text": "FSI to MSN feedforward inhibition is powerful."},
+    ]
+    score = score_one(
+        hits,
+        ["feature-catalog"],
+        5,
+        must_contain=["FSI", "feedforward"],
+        must_not_contain=["SABI normally inhibits"],
+    )
+    assert score["first_rel_rank"] == 2
+    assert score["hit@1"] == 0
+    assert score["hit@3"] == 1
+
+
 def test_quality_evaluator_is_portable_and_fail_closed():
     evaluator = Path("tools/rag/rag_eval.py").read_text(encoding="utf-8")
     assert "E:\\Documents" not in evaluator
     assert 'RagRetriever(PATHS, corpus="all"' in evaluator
     assert "RAG_QUALITY_BLOCKED" in evaluator
+    assert 'default=0.90' in evaluator
     launcher = Path("tools/rag/eval.sh")
     assert launcher.exists()
 
 
 def test_index_refresh_runs_the_quality_floor():
     updater = Path("tools/rag/update_indexes.py").read_text(encoding="utf-8")
-    assert "check_retrieval_quality()" in updater
+    check = updater.index("check_retrieval_quality(candidate_root)", updater.index("def main"))
+    publish = updater.index("publish_candidate(candidate)", updater.index("def main"))
+    manifest = updater.index('json.dump({"hash": indexed_hash', updater.index("def main"))
+    assert check < publish < manifest
     assert '"--no-write"' in updater
-    assert "SIM_RAG_SKIP_QUALITY" in updater
+    assert "SIM_RAG_SKIP_QUALITY" not in updater
+    assert 'max(0.90, float(os.environ.get("SIM_RAG_MIN_MRR"' in updater
+    assert "corpus changed during refresh; repeating" in updater
 
 
 def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path):

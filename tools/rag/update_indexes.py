@@ -34,12 +34,19 @@ SOMA_MANIFEST = os.path.join(_SOMA_ROOT, ".soma_kb_manifest.json")
 SOMA_TYPES = {"finding", "plan", "doc", "catalog"}
 
 
-def persist_atomically(index):
-    """Publish a complete index directory without exposing half-written JSON."""
-    staging = f"{PERSIST}.staging-{os.getpid()}"
-    previous = f"{PERSIST}.previous-{os.getpid()}"
-    shutil.rmtree(staging, ignore_errors=True)
+def persist_candidate(index):
+    """Write a complete candidate index beside the live index for validation."""
+    candidate_root = os.path.join(RAG, f".candidate-{os.getpid()}")
+    staging = os.path.join(candidate_root, "llamaindex_full")
+    shutil.rmtree(candidate_root, ignore_errors=True)
+    os.makedirs(candidate_root)
     index.storage_context.persist(persist_dir=staging)
+    return candidate_root, staging
+
+
+def publish_candidate(staging):
+    """Atomically promote a validated candidate while retaining rollback safety."""
+    previous = f"{PERSIST}.previous-{os.getpid()}"
     moved_previous = False
     try:
         if os.path.isdir(PERSIST):
@@ -47,13 +54,13 @@ def persist_atomically(index):
             moved_previous = True
         os.replace(staging, PERSIST)
         if moved_previous:
-            shutil.rmtree(previous)
+            shutil.rmtree(previous, ignore_errors=True)
     except Exception:
         if moved_previous and not os.path.exists(PERSIST) and os.path.isdir(previous):
             os.replace(previous, PERSIST)
         raise
     finally:
-        shutil.rmtree(staging, ignore_errors=True)
+        shutil.rmtree(os.path.dirname(staging), ignore_errors=True)
 
 
 def evolving_files():
@@ -103,13 +110,8 @@ def refresh_llamaindex(rebuild=False):
     docs = B.load_docs()
     if rebuild or not os.path.isdir(PERSIST):
         idx = VectorStoreIndex.from_documents(docs, show_progress=False)
-        persist_atomically(idx)
-        json.dump(
-            {"document_id_schema": DOCUMENT_ID_SCHEMA, "source_repo": B.SIM},
-            open(SCHEMA, "w"),
-            indent=2,
-        )
-        return f"llamaindex REBUILT ({len(idx.docstore.docs)} nodes)"
+        candidate_root, candidate = persist_candidate(idx)
+        return f"llamaindex candidate REBUILT ({len(idx.docstore.docs)} nodes)", candidate_root, candidate
     try:
         schema = json.load(open(SCHEMA)).get("document_id_schema")
     except Exception:
@@ -131,8 +133,9 @@ def refresh_llamaindex(rebuild=False):
             except Exception:
                 pass
     res = idx.refresh_ref_docs(docs)                         # insert new + update changed (by hash); skip unchanged
-    persist_atomically(idx)
-    return f"llamaindex refreshed ({sum(bool(x) for x in res)}/{len(res)} new-or-changed, {ndel} deleted)"
+    candidate_root, candidate = persist_candidate(idx)
+    return (f"llamaindex candidate refreshed ({sum(bool(x) for x in res)}/{len(res)} new-or-changed, "
+            f"{ndel} deleted)", candidate_root, candidate)
 
 
 def _store_file(mem, chunk_markdown, load_text, f):
@@ -204,12 +207,16 @@ def refresh_soma(rebuild=False):
             f"{cc} chunks stored, {n_forgot} forgotten)")
 
 
-def check_retrieval_quality():
-    """Run the labeled, read-only quality floor after publishing a changed index."""
+def check_retrieval_quality(candidate_root):
+    """Run the labeled quality floor against a candidate before publication."""
     evaluator = os.path.join(B.SIM, "tools", "rag", "rag_eval.py")
+    env = dict(os.environ)
+    env["SIM_RAG_ROOT"] = candidate_root
+    min_mrr = max(0.90, float(os.environ.get("SIM_RAG_MIN_MRR", "0.90")))
     result = subprocess.run(
-        [sys.executable, evaluator, "--no-write"],
+        [sys.executable, evaluator, "--no-write", "--min-mrr", str(min_mrr)],
         cwd=B.SIM,
+        env=env,
         text=True,
     )
     if result.returncode:
@@ -237,14 +244,34 @@ def main():
         print("[update-indexes] another update is running; skip (it will pick up these changes).", flush=True); return
     try:
         t0 = time.time()
-        print(refresh_llamaindex(rebuild=args.rebuild), flush=True)
-        try:
-            print(refresh_soma(rebuild=args.rebuild), flush=True)
-        except Exception as e:
-            print(f"[update-indexes] SOMA rebuild failed (LlamaIndex still updated): {e}", flush=True)
-        json.dump({"hash": manifest_hash(), "at": int(time.time())}, open(MANIFEST, "w"))
-        if os.environ.get("SIM_RAG_SKIP_QUALITY") != "1":
-            check_retrieval_quality()
+        while True:
+            indexed_hash = manifest_hash()
+            message, candidate_root, candidate = refresh_llamaindex(rebuild=args.rebuild)
+            print(message, flush=True)
+            try:
+                check_retrieval_quality(candidate_root)
+                publish_candidate(candidate)
+            except Exception:
+                shutil.rmtree(candidate_root, ignore_errors=True)
+                raise
+            schema_tmp = f"{SCHEMA}.tmp-{os.getpid()}"
+            with open(schema_tmp, "w", encoding="utf-8") as handle:
+                json.dump(
+                    {"document_id_schema": DOCUMENT_ID_SCHEMA, "source_repo": B.SIM},
+                    handle,
+                    indent=2,
+                )
+            os.replace(schema_tmp, SCHEMA)
+            print("llamaindex candidate PASSED and published", flush=True)
+            try:
+                print(refresh_soma(rebuild=args.rebuild), flush=True)
+            except Exception as e:
+                print(f"[update-indexes] SOMA rebuild failed (LlamaIndex still updated): {e}", flush=True)
+            latest_hash = manifest_hash()
+            if latest_hash == indexed_hash:
+                json.dump({"hash": indexed_hash, "at": int(time.time())}, open(MANIFEST, "w"))
+                break
+            print("[update-indexes] corpus changed during refresh; repeating before marking current.", flush=True)
         print(f"[update-indexes] done in {time.time()-t0:.0f}s.", flush=True)
     finally:
         try:
