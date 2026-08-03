@@ -43,7 +43,8 @@ echo "Proceed only after reading what the above surfaced — a hit is a POINTER,
 # this script -- which returns those four priors in 0.63 s -- was not run until after the write-up.
 # The heartbeat flagged the missing check ~15 times that day and was read past every time, so REPORTING is
 # demonstrably insufficient for this class. The record below is what `gates/corpus_check_required` reads.
-_CC_LOG=/home/dant123/Projects/sim/research/queue/.corpus_checks.jsonl
+_CC_LOG="${SIM_CORPUS_CHECK_LOG:-$PWD/research/queue/.corpus_checks.jsonl}"
+mkdir -p "$(dirname "$_CC_LOG")"
 printf '{"when": %s, "iso": "%s", "query": %s, "cwd": "%s"}\n' \
   "$(date +%s)" "$(date -Iseconds)" "$(printf '%s' "$Q" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')" "$PWD" \
   >> "$_CC_LOG" 2>/dev/null || true
