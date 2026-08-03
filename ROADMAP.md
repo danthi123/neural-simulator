@@ -72,7 +72,10 @@ expected-omission pathway through LHb- and RMTg-like populations plus local
 critic normalization. Both clean GPU calibration seeds still learned the
 rewarded action under unrelated reward, while the intact omission pathway stayed
 silent. The next design must preserve a bounded learned expectation until
-outcome time without removing the load-bearing normalization.
+outcome time without removing the load-bearing normalization. A first
+dendritic-expectation successor passes seed-zero NumPy physiology, but the exact
+CuPy run fires at `45.833 Hz/cell`, above its fixed `20` limit. Resolve that
+cross-backend discrepancy before opening any scientific seed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
@@ -191,6 +194,12 @@ same behavior survives removal of oracle-like teaching.
 
 Deep credit assignment on real spikes is still an open research problem in this
 repository and must be treated as such.
+
+Invariant visual identity is also still open. The latest hierarchical V2-to-IT
+candidate was validly negative on both calibration seeds: intact inhibition
+silenced V2/IT and all learning, while removing V2 inhibition produced activity
+without above-chance identity. A new candidate must first show non-saturated,
+locally learned representations on smoke rather than adjust the selector.
 
 ### 7. Scale Without Changing The Scientific Claim
 

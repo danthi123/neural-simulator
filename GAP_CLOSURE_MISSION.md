@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 16:11 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 16:38 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -28,7 +28,9 @@ reached 100%, but yoked reward again reached 100%; intact critic normalization
 left the expected-omission LHb/RMTg path silent. The path fired only after a
 normalization lesion caused extreme critic activity, localizing the next design
 to bounded persistence of learned expectation at outcome time. Later seeds stay
-locked.
+locked. A research-grounded v4 dendritic-expectation successor passes seed-zero
+NumPy smoke but fails the identical CuPy smoke because outcome-time value firing
+is `45.833 Hz/cell`, above the fixed `20` limit. Its scientific phases are sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -58,10 +60,10 @@ it on smoke seed `216`, so that candidate was retired before scientific executio
 by spike-latency competition. A temporal-binding successor failed both fresh
 seeds: intact decoding stayed below threshold, learning-off matched or beat
 intact, and fast-spiking competition was not consistently causal. A
-hierarchical V2-part to trace-bound-IT successor now passes smoke without
-host first-K selection. It discloses identity-pure track boundaries and a fixed
-V2 inhibitory afferent current as scaffolds. Formal seeds `503/509` remain
-untouched pending final re-audit.
+hierarchical V2-part to trace-bound-IT successor then failed both valid formal
+seeds. Intact V2 and IT were silent, changed no permanences, and decoded at
+chance; removing V2 inhibition created activity but no identity signal and
+saturated IT on one seed. Later phases stay locked and the candidate is retired.
 
 **Compute and repositories:** CUDA/CuPy access to the RTX 3090 is verified. One
 full Gate B v3 calibration used the GPU successfully; focused CuPy substrate
@@ -73,15 +75,16 @@ evidence or workflow commit.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Design a fresh action-credit successor that gives bounded learned expectation
-   a persistent effect at outcome time; do not tune Gate B v3 seeds.
+1. Resolve Gate B v4's NumPy/CuPy firing-rate disagreement on seed-zero smoke
+   without backend-specific tuning; all scientific v4 seeds remain sealed.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a
    nonzero rival burden that local competition can causally reduce; do not rerun
    v4 seeds `601/607`.
-4. If the final audit clears hierarchical visual identity, run exact calibration
-   seeds `503/509` on separate mini PCs.
+4. Preregister a different visual representation mechanism only after reserved
+   smoke has nonzero, non-saturated V2/IT learning and causal inhibition; do not
+   reuse hierarchical seeds `503/509`.
 5. Merge only cleared mechanisms into the persistent develop-loop; do not scale
    the conventional language scaffold ahead of grounded message selection.
 

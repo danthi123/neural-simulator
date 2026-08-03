@@ -1,0 +1,33 @@
+{
+ "run_id": "1785788847-495468",
+ "runner": "research/runners/_laneD_visual_hierarchical_part_identity_gate.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneD_visual_hierarchical_part_identity_gate.py",
+  "--phase",
+  "calibration",
+  "--seeds",
+  "503",
+  "509",
+  "--out",
+  "research/findings/raw/visual_hierarchical_identity_v1/calibration.json"
+ ],
+ "git_sha": "b976f89459f50cd29664533c7149d36bc58f728d",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "17eadc7a732d1c35a904bb6857b8db0c469853e527291bc9fb1cac3d8b06fef9",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-03T16:27:27",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 7603.1,
+ "corpus_check_query": "Visual temporal binding provenance repeat only; runner and criteria unchanged",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/visual_hierarchical_identity_v1/calibration.json"
+}
