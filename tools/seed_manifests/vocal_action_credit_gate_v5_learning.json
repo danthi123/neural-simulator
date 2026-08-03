@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "mechanism": "neural-vocal-action-credit-v5-learning",
+  "namespace": "neural-vocal-action-credit-v5-learning/formal-v1",
+  "generator": "tools/assign_vocal_credit_v5_learning_seeds.py",
+  "device": "not_applicable_seed_assignment_no_execution",
+  "source_revision": "5253fc81dff2c1ae7b1c6009d9c20f3f052982bb",
+  "scan_scope": [
+    "research/runners/**/*.py",
+    "tests/**/*.py"
+  ],
+  "declaration_count": 440,
+  "declaration_digest": "094cfc005657666de64713d7b968dbbaa8d2c2d3db7da001b6cff8a27b21ac03",
+  "candidate_range": [
+    71000,
+    79999
+  ],
+  "partitions": {
+    "calibration": [
+      76405,
+      71409
+    ],
+    "development": [
+      79696,
+      72650,
+      77948,
+      75688
+    ],
+    "held_out": [
+      71272,
+      79796
+    ]
+  },
+  "collisions": [],
+  "formal_execution_open": false
+}
