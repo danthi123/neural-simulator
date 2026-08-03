@@ -131,9 +131,11 @@ satiation, and competing priorities, but it is not a primary deployment goal
 for a system that does not eat. Prioritize pressures grounded in the system's
 actual life: uncertainty and learning progress, social engagement, unresolved
 goals, prediction conflict, memory consolidation, sensory overload,
-communication outcomes, and real operating constraints. Do not label a scalar
-as a feeling unless it develops, persists, and causally changes the wider
-brain.
+communication outcomes, and real operating constraints. Continue a biological-
+need experiment only when it reveals a reusable mechanism for persistence,
+regulation, competing priorities, or adaptation in that actual life. Do not
+label a scalar as a feeling unless it develops, persists, and causally changes
+the wider brain.
 
 **Evidence required:** internal-state changes alter several faculties; matched
 lesions remove the predicted effects; the brain distinguishes learnable novelty

@@ -160,8 +160,11 @@ requirements. Hunger can test persistent interoception and drive reduction,
 but practical development should emphasize pressures the system can genuinely
 encounter: uncertainty, learning progress, social response, unresolved goals,
 prediction conflict, consolidation demand, sensory overload, communication
-success, and real system-health signals. Human-like names should be used only
-when the resulting state has the claimed persistence and causal reach.
+success, and real system-health signals. Findings from biological-need probes
+should be retained when they transfer to those practical pressures, rather than
+turning literal hunger or similar states into required product features.
+Human-like names should be used only when the resulting state has the claimed
+persistence and causal reach.
 
 ## Emotion, Curiosity, And Honesty
 
