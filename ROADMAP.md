@@ -81,10 +81,12 @@ CPU and GPU. A fifth version now uses commit/arousal dendritic coincidence
 during a fixed action epoch and symmetric outcome-linked feed-forward
 normalization. Its reserved smoke passes on NumPy and CuPy with one
 configuration, changes no weights, rejects bilateral commit and outcome state,
-and stays below 20 Hz/cell. This is only a qualified mechanism smoke. Formal
-seeds remain sealed until adversarial re-review and a fresh preregistration
-require actual local learning, yoked neutrality, contingent acquisition,
-omission activity, permutation, and all lesions.
+and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
+and a learning preregistration now requires actual local learning, yoked
+neutrality, contingent acquisition, omission activity, permutation, and all
+lesions. This remains only a qualified mechanism smoke. Formal seeds stay
+sealed while a collision-checked seed manifest and reserved-seed learning
+implementation are committed and audited.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

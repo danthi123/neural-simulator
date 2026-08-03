@@ -1,6 +1,6 @@
 ---
 type: preregistration
-status: draft
+status: live
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v5-learning
 runner: research/runners/_vocal_action_credit_gate_v5_learning.py
@@ -9,9 +9,11 @@ runner: research/runners/_vocal_action_credit_gate_v5_learning.py
 # Gate B v5 learning: action trace to local reward prediction
 
 **Filed before the learning runner exists and before any scientific seed is
-assigned.** Reserved seed `0` may be used only for implementation smoke. Formal
-entry points remain sealed until the corrected v5 smoke audit is clear, this
-document is committed, and a separate seed manifest is committed.
+assigned.** The corrected frozen-dynamics smoke has passed an independent
+adversarial audit and this preregistration is committed. Reserved seed `0` may
+be used only for implementation smoke. Formal entry points remain sealed until
+a separate collision-checked seed manifest is committed and the implementation
+smoke passes its structural and dynamics checks.
 
 ## Question
 

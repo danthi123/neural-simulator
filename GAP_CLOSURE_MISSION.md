@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 16:38 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 18:26 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -41,8 +41,11 @@ excitation plus feed-forward inhibition. Its frozen-dynamics reserved seed-zero
 battery passes on NumPy and the RTX 3090 with one configuration (`18.06` and
 `17.36 Hz/cell`), zero changed weights, and explicit rejection of bilateral
 commit and outcome state. This is a qualified mechanism smoke, not learned
-credit; formal phases remain sealed pending adversarial re-audit and a fresh
-preregistration.
+credit. An independent audit found the corrected artifacts, controls, route
+confinement, and zero-weight-change claim clear. The learning preregistration is
+committed and live. Formal phases remain sealed while a deterministic seed
+manifest is committed and the reserved-seed learning implementation is built
+and audited.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -89,10 +92,11 @@ enforce evidence gates and refresh the main-branch index automatically.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Adversarially audit the cross-backend Gate B v5 smoke, then preregister fresh
-   formal partitions for actual local learning, contingent acquisition, yoked
-   neutrality, omission activity, permutation, and lesions. Do not assign or
-   open a formal seed until the audit and preregistration are committed.
+1. Commit a collision-checked Gate B v5 learning seed manifest, then implement
+   and audit the reserved seed-zero learning smoke. The independent frozen-
+   dynamics audit is clear and the learning preregistration is live, but do not
+   open a formal seed until the smoke passes its structural, contingent/yoked,
+   omission, permutation, lesion, and plasticity-isolation checks.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a
