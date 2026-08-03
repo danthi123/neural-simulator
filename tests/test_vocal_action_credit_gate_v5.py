@@ -67,8 +67,35 @@ def test_pathways_are_host_winner_free_and_outcome_symmetric(gate):
         assert all(not p.plastic for p in routes)
 
 
+def test_fixed_epoch_commit_read_rejects_bilateral_state(gate):
+    assert gate._winner_from_neural_counts([225, 15]) == 0
+    assert gate._winner_from_neural_counts([15, 225]) == 1
+    assert gate._winner_from_neural_counts([20, 20]) is None
+    assert gate._winner_from_neural_counts([11, 0]) is None
+    assert gate._channel_is_selective([26, 0], 0, 0.10)
+    assert not gate._channel_is_selective([26, 26], 0, 0.10)
+    assert not gate._channel_is_selective([0, 0], 0, 0.10)
+
+
+def test_coincidence_mask_is_confined_to_declared_tag_routes(gate):
+    bridge, _ = gate.build_v5_bridge()
+    audit = gate._coincidence_route_audit(bridge, (0, 1))
+    assert audit["enabled_synapses"] == 2592
+    assert audit["enabled_synapses"] == audit["intended_synapses"]
+    assert audit["enabled_outside_intended_routes"] == 0
+    assert audit["disabled_inside_intended_routes"] == 0
+
+
 def test_numpy_smoke(gate):
     result = gate.run_smoke()
     failed = [name for name, ok in result["checks"].items() if not ok]
     assert result["science_seed_executed"] is False
+    assert result["backend"] == "numpy"
+    preconditions = {row["name"]: row["ok"] for row in result["preconditions"]}
+    assert preconditions["formal_phases_sealed"] is True
+    assert preconditions["default_config_selected"] is True
+    assert result["checks"]["coincidence_is_confined_to_declared_tag_routes"] is True
+    assert result["checks"]["smoke_weights_are_frozen"] is True
+    assert result["checks"]["intact_outcome_is_channel_selective"] is True
+    assert result["checks"]["permutation_outcome_is_channel_selective"] is True
     assert result["status"] == "SMOKE_PASS", failed

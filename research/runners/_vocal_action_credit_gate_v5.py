@@ -14,7 +14,12 @@ sealed.
 
 from __future__ import annotations
 
+import argparse
+import hashlib
+import json
+import platform
 from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Iterable
 
 import numpy as np
@@ -61,19 +66,25 @@ OUTCOME_INHIBITION_GATE = "vocal_credit_v5_outcome_inhibition"
 
 @dataclass(frozen=True)
 class VocalCreditConfigV5(v3.VocalCreditConfigV3):
-    commit_to_value_weight: float = 20.0
-    arousal_to_value_weight: float = 20.0
+    commit_to_value_weight: float = 22.0
+    arousal_to_value_weight: float = 18.0
     outcome_to_value_weight: float = 2.0
-    outcome_to_value_fs_weight: float = 14.0
-    action_tag_center: float = 400.0
+    outcome_to_value_fs_weight: float = 18.0
+    action_tag_center: float = 300.0
     action_tag_slope: float = 0.20
-    action_tag_strength: float = 3.0
+    action_tag_strength: float = 2.0
+    action_tag_max_loser_ratio: float = 0.10
+    min_plateau_outcome_fraction: float = 0.20
+    min_outcome_excitation_fraction: float = 0.10
+    min_outcome_event_fraction: float = 0.10
+    min_outcome_inhibition_fraction: float = 0.20
+    max_outcome_loser_ratio: float = 0.10
     action_tag_tau_decay_ms: float = 500.0
     action_tag_tau_rise_ms: float = 2.0
     smoke_warmup_steps: int = 120
     smoke_action_steps: int = 100
     smoke_gap_steps: int = 100
-    smoke_outcome_steps: int = 40
+    smoke_outcome_steps: int = 60
 
 
 def v5_config() -> VocalCreditConfigV5:
@@ -215,6 +226,9 @@ def build_v5_bridge(
     bridge.cp_reward_eligibility_synapse_indices = xp.asarray(
         routes.all_indices(), dtype=xp.int64
     )
+    # Named route gates can override a global freeze. Freeze again after
+    # configuring ownership so this smoke isolates fixed dynamics.
+    bridge.set_global_plasticity_gain(0.0)
     return bridge, {
         "routes": routes,
         "tag_routes": tag_routes,
@@ -234,6 +248,32 @@ def _plateau_means(bridge) -> list[float]:
         float(state[_indices(bridge, _value(channel))].mean())
         for channel in CHANNELS
     ]
+
+
+def _coincidence_route_audit(bridge, action_permutation: tuple[int, int]) -> dict:
+    mask = np.asarray(to_host(bridge.cp_coincidence_synapse_mask), dtype=bool)
+    intended = np.zeros(mask.shape, dtype=bool)
+    route_counts: dict[str, int] = {}
+    for source_channel in CHANNELS:
+        target_channel = int(action_permutation[source_channel])
+        source = f"commit_{source_channel}"
+        target = _value(target_channel)
+        indices = _route_synapses(bridge, source, target)
+        intended[indices] = True
+        route_counts[f"{source}->{target}"] = int(len(indices))
+    for target_channel in CHANNELS:
+        source = "practice_arousal"
+        target = _value(target_channel)
+        indices = _route_synapses(bridge, source, target)
+        intended[indices] = True
+        route_counts[f"{source}->{target}"] = int(len(indices))
+    return {
+        "enabled_synapses": int(mask.sum()),
+        "intended_synapses": int(intended.sum()),
+        "enabled_outside_intended_routes": int(np.logical_and(mask, ~intended).sum()),
+        "disabled_inside_intended_routes": int(np.logical_and(~mask, intended).sum()),
+        "route_counts": route_counts,
+    }
 
 
 def _observe_counts(bridge, steps: int) -> dict[str, object]:
@@ -264,14 +304,16 @@ def _observe_counts(bridge, steps: int) -> dict[str, object]:
     return totals
 
 
-def _winner_from_neural_counts(motor_counts: list[int]) -> int | None:
-    crossed = [
-        channel for channel in CHANNELS
-        if motor_counts[channel] >= selector_config("v2").commit_threshold_spikes
-    ]
-    if len(crossed) != 1:
+def _winner_from_neural_counts(commit_counts: list[int]) -> int | None:
+    """Infer the fixed-epoch choice from neural commit state without controlling it."""
+    winner = int(np.argmax(commit_counts))
+    loser = 1 - winner
+    if commit_counts[winner] < selector_config("v2").commit_threshold_spikes:
         return None
-    return int(crossed[0])
+    loser_ratio = float(commit_counts[loser] / max(1, commit_counts[winner]))
+    if loser_ratio > selector_config("v2").clean_loser_ratio:
+        return None
+    return winner
 
 
 def _rates(counts: list[int], config: VocalCreditConfigV5) -> list[float]:
@@ -279,12 +321,23 @@ def _rates(counts: list[int], config: VocalCreditConfigV5) -> list[float]:
     return [float(count / config.n_value / seconds) for count in counts]
 
 
+def _channel_is_selective(
+    counts: list[int], expected: int | None, max_loser_ratio: float
+) -> bool:
+    if expected is None or counts[expected] <= 0:
+        return False
+    return bool(
+        counts[1 - expected] / counts[expected] <= max_loser_ratio
+    )
+
+
 def run_smoke_condition(
     control: str = "intact",
     config: VocalCreditConfigV5 | None = None,
 ) -> dict:
     controls = {
-        "intact", "arousal_lesion", "plateau_lesion",
+        "intact", "arousal_lesion", "commit_lesion", "plateau_lesion",
+        "no_outcome",
         "outcome_excitation_lesion", "outcome_inhibition_lesion",
         "action_channel_permutation",
     }
@@ -295,12 +348,20 @@ def run_smoke_condition(
     bridge, handles = build_v5_bridge(
         config=config, action_permutation=permutation
     )
+    coincidence_route_audit = _coincidence_route_audit(bridge, permutation)
+    xp, _ = get_backend()
+    if control == "commit_lesion":
+        commit_indices = np.concatenate(list(handles["tag_routes"].values()))
+        bridge.cp_connections.data[xp.asarray(commit_indices, dtype=xp.int64)] = 0.0
     if control == "plateau_lesion":
         bridge.cp_coincidence_synapse_mask[:] = False
     if control == "outcome_excitation_lesion":
         bridge.set_transmission_gate(OUTCOME_EXCITATION_GATE, 0.0)
     if control == "outcome_inhibition_lesion":
         bridge.set_transmission_gate(OUTCOME_INHIBITION_GATE, 0.0)
+    weights_before = np.asarray(
+        to_host(bridge.cp_connections.data), dtype=np.float32
+    ).copy()
 
     selector = selector_config("v2")
     v3._set_trial_current_v3(bridge, selector, config)
@@ -316,14 +377,20 @@ def run_smoke_condition(
     )
     action = _observe_counts(bridge, config.smoke_action_steps)
     plateau_after_action = _plateau_means(bridge)
-    winner = _winner_from_neural_counts(action["motor"])
+    winner = _winner_from_neural_counts(action["commit"])
 
     v3._set_trial_current_v3(bridge, selector, config)
     delay = _observe_counts(bridge, config.smoke_gap_steps)
     plateau_before_outcome = _plateau_means(bridge)
 
-    v3._set_trial_current_v3(bridge, selector, config, outcome=True)
+    v3._set_trial_current_v3(
+        bridge, selector, config, outcome=control != "no_outcome"
+    )
     outcome = _observe_counts(bridge, config.smoke_outcome_steps)
+    weights_after = np.asarray(
+        to_host(bridge.cp_connections.data), dtype=np.float32
+    )
+    weight_delta = np.abs(weights_after - weights_before)
     expected = None if winner is None else int(permutation[winner])
     result = {
         "control": control,
@@ -341,6 +408,11 @@ def run_smoke_condition(
         "plateau_before_outcome": plateau_before_outcome,
         "outcome_value_rate_hz_per_cell": _rates(outcome["value"], config),
         "host_boundary": dict(HOST_BOUNDARY),
+        "coincidence_route_audit": coincidence_route_audit,
+        "weight_change_audit": {
+            "changed_synapses": int(np.count_nonzero(weight_delta)),
+            "max_abs_delta": float(weight_delta.max(initial=0.0)),
+        },
         "route_gains": {
             "outcome_excitation": float(
                 bridge._transmission_gate_values[OUTCOME_EXCITATION_GATE]
@@ -355,10 +427,17 @@ def run_smoke_condition(
 
 
 def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
+    config = config or v5_config()
+    xp, _ = get_backend()
+    config_payload = json.dumps(
+        asdict(config), sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    config_digest = hashlib.sha256(config_payload).hexdigest()
     rows = {
         control: run_smoke_condition(control, config)
         for control in (
-            "intact", "arousal_lesion", "plateau_lesion",
+            "intact", "arousal_lesion", "commit_lesion", "plateau_lesion",
+            "no_outcome",
             "outcome_excitation_lesion", "outcome_inhibition_lesion",
             "action_channel_permutation",
         )
@@ -376,13 +455,13 @@ def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
                 intact["plateau_after_action"][expected],
                 rows["arousal_lesion"]["plateau_after_action"][expected],
             ),
-            "outcome_read_to_plateau": attributable_to(
-                "v5 outcome read from persistent action tag",
+            "outcome_window_activity_to_plateau": attributable_to(
+                "v5 outcome-window selected activity from persistent action tag",
                 intact["outcome"]["value"][expected],
                 rows["plateau_lesion"]["outcome"]["value"][expected],
             ),
-            "outcome_read_to_excitation": attributable_to(
-                "v5 outcome read from generic excitation",
+            "outcome_window_activity_to_excitation": attributable_to(
+                "v5 outcome-window selected activity from generic excitation",
                 intact["outcome"]["value"][expected],
                 rows["outcome_excitation_lesion"]["outcome"]["value"][expected],
             ),
@@ -393,6 +472,7 @@ def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
             ),
         }
     checks = {
+        "default_config_selected": asdict(config) == asdict(v5_config()),
         "reserved_smoke_seed_only": all(
             row["seed"] == SMOKE_SEED and not row["scientific_seed_executed"]
             for row in rows.values()
@@ -400,6 +480,18 @@ def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
         "no_host_winner_or_timing_latch": bool(
             not HOST_BOUNDARY["host_action_winner_latch"]
             and not HOST_BOUNDARY["host_action_timed_transmission_window"]
+        ),
+        "coincidence_is_confined_to_declared_tag_routes": all(
+            row["coincidence_route_audit"]["enabled_synapses"]
+            == row["coincidence_route_audit"]["intended_synapses"]
+            and row["coincidence_route_audit"]["enabled_outside_intended_routes"] == 0
+            and row["coincidence_route_audit"]["disabled_inside_intended_routes"] == 0
+            for row in rows.values()
+        ),
+        "smoke_weights_are_frozen": all(
+            row["weight_change_audit"]["changed_synapses"] == 0
+            and row["weight_change_audit"]["max_abs_delta"] == 0.0
+            for row in rows.values()
         ),
         "selector_commits": expected is not None,
         "coincidence_adds_selected_plateau": bool(
@@ -412,24 +504,40 @@ def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
             and intact["plateau_after_action"][expected]
             > rows["arousal_lesion"]["plateau_after_action"][expected]
         ),
+        "commit_is_load_bearing_for_tag": bool(
+            expected is not None
+            and intact["plateau_after_action"][expected]
+            > rows["commit_lesion"]["plateau_after_action"][expected]
+        ),
         "tag_is_channel_selective": bool(
             expected is not None
             and intact["plateau_before_outcome"][expected]
             > intact["plateau_before_outcome"][1 - expected]
+            and intact["plateau_before_outcome"][1 - expected]
+            / max(1e-12, intact["plateau_before_outcome"][expected])
+            <= config.action_tag_max_loser_ratio
         ),
         "permutation_moves_neural_tag": bool(
             permuted_expected is not None
             and permuted_expected == 1 - permuted["winner_observed_after_fixed_action_epoch"]
             and permuted["plateau_before_outcome"][permuted_expected]
             > permuted["plateau_before_outcome"][1 - permuted_expected]
+            and permuted["plateau_before_outcome"][1 - permuted_expected]
+            / max(1e-12, permuted["plateau_before_outcome"][permuted_expected])
+            <= config.action_tag_max_loser_ratio
         ),
         "plateau_lesion_removes_tag": max(
             rows["plateau_lesion"]["plateau_before_outcome"]
         ) == 0.0,
-        "plateau_is_load_bearing_for_outcome_read": bool(
+        "plateau_is_load_bearing_for_outcome_window_activity": bool(
             expected is not None
             and intact["outcome"]["value"][expected]
             > rows["plateau_lesion"]["outcome"]["value"][expected]
+            and (
+                intact["outcome"]["value"][expected]
+                - rows["plateau_lesion"]["outcome"]["value"][expected]
+            ) / max(1, intact["outcome"]["value"][expected])
+            >= config.min_plateau_outcome_fraction
         ),
         "generic_outcome_drives_both_fs_pools": all(
             count > 0 for count in intact["outcome"]["value_fs"]
@@ -438,11 +546,43 @@ def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
             expected is not None
             and intact["outcome"]["value"][expected]
             > rows["outcome_excitation_lesion"]["outcome"]["value"][expected]
+            and (
+                intact["outcome"]["value"][expected]
+                - rows["outcome_excitation_lesion"]["outcome"]["value"][expected]
+            ) / max(1, intact["outcome"]["value"][expected])
+            >= config.min_outcome_excitation_fraction
+        ),
+        "outcome_event_materially_modulates_tagged_population": bool(
+            expected is not None
+            and abs(
+                intact["outcome"]["value"][expected]
+                - rows["no_outcome"]["outcome"]["value"][expected]
+            ) / max(1, rows["no_outcome"]["outcome"]["value"][expected])
+            >= config.min_outcome_event_fraction
         ),
         "outcome_inhibition_is_load_bearing": bool(
             expected is not None
             and rows["outcome_inhibition_lesion"]["outcome"]["value"][expected]
             > intact["outcome"]["value"][expected]
+            and (
+                rows["outcome_inhibition_lesion"]["outcome"]["value"][expected]
+                - intact["outcome"]["value"][expected]
+            ) / max(1, intact["outcome"]["value"][expected])
+            >= config.min_outcome_inhibition_fraction
+        ),
+        "intact_outcome_is_channel_selective": bool(
+            _channel_is_selective(
+                intact["outcome"]["value"],
+                expected,
+                config.max_outcome_loser_ratio,
+            )
+        ),
+        "permutation_outcome_is_channel_selective": bool(
+            _channel_is_selective(
+                permuted["outcome"]["value"],
+                permuted_expected,
+                config.max_outcome_loser_ratio,
+            )
         ),
         "selected_outcome_rate_is_bounded_1_to_20_hz_per_cell": bool(
             expected is not None
@@ -450,8 +590,40 @@ def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
         ),
     }
     return {
+        "artifact_schema_version": 1,
         "probe": "vocal_action_credit_gate_b_v5",
         "version": "v5-smoke-only",
+        "backend": "cupy" if xp.__name__ == "cupy" else "numpy",
+        "device": (
+            xp.cuda.runtime.getDeviceProperties(0)["name"].decode("utf-8")
+            if xp.__name__ == "cupy"
+            else platform.processor() or platform.machine() or "CPU"
+        ),
+        "config_sha256": config_digest,
+        "preconditions": [
+            {
+                "name": "reserved_smoke_seed_only",
+                "ok": checks["reserved_smoke_seed_only"],
+                "observed": SMOKE_SEED,
+                "expected": SMOKE_SEED,
+            },
+            {
+                "name": "formal_phases_sealed",
+                "ok": OPEN_PHASES == (),
+                "observed": list(OPEN_PHASES),
+                "expected": [],
+            },
+            {
+                "name": "default_config_selected",
+                "ok": checks["default_config_selected"],
+                "observed_sha256": config_digest,
+                "expected_sha256": hashlib.sha256(
+                    json.dumps(
+                        asdict(v5_config()), sort_keys=True, separators=(",", ":")
+                    ).encode("utf-8")
+                ).hexdigest(),
+            },
+        ],
         "science_seed_executed": False,
         "open_phases": list(OPEN_PHASES),
         "host_boundary": dict(HOST_BOUNDARY),
@@ -464,3 +636,23 @@ def run_smoke(config: VocalCreditConfigV5 | None = None) -> dict:
 
 def run_formal_seed(seed: int, config: VocalCreditConfigV5 | None = None):
     validate_formal_seeds((seed,))
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    result = run_smoke()
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({
+        "status": result["status"],
+        "backend": result["backend"],
+        "device": result["device"],
+        "output": str(args.output),
+    }))
+    return 0 if result["status"] == "SMOKE_PASS" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
