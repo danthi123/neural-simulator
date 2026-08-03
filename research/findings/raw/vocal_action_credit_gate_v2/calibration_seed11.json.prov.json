@@ -1,0 +1,33 @@
+{
+ "run_id": "1785779144-1236584",
+ "runner": "research/runners/_vocal_action_credit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate.py",
+  "--credit-version",
+  "v2",
+  "--seeds",
+  "11",
+  "--training-trials",
+  "40",
+  "--baseline-trials",
+  "10",
+  "--evaluation-trials",
+  "20",
+  "--output",
+  "research/findings/raw/vocal_action_credit_gate_v2/calibration_seed11.json"
+ ],
+ "git_sha": "4fddb43e0",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-03T13:45:44",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/vocal_action_credit_gate_v2/calibration_seed11.json"
+}

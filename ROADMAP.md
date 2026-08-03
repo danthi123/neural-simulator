@@ -65,9 +65,12 @@ counterproductive bilateral striatal-interneuron branch and passed all four:
 and zero actions when shared arousal or the direct pathway was lesioned. Gate A
 is therefore complete. Gate B's first local reward-credit circuit learned under
 both contingent and unrelated delayed reward, exposing arbitrary action bias
-rather than useful credit. A second version adds competing spiking action-value
-populations and is still in calibration; development and held-out seeds remain
-locked. After local credit is reliable, return to same-brain adaptation,
+rather than useful credit. A second version added competing spiking action-value
+populations, but clean calibration still saturated under unrelated reward: one
+seed chose each arbitrary action. A preregistered third version now adds a
+spiking expected-omission pathway through LHb- and RMTg-like populations plus
+local critic normalization; all of its scientific seeds remain untouched.
+After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
 ### 2. Turn Internal Messages Into Natural Speech

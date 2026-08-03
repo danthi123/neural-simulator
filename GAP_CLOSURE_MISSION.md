@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 13:45 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 14:10 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -20,9 +20,11 @@ continuously running spiking brain.
 **Grounded communication:** the two-intent by two-referent learned convention is
 6-seed GO, and the intrinsic Gate A v2 neural action selector is 4-seed GO.
 Gate B v1 local delayed reward credit is NO-GO because unrelated yoked reward
-still creates arbitrary preference. Gate B v2 adds spiking action-value
-populations and is running calibration seeds 7 and 11 concurrently on the RTX
-3090. Development and held-out seeds are mechanically locked.
+still creates arbitrary preference. Gate B v2's spiking action-value critic is
+also NO-GO on two clean calibration seeds: contingent behavior reached 100%,
+but yoked behavior saturated toward opposite arbitrary actions across seeds.
+Gate B v3 is preregistered with a spiking LHb-RMTg expected-omission path,
+reward veto, and local critic normalization. Its scientific seeds are untouched.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -51,10 +53,10 @@ evidence or workflow commit.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Finish and file Gate B v2 calibration honestly; open no reserved seeds.
-2. Build replay v3 around selective learned CA1-to-cortex target reinstatement.
-3. Fix the source v3 functional tradeoff before implementing or running it.
-4. Build locally learned visual invariance upstream of spike-latency selection.
+1. Run Gate B v3 calibration without opening later phases.
+2. Run replay v3 learned-index calibration under its fixed order/content controls.
+3. Run source v3 local-homeostasis calibration under its bounded tradeoff rule.
+4. Run visual temporal-binding calibration with labels restricted to scoring.
 5. Merge only cleared mechanisms into the persistent develop-loop; do not scale
    the conventional language scaffold ahead of grounded message selection.
 
