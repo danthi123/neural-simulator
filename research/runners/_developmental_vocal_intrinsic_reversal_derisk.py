@@ -254,6 +254,9 @@ def _run_error_path_lesion_control(seed):
     settle_after_training(agent, steps=300)
     calibrate_snc_tonic(agent, tonic_pA=220.0)
     initial = _train(agent, identity, INITIAL_TRIALS, seed=seed)
+    settle_after_training(agent, steps=300)
+    initial_origin = _snapshot_trial_state(agent)
+    initial_evaluation = _evaluate_from_origin(agent, identity, initial_origin)
     lesioned = (
         _zero_pathway(agent, VOCAL_NEGATIVE_FEEDBACK, VOCAL_RMTG)
         + _zero_pathway(agent, VOCAL_RMTG, "limbic_snc")
@@ -273,6 +276,7 @@ def _run_error_path_lesion_control(seed):
     result = {
         "lesioned_synapses": lesioned,
         "initial_training": initial,
+        "initial_evaluation": initial_evaluation,
         "extinction_training": extinction,
         "reversal_training": reversal,
         "evaluation": evaluation,
@@ -343,19 +347,19 @@ def run_seed(seed, *, full_controls=False, verbose=True):
         del agent
         _release()
         controls = {
-            "no_consequence": _run_acquisition_control(seed + 1000, mode="none"),
+            "no_consequence": _run_acquisition_control(seed, mode="none"),
             "yoked_reward": _run_acquisition_control(
-                seed + 2000,
+                seed,
                 mode="yoked",
                 yoked_schedule=main_reward_schedule,
             ),
-            "dopamine_lesion": _run_acquisition_control(seed + 3000, mode="da_lesion"),
+            "dopamine_lesion": _run_acquisition_control(seed, mode="da_lesion"),
             "exploration_arousal_lesion": _run_acquisition_control(
-                seed + 4000,
+                seed,
                 mode="contingent",
                 arousal_pA=0.0,
             ),
-            "rmtg_error_path_lesion": _run_error_path_lesion_control(seed + 5000),
+            "rmtg_error_path_lesion": _run_error_path_lesion_control(seed),
         }
         control_acc = {
             name: control["evaluation"]["joint_accuracy"]
@@ -390,6 +394,11 @@ def run_seed(seed, *, full_controls=False, verbose=True):
                 control_acc["exploration_arousal_lesion"] <= 0.25
             ),
             "rmtg_lesion_blocks_reversal": control_acc["rmtg_error_path_lesion"] <= 0.50,
+            "rmtg_control_acquires_before_lesion": (
+                controls["rmtg_error_path_lesion"]["initial_evaluation"][
+                    "joint_accuracy"
+                ] == 1.0
+            ),
             "causal_attribution_is_substantial": all(
                 value is not None and value >= 0.50 for value in attribution.values()
             ),
