@@ -1,0 +1,1000 @@
+{
+  "summary": {
+    "probe": "laneD_visual_identity_temporal_binding_gate",
+    "phase": "calibration",
+    "seeds": [
+      224,
+      225
+    ],
+    "formal_gate_run": true,
+    "formal_verdict": "NO-GO",
+    "scientific_evidence": true,
+    "passing_seeds": 0,
+    "seed_partitions": {
+      "calibration": [
+        224,
+        225
+      ],
+      "development": [
+        226,
+        227,
+        322
+      ],
+      "heldout": [
+        323,
+        324,
+        325
+      ]
+    },
+    "smoke_seed": 220,
+    "smoke_seed_is_scientific_evidence": false,
+    "controls": [
+      "intact",
+      "temporal_shuffle",
+      "persistence_lesion",
+      "trace_lesion",
+      "homeostasis_lesion",
+      "no_learning",
+      "pixel_scramble",
+      "V1_flat_latency_drive",
+      "V1_neural_drive_lesion",
+      "V1_fs_pathway_lesion",
+      "identity_flat_latency_drive",
+      "identity_neural_drive_lesion",
+      "identity_fs_pathway_lesion"
+    ],
+    "mechanism": "Graded Gabor/V1-complex activity becomes V1 spike assemblies through first-spike latency. Substrate-resident V1-to-identity permanences are updated from local pre-spike traces and post-spike winners; short-lived post-winner persistence binds adjacent views during learning. Identity inference uses only V1 spikes and first-spike identity selection.",
+    "honest_scope": "No host activation ranking or object label selects V1 or identity units. The host still computes fixed Gabor responses, divisive normalization, overlap-to-current scaling, temporal traces, persistence current, spike-time readout, same-step ties, track boundaries, and external scoring. These are explicit scaffolds and causal controls, not completed biology.",
+    "config": {
+      "phase": "calibration",
+      "seeds": [
+        224,
+        225
+      ],
+      "train_frames": 12,
+      "tracks_per_object": 2,
+      "held_frames": 8,
+      "image_size": 32,
+      "pixel_noise": 0.025,
+      "n_orientations": 8,
+      "n_frequencies": 2,
+      "n_pos": 8,
+      "rf_radius": 4,
+      "complex_norm": "local_orient_div",
+      "v1_k_active": 32,
+      "v1_fs_neurons": 12,
+      "n_col": 240,
+      "k_win": 12,
+      "epochs": 10,
+      "trace_decay": 0.8,
+      "persistence_decay": 0.72,
+      "persistence_gain": 3.0,
+      "pool_lr_pot": 0.05,
+      "pool_lr_depress": 0.01,
+      "homeostasis_rate": 0.01,
+      "homeostasis_strength": 6.0,
+      "latency_fs_neurons": 8,
+      "latency_steps": 40,
+      "out": "research/findings/raw/parallel_gates/visual_temporal_binding_calibration.json"
+    },
+    "elapsed_seconds": 86.36
+  },
+  "per_seed": [
+    {
+      "seed": 224,
+      "chance": 0.25,
+      "n_objects": 4,
+      "n_train_images": 96,
+      "n_heldout_images": 32,
+      "arms": {
+        "intact": {
+          "heldout_identity_decode": 0.2188,
+          "held_to_train_same_cosine": 0.1185,
+          "held_to_train_cross_cosine": 0.0663,
+          "held_to_train_cosine_margin": 0.0522,
+          "held_within_object_jaccard": 0.0631,
+          "held_cross_object_jaccard": 0.0642,
+          "held_jaccard_margin": -0.0011,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 129,
+            "dead_column_fraction": 0.4625,
+            "usage_cv": 1.0356,
+            "normalized_usage_entropy": 0.87,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 66048,
+            "changed_synapse_fraction": 0.5375,
+            "mean_absolute_change": 0.213583
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": true,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "temporal_shuffle": {
+          "heldout_identity_decode": 0.3438,
+          "held_to_train_same_cosine": 0.0954,
+          "held_to_train_cross_cosine": 0.0872,
+          "held_to_train_cosine_margin": 0.0082,
+          "held_within_object_jaccard": 0.041,
+          "held_cross_object_jaccard": 0.0607,
+          "held_jaccard_margin": -0.0197,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 117,
+            "dead_column_fraction": 0.5125,
+            "usage_cv": 1.0845,
+            "normalized_usage_entropy": 0.8601,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 59904,
+            "changed_synapse_fraction": 0.4875,
+            "mean_absolute_change": 0.198636
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": true,
+            "homeostasis": "slow",
+            "shuffle": true,
+            "learning": true
+          }
+        },
+        "persistence_lesion": {
+          "heldout_identity_decode": 0.2812,
+          "held_to_train_same_cosine": 0.1004,
+          "held_to_train_cross_cosine": 0.0692,
+          "held_to_train_cosine_margin": 0.0312,
+          "held_within_object_jaccard": 0.0682,
+          "held_cross_object_jaccard": 0.0774,
+          "held_jaccard_margin": -0.0091,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 149,
+            "dead_column_fraction": 0.3792,
+            "usage_cv": 0.8844,
+            "normalized_usage_entropy": 0.8977,
+            "persistence_bias_presentations": 0
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 76288,
+            "changed_synapse_fraction": 0.620833,
+            "mean_absolute_change": 0.244704
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": false,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "trace_lesion": {
+          "heldout_identity_decode": 0.2812,
+          "held_to_train_same_cosine": 0.0255,
+          "held_to_train_cross_cosine": 0.0108,
+          "held_to_train_cosine_margin": 0.0147,
+          "held_within_object_jaccard": 0.0642,
+          "held_cross_object_jaccard": 0.0785,
+          "held_jaccard_margin": -0.0143,
+          "mean_code_activity": 0.0491,
+          "usage": {
+            "active_columns": 200,
+            "dead_column_fraction": 0.1667,
+            "usage_cv": 0.7394,
+            "normalized_usage_entropy": 0.9368,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 102400,
+            "changed_synapse_fraction": 0.833333,
+            "mean_absolute_change": 0.286378
+          },
+          "mechanism": {
+            "trace": false,
+            "persistence": true,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "homeostasis_lesion": {
+          "heldout_identity_decode": 0.4062,
+          "held_to_train_same_cosine": 0.679,
+          "held_to_train_cross_cosine": 0.6586,
+          "held_to_train_cosine_margin": 0.0205,
+          "held_within_object_jaccard": 0.4899,
+          "held_cross_object_jaccard": 0.5023,
+          "held_jaccard_margin": -0.0125,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 43,
+            "dead_column_fraction": 0.8208,
+            "usage_cv": 3.8796,
+            "normalized_usage_entropy": 0.5162,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 22016,
+            "changed_synapse_fraction": 0.179167,
+            "mean_absolute_change": 0.041101
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": true,
+            "homeostasis": "none",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "no_learning": {
+          "heldout_identity_decode": 0.2812,
+          "held_to_train_same_cosine": 0.0729,
+          "held_to_train_cross_cosine": 0.0703,
+          "held_to_train_cosine_margin": 0.0026,
+          "held_within_object_jaccard": 0.035,
+          "held_cross_object_jaccard": 0.0417,
+          "held_jaccard_margin": -0.0067,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 0,
+            "dead_column_fraction": 1.0,
+            "usage_cv": 0.0,
+            "normalized_usage_entropy": 0.0,
+            "persistence_bias_presentations": 0
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 0,
+            "changed_synapse_fraction": 0.0,
+            "mean_absolute_change": 0.0
+          },
+          "mechanism": {
+            "trace": false,
+            "persistence": false,
+            "homeostasis": "none",
+            "shuffle": false,
+            "learning": false
+          }
+        }
+      },
+      "pixel_scramble": {
+        "heldout_identity_decode": 0.1562,
+        "held_to_train_same_cosine": 0.0314,
+        "held_to_train_cross_cosine": 0.0798,
+        "held_to_train_cosine_margin": -0.0484,
+        "held_within_object_jaccard": 0.0858,
+        "held_cross_object_jaccard": 0.0717,
+        "held_jaccard_margin": 0.0141,
+        "mean_code_activity": 0.05
+      },
+      "v1_selection": {
+        "graded_winners": [
+          9,
+          71,
+          87,
+          97,
+          138,
+          155,
+          156,
+          160,
+          161,
+          188,
+          195,
+          202,
+          210,
+          216,
+          220,
+          224,
+          252,
+          257,
+          259,
+          272,
+          274,
+          280,
+          316,
+          328,
+          336,
+          338,
+          356,
+          392,
+          419,
+          420,
+          436,
+          457
+        ],
+        "graded_host_reference_overlap": 0.9375,
+        "flat_drive_overlap_with_graded": 0.0625,
+        "flat_drive_winners": [
+          5,
+          23,
+          32,
+          49,
+          68,
+          128,
+          136,
+          137,
+          155,
+          165,
+          176,
+          180,
+          183,
+          191,
+          200,
+          204,
+          240,
+          247,
+          248,
+          252,
+          269,
+          312,
+          315,
+          324,
+          347,
+          384,
+          391,
+          393,
+          400,
+          438,
+          449,
+          503
+        ],
+        "neural_drive_lesion_winners": [],
+        "fs_lesion_winner_overlap": 1.0,
+        "fs_intact_columns_fired": 512,
+        "fs_lesion_columns_fired": 512,
+        "host_drive_ranking_used_for_winners": false
+      },
+      "identity_selection": {
+        "graded_winners": [
+          10,
+          44,
+          75,
+          77,
+          99,
+          152,
+          164,
+          208,
+          225,
+          230,
+          232,
+          236
+        ],
+        "graded_host_reference_overlap": 0.8333,
+        "flat_drive_overlap_with_graded": 0.0,
+        "flat_drive_winners": [
+          1,
+          41,
+          57,
+          63,
+          68,
+          73,
+          117,
+          181,
+          195,
+          207,
+          209,
+          238
+        ],
+        "neural_drive_lesion_winners": [],
+        "fs_lesion_winner_overlap": 0.6667,
+        "fs_intact_columns_fired": 240,
+        "fs_lesion_columns_fired": 169,
+        "host_drive_ranking_used_for_winners": false
+      },
+      "v1_selection_telemetry": {
+        "selection_route": "first_spike_latency",
+        "winner_source": "cp_firing_states timing",
+        "host_drive_ranking_used_for_winners": false,
+        "host_spike_time_readout": true,
+        "host_same_step_tie_break": "seeded drive-independent key",
+        "fs_pathways_enabled": true,
+        "selection_calls": 160,
+        "mean_columns_fired_per_window": 512.0,
+        "last_columns_fired": 512,
+        "representation_stage": "graded V1-complex to V1 spike assembly",
+        "host_top_k_used": false
+      },
+      "identity_selection_telemetry": {
+        "selection_route": "first_spike_latency",
+        "winner_source": "cp_firing_states timing",
+        "host_drive_ranking_used_for_winners": false,
+        "host_spike_time_readout": true,
+        "host_same_step_tie_break": "seeded drive-independent key",
+        "fs_pathways_enabled": true,
+        "selection_calls": 1123,
+        "mean_columns_fired_per_window": 128.439,
+        "last_columns_fired": 0
+      },
+      "diagnostics": {
+        "decode_above_chance": false,
+        "identity_margin_positive": true,
+        "temporal_order_load_bearing": true,
+        "persistence_load_bearing": true,
+        "presynaptic_trace_load_bearing": true,
+        "homeostasis_reduces_usage_cv": true,
+        "no_learning_costs_decode": false,
+        "no_learning_costs_margin": true,
+        "no_learning_changes_no_permanences": true,
+        "pixel_scramble_at_or_below_half": true,
+        "pixel_scramble_at_or_below_chance": true,
+        "pixel_scramble_costs_decode": false,
+        "local_synapses_changed": true,
+        "v1_spike_selection_produces_k_winners": true,
+        "v1_neural_drive_lesion_silences": true,
+        "v1_fs_pathway_is_causal": false,
+        "identity_spike_selection_produces_k_winners": true,
+        "identity_neural_drive_lesion_silences": true,
+        "identity_fs_pathway_is_causal": false,
+        "identity_latency_tracks_graded_drive": true,
+        "identity_flat_drive_destroys_rank_signal": true
+      },
+      "phase": "calibration",
+      "scientific_evidence": true,
+      "calibration_status": "CALIBRATION_FAIL",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "successor seed partitions are fresh",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "smoke seed is outside every scientific partition",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "training and held-out transforms are disjoint",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "temporal shuffle preserves the exact frame multiset",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "labels do not enter learning or inference",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "V1 spikes come from latency rather than host top-k",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "identity winners come from latency rather than host top-k",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "all scored measurements are finite",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": [],
+      "calibration_readiness_verdict": "NO-GO",
+      "formal_verdict": "NO-GO",
+      "stream_checks": {
+        "fresh_seed_partitions": true,
+        "smoke_seed_outside_scientific_partitions": true,
+        "same_multiset_after_temporal_shuffle": true,
+        "labels_enter_learning_or_inference": false,
+        "training_inputs": [
+          "V1 spike indices",
+          "recent presynaptic spike trace",
+          "recent postsynaptic spike trace"
+        ],
+        "inference_inputs": [
+          "V1 spike indices"
+        ],
+        "v1_spikes_read_from": "first-spike timing in cp_firing_states",
+        "identity_winners_read_from": "first-spike timing in cp_firing_states",
+        "host_top_k_determines_v1_spikes": false,
+        "host_top_k_determines_identity_winners": false,
+        "remaining_scaffolds": [
+          "fixed Gabor filters and host V1-complex normalization",
+          "host overlap-to-current max normalization in both latency populations",
+          "host first-spike-time readout",
+          "host seeded drive-independent same-step tie break",
+          "runner-maintained presynaptic temporal trace",
+          "runner-maintained postsynaptic persistence current",
+          "fixed synthetic continuous-track boundaries",
+          "host evaluator labels and centroid scoring"
+        ]
+      }
+    },
+    {
+      "seed": 225,
+      "chance": 0.25,
+      "n_objects": 4,
+      "n_train_images": 96,
+      "n_heldout_images": 32,
+      "arms": {
+        "intact": {
+          "heldout_identity_decode": 0.3125,
+          "held_to_train_same_cosine": 0.0729,
+          "held_to_train_cross_cosine": 0.0648,
+          "held_to_train_cosine_margin": 0.0081,
+          "held_within_object_jaccard": 0.0461,
+          "held_cross_object_jaccard": 0.0639,
+          "held_jaccard_margin": -0.0178,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 139,
+            "dead_column_fraction": 0.4208,
+            "usage_cv": 0.9535,
+            "normalized_usage_entropy": 0.8858,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 71168,
+            "changed_synapse_fraction": 0.579167,
+            "mean_absolute_change": 0.228304
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": true,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "temporal_shuffle": {
+          "heldout_identity_decode": 0.4062,
+          "held_to_train_same_cosine": 0.0887,
+          "held_to_train_cross_cosine": 0.0847,
+          "held_to_train_cosine_margin": 0.0039,
+          "held_within_object_jaccard": 0.0454,
+          "held_cross_object_jaccard": 0.0609,
+          "held_jaccard_margin": -0.0155,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 117,
+            "dead_column_fraction": 0.5125,
+            "usage_cv": 1.0888,
+            "normalized_usage_entropy": 0.8587,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 59904,
+            "changed_synapse_fraction": 0.4875,
+            "mean_absolute_change": 0.194501
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": true,
+            "homeostasis": "slow",
+            "shuffle": true,
+            "learning": true
+          }
+        },
+        "persistence_lesion": {
+          "heldout_identity_decode": 0.4062,
+          "held_to_train_same_cosine": 0.0783,
+          "held_to_train_cross_cosine": 0.0682,
+          "held_to_train_cosine_margin": 0.0101,
+          "held_within_object_jaccard": 0.0542,
+          "held_cross_object_jaccard": 0.0751,
+          "held_jaccard_margin": -0.0209,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 149,
+            "dead_column_fraction": 0.3792,
+            "usage_cv": 0.8648,
+            "normalized_usage_entropy": 0.9009,
+            "persistence_bias_presentations": 0
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 76288,
+            "changed_synapse_fraction": 0.620833,
+            "mean_absolute_change": 0.24203
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": false,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "trace_lesion": {
+          "heldout_identity_decode": 0.3125,
+          "held_to_train_same_cosine": 0.0198,
+          "held_to_train_cross_cosine": 0.0064,
+          "held_to_train_cosine_margin": 0.0134,
+          "held_within_object_jaccard": 0.0921,
+          "held_cross_object_jaccard": 0.0964,
+          "held_jaccard_margin": -0.0044,
+          "mean_code_activity": 0.0491,
+          "usage": {
+            "active_columns": 198,
+            "dead_column_fraction": 0.175,
+            "usage_cv": 0.7276,
+            "normalized_usage_entropy": 0.938,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 101376,
+            "changed_synapse_fraction": 0.825,
+            "mean_absolute_change": 0.283753
+          },
+          "mechanism": {
+            "trace": false,
+            "persistence": true,
+            "homeostasis": "slow",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "homeostasis_lesion": {
+          "heldout_identity_decode": 0.2188,
+          "held_to_train_same_cosine": 0.4721,
+          "held_to_train_cross_cosine": 0.5221,
+          "held_to_train_cosine_margin": -0.0501,
+          "held_within_object_jaccard": 0.368,
+          "held_cross_object_jaccard": 0.3587,
+          "held_jaccard_margin": 0.0093,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 56,
+            "dead_column_fraction": 0.7667,
+            "usage_cv": 3.5745,
+            "normalized_usage_entropy": 0.5569,
+            "persistence_bias_presentations": 880
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 28672,
+            "changed_synapse_fraction": 0.233333,
+            "mean_absolute_change": 0.056812
+          },
+          "mechanism": {
+            "trace": true,
+            "persistence": true,
+            "homeostasis": "none",
+            "shuffle": false,
+            "learning": true
+          }
+        },
+        "no_learning": {
+          "heldout_identity_decode": 0.25,
+          "held_to_train_same_cosine": 0.0751,
+          "held_to_train_cross_cosine": 0.0722,
+          "held_to_train_cosine_margin": 0.0029,
+          "held_within_object_jaccard": 0.0344,
+          "held_cross_object_jaccard": 0.043,
+          "held_jaccard_margin": -0.0086,
+          "mean_code_activity": 0.05,
+          "usage": {
+            "active_columns": 0,
+            "dead_column_fraction": 1.0,
+            "usage_cv": 0.0,
+            "normalized_usage_entropy": 0.0,
+            "persistence_bias_presentations": 0
+          },
+          "local_learning": {
+            "permanences_live_in": "SimulationBridge.cp_connections.data",
+            "update_inputs": "recent presynaptic V1 spikes and postsynaptic spike winners",
+            "changed_synapses": 0,
+            "changed_synapse_fraction": 0.0,
+            "mean_absolute_change": 0.0
+          },
+          "mechanism": {
+            "trace": false,
+            "persistence": false,
+            "homeostasis": "none",
+            "shuffle": false,
+            "learning": false
+          }
+        }
+      },
+      "pixel_scramble": {
+        "heldout_identity_decode": 0.25,
+        "held_to_train_same_cosine": 0.0587,
+        "held_to_train_cross_cosine": 0.0448,
+        "held_to_train_cosine_margin": 0.0139,
+        "held_within_object_jaccard": 0.052,
+        "held_cross_object_jaccard": 0.0553,
+        "held_jaccard_margin": -0.0033,
+        "mean_code_activity": 0.05
+      },
+      "v1_selection": {
+        "graded_winners": [
+          9,
+          17,
+          33,
+          40,
+          97,
+          103,
+          138,
+          155,
+          156,
+          160,
+          161,
+          202,
+          210,
+          216,
+          220,
+          224,
+          272,
+          274,
+          280,
+          305,
+          328,
+          336,
+          338,
+          344,
+          356,
+          369,
+          392,
+          419,
+          420,
+          457,
+          483,
+          486
+        ],
+        "graded_host_reference_overlap": 0.9062,
+        "flat_drive_overlap_with_graded": 0.0312,
+        "flat_drive_winners": [
+          10,
+          19,
+          35,
+          58,
+          65,
+          77,
+          98,
+          127,
+          132,
+          137,
+          145,
+          164,
+          175,
+          203,
+          241,
+          252,
+          274,
+          281,
+          295,
+          314,
+          327,
+          335,
+          376,
+          377,
+          383,
+          389,
+          396,
+          398,
+          427,
+          447,
+          487,
+          508
+        ],
+        "neural_drive_lesion_winners": [],
+        "fs_lesion_winner_overlap": 1.0,
+        "fs_intact_columns_fired": 512,
+        "fs_lesion_columns_fired": 512,
+        "host_drive_ranking_used_for_winners": false
+      },
+      "identity_selection": {
+        "graded_winners": [
+          0,
+          27,
+          28,
+          34,
+          35,
+          41,
+          55,
+          118,
+          126,
+          155,
+          174,
+          200
+        ],
+        "graded_host_reference_overlap": 0.8333,
+        "flat_drive_overlap_with_graded": 0.0833,
+        "flat_drive_winners": [
+          30,
+          33,
+          36,
+          37,
+          59,
+          66,
+          104,
+          111,
+          171,
+          173,
+          200,
+          234
+        ],
+        "neural_drive_lesion_winners": [],
+        "fs_lesion_winner_overlap": 0.8333,
+        "fs_intact_columns_fired": 47,
+        "fs_lesion_columns_fired": 164,
+        "host_drive_ranking_used_for_winners": false
+      },
+      "v1_selection_telemetry": {
+        "selection_route": "first_spike_latency",
+        "winner_source": "cp_firing_states timing",
+        "host_drive_ranking_used_for_winners": false,
+        "host_spike_time_readout": true,
+        "host_same_step_tie_break": "seeded drive-independent key",
+        "fs_pathways_enabled": true,
+        "selection_calls": 160,
+        "mean_columns_fired_per_window": 512.0,
+        "last_columns_fired": 512,
+        "representation_stage": "graded V1-complex to V1 spike assembly",
+        "host_top_k_used": false
+      },
+      "identity_selection_telemetry": {
+        "selection_route": "first_spike_latency",
+        "winner_source": "cp_firing_states timing",
+        "host_drive_ranking_used_for_winners": false,
+        "host_spike_time_readout": true,
+        "host_same_step_tie_break": "seeded drive-independent key",
+        "fs_pathways_enabled": true,
+        "selection_calls": 1123,
+        "mean_columns_fired_per_window": 136.0534,
+        "last_columns_fired": 0
+      },
+      "diagnostics": {
+        "decode_above_chance": false,
+        "identity_margin_positive": true,
+        "temporal_order_load_bearing": true,
+        "persistence_load_bearing": false,
+        "presynaptic_trace_load_bearing": false,
+        "homeostasis_reduces_usage_cv": true,
+        "no_learning_costs_decode": false,
+        "no_learning_costs_margin": true,
+        "no_learning_changes_no_permanences": true,
+        "pixel_scramble_at_or_below_half": true,
+        "pixel_scramble_at_or_below_chance": true,
+        "pixel_scramble_costs_decode": false,
+        "local_synapses_changed": true,
+        "v1_spike_selection_produces_k_winners": true,
+        "v1_neural_drive_lesion_silences": true,
+        "v1_fs_pathway_is_causal": false,
+        "identity_spike_selection_produces_k_winners": true,
+        "identity_neural_drive_lesion_silences": true,
+        "identity_fs_pathway_is_causal": true,
+        "identity_latency_tracks_graded_drive": true,
+        "identity_flat_drive_destroys_rank_signal": true
+      },
+      "phase": "calibration",
+      "scientific_evidence": true,
+      "calibration_status": "CALIBRATION_FAIL",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "successor seed partitions are fresh",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "smoke seed is outside every scientific partition",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "training and held-out transforms are disjoint",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "temporal shuffle preserves the exact frame multiset",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "labels do not enter learning or inference",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "V1 spikes come from latency rather than host top-k",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "identity winners come from latency rather than host top-k",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "all scored measurements are finite",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": [],
+      "calibration_readiness_verdict": "NO-GO",
+      "formal_verdict": "NO-GO",
+      "stream_checks": {
+        "fresh_seed_partitions": true,
+        "smoke_seed_outside_scientific_partitions": true,
+        "same_multiset_after_temporal_shuffle": true,
+        "labels_enter_learning_or_inference": false,
+        "training_inputs": [
+          "V1 spike indices",
+          "recent presynaptic spike trace",
+          "recent postsynaptic spike trace"
+        ],
+        "inference_inputs": [
+          "V1 spike indices"
+        ],
+        "v1_spikes_read_from": "first-spike timing in cp_firing_states",
+        "identity_winners_read_from": "first-spike timing in cp_firing_states",
+        "host_top_k_determines_v1_spikes": false,
+        "host_top_k_determines_identity_winners": false,
+        "remaining_scaffolds": [
+          "fixed Gabor filters and host V1-complex normalization",
+          "host overlap-to-current max normalization in both latency populations",
+          "host first-spike-time readout",
+          "host seeded drive-independent same-step tie break",
+          "runner-maintained presynaptic temporal trace",
+          "runner-maintained postsynaptic persistence current",
+          "fixed synthetic continuous-track boundaries",
+          "host evaluator labels and centroid scoring"
+        ]
+      }
+    }
+  ]
+}

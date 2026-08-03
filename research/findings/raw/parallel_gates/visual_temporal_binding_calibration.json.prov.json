@@ -1,0 +1,29 @@
+{
+ "run_id": "1785781652-482653",
+ "runner": "research/runners/_laneD_visual_identity_temporal_binding_gate.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneD_visual_identity_temporal_binding_gate.py",
+  "--phase",
+  "calibration",
+  "--seeds",
+  "224",
+  "225",
+  "--out",
+  "research/findings/raw/parallel_gates/visual_temporal_binding_calibration.json"
+ ],
+ "git_sha": "d24548b630a6c43012baa67bbed7bdde10add5a9",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "f4561464b4e03be3a8ac9b024624c8bd7ab67fa56348f4eddd3764a42caad723",
+ "started": "2026-08-03T14:27:32",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 86.8,
+ "corpus_check_query": "Visual temporal binding provenance repeat only; runner and criteria unchanged",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/parallel_gates/visual_temporal_binding_calibration.json"
+}
