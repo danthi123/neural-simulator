@@ -1,7 +1,11 @@
 """Focused guards for the visual temporal-binding calibration successor."""
 from __future__ import annotations
 
+import copy
 import inspect
+import os
+
+os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 
 import numpy as np
 import pytest
@@ -76,9 +80,17 @@ def test_seed_partitions_are_fresh_disjoint_and_smoke_is_reserved():
     assert gate.build_parser().parse_args([]).seeds == [224, 225]
     gate.validate_seed_partition("smoke", [gate.SMOKE_SEED])
     gate.validate_seed_partition("calibration", [224, 225])
-    with pytest.raises(ValueError, match="cannot use seeds"):
+    gate.validate_individual_seed("calibration", 224)
+    gate.validate_individual_seed("calibration", 225)
+    with pytest.raises(ValueError, match="exact ordered seeds"):
+        gate.validate_seed_partition("calibration", [224])
+    with pytest.raises(ValueError, match="exact ordered seeds"):
+        gate.validate_seed_partition("calibration", [224, 224])
+    with pytest.raises(ValueError, match="exact ordered seeds"):
+        gate.validate_seed_partition("calibration", [225, 224])
+    with pytest.raises(ValueError, match="exact ordered seeds"):
         gate.validate_seed_partition("calibration", [gate.SMOKE_SEED])
-    with pytest.raises(ValueError, match="requires only reserved"):
+    with pytest.raises(ValueError, match="exact ordered seeds"):
         gate.validate_seed_partition("smoke", [224])
     with pytest.raises(ValueError, match="is not open"):
         gate.validate_seed_partition("development", [226])
@@ -97,14 +109,39 @@ def test_formal_verdict_helpers_keep_smoke_separate_and_require_both_seeds():
         gate.formal_verdict_for_phase("calibration")
     assert gate.aggregate_formal_verdict("smoke", []) == "NOT-SCIENTIFIC-SMOKE"
     assert gate.aggregate_formal_verdict(
-        "calibration", [{"formal_verdict": "GO"}, {"formal_verdict": "GO"}]
+        "calibration",
+        [
+            {"seed": 224, "formal_verdict": "GO"},
+            {"seed": 225, "formal_verdict": "GO"},
+        ],
     ) == "GO"
     assert gate.aggregate_formal_verdict(
-        "calibration", [{"formal_verdict": "GO"}, {"formal_verdict": "NO-GO"}]
+        "calibration",
+        [
+            {"seed": 224, "formal_verdict": "GO"},
+            {"seed": 225, "formal_verdict": "NO-GO"},
+        ],
     ) == "NO-GO"
     assert gate.aggregate_formal_verdict(
-        "calibration", [{"formal_verdict": "GO"}, {"formal_verdict": "UNDEFINED"}]
+        "calibration",
+        [
+            {"seed": 224, "formal_verdict": "GO"},
+            {"seed": 225, "formal_verdict": "UNDEFINED"},
+        ],
     ) == "UNDEFINED"
+    for invalid_rows in (
+        [{"seed": 224, "formal_verdict": "GO"}],
+        [
+            {"seed": 224, "formal_verdict": "GO"},
+            {"seed": 224, "formal_verdict": "GO"},
+        ],
+        [
+            {"seed": 225, "formal_verdict": "GO"},
+            {"seed": 224, "formal_verdict": "GO"},
+        ],
+    ):
+        with pytest.raises(ValueError, match="exact ordered result rows"):
+            gate.aggregate_formal_verdict("calibration", invalid_rows)
 
 
 def test_run_seed_rejects_smoke_seed_as_calibration_before_building(monkeypatch, tmp_path):
@@ -115,8 +152,86 @@ def test_run_seed_rejects_smoke_seed_as_calibration_before_building(monkeypatch,
         raise AssertionError("dataset construction happened before seed validation")
 
     monkeypatch.setattr(gate, "build_visual_dataset", fail_dataset_build)
-    with pytest.raises(ValueError, match="cannot use seeds"):
+    with pytest.raises(ValueError, match="cannot use seed"):
         gate.run_seed(gate.SMOKE_SEED, args)
+
+
+def test_diagnostics_require_learning_fs_and_strict_scramble_controls():
+    arms = {
+        "intact": {
+            "heldout_identity_decode": 0.75,
+            "held_to_train_cosine_margin": 0.40,
+            "usage": {"usage_cv": 0.20},
+            "local_learning": {"changed_synapses": 3},
+        },
+        "temporal_shuffle": {"held_to_train_cosine_margin": 0.20},
+        "persistence_lesion": {"held_to_train_cosine_margin": 0.20},
+        "trace_lesion": {"held_to_train_cosine_margin": 0.20},
+        "homeostasis_lesion": {"usage": {"usage_cv": 0.30}},
+        "no_learning": {
+            "heldout_identity_decode": 0.50,
+            "held_to_train_cosine_margin": 0.10,
+            "local_learning": {"changed_synapses": 0},
+        },
+    }
+    selection = {
+        "graded_winners": [0, 1],
+        "neural_drive_lesion_winners": [],
+        "fs_intact_columns_fired": 2,
+        "fs_lesion_columns_fired": 3,
+        "graded_host_reference_overlap": 1.0,
+        "flat_drive_overlap_with_graded": 0.0,
+    }
+
+    diagnostics = gate.calibration_diagnostics(
+        arms,
+        {"heldout_identity_decode": 0.25},
+        selection,
+        selection,
+        v1_k_active=2,
+        k_win=2,
+        n_col=16,
+    )
+    assert all(diagnostics.values())
+
+    def evaluate(
+        trial_arms=arms,
+        pixel_decode=0.25,
+        v1_selection=selection,
+        identity_selection=selection,
+    ):
+        return gate.calibration_diagnostics(
+            trial_arms,
+            {"heldout_identity_decode": pixel_decode},
+            v1_selection,
+            identity_selection,
+            v1_k_active=2,
+            k_win=2,
+            n_col=16,
+        )
+
+    trial_arms = copy.deepcopy(arms)
+    trial_arms["no_learning"]["heldout_identity_decode"] = 0.51
+    assert evaluate(trial_arms)["no_learning_costs_decode"] is False
+
+    trial_arms = copy.deepcopy(arms)
+    trial_arms["no_learning"]["held_to_train_cosine_margin"] = 0.40
+    assert evaluate(trial_arms)["no_learning_costs_margin"] is False
+
+    trial_arms = copy.deepcopy(arms)
+    trial_arms["no_learning"]["local_learning"]["changed_synapses"] = 1
+    assert evaluate(trial_arms)["no_learning_changes_no_permanences"] is False
+
+    fs_lesion_inactive = {**selection, "fs_lesion_columns_fired": 2}
+    assert evaluate(v1_selection=fs_lesion_inactive)["v1_fs_pathway_is_causal"] is False
+    assert (
+        evaluate(identity_selection=fs_lesion_inactive)[
+            "identity_fs_pathway_is_causal"
+        ]
+        is False
+    )
+    assert evaluate(pixel_decode=0.26)["pixel_scramble_at_or_below_chance"] is False
+    assert evaluate(pixel_decode=0.51)["pixel_scramble_costs_decode"] is False
 
 
 def test_v1_encoder_selects_from_spikes_without_host_activation_top_k(monkeypatch):

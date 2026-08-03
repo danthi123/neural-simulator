@@ -38,8 +38,10 @@ V1 spikes only; object labels remain outside the network for scoring.
 - Development, locked: `226`, `227`, `322`.
 - Held out, locked: `323`, `324`, `325`.
 
-Both calibration seeds must pass every criterion without parameter changes
-between seeds. Any failure is a calibration NO-GO and keeps later phases closed.
+The aggregate runner requires the exact ordered calibration tuple `224`, `225`,
+and rejects incomplete, duplicate, or reordered result rows. Both seeds must
+pass every criterion without parameter changes between seeds. Any failure is a
+calibration NO-GO and keeps later phases closed.
 
 ## Fixed protocol and controls
 
@@ -70,14 +72,19 @@ Every item must pass on both calibration seeds:
    lesion, and presynaptic-trace lesion.
 3. Intact identity-unit usage coefficient of variation is strictly lower than
    the homeostasis lesion.
-4. Pixel-scrambled held-view decoding is at most `0.50`.
-5. Intact local learning changes at least one substrate permanence; learning
-   off changes none.
-6. V1 and identity latency populations each produce exactly their configured
+4. Learning-off decoding is at least `0.25` below intact decoding, and its
+   held-to-train cosine margin is strictly below intact.
+5. Pixel-scrambled held-view decoding is at most four-way chance `0.25`, and is
+   at least `0.25` below intact decoding.
+6. Intact local learning changes at least one substrate permanence; learning
+   off changes exactly zero permanences.
+7. V1 and identity latency populations each produce exactly their configured
    winner count under graded drive and zero winners under neural-drive lesion.
-7. Identity first-spike winners overlap the graded host reference by at least
+   Lesioning each population's fast-spiking pathway must strictly increase the
+   number of columns that fire relative to its intact pathway.
+8. Identity first-spike winners overlap the graded host reference by at least
    `0.80`. The host reference is measurement only and never selects a winner.
-8. Flat identity drive overlap with graded winners is at most
+9. Flat identity drive overlap with graded winners is at most
    `k_win / n_col + 0.25`.
 
 ## Host boundary and scaffolds

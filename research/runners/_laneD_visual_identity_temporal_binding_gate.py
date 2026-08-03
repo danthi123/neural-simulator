@@ -145,26 +145,45 @@ OUT = Path(
 )
 
 
-def validate_seed_partition(phase: str, seeds: Sequence[int]) -> None:
-    """Keep every successor seed fresh and later decision phases locked."""
+def validate_individual_seed(phase: str, seed: int) -> int:
+    """Validate one seed for internal execution without weakening aggregate locks."""
+    supplied = int(seed)
     if phase == "smoke":
-        supplied = tuple(int(seed) for seed in seeds)
-        if supplied != (SMOKE_SEED,):
+        if supplied != SMOKE_SEED:
             raise ValueError(
                 f"smoke phase requires only reserved SMOKE_SEED={SMOKE_SEED}; "
-                f"received {list(supplied)}"
+                f"received {supplied}"
             )
-        return
+        return supplied
     if phase not in OPEN_PHASES:
         raise ValueError(
             f"phase {phase!r} is not open; this successor is calibration-only and "
             "development/held-out seeds remain locked"
         )
-    allowed = set(SEED_PARTITIONS[phase])
-    unexpected = sorted(set(int(seed) for seed in seeds) - allowed)
-    if unexpected:
+    allowed = SEED_PARTITIONS[phase]
+    if supplied not in allowed:
         raise ValueError(
-            f"{phase} phase cannot use seeds {unexpected}; allowed seeds are {sorted(allowed)}"
+            f"{phase} phase cannot use seed {supplied}; allowed seeds are {list(allowed)}"
+        )
+    return supplied
+
+
+def validate_seed_partition(phase: str, seeds: Sequence[int]) -> None:
+    """Require the exact ordered seed partition for aggregate execution."""
+    supplied = tuple(int(seed) for seed in seeds)
+    if phase == "smoke":
+        expected = (SMOKE_SEED,)
+    elif phase in OPEN_PHASES:
+        expected = SEED_PARTITIONS[phase]
+    else:
+        raise ValueError(
+            f"phase {phase!r} is not open; this successor is calibration-only and "
+            "development/held-out seeds remain locked"
+        )
+    if supplied != expected:
+        raise ValueError(
+            f"{phase} phase requires exact ordered seeds {list(expected)}; "
+            f"received {list(supplied)}"
         )
 
 
@@ -179,6 +198,12 @@ def formal_verdict_for_phase(phase: str, decided_status: str | None = None) -> s
 def aggregate_formal_verdict(phase: str, rows: Sequence[dict]) -> str:
     if phase == "smoke":
         return "NOT-SCIENTIFIC-SMOKE"
+    row_seeds = tuple(int(row["seed"]) for row in rows)
+    if row_seeds != CALIBRATION_SEEDS:
+        raise ValueError(
+            "calibration aggregate requires exact ordered result rows "
+            f"{list(CALIBRATION_SEEDS)}; received {list(row_seeds)}"
+        )
     statuses = [row["formal_verdict"] for row in rows]
     if any(status == UNDEFINED for status in statuses):
         return UNDEFINED
@@ -509,8 +534,91 @@ def _all_numeric_values_finite(value: object) -> bool:
     return True
 
 
+def calibration_diagnostics(
+    arms: dict[str, dict],
+    pixel_scramble: dict,
+    v1_selection: dict,
+    identity_selection: dict,
+    *,
+    v1_k_active: int,
+    k_win: int,
+    n_col: int,
+) -> dict[str, bool]:
+    """Evaluate every preregistered scientific criterion."""
+    intact = arms["intact"]
+    shuffled = arms["temporal_shuffle"]
+    persistence_lesion = arms["persistence_lesion"]
+    trace_lesion = arms["trace_lesion"]
+    homeostasis_lesion = arms["homeostasis_lesion"]
+    no_learning = arms["no_learning"]
+    intact_decode = intact["heldout_identity_decode"]
+    no_learning_decode = no_learning["heldout_identity_decode"]
+    pixel_decode = pixel_scramble["heldout_identity_decode"]
+    return {
+        "decode_above_chance": intact_decode >= 0.50,
+        "identity_margin_positive": intact["held_to_train_cosine_margin"] > 0.0,
+        "temporal_order_load_bearing": (
+            intact["held_to_train_cosine_margin"]
+            > shuffled["held_to_train_cosine_margin"]
+        ),
+        "persistence_load_bearing": (
+            intact["held_to_train_cosine_margin"]
+            > persistence_lesion["held_to_train_cosine_margin"]
+        ),
+        "presynaptic_trace_load_bearing": (
+            intact["held_to_train_cosine_margin"]
+            > trace_lesion["held_to_train_cosine_margin"]
+        ),
+        "homeostasis_reduces_usage_cv": (
+            intact["usage"]["usage_cv"]
+            < homeostasis_lesion["usage"]["usage_cv"]
+        ),
+        "no_learning_costs_decode": intact_decode >= no_learning_decode + 0.25,
+        "no_learning_costs_margin": (
+            intact["held_to_train_cosine_margin"]
+            > no_learning["held_to_train_cosine_margin"]
+        ),
+        "no_learning_changes_no_permanences": (
+            no_learning["local_learning"]["changed_synapses"] == 0
+        ),
+        "pixel_scramble_at_or_below_half": pixel_decode <= 0.50,
+        "pixel_scramble_at_or_below_chance": pixel_decode <= 0.25,
+        "pixel_scramble_costs_decode": intact_decode >= pixel_decode + 0.25,
+        "local_synapses_changed": (
+            intact["local_learning"]["changed_synapses"] > 0
+        ),
+        "v1_spike_selection_produces_k_winners": (
+            len(v1_selection["graded_winners"]) == v1_k_active
+        ),
+        "v1_neural_drive_lesion_silences": (
+            len(v1_selection["neural_drive_lesion_winners"]) == 0
+        ),
+        "v1_fs_pathway_is_causal": (
+            v1_selection["fs_lesion_columns_fired"]
+            > v1_selection["fs_intact_columns_fired"]
+        ),
+        "identity_spike_selection_produces_k_winners": (
+            len(identity_selection["graded_winners"]) == k_win
+        ),
+        "identity_neural_drive_lesion_silences": (
+            len(identity_selection["neural_drive_lesion_winners"]) == 0
+        ),
+        "identity_fs_pathway_is_causal": (
+            identity_selection["fs_lesion_columns_fired"]
+            > identity_selection["fs_intact_columns_fired"]
+        ),
+        "identity_latency_tracks_graded_drive": (
+            identity_selection["graded_host_reference_overlap"] >= 0.80
+        ),
+        "identity_flat_drive_destroys_rank_signal": (
+            identity_selection["flat_drive_overlap_with_graded"]
+            <= k_win / n_col + 0.25
+        ),
+    }
+
+
 def run_seed(seed: int, args: argparse.Namespace) -> dict:
-    validate_seed_partition(args.phase, [seed])
+    validate_individual_seed(args.phase, seed)
     dataset = build_visual_dataset(
         seed=seed,
         image_size=args.image_size,
@@ -616,56 +724,15 @@ def run_seed(seed: int, args: argparse.Namespace) -> dict:
     )
     v1_selection = latency_controls(v1_control_encoder.selector, held_activity[0])
 
-    intact = arms["intact"]
-    shuffled = arms["temporal_shuffle"]
-    persistence_lesion = arms["persistence_lesion"]
-    trace_lesion = arms["trace_lesion"]
-    homeostasis_lesion = arms["homeostasis_lesion"]
-    diagnostics = {
-        "decode_above_chance": intact["heldout_identity_decode"] >= 0.50,
-        "identity_margin_positive": intact["held_to_train_cosine_margin"] > 0.0,
-        "temporal_order_load_bearing": (
-            intact["held_to_train_cosine_margin"]
-            > shuffled["held_to_train_cosine_margin"]
-        ),
-        "persistence_load_bearing": (
-            intact["held_to_train_cosine_margin"]
-            > persistence_lesion["held_to_train_cosine_margin"]
-        ),
-        "presynaptic_trace_load_bearing": (
-            intact["held_to_train_cosine_margin"]
-            > trace_lesion["held_to_train_cosine_margin"]
-        ),
-        "homeostasis_reduces_usage_cv": (
-            intact["usage"]["usage_cv"]
-            < homeostasis_lesion["usage"]["usage_cv"]
-        ),
-        "pixel_scramble_at_or_below_half": (
-            pixel_scramble["heldout_identity_decode"] <= 0.50
-        ),
-        "local_synapses_changed": (
-            intact["local_learning"]["changed_synapses"] > 0
-        ),
-        "v1_spike_selection_produces_k_winners": (
-            len(v1_selection["graded_winners"]) == args.v1_k_active
-        ),
-        "v1_neural_drive_lesion_silences": (
-            len(v1_selection["neural_drive_lesion_winners"]) == 0
-        ),
-        "identity_spike_selection_produces_k_winners": (
-            len(identity_selection["graded_winners"]) == args.k_win
-        ),
-        "identity_neural_drive_lesion_silences": (
-            len(identity_selection["neural_drive_lesion_winners"]) == 0
-        ),
-        "identity_latency_tracks_graded_drive": (
-            identity_selection["graded_host_reference_overlap"] >= 0.80
-        ),
-        "identity_flat_drive_destroys_rank_signal": (
-            identity_selection["flat_drive_overlap_with_graded"]
-            <= args.k_win / args.n_col + 0.25
-        ),
-    }
+    diagnostics = calibration_diagnostics(
+        arms,
+        pixel_scramble,
+        v1_selection,
+        identity_selection,
+        v1_k_active=args.v1_k_active,
+        k_win=args.k_win,
+        n_col=args.n_col,
+    )
     calibration_ready = bool(all(diagnostics.values()))
 
     prior_seeds = {
