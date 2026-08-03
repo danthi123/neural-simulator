@@ -1,0 +1,20 @@
+{
+ "run_id": "1785742181-448831",
+ "runner": "research/runners/_grounded_speech_action_loop_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_grounded_speech_action_loop_derisk.py"
+ ],
+ "git_sha": "75d589ffd",
+ "git_dirty": true,
+ "started": "2026-08-03T03:29:41",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4775.4,
+ "corpus_check_query": "a minimal grounded speech-action loop must let hunger plus a perceived food object cause a brain-selected request, let the social consequence change energy and hunger, and make the unchanged scene pro",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/grounded_speech_action_loop_6seed.json"
+}

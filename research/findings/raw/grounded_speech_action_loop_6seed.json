@@ -1,0 +1,1949 @@
+{
+  "claim": "hunger plus grounded food perception causes a neural request whose consequence creates same-scene silence",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "six independent seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f9b96748f40>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "learned route changed on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all faculties occupy one shared bridge",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "graded drive measurement is finite on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / Hebbian / reward modulation / threshold adaptation during inference",
+      "why": "the first rung isolates whether the trained food association and fixed need/cue circuit cause the action"
+    }
+  ],
+  "undefined_reasons": [],
+  "config": {
+    "drive_weight": 8.0,
+    "cue_weight": 60.0,
+    "association_max_weight": 4.0,
+    "silence_tonic_pA": 210.0,
+    "request_threshold_mv": -35.0,
+    "train_epochs": 16,
+    "train_steps": 60,
+    "decision_steps": 140,
+    "post_train_settle_steps": 1000,
+    "renderer": "none; conceptual speech action only"
+  },
+  "rows": [
+    {
+      "seed": 42,
+      "learning": {
+        "n_synapses": 20485,
+        "mean_initial": 0.050000011920928955,
+        "mean_trained": 0.1616450995206833,
+        "mean_delta": 0.11164510995149612,
+        "max_delta": 3.950000047683716
+      },
+      "request_threshold": {
+        "before_mean_mv": -43.07651138305664,
+        "fixed_mv": -35.0
+      },
+      "energy_before": 0.25,
+      "energy_after": 1.0,
+      "food_delivered": true,
+      "causal_events": [
+        "brain_decision:request_apple",
+        "world_consequence:food_delivered"
+      ],
+      "hungry_food": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": {
+          "intent": "request",
+          "referent": "apple"
+        },
+        "decision": "request",
+        "spikes": {
+          "agrp": 503.0,
+          "pomc": 88.0,
+          "gen_concept": 617.0,
+          "food_cue": 35.0,
+          "request": 155.0,
+          "silence": 103.0,
+          "wta_fs": 550.0
+        },
+        "request_margin": 52.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "sated_same_scene": {
+        "scene": "apple",
+        "energy": 1.0,
+        "deficit": 0.0,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 665.0,
+          "gen_concept": 750.0,
+          "food_cue": 43.0,
+          "request": 3.0,
+          "silence": 404.0,
+          "wta_fs": 732.0
+        },
+        "request_margin": -401.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "drive_dose_response": [
+        {
+          "scene": "apple",
+          "energy": 1.0,
+          "deficit": 0.0,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 0.0,
+            "pomc": 665.0,
+            "gen_concept": 617.0,
+            "food_cue": 35.0,
+            "request": 0.0,
+            "silence": 410.0,
+            "wta_fs": 735.0
+          },
+          "request_margin": -410.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.75,
+          "deficit": 0.25,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 122.0,
+            "pomc": 465.0,
+            "gen_concept": 617.0,
+            "food_cue": 35.0,
+            "request": 2.0,
+            "silence": 339.0,
+            "wta_fs": 589.0
+          },
+          "request_margin": -337.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.5,
+          "deficit": 0.5,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 311.0,
+            "pomc": 277.0,
+            "gen_concept": 617.0,
+            "food_cue": 35.0,
+            "request": 79.0,
+            "silence": 228.0,
+            "wta_fs": 542.0
+          },
+          "request_margin": -149.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 503.0,
+            "pomc": 88.0,
+            "gen_concept": 617.0,
+            "food_cue": 35.0,
+            "request": 155.0,
+            "silence": 103.0,
+            "wta_fs": 550.0
+          },
+          "request_margin": 52.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        }
+      ],
+      "drive_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 88.0,
+          "gen_concept": 617.0,
+          "food_cue": 35.0,
+          "request": 11.0,
+          "silence": 150.0,
+          "wta_fs": 367.0
+        },
+        "request_margin": -139.0,
+        "lesion_drive": true,
+        "lesion_perception": false
+      },
+      "perception_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 503.0,
+          "pomc": 88.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 64.0,
+          "silence": 135.0,
+          "wta_fs": 458.0
+        },
+        "request_margin": -71.0,
+        "lesion_drive": false,
+        "lesion_perception": true
+      },
+      "wrong_object": {
+        "scene": "river",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 503.0,
+          "pomc": 88.0,
+          "gen_concept": 774.0,
+          "food_cue": 0.0,
+          "request": 64.0,
+          "silence": 135.0,
+          "wta_fs": 458.0
+        },
+        "request_margin": -71.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "route_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 503.0,
+          "pomc": 88.0,
+          "gen_concept": 617.0,
+          "food_cue": 0.0,
+          "request": 64.0,
+          "silence": 135.0,
+          "wta_fs": 458.0
+        },
+        "request_margin": -71.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "untrained_route": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 503.0,
+          "pomc": 88.0,
+          "gen_concept": 617.0,
+          "food_cue": 0.0,
+          "request": 64.0,
+          "silence": 135.0,
+          "wta_fs": 458.0
+        },
+        "request_margin": -71.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "no_consequence": {
+        "first": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 503.0,
+            "pomc": 88.0,
+            "gen_concept": 617.0,
+            "food_cue": 35.0,
+            "request": 155.0,
+            "silence": 103.0,
+            "wta_fs": 550.0
+          },
+          "request_margin": 52.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "second": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 501.0,
+            "pomc": 85.0,
+            "gen_concept": 750.0,
+            "food_cue": 43.0,
+            "request": 233.0,
+            "silence": 80.0,
+            "wta_fs": 577.0
+          },
+          "request_margin": 153.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "delivered": false,
+        "energy_before": 0.25,
+        "energy_after": 0.25
+      },
+      "one_shared_bridge": true,
+      "scaffolds": [
+        "explicit caregiver pairing of apple percept with food-cue population",
+        "fixed need/cue coincidence and request-vs-silence wiring",
+        "fixed host decoder from request population to conceptual request apple action",
+        "host world renders sensory/interoceptive input and applies the social food consequence",
+        "counterfactual lesion branches restore one shared post-training neural-state snapshot"
+      ],
+      "verdict": {
+        "go": true,
+        "checks": {
+          "learned_route_changed": true,
+          "hungry_food_requests": true,
+          "consequence_changes_body": true,
+          "request_precedes_delivery": true,
+          "same_scene_sated_silence": true,
+          "deficit_tracks_request_margin": true,
+          "drive_lesion_collapses": true,
+          "perception_lesion_collapses": true,
+          "wrong_object_silent": true,
+          "route_lesion_collapses": true,
+          "untrained_route_collapses": true,
+          "no_consequence_repeats_request": true,
+          "one_shared_bridge": true
+        },
+        "dose_correlation": 0.981872429978779
+      }
+    },
+    {
+      "seed": 43,
+      "learning": {
+        "n_synapses": 20396,
+        "mean_initial": 0.05000000074505806,
+        "mean_trained": 0.15283633768558502,
+        "mean_delta": 0.10283634066581726,
+        "max_delta": 3.950000047683716
+      },
+      "request_threshold": {
+        "before_mean_mv": -42.48712158203125,
+        "fixed_mv": -35.0
+      },
+      "energy_before": 0.25,
+      "energy_after": 1.0,
+      "food_delivered": true,
+      "causal_events": [
+        "brain_decision:request_apple",
+        "world_consequence:food_delivered"
+      ],
+      "hungry_food": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": {
+          "intent": "request",
+          "referent": "apple"
+        },
+        "decision": "request",
+        "spikes": {
+          "agrp": 481.0,
+          "pomc": 94.0,
+          "gen_concept": 1326.0,
+          "food_cue": 27.0,
+          "request": 135.0,
+          "silence": 101.0,
+          "wta_fs": 471.0
+        },
+        "request_margin": 34.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "sated_same_scene": {
+        "scene": "apple",
+        "energy": 1.0,
+        "deficit": 0.0,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 647.0,
+          "gen_concept": 1430.0,
+          "food_cue": 36.0,
+          "request": 1.0,
+          "silence": 467.0,
+          "wta_fs": 659.0
+        },
+        "request_margin": -466.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "drive_dose_response": [
+        {
+          "scene": "apple",
+          "energy": 1.0,
+          "deficit": 0.0,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 0.0,
+            "pomc": 647.0,
+            "gen_concept": 1326.0,
+            "food_cue": 27.0,
+            "request": 0.0,
+            "silence": 473.0,
+            "wta_fs": 655.0
+          },
+          "request_margin": -473.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.75,
+          "deficit": 0.25,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 103.0,
+            "pomc": 459.0,
+            "gen_concept": 1326.0,
+            "food_cue": 27.0,
+            "request": 0.0,
+            "silence": 367.0,
+            "wta_fs": 541.0
+          },
+          "request_margin": -367.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.5,
+          "deficit": 0.5,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 288.0,
+            "pomc": 281.0,
+            "gen_concept": 1326.0,
+            "food_cue": 27.0,
+            "request": 41.0,
+            "silence": 251.0,
+            "wta_fs": 505.0
+          },
+          "request_margin": -210.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 481.0,
+            "pomc": 94.0,
+            "gen_concept": 1326.0,
+            "food_cue": 27.0,
+            "request": 135.0,
+            "silence": 101.0,
+            "wta_fs": 471.0
+          },
+          "request_margin": 34.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        }
+      ],
+      "drive_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 94.0,
+          "gen_concept": 1326.0,
+          "food_cue": 27.0,
+          "request": 3.0,
+          "silence": 163.0,
+          "wta_fs": 333.0
+        },
+        "request_margin": -160.0,
+        "lesion_drive": true,
+        "lesion_perception": false
+      },
+      "perception_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 481.0,
+          "pomc": 94.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 141.0,
+          "wta_fs": 405.0
+        },
+        "request_margin": -81.0,
+        "lesion_drive": false,
+        "lesion_perception": true
+      },
+      "wrong_object": {
+        "scene": "river",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 481.0,
+          "pomc": 94.0,
+          "gen_concept": 1029.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 141.0,
+          "wta_fs": 405.0
+        },
+        "request_margin": -81.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "route_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 481.0,
+          "pomc": 94.0,
+          "gen_concept": 1326.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 141.0,
+          "wta_fs": 405.0
+        },
+        "request_margin": -81.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "untrained_route": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 481.0,
+          "pomc": 94.0,
+          "gen_concept": 1326.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 141.0,
+          "wta_fs": 405.0
+        },
+        "request_margin": -81.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "no_consequence": {
+        "first": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 481.0,
+            "pomc": 94.0,
+            "gen_concept": 1326.0,
+            "food_cue": 27.0,
+            "request": 135.0,
+            "silence": 101.0,
+            "wta_fs": 471.0
+          },
+          "request_margin": 34.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "second": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 480.0,
+            "pomc": 94.0,
+            "gen_concept": 1430.0,
+            "food_cue": 36.0,
+            "request": 208.0,
+            "silence": 95.0,
+            "wta_fs": 488.0
+          },
+          "request_margin": 113.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "delivered": false,
+        "energy_before": 0.25,
+        "energy_after": 0.25
+      },
+      "one_shared_bridge": true,
+      "scaffolds": [
+        "explicit caregiver pairing of apple percept with food-cue population",
+        "fixed need/cue coincidence and request-vs-silence wiring",
+        "fixed host decoder from request population to conceptual request apple action",
+        "host world renders sensory/interoceptive input and applies the social food consequence",
+        "counterfactual lesion branches restore one shared post-training neural-state snapshot"
+      ],
+      "verdict": {
+        "go": true,
+        "checks": {
+          "learned_route_changed": true,
+          "hungry_food_requests": true,
+          "consequence_changes_body": true,
+          "request_precedes_delivery": true,
+          "same_scene_sated_silence": true,
+          "deficit_tracks_request_margin": true,
+          "drive_lesion_collapses": true,
+          "perception_lesion_collapses": true,
+          "wrong_object_silent": true,
+          "route_lesion_collapses": true,
+          "untrained_route_collapses": true,
+          "no_consequence_repeats_request": true,
+          "one_shared_bridge": true
+        },
+        "dose_correlation": 0.9832894006669198
+      }
+    },
+    {
+      "seed": 44,
+      "learning": {
+        "n_synapses": 20356,
+        "mean_initial": 0.05000000447034836,
+        "mean_trained": 0.15905384719371796,
+        "mean_delta": 0.109053835272789,
+        "max_delta": 3.950000047683716
+      },
+      "request_threshold": {
+        "before_mean_mv": -42.2597541809082,
+        "fixed_mv": -35.0
+      },
+      "energy_before": 0.25,
+      "energy_after": 1.0,
+      "food_delivered": true,
+      "causal_events": [
+        "brain_decision:request_apple",
+        "world_consequence:food_delivered"
+      ],
+      "hungry_food": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": {
+          "intent": "request",
+          "referent": "apple"
+        },
+        "decision": "request",
+        "spikes": {
+          "agrp": 480.0,
+          "pomc": 98.0,
+          "gen_concept": 579.0,
+          "food_cue": 46.0,
+          "request": 216.0,
+          "silence": 121.0,
+          "wta_fs": 507.0
+        },
+        "request_margin": 95.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "sated_same_scene": {
+        "scene": "apple",
+        "energy": 1.0,
+        "deficit": 0.0,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 654.0,
+          "gen_concept": 623.0,
+          "food_cue": 51.0,
+          "request": 18.0,
+          "silence": 510.0,
+          "wta_fs": 683.0
+        },
+        "request_margin": -492.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "drive_dose_response": [
+        {
+          "scene": "apple",
+          "energy": 1.0,
+          "deficit": 0.0,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 0.0,
+            "pomc": 655.0,
+            "gen_concept": 579.0,
+            "food_cue": 46.0,
+            "request": 7.0,
+            "silence": 498.0,
+            "wta_fs": 686.0
+          },
+          "request_margin": -491.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.75,
+          "deficit": 0.25,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 112.0,
+            "pomc": 466.0,
+            "gen_concept": 579.0,
+            "food_cue": 46.0,
+            "request": 55.0,
+            "silence": 399.0,
+            "wta_fs": 597.0
+          },
+          "request_margin": -344.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.5,
+          "deficit": 0.5,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 301.0,
+            "pomc": 284.0,
+            "gen_concept": 579.0,
+            "food_cue": 46.0,
+            "request": 111.0,
+            "silence": 250.0,
+            "wta_fs": 575.0
+          },
+          "request_margin": -139.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 480.0,
+            "pomc": 98.0,
+            "gen_concept": 579.0,
+            "food_cue": 46.0,
+            "request": 216.0,
+            "silence": 121.0,
+            "wta_fs": 507.0
+          },
+          "request_margin": 95.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        }
+      ],
+      "drive_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 98.0,
+          "gen_concept": 579.0,
+          "food_cue": 46.0,
+          "request": 40.0,
+          "silence": 172.0,
+          "wta_fs": 387.0
+        },
+        "request_margin": -132.0,
+        "lesion_drive": true,
+        "lesion_perception": false
+      },
+      "perception_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 480.0,
+          "pomc": 98.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 57.0,
+          "silence": 159.0,
+          "wta_fs": 404.0
+        },
+        "request_margin": -102.0,
+        "lesion_drive": false,
+        "lesion_perception": true
+      },
+      "wrong_object": {
+        "scene": "river",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 480.0,
+          "pomc": 98.0,
+          "gen_concept": 1264.0,
+          "food_cue": 0.0,
+          "request": 57.0,
+          "silence": 159.0,
+          "wta_fs": 404.0
+        },
+        "request_margin": -102.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "route_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 480.0,
+          "pomc": 98.0,
+          "gen_concept": 579.0,
+          "food_cue": 0.0,
+          "request": 57.0,
+          "silence": 159.0,
+          "wta_fs": 404.0
+        },
+        "request_margin": -102.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "untrained_route": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 480.0,
+          "pomc": 98.0,
+          "gen_concept": 579.0,
+          "food_cue": 0.0,
+          "request": 57.0,
+          "silence": 159.0,
+          "wta_fs": 404.0
+        },
+        "request_margin": -102.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "no_consequence": {
+        "first": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 480.0,
+            "pomc": 98.0,
+            "gen_concept": 579.0,
+            "food_cue": 46.0,
+            "request": 216.0,
+            "silence": 121.0,
+            "wta_fs": 507.0
+          },
+          "request_margin": 95.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "second": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 479.0,
+            "pomc": 99.0,
+            "gen_concept": 623.0,
+            "food_cue": 51.0,
+            "request": 230.0,
+            "silence": 94.0,
+            "wta_fs": 550.0
+          },
+          "request_margin": 136.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "delivered": false,
+        "energy_before": 0.25,
+        "energy_after": 0.25
+      },
+      "one_shared_bridge": true,
+      "scaffolds": [
+        "explicit caregiver pairing of apple percept with food-cue population",
+        "fixed need/cue coincidence and request-vs-silence wiring",
+        "fixed host decoder from request population to conceptual request apple action",
+        "host world renders sensory/interoceptive input and applies the social food consequence",
+        "counterfactual lesion branches restore one shared post-training neural-state snapshot"
+      ],
+      "verdict": {
+        "go": true,
+        "checks": {
+          "learned_route_changed": true,
+          "hungry_food_requests": true,
+          "consequence_changes_body": true,
+          "request_precedes_delivery": true,
+          "same_scene_sated_silence": true,
+          "deficit_tracks_request_margin": true,
+          "drive_lesion_collapses": true,
+          "perception_lesion_collapses": true,
+          "wrong_object_silent": true,
+          "route_lesion_collapses": true,
+          "untrained_route_collapses": true,
+          "no_consequence_repeats_request": true,
+          "one_shared_bridge": true
+        },
+        "dose_correlation": 0.9950177203416056
+      }
+    },
+    {
+      "seed": 100,
+      "learning": {
+        "n_synapses": 20566,
+        "mean_initial": 0.050000015646219254,
+        "mean_trained": 0.16043712198734283,
+        "mean_delta": 0.11043713241815567,
+        "max_delta": 3.950000047683716
+      },
+      "request_threshold": {
+        "before_mean_mv": -42.520957946777344,
+        "fixed_mv": -35.0
+      },
+      "energy_before": 0.25,
+      "energy_after": 1.0,
+      "food_delivered": true,
+      "causal_events": [
+        "brain_decision:request_apple",
+        "world_consequence:food_delivered"
+      ],
+      "hungry_food": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": {
+          "intent": "request",
+          "referent": "apple"
+        },
+        "decision": "request",
+        "spikes": {
+          "agrp": 450.0,
+          "pomc": 73.0,
+          "gen_concept": 0.0,
+          "food_cue": 43.0,
+          "request": 210.0,
+          "silence": 76.0,
+          "wta_fs": 449.0
+        },
+        "request_margin": 134.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "sated_same_scene": {
+        "scene": "apple",
+        "energy": 1.0,
+        "deficit": 0.0,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 601.0,
+          "gen_concept": 0.0,
+          "food_cue": 48.0,
+          "request": 8.0,
+          "silence": 365.0,
+          "wta_fs": 600.0
+        },
+        "request_margin": -357.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "drive_dose_response": [
+        {
+          "scene": "apple",
+          "energy": 1.0,
+          "deficit": 0.0,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 0.0,
+            "pomc": 601.0,
+            "gen_concept": 0.0,
+            "food_cue": 43.0,
+            "request": 12.0,
+            "silence": 362.0,
+            "wta_fs": 599.0
+          },
+          "request_margin": -350.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.75,
+          "deficit": 0.25,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 81.0,
+            "pomc": 421.0,
+            "gen_concept": 0.0,
+            "food_cue": 43.0,
+            "request": 44.0,
+            "silence": 312.0,
+            "wta_fs": 501.0
+          },
+          "request_margin": -268.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.5,
+          "deficit": 0.5,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 264.0,
+            "pomc": 245.0,
+            "gen_concept": 0.0,
+            "food_cue": 43.0,
+            "request": 98.0,
+            "silence": 188.0,
+            "wta_fs": 438.0
+          },
+          "request_margin": -90.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 450.0,
+            "pomc": 73.0,
+            "gen_concept": 0.0,
+            "food_cue": 43.0,
+            "request": 210.0,
+            "silence": 76.0,
+            "wta_fs": 449.0
+          },
+          "request_margin": 134.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        }
+      ],
+      "drive_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 73.0,
+          "gen_concept": 0.0,
+          "food_cue": 43.0,
+          "request": 51.0,
+          "silence": 134.0,
+          "wta_fs": 344.0
+        },
+        "request_margin": -83.0,
+        "lesion_drive": true,
+        "lesion_perception": false
+      },
+      "perception_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 450.0,
+          "pomc": 73.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 104.0,
+          "silence": 144.0,
+          "wta_fs": 387.0
+        },
+        "request_margin": -40.0,
+        "lesion_drive": false,
+        "lesion_perception": true
+      },
+      "wrong_object": {
+        "scene": "river",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 450.0,
+          "pomc": 73.0,
+          "gen_concept": 322.0,
+          "food_cue": 0.0,
+          "request": 104.0,
+          "silence": 144.0,
+          "wta_fs": 387.0
+        },
+        "request_margin": -40.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "route_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 450.0,
+          "pomc": 73.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 104.0,
+          "silence": 144.0,
+          "wta_fs": 387.0
+        },
+        "request_margin": -40.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "untrained_route": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 450.0,
+          "pomc": 73.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 104.0,
+          "silence": 144.0,
+          "wta_fs": 387.0
+        },
+        "request_margin": -40.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "no_consequence": {
+        "first": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 450.0,
+            "pomc": 73.0,
+            "gen_concept": 0.0,
+            "food_cue": 43.0,
+            "request": 210.0,
+            "silence": 76.0,
+            "wta_fs": 449.0
+          },
+          "request_margin": 134.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "second": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 448.0,
+            "pomc": 72.0,
+            "gen_concept": 0.0,
+            "food_cue": 48.0,
+            "request": 237.0,
+            "silence": 49.0,
+            "wta_fs": 518.0
+          },
+          "request_margin": 188.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "delivered": false,
+        "energy_before": 0.25,
+        "energy_after": 0.25
+      },
+      "one_shared_bridge": true,
+      "scaffolds": [
+        "explicit caregiver pairing of apple percept with food-cue population",
+        "fixed need/cue coincidence and request-vs-silence wiring",
+        "fixed host decoder from request population to conceptual request apple action",
+        "host world renders sensory/interoceptive input and applies the social food consequence",
+        "counterfactual lesion branches restore one shared post-training neural-state snapshot"
+      ],
+      "verdict": {
+        "go": true,
+        "checks": {
+          "learned_route_changed": true,
+          "hungry_food_requests": true,
+          "consequence_changes_body": true,
+          "request_precedes_delivery": true,
+          "same_scene_sated_silence": true,
+          "deficit_tracks_request_margin": true,
+          "drive_lesion_collapses": true,
+          "perception_lesion_collapses": true,
+          "wrong_object_silent": true,
+          "route_lesion_collapses": true,
+          "untrained_route_collapses": true,
+          "no_consequence_repeats_request": true,
+          "one_shared_bridge": true
+        },
+        "dose_correlation": 0.9811056013933569
+      }
+    },
+    {
+      "seed": 101,
+      "learning": {
+        "n_synapses": 20189,
+        "mean_initial": 0.05000000447034836,
+        "mean_trained": 0.1570211499929428,
+        "mean_delta": 0.10702114552259445,
+        "max_delta": 3.950000047683716
+      },
+      "request_threshold": {
+        "before_mean_mv": -42.5284423828125,
+        "fixed_mv": -35.0
+      },
+      "energy_before": 0.25,
+      "energy_after": 1.0,
+      "food_delivered": true,
+      "causal_events": [
+        "brain_decision:request_apple",
+        "world_consequence:food_delivered"
+      ],
+      "hungry_food": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": {
+          "intent": "request",
+          "referent": "apple"
+        },
+        "decision": "request",
+        "spikes": {
+          "agrp": 447.0,
+          "pomc": 93.0,
+          "gen_concept": 759.0,
+          "food_cue": 34.0,
+          "request": 158.0,
+          "silence": 81.0,
+          "wta_fs": 476.0
+        },
+        "request_margin": 77.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "sated_same_scene": {
+        "scene": "apple",
+        "energy": 1.0,
+        "deficit": 0.0,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 655.0,
+          "gen_concept": 880.0,
+          "food_cue": 43.0,
+          "request": 8.0,
+          "silence": 389.0,
+          "wta_fs": 682.0
+        },
+        "request_margin": -381.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "drive_dose_response": [
+        {
+          "scene": "apple",
+          "energy": 1.0,
+          "deficit": 0.0,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 0.0,
+            "pomc": 656.0,
+            "gen_concept": 759.0,
+            "food_cue": 34.0,
+            "request": 0.0,
+            "silence": 394.0,
+            "wta_fs": 674.0
+          },
+          "request_margin": -394.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.75,
+          "deficit": 0.25,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 82.0,
+            "pomc": 465.0,
+            "gen_concept": 759.0,
+            "food_cue": 34.0,
+            "request": 4.0,
+            "silence": 306.0,
+            "wta_fs": 560.0
+          },
+          "request_margin": -302.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.5,
+          "deficit": 0.5,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 266.0,
+            "pomc": 278.0,
+            "gen_concept": 759.0,
+            "food_cue": 34.0,
+            "request": 72.0,
+            "silence": 196.0,
+            "wta_fs": 504.0
+          },
+          "request_margin": -124.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 447.0,
+            "pomc": 93.0,
+            "gen_concept": 759.0,
+            "food_cue": 34.0,
+            "request": 158.0,
+            "silence": 81.0,
+            "wta_fs": 476.0
+          },
+          "request_margin": 77.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        }
+      ],
+      "drive_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 93.0,
+          "gen_concept": 759.0,
+          "food_cue": 34.0,
+          "request": 8.0,
+          "silence": 132.0,
+          "wta_fs": 365.0
+        },
+        "request_margin": -124.0,
+        "lesion_drive": true,
+        "lesion_perception": false
+      },
+      "perception_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 447.0,
+          "pomc": 93.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 114.0,
+          "wta_fs": 431.0
+        },
+        "request_margin": -54.0,
+        "lesion_drive": false,
+        "lesion_perception": true
+      },
+      "wrong_object": {
+        "scene": "river",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 447.0,
+          "pomc": 93.0,
+          "gen_concept": 370.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 114.0,
+          "wta_fs": 431.0
+        },
+        "request_margin": -54.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "route_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 447.0,
+          "pomc": 93.0,
+          "gen_concept": 759.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 114.0,
+          "wta_fs": 431.0
+        },
+        "request_margin": -54.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "untrained_route": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 447.0,
+          "pomc": 93.0,
+          "gen_concept": 759.0,
+          "food_cue": 0.0,
+          "request": 60.0,
+          "silence": 114.0,
+          "wta_fs": 431.0
+        },
+        "request_margin": -54.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "no_consequence": {
+        "first": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 447.0,
+            "pomc": 93.0,
+            "gen_concept": 759.0,
+            "food_cue": 34.0,
+            "request": 158.0,
+            "silence": 81.0,
+            "wta_fs": 476.0
+          },
+          "request_margin": 77.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "second": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 446.0,
+            "pomc": 93.0,
+            "gen_concept": 880.0,
+            "food_cue": 43.0,
+            "request": 184.0,
+            "silence": 55.0,
+            "wta_fs": 581.0
+          },
+          "request_margin": 129.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "delivered": false,
+        "energy_before": 0.25,
+        "energy_after": 0.25
+      },
+      "one_shared_bridge": true,
+      "scaffolds": [
+        "explicit caregiver pairing of apple percept with food-cue population",
+        "fixed need/cue coincidence and request-vs-silence wiring",
+        "fixed host decoder from request population to conceptual request apple action",
+        "host world renders sensory/interoceptive input and applies the social food consequence",
+        "counterfactual lesion branches restore one shared post-training neural-state snapshot"
+      ],
+      "verdict": {
+        "go": true,
+        "checks": {
+          "learned_route_changed": true,
+          "hungry_food_requests": true,
+          "consequence_changes_body": true,
+          "request_precedes_delivery": true,
+          "same_scene_sated_silence": true,
+          "deficit_tracks_request_margin": true,
+          "drive_lesion_collapses": true,
+          "perception_lesion_collapses": true,
+          "wrong_object_silent": true,
+          "route_lesion_collapses": true,
+          "untrained_route_collapses": true,
+          "no_consequence_repeats_request": true,
+          "one_shared_bridge": true
+        },
+        "dose_correlation": 0.9877120900379697
+      }
+    },
+    {
+      "seed": 102,
+      "learning": {
+        "n_synapses": 20341,
+        "mean_initial": 0.05000000447034836,
+        "mean_trained": 0.16224128007888794,
+        "mean_delta": 0.11224129050970078,
+        "max_delta": 3.950000047683716
+      },
+      "request_threshold": {
+        "before_mean_mv": -44.36176681518555,
+        "fixed_mv": -35.0
+      },
+      "energy_before": 0.25,
+      "energy_after": 1.0,
+      "food_delivered": true,
+      "causal_events": [
+        "brain_decision:request_apple",
+        "world_consequence:food_delivered"
+      ],
+      "hungry_food": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": {
+          "intent": "request",
+          "referent": "apple"
+        },
+        "decision": "request",
+        "spikes": {
+          "agrp": 485.0,
+          "pomc": 96.0,
+          "gen_concept": 438.0,
+          "food_cue": 45.0,
+          "request": 247.0,
+          "silence": 91.0,
+          "wta_fs": 517.0
+        },
+        "request_margin": 156.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "sated_same_scene": {
+        "scene": "apple",
+        "energy": 1.0,
+        "deficit": 0.0,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 654.0,
+          "gen_concept": 506.0,
+          "food_cue": 45.0,
+          "request": 28.0,
+          "silence": 416.0,
+          "wta_fs": 690.0
+        },
+        "request_margin": -388.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "drive_dose_response": [
+        {
+          "scene": "apple",
+          "energy": 1.0,
+          "deficit": 0.0,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 0.0,
+            "pomc": 655.0,
+            "gen_concept": 438.0,
+            "food_cue": 45.0,
+            "request": 3.0,
+            "silence": 428.0,
+            "wta_fs": 678.0
+          },
+          "request_margin": -425.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.75,
+          "deficit": 0.25,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 111.0,
+            "pomc": 455.0,
+            "gen_concept": 438.0,
+            "food_cue": 45.0,
+            "request": 57.0,
+            "silence": 347.0,
+            "wta_fs": 588.0
+          },
+          "request_margin": -290.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.5,
+          "deficit": 0.5,
+          "action": null,
+          "decision": "silence",
+          "spikes": {
+            "agrp": 296.0,
+            "pomc": 278.0,
+            "gen_concept": 438.0,
+            "food_cue": 45.0,
+            "request": 140.0,
+            "silence": 216.0,
+            "wta_fs": 547.0
+          },
+          "request_margin": -76.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 485.0,
+            "pomc": 96.0,
+            "gen_concept": 438.0,
+            "food_cue": 45.0,
+            "request": 247.0,
+            "silence": 91.0,
+            "wta_fs": 517.0
+          },
+          "request_margin": 156.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        }
+      ],
+      "drive_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 0.0,
+          "pomc": 96.0,
+          "gen_concept": 438.0,
+          "food_cue": 45.0,
+          "request": 55.0,
+          "silence": 168.0,
+          "wta_fs": 399.0
+        },
+        "request_margin": -113.0,
+        "lesion_drive": true,
+        "lesion_perception": false
+      },
+      "perception_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 485.0,
+          "pomc": 96.0,
+          "gen_concept": 0.0,
+          "food_cue": 0.0,
+          "request": 65.0,
+          "silence": 152.0,
+          "wta_fs": 415.0
+        },
+        "request_margin": -87.0,
+        "lesion_drive": false,
+        "lesion_perception": true
+      },
+      "wrong_object": {
+        "scene": "river",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 485.0,
+          "pomc": 96.0,
+          "gen_concept": 355.0,
+          "food_cue": 0.0,
+          "request": 65.0,
+          "silence": 152.0,
+          "wta_fs": 415.0
+        },
+        "request_margin": -87.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "route_lesion": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 485.0,
+          "pomc": 96.0,
+          "gen_concept": 438.0,
+          "food_cue": 0.0,
+          "request": 65.0,
+          "silence": 152.0,
+          "wta_fs": 415.0
+        },
+        "request_margin": -87.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "untrained_route": {
+        "scene": "apple",
+        "energy": 0.25,
+        "deficit": 0.75,
+        "action": null,
+        "decision": "silence",
+        "spikes": {
+          "agrp": 485.0,
+          "pomc": 96.0,
+          "gen_concept": 438.0,
+          "food_cue": 0.0,
+          "request": 65.0,
+          "silence": 152.0,
+          "wta_fs": 415.0
+        },
+        "request_margin": -87.0,
+        "lesion_drive": false,
+        "lesion_perception": false
+      },
+      "no_consequence": {
+        "first": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 485.0,
+            "pomc": 96.0,
+            "gen_concept": 438.0,
+            "food_cue": 45.0,
+            "request": 247.0,
+            "silence": 91.0,
+            "wta_fs": 517.0
+          },
+          "request_margin": 156.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "second": {
+          "scene": "apple",
+          "energy": 0.25,
+          "deficit": 0.75,
+          "action": {
+            "intent": "request",
+            "referent": "apple"
+          },
+          "decision": "request",
+          "spikes": {
+            "agrp": 483.0,
+            "pomc": 95.0,
+            "gen_concept": 506.0,
+            "food_cue": 45.0,
+            "request": 249.0,
+            "silence": 69.0,
+            "wta_fs": 590.0
+          },
+          "request_margin": 180.0,
+          "lesion_drive": false,
+          "lesion_perception": false
+        },
+        "delivered": false,
+        "energy_before": 0.25,
+        "energy_after": 0.25
+      },
+      "one_shared_bridge": true,
+      "scaffolds": [
+        "explicit caregiver pairing of apple percept with food-cue population",
+        "fixed need/cue coincidence and request-vs-silence wiring",
+        "fixed host decoder from request population to conceptual request apple action",
+        "host world renders sensory/interoceptive input and applies the social food consequence",
+        "counterfactual lesion branches restore one shared post-training neural-state snapshot"
+      ],
+      "verdict": {
+        "go": true,
+        "checks": {
+          "learned_route_changed": true,
+          "hungry_food_requests": true,
+          "consequence_changes_body": true,
+          "request_precedes_delivery": true,
+          "same_scene_sated_silence": true,
+          "deficit_tracks_request_margin": true,
+          "drive_lesion_collapses": true,
+          "perception_lesion_collapses": true,
+          "wrong_object_silent": true,
+          "route_lesion_collapses": true,
+          "untrained_route_collapses": true,
+          "no_consequence_repeats_request": true,
+          "one_shared_bridge": true
+        },
+        "dose_correlation": 0.9934374932211313
+      }
+    }
+  ]
+}

@@ -72,6 +72,15 @@ GEN_FACT = "gen_fact"
 # same trained-then-frozen discipline as the parser. The convergent concept→fact edges are plastic=False.
 GEN_CONV_GATE = "gen_convergence_fixed"
 
+# Minimal grounded speech-action slice.  The visual association is plastic and
+# trained by the developmental runner; the need/cue coincidence and the
+# request-vs-silence competition are fixed neural pathways on this bridge.
+SPEECH_FOOD_CUE = "speech_food_cue"
+SPEECH_REQUEST = "speech_request"
+SPEECH_SILENCE = "speech_silence"
+SPEECH_WTA_FS = "speech_wta_fs"
+SPEECH_GROUNDING_GATE = "speech_grounding"
+
 # ── command-route (route A: language->action) constants — ported from spoken_instruction_nav.py (GO 3-seed) ────
 # The CONSOLIDATION (FOLLOW-ON #2) lifts the LEARNED `language_input -> cortex_X` route + its `command_route`
 # transmission gate onto the merged bridge so MergedNavConvAgent.command_move() steers nav from a PARSED command.
@@ -282,6 +291,66 @@ def _generalization_regions_pathways(gen_n_concept_per: int, gen_n_fact_per: int
         # concept → fact: convergent block (every concept block of category c → fact-tag block c), FIXED.
         RegionPathway(from_region=GEN_CONCEPT, to_region=GEN_FACT, density=1.0,
                       weight_mean=30.0, weight_jitter=0.0, plastic=False),
+    ]
+    return regions, pathways
+
+
+def _grounded_speech_regions_pathways(n_acc: int = 40, n_fs: int = 20,
+                                      drive_weight: float = 8.0,
+                                      cue_weight: float = 60.0):
+    """Regions for a minimal grounded request action on the shared bridge.
+
+    The learned ``gen_perception -> speech_food_cue`` route associates the
+    spiking visual feature ensemble with food. Hunger and that cue converge on ``speech_request``; either
+    input alone is intended to remain below the competing silence population.
+    ``drive_pomc`` adds satiety evidence to silence.  The runner tunes only the
+    operating point and trains the visual association; inference is synaptic.
+    """
+    from sim.enums import NeuronType as _NT
+
+    _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+    _FS = _NT.IZH2007_FS_CORTICAL_INTERNEURON.name
+    regions = [
+        BrainRegion(name=SPEECH_FOOD_CUE, n_neurons=int(n_acc), exc_fraction=1.0,
+                    internal_density=0.15, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                    weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
+                    enable_nmda=True, enable_homeostasis=True),
+        BrainRegion(name=SPEECH_REQUEST, n_neurons=int(n_acc), exc_fraction=1.0,
+                    internal_density=0.35, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                    weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
+                    enable_nmda=True, enable_homeostasis=True),
+        BrainRegion(name=SPEECH_SILENCE, n_neurons=int(n_acc), exc_fraction=1.0,
+                    internal_density=0.35, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                    weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
+                    enable_nmda=True, enable_homeostasis=True),
+        BrainRegion(name=SPEECH_WTA_FS, n_neurons=int(n_fs), exc_fraction=0.0,
+                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_FS,
+                    enable_nmda=False, enable_homeostasis=True),
+    ]
+    pathways = [
+        RegionPathway(from_region=GEN_PERCEPTION, to_region=SPEECH_FOOD_CUE,
+                      density=0.25, weight_mean=0.05, weight_jitter=0.0,
+                      plastic=True, plasticity_gate=SPEECH_GROUNDING_GATE),
+        RegionPathway(from_region="drive_agrp", to_region=SPEECH_REQUEST,
+                      density=0.60, weight_mean=float(drive_weight), weight_jitter=0.10,
+                      plastic=False),
+        RegionPathway(from_region=SPEECH_FOOD_CUE, to_region=SPEECH_REQUEST,
+                      density=0.60, weight_mean=float(cue_weight), weight_jitter=0.10,
+                      plastic=False),
+        RegionPathway(from_region="drive_pomc", to_region=SPEECH_SILENCE,
+                      density=0.60, weight_mean=float(drive_weight), weight_jitter=0.10,
+                      plastic=False),
+        RegionPathway(from_region=SPEECH_REQUEST, to_region=SPEECH_WTA_FS,
+                      density=0.50, weight_mean=8.0, weight_jitter=0.10, plastic=False),
+        RegionPathway(from_region=SPEECH_SILENCE, to_region=SPEECH_WTA_FS,
+                      density=0.50, weight_mean=8.0, weight_jitter=0.10, plastic=False),
+        RegionPathway(from_region=SPEECH_WTA_FS, to_region=SPEECH_REQUEST,
+                      density=0.60, weight_mean=6.0, weight_jitter=0.10,
+                      plastic=False, receptor="gaba_a"),
+        RegionPathway(from_region=SPEECH_WTA_FS, to_region=SPEECH_SILENCE,
+                      density=0.60, weight_mean=6.0, weight_jitter=0.10,
+                      plastic=False, receptor="gaba_a"),
     ]
     return regions, pathways
 
@@ -552,6 +621,10 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  drive_n_pool: int = 60,
                                  drive_to_da: bool = False,
                                  drive_da_sensitivity: float = 8.0,
+                                 co_resident_grounded_speech: bool = False,
+                                 speech_n_acc: int = 40, speech_n_fs: int = 20,
+                                 speech_drive_weight: float = 8.0,
+                                 speech_cue_weight: float = 60.0,
                                  co_resident_nav_critic: bool = False,
                                  nav_critic_convergent_upstate: bool = False,
                                  nav_critic_homeostasis_mask: str = "all3",
@@ -672,6 +745,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     assert not (nav_critic_grid_frontend and not nav_critic_place_selforg), \
         ("nav_critic_grid_frontend (the grid-cell place afferent) requires nav_critic_place_selforg (it IS the "
          "self-org place_sensors afferent; without the self-org place pool there is nothing to drive).")
+    if co_resident_grounded_speech and not (co_resident_generalization and co_resident_drive):
+        raise ValueError("co_resident_grounded_speech requires co_resident_generalization and co_resident_drive")
     if co_resident_nav_critic:
         # nav_critic_convergent_upstate (the value-train A1 up-state arm, CYCLE 209 value-train build): forward
         # enable_convergent_upstate to build_bg_brain_regions so the dense NON-plastic vs_place_drive->striosome_value
@@ -868,8 +943,9 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # The pools are DRIVEN by external interoceptive current + READ by firing rate, so they need NO internal pathways and
     # NO neuromodulator (reading the firing directly is fully brain-based — the firing IS the drive signal — and avoids a
     # second scope=all plasticity-rate modulator colliding with the nav DA broadcast). ALL drive_-prefixed (zero name
-    # collision with the nav cascade / limbic / td / rf) + internal_density=0; ZERO out-edges anywhere (no pathways at
-    # all), so the slice is maximally nav-inert (no cp_connections edges into navigation, like rf/cortex_it). enable_
+    # collision with the nav cascade / limbic / td / rf) + internal_density=0. With grounded speech OFF there are zero
+    # out-edges; with it ON, AgRP projects only to the appended speech-request pool. Neither mode adds edges into
+    # navigation, so the slice remains nav-inert (like rf/cortex_it). enable_
     # homeostasis=True PER-REGION (the merged-config operating-point fix, the limbic-core-lift lesson): the standalone
     # drive was tuned with the CoreSimConfig default enable_homeostasis=True (vpeak->~-42mV threshold, the f-I gain that
     # makes the deficit current cross threshold); the merged bridge keeps GLOBAL homeostasis OFF (the synaptic-scaling
@@ -891,7 +967,13 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                         exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
                         izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
         ]
-        drive_pathways = []                              # no out-edges: the slice is driven by current + read by firing
+        drive_pathways = []  # The opt-in grounded-speech slice adds its own AgRP output pathway.
+
+    speech_regions, speech_pathways = [], []
+    if co_resident_grounded_speech:
+        speech_regions, speech_pathways = _grounded_speech_regions_pathways(
+            n_acc=speech_n_acc, n_fs=speech_n_fs,
+            drive_weight=speech_drive_weight, cue_weight=speech_cue_weight)
 
     # A-CSC TD CUE-SHIFT SLICE (co_resident_td_cueshift, additive default-off): the validated complete-serial-compound
     # TD machinery (snc_stageb_critic_probe.py --td-csc, GO 3/3 r=-0.80/-0.77/-0.89) as a td_-prefixed co-resident slice.
@@ -1040,10 +1122,11 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                      + list(rf_regions) + list(perception_regions) + list(command_route_regions)
                      + list(generalization_regions)
                      + list(limbic_regions) + list(td_regions) + list(drive_regions)
+                     + list(speech_regions)
                      + list(hippo_regions))
     union_pathways = (list(nav_pathways) + list(parser_pathways) + list(command_route_pathways)
                       + list(generalization_pathways) + list(limbic_pathways)
-                      + list(td_pathways) + list(drive_pathways)
+                      + list(td_pathways) + list(drive_pathways) + list(speech_pathways)
                       + list(hippo_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
@@ -1242,6 +1325,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # (before the parser train pass) so the parser pass cannot drift the dlPFC edges either. The parser gate is
     # zeroed only AFTER its train pass (step 5).
     bridge.set_plasticity_gate(DLPFC_FIXED_GATE, 0.0)
+    if co_resident_grounded_speech:
+        bridge.set_plasticity_gate(SPEECH_GROUNDING_GATE, 0.0)
 
     # 5) Parser train pass on the framework slices (after the FINAL injection — a later injection would reset the
     #    trained weights). Temporarily Hebbian ON + STDP/reward OFF; OU=20 is already ON from build (the validated
@@ -1352,6 +1437,11 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         # deficit/surplus each step, read drive_agrp firing as the spiking hunger that gates the reward).
         handles["drive"] = {n: {"base": int(rm.indices(n)[0]), "size": len(list(rm.indices(n)))}
                             for n in ("drive_agrp", "drive_pomc")}
+    if co_resident_grounded_speech:
+        handles["grounded_speech"] = {
+            n: np.asarray(list(rm.indices(n)), dtype=np.int64)
+            for n in (SPEECH_FOOD_CUE, SPEECH_REQUEST, SPEECH_SILENCE, SPEECH_WTA_FS)
+        }
     if co_resident_td_cueshift:
         # The TD-slice base indices (for the on-merge A-CSC cue-shift battery: drive td_csc_k / td_reward_us, read
         # td_snc / td_striosome per bin for the migration time-course).
@@ -1385,7 +1475,8 @@ def conv_extra_regions_pathways(vocab=None, co_resident_rf=False, rf_D=128,
     co_resident_drive (Tier-3 SPIKING living loop): also append the 2-pool SPIKING interoceptive drive slice
     (`drive_agrp`=hunger / `drive_pomc`=satiety; hypothalamic AgRP/POMC, catalog O.05/O.06; mechanism GO
     2026-06-17-homeostatic-spiking-drive-mechanism-GO.md) so it is genuinely CO-RESIDENT on the SAME bridge the
-    agent navigates. The pools have ZERO out-edges (driven by interoceptive current, read by firing rate), so the
+    agent navigates. This episode-path helper gives the pools zero out-edges (they are driven by interoceptive current
+    and read by firing rate), so the
     slice is maximally nav-inert (like rf). enable_homeostasis=True PER-REGION = the merged-config operating-point
     fix (the limbic-core-lift lesson): the already-shipped per-region homeostasis mask (sim/bridge.py:1227-1245/
     :6320) gives ONLY the drive slice the low spike threshold while nav/conv stay at vpeak (byte-unchanged), and
@@ -1631,6 +1722,8 @@ class CoResidentOneBrainComposer(OneBrainComposer):
         grounded_codes = kwargs.get("grounded_codes", None)
         # --- the flag fields (defaults match OneBrainComposer.__init__ signature) ---
         self.seed = seed; self.D = D; self.period = period
+        self.persistent_store = bool(kwargs.get("persistent_store", False))
+        self._persistent_dirty = True
         self.trace = bool(kwargs.get("trace", False)); self.last_trace = None
         self.integrated_loop = bool(kwargs.get("integrated_loop", False))
         self.persistent_loop = bool(kwargs.get("persistent_loop", False))
@@ -1753,6 +1846,8 @@ class MergedNavConvAgent:
                  co_resident_perception=False, co_resident_generalization=False,
                  perception_grounding="gen_spikes", perception_device_resident=False,
                  co_resident_drive=False, drive_n_pool=60, drive_to_da=False, drive_da_sensitivity=8.0,
+                 co_resident_grounded_speech=False, speech_n_acc=40, speech_n_fs=20,
+                 speech_drive_weight=8.0, speech_cue_weight=60.0,
                  co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
@@ -2045,16 +2140,21 @@ class MergedNavConvAgent:
                 D=_D, vocab=vocab, k_max=self._onebrain_k_max, enable_attributed=False)
         # Tier-3 living-loop seam (additive, default-off, byte-preserving): the co-resident 2-pool SPIKING hunger
         # drive (drive_agrp/drive_pomc; O.05/O.06). Appended LAST in the build so all other index bases are
-        # byte-unchanged; ZERO out-edges so it is nav/conv-inert. Read by firing rate off cp_firing_states.
+        # byte-unchanged. Grounded speech adds only the opt-in AgRP/POMC speech outputs; no mode adds an edge into
+        # navigation or conversation. The drive is read by firing rate off cp_firing_states.
         self.co_resident_drive = bool(co_resident_drive)
         self._drive_n_pool = int(drive_n_pool)
         self._drive_to_da = bool(drive_to_da)                  # Tier-3 Option 3: hunger raises the shared DA
         self._drive_da_sensitivity = float(drive_da_sensitivity)
+        self.co_resident_grounded_speech = bool(co_resident_grounded_speech)
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
             onebrain_rf_size=_onebrain_rf_size,
             co_resident_drive=self.co_resident_drive, drive_n_pool=self._drive_n_pool,
             drive_to_da=self._drive_to_da, drive_da_sensitivity=self._drive_da_sensitivity,
+            co_resident_grounded_speech=self.co_resident_grounded_speech,
+            speech_n_acc=int(speech_n_acc), speech_n_fs=int(speech_n_fs),
+            speech_drive_weight=float(speech_drive_weight), speech_cue_weight=float(speech_cue_weight),
             co_resident_perception=self.co_resident_perception,
             co_resident_generalization=self.co_resident_generalization,
             enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),

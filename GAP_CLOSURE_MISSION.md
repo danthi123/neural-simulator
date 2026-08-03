@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT — 2026-08-03 01:59 EDT (read first; below this is history)
+## STATE OF THE PROJECT — 2026-08-03 03:35 EDT (read first; below this is history)
 
 **Public documentation realigned:** `README.md`, `ROADMAP.md`, `docs/CURRENT-STATE.md`, `QUICKSTART.md`, and
 `docs/INDEX.md` have been rewritten as the plain-language front door. New `docs/SCAFFOLD-LEDGER.md` is the public
@@ -30,11 +30,18 @@ source event, separate bridge, host-normalized readout, fixed meta-to-self relay
 GPU seed-42 parity is GO. Finding:
 `research/findings/2026-08-03-laneC-plastic-source-memory-GO-learned-source-support-production-wirein.md`.
 
-**EXACT NEXT:** build the minimal grounded speech-action loop: internal need plus grounded perception causes a
-brain-selected request, the social/world consequence changes internal state, and the same scene produces silence after
-the need is met. In parallel, move the learned source populations onto the shared brain and connect their spikes
-directly through dynamic ACC/aPFC and self-schema. The 267M WKV may render a brain-chosen message only as a named
-fluency scaffold; do not scale it as an ungrounded text predictor.
+**Grounded speech-action loop completed:** the first shared-bridge need-to-communication-to-consequence rung is **GO
+6/6** on the RTX 3090. The brain learns an apple-percept to food-cue association; hunger plus that cue wins a neural
+request-versus-silence competition; the host world delivers food only after the request; energy rises from 0.25 to
+1.00; and the unchanged apple scene then produces silence. Drive, perception, learned-route, untrained-route, and
+wrong-object controls all collapse to silence. With consequence disabled, the hungry brain requests again. Honest
+boundary: this is a single conceptual `request apple` action with explicit caregiver pairing, fixed coincidence/WTA
+wiring, fixed thresholds, and a host decoder. It is not fluent language.
+
+**EXACT NEXT:** generalize the grounded loop to multiple learned referents and intents and let contingent interaction
+change later choices, while burning down the fixed `request apple` decoder and hand-set operating point. In parallel,
+move the learned source populations onto the same bridge and connect their spikes directly through dynamic ACC/aPFC
+and self-schema. Use the 267M WKV only after the brain chooses message, referent, certainty, and whether to speak.
 
 ---
 

@@ -32,6 +32,7 @@ program trying to grow one grounded, continuously learning conversational brain.
 |---|---|
 | Navigation and action | Spiking loops for visual/gridworld navigation, action selection, motor output, and reward learning exist. Treat older headline scores cautiously because several were later corrected. |
 | Simple conversation | The system can store simple facts, parse basic questions, answer from memory, and decline when no matching memory exists. This is narrow grounded dialogue, not open conversation. |
+| Grounded communication | A first shared-brain loop learns an apple-to-food association, combines it with hunger, emits a conceptual request, receives food, and becomes silent when sated. It passed six seeds plus drive, perception, association, wrong-object, and no-consequence controls. The single request and its decoder remain fixed scaffolds. |
 | Language production | Bounded spiking speech paths and larger recurrent language experiments exist. A mature 267M-parameter WKV checkpoint now has six-seed RF spiking-forward parity under the current test. Fluent open-ended language is still unfinished and partly scaffolded by conventional training. |
 | Word and category learning | Local learning experiments show word-meaning structure, categories, taxonomies, inheritance, and exceptions at small scale. The strongest versions still need deeper sensory/action grounding. |
 | Memory and replay | Episodic memory, completion, replay, consolidation, and directional replay reading have substantial tested support. The production path still has database-like pieces to replace. |
@@ -39,7 +40,7 @@ program trying to grow one grounded, continuously learning conversational brain.
 | Affect | Persistent mood-like state and neuromodulator axes exist. Rich, graded, learned emotion that changes perception, memory, speech, and behavior remains open. |
 | Curiosity | Curiosity circuits can seek learnable unknowns and avoid some unlearnable noise. Learning-progress memory is improving but not fully brain-native yet. |
 | Self-monitoring and honesty | Confidence, attention, authorship, and source-monitoring pieces exist. The default-off production hook is moat-safe. A new spiking Hebbian path learns whether a complete proposition was externally experienced and feeds that support into the self-schema without reading an expected answer at inference. It downgraded all 46 stressed wrong recalls across six seeds, but unnecessarily hedged 5/133 correct recalls and still uses a separate, partly host-defined circuit. |
-| One-brain integration | Several combined demos show navigation, conversation, memory, and modulation co-residing. The next step is a continuously running lived loop, not another combined demo. |
+| One-brain integration | Several combined demos show navigation, conversation, memory, and modulation co-residing. The first need-to-communication-to-consequence loop now runs on one bridge; broader continuous life and learning remain open. |
 
 ## What Is Still Scaffolded
 
@@ -65,8 +66,9 @@ The detailed public list is [SCAFFOLD-LEDGER.md](SCAFFOLD-LEDGER.md).
    speech, but it does not yet speak freely from a rich internal life.
 2. **Grounded meaning.** Words need to share circuitry with what the brain sees,
    does, wants, and remembers.
-3. **A complete live loop.** The project needs a small but continuous
-   world/body/speech/learning loop where consequences change the brain.
+3. **A broader live loop.** One food request now closes the causal loop, but the
+   project still needs continuous life with several needs, objects, intents,
+   memories, and changing consequences.
 4. **Self-based honesty.** Source support can now be learned in spiking synapses,
    but the source circuit, ACC-like monitor, self-schema, and speech decision are
    not yet one co-resident learned pathway driven by lived sensory activity.
@@ -79,19 +81,17 @@ The detailed public list is [SCAFFOLD-LEDGER.md](SCAFFOLD-LEDGER.md).
 
 ## Highest-Value Direction
 
-The next major build should be a minimal grounded conversation loop. In parallel,
-the new learned source signal should move onto the same brain as the confidence
-and self-schema circuits:
+The next major build should generalize the first grounded request loop. In
+parallel, the learned source signal should move onto the same brain as the
+confidence and self-schema circuits:
 
-1. Put the brain in a small world with a few objects, actions, needs, and a social
-   partner.
-2. Let internal state produce a reason to speak: curiosity, surprise,
-   uncertainty, need, or affect.
-3. Make the utterance refer to grounded internal representations.
-4. Feed the result of the speech act back into reward, surprise, confidence, and
-   learning.
-5. Test whether removing internal state, grounding, source-monitoring, or
-   contingent feedback breaks the behavior.
+1. Add several grounded objects and learn which one satisfies each need.
+2. Learn more than one intent, such as request, ask, report, or decline.
+3. Replace the fixed conceptual decoder with a learned message-to-word path.
+4. Add curiosity or uncertainty as a second internal reason to speak.
+5. Make contingent human interaction change later speech and behavior.
+6. Test whether removing each internal cause, grounding route, source signal, or
+   consequence breaks the claimed behavior.
 
 That is the shortest path from a collection of working mechanisms to a small
 brain that says simple things of its own.

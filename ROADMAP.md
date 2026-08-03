@@ -96,6 +96,15 @@ Pass condition:
 The same external prompt should not be enough to determine the utterance. Speech
 must depend on internal state, recent experience, and learned grounding.
 
+Current rung:
+
+A first six-seed loop now joins learned food perception, an AgRP/POMC-inspired
+hunger/satiety drive, a neural request-versus-silence choice, and a world
+consequence on one bridge. A hungry brain requests the learned food; receiving
+it changes body state; the unchanged scene then produces silence. Lesioning the
+drive, perception, or learned association removes the request. This is one
+preverbal request with fixed teaching and decoding, not general conversation.
+
 ## Phase 2: Make Language A Grounded Action
 
 Goal: words flow into and out of grounded brain state.
@@ -112,6 +121,8 @@ Build:
 
 Current assets:
 
+- a six-seed grounded food-request loop in which internal need and learned
+  perception jointly determine whether the brain communicates;
 - bounded spiking speech paths;
 - concept-pool to word-output pathways;
 - basic question parsing and fact answering;
@@ -239,8 +250,9 @@ not because a giant static model was preallocated.
 
 ## Highest Priority Work Now
 
-1. **Build the minimal grounded speech-action loop.** Let curiosity, surprise,
-   need, or affect cause a simple utterance; feed the result back into learning.
+1. **Generalize the grounded speech-action loop.** Learn several referents and
+   intents from contingent interaction, add another internal cause such as
+   curiosity or uncertainty, and remove the fixed apple-request decoder.
 2. **Finish the honesty integration.** Move the learned source populations onto
    the shared brain and connect their spikes directly through ACC-like monitoring
    and self-schema to speech certainty.

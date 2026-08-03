@@ -70,16 +70,18 @@ doing the brain's work.
 | Shared-brain wiring | Brain regions and pathways can be declared and run together in one simulation loop. This supports combined navigation, memory, reward, conversation, and modulation experiments. |
 | Navigation and action | Spiking visual, basal-ganglia-like, motor, and reward loops exist for gridworld tasks. Some older headline claims were corrected, so use current findings before quoting numbers. |
 | Simple conversation | The system can store simple facts, parse basic questions, answer from memory, and abstain when no matching memory exists. This is useful, but it is still narrow question answering, not open conversation. |
+| Grounded communication | A first shared-brain loop now learns that an apple percept predicts food, combines that cue with hunger, emits a conceptual request, receives food, and falls silent when sated. It passed six seeds and causal controls. The single intent, referent, decoder, and caregiver lesson are still fixed scaffolds, so this is not natural language yet. |
 | Language circuits | Bounded spiking speech paths and larger local recurrent language experiments exist. Fluent open-ended speech remains the largest unfinished capability. |
 | Memory and replay | The repo contains episodic memory, pattern completion, replay, consolidation, and directional replay experiments. The open goal is integrated reconstructive memory rather than database-like recall. |
 | Affect and drive | Reward prediction, value, persistent mood-like state, neuromodulator axes, and curiosity circuits exist. Rich emotion that develops over time and colors speech/behavior remains open. |
-| Self-monitoring | Confidence, attention, authorship, and source-monitoring circuits exist in research runners. A default-off conversation hook can use self-schema confidence to hedge; a newer independent RF source-memory echo catches a current high-confidence wrong-recall failure mode in six-seed tests. This is progress, not final biological honesty. |
+| Self-monitoring | Confidence, attention, authorship, and source-monitoring circuits exist. A default-off conversation hook can hedge, and a plastic spiking source memory now learns external support for complete propositions. It passed the six-seed safety battery but remains separate and partly host-defined. |
 | Research workflow | Findings are expected to cite raw artifacts, provenance, controls, and multi-seed runs when practical. Negative and corrected results remain part of the record. |
 
 ## The Main Open Problems
 
-1. **Make a live loop.** The brain needs a small world, a body, internal state,
-   speech/action, consequences, and learning all running together.
+1. **Broaden the first live loop.** The initial hunger-to-request-to-satiety loop
+   works. It now needs several needs, objects, intents, and learned consequences
+   in continuous interaction.
 2. **Make language grounded action.** Speech should come from curiosity, affect,
    need, memory, or social intent inside the brain, not from a host-written query
    template.
