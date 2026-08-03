@@ -4,6 +4,8 @@ status: live
 lane: laneC
 date: 2026-08-03
 mechanism: source-monitor-coresidency-v3
+amended: 2026-08-03
+seed_integrity: amended-before-formal-evidence
 ---
 
 # Source-monitor v3 local-homeostasis calibration: preregistration
@@ -68,14 +70,32 @@ project's source-monitor record.
 
 ## Fixed Seeds And Phase Lock
 
-- Calibration, and the only open phase: seeds `220` and `221`.
-- Development, reserved and mechanically rejected: seeds `222`, `223`, and
-  `318`.
-- Held out and mechanically rejected: seeds `319`, `320`, and `321`.
+- Non-scientific implementation smoke only: seed `220`.
+- Calibration, and the only open formal phase: seeds `232` and `233`.
+- Development, reserved and mechanically rejected: seeds `234`, `235`, and
+  `330`.
+- Held out and mechanically rejected: seeds `331`, `332`, and `333`.
 
 Both calibration seeds must pass without tuning between them before a separate
 development preregistration may open development. Development and held-out
 seeds must not be inspected or run while this calibration gate is live.
+
+### Seed-integrity amendment - 2026-08-03
+
+The initial preregistration named `220` and `221` as calibration seeds. During
+implementation, before any formal evidence run or artifact, unit tests
+instantiated seed `220` and exercised four local simulation steps to verify that
+the source-only homeostasis mask changed only source-memory thresholds. Seed
+`220` is therefore reclassified as `SMOKE_SEED` and can never contribute formal
+evidence. Seed `221` was not run, but is retired conservatively because it was
+part of the same published partition.
+
+Before any formal calibration run, the untouched partitions are replaced with
+calibration `232, 233`, reserved development `234, 235, 330`, and held-out
+`331, 332, 333`. Unit tests may construct or advance dynamics only with smoke
+seed `220`. They may inspect the formal constants and exercise pure seed
+validation, but must not construct a network or evaluate dynamics with any
+formal calibration, development, or held-out seed.
 
 ## Fixed Acceptance Rule
 
