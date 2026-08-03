@@ -1,0 +1,29 @@
+{
+ "run_id": "1785787233-501434",
+ "runner": "research/runners/_laneC_source_monitor_coresidency_gate_v4.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneC_source_monitor_coresidency_gate_v4.py",
+  "--phase",
+  "calibration",
+  "--seeds",
+  "601",
+  "607",
+  "--json",
+  "research/findings/raw/source_monitor_coresidency_v4/calibration.json"
+ ],
+ "git_sha": "6986109804925cd49d40d6127fb2662c24df4762",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "a1292cdca4f1234023316b69da1c15948ae846235b15412978ed3816aa2aba74",
+ "started": "2026-08-03T16:00:33",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5523.2,
+ "corpus_check_query": "Source monitor v3 provenance repeat only seed 233; runner and criteria unchanged",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/source_monitor_coresidency_v4/calibration.json"
+}

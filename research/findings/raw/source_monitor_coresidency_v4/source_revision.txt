@@ -1,0 +1,5 @@
+git_sha=6986109804925cd49d40d6127fb2662c24df4762
+source_kind=git_archive
+source_manifest_sha256=a1292cdca4f1234023316b69da1c15948ae846235b15412978ed3816aa2aba74
+excluded_worktree_paths=0
+created_utc=2026-08-03T19:59:34Z

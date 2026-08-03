@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 15:25 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 16:11 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -38,10 +38,11 @@ an already strong source. V3 preregistered a bounded tradeoff and added local
 threshold homeostasis, but both fresh seeds failed without improving the
 weakest source; one seed also lost inherited causal attribution. No development
 or held-out seed is open. V4 replaces threshold tuning with local plastic
-FS-to-rival inhibition. Its CPU and GPU smoke pass, and post-learning state,
-routing, checkpoint, trace-lifecycle, and fast-path audit defects are repaired.
-A final independent re-audit cleared every prior blocker. Formal seeds
-`601/607` remain untouched and are now the exact next CPU-pool run.
+FS-to-rival inhibition. Its CPU and GPU smoke passed, but formal `601/607` are
+UNDEFINED because a bound-method interface guard incorrectly expected `self`.
+The recorded circuit otherwise engaged cleanly, yet intact source margins and
+rival spike burden exactly matched the learning lesion on both seeds. Those
+seeds are consumed, later phases stay locked, and the candidate is retired.
 
 **Replay consolidation:** V1 proved that uncued hippocampal replay can change
 cortical weights on one bridge, but useful hippocampus-independent recall was
@@ -76,8 +77,9 @@ evidence or workflow commit.
    a persistent effect at outcome time; do not tune Gate B v3 seeds.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
-3. Run source-monitor v4 calibration seeds `601/607` from the same immutable
-   revision on separate mini PCs, then aggregate only the exact pair.
+3. Preregister a fresh source-monitor successor only after smoke establishes a
+   nonzero rival burden that local competition can causally reduce; do not rerun
+   v4 seeds `601/607`.
 4. If the final audit clears hierarchical visual identity, run exact calibration
    seeds `503/509` on separate mini PCs.
 5. Merge only cleared mechanisms into the persistent develop-loop; do not scale

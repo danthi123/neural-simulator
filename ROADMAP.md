@@ -115,10 +115,11 @@ no-harm control. A third version preregistered a bounded tradeoff and added
 source-local intrinsic threshold homeostasis. Both fresh seeds failed: the
 weakest source did not improve, one source weakened, and one seed also lost
 inherited causal attribution. A fourth version now uses local inhibitory STDP
-on FS-to-rival-source routes. Its real source-to-FS rehearsal circuit passes
-CPU/GPU smoke with per-pool and per-route checks, and a final independent audit
-cleared state matching, checkpoint, rule-isolation, and trace-lifecycle guards.
-Formal `601/607` remain untouched and are next from one immutable revision.
+on FS-to-rival-source routes. Its real source-to-FS rehearsal circuit passed
+CPU/GPU smoke, but formal `601/607` are undefined because an interface guard
+incorrectly expected `self` in a bound method signature. The recorded intact
+and learning-lesion margins were also identical, with zero rival spike burden
+in both arms. Those seeds are consumed and the v4 candidate is retired.
 
 ### 4. Build A Lived, Reconstructive Memory
 
