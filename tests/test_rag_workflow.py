@@ -5,6 +5,7 @@ import os
 import subprocess
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -15,7 +16,7 @@ from tools.rag.rag_paths import (
     resolve_paths,
     stable_document_id,
 )
-from tools.rag.retrieval import candidate_count
+from tools.rag.retrieval import _source_intent, candidate_count
 from tools.rag.rag_eval import score_one
 
 
@@ -156,6 +157,17 @@ def test_retrieval_keeps_a_broad_hybrid_rerank_window():
     assert candidate_count(1) == 30
     assert candidate_count(5) == 30
     assert candidate_count(10) == 60
+
+
+def test_named_source_intent_preserves_compact_version_tokens():
+    def hit(source):
+        return SimpleNamespace(node=SimpleNamespace(
+            metadata={"source": source}, ref_doc_id=source
+        ))
+
+    query = "did neural vocal credit Gate B v4 pass or was it retired?"
+    assert _source_intent(query, hit("neural-vocal-credit-gateB-v4-smoke-NO-GO.md")) \
+        > _source_intent(query, hit("neural-vocal-credit-gateB-v5-smoke-QUALIFIED.md"))
 
 
 def test_scientific_eval_requires_the_labeled_passage_not_just_the_source():

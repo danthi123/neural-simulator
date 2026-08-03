@@ -25,8 +25,11 @@ def node_source(node_with_score) -> str:
 
 def _source_intent(query: str, node_with_score) -> int:
     """Prefer a named source when the user explicitly includes its distinctive name."""
-    query_terms = set(re.findall(r"[a-z]{4,}", query.lower()))
-    source_terms = set(re.findall(r"[a-z]{4,}", node_source(node_with_score).lower()))
+    # Preserve compact version identifiers (v3/v4) and years. Dropping them
+    # made a newer v5 finding outrank an explicitly requested v4 source.
+    token_pattern = r"[a-z]+\d+|\d{4}|[a-z]{4,}"
+    query_terms = set(re.findall(token_pattern, query.lower()))
+    source_terms = set(re.findall(token_pattern, node_source(node_with_score).lower()))
     generic = {"book", "full", "paper", "review", "finding", "gate", "smoke"}
     return len(query_terms & (source_terms - generic))
 
