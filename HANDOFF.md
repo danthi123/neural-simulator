@@ -196,7 +196,7 @@ It runs, in ~30s: (1) a RAG query over our own findings ("has this been scoped/t
 
 1. **Check OUR OWN knowledge base via RAG — the cheapest move, before any external search:**
    ```bash
-   .venv-rag/bin/python tools/rag/rag_search.py "<question>" 5 --corpus finding|plan|doc|catalog|kandel|paper|all
+   bash tools/rag/search.sh "<question>" 5 --corpus finding|plan|doc|catalog|kandel|paper|all
    ```
    Corpora: `finding` (our conclusions in `research/findings/`), `plan` (`docs/plans/`), `doc` (CLAUDE/ROADMAP/README), `catalog` (the biology index), `kandel` (Kandel 6e full text). Note the **two interpreters**: RAG uses `.venv-rag/bin/python`; everything else uses `.venv/bin/python`.
 2. **Read OUR OWN substrate/wiring first** before theorizing about why it misbehaves. A diagnostic number that violates a known criterion *is* the primary lead. (Proof: a CA3 formation blocker was a 5-line "zero feedback inhibition wired" fact in the code, found only after ~3 cycles of doomed plasticity-rule tweaks.)
@@ -285,8 +285,8 @@ Several disciplines above were implemented with Claude-Code-only tools. The **un
 | **`Skill` tool** (`neural-simulator`, `verify-go`, `sync-documentation`, `evolve-skills`) | Loaded a workflow's instructions on demand | The skills are plain markdown at `.claude/skills/<name>/SKILL.md`. **Read them directly**; follow the prose. |
 | **`Monitor` tool** + heartbeat | Watched long background runs for done/crash/hang, emitting a state heartbeat every ~15 min | Poll the process yourself (`ps`, `kill -0 <pid>`, tail the JSON/log). **Silence ≠ success**: check the run's *own* terminal verdict, and confirm which *device* it ran on. Never conclude "crashed/complete" without `ps`/`kill -0` — buffered stdout has faked both. |
 | **`run_in_background` + sub-agents + Workflows** | Fanned independent de-risks/reviews across processes | Use your own background/parallel primitives. The pattern that matters: **fan multi-seed sweeps across OS processes** (one process per seed, `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 SIM_BACKEND=numpy`, `wait` at the end), not one process looping seeds serially (that pins 1/N cores). |
-| **Git hooks (the gates) — these DO work from any shell** | `tools/gates/*` auto-discovered into a pre-commit hook; block commits on claim-provenance, biology bindings, single-seed headlines, doc structure, etc. | The gate logic is ordinary Python/bash. **The gates are already armed** in this checkout via `git config core.hooksPath tools/githooks` — verify with `git config core.hooksPath` (prints `tools/githooks`). Do **not** symlink into `.git/hooks/`: when `core.hooksPath` is set, git ignores `.git/hooks/` entirely. `tools/githooks/pre-commit` blocks commits; `tools/githooks/post-commit` re-indexes the RAG. (Ignore the hyphenated `tools/git-hooks/` — a dead Windows-era artifact.) Authoritative index: `docs/FAILURE_GATE_MATRIX.md`. |
-| **The RAG index** | Semantic search over findings/plans/docs/textbooks | Works from any shell: `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus <c>`. A `post-commit` hook auto-refreshes it; a *this-session, uncommitted* finding won't be indexed yet — `grep research/findings/AUTONOMOUS_STATE.md` and recent `research/findings/*.md` for the latest. |
+| **Git hooks (the gates) — these DO work from any shell** | `tools/gates/*` auto-discovered into a pre-commit hook; block commits on claim-provenance, biology bindings, single-seed headlines, doc structure, etc. | Run `python3 tools/rag/check_workflow.py` to verify `core.hooksPath`, executable hooks, both canonical interpreters, the index/catalog, and index schema. Repair hook installation with `python3 tools/rag/check_workflow.py --install`; a blocked check must not be described as armed. (Ignore the hyphenated `tools/git-hooks/` — a dead Windows-era artifact.) Authoritative index: `docs/FAILURE_GATE_MATRIX.md`. |
+| **The RAG index** | Semantic search over findings/plans/docs/textbooks | Works from main or a linked worktree: `bash tools/rag/search.sh "<q>" 5 --corpus <c>`. The `main` post-commit hook refreshes it; feature-branch and blocked refreshes are written explicitly to `rag_index/_autoupdate.log`. Uncommitted findings are not indexed. |
 
 **Two rules that survive any harness:** (1) a **noticed failure cannot stay unclosed** — add one line to `research/FAILURE_LOG.md` and it must name a gate or declare `NOT-GATEABLE: <reason>`; (2) when a committed finding changes a wall/gap **status**, the current **frontier**, or a **next-action**, sync the summary docs the **same cycle** (the roadmap ledger, `GAP_CLOSURE_MISSION.md` CURRENT STATE, `research/findings/AUTONOMOUS_STATE.md`, `ROADMAP.md`) — following `.claude/skills/sync-documentation/SKILL.md`. Stale summary pointers are the #1 cause of re-deriving concluded work: **a summary doc is a POINTER, not ground truth; if it conflicts with a finding, the finding wins and you fix the summary in the same commit.**
 
@@ -952,8 +952,8 @@ bash tools/before_you_build.sh "the slot competition ignores the cue"
 
 # ── Search the local corpus (findings + biology catalog + Kandel 6e + textbooks) ──
 # Uses the RAG venv. --corpus one of: all(default) finding plan doc catalog kandel paper
-.venv-rag/bin/python tools/rag/rag_search.py "how does BTSP form a place field" 5 --corpus kandel
-.venv-rag/bin/python tools/rag/rag_search.py "have we already tried mean-subtract recall" 5 --corpus finding
+bash tools/rag/search.sh "how does BTSP form a place field" 5 --corpus kandel
+bash tools/rag/search.sh "have we already tried mean-subtract recall" 5 --corpus finding
 # A hit is a POINTER, not a paraphrase — open and READ the cited source.
 
 # ── Run a research-gate runner (note: SIM_BACKEND is set EXPLICITLY) ──
@@ -1010,7 +1010,7 @@ Verified present and executable. Run it with the **RAG venv** (not the engine ve
 
 ```bash
 # usage: rag_search.py "<question>" [top_k] [--corpus finding|plan|doc|catalog|kandel|paper|all]
-.venv-rag/bin/python tools/rag/rag_search.py "how does BTSP set a place field" 5 --corpus kandel
+bash tools/rag/search.sh "how does BTSP set a place field" 5 --corpus kandel
 ```
 
 Corpora it indexes (`--corpus`, default `all`):
@@ -1022,7 +1022,7 @@ Corpora it indexes (`--corpus`, default `all`):
 - `kandel` — Kandel PNS 6e full text ("how does the BIOLOGY do X?")
 - `paper` — the specialty texts (Marr 1969, Albus 1971, Buzsáki *Rhythms of the Brain*, O'Keefe-Nadel *Cognitive Map*, Schultz, Sutton-Barto, Tepper/Bolam BG)
 
-The index lives at `/home/dant123/Projects/rag_index/llamaindex_full` (auto-resolved as `<parent-of-repo>/rag_index`; override with `SIM_RAG_ROOT`, currently unset). Falls back to a findings-only index if the full one is absent.
+The index lives at `/home/dant123/Projects/rag_index/llamaindex_full`. Linked worktrees resolve it through Git's common checkout rather than their immediate parent; override with `SIM_RAG_ROOT`. Only `finding`/`all` may fall back to a findings-only index, so a missing full reference index cannot look like a valid empty catalog search.
 
 ### 3. Full-text reference access (papers + textbooks)
 

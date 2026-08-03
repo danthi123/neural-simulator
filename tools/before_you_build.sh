@@ -13,7 +13,7 @@ Q="${*:-}"
 [ -z "$Q" ] && { echo "usage: bash tools/before_you_build.sh \"<the defect in one line>\""; exit 2; }
 
 echo "════ 1. HAS THIS ALREADY BEEN SCOPED / TRIED / REFUTED? (our own findings) ════"
-.venv-rag/bin/python tools/rag/rag_search.py "$Q" 5 --corpus finding 2>/dev/null | grep -vi "^LLM is" || echo "  (rag unavailable)"
+bash tools/rag/search.sh "$Q" 5 --corpus finding 2>/dev/null | grep -vi "^LLM is" || echo "  (rag unavailable)"
 
 echo
 echo "════ 2. IS THERE A RESEARCH GATE / SCOPE DOC ALREADY? ════"

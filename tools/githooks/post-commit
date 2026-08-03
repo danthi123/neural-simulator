@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# RAG auto-update post-commit hook (installed by tools/rag/install_git_hook.sh).
+# RAG auto-update post-commit hook (armed through core.hooksPath=tools/githooks).
 # When a commit touches the prose knowledge base, fire a BACKGROUND, DEBOUNCED update of BOTH RAG indexes
 # (LlamaIndex + SOMA) via tools/rag/update_indexes.py. Non-blocking: the commit returns immediately.
 # update_indexes.py is lock-guarded + manifest-gated, so a burst of commits collapses to one update and an
@@ -9,18 +9,30 @@
 changed=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null)
 if echo "$changed" | grep -qE '^(research/findings/|docs/|CLAUDE\.md|ROADMAP\.md|README\.md)'; then
   REPO=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
-  ROOT="${SIM_RAG_ROOT:-$(dirname "$REPO")/rag_index}"
-  PY="$REPO/.venv-rag/bin/python"
+  COMMON=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 0
+  CANONICAL=$(dirname "$COMMON")
+  ROOT="${SIM_RAG_ROOT:-$(dirname "$CANONICAL")/rag_index}"
+  PY="${SIM_RAG_PYTHON:-$CANONICAL/.venv-rag/bin/python}"
   UPD="$REPO/tools/rag/update_indexes.py"
   LOG="$ROOT/_autoupdate.log"
-  [ -x "$PY" ] || exit 0            # RAG venv absent (e.g. a fresh clone) -> skip; search still works once built
-  # MIGRATION GATE: update_indexes refreshes by path-based doc id. An index carried over from another box holds
-  # FOREIGN path ids, so a refresh would delete every ref_doc and re-embed the whole corpus (incl. the Kandel
-  # full-book) -- slow, and it can contend for VRAM with a live run. Require an explicit one-time local rebuild
-  # (tools/rag/update_indexes.py --rebuild) to drop this sentinel before auto-update is allowed to fire.
-  [ -f "$ROOT/.rag_paths_migrated" ] || exit 0
-  # sleep briefly so a burst of commits collapses into one update (the lock+manifest gate does the rest), then update.
-  ( sleep 45; "$PY" "$UPD" >> "$LOG" 2>&1 ) >/dev/null 2>&1 &
+  mkdir -p "$ROOT"
+  if [ ! -x "$PY" ]; then
+    printf '[post-commit] BLOCKED: RAG interpreter missing: %s\n' "$PY" >> "$LOG"
+    exit 0
+  fi
+  BRANCH=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || printf detached)
+  if [ "$BRANCH" != "${SIM_RAG_REFRESH_BRANCH:-main}" ]; then
+    printf '[post-commit] SKIP: branch=%s; canonical refresh branch=%s\n' \
+      "$BRANCH" "${SIM_RAG_REFRESH_BRANCH:-main}" >> "$LOG"
+    exit 0
+  fi
+  if ! grep -q '"document_id_schema"[[:space:]]*:[[:space:]]*"repo-relative-v1"' "$ROOT/.rag_schema.json" 2>/dev/null; then
+    printf '[post-commit] BLOCKED: legacy/missing index schema; run tools/rag/update_indexes.py --rebuild\n' >> "$LOG"
+    exit 0
+  fi
+  # Sleep briefly so a burst of commits collapses into one update (the lock+manifest gate does the rest), then update.
+  # The delay override exists for deterministic hook integration tests.
+  ( sleep "${SIM_RAG_REFRESH_DELAY:-45}"; SIM_REPO="$REPO" "$PY" "$UPD" >> "$LOG" 2>&1 ) >/dev/null 2>&1 &
   disown 2>/dev/null || true
 fi
 exit 0

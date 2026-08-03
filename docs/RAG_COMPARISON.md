@@ -132,14 +132,12 @@ the actual recoding/pattern-recognition passage — i.e. the Marr-Albus codon so
 locatable at last. `--corpus all "homeostatic threshold adaptation degrading learning when neurons are idle"` → the
 current co-training finding at 3.3 s.
 
-**Auto-update is armed, behind a MIGRATION GATE — a real trap that would have fired on the first commit.**
-`update_indexes.refresh_llamaindex` matches ref-docs by PATH-BASED id. A carried-over index holds FOREIGN path ids,
-so `cur_ids` (Linux paths) would match nothing → **every ref_doc deleted (lines 88-93) and the whole corpus re-embedded
-(line 94)**, silently, possibly contending for VRAM with a live run. The `post-commit` hook now (a) resolves paths via
-`git rev-parse --show-toplevel`, (b) uses `.venv-rag`, (c) no-ops when that venv is absent, and (d) **requires
-`$RAG_ROOT/.rag_paths_migrated`**, a sentinel only a deliberate `update_indexes.py --rebuild` drops. Post-rebuild the
-sentinel is in place, so a commit touching `research/findings/|docs/|CLAUDE|ROADMAP|README` refreshes incrementally
-(~45 s debounce, lock + manifest gated) as designed.
+**Auto-update is schema-gated and worktree-aware.** Repository-relative document ids replace checkout-specific absolute
+paths, allowing the shared canonical index to refresh from the linked `main` worktree without deleting and re-embedding
+the corpus solely because its checkout path changed. `tools/rag/check_workflow.py` verifies the executable repo hooks,
+canonical interpreter/index/catalog, and `.rag_schema.json`; the post-commit hook logs missing dependencies, legacy
+schema, and feature-branch skips rather than silently claiming a refresh. A one-time `update_indexes.py --rebuild` is
+required when migrating an older absolute-path index.
 
 **VERIFIED end-to-end, not assumed** (2026-07-16). (1) The hook fires: a `docs/` commit triggered it and it correctly
 hit the lock held by a manual rebuild — `another update is running; skip (it will pick up these changes)`. (2) The

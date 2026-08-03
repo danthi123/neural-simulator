@@ -9,9 +9,9 @@ Corpora (prose only — code/tests are for Grep, deliberately excluded):
   kandel  : sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt -> "how does the BIOLOGY do X?"
 
 Each Document gets metadata {source_type, source} so rag_search can filter by --corpus and display what each hit is.
-Same embedder (all-MiniLM-L6-v2) + retrieval-only as the findings-only index. Run with the rag_compare_env python.
-Persists to rag_compare/llamaindex_full (does NOT clobber the findings-only index until rag_search is switched over)."""
-import os, sys, time, glob
+Same embedder (all-MiniLM-L6-v2) + retrieval-only as the findings-only index. Run with the canonical RAG interpreter.
+Persists to the canonical rag_index/llamaindex_full directory."""
+import os, time, glob
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -19,16 +19,20 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from llama_index.core import Document, VectorStoreIndex, Settings
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+try:
+    from .rag_paths import resolve_paths, stable_document_id
+except ImportError:  # direct script execution
+    from rag_paths import resolve_paths, stable_document_id
 
 # Paths resolve from this file's location (repo root = two dirs up) with env overrides, so the tooling is portable:
 #   $SIM_REPO      -> the sim repo            (default: two dirs above this file)
 #   $SIM_CATALOG   -> sim-catalog/references  (default: <parent-of-repo>/sim-catalog/references)
 #   $SIM_RAG_ROOT  -> the index root          (default: <parent-of-repo>/rag_index)
 _HERE = os.path.dirname(os.path.abspath(__file__))
-SIM = os.environ.get("SIM_REPO") or os.path.dirname(os.path.dirname(_HERE))
-_PARENT = os.path.dirname(SIM)
-CAT = os.environ.get("SIM_CATALOG") or os.path.join(_PARENT, "sim-catalog", "references")
-RAG_ROOT = os.environ.get("SIM_RAG_ROOT") or os.path.join(_PARENT, "rag_index")
+_PATHS = resolve_paths(os.path.dirname(os.path.dirname(_HERE)))
+SIM = str(_PATHS.repo)
+CAT = str(_PATHS.catalog)
+RAG_ROOT = str(_PATHS.rag_root)
 PERSIST = os.path.join(RAG_ROOT, "llamaindex_full")
 
 # (source_type, list of file globs / explicit files)
@@ -58,10 +62,14 @@ SOURCES = [
 EXCLUDE_BASENAMES = {"AUTONOMOUS_STATE.md", "AUTONOMOUS_STATE_ARCHIVE.md"}
 
 
+def document_id(source_type, path):
+    """Stable IDs let the canonical index refresh from any checkout of the same repo."""
+    return stable_document_id(source_type, path, SIM, CAT)
+
+
 def load_docs():
     docs = []
-    seen = set()   # a path claimed by an EARLIER source_type wins: Document id_ IS the path, so indexing a file under
-                   # two source types would emit duplicate ids (e.g. kandel/full-book.txt also matches the paper glob).
+    seen = set()   # An earlier source type wins; duplicate matches would otherwise emit duplicate stable IDs.
     for stype, patterns in SOURCES:
         files = []
         for p in patterns:
@@ -79,7 +87,7 @@ def load_docs():
                 print(f"  [skip] {f}: {e}", flush=True); continue
             if not text.strip():
                 continue
-            docs.append(Document(text=text, id_=f,   # id_=path so refresh_ref_docs (incremental update) is hash-based
+            docs.append(Document(text=text, id_=document_id(stype, f),
                                  metadata={"source_type": stype, "source": os.path.basename(f), "path": f},
                                  excluded_embed_metadata_keys=["path"], excluded_llm_metadata_keys=["path"]))
             n += 1

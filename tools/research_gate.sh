@@ -36,11 +36,11 @@ OUT=$(mktemp)
 # corpora unqueried. Proven concretely: the blended query returned 0 primary hits for a question whose
 # --corpus kandel query returned Figure 10-15, the passage that reframed the whole gap#5 residual.
 # So the gate now runs the per-corpus queries ITSELF and counts across all of them.
-"$ROOT"/.venv-rag/bin/python "$ROOT"/tools/rag/rag_search.py "$Q" "$N" 2>/dev/null | tee "$OUT"
+bash "$ROOT/tools/rag/search.sh" "$Q" "$N" 2>/dev/null | tee "$OUT"
 for C in kandel catalog paper; do
   echo
   echo "────── --corpus $C (the primary corpora, queried directly so they cannot be crowded out) ──────"
-  "$ROOT"/.venv-rag/bin/python "$ROOT"/tools/rag/rag_search.py "$Q" 4 --corpus "$C" 2>/dev/null | tee -a "$OUT"
+  bash "$ROOT/tools/rag/search.sh" "$Q" 4 --corpus "$C" 2>/dev/null | tee -a "$OUT"
 done
 echo
 # RELEVANCE FLOOR, not a hit count (defect found 2026-07-31 by the codebase bug hunt, in THIS file, hours after
