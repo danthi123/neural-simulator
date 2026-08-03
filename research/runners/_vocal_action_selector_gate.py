@@ -16,6 +16,7 @@ import argparse
 from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
+import time
 
 import numpy as np
 
@@ -73,6 +74,26 @@ def selector_config(version: str) -> SelectorConfig:
     if version == "v2":
         return SelectorConfig(enable_striatal_fsi=False)
     raise ValueError(f"unknown selector version: {version}")
+
+
+def _topology_summary(config: SelectorConfig):
+    shared = config.n_practice + config.n_stn + config.n_reset
+    per_channel = (
+        config.n_proposal
+        + 2 * config.n_striatum
+        + config.n_gpe
+        + config.n_gpi
+        + config.n_thalamus
+        + config.n_commit
+        + config.n_commit_fs
+        + config.n_motor
+    )
+    if config.enable_striatal_fsi:
+        per_channel += config.n_commit_fs
+    return {
+        "neurons": int(shared + len(CHANNELS) * per_channel),
+        "declared_pathways": 44 if config.enable_striatal_fsi else 36,
+    }
 
 
 def _region(name, n, *, exc_fraction, neuron_type, internal_density=0.0,
@@ -538,6 +559,7 @@ def main(argv=None):
     )
     args = parser.parse_args(argv)
     config = selector_config(args.selector_version)
+    started = time.perf_counter()
     rows = [
         run_seed(
             seed,
@@ -547,6 +569,11 @@ def main(argv=None):
         )
         for seed in args.seeds
     ]
+    elapsed_seconds = time.perf_counter() - started
+    total_trials = len(args.seeds) * (
+        args.trials + 2 * args.lesion_trials
+    )
+    xp, backend_name = get_backend()
     result = {
         "probe": "vocal_action_selector_gate_a",
         "selector_version": args.selector_version,
@@ -554,8 +581,27 @@ def main(argv=None):
         "rows": rows,
         "n_go": int(sum(row["go"] for row in rows)),
         "all_go": bool(all(row["go"] for row in rows)),
-        "backend": get_backend()[1],
+        "backend": backend_name,
+        "topology": _topology_summary(config),
+        "performance": {
+            "elapsed_seconds": float(elapsed_seconds),
+            "total_trials": int(total_trials),
+            "wall_ms_per_trial": float(
+                1000.0 * elapsed_seconds / max(1, total_trials)
+            ),
+        },
     }
+    if backend_name == "cupy":
+        properties = xp.cuda.runtime.getDeviceProperties(0)
+        device_name = properties["name"]
+        if isinstance(device_name, bytes):
+            device_name = device_name.decode("utf-8", errors="replace")
+        pool = xp.get_default_memory_pool()
+        result["performance"].update({
+            "device": str(device_name),
+            "memory_pool_used_bytes_after_run": int(pool.used_bytes()),
+            "memory_pool_reserved_bytes_after_run": int(pool.total_bytes()),
+        })
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2) + "\n")

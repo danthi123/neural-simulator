@@ -8,6 +8,7 @@ from research.runners._vocal_action_selector_gate import (
     CHANNELS,
     DIRECT_PATH_GATE,
     SelectorConfig,
+    _topology_summary,
     build_selector_bridge,
     run_condition,
     selector_config,
@@ -91,6 +92,19 @@ def test_v2_removes_counterproductive_striatal_fsi_branch():
         or pathway.to_region.startswith("str_fsi_")
         for pathway in bridge.core_config.region_pathways
     )
+
+
+def test_selector_versions_preserve_v1_and_reduce_v2_topology():
+    assert selector_config("v1").enable_striatal_fsi is True
+    assert selector_config("v2").enable_striatal_fsi is False
+    assert _topology_summary(selector_config("v1")) == {
+        "neurons": 632,
+        "declared_pathways": 44,
+    }
+    assert _topology_summary(selector_config("v2")) == {
+        "neurons": 600,
+        "declared_pathways": 36,
+    }
 
 
 def test_selector_smoke_records_neural_threshold_without_argmax():
