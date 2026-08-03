@@ -1,0 +1,35 @@
+{
+ "run_id": "1785725217-393546",
+ "runner": "research/runners/_laneD_v1_pooler_trace_invariance_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneD_v1_pooler_trace_invariance_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "--position-axis",
+  "y",
+  "--complex-norm",
+  "local_orient_div",
+  "--n-col",
+  "240",
+  "--k-win",
+  "12",
+  "--trace-decay",
+  "0.75",
+  "--out",
+  "research/findings/raw/lanes/perception/v1_pooler_trace_sidecar_3seed_yaxis_localdiv_ncol240_k12_lr08_ld01_td075.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": false,
+ "started": "2026-08-02T22:46:57",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/perception/v1_pooler_trace_sidecar_3seed_yaxis_localdiv_ncol240_k12_lr08_ld01_td075.json"
+}

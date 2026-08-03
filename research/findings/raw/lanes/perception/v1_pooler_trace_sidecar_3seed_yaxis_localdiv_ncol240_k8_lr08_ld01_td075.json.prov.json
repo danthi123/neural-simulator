@@ -1,0 +1,29 @@
+{
+ "run_id": "1785702234-2",
+ "runner": "research/runners/_second_order_metacog_monitor_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_second_order_metacog_monitor_derisk.py",
+  "--smoke",
+  "--seed",
+  "42",
+  "--confidence-read",
+  "learned_acc",
+  "--backend",
+  "numpy",
+  "--json",
+  "research/findings/raw/lanes/metacog/metacog_learned_acc_smoke_s42.json"
+ ],
+ "git_sha": "9930383c5",
+ "git_dirty": true,
+ "started": "2026-08-02T16:23:54",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 700.8,
+ "corpus_check_query": "lane C learned ACC aPFC error conflict monitor",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/perception/v1_pooler_trace_sidecar_3seed_yaxis_localdiv_ncol240_k8_lr08_ld01_td075.json"
+}
