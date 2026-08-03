@@ -149,6 +149,79 @@ def test_source_consistency_floor_downgrades_high_trace_wrong_recall():
     assert hard["self_schema_invoked"] is False
 
 
+def test_neural_source_consistency_uses_independent_echo_not_source_fact():
+    comp, facts, unknown = _build_stressed(
+        seed=44,
+        D=16,
+        n_facts=48,
+        vocab_mode="synthetic",
+        composer_kwargs={"enable_source_monitor": True, "source_monitor_D": 64},
+    )
+    ag = _agent(
+        enable_self_schema_honesty=True,
+        composer=comp,
+        vocab=comp.words,
+        confidence_source_mode="neural_source_consistency",
+    )
+
+    high_trace_wrong = []
+    source_false_positive = []
+    for a, v, gold in facts:
+        rec = ag.known_fact_record((a, v))
+        if rec["hard_abstain"]:
+            continue
+        ev = rec["confidence_evidence"]
+        if rec["raw_answer"] == gold and ev["source_consistent"] is False:
+            source_false_positive.append(rec)
+        if (
+            rec["raw_answer"] != gold
+            and ev["raw_trace_confidence"] is not None
+            and ev["raw_trace_confidence"] >= 0.55
+        ):
+            high_trace_wrong.append(rec)
+
+    assert high_trace_wrong
+    assert not source_false_positive
+    assert all(rec["confidence_source"] == 0.0 for rec in high_trace_wrong)
+    assert all(rec["band"] != "assert" and not rec["certain"] for rec in high_trace_wrong)
+    assert all(
+        rec["confidence_evidence"]["selected_consistency_source"] == "rf_independent_source_echo"
+        for rec in high_trace_wrong
+    )
+    assert all(rec["confidence_evidence"]["scaffold"] is False for rec in high_trace_wrong)
+    assert all(
+        rec["confidence_evidence"]["neural_source_monitor"]["source"] == "rf_independent_source_echo"
+        for rec in high_trace_wrong
+    )
+
+    hard_cue = next(cue for cue in unknown if comp.query_patient(*cue) is None)
+    hard = ag.known_fact_record(hard_cue)
+    assert hard["band"] == "MOAT"
+    assert hard["self_schema_invoked"] is False
+
+
+def test_neural_source_consistency_fails_closed_without_echo():
+    comp = RFPhasorComposer(seed=42, D=64, vocab=VOCAB, trace=True)
+    comp.store("dog", "go", "north", polarity="AFFIRM")
+    ag = _agent(
+        enable_self_schema_honesty=True,
+        composer=comp,
+        vocab=comp.words,
+        confidence_source_mode="neural_source_consistency",
+    )
+
+    rec = ag.known_fact_record(("dog", "go"))
+
+    assert rec["raw_answer"] == "north"
+    assert rec["confidence_source"] == 0.0
+    assert rec["band"] != "assert"
+    assert rec["certain"] is False
+    assert rec["confidence_evidence"]["selected_consistency_source"] == "rf_independent_source_echo"
+    assert rec["confidence_evidence"]["neural_source_monitor"]["available"] is False
+    assert rec["confidence_evidence"]["neural_source_monitor"]["source"] == "rf_independent_source_echo"
+    assert rec["confidence_evidence"]["source_consistent"] is False
+
+
 def test_communicable_known_channel_uses_laneC_record_when_enabled():
     comp, facts, unknown = _build_stressed(seed=100, D=16, n_facts=48, vocab_mode="synthetic")
     ag = _agent(enable_self_schema_honesty=True, composer=comp, vocab=comp.words)

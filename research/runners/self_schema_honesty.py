@@ -27,9 +27,11 @@ from tools.lab import attributable_to
 
 CONFIDENCE_SOURCE_TRACE = "trace"
 CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR = "source_consistency_floor"
+CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY = "neural_source_consistency"
 CONFIDENCE_SOURCE_CHOICES = (
     CONFIDENCE_SOURCE_TRACE,
     CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR,
+    CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY,
 )
 
 
@@ -194,6 +196,7 @@ def known_fact_confidence_record(
     cue: tuple[Any, ...],
     raw_answer: Any,
     mode: str = CONFIDENCE_SOURCE_TRACE,
+    source_monitor_evidence: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Choose the confidence scalar used by the self-schema relay.
 
@@ -216,7 +219,20 @@ def known_fact_confidence_record(
     source_consistent = None
     if source_matches is not None or source_cue_matches is not None:
         source_consistent = bool(source_matches is not False and source_cue_matches is not False)
-    if mode == CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR and source_consistent is False:
+    exact_source_consistent = source_consistent
+    source_monitor = dict(source_monitor_evidence or {})
+    neural_source_consistent = source_monitor.get("source_consistent")
+    selected_consistency_source = "trace_source_fact"
+    if mode == CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY:
+        selected_consistency_source = "rf_independent_source_echo"
+        if not source_monitor.get("available", False):
+            source_consistent = False
+        else:
+            source_consistent = neural_source_consistent if neural_source_consistent is not None else False
+    if mode in (
+        CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR,
+        CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY,
+    ) and source_consistent is False:
         confidence = 0.0
     evidence.update({
         "mode": mode,
@@ -224,6 +240,10 @@ def known_fact_confidence_record(
         "source_expected_answer": source_answer,
         "source_answer_matches": source_matches,
         "source_cue_matches": source_cue_matches,
+        "exact_source_consistent": exact_source_consistent,
+        "neural_source_monitor": source_monitor,
+        "neural_source_consistent": neural_source_consistent,
+        "selected_consistency_source": selected_consistency_source,
         "source_consistent": source_consistent,
         "scaffold": bool(mode == CONFIDENCE_SOURCE_SOURCE_CONSISTENCY_FLOOR),
     })

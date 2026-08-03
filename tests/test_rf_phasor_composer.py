@@ -62,6 +62,29 @@ def test_rf_trace_exposes_cleanup_margin_and_source_fact():
     assert pol["margin"] >= 0.0
 
 
+def test_rf_source_monitor_echo_checks_candidate_without_source_fact():
+    comp = RFPhasorComposer(
+        seed=42,
+        D=64,
+        period=200,
+        trace=True,
+        enable_source_monitor=True,
+        source_monitor_D=64,
+    )
+    comp.store("dog", "go", "north", polarity="AFFIRM")
+
+    ok = comp.source_consistency_record(kind="what_does", cue=("dog", "go"), raw_answer="north")
+    bad = comp.source_consistency_record(kind="what_does", cue=("dog", "go"), raw_answer="south")
+
+    assert ok["available"] is True
+    assert ok["source"] == "rf_independent_source_echo"
+    assert ok["source_expected_answer"] == "north"
+    assert ok["source_consistent"] is True
+    assert bad["source_expected_answer"] == "north"
+    assert bad["source_consistent"] is False
+    assert "source_fact" not in ok
+
+
 @pytest.mark.parametrize("seed", [42, 43, 44])
 def test_rf_phasor_composer_one_attribute(seed):
     """b.3a: a 1-attribute entity ('big apple') -- the ATTRIBUTE role-tag binding RESOLVES (adjective + noun both

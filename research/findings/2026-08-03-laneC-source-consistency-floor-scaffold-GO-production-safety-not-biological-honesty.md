@@ -84,3 +84,15 @@ disagreement as low confidence. Until then, `source_consistency_floor` belongs i
 2. Build a neural source-consistency readout that compares cue/source/answer activity without exact host labels.
 3. Feed that readout, or a calibrated dynamic ACC/aPFC correctness signal, into the existing self-schema hook.
 4. Re-run the same six-seed battery with source metadata disabled or permuted as a collapse control.
+
+## 2026-08-03 Follow-Up
+
+The first burn-down step is now banked. `confidence_source_mode="neural_source_consistency"` uses an independent RF
+source-memory echo instead of the exact `source_fact` metadata for the selected consistency signal. It matched this
+scaffold's safety result on the same six-seed battery: 46/46 wrong recalls downgraded, 0 wrong assertions, 0 source-
+mismatch false positives on correct recalls, 475/475 hard-moat abstains preserved, and 0 added false accepts. Prefer
+that mode over this exact metadata floor for current production safety experiments.
+
+The new mode is still not final biological honesty: the redundant source echo is engineered at store time, not learned
+developmentally. Finding:
+`research/findings/2026-08-03-laneC-neural-source-consistency-echo-GO-independent-source-memory-burn-down.md`.

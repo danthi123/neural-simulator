@@ -188,7 +188,7 @@ def _v3(v):
     return v + ("es" if v.endswith(("s", "x", "z", "ch", "sh")) else "s")
 
 
-def _build_stressed(seed, D, n_facts, vocab_mode="synthetic"):
+def _build_stressed(seed, D, n_facts, vocab_mode="synthetic", composer_kwargs=None):
     """Build an RFPhasorComposer at a STRESSED op-point (low D) with distinct-(agent,action) SVO facts (moat-uniqueness
     preserved). trace=True so S is read from last_trace. Returns (composer, facts, unknown_cues).
 
@@ -199,10 +199,11 @@ def _build_stressed(seed, D, n_facts, vocab_mode="synthetic"):
     at D=16, so it stresses whether hedging stays gate-first invariant even when the composer's own moat is imperfect)."""
     from research.runners.rf_phasor_composer import RFPhasorComposer
     rng = np.random.default_rng(1000 + seed)
+    composer_kwargs = dict(composer_kwargs or {})
     if vocab_mode == "synthetic":
         V = 48
         vocab = [f"w{i:03d}" for i in range(V)]
-        comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, trace=True)
+        comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, trace=True, **composer_kwargs)
         facts, used = [], set()
         tries = 0
         while len(facts) < n_facts and tries < n_facts * 60:
@@ -220,7 +221,7 @@ def _build_stressed(seed, D, n_facts, vocab_mode="synthetic"):
         return comp, facts, unknown
     # themed (readable)
     vocab = _ANIMALS + _VERBS + _OBJECTS
-    comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, trace=True)
+    comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, trace=True, **composer_kwargs)
     facts, used = [], set()
     tries = 0
     while len(facts) < n_facts and tries < n_facts * 60:

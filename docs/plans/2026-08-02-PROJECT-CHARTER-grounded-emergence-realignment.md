@@ -1,7 +1,8 @@
 # PROJECT CHARTER — a grounded, emergent, fully-spiking mind (realignment, 2026-08-02)
 
 > **Status:** FOUNDATIONAL. This charter is the spine. It supersedes the *framing* (not the accumulated results) of
-> `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` and `ROADMAP.md`. Companion docs built ON this charter:
+> pre-2026-08-02 roadmaps, including `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`. The current
+> `ROADMAP.md` implements this framing. Companion docs built ON this charter:
 > (1) the short/medium/long **roadmap**, (2) the **structural-mechanism map** (biological references), (3) the
 > **anti-drift workflow/gate design**. Written after an owner realignment: we had been optimizing narrow proxies for
 > human faculties instead of building the conditions from which those faculties emerge. This document exists so that

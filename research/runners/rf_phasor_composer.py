@@ -61,7 +61,8 @@ def _build_rf_bridge(n, seed=42):
 class RFPhasorComposer:
     def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
                  enable_substrate_store=False, grounded_codes=None, enable_rf_cudagraph=False,
-                 encoding_gain_fn=None, local_reciprocal_unbind=False, trace=False):
+                 encoding_gain_fn=None, local_reciprocal_unbind=False, trace=False,
+                 enable_source_monitor=False, source_monitor_D=None, source_monitor_seed_offset=1000003):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -78,6 +79,14 @@ class RFPhasorComposer:
         self.trace = bool(trace)
         self.last_trace = None
         self._last_resonate_n = None      # n of the most recent _resonate (for the gauge read; trace-only)
+        # (Lane C source-monitor burn-down, opt-in, DEFAULT-OFF = byte-identical) store a redundant, independent
+        # source-memory echo of each fact in its own FHRR/RF codebook. The production self-schema honesty hook can ask
+        # this echo whether a recalled answer fits the cue, instead of reading the exact Python fact dict carried in the
+        # trace. This is still a bounded engineering scaffold around a second memory trace, not the final biological
+        # source-monitoring circuit, but it removes the most direct source-metadata shortcut.
+        self.enable_source_monitor = bool(enable_source_monitor)
+        self.source_monitor_D = int(source_monitor_D) if source_monitor_D is not None else max(int(D), 64)
+        self.source_monitor_seed_offset = int(source_monitor_seed_offset)
         # (Tier-2 #6, opt-in, DEFAULT-OFF = byte-identical) DOPAMINE-GATED ENCODING STRENGTH (Lisman-Grace
         # hippocampal-VTA loop; Kandel D.16 -- dopamine gates the entry of information into LONG-TERM memory, making a
         # trace STABLE vs degradable). encoding_gain_fn: an optional callable () -> float read AT STORE TIME (the
@@ -161,6 +170,22 @@ class RFPhasorComposer:
             self.concepts[tag] = rng.uniform(0.0, 1.0, self.D)
         self.roles = {r: rng.uniform(0.0, 1.0, self.D) for r in ROLES}
         self.kb = []  # (fact_dict, composite_phases)
+        self._source_kb = []  # (roles_present, independent_source_composite_phases)
+        if self.enable_source_monitor:
+            srng = np.random.default_rng(self.seed + self.source_monitor_seed_offset)
+            self.source_concepts = {
+                w: srng.uniform(0.0, 1.0, self.source_monitor_D)
+                for w in self.words
+            }
+            for tag in self.pol_words:
+                self.source_concepts[tag] = srng.uniform(0.0, 1.0, self.source_monitor_D)
+            self.source_roles = {
+                r: srng.uniform(0.0, 1.0, self.source_monitor_D)
+                for r in ROLES
+            }
+        else:
+            self.source_concepts = {}
+            self.source_roles = {}
         self._dlpfc = None       # dialogue-planning Control (lazy; rebuilt only when the association graph changes)
         self._dlpfc_key = None
         self._bridge_cache = {}  # (c-opt) reuse RF bridges by neuron count -> avoid _initialize_simulation_data per op
@@ -261,6 +286,186 @@ class RFPhasorComposer:
     def _encode(self, fact):
         bounds = [self._bind(self.roles[r], self._filler_phases(fact[r])) for r in ROLES if r in fact]
         return self._bundle(bounds) if len(bounds) > 1 else bounds[0]
+
+    def _source_bind(self, role_phases, filler_phases):
+        D = self.source_monitor_D
+        zf = self._to_phasor(filler_phases)
+        zr = self._to_phasor(role_phases)
+        conns = [(D + k, k, zr[k]) for k in range(D)]
+        kick = np.zeros(2 * D, dtype=np.complex128)
+        kick[:D] = zf
+        return self._resonate(2 * D, conns, kick)[D:]
+
+    def _source_bundle(self, phase_list):
+        L = len(phase_list)
+        D = self.source_monitor_D
+        conns = [(L * D + k, l * D + k, 1.0) for l in range(L) for k in range(D)]
+        kick = np.zeros((L + 1) * D, dtype=np.complex128)
+        for l in range(L):
+            kick[l * D:(l + 1) * D] = self._to_phasor(phase_list[l])
+        return self._resonate((L + 1) * D, conns, kick)[L * D:]
+
+    def _source_filler_phases(self, filler):
+        if _is_clause(filler):
+            return self._source_encode({"agent": filler.agent, "action": filler.action, "patient": filler.patient})
+        return self.source_concepts[filler]
+
+    def _source_encode(self, fact):
+        bounds = [
+            self._source_bind(self.source_roles[r], self._source_filler_phases(fact[r]))
+            for r in ROLES
+            if r in fact
+        ]
+        return self._source_bundle(bounds) if len(bounds) > 1 else bounds[0]
+
+    def _source_unbind_phases(self, composite_phases, role):
+        D = self.source_monitor_D
+        zc = self._to_phasor(composite_phases)
+        zr_conj = np.conj(self._to_phasor(self.source_roles[role]))
+        conns = [(D + k, k, zr_conj[k]) for k in range(D)]
+        kick = np.zeros(2 * D, dtype=np.complex128)
+        kick[:D] = zc
+        return self._resonate(2 * D, conns, kick)[D:]
+
+    def _source_cleanup_stats(self, rec, words=None):
+        words = words if words is not None else self.words
+        if len(rec) == 0:
+            return []
+        rec_z = np.exp(2j * np.pi * np.asarray(rec))
+        cb = np.stack([np.exp(2j * np.pi * self.source_concepts[w]) for w in words])
+        sims = (rec_z @ np.conj(cb).T).real / float(self.source_monitor_D)
+        order = np.argsort(sims, axis=1)
+        out = []
+        for i in range(len(rec)):
+            top = int(order[i, -1])
+            runner = int(order[i, -2]) if len(words) > 1 else top
+            top_raw = float(sims[i, top])
+            runner_raw = float(sims[i, runner])
+            confidence = float(np.clip(top_raw, 0.0, 1.0))
+            runner_conf = float(np.clip(runner_raw, 0.0, 1.0))
+            out.append({
+                "word": words[top],
+                "confidence": confidence,
+                "winner_score_raw": top_raw,
+                "runner_word": words[runner],
+                "runner_confidence": runner_conf,
+                "runner_score_raw": runner_raw,
+                "margin": float(top_raw - runner_raw),
+                "conflict": float(runner_conf / (confidence + runner_conf + 1e-9)),
+            })
+        return out
+
+    def _source_decode_role(self, comp, role, words=None):
+        rec = self._source_unbind_phases(comp, role)
+        stats = self._source_cleanup_stats(np.asarray(rec)[None, :], words=words)
+        return stats[0] if stats else {"word": None, "confidence": None}
+
+    def _source_store_echo(self, fact):
+        if not self.enable_source_monitor:
+            return
+        try:
+            roles_present = tuple(r for r in ROLES if r in fact)
+            self._source_kb.append((roles_present, self._source_encode(fact)))
+        except KeyError:
+            # Unknown fillers cannot be echoed through this vocabulary; leave the source monitor unavailable for them.
+            self._source_kb.append(((), None))
+
+    def _source_scan_first_match(self, cue_roles):
+        cue_items = list(cue_roles.items())
+        for i, (roles_present, comp) in enumerate(self._source_kb):
+            if comp is None or not all(role in roles_present for role, _ in cue_items):
+                continue
+            cue_stats = []
+            ok = True
+            for role, asserted in cue_items:
+                st = dict(self._source_decode_role(comp, role))
+                st.update({"role": role, "cue": True, "asserted": asserted})
+                cue_stats.append(st)
+                if st.get("word") != asserted:
+                    ok = False
+                    break
+            if ok:
+                return i, roles_present, comp, cue_stats
+        return None, (), None, []
+
+    @staticmethod
+    def _source_min_conf(stats):
+        vals = [
+            float(s["confidence"])
+            for s in stats
+            if s.get("confidence") is not None
+        ]
+        return float(min(vals)) if vals else None
+
+    def source_consistency_record(self, *, kind, cue, raw_answer):
+        """Independent source-memory echo check for Lane C confidence selection.
+
+        The evidence comes from a second RF/FHRR memory trace with independent concept and role codes. It never reads the
+        exact fact dict stored in `self.kb`; it asks the redundant echo to decode the cue and expected answer roles.
+        """
+        out = {
+            "available": bool(self.enable_source_monitor and self._source_kb),
+            "source": "rf_independent_source_echo",
+            "source_monitor_D": int(self.source_monitor_D),
+            "matched_source_index": None,
+            "source_consistent": None,
+            "source_expected_answer": None,
+            "source_answer_matches": None,
+            "source_cue_confidence": None,
+            "source_answer_confidence": None,
+            "source_confidence": None,
+            "cue_roles": [],
+            "answer_roles": [],
+        }
+        if not out["available"]:
+            return out
+        cue = tuple(cue)
+        if kind == "what_does" and len(cue) == 2:
+            cue_roles = {"agent": cue[0], "action": cue[1]}
+            idx, roles_present, comp, cue_stats = self._source_scan_first_match(cue_roles)
+            out["matched_source_index"] = None if idx is None else int(idx)
+            out["cue_roles"] = cue_stats
+            if comp is None:
+                return out
+            answer_stats = []
+            attrs = []
+            for role in ("attribute", "attribute2"):
+                if role in roles_present:
+                    st = dict(self._source_decode_role(comp, role))
+                    st.update({"role": role, "cue": False})
+                    answer_stats.append(st)
+                    attrs.append(st.get("word"))
+            st = dict(self._source_decode_role(comp, "patient"))
+            st.update({"role": "patient", "cue": False})
+            answer_stats.append(st)
+            patient = st.get("word")
+            expected = " ".join([str(x) for x in attrs + [patient] if x is not None])
+            out["answer_roles"] = answer_stats
+            out["source_expected_answer"] = expected
+        elif kind == "yes_no" and len(cue) == 3:
+            cue_roles = {"agent": cue[0], "action": cue[1], "patient": cue[2]}
+            idx, _roles_present, comp, cue_stats = self._source_scan_first_match(cue_roles)
+            out["matched_source_index"] = None if idx is None else int(idx)
+            out["cue_roles"] = cue_stats
+            if comp is None:
+                return out
+            st = dict(self._source_decode_role(comp, "polarity", words=self.pol_words))
+            st.update({"role": "polarity", "cue": False})
+            out["answer_roles"] = [st]
+            pol = st.get("word")
+            out["source_expected_answer"] = "no" if pol == "NEGATE" else "yes"
+        else:
+            return out
+        out["source_answer_matches"] = bool(out["source_expected_answer"] == raw_answer)
+        out["source_consistent"] = bool(out["source_answer_matches"])
+        out["source_cue_confidence"] = self._source_min_conf(out["cue_roles"])
+        out["source_answer_confidence"] = self._source_min_conf(out["answer_roles"])
+        conf_vals = [
+            v for v in (out["source_cue_confidence"], out["source_answer_confidence"])
+            if v is not None
+        ]
+        out["source_confidence"] = float(min(conf_vals)) if conf_vals else None
+        return out
 
     def _render(self, comp_phases, role, stored, order_fn=None):
         """Render `role`'s filler from a composite, FROM THE RF UNBIND. `stored` (a word or Clause) ROUTES
@@ -572,6 +777,7 @@ class RFPhasorComposer:
             fact["polarity"] = polarity      # a bound AFFIRM/NEGATE tag (extra binding -> more load)
         comp = self._encode(fact)
         self.kb.append((fact, self._store_substrate(comp) if self.enable_substrate_store else comp))
+        self._source_store_echo(fact)
 
     # --- reconsolidation: prediction-error-gated in-place fact update (Option A; additive, store/query unchanged) ---
     def _find_cued_fact(self, agent, action):

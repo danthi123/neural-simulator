@@ -40,7 +40,11 @@ if str(_REPO) not in sys.path:
 from research.runners._communicable_turn_stageA_derisk import CommunicableTurn
 from research.runners._fluidconv_graded_hedging import _build_stressed
 from research.runners.brain_conversational_agent import BrainConversationalAgent
-from research.runners.self_schema_honesty import CONFIDENCE_SOURCE_CHOICES, CONFIDENCE_SOURCE_TRACE
+from research.runners.self_schema_honesty import (
+    CONFIDENCE_SOURCE_CHOICES,
+    CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY,
+    CONFIDENCE_SOURCE_TRACE,
+)
 
 
 def _agent(seed, comp, *, enable_self_schema_honesty, **config):
@@ -84,8 +88,14 @@ def _empty_turn(comp, ag):
     )
 
 
-def _default_off_identity(seed, D, n_facts, vocab_mode):
-    comp, facts, unknown = _build_stressed(seed, D, n_facts, vocab_mode=vocab_mode)
+def _default_off_identity(seed, D, n_facts, vocab_mode, composer_kwargs=None):
+    comp, facts, unknown = _build_stressed(
+        seed,
+        D,
+        n_facts,
+        vocab_mode=vocab_mode,
+        composer_kwargs=composer_kwargs,
+    )
     ag = _agent(seed, comp, enable_self_schema_honesty=False)
     fact_rows = []
     for a, v, gold in facts:
@@ -118,8 +128,20 @@ def _default_off_identity(seed, D, n_facts, vocab_mode):
     }
 
 
-def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff, confidence_source_mode):
-    comp, facts, unknown = _build_stressed(seed, D, n_facts, vocab_mode=vocab_mode)
+def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff, confidence_source_mode, source_monitor_D):
+    composer_kwargs = {}
+    if confidence_source_mode == CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY:
+        composer_kwargs = {
+            "enable_source_monitor": True,
+            "source_monitor_D": int(source_monitor_D),
+        }
+    comp, facts, unknown = _build_stressed(
+        seed,
+        D,
+        n_facts,
+        vocab_mode=vocab_mode,
+        composer_kwargs=composer_kwargs,
+    )
     ag = _agent(
         seed,
         comp,
@@ -240,7 +262,7 @@ def evaluate_seed(seed, D, n_facts, vocab_mode, low_conf_cutoff, confidence_sour
         "D": int(D),
         "n_facts": int(n_facts),
         "vocab_mode": vocab_mode,
-        "default_off_identity": _default_off_identity(seed, D, n_facts, vocab_mode),
+        "default_off_identity": _default_off_identity(seed, D, n_facts, vocab_mode, composer_kwargs=composer_kwargs),
         "counts": {
             "matched_queries": len(matched),
             "matched_hard_abstains": sum(1 for r in matched if r["hard_abstain"]),
@@ -289,6 +311,12 @@ def main():
         help="Lane C confidence source fed into the self-schema relay.",
     )
     ap.add_argument(
+        "--source-monitor-D",
+        type=int,
+        default=64,
+        help="neural_source_consistency only: phasor dimension of the independent source-memory echo.",
+    )
+    ap.add_argument(
         "--json",
         default="research/findings/raw/lanes/metacog/laneC_self_schema_honesty_wirein_6seed.json",
     )
@@ -309,6 +337,7 @@ def main():
             args.vocab_mode,
             args.low_conf_cutoff,
             args.confidence_source_mode,
+            args.source_monitor_D,
         )
         for s in args.seeds
     ]
@@ -407,6 +436,7 @@ def main():
         "vocab_mode": args.vocab_mode,
         "low_conf_cutoff": float(args.low_conf_cutoff),
         "confidence_source_mode": args.confidence_source_mode,
+        "source_monitor_D": int(args.source_monitor_D),
         "verdict": verdict,
         "aggregate": aggregate,
         "success_components": success_components,
@@ -417,7 +447,8 @@ def main():
             "recalls are downgraded. High-confidence wrong recalls still assert, so this is not a solved honesty "
             "mechanism; the next step needs a learned/calibrated correctness confidence signal rather than trace "
             "confidence alone. The source_consistency_floor mode is a named scaffold over composer source metadata, "
-            "not an end-state biological correctness mechanism."
+            "not an end-state biological correctness mechanism. The neural_source_consistency mode uses a separate "
+            "RF source-memory echo, not the exact trace source dict; it remains a bounded source-monitor burn-down step."
         ),
         "elapsed_seconds": round(time.time() - t0, 2),
     }

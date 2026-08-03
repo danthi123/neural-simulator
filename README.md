@@ -1,115 +1,121 @@
 # Neural Simulator
 
-Neural Simulator is a research codebase for building a simulated brain from
-spiking neurons and synapses. The long-term aim is not to wrap a chatbot in
-brain-themed code. The aim is to grow one integrated, biologically grounded
-system that can eventually perceive, act, remember, develop emotions, learn from
-people, and speak from its own internal state.
+Neural Simulator is a research codebase for growing a simulated brain from
+spiking neurons and synapses.
 
-The project is active research. Some pieces are strong and well tested. Some are
-temporary scaffolds. Some earlier results are useful but were aimed at narrower
-tests than the current goal. This README is the plain-language front door; the
-detailed experiment record lives in [`research/findings/`](research/findings/).
+The aim is not to wrap a chatbot in neuroscience vocabulary. The aim is to build
+one integrated brain that can eventually perceive a world, act in it, remember
+what happened, develop emotion and curiosity, learn from people, and speak from
+its own internal state.
+
+This is active research. Some parts are solid infrastructure. Some are promising
+but narrow. Some are temporary scaffolds that must be replaced by brain-native
+mechanisms before they count as the real capability.
 
 ## The Goal
 
-Build one simulated spiking brain that:
+The long-term target is a fully spiking brain that:
 
 - lives in a small world through sensors and a body;
-- learns from interaction instead of only from prewritten text;
-- forms grounded concepts tied to perception, action, memory, and affect;
+- learns from interaction, not only from prewritten text;
+- builds concepts tied to perception, action, memory, value, and emotion;
 - develops persistent emotional state that changes attention, memory, speech,
   and behavior;
 - has curiosity as a drive to learn what is learnable;
-- can read parts of its own state, including attention, confidence, and
+- can read useful parts of its own state, such as attention, confidence, and
   authorship;
-- says "I do not know" or asks when its grounding is weak instead of fabricating;
-- grows over time while keeping earlier memories and skills.
+- says it does not know, hedges, or asks when its grounding is weak;
+- keeps learning and growing without wiping itself.
 
-The end state is one fully spiking brain on a shared substrate. Dedicated brain
-regions are fine, because real brains are organized that way. The important rule
-is that perception, attention, value, memory, emotion, reasoning, self-modeling,
-and language must be computed by the simulated neurons and synapses, not by
-ordinary host-side shortcuts. Host code is allowed for the world, the body, file
-I/O, visualization, and temporary training scaffolds that are explicitly tracked.
+In ordinary terms: we want a small artificial brain that can grow toward the
+conversational usefulness of a small language model, but through grounded lived
+experience rather than text imitation.
+
+The end state is one shared spiking substrate. Specialized regions are expected,
+because real brains are specialized. The important rule is that perception,
+attention, value, memory, affect, reasoning, self-modeling, and language should
+be computed by simulated neurons and synapses. Host code is allowed for the
+outside world, the body interface, files, visualization, and temporary scaffolds
+that are explicitly tracked.
 
 The project does not claim consciousness or felt emotion. It builds and measures
-functional correlates: access to information, self-report, confidence, affective
-bias, learning drive, and integrated behavior. Whether subjective experience has
-appeared is treated as the long-horizon wager, not as a claim we can casually
-assert.
+functional ingredients: access to information, self-report, confidence,
+affective bias, learning drive, memory, and integrated behavior.
 
 ## Why This Is Not Just An LLM
 
-A large language model learns statistical patterns in text and generates likely
-continuations. This project is trying to build the process underneath language:
-a world-facing brain that has something to perceive, want, remember, feel,
-question, and express.
+A language model learns patterns in text and predicts likely continuations. This
+project is trying to build the machinery beneath useful language: a stateful
+world-facing brain that has something to perceive, want, remember, question, and
+express.
 
-The current lesson of the project is blunt: passing a narrow test can produce
-template-like behavior even when the mechanism is spiking and learned. A language
-network trained only to predict a corpus is still a corpus predictor. A
-no-fabrication rule bolted on at the edge is still a rule. The roadmap has been
-realigned around the closed loop: senses, internal state, action or speech,
-consequence, learning, and back again.
+That distinction matters. Earlier parts of this repo showed that narrow tests can
+produce template-like behavior even when the mechanism is spiking. A corpus
+predictor can sound fluent without grounded meaning. A no-fabrication rule can
+decline unknowns without being a real self-model. The current roadmap therefore
+focuses on a closed loop:
+
+```text
+sense -> internal state -> speech or action -> consequence -> learning
+```
+
+Language should become one action the brain can take, not the central shortcut
+doing the brain's work.
 
 ## What Exists Today
 
 | Area | Current state |
 |---|---|
-| Spiking simulation engine | Mature research infrastructure. It supports GPU via CuPy and CPU via NumPy, sparse connectivity, multiple neuron models, neuromodulators, plasticity, checkpointing, and visualization. |
-| Brain-region framework | Regions and pathways can be declared and wired into one shared simulation loop. This supports navigation, conversation, memory, reward, and combined-brain experiments. |
-| Navigation | The system has spiking visual, decision, basal-ganglia, motor, and reward loops for gridworld navigation. Older shortcut-closed claims were audited; use current findings before quoting old numbers. |
-| Grounded question answering | The brain can store and retrieve simple facts, parse basic who/what and yes/no questions, handle some grammar variants, and abstain when the matching memory is absent. |
-| Word and category learning | Several experiments show local, experience-driven formation of word meaning, categories, simple taxonomies, and inheritance with exceptions. These are promising but still small-scale. |
-| Memory and replay | The repo contains hippocampus-style episodic memory, replay, consolidation, directional replay readers, and several tested routes for moving memory toward cortical storage. Some older memory claims were corrected or retired. |
-| Affect and drive | Reward prediction, value, persistent mood-like state, dissociable neuromodulator axes, and basic curiosity circuits exist. Rich graded emotion, appraisal, and speech coloring remain open. |
-| Self-monitoring | Separate test runners show circuits that can report confidence, attention, and self-related state with lesion controls. These are not yet fully integrated into the production conversation loop. |
-| Language generation | There are bounded spiking speech generators and larger local language-circuit experiments. Fluent open-ended conversation is still the largest gap. A conventional generator remains a temporary phrasing scaffold in some demos. |
-
-Current repo scale, measured in this checkout: 43 `sim/` modules, 489 test
-files, 1389 research runners, 1938 dated finding docs, and 46 saved simulation
-profiles.
+| Simulation engine | Mature research infrastructure with CPU and NVIDIA GPU backends, sparse spiking networks, multiple neuron models, plasticity, neuromodulators, checkpointing, and visualization. |
+| Shared-brain wiring | Brain regions and pathways can be declared and run together in one simulation loop. This supports combined navigation, memory, reward, conversation, and modulation experiments. |
+| Navigation and action | Spiking visual, basal-ganglia-like, motor, and reward loops exist for gridworld tasks. Some older headline claims were corrected, so use current findings before quoting numbers. |
+| Simple conversation | The system can store simple facts, parse basic questions, answer from memory, and abstain when no matching memory exists. This is useful, but it is still narrow question answering, not open conversation. |
+| Language circuits | Bounded spiking speech paths and larger local recurrent language experiments exist. Fluent open-ended speech remains the largest unfinished capability. |
+| Memory and replay | The repo contains episodic memory, pattern completion, replay, consolidation, and directional replay experiments. The open goal is integrated reconstructive memory rather than database-like recall. |
+| Affect and drive | Reward prediction, value, persistent mood-like state, neuromodulator axes, and curiosity circuits exist. Rich emotion that develops over time and colors speech/behavior remains open. |
+| Self-monitoring | Confidence, attention, authorship, and source-monitoring circuits exist in research runners. A default-off conversation hook can use self-schema confidence to hedge; a newer independent RF source-memory echo catches a current high-confidence wrong-recall failure mode in six-seed tests. This is progress, not final biological honesty. |
+| Research workflow | Findings are expected to cite raw artifacts, provenance, controls, and multi-seed runs when practical. Negative and corrected results remain part of the record. |
 
 ## The Main Open Problems
 
-1. **Close the whole loop.** The project has many validated pieces, but the next
-   step is making a small brain live continuously: perceive, form internal state,
-   speak or act, receive consequences, and learn from them.
-2. **Make language an action.** Speech should come from an internal reason to
-   communicate, not from a query string or text-completion objective.
-3. **Ground meaning in lived experience.** Words need to point to the same neural
-   assemblies used for seeing, acting, remembering, and valuing.
-4. **Move honesty into the self-model.** "I do not know" should emerge from
-   confidence and grounding signals inside the brain, not remain a separate
-   host-side guard.
-5. **Make affect richer and developmental.** The current mood/value machinery must
-   become graded, learned, embodied, and able to shape speech and behavior.
-6. **Support continual learning and growth.** The brain must learn from a stream of
-   interaction without overwriting earlier knowledge, using consolidation and
-   developmental growth.
-7. **Scale without becoming datacenter-only.** The target is high-end consumer
-   hardware, with sparse, local, event-driven computation and a long-term path
-   toward neuromorphic hardware.
+1. **Make a live loop.** The brain needs a small world, a body, internal state,
+   speech/action, consequences, and learning all running together.
+2. **Make language grounded action.** Speech should come from curiosity, affect,
+   need, memory, or social intent inside the brain, not from a host-written query
+   template.
+3. **Ground meaning.** Words need to share neural machinery with what the brain
+   sees, does, remembers, and values.
+4. **Move honesty into the self-model.** Abstention and hedging should be driven
+   by brain-state confidence and source-monitoring, not by a final host-side
+   safety rule.
+5. **Make emotion developmental.** Current affect is useful but too simple. The
+   target is graded emotion learned from experience.
+6. **Support continual learning and growth.** The system needs to keep learning
+   through interaction without catastrophic forgetting.
+7. **Stay ownable.** The target is high-end consumer hardware, with sparse,
+   local, event-driven computation and a long-term path toward neuromorphic
+   hardware.
 
 ## Temporary Scaffolds
 
-Scaffolds are allowed when they help develop the real brain, but they are not the
-product. They must be tracked and replaced.
+Scaffolds are allowed when they help build the real brain, but they are not the
+product. Important current scaffolds include:
 
-Current important scaffolds include:
+- conventional language-model training used by some fluency experiments;
+- host-side parsing, discourse planning, and routing in older conversation paths;
+- host-computed novelty, appraisal, confidence, or learning-progress signals in
+  some probes;
+- exact source metadata and engineered source echoes used to make current
+  honesty tests safer;
+- hand-designed concept codes, grammar frames, memory slots, and pathway weights;
+- an AI teacher used as an early social environment.
 
-- conventional language-model training used by some language experiments;
-- host-side parsing and discourse planning in older conversation paths;
-- host-computed novelty, appraisal, or confidence signals in some probes;
-- hand-designed concept codes, weights, grammar frames, and memory layouts;
-- the AI teacher used as an early social environment.
+The replacement direction is always the same: move the computation into the
+spiking brain, connect it to perception/action/affect/memory, and test it in the
+closed loop. The public scaffold ledger is
+[docs/SCAFFOLD-LEDGER.md](docs/SCAFFOLD-LEDGER.md).
 
-The replacement direction is the same in each case: move the computation into the
-spiking brain, ground it in perception/action/affect/memory, and test it in the
-whole loop.
-
-## Running It
+## Run It
 
 ```bash
 git clone https://github.com/danthi123/neural-simulator
@@ -118,26 +124,24 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
+```
+
+Run the GUI on a CUDA-capable machine:
+
+```bash
 python neural-simulator.py
 ```
 
-Use the CPU backend when CUDA is unavailable:
+Run a CPU conversation smoke test:
 
 ```bash
 SIM_BACKEND=numpy python -m research.runners.chat_demo --seed 43
 ```
 
-Interactive conversation demo:
-
-```bash
-python -m research.runners.chat_repl --mode tier1 --seed 43 \
-  --save-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
-```
-
 Run tests:
 
 ```bash
-pytest tests/ -v
+pytest tests/ -q
 ```
 
 More setup detail is in [QUICKSTART.md](QUICKSTART.md).
@@ -146,26 +150,24 @@ More setup detail is in [QUICKSTART.md](QUICKSTART.md).
 
 | Path | Purpose |
 |---|---|
-| `sim/` | Core simulation engine: bridge, neurons, synapses, plasticity, regions, neuromodulators, checkpointing. |
-| `experiment/` | Stimuli, readouts, training utilities, and reusable experiment helpers. |
-| `research/runners/` | Headless experiment scripts. Most scientific work enters here before being promoted into shared code. |
-| `research/findings/` | Dated experiment writeups, including negative and corrected results. This is the audit trail. |
-| `docs/` | Current state, biology notes, diagrams, plans, and historical docs. |
-| `tools/gates/` | Automated checks that block unsupported claims, stale documentation, missing provenance, weak controls, and other known failure modes. |
+| `sim/` | Core simulation engine: neurons, synapses, pathways, plasticity, neuromodulators, checkpointing, and backends. |
+| `experiment/` | Stimuli, training helpers, readouts, and reusable experiment support. |
+| `research/runners/` | Headless experiment scripts where most new scientific work starts. |
+| `research/findings/` | Dated research writeups, including negative, corrected, and superseded results. |
+| `research/findings/raw/` | Raw artifacts and provenance sidecars. |
+| `docs/` | Current state, roadmap support, biology notes, diagrams, and historical plans. |
+| `tools/gates/` | Checks that catch unsupported claims, stale docs, missing provenance, weak controls, and repeated refuted ideas. |
 | `ui/`, `viz/`, `webapp/` | Desktop and web visualization/control surfaces. |
 
-## How Progress Is Judged
+## How To Read The Project
 
-The project values honest, reproducible progress over impressive phrasing.
+Start with:
 
-- Results should run across multiple random seeds when practical.
-- Claims need raw artifacts and provenance.
-- Controls should remove, lesion, scramble, or permute the mechanism being
-  credited.
-- A passed isolated test is a floor, not proof that a human-like faculty exists.
-- Every mechanism needs a short statement of its role in the whole brain.
-- Every scaffold needs a named biological replacement and a burn-down trigger.
+- [ROADMAP.md](ROADMAP.md) for what we are building next;
+- [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md) for what works today;
+- [docs/SCAFFOLD-LEDGER.md](docs/SCAFFOLD-LEDGER.md) for what is still temporary;
+- [research/findings/](research/findings/) for the full evidence trail.
 
-Start with [ROADMAP.md](ROADMAP.md) for the plan,
-[docs/CURRENT-STATE.md](docs/CURRENT-STATE.md) for capability status, and
-[HANDOFF.md](HANDOFF.md) for the development workflow.
+Progress is judged by whether a mechanism helps the whole brain, not only by
+whether it passes an isolated test. A strong result should have raw artifacts,
+provenance, controls, and an honest statement of what remains scaffolded.

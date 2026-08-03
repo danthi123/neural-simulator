@@ -8,6 +8,33 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
+## STATE OF THE PROJECT — 2026-08-03 00:26 EDT (read first; below this is history)
+
+**Public documentation realigned:** `README.md`, `ROADMAP.md`, `docs/CURRENT-STATE.md`, `QUICKSTART.md`, and
+`docs/INDEX.md` have been rewritten as the plain-language front door. New `docs/SCAFFOLD-LEDGER.md` is the public
+shortcut/burn-down tracker. Dense lab history remains in `research/findings/`; this board remains the autonomous work
+anchor.
+
+**GPU exact-next is now running, not blocked:** local RTX 3090/CUDA access is available. Run4 RF spiking-forward
+six-seed promotion is active in session 48264:
+`research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json`. Do NOT claim the promotion until the artifact exists
+and the WKV finding is updated. Last observed progress before this state note: seeds 42/43/44/100 printed perfect
+cheap RF fidelity and the GPU was ~90% utilized.
+
+**CPU Lane C advanced:** `source_consistency_floor` exact metadata scaffold is superseded for current safety experiments
+by `neural_source_consistency`, an independent RF source-memory echo. Six-seed stressed known-fact battery is **GO**:
+46/46 wrong recalls downgraded, 0 wrong assertions, 0 correct source-mismatch false positives, 475/475 hard-moat
+abstains preserved, and 0 added false accepts. Honest scope: this is a source-monitoring burn-down, not final
+biological honesty, because the echo is engineered at store time. Next Lane C step is learned/plastic source monitoring
+feeding dynamic ACC/aPFC and self-schema.
+
+**EXACT NEXT:** while the GPU run continues, finish documentation/finding sync, run focused tests and gates, commit and
+push to GitHub + Gitea. When the WKV artifact lands, validate it with `jq`, update
+`research/findings/2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md`,
+then commit/push that promotion separately if it is clean.
+
+---
+
 ## ⚡ SESSION START — DO THIS FIRST, EVERY session (owner-chosen 2026-07-18: doc-instruction arming, NO hooks/daemon)
 
 **FIRST ACTION: arm the within-session anti-stall + RUN-STATE heartbeat — at SESSION START AND on ANY CONTINUATION

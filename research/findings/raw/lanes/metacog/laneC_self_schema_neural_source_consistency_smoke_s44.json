@@ -1,0 +1,1090 @@
+{
+  "runner": "research/runners/_laneC_self_schema_honesty_wirein_derisk.py",
+  "faculty": "Lane C metacognition / self-schema honesty in production known-fact conversation",
+  "theory": "answer-process confidence routed through a fixed meta_schema -> self_schema spiking relay",
+  "backend": "numpy",
+  "seeds": [
+    44
+  ],
+  "D": 16,
+  "n_facts": 48,
+  "vocab_mode": "synthetic",
+  "low_conf_cutoff": 0.48,
+  "confidence_source_mode": "neural_source_consistency",
+  "source_monitor_D": 64,
+  "verdict": "GO",
+  "aggregate": {
+    "core_ok": true,
+    "low_conf_measured": true,
+    "low_conf_all_downgraded": true,
+    "source_mismatch_measured": true,
+    "source_mismatch_all_downgraded": true,
+    "high_conf_errors_remain": false,
+    "wrong_assert_rate": 0.0,
+    "source_mismatch_wrong_downgrade_rate": 1.0,
+    "low_conf_wrong_downgrade_rate": 1.0,
+    "correct_assert_rate": 0.5263157894736842,
+    "total_counts": {
+      "matched_queries": 48,
+      "matched_hard_abstains": 20,
+      "correct": 19,
+      "wrong": 9,
+      "wrong_assert": 0,
+      "low_conf_wrong": 9,
+      "low_conf_wrong_downgraded": 9,
+      "source_mismatch_wrong": 9,
+      "source_mismatch_wrong_downgraded": 9,
+      "source_mismatch_correct": 0,
+      "correct_assert": 10,
+      "hard_moat_off": 78,
+      "hard_moat_on": 78,
+      "added_false_accepts": 0,
+      "self_schema_invoked_on_hard_moat": 0,
+      "intrinsic_unknown_answers": 2
+    }
+  },
+  "success_components": {
+    "default_off_identity_preserved": true,
+    "hard_moat_added_false_accepts_zero": true,
+    "self_schema_not_invoked_on_hard_moat": true,
+    "low_conf_familiar_wrong_measured": true,
+    "low_conf_familiar_wrong_some_downgraded": true,
+    "low_conf_familiar_wrong_all_downgraded": true,
+    "source_mismatch_wrong_measured": true,
+    "source_mismatch_wrong_all_downgraded": true,
+    "source_mismatch_correct_false_positive_zero": true,
+    "wrong_asserts_absent_for_full_go": true
+  },
+  "per_seed": [
+    {
+      "seed": 44,
+      "D": 16,
+      "n_facts": 48,
+      "vocab_mode": "synthetic",
+      "default_off_identity": {
+        "facts_checked": 48,
+        "hard_moat_checked": 78,
+        "ok": true
+      },
+      "counts": {
+        "matched_queries": 48,
+        "matched_hard_abstains": 20,
+        "correct": 19,
+        "wrong": 9,
+        "wrong_assert": 0,
+        "low_conf_wrong": 9,
+        "low_conf_wrong_downgraded": 9,
+        "source_mismatch_wrong": 9,
+        "source_mismatch_wrong_downgraded": 9,
+        "source_mismatch_correct": 0,
+        "correct_assert": 10,
+        "hard_moat_off": 78,
+        "hard_moat_on": 78,
+        "added_false_accepts": 0,
+        "self_schema_invoked_on_hard_moat": 0,
+        "intrinsic_unknown_answers": 2
+      },
+      "rates": {
+        "wrong_assert_rate": 0.0,
+        "low_conf_wrong_downgrade_rate": 1.0,
+        "correct_assert_rate": 0.5263157894736842,
+        "self_rate_vs_trace_spearman": 0.9885057471264368
+      },
+      "band_counts": {
+        "MOAT": 20,
+        "assert": 10,
+        "soft_abstain": 10,
+        "hedge": 8
+      },
+      "communicable_path": {
+        "low_conf_wrong_checked": true,
+        "low_conf_wrong_downgraded": true,
+        "hard_moat_checked": true,
+        "hard_moat_preserved": true
+      },
+      "sample_wrong_asserts": [],
+      "sample_source_mismatch_wrong": [
+        {
+          "cue": [
+            "w026",
+            "w030"
+          ],
+          "gold": "w024",
+          "raw_answer": "w044",
+          "answer_text": "I am not sure enough to assert it, but it might be w044.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.46512854503590084,
+            "answer_confidence": 0.46512854503590084,
+            "answer_margin": 0.07797703641017051,
+            "answer_conflict": 0.45425386468704315,
+            "cue_min_confidence": 0.5275818656622435,
+            "cue_min_margin": 0.03782777000687193,
+            "matched_fact_index": 5,
+            "source_fact": {
+              "agent": "w026",
+              "action": "w030",
+              "patient": "w024"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w024",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 5,
+              "source_consistent": false,
+              "source_expected_answer": "w024",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.4511900393657215,
+              "source_answer_confidence": 0.5623458043420051,
+              "source_confidence": 0.4511900393657215,
+              "cue_roles": [
+                {
+                  "word": "w026",
+                  "confidence": 0.4511900393657215,
+                  "winner_score_raw": 0.4511900393657215,
+                  "runner_word": "w015",
+                  "runner_confidence": 0.17647333121085737,
+                  "runner_score_raw": 0.17647333121085737,
+                  "margin": 0.27471670815486415,
+                  "conflict": 0.28115919966396596,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w026"
+                },
+                {
+                  "word": "w030",
+                  "confidence": 0.5674792266413925,
+                  "winner_score_raw": 0.5674792266413925,
+                  "runner_word": "w040",
+                  "runner_confidence": 0.26209282745279855,
+                  "runner_score_raw": 0.26209282745279855,
+                  "margin": 0.30538639918859395,
+                  "conflict": 0.31593738704595115,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w030"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w024",
+                  "confidence": 0.5623458043420051,
+                  "winner_score_raw": 0.5623458043420051,
+                  "runner_word": "w038",
+                  "runner_confidence": 0.1896668700437421,
+                  "runner_score_raw": 0.1896668700437421,
+                  "margin": 0.372678934298263,
+                  "conflict": 0.252212331323341,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w032",
+            "w004"
+          ],
+          "gold": "w011",
+          "raw_answer": "w037",
+          "answer_text": "I am not sure enough to assert it, but it might be w037.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.48457055624309453,
+            "answer_confidence": 0.48457055624309453,
+            "answer_margin": 0.010486726426520543,
+            "answer_conflict": 0.494530496303947,
+            "cue_min_confidence": 0.454990917642401,
+            "cue_min_margin": 0.07661563788741221,
+            "matched_fact_index": 8,
+            "source_fact": {
+              "agent": "w032",
+              "action": "w004",
+              "patient": "w011"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w011",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 8,
+              "source_consistent": false,
+              "source_expected_answer": "w011",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.5041611338662925,
+              "source_answer_confidence": 0.5617314424800246,
+              "source_confidence": 0.5041611338662925,
+              "cue_roles": [
+                {
+                  "word": "w032",
+                  "confidence": 0.5516145602604545,
+                  "winner_score_raw": 0.5516145602604545,
+                  "runner_word": "w022",
+                  "runner_confidence": 0.2827050515086174,
+                  "runner_score_raw": 0.2827050515086174,
+                  "margin": 0.2689095087518371,
+                  "conflict": 0.33884502675219536,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w032"
+                },
+                {
+                  "word": "w004",
+                  "confidence": 0.5041611338662925,
+                  "winner_score_raw": 0.5041611338662925,
+                  "runner_word": "w014",
+                  "runner_confidence": 0.15410222877053797,
+                  "runner_score_raw": 0.15410222877053797,
+                  "margin": 0.3500589050957545,
+                  "conflict": 0.2341042161592294,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w004"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w011",
+                  "confidence": 0.5617314424800246,
+                  "winner_score_raw": 0.5617314424800246,
+                  "runner_word": "w021",
+                  "runner_confidence": 0.1668698936056896,
+                  "runner_score_raw": 0.1668698936056896,
+                  "margin": 0.394861548874335,
+                  "conflict": 0.2290277070766049,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w004",
+            "w005"
+          ],
+          "gold": "w042",
+          "raw_answer": "w047",
+          "answer_text": "I am not sure enough to assert it, but it might be w047.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.35545005797459556,
+            "answer_confidence": 0.35545005797459556,
+            "answer_margin": 0.0028944915378413816,
+            "answer_conflict": 0.49795588309333016,
+            "cue_min_confidence": 0.36838711331565405,
+            "cue_min_margin": 0.007130524231545032,
+            "matched_fact_index": 9,
+            "source_fact": {
+              "agent": "w004",
+              "action": "w005",
+              "patient": "w042"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w042",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 9,
+              "source_consistent": false,
+              "source_expected_answer": "w042",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.45331129483755395,
+              "source_answer_confidence": 0.5645382174675148,
+              "source_confidence": 0.45331129483755395,
+              "cue_roles": [
+                {
+                  "word": "w004",
+                  "confidence": 0.45331129483755395,
+                  "winner_score_raw": 0.45331129483755395,
+                  "runner_word": "w033",
+                  "runner_confidence": 0.217017363391174,
+                  "runner_score_raw": 0.217017363391174,
+                  "margin": 0.23629393144637995,
+                  "conflict": 0.32374770256857516,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w004"
+                },
+                {
+                  "word": "w005",
+                  "confidence": 0.5909071325923572,
+                  "winner_score_raw": 0.5909071325923572,
+                  "runner_word": "w000",
+                  "runner_confidence": 0.11941910172174972,
+                  "runner_score_raw": 0.11941910172174972,
+                  "margin": 0.4714880308706074,
+                  "conflict": 0.16811866968273034,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w005"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w042",
+                  "confidence": 0.5645382174675148,
+                  "winner_score_raw": 0.5645382174675148,
+                  "runner_word": "w019",
+                  "runner_confidence": 0.21111198350137322,
+                  "runner_score_raw": 0.21111198350137322,
+                  "margin": 0.35342623396614153,
+                  "conflict": 0.2721742132800233,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w035",
+            "w047"
+          ],
+          "gold": "w046",
+          "raw_answer": "w034",
+          "answer_text": "I am not sure enough to assert it, but it might be w034.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.3405142725970066,
+            "answer_confidence": 0.3405142725970066,
+            "answer_margin": 0.014493405630567113,
+            "answer_conflict": 0.48912780005993733,
+            "cue_min_confidence": 0.5514935389276312,
+            "cue_min_margin": 0.12849866926040743,
+            "matched_fact_index": 12,
+            "source_fact": {
+              "agent": "w035",
+              "action": "w047",
+              "patient": "w046"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w046",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 12,
+              "source_consistent": false,
+              "source_expected_answer": "w046",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.3906872507471496,
+              "source_answer_confidence": 0.5606980721436923,
+              "source_confidence": 0.3906872507471496,
+              "cue_roles": [
+                {
+                  "word": "w035",
+                  "confidence": 0.5078028790302676,
+                  "winner_score_raw": 0.5078028790302676,
+                  "runner_word": "w038",
+                  "runner_confidence": 0.21382624384943547,
+                  "runner_score_raw": 0.21382624384943547,
+                  "margin": 0.29397663518083206,
+                  "conflict": 0.29631044088109826,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w035"
+                },
+                {
+                  "word": "w047",
+                  "confidence": 0.3906872507471496,
+                  "winner_score_raw": 0.3906872507471496,
+                  "runner_word": "w008",
+                  "runner_confidence": 0.24109827020739477,
+                  "runner_score_raw": 0.24109827020739477,
+                  "margin": 0.14958898053975483,
+                  "conflict": 0.38161411084811353,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w047"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w046",
+                  "confidence": 0.5606980721436923,
+                  "winner_score_raw": 0.5606980721436923,
+                  "runner_word": "w009",
+                  "runner_confidence": 0.17223083075459167,
+                  "runner_score_raw": 0.17223083075459167,
+                  "margin": 0.3884672413891006,
+                  "conflict": 0.23498981939248764,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w014",
+            "w034"
+          ],
+          "gold": "w046",
+          "raw_answer": "w009",
+          "answer_text": "I am not sure enough to assert it, but it might be w009.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.5234527612744775,
+            "answer_confidence": 0.5234527612744775,
+            "answer_margin": 0.12217968865528867,
+            "answer_conflict": 0.4339373438888846,
+            "cue_min_confidence": 0.30650185437734145,
+            "cue_min_margin": 0.008010367678881747,
+            "matched_fact_index": 14,
+            "source_fact": {
+              "agent": "w026",
+              "action": "w034",
+              "patient": "w009"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w009",
+            "source_answer_matches": true,
+            "source_cue_matches": false,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 25,
+              "source_consistent": false,
+              "source_expected_answer": "w046",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.4866710891085544,
+              "source_answer_confidence": 0.5816342775551884,
+              "source_confidence": 0.4866710891085544,
+              "cue_roles": [
+                {
+                  "word": "w014",
+                  "confidence": 0.4866710891085544,
+                  "winner_score_raw": 0.4866710891085544,
+                  "runner_word": "w009",
+                  "runner_confidence": 0.2760192759047099,
+                  "runner_score_raw": 0.2760192759047099,
+                  "margin": 0.21065181320384446,
+                  "conflict": 0.36190214037646506,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w014"
+                },
+                {
+                  "word": "w034",
+                  "confidence": 0.5125261971306778,
+                  "winner_score_raw": 0.5125261971306778,
+                  "runner_word": "w009",
+                  "runner_confidence": 0.19910515072003296,
+                  "runner_score_raw": 0.19910515072003296,
+                  "margin": 0.31342104641064483,
+                  "conflict": 0.27978693046840764,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w034"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w046",
+                  "confidence": 0.5816342775551884,
+                  "winner_score_raw": 0.5816342775551884,
+                  "runner_word": "w026",
+                  "runner_confidence": 0.16009514511284598,
+                  "runner_score_raw": 0.16009514511284598,
+                  "margin": 0.4215391324423424,
+                  "conflict": 0.21584035903704094,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        }
+      ],
+      "sample_low_conf_wrong": [
+        {
+          "cue": [
+            "w026",
+            "w030"
+          ],
+          "gold": "w024",
+          "raw_answer": "w044",
+          "answer_text": "I am not sure enough to assert it, but it might be w044.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.46512854503590084,
+            "answer_confidence": 0.46512854503590084,
+            "answer_margin": 0.07797703641017051,
+            "answer_conflict": 0.45425386468704315,
+            "cue_min_confidence": 0.5275818656622435,
+            "cue_min_margin": 0.03782777000687193,
+            "matched_fact_index": 5,
+            "source_fact": {
+              "agent": "w026",
+              "action": "w030",
+              "patient": "w024"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w024",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 5,
+              "source_consistent": false,
+              "source_expected_answer": "w024",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.4511900393657215,
+              "source_answer_confidence": 0.5623458043420051,
+              "source_confidence": 0.4511900393657215,
+              "cue_roles": [
+                {
+                  "word": "w026",
+                  "confidence": 0.4511900393657215,
+                  "winner_score_raw": 0.4511900393657215,
+                  "runner_word": "w015",
+                  "runner_confidence": 0.17647333121085737,
+                  "runner_score_raw": 0.17647333121085737,
+                  "margin": 0.27471670815486415,
+                  "conflict": 0.28115919966396596,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w026"
+                },
+                {
+                  "word": "w030",
+                  "confidence": 0.5674792266413925,
+                  "winner_score_raw": 0.5674792266413925,
+                  "runner_word": "w040",
+                  "runner_confidence": 0.26209282745279855,
+                  "runner_score_raw": 0.26209282745279855,
+                  "margin": 0.30538639918859395,
+                  "conflict": 0.31593738704595115,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w030"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w024",
+                  "confidence": 0.5623458043420051,
+                  "winner_score_raw": 0.5623458043420051,
+                  "runner_word": "w038",
+                  "runner_confidence": 0.1896668700437421,
+                  "runner_score_raw": 0.1896668700437421,
+                  "margin": 0.372678934298263,
+                  "conflict": 0.252212331323341,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w032",
+            "w004"
+          ],
+          "gold": "w011",
+          "raw_answer": "w037",
+          "answer_text": "I am not sure enough to assert it, but it might be w037.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.48457055624309453,
+            "answer_confidence": 0.48457055624309453,
+            "answer_margin": 0.010486726426520543,
+            "answer_conflict": 0.494530496303947,
+            "cue_min_confidence": 0.454990917642401,
+            "cue_min_margin": 0.07661563788741221,
+            "matched_fact_index": 8,
+            "source_fact": {
+              "agent": "w032",
+              "action": "w004",
+              "patient": "w011"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w011",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 8,
+              "source_consistent": false,
+              "source_expected_answer": "w011",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.5041611338662925,
+              "source_answer_confidence": 0.5617314424800246,
+              "source_confidence": 0.5041611338662925,
+              "cue_roles": [
+                {
+                  "word": "w032",
+                  "confidence": 0.5516145602604545,
+                  "winner_score_raw": 0.5516145602604545,
+                  "runner_word": "w022",
+                  "runner_confidence": 0.2827050515086174,
+                  "runner_score_raw": 0.2827050515086174,
+                  "margin": 0.2689095087518371,
+                  "conflict": 0.33884502675219536,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w032"
+                },
+                {
+                  "word": "w004",
+                  "confidence": 0.5041611338662925,
+                  "winner_score_raw": 0.5041611338662925,
+                  "runner_word": "w014",
+                  "runner_confidence": 0.15410222877053797,
+                  "runner_score_raw": 0.15410222877053797,
+                  "margin": 0.3500589050957545,
+                  "conflict": 0.2341042161592294,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w004"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w011",
+                  "confidence": 0.5617314424800246,
+                  "winner_score_raw": 0.5617314424800246,
+                  "runner_word": "w021",
+                  "runner_confidence": 0.1668698936056896,
+                  "runner_score_raw": 0.1668698936056896,
+                  "margin": 0.394861548874335,
+                  "conflict": 0.2290277070766049,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w004",
+            "w005"
+          ],
+          "gold": "w042",
+          "raw_answer": "w047",
+          "answer_text": "I am not sure enough to assert it, but it might be w047.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.35545005797459556,
+            "answer_confidence": 0.35545005797459556,
+            "answer_margin": 0.0028944915378413816,
+            "answer_conflict": 0.49795588309333016,
+            "cue_min_confidence": 0.36838711331565405,
+            "cue_min_margin": 0.007130524231545032,
+            "matched_fact_index": 9,
+            "source_fact": {
+              "agent": "w004",
+              "action": "w005",
+              "patient": "w042"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w042",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 9,
+              "source_consistent": false,
+              "source_expected_answer": "w042",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.45331129483755395,
+              "source_answer_confidence": 0.5645382174675148,
+              "source_confidence": 0.45331129483755395,
+              "cue_roles": [
+                {
+                  "word": "w004",
+                  "confidence": 0.45331129483755395,
+                  "winner_score_raw": 0.45331129483755395,
+                  "runner_word": "w033",
+                  "runner_confidence": 0.217017363391174,
+                  "runner_score_raw": 0.217017363391174,
+                  "margin": 0.23629393144637995,
+                  "conflict": 0.32374770256857516,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w004"
+                },
+                {
+                  "word": "w005",
+                  "confidence": 0.5909071325923572,
+                  "winner_score_raw": 0.5909071325923572,
+                  "runner_word": "w000",
+                  "runner_confidence": 0.11941910172174972,
+                  "runner_score_raw": 0.11941910172174972,
+                  "margin": 0.4714880308706074,
+                  "conflict": 0.16811866968273034,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w005"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w042",
+                  "confidence": 0.5645382174675148,
+                  "winner_score_raw": 0.5645382174675148,
+                  "runner_word": "w019",
+                  "runner_confidence": 0.21111198350137322,
+                  "runner_score_raw": 0.21111198350137322,
+                  "margin": 0.35342623396614153,
+                  "conflict": 0.2721742132800233,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w035",
+            "w047"
+          ],
+          "gold": "w046",
+          "raw_answer": "w034",
+          "answer_text": "I am not sure enough to assert it, but it might be w034.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.3405142725970066,
+            "answer_confidence": 0.3405142725970066,
+            "answer_margin": 0.014493405630567113,
+            "answer_conflict": 0.48912780005993733,
+            "cue_min_confidence": 0.5514935389276312,
+            "cue_min_margin": 0.12849866926040743,
+            "matched_fact_index": 12,
+            "source_fact": {
+              "agent": "w035",
+              "action": "w047",
+              "patient": "w046"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w046",
+            "source_answer_matches": false,
+            "source_cue_matches": true,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 12,
+              "source_consistent": false,
+              "source_expected_answer": "w046",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.3906872507471496,
+              "source_answer_confidence": 0.5606980721436923,
+              "source_confidence": 0.3906872507471496,
+              "cue_roles": [
+                {
+                  "word": "w035",
+                  "confidence": 0.5078028790302676,
+                  "winner_score_raw": 0.5078028790302676,
+                  "runner_word": "w038",
+                  "runner_confidence": 0.21382624384943547,
+                  "runner_score_raw": 0.21382624384943547,
+                  "margin": 0.29397663518083206,
+                  "conflict": 0.29631044088109826,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w035"
+                },
+                {
+                  "word": "w047",
+                  "confidence": 0.3906872507471496,
+                  "winner_score_raw": 0.3906872507471496,
+                  "runner_word": "w008",
+                  "runner_confidence": 0.24109827020739477,
+                  "runner_score_raw": 0.24109827020739477,
+                  "margin": 0.14958898053975483,
+                  "conflict": 0.38161411084811353,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w047"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w046",
+                  "confidence": 0.5606980721436923,
+                  "winner_score_raw": 0.5606980721436923,
+                  "runner_word": "w009",
+                  "runner_confidence": 0.17223083075459167,
+                  "runner_score_raw": 0.17223083075459167,
+                  "margin": 0.3884672413891006,
+                  "conflict": 0.23498981939248764,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        },
+        {
+          "cue": [
+            "w014",
+            "w034"
+          ],
+          "gold": "w046",
+          "raw_answer": "w009",
+          "answer_text": "I am not sure enough to assert it, but it might be w009.",
+          "hard_abstain": false,
+          "correct": false,
+          "certain": false,
+          "band": "soft_abstain",
+          "confidence_source": 0.0,
+          "confidence_source_mode": "neural_source_consistency",
+          "confidence_evidence": {
+            "raw_trace_confidence": 0.5234527612744775,
+            "answer_confidence": 0.5234527612744775,
+            "answer_margin": 0.12217968865528867,
+            "answer_conflict": 0.4339373438888846,
+            "cue_min_confidence": 0.30650185437734145,
+            "cue_min_margin": 0.008010367678881747,
+            "matched_fact_index": 14,
+            "source_fact": {
+              "agent": "w026",
+              "action": "w034",
+              "patient": "w009"
+            },
+            "mode": "neural_source_consistency",
+            "selected_confidence": 0.0,
+            "source_expected_answer": "w009",
+            "source_answer_matches": true,
+            "source_cue_matches": false,
+            "exact_source_consistent": false,
+            "neural_source_monitor": {
+              "available": true,
+              "source": "rf_independent_source_echo",
+              "source_monitor_D": 64,
+              "matched_source_index": 25,
+              "source_consistent": false,
+              "source_expected_answer": "w046",
+              "source_answer_matches": false,
+              "source_cue_confidence": 0.4866710891085544,
+              "source_answer_confidence": 0.5816342775551884,
+              "source_confidence": 0.4866710891085544,
+              "cue_roles": [
+                {
+                  "word": "w014",
+                  "confidence": 0.4866710891085544,
+                  "winner_score_raw": 0.4866710891085544,
+                  "runner_word": "w009",
+                  "runner_confidence": 0.2760192759047099,
+                  "runner_score_raw": 0.2760192759047099,
+                  "margin": 0.21065181320384446,
+                  "conflict": 0.36190214037646506,
+                  "role": "agent",
+                  "cue": true,
+                  "asserted": "w014"
+                },
+                {
+                  "word": "w034",
+                  "confidence": 0.5125261971306778,
+                  "winner_score_raw": 0.5125261971306778,
+                  "runner_word": "w009",
+                  "runner_confidence": 0.19910515072003296,
+                  "runner_score_raw": 0.19910515072003296,
+                  "margin": 0.31342104641064483,
+                  "conflict": 0.27978693046840764,
+                  "role": "action",
+                  "cue": true,
+                  "asserted": "w034"
+                }
+              ],
+              "answer_roles": [
+                {
+                  "word": "w046",
+                  "confidence": 0.5816342775551884,
+                  "winner_score_raw": 0.5816342775551884,
+                  "runner_word": "w026",
+                  "runner_confidence": 0.16009514511284598,
+                  "runner_score_raw": 0.16009514511284598,
+                  "margin": 0.4215391324423424,
+                  "conflict": 0.21584035903704094,
+                  "role": "patient",
+                  "cue": false
+                }
+              ]
+            },
+            "neural_source_consistent": false,
+            "selected_consistency_source": "rf_independent_source_echo",
+            "source_consistent": false,
+            "scaffold": false
+          },
+          "self_schema_rate": 0.0,
+          "assert_rate_threshold": 0.06527777777777778,
+          "hedge_rate_threshold": 0.04861111111111111
+        }
+      ],
+      "seed_core_ok": true,
+      "low_conf_wrong_ok": true
+    }
+  ],
+  "preconditions": [
+    {
+      "name": "production_and_default_off_paths_measured",
+      "ok": true
+    },
+    {
+      "name": "moat_and_matched_fact_counts_recorded",
+      "ok": true
+    },
+    {
+      "name": "verdict_derived_from_recorded_counts",
+      "ok": true
+    }
+  ],
+  "honest_scope": "Production wire-in is built and default-off. The moat remains first, and low-confidence familiar-wrong recalls are downgraded. High-confidence wrong recalls still assert, so this is not a solved honesty mechanism; the next step needs a learned/calibrated correctness confidence signal rather than trace confidence alone. The source_consistency_floor mode is a named scaffold over composer source metadata, not an end-state biological correctness mechanism. The neural_source_consistency mode uses a separate RF source-memory echo, not the exact trace source dict; it remains a bounded source-monitor burn-down step.",
+  "elapsed_seconds": 19.15
+}
