@@ -67,15 +67,15 @@ into the outcome phase, or apply a synaptic update.
 ## Seed lock
 
 - Implementation smoke: reserved seed `0` only.
-- Calibration: unassigned and sealed.
-- Development: unassigned and sealed.
-- Held out: unassigned and sealed.
+- Calibration: assigned `[76405, 71409]` and sealed.
+- Development: assigned `[79696, 72650, 77948, 75688]` and sealed.
+- Held out: assigned `[71272, 79796]` and sealed.
 
-After audit clearance and this preregistration commit, a deterministic seed-
-assignment script must reject every seed used by vocal-credit v1-v4 or by any
-other active gate. It must commit two calibration seeds, four development
-seeds, and two held-out seeds before the learning runner can execute a formal
-phase. No result may influence that assignment.
+The committed deterministic seed-assignment script rejects every seed used by
+vocal-credit v1-v4 or by any other active gate. It assigned two calibration
+seeds, four development seeds, and two held-out seeds before this runner was
+implemented; no result influenced the assignment. Assignment does not open a
+formal phase.
 
 ## Fixed protocol
 
@@ -170,4 +170,4 @@ Do not weaken yoked neutrality, omit the no-learning arm, accept an arbitrary
 yoked preference because its direction varies by seed, or let the fixed action
 trace itself count as learned value. If the smoke cannot establish active,
 bounded expectation learning and a causal prediction-error signal, retire the
-candidate before assigning formal seeds.
+candidate before opening or executing any assigned formal seed.
