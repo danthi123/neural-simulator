@@ -13,11 +13,13 @@ brain never receives a target channel, intended label, or expected answer.
 
 Honest scope
 ------------
-This is a preverbal reinforcement-learning rung, not language. A runner-side,
-target-independent balanced motor-babbling schedule supplies early exploration;
-the world has only two contexts and two objects; the body reads population
-spike counts. These are tracked scaffolds. Direct caregiver output clamping and
-the old fixed ``request apple`` semantic decoder are absent.
+This is a preverbal reinforcement-learning rung, not language. The original
+benchmark preserves a target-independent balanced motor-babbling schedule;
+the replacement path uses a shared spiking arousal/competition circuit and
+sensory negative feedback. The world still has only two contexts and two
+objects, and the body reads population spike counts. These are tracked
+scaffolds. Direct caregiver output clamping and the old fixed ``request apple``
+semantic decoder are absent.
 """
 from __future__ import annotations
 
@@ -46,9 +48,13 @@ from research.runners.nav_conv_merged_bridge import (
     MergedNavConvAgent,
     VOCAL_INTENT_FS,
     VOCAL_INTENT_PREFIX,
+    VOCAL_EXPLORATION_AROUSAL,
+    VOCAL_EXPLORE_PREFIX,
     VOCAL_LEARNING_GATE,
+    VOCAL_NEGATIVE_FEEDBACK,
     VOCAL_REFERENT_FS,
     VOCAL_REFERENT_PREFIX,
+    VOCAL_RMTG,
     VOCAL_SILENCE,
     VOCAL_SOCIAL_CUE,
     VOCAL_SPEAK,
@@ -135,8 +141,13 @@ class InteractiveListenerWorld:
         }
 
 
-def _build_agent(seed: int):
-    return MergedNavConvAgent(
+def _build_agent(
+    seed: int,
+    *,
+    intrinsic_exploration: bool = False,
+    error_feedback: bool = False,
+):
+    agent = MergedNavConvAgent(
         seed=seed,
         vocab=VOCAB,
         co_resident_composer=True,
@@ -149,13 +160,31 @@ def _build_agent(seed: int):
         co_resident_nav_critic=False,
         co_resident_developmental_vocal=True,
         vocal_n_channels=2,
+        vocal_intrinsic_exploration=bool(intrinsic_exploration),
+        vocal_error_feedback=bool(error_feedback),
         co_resident_command_route=False,
     )
+    if intrinsic_exploration:
+        # Slow after-spike recovery makes a recently active exploration pool
+        # temporarily less excitable, preventing one structural winner from
+        # monopolizing development. This is intrinsic neural fatigue, not a
+        # runner-selected action schedule.
+        xp, _ = get_backend()
+        handles = agent._handles["developmental_vocal"]
+        explore = np.concatenate([
+            np.asarray(handles[f"{VOCAL_EXPLORE_PREFIX}{bank}_{i}"], dtype=np.int64)
+            for bank in ("speak", "intent", "referent")
+            for i in range(2)
+        ])
+        explore_x = xp.asarray(explore)
+        agent._merged_bridge.cp_izh_d_increment[explore_x] = xp.float32(80.0)
+        agent._merged_bridge.cp_izh_a[explore_x] = xp.float32(0.008)
+    return agent
 
 
 def _vocal_indices(agent):
     h = agent._handles["developmental_vocal"]
-    return {
+    out = {
         "social": np.asarray(h[VOCAL_SOCIAL_CUE], dtype=np.int64),
         "speak": np.asarray(h[VOCAL_SPEAK], dtype=np.int64),
         "silence": np.asarray(h[VOCAL_SILENCE], dtype=np.int64),
@@ -171,6 +200,28 @@ def _vocal_indices(agent):
         "intent_fs": np.asarray(h[VOCAL_INTENT_FS], dtype=np.int64),
         "referent_fs": np.asarray(h[VOCAL_REFERENT_FS], dtype=np.int64),
     }
+    explore_keys = [
+        f"{VOCAL_EXPLORE_PREFIX}{bank}_{i}"
+        for bank in ("speak", "intent", "referent")
+        for i in range(2)
+    ]
+    if all(key in h for key in explore_keys):
+        out["exploration_arousal"] = np.asarray(
+            h[VOCAL_EXPLORATION_AROUSAL], dtype=np.int64
+        )
+        out["explore"] = {
+            bank: [
+                np.asarray(h[f"{VOCAL_EXPLORE_PREFIX}{bank}_{i}"], dtype=np.int64)
+                for i in range(2)
+            ]
+            for bank in ("speak", "intent", "referent")
+        }
+    if VOCAL_NEGATIVE_FEEDBACK in h:
+        out["negative_feedback"] = np.asarray(
+            h[VOCAL_NEGATIVE_FEEDBACK], dtype=np.int64
+        )
+        out["rmtg"] = np.asarray(h[VOCAL_RMTG], dtype=np.int64)
+    return out
 
 
 def _region_indices(agent, name):
@@ -181,6 +232,17 @@ def _step(bridge, n=1):
     for _ in range(int(n)):
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
+
+
+def _set_ou_sigma(bridge, sigma_pA):
+    """Update both the OU config value and its cached per-step coefficient."""
+    cc = bridge.core_config
+    cc.ou_std_current_pA = float(sigma_pA)
+    dt_s = float(cc.dt_ms) / 1000.0
+    tau_s = float(cc.ou_tau_ms) / 1000.0
+    bridge.ou_noise_std = float(
+        float(sigma_pA) * np.sqrt((1.0 - np.exp(-2.0 * dt_s / tau_s)) / 2.0)
+    )
 
 
 def _vocal_route_masks(agent):
@@ -306,7 +368,135 @@ def _explore_action(agent, intent, referent, exploration, *, pairings=1,
     return neural, action
 
 
-def _drive_reward_us(agent, *, reward_steps=18, reward_pA=700.0):
+def _intrinsic_explore_action(
+    agent,
+    intent,
+    referent,
+    *,
+    snc_tonic_pA=0.0,
+    exploration_arousal_pA=700.0,
+    lead_steps=8,
+    act_steps=120,
+):
+    """Read the first clear motor commitment produced by intrinsic exploration.
+
+    Unlike ``_explore_action``, this function never writes current into a vocal
+    output or channel-specific exploration population. It drives one shared
+    arousal population, whose symmetric pathways and independent downstream
+    spiking dynamics choose the raw action. The body's readout stops at the first
+    jointly clear speak/intent/referent competition instead of averaging across
+    later exploratory switches.
+    """
+    bridge = agent._merged_bridge
+    xp, _ = get_backend()
+    h = _vocal_indices(agent)
+    current = _context_current(agent, intent, referent)
+    current[xp.asarray(h["exploration_arousal"])] = np.float32(
+        exploration_arousal_pA
+    )
+    if float(snc_tonic_pA) != 0.0:
+        current[xp.asarray(_region_indices(agent, "limbic_snc"))] = np.float32(
+            snc_tonic_pA
+        )
+    speak_counts = np.zeros(2, dtype=np.float64)
+    intent_counts = np.zeros(2, dtype=np.float64)
+    referent_counts = np.zeros(2, dtype=np.float64)
+    explore_counts = {
+        bank: np.zeros(2, dtype=np.float64)
+        for bank in ("speak", "intent", "referent")
+    }
+    bridge.cp_external_input_current[:] = current
+    _step(bridge, lead_steps)
+    committed_action = None
+    committed = False
+    commit_latency_steps = None
+    motor_outcome = "timeout"
+    for step in range(int(act_steps)):
+        bridge.cp_external_input_current[:] = current
+        _step(bridge)
+        firing = np.asarray(to_host(bridge.cp_firing_states))
+        speak_counts += [firing[h["speak"]].sum(), firing[h["silence"]].sum()]
+        for i in range(2):
+            intent_counts[i] += firing[h["intent"][i]].sum()
+            referent_counts[i] += firing[h["referent"][i]].sum()
+            for bank in ("speak", "intent", "referent"):
+                explore_counts[bank][i] += firing[h["explore"][bank][i]].sum()
+        bank_counts = {
+            "speak": speak_counts,
+            "intent": intent_counts,
+            "referent": referent_counts,
+        }
+        orders = {bank: np.argsort(-counts) for bank, counts in bank_counts.items()}
+        committed = all(
+            counts[orders[bank][0]] >= 2.0
+            and counts[orders[bank][0]] - counts[orders[bank][1]] >= 1.0
+            for bank, counts in bank_counts.items()
+        )
+        if committed:
+            commit_latency_steps = int(step + 1)
+            if int(orders["speak"][0]) == 0:
+                committed_action = RawVocalAction(
+                    int(orders["intent"][0]), int(orders["referent"][0])
+                )
+                motor_outcome = "emitted"
+            else:
+                motor_outcome = "silence"
+            break
+    bridge.cp_external_input_current[:] = 0.0
+    _, neural = _decode_counts(speak_counts, intent_counts, referent_counts)
+    neural["exploration_channels"] = None
+    neural["exploration_spikes"] = {
+        bank: counts.tolist() for bank, counts in explore_counts.items()
+    }
+    neural["injected_output_current"] = False
+    neural["exploration_arousal_pA"] = float(exploration_arousal_pA)
+    neural["motor_committed"] = bool(committed)
+    neural["motor_outcome"] = motor_outcome
+    neural["commit_latency_steps"] = commit_latency_steps
+    neural["raw_action"] = (
+        None if committed_action is None else asdict(committed_action)
+    )
+    return neural, committed_action
+
+
+def calibrate_snc_tonic(agent, *, tonic_pA=220.0, settle_steps=300, measure_steps=120):
+    """Center signed dopamine production on the measured tonic SNc rate."""
+    bridge = agent._merged_bridge
+    xp, _ = get_backend()
+    snc = np.asarray(_region_indices(agent, "limbic_snc"), dtype=np.int64)
+    snc_x = xp.asarray(snc)
+    mgr = bridge.neuromodulator_manager
+    da_cfg = mgr._config_by_name("dopamine")
+    da_rule = da_cfg.production_rules[0]
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.cp_external_input_current[snc_x] = np.float32(tonic_pA)
+    _step(bridge, settle_steps)
+    spikes = 0.0
+    for _ in range(int(measure_steps)):
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[snc_x] = np.float32(tonic_pA)
+        _step(bridge)
+        spikes += float(np.asarray(to_host(bridge.cp_firing_states[snc_x])).sum())
+    tonic_fraction = spikes / max(1.0, float(len(snc) * measure_steps))
+    da_rule.threshold = float(tonic_fraction)
+    mgr._rule_state["dopamine"]["signed_rate_ema"] = float(tonic_fraction)
+    mgr.set_concentration("dopamine", da_cfg.baseline)
+    bridge.cp_external_input_current[:] = 0.0
+    return {
+        "tonic_pA": float(tonic_pA),
+        "tonic_firing_fraction": float(tonic_fraction),
+        "tonic_hz": float(1000.0 * tonic_fraction),
+        "dopamine_baseline": float(da_cfg.baseline),
+    }
+
+
+def _drive_reward_us(
+    agent,
+    *,
+    reward_steps=18,
+    reward_pA=700.0,
+    snc_tonic_pA=0.0,
+):
     bridge = agent._merged_bridge
     xp, _ = get_backend()
     reward_us = _region_indices(agent, "limbic_reward_us")
@@ -315,6 +505,8 @@ def _drive_reward_us(agent, *, reward_steps=18, reward_pA=700.0):
     snc_spikes = 0.0
     current = xp.zeros(int(bridge.core_config.num_neurons), dtype=xp.float32)
     current[xp.asarray(reward_us)] = np.float32(reward_pA)
+    if float(snc_tonic_pA) != 0.0:
+        current[xp.asarray(snc)] = np.float32(snc_tonic_pA)
     for _ in range(int(reward_steps)):
         bridge.cp_external_input_current[:] = current
         _step(bridge)
@@ -322,7 +514,52 @@ def _drive_reward_us(agent, *, reward_steps=18, reward_pA=700.0):
         snc_spikes += float(firing[snc].sum())
         peak_da = max(peak_da, bridge.neuromodulator_manager.get_concentration("dopamine"))
     bridge.cp_external_input_current[:] = 0.0
-    return {"snc_spikes": snc_spikes, "peak_dopamine": float(peak_da)}
+    return {
+        "kind": "reward",
+        "snc_spikes": snc_spikes,
+        "peak_dopamine": float(peak_da),
+        "minimum_dopamine": float(peak_da),
+        "rmtg_spikes": 0.0,
+    }
+
+
+def _drive_negative_feedback(
+    agent,
+    *,
+    feedback_steps=18,
+    feedback_pA=700.0,
+    snc_tonic_pA=220.0,
+):
+    """Route a negative social consequence through feedback -> RMTg -> SNc."""
+    bridge = agent._merged_bridge
+    xp, _ = get_backend()
+    h = _vocal_indices(agent)
+    if "negative_feedback" not in h:
+        raise RuntimeError("developmental vocal error-feedback circuit is absent")
+    snc = _region_indices(agent, "limbic_snc")
+    rmtg = h["rmtg"]
+    mgr = bridge.neuromodulator_manager
+    minimum_da = mgr.get_concentration("dopamine")
+    snc_spikes = 0.0
+    rmtg_spikes = 0.0
+    current = xp.zeros(int(bridge.core_config.num_neurons), dtype=xp.float32)
+    current[xp.asarray(snc)] = np.float32(snc_tonic_pA)
+    current[xp.asarray(h["negative_feedback"])] = np.float32(feedback_pA)
+    for _ in range(int(feedback_steps)):
+        bridge.cp_external_input_current[:] = current
+        _step(bridge)
+        firing = np.asarray(to_host(bridge.cp_firing_states))
+        snc_spikes += float(firing[snc].sum())
+        rmtg_spikes += float(firing[rmtg].sum())
+        minimum_da = min(minimum_da, mgr.get_concentration("dopamine"))
+    bridge.cp_external_input_current[:] = 0.0
+    return {
+        "kind": "negative_feedback",
+        "snc_spikes": snc_spikes,
+        "rmtg_spikes": rmtg_spikes,
+        "peak_dopamine": float(minimum_da),
+        "minimum_dopamine": float(minimum_da),
+    }
 
 
 def train_by_consequence(
@@ -334,10 +571,26 @@ def train_by_consequence(
     mode="contingent",
     yoked_schedule=None,
     intertrial_steps=100,
+    exploration_mode="balanced",
+    negative_feedback=False,
+    snc_tonic_pA=0.0,
+    intrinsic_action_steps=120,
+    intrinsic_noise_pA=20.0,
+    exploration_arousal_pA=700.0,
+    phasic_update_window=False,
+    phasic_consolidation_steps=30,
+    negative_feedback_steps=18,
+    negative_consolidation_steps=5,
+    negative_learning_scale=0.10,
+    vocal_weight_max=100.0,
+    context_learning_gain=0.35,
+    visual_learning_gain=1.0,
 ):
     """Reinforce overt successes; never inject a desired output population."""
-    if mode not in ("contingent", "none", "yoked", "da_lesion"):
+    if mode not in ("contingent", "negative_only", "none", "yoked", "da_lesion"):
         raise ValueError(mode)
+    if exploration_mode not in ("balanced", "intrinsic"):
+        raise ValueError(exploration_mode)
     bridge = agent._merged_bridge
     cc = bridge.core_config
     xp, _ = get_backend()
@@ -358,9 +611,11 @@ def train_by_consequence(
             "reward_coactivity_scale", "stdp_a_plus", "stdp_a_minus",
             "stdp_w_min", "stdp_w_max", "hebbian_min_weight", "hebbian_max_weight",
             "enable_ou_process", "ou_std_current_pA",
+            "homeostasis_threshold_adapt_rate",
         )
     }
     saved_eligibility_scope = bridge.cp_reward_eligibility_synapse_indices
+    saved_ou_noise_std = bridge.ou_noise_std
     mgr = bridge.neuromodulator_manager
     da_mod = mgr._config_by_name("dopamine")
     saved_da_tau = da_mod.decay_tau_ms
@@ -371,11 +626,16 @@ def train_by_consequence(
     # Context populations are much denser and more active than the sparse visual
     # feature ensemble. The lower context gain is a fixed anatomical learning-
     # rate difference, shared by every channel and convention.
-    bridge.cp_plasticity_rate_gain[context_mask_x] = 0.35
-    bridge.cp_plasticity_rate_gain[visual_mask_x] = 1.0
+    bridge.cp_plasticity_rate_gain[context_mask_x] = float(context_learning_gain)
+    bridge.cp_plasticity_rate_gain[visual_mask_x] = float(visual_learning_gain)
     cc.enable_hebbian_learning = False
     cc.enable_stdp = False
     cc.enable_reward_modulation = True
+    # Trials are compressed into milliseconds, whereas cortical threshold
+    # homeostasis acts over developmental time. Letting the default rate run at
+    # this accelerated schedule raises motor thresholds until learned speech is
+    # silent before any biologically comparable recovery interval can pass.
+    cc.homeostasis_threshold_adapt_rate = 0.0
     cc.reward_learning_rate = 0.05
     cc.reward_eligibility_tau_ms = 20.0
     cc.reward_eligibility_from_coactivity = True
@@ -387,11 +647,14 @@ def train_by_consequence(
     # reward and the anatomical gate still determine whether any update occurs.
     cc.reward_coactivity_scale = 360.0
     cc.stdp_w_min = 0.0
-    cc.stdp_w_max = 100.0
+    cc.stdp_w_max = float(vocal_weight_max)
     cc.hebbian_min_weight = 0.0
-    cc.hebbian_max_weight = 100.0
+    cc.hebbian_max_weight = float(vocal_weight_max)
     cc.enable_ou_process = True
-    cc.ou_std_current_pA = 10.0
+    _set_ou_sigma(
+        bridge,
+        float(intrinsic_noise_pA) if exploration_mode == "intrinsic" else 10.0
+    )
     da_mod.decay_tau_ms = 20.0
     da_rule.window_ms = 20.0
     bridge.cp_reward_eligibility_synapse_indices = xp.asarray(
@@ -403,6 +666,7 @@ def train_by_consequence(
         bridge.cp_eligibility_trace[:] = 0.0
     if bridge.cp_reward_coactivity_trace is not None:
         bridge.cp_reward_coactivity_trace[:] = 0.0
+    active_gain = bridge.cp_plasticity_rate_gain.copy()
 
     rng = np.random.default_rng(int(exploration_seed))
     # Balanced motor babbling: each context encounters every raw speak/intent/
@@ -423,40 +687,114 @@ def train_by_consequence(
     reward_schedule = []
     try:
         for trial in range(int(trials)):
+            if phasic_update_window:
+                bridge.cp_plasticity_rate_gain[:] = active_gain
+                cc.enable_neuromodulator_subsystem = False
             intent, referent = TRAIN_CASES[trial % len(TRAIN_CASES)]
             case = (intent, referent)
-            if not motor_queues[case]:
-                order = rng.permutation(len(motor_space))
-                motor_queues[case] = [motor_space[i] for i in order]
-            exploration = motor_queues[case].pop()
-            neural, action = _explore_action(agent, intent, referent, exploration)
+            if exploration_mode == "intrinsic":
+                neural, action = _intrinsic_explore_action(
+                    agent,
+                    intent,
+                    referent,
+                    snc_tonic_pA=snc_tonic_pA,
+                    exploration_arousal_pA=exploration_arousal_pA,
+                    act_steps=intrinsic_action_steps,
+                )
+            else:
+                if not motor_queues[case]:
+                    order = rng.permutation(len(motor_space))
+                    motor_queues[case] = [motor_space[i] for i in order]
+                exploration = motor_queues[case].pop()
+                neural, action = _explore_action(
+                    agent, intent, referent, exploration
+                )
             world = InteractiveListenerWorld(
                 convention, referent, "need" if intent == "request" else "joint_attention")
             consequence = world.apply(action)
             if mode == "contingent":
                 reward_now = bool(consequence["success"])
+            elif mode == "negative_only":
+                reward_now = False
             elif mode == "yoked":
                 reward_now = bool(yoked_schedule[trial])
             else:
                 reward_now = False
             if mode == "da_lesion":
                 reward_now = bool(consequence["success"])
-            reward_trace = {"snc_spikes": 0.0, "peak_dopamine": 0.5}
+            negative_now = bool(
+                negative_feedback
+                and mode in ("contingent", "negative_only", "da_lesion")
+                and not consequence["success"]
+                and action is not None
+            )
+            reward_trace = {
+                "kind": "neutral",
+                "snc_spikes": 0.0,
+                "rmtg_spikes": 0.0,
+                "peak_dopamine": 0.5,
+                "minimum_dopamine": 0.5,
+            }
             if reward_now:
-                reward_trace = _drive_reward_us(agent)
+                if phasic_update_window and mode != "da_lesion":
+                    cc.enable_neuromodulator_subsystem = True
+                reward_trace = _drive_reward_us(
+                    agent, snc_tonic_pA=snc_tonic_pA
+                )
+            elif negative_now:
+                if phasic_update_window and mode != "da_lesion":
+                    cc.enable_neuromodulator_subsystem = True
+                    # Error dips are frequent before a convention exists, so
+                    # they prune more gently than successes consolidate.
+                    bridge.cp_plasticity_rate_gain[:] = (
+                        active_gain * float(negative_learning_scale)
+                    )
+                reward_trace = _drive_negative_feedback(
+                    agent,
+                    feedback_steps=negative_feedback_steps,
+                    snc_tonic_pA=snc_tonic_pA,
+                )
             else:
                 bridge.cp_external_input_current[:] = 0.0
+                if float(snc_tonic_pA) != 0.0:
+                    bridge.cp_external_input_current[
+                        xp.asarray(_region_indices(agent, "limbic_snc"))
+                    ] = np.float32(snc_tonic_pA)
                 _step(bridge, 18)
             reward_schedule.append(bool(reward_now))
+            consolidation_steps = 0
+            if phasic_update_window and (reward_now or negative_now):
+                consolidation_limit = (
+                    negative_consolidation_steps
+                    if negative_now
+                    else phasic_consolidation_steps
+                )
+                consolidation_steps = min(
+                    int(intertrial_steps), int(consolidation_limit)
+                )
+                bridge.cp_external_input_current[:] = 0.0
+                if float(snc_tonic_pA) != 0.0:
+                    bridge.cp_external_input_current[
+                        xp.asarray(_region_indices(agent, "limbic_snc"))
+                    ] = np.float32(snc_tonic_pA)
+                _step(bridge, consolidation_steps)
+            if phasic_update_window:
+                bridge.cp_plasticity_rate_gain[:] = 0.0
+                cc.enable_neuromodulator_subsystem = mode != "da_lesion"
             bridge.cp_external_input_current[:] = 0.0
-            _step(bridge, intertrial_steps)
-            if trial < 12 or trial >= int(trials) - 12 or reward_now:
+            if float(snc_tonic_pA) != 0.0:
+                bridge.cp_external_input_current[
+                    xp.asarray(_region_indices(agent, "limbic_snc"))
+                ] = np.float32(snc_tonic_pA)
+            _step(bridge, int(intertrial_steps) - consolidation_steps)
+            if trial < 12 or trial >= int(trials) - 12 or reward_now or negative_now:
                 events.append({
                     "trial": trial,
                     "case": [intent, referent],
                     "neural": neural,
                     "listener_success": consequence["success"],
                     "reward_delivered": bool(reward_now),
+                    "negative_feedback_delivered": bool(negative_now),
                     "reward_trace": reward_trace,
                 })
     finally:
@@ -466,6 +804,7 @@ def train_by_consequence(
         bridge.cp_reward_eligibility_synapse_indices = saved_eligibility_scope
         for name, value in saved.items():
             setattr(cc, name, value)
+        bridge.ou_noise_std = saved_ou_noise_std
         da_mod.decay_tau_ms = saved_da_tau
         da_rule.window_ms = saved_da_window
 
@@ -476,6 +815,17 @@ def train_by_consequence(
     deltas = {name: after[name] - before[name] for name in before}
     return {
         "mode": mode,
+        "exploration_mode": exploration_mode,
+        "negative_feedback": bool(negative_feedback),
+        "exploration_arousal_pA": float(exploration_arousal_pA),
+        "phasic_update_window": bool(phasic_update_window),
+        "phasic_consolidation_steps": int(phasic_consolidation_steps),
+        "negative_feedback_steps": int(negative_feedback_steps),
+        "negative_consolidation_steps": int(negative_consolidation_steps),
+        "negative_learning_scale": float(negative_learning_scale),
+        "vocal_weight_max": float(vocal_weight_max),
+        "context_learning_gain": float(context_learning_gain),
+        "visual_learning_gain": float(visual_learning_gain),
         "trials": int(trials),
         "n_rewards": int(sum(reward_schedule)),
         "reward_schedule": reward_schedule,
@@ -506,12 +856,13 @@ def decide_raw_vocal_action(
         cc.enable_stdp, cc.enable_reward_modulation, cc.enable_hebbian_learning,
         cc.homeostasis_threshold_adapt_rate, cc.enable_ou_process, cc.ou_std_current_pA,
     )
+    saved_ou_noise_std = bridge.ou_noise_std
     cc.enable_stdp = False
     cc.enable_reward_modulation = False
     cc.enable_hebbian_learning = False
     cc.homeostasis_threshold_adapt_rate = 0.0
     cc.enable_ou_process = True
-    cc.ou_std_current_pA = 20.0
+    _set_ou_sigma(bridge, 20.0)
     xp.random.seed(int(agent.seed * 1009 + 71))
     bridge.cp_external_input_current[:] = 0.0
     _step(bridge, washout_steps)
@@ -541,6 +892,7 @@ def decide_raw_vocal_action(
             cc.enable_stdp, cc.enable_reward_modulation, cc.enable_hebbian_learning,
             cc.homeostasis_threshold_adapt_rate, cc.enable_ou_process, cc.ou_std_current_pA,
         ) = saved
+        bridge.ou_noise_std = saved_ou_noise_std
     action, neural = _decode_counts(speak_counts, intent_counts, referent_counts)
     neural.update({
         "context": intent_context,

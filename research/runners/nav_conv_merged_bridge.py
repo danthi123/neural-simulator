@@ -94,6 +94,11 @@ VOCAL_SPEAK_FS = "vocal_speak_fs"
 VOCAL_INTENT_FS = "vocal_intent_fs"
 VOCAL_REFERENT_FS = "vocal_referent_fs"
 VOCAL_CROSS_FS_PREFIX = "vocal_cross_fs_"
+VOCAL_EXPLORATION_AROUSAL = "vocal_exploration_arousal"
+VOCAL_EXPLORE_PREFIX = "vocal_explore_"
+VOCAL_EXPLORE_FS_PREFIX = "vocal_explore_fs_"
+VOCAL_NEGATIVE_FEEDBACK = "vocal_negative_feedback"
+VOCAL_RMTG = "vocal_rmtg"
 VOCAL_LEARNING_GATE = "vocal_convention_learning"
 
 # ── command-route (route A: language->action) constants — ported from spoken_instruction_nav.py (GO 3-seed) ────
@@ -370,8 +375,14 @@ def _grounded_speech_regions_pathways(n_acc: int = 40, n_fs: int = 20,
     return regions, pathways
 
 
-def _developmental_vocal_regions_pathways(n_channels: int = 2, n_acc: int = 40,
-                                           n_fs: int = 20):
+def _developmental_vocal_regions_pathways(
+    n_channels: int = 2,
+    n_acc: int = 40,
+    n_fs: int = 20,
+    *,
+    intrinsic_exploration: bool = False,
+    error_feedback: bool = False,
+):
     """Learnable context/object -> raw vocal-channel routes on one bridge.
 
     The slice has two compositional output banks: an intent bank and a referent
@@ -392,6 +403,11 @@ def _developmental_vocal_regions_pathways(n_channels: int = 2, n_acc: int = 40,
         raise ValueError("developmental vocal learning requires at least two channels")
     _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
     _FS = _NT.IZH2007_FS_CORTICAL_INTERNEURON.name
+    output_internal_density = 0.0 if intrinsic_exploration else 0.20
+    vocal_route_density = 1.0 if intrinsic_exploration else 0.60
+    visual_route_density = 1.0 if intrinsic_exploration else 0.25
+    wta_density = 1.0 if intrinsic_exploration else 0.60
+    wta_jitter = 0.0 if intrinsic_exploration else 0.10
     intent_names = [f"{VOCAL_INTENT_PREFIX}{i}" for i in range(int(n_channels))]
     referent_names = [f"{VOCAL_REFERENT_PREFIX}{i}" for i in range(int(n_channels))]
     output_banks = {
@@ -404,6 +420,16 @@ def _developmental_vocal_regions_pathways(n_channels: int = 2, n_acc: int = 40,
         for bank, names in output_banks.items()
         for i in range(len(names))
     ]
+    explore_names = [
+        f"{VOCAL_EXPLORE_PREFIX}{bank}_{i}"
+        for bank, names in output_banks.items()
+        for i in range(len(names))
+    ] if intrinsic_exploration else []
+    explore_fs_names = [
+        f"{VOCAL_EXPLORE_FS_PREFIX}{bank}_{i}"
+        for bank, names in output_banks.items()
+        for i in range(len(names))
+    ] if intrinsic_exploration else []
     regions = [
         BrainRegion(name=VOCAL_SOCIAL_CUE, n_neurons=int(n_acc), exc_fraction=1.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -411,17 +437,20 @@ def _developmental_vocal_regions_pathways(n_channels: int = 2, n_acc: int = 40,
                     enable_nmda=False, enable_homeostasis=True),
         *[
             BrainRegion(name=name, n_neurons=int(n_acc), exc_fraction=1.0,
-                        internal_density=0.20, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                        internal_density=output_internal_density,
+                        exc_weight_mean=0.3, inh_weight_mean=0.0,
                         weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
                         enable_nmda=True, enable_homeostasis=True)
             for name in intent_names + referent_names
         ],
         BrainRegion(name=VOCAL_SPEAK, n_neurons=int(n_acc), exc_fraction=1.0,
-                    internal_density=0.20, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                    internal_density=output_internal_density,
+                    exc_weight_mean=0.3, inh_weight_mean=0.0,
                     weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
                     enable_nmda=True, enable_homeostasis=True),
         BrainRegion(name=VOCAL_SILENCE, n_neurons=int(n_acc), exc_fraction=1.0,
-                    internal_density=0.20, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                    internal_density=output_internal_density,
+                    exc_weight_mean=0.3, inh_weight_mean=0.0,
                     weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
                     enable_nmda=True, enable_homeostasis=True),
         BrainRegion(name=VOCAL_SPEAK_FS, n_neurons=int(n_fs), exc_fraction=0.0,
@@ -443,45 +472,85 @@ def _developmental_vocal_regions_pathways(n_channels: int = 2, n_acc: int = 40,
                         enable_nmda=False, enable_homeostasis=True)
             for name in cross_fs_names
         ],
+        *([
+            BrainRegion(
+                name=VOCAL_EXPLORATION_AROUSAL,
+                n_neurons=max(12, int(n_fs)),
+                exc_fraction=1.0,
+                internal_density=0.0,
+                exc_weight_mean=0.0,
+                inh_weight_mean=0.0,
+                weight_jitter=0.0,
+                plastic_internal=False,
+                izh_neuron_type=_RS,
+                enable_nmda=False,
+                enable_homeostasis=True,
+            )
+        ] if intrinsic_exploration else []),
+        *[
+            BrainRegion(name=name, n_neurons=max(8, int(n_fs) // 2), exc_fraction=1.0,
+                        internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                        weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_RS,
+                        enable_nmda=False, enable_homeostasis=True)
+            for name in explore_names
+        ],
+        *[
+            BrainRegion(name=name, n_neurons=max(8, int(n_fs) // 2), exc_fraction=0.0,
+                        internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                        weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_FS,
+                        enable_nmda=False, enable_homeostasis=True)
+            for name in explore_fs_names
+        ],
     ]
+    if error_feedback:
+        regions.extend([
+            BrainRegion(name=VOCAL_NEGATIVE_FEEDBACK, n_neurons=int(n_acc), exc_fraction=1.0,
+                        internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                        weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_RS,
+                        enable_nmda=False, enable_homeostasis=True),
+            BrainRegion(name=VOCAL_RMTG, n_neurons=max(12, int(n_fs)), exc_fraction=0.0,
+                        internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                        weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_FS,
+                        enable_nmda=False, enable_homeostasis=True),
+        ])
     pathways = []
     for name in (VOCAL_SPEAK, VOCAL_SILENCE):
         pathways.extend([
-            RegionPathway(from_region="drive_agrp", to_region=name, density=0.60,
+            RegionPathway(from_region="drive_agrp", to_region=name, density=vocal_route_density,
                           weight_mean=0.05, weight_jitter=0.0, plastic=True,
                           plasticity_gate=VOCAL_LEARNING_GATE),
-            RegionPathway(from_region=VOCAL_SOCIAL_CUE, to_region=name, density=0.60,
+            RegionPathway(from_region=VOCAL_SOCIAL_CUE, to_region=name, density=vocal_route_density,
                           weight_mean=0.05, weight_jitter=0.0, plastic=True,
                           plasticity_gate=VOCAL_LEARNING_GATE),
-            RegionPathway(from_region=name, to_region=VOCAL_SPEAK_FS, density=0.50,
-                          weight_mean=8.0, weight_jitter=0.10, plastic=False),
-            RegionPathway(from_region=VOCAL_SPEAK_FS, to_region=name, density=0.60,
-                          weight_mean=6.0, weight_jitter=0.10, plastic=False,
+            RegionPathway(from_region=name, to_region=VOCAL_SPEAK_FS, density=wta_density,
+                          weight_mean=8.0, weight_jitter=wta_jitter, plastic=False),
+            RegionPathway(from_region=VOCAL_SPEAK_FS, to_region=name, density=wta_density,
+                          weight_mean=6.0, weight_jitter=wta_jitter, plastic=False,
                           receptor="gaba_a"),
         ])
     for name in intent_names:
         pathways.extend([
-            RegionPathway(from_region="drive_agrp", to_region=name, density=0.60,
+            RegionPathway(from_region="drive_agrp", to_region=name, density=vocal_route_density,
                           weight_mean=0.05, weight_jitter=0.0, plastic=True,
                           plasticity_gate=VOCAL_LEARNING_GATE),
-            RegionPathway(from_region=VOCAL_SOCIAL_CUE, to_region=name, density=0.60,
+            RegionPathway(from_region=VOCAL_SOCIAL_CUE, to_region=name, density=vocal_route_density,
                           weight_mean=0.05, weight_jitter=0.0, plastic=True,
                           plasticity_gate=VOCAL_LEARNING_GATE),
-            RegionPathway(from_region=name, to_region=VOCAL_INTENT_FS, density=0.50,
-                          weight_mean=8.0, weight_jitter=0.10, plastic=False),
-            RegionPathway(from_region=VOCAL_INTENT_FS, to_region=name, density=0.60,
-                          weight_mean=6.0, weight_jitter=0.10, plastic=False,
+            RegionPathway(from_region=name, to_region=VOCAL_INTENT_FS, density=wta_density,
+                          weight_mean=8.0, weight_jitter=wta_jitter, plastic=False),
+            RegionPathway(from_region=VOCAL_INTENT_FS, to_region=name, density=wta_density,
+                          weight_mean=6.0, weight_jitter=wta_jitter, plastic=False,
                           receptor="gaba_a"),
         ])
     for name in referent_names:
         pathways.extend([
-            RegionPathway(from_region=GEN_PERCEPTION, to_region=name, density=0.25,
+            RegionPathway(from_region=GEN_PERCEPTION, to_region=name, density=visual_route_density,
                           weight_mean=0.05, weight_jitter=0.0, plastic=True,
                           plasticity_gate=VOCAL_LEARNING_GATE),
-            RegionPathway(from_region=name, to_region=VOCAL_REFERENT_FS, density=0.50,
-                          weight_mean=8.0, weight_jitter=0.10, plastic=False),
-            RegionPathway(from_region=VOCAL_REFERENT_FS, to_region=name, density=0.60,
-                          weight_mean=6.0, weight_jitter=0.10, plastic=False,
+            RegionPathway(from_region=name, to_region=VOCAL_REFERENT_FS, density=wta_density,
+                          weight_mean=8.0, weight_jitter=wta_jitter, plastic=False),
+            RegionPathway(from_region=VOCAL_REFERENT_FS, to_region=name, density=wta_density,
+                          weight_mean=6.0, weight_jitter=wta_jitter, plastic=False,
                           receptor="gaba_a"),
         ])
     # Channel-specific cross-inhibition. Winner i recruits its own FS pool,
@@ -492,15 +561,62 @@ def _developmental_vocal_regions_pathways(n_channels: int = 2, n_acc: int = 40,
         for i, winner in enumerate(names):
             fs_name = f"{VOCAL_CROSS_FS_PREFIX}{bank}_{i}"
             pathways.append(RegionPathway(
-                from_region=winner, to_region=fs_name, density=0.60,
-                weight_mean=12.0, weight_jitter=0.10, plastic=False))
+                from_region=winner, to_region=fs_name, density=wta_density,
+                weight_mean=12.0, weight_jitter=wta_jitter, plastic=False))
             for j, loser in enumerate(names):
                 if i == j:
                     continue
                 pathways.append(RegionPathway(
-                    from_region=fs_name, to_region=loser, density=0.70,
-                    weight_mean=20.0, weight_jitter=0.10, plastic=False,
+                    from_region=fs_name, to_region=loser, density=wta_density,
+                    weight_mean=20.0, weight_jitter=wta_jitter, plastic=False,
                     receptor="gaba_a"))
+    if intrinsic_exploration:
+        # Symmetric, target-independent developmental exploration. One common
+        # arousal population excites every channel generator equally;
+        # independent neural noise and reciprocal inhibition select the raw
+        # action. Context remains available to the plastic motor routes but
+        # cannot bias the exploratory choice, and the listener convention is
+        # absent from this wiring.
+        for bank, names in output_banks.items():
+            for i, output_name in enumerate(names):
+                explore_name = f"{VOCAL_EXPLORE_PREFIX}{bank}_{i}"
+                pathways.append(RegionPathway(
+                    from_region=VOCAL_EXPLORATION_AROUSAL,
+                    to_region=explore_name,
+                    density=1.0, weight_mean=24.0, weight_jitter=0.0,
+                    plastic=False))
+                pathways.append(RegionPathway(
+                    from_region=explore_name, to_region=output_name,
+                    density=1.0, weight_mean=40.0, weight_jitter=0.0,
+                    plastic=False))
+                explore_fs = f"{VOCAL_EXPLORE_FS_PREFIX}{bank}_{i}"
+                pathways.append(RegionPathway(
+                    from_region=explore_name, to_region=explore_fs,
+                    density=1.0, weight_mean=12.0, weight_jitter=0.0,
+                    plastic=False))
+                for j in range(len(names)):
+                    if i == j:
+                        continue
+                    pathways.append(RegionPathway(
+                        from_region=explore_fs,
+                        to_region=f"{VOCAL_EXPLORE_PREFIX}{bank}_{j}",
+                        density=1.0, weight_mean=20.0, weight_jitter=0.0,
+                        plastic=False, receptor="gaba_a"))
+    if error_feedback:
+        # A listener's negative social consequence enters as sensory spikes.
+        # The excitatory feedback population recruits an inhibitory RMTg-like
+        # relay, which suppresses tonic SNc firing and therefore creates a
+        # dopamine dip through the existing signed firing-rate modulator.
+        pathways.extend([
+            RegionPathway(
+                from_region=VOCAL_NEGATIVE_FEEDBACK, to_region=VOCAL_RMTG,
+                density=0.70, weight_mean=12.0, weight_jitter=0.10,
+                plastic=False),
+            RegionPathway(
+                from_region=VOCAL_RMTG, to_region="limbic_snc",
+                density=0.70, weight_mean=18.0, weight_jitter=0.10,
+                plastic=False, receptor="gaba_a"),
+        ])
     return regions, pathways
 
 
@@ -777,6 +893,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  co_resident_developmental_vocal: bool = False,
                                  vocal_n_channels: int = 2,
                                  vocal_n_acc: int = 40, vocal_n_fs: int = 20,
+                                 vocal_intrinsic_exploration: bool = False,
+                                 vocal_error_feedback: bool = False,
                                  co_resident_nav_critic: bool = False,
                                  nav_critic_convergent_upstate: bool = False,
                                  nav_critic_homeostasis_mask: str = "all3",
@@ -902,6 +1020,11 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     if co_resident_developmental_vocal and not (co_resident_generalization and co_resident_drive):
         raise ValueError(
             "co_resident_developmental_vocal requires co_resident_generalization and co_resident_drive")
+    if vocal_intrinsic_exploration and not co_resident_developmental_vocal:
+        raise ValueError("vocal_intrinsic_exploration requires co_resident_developmental_vocal")
+    if vocal_error_feedback and not (co_resident_developmental_vocal and co_resident_limbic):
+        raise ValueError(
+            "vocal_error_feedback requires developmental vocal and limbic slices")
     if co_resident_nav_critic:
         # nav_critic_convergent_upstate (the value-train A1 up-state arm, CYCLE 209 value-train build): forward
         # enable_convergent_upstate to build_bg_brain_regions so the dense NON-plastic vs_place_drive->striosome_value
@@ -1132,7 +1255,9 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     vocal_regions, vocal_pathways = [], []
     if co_resident_developmental_vocal:
         vocal_regions, vocal_pathways = _developmental_vocal_regions_pathways(
-            n_channels=vocal_n_channels, n_acc=vocal_n_acc, n_fs=vocal_n_fs)
+            n_channels=vocal_n_channels, n_acc=vocal_n_acc, n_fs=vocal_n_fs,
+            intrinsic_exploration=bool(vocal_intrinsic_exploration),
+            error_feedback=bool(vocal_error_feedback))
 
     # A-CSC TD CUE-SHIFT SLICE (co_resident_td_cueshift, additive default-off): the validated complete-serial-compound
     # TD machinery (snc_stageb_critic_probe.py --td-csc, GO 3/3 r=-0.80/-0.77/-0.89) as a td_-prefixed co-resident slice.
@@ -1612,11 +1737,23 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     if co_resident_developmental_vocal:
         intent_names = [f"{VOCAL_INTENT_PREFIX}{i}" for i in range(int(vocal_n_channels))]
         referent_names = [f"{VOCAL_REFERENT_PREFIX}{i}" for i in range(int(vocal_n_channels))]
+        explore_names = [
+            f"{VOCAL_EXPLORE_PREFIX}{bank}_{i}"
+            for bank in ("speak", "intent", "referent")
+            for i in range(int(vocal_n_channels))
+        ] if vocal_intrinsic_exploration else []
+        arousal_names = [
+            VOCAL_EXPLORATION_AROUSAL
+        ] if vocal_intrinsic_exploration else []
+        feedback_names = [
+            VOCAL_NEGATIVE_FEEDBACK, VOCAL_RMTG
+        ] if vocal_error_feedback else []
         handles["developmental_vocal"] = {
             n: np.asarray(list(rm.indices(n)), dtype=np.int64)
             for n in (VOCAL_SOCIAL_CUE, VOCAL_SPEAK, VOCAL_SILENCE, VOCAL_SPEAK_FS,
                       *intent_names, *referent_names,
-                      VOCAL_INTENT_FS, VOCAL_REFERENT_FS)
+                      VOCAL_INTENT_FS, VOCAL_REFERENT_FS,
+                      *arousal_names, *explore_names, *feedback_names)
         }
     if co_resident_td_cueshift:
         # The TD-slice base indices (for the on-merge A-CSC cue-shift battery: drive td_csc_k / td_reward_us, read
@@ -2026,6 +2163,7 @@ class MergedNavConvAgent:
                  speech_drive_weight=8.0, speech_cue_weight=60.0,
                  co_resident_developmental_vocal=False, vocal_n_channels=2,
                  vocal_n_acc=40, vocal_n_fs=20,
+                 vocal_intrinsic_exploration=False, vocal_error_feedback=False,
                  co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
@@ -2337,6 +2475,8 @@ class MergedNavConvAgent:
             co_resident_developmental_vocal=self.co_resident_developmental_vocal,
             vocal_n_channels=int(vocal_n_channels), vocal_n_acc=int(vocal_n_acc),
             vocal_n_fs=int(vocal_n_fs),
+            vocal_intrinsic_exploration=bool(vocal_intrinsic_exploration),
+            vocal_error_feedback=bool(vocal_error_feedback),
             co_resident_perception=self.co_resident_perception,
             co_resident_generalization=self.co_resident_generalization,
             enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),

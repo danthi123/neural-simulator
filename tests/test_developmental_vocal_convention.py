@@ -9,14 +9,19 @@ from research.runners._developmental_vocal_convention_derisk import (
     InteractiveListenerWorld,
     RawVocalAction,
     VocalConvention,
+    _set_ou_sigma,
 )
 from research.runners._homeostatic_spiking_reward_plasticity_derisk import build_bridge
 from sim.backend import get_backend, to_host
 from research.runners.nav_conv_merged_bridge import (
     GEN_PERCEPTION,
+    VOCAL_EXPLORATION_AROUSAL,
+    VOCAL_EXPLORE_PREFIX,
     VOCAL_INTENT_PREFIX,
     VOCAL_LEARNING_GATE,
+    VOCAL_NEGATIVE_FEEDBACK,
     VOCAL_REFERENT_PREFIX,
+    VOCAL_RMTG,
     VOCAL_SILENCE,
     VOCAL_SOCIAL_CUE,
     VOCAL_SPEAK,
@@ -57,6 +62,54 @@ def test_listener_meaning_follows_external_permutable_convention():
     assert identity_result["consequence"] == "resource_delivered"
     assert not swapped_result["success"]
     assert swapped_result["decoded"] == ["report", "river"]
+
+
+def test_intrinsic_exploration_is_symmetric_and_context_blind():
+    regions, pathways = _developmental_vocal_regions_pathways(
+        intrinsic_exploration=True,
+        error_feedback=True,
+    )
+    names = {region.name for region in regions}
+    assert {VOCAL_EXPLORATION_AROUSAL, VOCAL_NEGATIVE_FEEDBACK, VOCAL_RMTG} <= names
+
+    outputs = {
+        "speak": [VOCAL_SPEAK, VOCAL_SILENCE],
+        "intent": [f"{VOCAL_INTENT_PREFIX}{i}" for i in range(2)],
+        "referent": [f"{VOCAL_REFERENT_PREFIX}{i}" for i in range(2)],
+    }
+    routes = {(route.from_region, route.to_region): route for route in pathways}
+    for bank, bank_outputs in outputs.items():
+        for channel, output in enumerate(bank_outputs):
+            explore = f"{VOCAL_EXPLORE_PREFIX}{bank}_{channel}"
+            arousal_route = routes[(VOCAL_EXPLORATION_AROUSAL, explore)]
+            output_route = routes[(explore, output)]
+            assert arousal_route.density == 1.0
+            assert arousal_route.weight_mean == 24.0
+            assert arousal_route.weight_jitter == 0.0
+            assert output_route.density == 1.0
+            assert output_route.weight_mean == 40.0
+            assert output_route.weight_jitter == 0.0
+            assert not any(
+                route.to_region == explore
+                and route.from_region in {"drive_agrp", VOCAL_SOCIAL_CUE, GEN_PERCEPTION}
+                for route in pathways
+            )
+
+    assert (VOCAL_NEGATIVE_FEEDBACK, VOCAL_RMTG) in routes
+    snc_route = routes[(VOCAL_RMTG, "limbic_snc")]
+    assert snc_route.receptor == "gaba_a"
+
+
+def test_set_ou_sigma_updates_cached_step_coefficient():
+    bridge, cfg = build_bridge(seed=41, n=20)
+    cfg.ou_tau_ms = 15.0
+    _set_ou_sigma(bridge, 37.0)
+    expected = 37.0 * np.sqrt(
+        (1.0 - np.exp(-2.0 * (cfg.dt_ms / 1000.0) / (cfg.ou_tau_ms / 1000.0)))
+        / 2.0
+    )
+    assert cfg.ou_std_current_pA == 37.0
+    assert bridge.ou_noise_std == pytest.approx(expected)
 
 
 @pytest.mark.parametrize("branchless", [False, True])
