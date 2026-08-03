@@ -188,14 +188,14 @@ def build_manifest(root: Path = ROOT) -> dict:
 
 
 def validate_manifest(manifest: dict, root: Path = ROOT) -> None:
-    expected = build_manifest(root)
+    expected_partitions = assignment(scan_seed_declarations(root))
     if manifest.get("schema_version") != 1:
         raise ValueError("unsupported seed manifest schema")
-    if manifest.get("mechanism") != expected["mechanism"]:
+    if manifest.get("mechanism") != "neural-vocal-action-credit-v5-learning":
         raise ValueError("seed manifest mechanism mismatch")
     if manifest.get("namespace") != NAMESPACE:
         raise ValueError("seed manifest namespace mismatch")
-    if manifest.get("partitions") != expected["partitions"]:
+    if manifest.get("partitions") != expected_partitions:
         raise ValueError(
             "seed manifest is no longer the deterministic collision-free assignment"
         )

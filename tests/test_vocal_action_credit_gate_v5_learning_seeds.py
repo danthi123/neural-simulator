@@ -37,3 +37,16 @@ def test_committed_manifest_is_valid_and_keeps_formal_execution_sealed():
     seeds.validate_manifest(manifest)
     assert manifest["formal_execution_open"] is False
     assert manifest["collisions"] == []
+
+
+def test_runtime_validation_does_not_require_git_metadata(monkeypatch):
+    manifest_path = Path(
+        "tools/seed_manifests/vocal_action_credit_gate_v5_learning.json"
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+    def reject_revision_lookup(*_args, **_kwargs):
+        raise AssertionError("runtime validation must not query Git")
+
+    monkeypatch.setattr(seeds, "current_revision", reject_revision_lookup)
+    seeds.validate_manifest(manifest)
