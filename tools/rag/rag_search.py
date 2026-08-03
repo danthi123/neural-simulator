@@ -18,32 +18,36 @@ venv would churn its pinned torch/cupy CUDA stack):
     .venv-rag/bin/python tools/rag/rag_search.py "<question>" [top_k] [--corpus TYPE]
   --corpus one of {all(default), finding, plan, doc, catalog, kandel, paper} -- target one corpus (e.g. --corpus kandel for biology).
 
-Index location resolves in order: $SIM_RAG_ROOT -> <parent-of-repo>/rag_index -> the legacy Windows path.
-Falls back to the findings-only index if the broadened one isn't built. See docs/RAG_COMPARISON.md."""
+Index location resolves through Git's common checkout, so linked worktrees use the canonical sibling
+``rag_index`` and ``sim-catalog``. ``SIM_RAG_ROOT`` remains an explicit override. See docs/RAG_COMPARISON.md."""
 import os, io, sys, time
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from contextlib import redirect_stderr
+from rag_paths import choose_index, resolve_paths
 
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-_ROOTS = [os.environ.get("SIM_RAG_ROOT"),
-          os.path.join(os.path.dirname(_REPO), "rag_index"),
-          r"E:\Documents\Projects\rag_compare"]
-_ROOT = next((r for r in _ROOTS if r and os.path.isdir(r)), _ROOTS[1])
-FULL = os.path.join(_ROOT, "llamaindex_full")
-FINDINGS = os.path.join(_ROOT, "llamaindex_findings")
+PATHS = resolve_paths(_REPO)
 
 argv = sys.argv[1:]
 corpus = "all"
 if "--corpus" in argv:
     i = argv.index("--corpus"); corpus = argv[i + 1]; del argv[i:i + 2]
+valid_corpora = {"all", "finding", "plan", "doc", "catalog", "kandel", "paper"}
+if corpus not in valid_corpora:
+    sys.stderr.write(f"unknown corpus {corpus!r}; choose one of {sorted(valid_corpora)}\n")
+    raise SystemExit(2)
 if not argv or not argv[0].strip():
-    sys.stdout.write('usage: rag_search.py "<question>" [top_k] [--corpus finding|plan|doc|catalog|kandel|all]\n')
+    sys.stdout.write('usage: rag_search.py "<question>" [top_k] [--corpus finding|plan|doc|catalog|kandel|paper|all]\n')
     raise SystemExit(2)
 query = argv[0]
 top_k = int(argv[1]) if len(argv) > 1 else 5
-persist = FULL if os.path.isdir(FULL) else FINDINGS
+try:
+    persist = choose_index(PATHS, corpus)
+except FileNotFoundError as exc:
+    sys.stderr.write(f"rag_search: {exc}\n")
+    raise SystemExit(1)
 
 with redirect_stderr(io.StringIO()):
     from llama_index.core import StorageContext, load_index_from_storage, Settings
@@ -55,7 +59,7 @@ with redirect_stderr(io.StringIO()):
 
     Settings.embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     Settings.llm = None
-    index = load_index_from_storage(StorageContext.from_defaults(persist_dir=persist))
+    index = load_index_from_storage(StorageContext.from_defaults(persist_dir=str(persist)))
     reranker = SentenceTransformerRerank(model="cross-encoder/ms-marco-MiniLM-L-6-v2", top_n=top_k)
     t0 = time.time()
     if corpus != "all":
@@ -73,7 +77,7 @@ with redirect_stderr(io.StringIO()):
     nodes = reranker.postprocess_nodes(cand, query_str=query)[:top_k]
 
 buf = io.StringIO()
-buf.write(f'Q: {query}   ({time.time()-t0:.2f}s, top {top_k}, corpus={corpus}, index={os.path.basename(persist)})\n')
+buf.write(f'Q: {query}   ({time.time()-t0:.2f}s, top {top_k}, corpus={corpus}, index={persist})\n')
 for i, n in enumerate(nodes):
     md = n.node.metadata or {}
     stype = md.get("source_type", "?")

@@ -1,19 +1,20 @@
 """Keep BOTH RAG indexes (LlamaIndex + SOMA) fresh as new docs are added. Idempotent, lock-guarded, manifest-gated:
 runs only when the evolving prose actually changed since the last successful update, and never two at once (bursts of
-commits collapse to one update). Wired to fire automatically via the git post-commit hook (tools/git-hooks/post-commit).
+commits collapse to one update). Wired to fire automatically via the git post-commit hook (tools/githooks/post-commit).
 
-- LlamaIndex (rag_compare/llamaindex_full): INCREMENTAL via refresh_ref_docs (new/changed re-embedded) + explicit
+- LlamaIndex (rag_index/llamaindex_full): INCREMENTAL via refresh_ref_docs (new/changed re-embedded) + explicit
   delete_ref_doc for vanished docs; the static 8.7MB Kandel is skipped when unchanged, so a typical update is seconds.
-  Needs the index built with path-based ids (build_llamaindex_full.py, id_=path) -- if the persisted index predates
-  that, pass --rebuild once.
+  Uses repository-relative ids so one canonical index can be refreshed from the main linked worktree. If the
+  persisted index predates that schema, pass --rebuild once.
 - SOMA (soma_bundles/sim_kb): INCREMENTAL for new/edited/deleted files -- an edited/deleted file's old chunks are
   forgotten by their manifest-recorded node_ids and (for an edit) the new chunks stored, so a single edit no longer
   re-embeds the whole corpus. Covers the EVOLVING prose (findings/plans/docs/catalog; Kandel excluded -- static biology
   lives in LlamaIndex --corpus kandel). A FULL rebuild happens only on --rebuild, a missing bundle, or a one-time
   migration of a pre-node-id manifest.
 
-Run with the rag_compare_env python (has BOTH llama-index and soma):
-  E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/update_indexes.py [--rebuild] [--force]
+Run with the canonical checkout's RAG interpreter:
+  CANONICAL=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
+  "$CANONICAL/.venv-rag/bin/python" tools/rag/update_indexes.py [--rebuild] [--force]
 """
 import os, sys, time, json, hashlib, shutil, glob, argparse
 
@@ -24,11 +25,35 @@ RAG = B.RAG_ROOT                      # portable: see build_llamaindex_full ($SI
 PERSIST = B.PERSIST
 LOCK = os.path.join(RAG, ".update.lock")
 MANIFEST = os.path.join(RAG, ".rag_manifest.json")
+SCHEMA = os.path.join(RAG, ".rag_schema.json")
+DOCUMENT_ID_SCHEMA = "repo-relative-v1"
 _SOMA_ROOT = os.environ.get("SIM_SOMA_ROOT") or os.path.join(os.path.dirname(B.SIM), "soma_bundles")
 SOMA_BUNDLE = os.path.join(_SOMA_ROOT, "sim_kb")
 SOMA_MANIFEST = os.path.join(_SOMA_ROOT, ".soma_kb_manifest.json")
 # evolving source types SOMA covers (Kandel excluded — static)
 SOMA_TYPES = {"finding", "plan", "doc", "catalog"}
+
+
+def persist_atomically(index):
+    """Publish a complete index directory without exposing half-written JSON."""
+    staging = f"{PERSIST}.staging-{os.getpid()}"
+    previous = f"{PERSIST}.previous-{os.getpid()}"
+    shutil.rmtree(staging, ignore_errors=True)
+    index.storage_context.persist(persist_dir=staging)
+    moved_previous = False
+    try:
+        if os.path.isdir(PERSIST):
+            os.replace(PERSIST, previous)
+            moved_previous = True
+        os.replace(staging, PERSIST)
+        if moved_previous:
+            shutil.rmtree(previous)
+    except Exception:
+        if moved_previous and not os.path.exists(PERSIST) and os.path.isdir(previous):
+            os.replace(previous, PERSIST)
+        raise
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
 
 
 def evolving_files():
@@ -38,7 +63,7 @@ def evolving_files():
         if stype == "kandel":
             continue
         for p in patterns:
-            for f in sorted(glob.glob(p)):
+            for f in sorted(glob.glob(p, recursive=True)):
                 if os.path.basename(f) in B.EXCLUDE_BASENAMES:
                     continue
                 yield stype, f
@@ -78,8 +103,22 @@ def refresh_llamaindex(rebuild=False):
     docs = B.load_docs()
     if rebuild or not os.path.isdir(PERSIST):
         idx = VectorStoreIndex.from_documents(docs, show_progress=False)
-        idx.storage_context.persist(persist_dir=PERSIST)
+        persist_atomically(idx)
+        json.dump(
+            {"document_id_schema": DOCUMENT_ID_SCHEMA, "source_repo": B.SIM},
+            open(SCHEMA, "w"),
+            indent=2,
+        )
         return f"llamaindex REBUILT ({len(idx.docstore.docs)} nodes)"
+    try:
+        schema = json.load(open(SCHEMA)).get("document_id_schema")
+    except Exception:
+        schema = None
+    if schema != DOCUMENT_ID_SCHEMA:
+        raise RuntimeError(
+            "RAG index uses legacy checkout-specific document IDs; run "
+            "tools/rag/update_indexes.py --rebuild once before incremental refresh"
+        )
     idx = load_index_from_storage(StorageContext.from_defaults(persist_dir=PERSIST))
     # refresh_ref_docs inserts NEW + updates CHANGED (by content hash) but does NOT remove docs that vanished, so a
     # deleted findings/doc would linger as stale hits -> explicitly delete the ref docs no longer in the corpus.
@@ -92,7 +131,7 @@ def refresh_llamaindex(rebuild=False):
             except Exception:
                 pass
     res = idx.refresh_ref_docs(docs)                         # insert new + update changed (by hash); skip unchanged
-    idx.storage_context.persist(persist_dir=PERSIST)
+    persist_atomically(idx)
     return f"llamaindex refreshed ({sum(bool(x) for x in res)}/{len(res)} new-or-changed, {ndel} deleted)"
 
 
@@ -167,7 +206,7 @@ def refresh_soma(rebuild=False):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rebuild", action="store_true", help="full LlamaIndex rebuild (needed once to install path-ids)")
+    ap.add_argument("--rebuild", action="store_true", help="full LlamaIndex rebuild (needed once per ID schema)")
     ap.add_argument("--force", action="store_true", help="update even if the manifest is unchanged")
     args = ap.parse_args()
 
