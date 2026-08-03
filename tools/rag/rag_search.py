@@ -20,12 +20,12 @@ venv would churn its pinned torch/cupy CUDA stack):
 
 Index location resolves through Git's common checkout, so linked worktrees use the canonical sibling
 ``rag_index`` and ``sim-catalog``. ``SIM_RAG_ROOT`` remains an explicit override. See docs/RAG_COMPARISON.md."""
-import os, io, sys, time
+import os, io, sys
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-from contextlib import redirect_stderr
-from rag_paths import choose_index, resolve_paths
+from rag_paths import resolve_paths
+from retrieval import RagRetriever, node_source
 
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PATHS = resolve_paths(_REPO)
@@ -44,44 +44,19 @@ if not argv or not argv[0].strip():
 query = argv[0]
 top_k = int(argv[1]) if len(argv) > 1 else 5
 try:
-    persist = choose_index(PATHS, corpus)
+    engine = RagRetriever(PATHS, corpus=corpus, top_k=top_k)
 except FileNotFoundError as exc:
     sys.stderr.write(f"rag_search: {exc}\n")
     raise SystemExit(1)
 
-with redirect_stderr(io.StringIO()):
-    from llama_index.core import StorageContext, load_index_from_storage, Settings
-    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-    from llama_index.retrievers.bm25 import BM25Retriever
-    from llama_index.core.retrievers import QueryFusionRetriever
-    from llama_index.core.postprocessor import SentenceTransformerRerank
-    from llama_index.core.vector_stores import MetadataFilters, MetadataFilter, FilterOperator
-
-    Settings.embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    Settings.llm = None
-    index = load_index_from_storage(StorageContext.from_defaults(persist_dir=str(persist)))
-    reranker = SentenceTransformerRerank(model="cross-encoder/ms-marco-MiniLM-L-6-v2", top_n=top_k)
-    t0 = time.time()
-    if corpus != "all":
-        # filter DURING retrieval (vector + a source_type metadata filter) so a small corpus (catalog/plan) is not
-        # crowded out of the rerank window by the big corpora (Kandel/findings). BM25 can't filter, so vector-only here.
-        flt = MetadataFilters(filters=[MetadataFilter(key="source_type", value=corpus, operator=FilterOperator.EQ)])
-        retr = index.as_retriever(similarity_top_k=max(top_k * 4, 20), filters=flt)
-        cand = retr.retrieve(query)
-    else:
-        vec = index.as_retriever(similarity_top_k=12)
-        bm25 = BM25Retriever.from_defaults(docstore=index.docstore, similarity_top_k=12)
-        fusion = QueryFusionRetriever([vec, bm25], num_queries=1, mode="reciprocal_rerank",
-                                      similarity_top_k=12, use_async=False)
-        cand = fusion.retrieve(query)
-    nodes = reranker.postprocess_nodes(cand, query_str=query)[:top_k]
+nodes, latency_ms = engine.retrieve(query)
 
 buf = io.StringIO()
-buf.write(f'Q: {query}   ({time.time()-t0:.2f}s, top {top_k}, corpus={corpus}, index={persist})\n')
+buf.write(f'Q: {query}   ({latency_ms / 1000.0:.2f}s, top {top_k}, corpus={corpus}, index={engine.persist})\n')
 for i, n in enumerate(nodes):
     md = n.node.metadata or {}
     stype = md.get("source_type", "?")
-    src = md.get("source") or os.path.basename(str(n.node.ref_doc_id or ""))
+    src = node_source(n)
     txt = " ".join((n.node.get_content() or "")[:220].split())
     score = round(n.score, 3) if n.score is not None else ""
     buf.write(f"  [{i+1}] {score}  ({stype}) {src}\n      {txt}\n")

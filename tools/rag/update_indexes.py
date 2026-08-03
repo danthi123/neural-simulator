@@ -16,7 +16,7 @@ Run with the canonical checkout's RAG interpreter:
   CANONICAL=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
   "$CANONICAL/.venv-rag/bin/python" tools/rag/update_indexes.py [--rebuild] [--force]
 """
-import os, sys, time, json, hashlib, shutil, glob, argparse
+import os, sys, time, json, hashlib, shutil, glob, argparse, subprocess
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_llamaindex_full as B   # SOURCES + load_docs (+ PERSIST)
@@ -204,6 +204,18 @@ def refresh_soma(rebuild=False):
             f"{cc} chunks stored, {n_forgot} forgotten)")
 
 
+def check_retrieval_quality():
+    """Run the labeled, read-only quality floor after publishing a changed index."""
+    evaluator = os.path.join(B.SIM, "tools", "rag", "rag_eval.py")
+    result = subprocess.run(
+        [sys.executable, evaluator, "--no-write"],
+        cwd=B.SIM,
+        text=True,
+    )
+    if result.returncode:
+        raise RuntimeError(f"RAG retrieval quality check failed with status {result.returncode}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rebuild", action="store_true", help="full LlamaIndex rebuild (needed once per ID schema)")
@@ -231,6 +243,8 @@ def main():
         except Exception as e:
             print(f"[update-indexes] SOMA rebuild failed (LlamaIndex still updated): {e}", flush=True)
         json.dump({"hash": manifest_hash(), "at": int(time.time())}, open(MANIFEST, "w"))
+        if os.environ.get("SIM_RAG_SKIP_QUALITY") != "1":
+            check_retrieval_quality()
         print(f"[update-indexes] done in {time.time()-t0:.0f}s.", flush=True)
     finally:
         try:

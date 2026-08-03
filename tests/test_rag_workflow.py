@@ -15,6 +15,7 @@ from tools.rag.rag_paths import (
     resolve_paths,
     stable_document_id,
 )
+from tools.rag.retrieval import candidate_count
 
 
 def _layout(tmp_path: Path) -> RagPaths:
@@ -46,7 +47,19 @@ def test_linked_worktree_resolves_shared_index_catalog_and_python(tmp_path):
     ).resolve()
     assert paths.engine_python == (
         tmp_path / "projects" / "sim" / ".venv" / "bin" / "python"
-    ).resolve()
+    ).absolute()
+
+
+def test_virtualenv_python_paths_are_not_resolved_to_system_interpreter(tmp_path):
+    common = tmp_path / "projects" / "sim"
+    worktree = tmp_path / "projects" / "sim-worktrees" / "topic"
+    for environment in (".venv", ".venv-rag"):
+        executable = common / environment / "bin" / "python"
+        executable.parent.mkdir(parents=True, exist_ok=True)
+        executable.symlink_to("/usr/bin/python3")
+    paths = resolve_paths(worktree, env={}, common_dir=common / ".git")
+    assert paths.rag_python == common / ".venv-rag" / "bin" / "python"
+    assert paths.engine_python == common / ".venv" / "bin" / "python"
 
 
 def test_explicit_overrides_do_not_fall_through_to_an_unrelated_index(tmp_path):
@@ -136,6 +149,28 @@ def test_repo_post_commit_hook_logs_every_nonrefresh_path():
     assert "</dev/null" in hook
     assert "START: branch=" in hook
     assert "EXIT: status=" in hook
+
+
+def test_retrieval_keeps_a_broad_hybrid_rerank_window():
+    assert candidate_count(1) == 30
+    assert candidate_count(5) == 30
+    assert candidate_count(10) == 60
+
+
+def test_quality_evaluator_is_portable_and_fail_closed():
+    evaluator = Path("tools/rag/rag_eval.py").read_text(encoding="utf-8")
+    assert "E:\\Documents" not in evaluator
+    assert 'RagRetriever(PATHS, corpus="all"' in evaluator
+    assert "RAG_QUALITY_BLOCKED" in evaluator
+    launcher = Path("tools/rag/eval.sh")
+    assert launcher.exists()
+
+
+def test_index_refresh_runs_the_quality_floor():
+    updater = Path("tools/rag/update_indexes.py").read_text(encoding="utf-8")
+    assert "check_retrieval_quality()" in updater
+    assert '"--no-write"' in updater
+    assert "SIM_RAG_SKIP_QUALITY" in updater
 
 
 def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path):

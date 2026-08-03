@@ -1006,11 +1006,12 @@ One line each; the exact commands live in the tooling / command cheat-sheet sect
 
 ### 2. RAG system + local corpus (`tools/rag/rag_search.py`)
 
-Verified present and executable. Run it with the **RAG venv** (not the engine venv). It does hybrid vector+BM25 fusion → cross-encoder rerank over the project's prose knowledge base. It **locates** the passage — the discipline is still to open the cited file and read it.
+Verified present and executable. Run it with the **RAG venv** (not the engine venv). It does filtered hybrid vector+BM25 fusion → cross-encoder rerank over the project's prose knowledge base. Both lexical and semantic retrieval are active for every targeted corpus. It **locates** the passage — the discipline is still to open the cited file and read it.
 
 ```bash
 # usage: rag_search.py "<question>" [top_k] [--corpus finding|plan|doc|catalog|kandel|paper|all]
 bash tools/rag/search.sh "how does BTSP set a place field" 5 --corpus kandel
+bash tools/rag/eval.sh --no-write  # fail-closed quality check over findings + scientific corpora
 ```
 
 Corpora it indexes (`--corpus`, default `all`):
@@ -1023,6 +1024,8 @@ Corpora it indexes (`--corpus`, default `all`):
 - `paper` — the specialty texts (Marr 1969, Albus 1971, Buzsáki *Rhythms of the Brain*, O'Keefe-Nadel *Cognitive Map*, Schultz, Sutton-Barto, Tepper/Bolam BG)
 
 The index lives at `/home/dant123/Projects/rag_index/llamaindex_full`. Linked worktrees resolve it through Git's common checkout rather than their immediate parent; override with `SIM_RAG_ROOT`. Only `finding`/`all` may fall back to a findings-only index, so a missing full reference index cannot look like a valid empty catalog search.
+
+The executable `main` post-commit hook refreshes changed prose in the background using atomic publication, then runs the labeled read-only quality floor. The current Linux benchmark is 11/11 at rank 1 across prior findings, the reference catalog, Kandel, and specialty papers. `tools/rag/check_workflow.py` verifies paths, interpreters, hooks, index, catalog, and schema. SOMA is optional and currently unavailable on this PC; its failure is logged, while the maintained LlamaIndex path remains required and fail-closed.
 
 ### 3. Full-text reference access (papers + textbooks)
 

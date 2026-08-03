@@ -31,6 +31,11 @@ def _absolute(value: str | os.PathLike[str]) -> Path:
     return Path(value).expanduser().resolve()
 
 
+def _absolute_executable(value: str | os.PathLike[str]) -> Path:
+    """Normalize an executable path without resolving a virtualenv symlink."""
+    return Path(os.path.abspath(os.path.expanduser(os.fspath(value))))
+
+
 def _git_common_dir(repo: Path) -> Path:
     result = subprocess.run(
         ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
@@ -64,11 +69,11 @@ def resolve_paths(
         values.get("SIM_CATALOG")
         or projects_root / "sim-catalog" / "references"
     )
-    rag_python = _absolute(
+    rag_python = _absolute_executable(
         values.get("SIM_RAG_PYTHON")
         or common_repo / ".venv-rag" / "bin" / "python"
     )
-    engine_python = _absolute(
+    engine_python = _absolute_executable(
         values.get("SIM_ENGINE_PYTHON")
         or common_repo / ".venv" / "bin" / "python"
     )

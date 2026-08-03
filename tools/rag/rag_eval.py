@@ -10,10 +10,10 @@ Grow the query set: add lines to tools/rag/rag_eval_queries.jsonl as real resear
   {"q": "<a real 'have we already ...?' question>", "relevant": ["<distinctive basename substring>", ...]}
 A hit counts as relevant iff any `relevant` substring appears (case-insensitively) in the hit's source basename.
 
-Run with the isolated RAG venv (has llama-index + soma):
-  E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/rag_eval.py [--top-k 5] [--ts ISO8601] [--note "..."]
+Run with the canonical checkout's isolated RAG venv:
+  bash tools/rag/eval.sh [--top-k 5] [--ts ISO8601] [--note "..."]
 `--ts` stamps the record (pass one for reproducibility; defaults to now). See docs/RAG_COMPARISON.md."""
-import os, io, sys, csv, json, glob, time, argparse
+import os, io, sys, json, glob, time, argparse
 from contextlib import redirect_stderr
 from datetime import datetime
 
@@ -21,11 +21,14 @@ os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-SIM = r"E:\Documents\Projects\sim"
-LLAMA_FULL = r"E:\Documents\Projects\rag_compare\llamaindex_full"
-LLAMA_FINDINGS = r"E:\Documents\Projects\rag_compare\llamaindex_findings"
-SOMA_BUNDLE = r"E:\Documents\Projects\soma_bundles\sim_kb"
-SOMA_MANIFEST = r"E:\Documents\Projects\soma_bundles\.soma_kb_manifest.json"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from rag_paths import resolve_paths
+from retrieval import RagRetriever, node_source
+
+PATHS = resolve_paths(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+SIM = str(PATHS.repo)
+SOMA_BUNDLE = str(PATHS.projects_root / "soma_bundles" / "sim_kb")
+SOMA_MANIFEST = str(PATHS.projects_root / "soma_bundles" / ".soma_kb_manifest.json")
 QUERIES = os.path.join(SIM, "tools", "rag", "rag_eval_queries.jsonl")
 HISTORY_JSONL = os.path.join(SIM, "tools", "rag", "rag_eval_history.jsonl")
 HISTORY_MD = os.path.join(SIM, "docs", "RAG_EVAL_HISTORY.md")
@@ -64,35 +67,13 @@ def score_one(basenames, relevant, top_k):
 # ------------------------- engines (production retrieval paths) -------------------------
 
 def build_llamaindex(top_k):
-    with redirect_stderr(io.StringIO()):
-        from llama_index.core import StorageContext, load_index_from_storage, Settings
-        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-        from llama_index.retrievers.bm25 import BM25Retriever
-        from llama_index.core.retrievers import QueryFusionRetriever
-        from llama_index.core.postprocessor import SentenceTransformerRerank
-        Settings.embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-        Settings.llm = None
-        persist = LLAMA_FULL if os.path.isdir(LLAMA_FULL) else LLAMA_FINDINGS
-        index = load_index_from_storage(StorageContext.from_defaults(persist_dir=persist))
-        reranker = SentenceTransformerRerank(model="cross-encoder/ms-marco-MiniLM-L-6-v2", top_n=top_k)
-        vec = index.as_retriever(similarity_top_k=12)
-        bm25 = BM25Retriever.from_defaults(docstore=index.docstore, similarity_top_k=12)
-        fusion = QueryFusionRetriever([vec, bm25], num_queries=1, mode="reciprocal_rerank",
-                                      similarity_top_k=12, use_async=False)
-    n_nodes = len(index.docstore.docs)
+    engine = RagRetriever(PATHS, corpus="all", top_k=top_k)
 
-    def run(query):
-        with redirect_stderr(io.StringIO()):
-            t0 = time.time()
-            cand = fusion.retrieve(query)
-            nodes = reranker.postprocess_nodes(cand, query_str=query)[:top_k]
-            dt = (time.time() - t0) * 1000.0
-        names = []
-        for n in nodes:
-            md = n.node.metadata or {}
-            names.append(md.get("source") or os.path.basename(str(n.node.ref_doc_id or "")))
+    def run(query, corpus="finding"):
+        nodes, dt = engine.retrieve(query, corpus=corpus)
+        names = [node_source(node) for node in nodes]
         return names, dt
-    return run, n_nodes
+    return run, engine.node_count
 
 
 def build_soma(top_k):
@@ -138,11 +119,14 @@ def main():
     ap.add_argument("--top-k", type=int, default=5)
     ap.add_argument("--ts", default=None, help="ISO8601 timestamp to stamp this run (default: now)")
     ap.add_argument("--note", default="", help="free-text note for this run (what changed)")
+    ap.add_argument("--no-write", action="store_true", help="score without appending history")
+    ap.add_argument("--min-hit3", type=float, default=1.0,
+                    help="fail if LlamaIndex hit@3 is below this floor (default: 1.0)")
     args = ap.parse_args()
     ts = args.ts or datetime.now().isoformat(timespec="seconds")
 
     queries = load_queries()
-    n_findings = len([f for f in glob.glob(os.path.join(SIM, "research", "findings", "*.md"))
+    n_findings = len([f for f in glob.glob(os.path.join(SIM, "research", "findings", "**", "*.md"), recursive=True)
                       if os.path.basename(f) not in ("AUTONOMOUS_STATE.md", "AUTONOMOUS_STATE_ARCHIVE.md")])
 
     engines = {}
@@ -160,9 +144,12 @@ def main():
     per_engine_rows = {name: [] for name in engines}
 
     for q in queries:
-        entry = {"q": q["q"], "relevant": q["relevant"]}
+        corpus = q.get("corpus", "finding")
+        entry = {"q": q["q"], "corpus": corpus, "relevant": q["relevant"]}
         for name, (run, size) in engines.items():
-            names, dt = run(q["q"])
+            if name == "soma" and corpus != "finding":
+                continue
+            names, dt = run(q["q"], corpus) if name == "llamaindex" else run(q["q"])
             sc = score_one(names, q["relevant"], args.top_k)
             entry[name] = {"score": sc, "latency_ms": round(dt, 1)}
             per_engine_rows[name].append({"score": sc, "latency_ms": dt})
@@ -172,9 +159,13 @@ def main():
         result["corpus"]["llama_nodes" if name == "llamaindex" else "soma_chunks"] = size
         result["engines"][name] = aggregate(per_engine_rows[name])
 
-    # append the structured record (the accumulating over-time log)
-    with open(HISTORY_JSONL, "a", encoding="utf-8") as f:
-        f.write(json.dumps(result) + "\n")
+    if not engines:
+        print("[rag_eval] no retrieval engine is available", file=sys.stderr)
+        return 1
+
+    if not args.no_write:
+        with open(HISTORY_JSONL, "a", encoding="utf-8") as f:
+            f.write(json.dumps(result) + "\n")
 
     # human summary
     print(f"\n=== RAG eval  {ts}  (top_k={args.top_k}, {len(queries)} queries, {n_findings} findings) ===")
@@ -184,10 +175,24 @@ def main():
         a = result["engines"][name]
         size = result["corpus"].get("llama_nodes" if name == "llamaindex" else "soma_chunks")
         print(f"{name:<12} {a['hit@1']:>6} {a['hit@3']:>6} {a['mrr']:>6} {a['mean_latency_ms']:>8}  {size} chunks/nodes")
+    for entry in result["per_query"]:
+        llama_entry = entry.get("llamaindex")
+        if llama_entry and not llama_entry["score"]["hit@3"]:
+            print(f"MISS@3 ({entry['corpus']}): {entry['q']}")
+            print(f"  expected: {entry['relevant']}")
+            print(f"  returned: {llama_entry['score']['top']}")
 
-    # append a running markdown row
-    _append_md_row(ts, args.top_k, len(queries), n_findings, result, args.note)
-    print(f"\n[rag_eval] appended -> {os.path.relpath(HISTORY_JSONL, SIM)} + {os.path.relpath(HISTORY_MD, SIM)}")
+    if not args.no_write:
+        _append_md_row(ts, args.top_k, len(queries), n_findings, result, args.note)
+        print(f"\n[rag_eval] appended -> {os.path.relpath(HISTORY_JSONL, SIM)} + {os.path.relpath(HISTORY_MD, SIM)}")
+
+    llama = result["engines"].get("llamaindex")
+    if llama is None or llama["hit@3"] < args.min_hit3:
+        actual = "unavailable" if llama is None else llama["hit@3"]
+        print(f"RAG_QUALITY_BLOCKED: llamaindex hit@3={actual}, required={args.min_hit3}", file=sys.stderr)
+        return 1
+    print(f"RAG_QUALITY_READY: llamaindex hit@3={llama['hit@3']}")
+    return 0
 
 
 def _append_md_row(ts, top_k, nq, n_findings, result, note):
@@ -208,4 +213,4 @@ def _append_md_row(ts, top_k, nq, n_findings, result, note):
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

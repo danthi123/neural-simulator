@@ -8,3 +8,4 @@ hit@1 / hit@3 / MRR = better; lower latency = better. Grow the query set as real
 |---|---|---|---|---|---|---|---|---|
 | 2026-07-12T07:54:14 | 7 | 1508 | llamaindex | 0.8571 | 1.0 | 0.9048 | 356.3 | seed baseline (broadened corpus, node-id incremental) |
 | 2026-07-12T07:54:14 | 7 | 1508 | soma | 0.4286 | 0.7143 | 0.5595 | 77.7 | seed baseline (broadened corpus, node-id incremental) |
+| 2026-08-03T17:13:29 | 11 | 1967 | llamaindex | 1.0 | 1.0 | 1.0 | 1575.2 | Linux canonical paths; filtered vector+BM25 for every corpus; automatic quality floor |

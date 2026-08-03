@@ -2,6 +2,12 @@
 
 **Purpose.** We keep re-deriving conclusions our own `research/findings/` already record (the dendrite recommendation, the off-diagonal red herring, etc.). A retrieval index over our findings — surfaced at the top of research gates as a "check our own memory first" step — directly prevents that. This doc tracks two local, free RAG systems on the SAME corpus + query set so we can pick (or keep both). **Running doc — updated as we use them.**
 
+## Current Linux status (2026-08-03)
+
+LlamaIndex is the required production path and is working from the canonical checkout and linked worktrees. The executable `main` post-commit hook performs a detached incremental refresh with atomic publication and then runs `bash tools/rag/eval.sh --no-write`; retrieval quality therefore fails visibly if corpus growth pushes the labeled top-three recall below 100%. Targeted searches now fuse filtered BM25 and vector candidates before cross-encoder reranking for every corpus, rather than dropping lexical retrieval whenever `--corpus` was used.
+
+The portable evaluation currently scores **11/11 rank-1 hits** across eight real project-history questions plus catalog, Kandel, and specialty-paper checks. The set includes the newest Gate B v4 retirement, proving that a newly committed negative is both indexed and retrievable. SOMA is not installed on this Linux host (`No module named 'soma'`); this is nonfatal because LlamaIndex is the maintained required engine, but it is reported rather than hidden.
+
 **Why not fine-tuning:** a fine-tune injects lossy paraphrases (hallucination-prone, un-citable, stale) — the opposite of our "read the load-bearing source, cite chapter/page" discipline. Retrieval surfaces the actual passage to read. See the 2026-07-12 discussion.
 
 ## The two systems (configured apples-to-apples)
