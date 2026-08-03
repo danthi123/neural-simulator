@@ -8,48 +8,60 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT — 2026-08-03 03:35 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 13:45 EDT (read first; below this is history)
 
-**Public documentation realigned:** `README.md`, `ROADMAP.md`, `docs/CURRENT-STATE.md`, `QUICKSTART.md`, and
-`docs/INDEX.md` have been rewritten as the plain-language front door. New `docs/SCAFFOLD-LEDGER.md` is the public
-shortcut/burn-down tracker. Dense lab history remains in `research/findings/`; this board remains the autonomous work
-anchor.
+**The active goal is whole-brain capability, not the old five-gap checklist.** The
+plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
+the capability order; `docs/SCAFFOLD-LEDGER.md` records temporary shortcuts.
+Passing an isolated runner is evidence, not a completed faculty. A mechanism
+advances only when its fixed controls pass and it serves its role in the same
+continuously running spiking brain.
 
-**GPU lane completed:** local RTX 3090/CUDA access is available, and the run4/d2048 267M RF spiking-forward six-seed
-promotion is **GO**: `research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json` has mean ppl_ratio 0.9999999974,
-mean logit-fidelity Spearman 0.99999999997, max RF read error 7.66e-6, and 6/6 seeds. The WKV finding is updated:
-`research/findings/2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md`.
+**Grounded communication:** the two-intent by two-referent learned convention is
+6-seed GO, and the intrinsic Gate A v2 neural action selector is 4-seed GO.
+Gate B v1 local delayed reward credit is NO-GO because unrelated yoked reward
+still creates arbitrary preference. Gate B v2 adds spiking action-value
+populations and is running calibration seeds 7 and 11 concurrently on the RTX
+3090. Development and held-out seeds are mechanically locked.
 
-**CPU/GPU Lane C advanced:** `plastic_source_consistency` now learns complete-proposition to external-source support in
-zero-initialized gated Hebbian synapses. The isolated source gate is **GO 6/6**: 286/288 learned propositions accepted,
-0/288 wrong-answer accepts, 0/72 unknown accepts, no-learning and lesion both 0/72, permutation followed 72/72, and
-retrieval leaves weights frozen. The production stressed battery is also **GO 6/6**: 46/46 wrong recalls downgraded,
-0 wrong assertions, 475/475 hard-moat abstains preserved, and 0 added false accepts. Honest boundary: the learned source
-signal itself detected 45/46 wrong candidates and falsely marked 5/133 correct recalls; proposition hashing, the explicit
-source event, separate bridge, host-normalized readout, fixed meta-to-self relay, and host speech thresholds remain.
-GPU seed-42 parity is GO. Finding:
-`research/findings/2026-08-03-laneC-plastic-source-memory-GO-learned-source-support-production-wirein.md`.
+**Source monitoring:** a learned seen/heard/self pathway now co-resides with
+episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
+development seeds. V2 local fast-spiking competition cleared all absolute
+source margins on two fresh calibration seeds, but one seed slightly weakened
+an already strong source and failed the preregistered no-harm control. No
+development or held-out seed is open.
 
-**Grounded speech-action loop completed:** the first shared-bridge need-to-communication-to-consequence rung is **GO
-6/6** on the RTX 3090. The brain learns an apple-percept to food-cue association; hunger plus that cue wins a neural
-request-versus-silence competition; the host world delivers food only after the request; energy rises from 0.25 to
-1.00; and the unchanged apple scene then produces silence. Drive, perception, learned-route, untrained-route, and
-wrong-object controls all collapse to silence. With consequence disabled, the hungry brain requests again. Honest
-boundary: this is a single conceptual `request apple` action with explicit caregiver pairing, fixed coincidence/WTA
-wiring, fixed thresholds, and a host decoder. It is not fluent language.
+**Replay consolidation:** V1 proved that uncued hippocampal replay can change
+cortical weights on one bridge, but useful hippocampus-independent recall was
+weak and inaccurate. V2 local opponent inhibition sharply improved specificity
+on one seed but did not repeat on the other and did not reliably beat the
+learned-target-index or replay-order controls. Development remains locked.
 
-**Developmental vocal convention completed:** the next shared-bridge rung is **GO 6/6** on the RTX 3090. Fresh brains
-learn an external two-intent by two-referent raw vocal convention from contingent listener consequences, compose both
-combinations withheld from training, and learn a freshly swapped convention. Withholding consequences, yoking reward,
-lesioning dopamine, or removing the causal state/percept prevents the result. Honest boundary: exploration is still
-host-injected and balanced; intent/referent channels, listener semantics, architecture, currents, and readout are fixed;
-the positive-only learning rule has not passed same-brain reversal. Finding:
-`research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md`.
+**Visual identity:** host feature top-k selection has been removed and replaced
+by spike-latency competition. The selector and lesion controls work, but both
+fresh calibration seeds failed invariant identity decoding. The next change
+belongs in locally learned representations, not another selector threshold.
 
-**EXACT NEXT:** replace injected babbling with intrinsic spiking exploration, add omission/prediction-error-dependent
-depression, and pass same-brain convention reversal before broadening the world and meanings. In parallel, move the
-learned source populations onto this bridge and connect their spikes through dynamic ACC/aPFC and self-schema. Use the
-267M WKV only after the brain chooses message, referent, certainty, and whether to speak.
+**Compute and repositories:** CUDA/CuPy access to the RTX 3090 is verified. Two
+formal GPU processes saturate compute while using about 3 GB of 24 GB VRAM. SSH
+access to `pool40`, `pool41`, and `pool42` is verified; the dispatcher now
+rejects malformed or stale-source work and records exact source provenance.
+GitHub and Gitea are both configured and synchronized after each coherent
+evidence or workflow commit.
+
+**EXACT NEXT, IN PARALLEL:**
+
+1. Finish and file Gate B v2 calibration honestly; open no reserved seeds.
+2. Build replay v3 around selective learned CA1-to-cortex target reinstatement.
+3. Fix the source v3 functional tradeoff before implementing or running it.
+4. Build locally learned visual invariance upstream of spike-latency selection.
+5. Merge only cleared mechanisms into the persistent develop-loop; do not scale
+   the conventional language scaffold ahead of grounded message selection.
+
+Use the RTX 3090 for coupled simulations, local CPU for tests and one bounded
+calibration, and the three mini PCs for independent CPU seeds. Keep several
+scientifically independent lanes ready, but never fill hardware with unplanned
+sweeps, duplicate work, or development/held-out seeds whose gate is closed.
 
 ---
 
