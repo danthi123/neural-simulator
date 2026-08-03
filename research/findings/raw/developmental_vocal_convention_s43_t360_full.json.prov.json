@@ -1,0 +1,27 @@
+{
+ "run_id": "1785750413-623703",
+ "runner": "research/runners/_developmental_vocal_convention_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_developmental_vocal_convention_derisk.py",
+  "--seeds",
+  "43",
+  "--trials",
+  "360",
+  "--skip-reversal-diagnostic",
+  "--out",
+  "research/findings/raw/developmental_vocal_convention_s43_t360_full.json"
+ ],
+ "git_sha": "aa9490bbb",
+ "git_dirty": true,
+ "started": "2026-08-03T05:46:53",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8274.2,
+ "corpus_check_query": "a shared spiking brain must learn at least two communicative intents and two grounded referents from contingent social interaction, select them from internal state plus perception, and emit raw vocal ",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/developmental_vocal_convention_s43_t360_full.json"
+}

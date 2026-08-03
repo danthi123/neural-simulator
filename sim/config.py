@@ -677,6 +677,21 @@ class CoreSimConfig:
     reward_eligibility_tau_ms: float = 1000.0  # Eligibility trace decay (ms, typical: 500-2000ms)
     reward_baseline: float = 0.0           # Expected reward (for prediction error)
     current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
+    # Three-factor-only expression: STDP timing creates the eligibility tag but
+    # does not itself change the synaptic weight. A later reward/dopamine signal
+    # converts the surviving tag into LTP/LTD. Default False preserves the
+    # historical "ordinary STDP plus reward amplification" behavior.
+    reward_defer_stdp_weight_update: bool = False
+    # Optional actor-style three-factor rule. A recent presynaptic firing trace
+    # multiplied by a current postsynaptic output event creates a positive local
+    # eligibility tag; reward/dopamine later converts that tag into a weight
+    # change. This captures conjoint input/output activity without requiring a
+    # particular millisecond spike order. All fields are default-off/backward-
+    # compatible.
+    reward_eligibility_from_coactivity: bool = False
+    reward_coactivity_trace_tau_ms: float = 20.0
+    reward_coactivity_threshold: float = 0.01
+    reward_coactivity_scale: float = 0.05
     # DR-1 curiosity inversion (2026-07-23): the brain's EPISTEMIC-GAP signal — the
     # Bogacz-Brown familiarity-gate NOVELTY of the concept currently under consideration
     # (catalog D.04, the SAME signal that drives the no-confab moat) — written here each

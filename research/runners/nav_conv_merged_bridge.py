@@ -81,6 +81,21 @@ SPEECH_SILENCE = "speech_silence"
 SPEECH_WTA_FS = "speech_wta_fs"
 SPEECH_GROUNDING_GATE = "speech_grounding"
 
+# Developmental vocal-convention slice. These populations are deliberately
+# channel-numbered: semantic labels live only in the outside listener/evaluator,
+# so swapping the listener convention can test whether the brain learned the
+# mapping instead of inheriting a host-side decoder.
+VOCAL_SOCIAL_CUE = "vocal_social_cue"
+VOCAL_INTENT_PREFIX = "vocal_intent_"
+VOCAL_REFERENT_PREFIX = "vocal_referent_"
+VOCAL_SPEAK = "vocal_speak"
+VOCAL_SILENCE = "vocal_silence"
+VOCAL_SPEAK_FS = "vocal_speak_fs"
+VOCAL_INTENT_FS = "vocal_intent_fs"
+VOCAL_REFERENT_FS = "vocal_referent_fs"
+VOCAL_CROSS_FS_PREFIX = "vocal_cross_fs_"
+VOCAL_LEARNING_GATE = "vocal_convention_learning"
+
 # ── command-route (route A: language->action) constants — ported from spoken_instruction_nav.py (GO 3-seed) ────
 # The CONSOLIDATION (FOLLOW-ON #2) lifts the LEARNED `language_input -> cortex_X` route + its `command_route`
 # transmission gate onto the merged bridge so MergedNavConvAgent.command_move() steers nav from a PARSED command.
@@ -355,6 +370,140 @@ def _grounded_speech_regions_pathways(n_acc: int = 40, n_fs: int = 20,
     return regions, pathways
 
 
+def _developmental_vocal_regions_pathways(n_channels: int = 2, n_acc: int = 40,
+                                           n_fs: int = 20):
+    """Learnable context/object -> raw vocal-channel routes on one bridge.
+
+    The slice has two compositional output banks: an intent bank and a referent
+    bank.  AgRP-like need and a sensory joint-attention cue project to every
+    intent channel; visual features project to every referent channel.  A
+    target-independent exploratory motor current can coactivate one raw channel
+    while the corresponding source is active. Only successful outside-world
+    consequences reinforce that local route; no target channel, intent label,
+    or object label enters the neural readout.
+
+    This is a developmental teaching scaffold, not a final auditory-motor
+    learning system.  Its purpose is to retire the fixed ``request apple``
+    decoder with a convention that can be permuted and learned from interaction.
+    """
+    from sim.enums import NeuronType as _NT
+
+    if int(n_channels) < 2:
+        raise ValueError("developmental vocal learning requires at least two channels")
+    _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+    _FS = _NT.IZH2007_FS_CORTICAL_INTERNEURON.name
+    intent_names = [f"{VOCAL_INTENT_PREFIX}{i}" for i in range(int(n_channels))]
+    referent_names = [f"{VOCAL_REFERENT_PREFIX}{i}" for i in range(int(n_channels))]
+    output_banks = {
+        "speak": [VOCAL_SPEAK, VOCAL_SILENCE],
+        "intent": intent_names,
+        "referent": referent_names,
+    }
+    cross_fs_names = [
+        f"{VOCAL_CROSS_FS_PREFIX}{bank}_{i}"
+        for bank, names in output_banks.items()
+        for i in range(len(names))
+    ]
+    regions = [
+        BrainRegion(name=VOCAL_SOCIAL_CUE, n_neurons=int(n_acc), exc_fraction=1.0,
+                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_RS,
+                    enable_nmda=False, enable_homeostasis=True),
+        *[
+            BrainRegion(name=name, n_neurons=int(n_acc), exc_fraction=1.0,
+                        internal_density=0.20, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                        weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
+                        enable_nmda=True, enable_homeostasis=True)
+            for name in intent_names + referent_names
+        ],
+        BrainRegion(name=VOCAL_SPEAK, n_neurons=int(n_acc), exc_fraction=1.0,
+                    internal_density=0.20, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                    weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
+                    enable_nmda=True, enable_homeostasis=True),
+        BrainRegion(name=VOCAL_SILENCE, n_neurons=int(n_acc), exc_fraction=1.0,
+                    internal_density=0.20, exc_weight_mean=0.3, inh_weight_mean=0.0,
+                    weight_jitter=0.05, plastic_internal=False, izh_neuron_type=_RS,
+                    enable_nmda=True, enable_homeostasis=True),
+        BrainRegion(name=VOCAL_SPEAK_FS, n_neurons=int(n_fs), exc_fraction=0.0,
+                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_FS,
+                    enable_nmda=False, enable_homeostasis=True),
+        BrainRegion(name=VOCAL_INTENT_FS, n_neurons=int(n_fs), exc_fraction=0.0,
+                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_FS,
+                    enable_nmda=False, enable_homeostasis=True),
+        BrainRegion(name=VOCAL_REFERENT_FS, n_neurons=int(n_fs), exc_fraction=0.0,
+                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_FS,
+                    enable_nmda=False, enable_homeostasis=True),
+        *[
+            BrainRegion(name=name, n_neurons=max(8, int(n_fs) // 2), exc_fraction=0.0,
+                        internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                        weight_jitter=0.0, plastic_internal=False, izh_neuron_type=_FS,
+                        enable_nmda=False, enable_homeostasis=True)
+            for name in cross_fs_names
+        ],
+    ]
+    pathways = []
+    for name in (VOCAL_SPEAK, VOCAL_SILENCE):
+        pathways.extend([
+            RegionPathway(from_region="drive_agrp", to_region=name, density=0.60,
+                          weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate=VOCAL_LEARNING_GATE),
+            RegionPathway(from_region=VOCAL_SOCIAL_CUE, to_region=name, density=0.60,
+                          weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate=VOCAL_LEARNING_GATE),
+            RegionPathway(from_region=name, to_region=VOCAL_SPEAK_FS, density=0.50,
+                          weight_mean=8.0, weight_jitter=0.10, plastic=False),
+            RegionPathway(from_region=VOCAL_SPEAK_FS, to_region=name, density=0.60,
+                          weight_mean=6.0, weight_jitter=0.10, plastic=False,
+                          receptor="gaba_a"),
+        ])
+    for name in intent_names:
+        pathways.extend([
+            RegionPathway(from_region="drive_agrp", to_region=name, density=0.60,
+                          weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate=VOCAL_LEARNING_GATE),
+            RegionPathway(from_region=VOCAL_SOCIAL_CUE, to_region=name, density=0.60,
+                          weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate=VOCAL_LEARNING_GATE),
+            RegionPathway(from_region=name, to_region=VOCAL_INTENT_FS, density=0.50,
+                          weight_mean=8.0, weight_jitter=0.10, plastic=False),
+            RegionPathway(from_region=VOCAL_INTENT_FS, to_region=name, density=0.60,
+                          weight_mean=6.0, weight_jitter=0.10, plastic=False,
+                          receptor="gaba_a"),
+        ])
+    for name in referent_names:
+        pathways.extend([
+            RegionPathway(from_region=GEN_PERCEPTION, to_region=name, density=0.25,
+                          weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate=VOCAL_LEARNING_GATE),
+            RegionPathway(from_region=name, to_region=VOCAL_REFERENT_FS, density=0.50,
+                          weight_mean=8.0, weight_jitter=0.10, plastic=False),
+            RegionPathway(from_region=VOCAL_REFERENT_FS, to_region=name, density=0.60,
+                          weight_mean=6.0, weight_jitter=0.10, plastic=False,
+                          receptor="gaba_a"),
+        ])
+    # Channel-specific cross-inhibition. Winner i recruits its own FS pool,
+    # which inhibits only the competing channel, not the winner itself. This
+    # turns a learned weight difference into a stable motor choice and keeps
+    # reward eligibility off the losing route.
+    for bank, names in output_banks.items():
+        for i, winner in enumerate(names):
+            fs_name = f"{VOCAL_CROSS_FS_PREFIX}{bank}_{i}"
+            pathways.append(RegionPathway(
+                from_region=winner, to_region=fs_name, density=0.60,
+                weight_mean=12.0, weight_jitter=0.10, plastic=False))
+            for j, loser in enumerate(names):
+                if i == j:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=fs_name, to_region=loser, density=0.70,
+                    weight_mean=20.0, weight_jitter=0.10, plastic=False,
+                    receptor="gaba_a"))
+    return regions, pathways
+
+
 def _build_generalization_edges(rm, gen_n_concept_per: int, gen_n_fact_per: int, fact_weight: float = 30.0):
     """The EXACT generalization edges, keyed by the build_wiring_plan entry names so they OVERWRITE the framework's
     uniform versions in the union_plan (the dlpfc_loop insertion pattern). Returns
@@ -625,6 +774,9 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  speech_n_acc: int = 40, speech_n_fs: int = 20,
                                  speech_drive_weight: float = 8.0,
                                  speech_cue_weight: float = 60.0,
+                                 co_resident_developmental_vocal: bool = False,
+                                 vocal_n_channels: int = 2,
+                                 vocal_n_acc: int = 40, vocal_n_fs: int = 20,
                                  co_resident_nav_critic: bool = False,
                                  nav_critic_convergent_upstate: bool = False,
                                  nav_critic_homeostasis_mask: str = "all3",
@@ -747,6 +899,9 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
          "self-org place_sensors afferent; without the self-org place pool there is nothing to drive).")
     if co_resident_grounded_speech and not (co_resident_generalization and co_resident_drive):
         raise ValueError("co_resident_grounded_speech requires co_resident_generalization and co_resident_drive")
+    if co_resident_developmental_vocal and not (co_resident_generalization and co_resident_drive):
+        raise ValueError(
+            "co_resident_developmental_vocal requires co_resident_generalization and co_resident_drive")
     if co_resident_nav_critic:
         # nav_critic_convergent_upstate (the value-train A1 up-state arm, CYCLE 209 value-train build): forward
         # enable_convergent_upstate to build_bg_brain_regions so the dense NON-plastic vs_place_drive->striosome_value
@@ -974,6 +1129,10 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         speech_regions, speech_pathways = _grounded_speech_regions_pathways(
             n_acc=speech_n_acc, n_fs=speech_n_fs,
             drive_weight=speech_drive_weight, cue_weight=speech_cue_weight)
+    vocal_regions, vocal_pathways = [], []
+    if co_resident_developmental_vocal:
+        vocal_regions, vocal_pathways = _developmental_vocal_regions_pathways(
+            n_channels=vocal_n_channels, n_acc=vocal_n_acc, n_fs=vocal_n_fs)
 
     # A-CSC TD CUE-SHIFT SLICE (co_resident_td_cueshift, additive default-off): the validated complete-serial-compound
     # TD machinery (snc_stageb_critic_probe.py --td-csc, GO 3/3 r=-0.80/-0.77/-0.89) as a td_-prefixed co-resident slice.
@@ -1122,11 +1281,12 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                      + list(rf_regions) + list(perception_regions) + list(command_route_regions)
                      + list(generalization_regions)
                      + list(limbic_regions) + list(td_regions) + list(drive_regions)
-                     + list(speech_regions)
+                     + list(speech_regions) + list(vocal_regions)
                      + list(hippo_regions))
     union_pathways = (list(nav_pathways) + list(parser_pathways) + list(command_route_pathways)
                       + list(generalization_pathways) + list(limbic_pathways)
                       + list(td_pathways) + list(drive_pathways) + list(speech_pathways)
+                      + list(vocal_pathways)
                       + list(hippo_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
@@ -1154,6 +1314,11 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # Navigation-resident learning state (the nav cascade runs reward-STDP during episodes).
     cfg.enable_stdp = True
     cfg.enable_reward_modulation = True
+    # Allocate the dedicated local coactivity trace only for the developmental
+    # vocal slice. The runner opens its anatomical learning gate and supplies
+    # reward after listener consequences; every other merged build remains on
+    # the historical reward-STDP path.
+    cfg.reward_eligibility_from_coactivity = bool(co_resident_developmental_vocal)
     cfg.enable_hebbian_learning = False           # global Hebbian OFF during nav (parser is trained separately)
     # The parser's VALIDATED Hebbian learning rate (brain_conversational_agent.py:75, microcheck reference). In
     # effect ONLY during the parser train pass (nav keeps Hebbian off so this rate is never consulted in episodes).
@@ -1327,6 +1492,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     bridge.set_plasticity_gate(DLPFC_FIXED_GATE, 0.0)
     if co_resident_grounded_speech:
         bridge.set_plasticity_gate(SPEECH_GROUNDING_GATE, 0.0)
+    if co_resident_developmental_vocal:
+        bridge.set_plasticity_gate(VOCAL_LEARNING_GATE, 0.0)
 
     # 5) Parser train pass on the framework slices (after the FINAL injection — a later injection would reset the
     #    trained weights). Temporarily Hebbian ON + STDP/reward OFF; OU=20 is already ON from build (the validated
@@ -1441,6 +1608,15 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         handles["grounded_speech"] = {
             n: np.asarray(list(rm.indices(n)), dtype=np.int64)
             for n in (SPEECH_FOOD_CUE, SPEECH_REQUEST, SPEECH_SILENCE, SPEECH_WTA_FS)
+        }
+    if co_resident_developmental_vocal:
+        intent_names = [f"{VOCAL_INTENT_PREFIX}{i}" for i in range(int(vocal_n_channels))]
+        referent_names = [f"{VOCAL_REFERENT_PREFIX}{i}" for i in range(int(vocal_n_channels))]
+        handles["developmental_vocal"] = {
+            n: np.asarray(list(rm.indices(n)), dtype=np.int64)
+            for n in (VOCAL_SOCIAL_CUE, VOCAL_SPEAK, VOCAL_SILENCE, VOCAL_SPEAK_FS,
+                      *intent_names, *referent_names,
+                      VOCAL_INTENT_FS, VOCAL_REFERENT_FS)
         }
     if co_resident_td_cueshift:
         # The TD-slice base indices (for the on-merge A-CSC cue-shift battery: drive td_csc_k / td_reward_us, read
@@ -1848,6 +2024,8 @@ class MergedNavConvAgent:
                  co_resident_drive=False, drive_n_pool=60, drive_to_da=False, drive_da_sensitivity=8.0,
                  co_resident_grounded_speech=False, speech_n_acc=40, speech_n_fs=20,
                  speech_drive_weight=8.0, speech_cue_weight=60.0,
+                 co_resident_developmental_vocal=False, vocal_n_channels=2,
+                 vocal_n_acc=40, vocal_n_fs=20,
                  co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
@@ -2147,6 +2325,7 @@ class MergedNavConvAgent:
         self._drive_to_da = bool(drive_to_da)                  # Tier-3 Option 3: hunger raises the shared DA
         self._drive_da_sensitivity = float(drive_da_sensitivity)
         self.co_resident_grounded_speech = bool(co_resident_grounded_speech)
+        self.co_resident_developmental_vocal = bool(co_resident_developmental_vocal)
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
             onebrain_rf_size=_onebrain_rf_size,
@@ -2155,6 +2334,9 @@ class MergedNavConvAgent:
             co_resident_grounded_speech=self.co_resident_grounded_speech,
             speech_n_acc=int(speech_n_acc), speech_n_fs=int(speech_n_fs),
             speech_drive_weight=float(speech_drive_weight), speech_cue_weight=float(speech_cue_weight),
+            co_resident_developmental_vocal=self.co_resident_developmental_vocal,
+            vocal_n_channels=int(vocal_n_channels), vocal_n_acc=int(vocal_n_acc),
+            vocal_n_fs=int(vocal_n_fs),
             co_resident_perception=self.co_resident_perception,
             co_resident_generalization=self.co_resident_generalization,
             enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),

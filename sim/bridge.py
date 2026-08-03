@@ -453,6 +453,7 @@ class SimulationBridge:
         self.cp_neuron_firing_thresholds = None
         self.cp_neuron_activity_ema = None
         self.cp_hebb_coactivity_trace = None       # per-neuron decaying firing trace for the RATE-WINDOW Hebbian (None unless cfg.hebbian_rate_window)
+        self.cp_reward_coactivity_trace = None     # per-neuron presynaptic trace for optional three-factor coactivity eligibility
         self.cp_dendritic_source_activity = None   # per-source firing EMA for the dendritic divisive gain (None unless enable_dendritic_divisive_gain)
 
         # Per-neuron GABA_A reversal potential (mV). Defaults to a uniform
@@ -582,6 +583,11 @@ class SimulationBridge:
 
         # Eligibility trace for STDP/reward
         self.cp_eligibility_trace = None
+        # Optional runtime scope for coactivity eligibility. When set, only
+        # these synapse-data indices are tagged; useful for anatomically scoped
+        # experiments on a large shared bridge. Connectivity must remain fixed
+        # while a scope is installed.
+        self.cp_reward_eligibility_synapse_indices = None
 
         # Neuromodulator subsystem (Session E.1, opt-in).
         # When core_config.enable_neuromodulator_subsystem is True, this is
@@ -815,7 +821,9 @@ class SimulationBridge:
         if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
             self.cp_eligibility_trace[:nnz] += (w_new - w_all)
 
-        self.cp_connections.data[:] = w_new
+        if not (cfg.enable_reward_modulation
+                and getattr(cfg, "reward_defer_stdp_weight_update", False)):
+            self.cp_connections.data[:] = w_new
         # NOTE: _mock_total_plasticity_events (a diagnostic host int) is intentionally NOT maintained here -- computing
         # the active count would re-introduce a device->host sync, defeating the purpose. It is not byte-guaranteed
         # under this flag (the byte-identity test checks cp_connections.data + firing raster, not this counter).
@@ -1637,6 +1645,11 @@ class SimulationBridge:
             # RATE-WINDOW Hebbian co-activity trace (guarded: allocated only when enabled; else None -> byte-identical)
             if getattr(self.core_config, "hebbian_rate_window", False):
                 self.cp_hebb_coactivity_trace = cp.zeros(n, dtype=cp.float32)
+            # Reward-gated coactivity eligibility uses a separate trace from
+            # ordinary Hebbian learning so enabling it cannot change that
+            # rule's dynamics or require Hebbian weight updates.
+            if getattr(self.core_config, "reward_eligibility_from_coactivity", False):
+                self.cp_reward_coactivity_trace = cp.zeros(n, dtype=cp.float32)
 
             # Dendritic per-presynaptic-source divisive gain (D2 Phase 1): a dedicated per-source firing
             # EMA, allocated only when the feature is on. Left None otherwise so the gain block + the
@@ -8053,8 +8066,6 @@ class SimulationBridge:
                                 weight_changes_gated = (updated_weights - current_weights) * gain_here
                                 updated_weights = current_weights + weight_changes_gated
 
-                            self.cp_connections.data[stdp_active_indices] = updated_weights
-
                             # Update eligibility traces if reward modulation is enabled.
                             # SIGNED eligibility (this branch): accumulate the
                             # raw STDP weight change, preserving LTP (+) vs LTD (-)
@@ -8068,12 +8079,26 @@ class SimulationBridge:
                             # (see research/findings/2026-04-20-g5v2.md).
                             #
                             # Gating: weight_changes here is the post-gain
-                            # delta (already 0 if pathway is frozen), so the
-                            # eligibility trace correctly reflects what
-                            # actually happened to weights.
+                            # candidate delta (already 0 if frozen). In the
+                            # deferred mode below it records what can happen
+                            # if reward arrives; otherwise it also describes
+                            # the immediate STDP update.
                             if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
                                 weight_changes = updated_weights - current_weights
                                 self.cp_eligibility_trace[stdp_active_indices] += weight_changes
+
+                            # Optional strict three-factor expression. The
+                            # pre/post timing event above writes only a local
+                            # eligibility tag; lasting weight change waits for
+                            # the reward block below. This prevents unrewarded
+                            # exploration from silently becoming ordinary
+                            # Hebbian habit learning. Default False is exactly
+                            # the historical immediate-STDP path.
+                            if (cfg.enable_reward_modulation
+                                    and getattr(cfg, "reward_defer_stdp_weight_update", False)):
+                                self.cp_connections.data[stdp_active_indices] = current_weights
+                            else:
+                                self.cp_connections.data[stdp_active_indices] = updated_weights
 
                             self._mock_total_plasticity_events += stdp_active_indices.size
 
@@ -8479,6 +8504,64 @@ class SimulationBridge:
                     self.cp_eligibility_trace,
                     decay_factor
                 )
+
+                # Optional actor-style eligibility: recent presynaptic activity
+                # paired with a current postsynaptic output event leaves a
+                # local tag. The tag alone never changes a weight; the reward/
+                # dopamine term below is still required. The bounded input
+                # trace avoids requiring a particular pre/post spike order,
+                # while the current output event prevents a previously active
+                # losing action from continuing to receive credit.
+                if (getattr(cfg, "reward_eligibility_from_coactivity", False)
+                        and self.cp_reward_coactivity_trace is not None):
+                    trace_tau_ms = max(
+                        float(getattr(cfg, "reward_coactivity_trace_tau_ms", 20.0)),
+                        float(dt),
+                    )
+                    trace_decay = cp.exp(-dt / trace_tau_ms)
+                    fired_float = fired_this_step.astype(cp.float32, copy=False)
+                    self.cp_reward_coactivity_trace = (
+                        trace_decay * self.cp_reward_coactivity_trace
+                        + (1.0 - trace_decay) * fired_float
+                    )
+
+                    actual_nnz = self.cp_connections.nnz
+                    scoped_indices = self.cp_reward_eligibility_synapse_indices
+                    if scoped_indices is None:
+                        eligibility_indices = cp.arange(actual_nnz, dtype=cp.int64)
+                    else:
+                        eligibility_indices = scoped_indices
+
+                    if eligibility_indices.size > 0:
+                        coo_reward = self._get_cached_coo()
+                        pre_trace = self.cp_reward_coactivity_trace[
+                            coo_reward.row[eligibility_indices]
+                        ]
+                        post_activity = fired_float[
+                            coo_reward.col[eligibility_indices]
+                        ]
+                        coactivity = pre_trace * post_activity
+                        threshold = cp.float32(
+                            getattr(cfg, "reward_coactivity_threshold", 0.01)
+                        )
+                        local_tags = cp.where(
+                            coactivity > threshold,
+                            cp.float32(getattr(cfg, "reward_coactivity_scale", 0.05))
+                            * coactivity,
+                            cp.float32(0.0),
+                        )
+                        if self.cp_synapse_plastic_mask is not None:
+                            plastic = self._ensure_gate_capacity(
+                                "cp_synapse_plastic_mask", actual_nnz,
+                                fill=False, dtype=cp.bool_,
+                            )[:actual_nnz]
+                            local_tags = local_tags * plastic[eligibility_indices]
+                        if self.cp_plasticity_rate_gain is not None:
+                            gain = self._ensure_gate_capacity(
+                                "cp_plasticity_rate_gain", actual_nnz
+                            )[:actual_nnz]
+                            local_tags = local_tags * gain[eligibility_indices]
+                        self.cp_eligibility_trace[eligibility_indices] += local_tags
                 
                 # Apply reward modulation if reward signal is non-zero.
                 # R2.4 (2026-04-29): aversive-vs-appetitive magnitude
