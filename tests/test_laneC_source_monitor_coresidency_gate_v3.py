@@ -8,9 +8,10 @@ import numpy as np
 import pytest
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
+os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 
 from research.runners import _laneC_source_monitor_coresidency_gate_v3 as gate_module
-from research.runners._laneC_source_monitor_coresidency_gate import SOURCE_MEMORY, SOURCES
+from research.runners._laneC_source_monitor_coresidency_gate import SOURCE_MEMORY
 from research.runners._laneC_source_monitor_coresidency_gate_v2 import (
     SourceMonitorConfigV2,
 )

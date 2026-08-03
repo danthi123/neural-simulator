@@ -40,16 +40,13 @@ from research.runners._laneC_source_monitor_coresidency_gate import (
     SOURCE_MEMORY,
     SOURCE_RECALL_GATE,
     SOURCES,
-    SourceMonitorConfig,
     _dominant_source,
     _source_margin,
     make_episode_patterns,
 )
 from research.runners._laneC_source_monitor_coresidency_gate_v2 import (
-    APFC_GATE,
     MIN_ATTRIBUTION_FRACTION,
     MIN_SOURCE_MARGIN,
-    SOURCE_AFFERENT_GATE,
     SOURCE_COMPETITION_GATE,
     SOURCE_INTERNEURON,
     SourceMonitorConfigV2,
