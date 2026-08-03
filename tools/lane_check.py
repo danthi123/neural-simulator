@@ -48,6 +48,36 @@ CRUX = "F · gap#4 CRUX"
 MAX_IDLE_CPU_LANES = 3
 
 
+def _shared_queue_root() -> str:
+    """Return the checkout whose queues the persistent dispatchers consume."""
+    override = os.environ.get("SIM_QUEUE_ROOT")
+    if override:
+        return os.path.abspath(os.path.expanduser(override))
+    try:
+        common = subprocess.run(
+            ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=True,
+        ).stdout.strip()
+        if common:
+            return os.path.dirname(common)
+    except Exception:
+        pass
+    return ROOT
+
+
+def _queue_paths() -> tuple[str, str]:
+    shared = _shared_queue_root()
+    queue_dir = os.path.join(shared, "research", "queue")
+    return (
+        os.environ.get("GPU_QUEUE_PATH", os.path.join(queue_dir, "gpu.queue")),
+        os.environ.get("POOL_QUEUE_PATH", os.path.join(queue_dir, "pool.queue")),
+    )
+
+
 def classify(cmd: str):
     c = cmd.lower()
     hits = [ln for ln, (_, keys) in LANES.items() if any(k in c for k in keys)]
@@ -55,13 +85,14 @@ def classify(cmd: str):
 
 
 def _queue_jobs():
-    """BOTH queues. This read gpu.queue ONLY, so every job staged to the mini-PC POOL was invisible to lane
-    coverage -- the check reported "queued=0, 5 of 5 CPU lanes unserved" while CPU-lane work sat queued in
-    research/queue/pool.queue. A coverage check blind to one of the two queues reports starvation that has
-    already been fixed, which is the fastest way to teach a reader to ignore it."""
+    """Read both queues from the checkout used by the persistent dispatchers.
+
+    Worktrees contain versioned queue snapshots, but the dispatchers consume the
+    canonical checkout's live files. Reading the local snapshot can report work
+    that cannot run, or miss work that is already staged.
+    """
     out = []
-    for rel in ("research/queue/gpu.queue", "research/queue/pool.queue"):
-        p = os.path.join(ROOT, rel)
+    for p in _queue_paths():
         if not os.path.exists(p):
             continue
         for l in open(p).read().split("\n"):
@@ -113,7 +144,9 @@ def main():
     # instantaneous idleness would fire every cycle and train the reader to ignore it. Alarm instead on
     # STALENESS: no CPU-lane work dispatched for STALE_MIN. Any dispatch touches the marker.
     STALE_MIN = 45
-    marker = os.path.join(ROOT, "research/queue/.last_cpu_dispatch")
+    marker = os.path.join(
+        _shared_queue_root(), "research", "queue", ".last_cpu_dispatch"
+    )
     if cpu_active:
         try:
             open(marker, "w").write("dispatched")
