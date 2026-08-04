@@ -423,57 +423,45 @@
         "tests/test_v14_stageA_performance_v2.py",
         "research/specs/v14_stageA_performance_v2.json"
       ]
+    },
+    "019fce65-b311-7a01-a90d-db9fee003f9a": {
+      "completed_at": "2026-08-04T20:26:15+00:00",
+      "heartbeat_at": "2026-08-04T20:26:15+00:00",
+      "model": "inherited",
+      "next_action": "Execute v3 only under stabilized launcher.",
+      "result": "Mapped reversible root/non-root controls and desktop limitations; no files changed.",
+      "started_at": "2026-08-04T20:26:15+00:00",
+      "status": "completed",
+      "task": "Audit host benchmark controls",
+      "write_set": []
+    },
+    "019fce65-b7eb-7ca2-a5aa-ed98699e0495": {
+      "completed_at": "2026-08-04T20:26:15+00:00",
+      "heartbeat_at": "2026-08-04T20:26:15+00:00",
+      "model": "inherited",
+      "next_action": "Review v3 receipt under unchanged thresholds.",
+      "result": "Found unvalidated telemetry, fresh-process variance, unspecified affinity, and non-adjacent active/default pairs.",
+      "started_at": "2026-08-04T20:26:15+00:00",
+      "status": "completed",
+      "task": "Audit V14 v2 harness variance",
+      "write_set": []
+    },
+    "019fce6a-7bf3-7d40-a109-0f6c5b0fe7e8": {
+      "completed_at": "2026-08-04T20:26:15+00:00",
+      "heartbeat_at": "2026-08-04T20:26:15+00:00",
+      "model": "inherited",
+      "next_action": "Commit and run sealed v3.",
+      "result": "Implemented persistent source-isolated v3 harness; controller added warm-clock revalidation and protocol binding; 69 tests pass.",
+      "started_at": "2026-08-04T20:26:15+00:00",
+      "status": "completed",
+      "task": "Implement V14 performance harness v3",
+      "write_set": [
+        "tools/v14_stageA_performance_v3.py",
+        "tests/test_v14_stageA_performance_v3.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T16:48:34+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gpu-execution-efficiency"
-    },
-    {
-      "at": "2026-08-04T16:48:35+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcdad-3693-7c50-b31c-984632fff7b0"
-    },
-    {
-      "at": "2026-08-04T16:54:06+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd9c-0b90-7930-8dd1-d8e69ec70a06"
-    },
-    {
-      "at": "2026-08-04T16:54:06+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
-    {
-      "at": "2026-08-04T16:54:07+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcdad-3693-7c50-b31c-984632fff7b0"
-    },
-    {
-      "at": "2026-08-04T16:54:07+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gpu-execution-efficiency"
-    },
-    {
-      "at": "2026-08-04T17:24:16+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T17:24:16+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
     {
       "at": "2026-08-04T17:24:16+00:00",
       "detail": "blocked",
@@ -1025,6 +1013,54 @@
       "detail": "blocked",
       "kind": "lane-update",
       "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-benchmark-environment"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-performance-v3"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "completed",
+      "kind": "agent-register",
+      "subject": "019fce65-b311-7a01-a90d-db9fee003f9a"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce65-b311-7a01-a90d-db9fee003f9a"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "completed",
+      "kind": "agent-register",
+      "subject": "019fce65-b7eb-7ca2-a5aa-ed98699e0495"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce65-b7eb-7ca2-a5aa-ed98699e0495"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "completed",
+      "kind": "agent-register",
+      "subject": "019fce6a-7bf3-7d40-a109-0f6c5b0fe7e8"
+    },
+    {
+      "at": "2026-08-04T20:26:15+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce6a-7bf3-7d40-a109-0f6c5b0fe7e8"
     }
   ],
   "lanes": {
@@ -1276,13 +1312,13 @@
     },
     "v14-benchmark-environment": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T20:08:01+00:00",
-      "next_action": "Stabilize and record host affinity, CPU governor/load, GPU clock/power state, and foreign GPU processes while preserving v2 pairing, dispersion limits, and performance thresholds.",
+      "heartbeat_at": "2026-08-04T20:26:15+00:00",
+      "next_action": "Root cause isolated: delayed post-commit RAG refresh overlapped v2. Reversible CPU/GPU controls, persistent workers, and host-heavy scheduling lease are implemented and startup-smoked.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If clocks or foreign load cannot be controlled within the v2 dispersion contract, retain infrastructure-invalid and do not promote V14.",
+      "recovery_action": "Use only the sealed v3 launcher; it restores governors/clocks and refuses active or pending heavy workloads.",
       "resource": "local_gpu",
-      "status": "ready",
+      "status": "completed",
       "write_set": [
         "tools/v14_stageA_performance_v2.py",
         "tests/test_v14_stageA_performance_v2.py",
@@ -1383,6 +1419,24 @@
         "research/findings"
       ]
     },
+    "v14-performance-v3": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T20:26:15+00:00",
+      "next_action": "Commit/push the hash-bound v3 protocol and environment guards, wait for post-commit RAG refresh to finish, then run the sealed matrix through the reversible launcher.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Bank GO, NO-GO, or infrastructure-invalid exactly; retain all existing thresholds and no physiology effect.",
+      "resource": "local_gpu",
+      "status": "running",
+      "write_set": [
+        "tools/v14_stageA_performance_v3.py",
+        "tools/run_v14_stageA_performance_v3.py",
+        "tools/rag/update_indexes.py",
+        "tests",
+        "research/specs",
+        "research/findings"
+      ]
+    },
     "v14-performance-variance-audit": {
       "agent_id": "019fce59-1d91-7031-a987-f0d21a79edd4",
       "delegation": "agent",
@@ -1423,5 +1477,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T20:08:01+00:00"
+  "updated_at": "2026-08-04T20:26:15+00:00"
 }

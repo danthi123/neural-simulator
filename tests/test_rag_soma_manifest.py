@@ -74,3 +74,13 @@ def test_soma_file_storage_uses_bounded_batch_api(monkeypatch, tmp_path: Path):
 
     assert ids == ["node-0", "node-1", "node-2"]
     assert [len(texts) for texts, _ in memory.calls] == [2, 1]
+
+
+def test_host_heavy_lease_defers_overlapping_maintenance(monkeypatch, tmp_path):
+    monkeypatch.setattr(update_indexes, "HOST_HEAVY_LEASE", str(tmp_path / "host.lock"))
+    first = update_indexes.acquire_host_heavy_lease()
+    assert first is not None
+    try:
+        assert update_indexes.acquire_host_heavy_lease() is None
+    finally:
+        first.close()

@@ -1,0 +1,75 @@
+{
+  "schema": "v14-stageA-performance-protocol-v3",
+  "status": "preregistered-not-executed",
+  "scope": "engineering performance only",
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "prior_v2_receipt": "research/findings/raw/v14_stageA_performance_v2_59ca01e7d.json",
+  "prior_v2_effect": "infrastructure-invalid remains banked; no retrospective verdict",
+  "scientific_seeds": [],
+  "source_boundaries": {
+    "candidate": "clean committed revision with governed source hashes",
+    "prechange_control_revision": "6c9034991ba5d67024786d1faa080436c70347d5"
+  },
+  "measurement": {
+    "outer_pairs": 3,
+    "forward_chain": [
+      "candidate-active-unfused",
+      "candidate-active",
+      "candidate-default",
+      "prechange-control-default"
+    ],
+    "chain_order": ["forward", "reverse", "forward"],
+    "warmup_steps": 5000,
+    "telemetry_after_warmup": true,
+    "fixed_rewarm_steps": 500,
+    "timing_blocks": 5,
+    "steps_per_block": 3000,
+    "persistent_source_isolated_workers": 2,
+    "worker_timeout_seconds": 1800
+  },
+  "host_controls": {
+    "host_heavy_lease": "/tmp/sim-host-heavy.lock",
+    "blocking_workloads": ["RAG index refresh", "research runner"],
+    "worker_cpu": 10,
+    "controller_cpu": 16,
+    "nice": -4,
+    "scheduler": "SCHED_OTHER",
+    "cpu_governor": "performance",
+    "energy_performance_preference": "performance",
+    "power_profile": "performance",
+    "turbo": "enabled",
+    "gpu_clock_mhz": 1800,
+    "gpu_clock_tolerance_mhz": 15,
+    "memory_clock_mhz": 9751,
+    "power_limit_w": 300,
+    "clock_controls": "reversible external launcher using passwordless sudo",
+    "caller_owns_gpu_lease": true
+  },
+  "fixed_thresholds": {
+    "default_off_ratio_max": 1.02,
+    "active_ratio_max": 1.25,
+    "direct_output_ratio_max": 0.85
+  },
+  "infrastructure_validity": {
+    "max_inner_block_relative_range": 0.10,
+    "max_paired_ratio_relative_range": 0.05,
+    "clean_source_boundaries_required": true,
+    "controlled_host_state_required": true,
+    "warmup_and_post_timing_clock_validation_required": true,
+    "process_inventory_required": true,
+    "excess_dispersion_or_control_failure": "infrastructure_invalid"
+  },
+  "aggregation": {
+    "observation_duration": "sum of five timing blocks",
+    "comparison": "ratio within each outer pair",
+    "gate_value": "median of three paired ratios",
+    "channels": ["host", "cuda_event"]
+  },
+  "verdict_boundary": {
+    "physiology_verdict": null,
+    "promotion_effect_before_complete_valid_run": "none",
+    "threshold_failure_when_valid": "NO_GO",
+    "all_thresholds_pass_when_valid": "GO"
+  }
+}

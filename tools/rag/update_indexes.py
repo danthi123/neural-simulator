@@ -16,7 +16,7 @@ Run with the canonical checkout's RAG interpreter:
   CANONICAL=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
   "$CANONICAL/.venv-rag/bin/python" tools/rag/update_indexes.py [--rebuild] [--force]
 """
-import os, sys, time, json, hashlib, shutil, glob, argparse, subprocess
+import os, sys, time, json, hashlib, shutil, glob, argparse, subprocess, fcntl
 from pathlib import Path
 
 # RAG refreshes run as a background maintenance lane. Keep them off the
@@ -29,6 +29,7 @@ import build_llamaindex_full as B   # SOURCES + load_docs (+ PERSIST)
 RAG = B.RAG_ROOT                      # portable: see build_llamaindex_full ($SIM_RAG_ROOT / <parent-of-repo>/rag_index)
 PERSIST = B.PERSIST
 LOCK = os.path.join(RAG, ".update.lock")
+HOST_HEAVY_LEASE = os.environ.get("SIM_HOST_HEAVY_LEASE", "/tmp/sim-host-heavy.lock")
 MANIFEST = os.path.join(RAG, ".rag_manifest.json")
 SCHEMA = os.path.join(RAG, ".rag_schema.json")
 DOCUMENT_ID_SCHEMA = "repo-relative-v1"
@@ -136,6 +137,17 @@ def acquire_lock():
         except OSError:
             pass
         return False
+
+
+def acquire_host_heavy_lease():
+    """Keep CPU-heavy indexing from overlapping latency-sensitive benchmarks."""
+    handle = open(HOST_HEAVY_LEASE, "a+", encoding="utf-8")
+    try:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        handle.close()
+        return None
+    return handle
 
 
 def refresh_llamaindex(rebuild=False):
@@ -388,44 +400,54 @@ def main():
     if (not args.force) and (not args.rebuild) and prev == cur:
         print("[update-indexes] no evolving-doc change since last update; skip.", flush=True); return 0
 
-    if not acquire_lock():
-        print("[update-indexes] another update is running; skip (it will pick up these changes).", flush=True); return 0
+    host_lease = acquire_host_heavy_lease()
+    if host_lease is None:
+        print(
+            "[update-indexes] host-heavy benchmark active; defer to the next refresh.",
+            flush=True,
+        )
+        return 0
     try:
-        t0 = time.time()
-        while True:
-            indexed_hash = manifest_hash()
-            message, candidate_root, candidate = refresh_llamaindex(rebuild=args.rebuild)
-            print(message, flush=True)
-            try:
-                check_retrieval_quality(candidate_root)
-                publish_candidate(candidate)
-            except Exception:
-                shutil.rmtree(candidate_root, ignore_errors=True)
-                raise
-            schema_tmp = f"{SCHEMA}.tmp-{os.getpid()}"
-            with open(schema_tmp, "w", encoding="utf-8") as handle:
-                json.dump(
-                    {"document_id_schema": DOCUMENT_ID_SCHEMA, "source_repo": B.SIM},
-                    handle,
-                    indent=2,
-                )
-            os.replace(schema_tmp, SCHEMA)
-            print("llamaindex candidate PASSED and published", flush=True)
-            try:
-                print(refresh_soma(rebuild=args.rebuild), flush=True)
-            except Exception as e:
-                print(f"[update-indexes] SOMA rebuild failed (LlamaIndex still updated): {e}", flush=True)
-            latest_hash = manifest_hash()
-            if latest_hash == indexed_hash:
-                json.dump({"hash": indexed_hash, "at": int(time.time())}, open(MANIFEST, "w"))
-                break
-            print("[update-indexes] corpus changed during refresh; repeating before marking current.", flush=True)
-        print(f"[update-indexes] done in {time.time()-t0:.0f}s.", flush=True)
-    finally:
+        if not acquire_lock():
+            print("[update-indexes] another update is running; skip (it will pick up these changes).", flush=True); return 0
         try:
-            os.remove(LOCK)
-        except OSError:
-            pass
+            t0 = time.time()
+            while True:
+                indexed_hash = manifest_hash()
+                message, candidate_root, candidate = refresh_llamaindex(rebuild=args.rebuild)
+                print(message, flush=True)
+                try:
+                    check_retrieval_quality(candidate_root)
+                    publish_candidate(candidate)
+                except Exception:
+                    shutil.rmtree(candidate_root, ignore_errors=True)
+                    raise
+                schema_tmp = f"{SCHEMA}.tmp-{os.getpid()}"
+                with open(schema_tmp, "w", encoding="utf-8") as handle:
+                    json.dump(
+                        {"document_id_schema": DOCUMENT_ID_SCHEMA, "source_repo": B.SIM},
+                        handle,
+                        indent=2,
+                    )
+                os.replace(schema_tmp, SCHEMA)
+                print("llamaindex candidate PASSED and published", flush=True)
+                try:
+                    print(refresh_soma(rebuild=args.rebuild), flush=True)
+                except Exception as e:
+                    print(f"[update-indexes] SOMA rebuild failed (LlamaIndex still updated): {e}", flush=True)
+                latest_hash = manifest_hash()
+                if latest_hash == indexed_hash:
+                    json.dump({"hash": indexed_hash, "at": int(time.time())}, open(MANIFEST, "w"))
+                    break
+                print("[update-indexes] corpus changed during refresh; repeating before marking current.", flush=True)
+            print(f"[update-indexes] done in {time.time()-t0:.0f}s.", flush=True)
+        finally:
+            try:
+                os.remove(LOCK)
+            except OSError:
+                pass
+    finally:
+        host_lease.close()
     return 0
 
 
