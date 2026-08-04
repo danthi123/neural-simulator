@@ -1,0 +1,26 @@
+{
+  "enabled": false,
+  "base_url": "http://127.0.0.1:8020/v1",
+  "backend": "llama.cpp-cuda",
+  "device": "NVIDIA GeForce RTX 3090",
+  "expected_model_ids": [
+    "qwen3.6-27b",
+    "Qwen3.6-27B-Q4_K_M.gguf"
+  ],
+  "timeout_seconds": 120,
+  "max_output_tokens": 1200,
+  "temperature": 0.2,
+  "gpu_index": 0,
+  "lease_path": "/tmp/sim-local-model-gpu0.lock",
+  "allowed_tasks": [
+    "documentation",
+    "research_synthesis",
+    "catalog_triage"
+  ],
+  "forbidden_tasks": [
+    "code_edit",
+    "experiment_design",
+    "gate_decision",
+    "scientific_conclusion"
+  ]
+}

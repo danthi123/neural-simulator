@@ -26,6 +26,31 @@ Q="$ROOT/research/queue/${LANE}.queue"
 RUN="$Q.running"; DONE="$Q.done"; LOGD=/tmp/claude-1000/lane_$LANE
 mkdir -p "$(dirname "$Q")" "$LOGD"; touch "$Q" "$RUN" "$DONE"
 
+# The local model service and GPU experiment dispatcher share one advisory
+# lease. The lease is held for the whole period in which this dispatcher has
+# GPU jobs running, so a model request cannot race a queued experiment. CPU
+# and pool lanes are unaffected.
+GPU_LEASE_PATH="${SIM_GPU_LEASE_PATH:-/tmp/sim-local-model-gpu0.lock}"
+GPU_LEASE_HELD=0
+acquire_gpu_lease() {
+  [ "$LANE" = gpu ] || return 0
+  [ "$GPU_LEASE_HELD" -eq 1 ] && return 0
+  exec 8>"$GPU_LEASE_PATH"
+  if ! flock -n 8; then
+    exec 8>&-
+    return 1
+  fi
+  GPU_LEASE_HELD=1
+}
+release_gpu_lease() {
+  if [ "$GPU_LEASE_HELD" -eq 1 ]; then
+    flock -u 8 || true
+    exec 8>&-
+    GPU_LEASE_HELD=0
+  fi
+}
+trap release_gpu_lease EXIT
+
 # Count only real jobs, never this script or its own shells (a past monitor counted its own shells and
 # reported a false negative).
 running_count() {
@@ -71,6 +96,10 @@ while true; do
          echo "$LINE" >> "$Q.unchecked"
          continue ;;
     esac
+    if ! acquire_gpu_lease; then
+      echo "[BLOCKED $LANE] shared GPU lease is held by the local model; retrying"
+      break
+    fi
     # atomically remove that line from the queue before launching (no double-dispatch on restart)
     # ⛔ BUG FIXED 2026-07-30: this was `grep -vxF ... && mv`, and `grep -vxF` EXITS 1 WHEN IT OUTPUTS
     # NOTHING -- which is exactly the case when the queue holds only this one line. The `&&` then
@@ -92,6 +121,7 @@ while true; do
   # THE ALARM THAT MATTERS: an empty queue, not an idle lane. An idle lane with a full queue self-heals in
   # seconds; an empty queue means the session has stopped preparing work and the lane WILL go idle.
   if [ "$PEND" -eq 0 ] && [ "$(running_count)" -eq 0 ]; then
+    release_gpu_lease
     echo "[QUEUE EMPTY] $LANE lane drained — STOCK THE QUEUE ($Q) or this lane sits idle"
   fi
   sleep 60
