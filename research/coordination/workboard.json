@@ -753,6 +753,28 @@
         "sim/kernels.py",
         "tests/test_snr_packet_kernels.py"
       ]
+    },
+    "019fcf25-db1f-7bf3-a7fe-339f43b3b6be": {
+      "completed_at": "2026-08-04T23:52:38+00:00",
+      "heartbeat_at": "2026-08-04T23:52:38+00:00",
+      "model": "gpt-5.6-terra/high",
+      "next_action": "Controller closes the audited mixed-region execution invariants with CPU and GPU tests.",
+      "result": "Enumerated packet ownership, HH authority, Q10, mixed legacy mapping, direct-output, reset, and checkpoint risks; controller incorporated the applicable findings.",
+      "started_at": "2026-08-04T23:39:00+00:00",
+      "status": "completed",
+      "task": "Adversarial mixed-region SNr packet execution audit",
+      "write_set": []
+    },
+    "019fcf25-dafc-7e82-9afe-df118b4bd13e": {
+      "completed_at": "2026-08-04T23:52:38+00:00",
+      "heartbeat_at": "2026-08-04T23:52:38+00:00",
+      "model": "gpt-5.6-terra/high",
+      "next_action": "Controller validates dynamic-only schema-v2 continuation and tamper rejection.",
+      "result": "Specified packet checkpoint schema-v2 dynamic-only persistence, immutable regeneration, legacy compatibility, and continuation/tamper gates; controller implemented the design.",
+      "started_at": "2026-08-04T23:39:00+00:00",
+      "status": "completed",
+      "task": "Authenticated SNr packet checkpoint design audit",
+      "write_set": []
     }
   },
   "events": [
@@ -1488,13 +1510,13 @@
     },
     "gateb-v14-channel-kernel-integration": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T23:30:00+00:00",
-      "next_action": "Materialize the complete 69-parameter packet surface into mixed-region per-neuron device arrays and expand both SNr execution paths without hardcoded packet kinetics.",
+      "heartbeat_at": "2026-08-04T23:52:38+00:00",
+      "next_action": "Use the authenticated mixed-region runtime in the preregistered adaptive Stage B campaign; do not infer physiology from engineering equivalence.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "Preserve packet mode as provenance-only until every declared runtime parameter is consumed exactly and schema-v2 checkpoints regenerate immutable arrays.",
       "resource": "local_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -2015,5 +2037,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T23:38:45+00:00"
+  "updated_at": "2026-08-04T23:52:38+00:00"
 }

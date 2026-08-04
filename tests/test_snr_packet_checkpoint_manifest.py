@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from types import MappingProxyType, SimpleNamespace
+from types import MappingProxyType
 
 import h5py
 import pytest
@@ -12,6 +12,7 @@ from sim.bridge import SimulationBridge
 from sim.config import CoreSimConfig
 from sim.enums import NeuronModel
 from sim.regions import BrainRegion
+from tests.snr_packet_fixtures import runtime_binding
 
 
 _PACKET_PATH = "packets/snr.json"
@@ -34,6 +35,7 @@ def _packet_config(*, packet_digest: str = _PACKET_DIGEST) -> CoreSimConfig:
         seed=17,
         dt_ms=0.05,
         neuron_model_type=NeuronModel.HODGKIN_HUXLEY.name,
+        default_neuron_type_hh="HH_EXCITATORY_DEFAULT_LEGACY",
         enable_brain_region_framework=True,
         brain_regions=[region],
         region_pathways=[],
@@ -44,6 +46,7 @@ def _packet_config(*, packet_digest: str = _PACKET_DIGEST) -> CoreSimConfig:
         enable_structural_plasticity=False,
         enable_ou_process=False,
         enable_conductance_noise=False,
+        enable_parameter_heterogeneity=False,
     )
 
 
@@ -62,7 +65,7 @@ def _legacy_config() -> CoreSimConfig:
 
 
 def _bindings(label: str):
-    return MappingProxyType({"snr": SimpleNamespace(label=label)})
+    return MappingProxyType({"snr": runtime_binding(label=label)})
 
 
 def _build_bridge(config, source_root, monkeypatch, bindings, load_calls=None):

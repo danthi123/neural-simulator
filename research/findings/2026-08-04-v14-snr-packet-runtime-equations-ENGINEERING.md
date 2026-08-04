@@ -31,20 +31,30 @@ remain distinct evidence classes. The non-executable target catalog remains
   accessible volume, current fraction, calcium valence, and Faraday's constant.
 - The new fused packet kernel evaluates Phillips-form NaP kinetics, Cav2.2,
   HCN, physical calcium decay/influx, and direction-dependent SK kinetics.
+- A single full-population parameter matrix supports packet, legacy SNr, and
+  control regions in one fused launch. Packet regions also receive their
+  authenticated fast-HH values, reversals, initial state, and per-gate Q10
+  factors after any legacy heterogeneity is applied.
+- Standard and CuPy direct-output bridge paths consume the same packet arrays.
+- Packet checkpoint schema v2 stores only the seven dynamic channel states.
+  Conductance maxima and the 36-value equation matrix are regenerated from
+  live reauthenticated artifacts. Packet-owned slices of otherwise mixed HH
+  parameter arrays are zeroed in HDF5 and regenerated after manifest checking.
 - The existing legacy SNr kernel remains unchanged.
 
 ## Verification
 
-The combined focused suite passed `33` NumPy tests with one expected CuPy-only
-skip and `34` CuPy tests on the RTX 3090. Kernel outputs were compared against
-the independent equations in `sim/snr_channel_parameters.py`, including a
-non-default Cav2.2 activation power and unequal SK activation/deactivation time
-constants.
+The final combined focused suite passed `81` NumPy tests with three expected
+CuPy-only skips and `84` CuPy tests on the RTX 3090. This includes independent
+equation-oracle checks, mixed packet/legacy ownership, legacy-equation
+differential checks, exact standard/direct-output GPU equivalence, reset,
+dynamic-only checkpoint continuation, and fail-closed tamper cases for dtype,
+domain, missing state, injected immutable arrays, and exposed packet HH values.
 
 ## Next action
 
-Build full-length per-neuron parameter arrays from authenticated region
-bindings, preserve exact legacy values in mixed simulations, and route both the
-standard and direct-output bridge paths through the packet kernel. Packet mode
-must remain provenance-only until that integration and dynamic-only checkpoint
-regeneration pass CPU/GPU continuation and mixed-region gates.
+Construct versioned executable candidate packets without collapsing measured
+targets, transferred channel evidence, and model priors into one authority.
+Bind those candidates and their held-out perturbations into a preregistered,
+multi-seed adaptive Stage B campaign. The completed runtime gates authorize
+that experiment; they do not establish adult-mouse SNr physiology.

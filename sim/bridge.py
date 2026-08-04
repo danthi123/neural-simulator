@@ -76,6 +76,7 @@ from sim.snr_packet_runtime import (
     packet_trust_reference_document,
     runtime_binding_manifest_bytes,
 )
+from sim.snr_packet_parameters import SNrPacketParameters
 from sim.connectivity import (generate_spatial_connections_gpu,
                               generate_spatial_connections_chunked,
                               generate_spatial_connections_binned,
@@ -99,6 +100,8 @@ from sim.kernels import (
                          fused_snr_conductance_update,
                          fused_snr_conductance_update_into,
                          prepare_fused_snr_conductance_update_into,
+                         fused_snr_packet_conductance_update,
+                         prepare_fused_snr_packet_conductance_update_into,
                          fused_adex_dynamics_update,
                          fused_conductance_decay_and_current,
                          fused_readonly_izh_step,
@@ -163,8 +166,53 @@ _SNR_CONDUCTANCE_ARRAYS = (
     *_SNR_CONDUCTANCE_STATE_ARRAYS,
 )
 _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA = 1
+_SNR_PACKET_CONDUCTANCE_CHECKPOINT_SCHEMA = 2
 _SNR_PACKET_CHECKPOINT_DATASET = "snr_packet_binding_manifest"
 _SNR_PACKET_CHECKPOINT_SCHEMA = 1
+_SNR_PACKET_KERNEL_PARAMETER_ORDER = (
+    "nap_activation_half_mv",
+    "nap_activation_slope_mv",
+    "nap_activation_tau_min_ms",
+    "nap_activation_tau_max_ms",
+    "nap_activation_tau_half_mv",
+    "nap_activation_tau_sigma_0_mv",
+    "nap_activation_tau_sigma_1_mv",
+    "nap_inactivation_half_mv",
+    "nap_inactivation_slope_mv",
+    "nap_inactivation_tau_min_ms",
+    "nap_inactivation_tau_max_ms",
+    "nap_inactivation_tau_half_mv",
+    "nap_inactivation_tau_sigma_0_mv",
+    "nap_inactivation_tau_sigma_1_mv",
+    "cav22_activation_half_mv",
+    "cav22_activation_slope_mv",
+    "cav22_activation_tau_ms",
+    "cav22_inactivation_half_mv",
+    "cav22_inactivation_slope_mv",
+    "cav22_inactivation_tau_ms",
+    "cav22_activation_power",
+    "hcn_activation_half_mv",
+    "hcn_activation_slope_mv",
+    "hcn_activation_tau_ms",
+    "calcium_baseline_um",
+    "calcium_decay_tau_ms",
+    "calcium_influx_um_per_ms_per_inward_ua_per_cm2",
+    "sk_half_activation_um",
+    "sk_hill_coefficient",
+    "sk_activation_tau_ms",
+    "sk_deactivation_tau_ms",
+    "E_nalcn_mv",
+    "E_na_mv",
+    "E_ca_mv",
+    "E_k_mv",
+    "E_hcn_mv",
+)
+_SNR_PACKET_HH_PHI_ORDER = ("hh_phi_m", "hh_phi_h", "hh_phi_n")
+_SNR_PACKET_FORBIDDEN_CHECKPOINT_DATASETS = (
+    *_SNR_CONDUCTANCE_MAX_ARRAYS,
+    "cp_snr_packet_parameter_matrix",
+    "cp_snr_packet_hh_phi_matrix",
+)
 _INHIBITORY_CLAMP_STATE_ARRAYS = (
     "cp_inhibitory_clamp_decay_state_nS",
     "cp_inhibitory_clamp_rise_state_nS",
@@ -566,6 +614,10 @@ class SimulationBridge:
         for attr_name in _SNR_CONDUCTANCE_ARRAYS:
             setattr(self, attr_name, None)
         self.cp_snr_ionic_current_scratch = None
+        self.cp_snr_packet_parameter_matrix = None
+        self.cp_snr_packet_hh_phi_matrix = None
+        self.snr_packet_kernel_parameters = MappingProxyType({})
+        self.snr_packet_hh_phi = MappingProxyType({})
         self._snr_direct_output_executor = None
         self._hh_direct_output_executor = None
  
@@ -2460,8 +2512,6 @@ class SimulationBridge:
             if self.region_manager is not None:
                 self._apply_per_region_neuron_types(cfg, n)
 
-            self._initialize_snr_conductance_bundle(cfg, n)
-
             # B2: Apply parameter heterogeneity if enabled. Also invoked when a
             # per-region heterogeneity mask exists (>=1 region set
             # enable_heterogeneity=True) even if the global flag is OFF — in that
@@ -2475,6 +2525,11 @@ class SimulationBridge:
                 self._apply_parameter_heterogeneity(
                     cfg, n, backend_neutral=backend_neutral_izh
                 )
+
+            # Packet-backed HH values are authoritative and must be applied
+            # after optional legacy heterogeneity. Legacy-only initialization
+            # is unchanged because heterogeneity does not alter these gates.
+            self._initialize_snr_conductance_bundle(cfg, n)
 
             # Multiplying a negative b by zero produces backend-dependent
             # signed-zero bytes. Recompute the initial recovery state through
@@ -2704,6 +2759,12 @@ class SimulationBridge:
             import traceback; traceback.print_exc()
             self.is_initialized = False
             self.snr_packet_bindings = MappingProxyType({})
+            self.cp_snr_packet_parameter_matrix = None
+            self.cp_snr_packet_hh_phi_matrix = None
+            self.snr_packet_kernel_parameters = MappingProxyType({})
+            self.snr_packet_hh_phi = MappingProxyType({})
+            self._snr_direct_output_executor = None
+            self._hh_direct_output_executor = None
             if is_gpu_backend() and 'cupy' in sys.modules:
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
@@ -2838,9 +2899,15 @@ class SimulationBridge:
         self.cp_graded_lateral_M[di, di] = 0.0
 
     def _initialize_snr_conductance_bundle(self, cfg, n):
-        """Allocate region-scoped SNr conductances and equilibrium state."""
+        """Allocate legacy or authenticated packet SNr state for all neurons."""
         for attr_name in _SNR_CONDUCTANCE_ARRAYS:
             setattr(self, attr_name, None)
+        self.cp_snr_packet_parameter_matrix = None
+        self.cp_snr_packet_hh_phi_matrix = None
+        self.snr_packet_kernel_parameters = MappingProxyType({})
+        self.snr_packet_hh_phi = MappingProxyType({})
+        self._snr_direct_output_executor = None
+        self._hh_direct_output_executor = None
         if self.region_manager is None:
             return
 
@@ -2855,7 +2922,8 @@ class SimulationBridge:
             attr_name: np.zeros(n, dtype=np.float32)
             for attr_name in field_to_attr.values()
         }
-        enabled = False
+        packet_mode = bool(getattr(self, "snr_packet_bindings", {}))
+        enabled = packet_mode
         for region in self.region_manager.regions():
             indices = np.asarray(
                 list(self.region_manager.indices(region.name)), dtype=np.int64
@@ -2870,35 +2938,291 @@ class SimulationBridge:
         if cfg.neuron_model_type != NeuronModel.HODGKIN_HUXLEY.name:
             raise ValueError("SNr conductance bundle requires HODGKIN_HUXLEY")
 
+        if packet_mode:
+            unfused_currents = (
+                "hh_g_M_max", "hh_g_CaT_max", "hh_g_h_max", "hh_g_NaP_max",
+            )
+            active_unpacketized = [
+                name for name in unfused_currents
+                if float(getattr(cfg, name, 0.0)) != 0.0
+            ]
+            if active_unpacketized:
+                raise ValueError(
+                    "SNr packet mode cannot combine with unpacketized HH currents: "
+                    + ", ".join(active_unpacketized)
+                )
+            if getattr(cfg, "enable_conductance_noise", False):
+                raise ValueError(
+                    "SNr packet mode cannot combine with unpacketized conductance noise"
+                )
+
+            regions = {region.name: region for region in self.region_manager.regions()}
+            expected_packet_regions = {
+                name for name, region in regions.items()
+                if region.snr_executable_packet_enabled
+            }
+            if set(self.snr_packet_bindings) != expected_packet_regions:
+                raise ValueError(
+                    "authenticated SNr packet bindings do not match configured regions"
+                )
+
+            legacy_values = {
+                "nap_activation_half_mv": -50.0,
+                "nap_activation_slope_mv": 4.5,
+                "nap_activation_tau_min_ms": 0.1,
+                "nap_activation_tau_max_ms": 0.1,
+                "nap_activation_tau_half_mv": 0.0,
+                "nap_activation_tau_sigma_0_mv": 1.0,
+                "nap_activation_tau_sigma_1_mv": -1.0,
+                "nap_inactivation_half_mv": -57.0,
+                "nap_inactivation_slope_mv": -6.0,
+                "nap_inactivation_tau_min_ms": 20.0,
+                "nap_inactivation_tau_max_ms": 20.0,
+                "nap_inactivation_tau_half_mv": 0.0,
+                "nap_inactivation_tau_sigma_0_mv": 1.0,
+                "nap_inactivation_tau_sigma_1_mv": -1.0,
+                "cav22_activation_half_mv": -27.5,
+                "cav22_activation_slope_mv": 3.0,
+                "cav22_activation_tau_ms": 0.5,
+                "cav22_inactivation_half_mv": -52.5,
+                "cav22_inactivation_slope_mv": -5.2,
+                "cav22_inactivation_tau_ms": 18.0,
+                "cav22_activation_power": 2.0,
+                "hcn_activation_half_mv": -75.0,
+                "hcn_activation_slope_mv": -5.5,
+                "hcn_activation_tau_ms": 100.0,
+                "calcium_baseline_um": cfg.snr_calcium_baseline,
+                "calcium_decay_tau_ms": cfg.snr_calcium_decay_tau_ms,
+                "calcium_influx_um_per_ms_per_inward_ua_per_cm2": cfg.snr_calcium_influx_scale,
+                "sk_half_activation_um": cfg.snr_sk_calcium_half,
+                "sk_hill_coefficient": cfg.snr_sk_hill_coefficient,
+                "sk_activation_tau_ms": cfg.snr_sk_activation_tau_ms,
+                "sk_deactivation_tau_ms": cfg.snr_sk_activation_tau_ms,
+                "E_nalcn_mv": cfg.snr_E_nalcn,
+                "E_na_mv": cfg.snr_E_nap,
+                "E_ca_mv": cfg.snr_E_ca,
+                "E_k_mv": cfg.snr_E_sk,
+                "E_hcn_mv": cfg.snr_E_h,
+            }
+            host_parameters = np.empty(
+                (len(_SNR_PACKET_KERNEL_PARAMETER_ORDER), n), dtype=np.float32
+            )
+            for row, name in enumerate(_SNR_PACKET_KERNEL_PARAMETER_ORDER):
+                host_parameters[row, :] = np.float32(legacy_values[name])
+
+            temperature_delta = (cfg.hh_temperature_celsius - 6.3) / 10.0
+            hh_phi_m = np.full(
+                n, cfg.hh_q10_m ** temperature_delta, dtype=np.float32
+            )
+            hh_phi_h = np.full(
+                n, cfg.hh_q10_h ** temperature_delta, dtype=np.float32
+            )
+            hh_phi_n = np.full(
+                n, cfg.hh_q10_n ** temperature_delta, dtype=np.float32
+            )
+
+            for region_name, binding in self.snr_packet_bindings.items():
+                parameters = binding.runtime_parameters
+                if type(parameters) is not SNrPacketParameters:
+                    raise TypeError(
+                        f"SNr packet region {region_name!r} lacks typed runtime parameters"
+                    )
+                indices = np.asarray(
+                    list(self.region_manager.indices(region_name)), dtype=np.int64
+                )
+                nap = parameters.nap
+                cav22 = parameters.cav22
+                hcn = parameters.hcn
+                calcium_parameters = parameters.calcium
+                sk = parameters.sk
+                ionic = parameters.ionic_env
+                q10 = parameters.q10_factors
+                packet_values = {
+                    "nap_activation_half_mv": nap.activation_half_mv,
+                    "nap_activation_slope_mv": nap.activation_slope_mv,
+                    "nap_activation_tau_min_ms": nap.activation_tau_min_ms / q10.nap,
+                    "nap_activation_tau_max_ms": nap.activation_tau_max_ms / q10.nap,
+                    "nap_activation_tau_half_mv": nap.activation_tau_half_mv,
+                    "nap_activation_tau_sigma_0_mv": nap.activation_tau_sigma_0_mv,
+                    "nap_activation_tau_sigma_1_mv": nap.activation_tau_sigma_1_mv,
+                    "nap_inactivation_half_mv": nap.inactivation_half_mv,
+                    "nap_inactivation_slope_mv": nap.inactivation_slope_mv,
+                    "nap_inactivation_tau_min_ms": nap.inactivation_tau_min_ms / q10.nap,
+                    "nap_inactivation_tau_max_ms": nap.inactivation_tau_max_ms / q10.nap,
+                    "nap_inactivation_tau_half_mv": nap.inactivation_tau_half_mv,
+                    "nap_inactivation_tau_sigma_0_mv": nap.inactivation_tau_sigma_0_mv,
+                    "nap_inactivation_tau_sigma_1_mv": nap.inactivation_tau_sigma_1_mv,
+                    "cav22_activation_half_mv": cav22.activation_half_mv,
+                    "cav22_activation_slope_mv": cav22.activation_slope_mv,
+                    "cav22_activation_tau_ms": cav22.activation_tau_ms / q10.cav22,
+                    "cav22_inactivation_half_mv": cav22.inactivation_half_mv,
+                    "cav22_inactivation_slope_mv": cav22.inactivation_slope_mv,
+                    "cav22_inactivation_tau_ms": cav22.inactivation_tau_ms / q10.cav22,
+                    "cav22_activation_power": cav22.activation_power,
+                    "hcn_activation_half_mv": hcn.activation_half_mv,
+                    "hcn_activation_slope_mv": hcn.activation_slope_mv,
+                    "hcn_activation_tau_ms": hcn.activation_tau_ms / q10.hcn,
+                    "calcium_baseline_um": calcium_parameters.baseline_um,
+                    "calcium_decay_tau_ms": calcium_parameters.decay_tau_ms / q10.calcium,
+                    "calcium_influx_um_per_ms_per_inward_ua_per_cm2": parameters.calcium_influx_um_per_ms_per_inward_ua_per_cm2,
+                    "sk_half_activation_um": sk.half_activation_um,
+                    "sk_hill_coefficient": sk.hill_coefficient,
+                    "sk_activation_tau_ms": sk.activation_tau_ms / q10.sk,
+                    "sk_deactivation_tau_ms": sk.deactivation_tau_ms / q10.sk,
+                    "E_nalcn_mv": ionic.nalcn_reversal_mv,
+                    "E_na_mv": ionic.sodium_reversal_mv,
+                    "E_ca_mv": ionic.calcium_reversal_mv,
+                    "E_k_mv": ionic.potassium_reversal_mv,
+                    "E_hcn_mv": ionic.hcn_reversal_mv,
+                }
+                for row, name in enumerate(_SNR_PACKET_KERNEL_PARAMETER_ORDER):
+                    value32 = np.float32(packet_values[name])
+                    if not np.isfinite(value32):
+                        raise ValueError(
+                            f"SNr packet derived parameter {name} is not float32-finite"
+                        )
+                    if name.endswith("_ms") and value32 <= 0.0:
+                        raise ValueError(
+                            f"SNr packet derived parameter {name} must remain positive"
+                        )
+                    host_parameters[row, indices] = value32
+
+                fast = parameters.fast_hh
+                idx_arr = cp.asarray(indices, dtype=cp.int64)
+                packet_hh_values = (
+                    (self.cp_hh_C_m, fast.capacitance_density_uf_per_cm2),
+                    (self.cp_hh_g_Na_max, fast.sodium_conductance_density_ms_per_cm2),
+                    (self.cp_hh_g_K_max, fast.potassium_conductance_density_ms_per_cm2),
+                    (self.cp_hh_g_L, fast.leak_conductance_density_ms_per_cm2),
+                    (self.cp_hh_E_Na, ionic.sodium_reversal_mv),
+                    (self.cp_hh_E_K, ionic.potassium_reversal_mv),
+                    (self.cp_hh_E_L, ionic.leak_reversal_mv),
+                    (self.cp_hh_v_peak, fast.spike_detection_voltage_mv),
+                    (self.cp_membrane_potential_v, fast.initial_voltage_mv),
+                    (self.cp_gating_variable_m, fast.initial_m),
+                    (self.cp_gating_variable_h, fast.initial_h),
+                    (self.cp_gating_variable_n, fast.initial_n),
+                )
+                for array, value in packet_hh_values:
+                    array[idx_arr] = cp.float32(value)
+
+                host_maxima["cp_snr_g_nalcn_max"][indices] = np.float32(
+                    parameters.nalcn.conductance_density_ms_per_cm2
+                )
+                host_maxima["cp_snr_g_nap_max"][indices] = np.float32(
+                    nap.conductance_density_ms_per_cm2
+                )
+                host_maxima["cp_snr_g_ca_max"][indices] = np.float32(
+                    cav22.conductance_density_ms_per_cm2
+                )
+                host_maxima["cp_snr_g_sk_max"][indices] = np.float32(
+                    sk.conductance_density_ms_per_cm2
+                )
+                host_maxima["cp_snr_g_h_max"][indices] = np.float32(
+                    hcn.conductance_density_ms_per_cm2
+                )
+                hh_phi_m[indices] = np.float32(q10.fast_hh_sodium_activation)
+                hh_phi_h[indices] = np.float32(q10.fast_hh_sodium_inactivation)
+                hh_phi_n[indices] = np.float32(q10.fast_hh_potassium_activation)
+
+            self.cp_snr_packet_parameter_matrix = cp.asarray(
+                host_parameters, dtype=cp.float32
+            )
+            self.snr_packet_kernel_parameters = MappingProxyType({
+                name: self.cp_snr_packet_parameter_matrix[row]
+                for row, name in enumerate(_SNR_PACKET_KERNEL_PARAMETER_ORDER)
+            })
+            self.cp_snr_packet_hh_phi_matrix = cp.asarray(
+                np.stack((hh_phi_m, hh_phi_h, hh_phi_n)), dtype=cp.float32
+            )
+            self.snr_packet_hh_phi = MappingProxyType({
+                name: self.cp_snr_packet_hh_phi_matrix[row]
+                for row, name in enumerate(_SNR_PACKET_HH_PHI_ORDER)
+            })
+
         for attr_name, values in host_maxima.items():
             setattr(self, attr_name, cp.asarray(values, dtype=cp.float32))
 
         voltage = self.cp_membrane_potential_v
-        self.cp_snr_nap_activation = (
-            1.0 / (1.0 + cp.exp(-(voltage + 50.0) / 4.5))
-        ).astype(cp.float32)
-        self.cp_snr_nap_inactivation = (
-            1.0 / (1.0 + cp.exp((voltage + 57.0) / 6.0))
-        ).astype(cp.float32)
-        self.cp_snr_ca_activation = (
-            1.0 / (1.0 + cp.exp(-(voltage + 27.5) / 3.0))
-        ).astype(cp.float32)
-        self.cp_snr_ca_inactivation = (
-            1.0 / (1.0 + cp.exp((voltage + 52.5) / 5.2))
-        ).astype(cp.float32)
-        self.cp_snr_calcium = cp.full(
-            n, cfg.snr_calcium_baseline, dtype=cp.float32
-        )
+        kinetics = self.snr_packet_kernel_parameters
+        if packet_mode:
+            self.cp_snr_nap_activation = (1.0 / (1.0 + cp.exp(
+                -(voltage - kinetics["nap_activation_half_mv"])
+                / kinetics["nap_activation_slope_mv"]
+            ))).astype(cp.float32)
+            self.cp_snr_nap_inactivation = (1.0 / (1.0 + cp.exp(
+                -(voltage - kinetics["nap_inactivation_half_mv"])
+                / kinetics["nap_inactivation_slope_mv"]
+            ))).astype(cp.float32)
+            self.cp_snr_ca_activation = (1.0 / (1.0 + cp.exp(
+                -(voltage - kinetics["cav22_activation_half_mv"])
+                / kinetics["cav22_activation_slope_mv"]
+            ))).astype(cp.float32)
+            self.cp_snr_ca_inactivation = (1.0 / (1.0 + cp.exp(
+                -(voltage - kinetics["cav22_inactivation_half_mv"])
+                / kinetics["cav22_inactivation_slope_mv"]
+            ))).astype(cp.float32)
+            self.cp_snr_calcium = kinetics["calcium_baseline_um"].copy()
+            self.cp_snr_h_activation = (1.0 / (1.0 + cp.exp(
+                -(voltage - kinetics["hcn_activation_half_mv"])
+                / kinetics["hcn_activation_slope_mv"]
+            ))).astype(cp.float32)
+            half = kinetics["sk_half_activation_um"]
+            hill = kinetics["sk_hill_coefficient"]
+        else:
+            self.cp_snr_nap_activation = (
+                1.0 / (1.0 + cp.exp(-(voltage + 50.0) / 4.5))
+            ).astype(cp.float32)
+            self.cp_snr_nap_inactivation = (
+                1.0 / (1.0 + cp.exp((voltage + 57.0) / 6.0))
+            ).astype(cp.float32)
+            self.cp_snr_ca_activation = (
+                1.0 / (1.0 + cp.exp(-(voltage + 27.5) / 3.0))
+            ).astype(cp.float32)
+            self.cp_snr_ca_inactivation = (
+                1.0 / (1.0 + cp.exp((voltage + 52.5) / 5.2))
+            ).astype(cp.float32)
+            self.cp_snr_calcium = cp.full(
+                n, cfg.snr_calcium_baseline, dtype=cp.float32
+            )
+            self.cp_snr_h_activation = (
+                1.0 / (1.0 + cp.exp((voltage + 75.0) / 5.5))
+            ).astype(cp.float32)
+            half = cp.float32(cfg.snr_sk_calcium_half)
+            hill = cp.float32(cfg.snr_sk_hill_coefficient)
         calcium = self.cp_snr_calcium
-        half = cp.float32(cfg.snr_sk_calcium_half)
-        hill = cp.float32(cfg.snr_sk_hill_coefficient)
         calcium_power = cp.power(calcium, hill)
         self.cp_snr_sk_activation = (
             calcium_power / (calcium_power + cp.power(half, hill))
         ).astype(cp.float32)
-        self.cp_snr_h_activation = (
-            1.0 / (1.0 + cp.exp((voltage + 75.0) / 5.5))
-        ).astype(cp.float32)
+
+    def _snr_packet_conductance_inputs(self, dt):
+        """Return the fixed packet-kernel signature for one fused launch."""
+        parameters = self.snr_packet_kernel_parameters
+        kinetics = tuple(
+            parameters[name] for name in _SNR_PACKET_KERNEL_PARAMETER_ORDER[:31]
+        )
+        reversals = tuple(
+            parameters[name] for name in _SNR_PACKET_KERNEL_PARAMETER_ORDER[31:]
+        )
+        return (
+            self.cp_membrane_potential_v,
+            self.cp_snr_nap_activation,
+            self.cp_snr_nap_inactivation,
+            self.cp_snr_ca_activation,
+            self.cp_snr_ca_inactivation,
+            self.cp_snr_calcium,
+            self.cp_snr_sk_activation,
+            self.cp_snr_h_activation,
+            dt,
+            *kinetics,
+            self.cp_snr_g_nalcn_max,
+            self.cp_snr_g_nap_max,
+            self.cp_snr_g_ca_max,
+            self.cp_snr_g_sk_max,
+            self.cp_snr_g_h_max,
+            *reversals,
+        )
 
     def _apply_per_region_neuron_types(self, cfg, n):
         """Override per-neuron parameters based on region.izh_neuron_type /
@@ -3346,6 +3670,7 @@ class SimulationBridge:
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             *_SNR_CONDUCTANCE_ARRAYS,
             'cp_snr_ionic_current_scratch',
+            'cp_snr_packet_parameter_matrix', 'cp_snr_packet_hh_phi_matrix',
             '_snr_direct_output_executor', '_hh_direct_output_executor',
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
@@ -3361,6 +3686,8 @@ class SimulationBridge:
         self.inhibitory_clamp_pathways = ()
         self.inhibitory_clamp_target_regions = ()
         self.snr_packet_bindings = MappingProxyType({})
+        self.snr_packet_kernel_parameters = MappingProxyType({})
+        self.snr_packet_hh_phi = MappingProxyType({})
         self.region_manager = None
 
         if is_gpu_backend() and 'cupy' in sys.modules:
@@ -7574,33 +7901,45 @@ class SimulationBridge:
             self.cp_snr_ionic_current_scratch = cp.empty_like(
                 self.cp_membrane_potential_v
             )
-        snr_inputs = (
-            self.cp_membrane_potential_v,
-            self.cp_snr_nap_activation,
-            self.cp_snr_nap_inactivation,
-            self.cp_snr_ca_activation,
-            self.cp_snr_ca_inactivation,
-            self.cp_snr_calcium,
-            self.cp_snr_sk_activation,
-            self.cp_snr_h_activation,
-            dt,
-            self.cp_snr_g_nalcn_max,
-            self.cp_snr_g_nap_max,
-            self.cp_snr_g_ca_max,
-            self.cp_snr_g_sk_max,
-            self.cp_snr_g_h_max,
-            cfg.snr_E_nalcn,
-            cfg.snr_E_nap,
-            cfg.snr_E_ca,
-            cfg.snr_E_sk,
-            cfg.snr_E_h,
-            cfg.snr_calcium_baseline,
-            cfg.snr_calcium_influx_scale,
-            cfg.snr_calcium_decay_tau_ms,
-            cfg.snr_sk_calcium_half,
-            cfg.snr_sk_hill_coefficient,
-            cfg.snr_sk_activation_tau_ms,
-        )
+        packet_mode = bool(getattr(self, "snr_packet_bindings", {}))
+        if packet_mode:
+            snr_inputs = self._snr_packet_conductance_inputs(dt)
+            prepare_snr = prepare_fused_snr_packet_conductance_update_into
+            hh_phi_m = self.snr_packet_hh_phi["hh_phi_m"]
+            hh_phi_h = self.snr_packet_hh_phi["hh_phi_h"]
+            hh_phi_n = self.snr_packet_hh_phi["hh_phi_n"]
+        else:
+            snr_inputs = (
+                self.cp_membrane_potential_v,
+                self.cp_snr_nap_activation,
+                self.cp_snr_nap_inactivation,
+                self.cp_snr_ca_activation,
+                self.cp_snr_ca_inactivation,
+                self.cp_snr_calcium,
+                self.cp_snr_sk_activation,
+                self.cp_snr_h_activation,
+                dt,
+                self.cp_snr_g_nalcn_max,
+                self.cp_snr_g_nap_max,
+                self.cp_snr_g_ca_max,
+                self.cp_snr_g_sk_max,
+                self.cp_snr_g_h_max,
+                cfg.snr_E_nalcn,
+                cfg.snr_E_nap,
+                cfg.snr_E_ca,
+                cfg.snr_E_sk,
+                cfg.snr_E_h,
+                cfg.snr_calcium_baseline,
+                cfg.snr_calcium_influx_scale,
+                cfg.snr_calcium_decay_tau_ms,
+                cfg.snr_sk_calcium_half,
+                cfg.snr_sk_hill_coefficient,
+                cfg.snr_sk_activation_tau_ms,
+            )
+            prepare_snr = prepare_fused_snr_conductance_update_into
+            hh_phi_m = self._cached_hh_phi_m
+            hh_phi_h = self._cached_hh_phi_h
+            hh_phi_n = self._cached_hh_phi_n
         snr_outputs = (
             self.cp_snr_nap_activation,
             self.cp_snr_nap_inactivation,
@@ -7614,9 +7953,7 @@ class SimulationBridge:
         snr_executor = getattr(self, "_snr_direct_output_executor", None)
         if snr_executor is None:
             self._snr_direct_output_executor = (
-                prepare_fused_snr_conductance_update_into(
-                    snr_inputs, snr_outputs
-                )
+                prepare_snr(snr_inputs, snr_outputs)
             )
         else:
             snr_executor(*snr_inputs, *snr_outputs)
@@ -7639,9 +7976,9 @@ class SimulationBridge:
             self.cp_hh_E_Na,
             self.cp_hh_E_K,
             self.cp_hh_E_L,
-            self._cached_hh_phi_m,
-            self._cached_hh_phi_h,
-            self._cached_hh_phi_n,
+            hh_phi_m,
+            hh_phi_h,
+            hh_phi_n,
             self.cp_hh_v_peak,
         )
         hh_arguments = (*hh_inputs,
@@ -8640,33 +8977,38 @@ class SimulationBridge:
                     firing_state_written_in_place = True
                 else:
                     if self.cp_snr_g_nalcn_max is not None:
-                        snr_update = fused_snr_conductance_update(
-                            self.cp_membrane_potential_v,
-                            self.cp_snr_nap_activation,
-                            self.cp_snr_nap_inactivation,
-                            self.cp_snr_ca_activation,
-                            self.cp_snr_ca_inactivation,
-                            self.cp_snr_calcium,
-                            self.cp_snr_sk_activation,
-                            self.cp_snr_h_activation,
-                            dt,
-                            self.cp_snr_g_nalcn_max,
-                            self.cp_snr_g_nap_max,
-                            self.cp_snr_g_ca_max,
-                            self.cp_snr_g_sk_max,
-                            self.cp_snr_g_h_max,
-                            cfg.snr_E_nalcn,
-                            cfg.snr_E_nap,
-                            cfg.snr_E_ca,
-                            cfg.snr_E_sk,
-                            cfg.snr_E_h,
-                            cfg.snr_calcium_baseline,
-                            cfg.snr_calcium_influx_scale,
-                            cfg.snr_calcium_decay_tau_ms,
-                            cfg.snr_sk_calcium_half,
-                            cfg.snr_sk_hill_coefficient,
-                            cfg.snr_sk_activation_tau_ms,
-                        )
+                        if self.snr_packet_bindings:
+                            snr_update = fused_snr_packet_conductance_update(
+                                *self._snr_packet_conductance_inputs(dt)
+                            )
+                        else:
+                            snr_update = fused_snr_conductance_update(
+                                self.cp_membrane_potential_v,
+                                self.cp_snr_nap_activation,
+                                self.cp_snr_nap_inactivation,
+                                self.cp_snr_ca_activation,
+                                self.cp_snr_ca_inactivation,
+                                self.cp_snr_calcium,
+                                self.cp_snr_sk_activation,
+                                self.cp_snr_h_activation,
+                                dt,
+                                self.cp_snr_g_nalcn_max,
+                                self.cp_snr_g_nap_max,
+                                self.cp_snr_g_ca_max,
+                                self.cp_snr_g_sk_max,
+                                self.cp_snr_g_h_max,
+                                cfg.snr_E_nalcn,
+                                cfg.snr_E_nap,
+                                cfg.snr_E_ca,
+                                cfg.snr_E_sk,
+                                cfg.snr_E_h,
+                                cfg.snr_calcium_baseline,
+                                cfg.snr_calcium_influx_scale,
+                                cfg.snr_calcium_decay_tau_ms,
+                                cfg.snr_sk_calcium_half,
+                                cfg.snr_sk_hill_coefficient,
+                                cfg.snr_sk_activation_tau_ms,
+                            )
                         (
                             self.cp_snr_nap_activation[:],
                             self.cp_snr_nap_inactivation[:],
@@ -8735,12 +9077,20 @@ class SimulationBridge:
                         effective_input_uA = effective_input_uA - I_NaP
 
                     # Per-gate Q10 (precomputed phi values cached on bridge)
+                    if self.snr_packet_bindings:
+                        hh_phi_m = self.snr_packet_hh_phi["hh_phi_m"]
+                        hh_phi_h = self.snr_packet_hh_phi["hh_phi_h"]
+                        hh_phi_n = self.snr_packet_hh_phi["hh_phi_n"]
+                    else:
+                        hh_phi_m = self._cached_hh_phi_m
+                        hh_phi_h = self._cached_hh_phi_h
+                        hh_phi_n = self._cached_hh_phi_n
                     v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
                         self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
                         effective_input_uA, dt,
                         self.cp_hh_C_m, g_Na_effective, g_K_effective, self.cp_hh_g_L,
                         self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
-                        self._cached_hh_phi_m, self._cached_hh_phi_h, self._cached_hh_phi_n,
+                        hh_phi_m, hh_phi_h, hh_phi_n,
                     )
                     fired_this_step = (self.cp_membrane_potential_v < self.cp_hh_v_peak) & (v_new >= self.cp_hh_v_peak)
 
@@ -10240,13 +10590,19 @@ class SimulationBridge:
 
                 state_group = h5f 
 
+                snr_checkpoint_arrays = (
+                    _SNR_CONDUCTANCE_STATE_ARRAYS
+                    if self.snr_packet_bindings
+                    else _SNR_CONDUCTANCE_ARRAYS
+                )
+
                 # Note: cp_synapse_pulse_timers and cp_synapse_pulse_progress are synapse-indexed
                 # and handled separately with pre-allocation slicing
                 arrays_to_save_direct = [
                     'cp_membrane_potential_v', 'cp_conductance_g_e', 'cp_conductance_g_i',
                     *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
                     'cp_external_input_current', 'cp_intrinsic_current_pA',
-                    *_SNR_CONDUCTANCE_ARRAYS,
+                    *snr_checkpoint_arrays,
                     *_INHIBITORY_CLAMP_STATE_ARRAYS,
                     'cp_syn_reversal_potential_i_per_neuron',
                     'cp_neuron_type_ids', 'cp_heterogeneity_neuron_mask',
@@ -10263,7 +10619,9 @@ class SimulationBridge:
                          state_group.attrs[f"{attr_name}_is_empty"] = True
                 if self.cp_snr_g_nalcn_max is not None:
                     state_group.attrs["snr_conductance_state_schema"] = (
-                        _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA
+                        _SNR_PACKET_CONDUCTANCE_CHECKPOINT_SCHEMA
+                        if self.snr_packet_bindings
+                        else _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA
                     )
                 if self.cp_inhibitory_clamp_decay_state_nS is not None:
                     state_group.attrs["inhibitory_clamp_state_schema"] = (
@@ -10471,7 +10829,21 @@ class SimulationBridge:
                     for param in ['C_m', 'g_Na_max', 'g_K_max', 'g_L', 'E_Na', 'E_K', 'E_L', 'v_peak']:
                          attr_name_cp = f"cp_hh_{param}"
                          data_array = getattr(self, attr_name_cp, None)
-                         if data_array is not None and data_array.size > 0: state_group.create_dataset(attr_name_cp, data=_backend_to_host(data_array), compression="gzip")
+                         if data_array is not None and data_array.size > 0:
+                             host_data = np.asarray(_backend_to_host(data_array)).copy()
+                             if self.snr_packet_bindings:
+                                 for region_name in self.snr_packet_bindings:
+                                     packet_indices = np.asarray(
+                                         list(self.region_manager.indices(region_name)),
+                                         dtype=np.int64,
+                                     )
+                                     host_data[packet_indices] = 0
+                                 state_group.attrs[
+                                     "snr_packet_hh_parameters_masked"
+                                 ] = True
+                             state_group.create_dataset(
+                                 attr_name_cp, data=host_data, compression="gzip"
+                             )
                          elif data_array is not None : state_group.attrs[f"{attr_name_cp}_is_empty"] = True
                 
                 h5f.attrs["_mock_total_plasticity_events"] = self._mock_total_plasticity_events
@@ -10723,6 +11095,8 @@ class SimulationBridge:
                 else:
                     self.cp_intrinsic_current_pA = None
 
+                loaded_packet_snr_state = None
+                packet_checkpoint_migration = False
                 saved_snr_arrays = {
                     attr_name for attr_name in _SNR_CONDUCTANCE_ARRAYS
                     if attr_name in state_group
@@ -10732,20 +11106,50 @@ class SimulationBridge:
                         raise ValueError(
                             "Checkpoint SNr conductance state requires HODGKIN_HUXLEY"
                         )
-                    if int(state_group.attrs.get(
-                            "snr_conductance_state_schema", -1
-                    )) != _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA:
-                        raise ValueError(
-                            "Checkpoint SNr conductance state has an invalid schema"
-                        )
-                    missing = set(_SNR_CONDUCTANCE_ARRAYS) - saved_snr_arrays
-                    if missing:
+                    schema = int(state_group.attrs.get(
+                        "snr_conductance_state_schema", -1
+                    ))
+                    if self.snr_packet_bindings:
+                        if schema != _SNR_PACKET_CONDUCTANCE_CHECKPOINT_SCHEMA:
+                            raise ValueError(
+                                "Checkpoint packet SNr state has an invalid schema"
+                            )
+                        forbidden = {
+                            name for name in _SNR_PACKET_FORBIDDEN_CHECKPOINT_DATASETS
+                            if name in state_group
+                        }
+                        if forbidden:
+                            raise ValueError(
+                                "Checkpoint packet SNr state contains immutable arrays: "
+                                + ", ".join(sorted(forbidden))
+                            )
+                        expected_arrays = set(_SNR_CONDUCTANCE_STATE_ARRAYS)
+                    else:
+                        if schema != _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA:
+                            raise ValueError(
+                                "Checkpoint SNr conductance state has an invalid schema"
+                            )
+                        expected_arrays = set(_SNR_CONDUCTANCE_ARRAYS)
+                    missing = expected_arrays - saved_snr_arrays
+                    extra = saved_snr_arrays - expected_arrays
+                    if missing or extra:
+                        detail = []
+                        if missing:
+                            detail.append("missing " + ", ".join(sorted(missing)))
+                        if extra:
+                            detail.append("unexpected " + ", ".join(sorted(extra)))
                         raise ValueError(
                             "Checkpoint SNr conductance state is incomplete: "
-                            + ", ".join(sorted(missing))
+                            + "; ".join(detail)
                         )
-                    for attr_name in _SNR_CONDUCTANCE_ARRAYS:
-                        host = np.asarray(state_group[attr_name][:], dtype=np.float32)
+                    loaded = {}
+                    for attr_name in expected_arrays:
+                        dataset = state_group[attr_name]
+                        if self.snr_packet_bindings and dataset.dtype != np.dtype(np.float32):
+                            raise ValueError(
+                                f"Checkpoint {attr_name} must have exact float32 dtype"
+                            )
+                        host = np.asarray(dataset[:], dtype=np.float32)
                         if host.ndim != 1 or int(host.size) != int(n):
                             raise ValueError(
                                 f"Checkpoint {attr_name} vector does not match neuron count"
@@ -10766,7 +11170,14 @@ class SimulationBridge:
                             raise ValueError(
                                 f"Checkpoint {attr_name} gates must be in [0, 1]"
                             )
-                        setattr(self, attr_name, cp.asarray(host, dtype=cp.float32))
+                        loaded[attr_name] = cp.asarray(host, dtype=cp.float32)
+                    if self.snr_packet_bindings:
+                        loaded_packet_snr_state = loaded
+                        for attr_name in _SNR_CONDUCTANCE_ARRAYS:
+                            setattr(self, attr_name, None)
+                    else:
+                        for attr_name, value in loaded.items():
+                            setattr(self, attr_name, value)
                 else:
                     if "snr_conductance_state_schema" in state_group.attrs:
                         raise ValueError(
@@ -10774,6 +11185,8 @@ class SimulationBridge:
                         )
                     for attr_name in _SNR_CONDUCTANCE_ARRAYS:
                         setattr(self, attr_name, None)
+                    if self.snr_packet_bindings:
+                        packet_checkpoint_migration = True
 
                 def _load_optional_neuron_array(key, dtype):
                     if key not in state_group:
@@ -11133,9 +11546,89 @@ class SimulationBridge:
                     hh_param_map = {'C_m': 'hh_C_m', 'g_Na_max': 'hh_g_Na_max', 'g_K_max': 'hh_g_K_max', 'g_L': 'hh_g_L',
                                     'E_Na': 'hh_E_Na', 'E_K': 'hh_E_K', 'E_L': 'hh_E_L', 'v_peak': 'hh_v_peak'}
                     for param_key, config_attr_name in hh_param_map.items():
-                         setattr(self, f"cp_hh_{param_key}", _load_cp_array_from_h5(f"cp_hh_{param_key}",
-                                 lambda s, ca_name=config_attr_name: cp.full(s, getattr(self.core_config, ca_name), dtype=cp.float32)))
+                         dataset_name = f"cp_hh_{param_key}"
+                         if self.snr_packet_bindings and not packet_checkpoint_migration:
+                             if not bool(state_group.attrs.get(
+                                 "snr_packet_hh_parameters_masked", False
+                             )):
+                                 raise ValueError(
+                                     "Checkpoint packet HH parameters are not masked"
+                                 )
+                             if dataset_name not in state_group:
+                                 raise ValueError(
+                                     f"Checkpoint packet mode is missing {dataset_name}"
+                                 )
+                             dataset = state_group[dataset_name]
+                             if dataset.dtype != np.dtype(np.float32):
+                                 raise ValueError(
+                                     f"Checkpoint {dataset_name} must have exact float32 dtype"
+                                 )
+                             host_hh = np.asarray(dataset[:])
+                             if host_hh.ndim != 1 or int(host_hh.size) != int(n):
+                                 raise ValueError(
+                                     f"Checkpoint {dataset_name} vector does not match neuron count"
+                                 )
+                             if not np.all(np.isfinite(host_hh)):
+                                 raise ValueError(
+                                     f"Checkpoint {dataset_name} must be finite"
+                                 )
+                             for region_name in self.snr_packet_bindings:
+                                 packet_indices = np.asarray(
+                                     list(self.region_manager.indices(region_name)),
+                                     dtype=np.int64,
+                                 )
+                                 if np.any(host_hh[packet_indices] != 0.0):
+                                     raise ValueError(
+                                         f"Checkpoint {dataset_name} exposes packet-derived values"
+                                     )
+                             setattr(
+                                 self, dataset_name,
+                                 cp.asarray(host_hh, dtype=cp.float32),
+                             )
+                         else:
+                             setattr(self, dataset_name, _load_cp_array_from_h5(
+                                 dataset_name,
+                                 lambda s, ca_name=config_attr_name: cp.full(
+                                     s, getattr(self.core_config, ca_name), dtype=cp.float32
+                                 ),
+                             ))
                     self.cp_neuron_firing_thresholds = None 
+
+                    if self.snr_packet_bindings:
+                        if (
+                            loaded_packet_snr_state is None
+                            and not packet_checkpoint_migration
+                        ):
+                            raise ValueError(
+                                "Checkpoint packet mode lacks validated SNr dynamic state"
+                            )
+                        dynamic_hh_state = None
+                        if loaded_packet_snr_state is not None:
+                            dynamic_hh_state = (
+                                self.cp_membrane_potential_v.copy(),
+                                self.cp_gating_variable_m.copy(),
+                                self.cp_gating_variable_h.copy(),
+                                self.cp_gating_variable_n.copy(),
+                            )
+                        self._initialize_snr_conductance_bundle(
+                            self.core_config, n
+                        )
+                        if dynamic_hh_state is not None:
+                            (
+                                self.cp_membrane_potential_v[:],
+                                self.cp_gating_variable_m[:],
+                                self.cp_gating_variable_h[:],
+                                self.cp_gating_variable_n[:],
+                            ) = dynamic_hh_state
+                            for attr_name, state in loaded_packet_snr_state.items():
+                                getattr(self, attr_name)[:] = state
+                        else:
+                            self._log_console(
+                                "Migrated a pre-dynamics SNr packet checkpoint; "
+                                "packet channel state was initialized from live "
+                                "authenticated artifacts and is not continuation-equivalent.",
+                                "warning",
+                            )
 
                 self._mock_total_plasticity_events = h5f.attrs.get("_mock_total_plasticity_events",0)
                 self._mock_network_avg_firing_rate_hz = h5f.attrs.get("_mock_network_avg_firing_rate_hz",0.0)
