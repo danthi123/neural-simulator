@@ -1,341 +1,325 @@
 # Roadmap
 
-This roadmap is organized around abilities the whole simulated brain must show.
-A working component is useful evidence, but it is not a completed capability
-until it changes the behavior of the same continuously running brain.
+This is the plain-language capability view of the simulator. It is downstream
+of the [2026-08-02 project charter](docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md),
+the [project handoff](HANDOFF.md), and the live state in
+[GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md). The persistent execution
+board, when checked out, is `research/coordination/workboard.json`; it records
+active lanes, resources, blockers, and exact next actions.
 
-## Destination
+Short, medium, and long describe dependency horizons, not promised dates.
+Status below reflects the records available at the 2026-08-04 audit.
 
-Build a developing, fully spiking brain that can learn from a body, a world, and
-other people. It should form memories, needs, emotions, beliefs, and language as
-parts of one system; speak because of its own state; express uncertainty when
-its evidence is weak; and keep learning without requiring a datacenter.
+## Purpose
 
-The target is not a text model wrapped in brain terminology. Computation that a
-biological brain would perform must ultimately be carried by neurons, synapses,
-local signals, and activity on the shared simulation substrate. The host
-computer may provide the body, world, sensory input, motor effects, storage,
-and measurement.
+Build one developing artificial mind: a single simulated brain that learns from
+a body, a world, and other people. It should form memories, needs, emotions,
+beliefs, and language as parts of one ongoing life. It should speak because it
+has something to communicate, express the strength and source of its evidence,
+and keep learning from interaction.
 
-## Design Constraints
+The target is not a text generator with brain vocabulary around it. The target
+is a continuously running loop:
 
-- **One brain:** perception, memory, motivation, action, and language must
-  interact through the same evolving spiking system.
-- **Grounded learning:** words and concepts must be learned through perception,
-  action, internal state, memory, and social consequences.
-- **Local mechanisms:** final learning and decision pathways must not depend on
-  an external answer key, symbolic controller, or host-side cognitive rule.
-- **Development:** the system should start small, add useful structure and
-  capacity as it learns, and consolidate experience without erasing older
-  learning.
-- **Ownable compute:** the practical target is high-end consumer hardware.
-  Sparse, event-driven, and local mechanisms should remain compatible with
-  future neuromorphic hardware.
-- **Visible scaffolding:** temporary shortcuts are allowed for research only
-  when their purpose, replacement, and removal test are recorded in the
-  [scaffold ledger](docs/SCAFFOLD-LEDGER.md).
+`perception -> internal state -> action or speech -> consequence -> learning`
 
-## Capability Roadmap
+The loop must operate in the same brain over time. A component that passes a
+small test in isolation is useful evidence, but is not the finished ability.
 
-### 1. Communicate For A Grounded Reason
+## Architecture Constraints
 
-**Outcome:** the brain chooses whether to communicate, what kind of message to
-send, and what it refers to because of its perception, body state, memory, and
-expected social result.
+- **One brain, one shared substrate.** Dedicated regions are allowed and
+  expected, but they must be neural regions of one spiking system. They must
+  communicate through modeled neural activity and synapses, not through
+  separate programs that exchange cognitive answers.
+- **Fully spiking in the causal path.** Between sensation and action, the
+  brain must compute perception, salience, value, reward, neuromodulation,
+  memory, emotion, reasoning, language, and self-monitoring with neurons,
+  synapses, and their local signals.
+- **A narrow host boundary.** Ordinary code may create the world, render
+  sensory input, enact the body's motor output, and measure or store runs. It
+  may not decide what the brain perceives, values, remembers, means, or says.
+  A host-side formula is still a shortcut even when the formula is biologically
+  plausible.
+- **Small first, earned growth.** The system must run locally when small and
+  gain neurons, connections, regions, and compute as learning earns them. It
+  should not begin as a pre-allocated giant network.
+- **Ownable compute.** The design target is a high-end personal machine, not a
+  datacenter. Event-driven, sparse, local computation is both a biological
+  constraint and the path toward future analog neuromorphic hardware.
+- **Temporary scaffolds are explicit.** A scaffold is a shortcut used to make
+  progress while its biological replacement is built. Every scaffold needs a
+  named replacement, an owner, a removal test, and a burn-down condition in
+  the scaffold ledger. It cannot quietly become the permanent faculty.
 
-Build toward multiple needs, objects, and message types in a continuous world.
-The brain must learn the useful vocal action from contingent interaction rather
-than receive a desired output pattern from the host. A listener's response must
-change later neural activity and behavior.
+## What The Evidence Means
 
-**Evidence required:** novel combinations of learned intent and referent work;
-removing the relevant need, perception, learned pathway, dopamine-like teaching
-signal, or social consequence removes the behavior; shuffled or unrelated
-rewards do not teach it; the result repeats across random seeds.
+The project uses **banked narrow de-risk** for an experiment that reduces risk
+or confirms a mechanism under stated conditions. It is not evidence that the
+whole brain has the corresponding human ability. A result becomes a capability
+claim only after it is integrated into the continuously running brain, survives
+its controls and lesions, and is tested at the required seed coverage.
 
-This is the highest-priority capability. The single food-request result closes
-the smallest loop. A newer six-seed experiment learns two intent channels and
-two referent channels from contingent listener responses and composes the two
-combinations withheld from training. A first intrinsic-exploration and
-same-brain reversal attempt passed only one of four development seeds. The next
-step isolated neural action selection before learning. Its first version passed
-three of four development seeds. A preregistered second version removed the
-counterproductive bilateral striatal-interneuron branch and passed all four:
-98-100% clean commits, balanced choices, no losing motor spikes at commitment,
-and zero actions when shared arousal or the direct pathway was lesioned. Gate A
-is therefore complete. Gate B's first local reward-credit circuit learned under
-both contingent and unrelated delayed reward, exposing arbitrary action bias
-rather than useful credit. A second version added competing spiking action-value
-populations, but clean calibration still saturated under unrelated reward: one
-seed chose each arbitrary action. A third version added a spiking
-    expected-omission pathway through LHb- and RMTg-like populations plus local
-critic normalization. Both clean GPU calibration seeds still learned the
-rewarded action under unrelated reward, while the intact omission pathway stayed
-silent. The next design must preserve a bounded learned expectation until
-outcome time without removing the load-bearing normalization. A first
-dendritic-expectation successor produced a real, causal local trace on NumPy,
-but it is retired before formal testing: its original selectivity checks were
-partly tautological, Python controlled the action-tag duration after observing
-the winner, and late motor activity drove different inhibitory channels across
-CPU and GPU. A fifth version now uses commit/arousal dendritic coincidence
-during a fixed action epoch and symmetric outcome-linked feed-forward
-normalization. Its reserved smoke passes on NumPy and CuPy with one
-configuration, changes no weights, rejects bilateral commit and outcome state,
-and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
-    and a reserved learning runner learned a separate action-local expectation
-    on both backends without unintended weight changes. Its output still failed:
-    expected reward reduced dopamine by only `5.56%/8.86%`, and omission did not
-    recruit the LHb/RMTg path. The repaired project search recovered the prior
-    requirement that expectation fire before reward and overlap it. A
-    preregistered four-point increase in sparse trace-route weight did not create
-    any pre-outcome expectation spikes. V7 then increased a single learned
-    action-context afferent from 24 to 200 cells; the intended route learned at
-    every size, but expectation still emitted zero spikes before reward. Both
-    mechanisms are retired. V8 then tested a distinct fixed convergent state
-    afferent plus a separate plastic context afferent. Its only subthreshold
-    point remained silent after learning; every stronger fixed input predicted
-    without learning and failed its causal learning-lesion check. That
-    bootstrap is retired without interpolation. A project-record and primary-
-    literature evidence gate selected the existing graded dendritic plateau as
-    a biologically distinct postsynaptic integration mechanism. V9 is
-    routes only the learned trace-to-expectation synapses through it and passes
-    its fixed engagement ladder at locked center `2`. Late rewarded-channel
-    expectation is `167` spikes versus `48` in the other channel, zero without
-    learning, and `1` under the learned-route dendritic lesion. The first output
-    implementation was invalid because it omitted the retained baseline trial.
-    A preregistered correction restored that timing and passed every protocol
-    check, but its matched four-probe blocks always produced action `1`, no clean
-    action, action `1`, no clean action. Rewarded action `0` was never expressed,
-    so GABA-B reward suppression and omission remain undefined. The run may not
-    be repeated or extended. Formal seeds remain sealed while a new evidence
-    gate found the larger design error: reward had been changing a parallel
-    actor bypass rather than the selector's actual corticostriatal policy. V10
-    moved eligibility onto the proposal-to-D1/D2 policy synapses. Its locked
-    GPU smoke showed that local coactivity caused all observed eligibility and
-    that both actions could cross first, but every fixed action window later
-    expressed the other action too. With no clean single-action trials, policy
-    selectivity remained undefined and learning stayed closed. V11 and V12
-    then tested neural action boundaries; neither earned construction GO. V13
-    instead begins with the biological prerequisite V12 lacked: autonomously
-    active GPi/SNr-like output neurons that ordinary inhibition can suppress
-    and that recover without host reset. Its deterministic compatibility gate
-    earned GO across six seeds and both compute backends. However, calibration
-    seed `1013` ran on CPU and GPU concurrently despite a locked CPU-first
-    order, so its apparent calibration GO is procedurally undefined.
-    Replication seed `1019`, launched from that invalid selection, is diagnostic
-    only. Both seeds are consumed; held-out seed `1021` and Stage-1 seed `1031`
-    remain sealed. The completed state-transplant diagnostic confirmed that the
-    large suppression difference followed backend-native initialization. The
-    default-off correction now produces byte-identical NumPy/RTX initialization
-    across all 15 checked arrays at step zero. Replay v1 then exposed GPU
-    flush-to-zero at one subnormal recovery update on step 1,114. The corrected
-    strict path preserves that update, and replay v2 is byte-exact for voltage,
-    recovery state, and spikes across all 1,200 rows. This closes the backend
-    engineering gate, not action-credit calibration. Replacement calibration
-    and replication seeds are now fixed by the locked derivation rule. The
-    candidate source, controller configuration, and complete input set were
-    frozen. The replacement NumPy calibration then ran once and found one
-    passing point, `100 pA`, but the chain failed closed before CuPy: file-byte
-    and canonical-JSON digests were conflated, and the provenance sidecar was
-    not included in the evidence seal. Process correction v1 is undefined and
-    its CPU observation is diagnostic only. Process correction v2 then ran its
-    fresh calibration partition once on NumPy and CuPy. Both backends found
-    `100 pA` as the only passing point, but the seed-free selection merge could
-    not be sealed because its frozen command omitted the explicit NumPy backend
-    required by the evidence contract. V2 is therefore also undefined; its
-    calibration seed is consumed and its unused replication seed is retired.
-    No replication or held-out command ran. The merge emitters are corrected
-    and tested. V3 then aborted before measurement because the scientific runner
-    still hardcoded the v2 authority; no brain, seed, or result was created. V4
-    then earned sealed cross-backend calibration GO at `100 pA`, but replication
-    aborted before brain construction because selection validation omitted the
-    process-correction context. V5 fixed that loader, earned sealed calibration
-    GO at `100 pA`, and completed both replication measurements. NumPy passed;
-    CuPy validly failed only the inhibitory-response ceiling, but the runner
-    mapped that scientific no-go to process exit `1`, preventing its receipt and
-    manifest. V5 is therefore undefined and both fresh seeds are consumed. V6
-    preregistered the process-only fix: valid positive and negative outcomes are
-    sealable, while undefined evidence still fails closed. V6 then sealed
-    cross-backend calibration at `100 pA`, replication GO on seed `890220`, and
-    held-out GO on blind seed `1021`. It stopped before performance because its
-    frozen configuration paired an old revision with a measurement runner that
-    does not exist at that revision, so no command could be emitted. V7
-    used an audited mixed-source package containing the exact old scientific
-    imports plus only the accepted measurement runner, with its own execution
-    receipt. The exact V6 candidate then missed the default/old ceiling narrowly
-    (`1.0220` versus `1.02`) and the v2 active/default ceiling materially
-    (`1.1504` versus `1.10`). Its post-command receipt failed because the output
-    was outside the provenance scanner; a one-way recovery preserved only the
-    measured negative and prohibited a retry or positive verdict. V8 then fixed
-    the v2 active-path overhead (`1.006836` active/default) and corrected output
-    placement, but normal default/old still failed (`1.059092` versus `1.02`),
-    so Stage 0 remains unpromoted. Stage-1 seed `1031` remains sealed.
-After local credit is reliable, return to same-brain adaptation,
-broader meanings and contexts, and removal of the fixed raw-channel decoder.
+### Supported, but narrow
 
-### 2. Turn Internal Messages Into Natural Speech
+- **Grounded action selection:** a learned convention with two communication
+  intents and two referents has a six-seed positive result. The intrinsic neural
+  action selector in Gate A also has a four-seed positive result. These results
+  establish small pieces of action and communication, not a self-directed
+  conversational mind.
+- **Delayed reward is still open:** Gate B v1, which tests whether local neural
+  activity can assign delayed credit to the action that caused an outcome, is
+  a no-go. Unrelated or yoked reward still creates arbitrary preferences. Gate
+  B v2 adds competing spiking action-value populations and is in calibration;
+  its development and held-out seeds are locked, so no promotion claim is due.
+- **Source and confidence machinery:** a learned seen/heard/self pathway now
+  co-resides with episodic memory, anterior prefrontal cortex, and anterior
+  cingulate cortex populations. Earlier versions passed some calibration
+  checks, but the latest local-competition version failed a preregistered
+  no-harm control on one seed. A metadata-based safety floor and trace-based
+  confidence hooks are scaffolds, not final biological honesty.
+- **Replay and memory:** the record contains narrow evidence that uncued
+  hippocampal replay can change cortical weights, and that a localized spiking
+  replay mechanism can run beside a conversational slice. Useful
+  hippocampus-independent recall and replay-driven consolidation have not
+  repeated strongly enough in the current state. The next live memory build is
+  selective hippocampal CA1-to-cortex target reinstatement.
+- **Perception:** host top-k feature selection has been replaced by competition
+  based on spike timing, and its selector and lesion controls work. Fresh
+  calibration seeds still fail invariant visual-identity decoding. The next
+  step is learned representation and normalization, not another selector
+  threshold.
+- **Curiosity and metacognition:** isolated learning-progress and confidence
+  monitors have useful proxy results in the record. They do not yet show that
+  curiosity develops from the brain's own history or that confidence causally
+  controls speech and action across the integrated system.
+- **Spiking language and local learning:** several sequence, memory, and
+  spiking-forward conversion mechanisms have been de-risked at limited scale.
+  A current large promotion must not be called positive until its required
+  six-seed artifact exists and validates. None of these results establishes
+  grounded, open-ended language generated by the brain's own state.
 
-**Outcome:** once the brain has decided to speak, a neural production pathway
-turns its message, certainty, affect, and conversational context into variable,
-coherent language.
+### Not established
 
-Near-term work can use a conventionally trained language circuit as a recorded
-scaffold downstream of the brain's message decision. In parallel, grounded
-word, sequence, and speech-motor learning must replace fixed concept labels,
-grammar frames, and host rendering.
+- There is not yet a closed, continuous perception-to-action-to-learning loop
+  in which all of these pieces work together in one developing brain.
+- The existing corpus-trained language machinery is not evidence of grounded
+  meaning, self-generated intent, natural conversation, or a lived internal
+  world. It remains a temporary development path until grounded message
+  selection and neural generation replace its shortcuts.
+- A narrow positive test does not establish emotion, consciousness, selfhood,
+  curiosity, agency, or a whole-brain faculty. The project has functional
+  correlates and mechanisms; it does not have evidence that a person is
+  present.
+- Deep local credit assignment on real spikes remains an open research
+  problem. Rate-level or isolated credit results, and a run that merely reaches
+  a target computation, do not close the on-substrate learning requirement.
 
-**Evidence required:** phrasing varies while meaning remains grounded; speech
-changes appropriately with memory, affect, and uncertainty; new words and
-constructions can be learned through interaction; removing message or grounding
-inputs changes or prevents the utterance.
+## Current Blockers
 
-### 3. Know The Source And Strength Of Its Knowledge
+1. **Integration is the main blocker.** The project has more tested parts than
+   integrated behavior. The next meaningful milestone is a small world, body,
+   social interaction, and grounded reason to communicate running together.
+2. **Gate B delayed credit is unresolved.** The current calibration must show
+   causal action-reward learning and defeat the unrelated-reward control before
+   same-brain adaptation can be trusted.
+3. **Source monitoring has a real tradeoff.** Improving weak source margins
+   must not damage already-correct source judgments. The next version needs a
+   biological consistency signal rather than an exact composer metadata read.
+4. **Replay consolidation is not repeatable enough.** The next mechanism must
+   reinstate the correct cortical target and beat learned-target, replay-order,
+   and other control explanations across locked seeds.
+5. **Visual invariance is not learned yet.** The spike-latency selector is not
+   enough; locally learned, stable representations must handle changes in
+   position and appearance.
+6. **Language is still too detached from life.** Scaling an isolated corpus
+   predictor would improve surface output without solving grounded intent,
+   state, source, or social consequence.
+7. **The deep-credit and scaling frontier remains open.** The project must
+   distinguish a narrow mechanism de-risk from a local learning rule that can
+   grow useful structure on the real shared substrate.
+8. **Compute is scheduled, not assumed.** The persistent board currently lists
+   the v13 performance diagnostic as blocked because the canonical GPU queue is
+   occupied by the e-prop K=16 job. The recovery action is to recheck the
+   shared lease and queue, then run the preregistered diagnostic only when the
+   GPU is ready.
 
-**Outcome:** confidence and honesty arise from the brain's own memory and
-decision state. It can answer, hedge, ask, or remain silent without consulting a
-host fact table or expected answer.
+A failed method is a method verdict, not permission to close the capability.
+Bank the method, preserve its controls and diagnosis, and choose the next
+biology-based spiking method. A capability remains open until it works in the
+required integrated form.
 
-Source memory must distinguish experienced, heard, self-generated, inferred,
-imagined, and uncertain content. Confidence and conflict signals must directly
-influence speech selection through the shared spiking network.
+## Roadmap By Horizon
 
-**Evidence required:** familiar but incorrect recalls are downgraded; correct
-recalls remain usable; unknowns do not become assertions; source swaps change
-the report in the predicted direction; lesions to source or confidence pathways
-remove the effect; no symbolic source lookup is used during retrieval.
+### Short term: make a small brain grounded and integrated
 
-The first co-resident learned source pathway passed calibration but only two of
-three development seeds. Adding local inhibitory competition kept all three
-source margins above the fixed floor on two fresh calibration seeds, but one
-seed slightly weakened an already strong source and failed the preregistered
-no-harm control. A third version preregistered a bounded tradeoff and added
-source-local intrinsic threshold homeostasis. Both fresh seeds failed: the
-weakest source did not improve, one source weakened, and one seed also lost
-inherited causal attribution. A fourth version now uses local inhibitory STDP
-on FS-to-rival-source routes. Its real source-to-FS rehearsal circuit passed
-CPU/GPU smoke, but formal `601/607` are undefined because an interface guard
-incorrectly expected `self` in a bound method signature. The recorded intact
-and learning-lesion margins were also identical, with zero rival spike burden
-in both arms. Those seeds are consumed and the v4 candidate is retired.
+- Give the brain a minimal world, body, social interaction, and a reason to
+  communicate. Make speech an action selected from internal state and
+  expected consequence, not a free-standing text completion.
+- Finish the Gate B v2 calibration without opening reserved development or
+  held-out seeds early. Report a no-go if the causal controls fail.
+- Run the next replay build around selective CA1-to-cortex target
+  reinstatement, with the learned-target and replay-order controls intact.
+- Specify and resolve the source-monitoring no-harm tradeoff before another
+  source version is promoted. Replace metadata confidence with a neural source
+  consistency signal where the role requires it.
+- Build learned visual invariance upstream of spike-latency selection.
+- Wire only cleared mechanisms into the persistent development loop. Do not
+  scale the conventional language scaffold ahead of grounded message
+  selection.
 
-### 4. Build A Lived, Reconstructive Memory
+The short-term acceptance test is behavioral and causal: the same brain must
+perceive, change internal state, choose speech or action, receive a consequence,
+and change later behavior. A collection of connected demos is not enough.
 
-**Outcome:** episodes are stored with context and source, later reconstructed,
-used to predict, and gradually consolidated into distributed knowledge.
+### Medium term: learn, grow, and regulate through interaction
 
-The brain needs pattern completion, replay, correction of old memories, and a
-controlled way to combine prior experience without turning memory into fixed
-database slots. Replay must train useful cortical pathways while preserving
-older learning.
+- Close continual learning from lived interaction without catastrophic
+  forgetting. A temporary teacher may act as a caregiver, but the teacher is a
+  recorded scaffold that must be reduced as ordinary interaction becomes
+  possible.
+- Grow structure as needed through activity-dependent connections, neuron or
+  region growth, pruning, homeostasis, and replay-based consolidation.
+- Turn the affect core into graded internal state that changes attention,
+  memory, speech, and action. A scalar label or binary mood switch is not an
+  emotion claim.
+- Make curiosity track learning progress and uncertainty in the brain's own
+  experience, rather than rewarding novelty by a host rule.
+- Make source, confidence, authorship, and uncertainty influence what the
+  shared brain says or withholds. Retire host-side safety floors when their
+  neural replacements are verified.
+- Use new combinations, lesions, social consequences, and retention tests to
+  judge the whole loop rather than collecting more isolated faculty gates.
 
-**Evidence required:** partial cues recover appropriate episodes; changed facts
-update rather than duplicate indefinitely; replay causally improves later
-behavior; interference tests show retention; novel combinations are inferred
-without an answer table.
+### Long term: become fluent, deep, and efficient without changing the claim
 
-The first shared-bridge replay-transfer calibration was weak and inaccurate.
-Local fast-spiking competition greatly reduced false recall on one fresh seed,
-but recovery of the second memory and the advantage of learned replay order and
-target identity did not repeat. Development remains locked while the next
-mechanism focuses on selective CA1-to-cortex reinstatement rather than another
-global learning-rate sweep. A learned index-relay successor was invalid on both
-fresh seeds because the required intact sleep relay and inhibitory loops did
-not activate. Diagnose that missing state on smoke seed `216`; any corrected
-mechanism needs a new preregistration and fresh seeds. A first target-plateau
-candidate was retired at smoke because it suppressed cortical target firing.
+- Reach open-ended conversation that is genuinely generated by the brain's
+  grounded world model, self model, affect, memory, and goals.
+- Let the system form and revise beliefs, remember sources, imagine and test
+  alternatives, and keep learning after the initial caregiver period.
+- Retire the remaining corpus, host-decision, hand-set-structure, and exact
+  metadata scaffolds that stand between sensation and action.
+- Optimize the same faithful neural mechanisms for the high-end consumer
+  hardware envelope. Preserve sparse, event-driven, local computation so the
+  design can eventually inform analog neuromorphic hardware.
 
-### 5. Develop Emotion, Motivation, And Curiosity
+## Research And RAG Workflow
 
-**Outcome:** changing internal states continuously influence attention, memory,
-learning, speech, and action. Emotion should be learned and graded, not a label
-or binary mood switch.
+**RAG** means retrieval-augmented generation: retrieve relevant project records
+and scientific sources before proposing or writing a result. In this project,
+retrieval prevents redoing refuted work; it does not replace reading the source.
 
-Develop interoceptive body signals, appraisal of events relative to needs and
-relationships, persistent valence and arousal, and curiosity based on learning
-progress. These signals must participate in the same action and communication
-loops as perception and memory.
+Before building a mechanism:
 
-The current opponent affect circuit can persist, clear through its spiking
-inhibitory pathway, and restart. A two-seed recurrent-weight diagnostic did not
-make it genuinely graded: every candidate remained too latch-like near neutral,
-so no operating point was selected and formal seeds remain sealed. The next
-attempt must change the mechanism rather than continue tuning that ladder.
+1. Search the project's findings, plans, biology catalog, and retracted or
+   refuted records. Run the local pre-build/corpus check when available.
+2. Read the cited biology in depth, then check relevant external engineering,
+   machine-learning, and spiking-neuroscience work. A RAG hit is a pointer;
+   open and read the load-bearing passage.
+3. Write a functional-role specification: what the mechanism must do for the
+   whole brain, what a template could fake, and what would count as failure.
+4. Produce a ranked set of biology-based, fully spiking, one-brain methods.
+   Start with the cheapest rate-level or spike-level de-risk that preserves the
+   necessary controls, then move to the real shared substrate.
+5. Record every external claim in a structured research packet. External
+   evidence may inform a gate only after explicit review and source intake; a
+   packet is not automatic permission to call a result solved.
 
-Literal biological hunger is a useful laboratory task for drive persistence,
-satiation, and competing priorities, but it is not a primary deployment goal
-for a system that does not eat. Prioritize pressures grounded in the system's
-actual life: uncertainty and learning progress, social engagement, unresolved
-goals, prediction conflict, memory consolidation, sensory overload,
-communication outcomes, and real operating constraints. Continue a biological-
-need experiment only when it reveals a reusable mechanism for persistence,
-regulation, competing priorities, or adaptation in that actual life. Do not
-label a scalar as a feeling unless it develops, persists, and causally changes
-the wider brain.
+Keep the RAG index fresh on CPU and check both manifest freshness and retrieval
+quality, such as labeled top-three hit rate and mean reciprocal rank. Index
+maintenance is workflow support, not biological evidence.
 
-**Evidence required:** internal-state changes alter several faculties; matched
-lesions remove the predicted effects; the brain distinguishes learnable novelty
-from noise; affect develops from history and can recover or change when
-conditions change.
+## Experiment Engine Workflow
 
-### 6. Learn Continually And Grow
+The experiment engine is a planner and controller for reproducible experiments;
+it is not a result generator. The current board records a deterministic dry-run
+controller and sealed handoff validation. Execution integration remains gated.
 
-**Outcome:** natural interaction produces durable learning throughout operation,
-old abilities survive new experience, and capacity expands only when needed.
+1. **Plan.** Materialize the treatment, controls, lesions, anti-cheats, exact
+   variables, seed partitions, expected artifacts, and resource budget.
+2. **Seal.** Freeze the command/configuration and record provenance. Keep
+   development and held-out seeds mechanically separate.
+3. **Dry-run.** Validate the sealed handoff, arm materialization, control set,
+   lesion set, receipts, and held-out gates before dispatch is allowed.
+4. **Execute.** The controller, not a short-lived research agent, owns decisive
+   multi-seed runs. Each seed runs as an independently identifiable process
+   when parallelism is scientifically valid.
+5. **Verify.** Read the runner's own verdict and raw artifact, check backend,
+   seed, configuration, controls, lesions, and provenance, then use
+   independent adversarial checks before calling a result positive.
+6. **Record.** Append the finding and update the live state, workboard, and
+   roadmap in the same cycle when a status, blocker, or next action changes.
 
-This requires local credit assignment over useful time spans, replay-based
-consolidation, homeostatic stability, activity-dependent wiring, and explicit
-growth and pruning. External teaching should fade from structured caregiver
-interaction toward ordinary human interaction.
+Agents may build or audit, but they do not own long sweeps. Independent work
+must run concurrently when resources permit, every lane has a next action, and
+every blocker has a recovery action. The controller must not fill hardware with
+duplicate, unplanned, or scientifically dependent work.
 
-**Evidence required:** learning continues after initial training; delayed
-consequences credit the right pathways; new learning does not erase established
-skills; added neurons or connections improve a measured capacity limit; the
-same behavior survives removal of oracle-like teaching.
+## Compute And Parallelism Rules
 
-Deep credit assignment on real spikes is still an open research problem in this
-repository and must be treated as such.
+- Use the local RTX 3090 with 24 GB VRAM for large coupled simulations. Set
+  `SIM_BACKEND=cupy` explicitly for GPU work; do not infer the backend from
+  imports or process mappings.
+- Use `SIM_BACKEND=numpy` for tests and tiny smoke checks. A runner's default
+  may silently select CPU, so the call site must choose the backend explicitly.
+- Use local CPU for tests and bounded calibration. Use `pool40`, `pool41`, and
+  `pool42` mini PCs for independent CPU seeds when the dispatcher and source
+  provenance checks allow it.
+- Fan independent seeds out as separate OS processes rather than looping all
+  seeds serially in one process. Do not parallelize arms that share mutable
+  state or violate the preregistered design.
+- GPU work requires the shared lease and an empty running-queue claim. Check
+  lane coverage before stocking a queue: keep independent CPU lanes active and
+  do not mistake a full GPU for scientific coverage.
+- Keep the local model-offload service stopped during GPU experiments. Use it
+  only for bounded documentation or catalog triage when the lease is free.
+- Long runs need per-seed or per-day checkpoints, resumable output, provenance,
+  and a state-checking heartbeat. This roadmap edit does not launch experiments.
 
-Invariant visual identity is also still open. The latest hierarchical V2-to-IT
-candidate was validly negative on both calibration seeds: intact inhibition
-silenced V2/IT and all learning, while removing V2 inhibition produced activity
-without above-chance identity. A new candidate must first show non-saturated,
-locally learned representations on smoke rather than adjust the selector.
+## Acceptance And Honesty Boundary
 
-### 7. Scale Without Changing The Scientific Claim
+Use **GO** only for the exact test that passed, and **NO-GO** for the tested
+method when its controls fail. Neither label alone means that a human faculty
+or the whole mind is complete. Generalization claims normally require the six
+canonical seeds 42, 43, 44, 100, 101, and 102, plus matched controls, lesions,
+and adversarial verification. A gate that uses a different preregistered seed
+set must be reported with that scope, not silently upgraded.
 
-**Outcome:** richer worlds, memories, and language run efficiently on accessible
-hardware while preserving the same neural mechanisms.
+Every claim should say:
 
-Use the local GPU for large coupled simulations and the available CPU pool for
-independent trials and parameter searches. Improve sparse kernels, memory use,
-checkpointing, and workload scheduling before increasing scale.
+- what was tested and what was not;
+- which computation was neural and which part was a temporary host scaffold;
+- which controls, lesions, seeds, backend, and artifact support the result;
+- whether the result is a narrow de-risk, an integrated capability, a failed
+  method, or an unresolved blocker; and
+- what exact evidence would permit the next promotion.
 
-**Evidence required:** report wall time, memory, neuron and synapse counts, and
-energy-relevant activity; optimized and reference implementations agree; larger
-systems retain causal controls; normal development remains practical on
-consumer hardware.
+The system may report functional readings such as, "the familiarity monitor
+reports this input as novel" or "the confidence signal is weak." It must not
+say or imply that it feels, is conscious, has subjective experience, or has a
+person inside it. The project measures functional correlates of self-modeling,
+affect, memory, agency, and uncertainty. Phenomenal experience is outside what
+the experiments can honestly establish.
 
-## Near-Term Success Target
+## Short Glossary
 
-The next meaningful prototype is a small continuously running brain in a simple
-world that can:
-
-- perceive several objects and body conditions;
-- learn which outcomes satisfy which needs;
-- learn at least two communicative intents and several referents;
-- choose speech or silence from internal state;
-- remember the source of a small set of experiences;
-- let uncertainty, affect, and curiosity alter what it does;
-- change future behavior after interaction with a person or caregiver;
-- retain earlier learning across continued experience.
-
-Its speech may be simple. Success is an integrated, causal, developing system,
-not surface fluency.
-
-## How Progress Is Accepted
-
-A capability claim should include a reproducible artifact, multiple random
-seeds when practical, matched controls, and a test showing that the named neural
-mechanism is necessary. Results that depend on fixed labels, host decisions, or
-external training remain valuable experiments, but stay marked as partial until
-their scaffolds pass the removal conditions in the ledger.
+- **Shared substrate:** the common simulated neural network on which regions
+  communicate through modeled activity and synapses.
+- **Fully spiking:** the causal computation between sensation and action is
+  carried by spiking neurons and synapses, not host-side cognitive formulas.
+- **Scaffold:** a temporary shortcut with a named biological replacement and a
+  removal test.
+- **De-risk:** a small experiment that tests feasibility or a mechanism; it is
+  narrower than an integrated capability demonstration.
+- **Held-out seed:** a reserved random initialization used only after a design
+  is fixed, to test generalization without tuning on it.
+- **Local credit assignment:** a neural learning rule that assigns a delayed
+  consequence to the synapses and actions that caused it without a host answer
+  key or nonlocal backpropagation shortcut.
+- **Source monitoring:** distinguishing what was experienced, heard, inferred,
+  imagined, or is uncertain about, and using that distinction in behavior.
+- **Neuromodulation:** brain-wide or regional chemical-like signals that alter
+  learning, attention, motivation, or plasticity in the neural model.
+- **RAG:** retrieval-augmented generation; here it means retrieving and then
+  reading project and scientific sources before research decisions.
+- **CuPy and NumPy:** the GPU and CPU numerical backends used by the simulator.

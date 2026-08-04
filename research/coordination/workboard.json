@@ -77,11 +77,13 @@
       ]
     },
     "019fcd3f-b01a-7860-924e-d4228f299328": {
-      "heartbeat_at": "2026-08-04T14:49:04+00:00",
+      "completed_at": "2026-08-04T14:58:40+00:00",
+      "heartbeat_at": "2026-08-04T14:58:40+00:00",
       "model": "gpt-5.6-luna",
-      "next_action": "Return ROADMAP.md rewrite with explicit current-vs-unproven status; no commit.",
+      "next_action": "Review the roadmap alongside future whole-brain integration changes; keep status statements current.",
+      "result": "Reviewed and transferred a 2026-08-04 plain-language ROADMAP.md rewrite covering purpose, architecture, evidence boundaries, blockers, horizons, RAG, experiment engine, compute, acceptance, honesty, and glossary. Diff-check passed; no commit or push by agent.",
       "started_at": "2026-08-04T14:49:04+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Rewrite plain-language project roadmap",
       "write_set": [
         "ROADMAP.md"
@@ -238,6 +240,18 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "plain-language-roadmap"
+    },
+    {
+      "at": "2026-08-04T14:58:40+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd3f-b01a-7860-924e-d4228f299328"
+    },
+    {
+      "at": "2026-08-04T14:58:45+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "plain-language-roadmap"
     }
   ],
   "lanes": {
@@ -285,12 +299,12 @@
     "plain-language-roadmap": {
       "agent_id": "019fcd3f-b01a-7860-924e-d4228f299328",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T14:49:07+00:00",
-      "next_action": "Agent is rewriting only ROADMAP.md from the charter and handoff; review claims and readability on return.",
+      "heartbeat_at": "2026-08-04T14:58:45+00:00",
+      "next_action": "Keep ROADMAP.md synchronized with the charter, workboard, current evidence, blockers, and integrated capability results.",
       "owner": "controller",
       "priority": 2,
       "resource": "agent_cpu_network",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "ROADMAP.md"
       ]
@@ -336,5 +350,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T14:49:07+00:00"
+  "updated_at": "2026-08-04T14:58:45+00:00"
 }
