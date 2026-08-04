@@ -9,10 +9,11 @@ runner and never overrides a seed at runtime.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import sys
@@ -25,9 +26,17 @@ except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG_SCHEMA = "v13-stage0-controller-config-v1"
+CONFIG_SCHEMA = "v13-stage0-controller-config-v2"
 MANIFEST_SCHEMA = "v13-stage0-artifact-manifest-v1"
 COMMAND_SCHEMA = "v13-stage0-command-v1"
+READINESS_SCHEMA = "v13-stage0-readiness-v1"
+CONFIG_FIELDS = {
+    "schema", "status", "correction_id", "candidate_source_revision",
+    "candidate_source_identity", "candidate_source_manifest", "python",
+    "runner_module", "seeds", "seed_derivation", "seed_binding",
+    "strict_arithmetic_replay", "compatibility", "legacy_performance",
+    "artifacts", "sha256",
+}
 MANIFEST_FIELDS = {
     "schema", "kind", "config_sha256", "source_revision", "artifact",
     "command_envelope", "execution_receipt", "sha256",
@@ -54,20 +63,47 @@ MANIFEST_ACTIONS = {
     "final_stage0": "final_stage0_merge",
 }
 RUNNER_MODULE = "research.runners._vocal_action_credit_gate_v13_tonic_output"
-SEED_SPEC_PATH = "research/specs/v13_tonic_output_substrate.json"
+BASE_SPEC_PATH = "research/specs/v13_tonic_output_substrate.json"
+SEED_SPEC_PATH = (
+    "research/specs/v13_tonic_output_stage0_process_correction_v1.json"
+)
 COMPATIBILITY_PATH = (
     "research/findings/raw/v13_deterministic_compatibility/"
     "comparison-baseline-vs-candidate.json"
+)
+STRICT_REPLAY_PATH = (
+    "research/findings/raw/"
+    "v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/"
+    "evidence-manifest.json"
 )
 CRITICAL_SOURCE_PATHS = (
     "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
     "sim/bridge.py",
     "sim/regions.py",
     "sim/kernels.py",
+    BASE_SPEC_PATH,
     SEED_SPEC_PATH,
 )
+SOURCE_CLOSURE_ROOTS = (
+    *CRITICAL_SOURCE_PATHS[:-2],
+    "tools/execution_receipt.py",
+    "tools/v13_stage0_controller.py",
+    "tools/v13_stage0_manifest.py",
+)
+SOURCE_CLOSURE_DATA_PATHS = (BASE_SPEC_PATH, SEED_SPEC_PATH)
+REQUIRED_SOURCE_MANIFEST_PATHS = tuple(sorted(set(
+    SOURCE_CLOSURE_ROOTS + SOURCE_CLOSURE_DATA_PATHS
+)))
+REPLAY_RUNNER_MODULE = (
+    "research.runners._v13_backend_neutral_izh_arithmetic_replay_v2"
+)
+REPLAY_SENSITIVE_PREFIX = "sim/"
 OLD_CALIBRATION_SEED = 1013
 OLD_REPLICATION_SEED = 1019
+LOCKED_HELD_OUT_SEED = 1021
+SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v1"
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V1"
+SEED_DERIVATION_SOURCE_REVISION = "b3d57494b7dd7d99d5e91088489da44d89a85bf3"
 CALIBRATION_LADDER_PA = (75, 100, 125, 150, 175)
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _REVISION = re.compile(r"^[0-9a-f]{40}$")
@@ -156,6 +192,405 @@ def _revision_file_digest(root: Path, revision: str, relative: str) -> str:
     return hashlib.sha256(result.stdout).hexdigest()
 
 
+def _module_source_paths(root: Path, module: str) -> tuple[str, ...]:
+    """Return local files Python may execute while importing one module."""
+    if not module or any(not part.isidentifier() for part in module.split(".")):
+        return ()
+    parts = module.split(".")
+    found: set[str] = set()
+    for depth in range(1, len(parts) + 1):
+        package = root.joinpath(*parts[:depth], "__init__.py")
+        if package.is_file():
+            found.add(package.relative_to(root).as_posix())
+    module_file = root.joinpath(*parts).with_suffix(".py")
+    if module_file.is_file():
+        found.add(module_file.relative_to(root).as_posix())
+    return tuple(sorted(found))
+
+
+def _imported_local_sources(root: Path, relative: str) -> tuple[str, ...]:
+    path = root / relative
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=relative)
+    except (OSError, UnicodeDecodeError, SyntaxError) as exc:
+        raise ControllerError(f"cannot inspect candidate Python source {relative}: {exc}") from exc
+
+    module_parts = relative.removesuffix(".py").split("/")
+    package_parts = module_parts if module_parts[-1] == "__init__" else module_parts[:-1]
+    if package_parts[-1:] == ["__init__"]:
+        package_parts = package_parts[:-1]
+
+    modules: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            modules.update(alias.name for alias in node.names)
+            continue
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        if node.level:
+            keep = len(package_parts) - (node.level - 1)
+            if keep < 0:
+                continue
+            base_parts = package_parts[:keep]
+            if node.module:
+                base_parts.extend(node.module.split("."))
+            base = ".".join(base_parts)
+        else:
+            base = node.module or ""
+        if base:
+            modules.add(base)
+        for alias in node.names:
+            if alias.name != "*":
+                modules.add(".".join(part for part in (base, alias.name) if part))
+
+    imported: set[str] = set()
+    for module in modules:
+        imported.update(_module_source_paths(root, module))
+    return tuple(sorted(imported))
+
+
+def _required_candidate_source_paths(root: Path) -> tuple[str, ...]:
+    """Compute the exact conservative local import closure for Stage-0 execution."""
+    root = root.resolve(strict=True)
+    closure = set(SOURCE_CLOSURE_DATA_PATHS)
+    pending = list(SOURCE_CLOSURE_ROOTS)
+    while pending:
+        relative = pending.pop()
+        if relative in closure:
+            continue
+        path = root / relative
+        _require(path.is_file(), f"required candidate source is missing: {relative}")
+        closure.add(relative)
+        if path.suffix == ".py":
+            pending.extend(
+                imported for imported in _imported_local_sources(root, relative)
+                if imported not in closure
+            )
+    for relative in SOURCE_CLOSURE_DATA_PATHS:
+        _require((root / relative).is_file(), f"required candidate data is missing: {relative}")
+    return tuple(sorted(closure))
+
+
+def _parse_sha256_manifest(path: Path, label: str) -> dict[str, str]:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        raise ControllerError(f"cannot read {label}: {path}: {exc}") from exc
+    _require(bool(lines), f"{label} is empty")
+    entries: dict[str, str] = {}
+    for line_number, line in enumerate(lines, 1):
+        digest, separator, relative_text = line.partition("  ")
+        relative = PurePosixPath(relative_text)
+        valid = (
+            bool(separator) and _HEX64.fullmatch(digest) is not None
+            and not relative.is_absolute() and bool(relative.name)
+            and "." not in relative.parts and ".." not in relative.parts
+        )
+        _require(valid, f"{label} has an invalid entry on line {line_number}")
+        normalized = relative.as_posix()
+        _require(normalized not in entries, f"{label} has duplicate entry: {normalized}")
+        entries[normalized] = digest
+    return entries
+
+
+def _derive_replacement_seed(*, role: str, original_seed: int) -> int:
+    material = (
+        f"{SEED_DERIVATION_NAMESPACE}|{SEED_DERIVATION_SOURCE_REVISION}|"
+        f"role={role}|original_seed={original_seed}"
+    )
+    prefix = hashlib.sha256(material.encode("ascii")).hexdigest()[:12]
+    return 100000 + (int(prefix, 16) % 900000)
+
+
+def _validate_seed_derivation(config: dict[str, Any]) -> None:
+    derivation = config.get("seed_derivation")
+    _require(
+        isinstance(derivation, dict)
+        and set(derivation) == {
+            "algorithm", "namespace", "source_revision", "original_seeds",
+        },
+        "seed_derivation must contain exactly the locked derivation fields",
+    )
+    _require(derivation.get("algorithm") == SEED_DERIVATION_ALGORITHM,
+             "seed derivation algorithm is not the locked process correction")
+    _require(derivation.get("namespace") == SEED_DERIVATION_NAMESPACE,
+             "seed derivation namespace is not the locked process correction")
+    _require(derivation.get("source_revision") == SEED_DERIVATION_SOURCE_REVISION,
+             "seed derivation source revision is not the locked process correction")
+    originals = derivation.get("original_seeds")
+    _require(
+        originals == {
+            "calibration": OLD_CALIBRATION_SEED,
+            "replication": OLD_REPLICATION_SEED,
+        },
+        "seed derivation original seeds do not name the consumed Stage-0 seeds",
+    )
+    seeds = config["seeds"]
+    for role, original in originals.items():
+        expected = _derive_replacement_seed(role=role, original_seed=original)
+        _require(seeds[role] == expected,
+                 f"{role} seed is not the mechanically derived replacement")
+
+
+def _validate_source_manifest_binding(
+    config: dict[str, Any], root: Path, revision: str,
+) -> dict[str, Any]:
+    binding = config.get("candidate_source_manifest")
+    _require(
+        isinstance(binding, dict)
+        and set(binding) == {"path", "sha256", "tree_sha256", "file_count"},
+        "candidate_source_manifest must contain exactly path, sha256, "
+        "tree_sha256, and file_count",
+    )
+    relative, manifest_path = _repo_path(
+        root, binding.get("path"), "candidate_source_manifest.path"
+    )
+    expected_manifest = _require_digest(
+        binding.get("sha256"), "candidate_source_manifest.sha256"
+    )
+    expected_tree = _require_digest(
+        binding.get("tree_sha256"), "candidate_source_manifest.tree_sha256"
+    )
+    _require(type(binding.get("file_count")) is int and binding["file_count"] > 0,
+             "candidate_source_manifest.file_count must be a positive integer")
+    try:
+        source = execution_receipt.verify_source_manifest(root, relative)
+    except execution_receipt.ReceiptError as exc:
+        raise ControllerError(f"candidate source manifest is invalid: {exc}") from exc
+    _require(source["manifest_sha256"] == expected_manifest,
+             "candidate source manifest digest differs from frozen config")
+    _require(source["tree_sha256"] == expected_tree,
+             "candidate source tree digest differs from frozen config")
+    _require(source["file_count"] == binding["file_count"],
+             "candidate source manifest file count differs from frozen config")
+    _require(_revision_file_digest(root, revision, relative) == expected_manifest,
+             "candidate source manifest is not bound to frozen revision")
+    files = source["files"]
+    required = set(_required_candidate_source_paths(root))
+    _require(
+        set(files) == required,
+        "candidate source manifest must exactly match the deterministic local "
+        "import and data closure",
+    )
+    for source_relative, metadata in files.items():
+        _require(
+            _revision_file_digest(root, revision, source_relative)
+            == metadata["sha256"],
+            f"candidate source manifest entry is not bound to frozen revision: "
+            f"{source_relative}",
+        )
+    _require(_file_digest(manifest_path) == expected_manifest,
+             "candidate source manifest changed while being validated")
+    return source
+
+
+def _historical_replay_source(
+    root: Path, source: Any, revision: str,
+) -> dict[str, str]:
+    _require(
+        isinstance(source, dict)
+        and set(source) == {
+            "file_count", "git_sha", "kind", "manifest",
+            "manifest_sha256", "tree_sha256",
+        }
+        and source.get("git_sha") == revision
+        and source.get("kind") == "git",
+        "strict arithmetic replay source binding is invalid",
+    )
+    relative, manifest_path = _repo_path(
+        root, source.get("manifest"), "strict arithmetic replay source manifest"
+    )
+    manifest_sha = _require_digest(
+        source.get("manifest_sha256"), "strict replay source manifest sha256"
+    )
+    tree_sha = _require_digest(source.get("tree_sha256"), "strict replay source tree sha256")
+    _require(
+        manifest_path.is_file() and _file_digest(manifest_path) == manifest_sha,
+        "strict arithmetic replay source manifest is missing or has the wrong digest",
+    )
+    entries = _parse_sha256_manifest(manifest_path, "strict replay source manifest")
+    _require(
+        type(source.get("file_count")) is int
+        and source["file_count"] == len(entries),
+        "strict arithmetic replay source file count is invalid",
+    )
+    tree = hashlib.sha256()
+    for source_relative, digest in sorted(entries.items()):
+        tree.update(f"{digest}  {source_relative}\n".encode("utf-8"))
+        _require(
+            _revision_file_digest(root, revision, source_relative) == digest,
+            "strict arithmetic replay source manifest is not bound to its frozen "
+            f"revision: {source_relative}",
+        )
+    _require(tree.hexdigest() == tree_sha,
+             "strict arithmetic replay source tree digest is invalid")
+    _require(relative == source["manifest"],
+             "strict arithmetic replay source manifest path is not canonical")
+    return entries
+
+
+def _validate_replay_receipt(
+    root: Path, *, receipt_path: Any, source: dict[str, Any],
+    artifact_path: str, artifact_sha256: str, mode: str,
+    backend: str | None = None, receipt_sha256: str | None = None,
+) -> None:
+    relative, path = _repo_path(root, receipt_path, "strict replay receipt path")
+    if receipt_sha256 is not None:
+        _require(
+            _file_digest(path) == _require_digest(receipt_sha256, "strict replay receipt sha256"),
+            "strict replay receipt has the wrong digest",
+        )
+    receipt = _load_json(path, "strict replay receipt")
+    _require(
+        receipt.get("schema") == execution_receipt.SCHEMA
+        and receipt.get("status") == "success"
+        and receipt.get("exit_code") == 0
+        and receipt.get("source") == source,
+        "strict replay receipt does not prove a successful source-bound execution",
+    )
+    artifact = receipt.get("artifact")
+    _, expected_artifact = _repo_path(root, artifact_path, "strict replay artifact path")
+    _require(
+        isinstance(artifact, dict)
+        and artifact.get("path") == artifact_path
+        and artifact.get("sha256") == artifact_sha256
+        and type(artifact.get("size_bytes")) is int
+        and expected_artifact.is_file()
+        and expected_artifact.stat().st_size == artifact["size_bytes"]
+        and _file_digest(expected_artifact) == artifact_sha256,
+        "strict replay receipt does not bind its artifact",
+    )
+    argv = receipt.get("argv")
+    _require(
+        isinstance(argv, list) and len(argv) >= 4
+        and argv[1:3] == ["-m", REPLAY_RUNNER_MODULE]
+        and mode in argv
+        and argv[-2:] == ["--out", str(expected_artifact.resolve())],
+        "strict replay receipt command differs from the frozen replay workflow",
+    )
+    expected_env = {"SIM_BACKEND": backend or "numpy"}
+    _require(receipt.get("env_allowlist") == expected_env,
+             "strict replay receipt environment is invalid")
+    _require(relative == receipt_path, "strict replay receipt path is not canonical")
+
+
+def _validate_strict_replay_binding(
+    config: dict[str, Any], root: Path, candidate_source: dict[str, Any],
+) -> None:
+    binding = config.get("strict_arithmetic_replay")
+    _require(
+        isinstance(binding, dict)
+        and set(binding) == {"path", "sha256", "source_revision"},
+        "strict_arithmetic_replay must contain exactly path, sha256, and source_revision",
+    )
+    _require(binding.get("path") == STRICT_REPLAY_PATH,
+             f"strict_arithmetic_replay.path must be canonical: {STRICT_REPLAY_PATH}")
+    replay_revision = _require_revision(
+        binding.get("source_revision"), "strict_arithmetic_replay.source_revision"
+    )
+    _, replay_path = _repo_path(root, binding.get("path"), "strict_arithmetic_replay.path")
+    expected_digest = _require_digest(
+        binding.get("sha256"), "strict_arithmetic_replay.sha256"
+    )
+    _require(replay_path.is_file() and _file_digest(replay_path) == expected_digest,
+             "strict arithmetic replay evidence is missing or has the wrong digest")
+    replay = _load_json(replay_path, "strict arithmetic replay evidence")
+    _require(
+        replay.get("schema")
+        == "v13-backend-neutral-izh-arithmetic-replay-evidence-manifest-v2"
+        and replay.get("outcome") == "DIAGNOSTIC_PASS"
+        and replay.get("diagnostic_only") is True
+        and replay.get("scientific_verdict") is None,
+        "strict arithmetic replay v2 has not earned its diagnostic pass",
+    )
+    supplied = _require_digest(replay.get("sha256"), "strict replay artifact sha256")
+    _require(supplied == _canonical_digest(replay),
+             "strict arithmetic replay evidence self-digest is invalid")
+    source = replay.get("source")
+    replay_files = _historical_replay_source(root, source, replay_revision)
+    candidate_sensitive = {
+        path: metadata["sha256"]
+        for path, metadata in candidate_source["files"].items()
+        if path.startswith(REPLAY_SENSITIVE_PREFIX) and path.endswith(".py")
+    }
+    _require(bool(candidate_sensitive),
+             "candidate source closure contains no replay-sensitive simulator code")
+    for relative, digest in sorted(candidate_sensitive.items()):
+        _require(
+            replay_files.get(relative) == digest,
+            "candidate replay-sensitive source differs from the strict replay v2 "
+            f"revision: {relative}",
+        )
+    comparison = replay.get("comparison")
+    _require(isinstance(comparison, dict),
+             "strict arithmetic replay evidence lacks its comparison binding")
+    comparison_relative, comparison_path = _repo_path(
+        root, comparison.get("path"), "strict arithmetic replay comparison path"
+    )
+    del comparison_relative
+    comparison_file_digest = _require_digest(
+        comparison.get("sha256"), "strict arithmetic replay comparison file sha256"
+    )
+    _require(
+        comparison_path.is_file()
+        and _file_digest(comparison_path) == comparison_file_digest,
+        "strict arithmetic replay comparison is missing or has the wrong digest",
+    )
+    comparison_artifact = _load_json(comparison_path, "strict arithmetic replay comparison")
+    _require(
+        comparison_artifact.get("outcome") == "DIAGNOSTIC_PASS"
+        and comparison_artifact.get("all_required_trajectories_exact") is True
+        and all(
+            comparison_artifact.get("trajectory_comparisons", {})
+            .get(name, {}).get("all_1200_rows_exact") is True
+            for name in ("v", "u", "spikes")
+        ),
+        "strict arithmetic replay comparison does not prove exact required trajectories",
+    )
+    _require(
+        comparison_artifact.get("sha256") == comparison.get("artifact_sha256")
+        and comparison_artifact.get("source") == source,
+        "strict arithmetic replay comparison differs from its evidence manifest",
+    )
+    cells = replay.get("cells")
+    _require(
+        isinstance(cells, dict) and set(cells) == {"numpy", "cupy"}
+        and comparison_artifact.get("cell_artifacts") == cells,
+        "strict arithmetic replay cell chain is incomplete",
+    )
+    for backend, record in cells.items():
+        _require(
+            isinstance(record, dict)
+            and set(record) == {
+                "artifact_sha256", "file_sha256", "path", "receipt_path",
+            },
+            f"strict replay {backend} cell binding is invalid",
+        )
+        _, cell_path = _repo_path(root, record.get("path"), f"strict replay {backend} cell")
+        file_sha = _require_digest(record.get("file_sha256"), f"strict replay {backend} file")
+        _require(cell_path.is_file() and _file_digest(cell_path) == file_sha,
+                 f"strict replay {backend} cell file has the wrong digest")
+        cell = _load_json(cell_path, f"strict replay {backend} cell")
+        _require(
+            cell.get("schema") == "v13-backend-neutral-izh-arithmetic-replay-cell-v2"
+            and cell.get("backend") == backend
+            and cell.get("source") == source
+            and cell.get("sha256") == record.get("artifact_sha256")
+            and cell.get("sha256") == _canonical_digest(cell),
+            f"strict replay {backend} cell artifact binding is invalid",
+        )
+        _validate_replay_receipt(
+            root, receipt_path=record.get("receipt_path"), source=source,
+            artifact_path=record["path"], artifact_sha256=file_sha,
+            mode="--run", backend=backend,
+        )
+    _validate_replay_receipt(
+        root, receipt_path=comparison.get("receipt_path"), source=source,
+        artifact_path=comparison["path"], artifact_sha256=comparison_file_digest,
+        mode="--compare", receipt_sha256=comparison.get("receipt_sha256"),
+    )
+
+
 def _artifact_paths(config: dict[str, Any], root: Path) -> dict[str, Path]:
     artifacts = config.get("artifacts")
     _require(isinstance(artifacts, dict), "config artifacts must be an object")
@@ -177,7 +612,9 @@ def _artifact_paths(config: dict[str, Any], root: Path) -> dict[str, Path]:
     return paths
 
 
-def _verify_source_binding(config: dict[str, Any], root: Path) -> None:
+def _verify_source_binding(
+    config: dict[str, Any], root: Path, source: dict[str, Any],
+) -> None:
     expected_revision = _require_revision(
         config.get("candidate_source_revision"), "candidate_source_revision"
     )
@@ -206,10 +643,20 @@ def _verify_source_binding(config: dict[str, Any], root: Path) -> None:
     for name in ("calibration", "replication", "held_out"):
         _require(partitions.get(name) == [expected[name]],
                  f"locked seed specification does not bind replacement {name} seed")
+    _require(
+        spec.get("seed_derivation") == config["seed_derivation"],
+        "locked process-correction specification does not bind seed derivation metadata",
+    )
+    _require(
+        source["files"].get(SEED_SPEC_PATH, {}).get("sha256") == expected_digest,
+        "seed binding digest differs from the frozen candidate source manifest",
+    )
 
 
 def load_config(path: Path, *, root: Path = ROOT, verify_source: bool = True) -> dict[str, Any]:
     config = _load_json(path, "correction config")
+    _require(set(config) == CONFIG_FIELDS,
+             "correction config has missing or unknown top-level fields")
     _require(config.get("schema") == CONFIG_SCHEMA, f"unsupported config schema: {config.get('schema')!r}")
     _require(config.get("status") == "frozen", "correction config status must be frozen")
     supplied_digest = _require_digest(config.get("sha256"), "config sha256")
@@ -240,6 +687,22 @@ def load_config(path: Path, *, root: Path = ROOT, verify_source: bool = True) ->
              "calibration seed must replace consumed seed 1013")
     _require(seeds["replication"] != OLD_REPLICATION_SEED,
              "replication seed must replace consumed seed 1019")
+    _require(seeds["held_out"] == LOCKED_HELD_OUT_SEED,
+             "held-out seed must remain the original sealed Stage-0 seed")
+    _validate_seed_derivation(config)
+
+    source_manifest = config.get("candidate_source_manifest")
+    _require(isinstance(source_manifest, dict),
+             "candidate_source_manifest must be an object")
+    _require_digest(source_manifest.get("sha256"), "candidate_source_manifest.sha256")
+    _require_digest(
+        source_manifest.get("tree_sha256"), "candidate_source_manifest.tree_sha256"
+    )
+
+    candidate_source = _validate_source_manifest_binding(
+        config, root, config["candidate_source_revision"]
+    )
+    _validate_strict_replay_binding(config, root, candidate_source)
 
     compatibility = config.get("compatibility")
     _require(isinstance(compatibility, dict), "compatibility must be an object")
@@ -260,11 +723,9 @@ def load_config(path: Path, *, root: Path = ROOT, verify_source: bool = True) ->
     _require(legacy.get("runner_path") == "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
              "legacy_performance.runner_path is not canonical")
     _require_digest(legacy.get("runner_sha256"), "legacy_performance.runner_sha256")
-    _require(config["seed_binding"]["sha256"] == source_identity[SEED_SPEC_PATH],
-             "seed binding digest differs from the frozen candidate source identity")
     _artifact_paths(config, root)
     if verify_source:
-        _verify_source_binding(config, root)
+        _verify_source_binding(config, root, candidate_source)
     return config
 
 
@@ -286,29 +747,48 @@ def _expected_manifest_env(kind: str) -> dict[str, str]:
     return {"SIM_BACKEND": "cupy"}
 
 
+def _require_candidate_receipt_source(
+    source: Any, *, config: dict[str, Any], label: str,
+) -> None:
+    binding = config["candidate_source_manifest"]
+    _require(isinstance(source, dict), f"{label} source binding is invalid")
+    _require(
+        source.get("git_sha") == config["candidate_source_revision"]
+        and source.get("kind") in {"git", "git_archive"}
+        and source.get("manifest") == binding["path"]
+        and source.get("manifest_sha256") == binding["sha256"]
+        and source.get("tree_sha256") == binding["tree_sha256"]
+        and source.get("file_count") == binding["file_count"],
+        f"{label} source manifest differs from the frozen candidate source",
+    )
+
+
 def _expected_manifest_argv(
     *, config: dict[str, Any], kind: str, root: Path, output: Path,
 ) -> list[str]:
     paths = _artifact_paths(config, root)
     prefix = [config["python"], "-m", config["runner_module"]]
+    corrected_prefix = [
+        *prefix, "--process-correction-spec", str((root / SEED_SPEC_PATH).resolve()),
+    ]
     if kind.startswith("calibration_") and kind != "calibration_selection":
         return [
-            *prefix, "--calibration", "--compatibility-correction",
+            *corrected_prefix, "--calibration", "--compatibility-correction",
             str((root / COMPATIBILITY_PATH).resolve()), "--out", str(output),
         ]
     if kind == "calibration_selection":
         return [
-            *prefix, "--merge-calibration", str(paths["calibration_numpy"]),
+            *corrected_prefix, "--merge-calibration", str(paths["calibration_numpy"]),
             str(paths["calibration_cupy"]), "--out", str(output),
         ]
     if kind.startswith("replication_"):
         return [
-            *prefix, "--replication", str(paths["calibration_selection"]),
+            *corrected_prefix, "--replication", str(paths["calibration_selection"]),
             "--out", str(output),
         ]
     if kind.startswith("held_out_"):
         return [
-            *prefix, "--held-out", str(paths["calibration_selection"]),
+            *corrected_prefix, "--held-out", str(paths["calibration_selection"]),
             "--out", str(output),
         ]
     if kind == "performance_baseline":
@@ -320,7 +800,7 @@ def _expected_manifest_argv(
         ]
     compatibility = (root / COMPATIBILITY_PATH).resolve()
     return [
-        *prefix, "--merge-final", str(compatibility),
+        *corrected_prefix, "--merge-final", str(compatibility),
         str(paths["replication_numpy"]), str(paths["replication_cupy"]),
         str(paths["held_out_cupy"]), str(paths["held_out_numpy"]),
         str(paths["performance_candidate"]), "--out", str(output),
@@ -495,6 +975,10 @@ def load_manifest(
              f"{kind} receipt environment differs from command envelope")
     _require(receipt.get("source", {}).get("git_sha") == expected_source,
              f"{kind} receipt source revision is invalid")
+    if kind != "performance_baseline":
+        _require_candidate_receipt_source(
+            receipt.get("source"), config=config, label=f"{kind} receipt"
+        )
     _require(
         receipt.get("host") == host and receipt.get("device") == device,
         f"{kind} receipt host or device differs from manifest",
@@ -696,34 +1180,96 @@ def _emit_create_only(path: Path, envelope: dict[str, Any]) -> None:
         handle.write(data)
 
 
-def _runner_argv(config: dict[str, Any], *arguments: str) -> list[str]:
-    return [config["python"], "-m", config["runner_module"], *arguments]
+def _runner_argv(
+    config: dict[str, Any], *arguments: str, root: Path | None = None,
+    process_correction: bool = False,
+) -> list[str]:
+    prefix = [config["python"], "-m", config["runner_module"]]
+    if process_correction:
+        _require(root is not None, "process-correction commands require a source root")
+        prefix.extend([
+            "--process-correction-spec", str((root / SEED_SPEC_PATH).resolve()),
+        ])
+    return [*prefix, *arguments]
 
 
-def emit_calibration(
-    *, config_path: Path, backend: str, emit: Path,
-    numpy_manifest: Path | None = None, root: Path = ROOT,
-) -> dict[str, Any]:
+def _calibration_inputs(
+    *, config_path: Path, backend: str, numpy_manifest: Path | None,
+    root: Path,
+) -> tuple[dict[str, Any], list[dict[str, Any]], Path]:
     config = load_config(config_path, root=root)
     _require(backend in {"numpy", "cupy"}, "calibration backend must be numpy or cupy")
-    prerequisites: list[dict[str, Any]] = [{
-        "kind": "compatibility", "artifact_path": str((root / COMPATIBILITY_PATH).resolve()),
-        "artifact_sha256": config["compatibility"]["sha256"],
-    }]
+    replay = config["strict_arithmetic_replay"]
+    prerequisites: list[dict[str, Any]] = [
+        {
+            "kind": "strict_arithmetic_replay_v2",
+            "artifact_path": str((root / replay["path"]).resolve()),
+            "artifact_sha256": replay["sha256"],
+            "source_revision": replay["source_revision"],
+        },
+        {
+            "kind": "compatibility",
+            "artifact_path": str((root / COMPATIBILITY_PATH).resolve()),
+            "artifact_sha256": config["compatibility"]["sha256"],
+        },
+    ]
     if backend == "cupy":
-        _require(numpy_manifest is not None, "CuPy calibration requires a digested NumPy artifact")
+        _require(numpy_manifest is not None,
+                 "CuPy calibration requires a digested NumPy artifact")
         artifact, _, reference = load_manifest(
             numpy_manifest, config=config, kind="calibration_numpy", root=root
         )
         _validate_calibration_backend(artifact, config=config, backend="numpy")
         prerequisites.append(reference)
     else:
-        _require(numpy_manifest is None, "NumPy calibration cannot consume a prior NumPy manifest")
+        _require(numpy_manifest is None,
+                 "NumPy calibration cannot consume a prior NumPy manifest")
     output = _artifact_paths(config, root)[f"calibration_{backend}"]
     _ensure_new_artifact(output)
+    return config, prerequisites, output
+
+
+def check_calibration_readiness(
+    *, config_path: Path, backend: str,
+    numpy_manifest: Path | None = None, root: Path = ROOT,
+) -> dict[str, Any]:
+    """Validate calibration prerequisites without writing or exposing seed values."""
+    config, prerequisites, output = _calibration_inputs(
+        config_path=config_path, backend=backend,
+        numpy_manifest=numpy_manifest, root=root,
+    )
+    source = config["candidate_source_manifest"]
+    return {
+        "schema": READINESS_SCHEMA,
+        "ready": True,
+        "action": f"calibration_{backend}",
+        "backend": backend,
+        "source_revision": config["candidate_source_revision"],
+        "source_manifest": {
+            "path": source["path"],
+            "sha256": source["sha256"],
+            "tree_sha256": source["tree_sha256"],
+            "file_count": source["file_count"],
+        },
+        "prerequisite_kinds": [item["kind"] for item in prerequisites],
+        "output_available": not output.exists(),
+        "command_emitted": False,
+        "execution": "not_executed",
+    }
+
+
+def emit_calibration(
+    *, config_path: Path, backend: str, emit: Path,
+    numpy_manifest: Path | None = None, root: Path = ROOT,
+) -> dict[str, Any]:
+    config, prerequisites, output = _calibration_inputs(
+        config_path=config_path, backend=backend,
+        numpy_manifest=numpy_manifest, root=root,
+    )
     argv = _runner_argv(
         config, "--calibration", "--compatibility-correction",
         str((root / COMPATIBILITY_PATH).resolve()), "--out", str(output),
+        root=root, process_correction=True,
     )
     envelope = _envelope(
         action=f"calibration_{backend}", config_path=config_path, config=config,
@@ -751,6 +1297,7 @@ def emit_merge_calibration(
     argv = _runner_argv(
         config, "--merge-calibration", str(_artifact_paths(config, root)["calibration_numpy"]),
         str(_artifact_paths(config, root)["calibration_cupy"]), "--out", str(output),
+        root=root, process_correction=True,
     )
     envelope = _envelope(
         action="merge_calibration", config_path=config_path, config=config,
@@ -775,7 +1322,7 @@ def emit_replication(
     _ensure_new_artifact(output)
     argv = _runner_argv(
         config, "--replication", str(_artifact_paths(config, root)["calibration_selection"]),
-        "--out", str(output),
+        "--out", str(output), root=root, process_correction=True,
     )
     envelope = _envelope(
         action=f"replication_{backend}", config_path=config_path, config=config,
@@ -827,7 +1374,7 @@ def emit_held_out(
     _ensure_new_artifact(output)
     argv = _runner_argv(
         config, "--held-out", str(_artifact_paths(config, root)["calibration_selection"]),
-        "--out", str(output),
+        "--out", str(output), root=root, process_correction=True,
     )
     envelope = _envelope(
         action=f"held_out_{backend}", config_path=config_path, config=config,
@@ -1027,6 +1574,7 @@ def emit_final_merge(
         str(paths["replication_numpy"]), str(paths["replication_cupy"]),
         str(paths["held_out_cupy"]), str(paths["held_out_numpy"]),
         str(paths["performance_candidate"]), "--out", str(output),
+        root=root, process_correction=True,
     )
     envelope = _envelope(
         action="final_stage0_merge", config_path=config_path, config=config,
@@ -1049,12 +1597,16 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--config", type=Path, required=True)
-    parser.add_argument("--emit", type=Path, required=True)
+    parser.add_argument("--emit", type=Path)
     commands = parser.add_subparsers(dest="command", required=True)
 
     calibration = commands.add_parser("calibration")
     calibration.add_argument("--backend", choices=("numpy", "cupy"), required=True)
     calibration.add_argument("--numpy-manifest", type=Path)
+
+    readiness = commands.add_parser("calibration-readiness")
+    readiness.add_argument("--backend", choices=("numpy", "cupy"), required=True)
+    readiness.add_argument("--numpy-manifest", type=Path)
 
     merge = commands.add_parser("merge-calibration")
     merge.add_argument("--numpy-manifest", type=Path, required=True)
@@ -1094,6 +1646,14 @@ def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     root = args.root.resolve()
     try:
+        if args.command == "calibration-readiness":
+            readiness = check_calibration_readiness(
+                config_path=args.config, backend=args.backend,
+                numpy_manifest=args.numpy_manifest, root=root,
+            )
+            print(json.dumps(readiness, sort_keys=True))
+            return 0
+        _require(args.emit is not None, "--emit is required for command-envelope creation")
         if args.command == "calibration":
             envelope = emit_calibration(
                 config_path=args.config, backend=args.backend, emit=args.emit,

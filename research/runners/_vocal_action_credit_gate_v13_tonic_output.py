@@ -37,6 +37,9 @@ from tools.verdict import Verdict
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "research/specs/v13_tonic_output_substrate.json"
+PROCESS_CORRECTION_SPEC_PATH = (
+    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v1.json"
+)
 RUNNER_PATH = Path(__file__).resolve()
 COMPATIBILITY_ROOT = ROOT / "research/findings/raw/v13_deterministic_compatibility"
 COMPATIBILITY_CORRECTION_PATH = COMPATIBILITY_ROOT / "comparison-baseline-vs-candidate.json"
@@ -51,6 +54,10 @@ PARTITIONS = {
     "held_out": [1021],
     "reserved_for_stage1": [1031],
 }
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v1"
+SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v1"
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V1"
+SEED_DERIVATION_SOURCE_REVISION = "b3d57494b7dd7d99d5e91088489da44d89a85bf3"
 LADDER_PA = [75, 100, 125, 150, 175]
 HETEROGENEITY = {
     "izh_a_val": {
@@ -111,11 +118,93 @@ def _source_identity() -> dict[str, str]:
         ROOT / "sim/regions.py",
         ROOT / "sim/kernels.py",
         SPEC_PATH,
+        PROCESS_CORRECTION_SPEC_PATH,
     )
     return {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in paths
     }
+
+
+def _derived_replacement_seed(role: str, original_seed: int) -> int:
+    material = (
+        f"{SEED_DERIVATION_NAMESPACE}|{SEED_DERIVATION_SOURCE_REVISION}|"
+        f"role={role}|original_seed={original_seed}"
+    )
+    prefix = hashlib.sha256(material.encode("ascii")).hexdigest()[:12]
+    return 100000 + (int(prefix, 16) % 900000)
+
+
+def load_process_correction(path: Path) -> tuple[dict, dict[str, int]]:
+    resolved = path.resolve()
+    if resolved != PROCESS_CORRECTION_SPEC_PATH.resolve():
+        raise ValueError(
+            f"process correction spec must be {PROCESS_CORRECTION_SPEC_PATH}"
+        )
+    correction = json.loads(resolved.read_text())
+    base = correction.get("base_spec")
+    replay = correction.get("strict_arithmetic_replay")
+    derivation = correction.get("seed_derivation")
+    partitions = correction.get("partitions")
+    checks = {
+        "schema": correction.get("schema") == PROCESS_CORRECTION_SCHEMA,
+        "status": correction.get("status") == "preregistered",
+        "base_path": isinstance(base, dict)
+        and base.get("path") == str(SPEC_PATH.relative_to(ROOT)),
+        "base_digest": isinstance(base, dict)
+        and base.get("sha256") == hashlib.sha256(SPEC_PATH.read_bytes()).hexdigest(),
+        "strict_replay": isinstance(replay, dict)
+        and set(replay) == {"path", "sha256", "outcome"}
+        and replay.get("outcome") == "DIAGNOSTIC_PASS",
+        "derivation": derivation == {
+            "algorithm": SEED_DERIVATION_ALGORITHM,
+            "namespace": SEED_DERIVATION_NAMESPACE,
+            "source_revision": SEED_DERIVATION_SOURCE_REVISION,
+            "original_seeds": {"calibration": 1013, "replication": 1019},
+        },
+        "partition_shape": isinstance(partitions, dict)
+        and set(partitions) == {"calibration", "replication", "held_out"}
+        and all(
+            isinstance(partitions.get(role), list)
+            and len(partitions[role]) == 1
+            and type(partitions[role][0]) is int
+            for role in ("calibration", "replication", "held_out")
+        ),
+    }
+    if checks["strict_replay"]:
+        replay_path = (ROOT / replay["path"]).resolve()
+        checks["strict_replay_path"] = replay_path.is_relative_to(ROOT)
+        checks["strict_replay_digest"] = (
+            replay_path.is_file()
+            and hashlib.sha256(replay_path.read_bytes()).hexdigest() == replay["sha256"]
+        )
+        if checks["strict_replay_digest"]:
+            replay_artifact = json.loads(replay_path.read_text())
+            checks["strict_replay_outcome"] = (
+                replay_artifact.get("outcome") == "DIAGNOSTIC_PASS"
+                and replay_artifact.get("diagnostic_only") is True
+                and replay_artifact.get("scientific_verdict") is None
+            )
+    if checks["partition_shape"]:
+        checks.update({
+            "calibration_seed": partitions["calibration"][0]
+            == _derived_replacement_seed("calibration", 1013),
+            "replication_seed": partitions["replication"][0]
+            == _derived_replacement_seed("replication", 1019),
+            "held_out_sealed": partitions["held_out"] == PARTITIONS["held_out"],
+            "consumed_excluded": not (
+                {partitions["calibration"][0], partitions["replication"][0]}
+                & {1013, 1019}
+            ),
+        })
+    if not all(checks.values()):
+        raise ValueError(f"invalid Stage-0 process correction: {checks}")
+    seeds = {role: values[0] for role, values in partitions.items()}
+    binding = {
+        "path": str(resolved.relative_to(ROOT)),
+        "sha256": hashlib.sha256(resolved.read_bytes()).hexdigest(),
+    }
+    return binding, seeds
 
 
 def _earned_verdict(label: str, go: bool, requirements: dict[str, bool]) -> dict:
@@ -155,7 +244,9 @@ def _canonical_artifact_digest(artifact: dict) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def _load_compatibility_correction(path: Path) -> dict:
+def _load_compatibility_correction(
+    path: Path, *, process_correction: dict | None = None,
+) -> dict:
     path = path.resolve()
     if path != COMPATIBILITY_CORRECTION_PATH.resolve():
         raise ValueError(
@@ -209,7 +300,7 @@ def _load_compatibility_correction(path: Path) -> dict:
         ["git", "diff", "--name-only", f"{candidate_sha}..HEAD", "--", *critical_paths],
         cwd=ROOT, check=True, capture_output=True, text=True,
     ).stdout.splitlines()
-    if changed:
+    if changed and process_correction is None:
         raise ValueError(f"compatibility-covered simulator inputs changed: {changed}")
 
     baseline_relative = str(bundles["baseline"].relative_to(ROOT))
@@ -266,7 +357,7 @@ def _load_compatibility_correction(path: Path) -> dict:
 def _assert_source_sealed() -> None:
     relative = [str(path.relative_to(ROOT)) for path in (
         RUNNER_PATH, ROOT / "sim/bridge.py", ROOT / "sim/regions.py",
-        ROOT / "sim/kernels.py", SPEC_PATH,
+        ROOT / "sim/kernels.py", SPEC_PATH, PROCESS_CORRECTION_SPEC_PATH,
     )]
     tracked = subprocess.run(
         ["git", "ls-files", "--error-unmatch", *relative], cwd=ROOT,
@@ -527,15 +618,18 @@ def _physiology_metrics(run: dict, *, n=40, bin_steps=100) -> dict:
     return {"metrics": metrics, "checks": checks, "pass": all(checks.values())}
 
 
-def run_calibration(compatibility_path: Path) -> dict:
+def run_calibration(compatibility_path: Path, process_correction_path: Path) -> dict:
     spec = load_locked_spec()
-    compatibility = _load_compatibility_correction(compatibility_path)
+    process_correction, seeds = load_process_correction(process_correction_path)
+    compatibility = _load_compatibility_correction(
+        compatibility_path, process_correction=process_correction
+    )
     backend = _backend_info()
     started = time.perf_counter()
     rows = []
     for index, current in enumerate(LADDER_PA, start=1):
         unit_started = time.perf_counter()
-        bridge = build_tonic_bridge(PARTITIONS["calibration"][0], current)
+        bridge = build_tonic_bridge(seeds["calibration"], current)
         audit = _population_audit(bridge)
         run = _run_steps(bridge, spec["calibration"]["steps"])
         physiology = _physiology_metrics(run)
@@ -555,13 +649,14 @@ def run_calibration(compatibility_path: Path) -> dict:
     return {
         "probe": "gateB_v13_tonic_output_calibration",
         "stage": "calibration_backend",
-        "seed": PARTITIONS["calibration"][0],
+        "seed": seeds["calibration"],
         "backend": backend["backend"],
         "device": backend["device"],
         "backend_info": backend,
         "source_sha": _git_sha(),
         "source_identity": _source_identity(),
         "spec_sha256": hashlib.sha256(SPEC_PATH.read_bytes()).hexdigest(),
+        "process_correction": process_correction,
         "compatibility_correction": compatibility,
         "rows": rows,
         "passing_currents_pA": [row["current_pA"] for row in rows if row["pass"]],
@@ -569,13 +664,16 @@ def run_calibration(compatibility_path: Path) -> dict:
     }
 
 
-def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
+def merge_calibration(
+    numpy_path: Path, cupy_path: Path, process_correction_path: Path,
+) -> dict:
+    process_correction, seeds = load_process_correction(process_correction_path)
     artifacts = [json.loads(path.read_text()) for path in (numpy_path, cupy_path)]
     by_backend = {item["backend"]: item for item in artifacts}
     if set(by_backend) != {"numpy", "cupy"}:
         raise ValueError(f"expected numpy and cupy artifacts, got {sorted(by_backend)}")
     for item in artifacts:
-        if item["seed"] != PARTITIONS["calibration"][0]:
+        if item["seed"] != seeds["calibration"]:
             raise ValueError("calibration artifact used wrong seed")
         if [row["current_pA"] for row in item["rows"]] != LADDER_PA:
             raise ValueError("calibration artifact changed the locked ladder")
@@ -583,8 +681,11 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
     if not identities[0] or identities[0] != identities[1]:
         raise ValueError("calibration backends did not use identical sealed sources")
     compatibility = [item.get("compatibility_correction") for item in artifacts]
+    corrections = [item.get("process_correction") for item in artifacts]
+    if corrections != [process_correction, process_correction]:
+        raise ValueError("calibration artifacts lack the locked process correction")
     expected_compatibility = _load_compatibility_correction(
-        COMPATIBILITY_CORRECTION_PATH
+        COMPATIBILITY_CORRECTION_PATH, process_correction=process_correction
     )
     if compatibility != [expected_compatibility, expected_compatibility]:
         raise ValueError("calibration artifacts lack the earned compatibility correction")
@@ -599,7 +700,7 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
         {
             "numpy and cupy artifacts present": set(by_backend) == {"numpy", "cupy"},
             "locked calibration seed used": all(
-                item["seed"] == PARTITIONS["calibration"][0] for item in artifacts
+                item["seed"] == seeds["calibration"] for item in artifacts
             ),
             "locked ladder used": all(
                 [row["current_pA"] for row in item["rows"]] == LADDER_PA
@@ -617,10 +718,11 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
         "stage": "calibration_cross_backend",
         "backend": "cross_backend",
         "device": "numpy_and_cupy",
-        "seed": PARTITIONS["calibration"][0],
+        "seed": seeds["calibration"],
         "source_shas": {name: by_backend[name]["source_sha"] for name in by_backend},
         "source_identity": identities[0],
         "compatibility_correction": expected_compatibility,
+        "process_correction": process_correction,
         "artifacts": {"numpy": str(numpy_path), "cupy": str(cupy_path)},
         "common_passing_currents_pA": common,
         "selected_current_pA": selected,
@@ -815,11 +917,14 @@ def run_checkpoint_gate(seed: int, current_pA: float) -> dict:
     return {"checks": checks, "pass": all(checks.values()), "uninterrupted": left, "resumed": right}
 
 
-def run_replication(selection_path: Path, *, held_out=False) -> dict:
+def run_replication(
+    selection_path: Path, process_correction_path: Path, *, held_out=False,
+) -> dict:
     selection, current = _load_selection(selection_path)
+    process_correction, seeds = load_process_correction(process_correction_path)
     if held_out:
         _assert_source_sealed()
-    seed = PARTITIONS["held_out" if held_out else "replication"][0]
+    seed = seeds["held_out" if held_out else "replication"]
     backend = _backend_info()
     started = time.perf_counter()
     intact_bridge = build_tonic_bridge(seed, current)
@@ -871,6 +976,7 @@ def run_replication(selection_path: Path, *, held_out=False) -> dict:
         "source_identity": _source_identity(),
         "selection_artifact": str(selection_path),
         "selection": selection,
+        "process_correction": process_correction,
         "audit": audit,
         "intact": intact,
         "intact_hashes": {
@@ -1145,7 +1251,8 @@ def run_performance(old_baseline_path: Path | None = None) -> dict:
     }
 
 
-def merge_final(paths: list[Path]) -> dict:
+def merge_final(paths: list[Path], process_correction_path: Path) -> dict:
+    process_correction, _ = load_process_correction(process_correction_path)
     if len(paths) != 6:
         raise ValueError("final merge requires 6 artifacts")
     artifacts = [json.loads(path.read_text()) for path in paths]
@@ -1177,7 +1284,10 @@ def merge_final(paths: list[Path]) -> dict:
         "compatibility": (
             by_stage["cross_twin_compare"][0][1]
             == json.loads(COMPATIBILITY_CORRECTION_PATH.read_text())
-            and _load_compatibility_correction(COMPATIBILITY_CORRECTION_PATH)["outcome"]
+            and _load_compatibility_correction(
+                COMPATIBILITY_CORRECTION_PATH,
+                process_correction=process_correction,
+            )["outcome"]
             == "DETERMINISTIC_COMPATIBILITY_GO"
         ),
         "replication": all(item.get("go") for _, item in by_stage["replication"]),
@@ -1262,21 +1372,37 @@ def main(argv=None):
     stages.add_argument("--self-check", action="store_true")
     parser.add_argument("--old-baseline")
     parser.add_argument("--compatibility-correction")
+    parser.add_argument("--process-correction-spec")
     parser.add_argument("--out", required=True)
     args = parser.parse_args(argv)
 
     if args.calibration:
         if not args.compatibility_correction:
             parser.error("--calibration requires --compatibility-correction")
-        result = run_calibration(Path(args.compatibility_correction))
+        if not args.process_correction_spec:
+            parser.error("--calibration requires --process-correction-spec")
+        result = run_calibration(
+            Path(args.compatibility_correction), Path(args.process_correction_spec)
+        )
     elif args.merge_calibration:
+        if not args.process_correction_spec:
+            parser.error("--merge-calibration requires --process-correction-spec")
         result = merge_calibration(
-            Path(args.merge_calibration[0]), Path(args.merge_calibration[1])
+            Path(args.merge_calibration[0]), Path(args.merge_calibration[1]),
+            Path(args.process_correction_spec),
         )
     elif args.replication:
-        result = run_replication(Path(args.replication), held_out=False)
+        if not args.process_correction_spec:
+            parser.error("--replication requires --process-correction-spec")
+        result = run_replication(
+            Path(args.replication), Path(args.process_correction_spec), held_out=False
+        )
     elif args.held_out:
-        result = run_replication(Path(args.held_out), held_out=True)
+        if not args.process_correction_spec:
+            parser.error("--held-out requires --process-correction-spec")
+        result = run_replication(
+            Path(args.held_out), Path(args.process_correction_spec), held_out=True
+        )
     elif args.compatibility:
         result = run_compatibility()
     elif args.performance:
@@ -1286,7 +1412,12 @@ def main(argv=None):
     elif args.legacy_performance_baseline:
         result = run_legacy_performance_baseline()
     elif args.merge_final:
-        result = merge_final([Path(value) for value in args.merge_final])
+        if not args.process_correction_spec:
+            parser.error("--merge-final requires --process-correction-spec")
+        result = merge_final(
+            [Path(value) for value in args.merge_final],
+            Path(args.process_correction_spec),
+        )
     else:
         result = self_check()
 

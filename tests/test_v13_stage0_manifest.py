@@ -37,19 +37,136 @@ def _seal(value: dict) -> dict:
     return result
 
 
+def _write_replay_evidence(root: Path, revision: str) -> Path:
+    evidence_root = root / Path(controller.STRICT_REPLAY_PATH).parent
+    evidence_root.mkdir(parents=True, exist_ok=True)
+    replay_sources = sorted(
+        path for path in controller._required_candidate_source_paths(root)
+        if path.startswith(controller.REPLAY_SENSITIVE_PREFIX) and path.endswith(".py")
+    )
+    source_manifest = evidence_root / "source.sha256"
+    source_manifest.write_text("".join(
+        f"{_digest(root / relative)}  {relative}\n" for relative in replay_sources
+    ))
+    source = {
+        "file_count": len(replay_sources),
+        "git_sha": revision,
+        "kind": "git",
+        "manifest": source_manifest.relative_to(root).as_posix(),
+        "manifest_sha256": _digest(source_manifest),
+        "tree_sha256": _digest(source_manifest),
+    }
+    cells = {}
+    for backend in ("numpy", "cupy"):
+        cell_path = _write_json(evidence_root / f"cell-{backend}.json", _seal({
+            "schema": "v13-backend-neutral-izh-arithmetic-replay-cell-v2",
+            "backend": backend,
+            "source": source,
+        }))
+        receipt_path = evidence_root / f"cell-{backend}.receipt.json"
+        _write_json(receipt_path, {
+            "schema": execution_receipt.SCHEMA,
+            "status": "success",
+            "exit_code": 0,
+            "source": source,
+            "artifact": {
+                "path": cell_path.relative_to(root).as_posix(),
+                "sha256": _digest(cell_path),
+                "size_bytes": cell_path.stat().st_size,
+            },
+            "argv": [
+                "/usr/bin/python3", "-m", controller.REPLAY_RUNNER_MODULE,
+                "--run", "--backend", backend, "--out", str(cell_path.resolve()),
+            ],
+            "env_allowlist": {"SIM_BACKEND": backend},
+        })
+        cell = json.loads(cell_path.read_text())
+        cells[backend] = {
+            "artifact_sha256": cell["sha256"],
+            "file_sha256": _digest(cell_path),
+            "path": cell_path.relative_to(root).as_posix(),
+            "receipt_path": receipt_path.relative_to(root).as_posix(),
+        }
+    comparison_path = _write_json(evidence_root / "comparison.json", _seal({
+        "outcome": "DIAGNOSTIC_PASS",
+        "all_required_trajectories_exact": True,
+        "trajectory_comparisons": {
+            name: {"all_1200_rows_exact": True}
+            for name in ("v", "u", "spikes")
+        },
+        "cell_artifacts": cells,
+        "source": source,
+    }))
+    comparison_receipt = evidence_root / "comparison.receipt.json"
+    _write_json(comparison_receipt, {
+        "schema": execution_receipt.SCHEMA,
+        "status": "success",
+        "exit_code": 0,
+        "source": source,
+        "artifact": {
+            "path": comparison_path.relative_to(root).as_posix(),
+            "sha256": _digest(comparison_path),
+            "size_bytes": comparison_path.stat().st_size,
+        },
+        "argv": [
+            "/usr/bin/python3", "-m", controller.REPLAY_RUNNER_MODULE,
+            "--compare", "--out", str(comparison_path.resolve()),
+        ],
+        "env_allowlist": {"SIM_BACKEND": "numpy"},
+    })
+    return _write_json(root / controller.STRICT_REPLAY_PATH, _seal({
+        "schema": "v13-backend-neutral-izh-arithmetic-replay-evidence-manifest-v2",
+        "outcome": "DIAGNOSTIC_PASS",
+        "diagnostic_only": True,
+        "scientific_verdict": None,
+        "source": source,
+        "cells": cells,
+        "comparison": {
+            "path": comparison_path.relative_to(root).as_posix(),
+            "sha256": _digest(comparison_path),
+            "artifact_sha256": json.loads(comparison_path.read_text())["sha256"],
+            "receipt_path": comparison_receipt.relative_to(root).as_posix(),
+            "receipt_sha256": _digest(comparison_receipt),
+        },
+    }))
+
+
 class Fixture:
     def __init__(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setattr(controller, "SEED_DERIVATION_NAMESPACE", "TEST_STAGE0")
+        monkeypatch.setattr(controller, "SEED_DERIVATION_SOURCE_REVISION", CANDIDATE)
         self.root = (tmp_path / "candidate").resolve()
         self.root.mkdir()
         compatibility = _write_json(
             self.root / controller.COMPATIBILITY_PATH,
             {"outcome": "DETERMINISTIC_COMPATIBILITY_GO", "go": True},
         )
+        self.seeds = {
+            "calibration": controller._derive_replacement_seed(
+                role="calibration", original_seed=controller.OLD_CALIBRATION_SEED
+            ),
+            "replication": controller._derive_replacement_seed(
+                role="replication", original_seed=controller.OLD_REPLICATION_SEED
+            ),
+            "held_out": controller.LOCKED_HELD_OUT_SEED,
+        }
+        self.seed_derivation = {
+            "algorithm": controller.SEED_DERIVATION_ALGORITHM,
+            "namespace": controller.SEED_DERIVATION_NAMESPACE,
+            "source_revision": controller.SEED_DERIVATION_SOURCE_REVISION,
+            "original_seeds": {
+                "calibration": controller.OLD_CALIBRATION_SEED,
+                "replication": controller.OLD_REPLICATION_SEED,
+            },
+        }
         spec = _write_json(
             self.root / controller.SEED_SPEC_PATH,
-            {"partitions": {"calibration": [2003], "replication": [2009], "held_out": [2011]}},
+            {
+                "partitions": {name: [seed] for name, seed in self.seeds.items()},
+                "seed_derivation": self.seed_derivation,
+            },
         )
-        for relative in controller.CRITICAL_SOURCE_PATHS:
+        for relative in controller.REQUIRED_SOURCE_MANIFEST_PATHS:
             path = self.root / relative
             if path == spec:
                 continue
@@ -63,6 +180,16 @@ class Fixture:
             "research/runners/_vocal_action_credit_gate_v13_tonic_output.py"
         )
         legacy_runner = self.root / legacy_runner_relative
+        source_manifest = self.root / "source.sha256"
+        source_manifest.write_text("".join(
+            f"{_digest(self.root / relative)}  {relative}\n"
+            for relative in sorted(controller.REQUIRED_SOURCE_MANIFEST_PATHS)
+        ))
+        source_snapshot = execution_receipt.verify_source_manifest(
+            self.root, "source.sha256"
+        )
+
+        replay_path = _write_replay_evidence(self.root, CANDIDATE)
         self.artifacts = {
             "calibration_numpy": "evidence/calibration-numpy.json",
             "calibration_cupy": "evidence/calibration-cupy.json",
@@ -81,10 +208,22 @@ class Fixture:
             "correction_id": "stage0-process-correction-test",
             "candidate_source_revision": CANDIDATE,
             "candidate_source_identity": source_identity,
+            "candidate_source_manifest": {
+                "path": "source.sha256",
+                "sha256": source_snapshot["manifest_sha256"],
+                "tree_sha256": source_snapshot["tree_sha256"],
+                "file_count": source_snapshot["file_count"],
+            },
             "python": "/usr/bin/python3",
             "runner_module": controller.RUNNER_MODULE,
-            "seeds": {"calibration": 2003, "replication": 2009, "held_out": 2011},
+            "seeds": self.seeds,
+            "seed_derivation": self.seed_derivation,
             "seed_binding": {"path": controller.SEED_SPEC_PATH, "sha256": _digest(spec)},
+            "strict_arithmetic_replay": {
+                "path": controller.STRICT_REPLAY_PATH,
+                "sha256": _digest(replay_path),
+                "source_revision": CANDIDATE,
+            },
             "compatibility": {
                 "path": controller.COMPATIBILITY_PATH,
                 "sha256": _digest(compatibility),
@@ -119,10 +258,7 @@ class Fixture:
         self.artifact_path = _write_json(
             self.root / self.artifacts["calibration_numpy"], {"dummy": "result"}
         )
-        source = self.root / "dummy-source.txt"
-        source.write_text("sealed fixture source\n")
-        self.source_manifest = self.root / "source.sha256"
-        self.source_manifest.write_text(f"{_digest(source)}  dummy-source.txt\n")
+        self.source_manifest = source_manifest
         self.receipt_path = self.root / "receipts/calibration-numpy.json"
         self.receipt = self._receipt()
         _write_json(self.receipt_path, self.receipt)
@@ -261,6 +397,31 @@ def test_rejects_envelope_config_digest_and_extra_fields(fx: Fixture):
 def test_rejects_receipt_mismatches(fx: Fixture, mutation, message: str):
     fx.write_receipt(mutation)
     with pytest.raises(manifest_tool.ManifestError, match=message):
+        fx.create()
+
+
+def test_rejects_receipt_from_different_valid_source_manifest(fx: Fixture):
+    extra = fx.root / "extra-source.txt"
+    extra.write_text("extra source\n")
+    alternate = fx.root / "alternate-source.sha256"
+    alternate.write_text(
+        fx.source_manifest.read_text()
+        + f"{_digest(extra)}  extra-source.txt\n"
+    )
+    source = execution_receipt.verify_source_manifest(
+        fx.root, "alternate-source.sha256"
+    )
+
+    def mutate(receipt):
+        receipt["source"].update({
+            "file_count": source["file_count"],
+            "manifest": source["manifest"],
+            "manifest_sha256": source["manifest_sha256"],
+            "tree_sha256": source["tree_sha256"],
+        })
+
+    fx.write_receipt(mutate)
+    with pytest.raises(manifest_tool.ManifestError, match="frozen candidate source"):
         fx.create()
 
 

@@ -21,8 +21,24 @@ def test_locked_spec_matches_runner_and_seed_partitions_do_not_overlap():
     assert v13.PARTITIONS["reserved_for_stage1"] == [1031]
 
 
+def test_process_correction_derives_replacements_without_changing_held_out():
+    binding, seeds = v13.load_process_correction(v13.PROCESS_CORRECTION_SPEC_PATH)
+    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v1.json")
+    assert seeds["calibration"] == v13._derived_replacement_seed("calibration", 1013)
+    assert seeds["replication"] == v13._derived_replacement_seed("replication", 1019)
+    assert seeds["held_out"] == v13.PARTITIONS["held_out"][0]
+    assert not ({seeds["calibration"], seeds["replication"]} & {1013, 1019, 1021, 1031})
+    assert str(v13.PROCESS_CORRECTION_SPEC_PATH.relative_to(v13.ROOT)) in v13._source_identity()
+
+
 def test_earned_compatibility_correction_is_bound_to_committed_evidence():
-    result = v13._load_compatibility_correction(v13.COMPATIBILITY_CORRECTION_PATH)
+    process_correction, _ = v13.load_process_correction(
+        v13.PROCESS_CORRECTION_SPEC_PATH
+    )
+    result = v13._load_compatibility_correction(
+        v13.COMPATIBILITY_CORRECTION_PATH,
+        process_correction=process_correction,
+    )
     assert result["outcome"] == "DETERMINISTIC_COMPATIBILITY_GO"
     assert result["deterministic_patch_id"] == v13.DETERMINISTIC_PATCH_ID
     assert result["baseline_bundle_present_in_candidate_source"] is True
@@ -79,16 +95,21 @@ def test_checkpoint_continuation_is_exact_on_test_seed():
 
 
 def test_merge_calibration_selects_lowest_common_passing_point(tmp_path):
+    process_correction, seeds = v13.load_process_correction(
+        v13.PROCESS_CORRECTION_SPEC_PATH
+    )
     identity = {"runner": "same"}
     correction = v13._load_compatibility_correction(
-        v13.COMPATIBILITY_CORRECTION_PATH
+        v13.COMPATIBILITY_CORRECTION_PATH,
+        process_correction=process_correction,
     )
     base = {
         "stage": "calibration_backend",
-        "seed": 1013,
+        "seed": seeds["calibration"],
         "source_sha": "abc",
         "source_identity": identity,
         "compatibility_correction": correction,
+        "process_correction": process_correction,
         "rows": [{"current_pA": value} for value in v13.LADDER_PA],
     }
     numpy = {**base, "backend": "numpy", "passing_currents_pA": [100, 125]}
@@ -97,40 +118,50 @@ def test_merge_calibration_selects_lowest_common_passing_point(tmp_path):
     cupy_path = tmp_path / "cupy.json"
     numpy_path.write_text(json.dumps(numpy))
     cupy_path.write_text(json.dumps(cupy))
-    merged = v13.merge_calibration(numpy_path, cupy_path)
+    merged = v13.merge_calibration(
+        numpy_path, cupy_path, v13.PROCESS_CORRECTION_SPEC_PATH
+    )
     assert merged["calibration_go"]
     assert merged["selected_current_pA"] == 100
 
 
 def test_merge_calibration_refuses_source_mismatch(tmp_path):
+    process_correction, seeds = v13.load_process_correction(
+        v13.PROCESS_CORRECTION_SPEC_PATH
+    )
     rows = [{"current_pA": value} for value in v13.LADDER_PA]
     paths = []
     for backend, identity in (("numpy", {"x": "1"}), ("cupy", {"x": "2"})):
         path = tmp_path / f"{backend}.json"
         path.write_text(json.dumps({
-            "backend": backend, "seed": 1013, "source_sha": "abc",
+            "backend": backend, "seed": seeds["calibration"], "source_sha": "abc",
             "source_identity": identity, "rows": rows,
             "passing_currents_pA": [100],
+            "process_correction": process_correction,
         }))
         paths.append(path)
     with pytest.raises(ValueError, match="identical sealed sources"):
-        v13.merge_calibration(*paths)
+        v13.merge_calibration(*paths, v13.PROCESS_CORRECTION_SPEC_PATH)
 
 
 def test_merge_calibration_refuses_missing_compatibility_binding(tmp_path):
+    process_correction, seeds = v13.load_process_correction(
+        v13.PROCESS_CORRECTION_SPEC_PATH
+    )
     identity = {"runner": "same"}
     paths = []
     for backend in ("numpy", "cupy"):
         path = tmp_path / f"{backend}.json"
         path.write_text(json.dumps({
-            "backend": backend, "seed": 1013, "source_sha": "abc",
+            "backend": backend, "seed": seeds["calibration"], "source_sha": "abc",
             "source_identity": identity,
             "rows": [{"current_pA": value} for value in v13.LADDER_PA],
             "passing_currents_pA": [100],
+            "process_correction": process_correction,
         }))
         paths.append(path)
     with pytest.raises(ValueError, match="compatibility correction"):
-        v13.merge_calibration(*paths)
+        v13.merge_calibration(*paths, v13.PROCESS_CORRECTION_SPEC_PATH)
 
 
 def test_final_merge_requires_every_backend_and_gate(tmp_path):
@@ -157,13 +188,13 @@ def test_final_merge_requires_every_backend_and_gate(tmp_path):
             payload["selected_current_pA"] = 100
         path.write_text(json.dumps(payload))
         artifacts.append(path)
-    merged = v13.merge_final(artifacts)
+    merged = v13.merge_final(artifacts, v13.PROCESS_CORRECTION_SPEC_PATH)
     assert merged["outcome"] == "TONIC_OUTPUT_GO"
 
     failed = json.loads(artifacts[-1].read_text())
     failed["go"] = False
     artifacts[-1].write_text(json.dumps(failed))
-    merged = v13.merge_final(artifacts)
+    merged = v13.merge_final(artifacts, v13.PROCESS_CORRECTION_SPEC_PATH)
     assert merged["outcome"] == "TONIC_OUTPUT_NO_GO"
 
 
@@ -171,7 +202,7 @@ def test_final_merge_refuses_unearned_input_verdict(tmp_path):
     artifact = tmp_path / "invalid.json"
     artifact.write_text(json.dumps({"stage": "compatibility", "go": True}))
     with pytest.raises(ValueError, match="earned verdict"):
-        v13.merge_final([artifact] * 6)
+        v13.merge_final([artifact] * 6, v13.PROCESS_CORRECTION_SPEC_PATH)
 
 
 def test_compatibility_artifact_carries_earned_preconditions():

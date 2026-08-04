@@ -1,0 +1,41 @@
+{
+  "schema": "v13-stage0-process-correction-v1",
+  "status": "preregistered",
+  "date": "2026-08-04",
+  "provenance_exempt": "non-executed process correction; contains no measured result",
+  "device": "not_applicable_non_executed_protocol",
+  "authority": "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v1-PREREGISTRATION.md",
+  "base_spec": {
+    "path": "research/specs/v13_tonic_output_substrate.json",
+    "sha256": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936"
+  },
+  "strict_arithmetic_replay": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/evidence-manifest.json",
+    "sha256": "c9ceda9eaa263c542c88240f9df6661d808352c800abc8e3b79431f8e1578ecf",
+    "outcome": "DIAGNOSTIC_PASS"
+  },
+  "seed_derivation": {
+    "algorithm": "sha256-first-12-mod-900000-plus-100000-v1",
+    "namespace": "V13_STAGE0_PROCESS_CORRECTION_V1",
+    "source_revision": "b3d57494b7dd7d99d5e91088489da44d89a85bf3",
+    "original_seeds": {
+      "calibration": 1013,
+      "replication": 1019
+    }
+  },
+  "partitions": {
+    "calibration": [840860],
+    "replication": [687979],
+    "held_out": [1021]
+  },
+  "forbidden_consumed_seeds": [1013, 1019],
+  "execution_order": [
+    "calibration_numpy",
+    "calibration_cupy",
+    "merge_calibration",
+    "replication_numpy",
+    "replication_cupy",
+    "held_out_cupy",
+    "held_out_numpy"
+  ]
+}

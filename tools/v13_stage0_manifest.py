@@ -267,6 +267,13 @@ def create_manifest(
              "execution receipt environment differs from command envelope")
     _require(receipt.get("source", {}).get("git_sha") == envelope["source_revision"],
              "execution receipt source revision differs from command envelope")
+    if kind != "performance_baseline":
+        try:
+            controller._require_candidate_receipt_source(
+                receipt.get("source"), config=config, label="execution receipt"
+            )
+        except controller.ControllerError as exc:
+            raise ManifestError(str(exc)) from exc
     _require(isinstance(receipt.get("host"), str) and bool(receipt["host"].strip()),
              "execution receipt lacks an explicit host")
     _require(isinstance(receipt.get("device"), str) and bool(receipt["device"].strip()),
