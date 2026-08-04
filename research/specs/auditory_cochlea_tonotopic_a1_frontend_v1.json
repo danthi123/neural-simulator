@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "status": "construction",
+  "id": "auditory-cochlea-tonotopic-a1-frontend-v1",
+  "authority": "research/findings/2026-08-04-auditory-cochlea-tonotopic-a1-frontend-v1-CONSTRUCTION.md",
+  "runner": "research/runners/_auditory_cochlea_tonotopic_a1_frontend.py",
+  "seeds": [],
+  "execution_environment": {
+    "backend": "NumPy/SciPy on the local CPU",
+    "scientific_seed": null,
+    "note": "Only the no-seed peripheral construction smoke was executed; no SimulationBridge trajectory ran"
+  },
+  "input_contract": {
+    "sample_rate_hz": 16000,
+    "channels": 32,
+    "sample_type": "normalized float PCM in [-1, 1]",
+    "live_capture": "ALSA arecord S16_LE mono",
+    "automatic_gain_control": false,
+    "speech_labels_or_transcripts": false
+  },
+  "boundary": {
+    "external_sensory_transduction": [
+      "ERB-spaced fourth-order gammatone filterbank",
+      "half-wave rectification",
+      "one-third-power compression",
+      "inner-hair-cell low-pass",
+      "slow adaptation",
+      "refractory auditory-nerve spike encoding"
+    ],
+    "bridge_adapter_input": "auditory-nerve spike raster only",
+    "brain_internal_spiking": "ordinary BrainRegion and RegionPathway objects on the shared SimulationBridge",
+    "brain_internal_host_dynamics": false,
+    "shared_substrate_regions": [
+      "channel-specific auditory-nerve input populations",
+      "channel-specific excitatory A1 populations",
+      "channel-specific PV-like inhibitory A1 populations"
+    ],
+    "shared_substrate_pathways": [
+      "aligned auditory-nerve to A1 excitation",
+      "local A1 excitation and inhibition",
+      "flanking GABA_A inhibition across nearby frequency channels"
+    ]
+  },
+  "construction_controls": [
+    "three ordered pure-tone place probes",
+    "silence produces no auditory-nerve spikes",
+    "streaming chunk state matches whole-buffer processing",
+    "compression preserves level ordering without linear level growth",
+    "A1 builder has no afferent source except auditory-nerve input regions",
+    "bridge adapter modifies only auditory-nerve external-current slices and restores them",
+    "bridge adapter rejects waveform arrays and accepts CochlearFrame only",
+    "no standalone host-side A1 dynamics exist"
+  ],
+  "performance_budget": {
+    "hardware": "one local CPU core",
+    "sample_rate_hz": 16000,
+    "cochlear_channels": 32,
+    "maximum_real_time_factor": 1.0,
+    "note": "construction smoke only; live integration needs sustained chunk and latency profiling"
+  },
+  "allowed_claims": [
+    "local PCM can be converted into a streaming tonotopic auditory-nerve spike raster",
+    "the construction preserves ordered tone place into an auditory-nerve spike raster",
+    "the construction declares a tonotopic A1 slice for the shared SimulationBridge",
+    "the default smoke has no random seed and does not train"
+  ],
+  "excluded_claims": [
+    "speech recognition",
+    "speech understanding",
+    "phoneme discovery",
+    "human cochlear fidelity",
+    "complete auditory brainstem or thalamic circuitry",
+    "functional calibration of the declared shared-substrate A1 slice"
+  ],
+  "residual_scaffolds": [
+    "digital gammatone filters stand in for basilar-membrane traveling-wave mechanics and outer-hair-cell feedback",
+    "hair-cell and auditory-nerve dynamics are reduced phenomenological transforms",
+    "one deterministic auditory-nerve fiber stands in for heterogeneous fiber classes per place",
+    "cochlear nucleus, superior olive, inferior colliculus, and medial geniculate are absent",
+    "A1 pathway weights and population sizes are construction priors and have not passed a seeded functional calibration",
+    "the adapter converts auditory-nerve events into current pulses in bridge auditory-nerve input neurons",
+    "monaural capture provides no spatial hearing cues",
+    "microphone calibration to sound-pressure level is absent"
+  ]
+}
