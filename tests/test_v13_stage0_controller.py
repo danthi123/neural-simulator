@@ -722,6 +722,10 @@ def test_config_rejects_arbitrary_replacement_seed(fx: Fixture):
             "calibration contract",
         ),
         (
+            lambda value: value["merge_environment"]["calibration_selection"].clear(),
+            "merge environment contract",
+        ),
+        (
             lambda value: value["artifact_manifest"].update(
                 required_sealed_entries=[]
             ),

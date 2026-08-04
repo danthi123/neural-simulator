@@ -145,9 +145,10 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     required by the evidence contract. V2 is therefore also undefined; its
     calibration seed is consumed and its unused replication seed is retired.
     No replication or held-out command ran. The merge emitters are corrected
-    and tested. Process correction v3 must derive fresh partitions and be locked
-    before another scientific command. Held-out seed `1021` and Stage-1 seed
-    `1031` remain sealed.
+    and tested. Process correction v3 is now preregistered with fresh,
+    result-independent calibration seed `577995` and replication seed `578403`.
+    The next action is to freeze and commit its complete candidate source before
+    any v3 command. Held-out seed `1021` and Stage-1 seed `1031` remain sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
