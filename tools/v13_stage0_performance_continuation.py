@@ -442,7 +442,9 @@ def finalize(*, root: Path = ROOT) -> dict[str, Any]:
         raise ContinuationError("candidate transfer no longer binds the performance artifact")
     artifact = json.loads(artifact_bytes)
     performance_go = _validate_performance(artifact)
+    receipt_complete = True
     if transfer.get("schema") == "v13-stage0-candidate-performance-failed-receipt-v1":
+        receipt_complete = False
         if (
             performance_go
             or transfer.get("status") != "measured_no_go_receipt_failed"
@@ -459,9 +461,14 @@ def finalize(*, root: Path = ROOT) -> dict[str, Any]:
     final = {
         "schema": "v13-stage0-performance-continuation-final-v1",
         "stage": "final_cross_backend",
-        "status": "complete",
+        "status": (
+            "complete" if receipt_complete
+            else "negative-measurement-receipt-failed"
+        ),
         "go": performance_go,
         "outcome": outcome,
+        "promotion_eligible": performance_go and receipt_complete,
+        "candidate_receipt_complete": receipt_complete,
         "selected_current_pA": 100.0,
         "checks": {"sealed_v6_physiology": True, "performance": performance_go},
         "v6_inputs": accepted,
