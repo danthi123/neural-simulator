@@ -1,1 +1,3 @@
-Temporary waiver: the five A-E CPU lanes have current de-risk artifacts banked, and workflow_check identifies integration or backend confirmation as their next action rather than a new lane-specific de-risk. The pool queue is empty because no new question has been authorized; queuing the old runners would repeat banked work without a hypothesis. Re-open the lanes when the research-packet or experiment-controller integration registers a concrete A-E question, or when a backend confirmation is preregistered. This is a real absence-of-ready-work blocker, not a priority/focus rationale; auto-expires 6h.
+scope=no-ready-work
+reason=all current A-E CPU de-risk artifacts are banked; the workboard has no ready CPU-compatible lane; the next concrete question must be registered by research-packet or experiment-controller integration
+expiry=auto-6h

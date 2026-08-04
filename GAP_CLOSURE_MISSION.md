@@ -13,7 +13,36 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 23:35 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-04 11:29 EDT (read first; below is history)
+
+**The handoff guard repair is verified.** A structured `scope=no-ready-work` waiver now expires after
+six hours, is tied to the tracked workboard, and is rejected if a CPU-compatible lane is ready or if
+the reason is a preference for one lane over another. The workflow check therefore passes honestly
+when all current CPU de-risks are banked, without inventing duplicate jobs. The mini-PC copies were
+also provisioned from the same archived revision and passed a read-only 129-test regression bundle;
+the pool dispatcher recorded `rc=0` on `pool40`. This maintenance result opens no scientific claim.
+
+**Queue recovery and V13 diagnostic are complete.** The August 1 K=16 entry in
+`gpu.queue.running` was a stale claim, not a live job: the same command was already in
+`gpu.queue.done`, and its result/log existed. The dispatcher had fixed the analogous
+single-line `grep` bug in pending-queue removal but still had it in completion cleanup.
+Completion cleanup is now unconditional, and the coordinator reports live process counts
+separately from claim-ledger counts. This is an operational correction, not a scientific result.
+
+The valid V13 Stage-0 v9 diagnostic completed all 12 preregistered repetitions with the project
+Python/CuPy environment and passed every structural check. Median candidate/control ratios were
+`1.013981` cold and `0.993303` after v2 warmup. The receipt is
+`research/findings/raw/v13_stage0_performance_diagnostic_v9-rerun1.json`. It is process-only
+evidence: the sealed V8 `PERFORMANCE_NO_GO` remains authoritative, the performance boundary is
+unchanged, and Stage-1 seed `1031` remains sealed. The first system-Python attempt is recorded as
+an environment failure, not a negative finding.
+
+**EXACT NEXT:** do not rerun V9 unchanged or treat it as a capability promotion. Follow the
+workboard and plain-language roadmap back to whole-brain integration; any new performance claim
+requires a new preregistration and a fresh receipt. Keep the local model stopped whenever the
+3090 is reserved for a preregistered experiment.
+
+## STATE OF THE PROJECT - 2026-08-03 23:35 EDT (history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines

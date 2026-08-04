@@ -37,6 +37,13 @@ if bash -n tools/lane_dispatch.sh && grep -q "DISPATCHER SELF-CHECK FAILED" tool
   ok "lane_dispatch parses + carries the startup self-check"
 else bad "lane_dispatch missing its startup self-check or fails to parse"; fi
 
+# (c2) A single completion claim must be removable. `grep -v` returns 1 when it
+# filters the only line; an `&& mv` here recreates the stale-running-claim bug.
+if grep -q 'grep -vxF "\$LINE" "\$RUN" > "\$RUN.tmp" 2>/dev/null || true' tools/lane_dispatch.sh && \
+   ! grep -q 'grep -vxF "\$LINE" "\$RUN" > "\$RUN.tmp" 2>/dev/null && mv' tools/lane_dispatch.sh; then
+  ok "single-line completion claims cannot remain stale"
+else bad "lane_dispatch completion cleanup still gates mv on grep success"; fi
+
 # (d) Generic pool enqueue must emit the timestamped format consumed by the
 # pool dispatcher. This previously emitted a GPU-style bare command.
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT

@@ -163,3 +163,4 @@ attic/
 research/coordination/status.json
 research/coordination/heartbeats.jsonl
 research/coordination/HANDOFF.md
+research/queue/.corpus_checks.jsonl

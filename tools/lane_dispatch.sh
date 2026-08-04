@@ -113,7 +113,11 @@ while true; do
     TAG=$(echo "$LINE" | md5sum | cut -c1-8)
     ( cd "$ROOT" && eval "$LINE" > "$LOGD/$TAG.log" 2>&1
       echo "$LINE" >> "$DONE"
-      grep -vxF "$LINE" "$RUN" > "$RUN.tmp" 2>/dev/null && mv "$RUN.tmp" "$RUN" ) &
+      # grep exits 1 when this was the only running claim.  The write must still
+      # replace the file; gating mv on grep's status leaves a permanently stale
+      # claim that blocks the next GPU lane and misleads the coordinator.
+      grep -vxF "$LINE" "$RUN" > "$RUN.tmp" 2>/dev/null || true
+      mv "$RUN.tmp" "$RUN" ) &
     echo "[dispatch $LANE] -> $TAG  $(echo "$LINE" | cut -c1-90)"
     FREE=$(( FREE - 1 )); sleep 3
   done

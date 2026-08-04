@@ -7,7 +7,9 @@ import sys
 from tools.autonomous_coordinator import (
     SCHEMA,
     _default_board,
+    _gpu_process_count,
     board_warnings,
+    collect_resources,
     load_board,
     save_board,
 )
@@ -53,6 +55,39 @@ def test_running_lane_without_fresh_heartbeat_is_loud():
     board["lanes"]["rag-freshness"]["heartbeat_at"] = "2020-01-01T00:00:00+00:00"
     warnings = board_warnings(board, _quiet_resources())
     assert any(warning.startswith("LANE-STALE: rag-freshness") for warning in warnings)
+
+
+def test_stale_gpu_claim_is_not_counted_as_running_work():
+    processes = [
+        {"pid": 10, "args": ".venv/bin/python -u -m research.runners.real_job"},
+        {"pid": 11, "args": "sim-codex-heartbeat pgrep -fc research.runners"},
+    ]
+    assert _gpu_process_count(processes) == 1
+
+    resources = _quiet_resources()
+    resources["queues"].update({
+        "gpu_running": 0,
+        "gpu_running_claims": 1,
+        "gpu_running_stale_claims": 1,
+        "gpu_unclaimed_processes": 0,
+    })
+    warnings = board_warnings(_default_board(), resources)
+    assert any(warning.startswith("GPU-QUEUE-STATE-STALE") for warning in warnings)
+
+
+def test_actual_gpu_process_count_is_derived_from_processes_not_claims(monkeypatch, tmp_path: Path):
+    queue = tmp_path / "research" / "queue"
+    queue.mkdir(parents=True)
+    (queue / "gpu.queue.running").write_text("stale claim\n", encoding="utf-8")
+    (queue / "pool.queue.running").write_text("remote claim\n", encoding="utf-8")
+    monkeypatch.setattr("tools.autonomous_coordinator.shared_root", lambda: tmp_path)
+    monkeypatch.setattr("tools.autonomous_coordinator._processes", lambda: [])
+    monkeypatch.setattr("tools.autonomous_coordinator._gpu", lambda: {"available": True})
+    resources = collect_resources()
+    assert resources["queues"]["gpu_running"] == 0
+    assert resources["queues"]["gpu_running_claims"] == 1
+    assert resources["queues"]["gpu_running_stale_claims"] == 1
+    assert resources["queues"]["pool_running"] == 1
 
 
 def test_workboard_round_trips_atomically(tmp_path: Path):

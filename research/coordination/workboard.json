@@ -252,6 +252,24 @@
       "detail": "completed",
       "kind": "lane-update",
       "subject": "plain-language-roadmap"
+    },
+    {
+      "at": "2026-08-04T15:09:32+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "v13-performance-diagnostic"
+    },
+    {
+      "at": "2026-08-04T15:10:11+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v13-performance-diagnostic"
+    },
+    {
+      "at": "2026-08-04T15:14:35+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v13-performance-diagnostic"
     }
   ],
   "lanes": {
@@ -323,15 +341,15 @@
       ]
     },
     "v13-performance-diagnostic": {
-      "blocker": "Canonical GPU queue is occupied by the eprop K=16 job.",
+      "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T09:50:00+00:00",
-      "next_action": "Do not consume GPU until readiness becomes true; then execute V9 controller.",
+      "heartbeat_at": "2026-08-04T15:14:35+00:00",
+      "next_action": "Keep the V8 performance NO-GO sealed; use the complete V9 comparison as diagnostic context and do not rerun it unchanged. Select the next whole-brain integration lane from the roadmap/workboard.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Recheck queue and shared lease; run the preregistered four-cell diagnostic when both are clear.",
+      "recovery_action": "If a new performance hypothesis is proposed, preregister it with a new source boundary and receipt before using the GPU.",
       "resource": "local_gpu",
-      "status": "blocked",
+      "status": "completed",
       "write_set": [
         "research/specs/v13_stage0_performance_diagnostic_v9.json",
         "tools/v13_stage0_performance_diagnostic_v9.py"
@@ -350,5 +368,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T14:58:45+00:00"
+  "updated_at": "2026-08-04T15:14:35+00:00"
 }

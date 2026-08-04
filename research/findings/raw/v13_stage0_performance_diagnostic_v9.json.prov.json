@@ -1,0 +1,21 @@
+{
+  "schema": "sim-artifact-provenance-v1",
+  "artifact": "research/findings/raw/v13_stage0_performance_diagnostic_v9.json",
+  "artifact_sha256": "f54ed7db03e8b44932df0386ed7ccabd581be006313990cb0c682e515fb480a4",
+  "argv": [
+    "/usr/bin/python",
+    "tools/v13_stage0_performance_diagnostic_v9.py",
+    "--out",
+    "research/findings/raw/v13_stage0_performance_diagnostic_v9.json"
+  ],
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "environment": {
+    "SIM_BACKEND": "cupy",
+    "python": "system interpreter (3.14)",
+    "failure": "ModuleNotFoundError: No module named 'h5py'"
+  },
+  "source_revision": "b138718fa56d27569a73aa58c34301e2057f4883",
+  "source_files_clean": true,
+  "status": "incomplete",
+  "note": "Environment failure before GPU work; not a scientific negative."
+}

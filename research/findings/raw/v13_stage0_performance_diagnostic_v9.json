@@ -1,0 +1,364 @@
+{
+  "backend": "cupy",
+  "candidate_root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "control_root": "/tmp/sim-v13-v6-candidate-1bec",
+  "device": "NVIDIA GeForce RTX 3090",
+  "order_seed": 20260804,
+  "preregistration": "research/specs/v13_stage0_performance_diagnostic_v9.json",
+  "preregistration_sha256": "a623ec166189cfc8045614c479d425f174bcbfbc43b7ea22e018da2dd9d5b683",
+  "promotion_effect": "none; sealed V8 NO_GO remains authoritative",
+  "readiness": {
+    "candidate": {
+      "files": {
+        "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "e395c04ed5545a30b12018e841c9c4c0110c2be309a4879ad4ef0e1694a5e2a7",
+        "research/specs/v13_tonic_output_stage0_process_correction_v6.json": "e9600d6268ab0f2ba9c229fd9045978766d1ec3c60021dcc5797203a6b4a3be9",
+        "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+        "sim/bridge.py": "21c0e9f4764c6fc7bd6384a1e18b659891f90098a5b5e10e138e6d55dcf2ef91",
+        "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+        "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+      },
+      "missing": [],
+      "revision": "b138718fa56d27569a73aa58c34301e2057f4883",
+      "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+      "source_files_clean": true,
+      "source_status": ""
+    },
+    "checks": {
+      "candidate_matches_v8_source_files": true,
+      "candidate_sources_clean": true,
+      "candidate_sources_present": true,
+      "control_revision_locked": true,
+      "control_sources_clean": true,
+      "control_sources_present": true,
+      "gpu_queue_running_empty": true,
+      "runner_identical_between_sources": true,
+      "shared_gpu_lease_available": true
+    },
+    "control": {
+      "files": {
+        "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "e395c04ed5545a30b12018e841c9c4c0110c2be309a4879ad4ef0e1694a5e2a7",
+        "research/specs/v13_tonic_output_stage0_process_correction_v6.json": "e9600d6268ab0f2ba9c229fd9045978766d1ec3c60021dcc5797203a6b4a3be9",
+        "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+        "sim/bridge.py": "09564a6485e299d5c59c8b16bfdcb9fc4164b06e14a71e9a54223fb882e1f1a3",
+        "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+        "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+      },
+      "missing": [],
+      "revision": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+      "root": "/tmp/sim-v13-v6-candidate-1bec",
+      "source_files_clean": true,
+      "source_status": ""
+    },
+    "lease_path": "/tmp/sim-local-model-gpu0.lock",
+    "queue_running": [],
+    "queue_running_path": "/home/dant123/Projects/sim/research/queue/gpu.queue.running",
+    "schema": "v13-stage0-performance-diagnostic-v9-readiness-v1",
+    "spec_sha256": "a623ec166189cfc8045614c479d425f174bcbfbc43b7ea22e018da2dd9d5b683",
+    "status": "ready"
+  },
+  "repetitions": 3,
+  "results": [
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "D",
+      "rep": 3,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 1,
+      "source_label": "control",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/tmp/sim-v13-v6-candidate-1bec/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "A",
+      "rep": 2,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 2,
+      "source_label": "candidate",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "A",
+      "rep": 3,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 3,
+      "source_label": "candidate",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "B",
+      "rep": 1,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 4,
+      "source_label": "control",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/tmp/sim-v13-v6-candidate-1bec/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "C",
+      "rep": 3,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 5,
+      "source_label": "candidate",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "C",
+      "rep": 2,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 6,
+      "source_label": "candidate",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "D",
+      "rep": 2,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 7,
+      "source_label": "control",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/tmp/sim-v13-v6-candidate-1bec/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "A",
+      "rep": 1,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 8,
+      "source_label": "candidate",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "B",
+      "rep": 2,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 9,
+      "source_label": "control",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/tmp/sim-v13-v6-candidate-1bec/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "B",
+      "rep": 3,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 10,
+      "source_label": "control",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/tmp/sim-v13-v6-candidate-1bec/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "C",
+      "rep": 1,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 11,
+      "source_label": "candidate",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "D",
+      "rep": 1,
+      "returncode": 1,
+      "schema": "v13-stage0-performance-diagnostic-v9-worker-v1",
+      "sequence": 12,
+      "source_label": "control",
+      "status": "failed",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 608, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 574, in main\n    result = _worker(\n        source_root=args.source_root,\n    ...<4 lines>...\n        chunk_steps=args.chunk_steps,\n    )\n  File \"/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v13_stage0_performance_diagnostic_v9.py\", line 224, in _worker\n    from research.runners import _vocal_action_credit_gate_v13_tonic_output as runner\n  File \"/tmp/sim-v13-v6-candidate-1bec/research/runners/_vocal_action_credit_gate_v13_tonic_output.py\", line 14, in <module>\n    import h5py\nModuleNotFoundError: No module named 'h5py'\n",
+      "stdout": ""
+    }
+  ],
+  "run_plan": [
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "D",
+      "rep": 3,
+      "sequence": 1,
+      "source": "control",
+      "warm_v2": true
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "A",
+      "rep": 2,
+      "sequence": 2,
+      "source": "candidate",
+      "warm_v2": false
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "A",
+      "rep": 3,
+      "sequence": 3,
+      "source": "candidate",
+      "warm_v2": false
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "B",
+      "rep": 1,
+      "sequence": 4,
+      "source": "control",
+      "warm_v2": false
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "C",
+      "rep": 3,
+      "sequence": 5,
+      "source": "candidate",
+      "warm_v2": true
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "C",
+      "rep": 2,
+      "sequence": 6,
+      "source": "candidate",
+      "warm_v2": true
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "D",
+      "rep": 2,
+      "sequence": 7,
+      "source": "control",
+      "warm_v2": true
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "A",
+      "rep": 1,
+      "sequence": 8,
+      "source": "candidate",
+      "warm_v2": false
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "B",
+      "rep": 2,
+      "sequence": 9,
+      "source": "control",
+      "warm_v2": false
+    },
+    {
+      "cache_state": "cold-process",
+      "cell": "B",
+      "rep": 3,
+      "sequence": 10,
+      "source": "control",
+      "warm_v2": false
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "C",
+      "rep": 1,
+      "sequence": 11,
+      "source": "candidate",
+      "warm_v2": true
+    },
+    {
+      "cache_state": "after-v2-warmup",
+      "cell": "D",
+      "rep": 1,
+      "sequence": 12,
+      "source": "control",
+      "warm_v2": true
+    }
+  ],
+  "schema": "v13-stage0-performance-diagnostic-v9-result-v1",
+  "status": "incomplete",
+  "summary": {
+    "cells": {
+      "A": {
+        "all_structural_checks_pass": false,
+        "cache_state": "cold-process",
+        "completed_repetitions": 0,
+        "cuda_seconds": [],
+        "median_cuda_seconds": null,
+        "median_host_minus_device_seconds": null,
+        "median_wall_seconds": null,
+        "source": "candidate",
+        "wall_seconds": []
+      },
+      "B": {
+        "all_structural_checks_pass": false,
+        "cache_state": "cold-process",
+        "completed_repetitions": 0,
+        "cuda_seconds": [],
+        "median_cuda_seconds": null,
+        "median_host_minus_device_seconds": null,
+        "median_wall_seconds": null,
+        "source": "control",
+        "wall_seconds": []
+      },
+      "C": {
+        "all_structural_checks_pass": false,
+        "cache_state": "after-v2-warmup",
+        "completed_repetitions": 0,
+        "cuda_seconds": [],
+        "median_cuda_seconds": null,
+        "median_host_minus_device_seconds": null,
+        "median_wall_seconds": null,
+        "source": "candidate",
+        "wall_seconds": []
+      },
+      "D": {
+        "all_structural_checks_pass": false,
+        "cache_state": "after-v2-warmup",
+        "completed_repetitions": 0,
+        "cuda_seconds": [],
+        "median_cuda_seconds": null,
+        "median_host_minus_device_seconds": null,
+        "median_wall_seconds": null,
+        "source": "control",
+        "wall_seconds": []
+      }
+    },
+    "comparisons": {
+      "candidate_after_v2_vs_control_after_v2": null,
+      "candidate_after_v2_vs_historical": null,
+      "candidate_cold_vs_control_cold": null,
+      "candidate_cold_vs_historical": null
+    },
+    "historical_baseline_seconds": 5.78883048100397,
+    "interpretation_status": "requires_review; no automatic gate verdict",
+    "sealed_v8_boundary": "unchanged PERFORMANCE_NO_GO",
+    "stage1_seed_1031": "sealed-not-read-or-executed"
+  }
+}

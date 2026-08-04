@@ -1,0 +1,22 @@
+{
+  "schema": "sim-artifact-provenance-v1",
+  "artifact": "research/findings/raw/v13_stage0_performance_diagnostic_v9-rerun1.json",
+  "artifact_sha256": "9fa747523aacffa41905be440d272abc9847e83492b67892dfd809220c01aca4",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/v13_stage0_performance_diagnostic_v9.py",
+    "--out",
+    "research/findings/raw/v13_stage0_performance_diagnostic_v9-rerun1.json"
+  ],
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "environment": {
+    "SIM_BACKEND": "cupy",
+    "python": "3.11.14",
+    "cupy": "14.1.1",
+    "device": "NVIDIA GeForce RTX 3090"
+  },
+  "source_revision": "b138718fa56d27569a73aa58c34301e2057f4883",
+  "source_files_clean": true,
+  "status": "complete",
+  "note": "Valid project-environment rerun after the system-Python import failure; process-only diagnostic, no gate promotion."
+}

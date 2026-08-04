@@ -194,11 +194,15 @@ def shared_root() -> Path:
 
 
 def _queue_count(path: Path) -> int:
+    return len(_queue_lines(path))
+
+
+def _queue_lines(path: Path) -> list[str]:
     try:
-        return sum(1 for line in path.read_text(encoding="utf-8", errors="replace").splitlines()
-                   if line.strip() and not line.lstrip().startswith("#"))
+        return [line for line in path.read_text(encoding="utf-8", errors="replace").splitlines()
+                if line.strip() and not line.lstrip().startswith("#")]
     except OSError:
-        return 0
+        return []
 
 
 def _processes() -> list[dict[str, Any]]:
@@ -216,6 +220,15 @@ def _processes() -> list[dict[str, Any]]:
         except ValueError:
             continue
     return rows
+
+
+def _gpu_process_count(processes: list[dict[str, Any]]) -> int:
+    """Count local research runners, which are the jobs lane_dispatch treats as GPU work."""
+    return sum(
+        1 for process in processes
+        if ".venv/bin/python" in str(process.get("args", ""))
+        and "-m research.runners" in str(process.get("args", ""))
+    )
 
 
 def _gpu() -> dict[str, Any]:
@@ -240,6 +253,10 @@ def _gpu() -> dict[str, Any]:
 
 def collect_resources() -> dict[str, Any]:
     queue = shared_root() / "research" / "queue"
+    processes = _processes()
+    gpu_claims = _queue_lines(queue / "gpu.queue.running")
+    pool_claims = _queue_lines(queue / "pool.queue.running")
+    gpu_processes = _gpu_process_count(processes)
     try:
         load = list(os.getloadavg())
     except OSError:
@@ -252,11 +269,16 @@ def collect_resources() -> dict[str, Any]:
         "queues": {
             "root": str(queue),
             "gpu_pending": _queue_count(queue / "gpu.queue"),
-            "gpu_running": _queue_count(queue / "gpu.queue.running"),
+            # `*.running` is a claim ledger, not proof that a process exists.
+            # Keep both values so a crashed dispatcher cannot make the GPU look busy.
+            "gpu_running": gpu_processes,
+            "gpu_running_claims": len(gpu_claims),
+            "gpu_running_stale_claims": max(0, len(gpu_claims) - gpu_processes),
+            "gpu_unclaimed_processes": max(0, gpu_processes - len(gpu_claims)),
             "pool_pending": _queue_count(queue / "pool.queue"),
-            "pool_running": _queue_count(queue / "pool.queue.running"),
+            "pool_running": len(pool_claims),
         },
-        "processes": _processes(),
+        "processes": processes,
     }
 
 
@@ -301,6 +323,19 @@ def board_warnings(board: dict[str, Any], resources: dict[str, Any] | None = Non
     cores = cpu.get("logical_cores") or 0
     if missing_agent_lanes and cores and isinstance(load, (int, float)) and load < max(1.0, cores * 0.35):
         warnings.append("CPU-CAPACITY-AVAILABLE: ready CPU-compatible lanes exist while host load is low")
+    queues = resources.get("queues", {})
+    stale_claims = int(queues.get("gpu_running_stale_claims", 0) or 0)
+    if stale_claims:
+        warnings.append(
+            "GPU-QUEUE-STATE-STALE: gpu.queue.running has "
+            f"{stale_claims} claim(s) without a matching local research process; reconcile before dispatch"
+        )
+    unclaimed = int(queues.get("gpu_unclaimed_processes", 0) or 0)
+    if unclaimed:
+        warnings.append(
+            "GPU-QUEUE-STATE-UNCLAIMED: "
+            f"{unclaimed} local research process(es) have no running-queue claim"
+        )
     return warnings
 
 

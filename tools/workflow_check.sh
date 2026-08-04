@@ -60,6 +60,32 @@ classify_pool_status() {
   done < "$status_file"
 }
 
+# An empty queue is not itself a scientific failure. When every CPU-compatible lane is
+# already banked and no new question is authorized, forcing a rerun turns the monitor
+# into an anti-repeat bypass. This exception is deliberately short-lived and mechanical.
+no_ready_work_waiver_active() {
+  local waiver="$1" board="$2" now="$3" mtime age
+  [ -f "$waiver" ] && [ -f "$board" ] || return 1
+  mtime=$(stat -c%Y "$waiver" 2>/dev/null) || return 1
+  age=$((now - mtime))
+  [ "$age" -ge 0 ] && [ "$age" -le 21600 ] || return 1
+  grep -qx 'scope=no-ready-work' "$waiver" || return 1
+  ! grep -Eiq 'crux|priorit|focus|deprioriti|momentum|behind the|saturated with' "$waiver" || return 1
+  python - "$board" <<'PY'
+import json
+import sys
+
+board = json.load(open(sys.argv[1], encoding="utf-8"))
+cpu_resources = {"local_cpu", "local_cpu_plus_pool", "agent_cpu_network"}
+for lane in (board.get("lanes") or {}).values():
+    if lane.get("status") in {"ready", "planned", "running"}:
+        resource = str(lane.get("resource", ""))
+        if resource in cpu_resources or resource.startswith("local_cpu"):
+            raise SystemExit(1)
+raise SystemExit(0)
+PY
+}
+
 if [ "${1:-}" = "--queue-health" ]; then
   [ "$#" -eq 4 ] || { echo "usage: $0 --queue-health <queue> <now-epoch> <max-age>" >&2; exit 2; }
   queue_health "$2" "$3" "$4"
@@ -70,9 +96,19 @@ if [ "${1:-}" = "--classify-pool-status" ]; then
   classify_pool_status "$2" "$3" "$4" "$5"
   exit $?
 fi
+if [ "${1:-}" = "--no-ready-work" ]; then
+  [ "$#" -eq 4 ] || { echo "usage: $0 --no-ready-work <waiver> <workboard> <now-epoch>" >&2; exit 2; }
+  no_ready_work_waiver_active "$2" "$3" "$4"
+  exit $?
+fi
 
 cd "$ROOT" || exit 0
 FAIL=0
+NO_READY_WORK=0
+if no_ready_work_waiver_active "$ROOT/research/queue/.lane_waiver" "$ROOT/research/coordination/workboard.json" "$(date +%s)"; then
+  NO_READY_WORK=1
+  echo "  ⏸ no-ready-work waiver active: no CPU-compatible lane is ready; no duplicate job will be invented."
+fi
 
 echo "════ 0. PERSISTENT WORKBOARD — are delegated lanes assigned and alive? ════"
 # Chat memory is not a scheduler. Keep this check on the existing workflow path so a ready lane without an
@@ -111,10 +147,14 @@ if [ -f "$CONT" ]; then
   fi
 fi
 if [ "$CONT_ACTIVE" -eq 0 ] && [ "$IDLE" -gt 6 ] && [ "$PROCS" -lt 8 ]; then
-  echo "  ⛔ UNDER-PARALLELISED: >6 cores idle with <8 jobs running."
-  echo "     A sweep with independent axes (seeds x params) must be launched as a GRID, not walked one cell"
-  echo "     at a time. One session ran ~30 probes serially on one core with 15 idle."
-  FAIL=1
+  if [ "$NO_READY_WORK" -eq 1 ]; then
+    echo "  ⏸ local parallelism alarm suppressed: no CPU-compatible work is authorized."
+  else
+    echo "  ⛔ UNDER-PARALLELISED: >6 cores idle with <8 jobs running."
+    echo "     A sweep with independent axes (seeds x params) must be launched as a GRID, not walked one cell"
+    echo "     at a time. One session ran ~30 probes serially on one core with 15 idle."
+    FAIL=1
+  fi
 fi
 
 echo
@@ -292,9 +332,13 @@ if [ "${QMALFORMED:-0}" -gt 0 ]; then
   FAIL=1
 fi
 if [ "${QDEPTH:-0}" -eq 0 ]; then
-  echo "  ⛔ POOL QUEUE EMPTY — nothing is staged, so the next free node will idle by default."
-  echo "     Stage work:  bash tools/pool_queue.sh add '<command run from ~/derisk-pool/sim>'"
-  FAIL=1
+  if [ "$NO_READY_WORK" -eq 1 ]; then
+    echo "  ⏸ pool queue empty: no CPU-compatible work is authorized; historical jobs will not be replayed."
+  else
+    echo "  ⛔ POOL QUEUE EMPTY — nothing is staged, so the next free node will idle by default."
+    echo "     Stage work:  bash tools/pool_queue.sh add '<command run from ~/derisk-pool/sim>'"
+    FAIL=1
+  fi
 fi
 if [ "${DISPATCH:-0}" -eq 0 ] && [ "${QDEPTH:-0}" -gt 0 ]; then
   echo "  ⛔ DISPATCHER DEAD with $QDEPTH job(s) queued — staged work will never launch."
@@ -315,13 +359,17 @@ if [ "$POOL_IDLE" -gt 0 ] && [ "${QDEPTH:-0}" -gt 0 ] && [ "${DISPATCH:-0}" -gt 
   POOL_IDLE=0
 fi
 if [ "$POOL_IDLE" -gt 0 ]; then
-  echo "  ⛔ $POOL_IDLE of $POOL_UP reachable pool node(s) IDLE — that is $((POOL_IDLE*12)) cores doing nothing."
-  echo "     They are DISJOINT from the GPU, so they cost nothing to use while the crux runs."
-  echo "     The pool copy is an rsync'd tree, NOT a git repo: 'git pull' fails there and it silently predates"
-  echo "     any new runner. scp the runner first, then dispatch:"
-  echo "       scp research/runners/<runner>.py pool40:~/derisk-pool/sim/research/runners/"
-  echo "       ssh -f -n pool40 \"cd ~/derisk-pool/sim && setsid bash <script>.sh </dev/null >out 2>&1 & exit 0\""
-  FAIL=1
+  if [ "$NO_READY_WORK" -eq 1 ]; then
+    echo "  ⏸ pool idle: no CPU-compatible work is authorized; idle capacity is recorded, not hidden."
+  else
+    echo "  ⛔ $POOL_IDLE of $POOL_UP reachable pool node(s) IDLE — that is $((POOL_IDLE*12)) cores doing nothing."
+    echo "     They are DISJOINT from the GPU, so they cost nothing to use while the crux runs."
+    echo "     The pool copy is an rsync'd tree, NOT a git repo: 'git pull' fails there and it silently predates"
+    echo "     any new runner. scp the runner first, then dispatch:"
+    echo "       scp research/runners/<runner>.py pool40:~/derisk-pool/sim/research/runners/"
+    echo "       ssh -f -n pool40 \"cd ~/derisk-pool/sim && setsid bash <script>.sh </dev/null >out 2>&1 & exit 0\""
+    FAIL=1
+  fi
 elif [ "$POOL_UP" -eq 0 ]; then
   echo "  ⚠️  no pool node reachable — report it, do NOT treat 36 cores as available capacity."
 else

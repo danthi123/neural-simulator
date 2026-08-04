@@ -70,6 +70,18 @@ The coordinator reports live CPU load, GPU telemetry, queue depth, and matching 
 observation, not evidence that a scientific run succeeded. Scientific results still require their own receipts,
 controls, lesions, held-out data, seeds, and gate verdicts.
 
+Queue claims are not liveness. `research/queue/*.running` is a claim ledger used for recovery; it is not proof that a
+process is still executing. The coordinator therefore reports claim counts separately from matching local research
+processes and warns about stale or unclaimed GPU state. GPU runners must use the project interpreter
+`/home/dant123/Projects/sim/.venv/bin/python` (or the equivalent project `.venv/bin/python` from the canonical
+checkout), not whichever system `python` happens to be first on `PATH`; an import failure before the first step is an
+environment failure, not a scientific negative.
+
+An empty CPU queue is also not automatically a reason to invent a rerun. When all current CPU-compatible lanes are
+banked and no new question is authorized, `.lane_waiver` may carry `scope=no-ready-work`. The workflow check verifies
+that no CPU lane is ready, rejects preference-based wording, and expires the waiver after six hours. The next
+research-packet or experiment-controller handoff must replace it with a concrete question before CPU work resumes.
+
 ## Heartbeats And Handoffs
 
 Refresh a lane while it is active:

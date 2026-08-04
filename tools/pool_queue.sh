@@ -3,8 +3,9 @@
 #   bash tools/pool_queue.sh add '<remote command>'   # enqueue (run from ~/derisk-pool/sim on the node)
 #   bash tools/pool_queue.sh list                     # show depth + contents
 #   bash tools/pool_queue.sh depth                    # just the number (used by workflow_check)
-# The point is anticipation: workflow_check FAILS when this queue is EMPTY, because "nothing staged" is the
-# actual defect. "Pool idle" is only its symptom, and alarming on the symptom caps utilisation at my reaction time.
+# The point is anticipation: workflow_check fails when this queue is EMPTY while a CPU-compatible lane is ready,
+# because "nothing staged" is the actual defect in that state. When all such lanes are banked, the bounded
+# no-ready-work waiver records why replaying old commands would be worse than leaving the queue empty.
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 Q="${POOL_QUEUE_PATH:-/home/dant123/Projects/sim/research/queue/pool.queue}"

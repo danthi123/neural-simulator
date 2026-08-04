@@ -123,3 +123,43 @@ def test_queue_health_excludes_dispatcher_stale_records(tmp_path: Path) -> None:
     )
 
     assert result.stdout == "2\t1\t1\t3\n"
+
+
+def test_no_ready_work_waiver_is_bounded_and_workboard_tied(tmp_path: Path) -> None:
+    waiver = tmp_path / ".lane_waiver"
+    board = tmp_path / "workboard.json"
+    now = int(time.time())
+    waiver.write_text(
+        "scope=no-ready-work\n"
+        "reason=all current CPU lanes are banked and no new question is authorized\n"
+        "expiry=auto-6h\n"
+    )
+    board.write_text('{"lanes": {"gpu": {"status": "completed", "resource": "local_gpu"}}}\n')
+
+    result = run_bash(WORKFLOW, "--no-ready-work", str(waiver), str(board), str(now))
+    assert result.returncode == 0
+
+    board.write_text(
+        '{"lanes": {"cpu": {"status": "ready", "resource": "local_cpu_plus_pool"}}}\n'
+    )
+    result = subprocess.run(
+        ["bash", str(WORKFLOW), "--no-ready-work", str(waiver), str(board), str(now)],
+        cwd=ROOT,
+        env=os.environ.copy(),
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 1
+
+    board.write_text('{"lanes": {"gpu": {"status": "completed", "resource": "local_gpu"}}}\n')
+    waiver.write_text("scope=no-ready-work\nreason=priority preference\n")
+    result = subprocess.run(
+        ["bash", str(WORKFLOW), "--no-ready-work", str(waiver), str(board), str(now)],
+        cwd=ROOT,
+        env=os.environ.copy(),
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 1
