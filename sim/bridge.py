@@ -9350,6 +9350,10 @@ class SimulationBridge:
                 # and handled separately with pre-allocation slicing
                 arrays_to_save_direct = [
                     'cp_membrane_potential_v', 'cp_conductance_g_e', 'cp_conductance_g_i',
+                    'cp_conductance_g_nmda', 'cp_conductance_g_nmda_rise',
+                    'cp_conductance_g_nmda_recurrent',
+                    'cp_conductance_g_nmda_recurrent_rise',
+                    'cp_conductance_g_gabab', 'cp_conductance_g_gabab_slow',
                     'cp_external_input_current', 'cp_firing_states', 'cp_prev_firing_states',
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
@@ -9682,6 +9686,36 @@ class SimulationBridge:
                     setattr(self, attr_name, _load_cp_array_from_h5(h5_key, 
                             default_val_func=lambda size_n, dt=dtype: cp.zeros(size_n, dtype=dt), 
                             default_dtype_for_empty=dtype))
+
+                # Slow conductances are live state. Old checkpoints do not
+                # contain these datasets, so rebuild each buffer according to
+                # its initialization contract: global NMDA is always allocated,
+                # while recurrent NMDA and GABA_B are feature-gated. A present
+                # dataset wins even if configuration changed before the save.
+                slow_conductance_flags = {
+                    'cp_conductance_g_nmda': None,
+                    'cp_conductance_g_nmda_rise': None,
+                    'cp_conductance_g_nmda_recurrent': 'enable_nmda_recurrent',
+                    'cp_conductance_g_nmda_recurrent_rise': 'enable_nmda_recurrent',
+                    'cp_conductance_g_gabab': 'enable_gabab',
+                    'cp_conductance_g_gabab_slow': 'enable_td_value_derivative',
+                }
+                for attr_name, enable_flag in slow_conductance_flags.items():
+                    has_saved_state = (
+                        attr_name in state_group
+                        or f"{attr_name}_is_empty" in state_group.attrs
+                    )
+                    should_allocate = enable_flag is None or getattr(
+                        self.core_config, enable_flag, False
+                    )
+                    if has_saved_state or should_allocate:
+                        value = _load_cp_array_from_h5(
+                            attr_name,
+                            lambda size_n: cp.zeros(size_n, dtype=cp.float32),
+                        )
+                    else:
+                        value = None
+                    setattr(self, attr_name, value)
 
                 if "cp_neuron_positions_3d" in state_group or ("cp_neuron_positions_3d_is_empty" in state_group.attrs):
                      self.cp_neuron_positions_3d = _load_cp_array_from_h5("cp_neuron_positions_3d", 
