@@ -23,6 +23,7 @@ from typing import Any, Mapping, NamedTuple
 
 SCHEMA_VERSION = "snr-executable-packet-v2"
 ADJUDICATION_SCHEMA_VERSION = "snr-adjudication-receipt-v1"
+AUTHORITY_POLICY_SCHEMA_VERSION = "snr-authority-policy-v1"
 _HEX_LENGTH = 64
 _MAX_ARTIFACT_BYTES = 16 * 1024 * 1024
 _MAX_PACKET_BYTES = 4 * 1024 * 1024
@@ -458,6 +459,7 @@ class ExecutablePacket:
         "_state",
         "_groups",
         "_artifact_root",
+        "_artifact_prefix",
         "_adjudication",
         "_authority_policy",
         "_receipt",
@@ -477,6 +479,7 @@ class ExecutablePacket:
         state: PacketState,
         groups: Mapping[str, Mapping[str, ParameterLeaf]],
         artifact_root: Path,
+        artifact_prefix: tuple[str, ...],
         adjudication: AdjudicationBinding | None,
         authority_policy: AuthorityPolicy | None,
     ) -> None:
@@ -485,6 +488,7 @@ class ExecutablePacket:
         object.__setattr__(self, "_state", state)
         object.__setattr__(self, "_groups", groups)
         object.__setattr__(self, "_artifact_root", artifact_root)
+        object.__setattr__(self, "_artifact_prefix", artifact_prefix)
         object.__setattr__(self, "_adjudication", adjudication)
         object.__setattr__(self, "_authority_policy", authority_policy)
         object.__setattr__(self, "_receipt", None)
@@ -615,6 +619,7 @@ def load_packet_json(
     source: str | bytes | bytearray,
     *,
     artifact_root: str | Path,
+    artifact_prefix: tuple[str, ...] = (),
     authority_policy: AuthorityPolicy | None = None,
 ) -> ExecutablePacket:
     """Strictly parse JSON and validate every lifecycle claim it makes."""
@@ -641,6 +646,97 @@ def load_packet_json(
     return load_packet(
         document,
         artifact_root=artifact_root,
+        artifact_prefix=artifact_prefix,
+        authority_policy=authority_policy,
+    )
+
+
+def load_authority_policy(
+    source: str | bytes | bytearray,
+    expected_sha256: str,
+) -> AuthorityPolicy:
+    """Load an authority policy only from its exact, canonical JSON bytes.
+
+    The expected digest is supplied by a trust root outside the policy file.
+    Consequently, a policy cannot authorize itself merely by containing valid
+    looking claims or receipts.
+    """
+
+    raw = _json_source_bytes(source, "authority policy")
+    _sha256(expected_sha256, "expected authority policy SHA-256")
+    actual_sha256 = hashlib.sha256(raw).hexdigest()
+    if actual_sha256 != expected_sha256:
+        raise PacketError("authority policy digest mismatch")
+    try:
+        document = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=_unique_object,
+            parse_constant=_reject_constant,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, PacketError, RecursionError) as exc:
+        raise PacketError(f"invalid authority policy JSON: {exc}") from exc
+    _validate_document_limits(document)
+    try:
+        canonical = canonical_bytes(document)
+    except PacketError as exc:
+        raise PacketError("authority policy is not canonical JSON") from exc
+    if raw != canonical:
+        raise PacketError("authority policy bytes are not canonical JSON")
+    return _load_authority_policy_document(document)
+
+
+def load_authority_policy_json(
+    source: str | bytes | bytearray,
+    expected_sha256: str,
+) -> AuthorityPolicy:
+    """Explicit JSON-named alias for :func:`load_authority_policy`."""
+
+    return load_authority_policy(source, expected_sha256)
+
+
+def load_authority_policy_file(
+    path: str | Path,
+    *,
+    artifact_root: str | Path,
+    expected_sha256: str,
+) -> AuthorityPolicy:
+    """Load a policy through the rooted descriptor-relative artifact reader."""
+
+    relative = os.fspath(path)
+    if not isinstance(relative, str):
+        raise TypeError("authority policy path must be text or a path-like value")
+    _relative_components(relative)
+    root = Path(os.fspath(artifact_root))
+    _verify_root_openable(root)
+    with _ArtifactReader(root) as reader:
+        raw = reader.read(relative)
+    return load_authority_policy(raw, expected_sha256)
+
+
+def load_packet_file(
+    path: str | Path,
+    *,
+    artifact_root: str | Path,
+    expected_sha256: str,
+    authority_policy: AuthorityPolicy,
+) -> ExecutablePacket:
+    """Load a pinned packet and its sibling artifacts below one safe root."""
+
+    relative = os.fspath(path)
+    if not isinstance(relative, str):
+        raise TypeError("packet path must be text or a path-like value")
+    components = _relative_components(relative)
+    _sha256(expected_sha256, "expected packet SHA-256")
+    root = Path(os.fspath(artifact_root))
+    _verify_root_openable(root)
+    with _ArtifactReader(root) as reader:
+        raw = reader.read(relative)
+    if hashlib.sha256(raw).hexdigest() != expected_sha256:
+        raise PacketError("packet file digest mismatch")
+    return load_packet_json(
+        raw,
+        artifact_root=root,
+        artifact_prefix=components[:-1],
         authority_policy=authority_policy,
     )
 
@@ -649,11 +745,22 @@ def load_packet(
     document: object,
     *,
     artifact_root: str | Path,
+    artifact_prefix: tuple[str, ...] = (),
     authority_policy: AuthorityPolicy | None = None,
 ) -> ExecutablePacket:
     """Create an immutable packet only after validating its claimed state."""
 
     _validate_document_limits(document)
+    if not isinstance(artifact_prefix, tuple) or any(
+        not isinstance(component, str)
+        or not component
+        or component in {".", ".."}
+        or "/" in component
+        or "\\" in component
+        or "\x00" in component
+        for component in artifact_prefix
+    ):
+        raise PacketError("artifact_prefix must contain safe path components")
     root = Path(os.fspath(artifact_root))
     _verify_root_openable(root)
     obj = _object(document, "packet")
@@ -690,6 +797,7 @@ def load_packet(
         state=state,
         groups=groups,
         artifact_root=root,
+        artifact_prefix=artifact_prefix,
         adjudication=adjudication,
         authority_policy=authority_policy,
     )
@@ -1001,6 +1109,80 @@ def _load_adjudication_binding(value: object) -> AdjudicationBinding | None:
     return AdjudicationBinding(**fields)
 
 
+def _json_source_bytes(source: str | bytes | bytearray, name: str) -> bytes:
+    if isinstance(source, str):
+        try:
+            raw = source.encode("utf-8")
+        except UnicodeEncodeError as exc:
+            raise PacketError(f"{name} is not valid UTF-8") from exc
+    elif isinstance(source, (bytes, bytearray)):
+        raw = bytes(source)
+    else:
+        raise TypeError(f"{name} source must be str, bytes, or bytearray")
+    if len(raw) > _MAX_PACKET_BYTES:
+        raise PacketError(f"{name} JSON exceeds size limit")
+    return raw
+
+
+def _load_authority_policy_document(document: object) -> AuthorityPolicy:
+    obj = _object(document, "authority policy")
+    _exact_keys(
+        obj,
+        {
+            "schema_version",
+            "policy_id",
+            "trusted_claims",
+            "trusted_adjudication_receipts",
+        },
+        "authority policy",
+    )
+    if obj["schema_version"] != AUTHORITY_POLICY_SCHEMA_VERSION:
+        raise PacketError(
+            "unsupported authority policy schema_version: "
+            f"{obj['schema_version']!r}"
+        )
+    policy_id = _text(obj["policy_id"], "authority policy.policy_id")
+
+    claims_value = obj["trusted_claims"]
+    if type(claims_value) is not list:
+        raise PacketError("authority policy.trusted_claims must be an array")
+    claims: set[TrustedClaim] = set()
+    for index, value in enumerate(claims_value):
+        claim_obj = _object(value, f"authority policy.trusted_claims[{index}]")
+        name = f"authority policy.trusted_claims[{index}]"
+        _exact_keys(claim_obj, {"authority", "artifact_sha256", "claim_sha256"}, name)
+        try:
+            authority = AuthorityKind(claim_obj["authority"])
+        except (TypeError, ValueError) as exc:
+            raise PacketError(f"{name}.authority is invalid") from exc
+        if authority is AuthorityKind.UNRESOLVED:
+            raise PacketError(f"{name}.authority cannot be unresolved")
+        artifact_sha256 = _text(claim_obj["artifact_sha256"], f"{name}.artifact_sha256")
+        claim_sha256_value = _text(claim_obj["claim_sha256"], f"{name}.claim_sha256")
+        _sha256(artifact_sha256, f"{name}.artifact_sha256")
+        _sha256(claim_sha256_value, f"{name}.claim_sha256")
+        claim = TrustedClaim(authority, artifact_sha256, claim_sha256_value)
+        if claim in claims:
+            raise PacketError(f"duplicate trusted claim at {name}")
+        claims.add(claim)
+
+    receipts_value = obj["trusted_adjudication_receipts"]
+    if type(receipts_value) is not list:
+        raise PacketError(
+            "authority policy.trusted_adjudication_receipts must be an array"
+        )
+    receipts: set[str] = set()
+    for index, value in enumerate(receipts_value):
+        name = f"authority policy.trusted_adjudication_receipts[{index}]"
+        receipt = _text(value, name)
+        _sha256(receipt, name)
+        if receipt in receipts:
+            raise PacketError(f"duplicate trusted adjudication receipt at {name}")
+        receipts.add(receipt)
+
+    return AuthorityPolicy(policy_id, frozenset(claims), frozenset(receipts))
+
+
 def _validate_structure(packet: ExecutablePacket) -> None:
     actual_groups = set(packet._groups)
     if actual_groups != REQUIRED_GROUPS:
@@ -1064,7 +1246,9 @@ def _verify_leaf_artifacts(packet: ExecutablePacket) -> None:
                 leaf.authority.kind.value,
             )
             expected.extend(((leaf.evidence, claim), (leaf.authority, claim)))
-    with _ArtifactReader(packet.artifact_root) as reader:
+    with _ArtifactReader(
+        packet.artifact_root, packet._artifact_prefix
+    ) as reader:
         for binding, claim in expected:
             raw = reader.read(binding.artifact_path)
             if hashlib.sha256(raw).hexdigest() != binding.artifact_sha256:
@@ -1117,7 +1301,9 @@ def _validate_scientific_resolution(
     }
     if binding.artifact_path in leaf_paths:
         raise PacketError("adjudication must be an independent artifact")
-    with _ArtifactReader(packet.artifact_root) as reader:
+    with _ArtifactReader(
+        packet.artifact_root, packet._artifact_prefix
+    ) as reader:
         raw = reader.read(binding.artifact_path)
     if hashlib.sha256(raw).hexdigest() != binding.artifact_sha256:
         raise PacketError(f"artifact digest mismatch: {binding.artifact_path}")
@@ -1136,8 +1322,9 @@ def _validate_scientific_resolution(
 class _ArtifactReader:
     """Descriptor-relative, no-follow reader rooted at one open directory."""
 
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, prefix: tuple[str, ...] = ()):
         self._root = root
+        self._prefix = prefix
         self._root_fd = -1
         self._cache: dict[str, bytes] = {}
 
@@ -1147,7 +1334,18 @@ class _ArtifactReader:
                 self._root,
                 os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
             )
+            for component in self._prefix:
+                next_fd = os.open(
+                    component,
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                    dir_fd=self._root_fd,
+                )
+                os.close(self._root_fd)
+                self._root_fd = next_fd
         except OSError as exc:
+            if self._root_fd >= 0:
+                os.close(self._root_fd)
+                self._root_fd = -1
             raise PacketError(f"cannot open artifact root safely: {self._root}") from exc
         return self
 
@@ -1469,6 +1667,7 @@ def _sha256(value: str, name: str) -> None:
 
 __all__ = [
     "ADJUDICATION_SCHEMA_VERSION",
+    "AUTHORITY_POLICY_SCHEMA_VERSION",
     "AdjudicationBinding",
     "AuthorityBinding",
     "AuthorityKind",
@@ -1496,7 +1695,11 @@ __all__ = [
     "claim_document",
     "claim_sha256",
     "expected_adjudication_document",
+    "load_authority_policy",
+    "load_authority_policy_file",
+    "load_authority_policy_json",
     "load_packet",
+    "load_packet_file",
     "load_packet_json",
     "materialize_packet",
 ]

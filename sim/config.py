@@ -3,6 +3,7 @@
 import math
 from dataclasses import dataclass, field, fields, asdict
 from collections.abc import Mapping
+from pathlib import PurePosixPath
 from typing import List, Dict
 
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
@@ -157,6 +158,11 @@ class CoreSimConfig:
     snr_sk_calcium_half: float = 0.5
     snr_sk_hill_coefficient: float = 4.0
     snr_sk_activation_tau_ms: float = 5.0
+    # External trust root for authenticated region packets. The path is
+    # canonical and relative to the explicit simulation source root; the
+    # digest pins the exact policy bytes. Region records hold packet refs.
+    snr_authority_policy_path: str | None = None
+    snr_authority_policy_sha256: str | None = None
 
     # AdEx parameters. Default: Brette & Gerstner 2005 RS pyramidal.
     # Override via cfg.default_neuron_type_adex ∈ {ADEX_RS_CORTICAL_PYRAMIDAL,
@@ -1108,6 +1114,64 @@ class CoreSimConfig:
             value = getattr(self, field_name)
             if math.isfinite(value) and value <= 0.0:
                 errors.append(f"{field_name} must be positive, got {value}")
+
+        policy_path = self.snr_authority_policy_path
+        policy_sha256 = self.snr_authority_policy_sha256
+        if (policy_path is None) != (policy_sha256 is None):
+            errors.append(
+                "snr_authority_policy_path and sha256 must be set together"
+            )
+        elif policy_path is not None:
+            if (
+                not isinstance(policy_path, str)
+                or not policy_path
+                or policy_path != policy_path.strip()
+                or "\\" in policy_path
+                or "\x00" in policy_path
+                or any(ord(character) > 127 for character in policy_path)
+            ):
+                errors.append(
+                    "snr_authority_policy_path must be trimmed ASCII POSIX text"
+                )
+            else:
+                parsed_policy_path = PurePosixPath(policy_path)
+                if (
+                    parsed_policy_path.is_absolute()
+                    or str(parsed_policy_path) != policy_path
+                    or any(
+                        part in {"", ".", ".."}
+                        for part in parsed_policy_path.parts
+                    )
+                ):
+                    errors.append(
+                        "snr_authority_policy_path must be canonical and relative"
+                    )
+            if (
+                not isinstance(policy_sha256, str)
+                or len(policy_sha256) != 64
+                or any(
+                    character not in "0123456789abcdef"
+                    for character in policy_sha256
+                )
+            ):
+                errors.append(
+                    "snr_authority_policy_sha256 must be a lowercase SHA-256 digest"
+                )
+
+        packet_regions = [
+            region
+            for region in self.brain_regions
+            if getattr(region, "snr_executable_packet_path", None) is not None
+        ]
+        if packet_regions:
+            if self.neuron_model_type != NeuronModel.HODGKIN_HUXLEY.name:
+                errors.append("SNr executable packets require HODGKIN_HUXLEY")
+            if not self.enable_brain_region_framework:
+                errors.append("SNr executable packets require the brain-region framework")
+            if policy_path is None or policy_sha256 is None:
+                errors.append(
+                    "SNr executable packets require an authenticated authority policy"
+                )
 
         # Network parameters
         if self.num_neurons <= 0:

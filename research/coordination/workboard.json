@@ -688,6 +688,19 @@
       "status": "completed",
       "task": "Deep research for adult SNr fast currents and physiology bounds",
       "write_set": []
+    },
+    "019fcf10-5da9-7390-9fc1-6c44151acb16": {
+      "completed_at": "2026-08-04T23:17:00+00:00",
+      "heartbeat_at": "2026-08-04T23:17:00+00:00",
+      "model": "gpt-5.6-luna/medium",
+      "next_action": "Controller reviews and commits the authenticated config/runtime binding before bridge or checkpoint integration.",
+      "result": "Added six focused runtime-orchestration tests covering policy avoidance, rooted resolution, shared packet caching, deterministic digests, duplicate names, and immutable mappings; NumPy and CuPy suites passed.",
+      "started_at": "2026-08-04T23:11:00+00:00",
+      "status": "completed",
+      "task": "Authenticated SNr runtime packet binding tests",
+      "write_set": [
+        "tests/test_snr_packet_runtime.py"
+      ]
     }
   },
   "events": [
@@ -1912,6 +1925,26 @@
         "tests",
         "research/findings"
       ]
+    },
+    "v14-snr-packet-runtime-binding": {
+      "agent_id": "019fcf10-5da9-7390-9fc1-6c44151acb16",
+      "delegation": "controller_and_agent",
+      "heartbeat_at": "2026-08-04T23:18:37+00:00",
+      "next_action": "Bind canonical packet bytes and authority/config/materialization digests into bridge construction and checkpoint continuation; immutable arrays must be regenerated from authenticated inputs while dynamic state alone is restored.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Do not enable packet-backed dynamics until every declared parameter has an exact per-neuron kernel input and mixed legacy/packet regions remain exact.",
+      "resource": "local_cpu_agent_cpu_then_gpu",
+      "status": "in_progress",
+      "write_set": [
+        "sim/config.py",
+        "sim/regions.py",
+        "sim/snr_executable_packet.py",
+        "sim/snr_packet_runtime.py",
+        "sim/bridge.py",
+        "sim/kernels.py",
+        "tests"
+      ]
     }
   },
   "mission": "Advance a grounded, integrated, continuously learning mind on a shared fully spiking substrate; preserve biology, honest gates, scaffold burn-down, consumer hardware, and efficient development.",
@@ -1931,5 +1964,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T23:00:19+00:00"
+  "updated_at": "2026-08-04T23:18:37+00:00"
 }

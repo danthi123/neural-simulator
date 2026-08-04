@@ -11,6 +11,7 @@ import pytest
 
 from sim.snr_executable_packet import (
     ADJUDICATION_SCHEMA_VERSION,
+    AUTHORITY_POLICY_SCHEMA_VERSION,
     AuthorityKind,
     AuthorityPolicy,
     ExecutablePacket,
@@ -24,7 +25,11 @@ from sim.snr_executable_packet import (
     canonical_decimal,
     claim_document,
     expected_adjudication_document,
+    load_authority_policy,
+    load_authority_policy_file,
+    load_authority_policy_json,
     load_packet,
+    load_packet_file,
     load_packet_json,
     materialize_packet,
 )
@@ -131,6 +136,30 @@ def _write_json(path: Path, value: object) -> bytes:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(raw)
     return raw
+
+
+def _policy_document() -> dict[str, object]:
+    return {
+        "schema_version": AUTHORITY_POLICY_SCHEMA_VERSION,
+        "policy_id": "snr-production-v1",
+        "trusted_claims": [
+            {
+                "authority": "primary_source",
+                "artifact_sha256": "a" * 64,
+                "claim_sha256": "b" * 64,
+            },
+            {
+                "authority": "model_source",
+                "artifact_sha256": "c" * 64,
+                "claim_sha256": "d" * 64,
+            },
+        ],
+        "trusted_adjudication_receipts": ["e" * 64],
+    }
+
+
+def _policy_raw() -> bytes:
+    return canonical_bytes(_policy_document())
 
 
 def _valid_value(group: str, parameter: str) -> str:
@@ -307,6 +336,116 @@ def test_duplicate_json_keys_are_rejected(tmp_path: Path) -> None:
         load_packet_json(raw, artifact_root=tmp_path)
 
 
+def test_authority_policy_loader_accepts_exact_canonical_bytes() -> None:
+    raw = _policy_raw()
+    expected = hashlib.sha256(raw).hexdigest()
+    policy = load_authority_policy(raw, expected)
+    assert policy.policy_id == "snr-production-v1"
+    assert len(policy.trusted_claims) == 2
+    assert policy.trusted_adjudication_receipts == frozenset({"e" * 64})
+    assert load_authority_policy_json(raw, expected) == policy
+
+
+def test_authority_policy_loader_rejects_digest_and_canonicality_failures() -> None:
+    raw = _policy_raw()
+    with pytest.raises(PacketError, match="digest mismatch"):
+        load_authority_policy(raw, "f" * 64)
+
+    noncanonical = json.dumps(_policy_document(), indent=2).encode("ascii")
+    with pytest.raises(PacketError, match="canonical"):
+        load_authority_policy(noncanonical, hashlib.sha256(noncanonical).hexdigest())
+
+
+@pytest.mark.parametrize(
+    "mutate,match",
+    [
+        (lambda value: value["trusted_claims"].append(value["trusted_claims"][0]), "duplicate trusted claim"),
+        (lambda value: value["trusted_adjudication_receipts"].append("e" * 64), "duplicate trusted adjudication receipt"),
+        (lambda value: value["trusted_claims"][0].update({"authority": "unresolved"}), "cannot be unresolved"),
+        (lambda value: value["trusted_claims"][0].update({"claim_sha256": "BAD"}), "lowercase SHA-256"),
+        (lambda value: value.update({"unexpected": True}), "fields mismatch"),
+        (lambda value: value.pop("policy_id"), "fields mismatch"),
+    ],
+)
+def test_authority_policy_loader_rejects_invalid_policy_documents(mutate, match) -> None:
+    document = _policy_document()
+    mutate(document)
+    raw = canonical_bytes(document)
+    with pytest.raises(PacketError, match=match):
+        load_authority_policy(raw, hashlib.sha256(raw).hexdigest())
+
+
+def test_authority_policy_loader_rejects_duplicate_json_keys() -> None:
+    raw = (
+        b'{"schema_version":"snr-authority-policy-v1",'
+        b'"schema_version":"snr-authority-policy-v1"}'
+    )
+    with pytest.raises(PacketError, match="duplicate JSON key"):
+        load_authority_policy(raw, hashlib.sha256(raw).hexdigest())
+
+
+def test_authority_policy_file_loader_is_rooted_and_no_follow(tmp_path: Path) -> None:
+    raw = _policy_raw()
+    (tmp_path / "policy.json").write_bytes(raw)
+    expected = hashlib.sha256(raw).hexdigest()
+    policy = load_authority_policy_file(
+        "policy.json", artifact_root=tmp_path, expected_sha256=expected
+    )
+    assert policy.policy_id == "snr-production-v1"
+
+    with pytest.raises(PacketError, match="artifact_path"):
+        load_authority_policy_file(
+            "../policy.json", artifact_root=tmp_path, expected_sha256=expected
+        )
+
+    if hasattr(os, "O_NOFOLLOW"):
+        (tmp_path / "alias.json").symlink_to(tmp_path / "policy.json")
+        with pytest.raises(PacketError, match="cannot safely open artifact"):
+            load_authority_policy_file(
+                "alias.json", artifact_root=tmp_path, expected_sha256=expected
+            )
+
+
+def test_packet_file_loader_pins_nested_packet_and_artifact_directory(
+    tmp_path: Path,
+) -> None:
+    packet_dir = tmp_path / "nested" / "packet-v1"
+    document = _packet(packet_dir, state="SEALED")
+    raw = _write_json(packet_dir / "packet.json", document)
+    policy = _authority_policy(document)
+
+    packet = load_packet_file(
+        "nested/packet-v1/packet.json",
+        artifact_root=tmp_path,
+        expected_sha256=hashlib.sha256(raw).hexdigest(),
+        authority_policy=policy,
+    )
+    materialized = materialize_packet(packet, packet.validation_receipt)
+    assert materialized.packet_id == "snr-test-v2"
+
+    with pytest.raises(PacketError, match="packet file digest mismatch"):
+        load_packet_file(
+            "nested/packet-v1/packet.json",
+            artifact_root=tmp_path,
+            expected_sha256="f" * 64,
+            authority_policy=policy,
+        )
+
+
+def test_packet_file_loader_rejects_symlinked_parent_component(tmp_path: Path) -> None:
+    packet_dir = tmp_path / "real" / "packet-v1"
+    document = _packet(packet_dir, state="SEALED")
+    raw = _write_json(packet_dir / "packet.json", document)
+    (tmp_path / "alias").symlink_to(tmp_path / "real", target_is_directory=True)
+    with pytest.raises(PacketError, match="cannot safely open artifact"):
+        load_packet_file(
+            "alias/packet-v1/packet.json",
+            artifact_root=tmp_path,
+            expected_sha256=hashlib.sha256(raw).hexdigest(),
+            authority_policy=_authority_policy(document),
+        )
+
+
 def test_declared_schema_matches_the_complete_executable_surface() -> None:
     actual = {
         group: {parameter: next(iter(units)) for parameter, units in parameters.items()}
@@ -353,6 +492,7 @@ def test_direct_packet_and_receipt_constructor_misuse_is_rejected(tmp_path: Path
             state=PacketState.SEALED,
             groups={},
             artifact_root=tmp_path,
+            artifact_prefix=(),
             adjudication=None,
             authority_policy=None,
         )

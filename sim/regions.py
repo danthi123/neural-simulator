@@ -25,6 +25,7 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass, field
+from pathlib import PurePosixPath
 from typing import Dict, List, Optional, Sequence, Tuple
 
 
@@ -112,6 +113,14 @@ class BrainRegion:
     snr_g_ca_max: float = 0.0
     snr_g_sk_max: float = 0.0
     snr_g_h_max: float = 0.0
+
+    # Authenticated packet mode stores references only. Paths are canonical
+    # POSIX-relative paths below the explicit simulation source root; the
+    # digest pins the exact packet bytes. Legacy maxima and packet mode are
+    # mutually exclusive so mixed-region simulations cannot silently blend
+    # two authorities inside one region.
+    snr_executable_packet_path: Optional[str] = None
+    snr_executable_packet_sha256: Optional[str] = None
 
     # Per-region GABA_A reversal potential override in mV. None = use global
     # cfg.syn_reversal_potential_i. Used to model regions with different
@@ -308,6 +317,50 @@ class BrainRegion:
                 raise ValueError(
                     f"{field_name} must be finite and nonnegative, got {value}"
                 )
+
+        packet_path = self.snr_executable_packet_path
+        packet_sha256 = self.snr_executable_packet_sha256
+        if (packet_path is None) != (packet_sha256 is None):
+            raise ValueError(
+                "snr_executable_packet_path and sha256 must be set together"
+            )
+        if packet_path is not None:
+            if (
+                not isinstance(packet_path, str)
+                or not packet_path
+                or packet_path != packet_path.strip()
+                or "\\" in packet_path
+                or "\x00" in packet_path
+                or any(ord(character) > 127 for character in packet_path)
+            ):
+                raise ValueError(
+                    "snr_executable_packet_path must be trimmed ASCII POSIX text"
+                )
+            parsed = PurePosixPath(packet_path)
+            if (
+                parsed.is_absolute()
+                or str(parsed) != packet_path
+                or any(part in {"", ".", ".."} for part in parsed.parts)
+            ):
+                raise ValueError(
+                    "snr_executable_packet_path must be canonical and relative"
+                )
+            if (
+                not isinstance(packet_sha256, str)
+                or len(packet_sha256) != 64
+                or any(character not in "0123456789abcdef" for character in packet_sha256)
+            ):
+                raise ValueError(
+                    "snr_executable_packet_sha256 must be a lowercase SHA-256 digest"
+                )
+            if self.snr_conductance_bundle_enabled:
+                raise ValueError(
+                    "SNr packet references cannot be combined with legacy conductance maxima"
+                )
+
+    @property
+    def snr_executable_packet_enabled(self) -> bool:
+        return self.snr_executable_packet_path is not None
 
     @property
     def snr_conductance_bundle_enabled(self) -> bool:
