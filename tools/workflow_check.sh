@@ -74,6 +74,19 @@ fi
 cd "$ROOT" || exit 0
 FAIL=0
 
+echo "════ 0. PERSISTENT WORKBOARD — are delegated lanes assigned and alive? ════"
+# Chat memory is not a scheduler. Keep this check on the existing workflow path so a ready lane without an
+# assigned agent, a stale running lane, or a blocked lane without recovery cannot be silently carried across
+# commits. The coordinator only observes local state; it does not launch experiments or choose science.
+if [ -f "$ROOT/tools/autonomous_coordinator.py" ]; then
+  if ! python "$ROOT/tools/autonomous_coordinator.py" check; then
+    echo "  ⛔ autonomous workboard requires attention before continuing."
+    FAIL=1
+  fi
+else
+  echo "  ⚠️ coordinator unavailable (legacy checkout); continuing with the legacy workflow checks."
+fi
+
 echo "════ 1. PARALLELISM — is the machine actually being used? ════"
 CORES=$(nproc); LOAD=$(cut -d' ' -f1 /proc/loadavg); # `pgrep -c` prints "0" AND exits 1 on no match, so `|| echo 0` appended a SECOND line and PROCS became
 # "0\n0" -- which breaks the integer test below. Take the first line and default it instead.

@@ -15,6 +15,10 @@ From the repository root, run:
     python tools/autonomous_coordinator.py next
     python tools/autonomous_coordinator.py check
 
+`tools/workflow_check.sh` runs the same coordinator check automatically before its legacy parallelism, research,
+and pool checks. A commit or heartbeat that carries a ready lane without an assigned agent, or a stale running lane,
+therefore fails loudly instead of relying on chat memory.
+
 Read the top of HANDOFF.md, then the active mission header in GAP_CLOSURE_MISSION.md. The first concrete action
 comes from the highest-priority unblocked lane. Do not replace this with a new list in chat.
 
