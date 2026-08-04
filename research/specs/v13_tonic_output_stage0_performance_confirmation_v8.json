@@ -1,0 +1,22 @@
+{
+  "candidate_manifest": "research/specs/v13_stage0_candidate_source_v10.sha256",
+  "candidate_revision": "8505c54ff",
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "mechanism": "v13-stage0-performance-confirmation-v8",
+  "reused_legacy_baseline": "research/findings/raw/v13_tonic_output_stage0_performance_continuation_v7/legacy-baseline",
+  "status": "preregistered-not-executed",
+  "thresholds": {
+    "default_vs_old_max_ratio": 1.02,
+    "active_vs_default_max_ratio": 1.1,
+    "feature_storage_max_bytes_per_neuron": 4
+  },
+  "controls": {
+    "sealed_v6_physiology": true,
+    "run_no_new_physiology_seed": true,
+    "candidate_receipt_must_be_complete": true,
+    "candidate_artifact_inside_raw_evidence_root": true,
+    "stage1_seed_1031": "sealed-not-read-or-executed"
+  },
+  "sha256": "79cf6dc08592ff17d4540e202e736c69ae841f69a65a763c24733368b13f93b1"
+}
