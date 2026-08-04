@@ -102,7 +102,7 @@ def verify_immutable_source_manifest(snapshot=None):
             expected_files[normalized] = digest
 
         actual_files = set()
-        for relative_root in ("sim", "research/runners", "experiment", "tools"):
+        for relative_root in ("sim", "research/runners", "experiment", "tools", "tests"):
             root = os.path.join(_ROOT, relative_root)
             for dirpath, dirnames, filenames in os.walk(root):
                 dirnames[:] = [name for name in dirnames if name != "__pycache__"]

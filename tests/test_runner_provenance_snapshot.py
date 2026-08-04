@@ -142,3 +142,20 @@ def test_archive_manifest_accepts_bound_specs_and_ancestry_attestation(tmp_path,
         "source_manifest_verified": True,
         "source_manifest_verification_error": None,
     }
+
+
+def test_archive_manifest_accepts_deployed_test_helpers(tmp_path, monkeypatch):
+    _write_archive_snapshot(
+        tmp_path,
+        {
+            "research/__init__.py": "\n",
+            "research/runners/example.py": "VALUE = 1\n",
+            "tests/_capture_helper.py": "VALUE = 2\n",
+        },
+    )
+    monkeypatch.setattr(provenance, "_ROOT", str(tmp_path))
+
+    assert provenance.verify_immutable_source_manifest() == {
+        "source_manifest_verified": True,
+        "source_manifest_verification_error": None,
+    }
