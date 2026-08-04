@@ -1,0 +1,68 @@
+{
+  "schema": "sim-experiment-spec-v0",
+  "id": "gateB-v13-backend-arithmetic-localizer-v1",
+  "status": "preregistered_not_executed",
+  "date": "2026-08-04",
+  "provenance_exempt": "non-executed diagnostic protocol; contains no new scientific measurement",
+  "device": "not_applicable_non_executed_protocol",
+  "promotion_value": "none",
+  "acceptance": {
+    "isolated_gpu_strict_matches_sealed_numpy_bytes": true,
+    "legacy_path_unchanged_when_disabled": true,
+    "matched_state_full_replay_requires_exact_spikes": true,
+    "matched_state_full_replay_requires_float32_v_u_tolerance": {
+      "atol": 0.0,
+      "rtol": 0.0
+    },
+    "no_host_round_trip_per_step": true
+  },
+  "completed_evidence": {
+    "aggregate": {
+      "path": "research/findings/raw/v13_backend_state_transplant/aggregate.json",
+      "sha256": "2f94905eebfddec69e4264ccae75f618bbffc720eb95126be9270d6a3aa5a8c6"
+    },
+    "bundle": {
+      "path": "research/findings/raw/v13_backend_state_transplant/bundle-numpy.json",
+      "sha256": "5f9750ff1f26c38df8676525bc698571102e5aeefeae7d3787b8f2b3f6aa943b"
+    },
+    "cupy_run": {
+      "path": "research/findings/raw/v13_backend_state_transplant/run-numpy-on-cupy-default.json",
+      "sha256": "1228bd4946e2e20803a650d81069697bc167143486b260ee0847d577f5dac7ae"
+    },
+    "numpy_run": {
+      "path": "research/findings/raw/v13_backend_state_transplant/run-numpy-on-numpy-default.json",
+      "sha256": "e205b02693646d2529644b82a9d82d1952a4e8c1d62122ddf1852d0c339f313c"
+    }
+  },
+  "correction_contract": {
+    "default_enabled": false,
+    "gpu": "one device-resident elementwise kernel using explicit float32 round-to-nearest add, subtract, multiply, and divide operations",
+    "numpy": "explicit float32 ufunc stages in the same declared order",
+    "scope": "Izhikevich-2007 v/u Euler update only"
+  },
+  "diagnostic_cases": {
+    "u": {
+      "expected_differing_cells": [30, 33, 41, 57],
+      "input_trajectory_row": 1,
+      "output_trajectory_row": 2
+    },
+    "v": {
+      "expected_differing_cells": [40],
+      "input_trajectory_row": 9,
+      "output_trajectory_row": 10
+    }
+  },
+  "exclusions": [
+    "initialization",
+    "connectivity",
+    "sparse transpose accumulation",
+    "conductance integration",
+    "scientific calibration",
+    "parameter changes"
+  ],
+  "rng": {
+    "allowed": false,
+    "seed": null
+  },
+  "diagnostic_schema": "v13-backend-arithmetic-localizer-spec-v1"
+}
