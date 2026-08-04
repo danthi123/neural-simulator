@@ -199,8 +199,7 @@ def izhikevich2007_dynamics_update(
         total_synaptic_current, dt,
     )
 
-@fuse()
-def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, phi_m, phi_h, phi_n):
+def _hodgkin_huxley_dynamics_expression(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, phi_m, phi_h, phi_n):
     """Fused kernel for Hodgkin-Huxley model dynamics with per-gate Q10.
 
     Per-gate phi (φ_m, φ_h, φ_n) values precomputed by caller from
@@ -270,6 +269,33 @@ def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g
     dV_dt = (I_syn - I_ion) / C_m # dV/dt = (I_external - I_ionic) / C_m
     V_new = V + dV_dt * dt        # Euler integration
     return V_new, m_new, h_new, n_new
+
+
+@fuse()
+def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, phi_m, phi_h, phi_n):
+    return _hodgkin_huxley_dynamics_expression(
+        V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L,
+        E_Na, E_K, E_L, phi_m, phi_h, phi_n,
+    )
+
+
+@fuse()
+def fused_hh_state_and_spike_update_into(
+    V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L,
+    E_Na, E_K, E_L, phi_m, phi_h, phi_n, v_peak,
+    out_v, out_m, out_h, out_n, out_fired,
+):
+    """Retain HH arithmetic while writing cast state and spikes in place."""
+    v_new, m_new, h_new, n_new = _hodgkin_huxley_dynamics_expression(
+        V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L,
+        E_Na, E_K, E_L, phi_m, phi_h, phi_n,
+    )
+    fired = (V < v_peak) & (v_new >= v_peak)
+    out_v[:] = v_new.astype(cp.float32)
+    out_m[:] = m_new.astype(cp.float32)
+    out_h[:] = h_new.astype(cp.float32)
+    out_n[:] = n_new.astype(cp.float32)
+    out_fired[:] = fired
 
 @fuse()
 def fused_hh_m_current_update(V, p_old, dt, g_M_max, E_K, tau_m_ms, phi):

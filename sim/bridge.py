@@ -83,6 +83,7 @@ from sim.kernels import (
                          fused_izhikevich2007_dynamics_update,
                          izhikevich2007_dynamics_update,
                          fused_hodgkin_huxley_dynamics_update,
+                         fused_hh_state_and_spike_update_into,
                          fused_hh_m_current_update,
                          fused_hh_CaT_current_update,
                          fused_hh_h_current_update,
@@ -7338,17 +7339,17 @@ class SimulationBridge:
             self._cached_hh_phi_m,
             self._cached_hh_phi_h,
             self._cached_hh_phi_n,
+            self.cp_hh_v_peak,
         )
-        v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
-            *hh_inputs
+        fused_hh_state_and_spike_update_into(
+            *hh_inputs,
+            self.cp_membrane_potential_v,
+            self.cp_gating_variable_m,
+            self.cp_gating_variable_h,
+            self.cp_gating_variable_n,
+            self.cp_firing_states,
         )
-        fired = ((self.cp_membrane_potential_v < self.cp_hh_v_peak)
-                 & (v_new >= self.cp_hh_v_peak))
-        self.cp_membrane_potential_v[:] = v_new
-        self.cp_gating_variable_m[:] = m_new
-        self.cp_gating_variable_h[:] = h_new
-        self.cp_gating_variable_n[:] = n_new
-        return fired
+        return self.cp_firing_states
 
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
@@ -7356,6 +7357,7 @@ class SimulationBridge:
         self._validate_inhibitory_stdp_composability()
         try:
             n_neurons = self.core_config.num_neurons; cfg = self.core_config; dt = cfg.dt_ms
+            firing_state_written_in_place = False
 
             # SELECTIVE (input-modulated-leak) slow SSM state (Rung 4b, 2026-07-13): a per-neuron slow graded leaky
             # integrator whose retention is set by the INPUT-DRIVEN SHUNT -- s = lam_eff*s + (1-lam_eff)*inject,
@@ -8320,6 +8322,7 @@ class SimulationBridge:
                     fired_this_step = self._run_snr_direct_outputs(
                         cfg, effective_input_uA, dt
                     )
+                    firing_state_written_in_place = True
 
                 if not used_snr_direct_outputs and self.cp_snr_g_nalcn_max is not None:
                     snr_update = fused_snr_conductance_update(
@@ -8483,7 +8486,8 @@ class SimulationBridge:
                     self._rf_counter = 0
                 fired_this_step = self._rf_advance_one()
 
-            self.cp_firing_states[:] = fired_this_step
+            if not firing_state_written_in_place:
+                self.cp_firing_states[:] = fired_this_step
 
             # Engram tagging (catalog D.14): auto-accumulate spike counts
             # for any active recordings. Zero overhead when no recordings.

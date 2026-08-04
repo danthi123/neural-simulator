@@ -73,6 +73,7 @@ def test_bridge_helper_passes_persistent_state_in_place_and_detects_crossing(mon
     bridge.cp_gating_variable_m = np.zeros(2, dtype=np.float32)
     bridge.cp_gating_variable_h = np.zeros(2, dtype=np.float32)
     bridge.cp_gating_variable_n = np.zeros(2, dtype=np.float32)
+    bridge.cp_firing_states = np.zeros(2, dtype=bool)
     bridge.cp_snr_ionic_current_scratch = np.zeros(2, dtype=np.float32)
     for name in (
         "nap_activation", "nap_inactivation", "ca_activation", "ca_inactivation",
@@ -99,18 +100,19 @@ def test_bridge_helper_passes_persistent_state_in_place_and_detects_crossing(mon
 
     def hh_kernel(*inputs):
         observed["hh_inputs"] = inputs
-        return (
-            np.array([2.0, 0.0], dtype=np.float32),
-            bridge.cp_gating_variable_m.copy(),
-            bridge.cp_gating_variable_h.copy(),
-            bridge.cp_gating_variable_n.copy(),
-        )
+        out_v, out_m, out_h, out_n, out_fired = inputs[-5:]
+        out_v[:] = np.array([2.0, 0.0], dtype=np.float32)
+        out_m[:] = bridge.cp_gating_variable_m
+        out_h[:] = bridge.cp_gating_variable_h
+        out_n[:] = bridge.cp_gating_variable_n
+        out_fired[:] = np.array([True, False])
 
     monkeypatch.setattr(bridge_module, "fused_snr_conductance_update_into", snr_kernel)
-    monkeypatch.setattr(bridge_module, "fused_hodgkin_huxley_dynamics_update", hh_kernel)
+    monkeypatch.setattr(bridge_module, "fused_hh_state_and_spike_update_into", hh_kernel)
     current = np.zeros(2, dtype=np.float32)
     fired = bridge._run_snr_direct_outputs(cfg, current, 0.05)
 
     assert observed["snr_inputs"][0] is bridge.cp_membrane_potential_v
     assert observed["hh_inputs"][4] is not current
+    assert observed["hh_inputs"][-1] is bridge.cp_firing_states
     np.testing.assert_array_equal(fired, np.array([True, False]))

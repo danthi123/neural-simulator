@@ -391,12 +391,6 @@
       "at": "2026-08-04T15:52:20+00:00",
       "detail": "running",
       "kind": "lane-update",
-      "subject": "gateb-v14-config"
-    },
-    {
-      "at": "2026-08-04T15:52:20+00:00",
-      "detail": "running",
-      "kind": "lane-update",
       "subject": "gateb-v14-stageA"
     },
     {
@@ -986,6 +980,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "v14-active-path-fusion"
+    },
+    {
+      "at": "2026-08-04T19:38:43+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-active-path-fusion"
     }
   ],
   "lanes": {
@@ -1221,11 +1221,11 @@
     },
     "v14-active-path-fusion": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:31:46+00:00",
-      "next_action": "Profile candidate 7cfc2607e at launch level, then implement the smallest byte-equivalent fusion boundary capable of closing the measured 0.0866 ratio gap.",
+      "heartbeat_at": "2026-08-04T19:38:43+00:00",
+      "next_action": "In-place HH state/spike fusion passed 107 CPU/GPU tests; 20-step Nsight trace reduced kernel launches from 379 to 239 and a 1000-step screen reached about 0.671x unfused. Seal source and rerun the fixed matrix.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If exact arithmetic cannot be preserved, bank the attempted method and select another measured boundary; never loosen equivalence or thresholds.",
+      "recovery_action": "If the sealed matrix misses 0.85 despite the bounded margin, bank it and inspect process variance; do not tune on matrix repetitions.",
       "resource": "local_gpu",
       "status": "running",
       "write_set": [
@@ -1264,5 +1264,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T19:31:46+00:00"
+  "updated_at": "2026-08-04T19:38:43+00:00"
 }
