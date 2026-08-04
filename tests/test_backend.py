@@ -37,8 +37,8 @@ def _reset_cache():
 
 def _has_cupy() -> bool:
     try:
-        import cupy  # noqa: F401
-        return True
+        import cupy
+        return cupy.cuda.runtime.getDeviceCount() > 0
     except (ImportError, RuntimeError):
         return False
 
