@@ -25,6 +25,13 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_SPEC = REPO / "research" / "specs" / "lanea_graded_affect_quench_v1.json"
+SOURCE_ANCHOR_PARENT_SHA = "4c8b0460040f32125064323bb7e30e5627d6f10d"
+DIRECT_SOURCE_PATHS = (
+    "research/runners/_lanea_graded_affect_quench_v1.py",
+    "research/runners/_affect_eviction_derisk.py",
+    "research/runners/_affect_state_region_derisk.py",
+    "research/specs/lanea_graded_affect_quench_v1.json",
+)
 
 
 class ProtocolError(RuntimeError):
@@ -360,12 +367,33 @@ def formal_verdict(rows: list[dict[str, Any]], spec: dict[str, Any]) -> dict[str
 
 def _git_source_state() -> dict[str, Any]:
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", SOURCE_ANCHOR_PARENT_SHA, revision],
+        cwd=REPO,
+        capture_output=True,
+    ).returncode != 0:
+        raise ProtocolError("scientific source is not descended from the locked anchor")
+    sim_paths = subprocess.check_output(
+        ["git", "ls-files", "sim"], cwd=REPO, text=True
+    ).splitlines()
+    source_paths = [*sim_paths, *DIRECT_SOURCE_PATHS]
     tracked = subprocess.check_output(
-        ["git", "status", "--porcelain", "--untracked-files=no"], cwd=REPO, text=True
+        ["git", "status", "--porcelain", "--untracked-files=normal", "--", *source_paths],
+        cwd=REPO,
+        text=True,
     ).strip()
     if tracked:
-        raise ProtocolError("tracked source tree is dirty; scientific execution is undefined")
-    return {"git_revision": revision, "tracked_source_clean": True}
+        raise ProtocolError("scientific source paths are dirty; execution is undefined")
+    identities = {
+        relative: _sha256_bytes((REPO / relative).read_bytes()) for relative in source_paths
+    }
+    return {
+        "git_revision": revision,
+        "source_anchor_parent_sha": SOURCE_ANCHOR_PARENT_SHA,
+        "source_path_count": len(identities),
+        "source_identity": identities,
+        "source_paths_clean": True,
+    }
 
 
 def _artifact_path(spec: dict[str, Any], phase: str, seed: int | None = None) -> Path:
