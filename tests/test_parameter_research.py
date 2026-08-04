@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from hashlib import sha256
 import json
 from pathlib import Path
 
@@ -87,6 +88,53 @@ def _metadata_response(query: dict, *, doi: str = "10.1234/example.1") -> dict:
             "full_text_urls_are_leads_only": True,
         },
     }
+
+
+def _fulltext_receipt(lead: dict, store: Path, *, request_sha: str = "a" * 64) -> dict:
+    content = b"NALCN conductance was fitted in mS/cm^2.\n"
+    digest = sha256(content).hexdigest()
+    content_path = store / "content" / f"{digest}.txt"
+    content_path.parent.mkdir(parents=True, exist_ok=True)
+    content_path.write_bytes(content)
+    receipt = {
+        "schema_version": "scholarly-fulltext-v1",
+        "request_sha256": request_sha,
+        "source": {
+            "doi": lead.get("doi"),
+            "canonical_url": lead.get("canonical_url"),
+            "title": lead.get("title"),
+        },
+        "retrieval": {
+            "declared_url": lead["full_text_url_leads"][0],
+            "final_url": lead["full_text_url_leads"][0],
+            "mime_type": "text/plain",
+            "document_kind": "plain",
+            "byte_count": len(content),
+            "content_sha256": digest,
+            "content_path": f"content/{digest}.txt",
+        },
+        "candidate_locators": [{
+            "record_kind": "candidate_parameter_locator",
+            "locator": "lines 12-14",
+            "page": None,
+            "line_start": 12,
+            "line_end": 14,
+            "matched_parameter_terms": ["NALCN conductance"],
+            "matched_unit_patterns": [r"mS/cm\^2"],
+            "passage": "NALCN conductance was fitted in mS/cm^2.",
+            "claim_status": "not_a_claim",
+            "review_status": "pending_review",
+        }],
+        "evidence_boundary": {
+            "content_retrieved": True,
+            "locators_are_candidates_only": True,
+            "accepted_claims": False,
+            "interpreted_parameter_values": False,
+            "review_status": "pending_review",
+        },
+    }
+    receipt["sha256"] = pr.scholarly_fulltext._receipt_sha256(receipt)
+    return receipt
 
 
 def test_plan_derives_field_specific_queries_and_checks_rag_and_failures_first():
@@ -187,6 +235,156 @@ def test_live_metadata_rejects_claims_smuggled_into_provider_output():
 
     with pytest.raises(pr.ParameterResearchError, match="cannot contain evidence or claims"):
         pr.add_scholarly_metadata(state, discoverer=bad, searched_at="2026-08-04")
+
+
+def test_fulltext_receipt_and_locators_are_linked_but_remain_nonclaims(tmp_path: Path):
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    state = pr.add_scholarly_metadata(
+        state, discoverer=lambda query: _metadata_response(query), searched_at="2026-08-04"
+    )
+    checkpoints = []
+    result = pr.add_fulltext_retrievals(
+        state,
+        retrieve=lambda lead: _fulltext_receipt(lead, tmp_path),
+        store=tmp_path,
+        checkpoint=lambda value: checkpoints.append(copy.deepcopy(value)),
+        retrieved_at="2026-08-04",
+    )
+
+    assert len(checkpoints) == 1
+    assert result["metadata_leads"][0]["content_status"] == "metadata_only"
+    assert result["metadata_leads"][0]["fulltext_retrieval_ids"] == ["FT1"]
+    retrieval = result["fulltext_retrievals"][0]
+    assert retrieval["lead_id"] == result["metadata_leads"][0]["id"]
+    assert retrieval["receipt"]["candidate_locators"][0]["claim_status"] == "not_a_claim"
+    assert retrieval["receipt"]["evidence_boundary"]["accepted_claims"] is False
+    with pytest.raises(pr.ParameterResearchError, match="no completed external searches"):
+        pr.export_packet(result)
+
+    resumed = pr.add_fulltext_retrievals(
+        result, retrieve=lambda lead: _fulltext_receipt(lead, tmp_path),
+        store=tmp_path,
+    )
+    assert resumed == result
+
+
+def test_fulltext_state_rejects_tampered_boundary_and_wrong_lead_source(tmp_path: Path):
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    state = pr.add_scholarly_metadata(
+        state, discoverer=lambda query: _metadata_response(query), searched_at="2026-08-04"
+    )
+    result = pr.add_fulltext_retrievals(
+        state, retrieve=lambda lead: _fulltext_receipt(lead, tmp_path), store=tmp_path,
+        retrieved_at="2026-08-04",
+    )
+
+    tampered = copy.deepcopy(result)
+    receipt = tampered["fulltext_retrievals"][0]["receipt"]
+    receipt["evidence_boundary"]["accepted_claims"] = True
+    receipt["sha256"] = pr.scholarly_fulltext._receipt_sha256(receipt)
+    with pytest.raises(pr.ParameterResearchError, match="pending-review evidence boundary"):
+        pr.validate_state(tampered)
+
+    wrong_source = copy.deepcopy(result)
+    receipt = wrong_source["fulltext_retrievals"][0]["receipt"]
+    receipt["source"]["doi"] = "10.9999/wrong"
+    receipt["sha256"] = pr.scholarly_fulltext._receipt_sha256(receipt)
+    with pytest.raises(pr.ParameterResearchError, match="DOI does not match"):
+        pr.validate_state(wrong_source)
+
+    relative_content = result["fulltext_retrievals"][0]["receipt"]["retrieval"]["content_path"]
+    content_path = tmp_path / relative_content
+    content_path.write_bytes(b"corrupt")
+    with pytest.raises(pr.ParameterResearchError, match="content is missing or corrupt"):
+        pr.validate_state(result)
+
+
+def test_fulltext_source_binding_is_checked_before_request_dedup(tmp_path: Path):
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    state = pr.add_scholarly_metadata(
+        state, discoverer=lambda query: _metadata_response(query), searched_at="2026-08-04"
+    )
+    second = copy.deepcopy(state["metadata_leads"][0])
+    second.update({
+        "id": "LEAD2",
+        "doi": "10.1234/example.2",
+        "canonical_url": "https://doi.org/10.1234/example.2",
+        "title": "Second physiology paper",
+        "full_text_url_leads": ["https://example.test/second.txt"],
+    })
+    state["metadata_leads"].append(second)
+    state = pr.validate_state(state)
+    first_receipt = _fulltext_receipt(state["metadata_leads"][0], tmp_path)
+    state = pr.add_fulltext_retrievals(
+        state, retrieve=lambda lead: first_receipt, store=tmp_path,
+        lead_ids=["LEAD1"], retrieved_at="2026-08-04",
+    )
+
+    with pytest.raises(pr.ParameterResearchError, match="DOI does not match"):
+        pr.add_fulltext_retrievals(
+            state, retrieve=lambda lead: first_receipt, store=tmp_path,
+            lead_ids=["LEAD2"], retrieved_at="2026-08-04",
+        )
+
+
+def test_malformed_fulltext_retrieval_refs_raise_parameter_research_error(tmp_path: Path):
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    state = pr.add_scholarly_metadata(
+        state, discoverer=lambda query: _metadata_response(query), searched_at="2026-08-04"
+    )
+    state["metadata_leads"][0]["fulltext_retrieval_ids"] = [{}]
+    state_path = tmp_path / "malformed-state.json"
+    state_path.write_text(json.dumps(state), encoding="utf-8")
+
+    with pytest.raises(pr.ParameterResearchError, match="references must be strings"):
+        pr.load_state(state_path)
+
+
+def test_state_without_fulltext_fields_is_safely_normalized():
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    state = pr.add_scholarly_metadata(
+        state, discoverer=lambda query: _metadata_response(query), searched_at="2026-08-04"
+    )
+    state.pop("fulltext_retrievals")
+    for lead in state["metadata_leads"]:
+        lead.pop("fulltext_retrieval_ids")
+
+    normalized = pr.validate_state(state)
+
+    assert normalized["fulltext_retrievals"] == []
+    assert normalized["metadata_leads"][0]["fulltext_retrieval_ids"] == []
+
+
+def test_retrieve_fulltext_cli_checkpoints_linked_receipt(tmp_path: Path, monkeypatch):
+    state_path = tmp_path / "state.json"
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    state = pr.add_scholarly_metadata(
+        state, discoverer=lambda query: _metadata_response(query), searched_at="2026-08-04"
+    )
+    pr.save_state(state_path, state)
+    calls = []
+
+    class FakeRetriever:
+        def __init__(self, **options):
+            calls.append(("init", options))
+
+        def retrieve(self, lead, **options):
+            calls.append(("retrieve", lead["title"], options))
+            return _fulltext_receipt(lead, Path(options["store"]))
+
+    monkeypatch.setattr(pr.scholarly_fulltext, "ScholarlyFulltextRetriever", FakeRetriever)
+    monkeypatch.setattr("sys.argv", [
+        "parameter_research.py", "retrieve-fulltext",
+        "--state", str(state_path), "--store", str(tmp_path / "store"),
+        "--lead-id", "LEAD1", "--parameter-term", "NALCN conductance",
+        "--unit-pattern", r"mS/cm\^2",
+    ])
+    assert pr._main() == 0
+
+    saved = pr.load_state(state_path)
+    assert saved["metadata_leads"][0]["fulltext_retrieval_ids"] == ["FT1"]
+    assert calls[1][2]["parameter_terms"] == ["NALCN conductance"]
+    assert calls[1][2]["unit_patterns"] == [r"mS/cm\^2"]
 
 
 def test_discovery_is_resumable_deduplicated_by_doi_and_preserves_exact_metadata(tmp_path: Path):

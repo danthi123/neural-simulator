@@ -17,6 +17,7 @@ from tools.scholarly_fulltext import (  # noqa: E402
     ScholarlyFulltextRetriever,
     locate_parameter_passages,
     _receipt_sha256,
+    validate_receipt,
 )
 
 
@@ -315,3 +316,68 @@ def test_output_has_no_claim_or_interpreted_value_fields(tmp_path):
     for forbidden in ('"accepted_claim"', '"parameter_value"', '"quantitative_claim"', '"evidence_excerpt"'):
         assert forbidden not in serialized
     assert '"claim_status": "not_a_claim"' in serialized
+
+
+def test_public_receipt_validation_checks_boundary_and_content(tmp_path):
+    receipt = retriever(FixtureTransport([response()])).retrieve(
+        LEAD, store=tmp_path, parameter_terms=["conductance"], unit_patterns=["nS"]
+    )
+    assert validate_receipt(receipt, store=tmp_path) == receipt
+
+    tampered = json.loads(json.dumps(receipt))
+    tampered["evidence_boundary"]["accepted_claims"] = True
+    tampered["sha256"] = _receipt_sha256(tampered)
+    with pytest.raises(ScholarlyFulltextError, match="pending-review evidence boundary"):
+        validate_receipt(tampered, store=tmp_path)
+
+
+def test_receipt_validation_rejects_extra_locator_fields(tmp_path):
+    receipt = retriever(FixtureTransport([response()])).retrieve(
+        LEAD, store=tmp_path, parameter_terms=["conductance"], unit_patterns=["nS"]
+    )
+    receipt["candidate_locators"][0]["accepted_claim"] = True
+    receipt["candidate_locators"][0]["parameter_value"] = "invented 999 nS"
+    receipt["sha256"] = _receipt_sha256(receipt)
+
+    with pytest.raises(ScholarlyFulltextError, match="nonconforming candidate locator"):
+        validate_receipt(receipt, store=tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("updates", "message"),
+    [
+        ({"declared_url": "file:///etc/passwd"}, "invalid URL"),
+        ({"final_url": "../paper.txt"}, "invalid URL"),
+        ({"mime_type": "application/octet-stream"}, "inconsistent MIME"),
+        ({"document_kind": "executable"}, "inconsistent MIME"),
+        ({"byte_count": -1}, "invalid byte count"),
+        ({"byte_count": True}, "invalid byte count"),
+    ],
+)
+def test_receipt_validation_rejects_invalid_retrieval_provenance(tmp_path, updates, message):
+    receipt = retriever(FixtureTransport([response()])).retrieve(
+        LEAD, store=tmp_path, parameter_terms=["conductance"], unit_patterns=["nS"]
+    )
+    receipt["retrieval"].update(updates)
+    receipt["sha256"] = _receipt_sha256(receipt)
+
+    with pytest.raises(ScholarlyFulltextError, match=message):
+        validate_receipt(receipt, store=tmp_path)
+
+
+def test_receipt_validation_checks_content_address_and_actual_byte_count(tmp_path):
+    receipt = retriever(FixtureTransport([response()])).retrieve(
+        LEAD, store=tmp_path, parameter_terms=["conductance"], unit_patterns=["nS"]
+    )
+
+    wrong_path = json.loads(json.dumps(receipt))
+    wrong_path["retrieval"]["content_path"] = "content/not-the-digest.txt"
+    wrong_path["sha256"] = _receipt_sha256(wrong_path)
+    with pytest.raises(ScholarlyFulltextError, match="not content-addressed"):
+        validate_receipt(wrong_path, store=tmp_path)
+
+    wrong_size = json.loads(json.dumps(receipt))
+    wrong_size["retrieval"]["byte_count"] += 1
+    wrong_size["sha256"] = _receipt_sha256(wrong_size)
+    with pytest.raises(ScholarlyFulltextError, match="missing or corrupt"):
+        validate_receipt(wrong_size, store=tmp_path)

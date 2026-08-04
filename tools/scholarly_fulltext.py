@@ -31,6 +31,21 @@ SUPPORTED_MIME = {
     "text/html": "html",
     "text/plain": "plain",
 }
+CONTENT_SUFFIX = {"pdf": "pdf", "html": "html", "xml": "xml", "plain": "txt"}
+RECEIPT_FIELDS = {
+    "schema_version", "request_sha256", "source", "retrieval",
+    "candidate_locators", "evidence_boundary", "sha256",
+}
+SOURCE_FIELDS = {"doi", "canonical_url", "title"}
+RETRIEVAL_FIELDS = {
+    "declared_url", "final_url", "mime_type", "document_kind",
+    "byte_count", "content_sha256", "content_path",
+}
+LOCATOR_FIELDS = {
+    "record_kind", "locator", "page", "line_start", "line_end",
+    "matched_parameter_terms", "matched_unit_patterns", "passage",
+    "claim_status", "review_status",
+}
 FORBIDDEN_MIME_PARTS = (
     "archive",
     "compressed",
@@ -184,6 +199,116 @@ def _receipt_sha256(value: Mapping[str, Any]) -> str:
     return sha256(_canonical_json({
         key: item for key, item in value.items() if key != "sha256"
     })).hexdigest()
+
+
+def validate_receipt(receipt: Mapping[str, Any], *, store: Path | str | None = None) -> dict[str, Any]:
+    """Validate a retrieval receipt and, when supplied, its stored content."""
+    if not isinstance(receipt, Mapping) or receipt.get("schema_version") != SCHEMA_VERSION:
+        raise ScholarlyFulltextError("full-text receipt has an unsupported schema")
+    try:
+        result = json.loads(json.dumps(receipt))
+    except (TypeError, ValueError) as exc:
+        raise ScholarlyFulltextError("full-text receipt must be JSON-serializable") from exc
+    if set(result) != RECEIPT_FIELDS:
+        raise ScholarlyFulltextError("full-text receipt has unexpected or missing fields")
+    request_sha = result.get("request_sha256")
+    if not isinstance(request_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", request_sha):
+        raise ScholarlyFulltextError("full-text receipt has an invalid request digest")
+    if result.get("sha256") != _receipt_sha256(result):
+        raise ScholarlyFulltextError("full-text receipt digest does not match its contents")
+    source = result.get("source")
+    retrieval = result.get("retrieval")
+    locators = result.get("candidate_locators")
+    boundary = result.get("evidence_boundary")
+    if not isinstance(source, dict) or not isinstance(retrieval, dict) or not isinstance(locators, list):
+        raise ScholarlyFulltextError("full-text receipt is missing source, retrieval, or locator records")
+    if set(source) != SOURCE_FIELDS:
+        raise ScholarlyFulltextError("full-text receipt source has unexpected or missing fields")
+    if not isinstance(source["title"], str) or not source["title"].strip():
+        raise ScholarlyFulltextError("full-text receipt source has an invalid title")
+    if source["doi"] is not None and (
+        not isinstance(source["doi"], str) or not source["doi"].strip()
+    ):
+        raise ScholarlyFulltextError("full-text receipt source has an invalid DOI")
+    if source["canonical_url"] is not None and _http_url(source["canonical_url"]) != source["canonical_url"]:
+        raise ScholarlyFulltextError("full-text receipt source has an invalid canonical URL")
+    if set(retrieval) != RETRIEVAL_FIELDS:
+        raise ScholarlyFulltextError("full-text receipt retrieval has unexpected or missing fields")
+    declared_url = retrieval["declared_url"]
+    final_url = retrieval["final_url"]
+    if _http_url(declared_url) != declared_url or _http_url(final_url) != final_url:
+        raise ScholarlyFulltextError("full-text receipt retrieval has an invalid URL")
+    mime = retrieval["mime_type"]
+    kind = retrieval["document_kind"]
+    if mime not in SUPPORTED_MIME or SUPPORTED_MIME[mime] != kind:
+        raise ScholarlyFulltextError("full-text receipt retrieval has inconsistent MIME and document kind")
+    byte_count = retrieval["byte_count"]
+    if isinstance(byte_count, bool) or not isinstance(byte_count, int) or byte_count < 0:
+        raise ScholarlyFulltextError("full-text receipt retrieval has an invalid byte count")
+    if boundary != {
+        "content_retrieved": True,
+        "locators_are_candidates_only": True,
+        "accepted_claims": False,
+        "interpreted_parameter_values": False,
+        "review_status": "pending_review",
+    }:
+        raise ScholarlyFulltextError("full-text receipt violates the pending-review evidence boundary")
+    for locator in locators:
+        if not isinstance(locator, dict) or set(locator) != LOCATOR_FIELDS:
+            raise ScholarlyFulltextError("full-text receipt contains a nonconforming candidate locator")
+        if locator.get("record_kind") != "candidate_parameter_locator":
+            raise ScholarlyFulltextError("full-text receipt contains an invalid candidate locator")
+        if locator.get("claim_status") != "not_a_claim" or locator.get("review_status") != "pending_review":
+            raise ScholarlyFulltextError("full-text locator violates the pending-review evidence boundary")
+        if not isinstance(locator["passage"], str) or not locator["passage"].strip():
+            raise ScholarlyFulltextError("full-text locator has an invalid passage")
+        line_start = locator["line_start"]
+        line_end = locator["line_end"]
+        if any(isinstance(value, bool) or not isinstance(value, int) for value in (line_start, line_end)):
+            raise ScholarlyFulltextError("full-text locator has invalid line bounds")
+        if line_start < 1 or line_end < line_start:
+            raise ScholarlyFulltextError("full-text locator has invalid line bounds")
+        page = locator["page"]
+        if kind == "pdf":
+            if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+                raise ScholarlyFulltextError("PDF full-text locator has an invalid page")
+            expected_locator = f"page {page}, lines {line_start}-{line_end}"
+        else:
+            if page is not None:
+                raise ScholarlyFulltextError("non-PDF full-text locator cannot specify a page")
+            expected_locator = f"lines {line_start}-{line_end}"
+        if locator["locator"] != expected_locator:
+            raise ScholarlyFulltextError("full-text locator text does not match its coordinates")
+        for field in ("matched_parameter_terms", "matched_unit_patterns"):
+            if not isinstance(locator.get(field), list) or not locator[field] or not all(
+                isinstance(item, str) and item.strip() for item in locator[field]
+            ):
+                raise ScholarlyFulltextError(f"full-text locator has invalid {field}")
+            if len(locator[field]) != len(set(locator[field])):
+                raise ScholarlyFulltextError(f"full-text locator has duplicate {field}")
+    relative = retrieval.get("content_path")
+    digest = retrieval.get("content_sha256")
+    if not isinstance(relative, str) or not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+        raise ScholarlyFulltextError("full-text receipt has invalid content identity")
+    relative_path = Path(relative)
+    if relative_path.is_absolute() or ".." in relative_path.parts:
+        raise ScholarlyFulltextError("full-text receipt content path escapes store")
+    expected_relative = f"content/{digest}.{CONTENT_SUFFIX[kind]}"
+    if relative != expected_relative:
+        raise ScholarlyFulltextError("full-text receipt content path is not content-addressed")
+    if store is not None:
+        root = Path(store).expanduser().resolve()
+        content_path = (root / relative).resolve()
+        try:
+            content_path.relative_to(root)
+        except ValueError as exc:
+            raise ScholarlyFulltextError("full-text receipt content path escapes store") from exc
+        if not content_path.is_file():
+            raise ScholarlyFulltextError("full-text receipt content is missing or corrupt")
+        content = content_path.read_bytes()
+        if len(content) != byte_count or sha256(content).hexdigest() != digest:
+            raise ScholarlyFulltextError("full-text receipt content is missing or corrupt")
+    return result
 
 
 def _atomic_json(path: Path, value: Mapping[str, Any]) -> None:
@@ -426,7 +551,7 @@ class ScholarlyFulltextRetriever:
                     raise ScholarlyFulltextError(f"response exceeds max_bytes={self.max_bytes}")
                 mime, kind = _classify(_header(response.headers, "Content-Type"), response.body)
                 digest = sha256(response.body).hexdigest()
-                suffix = {"pdf": "pdf", "html": "html", "xml": "xml", "plain": "txt"}[kind]
+                suffix = CONTENT_SUFFIX[kind]
                 relative_content = Path("content") / f"{digest}.{suffix}"
                 content_path = root / relative_content
                 _write_content_once(content_path, response.body, digest)
@@ -485,20 +610,4 @@ class ScholarlyFulltextRetriever:
             raise ScholarlyFulltextError(f"persisted receipt is unreadable: {receipt_path.name}") from exc
         if not isinstance(receipt, dict) or receipt.get("request_sha256") != request_sha:
             raise ScholarlyFulltextError("persisted receipt does not match request")
-        if receipt.get("sha256") != _receipt_sha256(receipt):
-            raise ScholarlyFulltextError("persisted receipt digest does not match its contents")
-        retrieval = receipt.get("retrieval")
-        if not isinstance(retrieval, dict):
-            raise ScholarlyFulltextError("persisted receipt has no retrieval record")
-        relative = retrieval.get("content_path")
-        digest = retrieval.get("content_sha256")
-        if not isinstance(relative, str) or not isinstance(digest, str):
-            raise ScholarlyFulltextError("persisted receipt has invalid content identity")
-        content_path = (root / relative).resolve()
-        try:
-            content_path.relative_to(root)
-        except ValueError as exc:
-            raise ScholarlyFulltextError("persisted receipt content path escapes store") from exc
-        if not content_path.is_file() or sha256(content_path.read_bytes()).hexdigest() != digest:
-            raise ScholarlyFulltextError("persisted receipt content is missing or corrupt")
-        return receipt
+        return validate_receipt(receipt, store=root)

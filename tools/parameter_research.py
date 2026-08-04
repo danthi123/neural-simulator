@@ -22,9 +22,11 @@ from urllib.parse import urlsplit, urlunsplit
 try:
     from tools import research_packet
     from tools import scholarly_discovery
+    from tools import scholarly_fulltext
 except ModuleNotFoundError:  # direct script execution
     import research_packet
     import scholarly_discovery
+    import scholarly_fulltext
 
 
 STATE_VERSION = "parameter-research-v1"
@@ -41,6 +43,7 @@ class ParameterResearchError(RuntimeError):
 DiscoveryAdapter = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 LocalSearchAdapter = Callable[[str, str], Mapping[str, Any]]
 Checkpoint = Callable[[Mapping[str, Any]], None]
+FulltextAdapter = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 
 
 def _text(value: Any, field: str) -> str:
@@ -210,6 +213,7 @@ def create_plan(
         "candidates": [],
         "metadata_searches": [],
         "metadata_leads": [],
+        "fulltext_retrievals": [],
     }
     return validate_state(state)
 
@@ -227,8 +231,9 @@ def validate_state(state: Mapping[str, Any]) -> dict[str, Any]:
     candidates = state.get("candidates")
     metadata_searches = state.get("metadata_searches", [])
     metadata_leads = state.get("metadata_leads", [])
+    fulltext_retrievals = state.get("fulltext_retrievals", [])
     if not all(isinstance(value, list) for value in (
-        gaps, queries, checks, searches, candidates, metadata_searches, metadata_leads,
+        gaps, queries, checks, searches, candidates, metadata_searches, metadata_leads, fulltext_retrievals,
     )):
         raise ParameterResearchError("state collections must be lists")
     gap_ids = {_text(gap.get("id"), "gap.id") for gap in gaps}
@@ -253,7 +258,9 @@ def validate_state(state: Mapping[str, Any]) -> dict[str, Any]:
         _text(check.get("summary"), "local_check.summary")
     if actual_checks != required_checks:
         raise ParameterResearchError("every query requires project-RAG and prior-failure checks")
-    if any(check["status"] != "complete" for check in checks) and (searches or candidates):
+    if any(check["status"] != "complete" for check in checks) and (
+        searches or candidates or metadata_searches or metadata_leads or fulltext_retrievals
+    ):
         raise ParameterResearchError("external discovery is blocked while a local check is unavailable")
     search_ids: set[str] = set()
     searched_queries: set[str] = set()
@@ -357,6 +364,13 @@ def validate_state(state: Mapping[str, Any]) -> dict[str, Any]:
             raise ParameterResearchError("metadata lead requires provider records")
         if not isinstance(lead.get("full_text_url_leads"), list):
             raise ParameterResearchError("metadata lead full-text URLs must be a list")
+        retrieval_refs = lead.get("fulltext_retrieval_ids", [])
+        if not isinstance(retrieval_refs, list) or any(
+            not isinstance(item, str) or not item.strip() for item in retrieval_refs
+        ):
+            raise ParameterResearchError("metadata lead full-text retrieval references must be strings")
+        if len(retrieval_refs) != len(set(retrieval_refs)):
+            raise ParameterResearchError("metadata lead full-text retrieval references must be unique")
     metadata_query_ids: set[str] = set()
     for search in metadata_searches:
         query_id = _text(search.get("query_id"), "metadata_search.query_id")
@@ -369,9 +383,41 @@ def validate_state(state: Mapping[str, Any]) -> dict[str, Any]:
             raise ParameterResearchError("metadata search requires provider records")
         if not isinstance(search.get("lead_ids"), list) or any(item not in lead_ids for item in search["lead_ids"]):
             raise ParameterResearchError("metadata search refers to an unknown lead")
+    retrieval_ids: set[str] = set()
+    retrieval_requests: set[str] = set()
+    retrievals_by_lead: dict[str, set[str]] = {lead_id: set() for lead_id in lead_ids}
+    leads_by_id = {lead["id"]: lead for lead in metadata_leads}
+    for retrieval in fulltext_retrievals:
+        retrieval_id = _text(retrieval.get("id"), "fulltext_retrieval.id")
+        if retrieval_id in retrieval_ids:
+            raise ParameterResearchError("duplicate full-text retrieval id")
+        retrieval_ids.add(retrieval_id)
+        lead_id = _text(retrieval.get("lead_id"), "fulltext_retrieval.lead_id")
+        if lead_id not in lead_ids:
+            raise ParameterResearchError("full-text retrieval refers to an unknown metadata lead")
+        _date(retrieval.get("retrieved_at"), "fulltext_retrieval.retrieved_at")
+        store_path = _text(retrieval.get("store_path"), "fulltext_retrieval.store_path")
+        try:
+            receipt = scholarly_fulltext.validate_receipt(
+                retrieval.get("receipt"), store=store_path
+            )
+        except scholarly_fulltext.ScholarlyFulltextError as exc:
+            raise ParameterResearchError(f"invalid full-text receipt: {exc}") from exc
+        request_sha = receipt["request_sha256"]
+        if request_sha in retrieval_requests:
+            raise ParameterResearchError("duplicate full-text retrieval request")
+        retrieval_requests.add(request_sha)
+        _validate_fulltext_source(receipt, leads_by_id[lead_id])
+        retrievals_by_lead[lead_id].add(retrieval_id)
+    for lead in metadata_leads:
+        if set(lead.get("fulltext_retrieval_ids", [])) != retrievals_by_lead[lead["id"]]:
+            raise ParameterResearchError("metadata lead full-text retrieval links are inconsistent")
     normalized = json.loads(json.dumps(state))
     normalized.setdefault("metadata_searches", [])
     normalized.setdefault("metadata_leads", [])
+    normalized.setdefault("fulltext_retrievals", [])
+    for lead in normalized["metadata_leads"]:
+        lead.setdefault("fulltext_retrieval_ids", [])
     return normalized
 
 
@@ -381,6 +427,17 @@ def _candidate_keys(candidate: Mapping[str, Any]) -> set[tuple[str, str]]:
     if doi:
         keys.add(("doi", doi))
     return keys
+
+
+def _validate_fulltext_source(receipt: Mapping[str, Any], lead: Mapping[str, Any]) -> None:
+    receipt_source = receipt["source"]
+    if normalize_doi(receipt_source.get("doi")) != normalize_doi(lead.get("doi")):
+        raise ParameterResearchError("full-text receipt DOI does not match its metadata lead")
+    if (
+        receipt_source.get("canonical_url") != lead.get("canonical_url")
+        or receipt_source.get("title") != lead.get("title")
+    ):
+        raise ParameterResearchError("full-text receipt source does not match its metadata lead")
 
 
 def _metadata_keys(candidate: Mapping[str, Any]) -> set[tuple[str, str]]:
@@ -614,6 +671,67 @@ def add_scholarly_metadata(
     return result
 
 
+def add_fulltext_retrievals(
+    state: Mapping[str, Any], *, retrieve: FulltextAdapter,
+    store: Path | str, lead_ids: Sequence[str] | None = None,
+    checkpoint: Checkpoint | None = None,
+    retrieved_at: str | None = None,
+) -> dict[str, Any]:
+    """Retrieve selected metadata leads and durably link candidate locators.
+
+    Receipts remain a pre-review handoff. This function records no claims and
+    does not make full-text locators eligible for packet export.
+    """
+    result = validate_state(state)
+    if any(check["status"] != "complete" for check in result["local_checks"]):
+        raise ParameterResearchError("full-text retrieval requires successful local checks first")
+    retrieved_at = retrieved_at or dt.date.today().isoformat()
+    _date(retrieved_at, "retrieved_at")
+    store_path = str(Path(store).expanduser().resolve())
+    available = {lead["id"] for lead in result["metadata_leads"]}
+    selected = available if lead_ids is None else set(lead_ids)
+    if not selected:
+        raise ParameterResearchError("full-text retrieval requires at least one metadata lead")
+    unknown = selected - available
+    if unknown:
+        raise ParameterResearchError(f"unknown metadata lead id(s): {', '.join(sorted(unknown))}")
+    completed_requests = {
+        retrieval["receipt"]["request_sha256"]
+        for retrieval in result["fulltext_retrievals"]
+    }
+
+    for lead in result["metadata_leads"]:
+        if lead["id"] not in selected:
+            continue
+        retrieval_lead = {
+            key: value for key, value in lead.items()
+            if key not in {"id", "query_ids", "fulltext_retrieval_ids"}
+        }
+        raw_receipt = retrieve(retrieval_lead)
+        try:
+            receipt = scholarly_fulltext.validate_receipt(raw_receipt, store=store_path)
+        except scholarly_fulltext.ScholarlyFulltextError as exc:
+            raise ParameterResearchError(f"invalid full-text receipt: {exc}") from exc
+        _validate_fulltext_source(receipt, lead)
+        if receipt["request_sha256"] in completed_requests:
+            continue
+        retrieval_id = f"FT{len(result['fulltext_retrievals']) + 1}"
+        result["fulltext_retrievals"].append({
+            "id": retrieval_id,
+            "lead_id": lead["id"],
+            "retrieved_at": retrieved_at,
+            "store_path": store_path,
+            "receipt": receipt,
+        })
+        lead.setdefault("fulltext_retrieval_ids", []).append(retrieval_id)
+        completed_requests.add(receipt["request_sha256"])
+        result["updated_at"] = retrieved_at
+        result = validate_state(result)
+        if checkpoint is not None:
+            checkpoint(result)
+    return result
+
+
 def export_packet(state: Mapping[str, Any]) -> dict[str, Any]:
     """Export discovered sources and proposed claims into the existing packet boundary."""
     state = validate_state(state)
@@ -736,6 +854,18 @@ def _main() -> int:
     live.add_argument("--timeout", type=float, default=15.0)
     live.add_argument("--max-retries", type=int, default=2)
     live.add_argument("--per-provider", type=int, default=25)
+    fulltext = sub.add_parser("retrieve-fulltext")
+    fulltext.add_argument("--state", required=True, type=Path)
+    fulltext.add_argument("--store", required=True, type=Path)
+    fulltext.add_argument("--parameter-term", required=True, action="append")
+    fulltext.add_argument("--unit-pattern", required=True, action="append")
+    fulltext.add_argument("--lead-id", action="append")
+    fulltext.add_argument("--user-agent", default="sim-neural-research/1.0")
+    fulltext.add_argument("--timeout", type=float, default=20.0)
+    fulltext.add_argument("--converter-timeout", type=float, default=30.0)
+    fulltext.add_argument("--max-bytes", type=int, default=32 * 1024 * 1024)
+    fulltext.add_argument("--context-lines", type=int, default=2)
+    fulltext.add_argument("--max-passages", type=int, default=25)
     export = sub.add_parser("export-packet")
     export.add_argument("--state", required=True, type=Path)
     export.add_argument("--output", required=True, type=Path)
@@ -763,9 +893,34 @@ def _main() -> int:
                 checkpoint=lambda value: save_state(args.state, value),
             )
             save_state(args.state, state)
+        elif args.command == "retrieve-fulltext":
+            retriever = scholarly_fulltext.ScholarlyFulltextRetriever(
+                user_agent=args.user_agent,
+                timeout=args.timeout,
+                converter_timeout=args.converter_timeout,
+                max_bytes=args.max_bytes,
+            )
+            def retrieve(lead: Mapping[str, Any]) -> Mapping[str, Any]:
+                return retriever.retrieve(
+                    lead,
+                    store=args.store,
+                    parameter_terms=args.parameter_term,
+                    unit_patterns=args.unit_pattern,
+                    context_lines=args.context_lines,
+                    max_passages=args.max_passages,
+                )
+            state = add_fulltext_retrievals(
+                load_state(args.state), retrieve=retrieve, store=args.store,
+                lead_ids=args.lead_id,
+                checkpoint=lambda value: save_state(args.state, value),
+            )
+            save_state(args.state, state)
         else:
             research_packet.save_packet(args.output, export_packet(load_state(args.state)))
-    except (KeyError, OSError, json.JSONDecodeError, ParameterResearchError, research_packet.ResearchPacketError) as exc:
+    except (
+        KeyError, OSError, ValueError, json.JSONDecodeError, ParameterResearchError,
+        research_packet.ResearchPacketError, scholarly_fulltext.ScholarlyFulltextError,
+    ) as exc:
         parser.error(str(exc))
     print(f"{args.command}: valid")
     return 0
