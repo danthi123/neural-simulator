@@ -1,0 +1,30 @@
+{
+ "run_id": "1785833116-595123",
+ "runner": "research/runners/_lanea_graded_affect_quench_v1.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_lanea_graded_affect_quench_v1.py",
+  "--phase",
+  "diagnostic",
+  "--seed",
+  "7695139"
+ ],
+ "git_sha": "3cb87cf411d35093286d6dec8eff1096be8d9f31",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "c54bac1db8bdd380f2f3264f140bf4fbb4397cf0b78b1e704bb19c64c3c91753",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T04:45:16",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 51492.7,
+ "corpus_check_query": "Visual temporal binding provenance repeat only; runner and criteria unchanged",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/affect/graded_quench_v1/diagnostic/seed-7695139.json"
+}

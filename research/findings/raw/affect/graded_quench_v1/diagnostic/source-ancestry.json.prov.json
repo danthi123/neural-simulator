@@ -1,0 +1,21 @@
+{
+  "schema": "sim-source-ancestry-provenance-v1",
+  "artifact": "research/findings/raw/affect/graded_quench_v1/diagnostic/source-ancestry.json",
+  "runner": "tools/pool/provisioning/ancestry_attestation.py",
+  "argv": [
+    "python3",
+    "tools/pool/provisioning/ancestry_attestation.py",
+    "create",
+    "--repo",
+    ".",
+    "--revision",
+    "3cb87cf411d35093286d6dec8eff1096be8d9f31",
+    "--output",
+    ".source_ancestry.json"
+  ],
+  "git_sha": "3cb87cf411d35093286d6dec8eff1096be8d9f31",
+  "host": "dant123-wk",
+  "device": "cpu:provisioning",
+  "source_kind": "git",
+  "created_utc": "2026-08-04T08:43:01Z"
+}

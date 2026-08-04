@@ -1,0 +1,36 @@
+{
+  "argv": [
+    ".venv/bin/python",
+    "-u",
+    "-m",
+    "research.runners._lanea_graded_affect_quench_v1",
+    "--phase",
+    "diagnostic",
+    "--aggregate"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/affect/graded_quench_v1/diagnostic/aggregate.json",
+    "sha256": "0a89223fb5d186a09bb897cfea89a37a7a084bd326a8df533cafa3233f004b10",
+    "size_bytes": 4944
+  },
+  "device": "cpu:numpy",
+  "duration_monotonic_ns": 1202248371,
+  "ended_utc_ns": 1785833228041541690,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "node-dl5d243",
+  "schema": "sim-execution-receipt-v1",
+  "source": {
+    "file_count": 2098,
+    "git_sha": "3cb87cf411d35093286d6dec8eff1096be8d9f31",
+    "kind": "git_archive",
+    "manifest": ".source_manifest.sha256",
+    "manifest_sha256": "c54bac1db8bdd380f2f3264f140bf4fbb4397cf0b78b1e704bb19c64c3c91753",
+    "tree_sha256": "c54bac1db8bdd380f2f3264f140bf4fbb4397cf0b78b1e704bb19c64c3c91753"
+  },
+  "started_utc_ns": 1785833226839292125,
+  "status": "success"
+}
