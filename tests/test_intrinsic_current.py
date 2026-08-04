@@ -134,6 +134,11 @@ def test_nonfinite_intrinsic_current_raises(bad_value):
         _build([_region("gpi", 4, bad_value)])
 
 
+def test_intrinsic_current_must_fit_float32():
+    with pytest.raises(ValueError, match="representable as float32"):
+        _build([_region("gpi", 4, 1e40)])
+
+
 @pytest.mark.parametrize(
     "model", [NeuronModel.HODGKIN_HUXLEY.name, NeuronModel.ADEX.name]
 )
@@ -166,9 +171,23 @@ def test_intrinsic_current_checkpoint_round_trip_and_old_checkpoint(tmp_path):
     assert legacy.cp_intrinsic_current_pA is None
 
 
+def test_checkpoint_cannot_bypass_intrinsic_current_model_guard(tmp_path):
+    bridge = _build([_region("gpi", 4, 100.0)])
+    checkpoint = tmp_path / "wrong-model.simstate.h5"
+    assert bridge.save_checkpoint(str(checkpoint)) is True
+    with h5py.File(checkpoint, "r+") as h5f:
+        h5f.attrs["neuron_model_type"] = NeuronModel.HODGKIN_HUXLEY.name
+
+    restored = _build([_region("gpi", 4)])
+    assert restored.load_checkpoint(str(checkpoint)) is False
+    assert restored.cp_intrinsic_current_pA is None
+
+
 def test_recording_initial_state_captures_intrinsic_current_only_as_static_state():
     bridge = _build([_region("gpi", 5, 100.0)])
+    without_intrinsic = _build([_region("gpi", 5)])
     snapshot = bridge._capture_initial_state_for_recording()
     np.testing.assert_array_equal(
         snapshot["cp_intrinsic_current_pA"], np.full(5, 100.0, dtype=np.float32)
     )
+    assert bridge._estimate_frame_size_bytes() == without_intrinsic._estimate_frame_size_bytes()

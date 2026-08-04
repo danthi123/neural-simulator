@@ -212,7 +212,10 @@ def load_dict_from_hdf5_attrs(h5_group_or_file):
                 except json.JSONDecodeError:
                     data_dict[key] = value
         else:
-            data_dict[key] = value
+            # h5py returns numeric attributes as NumPy scalar objects. Keep
+            # configuration arithmetic byte-faithful to a fresh dataclass by
+            # restoring the corresponding Python scalar type.
+            data_dict[key] = value.item() if isinstance(value, np.generic) else value
     return data_dict
 
 
@@ -1431,6 +1434,11 @@ class SimulationBridge:
                 if not math.isfinite(value):
                     raise ValueError(
                         f"Region {region.name!r} intrinsic_current_pA must be finite"
+                    )
+                if abs(value) > float(np.finfo(np.float32).max):
+                    raise ValueError(
+                        f"Region {region.name!r} intrinsic_current_pA must be "
+                        "representable as float32"
                     )
                 if (value != 0.0
                         and self.core_config.neuron_model_type
@@ -4546,7 +4554,7 @@ class SimulationBridge:
             'cp_conductance_g_e', 'cp_conductance_g_i', 'cp_recovery_variable_u',
             'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
-            'cp_adex_w', 'cp_ou_current', 'cp_intrinsic_current_pA'
+            'cp_adex_w', 'cp_ou_current'
         ]
 
         # Synaptic data is often 10-20x larger than neuron data
@@ -9423,6 +9431,8 @@ class SimulationBridge:
                     'cp_membrane_potential_v', 'cp_conductance_g_e', 'cp_conductance_g_i',
                     *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
                     'cp_external_input_current', 'cp_intrinsic_current_pA',
+                    'cp_syn_reversal_potential_i_per_neuron',
+                    'cp_neuron_type_ids', 'cp_heterogeneity_neuron_mask',
                     'cp_firing_states', 'cp_prev_firing_states',
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
@@ -9641,6 +9651,12 @@ class SimulationBridge:
                 
                 h5f.attrs["_mock_total_plasticity_events"] = self._mock_total_plasticity_events
                 h5f.attrs["_mock_network_avg_firing_rate_hz"] = self._mock_network_avg_firing_rate_hz
+                h5f.attrs["checkpoint_current_time_ms"] = float(
+                    self.runtime_state.current_time_ms
+                )
+                h5f.attrs["checkpoint_current_time_step"] = int(
+                    self.runtime_state.current_time_step
+                )
                 
                 if self.runtime_state.neuron_types_list_for_viz:
                     h5f.attrs["neuron_types_list_for_viz_json"] = json.dumps(self.runtime_state.neuron_types_list_for_viz)
@@ -9760,6 +9776,11 @@ class SimulationBridge:
                 # without this dataset intentionally restores the legacy None
                 # state instead of manufacturing a zero vector.
                 if "cp_intrinsic_current_pA" in state_group:
+                    if self.core_config.neuron_model_type != NeuronModel.IZHIKEVICH.name:
+                        raise ValueError(
+                            "Checkpoint intrinsic current supports only IZHIKEVICH, "
+                            f"not {self.core_config.neuron_model_type}"
+                        )
                     intrinsic_host = np.asarray(
                         state_group["cp_intrinsic_current_pA"][:], dtype=np.float32
                     )
@@ -9777,6 +9798,35 @@ class SimulationBridge:
                     )
                 else:
                     self.cp_intrinsic_current_pA = None
+
+                def _load_optional_neuron_array(key, dtype):
+                    if key not in state_group:
+                        return None
+                    host = np.asarray(state_group[key][:], dtype=dtype)
+                    if host.ndim != 1 or int(host.size) != int(n):
+                        raise ValueError(
+                            f"Checkpoint {key} vector does not match neuron count"
+                        )
+                    return cp.asarray(host, dtype=dtype)
+
+                reversal = _load_optional_neuron_array(
+                    "cp_syn_reversal_potential_i_per_neuron", np.float32
+                )
+                if reversal is None:
+                    reversal = cp.full(
+                        n, self.core_config.syn_reversal_potential_i, dtype=cp.float32
+                    )
+                elif not bool(cp.all(cp.isfinite(reversal))):
+                    raise ValueError(
+                        "Checkpoint inhibitory reversal vector must be finite"
+                    )
+                self.cp_syn_reversal_potential_i_per_neuron = reversal
+                self.cp_neuron_type_ids = _load_optional_neuron_array(
+                    "cp_neuron_type_ids", np.int32
+                )
+                self.cp_heterogeneity_neuron_mask = _load_optional_neuron_array(
+                    "cp_heterogeneity_neuron_mask", np.bool_
+                )
 
                 # Slow conductances are live state. Old checkpoints do not
                 # contain these datasets, so rebuild each buffer according to
@@ -10113,6 +10163,12 @@ class SimulationBridge:
 
                 self._mock_total_plasticity_events = h5f.attrs.get("_mock_total_plasticity_events",0)
                 self._mock_network_avg_firing_rate_hz = h5f.attrs.get("_mock_network_avg_firing_rate_hz",0.0)
+                self.runtime_state.current_time_ms = float(
+                    h5f.attrs.get("checkpoint_current_time_ms", 0.0)
+                )
+                self.runtime_state.current_time_step = int(
+                    h5f.attrs.get("checkpoint_current_time_step", 0)
+                )
 
                 # Recompute step-invariant cached constants that aren't saved to
                 # the checkpoint (derivable from core_config). Without these, the
