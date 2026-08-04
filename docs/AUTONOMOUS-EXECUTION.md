@@ -29,6 +29,9 @@ Each lane must have:
 - a recovery action when blocked;
 - a heartbeat while running.
 
+An active delegated lane also records the agent ID that owns it. One active agent does not satisfy a different ready
+lane; the coordinator checks the assignment per lane.
+
 ready means work can start now. blocked means the blocker is recorded and the recovery action is the next
 thing to check. A blocked GPU lane does not block CPU, research, documentation, or agent lanes.
 

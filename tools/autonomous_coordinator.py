@@ -266,14 +266,19 @@ def board_warnings(board: dict[str, Any], resources: dict[str, Any] | None = Non
     warnings: list[str] = []
     lanes = board.get("lanes", {})
     agents = board.get("agents", {})
-    active_agents = [a for a in agents.values() if a.get("status") == "running"]
     ready_agent_lanes = [
         (lane_id, lane) for lane_id, lane in lanes.items()
         if lane.get("status") in {"ready", "planned"} and lane.get("delegation") == "agent"
     ]
-    if ready_agent_lanes and not active_agents:
-        names = ", ".join(lane_id for lane_id, _ in ready_agent_lanes[:4])
-        warnings.append(f"AGENT-DISPATCH-REQUIRED: ready disjoint lanes have no active agent ({names})")
+    missing_agent_lanes = []
+    for lane_id, lane in ready_agent_lanes:
+        agent_id = lane.get("agent_id")
+        agent = agents.get(agent_id) if isinstance(agent_id, str) else None
+        if not isinstance(agent, dict) or agent.get("status") != "running":
+            missing_agent_lanes.append(lane_id)
+    if missing_agent_lanes:
+        names = ", ".join(missing_agent_lanes[:4])
+        warnings.append(f"AGENT-DISPATCH-REQUIRED: ready disjoint lanes have no active assigned agent ({names})")
     for lane_id, lane in lanes.items():
         if lane.get("status") == "running":
             if not str(lane.get("next_action", "")).strip():
@@ -294,7 +299,7 @@ def board_warnings(board: dict[str, Any], resources: dict[str, Any] | None = Non
     cpu = resources.get("cpu", {})
     load = (cpu.get("load_1_5_15") or [0])[0]
     cores = cpu.get("logical_cores") or 0
-    if ready_agent_lanes and cores and isinstance(load, (int, float)) and load < max(1.0, cores * 0.35):
+    if missing_agent_lanes and cores and isinstance(load, (int, float)) and load < max(1.0, cores * 0.35):
         warnings.append("CPU-CAPACITY-AVAILABLE: ready CPU-compatible lanes exist while host load is low")
     return warnings
 
@@ -367,7 +372,7 @@ def _print_status(result: dict[str, Any], *, as_json: bool = False) -> None:
 
 def _lane(args: argparse.Namespace, board: dict[str, Any]) -> None:
     lane = board.setdefault("lanes", {}).setdefault(args.id, {})
-    for name in ("status", "resource", "delegation", "next_action", "owner", "blocker", "recovery_action"):
+    for name in ("status", "resource", "delegation", "next_action", "owner", "agent_id", "blocker", "recovery_action"):
         value = getattr(args, name, None)
         if value is not None:
             lane[name] = value
@@ -458,6 +463,7 @@ def parser() -> argparse.ArgumentParser:
     lane.add_argument("--delegation", choices=("controller", "agent", "local-model"))
     lane.add_argument("--next-action")
     lane.add_argument("--owner")
+    lane.add_argument("--agent-id")
     lane.add_argument("--blocker")
     lane.add_argument("--recovery-action")
     lane.add_argument("--write-set", nargs="+")

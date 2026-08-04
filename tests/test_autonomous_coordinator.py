@@ -41,12 +41,15 @@ def test_ready_disjoint_agent_lanes_raise_dispatch_warning():
         "started_at": board["updated_at"],
         "heartbeat_at": board["updated_at"],
     }
+    board["lanes"]["deep-research-packets"]["agent_id"] = "agent-1"
     warnings = board_warnings(board, _quiet_resources())
-    assert not any(warning.startswith("AGENT-DISPATCH-REQUIRED") for warning in warnings)
+    dispatch = [warning for warning in warnings if warning.startswith("AGENT-DISPATCH-REQUIRED")]
+    assert dispatch and "experiment-controller" in dispatch[0]
 
 
 def test_running_lane_without_fresh_heartbeat_is_loud():
     board = _default_board()
+    board["lanes"]["rag-freshness"]["status"] = "running"
     board["lanes"]["rag-freshness"]["heartbeat_at"] = "2020-01-01T00:00:00+00:00"
     warnings = board_warnings(board, _quiet_resources())
     assert any(warning.startswith("LANE-STALE: rag-freshness") for warning in warnings)

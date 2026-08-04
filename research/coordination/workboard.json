@@ -175,12 +175,25 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T14:34:31+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T14:34:34+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
     }
   ],
   "lanes": {
     "deep-research-packets": {
+      "agent_id": "019fcd2e-1492-7a72-b737-04bf116cfd38",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T14:29:56+00:00",
+      "heartbeat_at": "2026-08-04T14:34:31+00:00",
       "next_action": "Agent is integrating validated packet handoff into research escalation; review fail-closed tests on return.",
       "owner": "controller",
       "priority": 2,
@@ -192,8 +205,9 @@
       ]
     },
     "experiment-controller": {
+      "agent_id": "019fcd2e-14c3-7760-a307-2539d41ccbec",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T14:30:01+00:00",
+      "heartbeat_at": "2026-08-04T14:34:34+00:00",
       "next_action": "Agent is validating dry-run handoff against tools/experiment.py; review no-execution guarantees on return.",
       "owner": "controller",
       "priority": 2,
@@ -258,5 +272,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T14:30:01+00:00"
+  "updated_at": "2026-08-04T14:34:34+00:00"
 }
