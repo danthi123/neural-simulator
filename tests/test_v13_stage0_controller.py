@@ -832,6 +832,7 @@ def test_merge_emits_only_after_both_calibration_artifacts_match(fx: Fixture):
         cupy_manifest=cupy_manifest, emit=fx.root / "commands/merge.json", root=fx.root,
     )
     assert envelope["action"] == "merge_calibration"
+    assert envelope["env"] == controller._expected_manifest_env("calibration_selection")
     assert len(envelope["prerequisites"]) == 2
     assert not fx.artifact_path("calibration_selection").exists()
 
@@ -1235,6 +1236,7 @@ def test_final_merge_emits_complete_digested_runner_command(fx: Fixture):
     paths = {kind: str(fx.artifact_path(kind)) for kind in fx.artifacts}
     merge_index = envelope["argv"].index("--merge-final")
     assert envelope["action"] == "final_stage0_merge"
+    assert envelope["env"] == controller._expected_manifest_env("final_stage0")
     assert envelope["execution"] == "not_executed"
     assert envelope["expected_result"] == {
         "stage": "final_cross_backend", "outcome": "TONIC_OUTPUT_GO", "go": True,

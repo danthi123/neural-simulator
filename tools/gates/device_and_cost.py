@@ -49,6 +49,18 @@ COST_KEYS = ("cost_projection", "projected_total_hours", "cost_acknowledged", "p
 LONG_RUN_S = 8 * 3600.0
 
 
+def _is_structural_record(obj):
+    """True for create-only commands/configs that record no completed run."""
+    schema = obj.get("schema")
+    if obj.get("execution") == "not_executed" and isinstance(obj.get("argv"), list):
+        return True
+    return (
+        obj.get("status") == "frozen"
+        and isinstance(schema, str)
+        and "controller-config" in schema
+    )
+
+
 def _find(obj, keys, depth=0):
     """Shallow search — top level and one nested level (config/provenance/meta blocks live there)."""
     if not isinstance(obj, dict):
@@ -74,6 +86,8 @@ def _check_one(path, rel=None):
     except (OSError, ValueError):
         return []
     if not isinstance(obj, dict):
+        return []
+    if _is_structural_record(obj):
         return []
     problems = []
 
@@ -158,4 +172,11 @@ def selftest():
         # 9. SCOPING — standalone/empty scans nothing.
         if check(None) or check([]):
             bad.append("SCOPE LEAK: standalone/empty mode must not scan the legacy corpus")
+        # 10. NEGATIVE CONTROL — a frozen command/config describes future execution, not a run.
+        structural = (
+            w("command.json", {"execution": "not_executed", "argv": ["python", "runner.py"]}),
+            w("config.json", {"schema": "v13-stage0-controller-config-v3", "status": "frozen"}),
+        )
+        if any(_check_one(p, os.path.basename(p)) for p in structural):
+            bad.append("FALSE POSITIVE: treated a frozen command/config as a completed result")
     return bad

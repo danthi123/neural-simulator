@@ -1,0 +1,56 @@
+{
+  "action": "calibration_cupy",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v2.json",
+    "--calibration",
+    "--compatibility-correction",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-cupy.json"
+  ],
+  "config": {
+    "path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_stage0_controller_config_v4.json",
+    "sha256": "04077194eb6c9b92989b12b4d01f1a3e059881f9fb7a8443665c8bc1431540da"
+  },
+  "correction_id": "v13-stage0-process-correction-v2",
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "env": {
+    "SIM_BACKEND": "cupy"
+  },
+  "execution": "not_executed",
+  "output": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-cupy.json",
+  "prerequisites": [
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/evidence-manifest.json",
+      "artifact_sha256": "c9ceda9eaa263c542c88240f9df6661d808352c800abc8e3b79431f8e1578ecf",
+      "kind": "strict_arithmetic_replay_v2",
+      "source_revision": "c2db1becbe0948424958faec0f706f492de447c9"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+      "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+      "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+      "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+      "kind": "compatibility"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-numpy.json",
+      "artifact_sha256": "247ee5c352d4c1783c22f0aee9d3938d80cde1284a2010fc79bb414ea139adaa",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/commands/calibration-numpy.json",
+      "command_envelope_sha256": "586240199814faee3843e2b4f53ed2a328c518cf96f19a5b60decc53c7d83a8c",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/receipts/calibration-numpy.json",
+      "execution_receipt_sha256": "4eece499425a2ecb502b7d31bb612e0f9b3059419e5937001b0540c1b9f84c92",
+      "kind": "calibration_numpy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/manifests/calibration-numpy.json",
+      "manifest_sha256": "516c4c5ff7fb9ff918ad0d815f7c72c58c70a819686b9d085798a2243914c0ac",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-numpy.json.prov.json",
+      "provenance_sidecar_sha256": "9e8c90fdef690d04dfece4c83ede29a2d7b2cc786bd7bd6744217c9777ef90ee"
+    }
+  ],
+  "schema": "v13-stage0-command-v1",
+  "source_revision": "f41575539536809158736cd62ab42ab2292cf20c"
+}

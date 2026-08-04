@@ -40,7 +40,10 @@ BLOCKING = True
 
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _RAW_MARK = "research/findings/raw/"
-_STRONG = {"cmd", "argv", "command", "cmdline", "provenance", "runner", "run_id", "preset", "script"}
+_STRONG = {
+    "cmd", "argv", "command", "command_envelope", "cmdline", "execution_receipt",
+    "provenance", "runner", "run_id", "preset", "script",
+}
 _WEAK = {"seed", "seeds", "config", "cfg", "params", "args"}
 _WEAK_MAX_DEPTH = 1
 _STRONG_MAX_DEPTH = 3
@@ -180,6 +183,9 @@ def selftest() -> list:
                      "not an artifact (.md)": w("j.md", "no provenance here"),
                      "the sidecar itself": os.path.join(raw, "e.cmd.json"),
                      "json outside raw/": outside}
+        must_pass["evidence manifest references command"] = w(
+            "manifest.json", '{"command_envelope": {"path": "commands/run.json", "sha256": "abc"}}'
+        )
         for label, p in must_pass.items():
             probs = check([p])
             if probs:

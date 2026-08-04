@@ -1,0 +1,54 @@
+{
+  "action": "merge_calibration",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v2.json",
+    "--merge-calibration",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-numpy.json",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-cupy.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-selection.json"
+  ],
+  "config": {
+    "path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_stage0_controller_config_v4.json",
+    "sha256": "04077194eb6c9b92989b12b4d01f1a3e059881f9fb7a8443665c8bc1431540da"
+  },
+  "correction_id": "v13-stage0-process-correction-v2",
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "env": {},
+  "execution": "not_executed",
+  "output": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-selection.json",
+  "prerequisites": [
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-numpy.json",
+      "artifact_sha256": "247ee5c352d4c1783c22f0aee9d3938d80cde1284a2010fc79bb414ea139adaa",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/commands/calibration-numpy.json",
+      "command_envelope_sha256": "586240199814faee3843e2b4f53ed2a328c518cf96f19a5b60decc53c7d83a8c",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/receipts/calibration-numpy.json",
+      "execution_receipt_sha256": "4eece499425a2ecb502b7d31bb612e0f9b3059419e5937001b0540c1b9f84c92",
+      "kind": "calibration_numpy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/manifests/calibration-numpy.json",
+      "manifest_sha256": "516c4c5ff7fb9ff918ad0d815f7c72c58c70a819686b9d085798a2243914c0ac",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-numpy.json.prov.json",
+      "provenance_sidecar_sha256": "9e8c90fdef690d04dfece4c83ede29a2d7b2cc786bd7bd6744217c9777ef90ee"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-cupy.json",
+      "artifact_sha256": "0dc041797cdb23873f8153d194f486d56336937373a53ab67610e78ff12d0845",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/commands/calibration-cupy.json",
+      "command_envelope_sha256": "1fccb38899ffd9d58cdb4aa0ed1c3977b2ce9f33bbaee9d96f18786fdf537ad0",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/receipts/calibration-cupy.json",
+      "execution_receipt_sha256": "26ee95a370f2beb9591dfe0d12d4491e805320c6b7894b07863edffeb4705046",
+      "kind": "calibration_cupy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v2/manifests/calibration-cupy.json",
+      "manifest_sha256": "cf9b6b2774ebeac4f51cd5fc730c562e2c11eaab0af9291a0083b5b33c7e240a",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-cupy.json.prov.json",
+      "provenance_sidecar_sha256": "fb74a211205582b22a5f685996c2fb045968aaa24a20e480b7a269371669a65b"
+    }
+  ],
+  "schema": "v13-stage0-command-v1",
+  "source_revision": "f41575539536809158736cd62ab42ab2292cf20c"
+}

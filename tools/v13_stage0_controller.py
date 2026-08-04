@@ -1789,7 +1789,8 @@ def emit_merge_calibration(
     )
     envelope = _envelope(
         action="merge_calibration", config_path=config_path, config=config,
-        root=root, cwd=root, argv=argv, env={}, output=output,
+        root=root, cwd=root, argv=argv,
+        env=_expected_manifest_env("calibration_selection"), output=output,
         prerequisites=[numpy_ref, cupy_ref],
     )
     _emit_create_only(emit, envelope)
@@ -2068,7 +2069,8 @@ def emit_final_merge(
     )
     envelope = _envelope(
         action="final_stage0_merge", config_path=config_path, config=config,
-        root=root, cwd=root, argv=argv, env={}, output=output,
+        root=root, cwd=root, argv=argv,
+        env=_expected_manifest_env("final_stage0"), output=output,
         prerequisites=[
             compatibility_ref, selection_ref, repl_numpy_ref, repl_cupy_ref,
             held_cupy_ref, held_numpy_ref, performance_ref,

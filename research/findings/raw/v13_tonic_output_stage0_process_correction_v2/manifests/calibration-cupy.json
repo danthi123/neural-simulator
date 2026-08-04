@@ -1,0 +1,48 @@
+{
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-cupy.json",
+    "sha256": "0dc041797cdb23873f8153d194f486d56336937373a53ab67610e78ff12d0845"
+  },
+  "candidate_source_manifest": {
+    "file_count": 55,
+    "path": "research/specs/v13_stage0_candidate_source_v4.sha256",
+    "sha256": "77d0a8534dc68cf9fd94e01f4e5d124dbf96a9159cf52d07e359f46263fc0161",
+    "tree_sha256": "77d0a8534dc68cf9fd94e01f4e5d124dbf96a9159cf52d07e359f46263fc0161"
+  },
+  "command_envelope": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/commands/calibration-cupy.json",
+    "sha256": "1fccb38899ffd9d58cdb4aa0ed1c3977b2ce9f33bbaee9d96f18786fdf537ad0"
+  },
+  "compatibility": {
+    "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+    "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+    "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json"
+  },
+  "config_sha256": "04077194eb6c9b92989b12b4d01f1a3e059881f9fb7a8443665c8bc1431540da",
+  "controller_config": {
+    "canonical_sha256": "04077194eb6c9b92989b12b4d01f1a3e059881f9fb7a8443665c8bc1431540da",
+    "file_sha256": "7367d523afeb5bedcfcc465dd0b764691ad2025e879657b0feeba088ae8cc872",
+    "path": "research/specs/v13_stage0_controller_config_v4.json"
+  },
+  "execution_receipt": {
+    "device": "NVIDIA GeForce RTX 3090",
+    "ended_utc_ns": 1785841399380767787,
+    "host": "dant123-wk",
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/receipts/calibration-cupy.json",
+    "sha256": "26ee95a370f2beb9591dfe0d12d4491e805320c6b7894b07863edffeb4705046",
+    "started_utc_ns": 1785841396796336971
+  },
+  "kind": "calibration_cupy",
+  "process_correction_spec": {
+    "path": "research/specs/v13_tonic_output_stage0_process_correction_v2.json",
+    "sha256": "5730eb7ec58e40dedde6fc9324544135f09010dd2429a1262c0098c82cd01394"
+  },
+  "provenance_sidecar": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v2/calibration-cupy.json.prov.json",
+    "sha256": "fb74a211205582b22a5f685996c2fb045968aaa24a20e480b7a269371669a65b"
+  },
+  "schema": "v13-stage0-artifact-manifest-v2",
+  "sha256": "cf9b6b2774ebeac4f51cd5fc730c562e2c11eaab0af9291a0083b5b33c7e240a",
+  "source_revision": "f41575539536809158736cd62ab42ab2292cf20c"
+}
