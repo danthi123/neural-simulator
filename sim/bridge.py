@@ -6923,8 +6923,8 @@ class SimulationBridge:
     #   (2) conductance decay + I_syn from the DECAYED (pre-increment) conductances -- identical order to
     #       fused_conductance_decay_and_current (I_syn uses ge_dec/gi_dec; the matvec increment is applied AFTER,
     #       for the next step).
-    #   (3) total input = (I_syn + external[j]) + ou[j]  (ou passed IN -- the cp.random.randn draw + OU update stay
-    #       OUTSIDE the kernel, so the RNG stream is bit-faithful; NO in-kernel RNG).
+    #   (3) total input = (I_syn + (external[j] + intrinsic[j])) + ou[j]  (ou passed IN -- the cp.random.randn
+    #       draw + OU update stay OUTSIDE the kernel, so the RNG stream is bit-faithful; NO in-kernel RNG).
     #   (4) Izhikevich-2007 dynamics (byte-faithful op-order to fused_izhikevich2007_dynamics_update).
     #   (5) threshold-select vs vpeak gated by the refractory timer.
     #   (6) fast_spike_reset (v/u reset + refractory update, matching the cp.where path).
@@ -6939,7 +6939,7 @@ class SimulationBridge:
         const int* indptr, const int* indices, const double* wdata,
         const signed char* exc_flag, const bool* prev_fired,
         float* g_e, float* g_i, float* v, float* u, int* refr,
-        const float* ext, const float* ou,
+        const float* ext, const float* intrinsic, const float* ou,
         const float* C, const float* kk, const float* vr, const float* vt,
         const float* aa, const float* bb, const float* vpeak,
         const float* c_reset, const float* d_inc,
@@ -6970,7 +6970,7 @@ class SimulationBridge:
       // (3) apply the matvec increment for the NEXT step + assemble total input.
       float ge_new = ge_dec + ge_inc;
       float gi_new = gi_dec + gi_inc;
-      float total_I = (I_syn + ext[j]) + ou[j];
+      float total_I = (I_syn + (ext[j] + intrinsic[j])) + ou[j];
       // (4) Izhikevich-2007 dynamics (left-assoc, matching fused_izhikevich2007_dynamics_update).
       float Cp = C[j];
       float C_safe = (Cp == 0.0f) ? 1.0f : Cp;
@@ -7076,9 +7076,11 @@ class SimulationBridge:
         # fired-neuron refractory reset (matches the fast_spike_reset off-by-one: period_steps - 1).
         refractory_reset = cp.int32(max(0, cfg.refractory_period_steps - 1))
 
-        dynamics_current = self.cp_external_input_current
-        if self.cp_intrinsic_current_pA is not None:
-            dynamics_current = dynamics_current + self.cp_intrinsic_current_pA
+        intrinsic_current = (
+            self.cp_intrinsic_current_pA
+            if self.cp_intrinsic_current_pA is not None
+            else self._step_megakernel_scratch_zeros()
+        )
 
         threads = 128
         blocks = (n + threads - 1) // threads
@@ -7087,7 +7089,7 @@ class SimulationBridge:
             self._step_v2_exc_flag, self.cp_prev_firing_states,
             self.cp_conductance_g_e, self.cp_conductance_g_i,
             self.cp_membrane_potential_v, self.cp_recovery_variable_u, self.cp_refractory_timers,
-            dynamics_current, ou_current,
+            self.cp_external_input_current, intrinsic_current, ou_current,
             self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
             self.cp_izh_a, self.cp_izh_b, self.cp_izh_vpeak,
             self.cp_izh_c_reset, self.cp_izh_d_increment,
