@@ -1,0 +1,76 @@
+{
+  "all_bundle_unallocated": true,
+  "all_checkpoint_exact": true,
+  "argv": [
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v14_stageA_default_off_compatibility.py",
+    "--label",
+    "prechange-control",
+    "--output",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v14_snr_conductance_stageA/control-default-off.json"
+  ],
+  "backend": "numpy",
+  "cells": [
+    {
+      "bundle_allocated": false,
+      "checkpoint_exact": true,
+      "continued_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530",
+      "seed": 193883,
+      "trajectory_sha256": "b0710f54bda0d79f324a6bc690f7f32877a1c024c9c8dca1050bc6993817d1c4",
+      "uninterrupted_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530"
+    },
+    {
+      "bundle_allocated": false,
+      "checkpoint_exact": true,
+      "continued_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530",
+      "seed": 261805,
+      "trajectory_sha256": "8f012cc3dd6c30e9052b68d93879c89277e81d771785fe5cb87f9d38bd846395",
+      "uninterrupted_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530"
+    },
+    {
+      "bundle_allocated": false,
+      "checkpoint_exact": true,
+      "continued_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530",
+      "seed": 768106,
+      "trajectory_sha256": "fd31ae8e2b979d80a6866f520fea1629cd0d1550281ef4c00c776f8cc36dc236",
+      "uninterrupted_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530"
+    },
+    {
+      "bundle_allocated": false,
+      "checkpoint_exact": true,
+      "continued_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530",
+      "seed": 929013,
+      "trajectory_sha256": "3414052ea263a4564628394b3ccbe4d53398f583a7a3d165fda33c5a58453c3b",
+      "uninterrupted_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530"
+    },
+    {
+      "bundle_allocated": false,
+      "checkpoint_exact": true,
+      "continued_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530",
+      "seed": 736887,
+      "trajectory_sha256": "2ae8a322aab0e9869e45fd062e4b11a945be278791606373b555ce76f0eae834",
+      "uninterrupted_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530"
+    },
+    {
+      "bundle_allocated": false,
+      "checkpoint_exact": true,
+      "continued_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530",
+      "seed": 366590,
+      "trajectory_sha256": "1e4fed0be2a3796651c33ba63fed023300598820f84ea7b491096f82e2424e56",
+      "uninterrupted_sha256": "f9af0f4c2d8d91e40a0c3b2613eddf52b12359e30b9acb2944dadacc1d816530"
+    }
+  ],
+  "label": "prechange-control",
+  "runner": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/tools/v14_stageA_default_off_compatibility.py",
+  "schema": "v14-stageA-default-off-compatibility-v1",
+  "seeds": [
+    193883,
+    261805,
+    768106,
+    929013,
+    736887,
+    366590
+  ],
+  "source_dirty": false,
+  "source_revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+  "source_root": "/tmp/sim-v14-stageA-control"
+}

@@ -335,6 +335,126 @@ def fused_hh_NaP_current_update(V, p_old, dt, g_NaP_max, E_Na, phi):
     I_NaP = g_NaP_max * p_new * (V - E_Na)
     return p_new, I_NaP
 
+
+@fuse()
+def fused_snr_conductance_update(
+    V,
+    nap_activation_old,
+    nap_inactivation_old,
+    ca_activation_old,
+    ca_inactivation_old,
+    calcium_old,
+    sk_activation_old,
+    h_activation_old,
+    dt,
+    g_nalcn_max,
+    g_nap_max,
+    g_ca_max,
+    g_sk_max,
+    g_h_max,
+    E_nalcn,
+    E_Na,
+    E_Ca,
+    E_K,
+    E_h,
+    calcium_baseline,
+    calcium_influx_scale,
+    calcium_decay_tau_ms,
+    sk_half_activation,
+    sk_hill_coefficient,
+    sk_tau_ms,
+):
+    """Advance the explicit SNr pacemaker bundle by one timestep.
+
+    Conductances are in units compatible with voltage so each current is
+    ``g * gates * (V - E)``. Negative currents are inward. Calcium uses an
+    arbitrary nonnegative concentration unit whose conversion from inward
+    calcium current is set by ``calcium_influx_scale``.
+
+    Returns the seven updated dynamic states followed by total ionic current.
+    The voltage-gate kinetics are the evidence-center Stage-A values from the
+    V14 SNr fallback review; calcium coupling and SK concentration kinetics are
+    explicit because the available evidence does not identify their units.
+    """
+    # Persistent sodium: fast activation and slow inactivation.
+    nap_activation_inf = 1.0 / (1.0 + cp.exp(-(V + 50.0) / 4.5))
+    nap_inactivation_inf = 1.0 / (1.0 + cp.exp((V + 57.0) / 6.0))
+    nap_activation = nap_activation_inf + (
+        nap_activation_old - nap_activation_inf
+    ) * cp.exp(-dt / 0.1)
+    nap_inactivation = nap_inactivation_inf + (
+        nap_inactivation_old - nap_inactivation_inf
+    ) * cp.exp(-dt / 20.0)
+    nap_activation = cp.clip(nap_activation, 0.0, 1.0)
+    nap_inactivation = cp.clip(nap_inactivation, 0.0, 1.0)
+
+    # Cav2.2-like high-threshold calcium current.
+    ca_activation_inf = 1.0 / (1.0 + cp.exp(-(V + 27.5) / 3.0))
+    ca_inactivation_inf = 1.0 / (1.0 + cp.exp((V + 52.5) / 5.2))
+    ca_activation = ca_activation_inf + (
+        ca_activation_old - ca_activation_inf
+    ) * cp.exp(-dt / 0.5)
+    ca_inactivation = ca_inactivation_inf + (
+        ca_inactivation_old - ca_inactivation_inf
+    ) * cp.exp(-dt / 18.0)
+    ca_activation = cp.clip(ca_activation, 0.0, 1.0)
+    ca_inactivation = cp.clip(ca_inactivation, 0.0, 1.0)
+
+    # Ih is optional through g_h_max=0 and primarily supports recovery from
+    # hyperpolarization rather than baseline SNr pacemaking.
+    h_activation_inf = 1.0 / (1.0 + cp.exp((V + 75.0) / 5.5))
+    h_activation = h_activation_inf + (
+        h_activation_old - h_activation_inf
+    ) * cp.exp(-dt / 100.0)
+    h_activation = cp.clip(h_activation, 0.0, 1.0)
+
+    I_nalcn = g_nalcn_max * (V - E_nalcn)
+    I_nap = (
+        g_nap_max * nap_activation * nap_inactivation * (V - E_Na)
+    )
+    I_ca = (
+        g_ca_max * ca_activation * ca_activation * ca_inactivation
+        * (V - E_Ca)
+    )
+
+    # Exact first-order calcium update for constant influx over this step.
+    calcium_tau = cp.maximum(calcium_decay_tau_ms, 1e-6)
+    calcium_floor = cp.maximum(calcium_baseline, 0.0)
+    calcium_influx = cp.maximum(calcium_influx_scale, 0.0) * cp.maximum(-I_ca, 0.0)
+    calcium_target = calcium_floor + calcium_tau * calcium_influx
+    calcium = calcium_target + (calcium_old - calcium_target) * cp.exp(
+        -dt / calcium_tau
+    )
+    calcium = cp.maximum(calcium, 0.0)
+
+    sk_half = cp.maximum(sk_half_activation, 1e-12)
+    sk_hill = cp.maximum(sk_hill_coefficient, 1e-6)
+    calcium_hill = cp.power(calcium, sk_hill)
+    sk_half_hill = cp.power(sk_half, sk_hill)
+    sk_activation_inf = calcium_hill / (
+        calcium_hill + sk_half_hill
+    )
+    sk_tau = cp.maximum(sk_tau_ms, 1e-6)
+    sk_activation = sk_activation_inf + (
+        sk_activation_old - sk_activation_inf
+    ) * cp.exp(-dt / sk_tau)
+    sk_activation = cp.clip(sk_activation, 0.0, 1.0)
+
+    I_sk = g_sk_max * sk_activation * (V - E_K)
+    I_h = g_h_max * h_activation * (V - E_h)
+    total_ionic_current = I_nalcn + I_nap + I_ca + I_sk + I_h
+    return (
+        nap_activation,
+        nap_inactivation,
+        ca_activation,
+        ca_inactivation,
+        calcium,
+        sk_activation,
+        h_activation,
+        total_ionic_current,
+    )
+
+
 @fuse()
 def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, tau_w):
     """Fused kernel for Adaptive Exponential Integrate-and-Fire (AdEx) dynamics.

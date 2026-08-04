@@ -87,6 +87,7 @@ from sim.kernels import (
                          fused_hh_CaT_current_update,
                          fused_hh_h_current_update,
                          fused_hh_NaP_current_update,
+                         fused_snr_conductance_update,
                          fused_adex_dynamics_update,
                          fused_conductance_decay_and_current,
                          fused_readonly_izh_step,
@@ -122,6 +123,29 @@ def _backend_neutral_random_state(seed, *, stream_name):
     if not 0 <= seed <= np.iinfo(np.uint32).max:
         raise ValueError(f"{stream_name} seed must be in [0, 2**32 - 1]")
     return np.random.RandomState(seed)
+
+
+_SNR_CONDUCTANCE_MAX_ARRAYS = (
+    "cp_snr_g_nalcn_max",
+    "cp_snr_g_nap_max",
+    "cp_snr_g_ca_max",
+    "cp_snr_g_sk_max",
+    "cp_snr_g_h_max",
+)
+_SNR_CONDUCTANCE_STATE_ARRAYS = (
+    "cp_snr_nap_activation",
+    "cp_snr_nap_inactivation",
+    "cp_snr_ca_activation",
+    "cp_snr_ca_inactivation",
+    "cp_snr_calcium",
+    "cp_snr_sk_activation",
+    "cp_snr_h_activation",
+)
+_SNR_CONDUCTANCE_ARRAYS = (
+    *_SNR_CONDUCTANCE_MAX_ARRAYS,
+    *_SNR_CONDUCTANCE_STATE_ARRAYS,
+)
+_SNR_CONDUCTANCE_CHECKPOINT_SCHEMA = 1
 
 
 # --- Optional dependencies ---
@@ -496,6 +520,8 @@ class SimulationBridge:
         self.cp_hh_CaT_h = None
         self.cp_hh_h_current_q = None
         self.cp_hh_NaP_activation = None
+        for attr_name in _SNR_CONDUCTANCE_ARRAYS:
+            setattr(self, attr_name, None)
  
         self.cp_hh_C_m = None; self.cp_hh_g_Na_max = None; self.cp_hh_g_K_max = None; self.cp_hh_g_L = None
         self.cp_hh_E_Na = None; self.cp_hh_E_K = None; self.cp_hh_E_L = None; self.cp_hh_v_peak = None
@@ -1465,6 +1491,25 @@ class SimulationBridge:
                         "BrainRegion.intrinsic_current_pA currently supports only "
                         f"IZHIKEVICH, not {self.core_config.neuron_model_type}"
                     )
+                snr_values = tuple(
+                    float(getattr(region, field_name, 0.0))
+                    for field_name in (
+                        "snr_g_nalcn_max", "snr_g_nap_max", "snr_g_ca_max",
+                        "snr_g_sk_max", "snr_g_h_max",
+                    )
+                )
+                if any(not math.isfinite(item) or item < 0.0 for item in snr_values):
+                    raise ValueError(
+                        f"Region {region.name!r} SNr conductance maxima must be "
+                        "finite and nonnegative"
+                    )
+                if (any(item > 0.0 for item in snr_values)
+                        and self.core_config.neuron_model_type
+                        != NeuronModel.HODGKIN_HUXLEY.name):
+                    raise ValueError(
+                        "BrainRegion SNr conductances currently support only "
+                        f"HODGKIN_HUXLEY, not {self.core_config.neuron_model_type}"
+                    )
 
         try:
             cfg = self.core_config
@@ -2155,6 +2200,8 @@ class SimulationBridge:
             if self.region_manager is not None:
                 self._apply_per_region_neuron_types(cfg, n)
 
+            self._initialize_snr_conductance_bundle(cfg, n)
+
             # B2: Apply parameter heterogeneity if enabled. Also invoked when a
             # per-region heterogeneity mask exists (>=1 region set
             # enable_heterogeneity=True) even if the global flag is OFF — in that
@@ -2528,6 +2575,69 @@ class SimulationBridge:
                                           + self.cp_graded_lateral_M.T)
         di = cp.arange(K)
         self.cp_graded_lateral_M[di, di] = 0.0
+
+    def _initialize_snr_conductance_bundle(self, cfg, n):
+        """Allocate region-scoped SNr conductances and equilibrium state."""
+        for attr_name in _SNR_CONDUCTANCE_ARRAYS:
+            setattr(self, attr_name, None)
+        if self.region_manager is None:
+            return
+
+        field_to_attr = {
+            "snr_g_nalcn_max": "cp_snr_g_nalcn_max",
+            "snr_g_nap_max": "cp_snr_g_nap_max",
+            "snr_g_ca_max": "cp_snr_g_ca_max",
+            "snr_g_sk_max": "cp_snr_g_sk_max",
+            "snr_g_h_max": "cp_snr_g_h_max",
+        }
+        host_maxima = {
+            attr_name: np.zeros(n, dtype=np.float32)
+            for attr_name in field_to_attr.values()
+        }
+        enabled = False
+        for region in self.region_manager.regions():
+            indices = np.asarray(
+                list(self.region_manager.indices(region.name)), dtype=np.int64
+            )
+            for field_name, attr_name in field_to_attr.items():
+                value = float(getattr(region, field_name, 0.0))
+                if value > 0.0:
+                    host_maxima[attr_name][indices] = np.float32(value)
+                    enabled = True
+        if not enabled:
+            return
+        if cfg.neuron_model_type != NeuronModel.HODGKIN_HUXLEY.name:
+            raise ValueError("SNr conductance bundle requires HODGKIN_HUXLEY")
+
+        for attr_name, values in host_maxima.items():
+            setattr(self, attr_name, cp.asarray(values, dtype=cp.float32))
+
+        voltage = self.cp_membrane_potential_v
+        self.cp_snr_nap_activation = (
+            1.0 / (1.0 + cp.exp(-(voltage + 50.0) / 4.5))
+        ).astype(cp.float32)
+        self.cp_snr_nap_inactivation = (
+            1.0 / (1.0 + cp.exp((voltage + 57.0) / 6.0))
+        ).astype(cp.float32)
+        self.cp_snr_ca_activation = (
+            1.0 / (1.0 + cp.exp(-(voltage + 27.5) / 3.0))
+        ).astype(cp.float32)
+        self.cp_snr_ca_inactivation = (
+            1.0 / (1.0 + cp.exp((voltage + 52.5) / 5.2))
+        ).astype(cp.float32)
+        self.cp_snr_calcium = cp.full(
+            n, cfg.snr_calcium_baseline, dtype=cp.float32
+        )
+        calcium = self.cp_snr_calcium
+        half = cp.float32(cfg.snr_sk_calcium_half)
+        hill = cp.float32(cfg.snr_sk_hill_coefficient)
+        calcium_power = cp.power(calcium, hill)
+        self.cp_snr_sk_activation = (
+            calcium_power / (calcium_power + cp.power(half, hill))
+        ).astype(cp.float32)
+        self.cp_snr_h_activation = (
+            1.0 / (1.0 + cp.exp((voltage + 75.0) / 5.5))
+        ).astype(cp.float32)
 
     def _apply_per_region_neuron_types(self, cfg, n):
         """Override per-neuron parameters based on region.izh_neuron_type /
@@ -2956,6 +3066,7 @@ class SimulationBridge:
             'cp_adex_w',
             'cp_gating_variable_m','cp_gating_variable_h','cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
+            *_SNR_CONDUCTANCE_ARRAYS,
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
@@ -4740,6 +4851,7 @@ class SimulationBridge:
             'cp_conductance_g_e', 'cp_conductance_g_i', 'cp_recovery_variable_u',
             'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
+            *_SNR_CONDUCTANCE_STATE_ARRAYS,
             'cp_adex_w', 'cp_ou_current'
         ]
 
@@ -4870,6 +4982,7 @@ class SimulationBridge:
             'cp_membrane_potential_v', 'cp_recovery_variable_u', 'cp_gating_variable_m',
             'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
+            *_SNR_CONDUCTANCE_ARRAYS,
             'cp_conductance_g_e',
             'cp_conductance_g_i', 'cp_external_input_current', 'cp_intrinsic_current_pA',
             'cp_refractory_timers',
@@ -5381,6 +5494,7 @@ class SimulationBridge:
                 'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h',
                 'cp_hh_h_current_q', 'cp_hh_NaP_activation'
             ])
+            dynamic_arrays.extend(_SNR_CONDUCTANCE_STATE_ARRAYS)
         elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
             dynamic_arrays.extend(['cp_adex_w'])
 
@@ -5541,6 +5655,7 @@ class SimulationBridge:
                         'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
                         'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation'
                     ])
+                    dynamic_arrays_to_capture.extend(_SNR_CONDUCTANCE_STATE_ARRAYS)
                 elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
                     dynamic_arrays_to_capture.extend(['cp_adex_w'])
 
@@ -6214,8 +6329,11 @@ class SimulationBridge:
                 'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
                 'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation'
             ])
+            dynamic_arrays_to_apply.extend(_SNR_CONDUCTANCE_STATE_ARRAYS)
         elif self.core_config.neuron_model_type == NeuronModel.ADEX.name:
             dynamic_arrays_to_apply.append('cp_adex_w')
+        if is_initial_state:
+            dynamic_arrays_to_apply.extend(_SNR_CONDUCTANCE_MAX_ARRAYS)
         
         # Copy CuPy arrays directly (GPU→GPU, very fast)
         for attr_name in dynamic_arrays_to_apply:
@@ -6306,6 +6424,8 @@ class SimulationBridge:
             _apply_to_cp_array(
                 "cp_intrinsic_current_pA", "cp_intrinsic_current_pA"
             )
+            for attr_name in _SNR_CONDUCTANCE_MAX_ARRAYS:
+                _apply_to_cp_array(attr_name, attr_name)
             if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                 for param in ['C', 'k', 'vr', 'vt', 'vpeak', 'a', 'b', 'c_reset', 'd_increment']:
                     _apply_to_cp_array(f"cp_izh_{param}", f"cp_izh_{param}")
@@ -6363,6 +6483,13 @@ class SimulationBridge:
             'cp_hh_CaT_h': 'cp_hh_CaT_h',
             'cp_hh_h_current_q': 'cp_hh_h_current_q',
             'cp_hh_NaP_activation': 'cp_hh_NaP_activation',
+            'cp_snr_nap_activation': 'cp_snr_nap_activation',
+            'cp_snr_nap_inactivation': 'cp_snr_nap_inactivation',
+            'cp_snr_ca_activation': 'cp_snr_ca_activation',
+            'cp_snr_ca_inactivation': 'cp_snr_ca_inactivation',
+            'cp_snr_calcium': 'cp_snr_calcium',
+            'cp_snr_sk_activation': 'cp_snr_sk_activation',
+            'cp_snr_h_activation': 'cp_snr_h_activation',
             'cp_conductance_g_e': 'cp_conductance_g_e',
             'cp_conductance_g_i': 'cp_conductance_g_i',
             'cp_adex_w': 'cp_adex_w',
@@ -8094,6 +8221,46 @@ class SimulationBridge:
                 # Start from synaptic/external input current density
                 effective_input_uA = total_input_current_uA_density_equivalent
 
+                if self.cp_snr_g_nalcn_max is not None:
+                    snr_update = fused_snr_conductance_update(
+                        self.cp_membrane_potential_v,
+                        self.cp_snr_nap_activation,
+                        self.cp_snr_nap_inactivation,
+                        self.cp_snr_ca_activation,
+                        self.cp_snr_ca_inactivation,
+                        self.cp_snr_calcium,
+                        self.cp_snr_sk_activation,
+                        self.cp_snr_h_activation,
+                        dt,
+                        self.cp_snr_g_nalcn_max,
+                        self.cp_snr_g_nap_max,
+                        self.cp_snr_g_ca_max,
+                        self.cp_snr_g_sk_max,
+                        self.cp_snr_g_h_max,
+                        cfg.snr_E_nalcn,
+                        cfg.snr_E_nap,
+                        cfg.snr_E_ca,
+                        cfg.snr_E_sk,
+                        cfg.snr_E_h,
+                        cfg.snr_calcium_baseline,
+                        cfg.snr_calcium_influx_scale,
+                        cfg.snr_calcium_decay_tau_ms,
+                        cfg.snr_sk_calcium_half,
+                        cfg.snr_sk_hill_coefficient,
+                        cfg.snr_sk_activation_tau_ms,
+                    )
+                    (
+                        self.cp_snr_nap_activation[:],
+                        self.cp_snr_nap_inactivation[:],
+                        self.cp_snr_ca_activation[:],
+                        self.cp_snr_ca_inactivation[:],
+                        self.cp_snr_calcium[:],
+                        self.cp_snr_sk_activation[:],
+                        self.cp_snr_h_activation[:],
+                        snr_ionic_current,
+                    ) = snr_update
+                    effective_input_uA = effective_input_uA - snr_ionic_current
+
                 # Optional slow K+ M-current: treated as part of ionic current by subtracting I_M from I_syn
                 if cfg.hh_g_M_max != 0.0:
                     m_act_new, I_M = fused_hh_m_current_update(
@@ -9633,6 +9800,7 @@ class SimulationBridge:
                     'cp_membrane_potential_v', 'cp_conductance_g_e', 'cp_conductance_g_i',
                     *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
                     'cp_external_input_current', 'cp_intrinsic_current_pA',
+                    *_SNR_CONDUCTANCE_ARRAYS,
                     'cp_syn_reversal_potential_i_per_neuron',
                     'cp_neuron_type_ids', 'cp_heterogeneity_neuron_mask',
                     'cp_firing_states', 'cp_prev_firing_states',
@@ -9646,6 +9814,10 @@ class SimulationBridge:
                         state_group.create_dataset(attr_name, data=_backend_to_host(data_array), compression="gzip")
                     elif data_array is not None: 
                          state_group.attrs[f"{attr_name}_is_empty"] = True
+                if self.cp_snr_g_nalcn_max is not None:
+                    state_group.attrs["snr_conductance_state_schema"] = (
+                        _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA
+                    )
 
                 if self.cp_connections is not None:
                     if self.cp_connections.data is not None and self.cp_connections.data.size > 0:
@@ -10000,6 +10172,58 @@ class SimulationBridge:
                     )
                 else:
                     self.cp_intrinsic_current_pA = None
+
+                saved_snr_arrays = {
+                    attr_name for attr_name in _SNR_CONDUCTANCE_ARRAYS
+                    if attr_name in state_group
+                }
+                if saved_snr_arrays:
+                    if self.core_config.neuron_model_type != NeuronModel.HODGKIN_HUXLEY.name:
+                        raise ValueError(
+                            "Checkpoint SNr conductance state requires HODGKIN_HUXLEY"
+                        )
+                    if int(state_group.attrs.get(
+                            "snr_conductance_state_schema", -1
+                    )) != _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA:
+                        raise ValueError(
+                            "Checkpoint SNr conductance state has an invalid schema"
+                        )
+                    missing = set(_SNR_CONDUCTANCE_ARRAYS) - saved_snr_arrays
+                    if missing:
+                        raise ValueError(
+                            "Checkpoint SNr conductance state is incomplete: "
+                            + ", ".join(sorted(missing))
+                        )
+                    for attr_name in _SNR_CONDUCTANCE_ARRAYS:
+                        host = np.asarray(state_group[attr_name][:], dtype=np.float32)
+                        if host.ndim != 1 or int(host.size) != int(n):
+                            raise ValueError(
+                                f"Checkpoint {attr_name} vector does not match neuron count"
+                            )
+                        if not np.all(np.isfinite(host)):
+                            raise ValueError(f"Checkpoint {attr_name} must be finite")
+                        if attr_name in _SNR_CONDUCTANCE_MAX_ARRAYS:
+                            if np.any(host < 0.0):
+                                raise ValueError(
+                                    f"Checkpoint {attr_name} must be nonnegative"
+                                )
+                        elif attr_name == "cp_snr_calcium":
+                            if np.any(host < 0.0):
+                                raise ValueError(
+                                    "Checkpoint cp_snr_calcium must be nonnegative"
+                                )
+                        elif np.any((host < 0.0) | (host > 1.0)):
+                            raise ValueError(
+                                f"Checkpoint {attr_name} gates must be in [0, 1]"
+                            )
+                        setattr(self, attr_name, cp.asarray(host, dtype=cp.float32))
+                else:
+                    if "snr_conductance_state_schema" in state_group.attrs:
+                        raise ValueError(
+                            "Checkpoint SNr conductance schema has no channel arrays"
+                        )
+                    for attr_name in _SNR_CONDUCTANCE_ARRAYS:
+                        setattr(self, attr_name, None)
 
                 def _load_optional_neuron_array(key, dtype):
                     if key not in state_group:

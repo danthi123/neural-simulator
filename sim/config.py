@@ -1,5 +1,6 @@
 """Configuration dataclasses for the neural simulator."""
 
+import math
 from dataclasses import dataclass, field, fields, asdict
 from typing import List, Dict
 
@@ -82,6 +83,21 @@ class CoreSimConfig:
     hh_g_h_max: float = 0.0
     hh_E_h: float = -30.0
     hh_g_NaP_max: float = 0.0
+
+    # Shared constants for the optional region-scoped SNr conductance bundle.
+    # Regional maxima use the HH density convention (mS/cm^2); these constants
+    # are declarations only until the bridge/kernel implementation lands.
+    snr_E_nalcn: float = 0.0
+    snr_E_nap: float = 50.0
+    snr_E_ca: float = 120.0
+    snr_E_sk: float = -90.0
+    snr_E_h: float = -30.0
+    snr_calcium_influx_scale: float = 0.01
+    snr_calcium_decay_tau_ms: float = 80.0
+    snr_calcium_baseline: float = 0.0
+    snr_sk_calcium_half: float = 0.5
+    snr_sk_hill_coefficient: float = 4.0
+    snr_sk_activation_tau_ms: float = 5.0
 
     # AdEx parameters. Default: Brette & Gerstner 2005 RS pyramidal.
     # Override via cfg.default_neuron_type_adex ∈ {ADEX_RS_CORTICAL_PYRAMIDAL,
@@ -929,6 +945,59 @@ class CoreSimConfig:
                           f"HH gating kinetics have time constants ~0.1-1ms at 37C; dt must resolve these.")
         if self.total_simulation_time_ms <= 0:
             errors.append(f"total_simulation_time_ms must be positive, got {self.total_simulation_time_ms}")
+
+        # Region-scoped SNr conductance constants. These are validated even
+        # while the bundle is disabled so malformed serialized configs fail
+        # before any future runtime state can be allocated.
+        snr_finite_fields = (
+            "snr_E_nalcn",
+            "snr_E_nap",
+            "snr_E_ca",
+            "snr_E_sk",
+            "snr_E_h",
+            "snr_calcium_influx_scale",
+            "snr_calcium_decay_tau_ms",
+            "snr_calcium_baseline",
+            "snr_sk_calcium_half",
+            "snr_sk_hill_coefficient",
+            "snr_sk_activation_tau_ms",
+        )
+        for field_name in snr_finite_fields:
+            value = getattr(self, field_name)
+            if not math.isfinite(value):
+                errors.append(f"{field_name} must be finite, got {value}")
+
+        snr_reversal_ranges = {
+            "snr_E_nalcn": (-100.0, 100.0),
+            "snr_E_nap": (0.0, 100.0),
+            "snr_E_ca": (0.0, 250.0),
+            "snr_E_sk": (-150.0, -40.0),
+            "snr_E_h": (-100.0, 50.0),
+        }
+        for field_name, (minimum, maximum) in snr_reversal_ranges.items():
+            value = getattr(self, field_name)
+            if math.isfinite(value) and not minimum <= value <= maximum:
+                errors.append(
+                    f"{field_name} must be in [{minimum}, {maximum}], got {value}"
+                )
+
+        for field_name in (
+            "snr_calcium_influx_scale",
+            "snr_calcium_baseline",
+        ):
+            value = getattr(self, field_name)
+            if math.isfinite(value) and value < 0.0:
+                errors.append(f"{field_name} must be nonnegative, got {value}")
+
+        for field_name in (
+            "snr_calcium_decay_tau_ms",
+            "snr_sk_calcium_half",
+            "snr_sk_hill_coefficient",
+            "snr_sk_activation_tau_ms",
+        ):
+            value = getattr(self, field_name)
+            if math.isfinite(value) and value <= 0.0:
+                errors.append(f"{field_name} must be positive, got {value}")
 
         # Network parameters
         if self.num_neurons <= 0:

@@ -118,6 +118,31 @@
       "status": "completed",
       "task": "Read-only V11-V13 evidence, seed, and process-boundary audit",
       "write_set": []
+    },
+    "019fcd79-a2dc-74a3-9215-8ec73ed5a3d2": {
+      "completed_at": "2026-08-04T15:56:29+00:00",
+      "heartbeat_at": "2026-08-04T15:56:29+00:00",
+      "result": "Implemented fused five-current SNr bundle with seven dynamic states; 9 focused tests and direct CuPy smoke passed.",
+      "started_at": "2026-08-04T15:52:20+00:00",
+      "status": "completed",
+      "task": "Implement V14 SNr conductance kernel and focused tests",
+      "write_set": [
+        "sim/kernels.py",
+        "tests/test_snr_conductance_kernels.py"
+      ]
+    },
+    "019fcd79-a78d-7883-9bd5-03368ad7a07d": {
+      "completed_at": "2026-08-04T15:56:29+00:00",
+      "heartbeat_at": "2026-08-04T15:56:29+00:00",
+      "result": "Implemented region conductance declarations and validated shared constants; 113 focused plus region tests passed.",
+      "started_at": "2026-08-04T15:52:20+00:00",
+      "status": "completed",
+      "task": "Implement V14 region/config declarations and validation",
+      "write_set": [
+        "sim/regions.py",
+        "sim/config.py",
+        "tests/test_snr_conductance_config.py"
+      ]
     }
   },
   "events": [
@@ -378,6 +403,66 @@
       "detail": "ready",
       "kind": "lane-update",
       "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T15:52:20+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd79-a2dc-74a3-9215-8ec73ed5a3d2"
+    },
+    {
+      "at": "2026-08-04T15:52:20+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd79-a78d-7883-9bd5-03368ad7a07d"
+    },
+    {
+      "at": "2026-08-04T15:52:20+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-config"
+    },
+    {
+      "at": "2026-08-04T15:52:20+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T15:52:20+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-kernel"
+    },
+    {
+      "at": "2026-08-04T15:56:29+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-config"
+    },
+    {
+      "at": "2026-08-04T15:56:29+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-kernel"
+    },
+    {
+      "at": "2026-08-04T15:56:29+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd79-a2dc-74a3-9215-8ec73ed5a3d2"
+    },
+    {
+      "at": "2026-08-04T15:56:29+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd79-a78d-7883-9bd5-03368ad7a07d"
+    },
+    {
+      "at": "2026-08-04T16:07:19+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
     }
   ],
   "lanes": {
@@ -439,20 +524,52 @@
       "resource": "agent_cpu_network",
       "status": "completed"
     },
+    "gateb-v14-config": {
+      "agent_id": "019fcd79-a78d-7883-9bd5-03368ad7a07d",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T15:56:29+00:00",
+      "next_action": "Use validated region fields to allocate bundle state only when requested.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu",
+      "status": "completed",
+      "write_set": [
+        "sim/regions.py",
+        "sim/config.py",
+        "tests/test_snr_conductance_config.py"
+      ]
+    },
+    "gateb-v14-kernel": {
+      "agent_id": "019fcd79-a2dc-74a3-9215-8ec73ed5a3d2",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T15:56:29+00:00",
+      "next_action": "Integrate the tested fused kernel into the HH bridge active path.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu",
+      "status": "completed",
+      "write_set": [
+        "sim/kernels.py",
+        "tests/test_snr_conductance_kernels.py"
+      ]
+    },
     "gateb-v14-stageA": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T15:51:18+00:00",
-      "next_action": "Commit the frozen Stage-A gate, then dispatch disjoint kernel/test and bridge/checkpoint implementation slices without opening physiology seeds.",
+      "heartbeat_at": "2026-08-04T16:07:19+00:00",
+      "next_action": "Commit and replicate the correctness checkpoint on pool40/41/42, then run the preregistered contemporaneous RTX 3090 performance matrix.",
       "owner": "controller",
       "priority": 1,
       "resource": "local_cpu_plus_gpu",
-      "status": "ready",
+      "status": "running",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
         "sim/regions.py",
         "sim/config.py",
-        "tests/test_snr_conductance_bundle.py"
+        "tests/test_snr_conductance_kernels.py",
+        "tests/test_snr_conductance_config.py",
+        "tests/test_snr_conductance_bridge.py",
+        "tools/v14_stageA_default_off_compatibility.py"
       ]
     },
     "local-model-offload": {
@@ -522,5 +639,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T15:51:18+00:00"
+  "updated_at": "2026-08-04T16:07:19+00:00"
 }

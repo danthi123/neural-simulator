@@ -93,6 +93,15 @@ class BrainRegion:
     # sensory stimulus and is currently supported only by Izhikevich regions.
     intrinsic_current_pA: float = 0.0
 
+    # Optional SNr pacemaker conductance bundle. Maxima use the HH path's
+    # conductance-density convention (mS/cm^2). All-zero is strictly disabled;
+    # runtime state is introduced only by the later bridge/kernel slice.
+    snr_g_nalcn_max: float = 0.0
+    snr_g_nap_max: float = 0.0
+    snr_g_ca_max: float = 0.0
+    snr_g_sk_max: float = 0.0
+    snr_g_h_max: float = 0.0
+
     # Per-region GABA_A reversal potential override in mV. None = use global
     # cfg.syn_reversal_potential_i. Used to model regions with different
     # chloride homeostasis (e.g., striatal MSNs ~−60 mV per PBR-160 ch 6;
@@ -250,6 +259,34 @@ class BrainRegion:
     # unless BOTH this flag and cfg.enable_input_divisive_norm_2 are set (cp_input_divisive_mask_2 stays
     # None otherwise). See research/findings/2026-06-20-shortcut6-FIXA-divnorm-accumulator.md.
     input_divisive_norm_2: bool = False
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "snr_g_nalcn_max",
+            "snr_g_nap_max",
+            "snr_g_ca_max",
+            "snr_g_sk_max",
+            "snr_g_h_max",
+        ):
+            value = getattr(self, field_name)
+            if not math.isfinite(value) or value < 0.0:
+                raise ValueError(
+                    f"{field_name} must be finite and nonnegative, got {value}"
+                )
+
+    @property
+    def snr_conductance_bundle_enabled(self) -> bool:
+        """Whether this region requests any part of the SNr channel bundle."""
+        return any(
+            value > 0.0
+            for value in (
+                self.snr_g_nalcn_max,
+                self.snr_g_nap_max,
+                self.snr_g_ca_max,
+                self.snr_g_sk_max,
+                self.snr_g_h_max,
+            )
+        )
 
 
 @dataclass
