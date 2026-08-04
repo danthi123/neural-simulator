@@ -147,9 +147,11 @@ def test_formal_recomputes_diagnostic_selection_before_opening(monkeypatch, tmp_
     spec, digest = lanea.load_spec()
     spec = copy.deepcopy(spec)
     spec["output_root"] = str(tmp_path.relative_to(lanea.REPO)) if tmp_path.is_relative_to(lanea.REPO) else str(tmp_path)
+    source = {"git_revision": "5" * 40}
     rows = []
     for seed in spec["seeds"]["diagnostic"]:
         row = {"schema_version": 1, "phase": "diagnostic", "seed": seed, "spec_sha256": digest,
+               "source": source,
                "candidates": [_candidate(weight, passing=weight == 16.0)
                               for weight in spec["diagnostic"]["recurrent_weight_ladder"]]}
         lanea.write_create_only(lanea._artifact_path(spec, "diagnostic", seed), row)
@@ -157,11 +159,13 @@ def test_formal_recomputes_diagnostic_selection_before_opening(monkeypatch, tmp_
     selected = lanea.select_diagnostic(rows, spec)
     hashes = {str(row["seed"]): lanea._sha256_bytes(
         lanea._artifact_path(spec, "diagnostic", row["seed"]).read_bytes()) for row in rows}
-    aggregate = {"phase": "diagnostic", "spec_sha256": digest, "input_artifact_sha256": hashes, **selected}
+    aggregate = {"phase": "diagnostic", "spec_sha256": digest, "source": source,
+                 "input_artifact_sha256": hashes, **selected}
     aggregate["selected_recurrent_weight"] = 18.0
     lanea.write_create_only(lanea._artifact_path(spec, "diagnostic"), aggregate)
+    monkeypatch.setattr(lanea, "_verify_artifact_receipt", lambda *args, **kwargs: {})
     with pytest.raises(lanea.ProtocolError, match="does not match sealed inputs"):
-        lanea.validate_diagnostic_aggregate(spec, digest)
+        lanea.validate_diagnostic_aggregate(spec, digest, source)
 
 
 def test_spec_output_paths_are_new_and_phase_separated():
@@ -173,3 +177,130 @@ def test_spec_output_paths_are_new_and_phase_separated():
     assert "graded_quench_v1/formal" in formal.as_posix()
     assert not Path(diagnostic).exists()
     assert not Path(formal).exists()
+
+
+def _write_archive_source(root):
+    paths = ["sim/a.py", *lanea.DIRECT_SOURCE_PATHS]
+    lines = []
+    for relative in paths:
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"source:{relative}\n")
+        lines.append(f"{lanea._sha256_bytes(path.read_bytes())}  {relative}\n")
+    (root / ".source_manifest.sha256").write_text("".join(lines))
+    return paths
+
+
+def test_source_state_accepts_verified_archive_without_git(monkeypatch, tmp_path):
+    paths = _write_archive_source(tmp_path)
+    monkeypatch.setattr(lanea, "REPO", tmp_path)
+    monkeypatch.setattr(
+        lanea,
+        "require_source_ancestor",
+        lambda root, anchor: {
+            "anchor": anchor,
+            "git_sha": "5" * 40,
+            "is_ancestor": True,
+            "kind": "git_archive",
+        },
+    )
+    monkeypatch.setattr(
+        lanea,
+        "verify_immutable_source_manifest",
+        lambda: {"source_manifest_verified": True},
+    )
+    monkeypatch.setattr(
+        lanea.subprocess,
+        "check_output",
+        lambda *args, **kwargs: pytest.fail("archive source check must not invoke Git"),
+    )
+
+    state = lanea._git_source_state()
+
+    assert state["git_revision"] == "5" * 40
+    assert state["source_kind"] == "git_archive"
+    assert state["source_paths_clean"] is True
+    assert set(state["source_identity"]) == set(paths)
+
+
+def test_source_state_rejects_archive_manifest_failure(monkeypatch, tmp_path):
+    _write_archive_source(tmp_path)
+    monkeypatch.setattr(lanea, "REPO", tmp_path)
+    monkeypatch.setattr(
+        lanea,
+        "require_source_ancestor",
+        lambda root, anchor: {
+            "anchor": anchor,
+            "git_sha": "5" * 40,
+            "is_ancestor": True,
+            "kind": "git_archive",
+        },
+    )
+    monkeypatch.setattr(
+        lanea,
+        "verify_immutable_source_manifest",
+        lambda: {
+            "source_manifest_verified": False,
+            "source_manifest_verification_error": "source digest mismatch",
+        },
+    )
+
+    with pytest.raises(lanea.ProtocolError, match="source digest mismatch"):
+        lanea._git_source_state()
+
+
+def test_receipt_requires_canonical_command_backend_device_and_source(monkeypatch, tmp_path):
+    artifact = tmp_path / "seed-6158765.json"
+    artifact.write_text("{}")
+    monkeypatch.setattr(lanea, "REPO", tmp_path)
+    source = {"git_revision": "5" * 40}
+    receipt = {
+        "argv": [*lanea.CANONICAL_RUNNER_ARGV, "--phase", "diagnostic", "--seed", "6158765"],
+        "env_allowlist": {"SIM_BACKEND": "numpy"},
+        "device": "cpu:numpy",
+        "source": {"git_sha": "5" * 40},
+    }
+    monkeypatch.setattr(lanea, "verify_receipt", lambda root, path: receipt)
+    assert lanea._verify_artifact_receipt(
+        artifact, phase="diagnostic", seed=6158765, source=source
+    ) == receipt
+
+    for field, value, message in (
+        ("argv", ["python", "wrong.py"], "noncanonical argv"),
+        ("env_allowlist", {"SIM_BACKEND": "cupy"}, "wrong backend"),
+        ("device", "gpu", "wrong device"),
+        ("source", {"git_sha": "6" * 40}, "wrong source"),
+    ):
+        changed = copy.deepcopy(receipt)
+        changed[field] = value
+        monkeypatch.setattr(lanea, "verify_receipt", lambda root, path, row=changed: row)
+        with pytest.raises(lanea.ProtocolError, match=message):
+            lanea._verify_artifact_receipt(
+                artifact, phase="diagnostic", seed=6158765, source=source
+            )
+
+
+def test_phase_rows_require_same_source_and_verified_receipts(monkeypatch, tmp_path):
+    spec, digest = lanea.load_spec()
+    spec = copy.deepcopy(spec)
+    spec["output_root"] = str(tmp_path)
+    source = {"git_revision": "5" * 40, "source_identity": {"sim/a.py": "a" * 64}}
+    for seed in spec["seeds"]["diagnostic"]:
+        lanea.write_create_only(
+            lanea._artifact_path(spec, "diagnostic", seed),
+            {"phase": "diagnostic", "seed": seed, "spec_sha256": digest, "source": source},
+        )
+    verified = []
+    monkeypatch.setattr(
+        lanea,
+        "_verify_artifact_receipt",
+        lambda artifact, **kwargs: verified.append((artifact.name, kwargs["seed"])),
+    )
+    rows = lanea._read_phase_rows(spec, digest, "diagnostic", source=source)
+    assert len(rows) == 2
+    assert verified == [("seed-6158765.json", 6158765), ("seed-7695139.json", 7695139)]
+
+    rows[0]["source"] = {"git_revision": "6" * 40}
+    lanea._artifact_path(spec, "diagnostic", rows[0]["seed"]).write_text(json.dumps(rows[0]))
+    with pytest.raises(lanea.ProtocolError, match="different source identity"):
+        lanea._read_phase_rows(spec, digest, "diagnostic", source=source)

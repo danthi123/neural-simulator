@@ -22,6 +22,10 @@ from typing import Any, Iterable
 
 import numpy as np
 
+from research.runners import verify_immutable_source_manifest
+from tools.execution_receipt import ReceiptError, verify_receipt
+from tools.pool.provisioning import AncestryError, require_source_ancestor
+
 
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_SPEC = REPO / "research" / "specs" / "lanea_graded_affect_quench_v1.json"
@@ -31,6 +35,12 @@ DIRECT_SOURCE_PATHS = (
     "research/runners/_affect_eviction_derisk.py",
     "research/runners/_affect_state_region_derisk.py",
     "research/specs/lanea_graded_affect_quench_v1.json",
+)
+CANONICAL_RUNNER_ARGV = (
+    ".venv/bin/python",
+    "-u",
+    "-m",
+    "research.runners._lanea_graded_affect_quench_v1",
 )
 
 
@@ -366,29 +376,49 @@ def formal_verdict(rows: list[dict[str, Any]], spec: dict[str, Any]) -> dict[str
 
 
 def _git_source_state() -> dict[str, Any]:
-    revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
-    if subprocess.run(
-        ["git", "merge-base", "--is-ancestor", SOURCE_ANCHOR_PARENT_SHA, revision],
-        cwd=REPO,
-        capture_output=True,
-    ).returncode != 0:
-        raise ProtocolError("scientific source is not descended from the locked anchor")
-    sim_paths = subprocess.check_output(
-        ["git", "ls-files", "sim"], cwd=REPO, text=True
-    ).splitlines()
+    try:
+        ancestry = require_source_ancestor(REPO, SOURCE_ANCHOR_PARENT_SHA)
+    except AncestryError as exc:
+        raise ProtocolError(f"scientific source ancestry is invalid: {exc}") from exc
+    revision = ancestry["git_sha"]
+
+    if ancestry["kind"] == "git":
+        sim_paths = subprocess.check_output(
+            ["git", "ls-files", "sim"], cwd=REPO, text=True
+        ).splitlines()
+    else:
+        manifest_check = verify_immutable_source_manifest()
+        if not manifest_check.get("source_manifest_verified"):
+            error = manifest_check.get("source_manifest_verification_error")
+            raise ProtocolError(f"archive source manifest is invalid: {error}")
+        manifest_paths = []
+        for line in (REPO / ".source_manifest.sha256").read_text(encoding="utf-8").splitlines():
+            _, separator, relative = line.partition("  ")
+            if not separator:
+                raise ProtocolError("archive source manifest contains a malformed entry")
+            manifest_paths.append(relative)
+        sim_paths = sorted(path for path in manifest_paths if path.startswith("sim/"))
+
     source_paths = [*sim_paths, *DIRECT_SOURCE_PATHS]
-    tracked = subprocess.check_output(
-        ["git", "status", "--porcelain", "--untracked-files=normal", "--", *source_paths],
-        cwd=REPO,
-        text=True,
-    ).strip()
-    if tracked:
-        raise ProtocolError("scientific source paths are dirty; execution is undefined")
+    if len(source_paths) != len(set(source_paths)):
+        raise ProtocolError("scientific source manifest contains duplicate paths")
+    if ancestry["kind"] == "git":
+        tracked = subprocess.check_output(
+            ["git", "status", "--porcelain", "--untracked-files=normal", "--", *source_paths],
+            cwd=REPO,
+            text=True,
+        ).strip()
+        if tracked:
+            raise ProtocolError("scientific source paths are dirty; execution is undefined")
+    elif any(relative not in manifest_paths for relative in DIRECT_SOURCE_PATHS):
+        raise ProtocolError("archive source manifest omits a direct Lane A input")
+
     identities = {
         relative: _sha256_bytes((REPO / relative).read_bytes()) for relative in source_paths
     }
     return {
         "git_revision": revision,
+        "source_kind": ancestry["kind"],
         "source_anchor_parent_sha": SOURCE_ANCHOR_PARENT_SHA,
         "source_path_count": len(identities),
         "source_identity": identities,
@@ -401,7 +431,43 @@ def _artifact_path(spec: dict[str, Any], phase: str, seed: int | None = None) ->
     return root / ("aggregate.json" if seed is None else f"seed-{seed}.json")
 
 
-def _read_phase_rows(spec: dict[str, Any], spec_sha: str, phase: str) -> list[dict[str, Any]]:
+def _receipt_path(artifact: Path) -> Path:
+    return artifact.with_name(f"{artifact.stem}.receipt.json")
+
+
+def _verify_artifact_receipt(
+    artifact: Path,
+    *,
+    phase: str,
+    seed: int | None,
+    source: dict[str, Any],
+) -> dict[str, Any]:
+    receipt_path = _receipt_path(artifact)
+    try:
+        relative_receipt = receipt_path.relative_to(REPO).as_posix()
+        receipt = verify_receipt(REPO, relative_receipt)
+    except (ReceiptError, OSError, ValueError) as exc:
+        raise ProtocolError(f"invalid execution receipt for {artifact.name}: {exc}") from exc
+    command = [*CANONICAL_RUNNER_ARGV, "--phase", phase]
+    command.extend(["--aggregate"] if seed is None else ["--seed", str(seed)])
+    if receipt.get("argv") != command:
+        raise ProtocolError(f"execution receipt has noncanonical argv for {artifact.name}")
+    if receipt.get("env_allowlist") != {"SIM_BACKEND": "numpy"}:
+        raise ProtocolError(f"execution receipt has wrong backend environment for {artifact.name}")
+    if receipt.get("device") != "cpu:numpy":
+        raise ProtocolError(f"execution receipt has wrong device for {artifact.name}")
+    if receipt.get("source", {}).get("git_sha") != source["git_revision"]:
+        raise ProtocolError(f"execution receipt has wrong source revision for {artifact.name}")
+    return receipt
+
+
+def _read_phase_rows(
+    spec: dict[str, Any],
+    spec_sha: str,
+    phase: str,
+    *,
+    source: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     rows = []
     for seed in spec["seeds"][phase]:
         path = _artifact_path(spec, phase, seed)
@@ -410,19 +476,28 @@ def _read_phase_rows(spec: dict[str, Any], spec_sha: str, phase: str) -> list[di
         row = json.loads(path.read_text())
         if row.get("phase") != phase or row.get("seed") != seed or row.get("spec_sha256") != spec_sha:
             raise ProtocolError(f"invalid {phase} artifact for seed {seed}")
+        if source is not None:
+            if row.get("source") != source:
+                raise ProtocolError(f"{phase} artifact for seed {seed} has a different source identity")
+            _verify_artifact_receipt(path, phase=phase, seed=seed, source=source)
         rows.append(row)
     return rows
 
 
-def validate_diagnostic_aggregate(spec: dict[str, Any], spec_sha: str) -> tuple[dict[str, Any], str]:
+def validate_diagnostic_aggregate(
+    spec: dict[str, Any], spec_sha: str, source: dict[str, Any]
+) -> tuple[dict[str, Any], str]:
     path = _artifact_path(spec, "diagnostic")
     if not path.is_file():
         raise ProtocolError("formal phase is sealed until diagnostic aggregate exists")
     aggregate = json.loads(path.read_text())
     if aggregate.get("phase") != "diagnostic" or aggregate.get("spec_sha256") != spec_sha:
         raise ProtocolError("diagnostic aggregate does not match the locked protocol")
+    if aggregate.get("source") != source:
+        raise ProtocolError("diagnostic aggregate has a different source identity")
+    _verify_artifact_receipt(path, phase="diagnostic", seed=None, source=source)
 
-    rows = _read_phase_rows(spec, spec_sha, "diagnostic")
+    rows = _read_phase_rows(spec, spec_sha, "diagnostic", source=source)
     recomputed = select_diagnostic(rows, spec)
     for field in ("selected_recurrent_weight", "selection_status", "eligible"):
         if aggregate.get(field) != recomputed[field]:
@@ -446,7 +521,7 @@ def execute_seed(spec: dict[str, Any], spec_sha: str, phase: str, seed: int) -> 
         payload = {"schema_version": 1, "phase": phase, "seed": seed, "spec_sha256": spec_sha,
                    "source": source, "promotion_value": "none", "candidates": candidates}
     else:
-        diagnostic, diagnostic_sha = validate_diagnostic_aggregate(spec, spec_sha)
+        diagnostic, diagnostic_sha = validate_diagnostic_aggregate(spec, spec_sha, source)
         if diagnostic.get("selected_recurrent_weight") is None:
             raise ProtocolError("diagnostic did not select a valid formal operating point")
         weight = float(diagnostic["selected_recurrent_weight"])
@@ -461,7 +536,7 @@ def execute_seed(spec: dict[str, Any], spec_sha: str, phase: str, seed: int) -> 
 
 def aggregate_phase(spec: dict[str, Any], spec_sha: str, phase: str) -> Path:
     source = _git_source_state()
-    rows = _read_phase_rows(spec, spec_sha, phase)
+    rows = _read_phase_rows(spec, spec_sha, phase, source=source)
     if phase == "diagnostic":
         result = select_diagnostic(rows, spec)
     else:
