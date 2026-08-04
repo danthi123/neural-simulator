@@ -85,6 +85,13 @@ opposite motor channel crossed later in every fixed 600-step action window, so
 zero trials met the preregistered clean single-action definition. The result is
 `UNDEFINED_ACTION_COVERAGE`; reward and weight learning never opened. Do not
 repeat seed `0`, relax cleanliness, or restore Python stop-on-winner timing.
+V11 then tested a literature-grounded, symmetric action-corollary population
+branching through local fast-spiking stopping populations. The locked
+construction seed failed on NumPy and CuPy before formal testing: the boundary
+fired during warmup and the no-action catch while both motor populations stayed
+at zero spikes. The topology recovered autonomously and all weights remained
+byte-identical, but it was not action-contingent. V11 is retired; formal seed
+`1`, reward, eligibility, and policy learning remain sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -135,13 +142,12 @@ is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. File a new evidence gate for a biologically grounded neural action boundary.
-   Use the V10 first-crossing and later-crossing telemetry plus primary
-   action-termination, corollary-discharge, basal-ganglia stopping, and motor
-   refractory literature. A successor must let the circuit enter a symmetric
-   post-commit state and preserve one completed action without Python stopping
-   the phase after observing a winner. Do not repeat seed `0`, relax the clean
-   criterion, open policy learning, or assign formal seeds.
+1. File a new evidence gate for action-contingent boundary quiescence and
+   release. Use the V11 startup/catch telemetry and primary local circuit,
+   corollary-discharge, disinhibition, and motor-stopping literature. A
+   successor must stay quiet before motor-copy input, enter a symmetric
+   temporary stopping state only after an action, and recover autonomously.
+   Do not tune or rerun V11, consume formal seed `1`, or open policy learning.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a
