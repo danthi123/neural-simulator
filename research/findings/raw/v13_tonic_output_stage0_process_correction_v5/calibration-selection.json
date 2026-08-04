@@ -1,0 +1,85 @@
+{
+  "probe": "gateB_v13_tonic_output_calibration",
+  "stage": "calibration_cross_backend",
+  "backend": "cross_backend",
+  "device": "numpy_and_cupy",
+  "seed": 216274,
+  "source_shas": {
+    "numpy": "0c8d60e55258eed7885bcdecac244d926e1d8014",
+    "cupy": "0c8d60e55258eed7885bcdecac244d926e1d8014"
+  },
+  "source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "dd37366a7d47b527b52b65e455a60b28f404e1140f4c960569bd5235f1154dff",
+    "sim/bridge.py": "09564a6485e299d5c59c8b16bfdcb9fc4164b06e14a71e9a54223fb882e1f1a3",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28",
+    "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+    "research/specs/v13_tonic_output_stage0_process_correction_v5.json": "1a1bff0233bc487f018bcb92a7ec1c792cd4530a23a245cde701806d82f45739"
+  },
+  "compatibility_correction": {
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+    "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+    "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+    "candidate_source_sha": "75c655db136aed3ed7066bef75133bb24df3d888",
+    "baseline_bundle_present_in_candidate_source": true,
+    "twin_intrinsic_states_valid": true,
+    "deterministic_patch_id": "18bd23624a3247cb0f205795081b7a540c15ed89",
+    "outcome": "DETERMINISTIC_COMPATIBILITY_GO"
+  },
+  "process_correction": {
+    "path": "research/specs/v13_tonic_output_stage0_process_correction_v5.json",
+    "sha256": "1a1bff0233bc487f018bcb92a7ec1c792cd4530a23a245cde701806d82f45739"
+  },
+  "artifacts": {
+    "numpy": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-numpy.json",
+    "cupy": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-cupy.json"
+  },
+  "common_passing_currents_pA": [
+    100
+  ],
+  "selected_current_pA": 100,
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "numpy and cupy artifacts present",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "locked calibration seed used",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "locked ladder used",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "identical sealed source identities",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "earned compatibility correction bound",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "go": true,
+  "outcome": "CALIBRATION_GO",
+  "calibration_go": true
+}

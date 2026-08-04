@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v5.json",
+    "--calibration",
+    "--compatibility-correction",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-cupy.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-cupy.json",
+    "sha256": "ed25e1a03ed84c6b4e53ffa025f3deab45c3b2cd8711f2d858aa5d1e8e870734",
+    "size_bytes": 11899
+  },
+  "device": "NVIDIA GeForce RTX 3090",
+  "duration_monotonic_ns": 2486042740,
+  "ended_utc_ns": 1785843248055546527,
+  "env_allowlist": {
+    "SIM_BACKEND": "cupy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "provenance": {
+    "ended_utc_ns": 1785843247935863297,
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-cupy.json.prov.json",
+    "run_id": "34765b51c1b0e07a2fa703c1f6979006af4ca3f1725010cec4c8fcd63abb53c7",
+    "sha256": "b82e705f78fad2d139a97772bc60c051389f06e8868fa933653e64150f68a185",
+    "started_utc_ns": 1785843245592328394
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 55,
+    "git_sha": "0c8d60e55258eed7885bcdecac244d926e1d8014",
+    "kind": "git",
+    "manifest": "research/specs/v13_stage0_candidate_source_v8.sha256",
+    "manifest_sha256": "dbc5db9d345f320c0cd2575929364950eedc19dc4a2114ae5e098775908af740",
+    "tree_sha256": "dbc5db9d345f320c0cd2575929364950eedc19dc4a2114ae5e098775908af740"
+  },
+  "started_utc_ns": 1785843245569502824,
+  "status": "success"
+}

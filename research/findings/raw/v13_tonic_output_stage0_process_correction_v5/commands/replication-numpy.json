@@ -1,0 +1,42 @@
+{
+  "action": "replication_numpy",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v5.json",
+    "--replication",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-selection.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/replication-numpy.json"
+  ],
+  "config": {
+    "path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_stage0_controller_config_v7.json",
+    "sha256": "9e65a7e520631fb42b194ede5dfa6de95f8ed4b35440b04dc57e3c4b051a7055"
+  },
+  "correction_id": "v13-stage0-process-correction-v5",
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "env": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution": "not_executed",
+  "output": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/replication-numpy.json",
+  "prerequisites": [
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-selection.json",
+      "artifact_sha256": "9aefae27fc96ed6de28a551d6198337912cb8418adc1c9b132be62b7db9d8865",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/commands/calibration-selection.json",
+      "command_envelope_sha256": "b1bc6170618ec17d14f2ec2432fcadffea1c3a34c4060f4babaebc64450dd3f6",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/receipts/calibration-selection.json",
+      "execution_receipt_sha256": "e9ec47eb6c2deeb703d15ef3c044fc679b2b6da24f8855d719d9302e48566c7f",
+      "kind": "calibration_selection",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/manifests/calibration-selection.json",
+      "manifest_sha256": "6bb6f8beb92386e31eab909fadb6315825e3aec4c8d29a65bb820dea3d6571b2",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-selection.json.prov.json",
+      "provenance_sidecar_sha256": "daab278f41686b6d08a18b03ca60f3ddb39bcecf3065441e1fa1cdb05cfc8bd0"
+    }
+  ],
+  "schema": "v13-stage0-command-v1",
+  "source_revision": "0c8d60e55258eed7885bcdecac244d926e1d8014"
+}

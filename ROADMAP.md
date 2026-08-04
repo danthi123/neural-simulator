@@ -149,10 +149,15 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     still hardcoded the v2 authority; no brain, seed, or result was created. V4
     then earned sealed cross-backend calibration GO at `100 pA`, but replication
     aborted before brain construction because selection validation omitted the
-    process-correction context. V5 fixes and directly tests that production
-    loader, with result-independent calibration seed `216274` and replication
-    seed `401461`. Source freeze is next. Held-out seed `1021` and Stage-1 seed
-    `1031` remain sealed.
+    process-correction context. V5 fixed that loader, earned sealed calibration
+    GO at `100 pA`, and completed both replication measurements. NumPy passed;
+    CuPy validly failed only the inhibitory-response ceiling, but the runner
+    mapped that scientific no-go to process exit `1`, preventing its receipt and
+    manifest. V5 is therefore undefined and both fresh seeds are consumed. V6
+    preregisters the process-only fix: valid positive and negative outcomes are
+    sealable, while undefined evidence still fails closed. Its fresh calibration
+    seed is `754571` and replication seed is `890220`; source freeze is next.
+    Held-out seed `1021` and Stage-1 seed `1031` remain sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

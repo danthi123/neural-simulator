@@ -77,7 +77,7 @@ MANIFEST_ACTIONS = {
 RUNNER_MODULE = "research.runners._vocal_action_credit_gate_v13_tonic_output"
 BASE_SPEC_PATH = "research/specs/v13_tonic_output_substrate.json"
 SEED_SPEC_PATH = (
-    "research/specs/v13_tonic_output_stage0_process_correction_v5.json"
+    "research/specs/v13_tonic_output_stage0_process_correction_v6.json"
 )
 COMPATIBILITY_PATH = (
     "research/findings/raw/v13_deterministic_compatibility/"
@@ -110,20 +110,22 @@ REPLAY_RUNNER_MODULE = (
     "research.runners._v13_backend_neutral_izh_arithmetic_replay_v2"
 )
 REPLAY_SENSITIVE_PREFIX = "sim/"
-FORBIDDEN_CONSUMED_SEEDS = frozenset((1013, 1019, 384414, 645424, 840860))
+FORBIDDEN_CONSUMED_SEEDS = frozenset(
+    (1013, 1019, 216274, 384414, 401461, 645424, 840860)
+)
 RETIRED_UNEXECUTED_SEEDS = frozenset((568500, 577995, 578403, 638726, 687979))
-PRIOR_PARTITION_SEEDS = {"calibration": 384414, "replication": 568500}
+PRIOR_PARTITION_SEEDS = {"calibration": 216274, "replication": 401461}
 LOCKED_HELD_OUT_SEED = 1021
 SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
-SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V5"
-SEED_DERIVATION_SOURCE_REVISION = "129b348db2ae2ab448283cb78c99e7143de99474"
-SEED_DERIVATION_SOURCE_COMMITTED_AT = "2026-08-04T07:25:47-04:00"
-SEED_DERIVATION_SOURCE_RELATION = "fixed_before_observation"
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V6"
+SEED_DERIVATION_SOURCE_REVISION = "0c8d60e55258eed7885bcdecac244d926e1d8014"
+SEED_DERIVATION_SOURCE_COMMITTED_AT = "2026-08-04T07:33:23-04:00"
+SEED_DERIVATION_SOURCE_RELATION = "fixed_before_v5_observation"
 SEED_DERIVATION_RESULT_EXCLUSION = (
     "no measured result, current, verdict, raster, state hash, or tested "
     "candidate is an input"
 )
-PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v5"
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v6"
 PROCESS_CORRECTION_STATUS = "preregistered-not-executed"
 COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 CALIBRATION_LADDER_PA = (75, 100, 125, 150, 175)
@@ -679,7 +681,7 @@ def _validate_process_correction_spec(
     _require(
         spec.get("authority")
         == "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-stage0-"
-           "process-correction-v5-PREREGISTRATION.md",
+           "process-correction-v6-PREREGISTRATION.md",
         "locked process-correction authority is invalid",
     )
     base = spec.get("base_spec")
@@ -742,6 +744,16 @@ def _validate_process_correction_spec(
             "production_loader_test_required_before_source_freeze": True,
         },
         "locked process-correction selection loading contract is invalid",
+    )
+    _require(
+        spec.get("scientific_outcome_process_exit") == {
+            "GO": 0,
+            "NO-GO": 0,
+            "UNDEFINED": "nonzero",
+            "exception": "nonzero",
+            "success_receipt_for": ["GO", "NO-GO"],
+        },
+        "locked process-correction outcome/exit contract is invalid",
     )
     _require(
         spec.get("merge_environment") == {
@@ -811,7 +823,7 @@ def _validate_process_correction_spec(
     )
     _require(
         spec.get("stop_rules") == [
-            "prior-chain evidence cannot unlock any v5 stage",
+            "prior-chain evidence cannot unlock any v6 stage",
             "any forbidden or retired seed blocks command emission",
             "any controller runner authority mismatch is UNDEFINED",
             "any selection compatibility context mismatch is UNDEFINED",

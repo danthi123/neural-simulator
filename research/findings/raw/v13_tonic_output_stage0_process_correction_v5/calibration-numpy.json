@@ -1,0 +1,358 @@
+{
+  "probe": "gateB_v13_tonic_output_calibration",
+  "stage": "calibration_backend",
+  "seed": 216274,
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "source_sha": "0c8d60e55258eed7885bcdecac244d926e1d8014",
+  "source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "dd37366a7d47b527b52b65e455a60b28f404e1140f4c960569bd5235f1154dff",
+    "sim/bridge.py": "09564a6485e299d5c59c8b16bfdcb9fc4164b06e14a71e9a54223fb882e1f1a3",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28",
+    "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+    "research/specs/v13_tonic_output_stage0_process_correction_v5.json": "1a1bff0233bc487f018bcb92a7ec1c792cd4530a23a245cde701806d82f45739"
+  },
+  "spec_sha256": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+  "process_correction": {
+    "path": "research/specs/v13_tonic_output_stage0_process_correction_v5.json",
+    "sha256": "1a1bff0233bc487f018bcb92a7ec1c792cd4530a23a245cde701806d82f45739"
+  },
+  "compatibility_correction": {
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+    "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+    "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+    "candidate_source_sha": "75c655db136aed3ed7066bef75133bb24df3d888",
+    "baseline_bundle_present_in_candidate_source": true,
+    "twin_intrinsic_states_valid": true,
+    "deterministic_patch_id": "18bd23624a3247cb0f205795081b7a540c15ed89",
+    "outcome": "DETERMINISTIC_COMPATIBILITY_GO"
+  },
+  "rows": [
+    {
+      "current_pA": 75,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.069872283935545,
+          "a": 0.04805511366575956,
+          "b": 2.0496700048446654,
+          "d": 24.440255308151244
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            26.25,
+            19.75,
+            27.25,
+            26.499999999999996,
+            22.5,
+            23.999999999999996,
+            25.0,
+            24.5,
+            26.25,
+            24.249999999999996
+          ],
+          "population_rate_hz": 24.625,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.125,
+          "distinct_first_spike_steps": 26,
+          "first_spike_span_ms": 52.0,
+          "total_spikes": 985
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": true,
+          "same_step_fraction": true,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "01a8cbc423067c1d03193e364a2dabac10140ff3f44e888121acd86fce01ee0b",
+      "state_hashes": {
+        "v": "00790b86327828ae2c0262a0c1679b551db927caf7f1e4841cf6e98adfea41dc",
+        "u": "d7f3f43eb12d0dde884bb5f46d97813345c22a3b1bedc786d9d52973cc85945e",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    },
+    {
+      "current_pA": 100,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.069872283935545,
+          "a": 0.04805511366575956,
+          "b": 2.0496700048446654,
+          "d": 24.440255308151244
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            57.5,
+            62.0,
+            61.74999999999999,
+            63.75,
+            62.5,
+            61.74999999999999,
+            61.5,
+            63.25,
+            62.24999999999999,
+            61.74999999999999
+          ],
+          "population_rate_hz": 61.8,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.2,
+          "distinct_first_spike_steps": 15,
+          "first_spike_span_ms": 17.0,
+          "total_spikes": 2472
+        },
+        "checks": {
+          "all_bins_in_rate_range": true,
+          "all_cells_fire": true,
+          "same_step_fraction": true,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": true
+      },
+      "raster_hash": "7e5d780d29618b12b6d8530f7d5e601c997f485b7a8d6faf5c8942ac0ac24f50",
+      "state_hashes": {
+        "v": "0052ae88901579125277d8c0cb99f19a4b7252d8704fe2659cd8b58143442559",
+        "u": "685758db31ff4a090e6ff550d9e1f211a727db01c768e80e4fa6aa5398557707",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": true
+    },
+    {
+      "current_pA": 125,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.069872283935545,
+          "a": 0.04805511366575956,
+          "b": 2.0496700048446654,
+          "d": 24.440255308151244
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            75.99999999999999,
+            79.5,
+            79.5,
+            78.25,
+            80.74999999999999,
+            79.0,
+            78.75,
+            80.74999999999999,
+            79.5,
+            78.75
+          ],
+          "population_rate_hz": 79.075,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.25,
+          "distinct_first_spike_steps": 12,
+          "first_spike_span_ms": 12.0,
+          "total_spikes": 3163
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": true,
+          "same_step_fraction": true,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "8524c51ffd6b33579a7bbf25fc1e395a93d9eb155a60d4627ccb202e6e02046d",
+      "state_hashes": {
+        "v": "f25ee39f64454e3307252765fd41f7ea57095f52ddd9804c599aad338f989020",
+        "u": "81aa5f41ced5de03d9f95d5fb222d2c7420e5f964a7c84670867d61e2ffca08c",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    },
+    {
+      "current_pA": 150,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.069872283935545,
+          "a": 0.04805511366575956,
+          "b": 2.0496700048446654,
+          "d": 24.440255308151244
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            89.74999999999999,
+            92.5,
+            93.0,
+            92.24999999999999,
+            91.99999999999999,
+            93.24999999999999,
+            92.5,
+            91.99999999999999,
+            93.24999999999999,
+            93.0
+          ],
+          "population_rate_hz": 92.35,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.25,
+          "distinct_first_spike_steps": 10,
+          "first_spike_span_ms": 10.0,
+          "total_spikes": 3694
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": true,
+          "same_step_fraction": true,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "900b313e7552718628f7529c2e0a842473f095a131f0d14b40cb9c97ca41d4be",
+      "state_hashes": {
+        "v": "6d539b478201c8cb9b5ad7f85b2d7e0d33334aa75d5e492a833bdcaeb34e1c0f",
+        "u": "25c3bb7d597a679514e0632eb0efd023394cb945b38df0b1ebebc69a86698968",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    },
+    {
+      "current_pA": 175,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.069872283935545,
+          "a": 0.04805511366575956,
+          "b": 2.0496700048446654,
+          "d": 24.440255308151244
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            100.74999999999999,
+            103.0,
+            103.49999999999999,
+            103.0,
+            103.0,
+            103.49999999999999,
+            103.24999999999999,
+            102.75,
+            104.25,
+            102.75
+          ],
+          "population_rate_hz": 102.975,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.3,
+          "distinct_first_spike_steps": 8,
+          "first_spike_span_ms": 8.0,
+          "total_spikes": 4119
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": true,
+          "same_step_fraction": false,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "4a8cef261fbfcd3d3aab0eb88f0a2de9aa3028d195a272a71342f1311be8a923",
+      "state_hashes": {
+        "v": "12b7286aacb66558482b85952a54dd05e0188dac1791ddb84fb7958b87b4cce3",
+        "u": "3844598e096260b481ff6de3a1574e4ac9c3088b04f59882fc4c68cc95f9981c",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    }
+  ],
+  "passing_currents_pA": [
+    100
+  ],
+  "elapsed_seconds": 0.2557148289924953
+}

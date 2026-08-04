@@ -24,7 +24,7 @@ def test_locked_spec_matches_runner_and_seed_partitions_do_not_overlap():
 
 def test_process_correction_derives_replacements_without_changing_held_out():
     binding, seeds = v13.load_process_correction(v13.PROCESS_CORRECTION_SPEC_PATH)
-    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v5.json")
+    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v6.json")
     assert seeds["calibration"] == v13._derived_replacement_seed(
         "calibration", v13.PRIOR_PARTITION_SEEDS["calibration"]
     )
@@ -275,3 +275,22 @@ def test_compatibility_artifact_carries_earned_preconditions():
     assert all(item["ok"] is True for item in result["preconditions"])
     assert result["verdict_status"] in {"GO", "NO-GO"}
     assert result["intrinsic_is_none"] is result["checks"]["intrinsic_is_none"]
+
+
+@pytest.mark.parametrize("status, go", [("GO", True), ("NO-GO", False)])
+def test_valid_scientific_verdicts_exit_successfully(status, go):
+    result = {
+        "verdict_status": status,
+        "go": go,
+        "undefined_reasons": [],
+    }
+    assert v13._artifact_process_exit_code(result) == 0
+
+
+def test_undefined_evidence_exits_as_process_failure():
+    result = {
+        "verdict_status": "UNDEFINED",
+        "go": False,
+        "undefined_reasons": ["missing prerequisite"],
+    }
+    assert v13._artifact_process_exit_code(result) != 0

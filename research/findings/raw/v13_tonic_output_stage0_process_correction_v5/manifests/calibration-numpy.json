@@ -1,0 +1,48 @@
+{
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-numpy.json",
+    "sha256": "ec054ffc80f084e445e6fdcff28f6a80c821ba8adeb90cd30006e949c5bdf794"
+  },
+  "candidate_source_manifest": {
+    "file_count": 55,
+    "path": "research/specs/v13_stage0_candidate_source_v8.sha256",
+    "sha256": "dbc5db9d345f320c0cd2575929364950eedc19dc4a2114ae5e098775908af740",
+    "tree_sha256": "dbc5db9d345f320c0cd2575929364950eedc19dc4a2114ae5e098775908af740"
+  },
+  "command_envelope": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/commands/calibration-numpy.json",
+    "sha256": "93d32e1a4cc6521a393d6e0a86601cc0eeea99a5a081bcf125c0bb3b46cd657b"
+  },
+  "compatibility": {
+    "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+    "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+    "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json"
+  },
+  "config_sha256": "9e65a7e520631fb42b194ede5dfa6de95f8ed4b35440b04dc57e3c4b051a7055",
+  "controller_config": {
+    "canonical_sha256": "9e65a7e520631fb42b194ede5dfa6de95f8ed4b35440b04dc57e3c4b051a7055",
+    "file_sha256": "1bd5236339f70ef4af13e20d9f5708d6711517dcba778d0497f256c87bd4b10a",
+    "path": "research/specs/v13_stage0_controller_config_v7.json"
+  },
+  "execution_receipt": {
+    "device": "12th Gen Intel(R) Core(TM) i7-12700",
+    "ended_utc_ns": 1785843229269306660,
+    "host": "dant123-wk",
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/receipts/calibration-numpy.json",
+    "sha256": "7d56937e92072913edfb6987bc0dd47b42c88987c410fef7b54bafd26d9b5c3d",
+    "started_utc_ns": 1785843228533902469
+  },
+  "kind": "calibration_numpy",
+  "process_correction_spec": {
+    "path": "research/specs/v13_tonic_output_stage0_process_correction_v5.json",
+    "sha256": "1a1bff0233bc487f018bcb92a7ec1c792cd4530a23a245cde701806d82f45739"
+  },
+  "provenance_sidecar": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-numpy.json.prov.json",
+    "sha256": "2160eb5de251401352e59f377224b91a286898e19dbe9585532ba48a8def0727"
+  },
+  "schema": "v13-stage0-artifact-manifest-v2",
+  "sha256": "cdbfd4baf96f042c233c760bedef3a063f56d70d76e8c4a51d4688f83e101bfd",
+  "source_revision": "0c8d60e55258eed7885bcdecac244d926e1d8014"
+}

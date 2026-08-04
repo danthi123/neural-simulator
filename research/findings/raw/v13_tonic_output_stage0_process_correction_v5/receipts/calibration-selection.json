@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v5.json",
+    "--merge-calibration",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-numpy.json",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-cupy.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-selection.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-selection.json",
+    "sha256": "9aefae27fc96ed6de28a551d6198337912cb8418adc1c9b132be62b7db9d8865",
+    "size_bytes": 3314
+  },
+  "device": "12th Gen Intel(R) Core(TM) i7-12700",
+  "duration_monotonic_ns": 473184711,
+  "ended_utc_ns": 1785843265521209472,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "provenance": {
+    "ended_utc_ns": 1785843265459227288,
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v5/calibration-selection.json.prov.json",
+    "run_id": "8ebd74125caeb1f38617348e498a425c654e0c228ca1b56be8304ded9bc6abfd",
+    "sha256": "daab278f41686b6d08a18b03ca60f3ddb39bcecf3065441e1fa1cdb05cfc8bd0",
+    "started_utc_ns": 1785843265065942934
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 55,
+    "git_sha": "0c8d60e55258eed7885bcdecac244d926e1d8014",
+    "kind": "git",
+    "manifest": "research/specs/v13_stage0_candidate_source_v8.sha256",
+    "manifest_sha256": "dbc5db9d345f320c0cd2575929364950eedc19dc4a2114ae5e098775908af740",
+    "tree_sha256": "dbc5db9d345f320c0cd2575929364950eedc19dc4a2114ae5e098775908af740"
+  },
+  "started_utc_ns": 1785843265048023628,
+  "status": "success"
+}

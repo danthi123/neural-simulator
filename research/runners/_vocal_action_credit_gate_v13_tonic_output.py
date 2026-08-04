@@ -39,7 +39,7 @@ from tools import stable_json_evidence
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "research/specs/v13_tonic_output_substrate.json"
 PROCESS_CORRECTION_SPEC_PATH = (
-    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v5.json"
+    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v6.json"
 )
 RUNNER_PATH = Path(__file__).resolve()
 COMPATIBILITY_ROOT = ROOT / "research/findings/raw/v13_deterministic_compatibility"
@@ -55,12 +55,14 @@ PARTITIONS = {
     "held_out": [1021],
     "reserved_for_stage1": [1031],
 }
-PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v5"
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v6"
 SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
-SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V5"
-SEED_DERIVATION_SOURCE_REVISION = "129b348db2ae2ab448283cb78c99e7143de99474"
-PRIOR_PARTITION_SEEDS = {"calibration": 384414, "replication": 568500}
-FORBIDDEN_CONSUMED_SEEDS = {1013, 1019, 384414, 645424, 840860}
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V6"
+SEED_DERIVATION_SOURCE_REVISION = "0c8d60e55258eed7885bcdecac244d926e1d8014"
+PRIOR_PARTITION_SEEDS = {"calibration": 216274, "replication": 401461}
+FORBIDDEN_CONSUMED_SEEDS = {
+    1013, 1019, 216274, 384414, 401461, 645424, 840860,
+}
 RETIRED_UNEXECUTED_SEEDS = {568500, 577995, 578403, 638726, 687979}
 COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 LADDER_PA = [75, 100, 125, 150, 175]
@@ -237,6 +239,13 @@ def _outcome(prefix: str, verdict: dict) -> str:
     if status == "UNDEFINED":
         return f"{prefix}_UNDEFINED"
     return f"{prefix}_GO" if verdict["go"] else f"{prefix}_NO_GO"
+
+
+def _artifact_process_exit_code(result: dict) -> int:
+    """Reserve process failure for undefined evidence, not negative science."""
+    if result.get("verdict_status") == "UNDEFINED" or result.get("undefined_reasons"):
+        return 1
+    return 0
 
 
 def _artifact_verdict_is_earned(artifact: dict) -> bool:
@@ -1467,7 +1476,7 @@ def main(argv=None):
         "stage": result["stage"], "outcome": result.get("outcome"),
         "backend": result.get("backend"), "output": str(output),
     }, indent=2))
-    return 0 if result.get("go", result.get("calibration_go", True)) else 1
+    return _artifact_process_exit_code(result)
 
 
 if __name__ == "__main__":
