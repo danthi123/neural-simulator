@@ -16,6 +16,8 @@ from tools import v13_stage0_controller as controller
 
 CANDIDATE = "a" * 40
 LEGACY = "b" * 40
+
+
 def _write_json(path: Path, value: dict) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
@@ -45,7 +47,14 @@ class Fixture:
 
         compatibility = _write_json(
             self.root / controller.COMPATIBILITY_PATH,
-            {"stage": "cross_twin_compare", "outcome": "DETERMINISTIC_COMPATIBILITY_GO", "go": True},
+            {
+                "stage": "cross_twin_compare",
+                "outcome": "DETERMINISTIC_COMPATIBILITY_GO",
+                "verdict_status": "GO",
+                "preconditions": [{"name": "sealed twins", "ok": True}],
+                "undefined_reasons": [],
+                "go": True,
+            },
         )
         spec = _write_json(
             self.root / controller.SEED_SPEC_PATH,
@@ -75,6 +84,7 @@ class Fixture:
             "held_out_numpy": "evidence/held-out-numpy.json",
             "performance_baseline": "evidence/performance-baseline.json",
             "performance_candidate": "evidence/performance-candidate.json",
+            "final_stage0": "evidence/final-stage0.json",
         }
         config_body = {
             "schema": controller.CONFIG_SCHEMA,
@@ -114,7 +124,7 @@ class Fixture:
     def artifact_path(self, kind: str) -> Path:
         return self.root / self.artifacts[kind]
 
-    def manifest(self, kind: str, artifact: dict) -> Path:
+    def manifest(self, kind: str, artifact: dict, *, bindings: dict | None = None) -> Path:
         artifact_path = _write_json(self.artifact_path(kind), artifact)
         source_revision = LEGACY if kind == "performance_baseline" else CANDIDATE
         body = {
@@ -124,6 +134,8 @@ class Fixture:
             "source_revision": source_revision,
             "artifact": {"path": self.artifacts[kind], "sha256": _digest(artifact_path)},
         }
+        if bindings is not None:
+            body["bindings"] = bindings
         return _write_json(self.manifest_dir / f"{kind}.manifest.json", _seal(body))
 
     def calibration(self, backend: str) -> dict:
@@ -164,6 +176,9 @@ class Fixture:
             "selected_current_pA": 100,
             "calibration_go": go,
             "go": go,
+            "verdict_status": "GO" if go else "NO-GO",
+            "preconditions": [{"name": "matched calibration", "ok": True}],
+            "undefined_reasons": [],
             "outcome": "CALIBRATION_GO" if go else "CALIBRATION_NO_GO",
         }
 
@@ -178,13 +193,85 @@ class Fixture:
             "selected_current_pA": 100,
             "selection": selection,
             "go": True,
+            "verdict_status": "GO",
+            "preconditions": [{"name": f"complete {stage}", "ok": True}],
+            "undefined_reasons": [],
             "outcome": f"{stage.upper()}_GO",
         }
+
+    def performance(self) -> dict:
+        return {
+            "stage": "performance",
+            "seed": 314159,
+            "backend": "cupy",
+            "device": "NVIDIA GeForce RTX 3090",
+            "source_sha": CANDIDATE,
+            "source_identity": self.source_identity,
+            "old_baseline_artifact": self.artifacts["performance_baseline"],
+            "old_baseline": {
+                "stage": "legacy_performance_baseline",
+                "outcome": "BASELINE_RECORDED",
+                "source_sha": LEGACY,
+                "backend": "cupy",
+                "device": "NVIDIA GeForce RTX 3090",
+                "median_seconds": 2.5,
+            },
+            "go": True,
+            "verdict_status": "GO",
+            "preconditions": [{"name": "complete benchmark matrix", "ok": True}],
+            "undefined_reasons": [],
+            "outcome": "PERFORMANCE_GO",
+        }
+
+    def final_manifests(
+        self, *, performance: dict | None = None,
+        performance_bindings: dict | None = None,
+    ) -> dict[str, Path]:
+        selection = self.selection()
+        manifests = {
+            "selection": self.manifest("calibration_selection", selection),
+            "replication_numpy": self.manifest(
+                "replication_numpy", self.stage("replication", "numpy", selection)
+            ),
+            "replication_cupy": self.manifest(
+                "replication_cupy", self.stage("replication", "cupy", selection)
+            ),
+            "held_out_cupy": self.manifest(
+                "held_out_cupy", self.stage("held_out", "cupy", selection)
+            ),
+            "held_out_numpy": self.manifest(
+                "held_out_numpy", self.stage("held_out", "numpy", selection)
+            ),
+        }
+        selection_seal = json.loads(manifests["selection"].read_text())
+        bindings = performance_bindings or {
+            "selection_manifest_sha256": selection_seal["sha256"],
+            "selected_current_pA": selection["selected_current_pA"],
+            "compatibility_path": controller.COMPATIBILITY_PATH,
+            "compatibility_sha256": self.config["compatibility"]["sha256"],
+        }
+        manifests["performance"] = self.manifest(
+            "performance_candidate", performance or self.performance(), bindings=bindings
+        )
+        return manifests
 
 
 @pytest.fixture
 def fx(tmp_path, monkeypatch):
     return Fixture(tmp_path, monkeypatch)
+
+
+def _emit_final(fx: Fixture, manifests: dict[str, Path], command: str = "final.json"):
+    return controller.emit_final_merge(
+        config_path=fx.config_path,
+        selection_manifest=manifests["selection"],
+        replication_numpy_manifest=manifests["replication_numpy"],
+        replication_cupy_manifest=manifests["replication_cupy"],
+        held_out_cupy_manifest=manifests["held_out_cupy"],
+        held_out_numpy_manifest=manifests["held_out_numpy"],
+        performance_manifest=manifests["performance"],
+        emit=fx.root / f"commands/{command}", root=fx.root,
+    )
 
 
 def test_numpy_calibration_is_first_and_only_emits_command(fx: Fixture):
@@ -424,3 +511,102 @@ def test_existing_scientific_artifact_target_is_never_overwritten(fx: Fixture):
             emit=fx.root / "commands/rejected.json", root=fx.root,
         )
     assert target.read_text() == "existing evidence\n"
+
+
+def test_final_merge_emits_complete_digested_runner_command(fx: Fixture):
+    manifests = fx.final_manifests()
+    envelope = _emit_final(fx, manifests)
+
+    paths = {kind: str(fx.artifact_path(kind)) for kind in fx.artifacts}
+    merge_index = envelope["argv"].index("--merge-final")
+    assert envelope["action"] == "final_stage0_merge"
+    assert envelope["execution"] == "not_executed"
+    assert envelope["expected_result"] == {
+        "stage": "final_cross_backend", "outcome": "TONIC_OUTPUT_GO", "go": True,
+    }
+    assert envelope["argv"][merge_index + 1:merge_index + 7] == [
+        str((fx.root / controller.COMPATIBILITY_PATH).resolve()),
+        paths["replication_numpy"], paths["replication_cupy"],
+        paths["held_out_cupy"], paths["held_out_numpy"],
+        paths["performance_candidate"],
+    ]
+    assert [item["kind"] for item in envelope["prerequisites"]] == [
+        "compatibility", "calibration_selection", "replication_numpy",
+        "replication_cupy", "held_out_cupy", "held_out_numpy",
+        "performance_candidate",
+    ]
+    assert all("artifact_sha256" in item for item in envelope["prerequisites"])
+    assert not fx.artifact_path("final_stage0").exists()
+
+
+def test_final_merge_requires_every_manifest(fx: Fixture):
+    manifests = fx.final_manifests()
+    manifests["held_out_numpy"] = fx.manifest_dir / "missing-held-out-numpy.json"
+    with pytest.raises(controller.ControllerError, match="does not exist"):
+        _emit_final(fx, manifests)
+
+
+def test_final_merge_requires_exact_performance_go_outcome(fx: Fixture):
+    performance = fx.performance()
+    performance.update({
+        "go": False,
+        "verdict_status": "NO-GO",
+        "outcome": "PERFORMANCE_NO_GO",
+    })
+    manifests = fx.final_manifests(performance=performance)
+    with pytest.raises(controller.ControllerError, match="earned PERFORMANCE_GO"):
+        _emit_final(fx, manifests)
+
+
+def test_final_merge_refuses_undefined_input_even_if_go_fields_claim_success(fx: Fixture):
+    manifests = fx.final_manifests()
+    replication = json.loads(fx.artifact_path("replication_numpy").read_text())
+    replication["verdict_status"] = "UNDEFINED"
+    replication["undefined_reasons"] = ["execution receipt missing"]
+    manifests["replication_numpy"] = fx.manifest("replication_numpy", replication)
+    with pytest.raises(controller.ControllerError, match="earned REPLICATION_GO"):
+        _emit_final(fx, manifests)
+
+
+def test_final_merge_refuses_performance_selection_or_compatibility_mismatch(fx: Fixture):
+    selection = fx.selection()
+    selection_path = fx.manifest("calibration_selection", selection)
+    selection_seal = json.loads(selection_path.read_text())
+    manifests = fx.final_manifests(performance_bindings={
+        "selection_manifest_sha256": selection_seal["sha256"],
+        "selected_current_pA": 125,
+        "compatibility_path": controller.COMPATIBILITY_PATH,
+        "compatibility_sha256": fx.config["compatibility"]["sha256"],
+    })
+    with pytest.raises(controller.ControllerError, match="bindings do not match"):
+        _emit_final(fx, manifests)
+
+
+def test_final_merge_refuses_existing_final_artifact(fx: Fixture):
+    manifests = fx.final_manifests()
+    target = fx.artifact_path("final_stage0")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("existing final evidence\n")
+    with pytest.raises(controller.ControllerError, match="existing artifact"):
+        _emit_final(fx, manifests)
+    assert target.read_text() == "existing final evidence\n"
+
+
+def test_final_merge_cli_dispatches_without_executing_runner(fx: Fixture):
+    manifests = fx.final_manifests()
+    command = fx.root / "commands/final-cli.json"
+    result = controller.main([
+        "--root", str(fx.root),
+        "--config", str(fx.config_path),
+        "--emit", str(command),
+        "final-merge",
+        "--selection-manifest", str(manifests["selection"]),
+        "--replication-numpy-manifest", str(manifests["replication_numpy"]),
+        "--replication-cupy-manifest", str(manifests["replication_cupy"]),
+        "--held-out-cupy-manifest", str(manifests["held_out_cupy"]),
+        "--held-out-numpy-manifest", str(manifests["held_out_numpy"]),
+        "--performance-manifest", str(manifests["performance"]),
+    ])
+    assert result == 0
+    assert json.loads(command.read_text())["execution"] == "not_executed"
+    assert not fx.artifact_path("final_stage0").exists()

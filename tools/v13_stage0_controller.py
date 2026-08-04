@@ -38,6 +38,7 @@ CRITICAL_SOURCE_PATHS = (
 )
 OLD_CALIBRATION_SEED = 1013
 OLD_REPLICATION_SEED = 1019
+CALIBRATION_LADDER_PA = (75, 100, 125, 150, 175)
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _REVISION = re.compile(r"^[0-9a-f]{40}$")
 
@@ -132,6 +133,7 @@ def _artifact_paths(config: dict[str, Any], root: Path) -> dict[str, Path]:
         "calibration_numpy", "calibration_cupy", "calibration_selection",
         "replication_numpy", "replication_cupy", "held_out_cupy",
         "held_out_numpy", "performance_baseline", "performance_candidate",
+        "final_stage0",
     }
     _require(set(artifacts) == required,
              f"config artifacts must contain exactly: {', '.join(sorted(required))}")
@@ -347,8 +349,8 @@ def _validate_selection(artifact: dict[str, Any], config: dict[str, Any]) -> Non
     expected = config["compatibility"]
     _require(binding.get("path") == expected["path"] and binding.get("sha256") == expected["sha256"],
              "calibration selection is not bound to canonical compatibility evidence")
-    _require(isinstance(artifact.get("selected_current_pA"), (int, float)),
-             "calibration selection lacks a selected current")
+    _require(artifact.get("selected_current_pA") in CALIBRATION_LADDER_PA,
+             "calibration selection is not on the locked current ladder")
 
 
 def _selection_fingerprint(artifact: dict[str, Any]) -> dict[str, Any]:
@@ -394,6 +396,22 @@ def _validate_backend_pair(
     for field in ("source_sha", "source_identity", "selected_current_pA"):
         _require(numpy_artifact.get(field) == cupy_artifact.get(field),
                  f"{stage} backends disagree on {field}")
+
+
+def _require_earned_go(
+    artifact: dict[str, Any], *, outcome: str, label: str,
+) -> None:
+    preconditions = artifact.get("preconditions")
+    _require(
+        artifact.get("go") is True
+        and artifact.get("outcome") == outcome
+        and artifact.get("verdict_status") == "GO"
+        and isinstance(preconditions, list)
+        and bool(preconditions)
+        and all(isinstance(item, dict) and item.get("ok") is True for item in preconditions)
+        and artifact.get("undefined_reasons") == [],
+        f"{label} is missing, no-go, undefined, or lacks an earned {outcome} verdict",
+    )
 
 
 def _ensure_new_artifact(path: Path) -> None:
@@ -653,6 +671,132 @@ def emit_performance_candidate(
     return envelope
 
 
+def _validate_performance_candidate(
+    artifact: dict[str, Any], manifest: dict[str, Any], *,
+    config: dict[str, Any], selection: dict[str, Any],
+    selection_reference: dict[str, Any], root: Path,
+) -> None:
+    _require(artifact.get("stage") == "performance",
+             "performance candidate artifact has the wrong stage")
+    _require_earned_go(
+        artifact, outcome="PERFORMANCE_GO", label="performance candidate",
+    )
+    _require(artifact.get("backend") == "cupy"
+             and "3090" in str(artifact.get("device", "")),
+             "performance candidate was not measured on the RTX 3090 CuPy lane")
+    _require(artifact.get("source_sha") == config["candidate_source_revision"],
+             "performance candidate used the wrong source revision")
+    _require(artifact.get("source_identity") == config["candidate_source_identity"],
+             "performance candidate source identities differ from the frozen config")
+    baseline = artifact.get("old_baseline")
+    _require(isinstance(baseline, dict),
+             "performance candidate does not embed its legacy baseline")
+    _validate_baseline(baseline, config)
+    baseline_path = artifact.get("old_baseline_artifact")
+    _require(isinstance(baseline_path, str) and baseline_path,
+             "performance candidate lacks its baseline artifact path")
+    supplied_baseline = Path(baseline_path)
+    if not supplied_baseline.is_absolute():
+        supplied_baseline = root / supplied_baseline
+    _require(supplied_baseline.resolve() == _artifact_paths(config, root)["performance_baseline"],
+             "performance candidate names a non-canonical baseline artifact")
+
+    bindings = manifest.get("bindings")
+    expected_bindings = {
+        "selection_manifest_sha256": selection_reference["manifest_sha256"],
+        "selected_current_pA": selection["selected_current_pA"],
+        "compatibility_path": config["compatibility"]["path"],
+        "compatibility_sha256": config["compatibility"]["sha256"],
+    }
+    _require(bindings == expected_bindings,
+             "performance manifest selection/current/compatibility bindings do not match")
+
+
+def emit_final_merge(
+    *, config_path: Path, selection_manifest: Path,
+    replication_numpy_manifest: Path, replication_cupy_manifest: Path,
+    held_out_cupy_manifest: Path, held_out_numpy_manifest: Path,
+    performance_manifest: Path, emit: Path, root: Path = ROOT,
+) -> dict[str, Any]:
+    config = load_config(config_path, root=root)
+    compatibility_path = (root / config["compatibility"]["path"]).resolve()
+    compatibility = _load_json(compatibility_path, "canonical compatibility artifact")
+    _require_earned_go(
+        compatibility, outcome="DETERMINISTIC_COMPATIBILITY_GO",
+        label="canonical compatibility artifact",
+    )
+    compatibility_ref = {
+        "kind": "compatibility",
+        "artifact_path": str(compatibility_path),
+        "artifact_sha256": config["compatibility"]["sha256"],
+    }
+
+    selection, _, selection_ref = load_manifest(
+        selection_manifest, config=config, kind="calibration_selection", root=root
+    )
+    _validate_selection(selection, config)
+    _require_earned_go(selection, outcome="CALIBRATION_GO", label="calibration selection")
+
+    repl_numpy, _, repl_numpy_ref = load_manifest(
+        replication_numpy_manifest, config=config, kind="replication_numpy", root=root
+    )
+    repl_cupy, _, repl_cupy_ref = load_manifest(
+        replication_cupy_manifest, config=config, kind="replication_cupy", root=root
+    )
+    _validate_backend_pair(
+        repl_numpy, repl_cupy, stage="replication",
+        seed=config["seeds"]["replication"], config=config, selection=selection,
+    )
+    _require_earned_go(repl_numpy, outcome="REPLICATION_GO", label="NumPy replication")
+    _require_earned_go(repl_cupy, outcome="REPLICATION_GO", label="CuPy replication")
+
+    held_cupy, _, held_cupy_ref = load_manifest(
+        held_out_cupy_manifest, config=config, kind="held_out_cupy", root=root
+    )
+    held_numpy, _, held_numpy_ref = load_manifest(
+        held_out_numpy_manifest, config=config, kind="held_out_numpy", root=root
+    )
+    _validate_backend_pair(
+        held_numpy, held_cupy, stage="held_out", seed=config["seeds"]["held_out"],
+        config=config, selection=selection,
+    )
+    _require_earned_go(held_cupy, outcome="HELD_OUT_GO", label="CuPy held-out")
+    _require_earned_go(held_numpy, outcome="HELD_OUT_GO", label="NumPy held-out")
+
+    performance, performance_seal, performance_ref = load_manifest(
+        performance_manifest, config=config, kind="performance_candidate", root=root
+    )
+    _validate_performance_candidate(
+        performance, performance_seal, config=config, selection=selection,
+        selection_reference=selection_ref, root=root,
+    )
+
+    paths = _artifact_paths(config, root)
+    output = paths["final_stage0"]
+    _ensure_new_artifact(output)
+    argv = _runner_argv(
+        config, "--merge-final", str(compatibility_path),
+        str(paths["replication_numpy"]), str(paths["replication_cupy"]),
+        str(paths["held_out_cupy"]), str(paths["held_out_numpy"]),
+        str(paths["performance_candidate"]), "--out", str(output),
+    )
+    envelope = _envelope(
+        action="final_stage0_merge", config_path=config_path, config=config,
+        root=root, cwd=root, argv=argv, env={}, output=output,
+        prerequisites=[
+            compatibility_ref, selection_ref, repl_numpy_ref, repl_cupy_ref,
+            held_cupy_ref, held_numpy_ref, performance_ref,
+        ],
+    )
+    envelope["expected_result"] = {
+        "stage": "final_cross_backend",
+        "outcome": "TONIC_OUTPUT_GO",
+        "go": True,
+    }
+    _emit_create_only(emit, envelope)
+    return envelope
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
@@ -687,6 +831,14 @@ def _parser() -> argparse.ArgumentParser:
     performance.add_argument("--selection-manifest", type=Path, required=True)
     performance.add_argument("--held-out-cupy-manifest", type=Path, required=True)
     performance.add_argument("--held-out-numpy-manifest", type=Path, required=True)
+
+    final = commands.add_parser("final-merge")
+    final.add_argument("--selection-manifest", type=Path, required=True)
+    final.add_argument("--replication-numpy-manifest", type=Path, required=True)
+    final.add_argument("--replication-cupy-manifest", type=Path, required=True)
+    final.add_argument("--held-out-cupy-manifest", type=Path, required=True)
+    final.add_argument("--held-out-numpy-manifest", type=Path, required=True)
+    final.add_argument("--performance-manifest", type=Path, required=True)
     return parser
 
 
@@ -723,12 +875,23 @@ def main(argv: list[str] | None = None) -> int:
                 config_path=args.config, source_root=args.source_root.resolve(),
                 emit=args.emit, root=root,
             )
-        else:
+        elif args.command == "performance-candidate":
             envelope = emit_performance_candidate(
                 config_path=args.config, baseline_manifest=args.baseline_manifest,
                 selection_manifest=args.selection_manifest,
                 held_out_cupy_manifest=args.held_out_cupy_manifest,
                 held_out_numpy_manifest=args.held_out_numpy_manifest,
+                emit=args.emit, root=root,
+            )
+        else:
+            envelope = emit_final_merge(
+                config_path=args.config,
+                selection_manifest=args.selection_manifest,
+                replication_numpy_manifest=args.replication_numpy_manifest,
+                replication_cupy_manifest=args.replication_cupy_manifest,
+                held_out_cupy_manifest=args.held_out_cupy_manifest,
+                held_out_numpy_manifest=args.held_out_numpy_manifest,
+                performance_manifest=args.performance_manifest,
                 emit=args.emit, root=root,
             )
     except ControllerError as exc:
