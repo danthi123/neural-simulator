@@ -1,0 +1,23 @@
+{
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-numpy.json",
+    "sha256": "d429386e313b26929c9e9754a447500cfd88a786032578e0486b2929e17f8f83"
+  },
+  "command_envelope": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/commands/calibration-numpy.json",
+    "sha256": "b40e11f944764a46f2d6385f9016e55c5b8c671668712979ba209d9301f505de"
+  },
+  "config_sha256": "044e0ac184f5cd6b1a9657175d68063b2a37b0756558ba96051dbd3de930556c",
+  "execution_receipt": {
+    "device": "12th Gen Intel(R) Core(TM) i7-12700",
+    "ended_utc_ns": 1785837444620991534,
+    "host": "dant123-wk",
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/receipts/calibration-numpy.json",
+    "sha256": "3f09aa4d24571f832a2f066e7c4af832296f7a0d1b55b7d3dd8ef3a320763bfa",
+    "started_utc_ns": 1785837443813264717
+  },
+  "kind": "calibration_numpy",
+  "schema": "v13-stage0-artifact-manifest-v1",
+  "sha256": "209f1d6a1de321aebff45e7362fc0745ac7546278dc6fb79943a7b3cf4e75bf2",
+  "source_revision": "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+}

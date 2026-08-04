@@ -1,0 +1,22 @@
+{
+  "artifact": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/manifests/calibration-numpy.json",
+  "command": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/v13_stage0_manifest.py",
+    "--root",
+    ".",
+    "--config",
+    "research/specs/v13_stage0_controller_config_v3.json",
+    "--envelope",
+    "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/commands/calibration-numpy.json",
+    "--receipt",
+    "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/receipts/calibration-numpy.json",
+    "--kind",
+    "calibration_numpy",
+    "--emit",
+    "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/manifests/calibration-numpy.json"
+  ],
+  "execution": "not_scientific_manifest_sealing",
+  "manifest_sha256": "209f1d6a1de321aebff45e7362fc0745ac7546278dc6fb79943a7b3cf4e75bf2",
+  "source_revision": "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+}

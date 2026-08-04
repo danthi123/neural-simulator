@@ -1,0 +1,41 @@
+{
+  "action": "calibration_numpy",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/specs/v13_tonic_output_stage0_process_correction_v1.json",
+    "--calibration",
+    "--compatibility-correction",
+    "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-numpy.json"
+  ],
+  "config": {
+    "path": "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/specs/v13_stage0_controller_config_v3.json",
+    "sha256": "044e0ac184f5cd6b1a9657175d68063b2a37b0756558ba96051dbd3de930556c"
+  },
+  "correction_id": "v13-stage0-process-correction-v1",
+  "cwd": "/home/dant123/Projects/sim-worktrees/v13-stage0-execution",
+  "env": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution": "not_executed",
+  "output": "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-numpy.json",
+  "prerequisites": [
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/evidence-manifest.json",
+      "artifact_sha256": "c9ceda9eaa263c542c88240f9df6661d808352c800abc8e3b79431f8e1578ecf",
+      "kind": "strict_arithmetic_replay_v2",
+      "source_revision": "c2db1becbe0948424958faec0f706f492de447c9"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+      "artifact_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+      "kind": "compatibility"
+    }
+  ],
+  "schema": "v13-stage0-command-v1",
+  "source_revision": "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+}

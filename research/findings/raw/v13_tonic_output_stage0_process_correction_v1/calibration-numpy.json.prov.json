@@ -1,0 +1,32 @@
+{
+ "run_id": "1785837443-2823284",
+ "runner": "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+  "--process-correction-spec",
+  "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/specs/v13_tonic_output_stage0_process_correction_v1.json",
+  "--calibration",
+  "--compatibility-correction",
+  "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/v13-stage0-execution/research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-numpy.json"
+ ],
+ "git_sha": "d091fa669",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T05:57:23",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-numpy.json"
+}
