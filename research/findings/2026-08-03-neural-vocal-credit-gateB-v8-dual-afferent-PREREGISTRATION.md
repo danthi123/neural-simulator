@@ -1,12 +1,15 @@
 ---
 type: preregistration
-status: live
+status: retired
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v8-dual-afferent-upstate
 runner: research/runners/_vocal_action_credit_gate_v8_dual_afferent.py
 ---
 
 # Gate B v8: subthreshold state plus learned action context
+
+> **Retired:** the complete ladder is NO-GO. See
+> [the v8 finding](2026-08-03-neural-vocal-credit-gateB-v8-dual-afferent-NO-GO.md).
 
 **Filed before the v8 runner exists.** This is a reserved-seed implementation
 smoke. Seed `0` is the only executable seed. No v8 scientific manifest exists,

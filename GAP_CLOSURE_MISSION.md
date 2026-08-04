@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 20:15 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 20:40 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -55,9 +55,14 @@ expectation spikes. The rewarded local route learned at every size and its
 lesion remained inert, so v7 retires population size as the missing lever for
 the single plastic afferent. The repaired project search recovered the relevant
 distinction in the earlier N9 result: MSN firing used a fixed convergent
-up-state afferent plus a separate plastic context afferent. A new mechanism may
-test that architecture only under a filed bounded preregistration. Formal
-phases remain sealed.
+up-state afferent plus a separate plastic context afferent. V8 tested that
+dual-afferent architecture at fixed weights `2/4/8/12/16`. Weight `2` remained
+subthreshold but learned no expectation; every higher point produced activity
+without learning, and the learning-lesion control retained or exceeded much of
+the intact activity. V8 is retired without interpolation. The next Gate B step
+is a new evidence gate for a biologically distinct mechanism that provides
+graded, learning-dependent MSN integration; do not reopen v6-v8 ladders.
+Formal phases remain sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -108,10 +113,11 @@ is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. File a new Gate B preregistration for a dual-afferent MSN mechanism: one
-   fixed convergent input that remains subthreshold by itself and one separate
-   plastic action-context input. Run only a bounded reserved-seed engagement
-   smoke first. Do not reopen v6/v7 ladders, test downstream GABA-B/omission, or
+1. Run a project-record and primary-literature research gate for a biologically
+   distinct way to produce graded, learning-dependent MSN integration. Compare
+   dendritic plateau/clustered-input and locally maintained membrane-state
+   mechanisms against the v6-v8 boundaries. Preregister before code. Do not
+   interpolate or reopen v6-v8 ladders, test downstream GABA-B/omission, or
    assign formal seeds until learned pre-outcome expectation and its learning
    lesion both pass.
 2. Replace replay v4's failed target-plateau candidate with a different
