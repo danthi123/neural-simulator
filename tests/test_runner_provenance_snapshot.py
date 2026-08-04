@@ -3,6 +3,8 @@
 import hashlib
 import json
 
+import pytest
+
 import research.runners as provenance
 
 
@@ -76,6 +78,131 @@ def test_output_sidecar_carries_snapshot_identity(tmp_path, monkeypatch):
     assert sidecar["source_manifest_verified_at_exit"] is False
     assert sidecar["source_manifest_exit_error"]
     assert sidecar["env"]["POOL_CHECKED_REASON"] == "prior record read"
+    assert "schema" not in sidecar
+    assert "started_utc_ns" not in sidecar
+    assert "ended_utc_ns" not in sidecar
+
+
+def _set_v2_identity(monkeypatch, *, source_kind="git"):
+    monkeypatch.setenv("SIM_PROVENANCE_V2", "1")
+    monkeypatch.setenv("SIM_PROVENANCE_RUN_ID", "receipt-owned-run")
+    monkeypatch.setenv("SIM_PROVENANCE_SOURCE_KIND", source_kind)
+    monkeypatch.setenv("SIM_PROVENANCE_SOURCE_MANIFEST_SHA256", "b" * 64)
+
+
+@pytest.mark.parametrize(
+    "missing",
+    (
+        "SIM_PROVENANCE_RUN_ID",
+        "SIM_PROVENANCE_SOURCE_KIND",
+        "SIM_PROVENANCE_SOURCE_MANIFEST_SHA256",
+    ),
+)
+def test_v2_record_requires_private_identity(tmp_path, monkeypatch, missing):
+    _set_v2_identity(monkeypatch)
+    monkeypatch.delenv(missing)
+    monkeypatch.setattr(provenance, "_PROV_DIR", str(tmp_path))
+
+    with pytest.raises(ValueError, match="requires private provenance identity"):
+        provenance._record_start()
+
+
+def test_v2_record_uses_full_identity_and_redacts_private_environment(tmp_path, monkeypatch):
+    _set_v2_identity(monkeypatch)
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.delenv("SIM_RUN_ID", raising=False)
+    monkeypatch.setattr(provenance, "_PROV_DIR", str(tmp_path))
+    monkeypatch.setattr(provenance, "_git_head", lambda full=False: ("a" * 40, False))
+
+    rec = provenance._record_start()
+
+    assert rec["run_id"] == "receipt-owned-run"
+    assert rec["git_sha"] == "a" * 40
+    assert rec["source_kind"] == "git"
+    assert rec["source_manifest_sha256"] == "b" * 64
+    assert rec["provenance_schema"] == "sim-run-provenance-v2"
+    assert isinstance(rec["started_utc_ns"], int)
+    assert rec["started_utc_ns"] > 0
+    assert rec["env"]["SIM_BACKEND"] == "numpy"
+    assert not any(key.startswith("SIM_PROVENANCE_") for key in rec["env"])
+    assert provenance.os.environ["SIM_RUN_ID"] == "receipt-owned-run"
+
+
+def test_v2_git_sidecar_has_timing_identity_and_null_archive_verification(tmp_path, monkeypatch):
+    raw = tmp_path / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    artifact = raw / "result.json"
+    artifact.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(provenance, "_ROOT", str(tmp_path))
+    monkeypatch.setattr(provenance, "_RAW_DIR", str(raw))
+    monkeypatch.setattr(provenance, "_START", 0.0)
+    rec = {
+        "run_id": "receipt-owned-run",
+        "runner": "research/runners/example.py",
+        "argv": ["example.py", "--out", str(artifact)],
+        "git_sha": "a" * 40,
+        "git_dirty": True,
+        "source_kind": "git",
+        "source_manifest_sha256": "b" * 64,
+        "started": "2026-08-04T13:00:00",
+        "started_utc_ns": 123456789,
+        "provenance_schema": "sim-run-provenance-v2",
+        "cwd": str(tmp_path),
+        "env": {"SIM_BACKEND": "numpy"},
+    }
+
+    assert provenance._stamp_outputs(rec) == [str(artifact)]
+
+    sidecar = json.loads((raw / "result.json.prov.json").read_text())
+    assert sidecar["schema"] == "sim-run-provenance-v2"
+    assert sidecar["run_id"] == "receipt-owned-run"
+    assert sidecar["git_sha"] == "a" * 40
+    assert sidecar["source_kind"] == "git"
+    assert sidecar["source_manifest_sha256"] == "b" * 64
+    assert sidecar["started_utc_ns"] == 123456789
+    assert sidecar["ended_utc_ns"] >= sidecar["started_utc_ns"]
+    assert sidecar["source_manifest_verified_at_start"] is None
+    assert sidecar["source_manifest_start_error"] is None
+    assert sidecar["source_manifest_verified_at_exit"] is None
+    assert sidecar["source_manifest_exit_error"] is None
+    assert not any(key.startswith("SIM_PROVENANCE_") for key in sidecar["env"])
+    assert "exit_code" not in sidecar
+
+
+def test_v2_archive_sidecar_records_start_and_exit_verification(tmp_path, monkeypatch):
+    files = {
+        "research/__init__.py": "\n",
+        "research/runners/example.py": "VALUE = 1\n",
+    }
+    manifest_hash = _write_archive_snapshot(tmp_path, files)
+    revision = "a" * 40
+    (tmp_path / ".source_revision").write_text(
+        f"git_sha={revision}\n"
+        "source_kind=git_archive\n"
+        f"source_manifest_sha256={manifest_hash}\n",
+        encoding="utf-8",
+    )
+    raw = tmp_path / "research" / "findings" / "raw"
+    raw.mkdir(parents=True)
+    artifact = raw / "result.json"
+    _set_v2_identity(monkeypatch, source_kind="git_archive")
+    monkeypatch.setenv("SIM_PROVENANCE_SOURCE_MANIFEST_SHA256", manifest_hash)
+    monkeypatch.setattr(provenance, "_ROOT", str(tmp_path))
+    monkeypatch.setattr(provenance, "_RAW_DIR", str(raw))
+    monkeypatch.setattr(provenance, "_PROV_DIR", str(raw / "_provenance"))
+    monkeypatch.setattr(provenance, "_git_head", lambda full=False: (revision, False))
+
+    rec = provenance._record_start()
+    artifact.write_text("{}", encoding="utf-8")
+    rec["argv"] = ["example.py", "--out", str(artifact)]
+
+    assert provenance._stamp_outputs(rec) == [str(artifact)]
+
+    sidecar = json.loads((raw / "result.json.prov.json").read_text())
+    assert sidecar["source_manifest_verified_at_start"] is True
+    assert sidecar["source_manifest_start_error"] is None
+    assert sidecar["source_manifest_verified_at_exit"] is True
+    assert sidecar["source_manifest_exit_error"] is None
 
 
 def test_archive_manifest_verification_rejects_tampering_and_extra_source(tmp_path, monkeypatch):

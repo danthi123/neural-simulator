@@ -48,7 +48,39 @@ _PROV_DIR = os.path.join(_ROOT, "research", "findings", "raw", "_provenance")
 _RAW_DIR = os.path.join(_ROOT, "research", "findings", "raw")
 _ENABLED = os.environ.get("SIM_NO_PROVENANCE", "") != "1"
 _START = time.time()
+_START_UTC_NS = time.time_ns()
 _OUTPUT_FLAGS = frozenset(("--out", "--output", "--json"))
+_PRIVATE_PROVENANCE_PREFIX = "SIM_PROVENANCE_"
+
+
+def _provenance_v2_enabled():
+    return os.environ.get("SIM_PROVENANCE_V2") == "1"
+
+
+def _required_v2_identity():
+    values = {
+        "run_id": os.environ.get("SIM_PROVENANCE_RUN_ID", "").strip(),
+        "source_kind": os.environ.get("SIM_PROVENANCE_SOURCE_KIND", "").strip(),
+        "source_manifest_sha256": os.environ.get(
+            "SIM_PROVENANCE_SOURCE_MANIFEST_SHA256", ""
+        ).strip(),
+    }
+    missing = [key for key, value in values.items() if not value]
+    if missing:
+        raise ValueError(
+            "SIM_PROVENANCE_V2=1 requires private provenance identity: "
+            + ", ".join(missing)
+        )
+    if values["source_kind"] not in ("git", "git_archive"):
+        raise ValueError("SIM_PROVENANCE_SOURCE_KIND must be git or git_archive")
+    digest = values["source_manifest_sha256"]
+    try:
+        valid_digest = len(digest) == 64 and digest == digest.lower() and int(digest, 16) >= 0
+    except ValueError:
+        valid_digest = False
+    if not valid_digest:
+        raise ValueError("SIM_PROVENANCE_SOURCE_MANIFEST_SHA256 must be lowercase SHA-256")
+    return values
 
 
 def _source_snapshot():
@@ -142,9 +174,10 @@ def verify_immutable_source_manifest(snapshot=None):
     return result
 
 
-def _git_head():
+def _git_head(full=False):
     try:
-        sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=_ROOT,
+        command = ["git", "rev-parse", "HEAD"] if full else ["git", "rev-parse", "--short", "HEAD"]
+        sha = subprocess.run(command, cwd=_ROOT,
                              capture_output=True, text=True, timeout=5).stdout.strip() or "unknown"
         dirty = subprocess.run(["git", "status", "--porcelain"], cwd=_ROOT,
                                capture_output=True, text=True, timeout=15).stdout.strip() != ""
@@ -159,26 +192,51 @@ def _git_head():
 
 
 def _record_start():
-    sha, dirty = _git_head()
+    v2 = _provenance_v2_enabled()
+    identity = _required_v2_identity() if v2 else None
+    sha, dirty = _git_head(full=v2)
     snapshot = _source_snapshot()
+    if v2:
+        if sha == "unknown" or len(sha) != 40:
+            raise ValueError("provenance v2 requires a full Git revision")
+        try:
+            int(sha, 16)
+        except ValueError as exc:
+            raise ValueError("provenance v2 requires a hexadecimal Git revision") from exc
+        if identity["source_kind"] == "git_archive":
+            expected = {
+                "git_sha": sha,
+                "source_kind": identity["source_kind"],
+                "source_manifest_sha256": identity["source_manifest_sha256"],
+            }
+            actual = {key: snapshot.get(key) for key in expected}
+            if actual != expected:
+                raise ValueError("private provenance identity does not match archive source identity")
     rec = {
-        "run_id": "%d-%d" % (int(_START), os.getpid()),
+        "run_id": identity["run_id"] if v2 else "%d-%d" % (int(_START), os.getpid()),
         "started": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(_START)),
         "argv": list(sys.argv),
         "cwd": os.getcwd(),
         "git_sha": sha,
         "git_dirty": dirty,
-        "source_kind": snapshot.get("source_kind"),
-        "source_manifest_sha256": snapshot.get("source_manifest_sha256"),
+        "source_kind": identity["source_kind"] if v2 else snapshot.get("source_kind"),
+        "source_manifest_sha256": (
+            identity["source_manifest_sha256"] if v2 else snapshot.get("source_manifest_sha256")
+        ),
         "python": sys.executable,
         "pid": os.getpid(),
         # The env vars that have silently changed results here before: SIM_BACKEND made `SIM_BACKEND=numpy` run
         # on the GPU for months, and gap#5's read-density lived ONLY in an env var -- a knob with no other record.
         "env": {k: v for k, v in os.environ.items()
-                if k.startswith(("SIM_", "GAP5_", "HEBB_", "POOL_", "GAP4_")) or k == "CUDA_VISIBLE_DEVICES"},
+                if not k.startswith(_PRIVATE_PROVENANCE_PREFIX)
+                and (k.startswith(("SIM_", "GAP5_", "HEBB_", "POOL_", "GAP4_"))
+                     or k == "CUDA_VISIBLE_DEVICES")},
     }
-    if snapshot.get("source_kind") == "git_archive":
-        rec.update(verify_immutable_source_manifest(snapshot))
+    if v2:
+        rec["provenance_schema"] = "sim-run-provenance-v2"
+        rec["started_utc_ns"] = _START_UTC_NS
+    if rec.get("source_kind") == "git_archive":
+        rec.update(verify_immutable_source_manifest(rec))
     os.makedirs(_PROV_DIR, exist_ok=True)
     with open(os.path.join(_PROV_DIR, "runs.jsonl"), "a") as fh:
         fh.write(json.dumps(rec) + "\n")
@@ -339,20 +397,28 @@ def _stamp_outputs(rec):
             "source_manifest_verification_error": None,
         }
     )
+    ended_utc_ns = time.time_ns()
     for p in candidates:
         try:
+            sidecar = {"run_id": rec["run_id"], "runner": rec.get("runner", "unknown"),
+                       "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
+                       "source_kind": rec.get("source_kind"),
+                       "source_manifest_sha256": rec.get("source_manifest_sha256"),
+                       "source_manifest_verified_at_start": rec.get("source_manifest_verified"),
+                       "source_manifest_start_error": rec.get("source_manifest_verification_error"),
+                       "source_manifest_verified_at_exit": exit_verification["source_manifest_verified"],
+                       "source_manifest_exit_error": exit_verification["source_manifest_verification_error"],
+                       "started": rec["started"], "env": rec["env"],
+                       **_resolved_backend(), **_corpus_check_state(),
+                       "artifact": os.path.relpath(p, _ROOT)}
+            if rec.get("provenance_schema") == "sim-run-provenance-v2":
+                sidecar.update({
+                    "schema": "sim-run-provenance-v2",
+                    "started_utc_ns": rec["started_utc_ns"],
+                    "ended_utc_ns": ended_utc_ns,
+                })
             with open(p + ".prov.json", "w") as fh:
-                json.dump({"run_id": rec["run_id"], "runner": rec.get("runner", "unknown"),
-                           "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
-                           "source_kind": rec.get("source_kind"),
-                           "source_manifest_sha256": rec.get("source_manifest_sha256"),
-                           "source_manifest_verified_at_start": rec.get("source_manifest_verified"),
-                           "source_manifest_start_error": rec.get("source_manifest_verification_error"),
-                           "source_manifest_verified_at_exit": exit_verification["source_manifest_verified"],
-                           "source_manifest_exit_error": exit_verification["source_manifest_verification_error"],
-                           "started": rec["started"], "env": rec["env"],
-                           **_resolved_backend(), **_corpus_check_state(),
-                           "artifact": os.path.relpath(p, _ROOT)}, fh, indent=1)
+                json.dump(sidecar, fh, indent=1)
             made.append(p)
         except OSError:
             pass

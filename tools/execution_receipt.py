@@ -7,17 +7,38 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import stat
 import subprocess
 import time
 from pathlib import Path, PurePosixPath
 from typing import Any, Mapping, Sequence
 
+try:
+    from tools.stable_json_evidence import (
+        StableJsonEvidenceError,
+        read_stable_json_evidence,
+    )
+except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
+    from stable_json_evidence import (  # type: ignore[no-redef]
+        StableJsonEvidenceError,
+        read_stable_json_evidence,
+    )
+
 
 SCHEMA = "sim-execution-receipt-v1"
+SCHEMA_V2 = "sim-execution-receipt-v2"
+PROVENANCE_SCHEMA_V2 = "sim-run-provenance-v2"
 _ENV_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _GIT_SHA = re.compile(r"^[0-9a-fA-F]{7,64}$")
+_RUN_ID = re.compile(r"^[0-9a-f]{64}$")
+_PRIVATE_PROVENANCE_ENV = {
+    "SIM_PROVENANCE_V2",
+    "SIM_PROVENANCE_RUN_ID",
+    "SIM_PROVENANCE_SOURCE_KIND",
+    "SIM_PROVENANCE_SOURCE_MANIFEST_SHA256",
+}
 
 
 class ReceiptError(ValueError):
@@ -47,7 +68,18 @@ def _safe_relative_path(root: Path, value: str | Path, field: str) -> tuple[str,
     ):
         raise ReceiptError(f"{field} must be a safe repository-relative path: {text!r}")
     root_resolved = root.resolve(strict=True)
-    candidate = root.joinpath(*relative.parts)
+    candidate = root_resolved.joinpath(*relative.parts)
+    current = root_resolved
+    for part in relative.parts:
+        current = current / part
+        if not os.path.lexists(current):
+            continue
+        try:
+            mode = current.lstat().st_mode
+        except OSError as exc:
+            raise ReceiptError(f"cannot inspect {field}: {current}: {exc}") from exc
+        if stat.S_ISLNK(mode):
+            raise ReceiptError(f"{field} cannot contain a symlink: {text!r}")
     try:
         resolved = candidate.resolve(strict=False)
         resolved.relative_to(root_resolved)
@@ -234,6 +266,118 @@ def _write_receipt(path: Path, receipt: dict[str, Any]) -> None:
         raise
 
 
+def _provenance_path(
+    root: Path, artifact_relative: str, artifact: Path
+) -> tuple[str, Path]:
+    relative = artifact_relative + ".prov.json"
+    normalized, path = _safe_relative_path(root, relative, "provenance sidecar path")
+    if path != Path(os.fspath(artifact) + ".prov.json"):
+        raise ReceiptError("provenance sidecar path is not adjacent to artifact")
+    return normalized, path
+
+
+def _read_provenance_v2(path: Path) -> tuple[dict[str, Any], str]:
+    try:
+        evidence = read_stable_json_evidence(path, require_object=True)
+    except StableJsonEvidenceError as exc:
+        raise ReceiptError(f"invalid provenance sidecar: {exc}") from exc
+    return evidence.value, evidence.file_sha256
+
+
+def _validate_provenance_v2(
+    value: Mapping[str, Any],
+    *,
+    artifact_relative: str,
+    git_sha: str,
+    source_kind: str,
+    source_manifest_sha256: str,
+    run_id: str,
+    receipt_started_utc_ns: int,
+    receipt_ended_utc_ns: int,
+    environment: Mapping[str, str],
+) -> tuple[int, int]:
+    required_fields = {
+        "artifact",
+        "ended_utc_ns",
+        "env",
+        "git_dirty",
+        "git_sha",
+        "run_id",
+        "schema",
+        "sim_backend",
+        "sim_backend_cupy_importable",
+        "sim_backend_requested",
+        "source_kind",
+        "source_manifest_exit_error",
+        "source_manifest_sha256",
+        "source_manifest_start_error",
+        "source_manifest_verified_at_exit",
+        "source_manifest_verified_at_start",
+        "started_utc_ns",
+    }
+    missing = required_fields.difference(value)
+    if missing:
+        raise ReceiptError(f"provenance sidecar is missing fields: {sorted(missing)}")
+    if value.get("schema") != PROVENANCE_SCHEMA_V2:
+        raise ReceiptError("provenance sidecar schema is invalid")
+    if not _RUN_ID.fullmatch(run_id) or value.get("run_id") != run_id:
+        raise ReceiptError("provenance sidecar run ID does not match receipt")
+    if value.get("artifact") != artifact_relative:
+        raise ReceiptError("provenance sidecar artifact path does not match receipt")
+    if value.get("git_sha") != git_sha:
+        raise ReceiptError("provenance sidecar Git SHA does not match receipt")
+    if value.get("source_kind") != source_kind:
+        raise ReceiptError("provenance sidecar source kind does not match receipt")
+    if value.get("source_manifest_sha256") != source_manifest_sha256:
+        raise ReceiptError("provenance sidecar source manifest does not match receipt")
+    if type(value.get("git_dirty")) is not bool:
+        raise ReceiptError("provenance sidecar git_dirty must be Boolean")
+
+    started = value.get("started_utc_ns")
+    ended = value.get("ended_utc_ns")
+    if (
+        type(started) is not int
+        or type(ended) is not int
+        or not receipt_started_utc_ns <= started <= ended <= receipt_ended_utc_ns
+    ):
+        raise ReceiptError("provenance sidecar timestamps are outside receipt interval")
+
+    if "SIM_BACKEND" not in environment:
+        raise ReceiptError("provenance v2 requires SIM_BACKEND in the environment allowlist")
+    backend = environment["SIM_BACKEND"]
+    if backend not in {"numpy", "cupy"}:
+        raise ReceiptError("provenance sidecar backend is unsupported")
+    sidecar_environment = value.get("env")
+    if not isinstance(sidecar_environment, dict):
+        raise ReceiptError("provenance sidecar environment is invalid")
+    if any(name in sidecar_environment for name in _PRIVATE_PROVENANCE_ENV):
+        raise ReceiptError("provenance sidecar exposes private provenance environment")
+    if sidecar_environment.get("SIM_BACKEND") != backend:
+        raise ReceiptError("provenance sidecar environment backend does not match receipt")
+    if value.get("sim_backend_requested") != backend or value.get("sim_backend") != backend:
+        raise ReceiptError("provenance sidecar backend does not match receipt")
+    if type(value.get("sim_backend_cupy_importable")) is not bool:
+        raise ReceiptError("provenance sidecar CuPy availability must be Boolean")
+    if backend == "cupy" and value["sim_backend_cupy_importable"] is not True:
+        raise ReceiptError("provenance sidecar does not confirm CuPy availability")
+
+    verification = (
+        value.get("source_manifest_verified_at_start"),
+        value.get("source_manifest_start_error"),
+        value.get("source_manifest_verified_at_exit"),
+        value.get("source_manifest_exit_error"),
+    )
+    if source_kind == "git_archive":
+        if verification != (True, None, True, None):
+            raise ReceiptError("archive provenance source verification is invalid")
+    elif source_kind == "git":
+        if verification != (None, None, None, None):
+            raise ReceiptError("Git provenance archive verification fields must be null")
+    else:
+        raise ReceiptError("provenance sidecar source kind is invalid")
+    return started, ended
+
+
 def run_and_receipt(
     *,
     root: Path,
@@ -246,6 +390,7 @@ def run_and_receipt(
     argv: Sequence[str],
     env_allowlist: Sequence[str] = (),
     environ: Mapping[str, str] | None = None,
+    provenance_v2: bool = False,
 ) -> dict[str, Any]:
     """Execute argv and write a success receipt only after all checks pass."""
     root = root.resolve(strict=True)
@@ -258,27 +403,83 @@ def run_and_receipt(
     artifact_relative, artifact = _safe_relative_path(root, artifact_path, "artifact path")
     receipt_relative, receipt_file = _safe_relative_path(root, receipt_path, "receipt path")
     manifest_relative, _ = _safe_relative_path(root, source_manifest, "source manifest")
-    if len({artifact_relative, receipt_relative, manifest_relative}) != 3:
+    provenance_relative = None
+    provenance_file = None
+    if provenance_v2:
+        provenance_relative, provenance_file = _provenance_path(
+            root, artifact_relative, artifact
+        )
+    distinct_paths = {artifact_relative, receipt_relative, manifest_relative}
+    if provenance_relative is not None:
+        distinct_paths.add(provenance_relative)
+    if len(distinct_paths) != (4 if provenance_v2 else 3):
         raise ReceiptError("artifact, receipt, and source manifest paths must be distinct")
-    for path, label in ((artifact, "artifact"), (receipt_file, "receipt")):
+    outputs = [(artifact, "artifact"), (receipt_file, "receipt")]
+    if provenance_file is not None:
+        outputs.append((provenance_file, "provenance sidecar"))
+    for path, label in outputs:
         if not path.parent.is_dir():
             raise ReceiptError(f"{label} parent directory does not exist: {path.parent}")
         _refuse_existing(path, label)
 
     environment = _environment(env_allowlist, os.environ if environ is None else environ)
+    if provenance_v2 and "SIM_BACKEND" not in environment:
+        raise ReceiptError("provenance v2 requires SIM_BACKEND in the environment allowlist")
+    if provenance_v2 and _PRIVATE_PROVENANCE_ENV.intersection(environment):
+        raise ReceiptError("private provenance variables cannot be allowlisted")
+    if provenance_v2 and len(git_sha) != 40:
+        raise ReceiptError("provenance v2 requires a full Git SHA")
     before = verify_source_manifest(root, manifest_relative)
     source_kind = _source_revision(root, git_sha, before["manifest_sha256"])
+    normalized_git_sha = git_sha.lower()
+    run_id = secrets.token_hex(32) if provenance_v2 else None
+    child_environment = dict(environment)
+    if provenance_v2:
+        assert run_id is not None
+        child_environment.update(
+            {
+                "SIM_PROVENANCE_V2": "1",
+                "SIM_PROVENANCE_RUN_ID": run_id,
+                "SIM_PROVENANCE_SOURCE_KIND": source_kind,
+                "SIM_PROVENANCE_SOURCE_MANIFEST_SHA256": before["manifest_sha256"],
+            }
+        )
 
     started_utc_ns = time.time_ns()
     started_monotonic_ns = time.monotonic_ns()
     try:
-        completed = subprocess.run(list(argv), cwd=root, env=environment, check=False)
+        completed = subprocess.run(list(argv), cwd=root, env=child_environment, check=False)
     except OSError as exc:
         raise ReceiptError(f"cannot launch command: {exc}") from exc
     ended_monotonic_ns = time.monotonic_ns()
     ended_utc_ns = time.time_ns()
     if completed.returncode != 0:
         raise ReceiptError(f"command exited nonzero: {completed.returncode}")
+
+    provenance = None
+    if provenance_v2:
+        assert provenance_file is not None
+        assert provenance_relative is not None
+        assert run_id is not None
+        sidecar, sidecar_sha256 = _read_provenance_v2(provenance_file)
+        sidecar_started, sidecar_ended = _validate_provenance_v2(
+            sidecar,
+            artifact_relative=artifact_relative,
+            git_sha=normalized_git_sha,
+            source_kind=source_kind,
+            source_manifest_sha256=before["manifest_sha256"],
+            run_id=run_id,
+            receipt_started_utc_ns=started_utc_ns,
+            receipt_ended_utc_ns=ended_utc_ns,
+            environment=environment,
+        )
+        provenance = {
+            "path": provenance_relative,
+            "sha256": sidecar_sha256,
+            "run_id": run_id,
+            "started_utc_ns": sidecar_started,
+            "ended_utc_ns": sidecar_ended,
+        }
 
     _safe_relative_path(root, artifact_relative, "artifact path")
     artifact_sha256, artifact_size, _ = _hash_regular_file(artifact, "artifact")
@@ -294,6 +495,11 @@ def run_and_receipt(
     final_artifact_sha256, final_artifact_size, _ = _hash_regular_file(artifact, "artifact")
     if (final_artifact_sha256, final_artifact_size) != (artifact_sha256, artifact_size):
         raise ReceiptError("artifact changed after command completion")
+    if provenance is not None:
+        assert provenance_file is not None
+        _, final_sidecar_sha256 = _read_provenance_v2(provenance_file)
+        if final_sidecar_sha256 != provenance["sha256"]:
+            raise ReceiptError("provenance sidecar changed after command completion")
     _refuse_existing(receipt_file, "receipt")
 
     receipt = {
@@ -310,10 +516,10 @@ def run_and_receipt(
         "execution_root": ".",
         "exit_code": completed.returncode,
         "host": host,
-        "schema": SCHEMA,
+        "schema": SCHEMA_V2 if provenance_v2 else SCHEMA,
         "source": {
             "file_count": before["file_count"],
-            "git_sha": git_sha.lower(),
+            "git_sha": normalized_git_sha,
             "kind": source_kind,
             "manifest": before["manifest"],
             "manifest_sha256": before["manifest_sha256"],
@@ -322,6 +528,8 @@ def run_and_receipt(
         "started_utc_ns": started_utc_ns,
         "status": "success",
     }
+    if provenance is not None:
+        receipt["provenance"] = provenance
     _write_receipt(receipt_file, receipt)
     return receipt
 
@@ -350,16 +558,20 @@ def verify_receipt(root: Path, receipt_path: str | Path) -> dict[str, Any]:
         raise ReceiptError(f"receipt changed while reading: {path}")
     if not isinstance(value, dict):
         raise ReceiptError("receipt must be a JSON object")
+    schema = value.get("schema")
+    receipt_fields = {
+        "argv", "artifact", "device", "duration_monotonic_ns", "ended_utc_ns",
+        "env_allowlist", "execution_root", "exit_code", "host", "schema", "source",
+        "started_utc_ns", "status",
+    }
+    if schema == SCHEMA_V2:
+        receipt_fields.add("provenance")
     _exact_keys(
         value,
-        {
-            "argv", "artifact", "device", "duration_monotonic_ns", "ended_utc_ns",
-            "env_allowlist", "execution_root", "exit_code", "host", "schema", "source",
-            "started_utc_ns", "status",
-        },
+        receipt_fields,
         "receipt",
     )
-    if value["schema"] != SCHEMA or value["status"] != "success":
+    if schema not in {SCHEMA, SCHEMA_V2} or value["status"] != "success":
         raise ReceiptError("receipt schema or status is invalid")
     if value["execution_root"] != "." or value["exit_code"] != 0:
         raise ReceiptError("receipt execution root or exit code is invalid")
@@ -408,6 +620,8 @@ def verify_receipt(root: Path, receipt_path: str | Path) -> dict[str, Any]:
         raise ReceiptError("receipt source kind is invalid")
     if not isinstance(source["git_sha"], str) or not _GIT_SHA.fullmatch(source["git_sha"]):
         raise ReceiptError("receipt Git SHA is invalid")
+    if schema == SCHEMA_V2 and len(source["git_sha"]) != 40:
+        raise ReceiptError("provenance v2 receipt requires a full Git SHA")
     for field in ("manifest_sha256", "tree_sha256"):
         if not isinstance(source[field], str) or not _SHA256.fullmatch(source[field]):
             raise ReceiptError(f"receipt source {field} is invalid")
@@ -422,6 +636,47 @@ def verify_receipt(root: Path, receipt_path: str | Path) -> dict[str, Any]:
         raise ReceiptError("source manifest does not match receipt")
     if _source_revision(root, source["git_sha"], current["manifest_sha256"]) != source["kind"]:
         raise ReceiptError("source identity does not match receipt")
+
+    if schema == SCHEMA_V2:
+        provenance = value["provenance"]
+        if not isinstance(provenance, dict):
+            raise ReceiptError("receipt provenance is invalid")
+        _exact_keys(
+            provenance,
+            {"path", "sha256", "run_id", "started_utc_ns", "ended_utc_ns"},
+            "provenance",
+        )
+        if not isinstance(provenance["sha256"], str) or not _SHA256.fullmatch(
+            provenance["sha256"]
+        ):
+            raise ReceiptError("receipt provenance SHA-256 is invalid")
+        run_id = _required_text(provenance["run_id"], "receipt provenance run ID")
+        if not _RUN_ID.fullmatch(run_id):
+            raise ReceiptError("receipt provenance run ID is invalid")
+        expected_provenance_relative, expected_provenance_path = _provenance_path(
+            root, artifact["path"], artifact_path
+        )
+        if provenance["path"] != expected_provenance_relative:
+            raise ReceiptError("receipt provenance path is not adjacent to artifact")
+        sidecar, sidecar_sha256 = _read_provenance_v2(expected_provenance_path)
+        if sidecar_sha256 != provenance["sha256"]:
+            raise ReceiptError("provenance sidecar does not match receipt")
+        sidecar_started, sidecar_ended = _validate_provenance_v2(
+            sidecar,
+            artifact_relative=artifact["path"],
+            git_sha=source["git_sha"],
+            source_kind=source["kind"],
+            source_manifest_sha256=source["manifest_sha256"],
+            run_id=run_id,
+            receipt_started_utc_ns=value["started_utc_ns"],
+            receipt_ended_utc_ns=value["ended_utc_ns"],
+            environment=value["env_allowlist"],
+        )
+        if (
+            provenance["started_utc_ns"] != sidecar_started
+            or provenance["ended_utc_ns"] != sidecar_ended
+        ):
+            raise ReceiptError("receipt provenance timestamps do not match sidecar")
     return value
 
 
@@ -437,6 +692,7 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--host", required=True)
     run.add_argument("--device", required=True)
     run.add_argument("--env", action="append", default=[], dest="env_allowlist")
+    run.add_argument("--provenance-v2", action="store_true")
     run.add_argument("command", nargs=argparse.REMAINDER)
 
     verify = subparsers.add_parser("verify", help="verify a receipt and its bound artifact")
@@ -461,6 +717,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 device=args.device,
                 argv=command,
                 env_allowlist=args.env_allowlist,
+                provenance_v2=args.provenance_v2,
             )
             print(f"WROTE {args.receipt} ({result['artifact']['sha256']})")
         else:
