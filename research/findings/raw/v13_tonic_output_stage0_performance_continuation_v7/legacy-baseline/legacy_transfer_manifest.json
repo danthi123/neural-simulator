@@ -1,0 +1,28 @@
+{
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "artifact": {
+    "candidate_evidence_path": "legacy-baseline/legacy_performance_baseline.json",
+    "package_path": "_run/legacy_performance_baseline.json",
+    "sha256": "869cde4dcb978fc9eafd2799358caf94654405506b6ad5d3fd840ce9e1b602d1",
+    "size_bytes": 487
+  },
+  "execution_receipt": {
+    "candidate_evidence_path": "legacy-baseline/legacy_execution_receipt.json",
+    "canonical_sha256": "ec5a7460fdb527898baa6731d64fc9583a658096fd99b038e307c9ab72c0bfee",
+    "package_path": "_run/legacy_execution_receipt.json",
+    "sha256": "755a8e21703b86e8e30c0c25ea4baeb4c5a4778a09a2652740ccd45f48d3ba98",
+    "size_bytes": 1644
+  },
+  "package": {
+    "lock_file_sha256": "ec0a8e13143a692ddaad9c815c61cfc709342f958018e52b89fff14a40619a74",
+    "lock_path": ".legacy_source_package.json",
+    "lock_sha256": "8f3e55d350efc933fe95795ca8ee6a769e488475ae2bc61524431e8785c95ce6",
+    "reported_source_revision": "8994b5102b39a8a6aa6abdeb9fde02579b7db6a8",
+    "source_manifest_path": ".source_manifest.sha256",
+    "source_manifest_sha256": "5e21f324b97fac758c52334b029e4a7d2ea78d15bab7a6dc3dfa33ba78baed68"
+  },
+  "schema": "v13-legacy-artifact-transfer-v1",
+  "sha256": "77835005412e396252ba23996c935ad2f1c3732ff14f770a1f8b70347abd0689",
+  "status": "transferred"
+}

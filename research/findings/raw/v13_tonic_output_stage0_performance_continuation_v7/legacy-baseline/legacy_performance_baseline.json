@@ -1,0 +1,17 @@
+{
+  "probe": "gateB_v13_legacy_default_performance",
+  "stage": "legacy_performance_baseline",
+  "seed": 314159,
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "source_sha": "8994b5102b39a8a6aa6abdeb9fde02579b7db6a8",
+  "wall_seconds": [
+    5.8334135839977534,
+    5.78883048100397,
+    5.77220255600696
+  ],
+  "median_seconds": 5.78883048100397,
+  "median_step_seconds": 0.0002894415240501985,
+  "outcome": "BASELINE_RECORDED",
+  "elapsed_seconds": 17.394446621008683
+}

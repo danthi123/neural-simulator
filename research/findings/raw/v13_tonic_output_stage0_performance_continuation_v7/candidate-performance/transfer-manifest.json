@@ -1,0 +1,28 @@
+{
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "files": {
+    "performance-candidate.json": {
+      "sha256": "5bfb761815a09ee88f19072e86c871cd369b99e1f313a6813dda6f18ac16f292",
+      "size_bytes": 6082
+    },
+    "provenance-start-record.json": {
+      "sha256": "9b91c1f9efddb7e78bc074b1fcbae3ccbd218cb8fd94b05b2663933931d07960",
+      "size_bytes": 840
+    }
+  },
+  "receipt_failure": "artifact path outside provenance scanner raw root",
+  "rerun_authorized": false,
+  "run_id": "710318d3535aaf03913a899e7eff6f6c7dd2be87a92db52cb4d553d783059cb2",
+  "schema": "v13-stage0-candidate-performance-failed-receipt-v1",
+  "measured_performance_outcome": "PERFORMANCE_NO_GO",
+  "preconditions": {
+    "execution_receipt_complete": false,
+    "measurement_complete": true,
+    "source_identity_complete": true
+  },
+  "sha256": "8ce46347f3c0e2ce126c4af6675c00077a51f62d882c73e96ad074a8e3fd9e56",
+  "source_manifest_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003",
+  "source_revision": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+  "status": "undefined_receipt_failed"
+}

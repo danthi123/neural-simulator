@@ -160,10 +160,15 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     held-out GO on blind seed `1021`. It stopped before performance because its
     frozen configuration paired an old revision with a measurement runner that
     does not exist at that revision, so no command could be emitted. V7
-    preregisters an audited mixed-source package containing the exact old
-    scientific imports plus only the accepted measurement runner, with its own
-    execution receipt. It reuses sealed V6 physiology without rerunning consumed
-    seeds. Stage-1 seed `1031` remains sealed.
+    used an audited mixed-source package containing the exact old scientific
+    imports plus only the accepted measurement runner, with its own execution
+    receipt. The exact V6 candidate then missed the default/old ceiling narrowly
+    (`1.0220` versus `1.02`) and the v2 active/default ceiling materially
+    (`1.1504` versus `1.10`). Its post-command receipt failed because the output
+    was outside the provenance scanner; a one-way recovery preserved only the
+    measured negative and prohibited a retry or positive verdict. Stage 0 is not
+    promoted. Profile and reduce v2 active-path overhead, fix output placement,
+    then preregister confirmation. Stage-1 seed `1031` remains sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

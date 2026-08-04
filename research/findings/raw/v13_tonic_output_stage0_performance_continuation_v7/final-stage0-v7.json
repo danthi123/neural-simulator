@@ -1,0 +1,50 @@
+{
+  "backend": "cross_backend",
+  "candidate_receipt_complete": false,
+  "checks": {
+    "performance": false,
+    "sealed_v6_physiology": true
+  },
+  "config": "research/specs/v13_tonic_output_stage0_performance_continuation_v7.json",
+  "device": "NumPy CPU and NVIDIA GeForce RTX 3090",
+  "go": false,
+  "measured_performance_outcome": "PERFORMANCE_NO_GO",
+  "outcome": "TONIC_OUTPUT_UNDEFINED",
+  "performance_artifact_sha256": "5bfb761815a09ee88f19072e86c871cd369b99e1f313a6813dda6f18ac16f292",
+  "performance_transfer_sha256": "8ce46347f3c0e2ce126c4af6675c00077a51f62d882c73e96ad074a8e3fd9e56",
+  "preconditions": {
+    "candidate_measurement_complete": true,
+    "candidate_receipt_complete": false,
+    "sealed_v6_physiology": true
+  },
+  "promotion_eligible": false,
+  "runner": "tools/v13_stage0_performance_continuation.py",
+  "schema": "v13-stage0-performance-continuation-final-v1",
+  "selected_current_pA": 100.0,
+  "sha256": "f81731143c6f287fe7d0a71e2b233521a695d34389a0bc2939856ce7c828848f",
+  "stage": "final_cross_backend",
+  "stage1_seed_1031": "sealed-not-read-or-executed",
+  "status": "undefined-receipt-failed",
+  "v6_inputs": {
+    "calibration_selection": {
+      "artifact_sha256": "30818e1cb5165ba56b67ed2cb55db36fc62b8e70cc286de5eda8113a4c86e0d2",
+      "manifest_sha256": "ef2c8d3b20a3e3e8a99be18a45763b02a45901851884c4ef5c8371fbd5a8eb62"
+    },
+    "held_out_cupy": {
+      "artifact_sha256": "583e1424995ec14c6c5655067724cda61ded1f7873811bdb7069da87b1dd374a",
+      "manifest_sha256": "600da09c5db47cb61be4051d720717994b98338d37fab3bef874841fb3c101cd"
+    },
+    "held_out_numpy": {
+      "artifact_sha256": "ab28acb25535211f91a8b594e3e98e32e578982c8c7fbea267b6c12383fe9521",
+      "manifest_sha256": "d203c7561049d3a2cace03e3f0e4ba1d0d50272b14171e5af25a368f915d3017"
+    },
+    "replication_cupy": {
+      "artifact_sha256": "424a8c5d9bb07c6204fddab1cce38f1f543ae468b14b66617344b362c71d0dce",
+      "manifest_sha256": "8b117a009f605b1bc4805c9e885250688f56e5b1c833bfac3ea3f68b1bff2c8e"
+    },
+    "replication_numpy": {
+      "artifact_sha256": "ac7b5c3f5b3ddce3e3526d93966bd33e2b14d680351b96f18e14d06521b274e4",
+      "manifest_sha256": "0dc33e6b312c4831eaa3ffe94beafc825cf678499c673db6bf1ff7095775fcf0"
+    }
+  }
+}

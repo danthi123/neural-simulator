@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "-m",
+    "--performance",
+    "--old-baseline",
+    "/tmp/sim-v13-v6-candidate-1bec/.v13-stage0-performance-v7/legacy_performance_baseline.json",
+    "--out",
+    "/tmp/sim-v13-v6-candidate-1bec/.v13-stage0-performance-v7/performance-candidate.json"
+  ],
+  "cwd": "/tmp/sim-v13-v6-candidate-1bec",
+  "env": {
+    "SIM_BACKEND": "cupy"
+  },
+  "git_dirty": true,
+  "git_sha": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+  "pid": 3061937,
+  "provenance_schema": "sim-run-provenance-v2",
+  "python": "/home/dant123/Projects/sim/.venv/bin/python",
+  "run_id": "710318d3535aaf03913a899e7eff6f6c7dd2be87a92db52cb4d553d783059cb2",
+  "source_kind": "git",
+  "source_manifest_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003",
+  "started": "2026-08-04T08:11:10",
+  "started_utc_ns": 1785845470634943449
+}
