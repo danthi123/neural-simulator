@@ -145,9 +145,11 @@
       ]
     },
     "019fcd89-b618-7642-9e21-7e4ba5cf4c87": {
-      "heartbeat_at": "2026-08-04T16:09:50+00:00",
+      "completed_at": "2026-08-04T16:16:10+00:00",
+      "heartbeat_at": "2026-08-04T16:16:10+00:00",
+      "result": "Implemented seed-free V14 Stage-A CuPy performance harness; 7 tests passed; controller review pending.",
       "started_at": "2026-08-04T16:09:50+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Implement seed-free V14 Stage-A performance harness",
       "write_set": [
         "tools/v14_stageA_performance.py",
@@ -485,6 +487,24 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T16:16:10+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd89-b618-7642-9e21-7e4ba5cf4c87"
+    },
+    {
+      "at": "2026-08-04T16:17:40+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T16:19:03+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
     }
   ],
   "lanes": {
@@ -576,13 +596,12 @@
       ]
     },
     "gateb-v14-performance": {
-      "agent_id": "019fcd89-b618-7642-9e21-7e4ba5cf4c87",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-04T16:09:50+00:00",
-      "next_action": "Build and review the seed-free contemporaneous candidate/control/active timing harness.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T16:19:03+00:00",
+      "next_action": "Review and seal the seed-free performance harness, then run the preregistered contemporaneous RTX 3090 matrix under the shared lease.",
       "owner": "controller",
       "priority": 1,
-      "resource": "agent_cpu_then_local_gpu",
+      "resource": "local_gpu",
       "status": "running",
       "write_set": [
         "tools/v14_stageA_performance.py",
@@ -675,5 +694,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T16:09:50+00:00"
+  "updated_at": "2026-08-04T16:19:03+00:00"
 }

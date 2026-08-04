@@ -76,9 +76,20 @@
   ],
   "performance": {
     "device": "NVIDIA GeForce RTX 3090",
+    "num_neurons": 600,
+    "construction_rng_seed": 0,
+    "process_order_seed": 20260804,
     "warmup_steps": 500,
     "measured_steps": 20000,
     "repetitions": 3,
+    "active_numerical_conductances": {
+      "snr_g_nalcn_max": 0.01,
+      "snr_g_nap_max": 0.02,
+      "snr_g_ca_max": 0.03,
+      "snr_g_sk_max": 0.04,
+      "snr_g_h_max": 0.005
+    },
+    "active_values_scope": "numerical path engagement only; no physiology claim",
     "default_off_ratio_max": 1.02,
     "active_ratio_max": 1.25,
     "comparison": "contemporaneous randomized candidate/control processes",
