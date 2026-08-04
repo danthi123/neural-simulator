@@ -80,6 +80,25 @@ def test_status_classifier_rejects_malformed_and_stale_rows(tmp_path: Path) -> N
     assert result.stdout == "C\t4\tpytest -q tests/test_example.py\n"
 
 
+def test_legacy_status_time_is_anchored_to_file_mtime(tmp_path: Path) -> None:
+    now = 2_000_000_000
+    clock = time.strftime("%H:%M:%S", time.localtime(now - 60))
+    log = tmp_path / "job_status.log"
+    log.write_text(f"1\t{clock}\tlegacy crash\n")
+    os.utime(log, (now - 7200, now - 7200))
+
+    result = run_bash(
+        WORKFLOW,
+        "--classify-pool-status",
+        str(log),
+        str(tmp_path),
+        str(now),
+        "3600",
+    )
+
+    assert result.stdout == ""
+
+
 def test_status_classifier_distinguishes_written_artifact(tmp_path: Path) -> None:
     now = 2_000_000_000
     relative_out = "research/findings/raw/result.json"

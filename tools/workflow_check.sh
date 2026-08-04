@@ -28,8 +28,9 @@ queue_health() {
 
 classify_pool_status() {
   local status_file="$1" sim_root="$2" now="$3" max_age="$4"
-  local f1 f2 f3 f4 extra epoch rc cmd payload age out day_epoch
+  local f1 f2 f3 f4 extra epoch rc cmd payload age out day_epoch file_mtime
   [ -f "$status_file" ] || return 0
+  file_mtime=$(stat -c%Y "$status_file" 2>/dev/null) || return 0
   while IFS=$'\t' read -r f1 f2 f3 f4 extra; do
     epoch=""; rc=""; cmd=""
     if [ "$f1" = "v2" ]; then
@@ -46,6 +47,11 @@ classify_pool_status() {
       cmd="$f3${f4:+$'\t'$f4}${extra:+$'\t'$extra}"
       day_epoch=$(date -d "$(date -d "@$now" +%F) $f2" +%s 2>/dev/null) || continue
       [ "$day_epoch" -le "$now" ] || day_epoch=$((day_epoch - 86400))
+      # A legacy row cannot have been written after the file's own mtime. When
+      # today's wall-clock reconstruction is newer than the last file write,
+      # the row belongs to the prior day. Without this anchor, yesterday's
+      # 13:18 failure becomes a fresh crash every day around 13:18.
+      [ "$day_epoch" -le $((file_mtime + 60)) ] || day_epoch=$((day_epoch - 86400))
       epoch="$day_epoch"
     fi
     age=$((now - epoch))
