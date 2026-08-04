@@ -77,7 +77,7 @@ MANIFEST_ACTIONS = {
 RUNNER_MODULE = "research.runners._vocal_action_credit_gate_v13_tonic_output"
 BASE_SPEC_PATH = "research/specs/v13_tonic_output_substrate.json"
 SEED_SPEC_PATH = (
-    "research/specs/v13_tonic_output_stage0_process_correction_v3.json"
+    "research/specs/v13_tonic_output_stage0_process_correction_v4.json"
 )
 COMPATIBILITY_PATH = (
     "research/findings/raw/v13_deterministic_compatibility/"
@@ -111,19 +111,19 @@ REPLAY_RUNNER_MODULE = (
 )
 REPLAY_SENSITIVE_PREFIX = "sim/"
 FORBIDDEN_CONSUMED_SEEDS = frozenset((1013, 1019, 840860, 645424))
-RETIRED_UNEXECUTED_SEEDS = frozenset((687979, 638726))
-PRIOR_PARTITION_SEEDS = {"calibration": 645424, "replication": 638726}
+RETIRED_UNEXECUTED_SEEDS = frozenset((687979, 638726, 577995, 578403))
+PRIOR_PARTITION_SEEDS = {"calibration": 577995, "replication": 578403}
 LOCKED_HELD_OUT_SEED = 1021
 SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
-SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V3"
-SEED_DERIVATION_SOURCE_REVISION = "f41575539536809158736cd62ab42ab2292cf20c"
-SEED_DERIVATION_SOURCE_COMMITTED_AT = "2026-08-04T07:01:25-04:00"
-SEED_DERIVATION_SOURCE_RELATION = "fixed_before_observation"
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V4"
+SEED_DERIVATION_SOURCE_REVISION = "63da248655ee406e159e762ff8c865d5dd49081c"
+SEED_DERIVATION_SOURCE_COMMITTED_AT = "2026-08-04T07:18:44-04:00"
+SEED_DERIVATION_SOURCE_RELATION = "fixed_before_attempt"
 SEED_DERIVATION_RESULT_EXCLUSION = (
     "no measured result, current, verdict, raster, state hash, or tested "
     "candidate is an input"
 )
-PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v3"
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v4"
 PROCESS_CORRECTION_STATUS = "preregistered-not-executed"
 COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 CALIBRATION_LADDER_PA = (75, 100, 125, 150, 175)
@@ -360,7 +360,7 @@ def _expected_seed_derivation() -> dict[str, Any]:
         "source_anchor": {
             "revision": SEED_DERIVATION_SOURCE_REVISION,
             "committed_at": SEED_DERIVATION_SOURCE_COMMITTED_AT,
-            "relation_to_v2_observation": SEED_DERIVATION_SOURCE_RELATION,
+            "relation_to_v3_attempt": SEED_DERIVATION_SOURCE_RELATION,
         },
         "material_template": (
             "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}"
@@ -679,7 +679,7 @@ def _validate_process_correction_spec(
     _require(
         spec.get("authority")
         == "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-stage0-"
-           "process-correction-v3-PREREGISTRATION.md",
+           "process-correction-v4-PREREGISTRATION.md",
         "locked process-correction authority is invalid",
     )
     base = spec.get("base_spec")
@@ -724,9 +724,16 @@ def _validate_process_correction_spec(
             "ladder_pA": list(CALIBRATION_LADDER_PA),
             "fresh_brain_per_point": True,
             "selection": "lowest_common_passing_point_after_both_backends_sealed",
-            "forbid_v1_v2_current_preference": True,
+            "forbid_prior_current_preference": True,
         },
         "locked process-correction calibration contract is invalid",
+    )
+    _require(
+        spec.get("authority_binding") == {
+            "controller_and_runner_spec_paths_must_match": True,
+            "controller_and_runner_schema_namespace_and_partitions_must_match": True,
+        },
+        "locked process-correction authority binding is invalid",
     )
     _require(
         spec.get("merge_environment") == {
@@ -796,8 +803,9 @@ def _validate_process_correction_spec(
     )
     _require(
         spec.get("stop_rules") == [
-            "v1 or v2 evidence cannot unlock any v3 stage",
+            "prior-chain evidence cannot unlock any v4 stage",
             "any forbidden or retired seed blocks command emission",
+            "any controller runner authority mismatch is UNDEFINED",
             "any digest-domain substitution is UNDEFINED",
             "a missing or changed provenance sidecar is UNDEFINED",
             "any emitted merge environment mismatch is UNDEFINED",

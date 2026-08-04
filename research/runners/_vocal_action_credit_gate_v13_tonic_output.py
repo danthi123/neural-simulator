@@ -39,7 +39,7 @@ from tools import stable_json_evidence
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "research/specs/v13_tonic_output_substrate.json"
 PROCESS_CORRECTION_SPEC_PATH = (
-    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v2.json"
+    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v4.json"
 )
 RUNNER_PATH = Path(__file__).resolve()
 COMPATIBILITY_ROOT = ROOT / "research/findings/raw/v13_deterministic_compatibility"
@@ -55,13 +55,13 @@ PARTITIONS = {
     "held_out": [1021],
     "reserved_for_stage1": [1031],
 }
-PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v2"
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v4"
 SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
-SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V2"
-SEED_DERIVATION_SOURCE_REVISION = "d091fa6692bdf8115c8073af6fd31fc9626921a8"
-PRIOR_PARTITION_SEEDS = {"calibration": 840860, "replication": 687979}
-FORBIDDEN_CONSUMED_SEEDS = {1013, 1019, 840860}
-RETIRED_UNEXECUTED_SEEDS = {687979}
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V4"
+SEED_DERIVATION_SOURCE_REVISION = "63da248655ee406e159e762ff8c865d5dd49081c"
+PRIOR_PARTITION_SEEDS = {"calibration": 577995, "replication": 578403}
+FORBIDDEN_CONSUMED_SEEDS = {1013, 1019, 840860, 645424}
+RETIRED_UNEXECUTED_SEEDS = {687979, 638726, 577995, 578403}
 COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 LADDER_PA = [75, 100, 125, 150, 175]
 HETEROGENEITY = {
@@ -283,7 +283,7 @@ def _load_compatibility_correction(
         "canonical_json_sha256": canonical_json_sha256,
         "canonicalization": COMPATIBILITY_CANONICALIZATION,
     }:
-        raise ValueError("compatibility digest domains differ from the v2 process correction")
+        raise ValueError("compatibility digest domains differ from the locked process correction")
     expected_identity = {
         "runner_sha256": hashlib.sha256(COMPATIBILITY_RUNNER_PATH.read_bytes()).hexdigest(),
         "spec_sha256": hashlib.sha256(COMPATIBILITY_SPEC_PATH.read_bytes()).hexdigest(),

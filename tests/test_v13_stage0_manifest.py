@@ -480,7 +480,7 @@ def test_rejects_artifact_backend_or_source_mismatch(fx: Fixture):
         fx.create()
 
 
-def test_v1_manifest_is_read_only_and_rejected_for_process_correction_v2(fx: Fixture):
+def test_v1_manifest_is_read_only_and_rejected_for_current_process_correction(fx: Fixture):
     v1 = {
         "schema": manifest_tool.SCHEMA_V1,
         "kind": "calibration_numpy",

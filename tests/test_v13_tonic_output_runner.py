@@ -11,6 +11,7 @@ import pytest  # noqa: E402
 
 from research.runners import _vocal_action_credit_gate_v13_tonic_output as v13  # noqa: E402
 from sim.backend import to_host  # noqa: E402
+from tools import v13_stage0_controller as controller  # noqa: E402
 
 
 def test_locked_spec_matches_runner_and_seed_partitions_do_not_overlap():
@@ -23,7 +24,7 @@ def test_locked_spec_matches_runner_and_seed_partitions_do_not_overlap():
 
 def test_process_correction_derives_replacements_without_changing_held_out():
     binding, seeds = v13.load_process_correction(v13.PROCESS_CORRECTION_SPEC_PATH)
-    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v2.json")
+    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v4.json")
     assert seeds["calibration"] == v13._derived_replacement_seed(
         "calibration", v13.PRIOR_PARTITION_SEEDS["calibration"]
     )
@@ -36,6 +37,18 @@ def test_process_correction_derives_replacements_without_changing_held_out():
         & (v13.FORBIDDEN_CONSUMED_SEEDS | v13.RETIRED_UNEXECUTED_SEEDS | {1021, 1031})
     )
     assert str(v13.PROCESS_CORRECTION_SPEC_PATH.relative_to(v13.ROOT)) in v13._source_identity()
+
+
+def test_runner_and_external_controller_share_one_process_authority():
+    assert v13.PROCESS_CORRECTION_SPEC_PATH.relative_to(v13.ROOT).as_posix() == (
+        controller.SEED_SPEC_PATH
+    )
+    assert v13.PROCESS_CORRECTION_SCHEMA == controller.PROCESS_CORRECTION_SCHEMA
+    assert v13.SEED_DERIVATION_NAMESPACE == controller.SEED_DERIVATION_NAMESPACE
+    assert v13.SEED_DERIVATION_SOURCE_REVISION == controller.SEED_DERIVATION_SOURCE_REVISION
+    assert v13.PRIOR_PARTITION_SEEDS == controller.PRIOR_PARTITION_SEEDS
+    assert v13.FORBIDDEN_CONSUMED_SEEDS == set(controller.FORBIDDEN_CONSUMED_SEEDS)
+    assert v13.RETIRED_UNEXECUTED_SEEDS == set(controller.RETIRED_UNEXECUTED_SEEDS)
 
 
 def test_earned_compatibility_correction_is_bound_to_committed_evidence():
