@@ -305,3 +305,87 @@ class MatchedMeanConductanceStep:
         return whole_cell_current_pA(
             self.conductance_nS_trace(times_ms, xp), voltage, self.reversal_mV
         )
+
+
+def compile_biexponential_event_increments(
+    events: Sequence[BiexponentialInhibitoryEvent],
+    schedules: Sequence[EventSchedule],
+    dt_ms: float,
+    xp: Any,
+):
+    """Compile exact schedules into one device row per simulation sample.
+
+    Off-grid events enter the recurrence at the first sample after the event,
+    with the analytically correct fractional-step decay already applied. The
+    returned matrices are consumed by channel-vector updates, never by a
+    per-event loop in the timestep path.
+    """
+    import numpy as np
+
+    dt_ms = _positive("dt_ms", dt_ms)
+    if len(events) != len(schedules):
+        raise ValueError("events and schedules must have equal length")
+    if not events:
+        raise ValueError("at least one event channel is required")
+
+    def sample_step_for(event_time_ms: float) -> int:
+        ratio = event_time_ms / dt_ms
+        nearest = round(ratio)
+        if math.isclose(ratio, nearest, rel_tol=0.0, abs_tol=1.0e-10):
+            return int(nearest)
+        return int(math.ceil(ratio))
+
+    max_step = 0
+    for schedule in schedules:
+        if schedule.event_times_ms:
+            max_step = max(
+                max_step,
+                max(sample_step_for(time_ms) for time_ms in schedule.event_times_ms),
+            )
+    decay_host = np.zeros((max_step + 1, len(events)), dtype=np.float32)
+    rise_host = np.zeros_like(decay_host)
+    for channel, (event, schedule) in enumerate(zip(events, schedules)):
+        amplitude = float(event.event_peak_nS) / event.peak_normalization
+        for event_time in schedule.event_times_ms:
+            sample_step = sample_step_for(event_time)
+            elapsed_ms = sample_step * dt_ms - event_time
+            decay_host[sample_step, channel] += amplitude * math.exp(
+                -elapsed_ms / event.tau_decay_ms
+            )
+            rise_host[sample_step, channel] += amplitude * math.exp(
+                -elapsed_ms / event.tau_rise_ms
+            )
+
+    decay_factors = np.asarray(
+        [math.exp(-dt_ms / event.tau_decay_ms) for event in events],
+        dtype=np.float32,
+    )
+    rise_factors = np.asarray(
+        [math.exp(-dt_ms / event.tau_rise_ms) for event in events],
+        dtype=np.float32,
+    )
+    return (
+        xp.asarray(decay_host),
+        xp.asarray(rise_host),
+        xp.asarray(decay_factors),
+        xp.asarray(rise_factors),
+    )
+
+
+def advance_biexponential_channels_in_place(
+    decay_state_nS: Any,
+    rise_state_nS: Any,
+    decay_factors: Any,
+    rise_factors: Any,
+    decay_increment_nS: Any,
+    rise_increment_nS: Any,
+    conductance_out_nS: Any,
+    xp: Any,
+):
+    """Advance every configured channel using fixed-count vector operations."""
+    xp.multiply(decay_state_nS, decay_factors, out=decay_state_nS)
+    xp.multiply(rise_state_nS, rise_factors, out=rise_state_nS)
+    xp.add(decay_state_nS, decay_increment_nS, out=decay_state_nS)
+    xp.add(rise_state_nS, rise_increment_nS, out=rise_state_nS)
+    xp.subtract(decay_state_nS, rise_state_nS, out=conductance_out_nS)
+    return conductance_out_nS

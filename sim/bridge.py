@@ -110,6 +110,12 @@ from sim.kernels import (
                          fused_eligibility_trace_decay)
 from experiment import ExperimentEngine
 from experiment.engine import experiment_config_from_dict, experiment_config_to_dict
+from experiment.inhibitory_conductance_clamp import (
+    BiexponentialInhibitoryEvent,
+    EventSchedule,
+    advance_biexponential_channels_in_place,
+    compile_biexponential_event_increments,
+)
 
 
 def _deterministic_ei_transpose_spmv(connections, excitatory_drive, inhibitory_drive):
@@ -150,6 +156,11 @@ _SNR_CONDUCTANCE_ARRAYS = (
     *_SNR_CONDUCTANCE_STATE_ARRAYS,
 )
 _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA = 1
+_INHIBITORY_CLAMP_STATE_ARRAYS = (
+    "cp_inhibitory_clamp_decay_state_nS",
+    "cp_inhibitory_clamp_rise_state_nS",
+)
+_INHIBITORY_CLAMP_CHECKPOINT_SCHEMA = 1
 
 
 # --- Optional dependencies ---
@@ -496,6 +507,21 @@ class SimulationBridge:
         self.cp_conductance_g_nmda_rise = None
         self.cp_external_input_current = None
         self.cp_intrinsic_current_pA = None
+        self.cp_inhibitory_clamp_decay_state_nS = None
+        self.cp_inhibitory_clamp_rise_state_nS = None
+        self.cp_inhibitory_clamp_conductance_nS = None
+        self.cp_inhibitory_clamp_current_pA_equivalent = None
+        self.cp_inhibitory_clamp_density_scratch = None
+        self.cp_inhibitory_clamp_channel_scratch = None
+        self.cp_inhibitory_clamp_target_density = None
+        self.cp_inhibitory_clamp_reversal_mV = None
+        self.cp_inhibitory_clamp_event_decay_increments = None
+        self.cp_inhibitory_clamp_event_rise_increments = None
+        self.cp_inhibitory_clamp_decay_factors = None
+        self.cp_inhibitory_clamp_rise_factors = None
+        self.cp_inhibitory_clamp_zero_increment = None
+        self.inhibitory_clamp_pathways = ()
+        self.inhibitory_clamp_target_regions = ()
         self.cp_firing_states = None        
         self.cp_prev_firing_states = None   
         self.cp_traits = None               
@@ -1469,6 +1495,160 @@ class SimulationBridge:
         
         return seed
 
+    @staticmethod
+    def _config_value(config, name):
+        return config[name] if isinstance(config, dict) else getattr(config, name)
+
+    def _initialize_inhibitory_conductance_clamp_runtime(self, n_neurons):
+        """Compile exact clamp schedules and region routing into backend arrays."""
+        cfg = self.core_config
+        if cfg.neuron_model_type != NeuronModel.HODGKIN_HUXLEY.name:
+            raise ValueError("inhibitory conductance clamp requires HODGKIN_HUXLEY")
+
+        region_slices = {}
+        offset = 0
+        for region in cfg.brain_regions:
+            name = self._config_value(region, "name")
+            count = int(self._config_value(region, "n_neurons"))
+            if name in region_slices:
+                raise ValueError(f"duplicate brain region name {name!r}")
+            region_slices[name] = slice(offset, offset + count)
+            offset += count
+        if offset != int(n_neurons):
+            raise ValueError(
+                "inhibitory clamp region sizes do not match the simulator neuron count"
+            )
+
+        events = []
+        schedules = []
+        pathways = []
+        target_regions = []
+        target_density_host = np.zeros(
+            (len(cfg.inhibitory_conductance_clamps), n_neurons), dtype=np.float32
+        )
+        reversals_host = np.empty(
+            len(cfg.inhibitory_conductance_clamps), dtype=np.float32
+        )
+        for channel_index, channel in enumerate(cfg.inhibitory_conductance_clamps):
+            pathway = self._config_value(channel, "pathway")
+            target_region = self._config_value(channel, "target_region")
+            if target_region not in region_slices:
+                raise ValueError(
+                    f"inhibitory clamp target region {target_region!r} does not exist"
+                )
+            event = BiexponentialInhibitoryEvent(
+                pathway=pathway,
+                tau_rise_ms=self._config_value(channel, "tau_rise_ms"),
+                tau_decay_ms=self._config_value(channel, "tau_decay_ms"),
+                reversal_mV=self._config_value(channel, "reversal_mV"),
+                event_peak_nS=self._config_value(channel, "event_peak_nS"),
+                membrane_area_um2=self._config_value(channel, "membrane_area_um2"),
+            )
+            schedule = EventSchedule.exact(
+                self._config_value(channel, "event_times_ms")
+            )
+            events.append(event)
+            schedules.append(schedule)
+            pathways.append(pathway)
+            target_regions.append(target_region)
+            target_density_host[
+                channel_index, region_slices[target_region]
+            ] = np.float32(100.0 / event.membrane_area_um2)
+            reversals_host[channel_index] = np.float32(event.reversal_mV)
+
+        (event_decay, event_rise, decay_factors,
+         rise_factors) = compile_biexponential_event_increments(
+            events, schedules, cfg.dt_ms, cp
+        )
+        channel_count = len(events)
+        self.cp_inhibitory_clamp_decay_state_nS = cp.zeros(
+            channel_count, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_rise_state_nS = cp.zeros(
+            channel_count, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_conductance_nS = cp.zeros(
+            channel_count, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_channel_scratch = cp.zeros(
+            channel_count, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_current_pA_equivalent = cp.zeros(
+            n_neurons, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_density_scratch = cp.zeros(
+            n_neurons, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_target_density = cp.asarray(
+            target_density_host, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_reversal_mV = cp.asarray(
+            reversals_host, dtype=cp.float32
+        )
+        self.cp_inhibitory_clamp_event_decay_increments = event_decay
+        self.cp_inhibitory_clamp_event_rise_increments = event_rise
+        self.cp_inhibitory_clamp_decay_factors = decay_factors
+        self.cp_inhibitory_clamp_rise_factors = rise_factors
+        self.cp_inhibitory_clamp_zero_increment = cp.zeros(
+            channel_count, dtype=cp.float32
+        )
+        self.inhibitory_clamp_pathways = tuple(pathways)
+        self.inhibitory_clamp_target_regions = tuple(target_regions)
+
+    def _update_inhibitory_conductance_clamp_current(self):
+        """Advance all clamp channels and write one device-resident current."""
+        step = int(self.runtime_state.current_time_step)
+        if step < int(self.cp_inhibitory_clamp_event_decay_increments.shape[0]):
+            decay_increment = self.cp_inhibitory_clamp_event_decay_increments[step]
+            rise_increment = self.cp_inhibitory_clamp_event_rise_increments[step]
+        else:
+            decay_increment = self.cp_inhibitory_clamp_zero_increment
+            rise_increment = self.cp_inhibitory_clamp_zero_increment
+
+        advance_biexponential_channels_in_place(
+            self.cp_inhibitory_clamp_decay_state_nS,
+            self.cp_inhibitory_clamp_rise_state_nS,
+            self.cp_inhibitory_clamp_decay_factors,
+            self.cp_inhibitory_clamp_rise_factors,
+            decay_increment,
+            rise_increment,
+            self.cp_inhibitory_clamp_conductance_nS,
+            cp,
+        )
+        cp.multiply(
+            self.cp_inhibitory_clamp_conductance_nS,
+            self.cp_inhibitory_clamp_reversal_mV,
+            out=self.cp_inhibitory_clamp_channel_scratch,
+        )
+        cp.matmul(
+            self.cp_inhibitory_clamp_target_density.T,
+            self.cp_inhibitory_clamp_channel_scratch,
+            out=self.cp_inhibitory_clamp_current_pA_equivalent,
+        )
+        cp.matmul(
+            self.cp_inhibitory_clamp_target_density.T,
+            self.cp_inhibitory_clamp_conductance_nS,
+            out=self.cp_inhibitory_clamp_density_scratch,
+        )
+        cp.multiply(
+            self.cp_inhibitory_clamp_density_scratch,
+            self.cp_membrane_potential_v,
+            out=self.cp_inhibitory_clamp_density_scratch,
+        )
+        cp.subtract(
+            self.cp_inhibitory_clamp_current_pA_equivalent,
+            self.cp_inhibitory_clamp_density_scratch,
+            out=self.cp_inhibitory_clamp_current_pA_equivalent,
+        )
+        # HH later multiplies bridge input by 1e-6. Convert uA/cm2 here to
+        # that existing pA-equivalent convention without altering HH dynamics.
+        cp.multiply(
+            self.cp_inhibitory_clamp_current_pA_equivalent,
+            cp.float32(1.0e6),
+            out=self.cp_inhibitory_clamp_current_pA_equivalent,
+        )
+        return self.cp_inhibitory_clamp_current_pA_equivalent
+
     def _initialize_simulation_data(self, called_from_playback_init=False):
         """Initializes or re-initializes all CuPy arrays and simulation state variables."""
         self._log_console(f"Initializing simulation data for model: {self.core_config.neuron_model_type} (3D)... (playback_init: {called_from_playback_init})")
@@ -1662,6 +1842,8 @@ class SimulationBridge:
                     self.cp_intrinsic_current_pA = cp.asarray(
                         intrinsic_host, dtype=cp.float32
                     )
+            if getattr(cfg, "enable_inhibitory_conductance_clamp", False):
+                self._initialize_inhibitory_conductance_clamp_runtime(n)
             self.cp_firing_states = cp.zeros(n, dtype=bool)
             self.cp_prev_firing_states = cp.zeros(n, dtype=bool)
             # Start with a generic random trait assignment. Traits feed the
@@ -3117,6 +3299,18 @@ class SimulationBridge:
             'cp_membrane_potential_v','cp_recovery_variable_u', 'cp_conductance_g_e','cp_conductance_g_i',
             *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
             'cp_external_input_current', 'cp_intrinsic_current_pA',
+            *_INHIBITORY_CLAMP_STATE_ARRAYS,
+            'cp_inhibitory_clamp_conductance_nS',
+            'cp_inhibitory_clamp_current_pA_equivalent',
+            'cp_inhibitory_clamp_density_scratch',
+            'cp_inhibitory_clamp_channel_scratch',
+            'cp_inhibitory_clamp_target_density',
+            'cp_inhibitory_clamp_reversal_mV',
+            'cp_inhibitory_clamp_event_decay_increments',
+            'cp_inhibitory_clamp_event_rise_increments',
+            'cp_inhibitory_clamp_decay_factors',
+            'cp_inhibitory_clamp_rise_factors',
+            'cp_inhibitory_clamp_zero_increment',
             'cp_firing_states','cp_prev_firing_states','cp_traits',
             'cp_neuron_positions_3d','cp_connections', 'cp_refractory_timers', 'cp_viz_activity_timers',
             'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
@@ -3141,6 +3335,8 @@ class SimulationBridge:
         for attr_name in attrs_to_clear:
             if hasattr(self, attr_name) and getattr(self, attr_name) is not None:
                 setattr(self, attr_name, None) 
+        self.inhibitory_clamp_pathways = ()
+        self.inhibitory_clamp_target_regions = ()
 
         if is_gpu_backend() and 'cupy' in sys.modules:
             try:
@@ -4915,6 +5111,9 @@ class SimulationBridge:
             'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             *_SNR_CONDUCTANCE_STATE_ARRAYS,
+            *_INHIBITORY_CLAMP_STATE_ARRAYS,
+            'cp_inhibitory_clamp_conductance_nS',
+            'cp_inhibitory_clamp_current_pA_equivalent',
             'cp_adex_w', 'cp_ou_current'
         ]
 
@@ -5046,6 +5245,7 @@ class SimulationBridge:
             'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             *_SNR_CONDUCTANCE_ARRAYS,
+            *_INHIBITORY_CLAMP_STATE_ARRAYS,
             'cp_conductance_g_e',
             'cp_conductance_g_i', 'cp_external_input_current', 'cp_intrinsic_current_pA',
             'cp_refractory_timers',
@@ -6948,6 +7148,8 @@ class SimulationBridge:
             return False
         if self.cp_ssm_state is not None or self.cp_ssm_readout_w is not None:
             return False
+        if self.cp_inhibitory_clamp_decay_state_nS is not None:
+            return False
         # Threshold path: no homeostasis threshold override -> vpeak is the threshold (fused-path assumption).
         if self.cp_homeostasis_neuron_mask is not None:
             return False
@@ -8285,6 +8487,12 @@ class SimulationBridge:
                         cp.float32(0.0),
                     )
                 total_input_current_pA = total_input_current_pA + ou_current
+
+            if self.cp_inhibitory_clamp_decay_state_nS is not None:
+                total_input_current_pA = (
+                    total_input_current_pA
+                    + self._update_inhibitory_conductance_clamp_current()
+                )
 
             if self.cp_intrinsic_current_pA is not None:
                 total_input_current_pA = (
@@ -9982,6 +10190,7 @@ class SimulationBridge:
                     *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
                     'cp_external_input_current', 'cp_intrinsic_current_pA',
                     *_SNR_CONDUCTANCE_ARRAYS,
+                    *_INHIBITORY_CLAMP_STATE_ARRAYS,
                     'cp_syn_reversal_potential_i_per_neuron',
                     'cp_neuron_type_ids', 'cp_heterogeneity_neuron_mask',
                     'cp_firing_states', 'cp_prev_firing_states',
@@ -9998,6 +10207,10 @@ class SimulationBridge:
                 if self.cp_snr_g_nalcn_max is not None:
                     state_group.attrs["snr_conductance_state_schema"] = (
                         _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA
+                    )
+                if self.cp_inhibitory_clamp_decay_state_nS is not None:
+                    state_group.attrs["inhibitory_clamp_state_schema"] = (
+                        _INHIBITORY_CLAMP_CHECKPOINT_SCHEMA
                     )
 
                 if self.cp_connections is not None:
@@ -10294,7 +10507,11 @@ class SimulationBridge:
                     if key_cfg not in loaded_sim_config_dict: 
                         loaded_sim_config_dict[key_cfg] = getattr(temp_cfg_for_validation, key_cfg) 
 
-                self.core_config = CoreSimConfig(**{k: v for k, v in loaded_sim_config_dict.items() if hasattr(CoreSimConfig, k)})
+                config_fields = CoreSimConfig.__dataclass_fields__
+                self.core_config = CoreSimConfig(**{
+                    key: value for key, value in loaded_sim_config_dict.items()
+                    if key in config_fields
+                })
                 n = self.core_config.num_neurons
                 state_group = h5f 
 
@@ -10326,6 +10543,54 @@ class SimulationBridge:
                     setattr(self, attr_name, _load_cp_array_from_h5(h5_key, 
                             default_val_func=lambda size_n, dt=dtype: cp.zeros(size_n, dtype=dt), 
                             default_dtype_for_empty=dtype))
+
+                saved_clamp_arrays = {
+                    attr_name for attr_name in _INHIBITORY_CLAMP_STATE_ARRAYS
+                    if attr_name in state_group
+                }
+                clamp_enabled = getattr(
+                    self.core_config,
+                    "enable_inhibitory_conductance_clamp",
+                    False,
+                )
+                if saved_clamp_arrays or clamp_enabled:
+                    if not clamp_enabled:
+                        raise ValueError(
+                            "Checkpoint inhibitory clamp state requires enabled configuration"
+                        )
+                    if int(state_group.attrs.get(
+                            "inhibitory_clamp_state_schema", -1
+                    )) != _INHIBITORY_CLAMP_CHECKPOINT_SCHEMA:
+                        raise ValueError(
+                            "Checkpoint inhibitory clamp state has an invalid schema"
+                        )
+                    missing = (
+                        set(_INHIBITORY_CLAMP_STATE_ARRAYS) - saved_clamp_arrays
+                    )
+                    if missing:
+                        raise ValueError(
+                            "Checkpoint inhibitory clamp state is incomplete: "
+                            + ", ".join(sorted(missing))
+                        )
+                    self._initialize_inhibitory_conductance_clamp_runtime(n)
+                    channel_count = len(
+                        self.core_config.inhibitory_conductance_clamps
+                    )
+                    for attr_name in _INHIBITORY_CLAMP_STATE_ARRAYS:
+                        host = np.asarray(
+                            state_group[attr_name][:], dtype=np.float32
+                        )
+                        if host.ndim != 1 or int(host.size) != channel_count:
+                            raise ValueError(
+                                "Checkpoint inhibitory clamp state does not match "
+                                "the configured channel count"
+                            )
+                        if not np.all(np.isfinite(host)) or np.any(host < 0.0):
+                            raise ValueError(
+                                "Checkpoint inhibitory clamp state must be finite "
+                                "and nonnegative"
+                            )
+                        setattr(self, attr_name, cp.asarray(host, dtype=cp.float32))
 
                 # Optional immutable construction state. An old checkpoint
                 # without this dataset intentionally restores the legacy None

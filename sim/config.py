@@ -25,6 +25,64 @@ _HH_L5_DEFAULTS = DefaultHodgkinHuxleyParams.PARAMS[NeuronType.HH_L5_CORTICAL_PY
 
 
 @dataclass
+class InhibitoryConductanceClampConfig:
+    """One exact, region-targeted inhibitory conductance-clamp channel."""
+
+    pathway: str
+    target_region: str
+    tau_rise_ms: float
+    tau_decay_ms: float
+    reversal_mV: float
+    event_peak_nS: float
+    membrane_area_um2: float
+    event_times_ms: List[float] = field(default_factory=list)
+
+    def __post_init__(self):
+        if not isinstance(self.pathway, str) or not self.pathway.strip():
+            raise ValueError("inhibitory clamp pathway must be a non-empty string")
+        if not isinstance(self.target_region, str) or not self.target_region.strip():
+            raise ValueError(
+                "inhibitory clamp target_region must be a non-empty string"
+            )
+        finite_fields = (
+            "tau_rise_ms", "tau_decay_ms", "reversal_mV",
+            "event_peak_nS", "membrane_area_um2",
+        )
+        for field_name in finite_fields:
+            value = getattr(self, field_name)
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise TypeError(f"inhibitory clamp {field_name} must be numeric")
+            if not math.isfinite(float(value)):
+                raise ValueError(f"inhibitory clamp {field_name} must be finite")
+        if self.tau_rise_ms <= 0.0 or self.tau_decay_ms <= 0.0:
+            raise ValueError("inhibitory clamp time constants must be positive")
+        if self.tau_rise_ms >= self.tau_decay_ms:
+            raise ValueError(
+                "inhibitory clamp tau_rise_ms must be less than tau_decay_ms"
+            )
+        if self.event_peak_nS <= 0.0 or self.membrane_area_um2 <= 0.0:
+            raise ValueError(
+                "inhibitory clamp event_peak_nS and membrane_area_um2 "
+                "must be positive"
+            )
+        previous = -math.inf
+        normalized_times = []
+        for event_time in self.event_times_ms:
+            if isinstance(event_time, bool) or not isinstance(event_time, (int, float)):
+                raise TypeError("inhibitory clamp event times must be numeric")
+            event_time = float(event_time)
+            if not math.isfinite(event_time) or event_time < 0.0:
+                raise ValueError(
+                    "inhibitory clamp event times must be finite and nonnegative"
+                )
+            if event_time < previous:
+                raise ValueError("inhibitory clamp event times must be sorted")
+            normalized_times.append(event_time)
+            previous = event_time
+        self.event_times_ms = normalized_times
+
+
+@dataclass
 class CoreSimConfig:
     """Holds parameters essential for the simulation's logic and reproducibility."""
     total_simulation_time_ms: float = 60000.0
@@ -797,6 +855,13 @@ class CoreSimConfig:
     brain_regions: list = field(default_factory=list)  # List[BrainRegion]
     region_pathways: list = field(default_factory=list)  # List[RegionPathway]
 
+    # Exact, externally scheduled conductance-clamp inputs for bounded physiology
+    # experiments. This is independent of generic network inhibition and supports
+    # only HH cells, whose bridge input is expressed as conductance-density-equivalent
+    # current. Default OFF leaves all runtime arrays unallocated.
+    enable_inhibitory_conductance_clamp: bool = False
+    inhibitory_conductance_clamps: list = field(default_factory=list)
+
     # ─── Graded LGN decorrelation stage (2026-06-06) ───────────────
     # The biology-faithful, on-substrate realization of the validated
     # whitening rule (research/findings/2026-06-06-option1-local-learning-
@@ -934,6 +999,11 @@ class CoreSimConfig:
 
     def __post_init__(self):
         """Validate configuration parameters after initialization."""
+        self.inhibitory_conductance_clamps = [
+            InhibitoryConductanceClampConfig(**item)
+            if isinstance(item, dict) else item
+            for item in self.inhibitory_conductance_clamps
+        ]
         # Initialize per-type STP defaults if not provided
         # Defaults: cortical-style depression for E->E/E->I, weaker for I->E/I->I
         if self.stp_U_per_type is None:
@@ -944,6 +1014,37 @@ class CoreSimConfig:
             self.stp_tau_f_per_type = [20.0, 20.0, 50.0, 50.0]      # ms
 
         errors = []
+
+        if type(self.enable_inhibitory_conductance_clamp) is not bool:
+            errors.append("enable_inhibitory_conductance_clamp must be a boolean")
+        if self.enable_inhibitory_conductance_clamp:
+            if self.neuron_model_type != NeuronModel.HODGKIN_HUXLEY.name:
+                errors.append(
+                    "inhibitory conductance clamp requires HODGKIN_HUXLEY"
+                )
+            if not self.enable_brain_region_framework or not self.brain_regions:
+                errors.append(
+                    "inhibitory conductance clamp requires the brain-region framework"
+                )
+            if not self.inhibitory_conductance_clamps:
+                errors.append(
+                    "enabled inhibitory conductance clamp requires at least one channel"
+                )
+        for index, channel in enumerate(self.inhibitory_conductance_clamps):
+            if not isinstance(channel, InhibitoryConductanceClampConfig):
+                errors.append(
+                    "inhibitory_conductance_clamps entries must be "
+                    f"InhibitoryConductanceClampConfig values, got index {index}"
+                )
+        channel_keys = [
+            (channel.pathway, channel.target_region)
+            for channel in self.inhibitory_conductance_clamps
+            if isinstance(channel, InhibitoryConductanceClampConfig)
+        ]
+        if len(channel_keys) != len(set(channel_keys)):
+            errors.append(
+                "inhibitory conductance clamp pathway/target_region pairs must be unique"
+            )
 
         # Time parameters
         if self.dt_ms <= 0:
