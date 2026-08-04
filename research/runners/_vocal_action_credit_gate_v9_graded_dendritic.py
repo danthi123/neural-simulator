@@ -363,6 +363,10 @@ def _run_trial(
 
     v3._set_trial_current_v3(bridge, selector, config)
     delay = _observe_window(bridge, config.reward_delay_steps)
+    snc_indices = _indices(bridge, v5l.SNC)
+    gabab_state = np.asarray(
+        to_host(bridge.cp_conductance_g_gabab), dtype=np.float64
+    )[snc_indices]
     eligibility = np.asarray(
         to_host(bridge.cp_eligibility_trace), dtype=np.float64
     )
@@ -405,6 +409,8 @@ def _run_trial(
         "delay": delay,
         "outcome": outcome,
         "eligibility_before_outcome": eligibility_means,
+        "gabab_snc_before_outcome_mean": float(gabab_state.mean()),
+        "gabab_snc_before_outcome_peak": float(gabab_state.max()),
         "dopamine_before_outcome": dopamine_before,
         "dopamine_burst_depth": float(
             outcome["dopamine_max"] - dopamine_before
@@ -528,6 +534,302 @@ def run_engagement_smoke(
             "expectation_plateau_lesion",
         )
     }
+    return _finish_engagement_smoke(center, seed, config, conditions)
+
+
+def run_output_condition(
+    mode: str,
+    probe: str,
+    *,
+    seed: int = SMOKE_SEED,
+) -> dict[str, object]:
+    if mode not in {
+        "output_intact", "expectation_output_lesion",
+        "expectation_learning_lesion",
+    }:
+        raise ValueError(mode)
+    if probe not in {"reward", "omission"}:
+        raise ValueError(probe)
+    validate_smoke_seed(seed)
+    config = v9_config(2.0)
+    bridge, handles = build_v9_bridge(seed=seed, config=config)
+    selector = selector_config("v2")
+    bridge.set_plasticity_gate(CREDIT_PLASTICITY_GATE, 0.0)
+    bridge.set_plasticity_gate(v5l.EXPECTATION_PLASTICITY_GATE, 0.0)
+    bridge.set_transmission_gate(v5l.EXPECTATION_OUTPUT_GATE, 0.0)
+    v3._calibrate_snc_tonic_v3(bridge, selector, config)
+    v3._set_trial_current_v3(bridge, selector, config)
+    v5._step(bridge, selector.warmup_steps)
+    v7._reset_measured_trial(bridge, config)
+
+    weights_before = np.asarray(
+        to_host(bridge.cp_connections.data), dtype=np.float32
+    ).copy()
+    expectation_before = v5l._weight_means(
+        bridge, handles["expectation_routes"]
+    )
+    bridge.set_plasticity_gate(
+        CREDIT_PLASTICITY_GATE, config.actor_plasticity_gain
+    )
+    bridge.set_plasticity_gate(v5l.EXPECTATION_PLASTICITY_GATE, 1.0)
+    if mode == "expectation_learning_lesion":
+        bridge.set_plasticity_gate(v5l.EXPECTATION_PLASTICITY_GATE, 0.0)
+    training_rows = [
+        _run_trial(bridge, handles, config, reward_action=0)
+        for _ in range(config.smoke_training_trials)
+    ]
+    expectation_after = v5l._weight_means(
+        bridge, handles["expectation_routes"]
+    )
+    weights_after_training = np.asarray(
+        to_host(bridge.cp_connections.data), dtype=np.float32
+    ).copy()
+
+    bridge.set_plasticity_gate(CREDIT_PLASTICITY_GATE, 0.0)
+    bridge.set_plasticity_gate(v5l.EXPECTATION_PLASTICITY_GATE, 0.0)
+    v7._reset_measured_trial(bridge, config)
+    bridge.set_transmission_gate(
+        v5l.EXPECTATION_OUTPUT_GATE,
+        0.0 if mode == "expectation_output_lesion" else 1.0,
+    )
+    probe_row = _run_trial(
+        bridge,
+        handles,
+        config,
+        reward_action=0 if probe == "reward" else None,
+        scheduled_reward=None if probe == "reward" else False,
+    )
+    weights_after_probe = np.asarray(
+        to_host(bridge.cp_connections.data), dtype=np.float32
+    )
+    changed_training = np.abs(weights_after_training - weights_before) > 1e-7
+    declared = np.zeros(changed_training.shape, dtype=bool)
+    declared[handles["routes"].all_indices()] = True
+    return {
+        "mode": mode,
+        "probe": probe,
+        "seed": int(seed),
+        "science_seed_executed": False,
+        "plateau_center": config.action_tag_center,
+        "expectation_output_gate_during_training": 0.0,
+        "expectation_output_gate_during_probe": float(
+            bridge._transmission_gate_values[v5l.EXPECTATION_OUTPUT_GATE]
+        ),
+        "expectation_weight_before": expectation_before,
+        "expectation_weight_after_training": expectation_after,
+        "clean_training_trials": int(sum(
+            row["winner"] is not None for row in training_rows
+        )),
+        "rewarded_training_trials": int(sum(
+            row["reward_delivered"] for row in training_rows
+        )),
+        "changed_training_synapses": int(changed_training.sum()),
+        "changed_training_outside_declared_routes": int(
+            np.logical_and(changed_training, ~declared).sum()
+        ),
+        "probe_weights_unchanged": bool(
+            np.array_equal(weights_after_training, weights_after_probe)
+        ),
+        "training_rows": training_rows,
+        "probe_row": probe_row,
+    }
+
+
+def _fraction_reduction(treatment: float, control: float) -> float | None:
+    if control <= 0.0:
+        return None
+    return float((control - treatment) / control)
+
+
+def run_output_smoke(*, seed: int = SMOKE_SEED) -> dict[str, object]:
+    validate_smoke_seed(seed)
+    conditions = {
+        f"{mode}_{probe}": run_output_condition(
+            mode, probe, seed=seed
+        )
+        for mode in (
+            "output_intact",
+            "expectation_output_lesion",
+            "expectation_learning_lesion",
+        )
+        for probe in ("reward", "omission")
+    }
+    reward = {
+        mode: conditions[f"{mode}_reward"]["probe_row"]
+        for mode in (
+            "output_intact",
+            "expectation_output_lesion",
+            "expectation_learning_lesion",
+        )
+    }
+    omission = {
+        mode: conditions[f"{mode}_omission"]["probe_row"]
+        for mode in (
+            "output_intact",
+            "expectation_output_lesion",
+            "expectation_learning_lesion",
+        )
+    }
+    modes = tuple(reward)
+    intact_reward = reward["output_intact"]
+    intact_omission = omission["output_intact"]
+    reward_suppression = {
+        control: _fraction_reduction(
+            float(intact_reward["dopamine_burst_depth"]),
+            float(reward[control]["dopamine_burst_depth"]),
+        )
+        for control in (
+            "expectation_output_lesion", "expectation_learning_lesion"
+        )
+    }
+    omission_dip_retained = {
+        control: (
+            float(omission[control]["dopamine_dip_depth"])
+            / max(float(intact_omission["dopamine_dip_depth"]), 1e-12)
+        )
+        for control in (
+            "expectation_output_lesion", "expectation_learning_lesion"
+        )
+    }
+    checks = {
+        "reserved_seed_only": int(seed) == SMOKE_SEED,
+        "formal_execution_remains_sealed": OPEN_PHASES == (),
+        "locked_center_two_only": all(
+            condition["plateau_center"] == 2.0
+            for condition in conditions.values()
+        ),
+        "all_conditions_train_with_output_closed": all(
+            condition["expectation_output_gate_during_training"] == 0.0
+            for condition in conditions.values()
+        ),
+        "all_training_actions_are_clean": all(
+            condition["clean_training_trials"]
+            >= 0.9 * v9_config(2.0).smoke_training_trials
+            for condition in conditions.values()
+        ),
+        "all_probes_execute_trained_action_zero": all(
+            row["winner"] == 0 for row in (*reward.values(), *omission.values())
+        ),
+        "reward_probe_is_delivered_and_omission_is_withheld": bool(
+            all(row["reward_delivered"] for row in reward.values())
+            and not any(row["reward_delivered"] for row in omission.values())
+        ),
+        "intact_expectation_is_action_specific_before_both_outcomes": bool(
+            intact_reward["delay"]["expectation"][0] > 0
+            and intact_reward["delay"]["expectation"][0]
+            >= 3 * max(intact_reward["delay"]["expectation"][1], 1)
+            and intact_omission["delay"]["expectation"][0] > 0
+            and intact_omission["delay"]["expectation"][0]
+            >= 3 * max(intact_omission["delay"]["expectation"][1], 1)
+        ),
+        "learning_lesion_removes_80pct_of_probe_expectation": all(
+            reward["expectation_learning_lesion"]["delay"]["expectation"][0]
+            <= 0.20 * max(intact_reward["delay"]["expectation"][0], 1)
+            and omission["expectation_learning_lesion"]["delay"]["expectation"][0]
+            <= 0.20 * max(intact_omission["delay"]["expectation"][0], 1)
+            for _ in (0,)
+        ),
+        "intact_expectation_creates_snc_gabab_before_reward": bool(
+            intact_reward["gabab_snc_before_outcome_mean"] > 0.0
+            and reward["expectation_output_lesion"]
+            ["gabab_snc_before_outcome_mean"] == 0.0
+        ),
+        "dopamine_reward_burst_is_suppressed_20pct": all(
+            value is not None and value >= 0.20
+            for value in reward_suppression.values()
+        ),
+        "intact_snc_outcome_spikes_do_not_increase": all(
+            intact_reward["outcome"]["snc"] <= reward[control]["outcome"]["snc"]
+            for control in (
+                "expectation_output_lesion", "expectation_learning_lesion"
+            )
+        ),
+        "intact_omission_recruits_lhb_rmtg_and_dopamine_dip": bool(
+            intact_omission["outcome"]["lhb"] > 0
+            and intact_omission["outcome"]["rmtg"] > 0
+            and intact_omission["dopamine_dip_depth"] > 0.0
+        ),
+        "omission_lesions_remove_80pct_lhb_and_rmtg": all(
+            omission[control]["outcome"][region]
+            <= 0.20 * intact_omission["outcome"][region]
+            for control in (
+                "expectation_output_lesion", "expectation_learning_lesion"
+            )
+            for region in ("lhb", "rmtg")
+        ),
+        "omission_lesions_remove_half_dopamine_dip": all(
+            value <= 0.50 for value in omission_dip_retained.values()
+        ),
+        "training_plasticity_is_confined": all(
+            condition["changed_training_outside_declared_routes"] == 0
+            for condition in conditions.values()
+        ),
+        "probe_weights_are_frozen": all(
+            condition["probe_weights_unchanged"]
+            for condition in conditions.values()
+        ),
+    }
+    preconditions = [
+        {
+            "name": "all_six_conditions_completed",
+            "ok": len(conditions) == 6,
+            "observed": sorted(conditions),
+            "expected_count": 6,
+        },
+        {
+            "name": "all_probes_execute_the_trained_action",
+            "ok": checks["all_probes_execute_trained_action_zero"],
+            "observed": {
+                name: condition["probe_row"]["winner"]
+                for name, condition in conditions.items()
+            },
+            "expected": 0,
+        },
+        {
+            "name": "probe_weights_remain_frozen",
+            "ok": checks["probe_weights_are_frozen"],
+            "observed": {
+                name: condition["probe_weights_unchanged"]
+                for name, condition in conditions.items()
+            },
+            "expected": True,
+        },
+    ]
+    prerequisites_hold = all(item["ok"] for item in preconditions)
+    xp, _ = get_backend()
+    return {
+        "artifact_schema_version": 1,
+        "probe": "vocal_action_credit_gate_b_v9_gabab_output_smoke",
+        "seed": int(seed),
+        "science_seed_executed": False,
+        "backend": "cupy" if xp.__name__ == "cupy" else "numpy",
+        "device": (
+            xp.cuda.runtime.getDeviceProperties(0)["name"].decode("utf-8")
+            if xp.__name__ == "cupy"
+            else platform.processor() or platform.machine() or "CPU"
+        ),
+        "host_boundary": dict(HOST_BOUNDARY),
+        "conditions": conditions,
+        "reward_suppression_fraction": reward_suppression,
+        "omission_dip_retained_fraction": omission_dip_retained,
+        "preconditions": preconditions,
+        "checks": checks,
+        "status": (
+            "OUTPUT_PASS"
+            if prerequisites_hold and all(checks.values())
+            else "OUTPUT_FAIL"
+            if prerequisites_hold
+            else "UNDEFINED"
+        ),
+    }
+
+
+def _finish_engagement_smoke(
+    center: float,
+    seed: int,
+    config: VocalCreditConfigV9,
+    conditions: dict[str, dict[str, object]],
+) -> dict[str, object]:
     intact = conditions["intact"]
     learning_lesion = conditions["expectation_learning_lesion"]
     plateau_lesion = conditions["expectation_plateau_lesion"]
@@ -860,14 +1162,21 @@ def main(argv: list[str] | None = None) -> int:
         default=PLATEAU_CENTER_LADDER[0],
     )
     parser.add_argument("--engagement", action="store_true")
+    parser.add_argument("--output-smoke", action="store_true")
     parser.add_argument("--formal-phase")
     parser.add_argument("--out", type=Path)
     args = parser.parse_args(argv)
     if args.formal_phase is not None:
         validate_phase(args.formal_phase)
     validate_smoke_seed(args.seed)
+    if args.engagement and args.output_smoke:
+        parser.error("--engagement and --output-smoke are mutually exclusive")
+    if args.output_smoke and args.plateau_center != 16.0:
+        parser.error("Phase-2 center is locked internally at 2; omit --plateau-center")
     result = (
-        run_engagement_smoke(args.plateau_center, seed=args.seed)
+        run_output_smoke(seed=args.seed)
+        if args.output_smoke
+        else run_engagement_smoke(args.plateau_center, seed=args.seed)
         if args.engagement
         else run_construction_smoke(args.plateau_center, seed=args.seed)
     )
@@ -878,7 +1187,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(payload)
     return 0 if result["status"] in {
-        "CONSTRUCTION_PASS", "ENGAGEMENT_PASS"
+        "CONSTRUCTION_PASS", "ENGAGEMENT_PASS", "OUTPUT_PASS"
     } else 1
 
 

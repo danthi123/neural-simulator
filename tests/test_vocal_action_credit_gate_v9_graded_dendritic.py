@@ -132,6 +132,71 @@ def test_engagement_result_requires_learning_and_plateau(gate, monkeypatch):
     assert result["status"] == "ENGAGEMENT_PASS", result["checks"]
 
 
+def test_output_result_requires_reward_and_omission_causality(gate, monkeypatch):
+    def condition(mode, probe, *, seed):
+        intact = mode == "output_intact"
+        learned = mode != "expectation_learning_lesion"
+        output_open = mode != "expectation_output_lesion"
+        expectation = [30, 5] if learned else [0, 0]
+        row = {
+            "winner": 0,
+            "reward_delivered": probe == "reward",
+            "delay": {"expectation": expectation},
+            "gabab_snc_before_outcome_mean": 1.0 if intact else 0.0,
+            "dopamine_burst_depth": 0.5 if intact else 1.0,
+            "dopamine_dip_depth": 0.5 if intact and probe == "omission" else 0.0,
+            "outcome": {
+                "snc": 5 if intact else 10,
+                "lhb": 10 if intact and probe == "omission" else 0,
+                "rmtg": 10 if intact and probe == "omission" else 0,
+            },
+        }
+        return {
+            "mode": mode,
+            "probe": probe,
+            "plateau_center": 2.0,
+            "expectation_output_gate_during_training": 0.0,
+            "expectation_output_gate_during_probe": 1.0 if output_open else 0.0,
+            "clean_training_trials": 12,
+            "changed_training_outside_declared_routes": 0,
+            "probe_weights_unchanged": True,
+            "probe_row": row,
+        }
+
+    monkeypatch.setattr(gate, "run_output_condition", condition)
+    result = gate.run_output_smoke()
+    assert all(item["ok"] for item in result["preconditions"])
+    assert result["status"] == "OUTPUT_PASS", result["checks"]
+
+
+def test_output_is_undefined_when_fixed_probe_selects_other_action(gate, monkeypatch):
+    def condition(mode, probe, *, seed):
+        return {
+            "mode": mode,
+            "probe": probe,
+            "plateau_center": 2.0,
+            "expectation_output_gate_during_training": 0.0,
+            "expectation_output_gate_during_probe": 0.0,
+            "clean_training_trials": 12,
+            "changed_training_outside_declared_routes": 0,
+            "probe_weights_unchanged": True,
+            "probe_row": {
+                "winner": 1,
+                "reward_delivered": False,
+                "delay": {"expectation": [0, 0]},
+                "gabab_snc_before_outcome_mean": 0.0,
+                "dopamine_burst_depth": 0.0,
+                "dopamine_dip_depth": 0.0,
+                "outcome": {"snc": 0, "lhb": 0, "rmtg": 0},
+            },
+        }
+
+    monkeypatch.setattr(gate, "run_output_condition", condition)
+    result = gate.run_output_smoke()
+    assert not all(item["ok"] for item in result["preconditions"])
+    assert result["status"] == "UNDEFINED"
+
+
 def test_cli_rejects_nonreserved_seed(gate):
     with pytest.raises(ValueError):
         gate.main(["--engagement", "--seed", "1"])
