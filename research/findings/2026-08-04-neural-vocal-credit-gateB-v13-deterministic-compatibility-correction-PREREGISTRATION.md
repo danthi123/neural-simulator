@@ -25,6 +25,16 @@ summation order.
 The correction is to remove that nondeterminism for this audit, not to weaken
 the equality requirement after seeing the result.
 
+## Pre-execution seed-schema clarification
+
+Before any formal correction seed was executed, an adversarial audit found
+that the machine-readable spec mislabeled the six documented compatibility
+seeds as `calibration` and also contained an undocumented held-out seed
+`271859`. The spec now records only one `compatibility` partition containing
+the six seeds locked below. Seed `271859` is removed and must not be executed
+or interpreted as evidence for this correction. This clarification changes no
+documented seed, measurement, acceptance threshold, or scientific partition.
+
 ## Locked implementation correction
 
 When `deterministic_transpose_matvec=True`, the E/I split must:
@@ -37,7 +47,9 @@ When `deterministic_transpose_matvec=True`, the E/I split must:
 
 A two-column CSR matrix-matrix multiply is not accepted as the deterministic
 path. The correction must have focused tests showing repeated exact output for
-both one-dimensional products on the RTX 3090 and unchanged default-off code.
+both one-dimensional products on the RTX 3090 and a frozen unregistered NumPy
+trajectory showing unchanged default-off behavior against the pre-correction
+source.
 
 This is simulator instrumentation. It does not add intrinsic current, change a
 weight, alter a stimulus, or choose an action.
@@ -121,4 +133,3 @@ checkpoint continuation, selector behavior, learning, or performance.
 The first failed compatibility finding remains in the record. Do not edit its
 artifacts or the original preregistration. This correction artifact must be an
 explicit prerequisite of later V13 merge and held-out stages.
-

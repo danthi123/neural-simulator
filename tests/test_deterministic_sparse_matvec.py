@@ -64,8 +64,8 @@ def _build_bridge(*, deterministic):
     return bridge
 
 
-def _run_trajectory():
-    bridge = _build_bridge(deterministic=True)
+def _run_trajectory(*, deterministic=True):
+    bridge = _build_bridge(deterministic=deterministic)
     xp, _ = get_backend()
     raster = []
     for _ in range(180):
@@ -78,6 +78,8 @@ def _run_trajectory():
         "u": _digest(bridge.cp_recovery_variable_u),
         "g_e": _digest(bridge.cp_conductance_g_e),
         "g_i": _digest(bridge.cp_conductance_g_i),
+        "weights": _digest(bridge.cp_connections.data),
+        "external": _digest(bridge.cp_external_input_current),
     }
     bridge.clear_simulation_state_and_gpu_memory()
     return result
@@ -187,3 +189,18 @@ def test_deterministic_trajectory_repeats_exactly():
     first = _run_trajectory()
     second = _run_trajectory()
     assert first == second
+
+
+def test_default_false_matches_frozen_pre_correction_numpy_trajectory():
+    _, backend = get_backend()
+    if backend != "numpy":
+        return
+    assert _run_trajectory(deterministic=False) == {
+        "raster": "068826f850a3749a26e1cbb4afe490532cd9a389a4abd26e9280da10b96a772e",
+        "v": "ad7081253888123fe22c38a062466863ed2fff8122647abb0f780c6628b9399d",
+        "u": "05379f3507dda7c164614f45afacb72b5c9e32990c445cd94be57d98ab68ceef",
+        "g_e": "28b68f3199cc62df4cc6cf8a2bebdecfa2e1a5207e229f42baf80d5e42690caf",
+        "g_i": "1fa855572ea193508cbc894c5e6d225bf71913041d450d5aacf0bb948f458949",
+        "weights": "028544ff47e7bfc354a430fe2d1c6abb97c0f6f08ffa07032a4b5974976bf000",
+        "external": "8b221633a4dae65d9b80d3ccd1440cc14aae901fb5e74005a4cc22fe399db3c8",
+    }

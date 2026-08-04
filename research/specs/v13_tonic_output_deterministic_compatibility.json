@@ -8,8 +8,7 @@
   "supersedes_gate_only": "V13 Stage-0 CuPy exact-state compatibility criterion",
   "baseline_base_revision": "8994b5102",
   "partitions": {
-    "calibration": [271829, 271831, 271837, 271843, 271849, 271853],
-    "held_out": [271859]
+    "compatibility": [271829, 271831, 271837, 271843, 271849, 271853]
   },
   "backends": ["numpy", "cupy"],
   "source_twins": ["baseline_8994_plus_deterministic_patch", "candidate_v13"],
