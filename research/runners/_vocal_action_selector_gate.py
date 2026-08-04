@@ -117,6 +117,7 @@ def build_selector_bridge(
     seed: int,
     config: SelectorConfig = SelectorConfig(),
     *,
+    policy_plasticity_gate: str | None = None,
     extra_regions=(),
     extra_pathways=(),
     core_config_updates=None,
@@ -241,7 +242,8 @@ def build_selector_bridge(
                 density=config.proposal_to_msn_density,
                 weight_mean=config.proposal_to_msn_weight,
                 weight_jitter=0.05,
-                plastic=False,
+                plastic=policy_plasticity_gate is not None,
+                plasticity_gate=policy_plasticity_gate,
             ),
             RegionPathway(
                 from_region=f"proposal_{channel}",
@@ -249,7 +251,8 @@ def build_selector_bridge(
                 density=config.proposal_to_msn_density,
                 weight_mean=config.proposal_to_msn_weight,
                 weight_jitter=0.05,
-                plastic=False,
+                plastic=policy_plasticity_gate is not None,
+                plasticity_gate=policy_plasticity_gate,
             ),
             RegionPathway(
                 from_region=f"str_d1_{channel}",

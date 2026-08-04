@@ -8731,10 +8731,22 @@ class SimulationBridge:
                     )
                     trace_decay = cp.exp(-dt / trace_tau_ms)
                     fired_float = fired_this_step.astype(cp.float32, copy=False)
-                    self.cp_reward_coactivity_trace = (
-                        trace_decay * self.cp_reward_coactivity_trace
-                        + (1.0 - trace_decay) * fired_float
-                    )
+                    trace_input_gain = float(getattr(
+                        cfg, "reward_coactivity_trace_input_gain", 1.0
+                    ))
+                    if trace_input_gain == 1.0:
+                        # Preserve the pre-gate expression exactly for every
+                        # existing caller and default configuration.
+                        self.cp_reward_coactivity_trace = (
+                            trace_decay * self.cp_reward_coactivity_trace
+                            + (1.0 - trace_decay) * fired_float
+                        )
+                    else:
+                        self.cp_reward_coactivity_trace = (
+                            trace_decay * self.cp_reward_coactivity_trace
+                            + cp.float32(trace_input_gain)
+                            * (1.0 - trace_decay) * fired_float
+                        )
 
                     actual_nnz = self.cp_connections.nnz
                     scoped_indices = self.cp_reward_eligibility_synapse_indices

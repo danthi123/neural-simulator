@@ -155,6 +155,37 @@ def test_d1_d2_asymmetry_uses_vocal_msn_cell_types_not_region_spelling():
         assert np.all(signs[np.isin(postsynaptic, d2)] == -1.0)
 
 
+def test_selector_builder_can_make_only_canonical_policy_routes_plastic():
+    gate = "test_selector_policy"
+    bridge = build_selector_bridge(
+        seed=23,
+        config=selector_config("v2"),
+        policy_plasticity_gate=gate,
+        core_config_updates={"enable_reward_modulation": True},
+    )
+    plastic = np.asarray(to_host(bridge.cp_synapse_plastic_mask), dtype=bool)
+    gated = np.asarray(
+        to_host(bridge._plasticity_gate_indices_gpu[gate]), dtype=np.int64
+    )
+    expected = []
+    for channel in CHANNELS:
+        for target in (f"str_d1_{channel}", f"str_d2_{channel}"):
+            pathway = _pathways(bridge, f"proposal_{channel}", target)
+            assert len(pathway) == 1
+            assert pathway[0].plastic is True
+            assert pathway[0].plasticity_gate == gate
+            coo = bridge.cp_connections.tocoo(copy=False)
+            rows = np.asarray(to_host(coo.row), dtype=np.int64)
+            cols = np.asarray(to_host(coo.col), dtype=np.int64)
+            pre = np.asarray(bridge.region_manager.indices(f"proposal_{channel}"))
+            post = np.asarray(bridge.region_manager.indices(target))
+            expected.extend(np.flatnonzero(np.isin(rows, pre) & np.isin(cols, post)))
+
+    expected = np.sort(np.asarray(expected, dtype=np.int64))
+    np.testing.assert_array_equal(np.sort(gated), expected)
+    np.testing.assert_array_equal(np.flatnonzero(plastic), expected)
+
+
 def test_selector_smoke_records_neural_threshold_without_argmax():
     result = run_condition(7, trials=2, config=SelectorConfig(
         warmup_steps=5,

@@ -230,3 +230,43 @@ def test_coactivity_eligibility_requires_reward_for_weight_change():
     assert not np.any(
         np.asarray(to_host(bridge.cp_eligibility_trace[route_x])) > 0.0
     )
+
+
+def test_coactivity_trace_input_gate_preserves_default_and_decay_only_paths():
+    bridge, cfg = build_bridge(seed=47, n=20)
+    bridge.strict_step_errors = True
+    xp, _ = get_backend()
+    cfg.enable_stdp = False
+    cfg.enable_hebbian_learning = False
+    cfg.enable_structural_plasticity = False
+    cfg.enable_ou_process = False
+    cfg.enable_reward_modulation = True
+    cfg.reward_eligibility_from_coactivity = True
+    cfg.reward_coactivity_trace_tau_ms = 5.0
+    bridge.cp_reward_coactivity_trace = xp.linspace(
+        0.1, 0.9, int(cfg.num_neurons), dtype=xp.float32
+    )
+    bridge.cp_external_input_current[:] = xp.float32(1000.0)
+    decay = float(np.exp(-cfg.dt_ms / cfg.reward_coactivity_trace_tau_ms))
+
+    before = np.asarray(to_host(bridge.cp_reward_coactivity_trace)).copy()
+    assert cfg.reward_coactivity_trace_input_gain == 1.0
+    bridge._run_one_simulation_step()
+    fired = np.asarray(to_host(bridge.cp_firing_states), dtype=np.float32)
+    expected_default = decay * before + (1.0 - decay) * fired
+    np.testing.assert_allclose(
+        np.asarray(to_host(bridge.cp_reward_coactivity_trace)),
+        expected_default,
+        rtol=1e-6,
+        atol=1e-7,
+    )
+
+    cfg.reward_coactivity_trace_input_gain = 0.0
+    before = np.asarray(to_host(bridge.cp_reward_coactivity_trace)).copy()
+    bridge._run_one_simulation_step()
+    np.testing.assert_allclose(
+        np.asarray(to_host(bridge.cp_reward_coactivity_trace)),
+        decay * before,
+        rtol=1e-6,
+        atol=1e-7,
+    )

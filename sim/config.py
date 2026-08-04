@@ -701,6 +701,10 @@ class CoreSimConfig:
     # compatible.
     reward_eligibility_from_coactivity: bool = False
     reward_coactivity_trace_tau_ms: float = 20.0
+    # Symmetric experimental input gate for the presynaptic coactivity trace.
+    # 1.0 preserves the historical update exactly; 0.0 allows the trace to
+    # decay without adding current spikes. It never gates neural transmission.
+    reward_coactivity_trace_input_gain: float = 1.0
     reward_coactivity_threshold: float = 0.01
     reward_coactivity_scale: float = 0.05
     # DR-1 curiosity inversion (2026-07-23): the brain's EPISTEMIC-GAP signal — the
@@ -931,6 +935,11 @@ class CoreSimConfig:
             errors.append(f"hebbian_learning_rate cannot be negative, got {self.hebbian_learning_rate}")
         if self.reward_learning_rate < 0:
             errors.append(f"reward_learning_rate cannot be negative, got {self.reward_learning_rate}")
+        if not 0.0 <= self.reward_coactivity_trace_input_gain <= 1.0:
+            errors.append(
+                "reward_coactivity_trace_input_gain must be in [0, 1], got "
+                f"{self.reward_coactivity_trace_input_gain}"
+            )
         if self.stdp_a_plus < 0:
             errors.append(f"stdp_a_plus cannot be negative, got {self.stdp_a_plus}")
         if self.stdp_a_minus < 0:
