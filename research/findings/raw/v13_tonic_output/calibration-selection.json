@@ -1,0 +1,76 @@
+{
+  "probe": "gateB_v13_tonic_output_calibration",
+  "stage": "calibration_cross_backend",
+  "backend": "cross_backend",
+  "device": "numpy_and_cupy",
+  "seed": 1013,
+  "source_shas": {
+    "numpy": "b3d57494b7dd7d99d5e91088489da44d89a85bf3",
+    "cupy": "b3d57494b7dd7d99d5e91088489da44d89a85bf3"
+  },
+  "source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "89a9aa052009e96ecc93836a20e27478a41abb35bdac5c3257fe7e05ddfde581",
+    "sim/bridge.py": "c4b95159bd2ce8edd6a2607863a3bfee43286a6a1be878193cee792c500433a4",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28",
+    "sim/kernels.py": "acdd398c0450363abddc603d84b748c8f5473f34626e936fdeb2bf4ae97ba73d",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936"
+  },
+  "compatibility_correction": {
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+    "candidate_source_sha": "75c655db136aed3ed7066bef75133bb24df3d888",
+    "deterministic_patch_id": "18bd23624a3247cb0f205795081b7a540c15ed89",
+    "outcome": "DETERMINISTIC_COMPATIBILITY_GO"
+  },
+  "artifacts": {
+    "numpy": "research/findings/raw/v13_tonic_output/calibration-numpy.json",
+    "cupy": "research/findings/raw/v13_tonic_output/calibration-cupy.json"
+  },
+  "common_passing_currents_pA": [
+    100
+  ],
+  "selected_current_pA": 100,
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "numpy and cupy artifacts present",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "locked calibration seed used",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "locked ladder used",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "identical sealed source identities",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "earned compatibility correction bound",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "go": true,
+  "outcome": "CALIBRATION_GO",
+  "calibration_go": true
+}
