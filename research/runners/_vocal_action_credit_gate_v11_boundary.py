@@ -21,7 +21,9 @@ from research.runners._vocal_action_credit_gate_v10_policy import (
     POLICY_GATE,
     _all_policy_indices,
     _core_updates,
+    _hash_array,
     _policy_routes,
+    _weights,
     structural_audit as v10_structural_audit,
 )
 from research.runners._vocal_action_selector_gate import (
@@ -544,6 +546,7 @@ def run_construction_point(*, seed: int, recurrence_weight: float):
     bridge, handles = build_v11_bridge(
         seed, recurrence_weight=float(recurrence_weight)
     )
+    initial_weights = _weights(bridge)
     audit = boundary_structural_audit(bridge, handles)
     warmup = _run_recovery(bridge, handles, steps=WARMUP_STEPS)
     catch = _run_epoch(
@@ -558,6 +561,7 @@ def run_construction_point(*, seed: int, recurrence_weight: float):
         bridge, handles, steps=ACTION_STEPS, practice_pA=ACTION_PRACTICE_PA
     )
     recovery_2 = _run_recovery(bridge, handles, steps=RECOVERY_STEPS)
+    final_weights = _weights(bridge)
 
     checks = {
         "structure": audit["pass"],
@@ -573,6 +577,9 @@ def run_construction_point(*, seed: int, recurrence_weight: float):
             row["selector_reset_current_max"] == 0.0
             for row in (warmup, recovery_0, recovery_1, recovery_2)
         ),
+        "weights_are_byte_identical": bool(
+            np.array_equal(initial_weights, final_weights)
+        ),
     }
     return {
         "seed": int(seed),
@@ -580,6 +587,8 @@ def run_construction_point(*, seed: int, recurrence_weight: float):
         "checks": checks,
         "pass": bool(all(checks.values())),
         "audit": audit,
+        "initial_weight_hash": _hash_array(initial_weights),
+        "final_weight_hash": _hash_array(final_weights),
         "warmup": warmup,
         "catch": catch,
         "recovery_after_catch": recovery_0,
@@ -679,7 +688,14 @@ def merge_construction_artifacts(numpy_path: Path, cupy_path: Path):
             backend: item["selected_weight_this_backend"]
             for backend, item in by_backend.items()
         },
-        "rows": rows,
+        "shared_pass_by_weight": [
+            {
+                "recurrence_weight": weight,
+                "numpy_pass": bool(rows["numpy"][weight]["pass"]),
+                "cupy_pass": bool(rows["cupy"][weight]["pass"]),
+            }
+            for weight in RECURRENCE_WEIGHTS
+        ],
     }
 
 

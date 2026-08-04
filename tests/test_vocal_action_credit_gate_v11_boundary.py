@@ -80,3 +80,9 @@ def test_cross_backend_merge_selects_first_shared_passing_weight(tmp_path):
     assert merged["construction_go"] is True
     assert merged["selected_recurrence_weight"] == 1.0
     assert merged["formal_execution_open"] is False
+    assert merged["shared_pass_by_weight"] == [
+        {"recurrence_weight": 0.25, "numpy_pass": False, "cupy_pass": False},
+        {"recurrence_weight": 0.5, "numpy_pass": True, "cupy_pass": False},
+        {"recurrence_weight": 1.0, "numpy_pass": True, "cupy_pass": True},
+        {"recurrence_weight": 2.0, "numpy_pass": True, "cupy_pass": True},
+    ]
