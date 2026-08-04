@@ -46,9 +46,9 @@ Add exactly these symmetric routes:
 | `motor_0/1 -> action_corollary` | `1.0` | `30` | AMPA, `boundary_motor_copy` |
 | `action_corollary -> action_corollary` | `0.35` | ladder below | AMPA, `boundary_recurrence` |
 | `action_corollary -> each *_stop_fs_*` | `1.0` | `30` | AMPA, branch gate |
-| `proposal_stop_fs_X -> proposal_X` | `0.70` | `16` | GABA-A |
-| `commit_stop_fs_X -> commit_X` | `0.70` | `16` | GABA-A |
-| `commit_stop_fs_X -> motor_X` | `0.70` | `16` | GABA-A |
+| `proposal_stop_fs_X -> proposal_X` | `1.0` | `16` | GABA-A |
+| `commit_stop_fs_X -> commit_X` | `1.0` | `16` | GABA-A |
+| `commit_stop_fs_X -> motor_X` | `1.0` | `16` | GABA-A |
 
 All new jitter is `0`. There is one route declaration per ordered region pair.
 The runner must assert that every NMDA source is excitatory, every GABA source
