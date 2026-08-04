@@ -5,7 +5,7 @@
   "device": "not_applicable_non_executed_protocol",
   "source_target_packet": {
     "path": "research/specs/v14_snr_stageB_target_packet.json",
-    "sha256": "0e12120dc23580b72c21e81212eeec5c93a3b3007d758516a2c7102211bd63d3"
+    "sha256": "b7ede93c4a137e79ede651794566dd5bfff75d7047371766ceef653bbd45f3e2"
   },
   "fixtures": [
     {
@@ -117,14 +117,14 @@
       "evidence": {
         "interval_provenance": "not-an-interval",
         "uncertainty": "reported non-significant baseline-rate effect; no preregistered equivalence margin",
-        "source_locator": "Atherton and Bevan 2005; transferred directional result pending exact page/figure packet transcription",
+        "source_locator": "Atherton and Bevan 2005 Methods pp. 8273-8274 and Figure 4/results",
         "preparation": {
-          "species_age": "juvenile rat SNr slice preparation",
-          "slice": "acute midbrain slice containing SNr",
-          "temperature": "source preparation temperature must be verified before this fixture can become a gate",
+          "species_age": "male Sprague-Dawley rat, P14-P25",
+          "slice": "300 um sagittal acute slice containing SNr",
+          "temperature": "37 C recording; perfusion 2-3 ml/min",
           "recording_modes": ["whole-cell current clamp"],
-          "solution": "source solution must be verified before this fixture can become a gate",
-          "blockers": ["source blocker conditions must be verified before this fixture can become a gate"]
+          "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+          "blockers": ["APV 50 uM", "DNQX 20 uM", "gabazine 20 uM"]
         }
       }
     }
@@ -133,6 +133,6 @@
     "target_id": "nalcn-lesion-ratio",
     "interval_provenance": "model-derived",
     "interval": {"low": 0.45, "high": 0.68},
-    "reason": "Lutas et al. 2016 temperature, exact scoring solution, and blocker metadata remain unresolved; no score fixture is valid yet"
+    "reason": "Lutas et al. 2016 permits 2.5 or 4 mM extracellular KCl but does not explicitly map Figure 5 to one concentration; no score fixture is valid until that ambiguity is resolved or explicitly modeled"
   }
 }

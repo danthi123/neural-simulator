@@ -124,22 +124,13 @@ def test_nalcn_model_interval_remains_blocked_by_unresolved_preparation():
     blocked = _packet()["blocked_model_derived_target"]
     assert blocked["interval_provenance"] == "model-derived"
     assert blocked["interval"] == {"low": 0.45, "high": 0.68}
-    assert "remain unresolved" in blocked["reason"]
+    assert "does not explicitly map Figure 5" in blocked["reason"]
     assert all(fixture["target_id"] != blocked["target_id"] for fixture in _fixtures().values())
 
 
 def test_non_significance_is_never_scored_as_equivalence():
     fixture = _fixtures()["hcn-baseline-non-significance-boundary"]
-    with pytest.raises(StageBFixtureError, match="is unresolved"):
-        validate_fixture(fixture)
-
-    completed = copy.deepcopy(fixture)
-    preparation = completed["evidence"]["preparation"]
-    preparation["temperature"] = "verified source temperature"
-    preparation["solution"] = "verified source solution"
-    preparation["blockers"] = ["verified source blocker conditions"]
-    completed["evidence"]["source_locator"] = "verified source page and figure locator"
-    result = score_observation(completed, _observation(completed))
+    result = score_observation(fixture, _observation(fixture))
     assert result == {
         "fixture_id": fixture["id"],
         "status": "not-scorable-as-equivalence",
@@ -147,6 +138,7 @@ def test_non_significance_is_never_scored_as_equivalence():
         "interval_provenance": "not-an-interval",
     }
 
+    completed = copy.deepcopy(fixture)
     completed["interval"] = {"low": -1.0, "high": 1.0}
     with pytest.raises(StageBFixtureError, match="cannot carry equivalence bounds"):
         validate_fixture(completed)

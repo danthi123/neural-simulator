@@ -52,27 +52,73 @@
       "doi": "10.7554/eLife.15271",
       "url": "https://elifesciences.org/articles/15271",
       "preparation": {
-        "species_age": "male and female mouse, 2-3 weeks at slice recording; Nalcn floxed conditional deletion",
+        "species_age": "male and female mouse, P14-P21; C57BL/6 and conditional Nalcn cohorts",
         "slice": "275 um acute coronal midbrain slice containing SNr",
-        "temperature": "unresolved in current packet",
+        "temperature": "34 C recording; 35 min recovery at 37 C followed by 25 min to 3 h at room temperature",
         "recording_modes": ["cell-attached spontaneous firing", "whole-cell voltage clamp"],
-        "solution": "see source Materials and methods; exact scoring solution remains to be transcribed",
-        "blockers": "unresolved in current packet"
+        "solution": "ACSF: 125 NaCl, 2.5 or 4 KCl depending on experiment, 25 NaHCO3, 1.25 NaH2PO4, 1.5 CaCl2, 1 MgCl2, 10 glucose mM; approximately 300 mOsm, pH 7.4; Figure 5 KCl concentration is not explicitly mapped",
+        "blockers": ["kynurenic acid 1 mM", "picrotoxin 100 uM", "whole-cell experiments additionally used Na-lidocaine 1 mM and TEA 1 mM"]
       },
-      "source_locator": "Figure 5C and associated source data; Materials and methods, Animals and Acute brain slice preparation",
+      "source_locator": "Materials and methods, acute slice preparation and electrophysiology; Figure 5C and associated source data",
       "role": "transferred causal NALCN rate ratio"
     },
     {
       "id": "Atherton-and-Bevan-2005",
       "citation": "Atherton JF, Bevan MD. Ionic mechanisms underlying autonomous action potential generation in the somata and dendrites of GABAergic substantia nigra pars reticulata neurons in vitro. J Neurosci. 2005.",
       "doi": "10.1523/JNEUROSCI.1475-05.2005",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6725542/",
+      "preparation": {
+        "species_age": "male Sprague-Dawley rat, P14-P25",
+        "slice": "300 um sagittal acute slice containing SNr",
+        "temperature": "37 C recording; perfusion 2-3 ml/min",
+        "recording_modes": ["gramicidin perforated-patch current clamp", "whole-cell current clamp", "whole-cell voltage clamp"],
+        "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+        "blockers": ["APV 50 uM", "DNQX 20 uM", "gabazine 20 uM"]
+      },
+      "source_locator": "Methods pp. 8273-8274; intrinsic results and Figs. 1-6",
       "role": "transferred sodium, Cav2.2, SK, HCN, AHP, and regularity directions"
     },
     {
       "id": "Ding-Wei-Zhou-2011",
       "citation": "Ding S, Wei W, Zhou FM. Molecular and functional differences in voltage-activated sodium currents between GABA projection neurons and dopamine neurons in the substantia nigra. J Neurophysiol. 2011.",
       "doi": "10.1152/jn.00305.2011",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3234097/",
+      "preparation": {
+        "species_age": "male and female Sprague-Dawley rat, P16-P24",
+        "slice": "300 um coronal mid-rostral substantia nigra slice",
+        "temperature": "30 C for most recordings; 25 C for Figures 12-13",
+        "recording_modes": ["whole-cell current clamp", "whole-cell voltage clamp"],
+        "solution": "extracellular: 125 NaCl, 2.5 KCl, 1.25 NaH2PO4, 25 NaHCO3, 2.5 CaCl2, 1.3 MgCl2, 10 glucose mM; pH 7.4; 95% O2/5% CO2",
+        "blockers": ["sodium-current isolation used TEA 20 mM, 4-AP 5 mM, picrotoxin 100 uM, D-AP5 20 uM, CNQX 10 uM, and TTX 1 uM subtraction"]
+      },
+      "source_locator": "Methods pp. 3020-3022; Table 3 and Figs. 4, 10-11",
       "role": "transferred fast, persistent, and resurgent sodium constraints"
+    }
+  ],
+  "transferred_source_observations": [
+    {
+      "id": "juvenile-rat-atherton-baseline",
+      "source": "Atherton-and-Bevan-2005",
+      "values": {"rate_mean_hz": 10.78, "rate_sd_hz": 6.0, "rate_n": 68, "perforated_cv_mean": 0.060, "perforated_cv_sd": 0.030, "perforated_cv_n": 31, "threshold_mean_mV": -43.32, "threshold_sd_mV": 5.89, "threshold_n": 9, "ahp_minimum_mean_mV": -68.49, "ahp_minimum_sd_mV": 4.93},
+      "uncertainty": "mean plus/minus SD; AHP cohort size is not restated beside the value",
+      "source_locator": "Atherton and Bevan 2005 Results and Fig. 1; AHP result after Fig. 2",
+      "use": "juvenile rat transfer evidence only; not an adult acceptance interval"
+    },
+    {
+      "id": "juvenile-rat-atherton-channel-perturbations",
+      "source": "Atherton-and-Bevan-2005",
+      "values": {"apamin_nM": 100.0, "analyzed_n": 8, "rate_before_hz": 12.59, "rate_after_hz": 16.82, "cv_before": 0.054, "cv_after": 0.162, "additional_blocked_cells": 4, "omega_conotoxin_uM": 1.0, "conotoxin_n": 6, "conotoxin_rate_before_hz": 11.22, "conotoxin_rate_after_hz": 13.97},
+      "uncertainty": "reported group means; full SD values remain in the source record and must be carried into any executable scorer",
+      "source_locator": "Atherton and Bevan 2005 Figs. 5-6 and associated Results",
+      "use": "directional SK and Cav2.2 lesion evidence; no adult rate gate"
+    },
+    {
+      "id": "juvenile-rat-ding-action-potential",
+      "source": "Ding-Wei-Zhou-2011",
+      "values": {"rate_mean_hz": 9.4, "rate_sem_hz": 0.6, "threshold_mean_mV": -40.3, "threshold_sem_mV": 0.5, "base_duration_mean_ms": 1.1, "base_duration_sem_ms": 0.1, "rise_10_90_mean_ms": 0.27, "rise_10_90_sem_ms": 0.02},
+      "uncertainty": "mean plus/minus SEM; SNr sample size is not explicitly attached to the Table 3 column; base duration is threshold-to-return, not half-width",
+      "source_locator": "Ding et al. 2011 Table 3",
+      "use": "juvenile rat waveform support only; not an adult half-width gate"
     }
   ],
   "accepted_targets": [
@@ -167,10 +213,11 @@
     "E_h": {"low": -35.0, "high": -20.0}
   },
   "unresolved_before_executable_spec": [
-    "source-sealed adult AP threshold and width bounds",
-    "source-sealed adult AHP minimum bound",
-    "source-sealed adult CV or CV2 regularity bound",
-    "source-sealed adult capacitance and input-resistance bounds",
+    "preparation-matched adult AP threshold and width bounds remain absent from checked primary-source text",
+    "preparation-matched adult AHP minimum bound remains absent from checked primary-source text",
+    "preparation-matched adult intrinsic CV or CV2 bound remains absent from checked primary-source text",
+    "adult capacitance and input-resistance values exist only in a Cs-internal mixed-identity voltage-clamp cohort and require an explicit include-or-exclude decision",
+    "Lutas Figure 5 extracellular KCl concentration is not explicitly mapped between the permitted 2.5 and 4 mM solutions",
     "operational scorer tolerance for directional lesion effects",
     "HCN baseline equivalence margin",
     "calcium concentration units and influx conversion",

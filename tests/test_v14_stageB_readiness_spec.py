@@ -61,12 +61,29 @@ def test_target_packet_separates_pathways_and_records_source_conditions():
     packet = _targets()
     assert packet["status"] == "readiness-draft-not-executable"
     sources = {source["id"]: source for source in packet["sources"]}
-    for source_id in ("Simmons-et-al-2018", "Simmons-et-al-2020", "Lutas-et-al-2016"):
+    for source_id in (
+        "Simmons-et-al-2018",
+        "Simmons-et-al-2020",
+        "Lutas-et-al-2016",
+        "Atherton-and-Bevan-2005",
+        "Ding-Wei-Zhou-2011",
+    ):
         source = sources[source_id]
         assert isinstance(source["preparation"], dict)
         assert source["source_locator"]
         assert source["preparation"]["species_age"]
         assert source["preparation"]["recording_modes"]
+
+    assert sources["Atherton-and-Bevan-2005"]["preparation"]["temperature"].startswith("37 C")
+    assert sources["Ding-Wei-Zhou-2011"]["preparation"]["temperature"].startswith("30 C")
+    lutas_solution = sources["Lutas-et-al-2016"]["preparation"]["solution"]
+    assert "2.5 or 4 KCl" in lutas_solution
+    assert "not explicitly mapped" in lutas_solution
+
+    transferred = {item["id"]: item for item in packet["transferred_source_observations"]}
+    assert transferred["juvenile-rat-atherton-baseline"]["values"]["perforated_cv_mean"] == 0.060
+    assert transferred["juvenile-rat-ding-action-potential"]["values"]["base_duration_mean_ms"] == 1.1
+    assert "not an adult" in transferred["juvenile-rat-atherton-baseline"]["use"]
 
     targets = {target["id"]: target for target in packet["accepted_targets"]}
     direct = targets["adult-inhibitory-conductance-support"]

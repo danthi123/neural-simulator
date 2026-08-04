@@ -86,16 +86,20 @@ or conversational capability.
 - [Lutas et al. (2016)](https://elifesciences.org/articles/15271), conditional
   NALCN loss.
 
-The target packet keeps direct and pallidal conductances separate. Its NALCN
-ratio tolerance is explicitly model-derived from the reported group means and
-SEM values, and the HCN observation is recorded as non-significance rather
-than equivalence.
+The target packet keeps direct and pallidal conductances separate. It now
+records the exact Atherton, Ding, and Lutas slice conditions and keeps their
+juvenile observations separate from adult calibration support. Its NALCN ratio
+tolerance is explicitly model-derived from the reported group means and SEM
+values, and the HCN observation is recorded as non-significance rather than
+equivalence. Lutas permits two extracellular potassium concentrations without
+mapping Figure 5 to one of them, so that lesion target remains blocked from the
+executable scorer.
 
 ## Next Exact Action
 
-Complete the remaining source-derived target metadata. Candidate-to-job
-binding and mechanism-specific adaptive objectives now have focused
-integration coverage, but must pass the full workflow and be committed before
-that readiness item closes. Then expose or explicitly freeze the missing SNr
-parameter surface, validate the scorer, and run the entire pipeline without a
-reserved seed.
+Finish the missing SNr parameter surface and integrate the conductance-clamp
+and physiology-metric primitives into the source-bound scorer. The checked
+primary text did not yield preparation-matched adult AP, AHP, or intrinsic
+regularity bounds, so each must be explicitly excluded, sourced elsewhere, or
+represented as a transfer-only constraint before the executable specification
+is sealed. Then run the entire pipeline without a reserved seed.
