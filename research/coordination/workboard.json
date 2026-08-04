@@ -88,6 +88,36 @@
       "write_set": [
         "ROADMAP.md"
       ]
+    },
+    "019fcd6c-e98a-7b53-8af2-1c482a0d09ac": {
+      "completed_at": "2026-08-04T15:51:13+00:00",
+      "heartbeat_at": "2026-08-04T15:51:13+00:00",
+      "model": "inherited",
+      "result": "Stopped after bounded source audit produced no incremental packet; existing local fallback review plus direct primary-source verification already answered the gate and records the missing adult density vector as unknown.",
+      "started_at": "2026-08-04T15:38:39+00:00",
+      "status": "completed",
+      "task": "Quantitative primary-source audit for explicit GPi/SNr pacemaker conductances",
+      "write_set": []
+    },
+    "019fcd6c-ee11-7063-be77-c8a5b95d6a39": {
+      "completed_at": "2026-08-04T15:47:47+00:00",
+      "heartbeat_at": "2026-08-04T15:47:47+00:00",
+      "model": "inherited",
+      "result": "Mapped region-scoped conductance engine seams, checkpoint risks, fast-path guards, and focused tests; reduced NaP/Ih-only proposal retained only as scaffold context.",
+      "started_at": "2026-08-04T15:38:39+00:00",
+      "status": "completed",
+      "task": "Read-only simulator audit for explicit-conductance implementation seam",
+      "write_set": []
+    },
+    "019fcd6c-f34c-7681-a635-6d67d51d683b": {
+      "completed_at": "2026-08-04T15:47:47+00:00",
+      "heartbeat_at": "2026-08-04T15:47:47+00:00",
+      "model": "inherited",
+      "result": "Locked successor lineage, forbidden historical seeds, fresh proposed partitions, inherited controls, and performance/process boundaries.",
+      "started_at": "2026-08-04T15:38:40+00:00",
+      "status": "completed",
+      "task": "Read-only V11-V13 evidence, seed, and process-boundary audit",
+      "write_set": []
     }
   },
   "events": [
@@ -270,6 +300,84 @@
       "detail": "completed",
       "kind": "lane-update",
       "subject": "v13-performance-diagnostic"
+    },
+    {
+      "at": "2026-08-04T15:38:39+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd6c-e98a-7b53-8af2-1c482a0d09ac"
+    },
+    {
+      "at": "2026-08-04T15:38:39+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd6c-ee11-7063-be77-c8a5b95d6a39"
+    },
+    {
+      "at": "2026-08-04T15:38:40+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd6c-f34c-7681-a635-6d67d51d683b"
+    },
+    {
+      "at": "2026-08-04T15:38:40+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-conductance-research"
+    },
+    {
+      "at": "2026-08-04T15:38:40+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-substrate-design"
+    },
+    {
+      "at": "2026-08-04T15:38:40+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-process-audit"
+    },
+    {
+      "at": "2026-08-04T15:47:47+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd6c-ee11-7063-be77-c8a5b95d6a39"
+    },
+    {
+      "at": "2026-08-04T15:47:47+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-substrate-design"
+    },
+    {
+      "at": "2026-08-04T15:47:47+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd6c-f34c-7681-a635-6d67d51d683b"
+    },
+    {
+      "at": "2026-08-04T15:47:47+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-process-audit"
+    },
+    {
+      "at": "2026-08-04T15:51:13+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-conductance-research"
+    },
+    {
+      "at": "2026-08-04T15:51:13+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd6c-e98a-7b53-8af2-1c482a0d09ac"
+    },
+    {
+      "at": "2026-08-04T15:51:18+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
     }
   ],
   "lanes": {
@@ -299,6 +407,52 @@
       "write_set": [
         "tools/experiment_controller.py",
         "tests/test_experiment_controller.py"
+      ]
+    },
+    "gateb-conductance-research": {
+      "agent_id": "019fcd6c-e98a-7b53-8af2-1c482a0d09ac",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T15:51:13+00:00",
+      "next_action": "Use reviewed fallback parameter envelopes and causal lesion targets; do not invent a complete adult SNr density vector.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu_network",
+      "status": "completed"
+    },
+    "gateb-process-audit": {
+      "agent_id": "019fcd6c-f34c-7681-a635-6d67d51d683b",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T15:47:47+00:00",
+      "next_action": "Bind fresh successor partitions and stop rules in committed preregistration before any scientific run.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu_network",
+      "status": "completed"
+    },
+    "gateb-substrate-design": {
+      "agent_id": "019fcd6c-ee11-7063-be77-c8a5b95d6a39",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T15:47:47+00:00",
+      "next_action": "Use audit as implementation context; biological replacement still requires NALCN plus NaP plus Cav2.2-SK.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu_network",
+      "status": "completed"
+    },
+    "gateb-v14-stageA": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T15:51:18+00:00",
+      "next_action": "Commit the frozen Stage-A gate, then dispatch disjoint kernel/test and bridge/checkpoint implementation slices without opening physiology seeds.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "local_cpu_plus_gpu",
+      "status": "ready",
+      "write_set": [
+        "sim/kernels.py",
+        "sim/bridge.py",
+        "sim/regions.py",
+        "sim/config.py",
+        "tests/test_snr_conductance_bundle.py"
       ]
     },
     "local-model-offload": {
@@ -368,5 +522,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T15:14:35+00:00"
+  "updated_at": "2026-08-04T15:51:18+00:00"
 }

@@ -1,0 +1,98 @@
+{
+  "schema": "v14-snr-conductance-stageA-implementation-v1",
+  "status": "preregistered-not-executed",
+  "mechanism_id": "gateB-v14-explicit-snr-pacemaker",
+  "lineage": {
+    "prechange_anchor_revision": "08b9e80cb6e1e878aa5e29d92ba74f904102474a",
+    "v13_verdict": "TONIC_OUTPUT_NO_GO",
+    "v13_evidence_weight": "engineering-context-only",
+    "v13_stage1_seed_1031": "sealed-not-readable-or-executable"
+  },
+  "seed_derivation": {
+    "algorithm": "sha256-existing-v13-rule",
+    "namespace": "gateB-v14-explicit-snr-pacemaker-stageA-v1",
+    "historical_v11_v13_seeds_forbidden": true
+  },
+  "partitions": {
+    "compatibility": [193883, 261805, 768106, 929013, 736887, 366590],
+    "calibration": [590297],
+    "replication": [979881, 651019, 950955],
+    "held_out": [312588, 787884, 625835],
+    "future_selector": [790326]
+  },
+  "stageA_authority": {
+    "allowed_partitions": ["compatibility"],
+    "forbidden_partitions": ["calibration", "replication", "held_out", "future_selector"],
+    "scientific_parameter_search": false,
+    "physiology_verdict": false,
+    "promotion_effect": "none"
+  },
+  "implementation": {
+    "neuron_model": "HODGKIN_HUXLEY",
+    "scope": "default-off region-scoped SNr conductance bundle on one shared SimulationBridge",
+    "required_currents": [
+      "NALCN-like voltage-independent cation conductance",
+      "persistent sodium activation and slow inactivation",
+      "Cav2.2-like calcium activation and inactivation",
+      "calcium concentration state and calcium-activated SK",
+      "optional hyperpolarization-activated Ih"
+    ],
+    "required_maximum_conductance_arrays": [
+      "g_nalcn", "g_nap", "g_ca", "g_sk", "g_h"
+    ],
+    "required_dynamic_arrays": [
+      "nap_activation", "nap_inactivation", "ca_activation",
+      "ca_inactivation", "calcium", "sk_activation", "h_activation"
+    ],
+    "state_dtype": "float32",
+    "maximum_active_persistent_bytes_per_total_neuron": 48,
+    "default_off_all_bundle_arrays": "None",
+    "host_per_step_channel_math": false,
+    "device_to_host_sync_per_step": false,
+    "unsupported_fast_paths": "must-refuse-dispatch"
+  },
+  "equation_contract": {
+    "current_sign": "I_channel = g_max * gates * (V - E); inward current is subtracted from total ionic current",
+    "gate_update": "x_new = x_inf + (x_old - x_inf) * exp(-dt/tau)",
+    "gate_bounds": [0.0, 1.0],
+    "initialization": "all gates initialize at steady state for each neuron's initial voltage; calcium initializes at its nonnegative baseline",
+    "calcium_update": "nonnegative influx from inward calcium current plus first-order decay; exact scale and decay are configuration values recorded in every run",
+    "sk_activation": "first-order approach to a saturating function of intracellular calcium",
+    "stageA_parameter_meaning": "numerical equation tests only; values are not selected or reported as adult SNr biology"
+  },
+  "required_tests": [
+    "current direction and voltage dependence for every current",
+    "bounded finite gates and calcium at dt 0.01, 0.05, and 0.1 ms",
+    "calcium accumulation, decay, and SK recruitment",
+    "steady-state initialization without a zero-gate startup transient",
+    "default-off no-allocation and exact six-seed compatibility",
+    "region isolation on a multi-region HH bridge",
+    "independent NALCN, NaP, calcium, SK, and Ih lesions",
+    "malformed enabled checkpoint fails closed",
+    "legacy default-off checkpoint loads with bundle state None",
+    "exact same-backend uninterrupted-versus-restored continuation",
+    "NumPy/CuPy behavioral parity",
+    "normal and supported fast-path state parity"
+  ],
+  "performance": {
+    "device": "NVIDIA GeForce RTX 3090",
+    "warmup_steps": 500,
+    "measured_steps": 20000,
+    "repetitions": 3,
+    "default_off_ratio_max": 1.02,
+    "active_ratio_max": 1.25,
+    "comparison": "contemporaneous randomized candidate/control processes",
+    "execute_after": "complete StageA correctness and compatibility pass"
+  },
+  "stop_rules": [
+    "any default-off compatibility mismatch",
+    "any bundle state allocated when no region enables it",
+    "any active path silently omits a configured current",
+    "any nonfinite or out-of-range gate or calcium state",
+    "any missing or malformed enabled checkpoint state",
+    "any per-step host channel calculation or device synchronization",
+    "any access to calibration, replication, held-out, or future-selector seeds",
+    "any parameter sweep or physiology claim from StageA"
+  ],
+  "next_transition": "After a committed StageA GO, file a separate preparation-matched StageB calibration specification and seal its source before opening seed 590297."
+}
