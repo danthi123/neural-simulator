@@ -51,6 +51,8 @@ def test_source_manifest_rejects_dirty_closure(
 
 
 def test_artifact_destinations_are_explicit_and_unique() -> None:
+    assert freeze.CORRECTION_ID == "v13-stage0-process-correction-v6"
+    assert freeze.ARTIFACT_ROOT.endswith("stage0_process_correction_v6")
     paths = freeze._artifact_paths()
     assert set(paths) == {
         "calibration_numpy", "calibration_cupy", "calibration_selection",

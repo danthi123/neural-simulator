@@ -30,8 +30,8 @@ except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
 
 ROOT = Path(__file__).resolve().parents[1]
 LEGACY_BASE_REVISION = "8994b5102"
-CORRECTION_ID = "v13-stage0-process-correction-v5"
-ARTIFACT_ROOT = "research/findings/raw/v13_tonic_output_stage0_process_correction_v5"
+CORRECTION_ID = "v13-stage0-process-correction-v6"
+ARTIFACT_ROOT = "research/findings/raw/v13_tonic_output_stage0_process_correction_v6"
 
 
 class FreezeError(RuntimeError):
