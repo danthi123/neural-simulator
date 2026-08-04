@@ -914,7 +914,7 @@ def transfer_legacy_artifact(
         raise PackageError("transfer requires exactly one artifact and execution receipt")
     artifact_path = runtime[LEGACY_OUTPUT_NAME]
     artifact_bytes = artifact_path.read_bytes()
-    _validate_legacy_artifact(artifact_bytes, "legacy transfer artifact")
+    artifact = _validate_legacy_artifact(artifact_bytes, "legacy transfer artifact")
     receipt_bytes = runtime[EXECUTION_RECEIPT_NAME].read_bytes()
     receipt = _validate_execution_receipt(
         receipt_bytes, package=package, verified=verified, artifact_bytes=artifact_bytes,
@@ -940,6 +940,8 @@ def transfer_legacy_artifact(
     value: dict[str, Any] = {
         "schema": TRANSFER_SCHEMA,
         "status": "transferred",
+        "backend": artifact["backend"],
+        "device": artifact["device"],
         "package": {
             "lock_path": LOCK_NAME,
             "lock_file_sha256": _sha256(lock_bytes),

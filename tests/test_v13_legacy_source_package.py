@@ -356,6 +356,8 @@ def test_transfer_is_create_only_and_binds_package_manifest_and_artifact(
         (built / package.MANIFEST_NAME).read_bytes()
     )
     assert manifest["artifact"]["sha256"] == _sha256(artifact_bytes)
+    assert manifest["backend"] == "cupy"
+    assert manifest["device"] == "NVIDIA GeForce RTX 3090"
     assert manifest["execution_receipt"]["sha256"] == _sha256(receipt_bytes)
     assert (transfer / package.LEGACY_OUTPUT_NAME).read_bytes() == artifact_bytes
     assert (transfer / package.EXECUTION_RECEIPT_NAME).read_bytes() == receipt_bytes

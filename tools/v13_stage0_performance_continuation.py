@@ -343,12 +343,19 @@ def preserve_failed_candidate(*, root: Path, candidate_root: Path) -> dict[str, 
         }
         value = {
             "schema": "v13-stage0-candidate-performance-failed-receipt-v1",
-            "status": "measured_no_go_receipt_failed",
+            "status": "undefined_receipt_failed",
+            "backend": artifact["backend"],
+            "device": artifact["device"],
             "source_revision": CANDIDATE_REVISION,
             "source_manifest_sha256": CANDIDATE_MANIFEST_SHA256,
             "run_id": run_record["run_id"],
             "receipt_failure": "artifact path outside provenance scanner raw root",
-            "scientific_disposition": "PERFORMANCE_NO_GO",
+            "measured_performance_outcome": "PERFORMANCE_NO_GO",
+            "preconditions": {
+                "measurement_complete": True,
+                "source_identity_complete": True,
+                "execution_receipt_complete": False,
+            },
             "rerun_authorized": False,
             "files": records_out,
         }
@@ -447,8 +454,8 @@ def finalize(*, root: Path = ROOT) -> dict[str, Any]:
         receipt_complete = False
         if (
             performance_go
-            or transfer.get("status") != "measured_no_go_receipt_failed"
-            or transfer.get("scientific_disposition") != "PERFORMANCE_NO_GO"
+            or transfer.get("status") != "undefined_receipt_failed"
+            or transfer.get("measured_performance_outcome") != "PERFORMANCE_NO_GO"
             or transfer.get("rerun_authorized") is not False
         ):
             raise ContinuationError("failed-receipt transfer cannot support this verdict")
