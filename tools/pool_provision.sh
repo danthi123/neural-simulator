@@ -3,19 +3,31 @@
 # The nodes have python3 + internet but NO pip/numpy/repo (reimaged). This is IDEMPOTENT — safe to re-run.
 #   1. rsync the code (sim/ + research/ + experiment/ + tests support) over ssh (repos are private → no clone).
 #   2. create a venv (python3 -m venv) and pip-install numpy + scipy (scipy REQUIRED for SIM_BACKEND=numpy sparse).
-# Usage:  bash tools/pool_provision.sh [pool40 pool41 pool42]
+# Usage:  bash tools/pool_provision.sh [--revision <commit>] [pool40 pool41 pool42]
 set -uo pipefail
 cd "$(dirname "$0")/.."
+REVISION_REF=HEAD
+if [[ "${1:-}" == "--revision" ]]; then
+  if [[ -z "${2:-}" ]]; then
+    echo "usage: bash tools/pool_provision.sh [--revision <commit>] [pool40 pool41 pool42]" >&2
+    exit 2
+  fi
+  REVISION_REF=$2
+  shift 2
+fi
 NODES=("${@:-pool40 pool41 pool42}"); NODES=(${NODES[@]})
 REMOTE_ROOT="derisk-pool/sim"   # matches the prior gaming-window manifest path
-SOURCE_SHA=$(git rev-parse HEAD 2>/dev/null || printf unknown)
+SOURCE_SHA=$(git rev-parse --verify "${REVISION_REF}^{commit}" 2>/dev/null) || {
+  echo "invalid source revision: $REVISION_REF" >&2
+  exit 2
+}
 STAGE=$(mktemp -d)
 MANIFEST=$(mktemp)
 REVISION=$(mktemp)
 FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
-git archive HEAD sim research/__init__.py research/runners research/specs experiment tools tests \
-  docs ROADMAP.md requirements.txt requirements-dev.txt \
+git archive "$SOURCE_SHA" sim research/__init__.py research/runners research/specs experiment tools tests \
+  docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md requirements.txt requirements-dev.txt \
   | tar -x -C "$STAGE"
 # Execute the generator extracted from HEAD. A dirty worktree copy must not mint
 # the trust record for a different archived source revision.
@@ -30,7 +42,7 @@ ANCESTRY_SHA=$(sha256sum "$STAGE/.source_ancestry.json" | awk '{print $1}')
     \( -name '*.py' -o -name '*.sh' \) -print0; \
   find research/specs -type f -name '*.json' -print0; \
   find docs -type f -name '*.md' -print0; \
-  printf 'research/__init__.py\0ROADMAP.md\0requirements-dev.txt\0.source_ancestry.json\0'; \
+  printf 'research/__init__.py\0CLAUDE.md\0GAP_CLOSURE_MISSION.md\0README.md\0ROADMAP.md\0requirements-dev.txt\0.source_ancestry.json\0'; \
 } | sort -z | xargs -0 sha256sum) > "$MANIFEST"
 MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
 EXCLUDED_DIRTY=$(git status --porcelain -- sim research/runners experiment tools 2>/dev/null | wc -l)
@@ -59,7 +71,8 @@ for h in "${NODES[@]}"; do
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
     "$STAGE/tests/" "$h:~/$REMOTE_ROOT/tests/"
   rsync -az --delete "$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"
-  rsync -az "$STAGE/ROADMAP.md" "$h:~/$REMOTE_ROOT/ROADMAP.md"
+  rsync -az "$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md" \
+    "$STAGE/ROADMAP.md" "$h:~/$REMOTE_ROOT/"
   rsync -az "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
   rsync -az "$STAGE/requirements-dev.txt" "$h:~/$REMOTE_ROOT/requirements-dev.txt" 2>/dev/null
   rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"

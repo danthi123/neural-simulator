@@ -163,7 +163,7 @@ def test_git_lookup_does_not_escape_archive_root(tmp_path):
 def test_provisioning_executes_the_generator_extracted_from_head():
     root = Path(__file__).resolve().parents[1]
     script = (root / "tools/pool_provision.sh").read_text(encoding="utf-8")
-    archive = script.index("git archive HEAD")
+    archive = script.index('git archive "$SOURCE_SHA"')
     staged_generator = script.index(
         'python3 "$STAGE/tools/pool/provisioning/ancestry_attestation.py" create'
     )
@@ -171,9 +171,26 @@ def test_provisioning_executes_the_generator_extracted_from_head():
     assert archive < staged_generator
     assert "python3 tools/pool/provisioning/ancestry_attestation.py create" not in script
     assert '--repo . --revision "$SOURCE_SHA"' in script
-    assert "docs ROADMAP.md requirements.txt requirements-dev.txt" in script
+    assert (
+        "docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md "
+        "requirements.txt requirements-dev.txt"
+    ) in script
     assert "find docs -type f -name '*.md' -print0" in script
-    assert "ROADMAP.md\\0requirements-dev.txt\\0.source_ancestry.json\\0" in script
+    assert (
+        "CLAUDE.md\\0GAP_CLOSURE_MISSION.md\\0README.md\\0ROADMAP.md\\0"
+        "requirements-dev.txt\\0.source_ancestry.json\\0"
+    ) in script
     assert '"$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"' in script
+    assert '"$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md"' in script
     assert "numpy scipy h5py pyyaml pytest" in script
     assert 'source_ancestry_sha256=%s' in script
+
+
+def test_provisioning_can_archive_an_explicit_revision():
+    root = Path(__file__).resolve().parents[1]
+    script = (root / "tools/pool_provision.sh").read_text(encoding="utf-8")
+
+    assert 'REVISION_REF=HEAD' in script
+    assert 'REVISION_REF=$2' in script
+    assert 'git rev-parse --verify "${REVISION_REF}^{commit}"' in script
+    assert 'git archive "$SOURCE_SHA"' in script
