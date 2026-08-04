@@ -66,7 +66,8 @@ except ImportError:
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
                         DefaultIzhikevichParamsManager, NEURON_TYPE_MAPPER)
 from sim.config import (CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
-                         _create_config_from_dict, _get_full_config_dict)
+                         _create_config_from_dict, core_sim_config_from_dict,
+                         _get_full_config_dict)
 from sim.profiles import (NEURAL_STRUCTURE_PROFILES, CONNECTIVITY_MOTIFS,
                           enforce_profile_neuron_type_compatibility)
 from sim.connectivity import (generate_spatial_connections_gpu,
@@ -3207,23 +3208,10 @@ class SimulationBridge:
 
         self.clear_simulation_state_and_gpu_memory()
 
-        # HDF5/JSON config snapshots store nested region dataclasses as plain
-        # dictionaries. Rehydrate them before region initialization.
-        core_config_dict = dict(full_config_dict.get("core_config") or {})
-        if core_config_dict.get("brain_regions"):
-            from sim.regions import BrainRegion, RegionPathway
-
-            core_config_dict["brain_regions"] = [
-                BrainRegion(**region) if isinstance(region, dict) else region
-                for region in core_config_dict["brain_regions"]
-            ]
-            core_config_dict["region_pathways"] = [
-                RegionPathway(**pathway) if isinstance(pathway, dict) else pathway
-                for pathway in core_config_dict.get("region_pathways", [])
-            ]
-
         # Create new config objects from the provided dictionaries
-        self.core_config = _create_config_from_dict(CoreSimConfig, core_config_dict)
+        self.core_config = core_sim_config_from_dict(
+            full_config_dict.get("core_config")
+        )
         self.viz_config = _create_config_from_dict(VisualizationConfig, full_config_dict.get("viz_config"))
         # We don't load runtime_state from profiles, so we re-initialize it.
         # Checkpoints might restore it, but that's handled in load_checkpoint.
@@ -10507,11 +10495,9 @@ class SimulationBridge:
                     if key_cfg not in loaded_sim_config_dict: 
                         loaded_sim_config_dict[key_cfg] = getattr(temp_cfg_for_validation, key_cfg) 
 
-                config_fields = CoreSimConfig.__dataclass_fields__
-                self.core_config = CoreSimConfig(**{
-                    key: value for key, value in loaded_sim_config_dict.items()
-                    if key in config_fields
-                })
+                self.core_config = core_sim_config_from_dict(
+                    loaded_sim_config_dict
+                )
                 n = self.core_config.num_neurons
                 state_group = h5f 
 

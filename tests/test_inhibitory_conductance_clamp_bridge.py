@@ -207,6 +207,14 @@ def test_checkpoint_continuation_preserves_clamp_and_hh_state(tmp_path):
 
     restored = _build()
     assert restored.load_checkpoint(str(checkpoint)) is True
+    assert all(
+        isinstance(region, BrainRegion)
+        for region in restored.core_config.brain_regions
+    )
+    assert all(
+        isinstance(channel, InhibitoryConductanceClampConfig)
+        for channel in restored.core_config.inhibitory_conductance_clamps
+    )
     assert restored.inhibitory_clamp_pathways == bridge.inhibitory_clamp_pathways
     _advance(restored, 10)
     continued = _capture(restored)

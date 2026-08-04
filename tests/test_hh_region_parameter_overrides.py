@@ -211,6 +211,10 @@ def test_checkpoint_round_trip_preserves_overridden_arrays(tmp_path):
 
     restored = _build([_region("snr", 4)])
     assert restored.load_checkpoint(str(checkpoint)) is True
+    assert all(
+        isinstance(region, BrainRegion)
+        for region in restored.core_config.brain_regions
+    )
     for attr_name, expected_array in expected.items():
         np.testing.assert_array_equal(
             to_host(getattr(restored, attr_name)), expected_array

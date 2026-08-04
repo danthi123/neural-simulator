@@ -2,6 +2,7 @@
 
 import math
 from dataclasses import dataclass, field, fields, asdict
+from collections.abc import Mapping
 from typing import List, Dict
 
 from sim.enums import (NeuronModel, NeuronType, DefaultHodgkinHuxleyParams,
@@ -1571,6 +1572,43 @@ def _create_config_from_dict(config_cls, data_dict):
     filtered_data = {k: v for k, v in data_dict.items() if k in class_fields}
 
     return config_cls(**filtered_data)
+
+
+def core_sim_config_from_dict(data_dict):
+    """Rehydrate every typed declaration nested in ``CoreSimConfig``."""
+
+    if not data_dict:
+        return CoreSimConfig()
+    if not isinstance(data_dict, Mapping):
+        raise TypeError("CoreSimConfig data must be a mapping")
+
+    from sim.regions import BrainRegion, RegionPathway
+
+    data = dict(data_dict)
+
+    def _typed_list(field_name, item_type):
+        values = data.get(field_name, [])
+        if not isinstance(values, list):
+            raise TypeError(f"CoreSimConfig.{field_name} must be a list")
+        result = []
+        for index, value in enumerate(values):
+            if isinstance(value, item_type):
+                result.append(value)
+            elif isinstance(value, Mapping):
+                result.append(item_type(**dict(value)))
+            else:
+                raise TypeError(
+                    f"CoreSimConfig.{field_name}[{index}] must be "
+                    f"{item_type.__name__} or a mapping"
+                )
+        data[field_name] = result
+
+    _typed_list("brain_regions", BrainRegion)
+    _typed_list("region_pathways", RegionPathway)
+    _typed_list(
+        "inhibitory_conductance_clamps", InhibitoryConductanceClampConfig
+    )
+    return _create_config_from_dict(CoreSimConfig, data)
 
 
 def _get_full_config_dict(core_cfg, viz_cfg, runtime_state, gpu_cfg=None):
