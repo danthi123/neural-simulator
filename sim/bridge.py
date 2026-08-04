@@ -81,6 +81,7 @@ from sim.kernels import (
     fused_btsp_dog_update,
     fused_btsp_milstein_update,fused_izhikevich_legacy_dynamics_update,
                          fused_izhikevich2007_dynamics_update,
+                         izhikevich2007_dynamics_update,
                          fused_hodgkin_huxley_dynamics_update,
                          fused_hh_m_current_update,
                          fused_hh_CaT_current_update,
@@ -1512,6 +1513,18 @@ class SimulationBridge:
                     and cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name):
                 raise ValueError(
                     "backend_neutral_izh_initialization supports only IZHIKEVICH"
+                )
+            backend_neutral_izh_arithmetic = getattr(
+                cfg, "backend_neutral_izh_arithmetic", False
+            )
+            if type(backend_neutral_izh_arithmetic) is not bool:
+                raise ValueError(
+                    "backend_neutral_izh_arithmetic must be a boolean"
+                )
+            if (backend_neutral_izh_arithmetic
+                    and cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name):
+                raise ValueError(
+                    "backend_neutral_izh_arithmetic supports only IZHIKEVICH"
                 )
             initialization_rng = (
                 _backend_neutral_random_state(
@@ -6706,6 +6719,8 @@ class SimulationBridge:
             return False
         if cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name:
             return False
+        if getattr(cfg, "backend_neutral_izh_arithmetic", False):
+            return False
         if not getattr(cfg, "fast_spike_reset", False):
             return False
         if not getattr(cfg, "read_only_fast_step", False):
@@ -7979,11 +7994,14 @@ class SimulationBridge:
             fired_this_step = cp.zeros(n_neurons, dtype=bool)
 
             if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
-                v_new, u_new = fused_izhikevich2007_dynamics_update(
+                v_new, u_new = izhikevich2007_dynamics_update(
                     self.cp_membrane_potential_v, self.cp_recovery_variable_u,
                     self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
                     self.cp_izh_a, self.cp_izh_b,
-                    total_input_current_pA, dt
+                    total_input_current_pA, dt,
+                    backend_neutral_arithmetic=getattr(
+                        cfg, "backend_neutral_izh_arithmetic", False
+                    ),
                 )
                 not_in_refractory = (self.cp_refractory_timers <= 0)
                 # Spike-threshold selection (2026-06-08: 3-branch for per-region

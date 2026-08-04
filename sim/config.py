@@ -114,6 +114,10 @@ class CoreSimConfig:
     # from one host-side NumPy contract before transferring it to the backend.
     # Default-off preserves the established backend-native initialization path.
     backend_neutral_izh_initialization: bool = False
+    # Diagnostic correction: use explicit float32 rounding points for the
+    # Izhikevich-2007 Euler update on both NumPy and CuPy. Default-off preserves
+    # the established fused arithmetic path exactly.
+    backend_neutral_izh_arithmetic: bool = False
 
     # B4: Enhanced Channel Noise (White et al. 2000, Destexhe & Rudolph-Lilith 2012)
     # Conductance noise (multiplicative, applied to HH channels)

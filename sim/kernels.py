@@ -12,11 +12,20 @@ on both because the NumPy API matches.
 See sim/backend.py + docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md.
 """
 
+import math
+
 # Route through the backend abstraction so this module works on both
 # CuPy and NumPy. `cp` is the active backend module; @fuse() is the
 # backend-aware kernel-fusion decorator.
 from sim.backend import get_backend, fuse
 cp, _backend_name = get_backend()
+_BACKEND_ARRAY_TYPE = cp.ndarray
+_FLOAT32_DTYPE = cp.dtype(cp.float32)
+_REAL_SCALAR_TYPES = (int, float, cp.integer, cp.floating)
+_STRICT_IZH_ARRAY_NAMES = (
+    "v", "u", "C_param", "k_param", "vr_param", "vt_param", "a_param",
+    "b_param", "total_synaptic_current",
+)
 
 # --- CuPy Fused Kernels ---
 @fuse()
@@ -43,6 +52,121 @@ def fused_izhikevich2007_dynamics_update(v, u, C_param, k_param, vr_param, vt_pa
     v_new = v + dv_dt * dt
     u_new = u + du_dt * dt
     return v_new, u_new
+
+
+if _backend_name == "cupy":
+    _strict_izhikevich2007_gpu_kernel = cp.ElementwiseKernel(
+        (
+            "float32 v, float32 u, float32 C, float32 k, float32 vr, "
+            "float32 vt, float32 a, float32 b, float32 total_current, "
+            "float32 dt"
+        ),
+        "float32 v_new, float32 u_new",
+        r"""
+        const float C_safe = C == 0.0f ? 1.0f : C;
+        const float v_minus_vr = __fsub_rn(v, vr);
+        const float v_minus_vt = __fsub_rn(v, vt);
+
+        const float k_times_vr = __fmul_rn(k, v_minus_vr);
+        const float quadratic = __fmul_rn(k_times_vr, v_minus_vt);
+        const float dv_minus_u = __fsub_rn(quadratic, u);
+        const float dv_numerator = __fadd_rn(dv_minus_u, total_current);
+        const float dv = __fdiv_rn(dv_numerator, C_safe);
+        const float dv_dt = __fmul_rn(dv, dt);
+        v_new = __fadd_rn(v, dv_dt);
+
+        const float b_times_vr = __fmul_rn(b, v_minus_vr);
+        const float du_inner = __fsub_rn(b_times_vr, u);
+        const float du = __fmul_rn(a, du_inner);
+        const float du_dt = __fmul_rn(du, dt);
+        u_new = __fadd_rn(u, du_dt);
+        """,
+        "strict_izhikevich2007_float32_update",
+    )
+else:
+    _strict_izhikevich2007_gpu_kernel = None
+
+
+def _require_float32_c_arrays(arrays):
+    expected_shape = None
+    for name, value in zip(_STRICT_IZH_ARRAY_NAMES, arrays):
+        if not isinstance(value, _BACKEND_ARRAY_TYPE):
+            raise TypeError(f"{name} must be an {_backend_name} array")
+        if value.dtype != _FLOAT32_DTYPE:
+            raise TypeError(f"{name} must have dtype float32, got {value.dtype}")
+        if not value.flags.c_contiguous:
+            raise ValueError(f"{name} must be C-contiguous")
+        if expected_shape is None:
+            expected_shape = value.shape
+        elif value.shape != expected_shape:
+            raise ValueError(
+                f"{name} must have shape {expected_shape}, got {value.shape}"
+            )
+
+
+def strict_izhikevich2007_dynamics_update(
+    v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+    total_synaptic_current, dt,
+):
+    """Izhikevich-2007 Euler update with explicit float32 rounding points.
+
+    CuPy executes one device-resident elementwise kernel. NumPy materializes
+    the same primitive operations in the same order. The caller must supply
+    C-contiguous float32 arrays so this opt-in correction cannot silently
+    promote or copy state.
+    """
+    arrays = (
+        v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+        total_synaptic_current,
+    )
+    _require_float32_c_arrays(arrays)
+    if not isinstance(dt, _REAL_SCALAR_TYPES):
+        raise TypeError("dt must be a real scalar")
+    dt_f32 = cp.float32(dt)
+    if not math.isfinite(float(dt_f32)):
+        raise ValueError("dt must be finite")
+
+    if _backend_name == "cupy":
+        return _strict_izhikevich2007_gpu_kernel(
+            v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+            total_synaptic_current, dt_f32,
+        )
+
+    C_safe = cp.where(C_param == cp.float32(0.0), cp.float32(1.0), C_param)
+    v_minus_vr = cp.subtract(v, vr_param)
+    v_minus_vt = cp.subtract(v, vt_param)
+    k_times_vr = cp.multiply(k_param, v_minus_vr)
+    quadratic = cp.multiply(k_times_vr, v_minus_vt)
+    dv_minus_u = cp.subtract(quadratic, u)
+    dv_numerator = cp.add(dv_minus_u, total_synaptic_current)
+    dv = cp.divide(dv_numerator, C_safe)
+    dv_dt = cp.multiply(dv, dt_f32)
+    v_new = cp.add(v, dv_dt)
+
+    b_times_vr = cp.multiply(b_param, v_minus_vr)
+    du_inner = cp.subtract(b_times_vr, u)
+    du = cp.multiply(a_param, du_inner)
+    du_dt = cp.multiply(du, dt_f32)
+    u_new = cp.add(u, du_dt)
+    return v_new, u_new
+
+
+def izhikevich2007_dynamics_update(
+    v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+    total_synaptic_current, dt, *, backend_neutral_arithmetic=False,
+):
+    """Dispatch the opt-in correction without changing the legacy path."""
+    if type(backend_neutral_arithmetic) is not bool:
+        raise TypeError("backend_neutral_arithmetic must be a boolean")
+    if backend_neutral_arithmetic:
+        return strict_izhikevich2007_dynamics_update(
+            v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+            total_synaptic_current, dt,
+        )
+    return fused_izhikevich2007_dynamics_update(
+        v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+        total_synaptic_current, dt,
+    )
 
 @fuse()
 def fused_hodgkin_huxley_dynamics_update(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, phi_m, phi_h, phi_n):
