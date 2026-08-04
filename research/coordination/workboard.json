@@ -364,39 +364,29 @@
       "status": "completed",
       "task": "audit local-only fallback safety and correctness",
       "write_set": []
+    },
+    "019fce33-2e22-7e81-a666-017fea7d0d85": {
+      "completed_at": "2026-08-04T19:23:05+00:00",
+      "heartbeat_at": "2026-08-04T19:23:05+00:00",
+      "next_action": "Implement the thin diagnostic only if bounded timing still shows material overhead after the CuPy root fix.",
+      "result": "Designed bounded Nsight Systems diagnostic: fresh processes, 4 warmup plus 8 measured steps, CUDA profiler capture, lease checks, and durable receipt.",
+      "started_at": "2026-08-04T19:15:00+00:00",
+      "status": "completed",
+      "task": "Design bounded V14 profiling screen and acceptance criteria",
+      "write_set": []
+    },
+    "019fce33-338b-7172-87de-f73156acbc81": {
+      "completed_at": "2026-08-04T19:23:05+00:00",
+      "heartbeat_at": "2026-08-04T19:23:05+00:00",
+      "next_action": "Profile actual launches after cold-cache repair; optimize only measured overhead.",
+      "result": "Audited candidate-active steady path; identified repeated cold fusion compilation, scalar memo-key conversion, synchronization, and a guarded full active HH+SNr fusion boundary.",
+      "started_at": "2026-08-04T19:15:00+00:00",
+      "status": "completed",
+      "task": "Audit V14 active-path launch and synchronization call graph",
+      "write_set": []
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T15:38:40+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-process-audit"
-    },
-    {
-      "at": "2026-08-04T15:47:47+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd6c-ee11-7063-be77-c8a5b95d6a39"
-    },
-    {
-      "at": "2026-08-04T15:47:47+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-substrate-design"
-    },
-    {
-      "at": "2026-08-04T15:47:47+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd6c-f34c-7681-a635-6d67d51d683b"
-    },
-    {
-      "at": "2026-08-04T15:47:47+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-process-audit"
-    },
     {
       "at": "2026-08-04T15:51:13+00:00",
       "detail": "completed",
@@ -966,6 +956,36 @@
       "detail": "completed",
       "kind": "agent-finish",
       "subject": "019fce15-7b7f-7e32-ad9d-73587830f58f"
+    },
+    {
+      "at": "2026-08-04T19:15:00+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce33-338b-7172-87de-f73156acbc81"
+    },
+    {
+      "at": "2026-08-04T19:15:00+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce33-2e22-7e81-a666-017fea7d0d85"
+    },
+    {
+      "at": "2026-08-04T19:15:00+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-launch-overhead-profile"
+    },
+    {
+      "at": "2026-08-04T19:23:05+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce33-338b-7172-87de-f73156acbc81"
+    },
+    {
+      "at": "2026-08-04T19:23:05+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce33-2e22-7e81-a666-017fea7d0d85"
     }
   ],
   "lanes": {
@@ -1201,13 +1221,13 @@
     },
     "v14-launch-overhead-profile": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:01:50+00:00",
-      "next_action": "Run a bounded profiler on the immutable candidate active path to identify the dominant per-step host launches; design one exact-equivalent fused slice and no long sweep.",
+      "heartbeat_at": "2026-08-04T19:15:00+00:00",
+      "next_action": "Reconstruct the immutable candidate-active setup, run a bounded launch-level screen under the GPU lease, then fuse only the measured dominant sequence.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "If profiler tooling perturbs timing, use launch counts and CUDA event ranges on a 100-step structural screen; do not repeat 20000 steps.",
       "resource": "local_gpu",
-      "status": "ready",
+      "status": "running",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -1228,5 +1248,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T19:11:08+00:00"
+  "updated_at": "2026-08-04T19:23:05+00:00"
 }

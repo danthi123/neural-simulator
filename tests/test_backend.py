@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import os
 import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -24,6 +25,7 @@ from sim.backend import (
     get_memory_pool_used_mb, _reset_cache_for_tests,
     set_device, get_device_mem_info, get_device_properties,
     get_memory_pool, get_pinned_memory_pool,
+    _configure_cupy_cuda_root,
 )
 
 
@@ -96,6 +98,33 @@ def test_get_backend_reads_env_var(monkeypatch):
     monkeypatch.setenv("SIM_BACKEND", "numpy")
     xp, name = get_backend()  # no arg
     assert name == "numpy"
+
+
+def test_configure_cupy_cuda_root_accepts_explicit_complete_toolkit(monkeypatch, tmp_path):
+    archive = tmp_path / "lib64" / "libcudadevrt.a"
+    archive.parent.mkdir()
+    archive.write_bytes(b"archive")
+    monkeypatch.setenv("CUDA_PATH", str(tmp_path))
+    fake_environment = SimpleNamespace(_cuda_path="")
+    fake_cupy = SimpleNamespace(
+        cuda=SimpleNamespace(get_cuda_path=lambda: None)
+    )
+
+    selected = _configure_cupy_cuda_root(fake_cupy, fake_environment)
+
+    assert selected == str(tmp_path.resolve())
+    assert fake_environment._cuda_path == selected
+
+
+def test_configure_cupy_cuda_root_rejects_incomplete_toolkit(monkeypatch, tmp_path):
+    monkeypatch.setenv("CUDA_PATH", str(tmp_path))
+    fake_environment = SimpleNamespace(_cuda_path="unchanged")
+    fake_cupy = SimpleNamespace(
+        cuda=SimpleNamespace(get_cuda_path=lambda: None)
+    )
+
+    assert _configure_cupy_cuda_root(fake_cupy, fake_environment) is None
+    assert fake_environment._cuda_path == "unchanged"
 
 
 # ──────────────────────────────────────────────────────────────────────

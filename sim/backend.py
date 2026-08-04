@@ -46,6 +46,35 @@ _cached_name: str | None = None
 _cached_sparse: Any = None
 
 
+def _configure_cupy_cuda_root(cupy: Any, environment_module: Any = None) -> str | None:
+    """Restore an explicit CUDA toolkit root hidden by split wheel packages.
+
+    CuPy 14's pathfinder prefers the pip ``nvidia-cuda-nvrtc`` library. For
+    CUDA 12 split wheels that library has no common toolkit root, so
+    ``get_cuda_path()`` returns ``None`` even when ``CUDA_PATH`` names a full
+    toolkit. Fusion kernels that request relocatable device code then fail
+    while looking for ``libcudadevrt.a``. Only accept an explicit root that
+    contains that archive; otherwise preserve CuPy's fail-fast behavior.
+    """
+    discovered = cupy.cuda.get_cuda_path()
+    if discovered is not None:
+        return str(discovered)
+    configured = os.environ.get("CUDA_PATH") or os.environ.get("CUDA_HOME")
+    if not configured:
+        return None
+    root = os.path.realpath(os.path.expanduser(configured))
+    archives = (
+        os.path.join(root, "lib64", "libcudadevrt.a"),
+        os.path.join(root, "lib", "libcudadevrt.a"),
+    )
+    if not any(os.path.isfile(path) for path in archives):
+        return None
+    if environment_module is None:
+        import cupy._environment as environment_module
+    environment_module._cuda_path = root
+    return root
+
+
 def _detect_default() -> str:
     """Auto-detect: CuPy if available, else NumPy."""
     try:
@@ -105,6 +134,7 @@ def get_backend(name: str | None = None) -> Tuple[Any, str]:
     # Load the requested backend
     if name == "cupy":
         import cupy
+        _configure_cupy_cuda_root(cupy)
         _cached_backend = cupy
         _cached_name = "cupy"
     elif name == "numpy":

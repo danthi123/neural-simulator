@@ -9,6 +9,7 @@ import pytest
 
 from sim.backend import get_backend
 from sim.kernels import (
+    _fusion_memo_key,
     fused_hodgkin_huxley_dynamics_update,
     fused_snr_conductance_update,
     fused_snr_conductance_update_into,
@@ -17,6 +18,22 @@ from sim.kernels import (
 
 cp, _BACKEND_NAME = get_backend()
 pytestmark = pytest.mark.skipif(_BACKEND_NAME != "cupy", reason="CuPy-only direct outputs")
+
+
+def test_fusion_memo_key_does_not_materialize_python_scalars_on_device(monkeypatch):
+    values = (0.05, 7, True)
+    expected = tuple(
+        item
+        for value in values
+        for item in (cp.dtype(type(value)).char, type(value))
+    )
+
+    def reject_scalar_transfer(value, *args, **kwargs):
+        raise AssertionError(f"unexpected device conversion for {value!r}")
+
+    monkeypatch.setattr(cp, "asarray", reject_scalar_transfer)
+
+    assert _fusion_memo_key(values) == expected
 
 
 def _fixture(size=257):

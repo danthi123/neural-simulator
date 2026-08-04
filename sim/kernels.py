@@ -464,7 +464,10 @@ def _fusion_memo_key(values):
         elif hasattr(value, "dtype"):
             key.append(cp.dtype(value.dtype).char)
         else:
-            key.extend((cp.asarray(value).dtype.char, type(value)))
+            # Fusion keys need the scalar dtype, not a device value. cp.asarray
+            # allocates and transfers Python scalars, which made this cache
+            # lookup perform twelve tiny host-to-device copies every step.
+            key.extend((cp.dtype(type(value)).char, type(value)))
     return tuple(key)
 
 

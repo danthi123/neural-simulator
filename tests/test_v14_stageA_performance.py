@@ -1,4 +1,5 @@
 import json
+import inspect
 from pathlib import Path
 
 import pytest
@@ -20,6 +21,11 @@ def test_fixed_contract_matches_preregistration():
     assert performance.ACTIVE_RATIO_MAX == spec["performance"]["active_ratio_max"]
     assert performance.DIRECT_OUTPUT_RATIO_MAX == spec["performance"]["direct_output_ratio_max"]
     assert performance.ACTIVE_BYTES_PER_NEURON == 48
+
+
+def test_performance_bridge_fails_loudly_on_step_errors():
+    source = inspect.getsource(performance._build_bridge)
+    assert "bridge.strict_step_errors = True" in source
 
 
 def test_run_plan_is_deterministic_complete_and_seed_free():

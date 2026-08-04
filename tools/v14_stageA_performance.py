@@ -169,6 +169,10 @@ def _build_bridge(*, active: bool, direct_outputs: bool):
     bridge._initialize_simulation_data()
     if not bridge.is_initialized:
         raise RuntimeError("bridge initialization failed")
+    # A performance worker must never time swallowed simulation errors as
+    # useful work. This caught the cold-cache CuPy toolchain failure that made
+    # the first active cell spend its timeout repeatedly recompiling.
+    bridge.strict_step_errors = True
     return bridge
 
 
