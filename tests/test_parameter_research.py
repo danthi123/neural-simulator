@@ -66,6 +66,29 @@ def _response(*candidates) -> dict:
     }
 
 
+def _metadata_response(query: dict, *, doi: str = "10.1234/example.1") -> dict:
+    return {
+        "schema_version": "scholarly-discovery-v1",
+        "query": {"id": query["id"], "text": query["text"]},
+        "provider_searches": [{
+            "provider": "openalex", "search_url": "https://api.openalex.org/works?search=nalcn",
+            "attempts": 1, "metadata_records": 1,
+        }],
+        "candidates": [{
+            "record_kind": "metadata_candidate", "content_status": "metadata_only",
+            "provider_records": [{"provider": "openalex", "provider_id": "W123"}],
+            "doi": doi, "canonical_url": f"https://doi.org/{doi}",
+            "full_text_url_leads": ["https://repository.test/paper.pdf"],
+            "title": "NALCN supports autonomous firing", "authors": ["A. Example"],
+            "year": 2024, "type": "article",
+        }],
+        "evidence_boundary": {
+            "content_status": "metadata_only", "full_text_retrieved": False,
+            "full_text_urls_are_leads_only": True,
+        },
+    }
+
+
 def test_plan_derives_field_specific_queries_and_checks_rag_and_failures_first():
     calls = []
     def local(query, purpose):
@@ -107,6 +130,63 @@ def test_unavailable_local_retrieval_blocks_external_discovery():
     )
     with pytest.raises(pr.ParameterResearchError, match="successful local checks"):
         pr.add_discovery_results(state, adapter=lambda query: _response(), searched_at="2026-08-04")
+
+
+def test_live_metadata_is_checkpointed_per_query_and_never_exported_as_a_claim():
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    checkpoints = []
+    discovered = pr.add_scholarly_metadata(
+        state,
+        discoverer=lambda query: _metadata_response(query),
+        checkpoint=lambda value: checkpoints.append(copy.deepcopy(value)),
+        searched_at="2026-08-04",
+    )
+    assert len(checkpoints) == len(state["queries"])
+    assert len(discovered["metadata_searches"]) == len(state["queries"])
+    assert len(discovered["metadata_leads"]) == 1
+    lead = discovered["metadata_leads"][0]
+    assert lead["content_status"] == "metadata_only"
+    assert set(lead["query_ids"]) == {query["id"] for query in state["queries"]}
+    assert not {"exact_locator", "evidence", "claims"}.intersection(lead)
+    with pytest.raises(pr.ParameterResearchError, match="no completed external searches"):
+        pr.export_packet(discovered)
+
+
+def test_live_metadata_resumes_after_an_interrupted_remote_query():
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    saved = []
+
+    def interrupted(query):
+        if query["id"] == state["queries"][1]["id"]:
+            raise RuntimeError("network interrupted")
+        return _metadata_response(query)
+
+    with pytest.raises(RuntimeError, match="network interrupted"):
+        pr.add_scholarly_metadata(
+            state, discoverer=interrupted,
+            checkpoint=lambda value: saved.append(copy.deepcopy(value)),
+            searched_at="2026-08-04",
+        )
+    assert len(saved) == 1
+    calls = []
+    resumed = pr.add_scholarly_metadata(
+        saved[-1], discoverer=lambda query: calls.append(query["id"]) or _metadata_response(query),
+        searched_at="2026-08-04",
+    )
+    assert state["queries"][0]["id"] not in calls
+    assert len(resumed["metadata_searches"]) == len(state["queries"])
+
+
+def test_live_metadata_rejects_claims_smuggled_into_provider_output():
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+
+    def bad(query):
+        response = _metadata_response(query)
+        response["candidates"][0]["claims"] = [{"value": 0.1}]
+        return response
+
+    with pytest.raises(pr.ParameterResearchError, match="cannot contain evidence or claims"):
+        pr.add_scholarly_metadata(state, discoverer=bad, searched_at="2026-08-04")
 
 
 def test_discovery_is_resumable_deduplicated_by_doi_and_preserves_exact_metadata(tmp_path: Path):

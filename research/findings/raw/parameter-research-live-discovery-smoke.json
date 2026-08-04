@@ -1,0 +1,28 @@
+{
+  "schema": "scholarly-discovery-live-smoke-v1",
+  "date": "2026-08-04",
+  "backend": "python-stdlib-urllib",
+  "device": "cpu-network",
+  "runner": "tools/scholarly_discovery.py",
+  "command": ".venv/bin/python -c <ScholarlyDiscoveryClient live smoke; per_provider=3, timeout=20, max_retries=1>",
+  "query": "substantia nigra pars reticulata NALCN conductance pacemaking",
+  "providers": [
+    {
+      "attempts": 1,
+      "metadata_records": 3,
+      "provider": "openalex"
+    },
+    {
+      "attempts": 1,
+      "metadata_records": 3,
+      "provider": "crossref"
+    }
+  ],
+  "candidate_count": 6,
+  "evidence_boundary": {
+    "content_status": "metadata_only",
+    "full_text_retrieved": false,
+    "full_text_urls_are_leads_only": true
+  },
+  "claims_extracted": 0
+}

@@ -21,8 +21,10 @@ from urllib.parse import urlsplit, urlunsplit
 
 try:
     from tools import research_packet
+    from tools import scholarly_discovery
 except ModuleNotFoundError:  # direct script execution
     import research_packet
+    import scholarly_discovery
 
 
 STATE_VERSION = "parameter-research-v1"
@@ -38,6 +40,7 @@ class ParameterResearchError(RuntimeError):
 
 DiscoveryAdapter = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 LocalSearchAdapter = Callable[[str, str], Mapping[str, Any]]
+Checkpoint = Callable[[Mapping[str, Any]], None]
 
 
 def _text(value: Any, field: str) -> str:
@@ -205,6 +208,8 @@ def create_plan(
         "queries": queries,
         "searches": [],
         "candidates": [],
+        "metadata_searches": [],
+        "metadata_leads": [],
     }
     return validate_state(state)
 
@@ -220,7 +225,11 @@ def validate_state(state: Mapping[str, Any]) -> dict[str, Any]:
     checks = state.get("local_checks")
     searches = state.get("searches")
     candidates = state.get("candidates")
-    if not all(isinstance(value, list) for value in (gaps, queries, checks, searches, candidates)):
+    metadata_searches = state.get("metadata_searches", [])
+    metadata_leads = state.get("metadata_leads", [])
+    if not all(isinstance(value, list) for value in (
+        gaps, queries, checks, searches, candidates, metadata_searches, metadata_leads,
+    )):
         raise ParameterResearchError("state collections must be lists")
     gap_ids = {_text(gap.get("id"), "gap.id") for gap in gaps}
     if len(gap_ids) != len(gaps):
@@ -319,7 +328,51 @@ def validate_state(state: Mapping[str, Any]) -> dict[str, Any]:
         expected = "searched" if query["id"] in searched_queries else "planned"
         if query.get("status") != expected:
             raise ParameterResearchError("query status does not match durable search records")
-    return json.loads(json.dumps(state))
+    lead_ids: set[str] = set()
+    lead_keys: set[tuple[str, str]] = set()
+    for lead in metadata_leads:
+        lead_id = _text(lead.get("id"), "metadata_lead.id")
+        if lead_id in lead_ids:
+            raise ParameterResearchError("duplicate metadata lead id")
+        lead_ids.add(lead_id)
+        if lead.get("record_kind") != "metadata_candidate" or lead.get("content_status") != "metadata_only":
+            raise ParameterResearchError("metadata leads must remain metadata_only candidates")
+        if any(field in lead for field in ("exact_locator", "evidence", "claims", "quantitative_claim")):
+            raise ParameterResearchError("metadata leads cannot contain evidence or claims")
+        _text(lead.get("title"), "metadata_lead.title")
+        query_refs = lead.get("query_ids")
+        if not isinstance(query_refs, list) or not query_refs or any(item not in query_ids for item in query_refs):
+            raise ParameterResearchError("metadata lead query_ids must refer to planned queries")
+        doi = normalize_doi(lead.get("doi"))
+        canonical_url = lead.get("canonical_url")
+        keys = set()
+        if doi:
+            keys.add(("doi", doi))
+        if canonical_url:
+            keys.add(("url", normalize_url(canonical_url)))
+        if not keys or keys & lead_keys:
+            raise ParameterResearchError("metadata leads require unique DOI or canonical URL identity")
+        lead_keys.update(keys)
+        if not isinstance(lead.get("provider_records"), list) or not lead["provider_records"]:
+            raise ParameterResearchError("metadata lead requires provider records")
+        if not isinstance(lead.get("full_text_url_leads"), list):
+            raise ParameterResearchError("metadata lead full-text URLs must be a list")
+    metadata_query_ids: set[str] = set()
+    for search in metadata_searches:
+        query_id = _text(search.get("query_id"), "metadata_search.query_id")
+        if query_id not in query_ids or query_id in metadata_query_ids:
+            raise ParameterResearchError("metadata search query is unknown or duplicated")
+        metadata_query_ids.add(query_id)
+        if search.get("schema_version") != scholarly_discovery.SCHEMA_VERSION:
+            raise ParameterResearchError("metadata search has an unsupported schema")
+        if not isinstance(search.get("provider_searches"), list) or not search["provider_searches"]:
+            raise ParameterResearchError("metadata search requires provider records")
+        if not isinstance(search.get("lead_ids"), list) or any(item not in lead_ids for item in search["lead_ids"]):
+            raise ParameterResearchError("metadata search refers to an unknown lead")
+    normalized = json.loads(json.dumps(state))
+    normalized.setdefault("metadata_searches", [])
+    normalized.setdefault("metadata_leads", [])
+    return normalized
 
 
 def _candidate_keys(candidate: Mapping[str, Any]) -> set[tuple[str, str]]:
@@ -327,6 +380,17 @@ def _candidate_keys(candidate: Mapping[str, Any]) -> set[tuple[str, str]]:
     keys = {("url", normalize_url(candidate.get("url")))}
     if doi:
         keys.add(("doi", doi))
+    return keys
+
+
+def _metadata_keys(candidate: Mapping[str, Any]) -> set[tuple[str, str]]:
+    keys: set[tuple[str, str]] = set()
+    doi = normalize_doi(candidate.get("doi"))
+    if doi:
+        keys.add(("doi", doi))
+    url = candidate.get("canonical_url")
+    if url:
+        keys.add(("url", normalize_url(url)))
     return keys
 
 
@@ -464,6 +528,92 @@ def add_discovery_results(
     return validate_state(result)
 
 
+def add_scholarly_metadata(
+    state: Mapping[str, Any], *, discoverer: DiscoveryAdapter,
+    checkpoint: Checkpoint | None = None, searched_at: str | None = None,
+) -> dict[str, Any]:
+    """Discover resumable source leads without treating metadata as evidence."""
+    result = validate_state(state)
+    if any(check["status"] != "complete" for check in result["local_checks"]):
+        raise ParameterResearchError("external discovery requires successful local checks first")
+    searched_at = searched_at or dt.date.today().isoformat()
+    _date(searched_at, "searched_at")
+    completed = {item["query_id"] for item in result["metadata_searches"]}
+
+    for query in result["queries"]:
+        if query["id"] in completed:
+            continue
+        response = discoverer(dict(query))
+        if (not isinstance(response, Mapping)
+                or response.get("schema_version") != scholarly_discovery.SCHEMA_VERSION
+                or response.get("query") != {"id": query["id"], "text": query["text"]}
+                or response.get("evidence_boundary") != {
+                    "content_status": "metadata_only",
+                    "full_text_retrieved": False,
+                    "full_text_urls_are_leads_only": True,
+                }):
+            raise ParameterResearchError("scholarly discovery response violates the metadata-only boundary")
+        provider_searches = response.get("provider_searches")
+        candidates = response.get("candidates")
+        if not isinstance(provider_searches, list) or not provider_searches or not isinstance(candidates, list):
+            raise ParameterResearchError("scholarly discovery response is missing searches or candidates")
+
+        lead_ids: list[str] = []
+        for raw in candidates:
+            if not isinstance(raw, Mapping):
+                raise ParameterResearchError("scholarly metadata candidates must be objects")
+            lead = dict(raw)
+            if lead.get("record_kind") != "metadata_candidate" or lead.get("content_status") != "metadata_only":
+                raise ParameterResearchError("scholarly candidate is not metadata-only")
+            if any(field in lead for field in ("exact_locator", "evidence", "claims", "quantitative_claim")):
+                raise ParameterResearchError("scholarly metadata cannot contain evidence or claims")
+            doi = normalize_doi(lead.get("doi"))
+            url = lead.get("canonical_url")
+            keys = set()
+            if doi:
+                keys.add(("doi", doi))
+            if url:
+                keys.add(("url", normalize_url(url)))
+            if not keys:
+                raise ParameterResearchError("scholarly metadata candidate has no stable DOI or URL")
+            existing = next(
+                (item for item in result["metadata_leads"] if keys & _metadata_keys(item)),
+                None,
+            )
+            if existing is None:
+                lead["id"] = f"LEAD{len(result['metadata_leads']) + 1}"
+                lead["doi"] = doi
+                lead["query_ids"] = [query["id"]]
+                result["metadata_leads"].append(lead)
+                existing = lead
+            else:
+                if query["id"] not in existing["query_ids"]:
+                    existing["query_ids"].append(query["id"])
+                existing["provider_records"] = sorted(
+                    existing["provider_records"] + [
+                        item for item in lead.get("provider_records", [])
+                        if item not in existing["provider_records"]
+                    ],
+                    key=lambda item: (item.get("provider", ""), item.get("provider_id", "")),
+                )
+                existing["full_text_url_leads"] = sorted(set(
+                    existing["full_text_url_leads"] + lead.get("full_text_url_leads", [])
+                ))
+            lead_ids.append(existing["id"])
+        result["metadata_searches"].append({
+            "schema_version": scholarly_discovery.SCHEMA_VERSION,
+            "query_id": query["id"],
+            "searched_at": searched_at,
+            "provider_searches": provider_searches,
+            "lead_ids": sorted(set(lead_ids)),
+        })
+        result["updated_at"] = searched_at
+        result = validate_state(result)
+        if checkpoint is not None:
+            checkpoint(result)
+    return result
+
+
 def export_packet(state: Mapping[str, Any]) -> dict[str, Any]:
     """Export discovered sources and proposed claims into the existing packet boundary."""
     state = validate_state(state)
@@ -580,6 +730,12 @@ def _main() -> int:
     discover = sub.add_parser("import-results")
     discover.add_argument("--state", required=True, type=Path)
     discover.add_argument("--results", required=True, type=Path)
+    live = sub.add_parser("discover-live")
+    live.add_argument("--state", required=True, type=Path)
+    live.add_argument("--user-agent", default="sim-neural-research/1.0")
+    live.add_argument("--timeout", type=float, default=15.0)
+    live.add_argument("--max-retries", type=int, default=2)
+    live.add_argument("--per-provider", type=int, default=25)
     export = sub.add_parser("export-packet")
     export.add_argument("--state", required=True, type=Path)
     export.add_argument("--output", required=True, type=Path)
@@ -595,6 +751,18 @@ def _main() -> int:
         elif args.command == "import-results":
             records = json.loads(args.results.read_text(encoding="utf-8"))
             save_state(args.state, add_discovery_results(load_state(args.state), adapter=_fixture_adapter(records)))
+        elif args.command == "discover-live":
+            client = scholarly_discovery.ScholarlyDiscoveryClient(
+                user_agent=args.user_agent,
+                timeout=args.timeout,
+                max_retries=args.max_retries,
+                per_provider=args.per_provider,
+            )
+            state = add_scholarly_metadata(
+                load_state(args.state), discoverer=client.discover,
+                checkpoint=lambda value: save_state(args.state, value),
+            )
+            save_state(args.state, state)
         else:
             research_packet.save_packet(args.output, export_packet(load_state(args.state)))
     except (KeyError, OSError, json.JSONDecodeError, ParameterResearchError, research_packet.ResearchPacketError) as exc:
