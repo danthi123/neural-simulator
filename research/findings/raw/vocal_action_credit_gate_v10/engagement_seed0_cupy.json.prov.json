@@ -1,0 +1,30 @@
+{
+ "run_id": "1785813903-2113368",
+ "runner": "research/runners/_vocal_action_credit_gate_v10_policy.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v10_policy.py",
+  "--seed",
+  "0",
+  "--output",
+  "research/findings/raw/vocal_action_credit_gate_v10/engagement_seed0_cupy.json"
+ ],
+ "git_sha": "5e7130fab",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-03T23:25:03",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4045.5,
+ "corpus_check_query": "Has this project already tested reward-plastic corticostriatal proposal-to-D1 synapses that causally alter vocal action selection, rather than a disconnected action tag?",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/vocal_action_credit_gate_v10/engagement_seed0_cupy.json"
+}
