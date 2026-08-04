@@ -79,6 +79,28 @@ from research.runners._productive_morphology_construction_derisk import (
 from research.runners._productive_morphology_dual_route_derisk import wire_wf_to_affix_inhibition
 
 
+# Recorded runs closed this mechanism. A successor needs a new preregistration
+# and fresh partitions before this runner may execute again.
+OPEN_PHASES: tuple[str, ...] = ()
+CONSUMED_SEEDS = frozenset((*range(42, 48), *range(100, 103)))
+
+
+def validate_execution_request(phase: str, base_seed: int, n_seeds: int) -> tuple[int, ...]:
+    """Fail closed without constructing a bridge or consuming another seed."""
+    if int(n_seeds) < 1:
+        raise ValueError("n-seeds must be positive")
+    seeds = tuple(range(int(base_seed), int(base_seed) + int(n_seeds)))
+    consumed = sorted(set(seeds) & CONSUMED_SEEDS)
+    if consumed:
+        raise ValueError(
+            f"morphology seeds {consumed} are consumed by existing evidence and closed"
+        )
+    raise ValueError(
+        f"morphology phase {phase!r} is not open; no scientific partition is "
+        "preregistered for this retired mechanism"
+    )
+
+
 # ---- TWO structurally-isolated pools (the architectural change) --------------------------------------------
 def build_two_pool(seed, n_lex=2000, n_proc=800, n_fs_lex=300, n_fs_proc=150,
                    rec_density=0.6, fs_inh=1.2, block_density=0.6,
@@ -266,6 +288,7 @@ def verify_seeded(seed, n_lex, n_proc):
 
 def run(seed, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
         inhib_strength=6.0, di_synaptic=False, n_inh_block=150, inh_drive=3.0, verbose=True):
+    validate_execution_request("direct-run", seed, 1)
     items, item2idx = _make_items()
     idx2name = {i: w for w, i in item2idx.items()}
     competitors = [item2idx[AFFIX]] + [item2idx[wf] for wf in IRREGULARS.values()]
@@ -394,6 +417,7 @@ def run(seed, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
 
 def summarize(base_seed, n_seeds=6, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
               inhib_strength=6.0, di_synaptic=False, n_inh_block=150, inh_drive=3.0, verbose=True):
+    validate_execution_request("direct-summary", base_seed, n_seeds)
     seeds = [base_seed + i for i in range(n_seeds)]
     seed_check = verify_seeded(base_seed, n_lex, n_proc)
     if verbose:
@@ -450,8 +474,18 @@ def summarize(base_seed, n_seeds=6, n_lex=2000, n_proc=800, pattern_size=90, cyc
     return summary
 
 
-def main():
-    ap = argparse.ArgumentParser()
+def build_parser() -> argparse.ArgumentParser:
+    ap = argparse.ArgumentParser(
+        description=(
+            "Retired two-pool morphology runner. No scientific phase is open; "
+            "historical seeds are consumed."
+        )
+    )
+    ap.add_argument(
+        "--phase",
+        required=True,
+        help="required execution phase; currently no scientific phase is open",
+    )
     ap.add_argument("--seed", type=int, default=42, help="base seed; the sweep uses seed..seed+n_seeds-1")
     ap.add_argument("--n-seeds", type=int, default=6)
     ap.add_argument("--n-lex", type=int, default=2000)
@@ -469,7 +503,12 @@ def main():
     ap.add_argument("--inh-drive", type=float, default=3.0,
                     help="di-synaptic: lex whole-form -> interneuron excitatory drive weight (fires the interneuron)")
     ap.add_argument("--out", default=None)
-    a = ap.parse_args()
+    return ap
+
+
+def main(argv=None):
+    a = build_parser().parse_args(argv)
+    validate_execution_request(a.phase, a.seed, a.n_seeds)
     mech = (f"DI-SYNAPTIC interneuron (n={a.n_inh_block}, drive={a.inh_drive})" if a.di_synaptic
             else "sign-inverted excitatory (S1 shortcut)")
     print(f"[two-pool morphology] DISTINCT populations (lex/proc) + {mech} blocking | base seed={a.seed} "

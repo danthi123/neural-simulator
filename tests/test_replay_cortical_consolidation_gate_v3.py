@@ -13,7 +13,7 @@ os.environ.setdefault("SIM_NO_PROVENANCE", "1")
 from research.runners import _replay_cortical_consolidation_gate_v3 as gate  # noqa: E402
 
 
-def test_fresh_seed_policy_and_phase_lock_keep_reserved_work_untouched():
+def test_consumed_calibration_is_closed_and_reserved_work_stays_locked():
     assert gate.SMOKE_SEED == 216
     assert gate.CALIBRATION_SEEDS == (228, 229)
     assert gate.DEVELOPMENT_SEEDS == (230, 231, 326)
@@ -21,15 +21,19 @@ def test_fresh_seed_policy_and_phase_lock_keep_reserved_work_untouched():
     assert gate.SMOKE_SEED not in (
         gate.CALIBRATION_SEEDS + gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS
     )
-    assert gate.validate_phase("calibration") == "calibration"
-    assert gate.validate_calibration_seeds(gate.CALIBRATION_SEEDS) == gate.CALIBRATION_SEEDS
+    assert gate.OPEN_PHASES == ()
+    with pytest.raises(ValueError, match="no open scientific phase"):
+        gate.validate_phase("calibration")
+    with pytest.raises(ValueError, match="consumed and closed"):
+        gate.validate_calibration_seeds(gate.CALIBRATION_SEEDS)
     for seed in gate.CALIBRATION_SEEDS:
-        assert gate.validate_calibration_seed(seed) == seed
+        with pytest.raises(ValueError, match="consumed and closed"):
+            gate.validate_calibration_seed(seed)
     assert gate.validate_smoke_seed(gate.SMOKE_SEED) == gate.SMOKE_SEED
-    with pytest.raises(ValueError, match="opens.*calibration"):
+    with pytest.raises(ValueError, match="no open scientific phase"):
         gate.validate_phase("development")
     for seed in (gate.SMOKE_SEED,) + gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS:
-        with pytest.raises(ValueError, match="individual fresh calibration seeds"):
+        with pytest.raises(ValueError, match="no open calibration partition"):
             gate.validate_calibration_seed(seed)
     for seed in gate.CALIBRATION_SEEDS + gate.DEVELOPMENT_SEEDS + gate.HELD_OUT_SEEDS:
         with pytest.raises(ValueError, match="non-scientific seed"):
@@ -49,20 +53,21 @@ def test_fresh_seed_policy_and_phase_lock_keep_reserved_work_untouched():
     ],
 )
 def test_aggregate_calibration_requires_exact_ordered_seed_partition(seeds):
-    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
+    with pytest.raises(ValueError, match="exact ordered calibration seed partition"):
         gate.validate_calibration_seeds(seeds)
 
 
 def test_cli_resolution_separates_smoke_from_every_scientific_partition():
+    parser = gate.build_parser()
+    assert parser._option_string_actions["--phase"].choices == ("smoke",)
+    assert "calibration is closed" in parser.format_help()
+    assert "228/229 are consumed and closed" in parser.format_help()
     assert gate.resolve_cli_request(smoke=True, phase=None, seeds=None) == (
         "smoke",
         (gate.SMOKE_SEED,),
     )
-    assert gate.resolve_cli_request(
-        smoke=False,
-        phase=None,
-        seeds=None,
-    ) == ("calibration", gate.CALIBRATION_SEEDS)
+    with pytest.raises(ValueError, match="no open scientific phase"):
+        gate.resolve_cli_request(smoke=False, phase=None, seeds=None)
     with pytest.raises(ValueError, match="accepts --seeds"):
         gate.resolve_cli_request(
             smoke=True,
@@ -71,7 +76,7 @@ def test_cli_resolution_separates_smoke_from_every_scientific_partition():
         )
     with pytest.raises(ValueError, match="requires --smoke"):
         gate.resolve_cli_request(smoke=False, phase="smoke", seeds=None)
-    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
+    with pytest.raises(ValueError, match="no open scientific phase"):
         gate.resolve_cli_request(
             smoke=False,
             phase="calibration",
@@ -89,7 +94,7 @@ def test_cli_resolution_separates_smoke_from_every_scientific_partition():
     ],
 )
 def test_cli_rejects_incomplete_duplicate_or_reordered_calibration_partition(seeds):
-    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
+    with pytest.raises(ValueError, match="no open scientific phase"):
         gate.resolve_cli_request(smoke=False, phase="calibration", seeds=seeds)
 
 
@@ -100,7 +105,7 @@ def test_run_calibration_rejects_partial_partition_before_running_seed(monkeypat
         lambda *_args, **_kwargs: pytest.fail("invalid aggregate must not run a seed"),
     )
 
-    with pytest.raises(ValueError, match="exact ordered fresh calibration seed partition"):
+    with pytest.raises(ValueError, match="no open scientific phase"):
         gate.run_calibration((gate.CALIBRATION_SEEDS[0],), gate.smoke_config())
 
 

@@ -69,7 +69,7 @@ def _small_pooler(seed=gate.SMOKE_SEED, persistence_gain=3.0):
     )
 
 
-def test_seed_partitions_are_fresh_disjoint_and_smoke_is_reserved():
+def test_retired_calibration_is_closed_and_smoke_remains_separate():
     partitions = [set(values) for values in gate.SEED_PARTITIONS.values()]
     assert partitions[0].isdisjoint(partitions[1])
     assert partitions[0].isdisjoint(partitions[2])
@@ -78,18 +78,14 @@ def test_seed_partitions_are_fresh_disjoint_and_smoke_is_reserved():
     assert set().union(*partitions).isdisjoint(prior)
     assert gate.SMOKE_SEED not in set().union(*partitions)
     assert gate.build_parser().parse_args([]).seeds == [224, 225]
+    assert gate.OPEN_PHASES == ()
     gate.validate_seed_partition("smoke", [gate.SMOKE_SEED])
-    gate.validate_seed_partition("calibration", [224, 225])
-    gate.validate_individual_seed("calibration", 224)
-    gate.validate_individual_seed("calibration", 225)
-    with pytest.raises(ValueError, match="exact ordered seeds"):
-        gate.validate_seed_partition("calibration", [224])
-    with pytest.raises(ValueError, match="exact ordered seeds"):
-        gate.validate_seed_partition("calibration", [224, 224])
-    with pytest.raises(ValueError, match="exact ordered seeds"):
-        gate.validate_seed_partition("calibration", [225, 224])
-    with pytest.raises(ValueError, match="exact ordered seeds"):
-        gate.validate_seed_partition("calibration", [gate.SMOKE_SEED])
+    for seed in gate.CALIBRATION_SEEDS:
+        with pytest.raises(ValueError, match="consumed and closed"):
+            gate.validate_individual_seed("calibration", seed)
+    for seeds in ([224, 225], [224], [224, 224], [225, 224], [gate.SMOKE_SEED]):
+        with pytest.raises(ValueError, match="consumed and closed"):
+            gate.validate_seed_partition("calibration", seeds)
     with pytest.raises(ValueError, match="exact ordered seeds"):
         gate.validate_seed_partition("smoke", [224])
     with pytest.raises(ValueError, match="is not open"):
@@ -152,7 +148,7 @@ def test_run_seed_rejects_smoke_seed_as_calibration_before_building(monkeypatch,
         raise AssertionError("dataset construction happened before seed validation")
 
     monkeypatch.setattr(gate, "build_visual_dataset", fail_dataset_build)
-    with pytest.raises(ValueError, match="cannot use seed"):
+    with pytest.raises(ValueError, match="consumed and closed"):
         gate.run_seed(gate.SMOKE_SEED, args)
 
 

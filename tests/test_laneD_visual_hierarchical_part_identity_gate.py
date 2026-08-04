@@ -32,12 +32,14 @@ def test_seed_policy_requires_exact_aggregate_and_locks_later_phases():
     assert gate.CALIBRATION_SEEDS == (503, 509)
     assert gate.DEVELOPMENT_SEEDS == (521, 523, 541)
     assert gate.HELDOUT_SEEDS == (547, 557, 563)
+    assert gate.OPEN_PHASES == ()
     gate.validate_seed_partition("smoke", [222])
-    gate.validate_seed_partition("calibration", [503, 509])
-    assert gate.validate_individual_seed("calibration", 503) == 503
-    for invalid in ([503], [509, 503], [503, 503], [503, 509, 509]):
-        with pytest.raises(ValueError, match="exact ordered seeds"):
-            gate.validate_seed_partition("calibration", invalid)
+    for seed in gate.CALIBRATION_SEEDS:
+        with pytest.raises(ValueError, match="consumed and closed"):
+            gate.validate_individual_seed("calibration", seed)
+    for seeds in ([503, 509], [503], [509, 503], [503, 503], [503, 509, 509]):
+        with pytest.raises(ValueError, match="consumed and closed"):
+            gate.validate_seed_partition("calibration", seeds)
     with pytest.raises(ValueError, match="locked"):
         gate.validate_seed_partition("development", [521, 523, 541])
     with pytest.raises(ValueError, match="locked"):

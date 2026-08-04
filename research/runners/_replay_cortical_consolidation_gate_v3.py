@@ -25,10 +25,11 @@ current are host-scheduled; host code reads activity and known assemblies only
 for measurement; and the fixed anatomy and rate-window Hebbian rule remain
 simplified biological stand-ins.
 
-The scientific verdict path is calibration-only. Seed 216 is reserved solely
-for non-scientific smoke tests and is outside every scientific partition.
-Untouched calibration seeds 228/229 are open; development seeds 230/231/326
-and held-out seeds 327/328/329 are mechanically rejected.
+The scientific verdict path is retired. Seed 216 remains reserved solely for
+non-scientific smoke tests and is outside every scientific partition.
+Calibration seeds 228/229 were consumed by an undefined calibration and are
+closed; development seeds 230/231/326 and held-out seeds 327/328/329 remain
+mechanically rejected. No scientific phase is open.
 """
 from __future__ import annotations
 
@@ -52,7 +53,7 @@ from tools.lab import attributable_to  # noqa: E402
 from tools.verdict import UNDEFINED, Verdict  # noqa: E402
 
 
-OPEN_PHASES = ("calibration",)
+OPEN_PHASES: tuple[str, ...] = ()
 SMOKE_SEED = 216
 CALIBRATION_SEEDS = (228, 229)
 DEVELOPMENT_SEEDS = (230, 231, 326)
@@ -134,29 +135,35 @@ def validate_phase(phase: str) -> str:
     checked = str(phase).strip().lower()
     if checked not in OPEN_PHASES:
         raise ValueError(
-            f"This bounded v3 runner opens {OPEN_PHASES} only; refusing phase {phase!r}."
+            "This bounded v3 runner has no open scientific phase; calibration "
+            f"seeds {CALIBRATION_SEEDS} are consumed and closed. Refusing {phase!r}."
         )
     return checked
 
 
 def validate_calibration_seed(seed: int) -> int:
     checked = int(seed)
-    if checked not in CALIBRATION_SEEDS:
+    if checked in CALIBRATION_SEEDS:
         raise ValueError(
-            f"This bounded v3 runner accepts individual fresh calibration seeds "
-            f"from {CALIBRATION_SEEDS} only; refusing reserved seed {checked}."
+            f"Replay-v3 calibration seed {checked} is consumed and closed."
         )
-    return checked
+    else:
+        raise ValueError(
+            "Replay-v3 has no open calibration partition; refusing reserved "
+            f"seed {checked}."
+        )
 
 
 def validate_calibration_seeds(seeds: Iterable[int]) -> tuple[int, ...]:
     checked = tuple(int(seed) for seed in seeds)
     if checked != CALIBRATION_SEEDS:
         raise ValueError(
-            f"Calibration requires the exact ordered fresh calibration seed partition "
+            f"Calibration historically used the exact ordered calibration seed partition "
             f"{CALIBRATION_SEEDS}; refusing {checked}."
         )
-    return checked
+    raise ValueError(
+        f"Replay-v3 calibration seeds {CALIBRATION_SEEDS} are consumed and closed."
+    )
 
 
 def validate_smoke_seed(seed: int) -> int:
@@ -1040,12 +1047,28 @@ def resolve_cli_request(
     return "calibration", validate_calibration_seeds(checked)
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--phase", choices=("calibration", "smoke"), default=None)
-    parser.add_argument("--seeds", type=int, nargs="+", default=None)
-    parser.add_argument("--smoke", action="store_true")
+    parser.add_argument(
+        "--phase",
+        choices=("smoke",),
+        default=None,
+        help="only non-scientific smoke remains selectable; calibration is closed",
+    )
+    parser.add_argument(
+        "--seeds",
+        type=int,
+        nargs="+",
+        default=None,
+        help="calibration seeds 228/229 are consumed and closed",
+    )
+    parser.add_argument("--smoke", action="store_true", help="run smoke-only plumbing")
     parser.add_argument("--out", type=Path, default=None)
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
     args = parser.parse_args()
     try:
         requested_phase, seeds = resolve_cli_request(

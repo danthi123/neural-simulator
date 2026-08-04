@@ -1,6 +1,6 @@
 ---
 type: preregistration
-status: live
+status: retired
 date: 2026-08-03
 mechanism: visual-identity-temporal-binding
 runner: research/runners/_laneD_visual_identity_temporal_binding_gate.py
@@ -34,14 +34,14 @@ V1 spikes only; object labels remain outside the network for scoring.
 ## Seed and phase lock
 
 - Non-scientific smoke only: `220`.
-- Calibration, currently open: `224`, `225`.
+- Calibration, consumed and closed after NO-GO: `224`, `225`.
 - Development, locked: `226`, `227`, `322`.
 - Held out, locked: `323`, `324`, `325`.
 
-The aggregate runner requires the exact ordered calibration tuple `224`, `225`,
-and rejects incomplete, duplicate, or reordered result rows. Both seeds must
-pass every criterion without parameter changes between seeds. Any failure is a
-calibration NO-GO and keeps later phases closed.
+The calibration tuple `224`, `225` was consumed and produced a recorded NO-GO.
+This preregistration is retired; the runner now rejects those seeds and keeps
+development and held-out phases closed. See
+`2026-08-03-visual-identity-temporal-binding-calibration-NO-GO.md`.
 
 ## Fixed protocol and controls
 

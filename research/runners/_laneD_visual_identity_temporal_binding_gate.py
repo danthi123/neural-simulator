@@ -21,8 +21,9 @@ lesionable. It also retains temporal shuffle, trace, homeostasis, pixel
 scramble, neural-drive, flat-drive, and fast-spiking pathway controls.
 
 Seed 220 is reserved for smoke/unit testing and is outside every scientific
-partition. Fresh calibration seeds 224/225 are open. Development seeds
-226/227/322 and held-out seeds 323/324/325 are locked.
+partition. Calibration seeds 224/225 were consumed by a recorded NO-GO and are
+closed. Development seeds 226/227/322 and held-out seeds 323/324/325 remain
+locked. No scientific phase is open.
 
 Cheap smoke::
 
@@ -91,8 +92,9 @@ SEED_PARTITIONS = {
     "development": DEVELOPMENT_SEEDS,
     "heldout": HELDOUT_SEEDS,
 }
-OPEN_PHASES = ("calibration",)
-CLI_PHASES = ("smoke",) + OPEN_PHASES
+OPEN_PHASES: tuple[str, ...] = ()
+RETIRED_PHASES = ("calibration",)
+CLI_PHASES = ("smoke",) + RETIRED_PHASES
 
 ARM_SPECS = {
     "intact": {
@@ -155,9 +157,13 @@ def validate_individual_seed(phase: str, seed: int) -> int:
                 f"received {supplied}"
             )
         return supplied
+    if phase == "calibration":
+        raise ValueError(
+            f"calibration seeds {CALIBRATION_SEEDS} are consumed and closed after NO-GO"
+        )
     if phase not in OPEN_PHASES:
         raise ValueError(
-            f"phase {phase!r} is not open; this successor is calibration-only and "
+            f"phase {phase!r} is not open; no scientific phase is open and "
             "development/held-out seeds remain locked"
         )
     allowed = SEED_PARTITIONS[phase]
@@ -173,11 +179,15 @@ def validate_seed_partition(phase: str, seeds: Sequence[int]) -> None:
     supplied = tuple(int(seed) for seed in seeds)
     if phase == "smoke":
         expected = (SMOKE_SEED,)
+    elif phase == "calibration":
+        raise ValueError(
+            f"calibration seeds {CALIBRATION_SEEDS} are consumed and closed after NO-GO"
+        )
     elif phase in OPEN_PHASES:
         expected = SEED_PARTITIONS[phase]
     else:
         raise ValueError(
-            f"phase {phase!r} is not open; this successor is calibration-only and "
+            f"phase {phase!r} is not open; no scientific phase is open and "
             "development/held-out seeds remain locked"
         )
     if supplied != expected:

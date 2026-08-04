@@ -8,8 +8,9 @@ deadline is forwarded; no host top-k or first-K truncation defines the V2 code.
 An IT population learns from those V2 spike sets with a presynaptic Foldiak
 trace. The predecessor's postsynaptic persistence current is absent.
 
-Seed 222 is non-scientific smoke only. Calibration requires the exact ordered
-tuple 503/509. Development and held-out seeds are locked.
+Seed 222 is non-scientific smoke only. Calibration seeds 503/509 were consumed
+by a recorded NO-GO and are closed. Development and held-out seeds remain
+locked. No scientific phase is open.
 """
 from __future__ import annotations
 
@@ -73,8 +74,9 @@ SEED_PARTITIONS = {
     "development": DEVELOPMENT_SEEDS,
     "heldout": HELDOUT_SEEDS,
 }
-OPEN_PHASES = ("calibration",)
-CLI_PHASES = ("smoke",) + OPEN_PHASES
+OPEN_PHASES: tuple[str, ...] = ()
+RETIRED_PHASES = ("calibration",)
+CLI_PHASES = ("smoke",) + RETIRED_PHASES
 
 ARM_SPECS = {
     "intact": dict(v2_learning=True, it_learning=True, trace=True),
@@ -145,8 +147,12 @@ def validate_individual_seed(phase: str, seed: int) -> int:
         if supplied != SMOKE_SEED:
             raise ValueError(f"smoke requires reserved seed {SMOKE_SEED}; received {supplied}")
         return supplied
+    if phase == "calibration":
+        raise ValueError(
+            f"calibration seeds {CALIBRATION_SEEDS} are consumed and closed after NO-GO"
+        )
     if phase not in OPEN_PHASES:
-        raise ValueError(f"phase {phase!r} is locked; only calibration is open")
+        raise ValueError(f"phase {phase!r} is locked; no scientific phase is open")
     if supplied not in SEED_PARTITIONS[phase]:
         raise ValueError(
             f"{phase} cannot use seed {supplied}; allowed seeds are "
@@ -159,10 +165,14 @@ def validate_seed_partition(phase: str, seeds: Sequence[int]) -> tuple[int, ...]
     supplied = tuple(int(seed) for seed in seeds)
     if phase == "smoke":
         expected = (SMOKE_SEED,)
+    elif phase == "calibration":
+        raise ValueError(
+            f"calibration seeds {CALIBRATION_SEEDS} are consumed and closed after NO-GO"
+        )
     elif phase in OPEN_PHASES:
         expected = SEED_PARTITIONS[phase]
     else:
-        raise ValueError(f"phase {phase!r} is locked; only calibration is open")
+        raise ValueError(f"phase {phase!r} is locked; no scientific phase is open")
     if supplied != expected:
         raise ValueError(
             f"{phase} requires exact ordered seeds {list(expected)}; received {list(supplied)}"

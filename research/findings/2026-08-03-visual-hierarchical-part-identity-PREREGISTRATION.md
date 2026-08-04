@@ -1,6 +1,6 @@
 ---
 type: preregistration
-status: live
+status: retired
 date: 2026-08-03
 mechanism: visual-hierarchical-part-identity
 runner: research/runners/_laneD_visual_hierarchical_part_identity_gate.py
@@ -44,16 +44,14 @@ Riesenhuber and Poggio.
 ## Seed and phase lock
 
 - Non-scientific smoke: `222`.
-- Calibration, open only as the exact ordered tuple: `503`, `509`.
+- Calibration, consumed and closed after NO-GO: `503`, `509`.
 - Development, locked: `521`, `523`, `541`.
 - Held out, locked: `547`, `557`, `563`.
 
-Direct per-seed execution validates membership for internal use. Aggregate and
-CLI execution require the complete ordered calibration tuple and reject
-partial, duplicate, reordered, development, or held-out seeds. Both
-calibration seeds must pass every fixed criterion with one unchanged
-configuration. Otherwise calibration is a NO-GO and later phases remain
-closed.
+This preregistration is retired. Direct, aggregate, and CLI execution now
+reject calibration seeds `503` and `509`; development and held-out phases
+remain closed. See
+`2026-08-03-visual-hierarchical-part-identity-calibration-NO-GO.md`.
 
 The formal calibration configuration is mechanically locked to the runner's
 declared `CALIBRATION_CONFIG`: 12 training frames per identity, two tracks per

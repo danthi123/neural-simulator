@@ -1,6 +1,6 @@
 ---
 type: preregistration
-status: live
+status: retired
 date: 2026-08-03
 mechanism: replay-driven-cortical-consolidation-v3
 runner: research/runners/_replay_cortical_consolidation_gate_v3.py
@@ -37,12 +37,13 @@ microcircuit anatomy.
 ## Seed and phase lock
 
 - Non-scientific smoke only: `216`.
-- Calibration, currently open: `228`, `229`.
+- Calibration, consumed and closed after an undefined run: `228`, `229`.
 - Development, locked: `230`, `231`, `326`.
 - Held out, locked: `327`, `328`, `329`.
 
-Both calibration seeds must pass every fixed criterion without tuning between
-them. A failure stops the gate and leaves later partitions closed.
+This preregistration is retired. The runner now rejects calibration seeds
+`228` and `229`, and later partitions remain closed. See
+`2026-08-03-replay-cortical-consolidation-v3-calibration-UNDEFINED.md`.
 
 ## Fixed protocol
 
