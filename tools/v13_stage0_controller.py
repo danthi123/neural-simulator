@@ -466,11 +466,17 @@ def _validate_replay_receipt(
         "strict replay receipt does not bind its artifact",
     )
     argv = receipt.get("argv")
+    output_argument = Path(argv[-1]) if isinstance(argv, list) and argv else Path()
+    artifact_parts = Path(artifact_path).parts
+    output_parts = output_argument.parts
     _require(
         isinstance(argv, list) and len(argv) >= 4
         and argv[1:3] == ["-m", REPLAY_RUNNER_MODULE]
         and mode in argv
-        and argv[-2:] == ["--out", str(expected_artifact.resolve())],
+        and argv[-2] == "--out"
+        and output_argument.is_absolute()
+        and len(output_parts) >= len(artifact_parts)
+        and output_parts[-len(artifact_parts):] == artifact_parts,
         "strict replay receipt command differs from the frozen replay workflow",
     )
     expected_env = {"SIM_BACKEND": backend or "numpy"}

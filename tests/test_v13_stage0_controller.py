@@ -629,6 +629,17 @@ def test_config_requires_passing_strict_arithmetic_replay(fx: Fixture):
         controller.load_config(bad_config, root=fx.root)
 
 
+def test_strict_replay_receipt_is_portable_across_worktree_roots(fx: Fixture):
+    replay = json.loads((fx.root / controller.STRICT_REPLAY_PATH).read_text())
+    receipt_path = fx.root / replay["cells"]["numpy"]["receipt_path"]
+    receipt = json.loads(receipt_path.read_text())
+    artifact = Path(receipt["artifact"]["path"])
+    receipt["argv"][-1] = str(Path("/different/checkout") / artifact)
+    _write_json(receipt_path, receipt)
+
+    assert controller.load_config(fx.config_path, root=fx.root)["status"] == "frozen"
+
+
 def test_source_manifest_must_be_bound_to_candidate_revision(
     fx: Fixture, monkeypatch: pytest.MonkeyPatch,
 ):
