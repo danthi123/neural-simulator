@@ -5,7 +5,7 @@
   "device": "not_applicable_non_executed_protocol",
   "source_target_packet": {
     "path": "research/specs/v14_snr_stageB_target_packet.json",
-    "sha256": "b7ede93c4a137e79ede651794566dd5bfff75d7047371766ceef653bbd45f3e2"
+    "sha256": "55bed7db16932f56cd27df01375b1b853214af9f6ad0ca670c56fece62705a14"
   },
   "fixtures": [
     {

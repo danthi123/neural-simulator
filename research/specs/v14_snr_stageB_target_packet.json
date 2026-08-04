@@ -223,7 +223,7 @@
     "calcium concentration units and influx conversion",
     "SK half-activation and nanodomain coupling",
     "decision on constant versus dynamic calcium reversal",
-    "SNr-specific fast spike-current and passive-leak parameterization"
+    "SNr-specific fast spike-current gating kinetics and temperature scaling; densities, reversals, leak, and capacitance are now population-scoped"
   ],
   "forbidden_interpretations": [
     "40-80 Hz is an isolated-slice calibration target",

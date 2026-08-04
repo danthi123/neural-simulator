@@ -461,20 +461,24 @@
       ]
     },
     "019fce98-4af3-7282-9bfe-bdd27bf5fc16": {
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "completed_at": "2026-08-04T21:19:31+00:00",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
       "model": "inherited",
       "next_action": "Return exact preparation metadata and locators.",
+      "result": "Exact Atherton, Ding, and Lutas preparation metadata integrated; adult context mismatches remain explicit.",
       "started_at": "2026-08-04T21:11:22+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Stage B primary-source metadata completion",
       "write_set": []
     },
     "019fce9d-4eb7-7f12-a1ba-e176cf868227": {
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "completed_at": "2026-08-04T21:19:31+00:00",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
       "model": "inherited",
       "next_action": "Implement and test pure metrics.",
+      "result": "Deterministic trace metrics implemented and tested.",
       "started_at": "2026-08-04T21:11:22+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Stage B physiology trace metrics",
       "write_set": [
         "tools/new",
@@ -482,11 +486,13 @@
       ]
     },
     "019fce9d-53d2-7920-b0a1-da98fe0490df": {
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "completed_at": "2026-08-04T21:19:31+00:00",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
       "model": "inherited",
       "next_action": "Implement and test per-region HH overrides.",
+      "result": "Regional HH capacitance, conductances, and reversals implemented with checkpoint tests.",
       "started_at": "2026-08-04T21:11:22+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Stage B intrinsic SNr parameter surface slice",
       "write_set": [
         "sim/config.py",
@@ -496,109 +502,44 @@
       ]
     },
     "019fce9d-5991-7a20-bd61-010d70f692dd": {
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "completed_at": "2026-08-04T21:19:31+00:00",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
       "model": "inherited",
       "next_action": "Implement and test standalone protocol substrate.",
+      "result": "Peak-normalized inhibitory conductance-clamp substrate implemented and tested on NumPy/CuPy.",
       "started_at": "2026-08-04T21:11:22+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Stage B biexponential conductance clamp substrate",
       "write_set": [
         "experiment/new",
         "tests/new"
       ]
+    },
+    "019fcea5-e8b1-7871-afa1-ccae79c23815": {
+      "heartbeat_at": "2026-08-04T21:20:21+00:00",
+      "model": "inherited",
+      "next_action": "Return exact sourced values and disjoint implementation slices.",
+      "started_at": "2026-08-04T21:20:21+00:00",
+      "status": "running",
+      "task": "Remaining SNr channel kinetics source/code packet",
+      "write_set": []
+    },
+    "019fcea5-ee57-77f3-83bf-466e6724b746": {
+      "heartbeat_at": "2026-08-04T21:20:21+00:00",
+      "model": "inherited",
+      "next_action": "Implement default-off bridge substrate and tests.",
+      "started_at": "2026-08-04T21:20:21+00:00",
+      "status": "running",
+      "task": "Device-resident inhibitory clamp integration",
+      "write_set": [
+        "sim/bridge.py",
+        "sim/config.py",
+        "experiment/inhibitory_conductance_clamp.py",
+        "tests/new"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T17:41:22+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcdd3-ed7b-7391-932f-10c8d1e33910"
-    },
-    {
-      "at": "2026-08-04T17:41:22+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "experiment-executor"
-    },
-    {
-      "at": "2026-08-04T17:42:37+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcdd3-cb7c-7691-8c09-6a19097d4444"
-    },
-    {
-      "at": "2026-08-04T17:42:37+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "parameter-research-discovery"
-    },
-    {
-      "at": "2026-08-04T17:43:05+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcddf-1d7f-7d80-b9e4-16310ebfd1fe"
-    },
-    {
-      "at": "2026-08-04T17:43:05+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "parameter-research-discovery"
-    },
-    {
-      "at": "2026-08-04T17:47:33+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcddf-1d7f-7d80-b9e4-16310ebfd1fe"
-    },
-    {
-      "at": "2026-08-04T17:47:33+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "parameter-research-discovery"
-    },
-    {
-      "at": "2026-08-04T17:52:03+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcde7-5202-7f21-b50d-1785f84172e3"
-    },
-    {
-      "at": "2026-08-04T17:52:03+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "parameter-research-discovery"
-    },
-    {
-      "at": "2026-08-04T17:56:58+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcde7-5202-7f21-b50d-1785f84172e3"
-    },
-    {
-      "at": "2026-08-04T17:56:58+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "parameter-research-discovery"
-    },
-    {
-      "at": "2026-08-04T17:59:32+00:00",
-      "detail": "blocked",
-      "kind": "agent-finish",
-      "subject": "019fcdd3-3734-7ae2-bf0a-57c98596ebb8"
-    },
-    {
-      "at": "2026-08-04T17:59:32+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gpu-execution-efficiency"
-    },
-    {
-      "at": "2026-08-04T18:14:01+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcdf9-de57-7801-b188-fca0e5d6cefa"
-    },
     {
       "at": "2026-08-04T18:14:01+00:00",
       "detail": "running",
@@ -1108,6 +1049,96 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fce9d-5991-7a20-bd61-010d70f692dd"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce98-4af3-7282-9bfe-bdd27bf5fc16"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce9d-4eb7-7f12-a1ba-e176cf868227"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce9d-53d2-7920-b0a1-da98fe0490df"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce9d-5991-7a20-bd61-010d70f692dd"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-source-metadata"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-intrinsic-surface"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-physiology-metrics"
+    },
+    {
+      "at": "2026-08-04T21:19:31+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-conductance-clamp"
+    },
+    {
+      "at": "2026-08-04T21:19:32+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-04T21:19:32+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "gateb-v14-clamp-integration"
+    },
+    {
+      "at": "2026-08-04T21:19:32+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "gateb-v14-channel-kinetics"
+    },
+    {
+      "at": "2026-08-04T21:20:20+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-clamp-integration"
+    },
+    {
+      "at": "2026-08-04T21:20:21+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-channel-kinetics"
+    },
+    {
+      "at": "2026-08-04T21:20:21+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcea5-ee57-77f3-83bf-466e6724b746"
+    },
+    {
+      "at": "2026-08-04T21:20:21+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcea5-e8b1-7871-afa1-ccae79c23815"
     }
   ],
   "lanes": {
@@ -1191,15 +1222,45 @@
       "resource": "agent_cpu_network",
       "status": "completed"
     },
+    "gateb-v14-channel-kinetics": {
+      "agent_id": "019fcea5-e8b1-7871-afa1-ccae79c23815",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T21:20:21+00:00",
+      "next_action": "Produce source-backed implementation packet for remaining kinetics and calcium/SK coupling.",
+      "owner": "Euler-2",
+      "priority": 2,
+      "resource": "local_cpu",
+      "status": "running",
+      "write_set": [
+        "sim",
+        "tests"
+      ]
+    },
+    "gateb-v14-clamp-integration": {
+      "agent_id": "019fcea5-ee57-77f3-83bf-466e6724b746",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T21:20:20+00:00",
+      "next_action": "Integrate clamp device-resident with default-off identity and checkpoint coverage.",
+      "owner": "Leibniz-2",
+      "priority": 1,
+      "resource": "local_gpu",
+      "status": "running",
+      "write_set": [
+        "sim",
+        "experiment",
+        "research/runners",
+        "tests"
+      ]
+    },
     "gateb-v14-conductance-clamp": {
       "agent_id": "019fce9d-5991-7a20-bd61-010d70f692dd",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
-      "next_action": "Implement standalone biexponential inhibitory clamp schedules and unit conversion before bridge integration.",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
+      "next_action": "Integrate standalone protocol substrate into bridge/runner without host synchronization.",
       "owner": "Maxwell-2",
       "priority": 1,
       "resource": "local_cpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "experiment/new",
         "tests/new"
@@ -1223,12 +1284,12 @@
     "gateb-v14-intrinsic-surface": {
       "agent_id": "019fce9d-53d2-7920-b0a1-da98fe0490df",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
-      "next_action": "Implement default-preserving per-region SNr HH conductance, reversal, and capacitance overrides with focused tests.",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
+      "next_action": "Continue with channel kinetics and calcium/SK coupling in a separate slice.",
       "owner": "Russell-2",
       "priority": 1,
       "resource": "local_cpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "sim/config.py",
         "sim/regions.py",
@@ -1271,26 +1332,40 @@
     "gateb-v14-physiology-metrics": {
       "agent_id": "019fce9d-4eb7-7f12-a1ba-e176cf868227",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
-      "next_action": "Implement deterministic pure trace metrics with synthetic positive and anti-cheat fixtures.",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
+      "next_action": "Integrate pure metrics into Stage B scorer and runner.",
       "owner": "Laplace-2",
       "priority": 1,
       "resource": "local_cpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/new",
         "tests/new"
       ]
     },
+    "gateb-v14-scorer-integration": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T21:19:32+00:00",
+      "next_action": "Build hard-gate physiology scorer over committed metrics with wrong-sign, rate-only, block, hidden-burn-in, and protocol-mismatch controls.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "local_cpu",
+      "status": "ready",
+      "write_set": [
+        "tools",
+        "tests",
+        "research/fixtures"
+      ]
+    },
     "gateb-v14-source-metadata": {
       "agent_id": "019fce98-4af3-7282-9bfe-bdd27bf5fc16",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T21:11:22+00:00",
-      "next_action": "Resolve exact Atherton 2005, Ding 2011, and Lutas 2016 preparation metadata and source locators without inferred gates.",
+      "heartbeat_at": "2026-08-04T21:19:31+00:00",
+      "next_action": "Carry explicit source ambiguities into scorer decisions.",
       "owner": "Ohm-2",
       "priority": 1,
       "resource": "online_research",
-      "status": "running"
+      "status": "completed"
     },
     "gateb-v14-stageA": {
       "blocker": "",
@@ -1584,5 +1659,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T21:11:22+00:00"
+  "updated_at": "2026-08-04T21:20:21+00:00"
 }

@@ -129,9 +129,20 @@ def test_readiness_keeps_required_controls_and_parameter_gaps_visible():
         "wrong-sign-scorer-control",
     } <= arms
 
-    unresolved = " ".join(spec["required_parameter_surface"]["must_be_resolved_before_calibration"])
-    for mechanism in ("fast sodium", "potassium", "passive leak", "NaP", "Cav2.2", "Ih", "calcium", "SK"):
+    surface = spec["required_parameter_surface"]
+    assert {
+        "hh_C_m_override",
+        "hh_g_Na_max_override",
+        "hh_g_K_max_override",
+        "hh_g_L_override",
+        "hh_E_Na_override",
+        "hh_E_K_override",
+        "hh_E_L_override",
+    } <= set(surface["already_population_scoped"])
+    unresolved = " ".join(surface["must_be_resolved_before_calibration"])
+    for mechanism in ("fast sodium", "potassium", "NaP", "Cav2.2", "Ih", "calcium", "SK"):
         assert mechanism in unresolved
+    assert "passive leak" not in unresolved
 
 
 def test_future_search_budget_and_order_are_fixed():

@@ -31,7 +31,7 @@
     },
     "target_packet": {
       "path": "research/specs/v14_snr_stageB_target_packet.json",
-      "sha256": "b7ede93c4a137e79ede651794566dd5bfff75d7047371766ceef653bbd45f3e2"
+      "sha256": "55bed7db16932f56cd27df01375b1b853214af9f6ad0ca670c56fece62705a14"
     }
   },
   "partitions": {
@@ -52,11 +52,18 @@
   "current_readiness": {
     "verdict": "READINESS_UNDEFINED",
     "open_gates": [
-      "complete preparation metadata and primary-source locators for transferred intrinsic-channel constraints",
+      "resolve the explicitly recorded Lutas potassium ambiguity and adult AP/AHP/regularity include-or-exclude decisions",
       "resolve or explicitly exclude the missing SNr parameter surface",
-      "implement and validate the physiology scorer and negative fixtures",
+      "integrate the conductance-clamp and trace metrics into the physiology scorer and complete negative fixtures",
       "complete a seed-free multi-candidate dry run through the committed sealed source",
       "write and source-seal the separate executable Stage B specification"
+    ],
+    "completed_primitives": [
+      "adaptive mechanism objective and pre-seal candidate-to-job binding",
+      "source-separated scorer fixture validation",
+      "deterministic physiology trace metrics",
+      "standalone peak-normalized inhibitory conductance-clamp protocols",
+      "population-scoped HH capacitance, fast sodium, delayed-rectifier potassium, and passive-leak densities and reversals"
     ]
   },
   "preparation_cohorts": [
@@ -106,12 +113,17 @@
       "snr_g_nap_max",
       "snr_g_ca_max",
       "snr_g_sk_max",
-      "snr_g_h_max"
+      "snr_g_h_max",
+      "hh_C_m_override",
+      "hh_g_Na_max_override",
+      "hh_g_K_max_override",
+      "hh_g_L_override",
+      "hh_E_Na_override",
+      "hh_E_K_override",
+      "hh_E_L_override"
     ],
     "must_be_resolved_before_calibration": [
-      "SNr-scoped fast sodium density and reversal",
-      "SNr-scoped delayed-rectifier potassium density and reversal",
-      "SNr-scoped passive leak density and reversal",
+      "fast sodium and delayed-rectifier potassium gating kinetics and temperature scaling",
       "NaP activation and inactivation kinetics",
       "Cav2.2-like activation and inactivation kinetics",
       "Ih activation kinetics and reversal",
