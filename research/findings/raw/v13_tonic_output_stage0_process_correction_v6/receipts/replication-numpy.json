@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v6.json",
+    "--replication",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/calibration-selection.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-numpy.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-numpy.json",
+    "sha256": "ac7b5c3f5b3ddce3e3526d93966bd33e2b14d680351b96f18e14d06521b274e4",
+    "size_bytes": 59536
+  },
+  "device": "12th Gen Intel(R) Core(TM) i7-12700",
+  "duration_monotonic_ns": 805957019,
+  "ended_utc_ns": 1785843985531594744,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "provenance": {
+    "ended_utc_ns": 1785843985471040732,
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-numpy.json.prov.json",
+    "run_id": "21fe875284424500465f852ceba8192bd887abab10bc8300da11e020d20f370c",
+    "sha256": "63ee53068550360ebaca38e47b34a4268fef45732a9bf00a29b1e86c97650322",
+    "started_utc_ns": 1785843984741974677
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 55,
+    "git_sha": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+    "kind": "git",
+    "manifest": "research/specs/v13_stage0_candidate_source_v9.sha256",
+    "manifest_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003",
+    "tree_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003"
+  },
+  "started_utc_ns": 1785843984725636503,
+  "status": "success"
+}

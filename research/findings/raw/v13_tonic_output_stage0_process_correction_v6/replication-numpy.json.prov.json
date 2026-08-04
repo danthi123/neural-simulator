@@ -1,0 +1,35 @@
+{
+ "run_id": "21fe875284424500465f852ceba8192bd887abab10bc8300da11e020d20f370c",
+ "runner": "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+  "--process-correction-spec",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v6.json",
+  "--replication",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/calibration-selection.json",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-numpy.json"
+ ],
+ "git_sha": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+ "git_dirty": true,
+ "source_kind": "git",
+ "source_manifest_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003",
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T07:46:24",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 14087.5,
+ "corpus_check_query": "git archive pool ancestry attestation source manifest scientific runner --max-results 8",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-numpy.json",
+ "schema": "sim-run-provenance-v2",
+ "started_utc_ns": 1785843984741974677,
+ "ended_utc_ns": 1785843985471040732
+}

@@ -154,10 +154,14 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     CuPy validly failed only the inhibitory-response ceiling, but the runner
     mapped that scientific no-go to process exit `1`, preventing its receipt and
     manifest. V5 is therefore undefined and both fresh seeds are consumed. V6
-    preregisters the process-only fix: valid positive and negative outcomes are
-    sealable, while undefined evidence still fails closed. Its fresh calibration
-    seed is `754571` and replication seed is `890220`; source freeze is next.
-    Held-out seed `1021` and Stage-1 seed `1031` remain sealed.
+    preregistered the process-only fix: valid positive and negative outcomes are
+    sealable, while undefined evidence still fails closed. V6 then sealed
+    cross-backend calibration at `100 pA`, replication GO on seed `890220`, and
+    held-out GO on blind seed `1021`. It stopped before performance because the
+    receipt wrapper cannot yet launch the historical baseline from the working
+    directory frozen in its command envelope. A process-only continuation must
+    bind that directory and reuse the sealed V6 physiology without rerunning
+    consumed seeds. Stage-1 seed `1031` remains sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

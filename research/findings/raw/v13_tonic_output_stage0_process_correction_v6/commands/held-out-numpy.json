@@ -1,0 +1,81 @@
+{
+  "action": "held_out_numpy",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v6.json",
+    "--held-out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/calibration-selection.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/held-out-numpy.json"
+  ],
+  "config": {
+    "path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_stage0_controller_config_v8.json",
+    "sha256": "f91abeafa9aa0464f70229f83a0e0af155615daaec14d0540439988e95ac4a75"
+  },
+  "correction_id": "v13-stage0-process-correction-v6",
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "env": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution": "not_executed",
+  "output": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/held-out-numpy.json",
+  "prerequisites": [
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/calibration-selection.json",
+      "artifact_sha256": "30818e1cb5165ba56b67ed2cb55db36fc62b8e70cc286de5eda8113a4c86e0d2",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/commands/calibration-selection.json",
+      "command_envelope_sha256": "d80f94945d58521645223600bf32b93593bd03d0a3748fab0945fdd67867fb11",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/receipts/calibration-selection.json",
+      "execution_receipt_sha256": "f9a4719bd64376b7d141f52835bcb98beb8e98fd636595d7bfb1a7e7ed4297ab",
+      "kind": "calibration_selection",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/manifests/calibration-selection.json",
+      "manifest_sha256": "733459343317a1352e5c4b042fd4d90dd38ed905856a7f823ff41320416d7e78",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/calibration-selection.json.prov.json",
+      "provenance_sidecar_sha256": "440faf4160e2a6e8b2dcb7ed0a7d7602c71f61c338d054d044bf54dd1a657b2a"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-numpy.json",
+      "artifact_sha256": "ac7b5c3f5b3ddce3e3526d93966bd33e2b14d680351b96f18e14d06521b274e4",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/commands/replication-numpy.json",
+      "command_envelope_sha256": "7f2feaf39507afdd0cb4ad951a3aa1b2550d0877f31e44d30f46c53e9bf8e2ae",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/receipts/replication-numpy.json",
+      "execution_receipt_sha256": "f1387fba1fae794f61880fe0c0e709ba1d18108aa266fc07aa9720c0003bd0e3",
+      "kind": "replication_numpy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/manifests/replication-numpy.json",
+      "manifest_sha256": "060b4875d3d34aac39ab79a488597eadaf05685dc17991cdad1769010d1981b5",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-numpy.json.prov.json",
+      "provenance_sidecar_sha256": "63ee53068550360ebaca38e47b34a4268fef45732a9bf00a29b1e86c97650322"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-cupy.json",
+      "artifact_sha256": "424a8c5d9bb07c6204fddab1cce38f1f543ae468b14b66617344b362c71d0dce",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/commands/replication-cupy.json",
+      "command_envelope_sha256": "328397c24b02d53c78f053ec98c7688b48b15bbf3cf70dfc5032a2ab7c14815a",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/receipts/replication-cupy.json",
+      "execution_receipt_sha256": "9316cc82602eee9f2aece7578b3fea12125b7e10d643435bacf1338bb5741a15",
+      "kind": "replication_cupy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/manifests/replication-cupy.json",
+      "manifest_sha256": "ed9680baafb01126ec39fd46053aaecfc00f4eb4eb1505816753915389ed0cea",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/replication-cupy.json.prov.json",
+      "provenance_sidecar_sha256": "dd52e7b5c79183b69dfb9a6526dbb43fb4e5fab63b327497ed3dac79cc32f906"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/held-out-cupy.json",
+      "artifact_sha256": "583e1424995ec14c6c5655067724cda61ded1f7873811bdb7069da87b1dd374a",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/commands/held-out-cupy.json",
+      "command_envelope_sha256": "18b1ca0c1406a2abaf2fe6fc05d33c18393d929513a48b51764d3937f647a7ba",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/receipts/held-out-cupy.json",
+      "execution_receipt_sha256": "8790f5929c8473c9a2ab565f39580c45c9fbb5feb20908f7b07e7894712612b9",
+      "kind": "held_out_cupy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/manifests/held-out-cupy.json",
+      "manifest_sha256": "155ff1f5ea34790e23f2381897a61d8f76ceaf05e791806176452e4a5254f234",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/held-out-cupy.json.prov.json",
+      "provenance_sidecar_sha256": "52ba24fd92875883d9c08f89b277be2c00e3fe905cda5160829d952b89adacac"
+    }
+  ],
+  "schema": "v13-stage0-command-v1",
+  "source_revision": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f"
+}

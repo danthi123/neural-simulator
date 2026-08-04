@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v6.json",
+    "--held-out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/calibration-selection.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v6/held-out-cupy.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/held-out-cupy.json",
+    "sha256": "583e1424995ec14c6c5655067724cda61ded1f7873811bdb7069da87b1dd374a",
+    "size_bytes": 58146
+  },
+  "device": "NVIDIA GeForce RTX 3090",
+  "duration_monotonic_ns": 2573860077,
+  "ended_utc_ns": 1785844043059204093,
+  "env_allowlist": {
+    "SIM_BACKEND": "cupy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "provenance": {
+    "ended_utc_ns": 1785844042927946475,
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v6/held-out-cupy.json.prov.json",
+    "run_id": "e89fdcccc24449ede2c9afb9d67df50e87e615faea60bb7b7a59f90917b26b25",
+    "sha256": "52ba24fd92875883d9c08f89b277be2c00e3fe905cda5160829d952b89adacac",
+    "started_utc_ns": 1785844040505709238
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 55,
+    "git_sha": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+    "kind": "git",
+    "manifest": "research/specs/v13_stage0_candidate_source_v9.sha256",
+    "manifest_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003",
+    "tree_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003"
+  },
+  "started_utc_ns": 1785844040485342974,
+  "status": "success"
+}
