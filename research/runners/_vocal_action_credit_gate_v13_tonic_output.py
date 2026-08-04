@@ -39,7 +39,7 @@ from tools import stable_json_evidence
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "research/specs/v13_tonic_output_substrate.json"
 PROCESS_CORRECTION_SPEC_PATH = (
-    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v4.json"
+    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v5.json"
 )
 RUNNER_PATH = Path(__file__).resolve()
 COMPATIBILITY_ROOT = ROOT / "research/findings/raw/v13_deterministic_compatibility"
@@ -55,13 +55,13 @@ PARTITIONS = {
     "held_out": [1021],
     "reserved_for_stage1": [1031],
 }
-PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v4"
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v5"
 SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
-SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V4"
-SEED_DERIVATION_SOURCE_REVISION = "63da248655ee406e159e762ff8c865d5dd49081c"
-PRIOR_PARTITION_SEEDS = {"calibration": 577995, "replication": 578403}
-FORBIDDEN_CONSUMED_SEEDS = {1013, 1019, 840860, 645424}
-RETIRED_UNEXECUTED_SEEDS = {687979, 638726, 577995, 578403}
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V5"
+SEED_DERIVATION_SOURCE_REVISION = "129b348db2ae2ab448283cb78c99e7143de99474"
+PRIOR_PARTITION_SEEDS = {"calibration": 384414, "replication": 568500}
+FORBIDDEN_CONSUMED_SEEDS = {1013, 1019, 384414, 645424, 840860}
+RETIRED_UNEXECUTED_SEEDS = {568500, 577995, 578403, 638726, 687979}
 COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 LADDER_PA = [75, 100, 125, 150, 175]
 HETEROGENEITY = {
@@ -765,7 +765,9 @@ def merge_calibration(
     }
 
 
-def _load_selection(path: Path) -> tuple[dict, float]:
+def _load_selection(
+    path: Path, *, process_correction: dict,
+) -> tuple[dict, float]:
     selection = json.loads(path.read_text())
     if selection.get("stage") != "calibration_cross_backend":
         raise ValueError("selection artifact is not a cross-backend calibration")
@@ -779,7 +781,7 @@ def _load_selection(path: Path) -> tuple[dict, float]:
     if selection.get("source_identity") != _source_identity():
         raise ValueError("selection source identity differs from executable source")
     if selection.get("compatibility_correction") != _load_compatibility_correction(
-        COMPATIBILITY_CORRECTION_PATH
+        COMPATIBILITY_CORRECTION_PATH, process_correction=process_correction
     ):
         raise ValueError("selection is not bound to the earned compatibility correction")
     return selection, float(current)
@@ -953,8 +955,10 @@ def run_checkpoint_gate(seed: int, current_pA: float) -> dict:
 def run_replication(
     selection_path: Path, process_correction_path: Path, *, held_out=False,
 ) -> dict:
-    selection, current = _load_selection(selection_path)
     process_correction, seeds = load_process_correction(process_correction_path)
+    selection, current = _load_selection(
+        selection_path, process_correction=process_correction,
+    )
     if held_out:
         _assert_source_sealed()
     seed = seeds["held_out" if held_out else "replication"]

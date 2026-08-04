@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v4.json",
+    "--calibration",
+    "--compatibility-correction",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json",
+    "sha256": "31641f55a3b4b780a984821931370a2755c5bc50f7ddf9d15a0b9fc988fee2ec",
+    "size_bytes": 11874
+  },
+  "device": "12th Gen Intel(R) Core(TM) i7-12700",
+  "duration_monotonic_ns": 728212288,
+  "ended_utc_ns": 1785842781760291718,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "provenance": {
+    "ended_utc_ns": 1785842781682862889,
+    "path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json.prov.json",
+    "run_id": "2faedced310dd11280bdeff5aac45d6256dfa9aacbd12cd642946f7f962dfdf4",
+    "sha256": "a335c809b4f074a42daa93821e75b4c4ddfb3c43a6a1ae3c490207a9c9c0a23f",
+    "started_utc_ns": 1785842781048889525
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 55,
+    "git_sha": "129b348db2ae2ab448283cb78c99e7143de99474",
+    "kind": "git",
+    "manifest": "research/specs/v13_stage0_candidate_source_v7.sha256",
+    "manifest_sha256": "344f02890d0ad35dc2def4b2fc60140d6796d1119aee2b3ebae2ceedf61e09bb",
+    "tree_sha256": "344f02890d0ad35dc2def4b2fc60140d6796d1119aee2b3ebae2ceedf61e09bb"
+  },
+  "started_utc_ns": 1785842781032077883,
+  "status": "success"
+}

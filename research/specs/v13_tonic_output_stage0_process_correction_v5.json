@@ -1,0 +1,126 @@
+{
+  "schema": "v13-stage0-process-correction-v5",
+  "status": "preregistered-not-executed",
+  "date": "2026-08-04",
+  "provenance_exempt": "non-executed process correction; contains no v5 measured result",
+  "device": "not_applicable_non_executed_protocol",
+  "authority": "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v5-PREREGISTRATION.md",
+  "base_spec": {
+    "path": "research/specs/v13_tonic_output_substrate.json",
+    "sha256": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936"
+  },
+  "strict_arithmetic_replay": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/evidence-manifest.json",
+    "sha256": "c9ceda9eaa263c542c88240f9df6661d808352c800abc8e3b79431f8e1578ecf",
+    "outcome": "DIAGNOSTIC_PASS"
+  },
+  "supersedes_process_correction": {
+    "path": "research/specs/v13_tonic_output_stage0_process_correction_v4.json",
+    "disposition": "PARTIAL_CALIBRATION_GO_REPLICATION_ABORTED",
+    "promotion_value": "none",
+    "reason": "selection loader omitted the validated process-correction context during compatibility revalidation"
+  },
+  "v4_calibration_diagnostic": {
+    "seed": 384414,
+    "selected_current_pA": 100,
+    "outcome": "CALIBRATION_GO",
+    "artifact": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-selection.json",
+    "promotion_value": "diagnostic_only",
+    "must_not_unlock_v5": true
+  },
+  "compatibility": {
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+    "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+    "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+    "verification": {
+      "same_opened_byte_buffer": true,
+      "regular_file_only": true,
+      "reject_symlink": true,
+      "verify_bytes_before_and_after_parse": true,
+      "require_both_named_digests_in_scientific_artifacts": true
+    }
+  },
+  "seed_derivation": {
+    "algorithm": "sha256-first-12-mod-900000-plus-100000-v2",
+    "namespace": "V13_STAGE0_PROCESS_CORRECTION_V5",
+    "source_anchor": {
+      "revision": "129b348db2ae2ab448283cb78c99e7143de99474",
+      "committed_at": "2026-08-04T07:25:47-04:00",
+      "relation_to_v4_observation": "fixed_before_observation"
+    },
+    "material_template": "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}",
+    "prior_partition_seeds": {
+      "calibration": 384414,
+      "replication": 568500
+    },
+    "result_exclusion": "no measured result, current, verdict, raster, state hash, or tested candidate is an input"
+  },
+  "partitions": {
+    "calibration": [216274],
+    "replication": [401461],
+    "held_out": [1021]
+  },
+  "forbidden_consumed_seeds": [1013, 1019, 384414, 645424, 840860],
+  "retired_unexecuted_seeds": [568500, 577995, 578403, 638726, 687979],
+  "sealed_future_seeds": {
+    "held_out": 1021,
+    "stage_1": 1031
+  },
+  "calibration": {
+    "ladder_pA": [75, 100, 125, 150, 175],
+    "fresh_brain_per_point": true,
+    "selection": "lowest_common_passing_point_after_both_backends_sealed",
+    "forbid_prior_current_preference": true
+  },
+  "authority_binding": {
+    "controller_and_runner_spec_paths_must_match": true,
+    "controller_and_runner_schema_namespace_and_partitions_must_match": true
+  },
+  "selection_loading": {
+    "load_process_correction_before_selection": true,
+    "pass_process_correction_to_compatibility_validation": true,
+    "production_loader_test_required_before_source_freeze": true
+  },
+  "merge_environment": {
+    "calibration_selection": {"SIM_BACKEND": "numpy"},
+    "final_stage0": {"SIM_BACKEND": "numpy"},
+    "emitter_and_manifest_policy_must_match": true
+  },
+  "artifact_manifest": {
+    "schema": "v13-stage0-artifact-manifest-v2",
+    "create_only": true,
+    "required_sealed_entries": [
+      "scientific_artifact", "provenance_sidecar", "command_envelope",
+      "execution_receipt", "controller_config", "process_correction_spec",
+      "candidate_source_manifest", "source_revision",
+      "compatibility_file_sha256", "compatibility_canonical_json_sha256",
+      "compatibility_canonicalization"
+    ],
+    "required_cross_checks": [
+      "artifact path and sha256 agree across sidecar receipt and manifest",
+      "run identity arguments backend source and destination agree",
+      "all sealed inputs are regular files and unchanged during validation",
+      "provenance sidecar is sealed in the same validation step as the artifact"
+    ],
+    "manifest_v1_accepted_for_promotion": false
+  },
+  "execution_order": [
+    "calibration_numpy", "seal_calibration_numpy_manifest_v2",
+    "calibration_cupy_after_numpy_manifest_v2_sealed",
+    "seal_calibration_cupy_manifest_v2", "merge_calibration_lowest_common_pass",
+    "replication_numpy_and_cupy_after_selection",
+    "held_out_cupy_after_both_replication_go",
+    "held_out_numpy_after_cupy_sealed"
+  ],
+  "stop_rules": [
+    "prior-chain evidence cannot unlock any v5 stage",
+    "any forbidden or retired seed blocks command emission",
+    "any controller runner authority mismatch is UNDEFINED",
+    "any selection compatibility context mismatch is UNDEFINED",
+    "any digest-domain substitution is UNDEFINED",
+    "a missing or changed provenance sidecar is UNDEFINED",
+    "any emitted merge environment mismatch is UNDEFINED",
+    "any source receipt order ladder or rerun violation is UNDEFINED"
+  ]
+}

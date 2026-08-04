@@ -24,7 +24,7 @@ def test_locked_spec_matches_runner_and_seed_partitions_do_not_overlap():
 
 def test_process_correction_derives_replacements_without_changing_held_out():
     binding, seeds = v13.load_process_correction(v13.PROCESS_CORRECTION_SPEC_PATH)
-    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v4.json")
+    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v5.json")
     assert seeds["calibration"] == v13._derived_replacement_seed(
         "calibration", v13.PRIOR_PARTITION_SEEDS["calibration"]
     )
@@ -147,6 +147,46 @@ def test_merge_calibration_selects_lowest_common_passing_point(tmp_path):
     )
     assert merged["calibration_go"]
     assert merged["selected_current_pA"] == 100
+
+
+def test_production_selection_loader_accepts_process_corrected_source(tmp_path):
+    process_correction, seeds = v13.load_process_correction(
+        v13.PROCESS_CORRECTION_SPEC_PATH
+    )
+    compatibility = v13._load_compatibility_correction(
+        v13.COMPATIBILITY_CORRECTION_PATH,
+        process_correction=process_correction,
+    )
+    base = {
+        "stage": "calibration_backend",
+        "seed": seeds["calibration"],
+        "source_sha": "candidate",
+        "source_identity": v13._source_identity(),
+        "compatibility_correction": compatibility,
+        "process_correction": process_correction,
+        "rows": [{"current_pA": value} for value in v13.LADDER_PA],
+    }
+    paths = []
+    for backend in ("numpy", "cupy"):
+        path = tmp_path / f"{backend}.json"
+        path.write_text(json.dumps({
+            **base,
+            "backend": backend,
+            "passing_currents_pA": [100],
+        }))
+        paths.append(path)
+    selection = v13.merge_calibration(
+        *paths, v13.PROCESS_CORRECTION_SPEC_PATH
+    )
+    selection_path = tmp_path / "selection.json"
+    selection_path.write_text(json.dumps(selection))
+
+    loaded, current = v13._load_selection(
+        selection_path, process_correction=process_correction,
+    )
+
+    assert loaded["outcome"] == "CALIBRATION_GO"
+    assert current == 100.0
 
 
 def test_merge_calibration_refuses_source_mismatch(tmp_path):

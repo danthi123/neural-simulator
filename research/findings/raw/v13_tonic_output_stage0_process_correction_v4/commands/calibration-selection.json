@@ -1,0 +1,56 @@
+{
+  "action": "merge_calibration",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v4.json",
+    "--merge-calibration",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-cupy.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-selection.json"
+  ],
+  "config": {
+    "path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_stage0_controller_config_v6.json",
+    "sha256": "6dbbece195bfc635b7df51ffd416929738da1de84e965b679b13abd90cfb584f"
+  },
+  "correction_id": "v13-stage0-process-correction-v4",
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "env": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution": "not_executed",
+  "output": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-selection.json",
+  "prerequisites": [
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json",
+      "artifact_sha256": "31641f55a3b4b780a984821931370a2755c5bc50f7ddf9d15a0b9fc988fee2ec",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/commands/calibration-numpy.json",
+      "command_envelope_sha256": "96724b39e6d739145660a07e10ea70a5d3e61f308dfcef6e50b4d910f7663dda",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/receipts/calibration-numpy.json",
+      "execution_receipt_sha256": "8070fca895e7f58f121b18f317846bb9f1442cc1101d6e2550a48fd8581bec49",
+      "kind": "calibration_numpy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/manifests/calibration-numpy.json",
+      "manifest_sha256": "ab77a2daff35ebdcfbbf3cc2a2c7d7c296bf9309bc4954094acf6f4cae683446",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json.prov.json",
+      "provenance_sidecar_sha256": "a335c809b4f074a42daa93821e75b4c4ddfb3c43a6a1ae3c490207a9c9c0a23f"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-cupy.json",
+      "artifact_sha256": "2493e668467943d469f45bc32c3249e52c9717c4f5c96c9356243a52cd6bd9a1",
+      "command_envelope_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/commands/calibration-cupy.json",
+      "command_envelope_sha256": "60207f30cfc71ac80c3d5d919f23e2dc6208d1007ea2852e08ce17bae79a2466",
+      "execution_receipt_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/receipts/calibration-cupy.json",
+      "execution_receipt_sha256": "5407214b0113d5f843a1266c330f74fedd3a9f1575e1a58ef3d955c5faf1c099",
+      "kind": "calibration_cupy",
+      "manifest_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/manifests/calibration-cupy.json",
+      "manifest_sha256": "c63a8ce3aa5ff85facb21c3c27a219d770ce4adc5a712f8879ed848c8b3ea66f",
+      "provenance_sidecar_path": "research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-cupy.json.prov.json",
+      "provenance_sidecar_sha256": "5ec84af819f5661f9e896f2a9252b1d1bce74cc04417af22705ee2db57389f75"
+    }
+  ],
+  "schema": "v13-stage0-command-v1",
+  "source_revision": "129b348db2ae2ab448283cb78c99e7143de99474"
+}

@@ -1,0 +1,43 @@
+{
+  "action": "calibration_numpy",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--process-correction-spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_tonic_output_stage0_process_correction_v4.json",
+    "--calibration",
+    "--compatibility-correction",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json"
+  ],
+  "config": {
+    "path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_stage0_controller_config_v6.json",
+    "sha256": "6dbbece195bfc635b7df51ffd416929738da1de84e965b679b13abd90cfb584f"
+  },
+  "correction_id": "v13-stage0-process-correction-v4",
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "env": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution": "not_executed",
+  "output": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_tonic_output_stage0_process_correction_v4/calibration-numpy.json",
+  "prerequisites": [
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/evidence-manifest.json",
+      "artifact_sha256": "c9ceda9eaa263c542c88240f9df6661d808352c800abc8e3b79431f8e1578ecf",
+      "kind": "strict_arithmetic_replay_v2",
+      "source_revision": "c2db1becbe0948424958faec0f706f492de447c9"
+    },
+    {
+      "artifact_path": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+      "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+      "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+      "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+      "kind": "compatibility"
+    }
+  ],
+  "schema": "v13-stage0-command-v1",
+  "source_revision": "129b348db2ae2ab448283cb78c99e7143de99474"
+}

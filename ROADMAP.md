@@ -147,10 +147,12 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     No replication or held-out command ran. The merge emitters are corrected
     and tested. V3 then aborted before measurement because the scientific runner
     still hardcoded the v2 authority; no brain, seed, or result was created. V4
-    now binds runner and controller authority directly and preregisters fresh,
-    result-independent calibration seed `384414` and replication seed `568500`.
-    The next action is to freeze and commit its complete candidate source before
-    any v4 command. Held-out seed `1021` and Stage-1 seed `1031` remain sealed.
+    then earned sealed cross-backend calibration GO at `100 pA`, but replication
+    aborted before brain construction because selection validation omitted the
+    process-correction context. V5 fixes and directly tests that production
+    loader, with result-independent calibration seed `216274` and replication
+    seed `401461`. Source freeze is next. Held-out seed `1021` and Stage-1 seed
+    `1031` remain sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

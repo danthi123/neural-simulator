@@ -1,0 +1,358 @@
+{
+  "probe": "gateB_v13_tonic_output_calibration",
+  "stage": "calibration_backend",
+  "seed": 384414,
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "source_sha": "129b348db2ae2ab448283cb78c99e7143de99474",
+  "source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "1a5f26ca163e8662f9aec281a27da750797b77c6626979489971b3fa5d0346b5",
+    "sim/bridge.py": "09564a6485e299d5c59c8b16bfdcb9fc4164b06e14a71e9a54223fb882e1f1a3",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28",
+    "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+    "research/specs/v13_tonic_output_stage0_process_correction_v4.json": "1a22e13dfd3383fbdef961f2fb03958426dca542f22ef36f85f5b319bbf9b6b2"
+  },
+  "spec_sha256": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+  "process_correction": {
+    "path": "research/specs/v13_tonic_output_stage0_process_correction_v4.json",
+    "sha256": "1a22e13dfd3383fbdef961f2fb03958426dca542f22ef36f85f5b319bbf9b6b2"
+  },
+  "compatibility_correction": {
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "file_sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971",
+    "canonical_json_sha256": "777e1ac590847beab2bffbb71b4a9d584021f4efc7f2f13529153b6f3faa2097",
+    "canonicalization": "python-json-sort-keys-compact-separators-utf8-v1",
+    "candidate_source_sha": "75c655db136aed3ed7066bef75133bb24df3d888",
+    "baseline_bundle_present_in_candidate_source": true,
+    "twin_intrinsic_states_valid": true,
+    "deterministic_patch_id": "18bd23624a3247cb0f205795081b7a540c15ed89",
+    "outcome": "DETERMINISTIC_COMPATIBILITY_GO"
+  },
+  "rows": [
+    {
+      "current_pA": 75,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.04632415771484,
+          "a": 0.05229620598256588,
+          "b": 2.082680270075798,
+          "d": 24.732611560821532
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            23.5,
+            22.999999999999996,
+            25.499999999999996,
+            24.249999999999996,
+            23.75,
+            23.75,
+            21.749999999999996,
+            25.499999999999996,
+            21.749999999999996,
+            22.25
+          ],
+          "population_rate_hz": 23.5,
+          "cells_firing": 38,
+          "max_same_step_fraction": 0.15,
+          "distinct_first_spike_steps": 26,
+          "first_spike_span_ms": 69.0,
+          "total_spikes": 940
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": false,
+          "same_step_fraction": true,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "2824cdc44718f34f547c45e6a4289c01530ee7b664b479280d6a30c6ecb801ec",
+      "state_hashes": {
+        "v": "6825bd97fc6bb292a9c367a08b01d77281a08bb30d33fdc300d22233c114e6af",
+        "u": "d212085b2cda074fda76590f2d66e4eac7aed8efc7af709db659c61a9df6a52e",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    },
+    {
+      "current_pA": 100,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.04632415771484,
+          "a": 0.05229620598256588,
+          "b": 2.082680270075798,
+          "d": 24.732611560821532
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            57.5,
+            62.5,
+            62.75,
+            64.0,
+            62.0,
+            62.24999999999999,
+            64.74999999999999,
+            62.5,
+            62.0,
+            64.25
+          ],
+          "population_rate_hz": 62.45,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.2,
+          "distinct_first_spike_steps": 15,
+          "first_spike_span_ms": 17.0,
+          "total_spikes": 2498
+        },
+        "checks": {
+          "all_bins_in_rate_range": true,
+          "all_cells_fire": true,
+          "same_step_fraction": true,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": true
+      },
+      "raster_hash": "0be85d260ae7581feee6667013dc848d0f12f4af516b55b50cd9f68b0330bf58",
+      "state_hashes": {
+        "v": "c22468972ed3677a5b2fd7ef555a7f467bc131e4018c3036cbd2614180b252d3",
+        "u": "89d37e417f5d49b0db09e8fc8c37edc7b60d3b20060af28772d3e6e39ac1c3c3",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": true
+    },
+    {
+      "current_pA": 125,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.04632415771484,
+          "a": 0.05229620598256588,
+          "b": 2.082680270075798,
+          "d": 24.732611560821532
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            75.25,
+            79.5,
+            79.0,
+            81.75,
+            80.0,
+            79.0,
+            79.0,
+            80.5,
+            78.75,
+            79.74999999999999
+          ],
+          "population_rate_hz": 79.25,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.35,
+          "distinct_first_spike_steps": 12,
+          "first_spike_span_ms": 12.0,
+          "total_spikes": 3170
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": true,
+          "same_step_fraction": false,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "bf5c72d78cc1d9b9cad8c7af717623905774a82024d4c95cfbaf2f82e3e4a11d",
+      "state_hashes": {
+        "v": "c0918e85a376e17dc9b9e95eaceba0bdf539cf8462a0131ae7b6abe3a69f8729",
+        "u": "315506e108f4199c82243040a5ec664db0d527e4997b7a9d88ca69ea7195eddc",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    },
+    {
+      "current_pA": 150,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.04632415771484,
+          "a": 0.05229620598256588,
+          "b": 2.082680270075798,
+          "d": 24.732611560821532
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            89.25,
+            92.5,
+            93.49999999999999,
+            91.5,
+            92.5,
+            93.0,
+            92.5,
+            91.99999999999999,
+            94.0,
+            92.24999999999999
+          ],
+          "population_rate_hz": 92.3,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.275,
+          "distinct_first_spike_steps": 10,
+          "first_spike_span_ms": 10.0,
+          "total_spikes": 3692
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": true,
+          "same_step_fraction": false,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "452de93c51269940bc6877b19ef31ea884c7d0bd948686fb1ff8c3c0fbe4cde3",
+      "state_hashes": {
+        "v": "7055694912d049a0fce24751692d2a8b4f9f0cf63b793bf99ef3bcd23f3d2123",
+        "u": "80a5a5573fa0247b8345934018414bcaf4da451b12b4d3ecdc6702c3e0df3137",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    },
+    {
+      "current_pA": 175,
+      "audit": {
+        "checks": {
+          "k_exact": true,
+          "vr_exact": true,
+          "vt_exact": true,
+          "vpeak_exact": true,
+          "heterogeneous_means_are_gpi_centered": true,
+          "global_heterogeneity_off": true,
+          "gpi_mask_covers_population": true
+        },
+        "pass": true,
+        "means": {
+          "C": 61.04632415771484,
+          "a": 0.05229620598256588,
+          "b": 2.082680270075798,
+          "d": 24.732611560821532
+        }
+      },
+      "physiology": {
+        "metrics": {
+          "bin_rates_hz": [
+            100.99999999999999,
+            104.25,
+            104.49999999999999,
+            103.75,
+            104.0,
+            105.5,
+            103.75,
+            104.49999999999999,
+            105.0,
+            104.25
+          ],
+          "population_rate_hz": 104.05,
+          "cells_firing": 40,
+          "max_same_step_fraction": 0.25,
+          "distinct_first_spike_steps": 8,
+          "first_spike_span_ms": 8.0,
+          "total_spikes": 4162
+        },
+        "checks": {
+          "all_bins_in_rate_range": false,
+          "all_cells_fire": true,
+          "same_step_fraction": true,
+          "distinct_first_spikes": true,
+          "first_spike_span": true,
+          "external_exact_zero": true,
+          "intrinsic_immutable": true,
+          "weights_immutable": true,
+          "finite_state": true
+        },
+        "pass": false
+      },
+      "raster_hash": "f675d328a63faa1615857e59ffe76c19fc3e5c2c6a644eb97f8ab71a1cdfe733",
+      "state_hashes": {
+        "v": "6d804694b358f3fbbe9a374f9eb747c4d72f45750166936eb088436bc3847260",
+        "u": "83004ea167500964e9a98d57ef3da9f392fd07bb97ee087f5140a9930b218863",
+        "g_e": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4",
+        "g_i": "b393978842a0fa3d3e1470196f098f473f9678e72463cb65ec4ab5581856c2e4"
+      },
+      "pass": false
+    }
+  ],
+  "passing_currents_pA": [
+    100
+  ],
+  "elapsed_seconds": 0.2676666059996933
+}
