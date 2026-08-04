@@ -12,6 +12,26 @@
   "temperature": 0.2,
   "gpu_index": 0,
   "lease_path": "/tmp/sim-local-model-gpu0.lock",
+  "ownership_path": "~/.local/state/neural-simulator/local-model-offload/service-owner.json",
+  "queue_directory": "~/.local/state/neural-simulator/local-model-offload",
+  "service_command": [
+    "docker",
+    "compose",
+    "--env-file",
+    "/home/dant123/Projects/club-3090/.env",
+    "-f",
+    "/home/dant123/Projects/club-3090/models/qwen3.6-27b/llama-cpp/compose/single/unsloth-q4km/mtp.yml",
+    "up"
+  ],
+  "service_stop_command": [
+    "docker",
+    "compose",
+    "--env-file",
+    "/home/dant123/Projects/club-3090/.env",
+    "-f",
+    "/home/dant123/Projects/club-3090/models/qwen3.6-27b/llama-cpp/compose/single/unsloth-q4km/mtp.yml",
+    "down"
+  ],
   "allowed_tasks": [
     "documentation",
     "research_synthesis",
