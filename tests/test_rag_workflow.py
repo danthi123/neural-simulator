@@ -143,6 +143,7 @@ def test_workflow_check_cannot_report_ready_for_inert_hooks_or_legacy_index(
 
 def test_repo_post_commit_hook_logs_every_nonrefresh_path():
     hook = Path("tools/githooks/post-commit").read_text(encoding="utf-8")
+    assert "GAP_CLOSURE_MISSION\\.md" in hook
     assert "BLOCKED: RAG interpreter missing" in hook
     assert "SKIP: branch=" in hook
     assert "BLOCKED: legacy/missing index schema" in hook
@@ -325,8 +326,9 @@ def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path
     )
     for key, value in (("user.name", "RAG Test"), ("user.email", "rag@example.invalid")):
         subprocess.run(["git", "config", key, value], cwd=canonical, check=True)
-    (canonical / "docs").mkdir()
-    (canonical / "docs/note.md").write_text("initial\n", encoding="utf-8")
+    (canonical / "GAP_CLOSURE_MISSION.md").write_text(
+        "initial\n", encoding="utf-8"
+    )
     hook_dir = canonical / "tools/githooks"
     hook_dir.mkdir(parents=True)
     hook = hook_dir / "post-commit"
@@ -369,8 +371,10 @@ def test_post_commit_runs_from_linked_worktree_without_recursive_commit(tmp_path
     )
     fake_python.chmod(0o755)
 
-    (topic / "docs/note.md").write_text("changed\n", encoding="utf-8")
-    subprocess.run(["git", "add", "docs/note.md"], cwd=topic, check=True)
+    (topic / "GAP_CLOSURE_MISSION.md").write_text("changed\n", encoding="utf-8")
+    subprocess.run(
+        ["git", "add", "GAP_CLOSURE_MISSION.md"], cwd=topic, check=True
+    )
     env = {
         **os.environ,
         "SIM_RAG_ROOT": str(rag_root),

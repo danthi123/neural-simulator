@@ -7,7 +7,7 @@
 # SOMA is optional -- update_indexes.py catches its ImportError and still refreshes LlamaIndex.
 
 changed=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null)
-if echo "$changed" | grep -qE '^(research/findings/|docs/|CLAUDE\.md|ROADMAP\.md|README\.md)'; then
+if echo "$changed" | grep -qE '^(research/findings/|docs/|CLAUDE\.md|ROADMAP\.md|README\.md|GAP_CLOSURE_MISSION\.md)'; then
   REPO=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
   COMMON=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 0
   CANONICAL=$(dirname "$COMMON")
