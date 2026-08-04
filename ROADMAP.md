@@ -124,13 +124,14 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     order, so its apparent calibration GO is procedurally undefined.
     Replication seed `1019`, launched from that invalid selection, is diagnostic
     only. Both seeds are consumed; held-out seed `1021` and Stage-1 seed `1031`
-    remain sealed. Backend-native random sampling is the leading explanation
-    for the differing CPU/GPU inhibitory responses because it created different
-    neuron populations from the same integer seed. The next experiment is the
-    preregistered byte-identical state-transplant matrix at diagnostic seed
-    `7606856`. Any required backend-neutral initialization correction follows,
-    then fresh mechanically derived calibration and replication seeds run
-    through the fail-closed controller.
+    remain sealed. The completed eight-cell state-transplant diagnostic at seed
+    `7606856` confirmed that the large suppression difference follows the
+    backend-native initialized population. It also found smaller CPU/GPU
+    neuron-update divergence even with the same transplanted state; deterministic
+    sparse mode did not remove it. The next work is to freeze backend-neutral
+    initialization and standardize the diverging neuron arithmetic, then validate
+    both on fresh diagnostic-only seeds. Only after those corrections pass may
+    fresh calibration and replication seeds run through the fail-closed controller.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
