@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 20:40 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 23:35 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -75,6 +75,16 @@ Every reward and omission block produced `[1, null, 1, null]`, so rewarded
 action `0` was never expressed and no output effect could be evaluated. The
 stop rule forbids a repeat, longer block, NumPy agreement, center change, or
 GABA-B tuning. V9 engagement remains qualified; its output remains untested.
+The completed V10 evidence gate corrected a broader architecture error: all
+earlier Gate B versions learned a parallel actor-to-GPi bypass while the
+selector's canonical proposal-to-D1/D2 policy stayed fixed. V10 made those four
+policy routes reward-plastic and ran a locked eligibility-only CuPy smoke. Both
+actions crossed first across the 12 trials (`7/5`), and disabling local
+coactivity reduced all D1/D2 policy eligibility to exactly zero. However, the
+opposite motor channel crossed later in every fixed 600-step action window, so
+zero trials met the preregistered clean single-action definition. The result is
+`UNDEFINED_ACTION_COVERAGE`; reward and weight learning never opened. Do not
+repeat seed `0`, relax cleanliness, or restore Python stop-on-winner timing.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -125,13 +135,13 @@ is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. File a new evidence gate for post-training neural action-policy expression.
-   Use the preserved v9 training and probe telemetry plus the project record and
-   primary action-selection literature to distinguish loss of clean commitment
-   from failure to express the learned action. A successor must make the
-   rewarded action recur without host selection before GABA-B output can be
-   tested. Do not repeat or extend v9, tune its output, reopen its center ladder,
-   run NumPy agreement, or assign formal seeds.
+1. File a new evidence gate for a biologically grounded neural action boundary.
+   Use the V10 first-crossing and later-crossing telemetry plus primary
+   action-termination, corollary-discharge, basal-ganglia stopping, and motor
+   refractory literature. A successor must let the circuit enter a symmetric
+   post-commit state and preserve one completed action without Python stopping
+   the phase after observing a winner. Do not repeat seed `0`, relax the clean
+   criterion, open policy learning, or assign formal seeds.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a

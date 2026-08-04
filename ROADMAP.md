@@ -108,8 +108,15 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     action, action `1`, no clean action. Rewarded action `0` was never expressed,
     so GABA-B reward suppression and omission remain undefined. The run may not
     be repeated or extended. Formal seeds remain sealed while a new evidence
-    gate investigates post-training neural action-policy expression without
-    host-forced actions or GABA-B tuning.
+    gate found the larger design error: reward had been changing a parallel
+    actor bypass rather than the selector's actual corticostriatal policy. V10
+    moved eligibility onto the proposal-to-D1/D2 policy synapses. Its locked
+    GPU smoke showed that local coactivity caused all observed eligibility and
+    that both actions could cross first, but every fixed action window later
+    expressed the other action too. With no clean single-action trials, policy
+    selectivity remains undefined and learning stays closed. The next design
+    must provide a neural action boundary or post-commit refractory state,
+    without host-forced actions, Python stop-on-winner, or GABA-B tuning.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
