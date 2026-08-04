@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import stat
 import sys
 import tempfile
 from typing import Any
@@ -28,8 +29,8 @@ except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
 
 ROOT = Path(__file__).resolve().parents[1]
 LEGACY_BASE_REVISION = "8994b5102"
-CORRECTION_ID = "v13-stage0-process-correction-v1"
-ARTIFACT_ROOT = "research/findings/raw/v13_tonic_output_stage0_process_correction_v1"
+CORRECTION_ID = "v13-stage0-process-correction-v2"
+ARTIFACT_ROOT = "research/findings/raw/v13_tonic_output_stage0_process_correction_v2"
 
 
 class FreezeError(RuntimeError):
@@ -53,6 +54,33 @@ def _digest(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             value.update(chunk)
     return value.hexdigest()
+
+
+def _compatibility_binding(path: Path) -> dict[str, str]:
+    before = path.lstat()
+    if stat.S_ISLNK(before.st_mode) or not stat.S_ISREG(before.st_mode):
+        raise FreezeError("compatibility evidence must be a regular file")
+    data = path.read_bytes()
+    after = path.lstat()
+    identity = lambda value: (
+        value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns,
+    )
+    if identity(before) != identity(after):
+        raise FreezeError("compatibility evidence changed while being read")
+    try:
+        artifact = json.loads(data)
+    except json.JSONDecodeError as exc:
+        raise FreezeError("compatibility evidence is not valid JSON") from exc
+    if not isinstance(artifact, dict):
+        raise FreezeError("compatibility evidence must be a JSON object")
+    return {
+        "path": controller.COMPATIBILITY_PATH,
+        "file_sha256": hashlib.sha256(data).hexdigest(),
+        "canonical_json_sha256": hashlib.sha256(
+            controller._canonical_bytes(artifact)
+        ).hexdigest(),
+        "canonicalization": controller.COMPATIBILITY_CANONICALIZATION,
+    }
 
 
 def _create_only(path: Path, data: bytes) -> None:
@@ -199,10 +227,7 @@ def build_config(
             "sha256": _digest(replay_path),
             "source_revision": replay["source"]["git_sha"],
         },
-        "compatibility": {
-            "path": controller.COMPATIBILITY_PATH,
-            "sha256": _digest(compatibility_path),
-        },
+        "compatibility": _compatibility_binding(compatibility_path),
         "legacy_performance": {
             "source_revision": legacy_revision,
             "runner_path": controller.CRITICAL_SOURCE_PATHS[0],

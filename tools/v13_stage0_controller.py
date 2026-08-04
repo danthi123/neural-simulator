@@ -26,8 +26,8 @@ except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG_SCHEMA = "v13-stage0-controller-config-v2"
-MANIFEST_SCHEMA = "v13-stage0-artifact-manifest-v1"
+CONFIG_SCHEMA = "v13-stage0-controller-config-v3"
+MANIFEST_SCHEMA = "v13-stage0-artifact-manifest-v2"
 COMMAND_SCHEMA = "v13-stage0-command-v1"
 READINESS_SCHEMA = "v13-stage0-readiness-v1"
 CONFIG_FIELDS = {
@@ -39,7 +39,7 @@ CONFIG_FIELDS = {
 }
 MANIFEST_FIELDS = {
     "schema", "kind", "config_sha256", "source_revision", "artifact",
-    "command_envelope", "execution_receipt", "sha256",
+    "command_envelope", "execution_receipt", "provenance_sidecar", "sha256",
 }
 MANIFEST_ARTIFACT_FIELDS = {"path", "sha256"}
 MANIFEST_COMMAND_REFERENCE_FIELDS = {"path", "sha256"}
@@ -65,7 +65,7 @@ MANIFEST_ACTIONS = {
 RUNNER_MODULE = "research.runners._vocal_action_credit_gate_v13_tonic_output"
 BASE_SPEC_PATH = "research/specs/v13_tonic_output_substrate.json"
 SEED_SPEC_PATH = (
-    "research/specs/v13_tonic_output_stage0_process_correction_v1.json"
+    "research/specs/v13_tonic_output_stage0_process_correction_v2.json"
 )
 COMPATIBILITY_PATH = (
     "research/findings/raw/v13_deterministic_compatibility/"
@@ -98,12 +98,14 @@ REPLAY_RUNNER_MODULE = (
     "research.runners._v13_backend_neutral_izh_arithmetic_replay_v2"
 )
 REPLAY_SENSITIVE_PREFIX = "sim/"
-OLD_CALIBRATION_SEED = 1013
-OLD_REPLICATION_SEED = 1019
+FORBIDDEN_CONSUMED_SEEDS = frozenset((1013, 1019, 840860))
+RETIRED_UNEXECUTED_SEEDS = frozenset((687979,))
+PRIOR_PARTITION_SEEDS = {"calibration": 840860, "replication": 687979}
 LOCKED_HELD_OUT_SEED = 1021
-SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v1"
-SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V1"
-SEED_DERIVATION_SOURCE_REVISION = "b3d57494b7dd7d99d5e91088489da44d89a85bf3"
+SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V2"
+SEED_DERIVATION_SOURCE_REVISION = "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 CALIBRATION_LADDER_PA = (75, 100, 125, 150, 175)
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _REVISION = re.compile(r"^[0-9a-f]{40}$")
@@ -298,10 +300,10 @@ def _parse_sha256_manifest(path: Path, label: str) -> dict[str, str]:
     return entries
 
 
-def _derive_replacement_seed(*, role: str, original_seed: int) -> int:
+def _derive_replacement_seed(*, role: str, prior_seed: int) -> int:
     material = (
         f"{SEED_DERIVATION_NAMESPACE}|{SEED_DERIVATION_SOURCE_REVISION}|"
-        f"role={role}|original_seed={original_seed}"
+        f"role={role}|prior_seed={prior_seed}"
     )
     prefix = hashlib.sha256(material.encode("ascii")).hexdigest()[:12]
     return 100000 + (int(prefix, 16) % 900000)
@@ -312,7 +314,8 @@ def _validate_seed_derivation(config: dict[str, Any]) -> None:
     _require(
         isinstance(derivation, dict)
         and set(derivation) == {
-            "algorithm", "namespace", "source_revision", "original_seeds",
+            "algorithm", "namespace", "source_anchor", "material_template",
+            "prior_partition_seeds", "result_exclusion",
         },
         "seed_derivation must contain exactly the locked derivation fields",
     )
@@ -320,19 +323,23 @@ def _validate_seed_derivation(config: dict[str, Any]) -> None:
              "seed derivation algorithm is not the locked process correction")
     _require(derivation.get("namespace") == SEED_DERIVATION_NAMESPACE,
              "seed derivation namespace is not the locked process correction")
-    _require(derivation.get("source_revision") == SEED_DERIVATION_SOURCE_REVISION,
+    source_anchor = derivation.get("source_anchor")
+    _require(isinstance(source_anchor, dict)
+             and source_anchor.get("revision") == SEED_DERIVATION_SOURCE_REVISION,
              "seed derivation source revision is not the locked process correction")
-    originals = derivation.get("original_seeds")
     _require(
-        originals == {
-            "calibration": OLD_CALIBRATION_SEED,
-            "replication": OLD_REPLICATION_SEED,
-        },
-        "seed derivation original seeds do not name the consumed Stage-0 seeds",
+        derivation.get("material_template")
+        == "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}",
+        "seed derivation material template is not locked",
+    )
+    priors = derivation.get("prior_partition_seeds")
+    _require(
+        priors == PRIOR_PARTITION_SEEDS,
+        "seed derivation prior partitions are not the locked v1 partitions",
     )
     seeds = config["seeds"]
-    for role, original in originals.items():
-        expected = _derive_replacement_seed(role=role, original_seed=original)
+    for role, prior in priors.items():
+        expected = _derive_replacement_seed(role=role, prior_seed=prior)
         _require(seeds[role] == expected,
                  f"{role} seed is not the mechanically derived replacement")
 
@@ -694,10 +701,11 @@ def load_config(path: Path, *, root: Path = ROOT, verify_source: bool = True) ->
     _require(all(type(seeds[name]) is int and seeds[name] >= 0 for name in seeds),
              "all Stage-0 seeds must be non-negative integers")
     _require(len(set(seeds.values())) == 3, "Stage-0 seeds must be distinct")
-    _require(seeds["calibration"] != OLD_CALIBRATION_SEED,
-             "calibration seed must replace consumed seed 1013")
-    _require(seeds["replication"] != OLD_REPLICATION_SEED,
-             "replication seed must replace consumed seed 1019")
+    _require(
+        not ({seeds["calibration"], seeds["replication"]}
+             & (FORBIDDEN_CONSUMED_SEEDS | RETIRED_UNEXECUTED_SEEDS)),
+        "calibration and replication seeds must exclude consumed and retired partitions",
+    )
     _require(seeds["held_out"] == LOCKED_HELD_OUT_SEED,
              "held-out seed must remain the original sealed Stage-0 seed")
     _validate_seed_derivation(config)
@@ -716,14 +724,35 @@ def load_config(path: Path, *, root: Path = ROOT, verify_source: bool = True) ->
     _validate_strict_replay_binding(config, root, candidate_source)
 
     compatibility = config.get("compatibility")
-    _require(isinstance(compatibility, dict), "compatibility must be an object")
+    _require(
+        isinstance(compatibility, dict)
+        and set(compatibility) == {
+            "path", "file_sha256", "canonical_json_sha256", "canonicalization",
+        },
+        "compatibility must contain exactly the named byte and canonical digest fields",
+    )
     _require(compatibility.get("path") == COMPATIBILITY_PATH,
              f"compatibility.path must be canonical: {COMPATIBILITY_PATH}")
-    compatibility_digest = _require_digest(compatibility.get("sha256"), "compatibility.sha256")
+    compatibility_digest = _require_digest(
+        compatibility.get("file_sha256"), "compatibility.file_sha256"
+    )
+    canonical_digest = _require_digest(
+        compatibility.get("canonical_json_sha256"),
+        "compatibility.canonical_json_sha256",
+    )
+    _require(
+        compatibility.get("canonicalization") == COMPATIBILITY_CANONICALIZATION,
+        "compatibility canonicalization algorithm is not locked",
+    )
     _, compatibility_path = _repo_path(root, compatibility.get("path"), "compatibility.path")
     _require(compatibility_path.is_file() and _file_digest(compatibility_path) == compatibility_digest,
              "canonical compatibility artifact is missing or has the wrong digest")
     compatibility_artifact = _load_json(compatibility_path, "compatibility artifact")
+    _require(
+        hashlib.sha256(_canonical_bytes(compatibility_artifact)).hexdigest()
+        == canonical_digest,
+        "canonical compatibility JSON digest is wrong",
+    )
     _require(compatibility_artifact.get("outcome") == "DETERMINISTIC_COMPATIBILITY_GO"
              and compatibility_artifact.get("go") is True,
              "canonical compatibility artifact has not earned GO")
@@ -929,6 +958,24 @@ def load_manifest(
     _require(artifact_path.is_file() and _file_digest(artifact_path) == artifact_digest,
              f"{kind} artifact is missing or its digest changed")
 
+    sidecar_ref = manifest.get("provenance_sidecar")
+    _require(
+        isinstance(sidecar_ref, dict)
+        and set(sidecar_ref) == MANIFEST_ARTIFACT_FIELDS,
+        f"{kind} provenance sidecar reference is invalid",
+    )
+    sidecar_relative, sidecar_path = _repo_path(
+        root, sidecar_ref.get("path"), f"{kind} provenance sidecar path"
+    )
+    expected_sidecar = Path(f"{artifact_path}.prov.json")
+    _require(sidecar_path == expected_sidecar,
+             f"{kind} manifest names a non-canonical provenance sidecar")
+    sidecar_digest = _require_digest(
+        sidecar_ref.get("sha256"), f"{kind} provenance sidecar sha256"
+    )
+    _require(sidecar_path.is_file() and _file_digest(sidecar_path) == sidecar_digest,
+             f"{kind} provenance sidecar is missing or its digest changed")
+
     envelope_ref = manifest.get("command_envelope")
     _require(
         isinstance(envelope_ref, dict)
@@ -1020,6 +1067,8 @@ def load_manifest(
         "command_envelope_sha256": envelope_digest,
         "execution_receipt_path": receipt_relative,
         "execution_receipt_sha256": receipt_digest,
+        "provenance_sidecar_path": sidecar_relative,
+        "provenance_sidecar_sha256": sidecar_digest,
     }
     return artifact, manifest, reference
 
@@ -1045,7 +1094,9 @@ def _validate_calibration_backend(
              "calibration artifact lacks a spec digest")
     expected = config["compatibility"]
     binding = _compatibility_binding(artifact)
-    _require(binding.get("path") == expected["path"] and binding.get("sha256") == expected["sha256"],
+    _require(all(binding.get(field) == expected[field] for field in (
+        "path", "file_sha256", "canonical_json_sha256", "canonicalization",
+    )),
              "calibration artifact is not bound to the canonical compatibility artifact")
     rows = artifact.get("rows")
     _require(isinstance(rows, list) and len(rows) == 5,
@@ -1089,7 +1140,9 @@ def _validate_selection(artifact: dict[str, Any], config: dict[str, Any]) -> Non
              "calibration selection source identities differ from the frozen config")
     binding = _compatibility_binding(artifact)
     expected = config["compatibility"]
-    _require(binding.get("path") == expected["path"] and binding.get("sha256") == expected["sha256"],
+    _require(all(binding.get(field) == expected[field] for field in (
+        "path", "file_sha256", "canonical_json_sha256", "canonicalization",
+    )),
              "calibration selection is not bound to canonical compatibility evidence")
     _require(artifact.get("selected_current_pA") in CALIBRATION_LADDER_PA,
              "calibration selection is not on the locked current ladder")
@@ -1221,7 +1274,9 @@ def _calibration_inputs(
         {
             "kind": "compatibility",
             "artifact_path": str((root / COMPATIBILITY_PATH).resolve()),
-            "artifact_sha256": config["compatibility"]["sha256"],
+            "file_sha256": config["compatibility"]["file_sha256"],
+            "canonical_json_sha256": config["compatibility"]["canonical_json_sha256"],
+            "canonicalization": config["compatibility"]["canonicalization"],
         },
     ]
     if backend == "cupy":
@@ -1534,7 +1589,9 @@ def emit_final_merge(
     compatibility_ref = {
         "kind": "compatibility",
         "artifact_path": str(compatibility_path),
-        "artifact_sha256": config["compatibility"]["sha256"],
+        "file_sha256": config["compatibility"]["file_sha256"],
+        "canonical_json_sha256": config["compatibility"]["canonical_json_sha256"],
+        "canonicalization": config["compatibility"]["canonicalization"],
     }
 
     selection, _, selection_ref = load_manifest(

@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import stat
 import subprocess
 import tempfile
 import time
@@ -38,7 +39,7 @@ from tools.verdict import Verdict
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "research/specs/v13_tonic_output_substrate.json"
 PROCESS_CORRECTION_SPEC_PATH = (
-    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v1.json"
+    ROOT / "research/specs/v13_tonic_output_stage0_process_correction_v2.json"
 )
 RUNNER_PATH = Path(__file__).resolve()
 COMPATIBILITY_ROOT = ROOT / "research/findings/raw/v13_deterministic_compatibility"
@@ -54,10 +55,14 @@ PARTITIONS = {
     "held_out": [1021],
     "reserved_for_stage1": [1031],
 }
-PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v1"
-SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v1"
-SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V1"
-SEED_DERIVATION_SOURCE_REVISION = "b3d57494b7dd7d99d5e91088489da44d89a85bf3"
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v2"
+SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
+SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V2"
+SEED_DERIVATION_SOURCE_REVISION = "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+PRIOR_PARTITION_SEEDS = {"calibration": 840860, "replication": 687979}
+FORBIDDEN_CONSUMED_SEEDS = {1013, 1019, 840860}
+RETIRED_UNEXECUTED_SEEDS = {687979}
+COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 LADDER_PA = [75, 100, 125, 150, 175]
 HETEROGENEITY = {
     "izh_a_val": {
@@ -126,10 +131,10 @@ def _source_identity() -> dict[str, str]:
     }
 
 
-def _derived_replacement_seed(role: str, original_seed: int) -> int:
+def _derived_replacement_seed(role: str, prior_seed: int) -> int:
     material = (
         f"{SEED_DERIVATION_NAMESPACE}|{SEED_DERIVATION_SOURCE_REVISION}|"
-        f"role={role}|original_seed={original_seed}"
+        f"role={role}|prior_seed={prior_seed}"
     )
     prefix = hashlib.sha256(material.encode("ascii")).hexdigest()[:12]
     return 100000 + (int(prefix, 16) % 900000)
@@ -148,7 +153,7 @@ def load_process_correction(path: Path) -> tuple[dict, dict[str, int]]:
     partitions = correction.get("partitions")
     checks = {
         "schema": correction.get("schema") == PROCESS_CORRECTION_SCHEMA,
-        "status": correction.get("status") == "preregistered",
+        "status": correction.get("status") == "preregistered-not-executed",
         "base_path": isinstance(base, dict)
         and base.get("path") == str(SPEC_PATH.relative_to(ROOT)),
         "base_digest": isinstance(base, dict)
@@ -156,12 +161,14 @@ def load_process_correction(path: Path) -> tuple[dict, dict[str, int]]:
         "strict_replay": isinstance(replay, dict)
         and set(replay) == {"path", "sha256", "outcome"}
         and replay.get("outcome") == "DIAGNOSTIC_PASS",
-        "derivation": derivation == {
-            "algorithm": SEED_DERIVATION_ALGORITHM,
-            "namespace": SEED_DERIVATION_NAMESPACE,
-            "source_revision": SEED_DERIVATION_SOURCE_REVISION,
-            "original_seeds": {"calibration": 1013, "replication": 1019},
-        },
+        "derivation": isinstance(derivation, dict)
+        and derivation.get("algorithm") == SEED_DERIVATION_ALGORITHM
+        and derivation.get("namespace") == SEED_DERIVATION_NAMESPACE
+        and derivation.get("source_anchor", {}).get("revision")
+        == SEED_DERIVATION_SOURCE_REVISION
+        and derivation.get("material_template")
+        == "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}"
+        and derivation.get("prior_partition_seeds") == PRIOR_PARTITION_SEEDS,
         "partition_shape": isinstance(partitions, dict)
         and set(partitions) == {"calibration", "replication", "held_out"}
         and all(
@@ -188,14 +195,18 @@ def load_process_correction(path: Path) -> tuple[dict, dict[str, int]]:
     if checks["partition_shape"]:
         checks.update({
             "calibration_seed": partitions["calibration"][0]
-            == _derived_replacement_seed("calibration", 1013),
+            == _derived_replacement_seed("calibration", PRIOR_PARTITION_SEEDS["calibration"]),
             "replication_seed": partitions["replication"][0]
-            == _derived_replacement_seed("replication", 1019),
+            == _derived_replacement_seed("replication", PRIOR_PARTITION_SEEDS["replication"]),
             "held_out_sealed": partitions["held_out"] == PARTITIONS["held_out"],
-            "consumed_excluded": not (
+            "forbidden_excluded": not (
                 {partitions["calibration"][0], partitions["replication"][0]}
-                & {1013, 1019}
+                & (FORBIDDEN_CONSUMED_SEEDS | RETIRED_UNEXECUTED_SEEDS)
             ),
+            "consumed_list": set(correction.get("forbidden_consumed_seeds", []))
+            == FORBIDDEN_CONSUMED_SEEDS,
+            "retired_list": set(correction.get("retired_unexecuted_seeds", []))
+            == RETIRED_UNEXECUTED_SEEDS,
         })
     if not all(checks.values()):
         raise ValueError(f"invalid Stage-0 process correction: {checks}")
@@ -244,6 +255,20 @@ def _canonical_artifact_digest(artifact: dict) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def _read_stable_regular(path: Path) -> bytes:
+    before = path.lstat()
+    if stat.S_ISLNK(before.st_mode) or not stat.S_ISREG(before.st_mode):
+        raise ValueError(f"required evidence is not a regular file: {path}")
+    data = path.read_bytes()
+    after = path.lstat()
+    identity = lambda value: (
+        value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns,
+    )
+    if identity(before) != identity(after):
+        raise ValueError(f"required evidence changed while reading: {path}")
+    return data
+
+
 def _load_compatibility_correction(
     path: Path, *, process_correction: dict | None = None,
 ) -> dict:
@@ -252,7 +277,19 @@ def _load_compatibility_correction(
         raise ValueError(
             f"compatibility correction must be {COMPATIBILITY_CORRECTION_PATH}"
         )
-    artifact = json.loads(path.read_text())
+    artifact_bytes = _read_stable_regular(path)
+    artifact = json.loads(artifact_bytes)
+    file_sha256 = hashlib.sha256(artifact_bytes).hexdigest()
+    canonical_json_sha256 = _canonical_artifact_digest(artifact)
+    compatibility_contract = json.loads(PROCESS_CORRECTION_SPEC_PATH.read_text())["compatibility"]
+    if compatibility_contract != {
+        **compatibility_contract,
+        "path": str(path.relative_to(ROOT)),
+        "file_sha256": file_sha256,
+        "canonical_json_sha256": canonical_json_sha256,
+        "canonicalization": COMPATIBILITY_CANONICALIZATION,
+    }:
+        raise ValueError("compatibility digest domains differ from the v2 process correction")
     expected_identity = {
         "runner_sha256": hashlib.sha256(COMPATIBILITY_RUNNER_PATH.read_bytes()).hexdigest(),
         "spec_sha256": hashlib.sha256(COMPATIBILITY_SPEC_PATH.read_bytes()).hexdigest(),
@@ -345,7 +382,9 @@ def _load_compatibility_correction(
         raise ValueError("source twins do not carry the required feature-absent/default-None states")
     return {
         "path": str(path.relative_to(ROOT)),
-        "sha256": _canonical_artifact_digest(artifact),
+        "file_sha256": file_sha256,
+        "canonical_json_sha256": canonical_json_sha256,
+        "canonicalization": COMPATIBILITY_CANONICALIZATION,
         "candidate_source_sha": candidate_sha,
         "baseline_bundle_present_in_candidate_source": True,
         "twin_intrinsic_states_valid": True,

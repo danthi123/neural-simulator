@@ -174,21 +174,24 @@ class Fixture:
         )
         self.seeds = {
             "calibration": controller._derive_replacement_seed(
-                role="calibration", original_seed=controller.OLD_CALIBRATION_SEED
+                role="calibration", prior_seed=controller.PRIOR_PARTITION_SEEDS["calibration"]
             ),
             "replication": controller._derive_replacement_seed(
-                role="replication", original_seed=controller.OLD_REPLICATION_SEED
+                role="replication", prior_seed=controller.PRIOR_PARTITION_SEEDS["replication"]
             ),
             "held_out": controller.LOCKED_HELD_OUT_SEED,
         }
         self.seed_derivation = {
             "algorithm": controller.SEED_DERIVATION_ALGORITHM,
             "namespace": controller.SEED_DERIVATION_NAMESPACE,
-            "source_revision": controller.SEED_DERIVATION_SOURCE_REVISION,
-            "original_seeds": {
-                "calibration": controller.OLD_CALIBRATION_SEED,
-                "replication": controller.OLD_REPLICATION_SEED,
+            "source_anchor": {
+                "revision": controller.SEED_DERIVATION_SOURCE_REVISION,
+                "committed_at": "fixture",
+                "relation_to_v1_observation": "fixed_before_observation",
             },
+            "material_template": "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}",
+            "prior_partition_seeds": controller.PRIOR_PARTITION_SEEDS,
+            "result_exclusion": "fixture result exclusion",
         }
         spec = _write_json(
             self.root / controller.SEED_SPEC_PATH,
@@ -262,7 +265,11 @@ class Fixture:
             },
             "compatibility": {
                 "path": controller.COMPATIBILITY_PATH,
-                "sha256": _digest(compatibility),
+                "file_sha256": _digest(compatibility),
+                "canonical_json_sha256": hashlib.sha256(
+                    controller._canonical_bytes(json.loads(compatibility.read_text()))
+                ).hexdigest(),
+                "canonicalization": controller.COMPATIBILITY_CANONICALIZATION,
             },
             "legacy_performance": {
                 "source_revision": LEGACY,
@@ -296,6 +303,9 @@ class Fixture:
         prerequisites: list[dict] | None = None,
     ) -> Path:
         artifact_path = _write_json(self.artifact_path(kind), artifact)
+        sidecar_path = _write_json(
+            Path(f"{artifact_path}.prov.json"), {"fixture": True}
+        )
         source_revision = LEGACY if kind == "performance_baseline" else CANDIDATE
         command = {
             "schema": controller.COMMAND_SCHEMA,
@@ -361,6 +371,10 @@ class Fixture:
             "config_sha256": self.config["sha256"],
             "source_revision": source_revision,
             "artifact": {"path": self.artifacts[kind], "sha256": _digest(artifact_path)},
+            "provenance_sidecar": {
+                "path": sidecar_path.relative_to(self.root).as_posix(),
+                "sha256": _digest(sidecar_path),
+            },
             "command_envelope": {
                 "path": command_path.relative_to(self.root).as_posix(),
                 "sha256": _digest(command_path),
@@ -388,6 +402,8 @@ class Fixture:
             "command_envelope_sha256": manifest["command_envelope"]["sha256"],
             "execution_receipt_path": manifest["execution_receipt"]["path"],
             "execution_receipt_sha256": manifest["execution_receipt"]["sha256"],
+            "provenance_sidecar_path": manifest["provenance_sidecar"]["path"],
+            "provenance_sidecar_sha256": manifest["provenance_sidecar"]["sha256"],
         }
 
     def calibration(self, backend: str) -> dict:
@@ -408,8 +424,7 @@ class Fixture:
             "source_identity": self.source_identity,
             "spec_sha256": "6" * 64,
             "compatibility_correction": {
-                "path": controller.COMPATIBILITY_PATH,
-                "sha256": self.config["compatibility"]["sha256"],
+                **self.config["compatibility"],
             },
             "rows": rows,
             "passing_currents_pA": [100],
@@ -422,8 +437,7 @@ class Fixture:
             "seed": self.seeds["calibration"],
             "source_identity": self.source_identity,
             "compatibility_correction": {
-                "path": controller.COMPATIBILITY_PATH,
-                "sha256": self.config["compatibility"]["sha256"],
+                **self.config["compatibility"],
             },
             "selected_current_pA": 100,
             "calibration_go": go,
@@ -503,7 +517,7 @@ class Fixture:
                 "selection_manifest_sha256": selection_reference["manifest_sha256"],
                 "selected_current_pA": selection["selected_current_pA"],
                 "compatibility_path": controller.COMPATIBILITY_PATH,
-                "compatibility_sha256": self.config["compatibility"]["sha256"],
+                "compatibility_sha256": self.config["compatibility"]["canonical_json_sha256"],
             }
             if performance_bindings != expected_bindings:
                 selection_reference = dict(selection_reference)
@@ -573,7 +587,10 @@ def test_config_requires_replacement_seeds_and_matching_locked_spec(fx: Fixture)
     config["seeds"] = dict(config["seeds"], calibration=1013)
     config.pop("sha256")
     bad_config = _write_json(fx.root / "bad-correction.json", _seal(config))
-    with pytest.raises(controller.ControllerError, match="replace consumed seed 1013"):
+    with pytest.raises(
+        controller.ControllerError,
+        match="exclude consumed and retired partitions",
+    ):
         controller.load_config(bad_config, root=fx.root)
 
     spec = fx.root / controller.SEED_SPEC_PATH
@@ -1047,7 +1064,10 @@ def test_final_merge_emits_complete_digested_runner_command(fx: Fixture):
         "replication_cupy", "held_out_cupy", "held_out_numpy",
         "performance_candidate",
     ]
-    assert all("artifact_sha256" in item for item in envelope["prerequisites"])
+    assert "artifact_sha256" not in envelope["prerequisites"][0]
+    assert all(
+        "artifact_sha256" in item for item in envelope["prerequisites"][1:]
+    )
     assert not fx.artifact_path("final_stage0").exists()
 
 
@@ -1088,7 +1108,7 @@ def test_final_merge_refuses_performance_selection_or_compatibility_mismatch(fx:
         "selection_manifest_sha256": selection_seal["sha256"],
         "selected_current_pA": 125,
         "compatibility_path": controller.COMPATIBILITY_PATH,
-        "compatibility_sha256": fx.config["compatibility"]["sha256"],
+        "compatibility_sha256": fx.config["compatibility"]["canonical_json_sha256"],
     })
     with pytest.raises(controller.ControllerError, match="not bound to the selected"):
         _emit_final(fx, manifests)

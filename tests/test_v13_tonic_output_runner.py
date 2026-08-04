@@ -23,11 +23,18 @@ def test_locked_spec_matches_runner_and_seed_partitions_do_not_overlap():
 
 def test_process_correction_derives_replacements_without_changing_held_out():
     binding, seeds = v13.load_process_correction(v13.PROCESS_CORRECTION_SPEC_PATH)
-    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v1.json")
-    assert seeds["calibration"] == v13._derived_replacement_seed("calibration", 1013)
-    assert seeds["replication"] == v13._derived_replacement_seed("replication", 1019)
+    assert binding["path"].endswith("v13_tonic_output_stage0_process_correction_v2.json")
+    assert seeds["calibration"] == v13._derived_replacement_seed(
+        "calibration", v13.PRIOR_PARTITION_SEEDS["calibration"]
+    )
+    assert seeds["replication"] == v13._derived_replacement_seed(
+        "replication", v13.PRIOR_PARTITION_SEEDS["replication"]
+    )
     assert seeds["held_out"] == v13.PARTITIONS["held_out"][0]
-    assert not ({seeds["calibration"], seeds["replication"]} & {1013, 1019, 1021, 1031})
+    assert not (
+        {seeds["calibration"], seeds["replication"]}
+        & (v13.FORBIDDEN_CONSUMED_SEEDS | v13.RETIRED_UNEXECUTED_SEEDS | {1021, 1031})
+    )
     assert str(v13.PROCESS_CORRECTION_SPEC_PATH.relative_to(v13.ROOT)) in v13._source_identity()
 
 
@@ -41,6 +48,10 @@ def test_earned_compatibility_correction_is_bound_to_committed_evidence():
     )
     assert result["outcome"] == "DETERMINISTIC_COMPATIBILITY_GO"
     assert result["deterministic_patch_id"] == v13.DETERMINISTIC_PATCH_ID
+    assert set(result) >= {
+        "file_sha256", "canonical_json_sha256", "canonicalization"
+    }
+    assert result["canonicalization"] == v13.COMPATIBILITY_CANONICALIZATION
     assert result["baseline_bundle_present_in_candidate_source"] is True
     assert result["twin_intrinsic_states_valid"] is True
 

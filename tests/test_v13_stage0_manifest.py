@@ -143,21 +143,24 @@ class Fixture:
         )
         self.seeds = {
             "calibration": controller._derive_replacement_seed(
-                role="calibration", original_seed=controller.OLD_CALIBRATION_SEED
+                role="calibration", prior_seed=controller.PRIOR_PARTITION_SEEDS["calibration"]
             ),
             "replication": controller._derive_replacement_seed(
-                role="replication", original_seed=controller.OLD_REPLICATION_SEED
+                role="replication", prior_seed=controller.PRIOR_PARTITION_SEEDS["replication"]
             ),
             "held_out": controller.LOCKED_HELD_OUT_SEED,
         }
         self.seed_derivation = {
             "algorithm": controller.SEED_DERIVATION_ALGORITHM,
             "namespace": controller.SEED_DERIVATION_NAMESPACE,
-            "source_revision": controller.SEED_DERIVATION_SOURCE_REVISION,
-            "original_seeds": {
-                "calibration": controller.OLD_CALIBRATION_SEED,
-                "replication": controller.OLD_REPLICATION_SEED,
+            "source_anchor": {
+                "revision": controller.SEED_DERIVATION_SOURCE_REVISION,
+                "committed_at": "fixture",
+                "relation_to_v1_observation": "fixed_before_observation",
             },
+            "material_template": "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}",
+            "prior_partition_seeds": controller.PRIOR_PARTITION_SEEDS,
+            "result_exclusion": "fixture result exclusion",
         }
         spec = _write_json(
             self.root / controller.SEED_SPEC_PATH,
@@ -226,7 +229,11 @@ class Fixture:
             },
             "compatibility": {
                 "path": controller.COMPATIBILITY_PATH,
-                "sha256": _digest(compatibility),
+                "file_sha256": _digest(compatibility),
+                "canonical_json_sha256": hashlib.sha256(
+                    controller._canonical_bytes(json.loads(compatibility.read_text()))
+                ).hexdigest(),
+                "canonicalization": controller.COMPATIBILITY_CANONICALIZATION,
             },
             "legacy_performance": {
                 "source_revision": LEGACY,
@@ -256,7 +263,31 @@ class Fixture:
             root=self.root,
         )
         self.artifact_path = _write_json(
-            self.root / self.artifacts["calibration_numpy"], {"dummy": "result"}
+            self.root / self.artifacts["calibration_numpy"], {
+                "backend": "numpy",
+                "dummy": "result",
+                "source_sha": CANDIDATE,
+            }
+        )
+        envelope = json.loads(self.envelope_path.read_text())
+        self.sidecar_path = _write_json(
+            Path(f"{self.artifact_path}.prov.json"),
+            {
+                "artifact": self.artifact_path.relative_to(self.root).as_posix(),
+                "argv": [
+                    str((self.root / "research/runners/"
+                         "_vocal_action_credit_gate_v13_tonic_output.py").resolve()),
+                    *envelope["argv"][3:],
+                ],
+                "env": envelope["env"],
+                "git_dirty": False,
+                "git_sha": CANDIDATE[:9],
+                "run_id": "fixture-run",
+                "runner": "research/runners/"
+                "_vocal_action_credit_gate_v13_tonic_output.py",
+                "sim_backend": "numpy",
+                "sim_backend_requested": "numpy",
+            },
         )
         self.source_manifest = source_manifest
         self.receipt_path = self.root / "receipts/calibration-numpy.json"
@@ -304,6 +335,11 @@ class Fixture:
         mutate(value)
         _write_json(self.envelope_path, value)
 
+    def write_sidecar(self, mutate) -> None:
+        value = json.loads(self.sidecar_path.read_text())
+        mutate(value)
+        _write_json(self.sidecar_path, value)
+
     def create(self, emit: str = "manifests/calibration-numpy.json") -> dict:
         return manifest_tool.create_manifest(
             root=self.root,
@@ -320,13 +356,13 @@ def fx(tmp_path, monkeypatch):
     return Fixture(tmp_path, monkeypatch)
 
 
-def test_emits_controller_consumable_self_digested_manifest(fx: Fixture):
+def test_emits_self_digested_v2_manifest_with_sidecar_binding(fx: Fixture):
     manifest = fx.create()
     stored = json.loads((fx.root / "manifests/calibration-numpy.json").read_text())
 
     assert stored == manifest
-    assert set(manifest) == controller.MANIFEST_FIELDS
-    assert manifest["schema"] == controller.MANIFEST_SCHEMA
+    assert set(manifest) == manifest_tool.MANIFEST_FIELDS_V2
+    assert manifest["schema"] == manifest_tool.SCHEMA_V2
     assert manifest["kind"] == "calibration_numpy"
     assert manifest["config_sha256"] == fx.config["sha256"]
     assert manifest["source_revision"] == CANDIDATE
@@ -338,17 +374,115 @@ def test_emits_controller_consumable_self_digested_manifest(fx: Fixture):
         "path": "commands/calibration-numpy.json",
         "sha256": _digest(fx.envelope_path),
     }
+    assert manifest["provenance_sidecar"] == {
+        "path": "evidence/calibration-numpy.json.prov.json",
+        "sha256": _digest(fx.sidecar_path),
+    }
     assert manifest["execution_receipt"]["host"] == "fixture-host"
     assert manifest["sha256"] == controller._canonical_digest(manifest)
 
-    artifact, loaded, _ = controller.load_manifest(
-        fx.root / "manifests/calibration-numpy.json",
-        config=fx.config,
-        kind="calibration_numpy",
+    loaded = manifest_tool.load_manifest_read_only(
+        "manifests/calibration-numpy.json",
         root=fx.root,
+        process_correction_version=2,
     )
-    assert artifact == {"dummy": "result"}
     assert loaded == manifest
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (lambda value: value.__setitem__("artifact", "evidence/other.json"),
+         "artifact path"),
+        (lambda value: value.__setitem__("runner", "research/runners/other.py"),
+         "runner differs"),
+        (lambda value: value.__setitem__("argv", ["false"]), "argv"),
+        (lambda value: value.__setitem__("git_sha", LEGACY[:9]), "source revision"),
+        (lambda value: value.__setitem__("sim_backend", "cupy"), "backend"),
+        (lambda value: value.__setitem__("sim_backend_requested", "cupy"), "backend"),
+        (lambda value: value.__setitem__("env", {"SIM_BACKEND": "cupy"}), "backend"),
+        (lambda value: value.__setitem__("env", []), "environment"),
+    ],
+)
+def test_rejects_provenance_sidecar_mismatches(
+    fx: Fixture, mutation, message: str,
+):
+    if message == "artifact path":
+        _write_json(fx.root / "evidence/other.json", {"dummy": "other"})
+    fx.write_sidecar(mutation)
+    with pytest.raises(manifest_tool.ManifestError, match=message):
+        fx.create()
+
+
+def test_rejects_missing_or_symlinked_provenance_sidecar(fx: Fixture):
+    fx.sidecar_path.unlink()
+    with pytest.raises(manifest_tool.ManifestError, match="sidecar.*missing"):
+        fx.create()
+
+    target = _write_json(fx.root / "sidecar-target.json", {"dummy": True})
+    fx.sidecar_path.symlink_to(target)
+    with pytest.raises(manifest_tool.ManifestError, match="sidecar"):
+        fx.create()
+
+
+def test_rejects_artifact_backend_or_source_mismatch(fx: Fixture):
+    artifact = json.loads(fx.artifact_path.read_text())
+    artifact["backend"] = "cupy"
+    _write_json(fx.artifact_path, artifact)
+    fx.receipt["artifact"].update({
+        "sha256": _digest(fx.artifact_path),
+        "size_bytes": fx.artifact_path.stat().st_size,
+    })
+    _write_json(fx.receipt_path, fx.receipt)
+    with pytest.raises(manifest_tool.ManifestError, match="artifact backend"):
+        fx.create()
+
+    artifact["backend"] = "numpy"
+    artifact["source_sha"] = LEGACY
+    _write_json(fx.artifact_path, artifact)
+    fx.receipt["artifact"].update({
+        "sha256": _digest(fx.artifact_path),
+        "size_bytes": fx.artifact_path.stat().st_size,
+    })
+    _write_json(fx.receipt_path, fx.receipt)
+    with pytest.raises(manifest_tool.ManifestError, match="artifact source revision"):
+        fx.create()
+
+
+def test_v1_manifest_is_read_only_and_rejected_for_process_correction_v2(fx: Fixture):
+    v1 = {
+        "schema": manifest_tool.SCHEMA_V1,
+        "kind": "calibration_numpy",
+        "config_sha256": fx.config["sha256"],
+        "source_revision": CANDIDATE,
+        "artifact": {"path": "evidence/calibration-numpy.json", "sha256": "a" * 64},
+        "command_envelope": {"path": "commands/calibration-numpy.json", "sha256": "b" * 64},
+        "execution_receipt": {
+            "path": "receipts/calibration-numpy.json",
+            "sha256": "c" * 64,
+            "host": "fixture-host",
+            "device": "fixture-device",
+            "started_utc_ns": 1,
+            "ended_utc_ns": 2,
+        },
+    }
+    v1["sha256"] = controller._canonical_digest(v1)
+    _write_json(fx.root / "manifests/existing-v1.json", v1)
+
+    assert manifest_tool.load_manifest_read_only(
+        "manifests/existing-v1.json", root=fx.root, allow_legacy_v1=True,
+    ) == v1
+    with pytest.raises(manifest_tool.ManifestError, match="cannot represent"):
+        manifest_tool.load_manifest_read_only(
+            "manifests/existing-v1.json", root=fx.root,
+        )
+    with pytest.raises(manifest_tool.ManifestError, match="cannot represent"):
+        manifest_tool.load_manifest_read_only(
+            "manifests/existing-v1.json",
+            root=fx.root,
+            allow_legacy_v1=True,
+            process_correction_version=2,
+        )
 
 
 @pytest.mark.parametrize(

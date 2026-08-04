@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Seal a V13 Stage-0 command, success receipt, and artifact as one manifest."""
+"""Seal V13 Stage-0 evidence, including runner provenance, as one manifest."""
 
 from __future__ import annotations
 
@@ -21,9 +21,18 @@ except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = controller.MANIFEST_SCHEMA
+SCHEMA_V1 = "v13-stage0-artifact-manifest-v1"
+SCHEMA_V2 = "v13-stage0-artifact-manifest-v2"
+SCHEMA = SCHEMA_V2
+MANIFEST_FIELDS_V1 = frozenset((
+    "schema", "kind", "config_sha256", "source_revision", "artifact",
+    "command_envelope", "execution_receipt", "sha256",
+))
+MANIFEST_FIELDS_V2 = frozenset((*MANIFEST_FIELDS_V1, "provenance_sidecar"))
+REFERENCE_FIELDS = frozenset(("path", "sha256"))
 KINDS = tuple(sorted(controller.MANIFEST_ACTIONS))
 _ACTION_BY_KIND = controller.MANIFEST_ACTIONS
+_HEX64 = frozenset("0123456789abcdef")
 
 
 class ManifestError(ValueError):
@@ -102,6 +111,111 @@ def _load_json(path: Path, label: str) -> dict[str, Any]:
         raise ManifestError(f"cannot read {label}: {path}: {exc}") from exc
     _require(isinstance(value, dict), f"{label} must be a JSON object")
     return value
+
+
+def _is_digest(value: Any) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and not (set(value) - _HEX64)
+    )
+
+
+def _validate_manifest_shape(
+    manifest: dict[str, Any],
+    *,
+    allow_legacy_v1: bool = False,
+    process_correction_version: int | None = None,
+) -> None:
+    """Validate a manifest without promoting or rewriting its evidence."""
+    schema = manifest.get("schema")
+    if schema == SCHEMA_V1:
+        _require(
+            allow_legacy_v1
+            and (process_correction_version is None or process_correction_version < 2),
+            "artifact manifest v1 cannot represent process-correction-v2 evidence",
+        )
+        expected_fields = MANIFEST_FIELDS_V1
+    elif schema == SCHEMA_V2:
+        expected_fields = MANIFEST_FIELDS_V2
+    else:
+        raise ManifestError("artifact manifest schema is invalid")
+    _require(set(manifest) == expected_fields,
+             "artifact manifest has missing or extra fields")
+    _require(_is_digest(manifest.get("sha256")),
+             "artifact manifest sha256 is invalid")
+    _require(
+        manifest["sha256"] == controller._canonical_digest(manifest),
+        "artifact manifest self-digest is invalid",
+    )
+    for field in ("artifact", "command_envelope"):
+        reference = manifest.get(field)
+        _require(
+            isinstance(reference, dict) and set(reference) == REFERENCE_FIELDS,
+            f"artifact manifest {field} reference is invalid",
+        )
+        _require(isinstance(reference.get("path"), str) and reference["path"],
+                 f"artifact manifest {field} path is invalid")
+        _require(_is_digest(reference.get("sha256")),
+                 f"artifact manifest {field} sha256 is invalid")
+    receipt = manifest.get("execution_receipt")
+    _require(
+        isinstance(receipt, dict)
+        and set(receipt) == controller.MANIFEST_RECEIPT_REFERENCE_FIELDS,
+        "artifact manifest execution receipt reference is invalid",
+    )
+    _require(isinstance(receipt.get("path"), str) and receipt["path"],
+             "artifact manifest execution receipt path is invalid")
+    _require(_is_digest(receipt.get("sha256")),
+             "artifact manifest execution receipt sha256 is invalid")
+    _require(isinstance(receipt.get("host"), str) and receipt["host"].strip(),
+             "artifact manifest execution receipt host is invalid")
+    _require(isinstance(receipt.get("device"), str) and receipt["device"].strip(),
+             "artifact manifest execution receipt device is invalid")
+    started = receipt.get("started_utc_ns")
+    ended = receipt.get("ended_utc_ns")
+    _require(type(started) is int and type(ended) is int and started <= ended,
+             "artifact manifest execution receipt timestamps are invalid")
+    if schema == SCHEMA_V2:
+        reference = manifest.get("provenance_sidecar")
+        _require(
+            isinstance(reference, dict) and set(reference) == REFERENCE_FIELDS,
+            "artifact manifest provenance sidecar reference is invalid",
+        )
+        _require(isinstance(reference.get("path"), str) and reference["path"],
+                 "artifact manifest provenance sidecar path is invalid")
+        _require(_is_digest(reference.get("sha256")),
+                 "artifact manifest provenance sidecar sha256 is invalid")
+
+
+def load_manifest_read_only(
+    path: str | Path,
+    *,
+    root: Path = ROOT,
+    allow_legacy_v1: bool = False,
+    process_correction_version: int | None = None,
+) -> dict[str, Any]:
+    """Read and structurally verify v1/v2 manifests without promoting evidence.
+
+    Historical v1 requires an explicit read-only opt-in and is always rejected for
+    a process-correction-v2 chain.
+    """
+    root = root.resolve(strict=True)
+    _, manifest_path = _safe_repo_path(
+        root, path, "artifact manifest path", must_exist=True
+    )
+    digest = _hash_regular_file(manifest_path, "artifact manifest")
+    manifest = _load_json(manifest_path, "artifact manifest")
+    _require(
+        _hash_regular_file(manifest_path, "artifact manifest") == digest,
+        "artifact manifest changed while being validated",
+    )
+    _validate_manifest_shape(
+        manifest,
+        allow_legacy_v1=allow_legacy_v1,
+        process_correction_version=process_correction_version,
+    )
+    return manifest
 
 
 def _expected_source(config: Mapping[str, Any], kind: str) -> str:
@@ -186,6 +300,144 @@ def _validate_envelope(
         }, "command envelope expected result is invalid")
     _require(envelope_path.is_file(), "command envelope is missing")
     return cwd, output
+
+
+def _artifact_backend(artifact: Mapping[str, Any]) -> str | None:
+    backend = artifact.get("backend")
+    if isinstance(backend, str) and backend:
+        return backend
+    backend_info = artifact.get("backend_info")
+    if isinstance(backend_info, dict):
+        backend = backend_info.get("backend")
+        if isinstance(backend, str) and backend:
+            return backend
+    return None
+
+
+def _artifact_source_revisions(artifact: Mapping[str, Any]) -> set[str]:
+    revisions: set[str] = set()
+    source = artifact.get("source_sha")
+    if isinstance(source, str) and source:
+        revisions.add(source.lower())
+    sources = artifact.get("source_shas")
+    if isinstance(sources, dict):
+        revisions.update(
+            value.lower() for value in sources.values()
+            if isinstance(value, str) and value
+        )
+    return revisions
+
+
+def _validate_sidecar(
+    *,
+    root: Path,
+    cwd: Path,
+    artifact_path: Path,
+    artifact: dict[str, Any],
+    envelope: dict[str, Any],
+    receipt: dict[str, Any],
+    kind: str,
+) -> tuple[str, str]:
+    sidecar_path = Path(f"{artifact_path}.prov.json")
+    try:
+        sidecar_relative = sidecar_path.relative_to(root).as_posix()
+    except ValueError as exc:
+        raise ManifestError("provenance sidecar is outside the repository") from exc
+    _, sidecar_file = _safe_repo_path(
+        root, sidecar_relative, "provenance sidecar", must_exist=True
+    )
+    sidecar_digest = _hash_regular_file(sidecar_file, "provenance sidecar")
+    sidecar = _load_json(sidecar_file, "provenance sidecar")
+
+    sidecar_artifact_relative, sidecar_artifact = _safe_repo_path(
+        root, sidecar.get("artifact", ""), "provenance sidecar artifact", must_exist=True
+    )
+    del sidecar_artifact_relative
+    _require(sidecar_artifact.resolve(strict=True) == artifact_path,
+             "provenance sidecar artifact path differs from canonical artifact")
+
+    runner_relative = controller.RUNNER_MODULE.replace(".", "/") + ".py"
+    _require(sidecar.get("runner") == runner_relative,
+             "provenance sidecar runner differs from frozen runner")
+    sidecar_argv = sidecar.get("argv")
+    _require(
+        isinstance(sidecar_argv, list)
+        and all(isinstance(item, str) for item in sidecar_argv)
+        and bool(sidecar_argv),
+        "provenance sidecar argv is invalid",
+    )
+    expected_argv = envelope["argv"]
+    _require(
+        len(expected_argv) >= 3
+        and expected_argv[1:3] == ["-m", controller.RUNNER_MODULE],
+        "command envelope does not invoke the frozen runner module",
+    )
+    runner_input = Path(sidecar_argv[0])
+    runner_path = runner_input if runner_input.is_absolute() else cwd / runner_input
+    try:
+        runner_path = runner_path.resolve(strict=True)
+        expected_runner = (cwd / runner_relative).resolve(strict=True)
+    except OSError as exc:
+        raise ManifestError("provenance sidecar argv runner path is invalid") from exc
+    _require(runner_path == expected_runner,
+             "provenance sidecar argv names a different runner")
+    _require(sidecar_argv[1:] == expected_argv[3:],
+             "provenance sidecar argv differs from command envelope")
+    _require(receipt.get("argv") == expected_argv,
+             "provenance sidecar cannot bind a receipt with different argv")
+
+    expected_source = envelope["source_revision"].lower()
+    sidecar_source = sidecar.get("git_sha")
+    _require(
+        isinstance(sidecar_source, str)
+        and 7 <= len(sidecar_source) <= 40
+        and expected_source.startswith(sidecar_source.lower()),
+        "provenance sidecar source revision differs from command envelope",
+    )
+    _require(receipt.get("source", {}).get("git_sha") == expected_source,
+             "provenance sidecar cannot bind a receipt from another source revision")
+    artifact_sources = _artifact_source_revisions(artifact)
+    _require(artifact_sources or kind == "final_stage0",
+             "artifact lacks a source revision binding")
+    for source in artifact_sources:
+        _require(source == expected_source,
+                 "artifact source revision differs from provenance sidecar")
+
+    expected_backend = envelope["env"].get("SIM_BACKEND")
+    receipt_backend = receipt.get("env_allowlist", {}).get("SIM_BACKEND")
+    sidecar_env = sidecar.get("env")
+    _require(isinstance(sidecar_env, dict),
+             "provenance sidecar environment is invalid")
+    sidecar_env_backend = sidecar_env.get("SIM_BACKEND")
+    sidecar_backend = sidecar.get("sim_backend")
+    sidecar_requested = sidecar.get("sim_backend_requested")
+    _require(sidecar_backend in {"numpy", "cupy"},
+             "provenance sidecar backend is invalid")
+    _require(isinstance(sidecar_requested, str) and sidecar_requested,
+             "provenance sidecar requested backend is invalid")
+    for value, label in (
+        (receipt_backend, "execution receipt"),
+        (sidecar_env_backend, "provenance sidecar environment"),
+        (sidecar_backend, "provenance sidecar backend"),
+        (sidecar_requested, "provenance sidecar requested backend"),
+    ):
+        if expected_backend is not None:
+            _require(value == expected_backend,
+                     f"{label} differs from command envelope backend")
+    artifact_backend = _artifact_backend(artifact)
+    _require(artifact_backend is not None, "artifact lacks a backend binding")
+    if expected_backend is not None:
+        _require(artifact_backend == expected_backend,
+                 "artifact backend differs from provenance sidecar")
+    elif artifact_backend is not None:
+        _require(artifact_backend == "cross_backend",
+                 f"{kind} artifact has an unexpected unsealed backend")
+
+    _require(
+        _hash_regular_file(sidecar_file, "provenance sidecar") == sidecar_digest,
+        "provenance sidecar changed while being validated",
+    )
+    return sidecar_relative, sidecar_digest
 
 
 def _write_create_only(path: Path, value: dict[str, Any]) -> None:
@@ -294,6 +546,20 @@ def create_manifest(
     artifact_digest = _hash_regular_file(artifact_path, "Stage-0 artifact")
     _require(receipt_artifact.get("sha256") == artifact_digest,
              "execution receipt artifact digest differs from canonical artifact")
+    artifact = _load_json(artifact_path, "Stage-0 artifact")
+    _require(
+        _hash_regular_file(artifact_path, "Stage-0 artifact") == artifact_digest,
+        "Stage-0 artifact changed while being validated",
+    )
+    sidecar_relative, sidecar_digest = _validate_sidecar(
+        root=root,
+        cwd=cwd,
+        artifact_path=artifact_path,
+        artifact=artifact,
+        envelope=envelope,
+        receipt=receipt,
+        kind=kind,
+    )
 
     manifest = {
         "schema": SCHEMA,
@@ -308,6 +574,10 @@ def create_manifest(
             "path": envelope_relative,
             "sha256": envelope_digest,
         },
+        "provenance_sidecar": {
+            "path": sidecar_relative,
+            "sha256": sidecar_digest,
+        },
         "execution_receipt": {
             "path": receipt_relative,
             "sha256": receipt_digest,
@@ -318,6 +588,7 @@ def create_manifest(
         },
     }
     manifest["sha256"] = controller._canonical_digest(manifest)
+    _validate_manifest_shape(manifest, process_correction_version=2)
     _write_create_only(emit_file, manifest)
     return manifest
 
