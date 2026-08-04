@@ -593,11 +593,13 @@
       "task": "Adversarial SNr packet integration review"
     },
     "019fced1-2fc9-7ee2-9604-dfe4f1c165b5": {
-      "heartbeat_at": "2026-08-04T22:07:43+00:00",
+      "completed_at": "2026-08-04T22:12:52+00:00",
+      "heartbeat_at": "2026-08-04T22:12:52+00:00",
       "model": "inherited",
-      "next_action": "Implement benchmark/tool tests and short GPU smoke only.",
+      "next_action": "Use the committed two-worker harness for future engineering profiles; profile a sealed runner before attempting further fusion.",
+      "result": "Two-worker 20,000-step RTX 3090 engineering benchmark averaged 90.2% GPU utilization, peaked at 100%, used about 3.0 GiB total device memory, and completed in 12.6 seconds; 12 tests passed.",
       "started_at": "2026-08-04T22:07:43+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Clamp performance and GPU co-scheduling benchmark",
       "write_set": [
         "tools/v14_clamp_performance.py",
@@ -605,12 +607,86 @@
       ]
     },
     "019fced1-356a-7570-9955-9bfef11b9d71": {
-      "heartbeat_at": "2026-08-04T22:07:43+00:00",
+      "completed_at": "2026-08-04T22:10:00+00:00",
+      "heartbeat_at": "2026-08-04T22:10:00+00:00",
       "model": "inherited",
-      "next_action": "Return schema, state machine, checkpoint rules, staged tests.",
+      "next_action": "Implement the canonical schema and loader before configuration, checkpoint, or kernel integration.",
+      "result": "Defined four-layer authority design, required parameter groups, per-leaf artifact bindings, fail-closed lifecycle, typed rehydration, checkpoint digest rules, and mixed-region exactness requirements.",
       "started_at": "2026-08-04T22:07:43+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Canonical authenticated SNr packet authority design",
+      "write_set": []
+    },
+    "019fced6-a735-7da0-ad56-5b8822ae14ef": {
+      "completed_at": "2026-08-04T22:30:20+00:00",
+      "heartbeat_at": "2026-08-04T22:30:20+00:00",
+      "model": "inherited",
+      "next_action": "Replacement Sol/high worker owns the rejected correction contract.",
+      "result": "Initial implementation returned, but the resumed correction lane made no edits and was stopped to avoid further subscription churn.",
+      "started_at": "2026-08-04T22:13:40+00:00",
+      "status": "interrupted",
+      "task": "Canonical authenticated SNr packet authority Stage 1 implementation",
+      "write_set": [
+        "sim/snr_executable_packet.py",
+        "tests/test_snr_executable_packet.py"
+      ]
+    },
+    "019fcee6-78b0-73d1-9ad9-8ca9e5a01581": {
+      "completed_at": "2026-08-04T22:42:07+00:00",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "model": "gpt-5.6-sol/high",
+      "next_action": "Independent Sol/high adversarial review owns acceptance; do not integrate before its verdict.",
+      "result": "Corrected all seven demonstrated packet-authority defects; 45 focused tests passed in fresh NumPy and CuPy processes, plus py_compile and diff-check.",
+      "started_at": "2026-08-04T22:30:20+00:00",
+      "status": "completed",
+      "task": "Canonical authenticated SNr packet authority Stage 1 correction",
+      "write_set": [
+        "sim/snr_executable_packet.py",
+        "tests/test_snr_executable_packet.py"
+      ]
+    },
+    "019fceda-5208-7df3-8353-06f5297cd7a1": {
+      "completed_at": "2026-08-04T22:20:30+00:00",
+      "heartbeat_at": "2026-08-04T22:20:30+00:00",
+      "model": "inherited",
+      "next_action": "Require correction and a second adversarial review before commit.",
+      "result": "Rejected Stage 1 for forgeable SEALED state, semantically unbound locators, stale validity after artifact mutation, path races, incomplete group schemas, self-asserted scientific resolution, and unsafe decimal syntax.",
+      "started_at": "2026-08-04T22:17:00+00:00",
+      "status": "completed",
+      "task": "Adversarial canonical SNr packet authority review",
+      "write_set": []
+    },
+    "019fcef2-1ac3-77d0-9412-ee6353c92d22": {
+      "completed_at": "2026-08-04T23:00:19+00:00",
+      "heartbeat_at": "2026-08-04T23:00:19+00:00",
+      "model": "gpt-5.6-sol/high",
+      "next_action": "Proceed to packet-reference configuration and checkpoint binding under the accepted external-trust boundary.",
+      "result": "Initial review rejected self-issued authority, reflection-vulnerable materialized leaves, invalid numeric domains, and resource errors. After controller correction, retesting accepted with no P0-P2 bypass and 54 focused tests passing.",
+      "started_at": "2026-08-04T22:44:32+00:00",
+      "status": "completed",
+      "task": "Independent adversarial review of corrected canonical SNr packet authority",
+      "write_set": []
+    },
+    "019fcedf-2d88-7b63-9150-a22ffa1a3bff": {
+      "completed_at": "2026-08-04T22:42:07+00:00",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "model": "inherited",
+      "next_action": "Keep direct causal constraints, model priors, and unresolved calcium geometry separate in the executable packet and campaign.",
+      "result": "Found no complete measured SNr calcium/SK set; returned preparation-matched Cav2.2/SK lesion effects, exact published-model priors, recombinant SK2 kinetics, and explicit unresolved geometry/coupling gaps.",
+      "started_at": "2026-08-04T22:22:12+00:00",
+      "status": "completed",
+      "task": "Deep research for SNr calcium and SK executable parameters",
+      "write_set": []
+    },
+    "019fcedf-327a-7d12-a1d0-580e237dd154": {
+      "completed_at": "2026-08-04T22:42:07+00:00",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "model": "inherited",
+      "next_action": "Use McElvain as the preparation-matched screen, Sitzia as held-out mature-adult context, and juvenile fast-current measurements only as explicit transfers.",
+      "result": "Returned controlled young-adult mouse rate/CV, mature-adult waveform context, direct juvenile-rat fast-Na/Kv3 constraints, model equations, and explicit missing adult kinetics/Q10/CV2 values.",
+      "started_at": "2026-08-04T22:22:14+00:00",
+      "status": "completed",
+      "task": "Deep research for adult SNr fast currents and physiology bounds",
       "write_set": []
     }
   },
@@ -1214,6 +1290,54 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fced1-2fc9-7ee2-9604-dfe4f1c165b5"
+    },
+    {
+      "at": "2026-08-04T22:10:00+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fced1-356a-7570-9955-9bfef11b9d71"
+    },
+    {
+      "at": "2026-08-04T22:12:52+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fced1-2fc9-7ee2-9604-dfe4f1c165b5"
+    },
+    {
+      "at": "2026-08-04T22:13:40+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fced6-a735-7da0-ad56-5b8822ae14ef"
+    },
+    {
+      "at": "2026-08-04T22:20:30+00:00",
+      "detail": "rejected",
+      "kind": "agent-finish",
+      "subject": "019fceda-5208-7df3-8353-06f5297cd7a1"
+    },
+    {
+      "at": "2026-08-04T22:22:12+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcedf-2d88-7b63-9150-a22ffa1a3bff"
+    },
+    {
+      "at": "2026-08-04T22:22:14+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcedf-327a-7d12-a1d0-580e237dd154"
+    },
+    {
+      "at": "2026-08-04T22:30:20+00:00",
+      "detail": "interrupted",
+      "kind": "agent-finish",
+      "subject": "019fced6-a735-7da0-ad56-5b8822ae14ef"
+    },
+    {
+      "at": "2026-08-04T22:30:20+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcee6-78b0-73d1-9ad9-8ca9e5a01581"
     }
   ],
   "lanes": {
@@ -1347,15 +1471,15 @@
     },
     "gateb-v14-clamp-megakernel": {
       "agent_id": "019fced1-2fc9-7ee2-9604-dfe4f1c165b5",
-      "blocker": "No representative sealed Stage B runner exists yet, so optimization lacks a valid workload and equivalence receipt.",
+      "blocker": "No representative sealed Stage B runner exists yet, so the engineering microbenchmark cannot authorize another fusion candidate.",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T22:07:43+00:00",
-      "next_action": "Build reviewed engineering benchmark and two-worker VRAM-aware GPU co-scheduling mode before any full run.",
-      "owner": "Dirac-3",
+      "heartbeat_at": "2026-08-04T22:12:52+00:00",
+      "next_action": "Benchmark the sealed Stage B runner after packet integration; only propose fusion if profiling identifies a dominant launch sequence and exactness remains strict.",
+      "owner": "controller",
       "priority": 2,
       "recovery_action": "After runner integration, profile 20,000 steps on RTX 3090 and gate any megakernel on byte-identical state/spike output.",
       "resource": "local_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/v14_clamp_performance.py",
         "tests/test_v14_clamp_performance.py"
@@ -1421,14 +1545,36 @@
       ]
     },
     "gateb-v14-packet-authority": {
-      "agent_id": "019fced1-356a-7570-9955-9bfef11b9d71",
+      "agent_id": "019fcef2-1ac3-77d0-9412-ee6353c92d22",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T22:07:43+00:00",
-      "next_action": "Design canonical per-group artifact-bound packet schema and checkpoint state machine.",
-      "owner": "Boyle-3",
+      "heartbeat_at": "2026-08-04T23:00:19+00:00",
+      "next_action": "Bind packet path/digest references and the external catalog/adjudication trust policy through region config and checkpoints.",
+      "owner": "controller",
       "priority": 1,
       "resource": "local_cpu",
-      "status": "running"
+      "status": "completed"
+    },
+    "gateb-v14-calcium-sk-research": {
+      "agent_id": "019fcedf-2d88-7b63-9150-a22ffa1a3bff",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "next_action": "Materialize accepted model-prior arms without promoting unresolved calcium geometry or coupling to measured authority.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu_network",
+      "status": "completed",
+      "write_set": []
+    },
+    "gateb-v14-fast-hh-adult-physiology-research": {
+      "agent_id": "019fcedf-327a-7d12-a1d0-580e237dd154",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "next_action": "Use preparation-matched physiology for screen scoring and preserve juvenile channel values as transfer-bounded constraints.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu_network",
+      "status": "completed",
+      "write_set": []
     },
     "gateb-v14-performance": {
       "blocker": "",
@@ -1772,13 +1918,18 @@
   "schema": "sim-autonomous-workboard-v1",
   "session_rules": {
     "agents_build_or_audit_but_do_not_own_long_sweeps": true,
+    "agents_model_and_effort_are_routed_by_task_difficulty": true,
+    "agents_require_disjoint_high_value_acceptance_bound_tasks": true,
     "controller_runs_experiments": true,
+    "deterministic_engine_runs_replace_llm_parameter_iteration": true,
     "disjoint_work_must_run_concurrently": true,
     "every_blocker_has_a_recovery_action": true,
     "every_lane_has_a_next_action": true,
     "gpu_requires_shared_lease_and_empty_running_queue_claim": true,
     "heartbeat_seconds": 900,
+    "local_model_handles_only_bounded_mechanical_low_authority_work": true,
+    "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T22:07:43+00:00"
+  "updated_at": "2026-08-04T23:00:19+00:00"
 }
