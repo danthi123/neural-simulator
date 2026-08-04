@@ -1,0 +1,39 @@
+{
+ "run_id": "1785834241-2724883",
+ "runner": "research/runners/_v13_backend_neutral_izh_arithmetic_replay_v2.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_v13_backend_neutral_izh_arithmetic_replay_v2.py",
+  "--spec",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2.json",
+  "--spec-sha256",
+  "94d96fb6a67e0d7df3d151e7b1dbbb85a2a9315115e1aa165f6f9355df6f0992",
+  "--run",
+  "--backend",
+  "cupy",
+  "--source-manifest",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/source.sha256",
+  "--source-revision",
+  "c2db1becbe0948424958faec0f706f492de447c9",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.json"
+ ],
+ "git_sha": "c2db1becb",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T05:04:01",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4345.0,
+ "corpus_check_query": "git archive pool ancestry attestation source manifest scientific runner --max-results 8",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.json"
+}

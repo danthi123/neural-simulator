@@ -1,0 +1,44 @@
+{
+  "cells": {
+    "cupy": {
+      "artifact_sha256": "9cfa2c8b91b474d8aaf2f0ec2f6a41921422f72d60dfc2d8d36b2dbf1b3ea106",
+      "file_sha256": "4f8ff1e54773710ac4088b0c3485c6d91e1f2bc5a62cd93b67c78258f976de15",
+      "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.json",
+      "receipt_path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.receipt.json"
+    },
+    "numpy": {
+      "artifact_sha256": "8fa3f7f4d617e854473a8f47d0f8be7a3618803099ba3c31058301068f9f3961",
+      "file_sha256": "e68ebc82ab4d7cbb2f4dcbfea77bdfaabd150eb2da87aa22d0c8d55e238e9055",
+      "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-numpy.json",
+      "receipt_path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-numpy.receipt.json"
+    }
+  },
+  "comparison": {
+    "artifact_sha256": "e4b58ae088dc0229be1d1b8842334844d168f034d613f497371a165ab6a0e210",
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/comparison.json",
+    "receipt_path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/comparison.receipt.json",
+    "receipt_sha256": "a35ab9a892641028c2bbbfcc6db8cfc64740d63da23da06a15a2d9f11f356292",
+    "sha256": "5710dcdc643a6e0221ba28832501ec5e89e1a854278273c0bae43226de7d755c"
+  },
+  "completed_input": {
+    "aggregate_file_sha256": "2f94905eebfddec69e4264ccae75f618bbffc720eb95126be9270d6a3aa5a8c6",
+    "bundle_artifact_sha256": "ee2650f6ddadfb57b2fb2ccc83a659f22a1c37767a738b8742a04c51eaf6746e",
+    "bundle_file_sha256": "5f9750ff1f26c38df8676525bc698571102e5aeefeae7d3787b8f2b3f6aa943b",
+    "bundle_path": "research/findings/raw/v13_backend_state_transplant/bundle-numpy.json",
+    "historical_source_revision": "74f3dcd60ba1e5f866a7639986e1fb96fcbd541b"
+  },
+  "diagnostic_only": true,
+  "outcome": "DIAGNOSTIC_PASS",
+  "promotion_value": "none",
+  "schema": "v13-backend-neutral-izh-arithmetic-replay-evidence-manifest-v2",
+  "scientific_verdict": null,
+  "sha256": "9512ccf9c85ce71e92621544735aff3b1b89071ad85f4645a4a809e87ca43630",
+  "source": {
+    "file_count": 67,
+    "git_sha": "c2db1becbe0948424958faec0f706f492de447c9",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/source.sha256",
+    "manifest_sha256": "e3d90dab8a34d2541ace6aa331807bcac312f9eaac6896c89f82715b672b2b52",
+    "tree_sha256": "e3d90dab8a34d2541ace6aa331807bcac312f9eaac6896c89f82715b672b2b52"
+  }
+}

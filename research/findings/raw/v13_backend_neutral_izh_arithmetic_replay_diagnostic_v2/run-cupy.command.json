@@ -1,0 +1,61 @@
+{
+  "action": "run_cupy",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "tools.execution_receipt",
+    "run",
+    "--root",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+    "--artifact",
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.json",
+    "--receipt",
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.receipt.json",
+    "--source-manifest",
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/source.sha256",
+    "--git-sha",
+    "c2db1becbe0948424958faec0f706f492de447c9",
+    "--host",
+    "dant123-wk",
+    "--device",
+    "gpu:rtx-3090",
+    "--env",
+    "SIM_BACKEND",
+    "--",
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_neutral_izh_arithmetic_replay_v2",
+    "--spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2.json",
+    "--spec-sha256",
+    "94d96fb6a67e0d7df3d151e7b1dbbb85a2a9315115e1aa165f6f9355df6f0992",
+    "--run",
+    "--backend",
+    "cupy",
+    "--source-manifest",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/source.sha256",
+    "--source-revision",
+    "c2db1becbe0948424958faec0f706f492de447c9",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.json"
+  ],
+  "artifact": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.json",
+  "diagnostic_only": true,
+  "env": {
+    "SIM_BACKEND": "cupy"
+  },
+  "execution": "not_executed",
+  "prerequisites": [
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/source.sha256"
+  ],
+  "promotion_value": "none",
+  "receipt": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.receipt.json",
+  "schema": "v13-backend-neutral-izh-arithmetic-replay-command-v2",
+  "sha256": "4d18a9a931f5adf9a910fbc82be0d08a02aeeac7ce74e0ad8e23ef7ee01aa7b0",
+  "source_manifest": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/source.sha256",
+    "sha256": "e3d90dab8a34d2541ace6aa331807bcac312f9eaac6896c89f82715b672b2b52",
+    "tree_sha256": "e3d90dab8a34d2541ace6aa331807bcac312f9eaac6896c89f82715b672b2b52"
+  },
+  "source_revision": "c2db1becbe0948424958faec0f706f492de447c9"
+}

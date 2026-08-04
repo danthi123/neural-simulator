@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_neutral_izh_arithmetic_replay_v2",
+    "--spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2.json",
+    "--spec-sha256",
+    "94d96fb6a67e0d7df3d151e7b1dbbb85a2a9315115e1aa165f6f9355df6f0992",
+    "--compare",
+    "--numpy-artifact",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-numpy.json",
+    "--numpy-receipt",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-numpy.receipt.json",
+    "--cupy-artifact",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.json",
+    "--cupy-receipt",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/cell-cupy.receipt.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/comparison.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/comparison.json",
+    "sha256": "5710dcdc643a6e0221ba28832501ec5e89e1a854278273c0bae43226de7d755c",
+    "size_bytes": 2868
+  },
+  "device": "cpu:numpy",
+  "duration_monotonic_ns": 496988460,
+  "ended_utc_ns": 1785834254041332405,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "schema": "sim-execution-receipt-v1",
+  "source": {
+    "file_count": 67,
+    "git_sha": "c2db1becbe0948424958faec0f706f492de447c9",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/source.sha256",
+    "manifest_sha256": "e3d90dab8a34d2541ace6aa331807bcac312f9eaac6896c89f82715b672b2b52",
+    "tree_sha256": "e3d90dab8a34d2541ace6aa331807bcac312f9eaac6896c89f82715b672b2b52"
+  },
+  "started_utc_ns": 1785834253544342672,
+  "status": "success"
+}
