@@ -26,6 +26,7 @@ from sim.snr_executable_packet import (
 
 
 RUNTIME_BINDING_SCHEMA = "snr-runtime-packet-binding-v1"
+RUNTIME_MANIFEST_SCHEMA = "snr-runtime-packet-manifest-v1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,6 +90,78 @@ def materialized_packet_document(packet: MaterializedPacket) -> dict[str, object
 
 def materialized_packet_sha256(packet: MaterializedPacket) -> str:
     return hashlib.sha256(canonical_bytes(materialized_packet_document(packet))).hexdigest()
+
+
+def runtime_binding_manifest_document(
+    bindings: Mapping[str, RuntimeSNrPacketBinding],
+) -> dict[str, object]:
+    """Return the deterministic checkpoint evidence for runtime bindings."""
+
+    records: list[dict[str, object]] = []
+    for region_name in sorted(bindings):
+        binding = bindings[region_name]
+        if type(binding) is not RuntimeSNrPacketBinding:
+            raise PacketError(
+                f"runtime binding for {region_name!r} has an invalid type"
+            )
+        if binding.region_name != region_name:
+            raise PacketError("runtime binding key does not match its region name")
+        try:
+            packet_json = binding.packet_canonical_bytes.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise PacketError("canonical packet bytes must be valid UTF-8") from exc
+        records.append(
+            {
+                "authority_policy_sha256": binding.authority_policy_sha256,
+                "config_sha256": binding.config_sha256,
+                "materialized_sha256": binding.materialized_sha256,
+                "packet_canonical_json": packet_json,
+                "packet_file_sha256": binding.packet_file_sha256,
+                "packet_path": binding.packet_path,
+                "packet_sha256": binding.packet_sha256,
+                "region_name": binding.region_name,
+                "schema_version": binding.schema_version,
+                "structural_sha256": binding.structural_sha256,
+            }
+        )
+    return {"bindings": records, "schema_version": RUNTIME_MANIFEST_SCHEMA}
+
+
+def runtime_binding_manifest_bytes(
+    bindings: Mapping[str, RuntimeSNrPacketBinding],
+) -> bytes:
+    return canonical_bytes(runtime_binding_manifest_document(bindings))
+
+
+def packet_trust_reference_document(config) -> dict[str, object] | None:
+    """Extract caller-selected trust references without reading artifacts."""
+
+    records = []
+    for region in getattr(config, "brain_regions", []):
+        path = getattr(region, "snr_executable_packet_path", None)
+        if path is None:
+            continue
+        records.append(
+            {
+                "packet_file_sha256": getattr(
+                    region, "snr_executable_packet_sha256", None
+                ),
+                "packet_path": path,
+                "region_name": getattr(region, "name", None),
+            }
+        )
+    if not records:
+        return None
+    records.sort(key=lambda record: str(record["region_name"]))
+    return {
+        "authority_policy_path": getattr(
+            config, "snr_authority_policy_path", None
+        ),
+        "authority_policy_sha256": getattr(
+            config, "snr_authority_policy_sha256", None
+        ),
+        "regions": records,
+    }
 
 
 def load_runtime_snr_packet_bindings(
@@ -176,9 +249,13 @@ def load_runtime_snr_packet_bindings(
 
 __all__ = [
     "RUNTIME_BINDING_SCHEMA",
+    "RUNTIME_MANIFEST_SCHEMA",
     "RuntimeSNrPacketBinding",
     "load_runtime_snr_packet_bindings",
     "materialized_packet_document",
     "materialized_packet_sha256",
+    "packet_trust_reference_document",
     "resolve_simulation_source_root",
+    "runtime_binding_manifest_bytes",
+    "runtime_binding_manifest_document",
 ]

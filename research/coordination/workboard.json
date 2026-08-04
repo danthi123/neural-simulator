@@ -701,6 +701,30 @@
       "write_set": [
         "tests/test_snr_packet_runtime.py"
       ]
+    },
+    "019fcf13-f854-7c32-88fd-1693d2082b58": {
+      "completed_at": "2026-08-04T23:26:00+00:00",
+      "heartbeat_at": "2026-08-04T23:26:00+00:00",
+      "model": "gpt-5.6-terra/high",
+      "next_action": "Expand the complete packet surface into per-neuron device arrays before enabling dynamics or schema-v2 dynamic-only restore.",
+      "result": "Mapped construction, reset, checkpoint, kernel, mixed-region, and recording seams; rejected partial execution and specified external reauthentication plus immutable-regeneration rules.",
+      "started_at": "2026-08-04T23:20:30+00:00",
+      "status": "completed",
+      "task": "Read-only authenticated SNr checkpoint integration audit",
+      "write_set": []
+    },
+    "019fcf14-9ab5-7fe0-845d-ef32d977d1f4": {
+      "completed_at": "2026-08-04T23:26:00+00:00",
+      "heartbeat_at": "2026-08-04T23:26:00+00:00",
+      "model": "gpt-5.6-luna/medium",
+      "next_action": "Controller commits accepted bridge lifecycle and checkpoint provenance coverage.",
+      "result": "Added four bridge lifecycle tests and seven checkpoint provenance tests; focused NumPy suites passed.",
+      "started_at": "2026-08-04T23:21:00+00:00",
+      "status": "completed",
+      "task": "Authenticated SNr bridge binding tests",
+      "write_set": [
+        "tests/test_snr_packet_bridge_binding.py"
+      ]
     }
   },
   "events": [
@@ -1435,15 +1459,14 @@
       "status": "completed"
     },
     "gateb-v14-channel-kernel-integration": {
-      "blocker": "No authenticated canonical packet schema yet; prior integration allowed checkpoint tampering, self-asserted provenance, and mixed-region divergence.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T22:07:43+00:00",
-      "next_action": "Do not retry kernel wiring until canonical packet authority and checkpoint regeneration rules are committed.",
+      "heartbeat_at": "2026-08-04T23:26:34+00:00",
+      "next_action": "Materialize the complete 69-parameter packet surface into mixed-region per-neuron device arrays and expand both SNr execution paths without hardcoded packet kinetics.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Complete canonical authority design and tests, then retry a smaller integration from the clean committed boundary.",
+      "recovery_action": "Preserve packet mode as provenance-only until every declared runtime parameter is consumed exactly and schema-v2 checkpoints regenerate immutable arrays.",
       "resource": "local_gpu",
-      "status": "blocked",
+      "status": "ready",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -1929,13 +1952,13 @@
     "v14-snr-packet-runtime-binding": {
       "agent_id": "019fcf10-5da9-7390-9fc1-6c44151acb16",
       "delegation": "controller_and_agent",
-      "heartbeat_at": "2026-08-04T23:18:37+00:00",
-      "next_action": "Bind canonical packet bytes and authority/config/materialization digests into bridge construction and checkpoint continuation; immutable arrays must be regenerated from authenticated inputs while dynamic state alone is restored.",
+      "heartbeat_at": "2026-08-04T23:26:34+00:00",
+      "next_action": "Continue through the now-ready complete kernel parameterization lane; add dynamic-only schema-v2 restore after immutable arrays exist.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "Do not enable packet-backed dynamics until every declared parameter has an exact per-neuron kernel input and mixed legacy/packet regions remain exact.",
       "resource": "local_cpu_agent_cpu_then_gpu",
-      "status": "in_progress",
+      "status": "completed",
       "write_set": [
         "sim/config.py",
         "sim/regions.py",
@@ -1964,5 +1987,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T23:18:37+00:00"
+  "updated_at": "2026-08-04T23:26:34+00:00"
 }

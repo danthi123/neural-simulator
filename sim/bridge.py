@@ -17,6 +17,7 @@ import h5py
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
+from types import MappingProxyType
 from typing import Dict, List, Optional
 
 # Route through the backend abstraction so this module is forward-
@@ -70,6 +71,11 @@ from sim.config import (CoreSimConfig, VisualizationConfig, RuntimeState, GPUCon
                          _get_full_config_dict)
 from sim.profiles import (NEURAL_STRUCTURE_PROFILES, CONNECTIVITY_MOTIFS,
                           enforce_profile_neuron_type_compatibility)
+from sim.snr_packet_runtime import (
+    load_runtime_snr_packet_bindings,
+    packet_trust_reference_document,
+    runtime_binding_manifest_bytes,
+)
 from sim.connectivity import (generate_spatial_connections_gpu,
                               generate_spatial_connections_chunked,
                               generate_spatial_connections_binned,
@@ -157,6 +163,8 @@ _SNR_CONDUCTANCE_ARRAYS = (
     *_SNR_CONDUCTANCE_STATE_ARRAYS,
 )
 _SNR_CONDUCTANCE_CHECKPOINT_SCHEMA = 1
+_SNR_PACKET_CHECKPOINT_DATASET = "snr_packet_binding_manifest"
+_SNR_PACKET_CHECKPOINT_SCHEMA = 1
 _INHIBITORY_CLAMP_STATE_ARRAYS = (
     "cp_inhibitory_clamp_decay_state_nS",
     "cp_inhibitory_clamp_rise_state_nS",
@@ -303,7 +311,7 @@ class SimulationBridge:
         prior ``else np`` fallback) -- additive backend-abstraction accessor (EMERGE-70/71 one-brain co-execution fix)."""
         return cp
 
-    def __init__(self, sim_core_ref=None, core_config=None, viz_config=None, runtime_state=None, gpu_config=None, ui_queue=None):
+    def __init__(self, sim_core_ref=None, core_config=None, viz_config=None, runtime_state=None, gpu_config=None, ui_queue=None, simulation_source_root=None):
         """Initialize SimulationBridge with optional config objects.
 
         Args:
@@ -313,12 +321,16 @@ class SimulationBridge:
             runtime_state: RuntimeState instance (creates default if None)
             gpu_config: GPUConfig instance (creates default if None)
             ui_queue: Queue for sending data/status to UI thread (None for headless)
+            simulation_source_root: Optional machine-local root for authenticated
+                simulation artifacts. It is intentionally not serialized.
         """
         self.core_config = core_config if core_config is not None else CoreSimConfig()
         self.viz_config = viz_config if viz_config is not None else VisualizationConfig()
         self.runtime_state = runtime_state if runtime_state is not None else RuntimeState()
         self.gpu_config = gpu_config if gpu_config is not None else GPUConfig()
         self.ui_queue = ui_queue  # Reference to the queue for sending data/status to UI
+        self._simulation_source_root = simulation_source_root
+        self.snr_packet_bindings = MappingProxyType({})
 
         # --- CuPy Arrays for Simulation State ---
         self.cp_membrane_potential_v = None 
@@ -1653,6 +1665,7 @@ class SimulationBridge:
     def _initialize_simulation_data(self, called_from_playback_init=False):
         """Initializes or re-initializes all CuPy arrays and simulation state variables."""
         self._log_console(f"Initializing simulation data for model: {self.core_config.neuron_model_type} (3D)... (playback_init: {called_from_playback_init})")
+        self.snr_packet_bindings = MappingProxyType({})
 
         if not called_from_playback_init:
             # These global_gui_state checks are for context; actual state changes are UI-driven.
@@ -1760,6 +1773,21 @@ class SimulationBridge:
                     f"Brain-region framework: {len(cfg.brain_regions)} regions, "
                     f"{cfg.num_neurons} total neurons, "
                     f"{len(getattr(cfg, 'region_pathways', []) or [])} pathways."
+                )
+
+            # Authenticate packet-backed scientific parameters before any
+            # packet-derived device state can be allocated. These bindings are
+            # provenance only until the fused dynamics accepts the full packet
+            # parameter surface; retaining them here prevents an incomplete
+            # host-side interpretation from becoming executable behavior.
+            self.snr_packet_bindings = load_runtime_snr_packet_bindings(
+                cfg,
+                source_root=self._simulation_source_root,
+            )
+            if called_from_playback_init and self.snr_packet_bindings:
+                raise ValueError(
+                    "Packet-backed SNr simulations require provenance-aware "
+                    "recording playback, which is not implemented"
                 )
 
             n = self.core_config.num_neurons
@@ -2669,6 +2697,7 @@ class SimulationBridge:
             self._log_console(f"Error during simulation data initialization (3D): {e}","critical")
             import traceback; traceback.print_exc()
             self.is_initialized = False
+            self.snr_packet_bindings = MappingProxyType({})
             if is_gpu_backend() and 'cupy' in sys.modules:
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
@@ -3325,6 +3354,7 @@ class SimulationBridge:
                 setattr(self, attr_name, None) 
         self.inhibitory_clamp_pathways = ()
         self.inhibitory_clamp_target_regions = ()
+        self.snr_packet_bindings = MappingProxyType({})
 
         if is_gpu_backend() and 'cupy' in sys.modules:
             try:
@@ -5208,6 +5238,11 @@ class SimulationBridge:
         if not self.is_initialized:
             self._log_console("Cannot capture initial state: Simulation not initialized.", "error")
             return None
+        if self.snr_packet_bindings:
+            raise RuntimeError(
+                "Packet-backed SNr recording requires authenticated provenance "
+                "support and is currently disabled"
+            )
 
         snapshot = {
             "start_time_ms": self.runtime_state.current_time_ms,
@@ -10165,9 +10200,36 @@ class SimulationBridge:
             self._log_to_ui("Sim not initialized. Cannot save checkpoint.","warning"); return False
 
         try:
+            configured_packet_trust = packet_trust_reference_document(
+                self.core_config
+            )
+            if configured_packet_trust is not None or self.snr_packet_bindings:
+                fresh_bindings = load_runtime_snr_packet_bindings(
+                    self.core_config,
+                    source_root=self._simulation_source_root,
+                )
+                if runtime_binding_manifest_bytes(fresh_bindings) != (
+                    runtime_binding_manifest_bytes(self.snr_packet_bindings)
+                ):
+                    raise ValueError(
+                        "Runtime SNr packet bindings are stale relative to the "
+                        "current config or authenticated artifacts"
+                    )
             with h5py.File(filepath, 'w') as h5f:
                 config_dict = self.core_config.to_dict()
                 save_dict_to_hdf5_attrs(h5f, config_dict)
+
+                if self.snr_packet_bindings:
+                    manifest_bytes = runtime_binding_manifest_bytes(
+                        self.snr_packet_bindings
+                    )
+                    manifest_dataset = h5f.create_dataset(
+                        _SNR_PACKET_CHECKPOINT_DATASET,
+                        data=np.frombuffer(manifest_bytes, dtype=np.uint8),
+                    )
+                    manifest_dataset.attrs["schema"] = (
+                        _SNR_PACKET_CHECKPOINT_SCHEMA
+                    )
 
                 state_group = h5f 
 
@@ -10470,6 +10532,9 @@ class SimulationBridge:
         try:
             with h5py.File(filepath, 'r') as h5f:
                 if self.runtime_state.is_running : self.stop_simulation() 
+                expected_packet_trust = packet_trust_reference_document(
+                    self.core_config
+                )
                 self.clear_simulation_state_and_gpu_memory() 
 
                 loaded_sim_config_dict = load_dict_from_hdf5_attrs(h5f) 
@@ -10498,6 +10563,51 @@ class SimulationBridge:
                 self.core_config = core_sim_config_from_dict(
                     loaded_sim_config_dict
                 )
+                loaded_packet_trust = packet_trust_reference_document(
+                    self.core_config
+                )
+                if (
+                    loaded_packet_trust is not None
+                    and loaded_packet_trust != expected_packet_trust
+                ):
+                    raise ValueError(
+                        "Checkpoint SNr packet trust references were not "
+                        "selected by the caller"
+                    )
+                self.snr_packet_bindings = load_runtime_snr_packet_bindings(
+                    self.core_config,
+                    source_root=self._simulation_source_root,
+                )
+                saved_packet_manifest = (
+                    _SNR_PACKET_CHECKPOINT_DATASET in h5f
+                )
+                if bool(self.snr_packet_bindings) != saved_packet_manifest:
+                    raise ValueError(
+                        "Checkpoint SNr packet provenance is missing or unexpected"
+                    )
+                if saved_packet_manifest:
+                    manifest_dataset = h5f[_SNR_PACKET_CHECKPOINT_DATASET]
+                    if int(manifest_dataset.attrs.get("schema", -1)) != (
+                        _SNR_PACKET_CHECKPOINT_SCHEMA
+                    ):
+                        raise ValueError(
+                            "Checkpoint SNr packet provenance has an invalid schema"
+                        )
+                    saved_manifest_array = np.asarray(
+                        manifest_dataset[:], dtype=np.uint8
+                    )
+                    if saved_manifest_array.ndim != 1:
+                        raise ValueError(
+                            "Checkpoint SNr packet provenance must be byte data"
+                        )
+                    current_manifest = runtime_binding_manifest_bytes(
+                        self.snr_packet_bindings
+                    )
+                    if saved_manifest_array.tobytes() != current_manifest:
+                        raise ValueError(
+                            "Checkpoint SNr packet provenance does not match "
+                            "the authenticated live artifacts"
+                        )
                 n = self.core_config.num_neurons
                 state_group = h5f 
 
@@ -11135,7 +11245,8 @@ class SimulationBridge:
                 return True
         except Exception as e:
             self._log_to_ui(f"Error loading checkpoint: {e}","error"); import traceback; traceback.print_exc()
-            self.is_initialized=False; 
+            self.is_initialized=False;
+            self.snr_packet_bindings = MappingProxyType({})
             if self.ui_queue: self.ui_queue.put({"type": "CHECKPOINT_LOAD_FAILED", "error": str(e)})
             return False        
 

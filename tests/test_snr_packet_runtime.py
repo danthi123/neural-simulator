@@ -196,3 +196,55 @@ def test_returned_binding_mapping_is_immutable(monkeypatch, tmp_path):
     with pytest.raises(TypeError):
         bindings["other"] = bindings["snr"]
 
+
+def test_checkpoint_manifest_is_canonical_and_region_order_independent():
+    materialized = _materialized_packet()
+
+    def binding(region_name: str):
+        return runtime.RuntimeSNrPacketBinding(
+            region_name=region_name,
+            packet_path=_PACKET_PATH,
+            packet_file_sha256=_PACKET_DIGEST,
+            packet_canonical_bytes=b'{"packet":"snr-test"}',
+            packet_sha256=materialized.packet_sha256,
+            structural_sha256=materialized.structural_sha256,
+            materialized_sha256=runtime.materialized_packet_sha256(materialized),
+            authority_policy_sha256=_POLICY_DIGEST,
+            config_sha256="e" * 64,
+            materialized=materialized,
+        )
+
+    first = {"snr-b": binding("snr-b"), "snr-a": binding("snr-a")}
+    second = {"snr-a": first["snr-a"], "snr-b": first["snr-b"]}
+    manifest = runtime.runtime_binding_manifest_bytes(first)
+
+    assert manifest == runtime.runtime_binding_manifest_bytes(second)
+    assert manifest == canonical_bytes(
+        runtime.runtime_binding_manifest_document(first)
+    )
+    assert b'"packet_canonical_json":"{\\"packet\\":\\"snr-test\\"}"' in manifest
+    assert manifest.index(b'"region_name":"snr-a"') < manifest.index(
+        b'"region_name":"snr-b"'
+    )
+
+
+def test_packet_trust_references_are_explicit_and_sorted():
+    config = _Config([_region("snr-b"), _region("snr-a")])
+
+    assert runtime.packet_trust_reference_document(config) == {
+        "authority_policy_path": _POLICY_PATH,
+        "authority_policy_sha256": _POLICY_DIGEST,
+        "regions": [
+            {
+                "packet_file_sha256": _PACKET_DIGEST,
+                "packet_path": _PACKET_PATH,
+                "region_name": "snr-a",
+            },
+            {
+                "packet_file_sha256": _PACKET_DIGEST,
+                "packet_path": _PACKET_PATH,
+                "region_name": "snr-b",
+            },
+        ],
+    }
+    assert runtime.packet_trust_reference_document(_Config([])) is None
