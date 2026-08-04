@@ -19,7 +19,7 @@ They do not imply human-level versions of the named ability.
 | Demonstrated result | Evidence and boundary |
 |---|---|
 | **Spiking simulation substrate** | The repository supports NumPy CPU and CuPy/NVIDIA GPU execution, multiple neuron models, sparse region-to-region wiring, continuous stepping, checkpoints, local plasticity, reward modulation, and configurable neuromodulators. Tests cover the shared simulation network, plasticity isolation, checkpoint behavior, and modulatory dynamics. |
-| **Grounded communication learning** | One six-seed experiment joins a learned food percept, hunger, request, consequence, and satiety. A second learns a two-intent by two-referent vocal convention from listener consequences, including combinations withheld from training. An isolated neural selector passes its four-seed physiology gate without host channel choice. Successive reward-credit experiments established local traces, policy-route eligibility, and action-specific expectation under narrow controls, but have not joined them into clean completed actions that can receive delayed credit. V11 and V12 neural action boundaries failed construction. V13 first adds autonomously active GPi/SNr-like output neurons: deterministic default-off compatibility passed, but its CPU-first calibration order was violated, making calibration and dependent replication procedurally undefined. The consumed seeds cannot be rerun; held-out, capability, and learning seeds remain sealed. An eight-cell state-transplant diagnostic found that the large CPU/GPU suppression difference follows backend-native population initialization. Smaller neuron-update arithmetic differences remain even with identical transplanted state, and deterministic sparse mode does not remove them. Backend-neutral initialization and arithmetic correction must pass fresh diagnostics before corrected calibration. Injected exploration, fixed channels, and a host listener/readout remain. These are preverbal causal loops, not natural language. See the [learned-convention finding](../research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md), [selector finding](../research/findings/2026-08-03-neural-vocal-selector-gateA-v2-4seed-GO.md), [v12 construction no-go](../research/findings/2026-08-04-neural-vocal-credit-gateB-v12-disinhibitory-boundary-CONSTRUCTION-NO-GO.md), [V13 process correction](../research/findings/2026-08-04-neural-vocal-credit-gateB-v13-calibration-order-UNDEFINED.md), and [state-transplant result](../research/findings/2026-08-04-neural-vocal-credit-gateB-v13-backend-state-transplant-DIAGNOSTIC-RESULT.md). |
+| **Grounded communication learning** | Controlled experiments have learned a food-request loop, a two-intent by two-referent vocal convention, and a neural action selector. They have not yet joined clean completed actions to reliable delayed reward credit. V13 adds autonomously active GPi/SNr-like output neurons, but its first calibration and dependent replication are procedurally undefined and their seeds are consumed. A state-transplant diagnostic traced the large CPU/GPU response split to backend-specific initialization. The default-off correction then passed exact step-zero parity for all 15 checked arrays on NumPy and the RTX 3090. The remaining arithmetic split was localized to fused multiply-add rounding; a default-off strict device kernel is implemented and passes focused tests. A full 1,200-step matched-state replay is still required before corrected calibration. Held-out, capability, and learning seeds remain sealed. Injected exploration, fixed channels, and a host listener/readout remain, so these are preverbal causal loops rather than natural language. See the [learned-convention finding](../research/findings/2026-08-03-developmental-vocal-convention-6seed-GO.md), [selector finding](../research/findings/2026-08-03-neural-vocal-selector-gateA-v2-4seed-GO.md), [V13 process correction](../research/findings/2026-08-04-neural-vocal-credit-gateB-v13-calibration-order-UNDEFINED.md), [state-transplant result](../research/findings/2026-08-04-neural-vocal-credit-gateB-v13-backend-state-transplant-DIAGNOSTIC-RESULT.md), and [initialization parity result](../research/findings/2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-initialization-correction-DIAGNOSTIC-RESULT.md). |
 | **Learned source-support signal** | A zero-initialized spiking pathway can learn whether episode activity was seen, heard, or self-generated and propagate recalled source activity into neural aPFC and ACC populations on the same bridge. Both initial calibration seeds passed every causal control, but one of three preregistered development seeds missed the fixed source-margin floor. Local inhibitory competition then cleared every absolute margin on two fresh seeds but slightly harmed one strong source. A third version's threshold homeostasis failed both fresh seeds. A fourth version's formal calibration is undefined because its evaluator mishandled a bound method signature; its intact and learning-lesion behavior was also identical on both consumed seeds. Episode allocation, source-afferent identity, fixed competition anatomy, and host-timed learning windows are still scaffolded. See the [development no-go](../research/findings/2026-08-03-source-monitor-coresidency-development-NO-GO.md), [competition no-go](../research/findings/2026-08-03-source-monitor-coresidency-v2-calibration-NO-GO.md), [homeostasis no-go](../research/findings/2026-08-03-source-monitor-coresidency-v3-calibration-NO-GO.md), and [adaptive-inhibition undefined result](../research/findings/2026-08-03-source-monitor-coresidency-v4-calibration-UNDEFINED.md). |
 | **Visual representation components** | Host top-k selection has been removed from the tested V1/V2/IT path, and all deadline-fired cells are measured. A hierarchical retinotopic-part and temporal-trace candidate failed both valid calibration seeds: intact inhibition silenced V2/IT and all permanence changes, while removing V2 inhibition created activity without above-chance identity and saturated IT on one seed. Fixed Gabor filters, host V1 normalization, fixed receptive fields, synthetic identity-pure tracks, and host-timed readout remain scaffolds. See the [hierarchical visual no-go](../research/findings/2026-08-03-visual-hierarchical-part-identity-calibration-NO-GO.md). |
 | **Memory and replay components** | The repository contains tested episodic storage, pattern completion, replay, reconsolidation, and wake/sleep integration experiments. Uncued hippocampal replay can causally change cortical weights on one bridge. Local fast-spiking competition made one fresh seed much more selective, but hippocampus-independent recall remained seed-fragile and did not reliably depend on learned target identity or replay order. A learned index-relay successor produced no intact recovery on either fresh seed because its required sleep relay and inhibitory-loop activity never appeared, making that calibration invalid rather than negative. This does not establish general autobiographical memory or lifelong consolidation. See the [sleep-cycle finding](../research/findings/2026-07-25-gap5-onebrain-production-sleepcycle-merge-6seed-GO.md), [replay v2 no-go](../research/findings/2026-08-03-replay-cortical-consolidation-v2-calibration-NO-GO.md), and [replay v3 invalid result](../research/findings/2026-08-03-replay-cortical-consolidation-v3-calibration-UNDEFINED.md). |
@@ -78,46 +78,15 @@ They do not imply human-level versions of the named ability.
 
 ## Highest-Value Work
 
-The immediate priority is still executed-action-local reward credit. The
-selector is reliable, but three credit circuits reinforced arbitrary actions
-under yoked reward and the first dendritic successor was retired for host-
-timing and backend defects. Its corrected v5 replacement has an audited CPU/GPU
-action trace and learns a separate action-local reward expectation. The current
-output circuit nevertheless fails before formal calibration: reward suppression
-is too weak and the omission path is silent. The repaired evidence search
-localized the boundary: neither a complete sparse-route weight ladder nor a
-`24/64/128/200` single-route convergence ladder made the striatal expectation
-cells fire before reward. A preregistered dual-afferent successor then tested a
-fixed convergent state input plus separate plastic context. Its weight-2 point
-was subthreshold but silent after learning; every higher point predicted without
-learning and failed the learning-lesion control. The completed evidence gate
-selected the simulator's existing graded dendritic plateau as a genuinely
-different postsynaptic integration mechanism. V9 passes its bounded engagement
-smoke at locked center `2`: late rewarded-channel expectation is `167` spikes
-versus `48` in the other channel, zero without learning, and `1` when only the
-learned route's dendritic mask is removed. This is qualified engagement, not
-completed reward prediction. Its corrected output phase passed every protocol
-control, learned the rewarded route in every intact arm, and kept probe weights
-frozen, but no four-probe block expressed rewarded action `0`; each produced
-action `1`, no clean action, action `1`, no clean action. The result is
-undefined and cannot be repeated or extended. V10 corrected the larger design
-error by putting eligibility on the selector's actual proposal-to-D1/D2 policy
-routes instead of a parallel actor bypass. On the RTX 3090, both actions crossed
-first and local coactivity produced all observed eligibility, but every fixed
-600-step action window later expressed the opposite action too. With zero clean
-single-action trials, the preregistered selectivity result is undefined and
-policy learning remains closed. V11's recurrent motor-corollary boundary then
-self-activated without a motor action. V12 tested a feed-forward guard,
-motor-triggered disinhibitor, corollary, and local fast-spiking stop circuit.
-All four matched inhibitory twins had the intended causal sign, every recovery
-settled without host reset, and weights stayed byte-identical. The intact
-circuit still activated the boundary and both motors during warmup, suppressed
-the guard by only `41.75-48.57%` against the required `50%`, and on CuPy allowed
-both motor channels to cross in both action windows. V12 is retired before
-capability seed `2` or any learning. The next evidence gate must use a genuinely
-different biology-supported mechanism that controls initialization transients
-and produces stronger action-contingent release without prolonged motor
-competition.
+The immediate priority remains reward credit for actions the brain actually
+completed. V13's output-neuron mechanism is the current candidate, but its first
+calibration cannot be used because the locked CPU-first order was violated. The
+backend diagnosis is now substantially narrower: initialization is byte-identical
+across all 15 checked arrays, and the runtime difference is explained by fused
+multiply-add rounding. Both corrections are opt-in so existing experiments keep
+their prior behavior. The next gate is an exact 1,200-step NumPy/RTX replay from
+matched state. Only if voltage, recovery state, and spikes remain identical may
+fresh V13 calibration and replication seeds be derived and opened.
 
 In parallel, replay needs a different mechanism after its first target-plateau
 correction failed smoke seed `216` and was retired. Source-monitor v4 is retired

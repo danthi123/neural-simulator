@@ -124,14 +124,15 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     order, so its apparent calibration GO is procedurally undefined.
     Replication seed `1019`, launched from that invalid selection, is diagnostic
     only. Both seeds are consumed; held-out seed `1021` and Stage-1 seed `1031`
-    remain sealed. The completed eight-cell state-transplant diagnostic at seed
-    `7606856` confirmed that the large suppression difference follows the
-    backend-native initialized population. It also found smaller CPU/GPU
-    neuron-update divergence even with the same transplanted state; deterministic
-    sparse mode did not remove it. The next work is to freeze backend-neutral
-    initialization and standardize the diverging neuron arithmetic, then validate
-    both on fresh diagnostic-only seeds. Only after those corrections pass may
-    fresh calibration and replication seeds run through the fail-closed controller.
+    remain sealed. The completed state-transplant diagnostic confirmed that the
+    large suppression difference followed backend-native initialization. The
+    default-off correction now produces byte-identical NumPy/RTX initialization
+    across all 15 checked arrays at step zero. The smaller runtime difference was
+    traced to GPU fused multiply-add rounding, and a default-off strict device
+    kernel now uses the same operation order on both backends; focused tests pass.
+    A full 1,200-step matched-state replay must still show exact voltage, recovery,
+    and spike trajectories before corrected calibration and replication may run
+    through the fail-closed controller.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
