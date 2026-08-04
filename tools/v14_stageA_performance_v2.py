@@ -1,0 +1,662 @@
+#!/usr/bin/env python3
+"""Run the prospective V14 Stage-A CuPy performance protocol v2.
+
+The caller owns the GPU lease. This process never acquires or releases one.
+Candidate/control default observations are adjacent deterministic AB/BA pairs.
+Each observation runs in a fresh process with an explicit SIM_SOURCE_ROOT.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import statistics
+import subprocess
+import sys
+import tempfile
+import time
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SPEC_PATH = ROOT / "research/specs/v14_snr_conductance_stageA_implementation.json"
+PROTOCOL_SPEC_PATH = ROOT / "research/specs/v14_stageA_performance_v2.json"
+OUTER_PAIRS = 3
+WARMUP_STEPS = 5000
+TIMING_BLOCKS = 5
+STEPS_PER_BLOCK = 3000
+NUM_NEURONS = 600
+ACTIVE_BYTES_PER_NEURON = 48
+DEFAULT_RATIO_MAX = 1.02
+ACTIVE_RATIO_MAX = 1.25
+DIRECT_OUTPUT_RATIO_MAX = 0.85
+CONSTRUCTION_RNG_SEED = 0
+WORKER_TIMEOUT_SECONDS = 1800
+
+# These validity limits are part of the prospective protocol, not tunable after a run.
+MAX_INNER_BLOCK_RELATIVE_RANGE = 0.10
+MAX_PAIRED_RATIO_RELATIVE_RANGE = 0.05
+
+BUNDLE_ARRAYS = (
+    "cp_snr_g_nalcn_max",
+    "cp_snr_g_nap_max",
+    "cp_snr_g_ca_max",
+    "cp_snr_g_sk_max",
+    "cp_snr_g_h_max",
+    "cp_snr_nap_activation",
+    "cp_snr_nap_inactivation",
+    "cp_snr_ca_activation",
+    "cp_snr_ca_inactivation",
+    "cp_snr_calcium",
+    "cp_snr_sk_activation",
+    "cp_snr_h_activation",
+)
+
+CELL_DEFINITIONS = {
+    "candidate-default": {
+        "source": "candidate", "active": False, "direct_outputs": False,
+    },
+    "prechange-control-default": {
+        "source": "prechange-control", "active": False, "direct_outputs": False,
+    },
+    "candidate-active-unfused": {
+        "source": "candidate", "active": True, "direct_outputs": False,
+    },
+    "candidate-active": {
+        "source": "candidate", "active": True, "direct_outputs": True,
+    },
+}
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git(root: Path, *args: str) -> str | None:
+    completed = subprocess.run(
+        ["git", *args], cwd=root, capture_output=True, text=True, check=False
+    )
+    return completed.stdout.strip() if completed.returncode == 0 else None
+
+
+def source_snapshot(root: Path) -> dict:
+    root = root.resolve()
+    rels = (
+        "sim/backend.py",
+        "sim/bridge.py",
+        "sim/config.py",
+        "sim/kernels.py",
+        "sim/regions.py",
+    )
+    return {
+        "root": str(root),
+        "revision": _git(root, "rev-parse", "HEAD"),
+        "status_porcelain": _git(root, "status", "--porcelain", "--", *rels),
+        "files": {
+            rel: _sha256(root / rel) if (root / rel).is_file() else None
+            for rel in rels
+        },
+    }
+
+
+def build_run_plan() -> list[dict]:
+    """Build sealed AB/BA/AB observations with adjacent default comparisons."""
+    jobs = []
+    sequence = 1
+    for outer_pair in range(1, OUTER_PAIRS + 1):
+        order = "AB" if outer_pair % 2 else "BA"
+        default_cells = (
+            ("candidate-default", "prechange-control-default")
+            if order == "AB"
+            else ("prechange-control-default", "candidate-default")
+        )
+        active_cells = (
+            ("candidate-active-unfused", "candidate-active")
+            if order == "AB"
+            else ("candidate-active", "candidate-active-unfused")
+        )
+        for phase, cells in (("default_pair", default_cells), ("active_pair", active_cells)):
+            for position, cell in enumerate(cells, 1):
+                jobs.append(
+                    {
+                        "sequence": sequence,
+                        "outer_pair": outer_pair,
+                        "pair_order": order,
+                        "phase": phase,
+                        "position_in_phase": position,
+                        "cell": cell,
+                        **CELL_DEFINITIONS[cell],
+                    }
+                )
+                sequence += 1
+    return jobs
+
+
+def _direct_output_config_kwargs(config_type, *, direct_outputs: bool) -> dict:
+    fields = getattr(config_type, "__dataclass_fields__", {})
+    if "enable_snr_direct_outputs" in fields:
+        return {"enable_snr_direct_outputs": direct_outputs}
+    if direct_outputs:
+        raise RuntimeError("source does not support SNr direct outputs")
+    return {}
+
+
+def _nvidia_smi() -> dict:
+    query = (
+        "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,"
+        "power.draw,utilization.gpu,memory.used,memory.total"
+    )
+    completed = subprocess.run(
+        ["nvidia-smi", f"--query-gpu={query}", "--format=csv,noheader,nounits"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return {
+        "query": query,
+        "returncode": completed.returncode,
+        "stdout": completed.stdout.strip(),
+        "stderr": completed.stderr.strip(),
+        "captured_at_unix": time.time(),
+    }
+
+
+def _build_bridge(*, active: bool, direct_outputs: bool):
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, GPUConfig, RuntimeState, VisualizationConfig
+    from sim.enums import NeuronModel
+    from sim.regions import BrainRegion
+
+    region_args = {}
+    if active:
+        # Numerical Stage-A values only; these are not adult SNr parameters.
+        region_args = {
+            "snr_g_nalcn_max": 0.01,
+            "snr_g_nap_max": 0.02,
+            "snr_g_ca_max": 0.03,
+            "snr_g_sk_max": 0.04,
+            "snr_g_h_max": 0.005,
+        }
+    region = BrainRegion(
+        name="performance_population",
+        n_neurons=NUM_NEURONS,
+        internal_density=0.0,
+        **region_args,
+    )
+    config = CoreSimConfig(
+        num_neurons=NUM_NEURONS,
+        connections_per_neuron=0,
+        seed=CONSTRUCTION_RNG_SEED,
+        neuron_model_type=NeuronModel.HODGKIN_HUXLEY.name,
+        default_neuron_type_hh="HH_EXCITATORY_DEFAULT_LEGACY",
+        dt_ms=0.05,
+        enable_brain_region_framework=True,
+        brain_regions=[region],
+        enable_parameter_heterogeneity=False,
+        enable_conductance_noise=False,
+        enable_hebbian_learning=False,
+        enable_short_term_plasticity=False,
+        enable_structural_plasticity=False,
+        enable_ou_process=False,
+        hh_external_drive_scale=0.0,
+        **_direct_output_config_kwargs(CoreSimConfig, direct_outputs=direct_outputs),
+    )
+    bridge = SimulationBridge(
+        core_config=config,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(enable_profiling=False),
+    )
+    bridge._initialize_simulation_data()
+    if not bridge.is_initialized:
+        raise RuntimeError("bridge initialization failed")
+    bridge.strict_step_errors = True
+    return bridge
+
+
+def _relative_range(values: list[float]) -> float | None:
+    if not values:
+        return None
+    median = float(statistics.median(values))
+    if median <= 0.0:
+        return None
+    return float((max(values) - min(values)) / median)
+
+
+def worker(*, source_root: Path, cell: str) -> dict:
+    source_root = source_root.resolve()
+    explicit_root = os.environ.get("SIM_SOURCE_ROOT")
+    if not explicit_root or Path(explicit_root).resolve() != source_root:
+        raise RuntimeError("SIM_SOURCE_ROOT must explicitly match --source-root")
+    os.environ["SIM_BACKEND"] = "cupy"
+    sys.path.insert(0, str(source_root))
+    import cupy as cp
+
+    definition = CELL_DEFINITIONS[cell]
+    if definition["active"] and definition["source"] != "candidate":
+        raise RuntimeError("active cell is candidate-only")
+    bridge = _build_bridge(
+        active=definition["active"], direct_outputs=definition["direct_outputs"]
+    )
+    try:
+        arrays = [getattr(bridge, name, None) for name in BUNDLE_ARRAYS]
+        attributes_present = [hasattr(bridge, name) for name in BUNDLE_ARRAYS]
+        bundle_bytes = sum(int(array.nbytes) for array in arrays if array is not None)
+        default_none = all(array is None for array in arrays)
+        active_bytes_exact = bundle_bytes == ACTIVE_BYTES_PER_NEURON * NUM_NEURONS
+        structural_ok = (
+            active_bytes_exact and all(array is not None for array in arrays)
+            if definition["active"]
+            else default_none
+        )
+
+        # Telemetry is deliberately outside the uninterrupted final warmup/timing window.
+        telemetry_before = _nvidia_smi()
+        for _ in range(WARMUP_STEPS):
+            bridge._run_one_simulation_step()
+        cp.cuda.runtime.deviceSynchronize()
+
+        blocks = []
+        for block_index in range(1, TIMING_BLOCKS + 1):
+            start_event = cp.cuda.Event()
+            end_event = cp.cuda.Event()
+            start_event.record()
+            host_started = time.perf_counter()
+            for _ in range(STEPS_PER_BLOCK):
+                bridge._run_one_simulation_step()
+            end_event.record()
+            end_event.synchronize()
+            blocks.append(
+                {
+                    "block": block_index,
+                    "steps": STEPS_PER_BLOCK,
+                    "host_seconds": float(time.perf_counter() - host_started),
+                    "cuda_event_seconds": float(
+                        cp.cuda.get_elapsed_time(start_event, end_event) / 1000.0
+                    ),
+                }
+            )
+        telemetry_after = _nvidia_smi()
+
+        host_values = [block["host_seconds"] for block in blocks]
+        cuda_values = [block["cuda_event_seconds"] for block in blocks]
+        properties = cp.cuda.runtime.getDeviceProperties(0)
+        device_name = properties.get("name", "unknown")
+        if isinstance(device_name, bytes):
+            device_name = device_name.decode("utf-8", errors="replace")
+        return {
+            "schema": "v14-stageA-performance-worker-v2",
+            "status": "completed" if structural_ok else "infrastructure_invalid",
+            "cell": cell,
+            "source": source_snapshot(source_root),
+            "backend": "cupy",
+            "runtime": {
+                "python": sys.version,
+                "platform": platform.platform(),
+                "hostname": platform.node(),
+                "cupy": cp.__version__,
+                "cuda_runtime_version": cp.cuda.runtime.runtimeGetVersion(),
+                "cuda_driver_version": cp.cuda.runtime.driverGetVersion(),
+                "device": str(device_name),
+            },
+            "configuration": {
+                "num_neurons": NUM_NEURONS,
+                "dt_ms": 0.05,
+                "warmup_steps": WARMUP_STEPS,
+                "timing_blocks": TIMING_BLOCKS,
+                "steps_per_block": STEPS_PER_BLOCK,
+                "construction_rng_seed": CONSTRUCTION_RNG_SEED,
+                "scientific_seeds": [],
+                "active": definition["active"],
+                "direct_outputs": definition["direct_outputs"],
+            },
+            "structural": {
+                "bundle_attributes_present": attributes_present,
+                "default_bundle_arrays_none": default_none,
+                "active_bundle_bytes": bundle_bytes,
+                "expected_active_bundle_bytes": ACTIVE_BYTES_PER_NEURON * NUM_NEURONS,
+                "active_bundle_bytes_exact": active_bytes_exact,
+                "passed": structural_ok,
+            },
+            "timing": {
+                "blocks": blocks,
+                "total_host_seconds": float(sum(host_values)),
+                "total_cuda_event_seconds": float(sum(cuda_values)),
+                "median_block_host_seconds": float(statistics.median(host_values)),
+                "median_block_cuda_event_seconds": float(statistics.median(cuda_values)),
+                "host_block_relative_range": _relative_range(host_values),
+                "cuda_block_relative_range": _relative_range(cuda_values),
+            },
+            "nvidia_smi": {"before_warmup": telemetry_before, "after_timing": telemetry_after},
+        }
+    finally:
+        bridge.clear_simulation_state_and_gpu_memory()
+
+
+def run_worker(job: dict, *, candidate_root: Path, control_root: Path) -> dict:
+    source_root = candidate_root if job["source"] == "candidate" else control_root
+    command = [
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--worker",
+        "--source-root",
+        str(source_root.resolve()),
+        "--cell",
+        job["cell"],
+    ]
+    env = {
+        **os.environ,
+        "SIM_BACKEND": "cupy",
+        "SIM_SOURCE_ROOT": str(source_root.resolve()),
+    }
+    started = time.time()
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=source_root,
+            env=env,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=WORKER_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        return {
+            "schema": "v14-stageA-performance-worker-v2",
+            "status": "infrastructure_failure",
+            "failure": "worker_timeout",
+            "timeout_seconds": WORKER_TIMEOUT_SECONDS,
+            "elapsed_seconds": time.time() - started,
+            "stdout": (exc.stdout or "")[-4000:] if isinstance(exc.stdout, str) else "",
+            "stderr": (exc.stderr or "")[-4000:] if isinstance(exc.stderr, str) else "",
+            "cell": job["cell"],
+            "source": source_snapshot(source_root),
+            **{key: job[key] for key in ("sequence", "outer_pair", "pair_order")},
+        }
+    try:
+        payload = json.loads(completed.stdout.strip().splitlines()[-1])
+    except (IndexError, json.JSONDecodeError):
+        payload = {
+            "schema": "v14-stageA-performance-worker-v2",
+            "status": "infrastructure_failure",
+            "returncode": completed.returncode,
+            "stdout": completed.stdout[-4000:],
+            "stderr": completed.stderr[-4000:],
+        }
+    payload.update(
+        **{
+            key: job[key]
+            for key in (
+                "sequence", "outer_pair", "pair_order", "phase", "position_in_phase"
+            )
+        }
+    )
+    if completed.returncode != 0:
+        payload["status"] = "infrastructure_failure"
+        payload["returncode"] = completed.returncode
+    return payload
+
+
+def _row_by_pair(rows: list[dict], outer_pair: int, cell: str) -> dict | None:
+    return next(
+        (
+            row for row in rows
+            if row.get("outer_pair") == outer_pair
+            and row.get("cell") == cell
+            and row.get("status") == "completed"
+        ),
+        None,
+    )
+
+
+def _timing_value(row: dict, channel: str) -> float:
+    return float(row["timing"][f"total_{channel}_seconds"])
+
+
+def _pair_ratios(rows: list[dict], numerator: str, denominator: str, channel: str) -> list[float]:
+    ratios = []
+    for outer_pair in range(1, OUTER_PAIRS + 1):
+        top = _row_by_pair(rows, outer_pair, numerator)
+        bottom = _row_by_pair(rows, outer_pair, denominator)
+        if top is None or bottom is None:
+            continue
+        denominator_value = _timing_value(bottom, channel)
+        if denominator_value > 0.0:
+            ratios.append(_timing_value(top, channel) / denominator_value)
+    return ratios
+
+
+def summarize(rows: list[dict]) -> dict:
+    completed = [row for row in rows if row.get("status") == "completed"]
+    complete = len(completed) == OUTER_PAIRS * len(CELL_DEFINITIONS)
+    structural = complete and all(
+        row.get("structural", {}).get("passed") is True for row in completed
+    )
+
+    ratio_definitions = {
+        "default_host": ("candidate-default", "prechange-control-default", "host"),
+        "default_cuda_event": (
+            "candidate-default", "prechange-control-default", "cuda_event",
+        ),
+        "active_host": ("candidate-active", "candidate-default", "host"),
+        "active_cuda_event": ("candidate-active", "candidate-default", "cuda_event"),
+        "direct_output_host": (
+            "candidate-active", "candidate-active-unfused", "host",
+        ),
+        "direct_output_cuda_event": (
+            "candidate-active", "candidate-active-unfused", "cuda_event",
+        ),
+    }
+    paired_ratios = {
+        name: _pair_ratios(rows, numerator, denominator, channel)
+        for name, (numerator, denominator, channel) in ratio_definitions.items()
+    }
+    median_ratios = {
+        name: float(statistics.median(values)) if values else None
+        for name, values in paired_ratios.items()
+    }
+    paired_dispersion = {
+        name: _relative_range(values) for name, values in paired_ratios.items()
+    }
+
+    observation_dispersion = []
+    for row in completed:
+        timing = row["timing"]
+        for channel, field in (
+            ("host", "host_block_relative_range"),
+            ("cuda_event", "cuda_block_relative_range"),
+        ):
+            value = timing.get(field)
+            observation_dispersion.append(
+                {
+                    "outer_pair": row["outer_pair"],
+                    "cell": row["cell"],
+                    "channel": channel,
+                    "relative_range": value,
+                    "limit": MAX_INNER_BLOCK_RELATIVE_RANGE,
+                    "passed": value is not None and value <= MAX_INNER_BLOCK_RELATIVE_RANGE,
+                }
+            )
+
+    dispersion_valid = complete and all(
+        item["passed"] for item in observation_dispersion
+    ) and all(
+        value is not None and value <= MAX_PAIRED_RATIO_RELATIVE_RANGE
+        for value in paired_dispersion.values()
+    )
+    infrastructure_valid = structural and dispersion_valid
+    thresholds_complete = all(value is not None for value in median_ratios.values())
+    thresholds_pass = thresholds_complete and (
+        median_ratios["default_host"] <= DEFAULT_RATIO_MAX
+        and median_ratios["default_cuda_event"] <= DEFAULT_RATIO_MAX
+        and median_ratios["active_host"] <= ACTIVE_RATIO_MAX
+        and median_ratios["active_cuda_event"] <= ACTIVE_RATIO_MAX
+        and median_ratios["direct_output_host"] <= DIRECT_OUTPUT_RATIO_MAX
+        and median_ratios["direct_output_cuda_event"] <= DIRECT_OUTPUT_RATIO_MAX
+    )
+    if not complete:
+        performance_status = "pending"
+    elif not infrastructure_valid:
+        performance_status = "infrastructure_invalid"
+    else:
+        performance_status = "GO" if thresholds_pass else "NO_GO"
+
+    return {
+        "completed_observations": len(completed),
+        "expected_observations": OUTER_PAIRS * len(CELL_DEFINITIONS),
+        "paired_ratios": paired_ratios,
+        "median_paired_ratios": median_ratios,
+        "dispersion": {
+            "observation_blocks": observation_dispersion,
+            "paired_ratio_relative_ranges": paired_dispersion,
+            "limits": {
+                "max_inner_block_relative_range": MAX_INNER_BLOCK_RELATIVE_RANGE,
+                "max_paired_ratio_relative_range": MAX_PAIRED_RATIO_RELATIVE_RANGE,
+            },
+            "passed": dispersion_valid,
+        },
+        "fixed_thresholds": {
+            "default_off_ratio_max": DEFAULT_RATIO_MAX,
+            "active_ratio_max": ACTIVE_RATIO_MAX,
+            "direct_output_ratio_max": DIRECT_OUTPUT_RATIO_MAX,
+        },
+        "infrastructure_valid": infrastructure_valid,
+        "performance_status": performance_status,
+        "physiology_verdict": None,
+        "promotion_effect": "none",
+    }
+
+
+def write_json_atomic(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(value, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    except BaseException:
+        try:
+            os.unlink(temporary)
+        except FileNotFoundError:
+            pass
+        raise
+
+
+def run_matrix(*, candidate_root: Path, control_root: Path, output: Path) -> dict:
+    plan = build_run_plan()
+    source_roots = {
+        "candidate": source_snapshot(candidate_root),
+        "prechange_control": source_snapshot(control_root),
+    }
+    result = {
+        "schema": "v14-stageA-performance-result-v2",
+        "status": "running",
+        "created_at_unix": time.time(),
+        "provenance": {"argv": list(sys.argv), "cwd": str(Path.cwd().resolve())},
+        "specification": str(SPEC_PATH.relative_to(ROOT)),
+        "specification_sha256": _sha256(SPEC_PATH),
+        "protocol_specification": str(PROTOCOL_SPEC_PATH.relative_to(ROOT)),
+        "protocol_specification_sha256": _sha256(PROTOCOL_SPEC_PATH),
+        "harness_sha256": _sha256(Path(__file__).resolve()),
+        "lease_policy": "caller-owned; harness acquires no lease",
+        "backend": "cupy",
+        "scientific_seeds": [],
+        "worker_timeout_seconds": WORKER_TIMEOUT_SECONDS,
+        "protocol": {
+            "outer_pairs": OUTER_PAIRS,
+            "default_pair_order": ["AB", "BA", "AB"],
+            "warmup_steps": WARMUP_STEPS,
+            "timing_blocks": TIMING_BLOCKS,
+            "steps_per_block": STEPS_PER_BLOCK,
+            "telemetry_boundary": "before final warmup and after all timing",
+            "dispersion_limits": {
+                "max_inner_block_relative_range": MAX_INNER_BLOCK_RELATIVE_RANGE,
+                "max_paired_ratio_relative_range": MAX_PAIRED_RATIO_RELATIVE_RANGE,
+            },
+        },
+        "run_plan": plan,
+        "source_roots": source_roots,
+        "results": [],
+        "summary": summarize([]),
+    }
+    result["preconditions"] = [
+        {
+            "kind": "require",
+            "name": "clean source boundaries",
+            "ok": all(
+                source.get("revision") and not source.get("status_porcelain")
+                for source in source_roots.values()
+            ),
+            "detail": "Both revisions and governed source hashes are recorded before dispatch.",
+        },
+        {
+            "kind": "require",
+            "name": "engineering-only seed boundary",
+            "ok": not result["scientific_seeds"],
+            "detail": "No calibration, replication, held-out, or selector seed is opened.",
+        },
+    ]
+    if not all(item["ok"] for item in result["preconditions"]):
+        result["status"] = "infrastructure_invalid"
+        result["summary"]["performance_status"] = "infrastructure_invalid"
+        write_json_atomic(output, result)
+        return result
+
+    write_json_atomic(output, result)
+    for job in plan:
+        row = run_worker(job, candidate_root=candidate_root, control_root=control_root)
+        result["results"].append(row)
+        result["summary"] = summarize(result["results"])
+        if row.get("status") != "completed":
+            result["status"] = row.get("status", "infrastructure_failure")
+            result["failed_sequence"] = job["sequence"]
+            write_json_atomic(output, result)
+            return result
+        write_json_atomic(output, result)
+
+    result["status"] = (
+        "complete"
+        if result["summary"]["performance_status"] in {"GO", "NO_GO"}
+        else "infrastructure_invalid"
+    )
+    write_json_atomic(output, result)
+    return result
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--candidate-root", type=Path, default=ROOT)
+    parser.add_argument("--prechange-control-root", type=Path)
+    parser.add_argument("--out", type=Path)
+    parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--source-root", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--cell", choices=tuple(CELL_DEFINITIONS), help=argparse.SUPPRESS)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parser().parse_args(argv)
+    if args.worker:
+        if args.source_root is None or args.cell is None:
+            raise SystemExit("worker requires --source-root and --cell")
+        print(json.dumps(worker(source_root=args.source_root, cell=args.cell), sort_keys=True))
+        return 0
+    if args.prechange_control_root is None or args.out is None:
+        raise SystemExit("controller requires --prechange-control-root and --out")
+    result = run_matrix(
+        candidate_root=args.candidate_root,
+        control_root=args.prechange_control_root,
+        output=args.out,
+    )
+    print(json.dumps({"status": result["status"], "out": str(args.out)}, sort_keys=True))
+    return 0 if result["status"] == "complete" else 75
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

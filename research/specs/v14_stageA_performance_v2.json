@@ -1,0 +1,49 @@
+{
+  "schema": "v14-stageA-performance-protocol-v2",
+  "status": "preregistered-not-executed",
+  "scope": "engineering performance only",
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "supersedes_for_future_runs": "tools/v14_stageA_performance.py",
+  "prior_v1_receipt_effect": "none; all prior verdicts remain banked",
+  "scientific_seeds": [],
+  "source_boundaries": {
+    "candidate": "clean committed revision with governed source hashes",
+    "prechange_control_revision": "6c9034991ba5d67024786d1faa080436c70347d5"
+  },
+  "protocol": {
+    "outer_pairs": 3,
+    "pair_order": ["AB", "BA", "AB"],
+    "warmup_steps": 5000,
+    "timing_blocks": 5,
+    "steps_per_block": 3000,
+    "worker_timeout_seconds": 1800,
+    "telemetry_boundary": "before final warmup and after all timing",
+    "default_pairs_are_adjacent": true,
+    "active_direct_unfused_pairs_are_adjacent": true,
+    "caller_owns_gpu_lease": true
+  },
+  "fixed_thresholds": {
+    "default_off_ratio_max": 1.02,
+    "active_ratio_max": 1.25,
+    "direct_output_ratio_max": 0.85
+  },
+  "infrastructure_validity": {
+    "max_inner_block_relative_range": 0.10,
+    "max_paired_ratio_relative_range": 0.05,
+    "excess_dispersion_status": "infrastructure_invalid",
+    "dirty_source_status": "infrastructure_invalid"
+  },
+  "aggregation": {
+    "observation_duration": "sum of five timing blocks",
+    "comparison": "ratio within each outer pair",
+    "gate_value": "median of three paired ratios",
+    "channels": ["host", "cuda_event"]
+  },
+  "verdict_boundary": {
+    "physiology_verdict": null,
+    "promotion_effect_before_complete_valid_run": "none",
+    "threshold_failure_when_valid": "NO_GO",
+    "all_thresholds_pass_when_valid": "GO"
+  }
+}

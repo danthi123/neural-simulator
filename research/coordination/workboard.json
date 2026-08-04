@@ -410,37 +410,22 @@
       "write_set": []
     },
     "019fce5c-2d4c-7fa2-98f7-102bfcc7795f": {
-      "heartbeat_at": "2026-08-04T19:59:52+00:00",
+      "completed_at": "2026-08-04T20:05:30+00:00",
+      "heartbeat_at": "2026-08-04T20:05:30+00:00",
       "model": "inherited",
-      "next_action": "Return tested new files without GPU use.",
+      "next_action": "Commit protocol and harness, then execute only from clean candidate/control source boundaries.",
+      "result": "Implemented prospective paired multi-block V14 performance harness v2; controller added hash-bound protocol spec; 26 v1/v2 tests pass.",
       "started_at": "2026-08-04T19:59:52+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Implement prospective V14 performance harness v2",
       "write_set": [
         "tools/v14_stageA_performance_v2.py",
-        "tests/test_v14_stageA_performance_v2.py"
+        "tests/test_v14_stageA_performance_v2.py",
+        "research/specs/v14_stageA_performance_v2.json"
       ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T16:36:59+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd9b-f02f-79b3-b515-8f45c37e6c87"
-    },
-    {
-      "at": "2026-08-04T16:36:59+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T16:36:59+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd9c-0b90-7930-8dd1-d8e69ec70a06"
-    },
     {
       "at": "2026-08-04T16:36:59+00:00",
       "detail": "blocked",
@@ -1022,6 +1007,24 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fce5c-2d4c-7fa2-98f7-102bfcc7795f"
+    },
+    {
+      "at": "2026-08-04T20:05:30+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce5c-2d4c-7fa2-98f7-102bfcc7795f"
+    },
+    {
+      "at": "2026-08-04T20:05:30+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-performance-harness-v2"
+    },
+    {
+      "at": "2026-08-04T20:05:30+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-performance-v2-execution"
     }
   ],
   "lanes": {
@@ -1336,16 +1339,32 @@
     "v14-performance-harness-v2": {
       "agent_id": "019fce5c-2d4c-7fa2-98f7-102bfcc7795f",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T19:59:52+00:00",
-      "next_action": "Implement prospective paired, multi-block, dispersion-gated harness v2 and focused CPU tests.",
+      "heartbeat_at": "2026-08-04T20:05:30+00:00",
+      "next_action": "Paired AB/BA, five-block, dispersion-gated protocol is implemented and hash-bound to a separate preregistration; 26 tests pass.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Do not edit the v1 harness, prior receipts, thresholds, or scientific seed boundaries.",
+      "recovery_action": "Do not edit protocol after timing begins; excessive dispersion is infrastructure-invalid.",
       "resource": "agent_cpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/v14_stageA_performance_v2.py",
         "tests/test_v14_stageA_performance_v2.py"
+      ]
+    },
+    "v14-performance-v2-execution": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T20:05:30+00:00",
+      "next_action": "Commit and push harness v2, then run the complete sealed matrix at candidate be25bf045 lineage versus control 6c9034991 under the shared GPU lease.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Bank complete GO/NO-GO or infrastructure-invalid receipt exactly; never rerun an unchanged valid source as promotion evidence.",
+      "resource": "local_gpu",
+      "status": "running",
+      "write_set": [
+        "research/specs/v14_stageA_performance_v2.json",
+        "tools/v14_stageA_performance_v2.py",
+        "tests/test_v14_stageA_performance_v2.py",
+        "research/findings"
       ]
     },
     "v14-performance-variance-audit": {
@@ -1388,5 +1407,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T19:59:52+00:00"
+  "updated_at": "2026-08-04T20:05:30+00:00"
 }
