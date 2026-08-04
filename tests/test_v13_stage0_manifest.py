@@ -137,6 +137,9 @@ class Fixture:
         monkeypatch.setattr(controller, "SEED_DERIVATION_SOURCE_REVISION", CANDIDATE)
         self.root = (tmp_path / "candidate").resolve()
         self.root.mkdir()
+        process_spec = json.loads(
+            (controller.ROOT / controller.SEED_SPEC_PATH).read_text()
+        )
         compatibility = _write_json(
             self.root / controller.COMPATIBILITY_PATH,
             {"outcome": "DETERMINISTIC_COMPATIBILITY_GO", "go": True},
@@ -155,26 +158,48 @@ class Fixture:
             "namespace": controller.SEED_DERIVATION_NAMESPACE,
             "source_anchor": {
                 "revision": controller.SEED_DERIVATION_SOURCE_REVISION,
-                "committed_at": "fixture",
-                "relation_to_v1_observation": "fixed_before_observation",
+                "committed_at": controller.SEED_DERIVATION_SOURCE_COMMITTED_AT,
+                "relation_to_v1_observation": controller.SEED_DERIVATION_SOURCE_RELATION,
             },
             "material_template": "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}",
             "prior_partition_seeds": controller.PRIOR_PARTITION_SEEDS,
-            "result_exclusion": "fixture result exclusion",
+            "result_exclusion": controller.SEED_DERIVATION_RESULT_EXCLUSION,
         }
-        spec = _write_json(
-            self.root / controller.SEED_SPEC_PATH,
-            {
-                "partitions": {name: [seed] for name, seed in self.seeds.items()},
-                "seed_derivation": self.seed_derivation,
-            },
-        )
+        spec_path = self.root / controller.SEED_SPEC_PATH
         for relative in controller.REQUIRED_SOURCE_MANIFEST_PATHS:
             path = self.root / relative
-            if path == spec:
+            if path == spec_path:
                 continue
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(f"# frozen source: {relative}\n")
+        _write_json(spec_path, {})
+        replay_path = _write_replay_evidence(self.root, CANDIDATE)
+        compatibility_binding = {
+            "path": controller.COMPATIBILITY_PATH,
+            "file_sha256": _digest(compatibility),
+            "canonical_json_sha256": hashlib.sha256(
+                controller._canonical_bytes(json.loads(compatibility.read_text()))
+            ).hexdigest(),
+            "canonicalization": controller.COMPATIBILITY_CANONICALIZATION,
+        }
+        process_spec.update({
+            "base_spec": {
+                "path": controller.BASE_SPEC_PATH,
+                "sha256": _digest(self.root / controller.BASE_SPEC_PATH),
+            },
+            "strict_arithmetic_replay": {
+                "path": controller.STRICT_REPLAY_PATH,
+                "sha256": _digest(replay_path),
+                "outcome": "DIAGNOSTIC_PASS",
+            },
+            "seed_derivation": self.seed_derivation,
+            "partitions": {name: [seed] for name, seed in self.seeds.items()},
+            "compatibility": {
+                **compatibility_binding,
+                "verification": process_spec["compatibility"]["verification"],
+            },
+        })
+        spec = _write_json(spec_path, process_spec)
         source_identity = {
             relative: _digest(self.root / relative)
             for relative in controller.CRITICAL_SOURCE_PATHS
@@ -192,7 +217,6 @@ class Fixture:
             self.root, "source.sha256"
         )
 
-        replay_path = _write_replay_evidence(self.root, CANDIDATE)
         self.artifacts = {
             "calibration_numpy": "evidence/calibration-numpy.json",
             "calibration_cupy": "evidence/calibration-cupy.json",
@@ -227,14 +251,7 @@ class Fixture:
                 "sha256": _digest(replay_path),
                 "source_revision": CANDIDATE,
             },
-            "compatibility": {
-                "path": controller.COMPATIBILITY_PATH,
-                "file_sha256": _digest(compatibility),
-                "canonical_json_sha256": hashlib.sha256(
-                    controller._canonical_bytes(json.loads(compatibility.read_text()))
-                ).hexdigest(),
-                "canonicalization": controller.COMPATIBILITY_CANONICALIZATION,
-            },
+            "compatibility": compatibility_binding,
             "legacy_performance": {
                 "source_revision": LEGACY,
                 "runner_path": legacy_runner_relative,
@@ -270,9 +287,14 @@ class Fixture:
             }
         )
         envelope = json.loads(self.envelope_path.read_text())
+        sidecar_source = execution_receipt.verify_source_manifest(
+            self.root, "source.sha256"
+        )
+        run_id = "a" * 64
         self.sidecar_path = _write_json(
             Path(f"{self.artifact_path}.prov.json"),
             {
+                "schema": execution_receipt.PROVENANCE_SCHEMA_V2,
                 "artifact": self.artifact_path.relative_to(self.root).as_posix(),
                 "argv": [
                     str((self.root / "research/runners/"
@@ -281,12 +303,22 @@ class Fixture:
                 ],
                 "env": envelope["env"],
                 "git_dirty": False,
-                "git_sha": CANDIDATE[:9],
-                "run_id": "fixture-run",
+                "git_sha": CANDIDATE,
+                "run_id": run_id,
                 "runner": "research/runners/"
                 "_vocal_action_credit_gate_v13_tonic_output.py",
+                "source_kind": "git",
+                "source_manifest_sha256": sidecar_source["manifest_sha256"],
+                "source_manifest_verified_at_start": None,
+                "source_manifest_start_error": None,
+                "source_manifest_verified_at_exit": None,
+                "source_manifest_exit_error": None,
+                "started": "fixture",
+                "started_utc_ns": 101,
+                "ended_utc_ns": 109,
                 "sim_backend": "numpy",
                 "sim_backend_requested": "numpy",
+                "sim_backend_cupy_importable": True,
             },
         )
         self.source_manifest = source_manifest
@@ -312,7 +344,7 @@ class Fixture:
             "execution_root": ".",
             "exit_code": 0,
             "host": "fixture-host",
-            "schema": execution_receipt.SCHEMA,
+            "schema": execution_receipt.SCHEMA_V2,
             "source": {
                 "file_count": source["file_count"],
                 "git_sha": CANDIDATE,
@@ -323,6 +355,13 @@ class Fixture:
             },
             "started_utc_ns": 100,
             "status": "success",
+            "provenance": {
+                "path": self.sidecar_path.relative_to(self.root).as_posix(),
+                "sha256": _digest(self.sidecar_path),
+                "run_id": "a" * 64,
+                "started_utc_ns": 101,
+                "ended_utc_ns": 109,
+            },
         }
 
     def write_receipt(self, mutate) -> None:
@@ -410,7 +449,10 @@ def test_rejects_provenance_sidecar_mismatches(
     if message == "artifact path":
         _write_json(fx.root / "evidence/other.json", {"dummy": "other"})
     fx.write_sidecar(mutation)
-    with pytest.raises(manifest_tool.ManifestError, match=message):
+    with pytest.raises(
+        manifest_tool.ManifestError,
+        match=f"{message}|provenance sidecar does not match receipt",
+    ):
         fx.create()
 
 
@@ -445,7 +487,7 @@ def test_rejects_artifact_backend_or_source_mismatch(fx: Fixture):
         "size_bytes": fx.artifact_path.stat().st_size,
     })
     _write_json(fx.receipt_path, fx.receipt)
-    with pytest.raises(manifest_tool.ManifestError, match="artifact source revision"):
+    with pytest.raises(manifest_tool.ManifestError, match="artifact source"):
         fx.create()
 
 
@@ -530,7 +572,10 @@ def test_rejects_envelope_config_digest_and_extra_fields(fx: Fixture):
 )
 def test_rejects_receipt_mismatches(fx: Fixture, mutation, message: str):
     fx.write_receipt(mutation)
-    with pytest.raises(manifest_tool.ManifestError, match=message):
+    with pytest.raises(
+        manifest_tool.ManifestError,
+        match=f"{message}|provenance sidecar .* does not match receipt",
+    ):
         fx.create()
 
 
@@ -555,7 +600,10 @@ def test_rejects_receipt_from_different_valid_source_manifest(fx: Fixture):
         })
 
     fx.write_receipt(mutate)
-    with pytest.raises(manifest_tool.ManifestError, match="frozen candidate source"):
+    with pytest.raises(
+        manifest_tool.ManifestError,
+        match="frozen candidate source|source manifest does not match receipt",
+    ):
         fx.create()
 
 
@@ -586,7 +634,10 @@ def test_rejects_receipt_for_noncanonical_artifact(fx: Fixture):
         }
 
     fx.write_receipt(mutate)
-    with pytest.raises(manifest_tool.ManifestError, match="canonical destination"):
+    with pytest.raises(
+        manifest_tool.ManifestError,
+        match="canonical destination|provenance path is not adjacent",
+    ):
         fx.create()
 
 
@@ -636,7 +687,7 @@ def test_baseline_uses_legacy_revision_while_other_kinds_use_candidate(fx: Fixtu
     [
         ("calibration_numpy", "calibration_numpy", "numpy", "--calibration"),
         ("calibration_cupy", "calibration_cupy", "cupy", "--calibration"),
-        ("calibration_selection", "merge_calibration", None, "--merge-calibration"),
+        ("calibration_selection", "merge_calibration", "numpy", "--merge-calibration"),
         ("replication_numpy", "replication_numpy", "numpy", "--replication"),
         ("replication_cupy", "replication_cupy", "cupy", "--replication"),
         ("held_out_cupy", "held_out_cupy", "cupy", "--held-out"),
@@ -653,7 +704,7 @@ def test_baseline_uses_legacy_revision_while_other_kinds_use_candidate(fx: Fixtu
             "cupy",
             "--performance",
         ),
-        ("final_stage0", "final_stage0_merge", None, "--merge-final"),
+        ("final_stage0", "final_stage0_merge", "numpy", "--merge-final"),
     ],
 )
 def test_all_kind_command_contracts_are_explicit(

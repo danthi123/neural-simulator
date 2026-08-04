@@ -28,7 +28,7 @@ MANIFEST_FIELDS_V1 = frozenset((
     "schema", "kind", "config_sha256", "source_revision", "artifact",
     "command_envelope", "execution_receipt", "sha256",
 ))
-MANIFEST_FIELDS_V2 = frozenset((*MANIFEST_FIELDS_V1, "provenance_sidecar"))
+MANIFEST_FIELDS_V2 = frozenset(controller.MANIFEST_FIELDS)
 REFERENCE_FIELDS = frozenset(("path", "sha256"))
 KINDS = tuple(sorted(controller.MANIFEST_ACTIONS))
 _ACTION_BY_KIND = controller.MANIFEST_ACTIONS
@@ -186,6 +186,32 @@ def _validate_manifest_shape(
                  "artifact manifest provenance sidecar path is invalid")
         _require(_is_digest(reference.get("sha256")),
                  "artifact manifest provenance sidecar sha256 is invalid")
+        config_ref = manifest.get("controller_config")
+        _require(
+            isinstance(config_ref, dict)
+            and set(config_ref) == controller.MANIFEST_CONFIG_REFERENCE_FIELDS,
+            "artifact manifest controller config reference is invalid",
+        )
+        _require(_is_digest(config_ref.get("file_sha256"))
+                 and _is_digest(config_ref.get("canonical_sha256")),
+                 "artifact manifest controller config digests are invalid")
+        process_ref = manifest.get("process_correction_spec")
+        _require(
+            isinstance(process_ref, dict) and set(process_ref) == REFERENCE_FIELDS,
+            "artifact manifest process-correction reference is invalid",
+        )
+        source_ref = manifest.get("candidate_source_manifest")
+        _require(
+            isinstance(source_ref, dict)
+            and set(source_ref) == controller.MANIFEST_SOURCE_REFERENCE_FIELDS,
+            "artifact manifest candidate source reference is invalid",
+        )
+        compatibility_ref = manifest.get("compatibility")
+        _require(
+            isinstance(compatibility_ref, dict)
+            and set(compatibility_ref) == controller.MANIFEST_COMPATIBILITY_FIELDS,
+            "artifact manifest compatibility reference is invalid",
+        )
 
 
 def load_manifest_read_only(
@@ -302,32 +328,6 @@ def _validate_envelope(
     return cwd, output
 
 
-def _artifact_backend(artifact: Mapping[str, Any]) -> str | None:
-    backend = artifact.get("backend")
-    if isinstance(backend, str) and backend:
-        return backend
-    backend_info = artifact.get("backend_info")
-    if isinstance(backend_info, dict):
-        backend = backend_info.get("backend")
-        if isinstance(backend, str) and backend:
-            return backend
-    return None
-
-
-def _artifact_source_revisions(artifact: Mapping[str, Any]) -> set[str]:
-    revisions: set[str] = set()
-    source = artifact.get("source_sha")
-    if isinstance(source, str) and source:
-        revisions.add(source.lower())
-    sources = artifact.get("source_shas")
-    if isinstance(sources, dict):
-        revisions.update(
-            value.lower() for value in sources.values()
-            if isinstance(value, str) and value
-        )
-    return revisions
-
-
 def _validate_sidecar(
     *,
     root: Path,
@@ -338,106 +338,18 @@ def _validate_sidecar(
     receipt: dict[str, Any],
     kind: str,
 ) -> tuple[str, str]:
-    sidecar_path = Path(f"{artifact_path}.prov.json")
     try:
-        sidecar_relative = sidecar_path.relative_to(root).as_posix()
-    except ValueError as exc:
-        raise ManifestError("provenance sidecar is outside the repository") from exc
-    _, sidecar_file = _safe_repo_path(
-        root, sidecar_relative, "provenance sidecar", must_exist=True
-    )
-    sidecar_digest = _hash_regular_file(sidecar_file, "provenance sidecar")
-    sidecar = _load_json(sidecar_file, "provenance sidecar")
-
-    sidecar_artifact_relative, sidecar_artifact = _safe_repo_path(
-        root, sidecar.get("artifact", ""), "provenance sidecar artifact", must_exist=True
-    )
-    del sidecar_artifact_relative
-    _require(sidecar_artifact.resolve(strict=True) == artifact_path,
-             "provenance sidecar artifact path differs from canonical artifact")
-
-    runner_relative = controller.RUNNER_MODULE.replace(".", "/") + ".py"
-    _require(sidecar.get("runner") == runner_relative,
-             "provenance sidecar runner differs from frozen runner")
-    sidecar_argv = sidecar.get("argv")
-    _require(
-        isinstance(sidecar_argv, list)
-        and all(isinstance(item, str) for item in sidecar_argv)
-        and bool(sidecar_argv),
-        "provenance sidecar argv is invalid",
-    )
-    expected_argv = envelope["argv"]
-    _require(
-        len(expected_argv) >= 3
-        and expected_argv[1:3] == ["-m", controller.RUNNER_MODULE],
-        "command envelope does not invoke the frozen runner module",
-    )
-    runner_input = Path(sidecar_argv[0])
-    runner_path = runner_input if runner_input.is_absolute() else cwd / runner_input
-    try:
-        runner_path = runner_path.resolve(strict=True)
-        expected_runner = (cwd / runner_relative).resolve(strict=True)
-    except OSError as exc:
-        raise ManifestError("provenance sidecar argv runner path is invalid") from exc
-    _require(runner_path == expected_runner,
-             "provenance sidecar argv names a different runner")
-    _require(sidecar_argv[1:] == expected_argv[3:],
-             "provenance sidecar argv differs from command envelope")
-    _require(receipt.get("argv") == expected_argv,
-             "provenance sidecar cannot bind a receipt with different argv")
-
-    expected_source = envelope["source_revision"].lower()
-    sidecar_source = sidecar.get("git_sha")
-    _require(
-        isinstance(sidecar_source, str)
-        and 7 <= len(sidecar_source) <= 40
-        and expected_source.startswith(sidecar_source.lower()),
-        "provenance sidecar source revision differs from command envelope",
-    )
-    _require(receipt.get("source", {}).get("git_sha") == expected_source,
-             "provenance sidecar cannot bind a receipt from another source revision")
-    artifact_sources = _artifact_source_revisions(artifact)
-    _require(artifact_sources or kind == "final_stage0",
-             "artifact lacks a source revision binding")
-    for source in artifact_sources:
-        _require(source == expected_source,
-                 "artifact source revision differs from provenance sidecar")
-
-    expected_backend = envelope["env"].get("SIM_BACKEND")
-    receipt_backend = receipt.get("env_allowlist", {}).get("SIM_BACKEND")
-    sidecar_env = sidecar.get("env")
-    _require(isinstance(sidecar_env, dict),
-             "provenance sidecar environment is invalid")
-    sidecar_env_backend = sidecar_env.get("SIM_BACKEND")
-    sidecar_backend = sidecar.get("sim_backend")
-    sidecar_requested = sidecar.get("sim_backend_requested")
-    _require(sidecar_backend in {"numpy", "cupy"},
-             "provenance sidecar backend is invalid")
-    _require(isinstance(sidecar_requested, str) and sidecar_requested,
-             "provenance sidecar requested backend is invalid")
-    for value, label in (
-        (receipt_backend, "execution receipt"),
-        (sidecar_env_backend, "provenance sidecar environment"),
-        (sidecar_backend, "provenance sidecar backend"),
-        (sidecar_requested, "provenance sidecar requested backend"),
-    ):
-        if expected_backend is not None:
-            _require(value == expected_backend,
-                     f"{label} differs from command envelope backend")
-    artifact_backend = _artifact_backend(artifact)
-    _require(artifact_backend is not None, "artifact lacks a backend binding")
-    if expected_backend is not None:
-        _require(artifact_backend == expected_backend,
-                 "artifact backend differs from provenance sidecar")
-    elif artifact_backend is not None:
-        _require(artifact_backend == "cross_backend",
-                 f"{kind} artifact has an unexpected unsealed backend")
-
-    _require(
-        _hash_regular_file(sidecar_file, "provenance sidecar") == sidecar_digest,
-        "provenance sidecar changed while being validated",
-    )
-    return sidecar_relative, sidecar_digest
+        return controller._validate_v13_provenance_sidecar(
+            root=root,
+            cwd=cwd,
+            artifact_path=artifact_path,
+            artifact=artifact,
+            envelope=envelope,
+            receipt=receipt,
+            kind=kind,
+        )
+    except controller.ControllerError as exc:
+        raise ManifestError(str(exc)) from exc
 
 
 def _write_create_only(path: Path, value: dict[str, Any]) -> None:
@@ -566,6 +478,14 @@ def create_manifest(
         "kind": kind,
         "config_sha256": config["sha256"],
         "source_revision": _expected_source(config, kind),
+        "controller_config": {
+            "path": config_relative,
+            "file_sha256": config.file_sha256,
+            "canonical_sha256": config["sha256"],
+        },
+        "process_correction_spec": dict(config["seed_binding"]),
+        "candidate_source_manifest": dict(config["candidate_source_manifest"]),
+        "compatibility": dict(config["compatibility"]),
         "artifact": {
             "path": config["artifacts"][kind],
             "sha256": artifact_digest,

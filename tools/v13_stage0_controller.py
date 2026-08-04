@@ -15,14 +15,17 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 import re
+import stat
 import subprocess
 import sys
 from typing import Any
 
 try:
     from tools import execution_receipt
+    from tools import stable_json_evidence
 except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
     import execution_receipt  # type: ignore[no-redef]
+    import stable_json_evidence  # type: ignore[no-redef]
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,9 +42,18 @@ CONFIG_FIELDS = {
 }
 MANIFEST_FIELDS = {
     "schema", "kind", "config_sha256", "source_revision", "artifact",
-    "command_envelope", "execution_receipt", "provenance_sidecar", "sha256",
+    "command_envelope", "execution_receipt", "provenance_sidecar",
+    "controller_config", "process_correction_spec", "candidate_source_manifest",
+    "compatibility", "sha256",
 }
 MANIFEST_ARTIFACT_FIELDS = {"path", "sha256"}
+MANIFEST_CONFIG_REFERENCE_FIELDS = {"path", "file_sha256", "canonical_sha256"}
+MANIFEST_SOURCE_REFERENCE_FIELDS = {
+    "path", "sha256", "tree_sha256", "file_count",
+}
+MANIFEST_COMPATIBILITY_FIELDS = {
+    "path", "file_sha256", "canonical_json_sha256", "canonicalization",
+}
 MANIFEST_COMMAND_REFERENCE_FIELDS = {"path", "sha256"}
 MANIFEST_RECEIPT_REFERENCE_FIELDS = {
     "path", "sha256", "host", "device", "started_utc_ns", "ended_utc_ns",
@@ -105,6 +117,14 @@ LOCKED_HELD_OUT_SEED = 1021
 SEED_DERIVATION_ALGORITHM = "sha256-first-12-mod-900000-plus-100000-v2"
 SEED_DERIVATION_NAMESPACE = "V13_STAGE0_PROCESS_CORRECTION_V2"
 SEED_DERIVATION_SOURCE_REVISION = "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+SEED_DERIVATION_SOURCE_COMMITTED_AT = "2026-08-04T05:45:13-04:00"
+SEED_DERIVATION_SOURCE_RELATION = "fixed_before_observation"
+SEED_DERIVATION_RESULT_EXCLUSION = (
+    "no measured result, current, verdict, raster, state hash, or tested "
+    "candidate is an input"
+)
+PROCESS_CORRECTION_SCHEMA = "v13-stage0-process-correction-v2"
+PROCESS_CORRECTION_STATUS = "preregistered-not-executed"
 COMPATIBILITY_CANONICALIZATION = "python-json-sort-keys-compact-separators-utf8-v1"
 CALIBRATION_LADDER_PA = (75, 100, 125, 150, 175)
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -113,6 +133,15 @@ _REVISION = re.compile(r"^[0-9a-f]{40}$")
 
 class ControllerError(RuntimeError):
     """A sealed prerequisite or state transition is invalid."""
+
+
+class FrozenConfig(dict[str, Any]):
+    """Validated config value with its exact file identity kept out of JSON."""
+
+    def __init__(self, value: dict[str, Any], *, path: Path, file_sha256: str):
+        super().__init__(value)
+        self.path = path
+        self.file_sha256 = file_sha256
 
 
 def _canonical_bytes(value: Any) -> bytes:
@@ -132,16 +161,19 @@ def _file_digest(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _load_json(path: Path, label: str) -> dict[str, Any]:
+def _load_json_evidence(
+    path: Path, label: str,
+) -> stable_json_evidence.StableJsonEvidence:
     try:
-        value = json.loads(path.read_text())
-    except FileNotFoundError as exc:
-        raise ControllerError(f"{label} does not exist: {path}") from exc
-    except (OSError, json.JSONDecodeError) as exc:
+        return stable_json_evidence.read_stable_json_evidence(
+            path, require_object=True
+        )
+    except stable_json_evidence.StableJsonEvidenceError as exc:
         raise ControllerError(f"cannot read {label}: {path}: {exc}") from exc
-    if not isinstance(value, dict):
-        raise ControllerError(f"{label} must be a JSON object: {path}")
-    return value
+
+
+def _load_json(path: Path, label: str) -> dict[str, Any]:
+    return _load_json_evidence(path, label).value
 
 
 def _require(condition: bool, message: str) -> None:
@@ -163,14 +195,26 @@ def _require_revision(value: Any, label: str) -> str:
 
 def _repo_path(root: Path, value: Any, label: str) -> tuple[str, Path]:
     _require(isinstance(value, str) and value, f"{label} must be a repository-relative path")
-    relative = Path(value)
-    _require(not relative.is_absolute() and ".." not in relative.parts,
+    relative = PurePosixPath(value)
+    _require(
+        not relative.is_absolute()
+        and bool(relative.name)
+        and "." not in relative.parts
+        and ".." not in relative.parts,
              f"{label} must be a safe repository-relative path")
-    resolved_root = root.resolve()
-    resolved = (resolved_root / relative).resolve()
-    _require(resolved == resolved_root or resolved_root in resolved.parents,
-             f"{label} escapes the source root")
-    return relative.as_posix(), resolved
+    resolved_root = root.resolve(strict=True)
+    candidate = resolved_root.joinpath(*relative.parts)
+    current = resolved_root
+    for part in relative.parts:
+        current = current / part
+        if not os.path.lexists(current):
+            continue
+        try:
+            mode = current.lstat().st_mode
+        except OSError as exc:
+            raise ControllerError(f"cannot inspect {label}: {current}: {exc}") from exc
+        _require(not stat.S_ISLNK(mode), f"{label} cannot contain a symlink")
+    return relative.as_posix(), candidate
 
 
 def _git_head(root: Path) -> str:
@@ -309,36 +353,31 @@ def _derive_replacement_seed(*, role: str, prior_seed: int) -> int:
     return 100000 + (int(prefix, 16) % 900000)
 
 
+def _expected_seed_derivation() -> dict[str, Any]:
+    return {
+        "algorithm": SEED_DERIVATION_ALGORITHM,
+        "namespace": SEED_DERIVATION_NAMESPACE,
+        "source_anchor": {
+            "revision": SEED_DERIVATION_SOURCE_REVISION,
+            "committed_at": SEED_DERIVATION_SOURCE_COMMITTED_AT,
+            "relation_to_v1_observation": SEED_DERIVATION_SOURCE_RELATION,
+        },
+        "material_template": (
+            "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}"
+        ),
+        "prior_partition_seeds": PRIOR_PARTITION_SEEDS,
+        "result_exclusion": SEED_DERIVATION_RESULT_EXCLUSION,
+    }
+
+
 def _validate_seed_derivation(config: dict[str, Any]) -> None:
     derivation = config.get("seed_derivation")
     _require(
-        isinstance(derivation, dict)
-        and set(derivation) == {
-            "algorithm", "namespace", "source_anchor", "material_template",
-            "prior_partition_seeds", "result_exclusion",
-        },
-        "seed_derivation must contain exactly the locked derivation fields",
-    )
-    _require(derivation.get("algorithm") == SEED_DERIVATION_ALGORITHM,
-             "seed derivation algorithm is not the locked process correction")
-    _require(derivation.get("namespace") == SEED_DERIVATION_NAMESPACE,
-             "seed derivation namespace is not the locked process correction")
-    source_anchor = derivation.get("source_anchor")
-    _require(isinstance(source_anchor, dict)
-             and source_anchor.get("revision") == SEED_DERIVATION_SOURCE_REVISION,
-             "seed derivation source revision is not the locked process correction")
-    _require(
-        derivation.get("material_template")
-        == "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}",
-        "seed derivation material template is not locked",
-    )
-    priors = derivation.get("prior_partition_seeds")
-    _require(
-        priors == PRIOR_PARTITION_SEEDS,
-        "seed derivation prior partitions are not the locked v1 partitions",
+        derivation == _expected_seed_derivation(),
+        "seed_derivation differs from the locked result-independent derivation",
     )
     seeds = config["seeds"]
-    for role, prior in priors.items():
+    for role, prior in PRIOR_PARTITION_SEEDS.items():
         expected = _derive_replacement_seed(role=role, prior_seed=prior)
         _require(seeds[role] == expected,
                  f"{role} seed is not the mechanically derived replacement")
@@ -630,6 +669,135 @@ def _artifact_paths(config: dict[str, Any], root: Path) -> dict[str, Path]:
     return paths
 
 
+def _validate_process_correction_spec(
+    spec: dict[str, Any], *, config: dict[str, Any],
+) -> None:
+    _require(spec.get("schema") == PROCESS_CORRECTION_SCHEMA,
+             "locked process-correction schema is invalid")
+    _require(spec.get("status") == PROCESS_CORRECTION_STATUS,
+             "locked process-correction status is invalid")
+    _require(
+        spec.get("authority")
+        == "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-stage0-"
+           "process-correction-v2-PREREGISTRATION.md",
+        "locked process-correction authority is invalid",
+    )
+    base = spec.get("base_spec")
+    _require(
+        base == {
+            "path": BASE_SPEC_PATH,
+            "sha256": config["candidate_source_identity"][BASE_SPEC_PATH],
+        },
+        "locked process-correction base specification is invalid",
+    )
+    replay = spec.get("strict_arithmetic_replay")
+    _require(
+        replay == {
+            "path": config["strict_arithmetic_replay"]["path"],
+            "sha256": config["strict_arithmetic_replay"]["sha256"],
+            "outcome": "DIAGNOSTIC_PASS",
+        },
+        "locked process-correction replay prerequisite is invalid",
+    )
+    _require(spec.get("seed_derivation") == _expected_seed_derivation(),
+             "locked process-correction seed derivation is invalid")
+    _require(
+        spec.get("partitions")
+        == {name: [seed] for name, seed in config["seeds"].items()},
+        "locked process-correction partitions differ from the frozen config",
+    )
+    _require(
+        spec.get("forbidden_consumed_seeds") == sorted(FORBIDDEN_CONSUMED_SEEDS),
+        "locked process-correction consumed-seed list is invalid",
+    )
+    _require(
+        spec.get("retired_unexecuted_seeds") == sorted(RETIRED_UNEXECUTED_SEEDS),
+        "locked process-correction retired-seed list is invalid",
+    )
+    _require(
+        spec.get("sealed_future_seeds")
+        == {"held_out": LOCKED_HELD_OUT_SEED, "stage_1": 1031},
+        "locked process-correction future seed seals are invalid",
+    )
+    _require(
+        spec.get("calibration") == {
+            "ladder_pA": list(CALIBRATION_LADDER_PA),
+            "fresh_brain_per_point": True,
+            "selection": "lowest_common_passing_point_after_both_backends_sealed",
+            "forbid_v1_current_preference": True,
+        },
+        "locked process-correction calibration contract is invalid",
+    )
+    compatibility = spec.get("compatibility")
+    _require(isinstance(compatibility, dict),
+             "locked process-correction compatibility contract is invalid")
+    _require(
+        {field: compatibility.get(field) for field in config["compatibility"]}
+        == config["compatibility"],
+        "locked process-correction compatibility digests differ from the config",
+    )
+    _require(
+        compatibility.get("verification") == {
+            "same_opened_byte_buffer": True,
+            "regular_file_only": True,
+            "reject_symlink": True,
+            "verify_bytes_before_and_after_parse": True,
+            "require_both_named_digests_in_scientific_artifacts": True,
+        },
+        "locked process-correction compatibility verification contract is invalid",
+    )
+    manifest = spec.get("artifact_manifest")
+    _require(isinstance(manifest, dict),
+             "locked process-correction manifest contract is invalid")
+    _require(manifest.get("schema") == MANIFEST_SCHEMA,
+             "locked process-correction manifest schema is invalid")
+    _require(manifest.get("create_only") is True,
+             "locked process-correction manifests must be create-only")
+    _require(manifest.get("manifest_v1_accepted_for_promotion") is False,
+             "locked process-correction cannot promote manifest v1")
+    _require(
+        manifest.get("required_sealed_entries") == [
+            "scientific_artifact", "provenance_sidecar", "command_envelope",
+            "execution_receipt", "controller_config", "process_correction_spec",
+            "candidate_source_manifest", "source_revision",
+            "compatibility_file_sha256", "compatibility_canonical_json_sha256",
+            "compatibility_canonicalization",
+        ],
+        "locked process-correction manifest seals are invalid",
+    )
+    _require(
+        manifest.get("required_cross_checks") == [
+            "artifact path and sha256 agree across sidecar receipt and manifest",
+            "run identity arguments backend source and destination agree",
+            "all sealed inputs are regular files and unchanged during validation",
+            "provenance sidecar is sealed in the same validation step as the artifact",
+        ],
+        "locked process-correction manifest cross-checks are invalid",
+    )
+    _require(
+        spec.get("execution_order") == [
+            "calibration_numpy", "seal_calibration_numpy_manifest_v2",
+            "calibration_cupy_after_numpy_manifest_v2_sealed",
+            "seal_calibration_cupy_manifest_v2",
+            "merge_calibration_lowest_common_pass",
+            "replication_numpy_and_cupy_after_selection",
+            "held_out_cupy_after_both_replication_go",
+            "held_out_numpy_after_cupy_sealed",
+        ],
+        "locked process-correction execution order is invalid",
+    )
+    _require(
+        spec.get("stop_rules") == [
+            "v1 evidence cannot unlock any v2 stage",
+            "any forbidden or retired seed blocks command emission",
+            "any digest-domain substitution is UNDEFINED",
+            "a missing or changed provenance sidecar is UNDEFINED",
+            "any source receipt order ladder or rerun violation is UNDEFINED",
+        ],
+        "locked process-correction stop rules are invalid",
+    )
+
+
 def _verify_source_binding(
     config: dict[str, Any], root: Path, source: dict[str, Any],
 ) -> None:
@@ -655,6 +823,7 @@ def _verify_source_binding(
     _require(spec_path.is_file() and _file_digest(spec_path) == expected_digest,
              "locked seed specification is missing or has the wrong digest")
     spec = _load_json(spec_path, "locked seed specification")
+    _validate_process_correction_spec(spec, config=config)
     expected = config["seeds"]
     partitions = spec.get("partitions")
     _require(isinstance(partitions, dict), "locked seed specification has no partitions object")
@@ -672,7 +841,12 @@ def _verify_source_binding(
 
 
 def load_config(path: Path, *, root: Path = ROOT, verify_source: bool = True) -> dict[str, Any]:
-    config = _load_json(path, "correction config")
+    config_evidence = _load_json_evidence(path, "correction config")
+    config = FrozenConfig(
+        config_evidence.value,
+        path=path.resolve(strict=True),
+        file_sha256=config_evidence.file_sha256,
+    )
     _require(set(config) == CONFIG_FIELDS,
              "correction config has missing or unknown top-level fields")
     _require(config.get("schema") == CONFIG_SCHEMA, f"unsupported config schema: {config.get('schema')!r}")
@@ -745,13 +919,22 @@ def load_config(path: Path, *, root: Path = ROOT, verify_source: bool = True) ->
         "compatibility canonicalization algorithm is not locked",
     )
     _, compatibility_path = _repo_path(root, compatibility.get("path"), "compatibility.path")
-    _require(compatibility_path.is_file() and _file_digest(compatibility_path) == compatibility_digest,
-             "canonical compatibility artifact is missing or has the wrong digest")
-    compatibility_artifact = _load_json(compatibility_path, "compatibility artifact")
+    compatibility_evidence = _load_json_evidence(
+        compatibility_path, "compatibility artifact"
+    )
+    compatibility_artifact = compatibility_evidence.value
     _require(
-        hashlib.sha256(_canonical_bytes(compatibility_artifact)).hexdigest()
-        == canonical_digest,
+        compatibility_evidence.file_sha256 == compatibility_digest,
+        "canonical compatibility artifact byte digest is wrong",
+    )
+    _require(
+        compatibility_evidence.canonical_json_sha256 == canonical_digest,
         "canonical compatibility JSON digest is wrong",
+    )
+    _require(
+        compatibility_evidence.canonicalization
+        == compatibility["canonicalization"],
+        "canonical compatibility algorithm differs from the stable reader",
     )
     _require(compatibility_artifact.get("outcome") == "DETERMINISTIC_COMPATIBILITY_GO"
              and compatibility_artifact.get("go") is True,
@@ -783,8 +966,137 @@ def _expected_manifest_env(kind: str) -> dict[str, str]:
     if kind.endswith("_numpy"):
         return {"SIM_BACKEND": "numpy"}
     if kind in {"calibration_selection", "final_stage0"}:
-        return {}
+        return {"SIM_BACKEND": "numpy"}
     return {"SIM_BACKEND": "cupy"}
+
+
+def _artifact_backend(artifact: dict[str, Any]) -> str | None:
+    backend = artifact.get("backend")
+    if isinstance(backend, str) and backend:
+        return backend
+    backend_info = artifact.get("backend_info")
+    if isinstance(backend_info, dict):
+        backend = backend_info.get("backend")
+        if isinstance(backend, str) and backend:
+            return backend
+    return None
+
+
+def _artifact_source_revisions(artifact: dict[str, Any]) -> set[str]:
+    revisions: set[str] = set()
+    source = artifact.get("source_sha")
+    if isinstance(source, str) and source:
+        revisions.add(source.lower())
+    sources = artifact.get("source_shas")
+    if isinstance(sources, dict):
+        revisions.update(
+            value.lower() for value in sources.values()
+            if isinstance(value, str) and value
+        )
+    return revisions
+
+
+def _validate_v13_provenance_sidecar(
+    *, root: Path, cwd: Path, artifact_path: Path, artifact: dict[str, Any],
+    envelope: dict[str, Any], receipt: dict[str, Any], kind: str,
+) -> tuple[str, str]:
+    _require(receipt.get("schema") == execution_receipt.SCHEMA_V2,
+             f"{kind} requires a provenance-binding execution receipt v2")
+    try:
+        sidecar_relative = Path(f"{artifact_path}.prov.json").relative_to(root).as_posix()
+    except ValueError as exc:
+        raise ControllerError(f"{kind} provenance sidecar is outside the source root") from exc
+    _, sidecar_path = _repo_path(
+        root, sidecar_relative, f"{kind} provenance sidecar"
+    )
+    sidecar_evidence = _load_json_evidence(
+        sidecar_path, f"{kind} provenance sidecar"
+    )
+    sidecar = sidecar_evidence.value
+    provenance = receipt.get("provenance")
+    _require(
+        isinstance(provenance, dict)
+        and provenance.get("path") == sidecar_relative
+        and provenance.get("sha256") == sidecar_evidence.file_sha256,
+        f"{kind} receipt does not seal the canonical provenance sidecar",
+    )
+    _require(sidecar.get("schema") == execution_receipt.PROVENANCE_SCHEMA_V2,
+             f"{kind} provenance sidecar schema is invalid")
+    _require(sidecar.get("run_id") == provenance.get("run_id"),
+             f"{kind} provenance sidecar run ID differs from receipt")
+    _require(
+        sidecar.get("started_utc_ns") == provenance.get("started_utc_ns")
+        and sidecar.get("ended_utc_ns") == provenance.get("ended_utc_ns"),
+        f"{kind} provenance timing differs from receipt",
+    )
+    artifact_relative, sidecar_artifact = _repo_path(
+        root, sidecar.get("artifact"), f"{kind} provenance artifact"
+    )
+    _require(sidecar_artifact == artifact_path,
+             f"{kind} provenance artifact differs from canonical destination")
+    del artifact_relative
+
+    runner_relative = RUNNER_MODULE.replace(".", "/") + ".py"
+    _require(sidecar.get("runner") == runner_relative,
+             f"{kind} provenance runner differs from frozen runner")
+    sidecar_argv = sidecar.get("argv")
+    _require(
+        isinstance(sidecar_argv, list)
+        and sidecar_argv
+        and all(isinstance(item, str) and item for item in sidecar_argv),
+        f"{kind} provenance argv is invalid",
+    )
+    runner_input = Path(sidecar_argv[0])
+    runner_path = runner_input if runner_input.is_absolute() else cwd / runner_input
+    try:
+        runner_path = runner_path.resolve(strict=True)
+        expected_runner = (cwd / runner_relative).resolve(strict=True)
+    except OSError as exc:
+        raise ControllerError(f"{kind} provenance runner path is invalid") from exc
+    _require(runner_path == expected_runner,
+             f"{kind} provenance argv names a different runner")
+    _require(sidecar_argv[1:] == envelope["argv"][3:],
+             f"{kind} provenance argv differs from command envelope")
+
+    expected_source = envelope["source_revision"]
+    _require(sidecar.get("git_sha") == expected_source,
+             f"{kind} provenance source revision differs from command envelope")
+    receipt_source = receipt.get("source")
+    _require(isinstance(receipt_source, dict), f"{kind} receipt source is invalid")
+    _require(
+        sidecar.get("source_kind") == receipt_source.get("kind")
+        and sidecar.get("source_manifest_sha256")
+        == receipt_source.get("manifest_sha256"),
+        f"{kind} provenance source identity differs from receipt",
+    )
+    artifact_sources = _artifact_source_revisions(artifact)
+    _require(artifact_sources or kind == "final_stage0",
+             f"{kind} artifact lacks a source revision binding")
+    _require(all(source == expected_source for source in artifact_sources),
+             f"{kind} artifact source differs from provenance")
+
+    execution_backend = envelope["env"].get("SIM_BACKEND")
+    _require(execution_backend in {"numpy", "cupy"},
+             f"{kind} command lacks an explicit execution backend")
+    _require(
+        receipt.get("env_allowlist", {}).get("SIM_BACKEND") == execution_backend
+        and sidecar.get("env", {}).get("SIM_BACKEND") == execution_backend
+        and sidecar.get("sim_backend_requested") == execution_backend
+        and sidecar.get("sim_backend") == execution_backend,
+        f"{kind} provenance backend differs from command or receipt",
+    )
+    if execution_backend == "cupy":
+        _require(sidecar.get("sim_backend_cupy_importable") is True,
+                 f"{kind} provenance does not confirm CuPy availability")
+    artifact_backend = _artifact_backend(artifact)
+    expected_artifact_backend = (
+        "cross_backend"
+        if kind in {"calibration_selection", "final_stage0"}
+        else execution_backend
+    )
+    _require(artifact_backend == expected_artifact_backend,
+             f"{kind} artifact backend differs from the sealed execution")
+    return sidecar_relative, sidecar_evidence.file_sha256
 
 
 def _require_candidate_receipt_source(
@@ -935,7 +1247,7 @@ def load_manifest(
         manifest_path.relative_to(root)
     except (OSError, ValueError) as exc:
         raise ControllerError(f"{kind} manifest path is outside the source root") from exc
-    manifest = _load_json(manifest_path, f"{kind} manifest")
+    manifest = _load_json_evidence(manifest_path, f"{kind} manifest").value
     _require(set(manifest) == MANIFEST_FIELDS,
              f"{kind} manifest has missing or extra fields")
     _require(manifest.get("schema") == MANIFEST_SCHEMA, f"{kind} manifest schema is invalid")
@@ -948,6 +1260,84 @@ def load_manifest(
     supplied_manifest_digest = _require_digest(manifest.get("sha256"), f"{kind} manifest sha256")
     _require(supplied_manifest_digest == _manifest_digest(manifest),
              f"{kind} manifest self-digest is invalid")
+
+    config_ref = manifest.get("controller_config")
+    _require(
+        isinstance(config_ref, dict)
+        and set(config_ref) == MANIFEST_CONFIG_REFERENCE_FIELDS,
+        f"{kind} controller config reference is invalid",
+    )
+    _require(isinstance(config, FrozenConfig),
+             f"{kind} config lacks exact-file validation metadata")
+    _, referenced_config = _repo_path(
+        root, config_ref.get("path"), f"{kind} controller config path"
+    )
+    _require(referenced_config == config.path,
+             f"{kind} manifest names a different controller config")
+    _require(config_ref.get("file_sha256") == config.file_sha256,
+             f"{kind} controller config exact-byte digest differs")
+    _require(config_ref.get("canonical_sha256") == config["sha256"],
+             f"{kind} controller config canonical digest differs")
+    _require(
+        _load_json_evidence(referenced_config, f"{kind} controller config").file_sha256
+        == config.file_sha256,
+        f"{kind} controller config changed after validation",
+    )
+
+    process_ref = manifest.get("process_correction_spec")
+    _require(
+        isinstance(process_ref, dict)
+        and set(process_ref) == MANIFEST_ARTIFACT_FIELDS
+        and process_ref == config["seed_binding"],
+        f"{kind} process-correction specification reference is invalid",
+    )
+    _, process_path = _repo_path(
+        root, process_ref.get("path"), f"{kind} process-correction specification"
+    )
+    _require(
+        _load_json_evidence(
+            process_path, f"{kind} process-correction specification"
+        ).file_sha256 == process_ref["sha256"],
+        f"{kind} process-correction specification changed",
+    )
+
+    source_ref = manifest.get("candidate_source_manifest")
+    _require(
+        isinstance(source_ref, dict)
+        and set(source_ref) == MANIFEST_SOURCE_REFERENCE_FIELDS
+        and source_ref == config["candidate_source_manifest"],
+        f"{kind} candidate source manifest reference is invalid",
+    )
+    source = execution_receipt.verify_source_manifest(root, source_ref["path"])
+    _require(
+        source["manifest_sha256"] == source_ref["sha256"]
+        and source["tree_sha256"] == source_ref["tree_sha256"]
+        and source["file_count"] == source_ref["file_count"],
+        f"{kind} candidate source manifest changed",
+    )
+
+    compatibility_ref = manifest.get("compatibility")
+    _require(
+        isinstance(compatibility_ref, dict)
+        and set(compatibility_ref) == MANIFEST_COMPATIBILITY_FIELDS
+        and compatibility_ref == config["compatibility"],
+        f"{kind} compatibility reference is invalid",
+    )
+    _, compatibility_path = _repo_path(
+        root, compatibility_ref["path"], f"{kind} compatibility evidence"
+    )
+    compatibility_evidence = _load_json_evidence(
+        compatibility_path, f"{kind} compatibility evidence"
+    )
+    _require(
+        compatibility_evidence.file_sha256 == compatibility_ref["file_sha256"]
+        and compatibility_evidence.canonical_json_sha256
+        == compatibility_ref["canonical_json_sha256"]
+        and compatibility_evidence.canonicalization
+        == compatibility_ref["canonicalization"],
+        f"{kind} compatibility evidence changed or swapped digest domains",
+    )
+
     artifact_ref = manifest.get("artifact")
     _require(isinstance(artifact_ref, dict) and set(artifact_ref) == MANIFEST_ARTIFACT_FIELDS,
              f"{kind} manifest artifact reference is invalid")
@@ -955,8 +1345,10 @@ def load_manifest(
     _, artifact_path = _repo_path(root, artifact_ref.get("path"), f"{kind} artifact path")
     _require(artifact_path == expected_path, f"{kind} manifest names a non-canonical artifact path")
     artifact_digest = _require_digest(artifact_ref.get("sha256"), f"{kind} artifact sha256")
-    _require(artifact_path.is_file() and _file_digest(artifact_path) == artifact_digest,
+    artifact_evidence = _load_json_evidence(artifact_path, f"{kind} artifact")
+    _require(artifact_evidence.file_sha256 == artifact_digest,
              f"{kind} artifact is missing or its digest changed")
+    artifact = artifact_evidence.value
 
     sidecar_ref = manifest.get("provenance_sidecar")
     _require(
@@ -973,7 +1365,8 @@ def load_manifest(
     sidecar_digest = _require_digest(
         sidecar_ref.get("sha256"), f"{kind} provenance sidecar sha256"
     )
-    _require(sidecar_path.is_file() and _file_digest(sidecar_path) == sidecar_digest,
+    sidecar_evidence = _load_json_evidence(sidecar_path, f"{kind} provenance sidecar")
+    _require(sidecar_evidence.file_sha256 == sidecar_digest,
              f"{kind} provenance sidecar is missing or its digest changed")
 
     envelope_ref = manifest.get("command_envelope")
@@ -988,13 +1381,19 @@ def load_manifest(
     envelope_digest = _require_digest(
         envelope_ref.get("sha256"), f"{kind} command envelope sha256"
     )
-    _require(envelope_path.is_file() and _file_digest(envelope_path) == envelope_digest,
+    envelope_evidence = _load_json_evidence(
+        envelope_path, f"{kind} command envelope"
+    )
+    _require(envelope_evidence.file_sha256 == envelope_digest,
              f"{kind} command envelope is missing or its digest changed")
-    envelope = _load_json(envelope_path, f"{kind} command envelope")
+    envelope = envelope_evidence.value
     cwd = _validate_manifest_envelope(
         envelope, config=config, kind=kind, root=root, artifact_path=artifact_path
     )
-    _require(_file_digest(envelope_path) == envelope_digest,
+    _require(
+        _load_json_evidence(
+            envelope_path, f"{kind} command envelope"
+        ).file_sha256 == envelope_digest,
              f"{kind} command envelope changed while being validated")
 
     receipt_ref = manifest.get("execution_receipt")
@@ -1009,7 +1408,10 @@ def load_manifest(
     receipt_digest = _require_digest(
         receipt_ref.get("sha256"), f"{kind} execution receipt sha256"
     )
-    _require(receipt_path.is_file() and _file_digest(receipt_path) == receipt_digest,
+    receipt_evidence = _load_json_evidence(
+        receipt_path, f"{kind} execution receipt"
+    )
+    _require(receipt_evidence.file_sha256 == receipt_digest,
              f"{kind} execution receipt is missing or its digest changed")
     host = receipt_ref.get("host")
     device = receipt_ref.get("device")
@@ -1025,7 +1427,10 @@ def load_manifest(
         receipt = execution_receipt.verify_receipt(cwd, receipt_relative)
     except execution_receipt.ReceiptError as exc:
         raise ControllerError(f"{kind} execution receipt is invalid: {exc}") from exc
-    _require(_file_digest(receipt_path) == receipt_digest,
+    _require(
+        _load_json_evidence(
+            receipt_path, f"{kind} execution receipt"
+        ).file_sha256 == receipt_digest,
              f"{kind} execution receipt changed while being validated")
     _require(receipt.get("argv") == envelope["argv"],
              f"{kind} receipt argv differs from command envelope")
@@ -1054,9 +1459,26 @@ def load_manifest(
              f"{kind} receipt names a non-canonical artifact")
     _require(receipt_artifact.get("sha256") == artifact_digest,
              f"{kind} receipt artifact digest differs from manifest")
-    _require(_file_digest(artifact_path) == artifact_digest,
+    _require(
+        _load_json_evidence(artifact_path, f"{kind} artifact").file_sha256
+        == artifact_digest,
              f"{kind} artifact changed while evidence was being validated")
-    artifact = _load_json(artifact_path, f"{kind} artifact")
+    validated_sidecar_relative, validated_sidecar_digest = (
+        _validate_v13_provenance_sidecar(
+            root=root,
+            cwd=cwd,
+            artifact_path=artifact_path,
+            artifact=artifact,
+            envelope=envelope,
+            receipt=receipt,
+            kind=kind,
+        )
+    )
+    _require(
+        (validated_sidecar_relative, validated_sidecar_digest)
+        == (sidecar_relative, sidecar_digest),
+        f"{kind} manifest sidecar seal differs from validated receipt provenance",
+    )
     reference = {
         "kind": kind,
         "manifest_path": str(manifest_path),

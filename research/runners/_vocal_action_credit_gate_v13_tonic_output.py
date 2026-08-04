@@ -7,7 +7,6 @@ import json
 import os
 from pathlib import Path
 import platform
-import stat
 import subprocess
 import tempfile
 import time
@@ -34,6 +33,7 @@ from sim.enums import NeuronType
 from sim.regions import BrainRegion, RegionPathway
 from tools.lab import assert_backend, project_cost
 from tools.verdict import Verdict
+from tools import stable_json_evidence
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -255,20 +255,6 @@ def _canonical_artifact_digest(artifact: dict) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def _read_stable_regular(path: Path) -> bytes:
-    before = path.lstat()
-    if stat.S_ISLNK(before.st_mode) or not stat.S_ISREG(before.st_mode):
-        raise ValueError(f"required evidence is not a regular file: {path}")
-    data = path.read_bytes()
-    after = path.lstat()
-    identity = lambda value: (
-        value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns,
-    )
-    if identity(before) != identity(after):
-        raise ValueError(f"required evidence changed while reading: {path}")
-    return data
-
-
 def _load_compatibility_correction(
     path: Path, *, process_correction: dict | None = None,
 ) -> dict:
@@ -277,11 +263,19 @@ def _load_compatibility_correction(
         raise ValueError(
             f"compatibility correction must be {COMPATIBILITY_CORRECTION_PATH}"
         )
-    artifact_bytes = _read_stable_regular(path)
-    artifact = json.loads(artifact_bytes)
-    file_sha256 = hashlib.sha256(artifact_bytes).hexdigest()
-    canonical_json_sha256 = _canonical_artifact_digest(artifact)
-    compatibility_contract = json.loads(PROCESS_CORRECTION_SPEC_PATH.read_text())["compatibility"]
+    try:
+        evidence = stable_json_evidence.read_stable_json_evidence(
+            path, require_object=True
+        )
+        correction_spec = stable_json_evidence.read_stable_json_evidence(
+            PROCESS_CORRECTION_SPEC_PATH, require_object=True
+        ).value
+    except stable_json_evidence.StableJsonEvidenceError as exc:
+        raise ValueError(str(exc)) from exc
+    artifact = evidence.value
+    file_sha256 = evidence.file_sha256
+    canonical_json_sha256 = evidence.canonical_json_sha256
+    compatibility_contract = correction_spec["compatibility"]
     if compatibility_contract != {
         **compatibility_contract,
         "path": str(path.relative_to(ROOT)),

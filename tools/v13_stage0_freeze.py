@@ -13,17 +13,18 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import stat
 import sys
 import tempfile
 from typing import Any
 
 try:
     from tools import execution_receipt
+    from tools import stable_json_evidence
     from tools import v13_stage0_controller as controller
 except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from tools import execution_receipt
+    from tools import stable_json_evidence
     from tools import v13_stage0_controller as controller
 
 
@@ -57,29 +58,17 @@ def _digest(path: Path) -> str:
 
 
 def _compatibility_binding(path: Path) -> dict[str, str]:
-    before = path.lstat()
-    if stat.S_ISLNK(before.st_mode) or not stat.S_ISREG(before.st_mode):
-        raise FreezeError("compatibility evidence must be a regular file")
-    data = path.read_bytes()
-    after = path.lstat()
-    identity = lambda value: (
-        value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns,
-    )
-    if identity(before) != identity(after):
-        raise FreezeError("compatibility evidence changed while being read")
     try:
-        artifact = json.loads(data)
-    except json.JSONDecodeError as exc:
-        raise FreezeError("compatibility evidence is not valid JSON") from exc
-    if not isinstance(artifact, dict):
-        raise FreezeError("compatibility evidence must be a JSON object")
+        evidence = stable_json_evidence.read_stable_json_evidence(
+            path, require_object=True
+        )
+    except stable_json_evidence.StableJsonEvidenceError as exc:
+        raise FreezeError(str(exc)) from exc
     return {
         "path": controller.COMPATIBILITY_PATH,
-        "file_sha256": hashlib.sha256(data).hexdigest(),
-        "canonical_json_sha256": hashlib.sha256(
-            controller._canonical_bytes(artifact)
-        ).hexdigest(),
-        "canonicalization": controller.COMPATIBILITY_CANONICALIZATION,
+        "file_sha256": evidence.file_sha256,
+        "canonical_json_sha256": evidence.canonical_json_sha256,
+        "canonicalization": evidence.canonicalization,
     }
 
 
