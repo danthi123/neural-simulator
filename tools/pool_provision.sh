@@ -4,7 +4,7 @@
 #   1. rsync the code (sim/ + research/ + experiment/ + tests support) over ssh (repos are private → no clone).
 #   2. create a venv (python3 -m venv) and pip-install numpy + scipy (scipy REQUIRED for SIM_BACKEND=numpy sparse).
 # Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]
-set -uo pipefail
+set -euo pipefail
 cd "$(dirname "$0")/.."
 REVISION_REF=HEAD
 ISOLATED=0
@@ -74,7 +74,15 @@ printf 'git_sha=%s\nsource_kind=git_archive\nsource_manifest_sha256=%s\nsource_a
   "$SOURCE_SHA" "$MANIFEST_SHA" "$ANCESTRY_SHA" "$EXCLUDED_DIRTY" "$(date -u +%FT%TZ)" > "$REVISION"
 for h in "${NODES[@]}"; do
   echo "=== provisioning $h:$REMOTE_ROOT ==="
-  ssh -o ConnectTimeout=10 "$h" "mkdir -p ~/$REMOTE_ROOT" || {
+  ssh -o ConnectTimeout=10 "$h" "mkdir -p \
+    ~/$REMOTE_ROOT/sim \
+    ~/$REMOTE_ROOT/research/runners \
+    ~/$REMOTE_ROOT/research/specs \
+    ~/$REMOTE_ROOT/research/findings/raw \
+    ~/$REMOTE_ROOT/experiment \
+    ~/$REMOTE_ROOT/tools \
+    ~/$REMOTE_ROOT/tests \
+    ~/$REMOTE_ROOT/docs" || {
     echo "  SSH FAIL $h"
     FAILED_NODES+=("$h:ssh")
     continue

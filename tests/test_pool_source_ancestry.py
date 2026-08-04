@@ -204,3 +204,21 @@ def test_provisioning_supports_revision_isolated_remote_roots():
     assert '--isolated)' in script
     assert 'REMOTE_ROOT="derisk-pool/revisions/$SOURCE_SHA"' in script
     assert 'REMOTE_ROOT="derisk-pool/sim"' in script
+
+
+def test_provisioning_is_fail_fast_and_creates_nested_destinations():
+    root = Path(__file__).resolve().parents[1]
+    script = (root / "tools/pool_provision.sh").read_text(encoding="utf-8")
+
+    assert "set -euo pipefail" in script
+    for destination in (
+        "sim",
+        "research/runners",
+        "research/specs",
+        "research/findings/raw",
+        "experiment",
+        "tools",
+        "tests",
+        "docs",
+    ):
+        assert f"~/$REMOTE_ROOT/{destination}" in script
