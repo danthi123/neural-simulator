@@ -243,7 +243,9 @@ def test_invalid_and_unreviewed_packets_fail_closed(tmp_path, monkeypatch):
     assert escalation._load(gate)["questions"][0]["status"] == "open"
 
 
-def test_explicitly_reviewed_packet_still_requires_retrievable_source_intake(tmp_path, monkeypatch):
+def test_explicitly_reviewed_packet_is_durably_intaken_without_changing_claim_review(tmp_path, monkeypatch):
+    catalog = tmp_path / "catalog"
+    monkeypatch.setenv("SIM_CATALOG", str(catalog))
     root, gate = _start(tmp_path, monkeypatch, FakeCommands())
     packet_path = root / "reviewed.json"
     packet = accept_claim(
@@ -260,17 +262,46 @@ def test_explicitly_reviewed_packet_still_requires_retrievable_source_intake(tmp
         root,
     )
     state = escalation._load(gate)
-    assert state["packets"][0]["packet"]["claims"][0]["status"] == "accepted"
-    assert state["packets"][0]["promotable"] is False
-    with pytest.raises(escalation.EscalationError, match="unreviewed or unresolved"):
-        escalation.answer(
-            argparse.Namespace(
-                gate=str(gate), question="P1", status="resolved",
-                answer="Use the explicitly reviewed preparation-specific range.", references="RP1",
-            ),
-            root,
-        )
-    assert escalation._load(gate)["questions"][0]["status"] == "open"
+    stored = state["packets"][0]
+    claim = stored["packet"]["claims"][0]
+    intake = stored["packet"]["sources"][0]["intake"]
+    assert claim["status"] == "accepted"
+    assert claim["review"]["reviewer"] == "biology-review"
+    assert stored["promotable"] is True
+    assert intake["retrievable"] is True
+    assert intake["parameter_claims"] == [claim]
+    assert intake["packet_provenance"]["packet_sha256"] == stored["packet_sha256"]
+    record_text = Path(intake["record_path"]).read_text(encoding="utf-8")
+    assert "Exact locator: Results, Figure 2" in record_text
+    assert "Exact claim locator: Results, Figure 2" in record_text
+    assert "75-100 Hz" in record_text
+    ledger = [json.loads(line) for line in (catalog / "source-intake.jsonl").read_text().splitlines()]
+    assert ledger[0]["parameter_claims"][0]["status"] == "accepted"
+
+    escalation.answer(
+        argparse.Namespace(
+            gate=str(gate), question="P1", status="resolved",
+            answer="Use the explicitly reviewed preparation-specific range.", references="RP1",
+        ),
+        root,
+    )
+    assert escalation._load(gate)["questions"][0]["status"] == "resolved"
+
+
+def test_pending_packet_does_not_create_catalog_intake_or_accept_claim(tmp_path, monkeypatch):
+    catalog = tmp_path / "catalog"
+    monkeypatch.setenv("SIM_CATALOG", str(catalog))
+    root, gate = _start(tmp_path / "repo", monkeypatch, FakeCommands())
+    packet_path = root / "pending.json"
+    packet_path.write_text(json.dumps(_external_packet()), encoding="utf-8")
+
+    escalation.handoff_packet(argparse.Namespace(gate=str(gate), packet=str(packet_path)), root)
+
+    stored = escalation._load(gate)["packets"][0]
+    assert stored["status"] == "pending_review"
+    assert stored["packet"]["claims"][0]["status"] == "pending_review"
+    assert "intake" not in stored["packet"]["sources"][0]
+    assert not catalog.exists()
 
 
 def test_start_distinguishes_local_reading_from_no_local_evidence(tmp_path, monkeypatch):

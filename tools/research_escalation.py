@@ -11,6 +11,7 @@ import base64
 from contextlib import contextmanager
 import datetime as dt
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -745,6 +746,7 @@ def handoff_packet(args: argparse.Namespace, root: Path) -> Path:
     except research_packet.ResearchPacketError as exc:
         raise EscalationError(f"research packet validation failed: {exc}") from exc
 
+    packet_sha256 = hashlib.sha256(packet_path.read_bytes()).hexdigest()
     path = Path(args.gate).resolve()
     with _gate_lock(path):
         state = _load(path)
@@ -753,6 +755,44 @@ def handoff_packet(args: argparse.Namespace, root: Path) -> Path:
             raise EscalationError(
                 f"research packet question ID is not present in this gate: {question_id}"
             )
+        review_status = _packet_review_status(packet)
+        if review_status == "accepted":
+            source_claims = {
+                source["id"]: [
+                    claim for claim in packet["claims"] if source["id"] in claim["source_ids"]
+                ]
+                for source in packet["sources"]
+            }
+            provenance = {
+                "packet_path": str(packet_path.resolve()),
+                "packet_sha256": packet_sha256,
+                "packet_version": packet["packet_version"],
+                "question_id": question_id,
+            }
+            for source in packet["sources"]:
+                search = next(
+                    item for item in packet["online_searches"] if item["id"] == source["search_id"]
+                )
+                try:
+                    intake = source_intake.register_source(
+                        root,
+                        citation=source["citation"],
+                        url=source["url"],
+                        kind=source["kind"],
+                        license_status=source["license_status"],
+                        accessed_at=packet["created_at"],
+                        questions=[question_id],
+                        query="; ".join(search["query_variants"]),
+                        locator=source["locator"],
+                        evidence=source["evidence"],
+                        parameter_claims=source_claims[source["id"]],
+                        packet_provenance=provenance,
+                    )
+                except source_intake.SourceIntakeError as exc:
+                    raise EscalationError(f"reviewed packet source intake failed: {exc}") from exc
+                intake.update(_refresh_and_verify_intake(root, intake))
+                source["intake"] = intake
+
         packets = state.setdefault("packets", [])
         packets.append({
             "id": f"RP{len(packets) + 1}",
@@ -760,10 +800,29 @@ def handoff_packet(args: argparse.Namespace, root: Path) -> Path:
             "question_id": question_id,
             "packet_path": str(packet_path.resolve()),
             "received_at": _utc_now(),
-            "status": _packet_review_status(packet),
+            "packet_sha256": packet_sha256,
+            "status": review_status,
             "promotable": _packet_is_promotable(packet),
             "packet": packet,
         })
+        if review_status == "accepted" and not _packet_is_promotable(packet):
+            failed = [
+                source["intake"]
+                for source in packet["sources"]
+                if not source["intake"]["retrievable"]
+            ]
+            attempt = {
+                "id": "",
+                "status": "retrieval-unavailable",
+                "reason": "reviewed packet intake was durable but did not become retrievable",
+                "completed_at": _utc_now(),
+                "records": [
+                    record
+                    for intake in failed
+                    for record in (intake["update"], intake["verification"])
+                ],
+            }
+            _append_retrieval_attempt(state, attempt)
         _write(path, state)
     return path
 
