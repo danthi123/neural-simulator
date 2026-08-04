@@ -398,6 +398,10 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   the timeout, so it was not a steady-state timing result. Strict benchmark
   errors, explicit toolkit discovery, and host-only fusion-key construction
   now pass bounded timing; the next complete matrix must remain source-sealed.
+  The sealed 12-worker rerun at `7cfc2607e` completed: default-off (`0.982x`)
+  and active overhead (`1.171x`) passed, while direct output reached `0.937x`
+  of unfused and missed its `0.85x` requirement. Bank the performance NO-GO
+  and profile the exact launch sequence before expanding fusion.
 - **Research and cost-control infrastructure:** RAG-first scholarly discovery
   now retrieves and hash-binds full text while keeping extracted locators
   pending review. The local Qwen fallback has also completed an isolated

@@ -388,24 +388,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T15:51:18+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
-      "at": "2026-08-04T15:52:20+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd79-a2dc-74a3-9215-8ec73ed5a3d2"
-    },
-    {
-      "at": "2026-08-04T15:52:20+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd79-a78d-7883-9bd5-03368ad7a07d"
-    },
-    {
       "at": "2026-08-04T15:52:20+00:00",
       "detail": "running",
       "kind": "lane-update",
@@ -986,6 +968,24 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "v14-launch-overhead-profile"
+    },
+    {
+      "at": "2026-08-04T19:31:46+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-launch-overhead-profile"
+    },
+    {
+      "at": "2026-08-04T19:31:46+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T19:31:46+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-active-path-fusion"
     }
   ],
   "lanes": {
@@ -1110,13 +1110,13 @@
       ]
     },
     "gateb-v14-stageA": {
-      "blocker": "The immutable performance matrix produced infrastructure_failure before any timing result; correctness evidence remains valid but promotion cannot be evaluated.",
+      "blocker": "Stage A correctness remains valid, but the complete performance matrix returned NO-GO because direct outputs were 0.9366x unfused versus the required 0.85.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:01:50+00:00",
-      "next_action": "Wait for a fused-path bounded timing screen; combine performance and correctness only after the screen returns valid measurements.",
+      "heartbeat_at": "2026-08-04T19:31:46+00:00",
+      "next_action": "Wait for a larger exact-equivalent active-path fusion to pass byte/checkpoint controls and a newly sealed performance matrix.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Profile and fuse the dominant active-path launch sequence, then use a short preregistered timing screen before any full matrix.",
+      "recovery_action": "Profile exact launches, implement only measured removable overhead, and retain the fixed thresholds.",
       "resource": "local_gpu",
       "status": "blocked",
       "write_set": [
@@ -1219,15 +1219,31 @@
         "tools/v13_stage0_performance_diagnostic_v9.py"
       ]
     },
-    "v14-launch-overhead-profile": {
+    "v14-active-path-fusion": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:28:53+00:00",
-      "next_action": "Banked the 4d58091cc partial matrix: historical control rejected the new default-off config field at sequence 4. Seal the fail-closed compatibility repair and run a new complete matrix; never combine partial timings.",
+      "heartbeat_at": "2026-08-04T19:31:46+00:00",
+      "next_action": "Profile candidate 7cfc2607e at launch level, then implement the smallest byte-equivalent fusion boundary capable of closing the measured 0.0866 ratio gap.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If the new complete matrix fails, preserve its receipt and diagnose only that exact failure.",
+      "recovery_action": "If exact arithmetic cannot be preserved, bank the attempted method and select another measured boundary; never loosen equivalence or thresholds.",
       "resource": "local_gpu",
       "status": "running",
+      "write_set": [
+        "sim/kernels.py",
+        "sim/bridge.py",
+        "tests",
+        "research/findings"
+      ]
+    },
+    "v14-launch-overhead-profile": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T19:31:46+00:00",
+      "next_action": "Formal matrix at 7cfc2607e completed: default and active overhead passed; direct output was 0.9366x unfused and failed the 0.85 threshold.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Preserve the NO-GO; do not rerun this source unchanged.",
+      "resource": "local_gpu",
+      "status": "completed",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -1248,5 +1264,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T19:28:53+00:00"
+  "updated_at": "2026-08-04T19:31:46+00:00"
 }
