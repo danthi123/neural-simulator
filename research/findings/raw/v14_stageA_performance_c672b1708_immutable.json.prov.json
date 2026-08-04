@@ -1,0 +1,38 @@
+{
+  "schema": "sim-artifact-provenance-v1",
+  "artifact": "research/findings/raw/v14_stageA_performance_c672b1708_immutable.json",
+  "artifact_sha256": "bd14a5720e26c90f6fd0092973869d5da21a056197d4e7655357e45c29d0cfa3",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/v14_stageA_performance.py",
+    "--candidate-root",
+    "/tmp/sim-v14-stageA-candidate-c672b1708",
+    "--prechange-control-root",
+    "/tmp/sim-v14-stageA-control"
+  ],
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "environment": {
+    "python": "3.11.14",
+    "cupy": "14.1.1",
+    "device": "NVIDIA GeForce RTX 3090",
+    "host": "dant123-wk"
+  },
+  "source_revision": "c672b1708deaf8b6d921c31193d72c106fe0a8a3",
+  "source_files_clean": true,
+  "status": "infrastructure_failure",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "immutable candidate and control",
+      "ok": true,
+      "detail": "Both detached worktrees were clean and their governed source hashes remained fixed."
+    },
+    {
+      "kind": "require",
+      "name": "no scientific verdict from timeout",
+      "ok": true,
+      "detail": "The first cell returned worker_timeout; no timing ratio or physiology verdict was computed."
+    }
+  ],
+  "note": "The worker timed out after 1800.208 seconds in candidate-active repetition 3. The result authorizes profiling and fusion work, not an unchanged rerun."
+}

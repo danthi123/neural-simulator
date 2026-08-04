@@ -1,0 +1,34 @@
+{
+  "schema": "sim-artifact-provenance-v1",
+  "artifact": "research/findings/raw/parameter-research-fulltext-retrieval-smoke.json",
+  "artifact_sha256": "70b6ccdc9dd0bcdc8d04b5e787d58416b16524c9b42138d24b4ed5ca0787db1d",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/parameter_research.py",
+    "plan/discover-live/retrieve-fulltext"
+  ],
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "environment": {
+    "python": "3.11.14",
+    "backend": "CPU, local RAG, and bounded scholarly network retrieval",
+    "host": "dant123-wk"
+  },
+  "source_revision": "7a6c2bbbd05f19e69f3d3bd455c38a70f29f1064",
+  "source_files_clean": false,
+  "status": "qualified",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "local checks precede network retrieval",
+      "ok": true,
+      "detail": "Eight project-RAG and prior-failure checks are complete in the state."
+    },
+    {
+      "kind": "require",
+      "name": "full-text output remains pending review",
+      "ok": true,
+      "detail": "The receipt accepts no claims or interpreted parameter values."
+    }
+  ],
+  "note": "The implementation matched source_revision, but disjoint operational and evidence files were uncommitted in the controller worktree. The downloaded PDF remains in the local content store and is bound by the receipt's byte count and SHA-256. The repository artifact contains workflow state, metadata, and one non-claim candidate locator."
+}

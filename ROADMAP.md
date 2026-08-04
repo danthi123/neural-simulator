@@ -138,11 +138,11 @@ its controls and lesions, and is tested at the required seed coverage.
 7. **The deep-credit and scaling frontier remains open.** The project must
    distinguish a narrow mechanism de-risk from a local learning rule that can
    grow useful structure on the real shared substrate.
-8. **Compute is scheduled, not assumed.** The persistent board currently lists
-   the v13 performance diagnostic as blocked because the canonical GPU queue is
-   occupied by the e-prop K=16 job. The recovery action is to recheck the
-   shared lease and queue, then run the preregistered diagnostic only when the
-   GPU is ready.
+8. **Compute is scheduled, not assumed.** The V14 immutable performance matrix
+   reached its fixed 1,800-second timeout in the first 20,000-step active cell
+   without returning a measurement. The RTX 3090 was lightly occupied while one
+   CPU core stayed saturated, so the next authorized action is a bounded launch
+   profile and exact-equivalent fused slice, not another unchanged long run.
 
 A failed method is a method verdict, not permission to close the capability.
 Bank the method, preserve its controls and diagnosis, and choose the next
@@ -272,7 +272,9 @@ duplicate, unplanned, or scientifically dependent work.
   lane coverage before stocking a queue: keep independent CPU lanes active and
   do not mistake a full GPU for scientific coverage.
 - Keep the local model-offload service stopped during GPU experiments. Use it
-  only for bounded documentation or catalog triage when the lease is free.
+  only for bounded conservative work in its isolated fallback clone when the
+  lease is free. Its end-to-end edit, local commit, exact-session resume, and
+  cleanup path are validated; frontier review remains mandatory.
 - Long runs need per-seed or per-day checkpoints, resumable output, provenance,
   and a state-checking heartbeat. This roadmap edit does not launch experiments.
 

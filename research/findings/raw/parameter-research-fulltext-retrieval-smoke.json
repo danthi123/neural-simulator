@@ -1,0 +1,461 @@
+{
+  "candidates": [],
+  "created_at": "2026-08-04",
+  "fulltext_retrievals": [
+    {
+      "id": "FT1",
+      "lead_id": "LEAD2",
+      "receipt": {
+        "candidate_locators": [
+          {
+            "claim_status": "not_a_claim",
+            "line_end": 56,
+            "line_start": 52,
+            "locator": "page 13, lines 52-56",
+            "matched_parameter_terms": [
+              "firing"
+            ],
+            "matched_unit_patterns": [
+              "Hz"
+            ],
+            "page": 13,
+            "passage": "recordings were digitally high-pass filtered at 1 Hz and a threshold was used to detect individual\n                                    action potentials in bins of one second. For drug applications, 60 s in each condition (baseline or\n                                    drug) were used as a measure of mean firing frequency. For normalized firing rate plots, individual\n                                    experiments were normalized to a 60 s baseline average. Graphs depicting the time course of firing\n                                    rate with drug application were smoothed using a 10 s moving window average. For whole cell I-V",
+            "record_kind": "candidate_parameter_locator",
+            "review_status": "pending_review"
+          }
+        ],
+        "evidence_boundary": {
+          "accepted_claims": false,
+          "content_retrieved": true,
+          "interpreted_parameter_values": false,
+          "locators_are_candidates_only": true,
+          "review_status": "pending_review"
+        },
+        "request_sha256": "1c19c84cc72bfae16f1a211683fda8faa0c506264028fb883d836ff39afadefc",
+        "retrieval": {
+          "byte_count": 1031328,
+          "content_path": "content/26457fde81995524cd3e656c6630ad4d70b6ccb4b432d9db2a0efe2031b598e2.pdf",
+          "content_sha256": "26457fde81995524cd3e656c6630ad4d70b6ccb4b432d9db2a0efe2031b598e2",
+          "declared_url": "https://cdn.elifesciences.org/articles/15271/elife-15271-v2.pdf",
+          "document_kind": "pdf",
+          "final_url": "https://cdn.elifesciences.org/articles/15271/elife-15271-v2.pdf",
+          "mime_type": "application/pdf"
+        },
+        "schema_version": "scholarly-fulltext-v1",
+        "sha256": "17272a32a2dc62c8f65b0324379ea18b105ab26cfcbfe647b3e13e222f8a69ad",
+        "source": {
+          "canonical_url": "https://doi.org/10.7554/elife.15271",
+          "doi": "10.7554/elife.15271",
+          "title": "The leak channel NALCN controls tonic firing and glycolytic sensitivity of substantia nigra pars reticulata neurons"
+        }
+      },
+      "retrieved_at": "2026-08-04",
+      "store_path": "/home/dant123/.local/share/neural-simulator/scholarly-fulltext-smoke"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G1",
+      "missing_fields": [
+        "value",
+        "units"
+      ],
+      "parameter": "NALCN maximal conductance density",
+      "preparation": "acute slice whole-cell recording",
+      "species": "mouse",
+      "units": null,
+      "value": null
+    }
+  ],
+  "local_checks": [
+    {
+      "id": "LC1",
+      "purpose": "project_rag",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording NALCN conductance density and autonomous firing rate quantitative measurement",
+      "query_id": "G1-Q1",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording NALCN conductance density and autonomous firing rate quantitative measurement   (4.27s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -0.6700000166893005  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [2] -1.1169999837875366  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [3] -2.3380000591278076  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n  [4] -3.802999973297119  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [5] -8.407999992370605  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:116\n      It is an equation seed, not closure ([Phillips et al. 2020](https://doi.org/10.7554/eLife.55592)). <!--derived--> ### GPi/EP family Start with two ensembles rather than one averaged cell. Type I receives the full HCN a\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC2",
+      "purpose": "prior_failures",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording NALCN conductance density and autonomous firing rate quantitative measurement NO-GO failed boundary",
+      "query_id": "G1-Q1",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording NALCN conductance density and autonomous firing rate quantitative measurement NO-GO failed boundary   (4.28s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -0.5379999876022339  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [2] -2.634000062942505  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n  [3] -3.552999973297119  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [4] -3.7179999351501465  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [5] -8.390000343322754  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:116\n      It is an equation seed, not closure ([Phillips et al. 2020](https://doi.org/10.7554/eLife.55592)). <!--derived--> ### GPi/EP family Start with two ensembles rather than one averaged cell. Type I receives the full HCN a\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC3",
+      "purpose": "project_rag",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording methods results parameter table",
+      "query_id": "G1-Q2",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording methods results parameter table   (4.25s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] 0.8650000095367432  (finding) 2026-08-04-parameter-research-live-discovery-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-live-discovery-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Live Discovery Smoke Date: 2026-08-04 The parameter-gap workflow's live scholarly adapter was checked against the\n  [2] -1.0460000038146973  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [3] -2.563999891281128  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [4] -2.5929999351501465  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n  [5] -8.890000343322754  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:116\n      It is an equation seed, not closure ([Phillips et al. 2020](https://doi.org/10.7554/eLife.55592)). <!--derived--> ### GPi/EP family Start with two ensembles rather than one averaged cell. Type I receives the full HCN a\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC4",
+      "purpose": "prior_failures",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording methods results parameter table NO-GO failed boundary",
+      "query_id": "G1-Q2",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording methods results parameter table NO-GO failed boundary   (4.26s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -10.692999839782715  (finding) 2026-07-24-gap5-readout-ignition-boundary-5-methods-NEGATIVE.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-24-gap5-readout-ignition-boundary-5-methods-NEGATIVE.md:1\n      # gap#5 imaginative-replay READOUT \u2014 the residual is discrete single-assembly IGNITION, and it is now a 5-method boundary (the store COMPLETES statically but will NOT ignite from the readout cue) (2026-07-24) ## The res\n  [2] 0.8240000009536743  (finding) 2026-08-04-parameter-research-live-discovery-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-live-discovery-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Live Discovery Smoke Date: 2026-08-04 The parameter-gap workflow's live scholarly adapter was checked against the\n  [3] -1.4789999723434448  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [4] -2.5199999809265137  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [5] -3.1059999465942383  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC5",
+      "purpose": "project_rag",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording mean range variance dose response kinetics conductance density",
+      "query_id": "G1-Q3",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording mean range variance dose response kinetics conductance density   (4.33s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -1.5410000085830688  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [2] -1.809000015258789  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [3] -2.809999942779541  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n  [4] -4.664000034332275  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [5] -7.401000022888184  (finding) 2026-06-08-gabab-girk-conductance-design.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-06-08-gabab-girk-conductance-design.md:499\n      **C.28** TD error. (Stage-B context.) ### Peer-reviewed literature (verified via search this session) - **Eshel N., Bukwich M., Rao V., Hemmelder V., Tian J., Uchida N. (2015)** \"Arithmetic and local circuitry underlyin\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC6",
+      "purpose": "prior_failures",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording mean range variance dose response kinetics conductance density NO-GO failed boundary",
+      "query_id": "G1-Q3",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording mean range variance dose response kinetics conductance density NO-GO failed boundary   (4.25s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -1.1729999780654907  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [2] -2.4110000133514404  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [3] -2.572000026702881  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n  [4] -4.8429999351501465  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [5] -7.788000106811523  (finding) 2026-06-08-gabab-girk-conductance-design.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-06-08-gabab-girk-conductance-design.md:499\n      **C.28** TD error. (Stage-B context.) ### Peer-reviewed literature (verified via search this session) - **Eshel N., Bukwich M., Rao V., Hemmelder V., Tian J., Uchida N. (2015)** \"Arithmetic and local circuitry underlyin\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC7",
+      "purpose": "project_rag",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording measurement units methods",
+      "query_id": "G1-Q4",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording measurement units methods   (4.33s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -1.0770000219345093  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [2] -2.5510001182556152  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [3] -3.197999954223633  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n  [4] -4.077000141143799  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [5] -8.651000022888184  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:116\n      It is an equation seed, not closure ([Phillips et al. 2020](https://doi.org/10.7554/eLife.55592)). <!--derived--> ### GPi/EP family Start with two ensembles rather than one averaged cell. Type I receives the full HCN a\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC8",
+      "purpose": "prior_failures",
+      "query": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording measurement units methods NO-GO failed boundary",
+      "query_id": "G1-Q4",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording measurement units methods NO-GO failed boundary   (4.33s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -1.2430000305175781  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: adult-mammalian-gpi-snr-autonomous-pacemaking-biophysical-fallback --- # GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback ## D\n  [2] -1.9989999532699585  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:57\n      Persistent sodium activated near `-60 mV`, peaked near `-40 mV` (`185.4 +/- 17.5 pA` per cell), and riluzole silenced firing. Resurgent sodium at `-40 mV` was `3.3 +/- 0.5 pA/pF` ([Ding, Wei, and Zhou 2011](https:/\n  [3] -2.9130001068115234  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:154\n      Do not add T-type rebound to SNr solely to reproduce a population overshoot. | | Is BK part of tonic timing? | Some SNr work reports or infers BK; other work explicitly calls its presence debated, with effects clearest u\n  [4] -4.118000030517578  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [5] -7.11299991607666  (finding) 2026-06-08-gabab-girk-conductance-design.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-06-08-gabab-girk-conductance-design.md:499\n      **C.28** TD error. (Stage-B context.) ### Peer-reviewed literature (verified via search this session) - **Eshel N., Bukwich M., Rao V., Hemmelder V., Tian J., Uchida N. (2015)** \"Arithmetic and local circuitry underlyin\n\nLLM is explicitly disabled. Using MockLLM."
+    }
+  ],
+  "metadata_leads": [
+    {
+      "authors": [
+        "Lorena Delgado Zabalza"
+      ],
+      "canonical_url": "https://theses.hal.science/tel-03265142",
+      "content_status": "metadata_only",
+      "doi": null,
+      "full_text_url_leads": [
+        "https://theses.hal.science/tel-03265142",
+        "https://theses.hal.science/tel-03265142v1/document"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD1",
+      "provider_records": [
+        {
+          "provider": "openalex",
+          "provider_id": "https://openalex.org/W4392483517"
+        }
+      ],
+      "query_ids": [
+        "G1-Q1",
+        "G1-Q2",
+        "G1-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Caract\u00e9risation \u00e9lectrophysiologique de la diversit\u00e9 neuronale dans la substantia nigra pars reticulata chez les souris contr\u00f4le et parkinsonienne",
+      "type": "dissertation",
+      "year": 2020
+    },
+    {
+      "authors": [
+        "Andrew Lutas",
+        "Carolina Lahmann",
+        "Magali Soumillon",
+        "Gary Yellen"
+      ],
+      "canonical_url": "https://doi.org/10.7554/elife.15271",
+      "content_status": "metadata_only",
+      "doi": "10.7554/elife.15271",
+      "full_text_url_leads": [
+        "https://cdn.elifesciences.org/articles/15271/elife-15271-v2.pdf",
+        "https://cdn.elifesciences.org/articles/15271/elife-15271-v2.xml",
+        "https://elifesciences.org/articles/15271"
+      ],
+      "fulltext_retrieval_ids": [
+        "FT1"
+      ],
+      "id": "LEAD2",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.7554/elife.15271"
+        }
+      ],
+      "query_ids": [
+        "G1-Q1",
+        "G1-Q2",
+        "G1-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "The leak channel NALCN controls tonic firing and glycolytic sensitivity of substantia nigra pars reticulata neurons",
+      "type": "journal-article",
+      "year": 2016
+    },
+    {
+      "authors": [],
+      "canonical_url": "https://doi.org/10.7554/elife.15271.015",
+      "content_status": "metadata_only",
+      "doi": "10.7554/elife.15271.015",
+      "full_text_url_leads": [],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD3",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.7554/elife.15271.015"
+        }
+      ],
+      "query_ids": [
+        "G1-Q1",
+        "G1-Q2",
+        "G1-Q3",
+        "G1-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Decision letter: The leak channel NALCN controls tonic firing and glycolytic sensitivity of substantia nigra pars reticulata neurons",
+      "type": "peer-review",
+      "year": 2016
+    },
+    {
+      "authors": [
+        "Andrew Lutas",
+        "Carolina Lahmann",
+        "Magali Soumillon",
+        "Gary Yellen"
+      ],
+      "canonical_url": "https://doi.org/10.7554/elife.15271.016",
+      "content_status": "metadata_only",
+      "doi": "10.7554/elife.15271.016",
+      "full_text_url_leads": [],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD4",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.7554/elife.15271.016"
+        }
+      ],
+      "query_ids": [
+        "G1-Q1",
+        "G1-Q2",
+        "G1-Q3",
+        "G1-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Author response: The leak channel NALCN controls tonic firing and glycolytic sensitivity of substantia nigra pars reticulata neurons",
+      "type": "peer-review",
+      "year": 2016
+    },
+    {
+      "authors": [
+        "Cheok-wai Wu",
+        "Chris K. S. Leung",
+        "Wing-ho Yung"
+      ],
+      "canonical_url": "https://doi.org/10.1097/00001756-199611040-00022",
+      "content_status": "metadata_only",
+      "doi": "10.1097/00001756-199611040-00022",
+      "full_text_url_leads": [
+        "http://journals.lww.com/00001756-199611040-00022"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD5",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1097/00001756-199611040-00022"
+        }
+      ],
+      "query_ids": [
+        "G1-Q3"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Sulphonylureas reverse hypoxia induced K+- conductance increase in substantia nigra pars reticulata neurones",
+      "type": "journal-article",
+      "year": 1996
+    },
+    {
+      "authors": [
+        "Matthew H. Higgs",
+        "James A. Jones",
+        "Charles J. Wilson",
+        "Michael J. Beckstead"
+      ],
+      "canonical_url": "https://doi.org/10.1523/eneuro.0445-22.2023",
+      "content_status": "metadata_only",
+      "doi": "10.1523/eneuro.0445-22.2023",
+      "full_text_url_leads": [
+        "https://doi.org/10.1523/eneuro.0445-22.2023",
+        "https://www.eneuro.org/content/eneuro/10/4/ENEURO.0445-22.2023.full.pdf"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD6",
+      "provider_records": [
+        {
+          "provider": "openalex",
+          "provider_id": "https://openalex.org/W4361017889"
+        }
+      ],
+      "query_ids": [
+        "G1-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "SK and Kv4 Channels Limit Spike Timing Perturbations in Pacemaking Dopamine Neurons",
+      "type": "article",
+      "year": 2023
+    }
+  ],
+  "metadata_searches": [
+    {
+      "lead_ids": [
+        "LEAD1",
+        "LEAD2",
+        "LEAD3",
+        "LEAD4"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 1,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+NALCN+conductance+density+and+autonomous+firing+rate+quantitative+measurement&per-page=3&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 3,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+NALCN+conductance+density+and+autonomous+firing+rate+quantitative+measurement&rows=3&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "G1-Q1",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD1",
+        "LEAD2",
+        "LEAD3",
+        "LEAD4"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 1,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+methods+results+parameter+table&per-page=3&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 3,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+methods+results+parameter+table&rows=3&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "G1-Q2",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD3",
+        "LEAD4",
+        "LEAD5"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+mean+range+variance+dose+response+kinetics+conductance+density&per-page=3&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 3,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+mean+range+variance+dose+response+kinetics+conductance+density&rows=3&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "G1-Q3",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD1",
+        "LEAD2",
+        "LEAD3",
+        "LEAD4",
+        "LEAD6"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 2,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+measurement+units+methods&per-page=3&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 3,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=adult+substantia+nigra+pars+reticulata+pacemaking+NALCN+maximal+conductance+density+mouse+acute+slice+whole-cell+recording+measurement+units+methods&rows=3&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "G1-Q4",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    }
+  ],
+  "queries": [
+    {
+      "gap_id": "G1",
+      "id": "G1-Q1",
+      "status": "planned",
+      "text": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording NALCN conductance density and autonomous firing rate quantitative measurement"
+    },
+    {
+      "gap_id": "G1",
+      "id": "G1-Q2",
+      "status": "planned",
+      "text": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording methods results parameter table"
+    },
+    {
+      "gap_id": "G1",
+      "id": "G1-Q3",
+      "status": "planned",
+      "text": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording mean range variance dose response kinetics conductance density"
+    },
+    {
+      "gap_id": "G1",
+      "id": "G1-Q4",
+      "status": "planned",
+      "text": "adult substantia nigra pars reticulata pacemaking NALCN maximal conductance density mouse acute slice whole-cell recording measurement units methods"
+    }
+  ],
+  "question": {
+    "id": "P1",
+    "kind": "parameter",
+    "requested_measurement": "NALCN conductance density and autonomous firing rate",
+    "target": "adult substantia nigra pars reticulata pacemaking",
+    "text": "What NALCN conductance density supports autonomous firing in adult substantia nigra pars reticulata neurons?"
+  },
+  "searches": [],
+  "state_version": "parameter-research-v1",
+  "updated_at": "2026-08-04"
+}

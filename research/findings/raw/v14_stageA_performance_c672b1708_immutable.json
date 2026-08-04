@@ -1,0 +1,220 @@
+{
+  "backend": "cupy",
+  "created_at_unix": 1785867881.8566651,
+  "failed_sequence": 1,
+  "harness_sha256": "ce15b616846338a33d1f47b781bfb74ba5d2e29722adf7a77e659dd74b1f1ba3",
+  "lease_policy": "caller-owned; harness acquires no lease",
+  "preconditions": [
+    {
+      "detail": "Candidate c672b1708 and control 6c9034991 were detached, clean, and hash-bound before dispatch.",
+      "kind": "require",
+      "name": "immutable source trees",
+      "ok": true
+    },
+    {
+      "detail": "The first cell timed out before returning a timing measurement; no scientific or promotion verdict is permitted.",
+      "kind": "require",
+      "name": "timeout classified as infrastructure",
+      "ok": true
+    }
+  ],
+  "process_order_seed": 20260804,
+  "projected_total_seconds": 6400,
+  "results": [
+    {
+      "cell": "candidate-active",
+      "elapsed_seconds": 1800.2082962989807,
+      "failure": "worker_timeout",
+      "rep": 3,
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 1,
+      "source": {
+        "files": {
+          "sim/bridge.py": "8a30552558de07d4691a3e85ad5a5c06ecb029d4d58680cf74c3ab6862100a7c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "6d3319057443916fe79f9c93aca5eecee79ebee9d9b43ca06be11e61849f0ddb",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "c672b1708deaf8b6d921c31193d72c106fe0a8a3",
+        "root": "/tmp/sim-v14-stageA-candidate-c672b1708",
+        "status_porcelain": ""
+      },
+      "status": "infrastructure_failure",
+      "stderr": "",
+      "stdout": "",
+      "timeout_seconds": 1800
+    }
+  ],
+  "run_plan": [
+    {
+      "active": true,
+      "cell": "candidate-active",
+      "direct_outputs": true,
+      "rep": 3,
+      "sequence": 1,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "candidate-default",
+      "direct_outputs": false,
+      "rep": 2,
+      "sequence": 2,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "candidate-default",
+      "direct_outputs": false,
+      "rep": 3,
+      "sequence": 3,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "prechange-control-default",
+      "direct_outputs": false,
+      "rep": 1,
+      "sequence": 4,
+      "source": "prechange-control"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active-unfused",
+      "direct_outputs": false,
+      "rep": 3,
+      "sequence": 5,
+      "source": "candidate"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active-unfused",
+      "direct_outputs": false,
+      "rep": 2,
+      "sequence": 6,
+      "source": "candidate"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active",
+      "direct_outputs": true,
+      "rep": 2,
+      "sequence": 7,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "candidate-default",
+      "direct_outputs": false,
+      "rep": 1,
+      "sequence": 8,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "prechange-control-default",
+      "direct_outputs": false,
+      "rep": 2,
+      "sequence": 9,
+      "source": "prechange-control"
+    },
+    {
+      "active": false,
+      "cell": "prechange-control-default",
+      "direct_outputs": false,
+      "rep": 3,
+      "sequence": 10,
+      "source": "prechange-control"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active-unfused",
+      "direct_outputs": false,
+      "rep": 1,
+      "sequence": 11,
+      "source": "candidate"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active",
+      "direct_outputs": true,
+      "rep": 1,
+      "sequence": 12,
+      "source": "candidate"
+    }
+  ],
+  "schema": "v14-stageA-performance-result-v1",
+  "scientific_seeds": [],
+  "source_roots": {
+    "candidate": {
+      "files": {
+        "sim/bridge.py": "8a30552558de07d4691a3e85ad5a5c06ecb029d4d58680cf74c3ab6862100a7c",
+        "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+        "sim/kernels.py": "6d3319057443916fe79f9c93aca5eecee79ebee9d9b43ca06be11e61849f0ddb",
+        "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+      },
+      "revision": "c672b1708deaf8b6d921c31193d72c106fe0a8a3",
+      "root": "/tmp/sim-v14-stageA-candidate-c672b1708",
+      "status_porcelain": ""
+    },
+    "prechange_control": {
+      "files": {
+        "sim/bridge.py": "21c0e9f4764c6fc7bd6384a1e18b659891f90098a5b5e10e138e6d55dcf2ef91",
+        "sim/config.py": "b25a07533a4d8ab525a196a74d166d15d03816b5a4f269bc7e1c7bf93c9f3d75",
+        "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+        "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+      },
+      "revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+      "root": "/tmp/sim-v14-stageA-control",
+      "status_porcelain": ""
+    }
+  },
+  "specification": "research/specs/v14_snr_conductance_stageA_implementation.json",
+  "specification_sha256": "0220c95fabeb29bbeecdb78765755f38c7a2f06b317cb6fcefc064c45514aa7e",
+  "status": "infrastructure_failure",
+  "summary": {
+    "cells": {
+      "candidate-active": {
+        "all_structural_checks_pass": false,
+        "completed_repetitions": 0,
+        "median_cuda_event_seconds": null,
+        "median_host_seconds": null
+      },
+      "candidate-active-unfused": {
+        "all_structural_checks_pass": false,
+        "completed_repetitions": 0,
+        "median_cuda_event_seconds": null,
+        "median_host_seconds": null
+      },
+      "candidate-default": {
+        "all_structural_checks_pass": false,
+        "completed_repetitions": 0,
+        "median_cuda_event_seconds": null,
+        "median_host_seconds": null
+      },
+      "prechange-control-default": {
+        "all_structural_checks_pass": false,
+        "completed_repetitions": 0,
+        "median_cuda_event_seconds": null,
+        "median_host_seconds": null
+      }
+    },
+    "fixed_thresholds": {
+      "active_ratio_max": 1.25,
+      "default_off_ratio_max": 1.02,
+      "direct_output_ratio_max": 0.85
+    },
+    "performance_status": "NO_GO",
+    "physiology_verdict": null,
+    "promotion_effect": "none",
+    "ratios_against_matching_medians": {
+      "active_cuda_event": null,
+      "active_host": null,
+      "default_cuda_event": null,
+      "default_host": null,
+      "direct_output_cuda_event": null,
+      "direct_output_host": null
+    }
+  },
+  "worker_timeout_seconds": 1800
+}

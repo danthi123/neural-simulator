@@ -1,0 +1,38 @@
+{
+  "schema": "sim-artifact-provenance-v1",
+  "artifact": "research/findings/raw/v14_stageA_performance_c672b1708_ABORTED.json",
+  "artifact_sha256": "52b4ca224233c4af1f98c8a3944e2ac78b121c996cf281201e3cf595c6f2d03a",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/v14_stageA_performance.py",
+    "--candidate-root",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+    "--prechange-control-root",
+    "/tmp/sim-v14-stageA-control"
+  ],
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "environment": {
+    "python": "3.11.14",
+    "cupy": "14.1.1",
+    "device": "NVIDIA GeForce RTX 3090",
+    "host": "dant123-wk"
+  },
+  "source_revision": "c672b1708deaf8b6d921c31193d72c106fe0a8a3",
+  "source_files_clean": false,
+  "status": "aborted-no-results",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "no timing result was observed",
+      "ok": true,
+      "detail": "The preserved results list is empty and performance status is NOT_EVALUATED."
+    },
+    {
+      "kind": "require",
+      "name": "replacement uses immutable sources",
+      "ok": true,
+      "detail": "The replacement candidate and control are detached clean worktrees."
+    }
+  ],
+  "note": "The simulator file hashes matched source_revision, but disjoint operational and evidence files were uncommitted in the controller worktree. The candidate worktree revision moved during the first worker, so the controller stopped before any result and preserved this classification instead of treating it as a scientific failure."
+}

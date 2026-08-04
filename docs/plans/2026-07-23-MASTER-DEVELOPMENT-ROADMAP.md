@@ -392,6 +392,17 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ## 8. IMMEDIATE NEXT ACTIONS
 
 **2026-08-04 UPDATE — current work is a bounded parallel portfolio around the smallest integrated communication loop.**
+- **GPU performance boundary:** the immutable V14 candidate/control matrix
+  timed out in its first 20,000-step active cell after 1,800 seconds without a
+  timing result. This is an infrastructure failure, not a physiology verdict.
+  Profile the per-step launch sequence and fuse the dominant exact-equivalent
+  path before a short preregistered timing screen; do not repeat the unchanged
+  long matrix.
+- **Research and cost-control infrastructure:** RAG-first scholarly discovery
+  now retrieves and hash-binds full text while keeping extracted locators
+  pending review. The local Qwen fallback has also completed an isolated
+  edit/commit/resume/cleanup validation and remains subordinate to frontier
+  review and the shared GPU lease.
 - **CPU/GPU, primary:** V13 deterministic compatibility earned GO, but calibration seed `1013` violated its locked CPU-first order. It and dependent replication seed `1019` are consumed and procedurally undefined; held-out seed `1021` and Stage-1 seed `1031` remain sealed.
   The backend-origin diagnostic traced the large response split to initialization, and the correction passed byte-exact NumPy/RTX parity across all 15 checked arrays at step zero. Replay v1 localized the remaining difference to GPU flush-to-zero at a subnormal recovery update on step 1,114. The corrected strict path then passed replay v2 with all 1,200 voltage, recovery, and spike rows byte-exact. This is engineering validation, not a new brain capability. Derive replacement calibration and replication seeds through the controller next.
 - **CPU pool, memory:** replay v3 was UNDEFINED because its required sleep relay and inhibitory loops never activated. V4's target-plateau correction then suppressed the intact target on smoke seed `216` and was retired. A different mechanism needs a new preregistration and fresh seeds.
