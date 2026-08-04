@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "status": "locked",
+  "mechanism": "gateB-v13-backend-state-transplant-diagnostic",
+  "promotion_value": "none",
+  "source_anchor_sha": "b3d57494b7dd7d99d5e91088489da44d89a85bf3",
+  "seed": 7606856,
+  "seed_derivation": {
+    "material": "V13_BACKEND_STATE_TRANSPLANT_V1|b3d57494b7dd7d99d5e91088489da44d89a85bf3|role=paired_origin",
+    "sha256_prefix_12": "b6388351e7c8",
+    "formula": "2000000 + (prefix_integer mod 7000000)"
+  },
+  "forbidden_seeds": [1013, 1019, 1021, 1031],
+  "origins": ["numpy", "cupy"],
+  "execution_backends": ["numpy", "cupy"],
+  "modes": ["default", "deterministic_transpose_matvec"],
+  "steps": {
+    "baseline": 500,
+    "inhibition": 200,
+    "release": 500,
+    "dt_ms": 1.0
+  },
+  "stimulus": {
+    "source_current_pA": 1000.0,
+    "target_external_current_pA": 0.0
+  },
+  "required_bundle_arrays": [
+    "C", "a", "b", "d", "k", "vr", "vt", "vpeak",
+    "v", "u", "g_e", "g_i", "intrinsic_current", "external_current",
+    "csr_data", "csr_indices", "csr_indptr"
+  ],
+  "required_trajectory_arrays": ["v", "u", "g_e", "g_i", "spikes"],
+  "verdict": "DIAGNOSTIC_ONLY"
+}
