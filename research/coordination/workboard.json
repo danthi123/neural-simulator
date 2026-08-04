@@ -568,11 +568,13 @@
       ]
     },
     "019fceb3-179e-7f41-9ea5-344da5d425e5": {
-      "heartbeat_at": "2026-08-04T21:34:43+00:00",
+      "completed_at": "2026-08-04T22:07:42+00:00",
+      "heartbeat_at": "2026-08-04T22:07:42+00:00",
       "model": "inherited",
-      "next_action": "Implement and validate default-preserving NumPy/CuPy integration.",
+      "next_action": "Define canonical authenticated packet authority before attempting kernel integration again.",
+      "result": "Integration rejected and withdrawn after checkpoint/provenance/mixed-region audit; corrected expansion also failed authority tests.",
       "started_at": "2026-08-04T21:34:43+00:00",
-      "status": "running",
+      "status": "blocked",
       "task": "Integrate provenance-bound SNr parameter packet into fused kernel",
       "write_set": [
         "sim/kernels.py",
@@ -581,57 +583,38 @@
         "sim/regions.py",
         "tests/new"
       ]
+    },
+    "019fcebe-0ee5-70b1-ade4-1b1dd3360ba9": {
+      "completed_at": "2026-08-04T21:52:09+00:00",
+      "heartbeat_at": "2026-08-04T21:52:09+00:00",
+      "result": "Audit rejected packet integration: checkpoint tamper, self-asserted provenance, mixed-region divergence, temperature/unit/heterogeneity gaps.",
+      "started_at": "2026-08-04T21:52:09+00:00",
+      "status": "completed",
+      "task": "Adversarial SNr packet integration review"
+    },
+    "019fced1-2fc9-7ee2-9604-dfe4f1c165b5": {
+      "heartbeat_at": "2026-08-04T22:07:43+00:00",
+      "model": "inherited",
+      "next_action": "Implement benchmark/tool tests and short GPU smoke only.",
+      "started_at": "2026-08-04T22:07:43+00:00",
+      "status": "running",
+      "task": "Clamp performance and GPU co-scheduling benchmark",
+      "write_set": [
+        "tools/v14_clamp_performance.py",
+        "tests/test_v14_clamp_performance.py"
+      ]
+    },
+    "019fced1-356a-7570-9955-9bfef11b9d71": {
+      "heartbeat_at": "2026-08-04T22:07:43+00:00",
+      "model": "inherited",
+      "next_action": "Return schema, state machine, checkpoint rules, staged tests.",
+      "started_at": "2026-08-04T22:07:43+00:00",
+      "status": "running",
+      "task": "Canonical authenticated SNr packet authority design",
+      "write_set": []
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T18:25:05+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce01-91a7-7362-bc6e-a30493e38120"
-    },
-    {
-      "at": "2026-08-04T18:29:30+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce01-91a7-7362-bc6e-a30493e38120"
-    },
-    {
-      "at": "2026-08-04T18:41:57+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "parameter-research-discovery"
-    },
-    {
-      "at": "2026-08-04T18:41:57+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
-    {
-      "at": "2026-08-04T18:41:57+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
-      "at": "2026-08-04T18:42:31+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce15-8093-7c11-9e4b-4d5d2001bbf3"
-    },
-    {
-      "at": "2026-08-04T18:42:32+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce15-7b7f-7e32-ad9d-73587830f58f"
-    },
-    {
-      "at": "2026-08-04T19:01:50+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
     {
       "at": "2026-08-04T19:01:50+00:00",
       "detail": "blocked",
@@ -1183,6 +1166,54 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fceb3-179e-7f41-9ea5-344da5d425e5"
+    },
+    {
+      "at": "2026-08-04T21:52:09+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcebe-0ee5-70b1-ade4-1b1dd3360ba9"
+    },
+    {
+      "at": "2026-08-04T21:52:09+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-channel-kernel-integration"
+    },
+    {
+      "at": "2026-08-04T22:07:42+00:00",
+      "detail": "blocked",
+      "kind": "agent-finish",
+      "subject": "019fceb3-179e-7f41-9ea5-344da5d425e5"
+    },
+    {
+      "at": "2026-08-04T22:07:43+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-channel-kernel-integration"
+    },
+    {
+      "at": "2026-08-04T22:07:43+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-packet-authority"
+    },
+    {
+      "at": "2026-08-04T22:07:43+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-clamp-megakernel"
+    },
+    {
+      "at": "2026-08-04T22:07:43+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fced1-356a-7570-9955-9bfef11b9d71"
+    },
+    {
+      "at": "2026-08-04T22:07:43+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fced1-2fc9-7ee2-9604-dfe4f1c165b5"
     }
   ],
   "lanes": {
@@ -1267,14 +1298,15 @@
       "status": "completed"
     },
     "gateb-v14-channel-kernel-integration": {
-      "agent_id": "019fceb3-179e-7f41-9ea5-344da5d425e5",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-04T21:34:43+00:00",
-      "next_action": "Wire explicit packet values into the existing fused SNr kernel with default byte identity and temperature/unit guards.",
-      "owner": "Meitner-3",
+      "blocker": "No authenticated canonical packet schema yet; prior integration allowed checkpoint tampering, self-asserted provenance, and mixed-region divergence.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T22:07:43+00:00",
+      "next_action": "Do not retry kernel wiring until canonical packet authority and checkpoint regeneration rules are committed.",
+      "owner": "controller",
       "priority": 1,
+      "recovery_action": "Complete canonical authority design and tests, then retry a smaller integration from the clean committed boundary.",
       "resource": "local_gpu",
-      "status": "running",
+      "status": "blocked",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -1314,15 +1346,20 @@
       ]
     },
     "gateb-v14-clamp-megakernel": {
+      "agent_id": "019fced1-2fc9-7ee2-9604-dfe4f1c165b5",
       "blocker": "No representative sealed Stage B runner exists yet, so optimization lacks a valid workload and equivalence receipt.",
-      "delegation": "controller",
-      "heartbeat_at": "2026-08-04T21:32:25+00:00",
-      "next_action": "Benchmark the integrated clamp inside a representative Stage B step; fuse recurrence and reductions only if launch overhead is measurable.",
-      "owner": "controller",
-      "priority": 3,
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T22:07:43+00:00",
+      "next_action": "Build reviewed engineering benchmark and two-worker VRAM-aware GPU co-scheduling mode before any full run.",
+      "owner": "Dirac-3",
+      "priority": 2,
       "recovery_action": "After runner integration, profile 20,000 steps on RTX 3090 and gate any megakernel on byte-identical state/spike output.",
       "resource": "local_gpu",
-      "status": "planned"
+      "status": "running",
+      "write_set": [
+        "tools/v14_clamp_performance.py",
+        "tests/test_v14_clamp_performance.py"
+      ]
     },
     "gateb-v14-conductance-clamp": {
       "agent_id": "019fce9d-5991-7a20-bd61-010d70f692dd",
@@ -1382,6 +1419,16 @@
         "sim/kernels.py",
         "tests/test_snr_conductance_kernels.py"
       ]
+    },
+    "gateb-v14-packet-authority": {
+      "agent_id": "019fced1-356a-7570-9955-9bfef11b9d71",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T22:07:43+00:00",
+      "next_action": "Design canonical per-group artifact-bound packet schema and checkpoint state machine.",
+      "owner": "Boyle-3",
+      "priority": 1,
+      "resource": "local_cpu",
+      "status": "running"
     },
     "gateb-v14-performance": {
       "blocker": "",
@@ -1733,5 +1780,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T21:34:43+00:00"
+  "updated_at": "2026-08-04T22:07:43+00:00"
 }
