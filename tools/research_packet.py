@@ -14,6 +14,7 @@ import datetime as dt
 import json
 import os
 from pathlib import Path
+import re
 import tempfile
 from typing import Any, Mapping
 from urllib.parse import urlparse
@@ -22,6 +23,7 @@ from urllib.parse import urlparse
 PACKET_VERSION = "research-packet-v1"
 CLAIM_STATUSES = {"pending_review", "accepted", "rejected"}
 PRIMARY_KINDS = {"peer-reviewed-primary", "primary-preprint"}
+DOI_RE = re.compile(r"^10\.\d{4,9}/\S+$", re.IGNORECASE)
 SEARCH_DATE_FORMAT = "%Y-%m-%d"
 
 
@@ -128,6 +130,31 @@ def _validate_sources(items: Any, search_ids: set[str]) -> set[str]:
             raise ResearchPacketError(f"source refers to unknown search: {search_id}")
         _text(item.get("locator"), "sources.locator")
         _text(item.get("evidence"), "sources.evidence")
+        doi = item.get("doi")
+        if doi is not None and (not isinstance(doi, str) or not DOI_RE.fullmatch(doi.strip())):
+            raise ResearchPacketError("sources.doi must be a normalized DOI")
+        discovery = item.get("discovery")
+        if discovery is not None:
+            if not isinstance(discovery, Mapping):
+                raise ResearchPacketError("sources.discovery must be an object")
+            _text(discovery.get("provider"), "sources.discovery.provider")
+            _text(discovery.get("provider_record_id"), "sources.discovery.provider_record_id")
+            _url(discovery.get("search_url"), "sources.discovery.search_url")
+            query_ids = [_text(v, "sources.discovery.query_ids") for v in _list(
+                discovery.get("query_ids"), "sources.discovery.query_ids"
+            )]
+            if not query_ids:
+                raise ResearchPacketError("sources.discovery.query_ids cannot be empty")
+            records = discovery.get("records")
+            if records is not None:
+                for record in _list(records, "sources.discovery.records"):
+                    if not isinstance(record, Mapping):
+                        raise ResearchPacketError("sources.discovery.records entries must be objects")
+                    _text(record.get("query_id"), "sources.discovery.records.query_id")
+                    _text(record.get("provider"), "sources.discovery.records.provider")
+                    _text(record.get("provider_record_id"), "sources.discovery.records.provider_record_id")
+                    _url(record.get("search_url"), "sources.discovery.records.search_url")
+                    _text(record.get("exact_locator"), "sources.discovery.records.exact_locator")
         if item.get("license_status") not in {
             "open-access", "public-domain", "permission-granted", "metadata-only"
         }:

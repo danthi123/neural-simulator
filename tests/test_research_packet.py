@@ -124,3 +124,26 @@ def test_save_and_load_use_validated_atomic_json(tmp_path: Path):
     loaded = load_packet(path)
     assert loaded["packet_version"] == "research-packet-v1"
     assert json.loads(path.read_text(encoding="utf-8"))["claims"][0]["status"] == "pending_review"
+
+
+def test_optional_discovery_provenance_and_normalized_doi_are_validated():
+    packet = _packet()
+    packet["sources"][0]["doi"] = "10.0000/example"
+    packet["sources"][0]["discovery"] = {
+        "provider": "OpenAlex",
+        "provider_record_id": "W123",
+        "search_url": "https://api.openalex.org/works?search=gpi",
+        "query_ids": ["G1-Q1"],
+        "records": [{
+            "query_id": "G1-Q1",
+            "provider": "OpenAlex",
+            "provider_record_id": "W123",
+            "search_url": "https://api.openalex.org/works?search=gpi",
+            "exact_locator": "Results, Figure 2",
+        }],
+    }
+    assert validate_packet(packet)["sources"][0]["doi"] == "10.0000/example"
+
+    packet["sources"][0]["doi"] = "not-a-doi"
+    with pytest.raises(ResearchPacketError, match="normalized DOI"):
+        validate_packet(packet)
