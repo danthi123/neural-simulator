@@ -81,8 +81,11 @@ in response to activity.
 
 ## Locked construction protocol
 
-Build one fresh bridge on NumPy and one on CuPy at seed `997`. There is no
-parameter ladder and no backend-specific configuration.
+Build one intact behavioral bridge on NumPy and one on CuPy at seed `997`.
+The locked inhibitory source-on/source-off audits below use additional fresh
+seed-`997` diagnostic twins on each backend; they never contribute to behavior
+selection or preserve state into the intact protocol. There is no parameter
+ladder and no backend-specific configuration.
 
 Each backend runs one uninterrupted protocol:
 
@@ -125,6 +128,28 @@ Archive complete telemetry even on the first failure. Any baseline boundary
 spike, silent guard bin, action preceding failure, later loser crossing,
 inhibitory rebound, or backend disagreement returns `CONSTRUCTION_NO_GO`. Do
 not consume seed `2`, alter a duration, add recurrence, or tune a weight.
+
+### Locked inhibitory source-on/source-off audits
+
+On each backend, construct four additional matched bridge pairs at seed `997`.
+Each twin runs `1000` baseline steps at `250 pA` followed by one complete
+`600`-step action window at `1000 pA`. The source-on twin has all boundary gates
+at `1`; the source-off twin differs only in the named inhibitory transmission
+gate, fixed before the first step:
+
+1. `boundary_guard`: compare post-motor `action_corollary` spikes;
+2. `boundary_disinhibition`: compare post-motor `boundary_guard_som` spikes;
+3. `boundary_proposal_stop`: compare post-corollary `proposal_0/1` spikes; and
+4. `boundary_commit_stop`: compare post-corollary summed `commit_0/1` and
+   `motor_0/1` spikes.
+
+The source-on target total must not exceed its source-off twin. Report both
+totals, the first causal divergence, complete firing hashes through that point,
+and maximum target GABA-A conductance. Exact prefix identity is required through
+the step before the inhibited target first receives source activity. A missing
+source event, prefix mismatch, zero target conductance, or source-on increase is
+an inhibitory-audit failure. These are polarity/rebound audits only; a strict
+causal reduction remains part of the later engagement gate.
 
 If the motor-triggered causal order and baseline quiet pass but either action
 window later admits the other motor channel, report
