@@ -17,8 +17,14 @@ promotion verdict. No timing ratio was computed, no scientific seeds were
 opened, and the remaining eleven cells were not started. The terminal receipt
 is `research/findings/raw/v14_stageA_performance_c672b1708_immutable.json`.
 
-GPU memory use remained small and the worker occupied one CPU core throughout,
-consistent with the already identified per-step host/launch-overhead boundary.
-The next performance action is therefore a bounded profiling and kernel-fusion
-slice before another long matrix. Repeating the unchanged 20,000-step cell is
-not authorized.
+The worker configuration was 500 warmup steps followed by 2,000 measured
+steps. Diagnosis after the receipt showed that CuPy could not locate
+`libcudadevrt.a` for the cold fusion compile. Non-strict bridge execution
+swallowed that exception and retried the failed compile every step. The timeout
+therefore did not measure steady-state launch overhead. The repaired benchmark
+restores the explicit CUDA toolkit root and enables strict step errors so this
+failure mode cannot be timed as useful work.
+
+This replacement run is distinct from the earlier abandoned 20,000-step
+attempt described in the preregistration amendment. Repeating either failed
+run unchanged is not authorized.

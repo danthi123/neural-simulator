@@ -39,6 +39,48 @@ def test_source_snapshot_records_backend_toolchain_boundary(tmp_path, monkeypatc
     assert tuple(snapshot["files"]) == tracked
 
 
+def test_historical_config_omits_unknown_default_off_field():
+    class HistoricalConfig:
+        __dataclass_fields__ = {"num_neurons": object()}
+
+    assert performance._direct_output_config_kwargs(
+        HistoricalConfig, direct_outputs=False
+    ) == {}
+    with pytest.raises(RuntimeError, match="does not support"):
+        performance._direct_output_config_kwargs(
+            HistoricalConfig, direct_outputs=True
+        )
+
+
+def test_current_config_records_direct_output_state():
+    class CurrentConfig:
+        __dataclass_fields__ = {"enable_snr_direct_outputs": object()}
+
+    assert performance._direct_output_config_kwargs(
+        CurrentConfig, direct_outputs=True
+    ) == {"enable_snr_direct_outputs": True}
+
+
+def test_matrix_receipt_records_provenance_and_preconditions(monkeypatch, tmp_path):
+    monkeypatch.setattr(performance, "build_run_plan", lambda: [])
+    monkeypatch.setattr(
+        performance,
+        "source_snapshot",
+        lambda root: {
+            "root": str(root), "revision": "abc", "status_porcelain": "",
+            "files": {"sim/backend.py": "hash"},
+        },
+    )
+    out = tmp_path / "receipt.json"
+
+    result = performance.run_matrix(
+        candidate_root=tmp_path, control_root=tmp_path, output=out
+    )
+
+    assert result["provenance"]["argv"]
+    assert all(item["ok"] for item in result["preconditions"])
+
+
 def test_performance_bridge_fails_loudly_on_step_errors():
     source = inspect.getsource(performance._build_bridge)
     assert "bridge.strict_step_errors = True" in source

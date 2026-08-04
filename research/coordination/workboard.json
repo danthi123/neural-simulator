@@ -388,18 +388,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T15:51:13+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-conductance-research"
-    },
-    {
-      "at": "2026-08-04T15:51:13+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd6c-e98a-7b53-8af2-1c482a0d09ac"
-    },
-    {
       "at": "2026-08-04T15:51:18+00:00",
       "detail": "ready",
       "kind": "lane-update",
@@ -986,6 +974,18 @@
       "detail": "completed",
       "kind": "agent-finish",
       "subject": "019fce33-2e22-7e81-a666-017fea7d0d85"
+    },
+    {
+      "at": "2026-08-04T19:27:04+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-launch-overhead-profile"
+    },
+    {
+      "at": "2026-08-04T19:28:53+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-launch-overhead-profile"
     }
   ],
   "lanes": {
@@ -1221,11 +1221,11 @@
     },
     "v14-launch-overhead-profile": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:15:00+00:00",
-      "next_action": "Reconstruct the immutable candidate-active setup, run a bounded launch-level screen under the GPU lease, then fuse only the measured dominant sequence.",
+      "heartbeat_at": "2026-08-04T19:28:53+00:00",
+      "next_action": "Banked the 4d58091cc partial matrix: historical control rejected the new default-off config field at sequence 4. Seal the fail-closed compatibility repair and run a new complete matrix; never combine partial timings.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If profiler tooling perturbs timing, use launch counts and CUDA event ranges on a 100-step structural screen; do not repeat 20000 steps.",
+      "recovery_action": "If the new complete matrix fails, preserve its receipt and diagnose only that exact failure.",
       "resource": "local_gpu",
       "status": "running",
       "write_set": [
@@ -1248,5 +1248,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T19:23:05+00:00"
+  "updated_at": "2026-08-04T19:28:53+00:00"
 }

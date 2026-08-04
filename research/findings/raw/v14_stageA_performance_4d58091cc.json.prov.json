@@ -1,0 +1,40 @@
+{
+  "schema": "sim-artifact-provenance-v1",
+  "artifact": "research/findings/raw/v14_stageA_performance_4d58091cc.json",
+  "artifact_sha256": "5e7d7de28590d71c99ec484a7932c28109556fac1617e28986da80ac736558a1",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/v14_stageA_performance.py",
+    "--candidate-root",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+    "--prechange-control-root",
+    "/tmp/sim-v14-stageA-control",
+    "--out",
+    "research/findings/raw/v14_stageA_performance_4d58091cc.json"
+  ],
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "environment": {
+    "python": "3.11.14",
+    "cupy": "14.1.1",
+    "device": "NVIDIA GeForce RTX 3090",
+    "host": "dant123-wk"
+  },
+  "source_revision": "4d58091cc068ae47ff0327fae9439451f9d3b0bd",
+  "source_files_clean": true,
+  "status": "infrastructure_failure",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "sealed candidate and control",
+      "ok": true,
+      "detail": "Both source roots were clean and governed file hashes were recorded before dispatch."
+    },
+    {
+      "kind": "require",
+      "name": "partial timing is non-decisive",
+      "ok": true,
+      "detail": "The historical control failed construction at sequence 4; no complete ratio or physiology verdict is permitted."
+    }
+  ],
+  "note": "The runner stopped on the first failed worker. A fail-closed compatibility repair is required before a newly sealed complete matrix."
+}

@@ -392,12 +392,12 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ## 8. IMMEDIATE NEXT ACTIONS
 
 **2026-08-04 UPDATE — current work is a bounded parallel portfolio around the smallest integrated communication loop.**
-- **GPU performance boundary:** the immutable V14 candidate/control matrix
-  timed out in its first 20,000-step active cell after 1,800 seconds without a
-  timing result. This is an infrastructure failure, not a physiology verdict.
-  Profile the per-step launch sequence and fuse the dominant exact-equivalent
-  path before a short preregistered timing screen; do not repeat the unchanged
-  long matrix.
+- **GPU performance boundary:** the immutable V14 replacement matrix timed out
+  in its first active worker after 1,800 seconds; that worker used 500 warmup
+  plus 2,000 measured steps. A hidden repeated CuPy cold-compile failure caused
+  the timeout, so it was not a steady-state timing result. Strict benchmark
+  errors, explicit toolkit discovery, and host-only fusion-key construction
+  now pass bounded timing; the next complete matrix must remain source-sealed.
 - **Research and cost-control infrastructure:** RAG-first scholarly discovery
   now retrieves and hash-binds full text while keeping extracted locators
   pending review. The local Qwen fallback has also completed an isolated

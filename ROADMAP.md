@@ -138,11 +138,13 @@ its controls and lesions, and is tested at the required seed coverage.
 7. **The deep-credit and scaling frontier remains open.** The project must
    distinguish a narrow mechanism de-risk from a local learning rule that can
    grow useful structure on the real shared substrate.
-8. **Compute is scheduled, not assumed.** The V14 immutable performance matrix
-   reached its fixed 1,800-second timeout in the first 20,000-step active cell
-   without returning a measurement. The RTX 3090 was lightly occupied while one
-   CPU core stayed saturated, so the next authorized action is a bounded launch
-   profile and exact-equivalent fused slice, not another unchanged long run.
+8. **Compute is scheduled, not assumed.** The V14 immutable replacement matrix
+   reached its fixed 1,800-second timeout in its first active worker, configured
+   for 500 warmup plus 2,000 measured steps. The cause was a hidden repeated
+   CuPy cold-compile failure, not a steady-state timing result. Benchmark workers
+   now restore the explicit CUDA toolkit root and fail loudly on step errors;
+   bounded timing also removed repeated scalar transfers from the direct-output
+   path before another sealed matrix.
 
 A failed method is a method verdict, not permission to close the capability.
 Bank the method, preserve its controls and diagnosis, and choose the next

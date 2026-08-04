@@ -106,6 +106,16 @@ def build_run_plan() -> list[dict]:
     return jobs
 
 
+def _direct_output_config_kwargs(config_type, *, direct_outputs: bool) -> dict:
+    """Bridge current and historical CoreSimConfig source boundaries."""
+    fields = getattr(config_type, "__dataclass_fields__", {})
+    if "enable_snr_direct_outputs" in fields:
+        return {"enable_snr_direct_outputs": direct_outputs}
+    if direct_outputs:
+        raise RuntimeError("source does not support SNr direct outputs")
+    return {}
+
+
 def _nvidia_smi() -> dict:
     query = (
         "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,"
@@ -164,7 +174,9 @@ def _build_bridge(*, active: bool, direct_outputs: bool):
         enable_structural_plasticity=False,
         enable_ou_process=False,
         hh_external_drive_scale=0.0,
-        enable_snr_direct_outputs=direct_outputs,
+        **_direct_output_config_kwargs(
+            CoreSimConfig, direct_outputs=direct_outputs
+        ),
     )
     bridge = SimulationBridge(
         core_config=config,
@@ -409,6 +421,10 @@ def run_matrix(*, candidate_root: Path, control_root: Path, output: Path) -> dic
         "schema": "v14-stageA-performance-result-v1",
         "status": "running",
         "created_at_unix": time.time(),
+        "provenance": {
+            "argv": list(sys.argv),
+            "cwd": str(Path.cwd().resolve()),
+        },
         "specification": str(SPEC_PATH.relative_to(ROOT)),
         "specification_sha256": _sha256(SPEC_PATH),
         "harness_sha256": _sha256(Path(__file__).resolve()),
@@ -426,6 +442,23 @@ def run_matrix(*, candidate_root: Path, control_root: Path, output: Path) -> dic
         "results": [],
         "summary": summarize([]),
     }
+    result["preconditions"] = [
+        {
+            "kind": "require",
+            "name": "clean source boundaries",
+            "ok": all(
+                source.get("revision") and not source.get("status_porcelain")
+                for source in result["source_roots"].values()
+            ),
+            "detail": "Candidate and historical control revisions and governed file hashes are recorded before dispatch.",
+        },
+        {
+            "kind": "require",
+            "name": "engineering-only seed boundary",
+            "ok": not result["scientific_seeds"],
+            "detail": "This performance matrix opens no calibration, replication, held-out, or selector seed.",
+        },
+    ]
     write_json_atomic(output, result)
     for job in plan:
         row = run_worker(job, candidate_root=candidate_root, control_root=control_root)
