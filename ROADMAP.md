@@ -127,12 +127,13 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     remain sealed. The completed state-transplant diagnostic confirmed that the
     large suppression difference followed backend-native initialization. The
     default-off correction now produces byte-identical NumPy/RTX initialization
-    across all 15 checked arrays at step zero. The smaller runtime difference was
-    traced to GPU fused multiply-add rounding, and a default-off strict device
-    kernel now uses the same operation order on both backends; focused tests pass.
-    A full 1,200-step matched-state replay must still show exact voltage, recovery,
-    and spike trajectories before corrected calibration and replication may run
-    through the fail-closed controller.
+    across all 15 checked arrays at step zero. Replay v1 then exposed GPU
+    flush-to-zero at one subnormal recovery update on step 1,114. The corrected
+    strict path preserves that update, and replay v2 is byte-exact for voltage,
+    recovery state, and spikes across all 1,200 rows. This closes the backend
+    engineering gate, not action-credit calibration. Replacement calibration and
+    replication seeds must now be derived and opened through the fail-closed
+    controller; held-out and learning seeds remain sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
@@ -217,6 +218,12 @@ Develop interoceptive body signals, appraisal of events relative to needs and
 relationships, persistent valence and arousal, and curiosity based on learning
 progress. These signals must participate in the same action and communication
 loops as perception and memory.
+
+The current opponent affect circuit can persist, clear through its spiking
+inhibitory pathway, and restart. A two-seed recurrent-weight diagnostic did not
+make it genuinely graded: every candidate remained too latch-like near neutral,
+so no operating point was selected and formal seeds remain sealed. The next
+attempt must change the mechanism rather than continue tuning that ladder.
 
 Literal biological hunger is a useful laboratory task for drive persistence,
 satiation, and competing priorities, but it is not a primary deployment goal
