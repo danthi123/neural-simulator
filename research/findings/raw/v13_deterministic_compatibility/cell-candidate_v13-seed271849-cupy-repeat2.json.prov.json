@@ -1,0 +1,41 @@
+{
+ "run_id": "1785824599-2411075",
+ "runner": "research/runners/_v13_deterministic_compatibility.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_v13_deterministic_compatibility.py",
+  "cell",
+  "--source-twin",
+  "candidate_v13",
+  "--seed",
+  "271849",
+  "--backend",
+  "cupy",
+  "--repeat",
+  "2",
+  "--deterministic-patch-commit",
+  "78bfb8617",
+  "--output-root",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/cell-candidate_v13-seed271849-cupy-repeat2.json"
+ ],
+ "git_sha": "75c655db1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T02:23:19",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4689.6,
+ "corpus_check_query": "continuous basal ganglia action selection autonomous GPi SNr tonic firing initialization hyperdirect stopping host reset --top-k 12",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v13_deterministic_compatibility/cell-candidate_v13-seed271849-cupy-repeat2.json"
+}

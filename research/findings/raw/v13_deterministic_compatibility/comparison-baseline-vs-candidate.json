@@ -1,0 +1,238 @@
+{
+  "acceptance_checks": {
+    "all_seven_hashes_exact_across_twins": true,
+    "topology_exact_across_twins": true
+  },
+  "baseline_bundle": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/bundle-baseline_8994_plus_deterministic_patch.json",
+  "baseline_bundle_sha256": "a6dcd707cbf4ddf49ee32b3db0851680f9d6c6f5ba4bef45813ee0abfbbc4c4a",
+  "candidate_bundle": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/bundle-candidate_v13.json",
+  "candidate_bundle_sha256": "2215c835f78840e841066fe69a72bfc0e14feadec3ffd55c7e0514f11b9f47c2",
+  "comparisons": {
+    "271829:cupy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271829:numpy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271831:cupy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271831:numpy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271837:cupy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271837:numpy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271843:cupy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271843:numpy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271849:cupy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271849:numpy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271853:cupy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    },
+    "271853:numpy": {
+      "all_seven_hashes_exact": true,
+      "hash_equal": {
+        "external": true,
+        "g_e": true,
+        "g_i": true,
+        "raster": true,
+        "u": true,
+        "v": true,
+        "weights": true
+      },
+      "topology_exact": true
+    }
+  },
+  "deterministic_patch_id": "18bd23624a3247cb0f205795081b7a540c15ed89",
+  "disabled_processes": [],
+  "executor_identity": {
+    "runner_sha256": "2a8eb41a27d0dea96f0636cb15aa15f75759bfbc5d3677a6e4aea5853e88ffc9",
+    "spec_sha256": "c9300af5b87a39f382fcaf5e238a54b7d813f72da94adf42fca778d9d4057f70"
+  },
+  "go": true,
+  "outcome": "DETERMINISTIC_COMPATIBILITY_GO",
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "baseline bundle earned determinism GO",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "candidate bundle earned determinism GO",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "baseline proves intrinsic field absent",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "candidate proves intrinsic field present",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "identical deterministic correction patch",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "identical executor",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "identical locked spec",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "identical preregistration",
+      "note": "",
+      "ok": true
+    }
+  ],
+  "schema": "v13-deterministic-compatibility-comparison-v1",
+  "stage": "cross_twin_compare",
+  "undefined_reasons": [],
+  "verdict_status": "GO"
+}

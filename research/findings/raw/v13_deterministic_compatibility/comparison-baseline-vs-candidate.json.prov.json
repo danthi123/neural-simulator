@@ -1,0 +1,33 @@
+{
+ "run_id": "1785824616-2411845",
+ "runner": "research/runners/_v13_deterministic_compatibility.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_v13_deterministic_compatibility.py",
+  "compare",
+  "--baseline",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/bundle-baseline_8994_plus_deterministic_patch.json",
+  "--candidate",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/bundle-candidate_v13.json",
+  "--output-root",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json"
+ ],
+ "git_sha": "75c655db1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T02:23:36",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4705.7,
+ "corpus_check_query": "continuous basal ganglia action selection autonomous GPi SNr tonic firing initialization hyperdirect stopping host reset --top-k 12",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json"
+}
