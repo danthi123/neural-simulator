@@ -562,6 +562,9 @@ def run_output_condition(
     v5._step(bridge, selector.warmup_steps)
     v7._reset_measured_trial(bridge, config)
 
+    baseline_probe = _run_trial(
+        bridge, handles, config, reward_action=None, scheduled_reward=False
+    )
     weights_before = np.asarray(
         to_host(bridge.cp_connections.data), dtype=np.float32
     ).copy()
@@ -574,6 +577,9 @@ def run_output_condition(
     bridge.set_plasticity_gate(v5l.EXPECTATION_PLASTICITY_GATE, 1.0)
     if mode == "expectation_learning_lesion":
         bridge.set_plasticity_gate(v5l.EXPECTATION_PLASTICITY_GATE, 0.0)
+    output_gate_during_training = float(
+        bridge._transmission_gate_values[v5l.EXPECTATION_OUTPUT_GATE]
+    )
     training_rows = [
         _run_trial(bridge, handles, config, reward_action=0)
         for _ in range(config.smoke_training_trials)
@@ -592,13 +598,16 @@ def run_output_condition(
         v5l.EXPECTATION_OUTPUT_GATE,
         0.0 if mode == "expectation_output_lesion" else 1.0,
     )
-    probe_row = _run_trial(
-        bridge,
-        handles,
-        config,
-        reward_action=0 if probe == "reward" else None,
-        scheduled_reward=None if probe == "reward" else False,
-    )
+    probe_rows = [
+        _run_trial(
+            bridge,
+            handles,
+            config,
+            reward_action=0 if probe == "reward" else None,
+            scheduled_reward=None if probe == "reward" else False,
+        )
+        for _ in range(4)
+    ]
     weights_after_probe = np.asarray(
         to_host(bridge.cp_connections.data), dtype=np.float32
     )
@@ -611,12 +620,13 @@ def run_output_condition(
         "seed": int(seed),
         "science_seed_executed": False,
         "plateau_center": config.action_tag_center,
-        "expectation_output_gate_during_training": 0.0,
+        "expectation_output_gate_during_training": output_gate_during_training,
         "expectation_output_gate_during_probe": float(
             bridge._transmission_gate_values[v5l.EXPECTATION_OUTPUT_GATE]
         ),
         "expectation_weight_before": expectation_before,
         "expectation_weight_after_training": expectation_after,
+        "baseline_probe": baseline_probe,
         "clean_training_trials": int(sum(
             row["winner"] is not None for row in training_rows
         )),
@@ -631,7 +641,7 @@ def run_output_condition(
             np.array_equal(weights_after_training, weights_after_probe)
         ),
         "training_rows": training_rows,
-        "probe_row": probe_row,
+        "probe_rows": probe_rows,
     }
 
 
@@ -641,56 +651,153 @@ def _fraction_reduction(treatment: float, control: float) -> float | None:
     return float((control - treatment) / control)
 
 
+def _mean_path(rows: list[dict[str, object]], *path: object) -> float:
+    values = []
+    for row in rows:
+        value = row
+        for key in path:
+            value = value[key]
+        values.append(float(value))
+    return float(np.mean(values)) if values else 0.0
+
+
+def _selected_rows(
+    conditions: dict[str, dict[str, object]],
+    probe: str,
+    mode: str,
+    action: int,
+) -> list[dict[str, object]]:
+    return [
+        row
+        for row in conditions[f"{mode}_{probe}"]["probe_rows"]
+        if row["winner"] == action
+    ]
+
+
 def run_output_smoke(*, seed: int = SMOKE_SEED) -> dict[str, object]:
     validate_smoke_seed(seed)
+    modes = (
+        "output_intact",
+        "expectation_output_lesion",
+        "expectation_learning_lesion",
+    )
+    probes = ("reward", "omission")
     conditions = {
         f"{mode}_{probe}": run_output_condition(
             mode, probe, seed=seed
         )
-        for mode in (
-            "output_intact",
-            "expectation_output_lesion",
-            "expectation_learning_lesion",
-        )
-        for probe in ("reward", "omission")
+        for mode in modes
+        for probe in probes
     }
-    reward = {
-        mode: conditions[f"{mode}_reward"]["probe_row"]
-        for mode in (
-            "output_intact",
-            "expectation_output_lesion",
-            "expectation_learning_lesion",
-        )
+    action_sequences = {
+        probe: {
+            mode: [
+                row["winner"]
+                for row in conditions[f"{mode}_{probe}"]["probe_rows"]
+            ]
+            for mode in modes
+        }
+        for probe in probes
     }
-    omission = {
-        mode: conditions[f"{mode}_omission"]["probe_row"]
-        for mode in (
-            "output_intact",
-            "expectation_output_lesion",
-            "expectation_learning_lesion",
-        )
+    selected = {
+        probe: {
+            mode: {
+                action: _selected_rows(conditions, probe, mode, action)
+                for action in CHANNELS
+            }
+            for mode in modes
+        }
+        for probe in probes
     }
-    modes = tuple(reward)
-    intact_reward = reward["output_intact"]
-    intact_omission = omission["output_intact"]
+
+    def mean(probe: str, mode: str, action: int, *path: object) -> float:
+        return _mean_path(selected[probe][mode][action], *path)
+
+    reward_burst = {
+        mode: mean("reward", mode, 0, "dopamine_burst_depth")
+        for mode in modes
+    }
     reward_suppression = {
         control: _fraction_reduction(
-            float(intact_reward["dopamine_burst_depth"]),
-            float(reward[control]["dopamine_burst_depth"]),
+            reward_burst["output_intact"], reward_burst[control]
         )
         for control in (
             "expectation_output_lesion", "expectation_learning_lesion"
         )
+    }
+    omission_dip = {
+        mode: mean("omission", mode, 0, "dopamine_dip_depth")
+        for mode in modes
     }
     omission_dip_retained = {
         control: (
-            float(omission[control]["dopamine_dip_depth"])
-            / max(float(intact_omission["dopamine_dip_depth"]), 1e-12)
+            omission_dip[control]
+            / max(omission_dip["output_intact"], 1e-12)
         )
         for control in (
             "expectation_output_lesion", "expectation_learning_lesion"
         )
     }
+    matched_sequences = all(
+        all(
+            action_sequences[probe][mode]
+            == action_sequences[probe]["output_intact"]
+            for mode in modes[1:]
+        )
+        for probe in probes
+    )
+    both_actions_sampled = all(
+        all(
+            selected[probe][mode][action]
+            for action in CHANNELS
+        )
+        for probe in probes
+        for mode in modes
+    )
+
+    def expectation(probe: str, mode: str, action: int, channel: int) -> float:
+        return mean(probe, mode, action, "delay", "expectation", channel)
+
+    def output_retains_expectation(probe: str) -> bool:
+        intact = expectation(probe, "output_intact", 0, 0)
+        lesioned = expectation(probe, "expectation_output_lesion", 0, 0)
+        return bool(
+            intact > 0.0
+            and 0.80 * intact <= lesioned <= 1.20 * intact
+        )
+
+    action_conditioned_means = {
+        probe: {
+            mode: {
+                str(action): {
+                    "delay_expectation": [
+                        expectation(probe, mode, action, channel)
+                        for channel in CHANNELS
+                    ],
+                    "gabab_snc_before_outcome": mean(
+                        probe, mode, action,
+                        "gabab_snc_before_outcome_mean",
+                    ),
+                    "dopamine_burst_depth": mean(
+                        probe, mode, action, "dopamine_burst_depth"
+                    ),
+                    "dopamine_dip_depth": mean(
+                        probe, mode, action, "dopamine_dip_depth"
+                    ),
+                    "outcome": {
+                        region: mean(
+                            probe, mode, action, "outcome", region
+                        )
+                        for region in ("snc", "lhb", "rmtg")
+                    },
+                }
+                for action in CHANNELS
+            }
+            for mode in modes
+        }
+        for probe in probes
+    }
+
     checks = {
         "reserved_seed_only": int(seed) == SMOKE_SEED,
         "formal_execution_remains_sealed": OPEN_PHASES == (),
@@ -702,56 +809,86 @@ def run_output_smoke(*, seed: int = SMOKE_SEED) -> dict[str, object]:
             condition["expectation_output_gate_during_training"] == 0.0
             for condition in conditions.values()
         ),
+        "probe_output_gates_match_lesions": all(
+            condition["expectation_output_gate_during_probe"]
+            == (0.0 if condition["mode"] == "expectation_output_lesion" else 1.0)
+            for condition in conditions.values()
+        ),
+        "baseline_expectation_is_zero": all(
+            condition["baseline_probe"]["delay"]["expectation"] == [0, 0]
+            for condition in conditions.values()
+        ),
         "all_training_actions_are_clean": all(
             condition["clean_training_trials"]
             >= 0.9 * v9_config(2.0).smoke_training_trials
             for condition in conditions.values()
         ),
-        "all_probes_execute_trained_action_zero": all(
-            row["winner"] == 0 for row in (*reward.values(), *omission.values())
+        "fixed_four_probe_blocks": all(
+            len(condition["probe_rows"]) == 4
+            for condition in conditions.values()
         ),
         "reward_probe_is_delivered_and_omission_is_withheld": bool(
-            all(row["reward_delivered"] for row in reward.values())
-            and not any(row["reward_delivered"] for row in omission.values())
+            all(
+                row["reward_delivered"] == (row["winner"] == 0)
+                for mode in modes
+                for row in conditions[f"{mode}_reward"]["probe_rows"]
+            )
+            and not any(
+                row["reward_delivered"]
+                for mode in modes
+                for row in conditions[f"{mode}_omission"]["probe_rows"]
+            )
         ),
         "intact_expectation_is_action_specific_before_both_outcomes": bool(
-            intact_reward["delay"]["expectation"][0] > 0
-            and intact_reward["delay"]["expectation"][0]
-            >= 3 * max(intact_reward["delay"]["expectation"][1], 1)
-            and intact_omission["delay"]["expectation"][0] > 0
-            and intact_omission["delay"]["expectation"][0]
-            >= 3 * max(intact_omission["delay"]["expectation"][1], 1)
+            all(
+                expectation(probe, "output_intact", 0, 0) > 0.0
+                and expectation(probe, "output_intact", 0, 0)
+                >= 3.0 * expectation(probe, "output_intact", 0, 1)
+                for probe in probes
+            )
         ),
         "learning_lesion_removes_80pct_of_probe_expectation": all(
-            reward["expectation_learning_lesion"]["delay"]["expectation"][0]
-            <= 0.20 * max(intact_reward["delay"]["expectation"][0], 1)
-            and omission["expectation_learning_lesion"]["delay"]["expectation"][0]
-            <= 0.20 * max(intact_omission["delay"]["expectation"][0], 1)
-            for _ in (0,)
+            expectation(probe, "expectation_learning_lesion", 0, 0)
+            <= 0.20 * expectation(probe, "output_intact", 0, 0)
+            for probe in probes
         ),
-        "intact_expectation_creates_snc_gabab_before_reward": bool(
-            intact_reward["gabab_snc_before_outcome_mean"] > 0.0
-            and reward["expectation_output_lesion"]
-            ["gabab_snc_before_outcome_mean"] == 0.0
+        "intact_expectation_creates_snc_gabab_before_outcomes": bool(
+            all(
+                mean(
+                    probe, "output_intact", 0,
+                    "gabab_snc_before_outcome_mean",
+                ) > 0.0
+                and mean(
+                    probe, "expectation_output_lesion", 0,
+                    "gabab_snc_before_outcome_mean",
+                ) == 0.0
+                for probe in probes
+            )
+        ),
+        "output_lesion_retains_expectation_within_20pct": all(
+            output_retains_expectation(probe) for probe in probes
         ),
         "dopamine_reward_burst_is_suppressed_20pct": all(
             value is not None and value >= 0.20
             for value in reward_suppression.values()
         ),
         "intact_snc_outcome_spikes_do_not_increase": all(
-            intact_reward["outcome"]["snc"] <= reward[control]["outcome"]["snc"]
+            mean("reward", "output_intact", 0, "outcome", "snc")
+            <= mean("reward", control, 0, "outcome", "snc")
             for control in (
                 "expectation_output_lesion", "expectation_learning_lesion"
             )
         ),
         "intact_omission_recruits_lhb_rmtg_and_dopamine_dip": bool(
-            intact_omission["outcome"]["lhb"] > 0
-            and intact_omission["outcome"]["rmtg"] > 0
-            and intact_omission["dopamine_dip_depth"] > 0.0
+            mean("omission", "output_intact", 0, "outcome", "lhb") > 0.0
+            and mean("omission", "output_intact", 0, "outcome", "rmtg") > 0.0
+            and omission_dip["output_intact"] > 0.0
         ),
         "omission_lesions_remove_80pct_lhb_and_rmtg": all(
-            omission[control]["outcome"][region]
-            <= 0.20 * intact_omission["outcome"][region]
+            mean("omission", control, 0, "outcome", region)
+            <= 0.20 * mean(
+                "omission", "output_intact", 0, "outcome", region
+            )
             for control in (
                 "expectation_output_lesion", "expectation_learning_lesion"
             )
@@ -759,6 +896,11 @@ def run_output_smoke(*, seed: int = SMOKE_SEED) -> dict[str, object]:
         ),
         "omission_lesions_remove_half_dopamine_dip": all(
             value <= 0.50 for value in omission_dip_retained.values()
+        ),
+        "untrained_action_expectation_does_not_exceed_trained_action": all(
+            expectation(probe, "output_intact", 1, 1)
+            <= expectation(probe, "output_intact", 0, 0)
+            for probe in probes
         ),
         "training_plasticity_is_confined": all(
             condition["changed_training_outside_declared_routes"] == 0
@@ -777,25 +919,42 @@ def run_output_smoke(*, seed: int = SMOKE_SEED) -> dict[str, object]:
             "expected_count": 6,
         },
         {
-            "name": "all_probes_execute_the_trained_action",
-            "ok": checks["all_probes_execute_trained_action_zero"],
-            "observed": {
-                name: condition["probe_row"]["winner"]
-                for name, condition in conditions.items()
-            },
-            "expected": 0,
+            "name": "matched_four_probe_action_sequences",
+            "ok": matched_sequences,
+            "observed": action_sequences,
+            "expected": "identical across lesions within each probe type",
         },
         {
-            "name": "probe_weights_remain_frozen",
-            "ok": checks["probe_weights_are_frozen"],
+            "name": "both_actions_sampled_in_every_condition",
+            "ok": both_actions_sampled,
             "observed": {
-                name: condition["probe_weights_unchanged"]
-                for name, condition in conditions.items()
+                probe: {
+                    mode: {
+                        str(action): len(selected[probe][mode][action])
+                        for action in CHANNELS
+                    }
+                    for mode in modes
+                }
+                for probe in probes
             },
-            "expected": True,
+            "expected": "at least one row for each action",
         },
     ]
     prerequisites_hold = all(item["ok"] for item in preconditions)
+    protocol_check_names = (
+        "reserved_seed_only",
+        "formal_execution_remains_sealed",
+        "locked_center_two_only",
+        "all_conditions_train_with_output_closed",
+        "probe_output_gates_match_lesions",
+        "baseline_expectation_is_zero",
+        "all_training_actions_are_clean",
+        "fixed_four_probe_blocks",
+        "reward_probe_is_delivered_and_omission_is_withheld",
+        "training_plasticity_is_confined",
+        "probe_weights_are_frozen",
+    )
+    protocol_holds = all(checks[name] for name in protocol_check_names)
     xp, _ = get_backend()
     return {
         "artifact_schema_version": 1,
@@ -810,16 +969,21 @@ def run_output_smoke(*, seed: int = SMOKE_SEED) -> dict[str, object]:
         ),
         "host_boundary": dict(HOST_BOUNDARY),
         "conditions": conditions,
+        "probe_action_sequences": action_sequences,
+        "action_conditioned_means": action_conditioned_means,
         "reward_suppression_fraction": reward_suppression,
         "omission_dip_retained_fraction": omission_dip_retained,
         "preconditions": preconditions,
+        "protocol_check_names": list(protocol_check_names),
         "checks": checks,
         "status": (
-            "OUTPUT_PASS"
-            if prerequisites_hold and all(checks.values())
-            else "OUTPUT_FAIL"
-            if prerequisites_hold
+            "OUTPUT_FAIL"
+            if not protocol_holds
             else "UNDEFINED"
+            if not prerequisites_hold
+            else "OUTPUT_PASS"
+            if all(checks.values())
+            else "OUTPUT_FAIL"
         ),
     }
 

@@ -137,64 +137,244 @@ def test_output_result_requires_reward_and_omission_causality(gate, monkeypatch)
         intact = mode == "output_intact"
         learned = mode != "expectation_learning_lesion"
         output_open = mode != "expectation_output_lesion"
-        expectation = [30, 5] if learned else [0, 0]
-        row = {
-            "winner": 0,
-            "reward_delivered": probe == "reward",
-            "delay": {"expectation": expectation},
-            "gabab_snc_before_outcome_mean": 1.0 if intact else 0.0,
-            "dopamine_burst_depth": 0.5 if intact else 1.0,
-            "dopamine_dip_depth": 0.5 if intact and probe == "omission" else 0.0,
-            "outcome": {
-                "snc": 5 if intact else 10,
-                "lhb": 10 if intact and probe == "omission" else 0,
-                "rmtg": 10 if intact and probe == "omission" else 0,
-            },
-        }
+        rows = []
+        for index, action in enumerate((1, 0, 0, 1)):
+            expectation = (
+                ([0.24, 0.04] if index == 1 else [0.36, 0.06])
+                if learned and action == 0
+                else [0, 0.03] if learned
+                else [0, 0]
+            )
+            if mode == "expectation_learning_lesion" and action == 0:
+                expectation = [0.04, 0] if index == 1 else [0.08, 0]
+            rows.append({
+                "winner": action,
+                "reward_delivered": probe == "reward" and action == 0,
+                "delay": {"expectation": expectation},
+                "gabab_snc_before_outcome_mean": (
+                    (0.5 if index == 1 else 1.5)
+                    if intact and action == 0 else 0.0
+                ),
+                "dopamine_burst_depth": (
+                    (0.4 if index == 1 else 0.6)
+                    if intact and action == 0
+                    else (0.8 if index == 1 else 1.2)
+                    if action == 0
+                    else 99.0
+                ),
+                "dopamine_dip_depth": (
+                    (0.4 if index == 1 else 0.6)
+                    if intact and probe == "omission" and action == 0
+                    else 99.0 if action == 1 else 0.0
+                ),
+                "outcome": {
+                    "snc": (
+                        (4 if index == 1 else 6)
+                        if intact and action == 0
+                        else (8 if index == 1 else 12)
+                        if action == 0
+                        else 999
+                    ),
+                    "lhb": (
+                        (8 if index == 1 else 12)
+                        if intact and probe == "omission" and action == 0
+                        else 999 if action == 1 else 0
+                    ),
+                    "rmtg": (
+                        (8 if index == 1 else 12)
+                        if intact and probe == "omission" and action == 0
+                        else 999 if action == 1 else 0
+                    ),
+                },
+            })
         return {
             "mode": mode,
             "probe": probe,
             "plateau_center": 2.0,
             "expectation_output_gate_during_training": 0.0,
             "expectation_output_gate_during_probe": 1.0 if output_open else 0.0,
+            "baseline_probe": {"delay": {"expectation": [0, 0]}},
             "clean_training_trials": 12,
             "changed_training_outside_declared_routes": 0,
             "probe_weights_unchanged": True,
-            "probe_row": row,
+            "probe_rows": rows,
         }
 
     monkeypatch.setattr(gate, "run_output_condition", condition)
     result = gate.run_output_smoke()
     assert all(item["ok"] for item in result["preconditions"])
     assert result["status"] == "OUTPUT_PASS", result["checks"]
+    means = result["action_conditioned_means"]["reward"]["output_intact"]
+    assert means["0"]["delay_expectation"] == pytest.approx([0.3, 0.05])
+    assert means["0"]["dopamine_burst_depth"] == pytest.approx(0.5)
+    assert means["0"]["outcome"]["snc"] == pytest.approx(5.0)
+    assert result["reward_suppression_fraction"] == {
+        "expectation_output_lesion": pytest.approx(0.5),
+        "expectation_learning_lesion": pytest.approx(0.5),
+    }
 
 
-def test_output_is_undefined_when_fixed_probe_selects_other_action(gate, monkeypatch):
+def test_output_is_undefined_when_block_samples_only_other_action(gate, monkeypatch):
     def condition(mode, probe, *, seed):
+        row = {
+            "winner": 1,
+            "reward_delivered": False,
+            "delay": {"expectation": [0, 0]},
+            "gabab_snc_before_outcome_mean": 0.0,
+            "dopamine_burst_depth": 0.0,
+            "dopamine_dip_depth": 0.0,
+            "outcome": {"snc": 0, "lhb": 0, "rmtg": 0},
+        }
         return {
             "mode": mode,
             "probe": probe,
             "plateau_center": 2.0,
             "expectation_output_gate_during_training": 0.0,
-            "expectation_output_gate_during_probe": 0.0,
+            "expectation_output_gate_during_probe": (
+                0.0 if mode == "expectation_output_lesion" else 1.0
+            ),
+            "baseline_probe": {"delay": {"expectation": [0, 0]}},
             "clean_training_trials": 12,
             "changed_training_outside_declared_routes": 0,
             "probe_weights_unchanged": True,
-            "probe_row": {
-                "winner": 1,
-                "reward_delivered": False,
-                "delay": {"expectation": [0, 0]},
-                "gabab_snc_before_outcome_mean": 0.0,
-                "dopamine_burst_depth": 0.0,
-                "dopamine_dip_depth": 0.0,
-                "outcome": {"snc": 0, "lhb": 0, "rmtg": 0},
-            },
+            "probe_rows": [dict(row) for _ in range(4)],
         }
 
     monkeypatch.setattr(gate, "run_output_condition", condition)
     result = gate.run_output_smoke()
     assert not all(item["ok"] for item in result["preconditions"])
     assert result["status"] == "UNDEFINED"
+
+
+def test_output_is_undefined_when_lesions_change_action_sequence(gate, monkeypatch):
+    def condition(mode, probe, *, seed):
+        sequence = (
+            (1, 0, 0, 1)
+            if mode != "expectation_output_lesion"
+            else (0, 1, 0, 1)
+        )
+        rows = [{
+            "winner": action,
+            "reward_delivered": probe == "reward" and action == 0,
+            "delay": {"expectation": [10, 0]},
+            "gabab_snc_before_outcome_mean": 0.0,
+            "dopamine_burst_depth": 0.0,
+            "dopamine_dip_depth": 0.0,
+            "outcome": {"snc": 0, "lhb": 0, "rmtg": 0},
+        } for action in sequence]
+        return {
+            "mode": mode,
+            "probe": probe,
+            "plateau_center": 2.0,
+            "expectation_output_gate_during_training": 0.0,
+            "expectation_output_gate_during_probe": (
+                0.0 if mode == "expectation_output_lesion" else 1.0
+            ),
+            "baseline_probe": {"delay": {"expectation": [0, 0]}},
+            "clean_training_trials": 12,
+            "changed_training_outside_declared_routes": 0,
+            "probe_weights_unchanged": True,
+            "probe_rows": rows,
+        }
+
+    monkeypatch.setattr(gate, "run_output_condition", condition)
+    result = gate.run_output_smoke()
+    assert not all(item["ok"] for item in result["preconditions"])
+    assert result["status"] == "UNDEFINED"
+
+
+def test_output_protocol_failure_precedes_undefined_sampling(gate, monkeypatch):
+    def condition(mode, probe, *, seed):
+        row = {
+            "winner": 1,
+            "reward_delivered": True,
+            "delay": {"expectation": [0, 0]},
+            "gabab_snc_before_outcome_mean": 0.0,
+            "dopamine_burst_depth": 0.0,
+            "dopamine_dip_depth": 0.0,
+            "outcome": {"snc": 0, "lhb": 0, "rmtg": 0},
+        }
+        return {
+            "mode": mode,
+            "probe": probe,
+            "plateau_center": 2.0,
+            "expectation_output_gate_during_training": (
+                1.0 if mode == "output_intact" else 0.0
+            ),
+            "expectation_output_gate_during_probe": (
+                0.0 if mode == "expectation_output_lesion" else 1.0
+            ),
+            "baseline_probe": {"delay": {"expectation": [0, 0]}},
+            "clean_training_trials": 12,
+            "changed_training_outside_declared_routes": 0,
+            "probe_weights_unchanged": True,
+            "probe_rows": [dict(row) for _ in range(3)],
+        }
+
+    monkeypatch.setattr(gate, "run_output_condition", condition)
+    result = gate.run_output_smoke()
+    assert not result["checks"]["all_conditions_train_with_output_closed"]
+    assert not result["checks"]["fixed_four_probe_blocks"]
+    assert not result["checks"][
+        "reward_probe_is_delivered_and_omission_is_withheld"
+    ]
+    assert not all(item["ok"] for item in result["preconditions"])
+    assert result["status"] == "OUTPUT_FAIL"
+
+
+def test_fractional_learning_lesion_threshold_has_no_one_spike_floor(
+    gate, monkeypatch
+):
+    def condition(mode, probe, *, seed):
+        rows = []
+        for action in (1, 0, 0, 1):
+            expectation = (
+                [0.1, 0.0]
+                if mode == "expectation_learning_lesion" and action == 0
+                else [0.3, 0.05]
+                if action == 0
+                else [0.0, 0.03]
+            )
+            intact_action = mode == "output_intact" and action == 0
+            rows.append({
+                "winner": action,
+                "reward_delivered": probe == "reward" and action == 0,
+                "delay": {"expectation": expectation},
+                "gabab_snc_before_outcome_mean": (
+                    1.0 if intact_action else 0.0
+                ),
+                "dopamine_burst_depth": 0.5 if intact_action else 1.0,
+                "dopamine_dip_depth": (
+                    0.5 if intact_action and probe == "omission" else 0.0
+                ),
+                "outcome": {
+                    "snc": 5 if intact_action else 10,
+                    "lhb": 10 if intact_action and probe == "omission" else 0,
+                    "rmtg": 10 if intact_action and probe == "omission" else 0,
+                },
+            })
+        return {
+            "mode": mode,
+            "probe": probe,
+            "plateau_center": 2.0,
+            "expectation_output_gate_during_training": 0.0,
+            "expectation_output_gate_during_probe": (
+                0.0 if mode == "expectation_output_lesion" else 1.0
+            ),
+            "baseline_probe": {"delay": {"expectation": [0, 0]}},
+            "clean_training_trials": 12,
+            "changed_training_outside_declared_routes": 0,
+            "probe_weights_unchanged": True,
+            "probe_rows": rows,
+        }
+
+    monkeypatch.setattr(gate, "run_output_condition", condition)
+    result = gate.run_output_smoke()
+    assert all(item["ok"] for item in result["preconditions"])
+    assert not result["checks"][
+        "learning_lesion_removes_80pct_of_probe_expectation"
+    ]
+    assert result["status"] == "OUTPUT_FAIL"
 
 
 def test_cli_rejects_nonreserved_seed(gate):
