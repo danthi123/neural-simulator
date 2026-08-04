@@ -14,6 +14,19 @@
   "origins": ["numpy", "cupy"],
   "execution_backends": ["numpy", "cupy"],
   "modes": ["default", "deterministic_transpose_matvec"],
+  "expected_matrix_cells": 8,
+  "network": {
+    "source_region": {"name": "inhibitory_source", "n_neurons": 20},
+    "target_region": {"name": "gpi_snr", "n_neurons": 40},
+    "target_intrinsic_current_pA": 100.0,
+    "pathway": {
+      "density": 1.0,
+      "weight_mean": 8.0,
+      "weight_jitter": 0.0,
+      "plastic": false,
+      "receptor": "gaba_a"
+    }
+  },
   "steps": {
     "baseline": 500,
     "inhibition": 200,
@@ -30,5 +43,11 @@
     "csr_data", "csr_indices", "csr_indptr"
   ],
   "required_trajectory_arrays": ["v", "u", "g_e", "g_i", "spikes"],
+  "required_state_scope": "all_allocated_cp_ndarrays",
+  "comparison_tolerance": {
+    "continuous_rtol": 1e-6,
+    "continuous_atol": 1e-6,
+    "spikes": "exact"
+  },
   "verdict": "DIAGNOSTIC_ONLY"
 }

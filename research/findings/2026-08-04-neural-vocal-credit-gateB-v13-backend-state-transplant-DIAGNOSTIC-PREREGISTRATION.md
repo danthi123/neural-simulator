@@ -19,6 +19,21 @@ This diagnostic resolves that ambiguity before corrected calibration. It has
 no promotion value, cannot rescue the invalid calibration or replication, and
 must not execute seeds `1013`, `1019`, `1021`, or `1031`.
 
+## Pre-execution schema clarification
+
+Before any diagnostic cell executed, implementation review fixed two omitted
+machine-readable details. Continuous trajectories use `rtol = 1e-6` and
+`atol = 1e-6` for the separately reported tolerance divergence; byte-exact
+divergence is still reported independently and spikes remain exact. The bundle
+must capture every allocated `cp_` ndarray, not only the named minimum arrays.
+The comparison artifact must reject anything other than the complete eight
+unique origin/backend/mode cells. These additions select no result and weaken
+no criterion.
+
+The diagnostic intentionally replays the observed `100 pA` condition solely to
+explain the archived backend difference. That value has no calibration or
+promotion status and must be selected again from the full ladder later.
+
 ## Locked diagnostic seed
 
 Use seed `7606856`. It is mechanically derived by taking SHA-256 of:
@@ -56,7 +71,8 @@ release. GPi/SNr external current remains exactly zero.
 Archive full per-neuron `v`, `u`, `g_e`, `g_i`, and spike state after every
 step, with canonical hashes for each trajectory and each individual step.
 Record the first exact and first tolerance-exceeding divergence for every pair
-sharing a bundle and mode. Also compare complete spike rasters, phase rates,
+sharing a bundle and mode, using the locked tolerance above. Also compare
+complete spike rasters, phase rates,
 suppression ratios, source spike schedule, immutable weights/intrinsic current,
 and the two origin bundles' exact parameter arrays and topology.
 
