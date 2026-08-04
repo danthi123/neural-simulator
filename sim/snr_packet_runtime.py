@@ -23,6 +23,10 @@ from sim.snr_executable_packet import (
     load_packet_file,
     materialize_packet,
 )
+from sim.snr_packet_parameters import (
+    SNrPacketParameters,
+    materialize_runtime_parameters,
+)
 
 
 RUNTIME_BINDING_SCHEMA = "snr-runtime-packet-binding-v1"
@@ -41,6 +45,7 @@ class RuntimeSNrPacketBinding:
     authority_policy_sha256: str
     config_sha256: str
     materialized: MaterializedPacket
+    runtime_parameters: SNrPacketParameters
     schema_version: str = RUNTIME_BINDING_SCHEMA
 
 
@@ -243,6 +248,7 @@ def load_runtime_snr_packet_bindings(
             authority_policy_sha256=policy_sha256,
             config_sha256=config_sha256,
             materialized=materialized,
+            runtime_parameters=materialize_runtime_parameters(materialized),
         )
     return MappingProxyType(bindings)
 

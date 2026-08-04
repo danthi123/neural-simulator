@@ -481,6 +481,184 @@ def fused_snr_conductance_update(
     )
 
 
+@fuse()
+def fused_snr_packet_conductance_update(
+    V,
+    nap_activation_old,
+    nap_inactivation_old,
+    cav22_activation_old,
+    cav22_inactivation_old,
+    calcium_old_um,
+    sk_activation_old,
+    hcn_activation_old,
+    dt_ms,
+    nap_activation_half_mv,
+    nap_activation_slope_mv,
+    nap_activation_tau_min_ms,
+    nap_activation_tau_max_ms,
+    nap_activation_tau_half_mv,
+    nap_activation_tau_sigma_0_mv,
+    nap_activation_tau_sigma_1_mv,
+    nap_inactivation_half_mv,
+    nap_inactivation_slope_mv,
+    nap_inactivation_tau_min_ms,
+    nap_inactivation_tau_max_ms,
+    nap_inactivation_tau_half_mv,
+    nap_inactivation_tau_sigma_0_mv,
+    nap_inactivation_tau_sigma_1_mv,
+    cav22_activation_half_mv,
+    cav22_activation_slope_mv,
+    cav22_activation_tau_ms,
+    cav22_inactivation_half_mv,
+    cav22_inactivation_slope_mv,
+    cav22_inactivation_tau_ms,
+    cav22_activation_power,
+    hcn_activation_half_mv,
+    hcn_activation_slope_mv,
+    hcn_activation_tau_ms,
+    calcium_baseline_um,
+    calcium_decay_tau_ms,
+    calcium_influx_um_per_ms_per_inward_ua_per_cm2,
+    sk_half_activation_um,
+    sk_hill_coefficient,
+    sk_activation_tau_ms,
+    sk_deactivation_tau_ms,
+    g_nalcn_max,
+    g_nap_max,
+    g_cav22_max,
+    g_sk_max,
+    g_hcn_max,
+    E_nalcn,
+    E_na,
+    E_ca,
+    E_k,
+    E_hcn,
+):
+    """Advance a fully packet-parameterized SNr conductance bundle.
+
+    All kinetics supplied here are already Q10-adjusted effective values.
+    Every parameter may be a scalar or a per-neuron array.  The equations are
+    deliberately the elementwise counterparts of ``snr_channel_parameters``:
+    Phillips NaP time constants, exact first-order gates, physical calcium
+    concentration decay/influx, and direction-dependent SK kinetics.
+    """
+    # NaP activation and inactivation use the Phillips voltage-dependent tau
+    # expression directly rather than the fixed Stage-A fallback constants.
+    nap_activation_inf = 1.0 / (
+        1.0 + cp.exp(-(V - nap_activation_half_mv) / nap_activation_slope_mv)
+    )
+    nap_inactivation_inf = 1.0 / (
+        1.0 + cp.exp(-(V - nap_inactivation_half_mv) / nap_inactivation_slope_mv)
+    )
+    nap_activation_tau = nap_activation_tau_min_ms + (
+        nap_activation_tau_max_ms - nap_activation_tau_min_ms
+    ) / (
+        cp.exp((nap_activation_tau_half_mv - V) / nap_activation_tau_sigma_0_mv)
+        + cp.exp((nap_activation_tau_half_mv - V) / nap_activation_tau_sigma_1_mv)
+    )
+    nap_inactivation_tau = nap_inactivation_tau_min_ms + (
+        nap_inactivation_tau_max_ms - nap_inactivation_tau_min_ms
+    ) / (
+        cp.exp((nap_inactivation_tau_half_mv - V) / nap_inactivation_tau_sigma_0_mv)
+        + cp.exp((nap_inactivation_tau_half_mv - V) / nap_inactivation_tau_sigma_1_mv)
+    )
+    nap_activation = nap_activation_inf + (
+        nap_activation_old - nap_activation_inf
+    ) * cp.exp(-dt_ms / nap_activation_tau)
+    nap_inactivation = nap_inactivation_inf + (
+        nap_inactivation_old - nap_inactivation_inf
+    ) * cp.exp(-dt_ms / nap_inactivation_tau)
+    nap_activation = cp.where(
+        cp.isfinite(nap_activation), cp.clip(nap_activation, 0.0, 1.0), 0.0
+    )
+    nap_inactivation = cp.where(
+        cp.isfinite(nap_inactivation), cp.clip(nap_inactivation, 0.0, 1.0), 0.0
+    )
+
+    cav22_activation_inf = 1.0 / (
+        1.0 + cp.exp(-(V - cav22_activation_half_mv) / cav22_activation_slope_mv)
+    )
+    cav22_inactivation_inf = 1.0 / (
+        1.0 + cp.exp(
+            -(V - cav22_inactivation_half_mv) / cav22_inactivation_slope_mv
+        )
+    )
+    cav22_activation = cav22_activation_inf + (
+        cav22_activation_old - cav22_activation_inf
+    ) * cp.exp(-dt_ms / cav22_activation_tau_ms)
+    cav22_inactivation = cav22_inactivation_inf + (
+        cav22_inactivation_old - cav22_inactivation_inf
+    ) * cp.exp(-dt_ms / cav22_inactivation_tau_ms)
+    cav22_activation = cp.where(
+        cp.isfinite(cav22_activation), cp.clip(cav22_activation, 0.0, 1.0), 0.0
+    )
+    cav22_inactivation = cp.where(
+        cp.isfinite(cav22_inactivation), cp.clip(cav22_inactivation, 0.0, 1.0), 0.0
+    )
+
+    hcn_activation_inf = 1.0 / (
+        1.0 + cp.exp(-(V - hcn_activation_half_mv) / hcn_activation_slope_mv)
+    )
+    hcn_activation = hcn_activation_inf + (
+        hcn_activation_old - hcn_activation_inf
+    ) * cp.exp(-dt_ms / hcn_activation_tau_ms)
+    hcn_activation = cp.where(
+        cp.isfinite(hcn_activation), cp.clip(hcn_activation, 0.0, 1.0), 0.0
+    )
+
+    I_nalcn = g_nalcn_max * (V - E_nalcn)
+    I_nap = g_nap_max * nap_activation * nap_inactivation * (V - E_na)
+    I_cav22 = (
+        g_cav22_max
+        * cp.power(cav22_activation, cav22_activation_power)
+        * cav22_inactivation
+        * (V - E_ca)
+    )
+
+    # Exact calcium step under constant inward current density.  The packet
+    # carries the already materialized physical conversion coefficient in
+    # uM/ms per inward uA/cm2, so no host-side geometry conversion occurs.
+    inward_cav22 = cp.maximum(-I_cav22, 0.0)
+    calcium_target = calcium_baseline_um + (
+        calcium_decay_tau_ms
+        * calcium_influx_um_per_ms_per_inward_ua_per_cm2
+        * inward_cav22
+    )
+    calcium = calcium_target + (calcium_old_um - calcium_target) * cp.exp(
+        -dt_ms / calcium_decay_tau_ms
+    )
+    calcium = cp.where(cp.isfinite(calcium), cp.maximum(calcium, 0.0), 0.0)
+
+    calcium_hill = cp.power(calcium, sk_hill_coefficient)
+    sk_half_hill = cp.power(sk_half_activation_um, sk_hill_coefficient)
+    sk_activation_inf = calcium_hill / (calcium_hill + sk_half_hill)
+    sk_tau_ms = cp.where(
+        sk_activation_inf >= sk_activation_old,
+        sk_activation_tau_ms,
+        sk_deactivation_tau_ms,
+    )
+    sk_activation = sk_activation_inf + (
+        sk_activation_old - sk_activation_inf
+    ) * cp.exp(-dt_ms / sk_tau_ms)
+    sk_activation = cp.where(
+        cp.isfinite(sk_activation), cp.clip(sk_activation, 0.0, 1.0), 0.0
+    )
+
+    I_sk = g_sk_max * sk_activation * (V - E_k)
+    I_hcn = g_hcn_max * hcn_activation * (V - E_hcn)
+    total_ionic_current = I_nalcn + I_nap + I_cav22 + I_sk + I_hcn
+    return (
+        nap_activation,
+        nap_inactivation,
+        cav22_activation,
+        cav22_inactivation,
+        calcium,
+        sk_activation,
+        hcn_activation,
+        total_ionic_current,
+    )
+
+
 def _fusion_memo_key(values):
     """Reproduce CuPy Fusion's dtype/rank key for a fixed argument list."""
     key = []
@@ -548,6 +726,28 @@ def prepare_fused_snr_conductance_update_into(inputs, outputs):
     fused_snr_conductance_update_into(inputs, outputs)
     key = _fusion_memo_key(inputs)
     cached = getattr(fused_snr_conductance_update, "_memo", {}).get(key)
+    if (not isinstance(cached, tuple) or len(cached) != 2
+            or not callable(cached[0]) or cached[1]):
+        raise RuntimeError("unsupported CuPy Fusion cache entry")
+    return cached[0]
+
+
+def fused_snr_packet_conductance_update_into(inputs, outputs):
+    """Run the packet SNr graph into seven states plus current scratch."""
+    if len(outputs) != 8:
+        raise ValueError("packet SNr direct output requires eight arrays")
+    return _run_cupy_fusion_into(
+        fused_snr_packet_conductance_update, inputs, outputs
+    )
+
+
+def prepare_fused_snr_packet_conductance_update_into(inputs, outputs):
+    """Execute packet SNr once and return its signature-specific executor."""
+    inputs = tuple(inputs)
+    outputs = tuple(outputs)
+    fused_snr_packet_conductance_update_into(inputs, outputs)
+    key = _fusion_memo_key(inputs)
+    cached = getattr(fused_snr_packet_conductance_update, "_memo", {}).get(key)
     if (not isinstance(cached, tuple) or len(cached) != 2
             or not callable(cached[0]) or cached[1]):
         raise RuntimeError("unsupported CuPy Fusion cache entry")

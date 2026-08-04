@@ -129,6 +129,7 @@ def test_policy_loaded_once_and_packet_cached_across_two_regions(monkeypatch, tm
     monkeypatch.setattr(runtime, "load_authority_policy_file", load_policy)
     monkeypatch.setattr(runtime, "load_packet_file", load_packet)
     monkeypatch.setattr(runtime, "materialize_packet", materialize)
+    monkeypatch.setattr(runtime, "materialize_runtime_parameters", lambda packet: object())
 
     bindings = runtime.load_runtime_snr_packet_bindings(
         _Config([_region("snr-a"), _region("snr-b")]),
@@ -147,6 +148,7 @@ def test_digests_are_deterministic_for_same_config_and_materialization(monkeypat
     monkeypatch.setattr(runtime, "load_authority_policy_file", lambda *args, **kwargs: object())
     monkeypatch.setattr(runtime, "load_packet_file", lambda *args, **kwargs: executable)
     monkeypatch.setattr(runtime, "materialize_packet", lambda packet, receipt: materialized)
+    monkeypatch.setattr(runtime, "materialize_runtime_parameters", lambda packet: object())
 
     config = _Config([_region("snr")], payload={"z": 2, "a": 1})
     first = runtime.load_runtime_snr_packet_bindings(config, source_root=tmp_path)["snr"]
@@ -187,6 +189,7 @@ def test_returned_binding_mapping_is_immutable(monkeypatch, tmp_path):
     monkeypatch.setattr(runtime, "load_authority_policy_file", lambda *args, **kwargs: object())
     monkeypatch.setattr(runtime, "load_packet_file", lambda *args, **kwargs: executable)
     monkeypatch.setattr(runtime, "materialize_packet", lambda packet, receipt: materialized)
+    monkeypatch.setattr(runtime, "materialize_runtime_parameters", lambda packet: object())
 
     bindings = runtime.load_runtime_snr_packet_bindings(
         _Config([_region("snr")]),
@@ -212,6 +215,7 @@ def test_checkpoint_manifest_is_canonical_and_region_order_independent():
             authority_policy_sha256=_POLICY_DIGEST,
             config_sha256="e" * 64,
             materialized=materialized,
+            runtime_parameters=object(),
         )
 
     first = {"snr-b": binding("snr-b"), "snr-a": binding("snr-a")}

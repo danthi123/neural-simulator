@@ -725,6 +725,34 @@
       "write_set": [
         "tests/test_snr_packet_bridge_binding.py"
       ]
+    },
+    "019fcf1b-cf71-78e1-a01d-c237820cf43c": {
+      "completed_at": "2026-08-04T23:36:00+00:00",
+      "heartbeat_at": "2026-08-04T23:36:00+00:00",
+      "model": "gpt-5.6-terra/high",
+      "next_action": "Controller integrates typed runtime parameters into per-neuron bridge arrays.",
+      "result": "Implemented deep-immutable conversion of all 69 packet leaves, unit conversion, Q10 factors, and physical calcium influx; 13 focused tests passed.",
+      "started_at": "2026-08-04T23:29:00+00:00",
+      "status": "completed",
+      "task": "Complete authenticated SNr runtime parameter conversion",
+      "write_set": [
+        "sim/snr_packet_parameters.py",
+        "tests/test_snr_packet_parameters.py"
+      ]
+    },
+    "019fcf1e-45c2-77b1-a971-5d439ce01d70": {
+      "completed_at": "2026-08-04T23:38:45+00:00",
+      "heartbeat_at": "2026-08-04T23:38:45+00:00",
+      "model": "gpt-5.6-terra/high",
+      "next_action": "Controller integrates the fused packet equations into full-length mixed-region bridge arrays.",
+      "result": "Implemented the fully parameterized fused SNr packet kernel and direct-output adapter; independent equation-oracle tests passed on NumPy and CuPy.",
+      "started_at": "2026-08-04T23:33:00+00:00",
+      "status": "completed",
+      "task": "Fully parameterized fused SNr packet kernel",
+      "write_set": [
+        "sim/kernels.py",
+        "tests/test_snr_packet_kernels.py"
+      ]
     }
   },
   "events": [
@@ -1460,13 +1488,13 @@
     },
     "gateb-v14-channel-kernel-integration": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T23:26:34+00:00",
+      "heartbeat_at": "2026-08-04T23:30:00+00:00",
       "next_action": "Materialize the complete 69-parameter packet surface into mixed-region per-neuron device arrays and expand both SNr execution paths without hardcoded packet kinetics.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "Preserve packet mode as provenance-only until every declared runtime parameter is consumed exactly and schema-v2 checkpoints regenerate immutable arrays.",
       "resource": "local_gpu",
-      "status": "ready",
+      "status": "running",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -1987,5 +2015,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T23:26:34+00:00"
+  "updated_at": "2026-08-04T23:38:45+00:00"
 }

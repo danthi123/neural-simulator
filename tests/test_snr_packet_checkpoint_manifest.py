@@ -163,6 +163,8 @@ def test_packet_checkpoint_reloads_live_artifacts_and_matches_manifest(
         calls_before_load = len(load_calls)
         assert restored.load_checkpoint(str(checkpoint)) is True
         assert restored.snr_packet_bindings["snr"].label == "same"
+        assert restored.region_manager is not None
+        assert list(restored.region_manager.indices("snr")) == [0, 1]
         assert len(load_calls) == calls_before_load + 1
         assert load_calls[-1][1] is tmp_path
     finally:

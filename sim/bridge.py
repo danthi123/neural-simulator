@@ -1662,6 +1662,30 @@ class SimulationBridge:
         )
         return self.cp_inhibitory_clamp_current_pA_equivalent
 
+    def _initialize_region_manager(self, cfg):
+        """Build deterministic region ownership before config-bound artifacts."""
+
+        self.region_manager = None
+        if not (
+            getattr(cfg, "enable_brain_region_framework", False)
+            and getattr(cfg, "brain_regions", None)
+        ):
+            return
+        from sim.regions import RegionManager
+
+        self.region_manager = RegionManager(
+            cfg.brain_regions,
+            getattr(cfg, "region_pathways", []) or [],
+        )
+        seed_val = cfg.seed if cfg.seed >= 0 else 0
+        self.region_manager.initialize(seed=seed_val)
+        cfg.num_neurons = self.region_manager.total_neurons()
+        self._log_console(
+            f"Brain-region framework: {len(cfg.brain_regions)} regions, "
+            f"{cfg.num_neurons} total neurons, "
+            f"{len(getattr(cfg, 'region_pathways', []) or [])} pathways."
+        )
+
     def _initialize_simulation_data(self, called_from_playback_init=False):
         """Initializes or re-initializes all CuPy arrays and simulation state variables."""
         self._log_console(f"Initializing simulation data for model: {self.core_config.neuron_model_type} (3D)... (playback_init: {called_from_playback_init})")
@@ -1755,25 +1779,7 @@ class SimulationBridge:
             # RegionManager BEFORE anything that depends on num_neurons.
             # If brain_regions is non-empty, RegionManager.total_neurons()
             # determines the global neuron count.
-            self.region_manager = None
-            if (getattr(cfg, "enable_brain_region_framework", False)
-                    and getattr(cfg, "brain_regions", None)):
-                from sim.regions import RegionManager
-                self.region_manager = RegionManager(
-                    cfg.brain_regions,
-                    getattr(cfg, "region_pathways", []) or [],
-                )
-                # Use main seed (or 0 default) for deterministic
-                # inhibitory-cell selection.
-                seed_val = cfg.seed if cfg.seed >= 0 else 0
-                self.region_manager.initialize(seed=seed_val)
-                # Override num_neurons to match the regions.
-                cfg.num_neurons = self.region_manager.total_neurons()
-                self._log_console(
-                    f"Brain-region framework: {len(cfg.brain_regions)} regions, "
-                    f"{cfg.num_neurons} total neurons, "
-                    f"{len(getattr(cfg, 'region_pathways', []) or [])} pathways."
-                )
+            self._initialize_region_manager(cfg)
 
             # Authenticate packet-backed scientific parameters before any
             # packet-derived device state can be allocated. These bindings are
@@ -3355,6 +3361,7 @@ class SimulationBridge:
         self.inhibitory_clamp_pathways = ()
         self.inhibitory_clamp_target_regions = ()
         self.snr_packet_bindings = MappingProxyType({})
+        self.region_manager = None
 
         if is_gpu_backend() and 'cupy' in sys.modules:
             try:
@@ -10563,6 +10570,7 @@ class SimulationBridge:
                 self.core_config = core_sim_config_from_dict(
                     loaded_sim_config_dict
                 )
+                self._initialize_region_manager(self.core_config)
                 loaded_packet_trust = packet_trust_reference_document(
                     self.core_config
                 )
