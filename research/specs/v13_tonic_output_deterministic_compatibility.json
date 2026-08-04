@@ -1,0 +1,46 @@
+{
+  "schema": "sim-experiment-spec-v0",
+  "id": "gateB-v13-deterministic-default-off-compatibility",
+  "status": "preregistered",
+  "date": "2026-08-04",
+  "provenance_exempt": "non-executed preregistration protocol; contains no measured result",
+  "authority": "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-deterministic-compatibility-correction-PREREGISTRATION.md",
+  "supersedes_gate_only": "V13 Stage-0 CuPy exact-state compatibility criterion",
+  "baseline_base_revision": "8994b5102",
+  "partitions": {
+    "calibration": [271829, 271831, 271837, 271843, 271849, 271853],
+    "held_out": [271859]
+  },
+  "backends": ["numpy", "cupy"],
+  "source_twins": ["baseline_8994_plus_deterministic_patch", "candidate_v13"],
+  "separate_process_repetitions": 3,
+  "steps": 300,
+  "population_count": 600,
+  "required_core_config": {
+    "deterministic_transpose_matvec": true,
+    "enable_nmda": false
+  },
+  "practice_drive_pA": 250.0,
+  "required_default_state": {
+    "cp_intrinsic_current_pA": null
+  },
+  "required_hashes": ["raster", "v", "u", "g_e", "g_i", "weights", "external"],
+  "acceptance": {
+    "within_source_repeats_exact": true,
+    "candidate_matches_baseline_exact": true,
+    "numeric_tolerance_allowed": false,
+    "seed_replacement_allowed": false
+  },
+  "promotion": {
+    "go_verdict": "DETERMINISTIC_COMPATIBILITY_GO",
+    "opens": "V13 tonic-output Stage-0 calibration seed 1013",
+    "does_not_claim": [
+      "tonic output physiology",
+      "inhibitory recovery",
+      "intrinsic lesion causality",
+      "selector behavior",
+      "learning",
+      "performance"
+    ]
+  }
+}
