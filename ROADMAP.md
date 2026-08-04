@@ -114,9 +114,23 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     GPU smoke showed that local coactivity caused all observed eligibility and
     that both actions could cross first, but every fixed action window later
     expressed the other action too. With no clean single-action trials, policy
-    selectivity remains undefined and learning stays closed. The next design
-    must provide a neural action boundary or post-commit refractory state,
-    without host-forced actions, Python stop-on-winner, or GABA-B tuning.
+    selectivity remained undefined and learning stayed closed. V11 and V12
+    then tested neural action boundaries; neither earned construction GO. V13
+    instead begins with the biological prerequisite V12 lacked: autonomously
+    active GPi/SNr-like output neurons that ordinary inhibition can suppress
+    and that recover without host reset. Its deterministic compatibility gate
+    earned GO across six seeds and both compute backends. However, calibration
+    seed `1013` ran on CPU and GPU concurrently despite a locked CPU-first
+    order, so its apparent calibration GO is procedurally undefined.
+    Replication seed `1019`, launched from that invalid selection, is diagnostic
+    only. Both seeds are consumed; held-out seed `1021` and Stage-1 seed `1031`
+    remain sealed. Backend-native random sampling is the leading explanation
+    for the differing CPU/GPU inhibitory responses because it created different
+    neuron populations from the same integer seed. The next experiment is the
+    preregistered byte-identical state-transplant matrix at diagnostic seed
+    `7606856`. Any required backend-neutral initialization correction follows,
+    then fresh mechanically derived calibration and replication seeds run
+    through the fail-closed controller.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
