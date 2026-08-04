@@ -133,12 +133,14 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     recovery state, and spikes across all 1,200 rows. This closes the backend
     engineering gate, not action-credit calibration. Replacement calibration
     and replication seeds are now fixed by the locked derivation rule. The
-    candidate source, controller configuration, and complete input set are
-    frozen, and a dry readiness check passed without issuing a scientific
-    command or running the simulator. No replacement calibration has run. The
-    next step is NumPy calibration, followed by CuPy only after the CPU result
-    is validated and sealed. Held-out seed `1021` and Stage-1 seed `1031` remain
-    sealed.
+    candidate source, controller configuration, and complete input set were
+    frozen. The replacement NumPy calibration then ran once and found one
+    passing point, `100 pA`, but the chain failed closed before CuPy: file-byte
+    and canonical-JSON digests were conflated, and the provenance sidecar was
+    not included in the evidence seal. Process correction v1 is undefined and
+    its CPU observation is diagnostic only. The next step is a preregistered v2
+    evidence contract with fresh mechanically derived partitions. Held-out seed
+    `1021` and Stage-1 seed `1031` remain sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
