@@ -463,30 +463,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T17:24:16+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
-    {
-      "at": "2026-08-04T17:24:40+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
-      "at": "2026-08-04T17:27:55+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
-    {
-      "at": "2026-08-04T17:27:55+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
-    {
       "at": "2026-08-04T17:31:05+00:00",
       "detail": "running",
       "kind": "lane-update",
@@ -1073,6 +1049,18 @@
       "detail": "ready",
       "kind": "lane-update",
       "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T21:02:34+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T21:02:35+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
     }
   ],
   "lanes": {
@@ -1093,15 +1081,22 @@
     },
     "experiment-controller": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T17:24:16+00:00",
-      "next_action": "Preregister execution dispatch as a separate successor; retain exact arm/manifest/receipt validation and keep seed selection and held-out access outside this controller.",
+      "heartbeat_at": "2026-08-04T21:02:35+00:00",
+      "next_action": "Adaptive candidates now materialize into a derived preregistration before sealing; preserve native candidate-by-arm-by-seed expansion, exact runner reconstruction, result echo, and held-out locking when Stage B becomes executable.",
       "owner": "controller",
       "priority": 1,
       "resource": "local_cpu",
       "status": "completed",
       "write_set": [
+        "tools/experiment.py",
         "tools/experiment_controller.py",
-        "tests/test_experiment_controller.py"
+        "tools/experiment_executor.py",
+        "tools/adaptive_experiment.py",
+        "tests/test_experiment_planner.py",
+        "tests/test_experiment_controller.py",
+        "tests/test_experiment_executor.py",
+        "tests/test_adaptive_experiment.py",
+        "docs/adaptive-experiment.md"
       ]
     },
     "experiment-executor": {
@@ -1199,19 +1194,18 @@
     "gateb-v14-stageA": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T20:30:45+00:00",
-      "next_action": "Write and source-seal the preparation-matched Stage B physiology calibration specification before opening reserved calibration seed 590297.",
+      "heartbeat_at": "2026-08-04T21:02:34+00:00",
+      "next_action": "Resolve the remaining transferred-channel source metadata and SNr parameter-surface gaps, then implement source-derived scorer fixtures; do not write or seal the executable Stage B spec while current_readiness is READINESS_UNDEFINED.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Stage A engineering GO has no physiology effect; retain causal channel lesions and reserved seed partitions in Stage B.",
-      "resource": "local_gpu",
-      "status": "ready",
+      "recovery_action": "Use the corrected direct-versus-pallidal target packet and readiness open-gate list; no calibration or reserved seed may open before READINESS_GO.",
+      "resource": "local_cpu",
+      "status": "running",
       "write_set": [
-        "sim/kernels.py",
-        "sim/bridge.py",
-        "sim/config.py",
-        "tests",
-        "research/findings"
+        "research/specs/v14_snr_stageB_readiness.json",
+        "research/specs/v14_snr_stageB_target_packet.json",
+        "research/findings/2026-08-04-neural-vocal-credit-gateB-v14-stageB-READINESS-PREREGISTRATION.md",
+        "tests/test_v14_stageB_readiness_spec.py"
       ]
     },
     "gpu-execution-efficiency": {
@@ -1489,5 +1483,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T20:30:45+00:00"
+  "updated_at": "2026-08-04T21:02:35+00:00"
 }

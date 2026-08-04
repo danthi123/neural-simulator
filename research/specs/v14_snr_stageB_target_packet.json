@@ -1,0 +1,188 @@
+{
+  "schema": "v14-snr-stageB-target-packet-v1",
+  "status": "readiness-draft-not-executable",
+  "provenance_exempt": "non-executed readiness target packet; contains no measured simulation result",
+  "device": "not_applicable_non_executed_protocol",
+  "mechanism_id": "neural-vocal-action-credit-v14-explicit-snr-pacemaker",
+  "readiness_authority": "research/specs/v14_snr_stageB_readiness.json",
+  "unit_convention": {
+    "source_conductance_density": "S/cm2",
+    "simulator_conductance_density": "mS/cm2",
+    "conversion": "simulator mS/cm2 = source S/cm2 * 1000",
+    "silent_unit_inference_allowed": false
+  },
+  "sources": [
+    {
+      "id": "Simmons-et-al-2018",
+      "citation": "Simmons DV, Higgs MH, Lebby S, Wilson CJ. Predicting responses to inhibitory synaptic input in substantia nigra pars reticulata neurons. J Neurophysiol. 2018;120:2679-2693.",
+      "doi": "10.1152/jn.00535.2018",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6295529/",
+      "catalog_intake": "/home/dant123/Projects/sim-catalog/references/source-90ccd824f762867c-simmons-et-al-2018-predicting-responses-to-inhibitory-synaptic-i.md",
+      "preparation": {
+        "species_age": "mouse, either sex, 60-90 days",
+        "slice": "300 um parasagittal acute slice containing SNr",
+        "temperature": "33-35 C recording; slices stored at 28 C for at least 2 h",
+        "recording_modes": ["gramicidin perforated-patch current clamp", "whole-cell voltage clamp", "conductance clamp"],
+        "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+        "blockers": ["NBQX 5 uM", "CPP 5 uM"]
+      },
+      "source_locator": "Materials and Methods, pp. 2680-2681; Results and Fig. 1-3",
+      "role": "primary adult baseline and direct-pathway inhibition"
+    },
+    {
+      "id": "Simmons-et-al-2020",
+      "citation": "Simmons DV, Higgs MH, Lebby S, Wilson CJ. Indirect pathway control of firing rate and pattern in the substantia nigra pars reticulata. J Neurophysiol. 2020;123:800-814.",
+      "doi": "10.1152/jn.00678.2019",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7052642/",
+      "catalog_intake": "/home/dant123/Projects/sim-catalog/references/source-62386b3450572efe-simmons-et-al-2020-indirect-pathway-control-of-firing-rate-and-p.md",
+      "preparation": {
+        "species_age": "mouse, either sex, 60-90 days",
+        "slice": "300 um parasagittal acute slice containing SNr",
+        "temperature": "33-35 C recording; slices stored at 28 C for at least 2 h",
+        "recording_modes": ["gramicidin perforated-patch current clamp", "whole-cell voltage clamp", "conductance clamp"],
+        "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+        "blockers": ["NBQX 5 uM", "CPP 5 uM"]
+      },
+      "source_locator": "Materials and Methods, pp. 801-802; unitary GPe inputs Fig. 2 and p. 803; barrage/step protocol Fig. 3 and pp. 801, 804",
+      "role": "pallido-nigral conductance, barrage, rate, regularity, and phase response"
+    },
+    {
+      "id": "Lutas-et-al-2016",
+      "citation": "Lutas A, Lahmann C, Soumillon M, Yellen G. The leak channel NALCN controls tonic firing and glycolytic sensitivity of substantia nigra pars reticulata neurons. eLife. 2016;5:e15271.",
+      "doi": "10.7554/eLife.15271",
+      "url": "https://elifesciences.org/articles/15271",
+      "preparation": {
+        "species_age": "male and female mouse, 2-3 weeks at slice recording; Nalcn floxed conditional deletion",
+        "slice": "275 um acute coronal midbrain slice containing SNr",
+        "temperature": "unresolved in current packet",
+        "recording_modes": ["cell-attached spontaneous firing", "whole-cell voltage clamp"],
+        "solution": "see source Materials and methods; exact scoring solution remains to be transcribed",
+        "blockers": "unresolved in current packet"
+      },
+      "source_locator": "Figure 5C and associated source data; Materials and methods, Animals and Acute brain slice preparation",
+      "role": "transferred causal NALCN rate ratio"
+    },
+    {
+      "id": "Atherton-and-Bevan-2005",
+      "citation": "Atherton JF, Bevan MD. Ionic mechanisms underlying autonomous action potential generation in the somata and dendrites of GABAergic substantia nigra pars reticulata neurons in vitro. J Neurosci. 2005.",
+      "doi": "10.1523/JNEUROSCI.1475-05.2005",
+      "role": "transferred sodium, Cav2.2, SK, HCN, AHP, and regularity directions"
+    },
+    {
+      "id": "Ding-Wei-Zhou-2011",
+      "citation": "Ding S, Wei W, Zhou FM. Molecular and functional differences in voltage-activated sodium currents between GABA projection neurons and dopamine neurons in the substantia nigra. J Neurophysiol. 2011.",
+      "doi": "10.1152/jn.00305.2011",
+      "role": "transferred fast, persistent, and resurgent sodium constraints"
+    }
+  ],
+  "accepted_targets": [
+    {
+      "id": "adult-autonomous-rate-support",
+      "source": "Simmons-et-al-2018",
+      "value": {"low": 9.6, "high": 27.8, "mean": 13.6, "sd": 5.7, "n": 11},
+      "units": "spikes/s",
+      "condition": "adult mouse SNr acute slice, autonomous baseline",
+      "uncertainty": "observed sample range plus mean and SD; n=11",
+      "source_locator": "Simmons et al. 2018 Results, baseline sample associated with Fig. 1",
+      "simulator_representation": "population firing rate in spikes/s after autonomous burn-in",
+      "use": "primary calibration support interval, not a universal SNr limit"
+    },
+    {
+      "id": "nalcn-lesion-ratio",
+      "source": "Lutas-et-al-2016",
+      "value": {"intact_hz": 21.0, "intact_sem": 1.3, "intact_n": 45, "lesion_hz": 11.9, "lesion_sem": 0.9, "lesion_n": 43, "lesion_over_intact": 0.567},
+      "units": "spikes/s and ratio",
+      "condition": "juvenile mouse transferred causal constraint",
+      "uncertainty": "source reports SEM; model-derived ratio interval 0.45-0.68 uses first-order independent-group propagation of the two reported SEM values (approximately 95%)",
+      "source_locator": "Lutas et al. 2016 Fig. 5C and source data",
+      "simulator_representation": "lesion/intact autonomous-rate ratio on the same parameter vector",
+      "use": "require persistent firing and lesion/intact ratio 0.45-0.68 as an explicitly model-derived tolerance; do not infer adult density"
+    },
+    {
+      "id": "adult-direct-pathway-ipsg",
+      "source": "Simmons-et-al-2018",
+      "value": {"peak": 2.0, "rise": 1.3, "decay": 5.0},
+      "units": {"peak": "nS", "rise": "ms", "decay": "ms"},
+      "condition": "adult mouse direct-pathway-like dynamic-clamp waveform",
+      "uncertainty": "fixed experimental stimulus waveform; not a population confidence interval",
+      "source_locator": "Simmons et al. 2018 conductance-clamp protocol",
+      "simulator_representation": "biexponential inhibitory conductance event",
+      "use": "calibration inhibition arm"
+    },
+    {
+      "id": "adult-inhibitory-conductance-support",
+      "source": "Simmons-et-al-2018",
+      "value": {"peak_low": 0.35, "peak_high": 6.4, "rise_mean": 0.9, "rise_sd": 0.3, "decay_mean": 6.2, "decay_sd": 3.4},
+      "units": {"peak": "nS", "rise": "ms", "decay": "ms"},
+      "condition": "adult mouse striato-nigral direct-pathway input; n=10 cells",
+      "uncertainty": "observed peak range; rise and decay values are mean plus/minus SD",
+      "source_locator": "Simmons et al. 2018 optogenetic IPSC measurements, Results/Fig. 3",
+      "simulator_representation": "direct-pathway unitary inhibitory conductance support",
+      "use": "direct-pathway support only; must not define the pallido-nigral barrage"
+    },
+    {
+      "id": "adult-pallidonigral-unitary-support",
+      "source": "Simmons-et-al-2020",
+      "value": {"peak_low": 2.4, "peak_high": 25.1, "rise_low": 0.49, "rise_high": 0.96, "rise_mean": 0.75, "rise_sd": 0.1, "decay_low": 1.7, "decay_high": 6.0, "decay_mean": 3.6, "decay_sd": 0.9},
+      "units": {"peak": "nS", "rise": "ms", "decay": "ms"},
+      "condition": "adult mouse threshold optogenetic GPe-to-SNr unitary input; 17 SNr neurons from 7 mice",
+      "uncertainty": "observed ranges plus reported means and SD for kinetics",
+      "source_locator": "Simmons et al. 2020 p. 803, Fig. 2",
+      "simulator_representation": "pallido-nigral low-frequency unitary inhibitory conductance support",
+      "use": "source support and low-frequency control; not the tonic barrage amplitude"
+    },
+    {
+      "id": "adult-pallidonigral-depressed-barrage",
+      "source": "Simmons-et-al-2020",
+      "value": {"peak_low": 1.6, "peak_high": 2.4, "rise": 0.4, "decay": 2.1, "event_rate": 90.0, "target_rate_reduction_low_percent": 20.0, "target_rate_reduction_high_percent": 50.0},
+      "units": {"peak": "nS", "rise": "ms", "decay": "ms", "event_rate": "events/s"},
+      "condition": "adult mouse dynamic-clamp Poisson GPe barrage; amplitude selected per cell to reduce unperturbed firing by 20-50%; matched-mean step comparator",
+      "uncertainty": "peak range reflects per-cell selected amplitudes; kinetics fixed by protocol",
+      "source_locator": "Simmons et al. 2020 pp. 801 and 804, Fig. 3",
+      "simulator_representation": "Poisson biexponential inhibitory conductance barrage and matched-mean step",
+      "use": "barrage-versus-step calibration and later held-out timing conditions"
+    }
+  ],
+  "directional_targets": [
+    "NaP lesion abolishes sustained autonomous firing or approaches silence; no exact residual-rate cutoff is yet source-sealed",
+    "Cav2.2 lesion weakens the AHP and elevates spike threshold; baseline-rate direction is not a gate",
+    "SK lesion weakens AHP depth and increases irregularity or causes depolarization block; a rate increase is not required",
+    "HCN blockade did not show a statistically significant baseline-rate change in the transferred preparation; no equivalence claim is allowed until a margin is preregistered, and hyperpolarization/recovery is assessed separately",
+    "inhibition suppresses firing and recovery occurs autonomously without state clear or host current",
+    "post-release overshoot remains phase-consistent rather than requiring an intrinsic T-type rebound burst",
+    "pallidal barrage generally suppresses less and increases irregularity more than an equal-mean conductance step"
+  ],
+  "conductance_priors_mS_per_cm2": {
+    "snr_g_nalcn_max": {"low": 0.01, "high": 0.10, "transform": "log"},
+    "snr_g_nap_max": {"low": 0.10, "high": 0.25, "transform": "log"},
+    "snr_g_ca_max": {"low": 0.5, "high": 2.0, "transform": "log"},
+    "snr_g_sk_max": {"low": 0.005, "high": 0.05, "transform": "log"},
+    "snr_g_h_max_baseline": {"low": 0.0, "high": 0.05, "transform": "linear"},
+    "snr_g_h_max_hyperpolarization_sensitivity_max": 0.20
+  },
+  "reversal_priors_mV": {
+    "E_Na": {"low": 45.0, "high": 55.0},
+    "E_K": {"low": -95.0, "high": -85.0},
+    "E_NALCN": {"low": -10.0, "high": 40.0},
+    "E_h": {"low": -35.0, "high": -20.0}
+  },
+  "unresolved_before_executable_spec": [
+    "source-sealed adult AP threshold and width bounds",
+    "source-sealed adult AHP minimum bound",
+    "source-sealed adult CV or CV2 regularity bound",
+    "source-sealed adult capacitance and input-resistance bounds",
+    "operational scorer tolerance for directional lesion effects",
+    "HCN baseline equivalence margin",
+    "calcium concentration units and influx conversion",
+    "SK half-activation and nanodomain coupling",
+    "decision on constant versus dynamic calcium reversal",
+    "SNr-specific fast spike-current and passive-leak parameterization"
+  ],
+  "forbidden_interpretations": [
+    "40-80 Hz is an isolated-slice calibration target",
+    "the NALCN search prior is a measured adult density",
+    "juvenile rat and adult mouse waveforms are one matched preparation",
+    "rate alone establishes the channel mechanism",
+    "BK may be added as a compensating search knob"
+  ]
+}

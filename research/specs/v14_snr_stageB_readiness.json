@@ -1,0 +1,189 @@
+{
+  "schema": "v14-snr-stageB-readiness-v1",
+  "id": "gateB-v14-snr-stageB-readiness",
+  "status": "preregistered-no-scientific-seed",
+  "provenance_exempt": "non-executed readiness protocol; contains no measured simulation result",
+  "device": "not_applicable_non_executed_protocol",
+  "mechanism_id": "neural-vocal-action-credit-v14-explicit-snr-pacemaker",
+  "authority": "research/findings/2026-08-04-neural-vocal-credit-gateB-v14-stageB-READINESS-PREREGISTRATION.md",
+  "parent_lineage": {
+    "stageA_spec": {
+      "path": "research/specs/v14_snr_conductance_stageA_implementation.json",
+      "sha256": "0220c95fabeb29bbeecdb78765755f38c7a2f06b317cb6fcefc064c45514aa7e"
+    },
+    "stageA_engineering_go": {
+      "path": "research/findings/2026-08-04-neural-vocal-credit-gateB-v14-stageA-ENGINEERING-GO.md",
+      "sha256": "62629378ad14c51a6b51f4a0332d38dc33c2f9bf706cb47f3fbfa1b72d42c9c6"
+    },
+    "stageA_performance_candidate_revision": "2c88daaac5c056495412c2a1b6d989372dc63c55",
+    "stageA_compatibility_control_revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+    "stageA_performance_receipt": {
+      "path": "research/findings/raw/v14_stageA_performance_v3_2c88daaac.json",
+      "sha256": "2f8c61b60048240b58d96fe37eb911ff806084ecfd823340808970f06804f4ab"
+    },
+    "biology_review": {
+      "path": "research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md",
+      "sha256": "962b2442b20b80b57e202aa95e503e63ddb1012038882b5868cf767e48ea6ba0"
+    },
+    "research_gate": {
+      "path": "research/findings/2026-08-04-neural-vocal-credit-gateB-v14-explicit-snr-pacemaker-RESEARCH-GATE.md",
+      "sha256": "6ec71460ac2ca66bb3158d67dc9698072834c14fce7d3c72d07b5d836dc09b41"
+    },
+    "target_packet": {
+      "path": "research/specs/v14_snr_stageB_target_packet.json",
+      "sha256": "0e12120dc23580b72c21e81212eeec5c93a3b3007d758516a2c7102211bd63d3"
+    }
+  },
+  "partitions": {
+    "readiness": [],
+    "calibration": [590297],
+    "replication": [979881, 651019, 950955],
+    "held_out": [312588, 787884, 625835],
+    "future_selector": [790326],
+    "historical_v13_forbidden": [1031]
+  },
+  "current_authority": {
+    "allowed_partitions": ["readiness"],
+    "forbidden_partitions": ["calibration", "replication", "held_out", "future_selector", "historical_v13_forbidden"],
+    "scientific_parameter_search": false,
+    "physiology_verdict": false,
+    "promotion_effect": "none"
+  },
+  "current_readiness": {
+    "verdict": "READINESS_UNDEFINED",
+    "open_gates": [
+      "complete preparation metadata and primary-source locators for transferred intrinsic-channel constraints",
+      "resolve or explicitly exclude the missing SNr parameter surface",
+      "implement and validate the physiology scorer and negative fixtures",
+      "complete a seed-free multi-candidate dry run through the committed sealed source",
+      "write and source-seal the separate executable Stage B specification"
+    ]
+  },
+  "preparation_cohorts": [
+    {
+      "id": "adult-mouse-slice-33-35C",
+      "role": "primary calibration autonomous-firing and inhibition cohort",
+      "sources": ["Simmons-et-al-2018", "Simmons-et-al-2020"],
+      "must_not_be_pooled_with": ["juvenile-rat-channel", "juvenile-mouse-NALCN", "system-40-80-Hz"]
+    },
+    {
+      "id": "juvenile-rat-channel",
+      "role": "transferred waveform and channel-direction constraints",
+      "sources": ["Atherton-and-Bevan-2005", "Ding-Wei-Zhou-2011"],
+      "must_not_define": ["adult baseline rate", "adult channel density"]
+    },
+    {
+      "id": "juvenile-mouse-NALCN",
+      "role": "cross-preparation causal ratio constraint",
+      "sources": ["Lutas-et-al-2016"],
+      "must_not_define": ["adult baseline rate", "adult channel density"]
+    },
+    {
+      "id": "system-40-80-Hz",
+      "role": "Stage C continuous-selector contract only",
+      "sources": ["project-V13-contract"],
+      "must_not_be_scored_in": ["Stage-B calibration"]
+    }
+  ],
+  "readiness_gates": [
+    "all parent paths and sha256 values resolve exactly",
+    "preparation target packet records species, age, temperature, recording mode, solution, blockers, metric, uncertainty, source locator, and simulator units",
+    "every numerical acceptance bound has a primary-source locator or is explicitly labelled model-derived",
+    "S/cm2 to mS/cm2 conversions are tested and stored without silent unit inference",
+    "all searched membrane and kinetic parameters are independently representable and population-scoped",
+    "generic HH fast-sodium, potassium, and passive-leak assumptions are either replaced by SNr-scoped parameters or excluded from the scientific claim",
+    "scorer passes source-derived positive fixtures and rejects wrong-sign, rate-only, depolarization-block, hidden-burn-in, and compensation fixtures",
+    "adaptive objective schema supports mechanism calibration without a synthetic behavior objective",
+    "candidate id, parameter digest, and effective parameters are bound through plan, job, runner, receipt, and result",
+    "two same-backend same-partition candidates complete an isolated dry run without ambiguous matching",
+    "valid scientific NO-GO is receipted with process success while infrastructure failure is distinct",
+    "controller enforces NumPy-before-CuPy calibration and seals each transition",
+    "all commands, inputs, outputs, manifests, and stage transitions pass a seed-free dry run"
+  ],
+  "required_parameter_surface": {
+    "already_population_scoped": [
+      "snr_g_nalcn_max",
+      "snr_g_nap_max",
+      "snr_g_ca_max",
+      "snr_g_sk_max",
+      "snr_g_h_max"
+    ],
+    "must_be_resolved_before_calibration": [
+      "SNr-scoped fast sodium density and reversal",
+      "SNr-scoped delayed-rectifier potassium density and reversal",
+      "SNr-scoped passive leak density and reversal",
+      "NaP activation and inactivation kinetics",
+      "Cav2.2-like activation and inactivation kinetics",
+      "Ih activation kinetics and reversal",
+      "calcium influx conversion and decay",
+      "SK calcium half-activation, Hill coefficient, and time constant"
+    ],
+    "fixed_stageA_assumptions_not_yet_measurements": [
+      "constant E_Ca",
+      "arbitrary nonnegative calcium concentration unit",
+      "generic HH spike-current kinetics"
+    ]
+  },
+  "required_arms": [
+    "intact",
+    "nalcn-lesion",
+    "nap-lesion",
+    "cav2.2-lesion",
+    "sk-lesion",
+    "hcn-baseline-lesion",
+    "hcn-hyperpolarization-lesion",
+    "inhibition-source-on",
+    "inhibition-source-off",
+    "release-recovery",
+    "checkpoint-continuation",
+    "default-HH-negative-control",
+    "rate-matched-compensation-control",
+    "wrong-sign-scorer-control"
+  ],
+  "future_search_budget": {
+    "sobol_numpy_intrinsic_exact": 512,
+    "full_population_numpy_exact": 64,
+    "cupy_calibration_exact": 12,
+    "frozen_diverse_survivors": 4,
+    "promotion_rule": "at each tier, retain hard-gate survivors ordered by preregistered normalized objective score descending, then candidate sha256 ascending; evaluate exactly the tier budget or issue scientific NO-GO if fewer survivors exist",
+    "selection_rule": {
+      "space": "all filed search parameters normalized to [0,1] by their preregistered low/high bounds; log-transformed parameters are normalized after log transform",
+      "distance": "Euclidean distance in normalized parameter space",
+      "first": "highest preregistered normalized objective score, candidate sha256 ascending as tie-break",
+      "iteration": "choose the candidate maximizing its minimum distance to the already selected set",
+      "ties": "preregistered normalized objective score descending, then candidate sha256 ascending",
+      "count": 4
+    },
+    "early_stop": "only scientific NO-GO when a tier has fewer survivors than its next exact budget or fewer than four final hard-gate survivors; infrastructure failure is retryable and does not consume the budget",
+    "range_widening_after_results": false,
+    "channel_addition_after_results": false
+  },
+  "future_stage_order": [
+    "readiness-GO",
+    "calibration-seed-590297-NumPy",
+    "calibration-seed-590297-CuPy",
+    "freeze-four-diverse-survivors",
+    "replication-three-seeds-NumPy-on-pool",
+    "replication-three-seeds-CuPy-under-GPU-lease",
+    "replication-GO",
+    "held-out-three-seeds-CuPy-first",
+    "held-out-three-seeds-NumPy-second",
+    "Stage-B-verdict"
+  ],
+  "verdicts": {
+    "READINESS_GO": "every readiness gate passes and a separate executable Stage B specification is source-sealed",
+    "READINESS_UNDEFINED": "any target, unit, parameter, scorer, candidate-binding, receipt, order, or dry-run gate is missing or invalid",
+    "future_CALIBRATION_NO_GO": "a valid receipted fixed-budget search yields fewer than four hard-gate survivors",
+    "future_REPLICATION_NO_GO": "any frozen survivor fails a required replication gate",
+    "future_HELD_OUT_NO_GO": "any frozen survivor fails a required held-out gate",
+    "future_STAGE_B_GO": "all four frozen survivors pass both backends, all replication seeds, all held-out seeds, all causal lesions, checkpoint, integrity, and scorer gates"
+  },
+  "stageB_go_authorizes": "a separate Stage C shared continuous-selector preregistration only",
+  "stageB_go_does_not_establish": [
+    "GPi physiology",
+    "continuous action selection",
+    "local reward credit",
+    "scaffold-ledger closure",
+    "language or conversation"
+  ]
+}
