@@ -155,6 +155,55 @@
         "tools/v14_stageA_performance.py",
         "tests/test_v14_stageA_performance.py"
       ]
+    },
+    "019fcd9b-d966-7473-85dd-fb7a8bf0d743": {
+      "completed_at": "2026-08-04T16:36:59+00:00",
+      "heartbeat_at": "2026-08-04T16:36:59+00:00",
+      "result": "Implemented reviewed parameter-packet to durable catalog/RAG intake with retrievability gate; 22 focused tests passed.",
+      "started_at": "2026-08-04T16:29:58+00:00",
+      "status": "completed",
+      "task": "Implement reviewed research-packet to durable source-intake slice",
+      "write_set": [
+        "tools/research_escalation.py",
+        "tools/rag/source_intake.py",
+        "tests/test_research_escalation.py",
+        "tests/test_rag_source_intake.py"
+      ]
+    },
+    "019fcd9b-f02f-79b3-b515-8f45c37e6c87": {
+      "completed_at": "2026-08-04T16:36:59+00:00",
+      "heartbeat_at": "2026-08-04T16:36:59+00:00",
+      "result": "Implemented sealed deterministic experiment arm materialization, manifest, and receipt validation; 17 focused tests passed.",
+      "started_at": "2026-08-04T16:29:58+00:00",
+      "status": "completed",
+      "task": "Implement sealed experiment arm materialization and manifest contract",
+      "write_set": [
+        "tools/experiment_controller.py",
+        "tests/test_experiment_controller.py"
+      ]
+    },
+    "019fcd9c-0b90-7930-8dd1-d8e69ec70a06": {
+      "completed_at": "2026-08-04T16:54:06+00:00",
+      "heartbeat_at": "2026-08-04T16:54:06+00:00",
+      "result": "Implemented durable offload queue plus lease-aware broker ownership state machine; 19 tests passed; no GPU use.",
+      "started_at": "2026-08-04T16:29:58+00:00",
+      "status": "completed",
+      "task": "Repair local-model lease ownership and request broker contract",
+      "write_set": [
+        "config/local_model_offload.json",
+        "tools/local_model_offload.py",
+        "tests/test_local_model_offload.py",
+        "docs/LOCAL-MODEL-OFFLOAD.md"
+      ]
+    },
+    "019fcdad-3693-7c50-b31c-984632fff7b0": {
+      "completed_at": "2026-08-04T16:54:07+00:00",
+      "heartbeat_at": "2026-08-04T16:54:07+00:00",
+      "result": "Static audit found roughly 20 tiny per-step kernels/copies; ranked in-place HH+SNr fusion then guarded multi-step batching; no files or GPU touched.",
+      "started_at": "2026-08-04T16:48:35+00:00",
+      "status": "completed",
+      "task": "Read-only audit of CPU-bound GPU step execution",
+      "write_set": []
     }
   },
   "events": [
@@ -505,31 +554,187 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T16:29:58+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T16:29:58+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd9b-d966-7473-85dd-fb7a8bf0d743"
+    },
+    {
+      "at": "2026-08-04T16:29:58+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T16:29:58+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd9b-f02f-79b3-b515-8f45c37e6c87"
+    },
+    {
+      "at": "2026-08-04T16:29:58+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T16:29:58+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd9c-0b90-7930-8dd1-d8e69ec70a06"
+    },
+    {
+      "at": "2026-08-04T16:36:59+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd9b-d966-7473-85dd-fb7a8bf0d743"
+    },
+    {
+      "at": "2026-08-04T16:36:59+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T16:36:59+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd9b-f02f-79b3-b515-8f45c37e6c87"
+    },
+    {
+      "at": "2026-08-04T16:36:59+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T16:36:59+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd9c-0b90-7930-8dd1-d8e69ec70a06"
+    },
+    {
+      "at": "2026-08-04T16:36:59+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T16:42:45+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T16:42:45+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd9c-0b90-7930-8dd1-d8e69ec70a06"
+    },
+    {
+      "at": "2026-08-04T16:48:34+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gpu-execution-efficiency"
+    },
+    {
+      "at": "2026-08-04T16:48:35+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcdad-3693-7c50-b31c-984632fff7b0"
+    },
+    {
+      "at": "2026-08-04T16:54:06+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd9c-0b90-7930-8dd1-d8e69ec70a06"
+    },
+    {
+      "at": "2026-08-04T16:54:06+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T16:54:07+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcdad-3693-7c50-b31c-984632fff7b0"
+    },
+    {
+      "at": "2026-08-04T16:54:07+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gpu-execution-efficiency"
+    },
+    {
+      "at": "2026-08-04T17:24:16+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T17:24:16+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T17:24:16+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T17:24:40+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T17:27:55+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T17:27:55+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
     }
   ],
   "lanes": {
     "deep-research-packets": {
-      "agent_id": "019fcd2e-1492-7a72-b737-04bf116cfd38",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-04T14:40:52+00:00",
-      "next_action": "Use handoff-packet with externally researched claims; require explicit review before RP evidence can resolve a gate, then catalog approved sources through source intake.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T17:24:16+00:00",
+      "next_action": "Use reviewed parameter packets for future walls; only accepted claims with durable source intake and passing RAG retrievability may resolve a gate.",
       "owner": "controller",
-      "priority": 2,
-      "resource": "agent_cpu_network",
+      "priority": 1,
+      "resource": "local_cpu",
       "status": "completed",
       "write_set": [
         "tools/research_escalation.py",
-        "tests/test_research_escalation.py"
+        "tools/rag/source_intake.py",
+        "tests/test_research_escalation.py",
+        "tests/test_rag_source_intake.py"
       ]
     },
     "experiment-controller": {
-      "agent_id": "019fcd2e-14c3-7760-a307-2539d41ccbec",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-04T14:41:18+00:00",
-      "next_action": "Review sealed handoff validation; only later add execution integration behind explicit arm materialization, seal, controls, lesions, seed partitions, receipts, and held-out gates.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T17:24:16+00:00",
+      "next_action": "Preregister execution dispatch as a separate successor; retain exact arm/manifest/receipt validation and keep seed selection and held-out access outside this controller.",
       "owner": "controller",
-      "priority": 2,
-      "resource": "local_cpu_plus_pool",
+      "priority": 1,
+      "resource": "local_cpu",
       "status": "completed",
       "write_set": [
         "tools/experiment_controller.py",
@@ -597,47 +802,69 @@
     },
     "gateb-v14-performance": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T16:19:03+00:00",
-      "next_action": "Review and seal the seed-free performance harness, then run the preregistered contemporaneous RTX 3090 matrix under the shared lease.",
+      "heartbeat_at": "2026-08-04T17:27:55+00:00",
+      "next_action": "Execute the sealed 2000-step amended candidate/control/active matrix under the shared RTX 3090 lease; preserve a receipt after every cell.",
       "owner": "controller",
       "priority": 1,
       "resource": "local_gpu",
       "status": "running",
       "write_set": [
+        "research/specs/v14_snr_conductance_stageA_implementation.json",
         "tools/v14_stageA_performance.py",
-        "tests/test_v14_stageA_performance.py"
+        "tests/test_v14_stageA_performance.py",
+        "research/findings/raw/v14_snr_conductance_stageA",
+        "research/findings"
       ]
     },
     "gateb-v14-stageA": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T16:07:19+00:00",
-      "next_action": "Commit and replicate the correctness checkpoint on pool40/41/42, then run the preregistered contemporaneous RTX 3090 performance matrix.",
+      "heartbeat_at": "2026-08-04T17:24:40+00:00",
+      "next_action": "Run the amended preregistered RTX 3090 performance matrix; correctness and mini-PC replication are already complete.",
       "owner": "controller",
       "priority": 1,
-      "resource": "local_cpu_plus_gpu",
+      "resource": "local_gpu",
       "status": "running",
+      "write_set": [
+        "research/specs/v14_snr_conductance_stageA_implementation.json",
+        "tools/v14_stageA_performance.py",
+        "tests/test_v14_stageA_performance.py",
+        "research/findings/raw/v14_snr_conductance_stageA",
+        "research/findings"
+      ]
+    },
+    "gpu-execution-efficiency": {
+      "blocker": "V14 timing workers import the live sim tree; simulator edits before matrix completion would invalidate contemporaneous cells.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T16:54:07+00:00",
+      "next_action": "Preserve the live sim tree until V14 timing completes; then start the fused-kernel equivalence lane.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "After the V14 matrix and receipt are sealed, preregister and implement an opt-in in-place HH+SNr kernel with byte-equivalence and checkpoint controls, then guarded multi-step batching.",
+      "resource": "local_gpu",
+      "status": "blocked",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
-        "sim/regions.py",
         "sim/config.py",
-        "tests/test_snr_conductance_kernels.py",
-        "tests/test_snr_conductance_config.py",
-        "tests/test_snr_conductance_bridge.py",
-        "tools/v14_stageA_default_off_compatibility.py"
+        "tests/test_hh_snr_fused_step.py",
+        "tests/test_hh_snr_fast_path_guards.py"
       ]
     },
     "local-model-offload": {
+      "blocker": "llama.cpp image and model weights are ready, but bounded service validation must not overlap the amended V14 GPU matrix.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T09:50:00+00:00",
-      "next_action": "Keep the service stopped during GPU experiments; use it only for bounded documentation/catalog triage when the lease is free.",
+      "heartbeat_at": "2026-08-04T17:27:55+00:00",
+      "next_action": "Validate the broker and one bounded drafting task immediately after V14 timing.",
       "owner": "controller",
-      "priority": 3,
+      "priority": 2,
+      "recovery_action": "After V14 releases the lease, enable the bounded broker, verify ownership/model identity, process one harmless queued draft, stop service, and inspect the awaiting-review receipt.",
       "resource": "local_gpu_gated",
-      "status": "ready",
+      "status": "blocked",
       "write_set": [
         "config/local_model_offload.json",
-        "tools/local_model_offload.py"
+        "tools/local_model_offload.py",
+        "tests/test_local_model_offload.py",
+        "docs/LOCAL-MODEL-OFFLOAD.md"
       ]
     },
     "plain-language-roadmap": {
@@ -694,5 +921,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T16:19:03+00:00"
+  "updated_at": "2026-08-04T17:27:55+00:00"
 }
