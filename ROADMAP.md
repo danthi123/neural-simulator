@@ -131,9 +131,14 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     flush-to-zero at one subnormal recovery update on step 1,114. The corrected
     strict path preserves that update, and replay v2 is byte-exact for voltage,
     recovery state, and spikes across all 1,200 rows. This closes the backend
-    engineering gate, not action-credit calibration. Replacement calibration and
-    replication seeds must now be derived and opened through the fail-closed
-    controller; held-out and learning seeds remain sealed.
+    engineering gate, not action-credit calibration. Replacement calibration
+    and replication seeds are now fixed by the locked derivation rule. The
+    candidate source, controller configuration, and complete input set are
+    frozen, and a dry readiness check passed without issuing a scientific
+    command or running the simulator. No replacement calibration has run. The
+    next step is NumPy calibration, followed by CuPy only after the CPU result
+    is validated and sealed. Held-out seed `1021` and Stage-1 seed `1031` remain
+    sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
