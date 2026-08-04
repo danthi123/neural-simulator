@@ -14,10 +14,10 @@ MANIFEST=$(mktemp)
 REVISION=$(mktemp)
 FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
-git archive HEAD sim research/__init__.py research/runners experiment tools requirements.txt \
+git archive HEAD sim research/__init__.py research/runners experiment tools tests requirements.txt \
   | tar -x -C "$STAGE"
 (cd "$STAGE" && { \
-  find sim research/runners experiment tools -type f \
+  find sim research/runners experiment tools tests -type f \
     \( -name '*.py' -o -name '*.sh' \) -print0; \
   printf 'research/__init__.py\0'; \
 } | sort -z | xargs -0 sha256sum) > "$MANIFEST"
@@ -44,6 +44,8 @@ for h in "${NODES[@]}"; do
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
   rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
+  rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
+    "$STAGE/tests/" "$h:~/$REMOTE_ROOT/tests/"
   rsync -az "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
   rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
   rsync -az "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
