@@ -1,0 +1,39 @@
+{
+ "run_id": "1785828406-2537444",
+ "runner": "research/runners/_v13_backend_state_transplant.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_v13_backend_state_transplant.py",
+  "--spec",
+  "research/specs/v13_backend_state_transplant.json",
+  "--spec-sha256",
+  "cd29d694d5e4d413167d83f0817532c1e31695ccb0d9a72490e81671c8ff920f",
+  "--run",
+  "--backend",
+  "numpy",
+  "--mode",
+  "default",
+  "--bundle",
+  "research/findings/raw/v13_backend_state_transplant/bundle-cupy.json",
+  "--out",
+  "research/findings/raw/v13_backend_state_transplant/run-cupy-on-numpy-default.json"
+ ],
+ "git_sha": "74f3dcd60",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T03:26:46",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 522.9,
+ "corpus_check_query": "graded affect state persistence magnitude tracking smooth sign crossing active quench_fs clearing eviction re-ignition lesion on the same spiking bridge",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v13_backend_state_transplant/run-cupy-on-numpy-default.json"
+}

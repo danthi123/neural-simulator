@@ -1,0 +1,979 @@
+{
+  "artifact_sha256": "3fc135870cf42434078ea4129364f15be10100abb5f5ed07d89ae935d21d1ae4",
+  "bundles": {
+    "cupy": "1a1b2f30e05d77cffeeb39cc4fdb30defe4f861d47495802f1d4c5a777b7370c",
+    "numpy": "ee2650f6ddadfb57b2fb2ccc83a659f22a1c37767a738b8742a04c51eaf6746e"
+  },
+  "matrix_cell_count": 8,
+  "matrix_cells": [
+    {
+      "artifact_sha256": "23982aa9f89399da844bb0796dc77ed3d3a0bd7d450efbddc9d11c79d0abb98e",
+      "execution_backend": "cupy",
+      "mode": "default",
+      "origin": "cupy"
+    },
+    {
+      "artifact_sha256": "b9aa945fa466f61374529faf0b1d417f4f98d185fa401ebcd4bbd8dc37440c89",
+      "execution_backend": "cupy",
+      "mode": "deterministic_transpose_matvec",
+      "origin": "cupy"
+    },
+    {
+      "artifact_sha256": "105c93e5edb387ade1bf57ca8a0112d0431e91b9bd23669426edcbb86358a999",
+      "execution_backend": "numpy",
+      "mode": "default",
+      "origin": "cupy"
+    },
+    {
+      "artifact_sha256": "6bdf7ea4d083ac79fa42e473771c7edaa43992f724685e948e6507ccc55cd86b",
+      "execution_backend": "numpy",
+      "mode": "deterministic_transpose_matvec",
+      "origin": "cupy"
+    },
+    {
+      "artifact_sha256": "2c837c69204999755342c8fbbf8bd14f1dfd375657046331f5c42122ac302eaa",
+      "execution_backend": "cupy",
+      "mode": "default",
+      "origin": "numpy"
+    },
+    {
+      "artifact_sha256": "3a46a750b6f80b2e04f1a00257bde78eecb96ed4bed852862a392f6b0e19c5f4",
+      "execution_backend": "cupy",
+      "mode": "deterministic_transpose_matvec",
+      "origin": "numpy"
+    },
+    {
+      "artifact_sha256": "5b21c7801c0871c1d3258d6223d4b498945f50e7d621eabb7c018e915c26f196",
+      "execution_backend": "numpy",
+      "mode": "default",
+      "origin": "numpy"
+    },
+    {
+      "artifact_sha256": "c248ba6ac29ee263bd1ece9b6acccded1b3ed7fad16382edbf2473afeb44fb85",
+      "execution_backend": "numpy",
+      "mode": "deterministic_transpose_matvec",
+      "origin": "numpy"
+    }
+  ],
+  "matrix_complete": true,
+  "origin_bundle_comparison": {
+    "full_cp_array_names": [
+      "cp_conductance_g_e",
+      "cp_conductance_g_i",
+      "cp_conductance_g_nmda",
+      "cp_conductance_g_nmda_rise",
+      "cp_external_input_current",
+      "cp_firing_states",
+      "cp_heterogeneity_neuron_mask",
+      "cp_intrinsic_current_pA",
+      "cp_izh_C",
+      "cp_izh_a",
+      "cp_izh_b",
+      "cp_izh_c_reset",
+      "cp_izh_d_increment",
+      "cp_izh_k",
+      "cp_izh_vpeak",
+      "cp_izh_vr",
+      "cp_izh_vt",
+      "cp_membrane_potential_v",
+      "cp_neuron_activity_ema",
+      "cp_neuron_firing_thresholds",
+      "cp_neuron_positions_3d",
+      "cp_neuron_type_ids",
+      "cp_prev_firing_states",
+      "cp_recovery_variable_u",
+      "cp_refractory_timers",
+      "cp_syn_reversal_potential_i_per_neuron",
+      "cp_synapse_action_tag",
+      "cp_synapse_plastic_mask",
+      "cp_synapse_pulse_progress",
+      "cp_synapse_pulse_timers",
+      "cp_traits",
+      "cp_viz_activity_timers"
+    ],
+    "parameter_arrays": {
+      "cp_heterogeneity_neuron_mask": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": null
+      },
+      "cp_intrinsic_current_pA": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": true
+      },
+      "cp_izh_C": {
+        "byte_exact": false,
+        "first_byte_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "first_tolerance_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "within_tolerance": false
+      },
+      "cp_izh_a": {
+        "byte_exact": false,
+        "first_byte_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "first_tolerance_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "within_tolerance": false
+      },
+      "cp_izh_b": {
+        "byte_exact": false,
+        "first_byte_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "first_tolerance_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "within_tolerance": false
+      },
+      "cp_izh_c_reset": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": true
+      },
+      "cp_izh_d_increment": {
+        "byte_exact": false,
+        "first_byte_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "first_tolerance_difference": {
+          "differing_neuron_count": 40,
+          "neuron_indices": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "within_tolerance": false
+      },
+      "cp_izh_k": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": true
+      },
+      "cp_izh_vpeak": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": true
+      },
+      "cp_izh_vr": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": true
+      },
+      "cp_izh_vt": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": true
+      },
+      "cp_neuron_type_ids": {
+        "byte_exact": false,
+        "first_byte_difference": {
+          "differing_neuron_count": 51,
+          "neuron_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            15,
+            16,
+            17,
+            18,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            29,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            45,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "step": 0
+        },
+        "first_tolerance_difference": null,
+        "within_tolerance": null
+      },
+      "cp_syn_reversal_potential_i_per_neuron": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": true
+      },
+      "cp_traits": {
+        "byte_exact": true,
+        "first_byte_difference": null,
+        "first_tolerance_difference": null,
+        "within_tolerance": null
+      }
+    },
+    "topology_checks": {
+      "indices": true,
+      "indptr": true
+    },
+    "topology_exact": true,
+    "weight_data_exact": true
+  },
+  "outcome": "DIAGNOSTIC_MATRIX_COMPLETE",
+  "schema": "v13-backend-state-transplant-aggregate-v1",
+  "seed": 7606856,
+  "source_identity": {
+    "research/runners/_v13_backend_state_transplant.py": "a439b17bf4e0e38716a683d9757af22756f666a54751bf7f5a6400343153a1ac",
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "cf676531b68bb8822c506c81b6c1b4ae1eb7ea8c21bf54ca02eaf923b9a26e43",
+    "sim/backend.py": "a84c20ae59034f8d4e77a2325c33936224cb393b0744287288659a4b92df4db9",
+    "sim/bridge.py": "c4b95159bd2ce8edd6a2607863a3bfee43286a6a1be878193cee792c500433a4",
+    "sim/kernels.py": "acdd398c0450363abddc603d84b748c8f5473f34626e936fdeb2bf4ae97ba73d",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+  },
+  "spec_sha256": "cd29d694d5e4d413167d83f0817532c1e31695ccb0d9a72490e81671c8ff920f",
+  "tolerance": {
+    "atol": 1e-06,
+    "rtol": 1e-06,
+    "spikes": "exact"
+  },
+  "verdict": "DIAGNOSTIC_ONLY",
+  "within_origin_mode_comparisons": {
+    "cupy:default": {
+      "bundle_artifact_sha256": "1a1b2f30e05d77cffeeb39cc4fdb30defe4f861d47495802f1d4c5a777b7370c",
+      "continuous_within_tolerance": false,
+      "first_byte_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            51
+          ],
+          "step": 183
+        },
+        "u": {
+          "differing_neuron_count": 4,
+          "neuron_indices": [
+            21,
+            24,
+            32,
+            34
+          ],
+          "step": 2
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            32
+          ],
+          "step": 4
+        }
+      },
+      "first_byte_exact_divergence": {
+        "differing_neuron_count": 4,
+        "neuron_indices": [
+          21,
+          24,
+          32,
+          34
+        ],
+        "step": 2,
+        "trajectory": "u"
+      },
+      "first_tolerance_divergence": {
+        "differing_neuron_count": 1,
+        "neuron_indices": [
+          32
+        ],
+        "step": 11,
+        "trajectory": "v"
+      },
+      "first_tolerance_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": null,
+        "u": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            32
+          ],
+          "step": 13
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            32
+          ],
+          "step": 11
+        }
+      },
+      "mode": "default",
+      "origin": "cupy",
+      "run_artifacts": {
+        "cupy": "23982aa9f89399da844bb0796dc77ed3d3a0bd7d450efbddc9d11c79d0abb98e",
+        "numpy": "105c93e5edb387ade1bf57ca8a0112d0431e91b9bd23669426edcbb86358a999"
+      },
+      "spikes_exact": false,
+      "tolerance": {
+        "atol": 1e-06,
+        "rtol": 1e-06,
+        "spikes": "exact"
+      },
+      "trajectory_hashes_equal": {
+        "g_e": true,
+        "g_i": true,
+        "spikes": false,
+        "u": false,
+        "v": false
+      }
+    },
+    "cupy:deterministic_transpose_matvec": {
+      "bundle_artifact_sha256": "1a1b2f30e05d77cffeeb39cc4fdb30defe4f861d47495802f1d4c5a777b7370c",
+      "continuous_within_tolerance": false,
+      "first_byte_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            51
+          ],
+          "step": 183
+        },
+        "u": {
+          "differing_neuron_count": 4,
+          "neuron_indices": [
+            21,
+            24,
+            32,
+            34
+          ],
+          "step": 2
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            32
+          ],
+          "step": 4
+        }
+      },
+      "first_byte_exact_divergence": {
+        "differing_neuron_count": 4,
+        "neuron_indices": [
+          21,
+          24,
+          32,
+          34
+        ],
+        "step": 2,
+        "trajectory": "u"
+      },
+      "first_tolerance_divergence": {
+        "differing_neuron_count": 1,
+        "neuron_indices": [
+          32
+        ],
+        "step": 11,
+        "trajectory": "v"
+      },
+      "first_tolerance_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": null,
+        "u": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            32
+          ],
+          "step": 13
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            32
+          ],
+          "step": 11
+        }
+      },
+      "mode": "deterministic_transpose_matvec",
+      "origin": "cupy",
+      "run_artifacts": {
+        "cupy": "b9aa945fa466f61374529faf0b1d417f4f98d185fa401ebcd4bbd8dc37440c89",
+        "numpy": "6bdf7ea4d083ac79fa42e473771c7edaa43992f724685e948e6507ccc55cd86b"
+      },
+      "spikes_exact": false,
+      "tolerance": {
+        "atol": 1e-06,
+        "rtol": 1e-06,
+        "spikes": "exact"
+      },
+      "trajectory_hashes_equal": {
+        "g_e": true,
+        "g_i": true,
+        "spikes": false,
+        "u": false,
+        "v": false
+      }
+    },
+    "numpy:default": {
+      "bundle_artifact_sha256": "ee2650f6ddadfb57b2fb2ccc83a659f22a1c37767a738b8742a04c51eaf6746e",
+      "continuous_within_tolerance": false,
+      "first_byte_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            55
+          ],
+          "step": 184
+        },
+        "u": {
+          "differing_neuron_count": 4,
+          "neuron_indices": [
+            30,
+            33,
+            41,
+            57
+          ],
+          "step": 2
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            40
+          ],
+          "step": 10
+        }
+      },
+      "first_byte_exact_divergence": {
+        "differing_neuron_count": 4,
+        "neuron_indices": [
+          30,
+          33,
+          41,
+          57
+        ],
+        "step": 2,
+        "trajectory": "u"
+      },
+      "first_tolerance_divergence": {
+        "differing_neuron_count": 1,
+        "neuron_indices": [
+          31
+        ],
+        "step": 18,
+        "trajectory": "v"
+      },
+      "first_tolerance_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": null,
+        "u": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            40
+          ],
+          "step": 26
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            31
+          ],
+          "step": 18
+        }
+      },
+      "mode": "default",
+      "origin": "numpy",
+      "run_artifacts": {
+        "cupy": "2c837c69204999755342c8fbbf8bd14f1dfd375657046331f5c42122ac302eaa",
+        "numpy": "5b21c7801c0871c1d3258d6223d4b498945f50e7d621eabb7c018e915c26f196"
+      },
+      "spikes_exact": false,
+      "tolerance": {
+        "atol": 1e-06,
+        "rtol": 1e-06,
+        "spikes": "exact"
+      },
+      "trajectory_hashes_equal": {
+        "g_e": true,
+        "g_i": true,
+        "spikes": false,
+        "u": false,
+        "v": false
+      }
+    },
+    "numpy:deterministic_transpose_matvec": {
+      "bundle_artifact_sha256": "ee2650f6ddadfb57b2fb2ccc83a659f22a1c37767a738b8742a04c51eaf6746e",
+      "continuous_within_tolerance": false,
+      "first_byte_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            55
+          ],
+          "step": 184
+        },
+        "u": {
+          "differing_neuron_count": 4,
+          "neuron_indices": [
+            30,
+            33,
+            41,
+            57
+          ],
+          "step": 2
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            40
+          ],
+          "step": 10
+        }
+      },
+      "first_byte_exact_divergence": {
+        "differing_neuron_count": 4,
+        "neuron_indices": [
+          30,
+          33,
+          41,
+          57
+        ],
+        "step": 2,
+        "trajectory": "u"
+      },
+      "first_tolerance_divergence": {
+        "differing_neuron_count": 1,
+        "neuron_indices": [
+          31
+        ],
+        "step": 18,
+        "trajectory": "v"
+      },
+      "first_tolerance_divergence_by_trajectory": {
+        "g_e": null,
+        "g_i": null,
+        "spikes": null,
+        "u": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            40
+          ],
+          "step": 26
+        },
+        "v": {
+          "differing_neuron_count": 1,
+          "neuron_indices": [
+            31
+          ],
+          "step": 18
+        }
+      },
+      "mode": "deterministic_transpose_matvec",
+      "origin": "numpy",
+      "run_artifacts": {
+        "cupy": "3a46a750b6f80b2e04f1a00257bde78eecb96ed4bed852862a392f6b0e19c5f4",
+        "numpy": "c248ba6ac29ee263bd1ece9b6acccded1b3ed7fad16382edbf2473afeb44fb85"
+      },
+      "spikes_exact": false,
+      "tolerance": {
+        "atol": 1e-06,
+        "rtol": 1e-06,
+        "spikes": "exact"
+      },
+      "trajectory_hashes_equal": {
+        "g_e": true,
+        "g_i": true,
+        "spikes": false,
+        "u": false,
+        "v": false
+      }
+    }
+  }
+}

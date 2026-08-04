@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_state_transplant",
+    "--spec",
+    "research/specs/v13_backend_state_transplant.json",
+    "--spec-sha256",
+    "cd29d694d5e4d413167d83f0817532c1e31695ccb0d9a72490e81671c8ff920f",
+    "--run",
+    "--backend",
+    "numpy",
+    "--mode",
+    "default",
+    "--bundle",
+    "research/findings/raw/v13_backend_state_transplant/bundle-cupy.json",
+    "--out",
+    "research/findings/raw/v13_backend_state_transplant/run-cupy-on-numpy-default.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_backend_state_transplant/run-cupy-on-numpy-default.json",
+    "sha256": "3a52e13cfdd65d06f7cffe4a4d08f23e696d3d78b72c50f554fd5a4448630f71",
+    "size_bytes": 2381060
+  },
+  "device": "CPU-NumPy",
+  "duration_monotonic_ns": 756192806,
+  "ended_utc_ns": 1785828407043047409,
+  "env_allowlist": {
+    "HOME": "/home/dant123",
+    "PATH": "/home/dant123/.codex/packages/standalone/releases/0.146.0-x86_64-unknown-linux-musl/codex-path:/home/dant123/.codex/tmp/arg0/codex-arg0eez5Yq:/home/dant123/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/dant123/.local/bin:/opt/codex-desktop/resources/node-runtime/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/opt/cuda/bin:/var/lib/flatpak/exports/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin:/home/dant123/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/home/dant123/.codex/packages/standalone/releases/0.146.0-x86_64-unknown-linux-musl/bin",
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "local3090",
+  "schema": "sim-execution-receipt-v1",
+  "source": {
+    "file_count": 6,
+    "git_sha": "74f3dcd60ba1e5f866a7639986e1fb96fcbd541b",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_state_transplant/source-manifest.sha256",
+    "manifest_sha256": "4a91ec11cc7023129fb12f75369e9c0e84c7bef1a00322deb11d780d087de7ca",
+    "tree_sha256": "5a91edf380a4125d1b99222d7cc722e2b98e2f527af32b7a7f0185cf6648e6a0"
+  },
+  "started_utc_ns": 1785828406286853251,
+  "status": "success"
+}
