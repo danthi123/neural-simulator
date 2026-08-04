@@ -282,22 +282,30 @@ def collect_resources() -> dict[str, Any]:
     }
 
 
+def agent_lanes_without_live_owner(board: dict[str, Any]) -> list[str]:
+    """Return delegated lanes that are actionable but have no live assigned agent."""
+    lanes = board.get("lanes", {})
+    agents = board.get("agents", {})
+    missing = []
+    for lane_id, lane in lanes.items():
+        if lane.get("status") not in {"ready", "planned", "running"}:
+            continue
+        if lane.get("delegation") != "agent":
+            continue
+        agent_id = lane.get("agent_id")
+        agent = agents.get(agent_id) if isinstance(agent_id, str) else None
+        if not isinstance(agent, dict) or agent.get("status") != "running":
+            missing.append(lane_id)
+    return missing
+
+
 def board_warnings(board: dict[str, Any], resources: dict[str, Any] | None = None) -> list[str]:
     resources = resources or collect_resources()
     now = time.time()
     warnings: list[str] = []
     lanes = board.get("lanes", {})
     agents = board.get("agents", {})
-    ready_agent_lanes = [
-        (lane_id, lane) for lane_id, lane in lanes.items()
-        if lane.get("status") in {"ready", "planned"} and lane.get("delegation") == "agent"
-    ]
-    missing_agent_lanes = []
-    for lane_id, lane in ready_agent_lanes:
-        agent_id = lane.get("agent_id")
-        agent = agents.get(agent_id) if isinstance(agent_id, str) else None
-        if not isinstance(agent, dict) or agent.get("status") != "running":
-            missing_agent_lanes.append(lane_id)
+    missing_agent_lanes = agent_lanes_without_live_owner(board)
     if missing_agent_lanes:
         names = ", ".join(missing_agent_lanes[:4])
         warnings.append(f"AGENT-DISPATCH-REQUIRED: ready disjoint lanes have no active assigned agent ({names})")
@@ -411,6 +419,8 @@ def _lane(args: argparse.Namespace, board: dict[str, Any]) -> None:
         value = getattr(args, name, None)
         if value is not None:
             lane[name] = value
+    if args.delegation is not None and args.delegation != "agent" and args.agent_id is None:
+        lane.pop("agent_id", None)
     if args.priority is not None:
         lane["priority"] = args.priority
     if args.write_set is not None:

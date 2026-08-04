@@ -31,7 +31,7 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | S | finding-status undeclared | — | pre-commit GATE 4 | pre-commit G4 | ✅ BLOCKS (new findings) |
 | X | invalid queued command | — | `pool_queue` argparse validation | execution path | ✅ BLOCKS |
 | Y | job died silently | — | dispatcher exit-status log + heartbeat | execution path | ✅ REPORTS |
-| AP | pending work SERIALISED while dispatchable agents sit unused | — | `gates/agent_parallelism` | registry | ✅ BLOCKS |
+| AP | pending work SERIALISED while dispatchable agents sit unused, including completed agents whose lanes remain falsely `running` | — | `gates/agent_parallelism` | registry; tracked JSON workboard | ✅ BLOCKS |
 | L | CPU lanes starved while work continues elsewhere | — | `gates/lane_starvation` | registry | ✅ BLOCKS |
 | IR | a GO reports a SIZE without a SOURCE (no decomposition) | — | `gates/instrument_required` | registry | ✅ BLOCKS |
 | OP | a run misses an operating-point target recorded in its own artifact | — | `gates/operating_point` | registry | ✅ BLOCKS |

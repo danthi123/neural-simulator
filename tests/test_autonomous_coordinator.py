@@ -8,6 +8,7 @@ from tools.autonomous_coordinator import (
     SCHEMA,
     _default_board,
     _gpu_process_count,
+    agent_lanes_without_live_owner,
     board_warnings,
     collect_resources,
     load_board,
@@ -47,6 +48,48 @@ def test_ready_disjoint_agent_lanes_raise_dispatch_warning():
     warnings = board_warnings(board, _quiet_resources())
     dispatch = [warning for warning in warnings if warning.startswith("AGENT-DISPATCH-REQUIRED")]
     assert dispatch and "experiment-controller" in dispatch[0]
+
+
+def test_running_delegated_lane_with_completed_agent_is_not_treated_as_live():
+    board = _default_board()
+    lane = board["lanes"]["deep-research-packets"]
+    lane.update(status="running", agent_id="agent-1")
+    board["agents"]["agent-1"] = {
+        "status": "completed",
+        "task": "bounded audit",
+        "write_set": ["docs/example.md"],
+        "started_at": board["updated_at"],
+        "heartbeat_at": board["updated_at"],
+    }
+    assert "deep-research-packets" in agent_lanes_without_live_owner(board)
+    warnings = board_warnings(board, _quiet_resources())
+    assert any(
+        warning.startswith("AGENT-DISPATCH-REQUIRED") and "deep-research-packets" in warning
+        for warning in warnings
+    )
+
+
+def test_lane_reassignment_to_controller_clears_stale_agent_id():
+    board = _default_board()
+    lane = board["lanes"]["deep-research-packets"]
+    lane["agent_id"] = "agent-1"
+    args = type("Args", (), {
+        "id": "deep-research-packets",
+        "status": "running",
+        "resource": None,
+        "delegation": "controller",
+        "next_action": None,
+        "owner": "controller",
+        "agent_id": None,
+        "blocker": None,
+        "recovery_action": None,
+        "priority": None,
+        "write_set": None,
+    })()
+    from tools.autonomous_coordinator import _lane
+
+    _lane(args, board)
+    assert "agent_id" not in lane
 
 
 def test_running_lane_without_fresh_heartbeat_is_loud():
