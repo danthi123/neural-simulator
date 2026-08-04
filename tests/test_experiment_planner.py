@@ -101,6 +101,7 @@ def experiment_repo(tmp_path):
     (root / "research/specs").mkdir(parents=True)
     (root / "research/runners").mkdir(parents=True)
     (root / "tools").mkdir()
+    (root / ".gitignore").write_text(".venv/\n__pycache__/\n", encoding="utf-8")
     (root / "tools/helper.py").write_text("VALUE = 1\n", encoding="utf-8")
     runner = root / "research/runners/example.py"
     runner.write_text(

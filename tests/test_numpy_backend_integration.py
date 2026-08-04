@@ -329,7 +329,7 @@ def test_extract_per_pathway_csrs_requires_region_manager():
     _reset_cache_for_tests()
     if "SIM_BACKEND" in os.environ:
         del os.environ["SIM_BACKEND"]
-    xp, name = get_backend("numpy") if "cupy" not in sys.modules else get_backend()
+    xp, name = get_backend("numpy")
     for modname in ("sim.kernels", "sim.connectivity", "sim.bridge"):
         if modname in sys.modules:
             importlib.reload(sys.modules[modname])
