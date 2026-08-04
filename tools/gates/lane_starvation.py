@@ -42,7 +42,6 @@ CLASS_ID = "L"
 BLOCKING = True
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-_WAIVER = os.path.join(_ROOT, "research", "queue", ".lane_waiver")
 MAX_IDLE_LANES = 3          # of the five disjoint CPU lanes
 LANE_WAIVER_MAX_H = 6
 RECENT_DISPATCH_MIN = 45   # a dispatched pool job runs remotely; it serves its lane for this long
@@ -57,6 +56,31 @@ CPU_LANES = {
 }
 
 
+def _shared_queue_root():
+    """Return the checkout whose persistent dispatchers consume the queues."""
+    override = os.environ.get("SIM_QUEUE_ROOT")
+    if override:
+        return os.path.abspath(os.path.expanduser(override))
+    try:
+        common = subprocess.run(
+            ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            cwd=_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=True,
+        ).stdout.strip()
+        if common:
+            return os.path.dirname(common)
+    except Exception:
+        pass
+    return _ROOT
+
+
+def _queue_dir():
+    return os.path.join(_shared_queue_root(), "research", "queue")
+
+
 def _served(text_blobs):
     served = set()
     for ln in text_blobs:
@@ -69,8 +93,9 @@ def _served(text_blobs):
 
 def _work_lines():
     lines = []
-    for rel in ("research/queue/gpu.queue", "research/queue/pool.queue"):
-        p = os.path.join(_ROOT, rel)
+    queue_dir = _queue_dir()
+    for name in ("gpu.queue", "pool.queue"):
+        p = os.path.join(queue_dir, name)
         if os.path.exists(p):
             for l in open(p, errors="ignore").read().split("\n"):
                 l = l.strip()
@@ -85,7 +110,7 @@ def _work_lines():
     # queue and runs remotely, so counting only local processes reported three lanes STARVED while their jobs
     # were actively running on pool40/41 -- the same blindness that made lane_check read one queue of two.
     # dispatch.log records what went out and when; a recent dispatch counts as serving its lane.
-    dl = os.path.join(_ROOT, "research", "queue", "dispatch.log")
+    dl = os.path.join(queue_dir, "dispatch.log")
     if os.path.exists(dl):
         cutoff = time.time() - RECENT_DISPATCH_MIN * 60
         try:
@@ -98,13 +123,14 @@ def _work_lines():
 
 
 def _waiver_active():
-    if not os.path.exists(_WAIVER):
+    waiver = os.path.join(_queue_dir(), ".lane_waiver")
+    if not os.path.exists(waiver):
         return None
-    age_h = (time.time() - os.path.getmtime(_WAIVER)) / 3600.0
+    age_h = (time.time() - os.path.getmtime(waiver)) / 3600.0
     if age_h > LANE_WAIVER_MAX_H:
         return None
     try:
-        return open(_WAIVER, errors="ignore").read().strip()[:120] or "(no reason given)"
+        return open(waiver, errors="ignore").read().strip()[:120] or "(no reason given)"
     except OSError:
         return None
 

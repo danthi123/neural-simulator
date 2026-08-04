@@ -1,12 +1,15 @@
 ---
 type: preregistration
-status: live
+status: retired
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v5-learning
 runner: research/runners/_vocal_action_credit_gate_v5_learning.py
 ---
 
 # Gate B v5 learning: action trace to local reward prediction
+
+> **Retired:** the reserved learning smoke is NO-GO. See
+> [the v5 finding](2026-08-03-neural-vocal-credit-gateB-v5-learning-smoke-NO-GO.md).
 
 **Filed before the learning runner exists and before any scientific seed is
 assigned.** The corrected frozen-dynamics smoke has passed an independent

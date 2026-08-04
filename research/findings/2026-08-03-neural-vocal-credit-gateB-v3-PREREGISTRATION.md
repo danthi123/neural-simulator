@@ -1,12 +1,15 @@
 ---
 type: preregistration
-status: live
+status: retired
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v3
 runner: research/runners/_vocal_action_credit_gate_v3.py
 ---
 
 # Vocal credit Gate B v3: omission error and local critic normalization
+
+> **Retired:** formal calibration is NO-GO. See
+> [the v3 finding](2026-08-03-neural-vocal-credit-gateB-v3-calibration-NO-GO.md).
 
 **Filed before any v3 scientific seed was constructed or run.** Implementation
 checks may use only smoke seed `0`, which is outside every formal partition.

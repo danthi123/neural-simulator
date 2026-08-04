@@ -90,11 +90,12 @@ localized the boundary: neither a complete sparse-route weight ladder nor a
 cells fire before reward. A preregistered dual-afferent successor then tested a
 fixed convergent state input plus separate plastic context. Its weight-2 point
 was subthreshold but silent after learning; every higher point predicted without
-learning and failed the learning-lesion control. The next step is a research
-gate for a genuinely different mechanism that provides graded, learning-
-dependent MSN integration, followed by a new preregistration. Only after learned
-expectation engages will the existing slow GABA-B/GIRK output be tested. Formal
-seeds remain sealed.
+learning and failed the learning-lesion control. The completed evidence gate
+selected the simulator's existing graded dendritic plateau as a genuinely
+different postsynaptic integration mechanism. A bounded v9 reserved-seed smoke
+is preregistered to test centers `16/8/4/2` with causal learning and dendritic-
+route lesions. Only after learned expectation engages will the existing slow
+GABA-B/GIRK output be tested. Formal seeds remain sealed.
 
 In parallel, replay needs a different mechanism after its first target-plateau
 correction failed smoke seed `216` and was retired. Source-monitor v4 is retired

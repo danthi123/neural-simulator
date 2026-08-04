@@ -95,10 +95,12 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     afferent plus a separate plastic context afferent. Its only subthreshold
     point remained silent after learning; every stronger fixed input predicted
     without learning and failed its causal learning-lesion check. That
-    bootstrap is retired without interpolation. The next Gate B step is a new
-    evidence review and preregistration for a biologically distinct form of
-    graded, learning-dependent MSN integration. Formal seeds remain sealed
-    until reserved smoke shows
+    bootstrap is retired without interpolation. A project-record and primary-
+    literature evidence gate selected the existing graded dendritic plateau as
+    a biologically distinct postsynaptic integration mechanism. V9 is
+    preregistered to route only the learned trace-to-expectation synapses
+    through it and test fixed centers `16/8/4/2` with causal learning and
+    dendritic-route lesions. Formal seeds remain sealed until reserved smoke shows
     learned pre-outcome expectation, graded GABA-B suppression, causal omission,
     cross-backend agreement, and an independent audit.
 After local credit is reliable, return to same-brain adaptation,

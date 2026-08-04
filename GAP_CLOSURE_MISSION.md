@@ -59,10 +59,11 @@ up-state afferent plus a separate plastic context afferent. V8 tested that
 dual-afferent architecture at fixed weights `2/4/8/12/16`. Weight `2` remained
 subthreshold but learned no expectation; every higher point produced activity
 without learning, and the learning-lesion control retained or exceeded much of
-the intact activity. V8 is retired without interpolation. The next Gate B step
-is a new evidence gate for a biologically distinct mechanism that provides
-graded, learning-dependent MSN integration; do not reopen v6-v8 ladders.
-Formal phases remain sealed.
+the intact activity. V8 is retired without interpolation. The completed v9
+evidence gate selected the bridge's existing graded dendritic plateau as a
+biologically distinct learned-route integration mechanism, and its bounded
+reserved-seed smoke is preregistered. It changes postsynaptic integration,
+not input weight, population size, or fixed drive. Formal phases remain sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -113,13 +114,12 @@ is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Run a project-record and primary-literature research gate for a biologically
-   distinct way to produce graded, learning-dependent MSN integration. Compare
-   dendritic plateau/clustered-input and locally maintained membrane-state
-   mechanisms against the v6-v8 boundaries. Preregister before code. Do not
-   interpolate or reopen v6-v8 ladders, test downstream GABA-B/omission, or
-   assign formal seeds until learned pre-outcome expectation and its learning
-   lesion both pass.
+1. Build and run the preregistered v9 reserved-seed smoke. Route only the
+   plastic trace-to-expectation synapses through the existing graded dendritic
+   plateau and test centers `16/8/4/2` in descending order, stopping at the
+   first complete pass. Require both learning and expectation-plateau lesions
+   to remove at least 80% of intact pre-outcome expectation. Do not interpolate,
+   reopen v6-v8, test downstream GABA-B/omission, or assign formal seeds.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a
