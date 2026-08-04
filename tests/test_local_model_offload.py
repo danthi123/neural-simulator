@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+import subprocess
+import sys
+import time
 
 from tools import local_model_offload as offload
 
@@ -402,6 +405,81 @@ def test_broker_interrupt_cleans_up_without_reraising(tmp_path: Path) -> None:
     assert result["return_code"] == 130
     assert events == ["spawn", "interrupted", "stop_while_locked"]
     assert not Path(config["ownership_path"]).exists()
+    available = offload.acquire_gpu_lease(Path(config["lease_path"]))
+    assert available is not None
+    offload.release_gpu_lease(available)
+
+
+def test_background_broker_sigterm_runs_cleanup_before_releasing_lease(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    service_pid = tmp_path / "service.pid"
+    config["service_command"] = [
+        "sh", "-c", f"echo $$ > {service_pid}; exec sleep 300"
+    ]
+    config["service_stop_command"] = ["sh", "-c", f"kill $(cat {service_pid})"]
+    config_path = tmp_path / "config.json"
+    offload.write_result(config_path, config)
+
+    process = subprocess.Popen(
+        [sys.executable, str(Path(offload.__file__)), "--config", str(config_path), "broker"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    try:
+        for _ in range(100):
+            if Path(config["ownership_path"]).exists():
+                break
+            time.sleep(0.02)
+        else:
+            raise AssertionError("broker did not publish ownership")
+        assert offload.acquire_gpu_lease(Path(config["lease_path"])) is None
+        process.terminate()
+        stdout, stderr = process.communicate(timeout=5)
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait()
+
+    assert process.returncode == 130
+    assert '"status": "service_interrupted"' in stdout
+    assert stderr == ""
+    assert not Path(config["ownership_path"]).exists()
+    available = offload.acquire_gpu_lease(Path(config["lease_path"]))
+    assert available is not None
+    offload.release_gpu_lease(available)
+
+
+def test_failed_service_stop_quarantines_gpu_lease(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    config["service_command"] = ["true"]
+    config["service_stop_command"] = ["false"]
+    config_path = tmp_path / "config.json"
+    offload.write_result(config_path, config)
+
+    process = subprocess.Popen(
+        [sys.executable, str(Path(offload.__file__)), "--config", str(config_path), "broker"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    try:
+        for _ in range(100):
+            probe = offload.acquire_gpu_lease(Path(config["lease_path"]))
+            if probe is None:
+                break
+            offload.release_gpu_lease(probe)
+            time.sleep(0.02)
+        else:
+            raise AssertionError("broker did not quarantine the GPU lease")
+        time.sleep(0.05)
+        assert process.poll() is None
+        assert offload.acquire_gpu_lease(Path(config["lease_path"])) is None
+    finally:
+        process.kill()
+        _stdout, stderr = process.communicate(timeout=5)
+
+    assert "GPU LEASE QUARANTINED" in stderr
     available = offload.acquire_gpu_lease(Path(config["lease_path"]))
     assert available is not None
     offload.release_gpu_lease(available)

@@ -204,219 +204,169 @@
       "status": "completed",
       "task": "Read-only audit of CPU-bound GPU step execution",
       "write_set": []
+    },
+    "019fcdd3-3734-7ae2-bf0a-57c98596ebb8": {
+      "completed_at": "2026-08-04T17:59:32+00:00",
+      "heartbeat_at": "2026-08-04T17:59:32+00:00",
+      "next_action": "Controller replaces failed draft with exact direct-output invocation of the existing compiled CuPy fusion kernels.",
+      "result": "One-launch RawKernel rejected: exact voltage arithmetic diverged by up to 3.05e-5 mV; assertions remained strict and no benchmark ran.",
+      "started_at": "2026-08-04T17:31:05+00:00",
+      "status": "blocked",
+      "task": "Implement kernel-only fused HH+SNr step and equivalence tests",
+      "write_set": [
+        "sim/kernels.py",
+        "tests/test_hh_snr_fused_step.py"
+      ]
+    },
+    "019fcdd3-cb7c-7691-8c09-6a19097d4444": {
+      "completed_at": "2026-08-04T17:42:37+00:00",
+      "heartbeat_at": "2026-08-04T17:42:37+00:00",
+      "next_action": "Add a live scholarly metadata/full-text discovery adapter and checkpoint each completed remote query; keep all extracted parameter claims pending review.",
+      "result": "Implemented RAG-first parameter-gap planning, durable imported discovery state, DOI/URL deduplication, and pending-review packet export; full-catalog scope corrected; 53 related tests passed.",
+      "started_at": "2026-08-04T17:31:05+00:00",
+      "status": "completed",
+      "task": "Implement autonomous parameter-gap research discovery workflow",
+      "write_set": [
+        "tools/parameter_research.py",
+        "tests/test_parameter_research.py",
+        "tools/research_packet.py",
+        "tests/test_research_packet.py"
+      ]
+    },
+    "019fcdd3-ed7b-7391-932f-10c8d1e33910": {
+      "completed_at": "2026-08-04T17:41:22+00:00",
+      "heartbeat_at": "2026-08-04T17:41:22+00:00",
+      "next_action": "Use executor only with a future sealed experiment expansion; it cannot choose seeds, widen arms, or access held-out partitions.",
+      "result": "Implemented exact sealed-manifest executor; controller review strengthened provenance semantics; 59 related tests passed.",
+      "started_at": "2026-08-04T17:31:05+00:00",
+      "status": "completed",
+      "task": "Implement safe exact-manifest experiment executor",
+      "write_set": [
+        "tools/experiment_executor.py",
+        "tests/test_experiment_executor.py",
+        "tools/experiment_controller.py",
+        "tests/test_experiment_controller.py"
+      ]
+    },
+    "019fcddf-1d7f-7d80-b9e4-16310ebfd1fe": {
+      "completed_at": "2026-08-04T17:47:33+00:00",
+      "heartbeat_at": "2026-08-04T17:47:33+00:00",
+      "next_action": "Controller must connect live responses to durable per-query lead state and add retrieval/review stages before packet export.",
+      "result": "Implemented fixture-tested OpenAlex/Crossref metadata discovery with bounded retry, full-text leads, DOI/URL deduplication, and explicit no-claims evidence boundary; 12 tests passed.",
+      "started_at": "2026-08-04T17:43:05+00:00",
+      "status": "completed",
+      "task": "Implement live scholarly metadata and full-text-lead discovery adapter",
+      "write_set": [
+        "tools/scholarly_discovery.py",
+        "tests/test_scholarly_discovery.py"
+      ]
+    },
+    "019fcde7-5202-7f21-b50d-1785f84172e3": {
+      "completed_at": "2026-08-04T17:56:58+00:00",
+      "heartbeat_at": "2026-08-04T17:56:58+00:00",
+      "next_action": "Add self-digest validation, connect receipts to metadata lead state, then live-test one declared open full-text lead.",
+      "result": "Implemented safe content-addressed full-text retrieval and bounded candidate locator extraction; controller review pending receipt self-digest; 18 tests passed.",
+      "started_at": "2026-08-04T17:52:03+00:00",
+      "status": "completed",
+      "task": "Implement safe scholarly full-text retrieval and parameter locator extraction",
+      "write_set": [
+        "tools/scholarly_fulltext.py",
+        "tests/test_scholarly_fulltext.py"
+      ]
+    },
+    "019fcdf9-de57-7801-b188-fca0e5d6cefa": {
+      "completed_at": "2026-08-04T18:23:00+00:00",
+      "heartbeat_at": "2026-08-04T18:23:00+00:00",
+      "model": "inherited",
+      "next_action": "complete bounded assignment",
+      "result": "Full-text durable state/CLI implementation delivered and under independent review.",
+      "started_at": "2026-08-04T18:14:01+00:00",
+      "status": "completed",
+      "task": "full-text durable workflow/CLI integration",
+      "write_set": [
+        "tools",
+        "tests"
+      ]
+    },
+    "019fcdf9-e31c-71b0-9606-a50a6ef29794": {
+      "completed_at": "2026-08-04T18:16:53+00:00",
+      "heartbeat_at": "2026-08-04T18:16:53+00:00",
+      "model": "inherited",
+      "next_action": "complete bounded assignment",
+      "result": "Found cold-cache scalar key defect; added regression; controller fixed and 13 GPU tests pass.",
+      "started_at": "2026-08-04T18:14:01+00:00",
+      "status": "completed",
+      "task": "independent direct-output exactness and cold-cache review",
+      "write_set": [
+        "tests/test_hh_snr_direct_outputs.py"
+      ]
+    },
+    "019fcdf9-e8a3-7541-83c8-6b19c8daa02b": {
+      "completed_at": "2026-08-04T18:16:53+00:00",
+      "heartbeat_at": "2026-08-04T18:16:53+00:00",
+      "model": "inherited",
+      "next_action": "complete bounded assignment",
+      "result": "Verified local-model image, model, queue, lease, cleanup procedure, and 19 implementation tests; smoke ready.",
+      "started_at": "2026-08-04T18:14:01+00:00",
+      "status": "completed",
+      "task": "local-model isolated smoke readiness audit",
+      "write_set": []
+    },
+    "019fce01-8cb8-7833-8ca9-542cac3c1474": {
+      "completed_at": "2026-08-04T18:23:00+00:00",
+      "heartbeat_at": "2026-08-04T18:23:00+00:00",
+      "model": "inherited",
+      "next_action": "implement CPU-only hardening and tests",
+      "result": "Hardened exact served model identity and clean Ctrl-C cleanup; 23 tests pass.",
+      "started_at": "2026-08-04T18:20:45+00:00",
+      "status": "completed",
+      "task": "local-model ID and clean Ctrl-C hardening",
+      "write_set": [
+        "tools/local_model_offload.py",
+        "config/local_model_offload.json",
+        "tests/test_local_model_offload.py"
+      ]
+    },
+    "019fce01-91a7-7362-bc6e-a30493e38120": {
+      "completed_at": "2026-08-04T18:29:30+00:00",
+      "heartbeat_at": "2026-08-04T18:29:30+00:00",
+      "model": "inherited",
+      "next_action": "implement four bounded fixes and rerun research tests",
+      "result": "Fixed four independent review findings; 89 controller-rerun adjacent tests pass.",
+      "started_at": "2026-08-04T18:20:45+00:00",
+      "status": "completed",
+      "task": "fix full-text validation review findings",
+      "write_set": [
+        "tools/scholarly_fulltext.py",
+        "tools/parameter_research.py",
+        "tests/test_scholarly_fulltext.py",
+        "tests/test_parameter_research.py"
+      ]
+    },
+    "019fce15-7b7f-7e32-ad9d-73587830f58f": {
+      "completed_at": "2026-08-04T19:11:08+00:00",
+      "heartbeat_at": "2026-08-04T19:11:08+00:00",
+      "model": "inherited",
+      "next_action": "report actionable documentation/flow gaps",
+      "result": "Final operability audit found no actionable defects after preflight, interruption, archive, handoff, and cleanup fixes.",
+      "started_at": "2026-08-04T18:42:32+00:00",
+      "status": "completed",
+      "task": "audit local fallback operator usability",
+      "write_set": []
+    },
+    "019fce15-8093-7c11-9e4b-4d5d2001bbf3": {
+      "completed_at": "2026-08-04T19:11:08+00:00",
+      "heartbeat_at": "2026-08-04T19:11:08+00:00",
+      "model": "inherited",
+      "next_action": "report findings to controller",
+      "result": "Final safety audit found no actionable shutdown or isolation defects; quarantine remains deliberately manual recovery.",
+      "started_at": "2026-08-04T18:42:31+00:00",
+      "status": "completed",
+      "task": "audit local-only fallback safety and correctness",
+      "write_set": []
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T09:50:00+00:00",
-      "detail": "Created after the Claude handoff audit; preserve anti-stall and fan-out rules as a machine-readable resume point.",
-      "kind": "workboard-created",
-      "subject": "autonomous-coordinator"
-    },
-    {
-      "at": "2026-08-04T14:14:39+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T14:14:44+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T14:15:24+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd20-193e-7a32-8e32-9a092634580c"
-    },
-    {
-      "at": "2026-08-04T14:15:26+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T14:15:28+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd20-1dc2-7bc0-b5f0-d885202da561"
-    },
-    {
-      "at": "2026-08-04T14:15:31+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T14:15:47+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "rag-freshness"
-    },
-    {
-      "at": "2026-08-04T14:21:05+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd20-193e-7a32-8e32-9a092634580c"
-    },
-    {
-      "at": "2026-08-04T14:21:08+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T14:21:11+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd20-1dc2-7bc0-b5f0-d885202da561"
-    },
-    {
-      "at": "2026-08-04T14:21:14+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T14:24:56+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "rag-freshness"
-    },
-    {
-      "at": "2026-08-04T14:29:53+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd2e-1492-7a72-b737-04bf116cfd38"
-    },
-    {
-      "at": "2026-08-04T14:29:56+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T14:29:58+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd2e-14c3-7760-a307-2539d41ccbec"
-    },
-    {
-      "at": "2026-08-04T14:30:01+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T14:34:31+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T14:34:34+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T14:40:50+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd2e-1492-7a72-b737-04bf116cfd38"
-    },
-    {
-      "at": "2026-08-04T14:40:52+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T14:41:15+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd2e-14c3-7760-a307-2539d41ccbec"
-    },
-    {
-      "at": "2026-08-04T14:41:18+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T14:49:04+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd3f-b01a-7860-924e-d4228f299328"
-    },
-    {
-      "at": "2026-08-04T14:49:07+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "plain-language-roadmap"
-    },
-    {
-      "at": "2026-08-04T14:58:40+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd3f-b01a-7860-924e-d4228f299328"
-    },
-    {
-      "at": "2026-08-04T14:58:45+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "plain-language-roadmap"
-    },
-    {
-      "at": "2026-08-04T15:09:32+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "v13-performance-diagnostic"
-    },
-    {
-      "at": "2026-08-04T15:10:11+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v13-performance-diagnostic"
-    },
-    {
-      "at": "2026-08-04T15:14:35+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v13-performance-diagnostic"
-    },
-    {
-      "at": "2026-08-04T15:38:39+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd6c-e98a-7b53-8af2-1c482a0d09ac"
-    },
-    {
-      "at": "2026-08-04T15:38:39+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd6c-ee11-7063-be77-c8a5b95d6a39"
-    },
-    {
-      "at": "2026-08-04T15:38:40+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd6c-f34c-7681-a635-6d67d51d683b"
-    },
-    {
-      "at": "2026-08-04T15:38:40+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-conductance-research"
-    },
-    {
-      "at": "2026-08-04T15:38:40+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-substrate-design"
-    },
     {
       "at": "2026-08-04T15:38:40+00:00",
       "detail": "running",
@@ -710,6 +660,312 @@
       "detail": "blocked",
       "kind": "lane-update",
       "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gpu-execution-efficiency"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcdd3-3734-7ae2-bf0a-57c98596ebb8"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "parameter-research-discovery"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcdd3-cb7c-7691-8c09-6a19097d4444"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "experiment-executor"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcdd3-ed7b-7391-932f-10c8d1e33910"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T17:31:05+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T17:34:40+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T17:41:22+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcdd3-ed7b-7391-932f-10c8d1e33910"
+    },
+    {
+      "at": "2026-08-04T17:41:22+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "experiment-executor"
+    },
+    {
+      "at": "2026-08-04T17:42:37+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcdd3-cb7c-7691-8c09-6a19097d4444"
+    },
+    {
+      "at": "2026-08-04T17:42:37+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "parameter-research-discovery"
+    },
+    {
+      "at": "2026-08-04T17:43:05+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcddf-1d7f-7d80-b9e4-16310ebfd1fe"
+    },
+    {
+      "at": "2026-08-04T17:43:05+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "parameter-research-discovery"
+    },
+    {
+      "at": "2026-08-04T17:47:33+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcddf-1d7f-7d80-b9e4-16310ebfd1fe"
+    },
+    {
+      "at": "2026-08-04T17:47:33+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "parameter-research-discovery"
+    },
+    {
+      "at": "2026-08-04T17:52:03+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcde7-5202-7f21-b50d-1785f84172e3"
+    },
+    {
+      "at": "2026-08-04T17:52:03+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "parameter-research-discovery"
+    },
+    {
+      "at": "2026-08-04T17:56:58+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcde7-5202-7f21-b50d-1785f84172e3"
+    },
+    {
+      "at": "2026-08-04T17:56:58+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "parameter-research-discovery"
+    },
+    {
+      "at": "2026-08-04T17:59:32+00:00",
+      "detail": "blocked",
+      "kind": "agent-finish",
+      "subject": "019fcdd3-3734-7ae2-bf0a-57c98596ebb8"
+    },
+    {
+      "at": "2026-08-04T17:59:32+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gpu-execution-efficiency"
+    },
+    {
+      "at": "2026-08-04T18:14:01+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcdf9-de57-7801-b188-fca0e5d6cefa"
+    },
+    {
+      "at": "2026-08-04T18:14:01+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcdf9-e31c-71b0-9606-a50a6ef29794"
+    },
+    {
+      "at": "2026-08-04T18:14:01+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcdf9-e8a3-7541-83c8-6b19c8daa02b"
+    },
+    {
+      "at": "2026-08-04T18:16:53+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcdf9-e31c-71b0-9606-a50a6ef29794"
+    },
+    {
+      "at": "2026-08-04T18:16:53+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcdf9-e8a3-7541-83c8-6b19c8daa02b"
+    },
+    {
+      "at": "2026-08-04T18:17:36+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gpu-execution-efficiency"
+    },
+    {
+      "at": "2026-08-04T18:17:36+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T18:17:36+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T18:19:44+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T18:19:44+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T18:19:45+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T18:20:45+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce01-91a7-7362-bc6e-a30493e38120"
+    },
+    {
+      "at": "2026-08-04T18:20:45+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce01-8cb8-7833-8ca9-542cac3c1474"
+    },
+    {
+      "at": "2026-08-04T18:23:00+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce01-8cb8-7833-8ca9-542cac3c1474"
+    },
+    {
+      "at": "2026-08-04T18:23:00+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcdf9-de57-7801-b188-fca0e5d6cefa"
+    },
+    {
+      "at": "2026-08-04T18:25:05+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce01-91a7-7362-bc6e-a30493e38120"
+    },
+    {
+      "at": "2026-08-04T18:29:30+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce01-91a7-7362-bc6e-a30493e38120"
+    },
+    {
+      "at": "2026-08-04T18:41:57+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "parameter-research-discovery"
+    },
+    {
+      "at": "2026-08-04T18:41:57+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T18:41:57+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T18:42:31+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce15-8093-7c11-9e4b-4d5d2001bbf3"
+    },
+    {
+      "at": "2026-08-04T18:42:32+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce15-7b7f-7e32-ad9d-73587830f58f"
+    },
+    {
+      "at": "2026-08-04T19:01:50+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-performance"
+    },
+    {
+      "at": "2026-08-04T19:01:50+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T19:01:50+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "v14-launch-overhead-profile"
+    },
+    {
+      "at": "2026-08-04T19:01:50+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "local-model-offload"
+    },
+    {
+      "at": "2026-08-04T19:11:08+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce15-8093-7c11-9e4b-4d5d2001bbf3"
+    },
+    {
+      "at": "2026-08-04T19:11:08+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce15-7b7f-7e32-ad9d-73587830f58f"
     }
   ],
   "lanes": {
@@ -737,6 +993,21 @@
       "resource": "local_cpu",
       "status": "completed",
       "write_set": [
+        "tools/experiment_controller.py",
+        "tests/test_experiment_controller.py"
+      ]
+    },
+    "experiment-executor": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T17:41:22+00:00",
+      "next_action": "Executor is ready for future sealed plans; next engine slice should add bounded result aggregation and preregistered stop-rule evaluation without automatic scientific interpretation.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "cpu",
+      "status": "completed",
+      "write_set": [
+        "tools/experiment_executor.py",
+        "tests/test_experiment_executor.py",
         "tools/experiment_controller.py",
         "tests/test_experiment_controller.py"
       ]
@@ -801,13 +1072,15 @@
       ]
     },
     "gateb-v14-performance": {
+      "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T17:27:55+00:00",
-      "next_action": "Execute the sealed 2000-step amended candidate/control/active matrix under the shared RTX 3090 lease; preserve a receipt after every cell.",
+      "heartbeat_at": "2026-08-04T19:01:50+00:00",
+      "next_action": "Immutable matrix terminated at the first candidate-active cell with a 1800-second worker timeout and no timing result; bank the infrastructure receipt and do not rerun unchanged.",
       "owner": "controller",
       "priority": 1,
+      "recovery_action": "Profile the 20000-step active path at launch granularity, fuse the dominant host-dispatched sequence, pass byte-equivalence/checkpoint controls, then preregister a bounded timing screen before another matrix.",
       "resource": "local_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "research/specs/v14_snr_conductance_stageA_implementation.json",
         "tools/v14_stageA_performance.py",
@@ -817,54 +1090,72 @@
       ]
     },
     "gateb-v14-stageA": {
+      "blocker": "The immutable performance matrix produced infrastructure_failure before any timing result; correctness evidence remains valid but promotion cannot be evaluated.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T17:24:40+00:00",
-      "next_action": "Run the amended preregistered RTX 3090 performance matrix; correctness and mini-PC replication are already complete.",
+      "heartbeat_at": "2026-08-04T19:01:50+00:00",
+      "next_action": "Wait for a fused-path bounded timing screen; combine performance and correctness only after the screen returns valid measurements.",
       "owner": "controller",
       "priority": 1,
-      "resource": "local_gpu",
-      "status": "running",
-      "write_set": [
-        "research/specs/v14_snr_conductance_stageA_implementation.json",
-        "tools/v14_stageA_performance.py",
-        "tests/test_v14_stageA_performance.py",
-        "research/findings/raw/v14_snr_conductance_stageA",
-        "research/findings"
-      ]
-    },
-    "gpu-execution-efficiency": {
-      "blocker": "V14 timing workers import the live sim tree; simulator edits before matrix completion would invalidate contemporaneous cells.",
-      "delegation": "controller",
-      "heartbeat_at": "2026-08-04T16:54:07+00:00",
-      "next_action": "Preserve the live sim tree until V14 timing completes; then start the fused-kernel equivalence lane.",
-      "owner": "controller",
-      "priority": 1,
-      "recovery_action": "After the V14 matrix and receipt are sealed, preregister and implement an opt-in in-place HH+SNr kernel with byte-equivalence and checkpoint controls, then guarded multi-step batching.",
+      "recovery_action": "Profile and fuse the dominant active-path launch sequence, then use a short preregistered timing screen before any full matrix.",
       "resource": "local_gpu",
       "status": "blocked",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
         "sim/config.py",
+        "tests",
+        "research/findings"
+      ]
+    },
+    "gpu-execution-efficiency": {
+      "blocker": "",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T18:17:36+00:00",
+      "next_action": "Direct-output SNr fusion committed at c672b1708; 102 CPU, 13 focused GPU, and 4 bridge/checkpoint tests passed.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "",
+      "resource": "gpu",
+      "status": "completed",
+      "write_set": [
+        "sim/kernels.py",
+        "sim/bridge.py",
+        "sim/config.py",
         "tests/test_hh_snr_fused_step.py",
-        "tests/test_hh_snr_fast_path_guards.py"
+        "tests/test_hh_snr_megakernel_dispatch.py",
+        "tests/test_hh_snr_megakernel_bridge.py"
       ]
     },
     "local-model-offload": {
-      "blocker": "llama.cpp image and model weights are ready, but bounded service validation must not overlap the amended V14 GPU matrix.",
+      "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T17:27:55+00:00",
-      "next_action": "Validate the broker and one bounded drafting task immediately after V14 timing.",
+      "heartbeat_at": "2026-08-04T19:01:50+00:00",
+      "next_action": "Autonomous fallback validated end to end in a standalone sandboxed clone: exact-session resume, local edit/commit, NO_SAFE_WORK stop, return handoff, container shutdown, owner cleanup, and GPU lease release.",
       "owner": "controller",
       "priority": 2,
-      "recovery_action": "After V14 releases the lease, enable the bounded broker, verify ownership/model identity, process one harmless queued draft, stop service, and inspect the awaiting-review receipt.",
-      "resource": "local_gpu_gated",
-      "status": "blocked",
+      "recovery_action": "When fused correctness tests finish and the lease is free, use a temporary enabled config, validate identity and one awaiting-review receipt, then stop the broker.",
+      "resource": "gpu",
+      "status": "completed",
       "write_set": [
         "config/local_model_offload.json",
         "tools/local_model_offload.py",
         "tests/test_local_model_offload.py",
         "docs/LOCAL-MODEL-OFFLOAD.md"
+      ]
+    },
+    "parameter-research-discovery": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T18:41:57+00:00",
+      "next_action": "RAG-first metadata plus verified full-text retrieval is operational; apply it to the next named parameter wall and keep locators pending review.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "cpu",
+      "status": "completed",
+      "write_set": [
+        "tools/scholarly_fulltext.py",
+        "tests/test_scholarly_fulltext.py",
+        "tools/parameter_research.py",
+        "tests/test_parameter_research.py"
       ]
     },
     "plain-language-roadmap": {
@@ -907,6 +1198,22 @@
         "research/specs/v13_stage0_performance_diagnostic_v9.json",
         "tools/v13_stage0_performance_diagnostic_v9.py"
       ]
+    },
+    "v14-launch-overhead-profile": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T19:01:50+00:00",
+      "next_action": "Run a bounded profiler on the immutable candidate active path to identify the dominant per-step host launches; design one exact-equivalent fused slice and no long sweep.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "If profiler tooling perturbs timing, use launch counts and CUDA event ranges on a 100-step structural screen; do not repeat 20000 steps.",
+      "resource": "local_gpu",
+      "status": "ready",
+      "write_set": [
+        "sim/kernels.py",
+        "sim/bridge.py",
+        "tests",
+        "research/findings"
+      ]
     }
   },
   "mission": "Advance a grounded, integrated, continuously learning mind on a shared fully spiking substrate; preserve biology, honest gates, scaffold burn-down, consumer hardware, and efficient development.",
@@ -921,5 +1228,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T17:27:55+00:00"
+  "updated_at": "2026-08-04T19:11:08+00:00"
 }

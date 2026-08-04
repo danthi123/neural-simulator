@@ -17,8 +17,10 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
+import time
 from typing import Any, Callable, Mapping
 import uuid
 from urllib.request import Request, urlopen
@@ -521,6 +523,16 @@ def run_service_broker(
     process = None
     interrupted = False
     return_code = 1
+    previous_sigint = signal.getsignal(signal.SIGINT)
+    previous_sigterm = signal.getsignal(signal.SIGTERM)
+
+    def interrupt_broker(_signum: int, _frame: Any) -> None:
+        raise KeyboardInterrupt
+
+    # A broker launched as a background Bash job inherits ignored SIGINT.
+    # Reset both stop signals so foreground and scripted shutdown share cleanup.
+    signal.signal(signal.SIGINT, signal.default_int_handler)
+    signal.signal(signal.SIGTERM, interrupt_broker)
     try:
         # The foreground service child inherits the same open-file description.
         # If the broker is killed, the kernel lease remains held until that
@@ -532,16 +544,41 @@ def run_service_broker(
             interrupted = True
             return_code = 130
     finally:
+        signal.signal(signal.SIGINT, previous_sigint)
+        signal.signal(signal.SIGTERM, previous_sigterm)
         # Deny new requests first, stop the endpoint fully, then release GPU 0.
+        shutdown_error: str | None = None
         try:
             clear_service_ownership(config, record)
         finally:
             try:
                 if process is not None:
-                    with suppress(OSError, subprocess.SubprocessError):
-                        run_command(list(config["service_stop_command"]), check=False, timeout=60)
+                    try:
+                        stopped = run_command(
+                            list(config["service_stop_command"]), check=False, timeout=60
+                        )
+                        if getattr(stopped, "returncode", 0) not in (None, 0):
+                            shutdown_error = (
+                                f"service stop exited {int(stopped.returncode)}"
+                            )
+                    except (OSError, subprocess.SubprocessError) as exc:
+                        shutdown_error = f"service stop failed: {exc}"
             finally:
-                release_gpu_lease(lease)
+                if shutdown_error is None:
+                    release_gpu_lease(lease)
+                else:
+                    # A surviving model must never race an experiment. Keep
+                    # this process and its inherited flock alive until the
+                    # operator stops the service and force-kills the broker.
+                    print(
+                        f"LOCAL MODEL GPU LEASE QUARANTINED: {shutdown_error}",
+                        file=sys.stderr,
+                        flush=True,
+                    )
+                    signal.signal(signal.SIGINT, signal.SIG_IGN)
+                    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+                    while True:
+                        time.sleep(3600)
     return {
         "schema": OWNER_SCHEMA,
         "status": (

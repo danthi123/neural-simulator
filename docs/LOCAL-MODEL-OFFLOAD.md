@@ -26,6 +26,17 @@ single-card recipe is Qwen3.6-27B GGUF. Downloading weights is separate from
 starting the service. Hugging Face terms acceptance and a read token may be
 required by the model publisher.
 
+Docker must advertise an `nvidia` runtime in `docker info`. Host `nvidia-smi`
+or CuPy access is not sufficient: without `nvidia-container-toolkit`, Compose
+fails with `could not select device driver "nvidia"`. On this CachyOS host the
+runtime was installed and registered with:
+
+```bash
+sudo pacman -S --needed nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+```
+
 Start the service only through the foreground ownership broker, and keep that
 process alive for as long as the service is needed:
 
@@ -40,6 +51,9 @@ The foreground service child inherits the broker's lease descriptor, so an
 abrupt broker exit does not free GPU 0 while that child is still alive.
 Stopping the foreground broker clears request authorization, runs the
 configured compose `down` command, and only then releases the lease.
+If shutdown fails or times out, the broker deliberately remains alive with the
+lease quarantined. An experiment cannot claim GPU 0 until an operator stops the
+container and terminates that quarantine broker.
 
 Do not start the old shell wrapper or compose file directly. They may still
 hold or consume the GPU, but they cannot create the verified ownership record,
@@ -121,6 +135,13 @@ returns the task to pending. A successful generation removes the claim but is
 recorded as `awaiting_review`, never approved. Its output cannot inform code,
 scientific conclusions, experiment design, parameter selection, or gates until
 a human or higher-capability model reviews it.
+
+The first bounded smoke on 2026-08-04 loaded the 27B Q4_K_M model in about 11
+seconds, used 22,835 MiB of the 24,576 MiB card, and generated 63 response
+tokens at about 50 tokens per second. It produced exactly one
+`awaiting_review` receipt. Shutdown left no container, ownership record, GPU
+lease owner, or running queue claim. These figures establish operability and
+resource cost; they do not establish output quality or scientific reliability.
 
 ## RAG Boundary
 
