@@ -84,12 +84,14 @@ from sim.kernels import (
                          izhikevich2007_dynamics_update,
                          fused_hodgkin_huxley_dynamics_update,
                          fused_hh_state_and_spike_update_into,
+                         prepare_fused_hh_state_and_spike_update_into,
                          fused_hh_m_current_update,
                          fused_hh_CaT_current_update,
                          fused_hh_h_current_update,
                          fused_hh_NaP_current_update,
                          fused_snr_conductance_update,
                          fused_snr_conductance_update_into,
+                         prepare_fused_snr_conductance_update_into,
                          fused_adex_dynamics_update,
                          fused_conductance_decay_and_current,
                          fused_readonly_izh_step,
@@ -525,6 +527,8 @@ class SimulationBridge:
         for attr_name in _SNR_CONDUCTANCE_ARRAYS:
             setattr(self, attr_name, None)
         self.cp_snr_ionic_current_scratch = None
+        self._snr_direct_output_executor = None
+        self._hh_direct_output_executor = None
  
         self.cp_hh_C_m = None; self.cp_hh_g_Na_max = None; self.cp_hh_g_K_max = None; self.cp_hh_g_L = None
         self.cp_hh_E_Na = None; self.cp_hh_E_K = None; self.cp_hh_E_L = None; self.cp_hh_v_peak = None
@@ -3071,6 +3075,7 @@ class SimulationBridge:
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             *_SNR_CONDUCTANCE_ARRAYS,
             'cp_snr_ionic_current_scratch',
+            '_snr_direct_output_executor', '_hh_direct_output_executor',
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
@@ -7320,14 +7325,26 @@ class SimulationBridge:
             self.cp_snr_h_activation,
             self.cp_snr_ionic_current_scratch,
         )
-        fused_snr_conductance_update_into(snr_inputs, snr_outputs)
-        effective_input = input_current - self.cp_snr_ionic_current_scratch
+        snr_executor = getattr(self, "_snr_direct_output_executor", None)
+        if snr_executor is None:
+            self._snr_direct_output_executor = (
+                prepare_fused_snr_conductance_update_into(
+                    snr_inputs, snr_outputs
+                )
+            )
+        else:
+            snr_executor(*snr_inputs, *snr_outputs)
+        cp.subtract(
+            input_current,
+            self.cp_snr_ionic_current_scratch,
+            out=self.cp_snr_ionic_current_scratch,
+        )
         hh_inputs = (
             self.cp_membrane_potential_v,
             self.cp_gating_variable_m,
             self.cp_gating_variable_h,
             self.cp_gating_variable_n,
-            effective_input,
+            self.cp_snr_ionic_current_scratch,
             dt,
             self.cp_hh_C_m,
             self.cp_hh_g_Na_max,
@@ -7341,14 +7358,20 @@ class SimulationBridge:
             self._cached_hh_phi_n,
             self.cp_hh_v_peak,
         )
-        fused_hh_state_and_spike_update_into(
-            *hh_inputs,
+        hh_arguments = (*hh_inputs,
             self.cp_membrane_potential_v,
             self.cp_gating_variable_m,
             self.cp_gating_variable_h,
             self.cp_gating_variable_n,
             self.cp_firing_states,
         )
+        hh_executor = getattr(self, "_hh_direct_output_executor", None)
+        if hh_executor is None:
+            self._hh_direct_output_executor = (
+                prepare_fused_hh_state_and_spike_update_into(hh_arguments)
+            )
+        else:
+            hh_executor(*hh_arguments)
         return self.cp_firing_states
 
     def _run_one_simulation_step(self):

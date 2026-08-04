@@ -541,6 +541,52 @@ def fused_snr_conductance_update_into(inputs, outputs):
     return _run_cupy_fusion_into(fused_snr_conductance_update, inputs, outputs)
 
 
+def prepare_fused_snr_conductance_update_into(inputs, outputs):
+    """Execute SNr once and return its signature-specific direct executor."""
+    inputs = tuple(inputs)
+    outputs = tuple(outputs)
+    fused_snr_conductance_update_into(inputs, outputs)
+    key = _fusion_memo_key(inputs)
+    cached = getattr(fused_snr_conductance_update, "_memo", {}).get(key)
+    if (not isinstance(cached, tuple) or len(cached) != 2
+            or not callable(cached[0]) or cached[1]):
+        raise RuntimeError("unsupported CuPy Fusion cache entry")
+    return cached[0]
+
+
+def prepare_fused_hh_state_and_spike_update_into(inputs):
+    """Execute HH once and return its fixed-shape in-place executor.
+
+    CuPy 14 routes in-place fusion through ``new_fusion``. Calling that public
+    wrapper reconstructs a large alias-aware signature on every step. A fresh
+    Fusion instance gives this bridge an unambiguous compiled plan which can be
+    invoked directly for its fixed neuron count.
+    """
+    if _backend_name != "cupy":
+        raise RuntimeError("direct fusion outputs require the CuPy backend")
+    inputs = tuple(inputs)
+    local_fusion = fuse()(fused_hh_state_and_spike_update_into.func)
+    local_fusion(*inputs)
+    compiled = getattr(local_fusion, "new_fusion", None)
+    cache = getattr(compiled, "_cache", None)
+    if not isinstance(cache, dict) or len(cache) != 1:
+        raise RuntimeError("unsupported CuPy in-place Fusion cache")
+    shape_variants, kernels = next(iter(cache.values()))
+    if (not isinstance(shape_variants, dict) or len(shape_variants) != 1
+            or not isinstance(kernels, list) or len(kernels) != 1):
+        raise RuntimeError("ambiguous CuPy in-place Fusion cache")
+    kernel, shapes = next(iter(shape_variants.values()))
+    if kernel is not kernels[0] or not callable(getattr(kernel, "execute", None)):
+        raise RuntimeError("unsupported CuPy in-place Fusion executor")
+
+    def execute(*values):
+        if len(values) != len(inputs):
+            raise ValueError("HH direct executor argument count changed")
+        kernel.execute(tuple(values), shapes)
+
+    return execute
+
+
 @fuse()
 def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, tau_w):
     """Fused kernel for Adaptive Exponential Integrate-and-Fire (AdEx) dynamics.

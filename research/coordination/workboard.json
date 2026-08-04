@@ -388,24 +388,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T15:56:29+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-kernel"
-    },
-    {
-      "at": "2026-08-04T15:56:29+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd79-a2dc-74a3-9215-8ec73ed5a3d2"
-    },
-    {
-      "at": "2026-08-04T15:56:29+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd79-a78d-7883-9bd5-03368ad7a07d"
-    },
-    {
       "at": "2026-08-04T16:07:19+00:00",
       "detail": "running",
       "kind": "lane-update",
@@ -986,6 +968,24 @@
       "detail": "blocked",
       "kind": "lane-update",
       "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T19:51:07+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-snr-hh-combined-fusion"
+    },
+    {
+      "at": "2026-08-04T19:51:07+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-cupy-dispatch-cache"
+    },
+    {
+      "at": "2026-08-04T19:51:07+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
     }
   ],
   "lanes": {
@@ -1112,11 +1112,11 @@
     "gateb-v14-stageA": {
       "blocker": "Correctness remains valid, but the second complete performance matrix returned NO-GO: exact HH state fusion reached 0.9162x unfused versus required 0.85.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:40:52+00:00",
-      "next_action": "Wait for exact combined SNr-to-HH fusion and a new sealed performance matrix.",
+      "heartbeat_at": "2026-08-04T19:51:07+00:00",
+      "next_action": "Executor-cache candidate is exact and screened at 0.726 direct/unfused; promotion remains blocked until a committed-source sealed matrix passes all performance gates.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Keep all fixed thresholds and byte-equivalence controls.",
+      "recovery_action": "Run the formal matrix only from a clean committed candidate and bank its complete receipt.",
       "resource": "local_gpu",
       "status": "blocked",
       "write_set": [
@@ -1235,6 +1235,22 @@
         "research/findings"
       ]
     },
+    "v14-cupy-dispatch-cache": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T19:51:07+00:00",
+      "next_action": "Commit the exact executor-cache candidate after broad regression, then run the sealed 12-cell V14 performance matrix against historical control 6c9034991.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "If the sealed direct/unfused ratio exceeds 0.85, bank NO-GO and profile the remaining launch/host boundary without changing arithmetic.",
+      "resource": "local_gpu",
+      "status": "running",
+      "write_set": [
+        "sim/kernels.py",
+        "sim/bridge.py",
+        "tests",
+        "research/findings"
+      ]
+    },
     "v14-launch-overhead-profile": {
       "delegation": "controller",
       "heartbeat_at": "2026-08-04T19:31:46+00:00",
@@ -1253,13 +1269,13 @@
     },
     "v14-snr-hh-combined-fusion": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:40:52+00:00",
-      "next_action": "Build one CuPy-generated in-place graph from the existing SNr and HH equation helpers; require exact state/spike/checkpoint controls before bounded timing.",
+      "heartbeat_at": "2026-08-04T19:51:07+00:00",
+      "next_action": "Rejected two exactness-breaking combined-graph variants: both changed V by 7.629e-6 mV after 64 steps. Preserve the two-kernel arithmetic boundary.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If combined graph changes any bit, reject it and bank the method; do not hand-transcribe approximate CUDA math.",
+      "recovery_action": "Do not combine across the float32 SNr-current materialization boundary or relax byte equivalence.",
       "resource": "local_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -1280,5 +1296,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T19:40:52+00:00"
+  "updated_at": "2026-08-04T19:51:07+00:00"
 }

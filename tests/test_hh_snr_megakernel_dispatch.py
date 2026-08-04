@@ -68,6 +68,9 @@ def test_dispatch_rejects_cpu_or_missing_snr_bundle(monkeypatch):
 
 
 def test_bridge_helper_passes_persistent_state_in_place_and_detects_crossing(monkeypatch):
+    monkeypatch.setattr(
+        bridge_module, "cp", SimpleNamespace(subtract=np.subtract)
+    )
     bridge = object.__new__(SimulationBridge)
     bridge.cp_membrane_potential_v = np.array([-1.0, 1.0], dtype=np.float32)
     bridge.cp_gating_variable_m = np.zeros(2, dtype=np.float32)
@@ -94,11 +97,16 @@ def test_bridge_helper_passes_persistent_state_in_place_and_detects_crossing(mon
     )
     observed = {}
 
-    def snr_kernel(inputs, outputs):
+    def prepare_snr(inputs, outputs):
         observed["snr_inputs"] = inputs
         outputs[-1][:] = 0.0
 
-    def hh_kernel(*inputs):
+        def run(*args):
+            observed["snr_reused"] = args
+
+        return run
+
+    def prepare_hh(inputs):
         observed["hh_inputs"] = inputs
         out_v, out_m, out_h, out_n, out_fired = inputs[-5:]
         out_v[:] = np.array([2.0, 0.0], dtype=np.float32)
@@ -107,8 +115,17 @@ def test_bridge_helper_passes_persistent_state_in_place_and_detects_crossing(mon
         out_n[:] = bridge.cp_gating_variable_n
         out_fired[:] = np.array([True, False])
 
-    monkeypatch.setattr(bridge_module, "fused_snr_conductance_update_into", snr_kernel)
-    monkeypatch.setattr(bridge_module, "fused_hh_state_and_spike_update_into", hh_kernel)
+        def run(*args):
+            observed["hh_reused"] = args
+
+        return run
+
+    monkeypatch.setattr(
+        bridge_module, "prepare_fused_snr_conductance_update_into", prepare_snr
+    )
+    monkeypatch.setattr(
+        bridge_module, "prepare_fused_hh_state_and_spike_update_into", prepare_hh
+    )
     current = np.zeros(2, dtype=np.float32)
     fired = bridge._run_snr_direct_outputs(cfg, current, 0.05)
 
@@ -116,3 +133,7 @@ def test_bridge_helper_passes_persistent_state_in_place_and_detects_crossing(mon
     assert observed["hh_inputs"][4] is not current
     assert observed["hh_inputs"][-1] is bridge.cp_firing_states
     np.testing.assert_array_equal(fired, np.array([True, False]))
+
+    bridge._run_snr_direct_outputs(cfg, current, 0.05)
+    assert "snr_reused" in observed
+    assert "hh_reused" in observed
