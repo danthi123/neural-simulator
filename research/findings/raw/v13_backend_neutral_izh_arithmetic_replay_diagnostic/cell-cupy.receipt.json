@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_neutral_izh_arithmetic_replay",
+    "--spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic.json",
+    "--spec-sha256",
+    "c8f42fee5d8d2dc044cf05ed7676c06ef7c20e093613a06facce311512686d2d",
+    "--run",
+    "--backend",
+    "cupy",
+    "--source-manifest",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "--source-revision",
+    "882b17fea0ed2752fab8dcae3c13f526e921a33e",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-cupy.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-cupy.json",
+    "sha256": "8fd6dc46ca67c92141e663245b47afe5b3a4ec8c75a22f4d27cf9b07534e0db9",
+    "size_bytes": 1139061
+  },
+  "device": "gpu:rtx-3090",
+  "duration_monotonic_ns": 1334206620,
+  "ended_utc_ns": 1785832749217615752,
+  "env_allowlist": {
+    "SIM_BACKEND": "cupy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "schema": "sim-execution-receipt-v1",
+  "source": {
+    "file_count": 62,
+    "git_sha": "882b17fea0ed2752fab8dcae3c13f526e921a33e",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "manifest_sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443",
+    "tree_sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443"
+  },
+  "started_utc_ns": 1785832747883407864,
+  "status": "success"
+}

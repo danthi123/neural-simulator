@@ -1,0 +1,44 @@
+{
+  "cells": {
+    "cupy": {
+      "artifact_sha256": "ea13855fc193d2d0965076c9d346888d242b78061923e7832a21c400e00d3b08",
+      "file_sha256": "8fd6dc46ca67c92141e663245b47afe5b3a4ec8c75a22f4d27cf9b07534e0db9",
+      "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-cupy.json",
+      "receipt_path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-cupy.receipt.json"
+    },
+    "numpy": {
+      "artifact_sha256": "a527865b4ed2e59e54de3250e74d61885ce7d100edaa9b3fc97e065364095f79",
+      "file_sha256": "ad69c842077485614b5ba3319cccfb39cdcfd20011965774f94634906e437303",
+      "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.json",
+      "receipt_path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.receipt.json"
+    }
+  },
+  "comparison": {
+    "artifact_sha256": "644cd33c53e31acb0120588820e90a89f7a00959ce19d7cdd2a03618df4d4cb5",
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/comparison.json",
+    "receipt_path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/comparison.receipt.json",
+    "receipt_sha256": "e1f4141c93ad36054e443647144ec458de0d6c3a30c6d465cf9157e918d19e9b",
+    "sha256": "eff8c25b57017ff994dee0dbce018275862c531ed7b901f6a908934ace51983a"
+  },
+  "completed_input": {
+    "aggregate_file_sha256": "2f94905eebfddec69e4264ccae75f618bbffc720eb95126be9270d6a3aa5a8c6",
+    "bundle_artifact_sha256": "ee2650f6ddadfb57b2fb2ccc83a659f22a1c37767a738b8742a04c51eaf6746e",
+    "bundle_file_sha256": "5f9750ff1f26c38df8676525bc698571102e5aeefeae7d3787b8f2b3f6aa943b",
+    "bundle_path": "research/findings/raw/v13_backend_state_transplant/bundle-numpy.json",
+    "historical_source_revision": "74f3dcd60ba1e5f866a7639986e1fb96fcbd541b"
+  },
+  "diagnostic_only": true,
+  "outcome": "DIAGNOSTIC_FAIL",
+  "promotion_value": "none",
+  "schema": "v13-backend-neutral-izh-arithmetic-replay-evidence-manifest-v1",
+  "scientific_verdict": null,
+  "sha256": "0633efbd83241dbb7836156cb339d17f4c7aa0ecfa275fa1dea653c2d8b828d9",
+  "source": {
+    "file_count": 62,
+    "git_sha": "882b17fea0ed2752fab8dcae3c13f526e921a33e",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "manifest_sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443",
+    "tree_sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443"
+  }
+}

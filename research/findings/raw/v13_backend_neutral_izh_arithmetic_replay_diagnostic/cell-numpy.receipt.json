@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_neutral_izh_arithmetic_replay",
+    "--spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic.json",
+    "--spec-sha256",
+    "c8f42fee5d8d2dc044cf05ed7676c06ef7c20e093613a06facce311512686d2d",
+    "--run",
+    "--backend",
+    "numpy",
+    "--source-manifest",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "--source-revision",
+    "882b17fea0ed2752fab8dcae3c13f526e921a33e",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.json",
+    "sha256": "ad69c842077485614b5ba3319cccfb39cdcfd20011965774f94634906e437303",
+    "size_bytes": 1138685
+  },
+  "device": "cpu:numpy",
+  "duration_monotonic_ns": 574929553,
+  "ended_utc_ns": 1785832748456305068,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "schema": "sim-execution-receipt-v1",
+  "source": {
+    "file_count": 62,
+    "git_sha": "882b17fea0ed2752fab8dcae3c13f526e921a33e",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "manifest_sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443",
+    "tree_sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443"
+  },
+  "started_utc_ns": 1785832747881374278,
+  "status": "success"
+}

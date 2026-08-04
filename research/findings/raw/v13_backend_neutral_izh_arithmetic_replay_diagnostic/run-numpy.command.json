@@ -1,0 +1,61 @@
+{
+  "action": "run_numpy",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "tools.execution_receipt",
+    "run",
+    "--root",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+    "--artifact",
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.json",
+    "--receipt",
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.receipt.json",
+    "--source-manifest",
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "--git-sha",
+    "882b17fea0ed2752fab8dcae3c13f526e921a33e",
+    "--host",
+    "dant123-wk",
+    "--device",
+    "cpu:numpy",
+    "--env",
+    "SIM_BACKEND",
+    "--",
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_neutral_izh_arithmetic_replay",
+    "--spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic.json",
+    "--spec-sha256",
+    "c8f42fee5d8d2dc044cf05ed7676c06ef7c20e093613a06facce311512686d2d",
+    "--run",
+    "--backend",
+    "numpy",
+    "--source-manifest",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "--source-revision",
+    "882b17fea0ed2752fab8dcae3c13f526e921a33e",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.json"
+  ],
+  "artifact": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.json",
+  "diagnostic_only": true,
+  "env": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution": "not_executed",
+  "prerequisites": [
+    "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256"
+  ],
+  "promotion_value": "none",
+  "receipt": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.receipt.json",
+  "schema": "v13-backend-neutral-izh-arithmetic-replay-command-v1",
+  "sha256": "250b9319a82e39dd8b8bdda7652559dca03c493e8df7bba5f8877b214b87247d",
+  "source_manifest": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/source.sha256",
+    "sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443",
+    "tree_sha256": "25dd5a4ab9e7f52b30aeeefc9cb3d364ee4207aa47560cb0834a09c73b09e443"
+  },
+  "source_revision": "882b17fea0ed2752fab8dcae3c13f526e921a33e"
+}

@@ -1,0 +1,41 @@
+{
+ "run_id": "1785832759-2669384",
+ "runner": "research/runners/_v13_backend_neutral_izh_arithmetic_replay.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_v13_backend_neutral_izh_arithmetic_replay.py",
+  "--spec",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic.json",
+  "--spec-sha256",
+  "c8f42fee5d8d2dc044cf05ed7676c06ef7c20e093613a06facce311512686d2d",
+  "--compare",
+  "--numpy-artifact",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.json",
+  "--numpy-receipt",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-numpy.receipt.json",
+  "--cupy-artifact",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-cupy.json",
+  "--cupy-receipt",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/cell-cupy.receipt.json",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/comparison.json"
+ ],
+ "git_sha": "882b17fea",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T04:39:19",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2862.2,
+ "corpus_check_query": "git archive pool ancestry attestation source manifest scientific runner --max-results 8",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic/comparison.json"
+}
