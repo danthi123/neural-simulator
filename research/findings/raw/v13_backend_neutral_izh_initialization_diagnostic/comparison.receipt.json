@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_neutral_izh_initialization_diagnostic",
+    "--spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_initialization_diagnostic.json",
+    "--spec-sha256",
+    "a3be9d0d0c0b99bce7e6f14f54a8e6b2ce937e62d72ac05cc680a9a8a7ed3ef4",
+    "--compare",
+    "--numpy-artifact",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.json",
+    "--numpy-receipt",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.receipt.json",
+    "--cupy-artifact",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-cupy.json",
+    "--cupy-receipt",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-cupy.receipt.json",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/comparison.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/comparison.json",
+    "sha256": "4715ac91a2d2a0a513f424c30ddd8be9c0d2201e146f5839eadeb47be4fa92ff",
+    "size_bytes": 4008
+  },
+  "device": "CPU: 12th Gen Intel(R) Core(TM) i7-12700",
+  "duration_monotonic_ns": 419012311,
+  "ended_utc_ns": 1785831405483925551,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "schema": "sim-execution-receipt-v1",
+  "source": {
+    "file_count": 55,
+    "git_sha": "58f5b1e4f1e46fdd96c5fa6bb77a5724d82ef25c",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/source.sha256",
+    "manifest_sha256": "775a22dc2d914d229d124311a3fc60b99f1a80a75be510892dabb4ec2fde1342",
+    "tree_sha256": "775a22dc2d914d229d124311a3fc60b99f1a80a75be510892dabb4ec2fde1342"
+  },
+  "started_utc_ns": 1785831405064912029,
+  "status": "success"
+}

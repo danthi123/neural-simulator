@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners._v13_backend_neutral_izh_initialization_diagnostic",
+    "--spec",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_initialization_diagnostic.json",
+    "--spec-sha256",
+    "a3be9d0d0c0b99bce7e6f14f54a8e6b2ce937e62d72ac05cc680a9a8a7ed3ef4",
+    "--capture",
+    "--backend",
+    "numpy",
+    "--source-manifest",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/source.sha256",
+    "--source-revision",
+    "58f5b1e4f1e46fdd96c5fa6bb77a5724d82ef25c",
+    "--out",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.json",
+    "sha256": "bcdc48d0af130d9b554b7bb6ca3e0869cc231176d3ee16886f74ff908a8f766d",
+    "size_bytes": 23188
+  },
+  "device": "CPU: 12th Gen Intel(R) Core(TM) i7-12700",
+  "duration_monotonic_ns": 501796680,
+  "ended_utc_ns": 1785831386867076985,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "schema": "sim-execution-receipt-v1",
+  "source": {
+    "file_count": 55,
+    "git_sha": "58f5b1e4f1e46fdd96c5fa6bb77a5724d82ef25c",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/source.sha256",
+    "manifest_sha256": "775a22dc2d914d229d124311a3fc60b99f1a80a75be510892dabb4ec2fde1342",
+    "tree_sha256": "775a22dc2d914d229d124311a3fc60b99f1a80a75be510892dabb4ec2fde1342"
+  },
+  "started_utc_ns": 1785831386365278735,
+  "status": "success"
+}

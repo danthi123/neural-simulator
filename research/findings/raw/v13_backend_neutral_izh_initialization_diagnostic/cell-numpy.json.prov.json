@@ -1,0 +1,39 @@
+{
+ "run_id": "1785831386-2629188",
+ "runner": "research/runners/_v13_backend_neutral_izh_initialization_diagnostic.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_v13_backend_neutral_izh_initialization_diagnostic.py",
+  "--spec",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/specs/v13_backend_neutral_izh_initialization_diagnostic.json",
+  "--spec-sha256",
+  "a3be9d0d0c0b99bce7e6f14f54a8e6b2ce937e62d72ac05cc680a9a8a7ed3ef4",
+  "--capture",
+  "--backend",
+  "numpy",
+  "--source-manifest",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/source.sha256",
+  "--source-revision",
+  "58f5b1e4f1e46fdd96c5fa6bb77a5724d82ef25c",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.json"
+ ],
+ "git_sha": "58f5b1e4f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T04:16:26",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1488.8,
+ "corpus_check_query": "git archive pool ancestry attestation source manifest scientific runner --max-results 8",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.json"
+}

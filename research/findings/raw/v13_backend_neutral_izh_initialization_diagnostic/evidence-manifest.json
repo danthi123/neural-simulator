@@ -1,0 +1,47 @@
+{
+  "cell_artifacts": {
+    "cupy": {
+      "device": "NVIDIA GeForce RTX 3090",
+      "host": "dant123-wk",
+      "path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-cupy.json",
+      "receipt_path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-cupy.receipt.json",
+      "receipt_sha256": "4e547a204869180bd3e75f6b7cf830d00ad6b3c5121cf5078a15ab2f61f37f40",
+      "sha256": "9f354fd1539f0ebac8d437dee197e8a556f26f00fcd6d8cc588141801ed8866d"
+    },
+    "numpy": {
+      "device": "CPU: 12th Gen Intel(R) Core(TM) i7-12700",
+      "host": "dant123-wk",
+      "path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.json",
+      "receipt_path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/cell-numpy.receipt.json",
+      "receipt_sha256": "f5e0cdd3e3315e6b085c10c1b419b5316cb3a02f0e9266e6cda25210e36bcb20",
+      "sha256": "bcdc48d0af130d9b554b7bb6ca3e0869cc231176d3ee16886f74ff908a8f766d"
+    }
+  },
+  "comparison_artifact": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/comparison.json",
+    "sha256": "4715ac91a2d2a0a513f424c30ddd8be9c0d2201e146f5839eadeb47be4fa92ff"
+  },
+  "comparison_receipt": {
+    "device": "CPU: 12th Gen Intel(R) Core(TM) i7-12700",
+    "ended_utc_ns": 1785831405483925551,
+    "host": "dant123-wk",
+    "path": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/comparison.receipt.json",
+    "sha256": "89ce6dbb6fe2910a2a1788ee6d683bf7a473d47dbf6b34f83591d3472ed8edef",
+    "started_utc_ns": 1785831405064912029
+  },
+  "config_sha256": "1090d2b785a7981562da7437ee51181bbcb4fe1ee411430ddadaa8d379f80873",
+  "diagnostic_only": true,
+  "outcome": "DIAGNOSTIC_PASS",
+  "promotion_value": "none",
+  "schema": "v13-backend-neutral-izh-initialization-evidence-manifest-v1",
+  "scientific_verdict": null,
+  "sha256": "36184eea6764b000511b18bd5f7f544f4749842457f324dfed2b678d1f696929",
+  "source": {
+    "file_count": 55,
+    "git_sha": "58f5b1e4f1e46fdd96c5fa6bb77a5724d82ef25c",
+    "kind": "git",
+    "manifest": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic/source.sha256",
+    "manifest_sha256": "775a22dc2d914d229d124311a3fc60b99f1a80a75be510892dabb4ec2fde1342",
+    "tree_sha256": "775a22dc2d914d229d124311a3fc60b99f1a80a75be510892dabb4ec2fde1342"
+  }
+}
