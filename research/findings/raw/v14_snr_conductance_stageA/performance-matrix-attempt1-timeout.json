@@ -1,0 +1,65 @@
+{
+  "schema": "v14-stageA-performance-infrastructure-failure-v1",
+  "status": "infrastructure_failure",
+  "promotion_effect": "none",
+  "physiology_verdict": null,
+  "performance_verdict": null,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "worker launched from the sealed prechange control",
+      "ok": true,
+      "detail": "source revision 6c9034991ba5d67024786d1faa080436c70347d5",
+      "note": "This earns only the infrastructure-failure classification."
+    },
+    {
+      "kind": "require",
+      "name": "controller observed the fixed timeout exception",
+      "ok": true,
+      "detail": "subprocess.TimeoutExpired after 3600 seconds",
+      "note": "The process was terminated by the declared worker timeout."
+    },
+    {
+      "kind": "require",
+      "name": "no timing measurement was returned",
+      "ok": true,
+      "detail": "host_seconds=null and cuda_event_seconds=null",
+      "note": "Therefore no performance verdict is permitted."
+    }
+  ],
+  "scientific_seeds": [],
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "source_revision": "d2f0b9c8e74b98b5d6e259566c94e9a1fc8506c4",
+  "prechange_control_revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+  "failed_cell": {
+    "sequence": 1,
+    "cell": "prechange-control-default",
+    "repetition": 1,
+    "worker_timeout_seconds": 3600,
+    "failure": "subprocess.TimeoutExpired"
+  },
+  "measurement": {
+    "warmup_steps": 500,
+    "requested_measured_steps": 20000,
+    "host_seconds": null,
+    "cuda_event_seconds": null,
+    "completed": false
+  },
+  "observations": {
+    "worker_cpu_percent_approx": 100,
+    "gpu_utilization_percent_observed_range": [2, 17],
+    "note": "The worker remained live and CPU/launch-bound until the controller terminated it at the fixed timeout. No timing value was emitted."
+  },
+  "command": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/v14_stageA_performance.py",
+    "--candidate-root",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+    "--prechange-control-root",
+    "/tmp/sim-v14-stageA-control",
+    "--out",
+    "research/findings/raw/v14_snr_conductance_stageA/performance-matrix.json"
+  ],
+  "failure_boundary": "Infrastructure failure only. It is not a performance NO-GO and does not alter Stage A correctness evidence."
+}

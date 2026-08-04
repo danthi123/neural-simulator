@@ -9,11 +9,13 @@ from tools import v14_stageA_performance as performance
 def test_fixed_contract_matches_preregistration():
     spec = json.loads(performance.SPEC_PATH.read_text())
     assert performance.WARMUP_STEPS == spec["performance"]["warmup_steps"] == 500
-    assert performance.TIMED_STEPS == spec["performance"]["measured_steps"] == 20000
+    assert performance.TIMED_STEPS == spec["performance"]["measured_steps"] == 2000
     assert performance.REPETITIONS == spec["performance"]["repetitions"] == 3
     assert performance.NUM_NEURONS == spec["performance"]["num_neurons"] == 600
     assert performance.CONSTRUCTION_RNG_SEED == spec["performance"]["construction_rng_seed"] == 0
     assert performance.PROCESS_ORDER_SEED == spec["performance"]["process_order_seed"] == 20260804
+    assert performance.WORKER_TIMEOUT_SECONDS == spec["performance"]["worker_timeout_seconds"] == 1800
+    assert performance.PROJECTED_TOTAL_SECONDS == spec["performance"]["projected_total_seconds"] == 4800
     assert performance.DEFAULT_RATIO_MAX == spec["performance"]["default_off_ratio_max"]
     assert performance.ACTIVE_RATIO_MAX == spec["performance"]["active_ratio_max"]
     assert performance.ACTIVE_BYTES_PER_NEURON == 48
@@ -105,6 +107,31 @@ def test_worker_subprocess_receives_explicit_source_root(monkeypatch, tmp_path):
     assert captured["cwd"] == candidate
     assert "--source-root" in captured["command"]
     assert result["sequence"] == 1
+
+
+def test_worker_timeout_becomes_durable_infrastructure_failure(monkeypatch, tmp_path):
+    candidate = tmp_path / "candidate"
+    control = tmp_path / "control"
+    candidate.mkdir()
+    control.mkdir()
+
+    def timeout(*args, **kwargs):
+        raise performance.subprocess.TimeoutExpired(args[0], kwargs["timeout"])
+
+    monkeypatch.setattr(performance.subprocess, "run", timeout)
+    monkeypatch.setattr(performance, "source_snapshot", lambda root: {"root": str(root)})
+    job = {
+        "cell": "candidate-default",
+        "source": "candidate",
+        "active": False,
+        "sequence": 1,
+        "rep": 1,
+    }
+    result = performance.run_worker(job, candidate_root=candidate, control_root=control)
+    assert result["status"] == "infrastructure_failure"
+    assert result["failure"] == "worker_timeout"
+    assert result["timeout_seconds"] == 1800
+    assert result["cell"] == "candidate-default"
 
 
 def test_atomic_json_replaces_destination_without_temp_residue(tmp_path: Path):

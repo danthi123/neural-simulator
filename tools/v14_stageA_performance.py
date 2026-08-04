@@ -25,13 +25,15 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC_PATH = ROOT / "research/specs/v14_snr_conductance_stageA_implementation.json"
 PROCESS_ORDER_SEED = 20260804
 WARMUP_STEPS = 500
-TIMED_STEPS = 20000
+TIMED_STEPS = 2000
 REPETITIONS = 3
 NUM_NEURONS = 600
 ACTIVE_BYTES_PER_NEURON = 48
 DEFAULT_RATIO_MAX = 1.02
 ACTIVE_RATIO_MAX = 1.25
 CONSTRUCTION_RNG_SEED = 0
+WORKER_TIMEOUT_SECONDS = 1800
+PROJECTED_TOTAL_SECONDS = 4800
 
 BUNDLE_ARRAYS = (
     "cp_snr_g_nalcn_max",
@@ -259,15 +261,31 @@ def run_worker(job: dict, *, candidate_root: Path, control_root: Path) -> dict:
         job["cell"],
     ]
     env = {**os.environ, "SIM_BACKEND": "cupy", "SIM_SOURCE_ROOT": str(source_root.resolve())}
-    completed = subprocess.run(
-        command,
-        cwd=source_root,
-        env=env,
-        capture_output=True,
-        text=True,
-        check=False,
-        timeout=3600,
-    )
+    started = time.time()
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=source_root,
+            env=env,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=WORKER_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        return {
+            "schema": "v14-stageA-performance-worker-v1",
+            "status": "infrastructure_failure",
+            "failure": "worker_timeout",
+            "timeout_seconds": WORKER_TIMEOUT_SECONDS,
+            "elapsed_seconds": time.time() - started,
+            "stdout": (exc.stdout or "")[-4000:] if isinstance(exc.stdout, str) else "",
+            "stderr": (exc.stderr or "")[-4000:] if isinstance(exc.stderr, str) else "",
+            "sequence": job["sequence"],
+            "rep": job["rep"],
+            "cell": job["cell"],
+            "source": source_snapshot(source_root),
+        }
     try:
         payload = json.loads(completed.stdout.strip().splitlines()[-1])
     except (IndexError, json.JSONDecodeError):
@@ -358,10 +376,9 @@ def write_json_atomic(path: Path, value: dict) -> None:
 
 def run_matrix(*, candidate_root: Path, control_root: Path, output: Path) -> dict:
     plan = build_run_plan()
-    rows = [run_worker(job, candidate_root=candidate_root, control_root=control_root) for job in plan]
     result = {
         "schema": "v14-stageA-performance-result-v1",
-        "status": "complete" if all(row.get("status") == "completed" for row in rows) else "incomplete",
+        "status": "running",
         "created_at_unix": time.time(),
         "specification": str(SPEC_PATH.relative_to(ROOT)),
         "specification_sha256": _sha256(SPEC_PATH),
@@ -370,14 +387,28 @@ def run_matrix(*, candidate_root: Path, control_root: Path, output: Path) -> dic
         "backend": "cupy",
         "scientific_seeds": [],
         "process_order_seed": PROCESS_ORDER_SEED,
+        "worker_timeout_seconds": WORKER_TIMEOUT_SECONDS,
+        "projected_total_seconds": PROJECTED_TOTAL_SECONDS,
         "run_plan": plan,
         "source_roots": {
             "candidate": source_snapshot(candidate_root),
             "prechange_control": source_snapshot(control_root),
         },
-        "results": rows,
-        "summary": summarize(rows),
+        "results": [],
+        "summary": summarize([]),
     }
+    write_json_atomic(output, result)
+    for job in plan:
+        row = run_worker(job, candidate_root=candidate_root, control_root=control_root)
+        result["results"].append(row)
+        result["summary"] = summarize(result["results"])
+        if row.get("status") != "completed":
+            result["status"] = "infrastructure_failure"
+            result["failed_sequence"] = job["sequence"]
+            write_json_atomic(output, result)
+            return result
+        write_json_atomic(output, result)
+    result["status"] = "complete"
     write_json_atomic(output, result)
     return result
 

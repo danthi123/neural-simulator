@@ -1,0 +1,45 @@
+{
+  "schema": "sim-artifact-provenance-v1",
+  "artifact": "research/findings/raw/v14_snr_conductance_stageA/performance-matrix-attempt1-timeout.json",
+  "artifact_sha256": "6b5f7988403f99fe2bdbffaef1f549063be2337bd6f1c0c3c2c8860c0a89781e",
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "tools/v14_stageA_performance.py",
+    "--candidate-root",
+    "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+    "--prechange-control-root",
+    "/tmp/sim-v14-stageA-control",
+    "--out",
+    "research/findings/raw/v14_snr_conductance_stageA/performance-matrix.json"
+  ],
+  "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+  "environment": {
+    "SIM_BACKEND": "cupy",
+    "python": "3.11.14",
+    "cupy": "14.1.1",
+    "cuda_runtime_version": 12090,
+    "cuda_driver_version": 13030,
+    "device": "NVIDIA GeForce RTX 3090",
+    "host": "dant123-wk"
+  },
+  "source_revision": "d2f0b9c8e74b98b5d6e259566c94e9a1fc8506c4",
+  "source_files_clean": false,
+  "status": "infrastructure_failure",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "artifact is the recovered timeout receipt",
+      "ok": true,
+      "detail": "artifact SHA-256 matches the manually recovered infrastructure record",
+      "note": "The original harness emitted no artifact before raising."
+    },
+    {
+      "kind": "require",
+      "name": "classification opens no scientific result",
+      "ok": true,
+      "detail": "performance and physiology verdicts are null; scientific seed list is empty",
+      "note": "Infrastructure failure only."
+    }
+  ],
+  "note": "Simulator source files were clean and matched the committed candidate. Uncommitted changes were limited to disjoint workflow/tooling files created while the worker ran. The first worker timed out before returning a timing value, and the original harness emitted no artifact. This sidecar binds the manually recovered failure receipt to the exact command and revisions."
+}

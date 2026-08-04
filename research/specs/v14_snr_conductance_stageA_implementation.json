@@ -80,8 +80,11 @@
     "construction_rng_seed": 0,
     "process_order_seed": 20260804,
     "warmup_steps": 500,
-    "measured_steps": 20000,
+    "measured_steps": 2000,
     "repetitions": 3,
+    "worker_timeout_seconds": 1800,
+    "projected_total_seconds": 4800,
+    "protocol_amendment": "Reduced from 20000 measured steps after the first prechange-control cell emitted no timing result and hit the preregistered 3600-second infrastructure timeout. No performance value was observed; cells, ordering, repetitions, warmup, and thresholds are unchanged.",
     "active_numerical_conductances": {
       "snr_g_nalcn_max": 0.01,
       "snr_g_nap_max": 0.02,
