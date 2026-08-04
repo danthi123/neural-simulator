@@ -92,6 +92,13 @@ fired during warmup and the no-action catch while both motor populations stayed
 at zero spikes. The topology recovered autonomously and all weights remained
 byte-identical, but it was not action-contingent. V11 is retired; formal seed
 `1`, reward, eligibility, and policy learning remain sealed.
+V12 then replaced recurrence with a feed-forward guard and motor-triggered
+disinhibitory release. Its four matched inhibitory source-on/source-off audits
+passed on NumPy and CuPy, and the intact circuit recovered autonomously without
+host reset. Construction still failed: startup activated the boundary and both
+motors, action-window guard suppression missed the fixed `50%` requirement,
+and CuPy admitted both motor channels. V12 is retired; capability seed `2`,
+reward, eligibility, and policy learning remain sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -142,12 +149,13 @@ is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. File a new evidence gate for action-contingent boundary quiescence and
-   release. Use the V11 startup/catch telemetry and primary local circuit,
-   corollary-discharge, disinhibition, and motor-stopping literature. A
-   successor must stay quiet before motor-copy input, enter a symmetric
-   temporary stopping state only after an action, and recover autonomously.
-   Do not tune or rerun V11, consume formal seed `1`, or open policy learning.
+1. Research a genuinely different action-boundary mechanism that controls
+   initialization transients and produces stronger motor-contingent release.
+   Retain V12's matched inhibitory-path audits and autonomous-recovery test.
+   A successor must stay quiet before motor-copy input, enter a symmetric
+   temporary stopping state only after an action, and prevent later competing
+   motor output. Do not tune or rerun V12, consume capability seed `2`, or open
+   policy learning.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a

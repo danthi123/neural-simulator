@@ -1,0 +1,17 @@
+{
+  "probe": "vocal_action_credit_gate_v12_disinhibitory_construction",
+  "stage": "construction_cross_backend",
+  "seed": 997,
+  "reserved_seed": 2,
+  "engagement_execution_open": false,
+  "backend_artifacts": {
+    "numpy": "research/findings/raw/vocal_action_credit_gate_v12/construction_seed997_numpy.json",
+    "cupy": "research/findings/raw/vocal_action_credit_gate_v12/construction_seed997_cupy.json"
+  },
+  "backend_outcomes": {
+    "numpy": "CONSTRUCTION_NO_GO",
+    "cupy": "CONSTRUCTION_NO_GO"
+  },
+  "outcome": "CONSTRUCTION_NO_GO",
+  "construction_go": false
+}
