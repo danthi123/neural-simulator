@@ -1,12 +1,16 @@
 ---
 type: preregistration
-status: live
+status: superseded
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v9-gabab-output
 runner: research/runners/_vocal_action_credit_gate_v9_graded_dendritic.py
 ---
 
 # Gate B v9 Phase 2: neural expectation must change reward and omission
+
+> **Superseded after an undefined run:** all fixed probes selected action `1`,
+> while only action `0` had learned reward expectation. No output claim was
+> evaluated. See the [replacement preregistration](2026-08-03-neural-vocal-credit-gateB-v9-output-v2-PREREGISTRATION.md).
 
 **Filed after engagement passed and before any v9 output code or run.** Center
 `2` is locked. Seed `0` remains the only executable seed, no scientific

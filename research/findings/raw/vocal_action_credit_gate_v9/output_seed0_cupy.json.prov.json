@@ -1,0 +1,29 @@
+{
+ "run_id": "1785807005-1955337",
+ "runner": "research/runners/_vocal_action_credit_gate_v9_graded_dendritic.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v9_graded_dendritic.py",
+  "--output-smoke",
+  "--out",
+  "research/findings/raw/vocal_action_credit_gate_v9/output_seed0_cupy.json"
+ ],
+ "git_sha": "0dd551bd1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-03T21:30:05",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2099.5,
+ "corpus_check_query": "bounded CPU regression checks for banked affect curiosity self-schema visual self-organization and grounded-language mechanisms; avoid repeating failed scientific experiments",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/vocal_action_credit_gate_v9/output_seed0_cupy.json"
+}
