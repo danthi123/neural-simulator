@@ -22,9 +22,11 @@ import textwrap
 from typing import Any, Iterable
 
 try:
+    from tools import research_packet
     from tools.rag import source_intake
     from tools.rag.rag_paths import resolve_paths
 except ModuleNotFoundError:  # direct script execution
+    import research_packet
     from rag import source_intake
     from rag.rag_paths import resolve_paths
 
@@ -127,10 +129,51 @@ def _command_text(record: dict[str, Any]) -> str:
     return " ".join(record["command"])
 
 
+def _packet_review_status(packet: dict[str, Any]) -> str:
+    statuses = {claim.get("status", "pending_review") for claim in packet.get("claims", [])}
+    if "rejected" in statuses:
+        return "rejected"
+    if statuses and statuses == {"accepted"}:
+        return "accepted"
+    return "pending_review"
+
+
+def _packet_is_promotable(packet: dict[str, Any]) -> bool:
+    claims = packet.get("claims", [])
+    if not claims or not all(claim.get("status") == "accepted" for claim in claims):
+        return False
+    # Packet review is necessary but does not replace the repository's existing source-intake gate. The
+    # external packet may carry a URL and a locator, but those are not evidence that the cited source is present
+    # in the maintained catalog/RAG path. A later intake step must attach a durable, retrievable intake record
+    # before an RP record can resolve a research question.
+    sources = packet.get("sources", [])
+    return bool(sources) and all(
+        isinstance(source.get("intake"), dict)
+        and isinstance(source["intake"].get("intake_id"), str)
+        and bool(source["intake"].get("retrievable"))
+        for source in sources
+    )
+
+
+def _validated_packet_record(record: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+    try:
+        packet = research_packet.validate_packet(record.get("packet"))
+    except research_packet.ResearchPacketError as exc:
+        raise EscalationError(
+            f"stored research packet {record.get('id', 'unknown')} failed validation: {exc}"
+        ) from exc
+    if packet["question"]["id"] != record.get("question_id"):
+        raise EscalationError(
+            f"stored research packet {record.get('id', 'unknown')} is bound to the wrong question"
+        )
+    return packet, _packet_is_promotable(packet)
+
+
 def _render(state: dict[str, Any]) -> str:
     questions = state["questions"]
     searches = state.get("searches", [])
     sources = state.get("sources", [])
+    packets = state.get("packets", [])
     retrieval_attempts = state.get("retrieval_attempts") or [
         {"id": "R1", "status": state.get("status", "unknown"), "records": state.get("retrieval", [])}
     ]
@@ -236,6 +279,56 @@ def _render(state: dict[str, Any]) -> str:
             ])
     else:
         lines.append("No source has been recorded yet.")
+
+    lines.extend(["", "## External research packets", ""])
+    if packets:
+        for handoff in packets:
+            packet = handoff["packet"]
+            lines.extend([
+                f"### {handoff['id']}: question {handoff['question_id']}",
+                "",
+                f"- Packet file: `{_safe_cell(handoff['packet_path'])}`",
+                f"- Received: {handoff['received_at']}",
+                f"- Review status: `{handoff['status']}`; promotable as resolved evidence: `{handoff['promotable']}`",
+                "- Prior-work matches:",
+            ])
+            for prior in packet["prior_work_matches"]:
+                lines.append(
+                    f"  - `{prior['id']}` `{prior['status']}`: {_safe_cell(prior['reference'])}; "
+                    f"{_safe_cell(prior['relationship'])}; {_safe_cell(prior['summary'])}"
+                )
+            lines.append("- Online searches:")
+            for search in packet["online_searches"]:
+                lines.append(
+                    f"  - `{search['id']}` {_safe_cell('; '.join(search['databases']))}; "
+                    f"queries: {_safe_cell('; '.join(search['query_variants']))}; "
+                    f"URLs: {_safe_cell('; '.join(search['urls']))}; {_safe_cell(search['outcome'])}"
+                )
+            lines.append("- Sources and provenance claims:")
+            for source in packet["sources"]:
+                lines.append(
+                    f"  - `{source['id']}` `{source['kind']}`: {_safe_cell(source['citation'])}; "
+                    f"{_safe_cell(source['url'])}; locator: {_safe_cell(source['locator'])}; "
+                    f"evidence: {_safe_cell(source['evidence'])}; license: `{source['license_status']}`"
+                )
+            lines.append("- Structured claims:")
+            for claim in packet["claims"]:
+                value = claim.get("value")
+                value_text = value if isinstance(value, str) else json.dumps(value, sort_keys=True)
+                review = claim.get("review") or {}
+                review_text = review.get("decision", "not reviewed")
+                if review.get("reviewer"):
+                    review_text += f" by {review['reviewer']}"
+                lines.append(
+                    f"  - `{claim['id']}` `{claim.get('status', 'pending_review')}`; "
+                    f"value: {_safe_cell(value_text)} {_safe_cell(claim['units'])}; "
+                    f"condition: {_safe_cell(claim['condition'])}; sources: {', '.join(claim['source_ids'])}; "
+                    f"locator: {_safe_cell(claim['locator'])}; review: {_safe_cell(review_text)}; "
+                    f"limitations: {_safe_cell(claim['limitations'])}"
+                )
+            lines.append("")
+    else:
+        lines.append("No external research packet has been handed off yet.")
 
     lines.extend(["", "## Question dispositions", ""])
     dispositions = [q for q in questions if q["status"] != "open"]
@@ -509,6 +602,7 @@ def start(args: argparse.Namespace, root: Path) -> Path:
             "questions": questions,
             "searches": [],
             "sources": [],
+            "packets": [],
             "decision": None,
             "next_experiment": None,
             "evidence_gate": "pending",
@@ -642,6 +736,38 @@ def record_source(args: argparse.Namespace, root: Path) -> Path:
     return path
 
 
+def handoff_packet(args: argparse.Namespace, root: Path) -> Path:
+    packet_path = Path(args.packet)
+    if not packet_path.is_absolute():
+        packet_path = root / packet_path
+    try:
+        packet = research_packet.load_packet(packet_path)
+    except research_packet.ResearchPacketError as exc:
+        raise EscalationError(f"research packet validation failed: {exc}") from exc
+
+    path = Path(args.gate).resolve()
+    with _gate_lock(path):
+        state = _load(path)
+        question_id = packet["question"]["id"]
+        if question_id not in _question_map(state):
+            raise EscalationError(
+                f"research packet question ID is not present in this gate: {question_id}"
+            )
+        packets = state.setdefault("packets", [])
+        packets.append({
+            "id": f"RP{len(packets) + 1}",
+            "questions": [question_id],
+            "question_id": question_id,
+            "packet_path": str(packet_path.resolve()),
+            "received_at": _utc_now(),
+            "status": _packet_review_status(packet),
+            "promotable": _packet_is_promotable(packet),
+            "packet": packet,
+        })
+        _write(path, state)
+    return path
+
+
 def answer(args: argparse.Namespace, root: Path) -> Path:
     path = Path(args.gate).resolve()
     with _gate_lock(path):
@@ -652,24 +778,38 @@ def answer(args: argparse.Namespace, root: Path) -> Path:
         references = _parse_ids(args.references)
         source_map = {source["id"]: source for source in state["sources"]}
         search_map = {search["id"]: search for search in state["searches"]}
-        unknown = sorted(set(references) - set(source_map) - set(search_map))
+        packet_map = {packet["id"]: packet for packet in state.get("packets", [])}
+        unknown = sorted(set(references) - set(source_map) - set(search_map) - set(packet_map))
         if unknown:
             raise EscalationError(f"unknown evidence record(s): {', '.join(unknown)}")
         if not references:
             raise EscalationError("an answer requires at least one source/search reference")
         unrelated = [
             ref for ref in references
-            if args.question not in (source_map.get(ref) or search_map.get(ref, {})).get("questions", [])
+            if args.question not in (
+                source_map.get(ref) or search_map.get(ref) or packet_map.get(ref, {})
+            ).get("questions", [])
         ]
         if unrelated:
             raise EscalationError(f"evidence record(s) do not cover {args.question}: {', '.join(unrelated)}")
         if args.status == "resolved":
+            packet_resolution = []
+            for record in (packet_map[ref] for ref in references if ref in packet_map):
+                _, promotable = _validated_packet_record(record)
+                if not promotable:
+                    packet_resolution.append(record["id"])
+            if packet_resolution:
+                raise EscalationError(
+                    "unreviewed or unresolved research packet(s) cannot be promoted as resolved evidence: "
+                    + ", ".join(packet_resolution)
+                )
             resolving = [
                 source_map[ref] for ref in references
                 if ref in source_map
                 and source_map[ref]["kind"] in RESOLVING_SOURCE_KINDS
                 and source_map[ref].get("intake", {}).get("retrievable")
             ]
+            resolving.extend(packet_map[ref] for ref in references if ref in packet_map)
             if not resolving:
                 raise EscalationError(
                     "resolved questions require a retrievable peer-reviewed primary source or primary preprint"
@@ -699,7 +839,7 @@ def finalize(args: argparse.Namespace, root: Path) -> Path:
         open_ids = [question["id"] for question in state["questions"] if question["status"] == "open"]
         if open_ids:
             raise EscalationError(f"cannot finalize with open questions: {', '.join(open_ids)}")
-        if not state["sources"] and not state["searches"]:
+        if not state["sources"] and not state["searches"] and not state.get("packets"):
             raise EscalationError("cannot finalize without recorded external evidence work")
         latest = state.get("retrieval_attempts", [{}])[-1]
         if state.get("retrieval_blocked") or latest.get("status") == "retrieval-unavailable":
@@ -793,12 +933,20 @@ def _parser() -> argparse.ArgumentParser:
     source.add_argument("--local-file", help="licensed local copy to archive in the source catalog")
     source.set_defaults(handler=record_source)
 
+    packet = sub.add_parser(
+        "handoff-packet",
+        help="validate and attach an external research packet without accepting its claims",
+    )
+    packet.add_argument("--gate", required=True)
+    packet.add_argument("--packet", required=True, help="validated research-packet JSON path")
+    packet.set_defaults(handler=handoff_packet)
+
     resolve = sub.add_parser("answer", help="resolve a question or record that the searched evidence is absent")
     resolve.add_argument("--gate", required=True)
     resolve.add_argument("--question", required=True)
     resolve.add_argument("--status", choices=("resolved", "not-found"), required=True)
     resolve.add_argument("--answer", required=True)
-    resolve.add_argument("--references", required=True, help="comma-separated S*/X* evidence IDs")
+    resolve.add_argument("--references", required=True, help="comma-separated S*/X*/RP* evidence IDs")
     resolve.set_defaults(handler=answer)
 
     finish = sub.add_parser("finalize", help="select a bounded next experiment through existing evidence gates")

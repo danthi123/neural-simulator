@@ -49,11 +49,13 @@
       ]
     },
     "019fcd2e-1492-7a72-b737-04bf116cfd38": {
-      "heartbeat_at": "2026-08-04T14:29:53+00:00",
+      "completed_at": "2026-08-04T14:40:50+00:00",
+      "heartbeat_at": "2026-08-04T14:40:50+00:00",
       "model": "gpt-5.6-luna",
-      "next_action": "Return focused tests and exact research_escalation integration diff; no commit or network search.",
+      "next_action": "Review packet integration and keep explicit claim review required before using RP evidence.",
+      "result": "Integrated validated research-packet handoff into research escalation; focused suite 15 passed, py_compile and diff-check passed. No commit or push.",
       "started_at": "2026-08-04T14:29:53+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Integrate research packets with research escalation",
       "write_set": [
         "tools/research_escalation.py",
@@ -61,11 +63,13 @@
       ]
     },
     "019fcd2e-14c3-7760-a307-2539d41ccbec": {
-      "heartbeat_at": "2026-08-04T14:29:58+00:00",
+      "completed_at": "2026-08-04T14:41:15+00:00",
+      "heartbeat_at": "2026-08-04T14:41:15+00:00",
       "model": "gpt-5.6-luna",
-      "next_action": "Return focused tests and exact controller integration diff; no dispatch or commit.",
+      "next_action": "Review exact expansion coverage and keep caller-side arm materialization, sealing, and execution gated.",
+      "result": "Integrated sealed handoff validation into dry-run experiment controller; focused suite 7 passed, py_compile and diff-check passed. No commit or push.",
       "started_at": "2026-08-04T14:29:58+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Integrate dry-run planner with sealed experiment API",
       "write_set": [
         "tools/experiment_controller.py",
@@ -187,18 +191,42 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T14:40:50+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd2e-1492-7a72-b737-04bf116cfd38"
+    },
+    {
+      "at": "2026-08-04T14:40:52+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T14:41:15+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd2e-14c3-7760-a307-2539d41ccbec"
+    },
+    {
+      "at": "2026-08-04T14:41:18+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
     }
   ],
   "lanes": {
     "deep-research-packets": {
       "agent_id": "019fcd2e-1492-7a72-b737-04bf116cfd38",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T14:34:31+00:00",
-      "next_action": "Agent is integrating validated packet handoff into research escalation; review fail-closed tests on return.",
+      "heartbeat_at": "2026-08-04T14:40:52+00:00",
+      "next_action": "Use handoff-packet with externally researched claims; require explicit review before RP evidence can resolve a gate, then catalog approved sources through source intake.",
       "owner": "controller",
       "priority": 2,
       "resource": "agent_cpu_network",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/research_escalation.py",
         "tests/test_research_escalation.py"
@@ -207,12 +235,12 @@
     "experiment-controller": {
       "agent_id": "019fcd2e-14c3-7760-a307-2539d41ccbec",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T14:34:34+00:00",
-      "next_action": "Agent is validating dry-run handoff against tools/experiment.py; review no-execution guarantees on return.",
+      "heartbeat_at": "2026-08-04T14:41:18+00:00",
+      "next_action": "Review sealed handoff validation; only later add execution integration behind explicit arm materialization, seal, controls, lesions, seed partitions, receipts, and held-out gates.",
       "owner": "controller",
       "priority": 2,
       "resource": "local_cpu_plus_pool",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/experiment_controller.py",
         "tests/test_experiment_controller.py"
@@ -272,5 +300,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T14:34:34+00:00"
+  "updated_at": "2026-08-04T14:41:18+00:00"
 }

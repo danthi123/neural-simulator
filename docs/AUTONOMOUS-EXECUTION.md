@@ -91,6 +91,18 @@ MRR=0.9231. SOMA is installed and automatically refreshed as a secondary local p
 is fresh and loadable, but its present labeled result is lower (hit@3=0.5, MRR=0.4938), so it may organize or
 triage material but does not replace the primary path or scientific source reading.
 
+## Research And Experiment Boundaries
+
+`tools/research_packet.py` describes an external search result with precise questions, prior-work matches,
+sources, locators, structured values, and review state. `research_escalation.py handoff-packet` attaches that
+record to the relevant wall without silently accepting it. Even an explicitly reviewed packet cannot resolve the
+wall until its cited source has a durable, retrievable catalog/RAG intake record.
+
+`tools/experiment_controller.py` currently plans and validates only. Its sealed-handoff check requires an existing
+experiment seal, verifies the real expansion contract, rejects extra backend/partition pairs, and never selects
+seeds, writes claims, dispatches jobs, executes code, or touches held-out data. Execution integration is a later
+lane with its own preregistration and receipt gates.
+
 ## Failure Policy
 
 An idle or stale lane is not silently accepted. Run check, dispatch a disjoint ready lane, or record a real blocker

@@ -11,6 +11,7 @@ import pytest
 
 from tools import research_escalation as escalation
 from tools.rag import index_status, source_intake
+from tools.research_packet import accept_claim, create_packet
 
 
 def _root(tmp_path: Path) -> Path:
@@ -120,6 +121,156 @@ def _absence_args(gate: Path, question: str) -> argparse.Namespace:
         date_to="2026-08-04",
         claim_absence=True,
     )
+
+
+def _external_packet(question_id: str = "P1") -> dict:
+    return create_packet(
+        question={
+            "id": question_id,
+            "kind": "parameter",
+            "target": "GPi autonomous output",
+            "requested_measurement": "baseline firing rate and variability",
+            "text": "What autonomous GPi firing-rate range is measured without fast synaptic input?",
+        },
+        prior_work_matches=[
+            {
+                "id": "F1",
+                "reference": "research/findings/prior-tonic-output-wall.md",
+                "relationship": "same wall; host current was a confound",
+                "status": "failed",
+                "summary": "The prior attempt did not establish autonomous output.",
+            }
+        ],
+        online_searches=[
+            {
+                "id": "S1",
+                "databases": ["PubMed", "Crossref"],
+                "query_variants": [
+                    "GPi spontaneous firing rate",
+                    "entopeduncular nucleus synaptic blockade",
+                ],
+                "date_from": "1900-01-01",
+                "date_to": "2026-08-04",
+                "urls": [
+                    "https://pubmed.ncbi.nlm.nih.gov/?term=gpi",
+                    "https://search.crossref.org/?q=gpi",
+                ],
+                "outcome": "Found preparation-matched primary measurements.",
+            }
+        ],
+        sources=[
+            {
+                "id": "SRC1",
+                "citation": "Example et al. (2026), GPi output",
+                "url": "https://doi.org/10.0000/example",
+                "kind": "peer-reviewed-primary",
+                "search_id": "S1",
+                "locator": "Results, Figure 2",
+                "evidence": "Cell-attached recordings report the baseline rate.",
+                "license_status": "metadata-only",
+            }
+        ],
+        claims=[
+            {
+                "id": "C1",
+                "source_ids": ["SRC1"],
+                "value": "75-100",
+                "units": "Hz",
+                "condition": "without fast synaptic input",
+                "species": "macaque",
+                "preparation": "in vivo cell-attached recording",
+                "uncertainty": "reported range; species and preparation dependent",
+                "locator": "Results, Figure 2",
+                "limitations": "Not a universal value for all GPi preparations.",
+            }
+        ],
+        created_at="2026-08-04",
+    )
+
+
+def test_valid_external_packet_handoff_keeps_prior_work_and_provenance_reviewable(tmp_path, monkeypatch):
+    root, gate = _start(tmp_path, monkeypatch, FakeCommands())
+    packet_path = root / "deep-research.json"
+    packet_path.write_text(json.dumps(_external_packet()), encoding="utf-8")
+
+    escalation.handoff_packet(
+        argparse.Namespace(gate=str(gate), packet=str(packet_path)),
+        root,
+    )
+
+    state = escalation._load(gate)
+    handoff = state["packets"][0]
+    assert handoff["id"] == "RP1"
+    assert handoff["status"] == "pending_review"
+    assert handoff["promotable"] is False
+    assert handoff["packet"]["prior_work_matches"][0]["reference"].endswith("prior-tonic-output-wall.md")
+    assert handoff["packet"]["sources"][0]["url"] == "https://doi.org/10.0000/example"
+    assert state["questions"][0]["status"] == "open"
+    rendered = gate.read_text(encoding="utf-8")
+    assert "prior-tonic-output-wall.md" in rendered
+    assert "https://doi.org/10.0000/example" in rendered
+    assert "pending_review" in rendered
+
+
+def test_invalid_and_unreviewed_packets_fail_closed(tmp_path, monkeypatch):
+    root, gate = _start(tmp_path, monkeypatch, FakeCommands())
+    invalid_path = root / "invalid.json"
+    invalid = _external_packet()
+    invalid["claims"][0]["source_ids"] = ["missing-source"]
+    invalid_path.write_text(json.dumps(invalid), encoding="utf-8")
+
+    with pytest.raises(escalation.EscalationError, match="known source"):
+        escalation.handoff_packet(
+            argparse.Namespace(gate=str(gate), packet=str(invalid_path)),
+            root,
+        )
+    assert escalation._load(gate).get("packets", []) == []
+
+    packet_path = root / "pending.json"
+    packet_path.write_text(json.dumps(_external_packet()), encoding="utf-8")
+    escalation.handoff_packet(
+        argparse.Namespace(gate=str(gate), packet=str(packet_path)),
+        root,
+    )
+    with pytest.raises(escalation.EscalationError, match="unreviewed or unresolved"):
+        escalation.answer(
+            argparse.Namespace(
+                gate=str(gate), question="P1", status="resolved",
+                answer="Use the external packet range.", references="RP1",
+            ),
+            root,
+        )
+    assert escalation._load(gate)["questions"][0]["status"] == "open"
+
+
+def test_explicitly_reviewed_packet_still_requires_retrievable_source_intake(tmp_path, monkeypatch):
+    root, gate = _start(tmp_path, monkeypatch, FakeCommands())
+    packet_path = root / "reviewed.json"
+    packet = accept_claim(
+        _external_packet(),
+        "C1",
+        reviewer="biology-review",
+        reviewed_at="2026-08-04",
+        notes="Conditions and limitation retained.",
+    )
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+
+    escalation.handoff_packet(
+        argparse.Namespace(gate=str(gate), packet=str(packet_path)),
+        root,
+    )
+    state = escalation._load(gate)
+    assert state["packets"][0]["packet"]["claims"][0]["status"] == "accepted"
+    assert state["packets"][0]["promotable"] is False
+    with pytest.raises(escalation.EscalationError, match="unreviewed or unresolved"):
+        escalation.answer(
+            argparse.Namespace(
+                gate=str(gate), question="P1", status="resolved",
+                answer="Use the explicitly reviewed preparation-specific range.", references="RP1",
+            ),
+            root,
+        )
+    assert escalation._load(gate)["questions"][0]["status"] == "open"
 
 
 def test_start_distinguishes_local_reading_from_no_local_evidence(tmp_path, monkeypatch):
