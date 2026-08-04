@@ -1,0 +1,99 @@
+{
+  "schema": "sim-experiment-spec-v0",
+  "id": "gateB-v13-stage0-tonic-output-substrate",
+  "status": "preregistered",
+  "date": "2026-08-04",
+  "provenance_exempt": "non-executed preregistration protocol; contains no measured result",
+  "device": "not_applicable_non_executed_protocol",
+  "authority": "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-tonic-output-substrate-PREREGISTRATION.md",
+  "functional_role": "Autonomous GPi/SNr-like tonic inhibition from the first scored window without runtime external current.",
+  "implementation": {
+    "region_field": "intrinsic_current_pA",
+    "default": 0.0,
+    "device_array": "cp_intrinsic_current_pA",
+    "device_dtype": "float32",
+    "allocate_only_if_nonzero": true,
+    "supported_models": ["IZHIKEVICH"],
+    "runtime_setter_allowed": false,
+    "apply_stage": "immediately_before_neuron_model_dynamics",
+    "checkpoint_required": true,
+    "default_off_exact": true
+  },
+  "population": {
+    "region": "gpi_snr",
+    "count": 40,
+    "neuron_type": "IZH2007_GPI_OUTPUT",
+    "excitatory_fraction": 0.0,
+    "dt_ms": 1.0,
+    "external_current_pA": 0.0,
+    "global_heterogeneity": false,
+    "region_heterogeneity": true,
+    "heterogeneity_distributions": {
+      "izh_a_val": {"type": "lognormal", "mean_log": -2.995732273553991, "sigma_log": 0.15},
+      "izh_b_val": {"type": "gaussian", "mean": 2.0, "std": 0.3},
+      "izh_d_val": {"type": "gaussian", "mean": 25.0, "std": 3.75},
+      "izh_C_val": {"type": "gaussian", "mean": 60.0, "std": 9.0}
+    }
+  },
+  "partitions": {
+    "audit_only": [314159],
+    "compatibility": [271828],
+    "calibration": [1013],
+    "replication": [1019],
+    "held_out": [1021],
+    "reserved_for_stage1": [1031]
+  },
+  "backends": ["numpy", "cupy"],
+  "calibration": {
+    "intrinsic_current_ladder_pA": [75, 100, 125, 150, 175],
+    "steps": 1000,
+    "bin_steps": 100,
+    "selection_rule": "lowest point passing every criterion on both backends",
+    "criteria": {
+      "minimum_bin_rate_hz": 40.0,
+      "maximum_bin_rate_hz": 80.0,
+      "all_cells_fire": true,
+      "maximum_same_step_fraction": 0.25,
+      "minimum_distinct_first_spike_steps": 8,
+      "minimum_first_spike_span_ms": 8.0,
+      "external_current_exact_zero": true,
+      "intrinsic_vector_immutable": true
+    }
+  },
+  "lesion": {
+    "field_value_pA": 0.0,
+    "steps": 1000,
+    "required_spikes": 0
+  },
+  "inhibitory_response": {
+    "source_count": 20,
+    "source_type": "IZH2007_FS_CORTICAL_INTERNEURON",
+    "source_drive_pA": 1000.0,
+    "pathway": {"receptor": "gaba_a", "density": 1.0, "weight": 8.0, "jitter": 0.0},
+    "phases_ms": {"baseline": 500, "inhibition": 200, "release": 500},
+    "maximum_inhibition_to_baseline_ratio": 0.10,
+    "recovery_by_release_bin": 2,
+    "maximum_rebound_to_baseline_ratio": 1.5
+  },
+  "checkpoint": {
+    "prefix_steps": 300,
+    "continuation_steps": 500,
+    "exact_raster_and_state_hashes": true,
+    "old_checkpoint_missing_feature_loads_none": true
+  },
+  "performance": {
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "unscored_steps": 500,
+    "timed_steps": 20000,
+    "repetitions": 3,
+    "maximum_default_off_ratio": 1.02,
+    "maximum_active_ratio": 1.10,
+    "maximum_feature_bytes_per_neuron": 4,
+    "per_step_device_to_host_sync_allowed": false
+  },
+  "promotion": {
+    "go_verdict": "TONIC_OUTPUT_GO",
+    "opens": "V13 continuous center-surround selector preregistration",
+    "does_not_claim": ["explicit ion-channel closure", "action selection", "reward learning", "conversation"]
+  }
+}
