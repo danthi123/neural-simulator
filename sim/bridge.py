@@ -1517,6 +1517,42 @@ class SimulationBridge:
                         "BrainRegion SNr conductances currently support only "
                         f"HODGKIN_HUXLEY, not {self.core_config.neuron_model_type}"
                     )
+                hh_override_names = (
+                    "hh_C_m_override", "hh_g_Na_max_override",
+                    "hh_g_K_max_override", "hh_g_L_override",
+                    "hh_E_Na_override", "hh_E_K_override", "hh_E_L_override",
+                )
+                hh_overrides = {
+                    field_name: getattr(region, field_name, None)
+                    for field_name in hh_override_names
+                }
+                if (any(value is not None for value in hh_overrides.values())
+                        and self.core_config.neuron_model_type
+                        != NeuronModel.HODGKIN_HUXLEY.name):
+                    raise ValueError(
+                        "BrainRegion HH parameter overrides require "
+                        f"HODGKIN_HUXLEY, not {self.core_config.neuron_model_type}"
+                    )
+                for field_name, raw_value in hh_overrides.items():
+                    if raw_value is None:
+                        continue
+                    value = float(raw_value)
+                    if not math.isfinite(value):
+                        raise ValueError(
+                            f"Region {region.name!r} {field_name} must be finite"
+                        )
+                    if abs(value) > float(np.finfo(np.float32).max):
+                        raise ValueError(
+                            f"Region {region.name!r} {field_name} must be "
+                            "representable as float32"
+                        )
+                    if field_name in {
+                        "hh_C_m_override", "hh_g_Na_max_override",
+                        "hh_g_K_max_override", "hh_g_L_override",
+                    } and value <= 0.0:
+                        raise ValueError(
+                            f"Region {region.name!r} {field_name} must be positive"
+                        )
 
         try:
             cfg = self.core_config
@@ -2696,9 +2732,27 @@ class SimulationBridge:
                     self._log_console(
                         f"Region '{region.name}' Izh type override failed: {e}", "warning",
                     )
-            # HH per-region override is more complex (uses scalar cfg fields,
-            # not per-neuron arrays for many params) — defer until Phase B
-            # actually needs HH-mode regions.
+            if cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
+                hh_overrides = {
+                    "cp_hh_C_m": region.hh_C_m_override,
+                    "cp_hh_g_Na_max": region.hh_g_Na_max_override,
+                    "cp_hh_g_K_max": region.hh_g_K_max_override,
+                    "cp_hh_g_L": region.hh_g_L_override,
+                    "cp_hh_E_Na": region.hh_E_Na_override,
+                    "cp_hh_E_K": region.hh_E_K_override,
+                    "cp_hh_E_L": region.hh_E_L_override,
+                }
+                applied = []
+                for attr_name, value in hh_overrides.items():
+                    if value is None:
+                        continue
+                    getattr(self, attr_name)[idx_arr] = cp.float32(value)
+                    applied.append(attr_name.removeprefix("cp_hh_"))
+                if applied:
+                    self._log_console(
+                        f"Region '{region.name}' ({len(indices)} neurons): "
+                        f"using HH parameter overrides {', '.join(applied)}"
+                    )
             # AdEx per-region override likewise deferred.
 
     def _apply_parameter_heterogeneity(self, cfg, n, *, backend_neutral=False):

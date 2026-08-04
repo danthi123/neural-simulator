@@ -88,6 +88,17 @@ class BrainRegion:
     hh_neuron_type: str = None
     adex_neuron_type: str = None
 
+    # Optional population-scoped overrides for the HH spike-generating and
+    # passive membrane parameters. None preserves the selected HH preset.
+    # Conductances use mS/cm^2, capacitance uses uF/cm^2, and reversals use mV.
+    hh_C_m_override: Optional[float] = None
+    hh_g_Na_max_override: Optional[float] = None
+    hh_g_K_max_override: Optional[float] = None
+    hh_g_L_override: Optional[float] = None
+    hh_E_Na_override: Optional[float] = None
+    hh_E_K_override: Optional[float] = None
+    hh_E_L_override: Optional[float] = None
+
     # Construction-time effective intrinsic drive in pA. This reduced-model
     # field represents unresolved cell-autonomous conductances; it is not a
     # sensory stimulus and is currently supported only by Izhikevich regions.
@@ -261,6 +272,30 @@ class BrainRegion:
     input_divisive_norm_2: bool = False
 
     def __post_init__(self) -> None:
+        positive_hh_fields = (
+            "hh_C_m_override",
+            "hh_g_Na_max_override",
+            "hh_g_K_max_override",
+            "hh_g_L_override",
+        )
+        for field_name in positive_hh_fields:
+            value = getattr(self, field_name)
+            if value is None:
+                continue
+            if not math.isfinite(value) or value <= 0.0:
+                raise ValueError(
+                    f"{field_name} must be finite and positive, got {value}"
+                )
+
+        for field_name in (
+            "hh_E_Na_override",
+            "hh_E_K_override",
+            "hh_E_L_override",
+        ):
+            value = getattr(self, field_name)
+            if value is not None and not math.isfinite(value):
+                raise ValueError(f"{field_name} must be finite, got {value}")
+
         for field_name in (
             "snr_g_nalcn_max",
             "snr_g_nap_max",
