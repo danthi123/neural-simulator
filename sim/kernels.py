@@ -26,6 +26,35 @@ _STRICT_IZH_ARRAY_NAMES = (
     "v", "u", "C_param", "k_param", "vr_param", "vt_param", "a_param",
     "b_param", "total_synaptic_current",
 )
+_STRICT_IZH_IEEE_PREAMBLE = r"""
+__device__ __forceinline__ float sim_fadd_rn(float lhs, float rhs) {
+    float result;
+    asm volatile("add.rn.f32 %0, %1, %2;"
+                 : "=f"(result) : "f"(lhs), "f"(rhs));
+    return result;
+}
+
+__device__ __forceinline__ float sim_fsub_rn(float lhs, float rhs) {
+    float result;
+    asm volatile("sub.rn.f32 %0, %1, %2;"
+                 : "=f"(result) : "f"(lhs), "f"(rhs));
+    return result;
+}
+
+__device__ __forceinline__ float sim_fmul_rn(float lhs, float rhs) {
+    float result;
+    asm volatile("mul.rn.f32 %0, %1, %2;"
+                 : "=f"(result) : "f"(lhs), "f"(rhs));
+    return result;
+}
+
+__device__ __forceinline__ float sim_fdiv_rn(float lhs, float rhs) {
+    float result;
+    asm volatile("div.rn.f32 %0, %1, %2;"
+                 : "=f"(result) : "f"(lhs), "f"(rhs));
+    return result;
+}
+"""
 
 # --- CuPy Fused Kernels ---
 @fuse()
@@ -64,24 +93,25 @@ if _backend_name == "cupy":
         "float32 v_new, float32 u_new",
         r"""
         const float C_safe = C == 0.0f ? 1.0f : C;
-        const float v_minus_vr = __fsub_rn(v, vr);
-        const float v_minus_vt = __fsub_rn(v, vt);
+        const float v_minus_vr = sim_fsub_rn(v, vr);
+        const float v_minus_vt = sim_fsub_rn(v, vt);
 
-        const float k_times_vr = __fmul_rn(k, v_minus_vr);
-        const float quadratic = __fmul_rn(k_times_vr, v_minus_vt);
-        const float dv_minus_u = __fsub_rn(quadratic, u);
-        const float dv_numerator = __fadd_rn(dv_minus_u, total_current);
-        const float dv = __fdiv_rn(dv_numerator, C_safe);
-        const float dv_dt = __fmul_rn(dv, dt);
-        v_new = __fadd_rn(v, dv_dt);
+        const float k_times_vr = sim_fmul_rn(k, v_minus_vr);
+        const float quadratic = sim_fmul_rn(k_times_vr, v_minus_vt);
+        const float dv_minus_u = sim_fsub_rn(quadratic, u);
+        const float dv_numerator = sim_fadd_rn(dv_minus_u, total_current);
+        const float dv = sim_fdiv_rn(dv_numerator, C_safe);
+        const float dv_dt = sim_fmul_rn(dv, dt);
+        v_new = sim_fadd_rn(v, dv_dt);
 
-        const float b_times_vr = __fmul_rn(b, v_minus_vr);
-        const float du_inner = __fsub_rn(b_times_vr, u);
-        const float du = __fmul_rn(a, du_inner);
-        const float du_dt = __fmul_rn(du, dt);
-        u_new = __fadd_rn(u, du_dt);
+        const float b_times_vr = sim_fmul_rn(b, v_minus_vr);
+        const float du_inner = sim_fsub_rn(b_times_vr, u);
+        const float du = sim_fmul_rn(a, du_inner);
+        const float du_dt = sim_fmul_rn(du, dt);
+        u_new = sim_fadd_rn(u, du_dt);
         """,
         "strict_izhikevich2007_float32_update",
+        preamble=_STRICT_IZH_IEEE_PREAMBLE,
     )
 else:
     _strict_izhikevich2007_gpu_kernel = None
@@ -110,10 +140,11 @@ def strict_izhikevich2007_dynamics_update(
 ):
     """Izhikevich-2007 Euler update with explicit float32 rounding points.
 
-    CuPy executes one device-resident elementwise kernel. NumPy materializes
-    the same primitive operations in the same order. The caller must supply
-    C-contiguous float32 arrays so this opt-in correction cannot silently
-    promote or copy state.
+    CuPy executes one device-resident elementwise kernel with explicit IEEE
+    round-to-nearest operations that preserve subnormal values. NumPy
+    materializes the same primitive operations in the same order. The caller
+    must supply C-contiguous float32 arrays so this opt-in correction cannot
+    silently promote or copy state.
     """
     arrays = (
         v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,

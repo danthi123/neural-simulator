@@ -98,6 +98,21 @@ def test_strict_toy_update_matches_staged_numpy_bytes_including_zero_C():
         assert np.array_equal(_host(left).view(np.uint32), right.view(np.uint32))
 
 
+def test_strict_update_preserves_replay_boundary_subnormal_recovery_delta():
+    u = np.asarray([0x81994A13], dtype=np.uint32).view(np.float32)
+    values = (
+        [-55.0], u, [100.0], [0.7], [-55.0], [-40.0], [0.2], [-2.0], [0.0],
+    )
+    inputs = tuple(xp.asarray(value, dtype=xp.float32) for value in values) + (1.0,)
+
+    du = np.multiply(np.float32(0.2), np.negative(u[0]))
+    assert np.float32(0.0) < du < np.finfo(np.float32).tiny
+    expected_u = np.asarray([0x81754352], dtype=np.uint32)
+
+    _, observed_u = kernels.strict_izhikevich2007_dynamics_update(*inputs)
+    assert np.array_equal(_host(observed_u).view(np.uint32), expected_u)
+
+
 @pytest.mark.parametrize("input_index", range(9))
 def test_strict_update_rejects_every_non_float32_array(input_index):
     inputs = list(_toy_inputs())
@@ -234,8 +249,11 @@ def test_bridge_strict_step_receives_float32_c_contiguous_runtime_arrays(monkeyp
 def test_gpu_path_is_one_explicit_rounding_kernel_without_host_conversion():
     source = Path(kernels.__file__).read_text()
     assert source.count("cp.ElementwiseKernel(") == 1
-    for intrinsic in ("__fsub_rn", "__fmul_rn", "__fadd_rn", "__fdiv_rn"):
-        assert intrinsic in source
+    for instruction in (
+        "add.rn.f32", "sub.rn.f32", "mul.rn.f32", "div.rn.f32",
+    ):
+        assert instruction in kernels._STRICT_IZH_IEEE_PREAMBLE
+    assert ".ftz" not in kernels._STRICT_IZH_IEEE_PREAMBLE
 
     strict_source = inspect.getsource(kernels.strict_izhikevich2007_dynamics_update)
     for forbidden in (".get(", "asnumpy", "to_host", "asarray"):
