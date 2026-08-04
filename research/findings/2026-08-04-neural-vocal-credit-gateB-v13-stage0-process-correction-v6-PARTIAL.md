@@ -41,11 +41,12 @@ and
 
 ## Engineering boundary
 
-The next locked step was a legacy RTX 3090 performance baseline. Its command
-envelope correctly requires the historical source checkout as its working
-directory. The execution-receipt wrapper, however, always launches the child
-from its evidence root. It cannot currently run the historical source while
-writing a receipt-bound artifact into the current evidence root.
+The next locked step was a legacy RTX 3090 performance baseline. The frozen V6
+configuration paired historical revision `8994b5102` with the current V13
+measurement runner, but that runner does not exist at the historical revision.
+The controller therefore rejected the source/runner pair before it could emit a
+command envelope. A generic current-root receipt would also have been unsuitable
+downstream, but it was not the first failure.
 
 No performance command was emitted or executed. Running the envelope through
 the current wrapper would benchmark the current source while claiming the old
@@ -59,8 +60,9 @@ revision, so progression stopped before that invalid transition.
   Stage-0 promotion.
 - No performance artifact or final merge exists.
 - Stage-1 seed `1031` remains sealed.
-- A process-only continuation must bind the receipt's actual subprocess
-  working directory to the frozen envelope and permit the sealed V6 physiology
+- A process-only continuation must use the audited historical source package,
+  add only the already accepted measurement-runner overlay, issue a
+  package-specific execution receipt, and permit the sealed V6 physiology
   evidence to unlock only the remaining engineering gates.
 
 V6 has no Stage-0 promotion value until performance and final evidence gates

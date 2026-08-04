@@ -1,0 +1,56 @@
+{
+  "candidate": {
+    "source_manifest": "research/specs/v13_stage0_candidate_source_v9.sha256",
+    "source_manifest_sha256": "e4d34d40e5176e52b42621635a18f40e9e6783c326ee61d93275e91efb330003",
+    "source_revision": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f"
+  },
+  "continuation_id": "v13-stage0-performance-continuation-v7",
+  "execution_lane": {
+    "backend": "cupy",
+    "device": "NVIDIA GeForce RTX 3090"
+  },
+  "legacy": {
+    "base_revision": "8994b5102b39a8a6aa6abdeb9fde02579b7db6a8",
+    "execution_receipt_required": true,
+    "overlay_path": "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+    "overlay_revision": "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+  },
+  "performance_thresholds": {
+    "default_vs_old_max": 1.02,
+    "normal_active_max": 1.1,
+    "required_checks": [
+      "old_baseline_supplied",
+      "default_off_ratio",
+      "normal_active_ratio",
+      "v1_active_ratio",
+      "v2_active_ratio",
+      "feature_storage",
+      "default_does_not_allocate",
+      "v1_dispatches",
+      "v2_dispatches"
+    ],
+    "v1_active_max": 1.1,
+    "v2_active_max": 1.1
+  },
+  "scientific_boundary": {
+    "new_seeds": false,
+    "physiology_reruns": false,
+    "sealed_stage1_seed": 1031,
+    "valid_no_go_is_preserved": true
+  },
+  "schema": "v13-stage0-performance-continuation-v7",
+  "sha256": "9395d59ba0cbb47c46ba8e40c7221570e9dd100a4799b97984cde90f2516f7eb",
+  "status": "preregistered-not-executed",
+  "v6": {
+    "candidate_source_revision": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+    "controller_config": "research/specs/v13_stage0_controller_config_v8.json",
+    "controller_config_file_sha256": "6367b975df3ae1664cad5ea5a7d4ed747c44ec7c0ea21f6d36d5af1f43364b93",
+    "manifest_file_sha256": {
+      "calibration_selection": "ef2c8d3b20a3e3e8a99be18a45763b02a45901851884c4ef5c8371fbd5a8eb62",
+      "held_out_cupy": "600da09c5db47cb61be4051d720717994b98338d37fab3bef874841fb3c101cd",
+      "held_out_numpy": "d203c7561049d3a2cace03e3f0e4ba1d0d50272b14171e5af25a368f915d3017",
+      "replication_cupy": "8b117a009f605b1bc4805c9e885250688f56e5b1c833bfac3ea3f68b1bff2c8e",
+      "replication_numpy": "0dc33e6b312c4831eaa3ffe94beafc825cf678499c673db6bf1ff7095775fcf0"
+    }
+  }
+}

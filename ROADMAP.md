@@ -157,11 +157,13 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     preregistered the process-only fix: valid positive and negative outcomes are
     sealable, while undefined evidence still fails closed. V6 then sealed
     cross-backend calibration at `100 pA`, replication GO on seed `890220`, and
-    held-out GO on blind seed `1021`. It stopped before performance because the
-    receipt wrapper cannot yet launch the historical baseline from the working
-    directory frozen in its command envelope. A process-only continuation must
-    bind that directory and reuse the sealed V6 physiology without rerunning
-    consumed seeds. Stage-1 seed `1031` remains sealed.
+    held-out GO on blind seed `1021`. It stopped before performance because its
+    frozen configuration paired an old revision with a measurement runner that
+    does not exist at that revision, so no command could be emitted. V7
+    preregisters an audited mixed-source package containing the exact old
+    scientific imports plus only the accepted measurement runner, with its own
+    execution receipt. It reuses sealed V6 physiology without rerunning consumed
+    seeds. Stage-1 seed `1031` remains sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
