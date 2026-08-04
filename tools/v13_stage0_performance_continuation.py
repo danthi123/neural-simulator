@@ -274,6 +274,92 @@ def transfer_candidate(*, root: Path, candidate_root: Path) -> dict[str, Any]:
     return value
 
 
+def preserve_failed_candidate(*, root: Path, candidate_root: Path) -> dict[str, Any]:
+    """Preserve only a measured NO-GO after the sidecar/receipt path failed."""
+    readiness(root=root)
+    candidate_root = candidate_root.resolve(strict=True)
+    if _git_head(candidate_root) != CANDIDATE_REVISION:
+        raise ContinuationError("candidate checkout identity changed before preservation")
+    paths = _candidate_paths(candidate_root)
+    if paths["receipt"].exists() or paths["sidecar"].exists():
+        raise ContinuationError("failure preservation refuses receipt or sidecar evidence")
+    artifact_bytes = _regular(paths["artifact"], "unsealed candidate artifact")
+    artifact = json.loads(artifact_bytes)
+    if _validate_performance(artifact) is not False:
+        raise ContinuationError("failure preservation accepts only measured PERFORMANCE_NO_GO")
+    config = _read_json(root / V6_CONFIG)
+    if artifact.get("source_identity") != config.get("candidate_source_identity"):
+        raise ContinuationError("unsealed artifact source identities differ from V6")
+    baseline_bytes = _regular(
+        root / RAW_PATH / LEGACY_TRANSFER / legacy.LEGACY_OUTPUT_NAME,
+        "sealed legacy baseline",
+    )
+    if artifact.get("old_baseline") != json.loads(baseline_bytes):
+        raise ContinuationError("unsealed artifact embeds a different legacy baseline")
+
+    run_log = candidate_root / "research/findings/raw/_provenance/runs.jsonl"
+    records = []
+    for line in _regular(run_log, "candidate provenance start log").splitlines():
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if (
+            record.get("provenance_schema") == "sim-run-provenance-v2"
+            and record.get("git_sha") == CANDIDATE_REVISION
+            and record.get("source_manifest_sha256") == CANDIDATE_MANIFEST_SHA256
+            and record.get("env") == {"SIM_BACKEND": "cupy"}
+            and str(paths["artifact"]) in record.get("argv", [])
+        ):
+            records.append(record)
+    if len(records) != 1:
+        raise ContinuationError(
+            f"expected one matching failed-receipt run record, found {len(records)}"
+        )
+    run_record = records[0]
+    if (
+        not isinstance(run_record.get("run_id"), str)
+        or len(run_record["run_id"]) != 64
+        or type(run_record.get("started_utc_ns")) is not int
+        or run_record["started_utc_ns"] <= 0
+    ):
+        raise ContinuationError("failed-receipt run identity or timing is invalid")
+
+    destination = root / RAW_PATH / "candidate-performance"
+    if os.path.lexists(destination):
+        raise ContinuationError(f"refusing existing candidate transfer: {destination}")
+    destination.mkdir(parents=True, mode=0o755)
+    run_bytes = (json.dumps(run_record, indent=2, sort_keys=True) + "\n").encode("ascii")
+    try:
+        (destination / "performance-candidate.json").write_bytes(artifact_bytes)
+        (destination / "provenance-start-record.json").write_bytes(run_bytes)
+        records_out = {
+            "performance-candidate.json": {
+                "sha256": _sha256(artifact_bytes), "size_bytes": len(artifact_bytes),
+            },
+            "provenance-start-record.json": {
+                "sha256": _sha256(run_bytes), "size_bytes": len(run_bytes),
+            },
+        }
+        value = {
+            "schema": "v13-stage0-candidate-performance-failed-receipt-v1",
+            "status": "measured_no_go_receipt_failed",
+            "source_revision": CANDIDATE_REVISION,
+            "source_manifest_sha256": CANDIDATE_MANIFEST_SHA256,
+            "run_id": run_record["run_id"],
+            "receipt_failure": "artifact path outside provenance scanner raw root",
+            "scientific_disposition": "PERFORMANCE_NO_GO",
+            "rerun_authorized": False,
+            "files": records_out,
+        }
+        value["sha256"] = _canonical_digest(value)
+        _write_exclusive(destination / "transfer-manifest.json", value)
+    except Exception:
+        shutil.rmtree(destination)
+        raise
+    return value
+
+
 def _validate_performance(artifact: dict[str, Any]) -> bool:
     checks = artifact.get("checks")
     ratios = artifact.get("ratios")
@@ -356,6 +442,19 @@ def finalize(*, root: Path = ROOT) -> dict[str, Any]:
         raise ContinuationError("candidate transfer no longer binds the performance artifact")
     artifact = json.loads(artifact_bytes)
     performance_go = _validate_performance(artifact)
+    if transfer.get("schema") == "v13-stage0-candidate-performance-failed-receipt-v1":
+        if (
+            performance_go
+            or transfer.get("status") != "measured_no_go_receipt_failed"
+            or transfer.get("scientific_disposition") != "PERFORMANCE_NO_GO"
+            or transfer.get("rerun_authorized") is not False
+        ):
+            raise ContinuationError("failed-receipt transfer cannot support this verdict")
+    elif (
+        transfer.get("schema") != "v13-stage0-candidate-performance-transfer-v1"
+        or transfer.get("status") != "transferred"
+    ):
+        raise ContinuationError("candidate transfer schema or status is invalid")
     outcome = "TONIC_OUTPUT_GO" if performance_go else "TONIC_OUTPUT_NO_GO"
     final = {
         "schema": "v13-stage0-performance-continuation-final-v1",
@@ -386,6 +485,8 @@ def _parser() -> argparse.ArgumentParser:
     candidate.add_argument("--candidate-root", type=Path, required=True)
     transfer = commands.add_parser("transfer-candidate")
     transfer.add_argument("--candidate-root", type=Path, required=True)
+    failed = commands.add_parser("preserve-failed-candidate")
+    failed.add_argument("--candidate-root", type=Path, required=True)
     commands.add_parser("finalize")
     return parser
 
@@ -401,6 +502,10 @@ def main(argv: list[str] | None = None) -> int:
             result = run_candidate(root=args.root, candidate_root=args.candidate_root)
         elif args.command == "transfer-candidate":
             result = transfer_candidate(root=args.root, candidate_root=args.candidate_root)
+        elif args.command == "preserve-failed-candidate":
+            result = preserve_failed_candidate(
+                root=args.root, candidate_root=args.candidate_root,
+            )
         else:
             result = finalize(root=args.root)
     except (ContinuationError, legacy.PackageError, OSError, ValueError) as exc:
