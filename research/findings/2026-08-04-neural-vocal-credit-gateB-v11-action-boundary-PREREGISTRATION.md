@@ -149,11 +149,11 @@ All validity checks precede the engagement verdict:
 1. seed `1` is the only reserved seed and every other phase is sealed;
 2. the fixed topology, symmetry, polarity, NMDA scope, and host boundary pass;
 3. initial weights and complete initial firing state match across conditions;
-4. `motor_copy_lesion` matches intact firing and RNG history through the first
-   motor spike inclusive on every trial;
+4. on trial one, `motor_copy_lesion` matches intact firing and RNG history
+   through the first motor spike inclusive;
 5. proposal, commit, and recurrence lesions match intact through the first
-   corollary spike inclusive; the coactivity lesion matches intact firing for
-   the complete run;
+   corollary spike inclusive on trial one; the coactivity lesion matches intact
+   firing for the complete run;
 6. first corollary activity follows motor activity, and local FS activity
    follows corollary activity, in every scored intact trial;
 7. both actions occur cleanly at least three times in intact, otherwise return
@@ -166,6 +166,11 @@ All validity checks precede the engagement verdict:
 11. saving intact state after an action and loading it into a fresh bridge
     restores every allocated slow-conductance array byte-exactly. The focused
     legacy/default checkpoint regressions must also pass.
+
+After a causal lesion changes trial one, later trials continue from legitimately
+different uninterrupted neural states. Their pre-causal prefixes are reported
+but are not required to be byte-identical; imposing that requirement would
+silently demand a host state reset and contradict the same-brain protocol.
 
 ## Locked causal criteria
 
