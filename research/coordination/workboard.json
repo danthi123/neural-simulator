@@ -516,20 +516,24 @@
       ]
     },
     "019fcea5-e8b1-7871-afa1-ccae79c23815": {
-      "heartbeat_at": "2026-08-04T21:20:21+00:00",
+      "completed_at": "2026-08-04T21:26:33+00:00",
+      "heartbeat_at": "2026-08-04T21:26:33+00:00",
       "model": "inherited",
       "next_action": "Return exact sourced values and disjoint implementation slices.",
+      "result": "No complete measured SNr parameter set exists; delivered source-backed measured/model-prior/unresolved packet and fail-closed temperature contract.",
       "started_at": "2026-08-04T21:20:21+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Remaining SNr channel kinetics source/code packet",
       "write_set": []
     },
     "019fcea5-ee57-77f3-83bf-466e6724b746": {
-      "heartbeat_at": "2026-08-04T21:20:21+00:00",
+      "completed_at": "2026-08-04T21:32:25+00:00",
+      "heartbeat_at": "2026-08-04T21:32:25+00:00",
       "model": "inherited",
       "next_action": "Implement default-off bridge substrate and tests.",
+      "result": "Device-resident region/pathway clamp integrated, checkpointed, and independently validated on NumPy/CuPy at cb4450c39.",
       "started_at": "2026-08-04T21:20:21+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Device-resident inhibitory clamp integration",
       "write_set": [
         "sim/bridge.py",
@@ -537,93 +541,49 @@
         "experiment/inhibitory_conductance_clamp.py",
         "tests/new"
       ]
+    },
+    "019fcea8-4356-7200-95d5-781220ae19e8": {
+      "completed_at": "2026-08-04T21:25:19+00:00",
+      "heartbeat_at": "2026-08-04T21:25:19+00:00",
+      "model": "inherited",
+      "next_action": "Return bypasses and exact remediation.",
+      "result": "Audit rejected self-asserted scorer receipts; no unsafe scorer code committed.",
+      "started_at": "2026-08-04T21:22:49+00:00",
+      "status": "completed",
+      "task": "Adversarial Stage B physiology scorer audit",
+      "write_set": []
+    },
+    "019fceab-a658-7833-8a6c-a5ddf854f609": {
+      "completed_at": "2026-08-04T21:34:43+00:00",
+      "heartbeat_at": "2026-08-04T21:34:43+00:00",
+      "model": "inherited",
+      "next_action": "Implement source/provenance/temperature-safe records and tests.",
+      "result": "Provenance-bound bridge-independent channel parameter module committed and validated on NumPy/CuPy at 49d4f8ffc.",
+      "started_at": "2026-08-04T21:26:33+00:00",
+      "status": "completed",
+      "task": "Bridge-independent SNr channel parameter module",
+      "write_set": [
+        "sim/snr_channel_parameters.py",
+        "tests/test_snr_channel_parameters.py"
+      ]
+    },
+    "019fceb3-179e-7f41-9ea5-344da5d425e5": {
+      "heartbeat_at": "2026-08-04T21:34:43+00:00",
+      "model": "inherited",
+      "next_action": "Implement and validate default-preserving NumPy/CuPy integration.",
+      "started_at": "2026-08-04T21:34:43+00:00",
+      "status": "running",
+      "task": "Integrate provenance-bound SNr parameter packet into fused kernel",
+      "write_set": [
+        "sim/kernels.py",
+        "sim/bridge.py",
+        "sim/config.py",
+        "sim/regions.py",
+        "tests/new"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T18:14:01+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcdf9-e31c-71b0-9606-a50a6ef29794"
-    },
-    {
-      "at": "2026-08-04T18:14:01+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcdf9-e8a3-7541-83c8-6b19c8daa02b"
-    },
-    {
-      "at": "2026-08-04T18:16:53+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcdf9-e31c-71b0-9606-a50a6ef29794"
-    },
-    {
-      "at": "2026-08-04T18:16:53+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcdf9-e8a3-7541-83c8-6b19c8daa02b"
-    },
-    {
-      "at": "2026-08-04T18:17:36+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gpu-execution-efficiency"
-    },
-    {
-      "at": "2026-08-04T18:17:36+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
-    {
-      "at": "2026-08-04T18:17:36+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
-    {
-      "at": "2026-08-04T18:19:44+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
-    {
-      "at": "2026-08-04T18:19:44+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
-    {
-      "at": "2026-08-04T18:19:45+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
-      "at": "2026-08-04T18:20:45+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce01-91a7-7362-bc6e-a30493e38120"
-    },
-    {
-      "at": "2026-08-04T18:20:45+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce01-8cb8-7833-8ca9-542cac3c1474"
-    },
-    {
-      "at": "2026-08-04T18:23:00+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce01-8cb8-7833-8ca9-542cac3c1474"
-    },
-    {
-      "at": "2026-08-04T18:23:00+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcdf9-de57-7801-b188-fca0e5d6cefa"
-    },
     {
       "at": "2026-08-04T18:25:05+00:00",
       "detail": "running",
@@ -1139,6 +1099,90 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fcea5-e8b1-7871-afa1-ccae79c23815"
+    },
+    {
+      "at": "2026-08-04T21:22:49+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-04T21:22:49+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcea8-4356-7200-95d5-781220ae19e8"
+    },
+    {
+      "at": "2026-08-04T21:25:19+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcea8-4356-7200-95d5-781220ae19e8"
+    },
+    {
+      "at": "2026-08-04T21:25:19+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-04T21:26:33+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcea5-e8b1-7871-afa1-ccae79c23815"
+    },
+    {
+      "at": "2026-08-04T21:26:33+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-channel-kinetics"
+    },
+    {
+      "at": "2026-08-04T21:26:33+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fceab-a658-7833-8a6c-a5ddf854f609"
+    },
+    {
+      "at": "2026-08-04T21:32:25+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcea5-ee57-77f3-83bf-466e6724b746"
+    },
+    {
+      "at": "2026-08-04T21:32:25+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-clamp-integration"
+    },
+    {
+      "at": "2026-08-04T21:32:25+00:00",
+      "detail": "planned",
+      "kind": "lane-update",
+      "subject": "gateb-v14-clamp-megakernel"
+    },
+    {
+      "at": "2026-08-04T21:34:43+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fceab-a658-7833-8a6c-a5ddf854f609"
+    },
+    {
+      "at": "2026-08-04T21:34:43+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-channel-kinetics"
+    },
+    {
+      "at": "2026-08-04T21:34:43+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-channel-kernel-integration"
+    },
+    {
+      "at": "2026-08-04T21:34:43+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fceb3-179e-7f41-9ea5-344da5d425e5"
     }
   ],
   "lanes": {
@@ -1222,15 +1266,32 @@
       "resource": "agent_cpu_network",
       "status": "completed"
     },
-    "gateb-v14-channel-kinetics": {
-      "agent_id": "019fcea5-e8b1-7871-afa1-ccae79c23815",
+    "gateb-v14-channel-kernel-integration": {
+      "agent_id": "019fceb3-179e-7f41-9ea5-344da5d425e5",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T21:20:21+00:00",
-      "next_action": "Produce source-backed implementation packet for remaining kinetics and calcium/SK coupling.",
-      "owner": "Euler-2",
+      "heartbeat_at": "2026-08-04T21:34:43+00:00",
+      "next_action": "Wire explicit packet values into the existing fused SNr kernel with default byte identity and temperature/unit guards.",
+      "owner": "Meitner-3",
+      "priority": 1,
+      "resource": "local_gpu",
+      "status": "running",
+      "write_set": [
+        "sim/kernels.py",
+        "sim/bridge.py",
+        "sim/config.py",
+        "sim/regions.py",
+        "tests/new"
+      ]
+    },
+    "gateb-v14-channel-kinetics": {
+      "agent_id": "019fceab-a658-7833-8a6c-a5ddf854f609",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T21:34:43+00:00",
+      "next_action": "Integrate the versioned packet into the existing fused SNr kernel without selecting scientific values.",
+      "owner": "Laplace-3",
       "priority": 2,
       "resource": "local_cpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "sim",
         "tests"
@@ -1239,18 +1300,29 @@
     "gateb-v14-clamp-integration": {
       "agent_id": "019fcea5-ee57-77f3-83bf-466e6724b746",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-04T21:20:20+00:00",
-      "next_action": "Integrate clamp device-resident with default-off identity and checkpoint coverage.",
+      "heartbeat_at": "2026-08-04T21:32:25+00:00",
+      "next_action": "Use the committed clamp API in the future sealed Stage B runner.",
       "owner": "Leibniz-2",
       "priority": 1,
       "resource": "local_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "sim",
         "experiment",
         "research/runners",
         "tests"
       ]
+    },
+    "gateb-v14-clamp-megakernel": {
+      "blocker": "No representative sealed Stage B runner exists yet, so optimization lacks a valid workload and equivalence receipt.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T21:32:25+00:00",
+      "next_action": "Benchmark the integrated clamp inside a representative Stage B step; fuse recurrence and reductions only if launch overhead is measurable.",
+      "owner": "controller",
+      "priority": 3,
+      "recovery_action": "After runner integration, profile 20,000 steps on RTX 3090 and gate any megakernel on byte-identical state/spike output.",
+      "resource": "local_gpu",
+      "status": "planned"
     },
     "gateb-v14-conductance-clamp": {
       "agent_id": "019fce9d-5991-7a20-bd61-010d70f692dd",
@@ -1344,13 +1416,15 @@
       ]
     },
     "gateb-v14-scorer-integration": {
+      "blocker": "No sealed Stage B runner yet emits candidate/job/manifest-bound raw traces for all required arms; caller-supplied metrics are not admissible evidence.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T21:19:32+00:00",
-      "next_action": "Build hard-gate physiology scorer over committed metrics with wrong-sign, rate-only, block, hidden-burn-in, and protocol-mismatch controls.",
+      "heartbeat_at": "2026-08-04T21:25:19+00:00",
+      "next_action": "Wait for sealed runner trace contracts; do not accept self-reported metric receipts.",
       "owner": "controller",
       "priority": 1,
+      "recovery_action": "After clamp and kinetics integration, build the runner to emit digest-bound raw traces, then recompute metrics inside a schema-driven scorer covering every readiness arm.",
       "resource": "local_cpu",
-      "status": "ready",
+      "status": "blocked",
       "write_set": [
         "tools",
         "tests",
@@ -1659,5 +1733,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T21:20:21+00:00"
+  "updated_at": "2026-08-04T21:34:43+00:00"
 }

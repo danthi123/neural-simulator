@@ -63,7 +63,9 @@
       "source-separated scorer fixture validation",
       "deterministic physiology trace metrics",
       "standalone peak-normalized inhibitory conductance-clamp protocols",
-      "population-scoped HH capacitance, fast sodium, delayed-rectifier potassium, and passive-leak densities and reversals"
+      "population-scoped HH capacitance, fast sodium, delayed-rectifier potassium, and passive-leak densities and reversals",
+      "versioned NaP, Cav2.2, HCN, calcium, and SK parameter records with measured-versus-model-prior provenance, explicit units, temperature guards, and NumPy/CuPy parity",
+      "device-resident region/pathway inhibitory conductance clamp with checkpoint continuation"
     ]
   },
   "preparation_cohorts": [
@@ -129,6 +131,11 @@
       "Ih activation kinetics and reversal",
       "calcium influx conversion and decay",
       "SK calcium half-activation, Hill coefficient, and time constant"
+    ],
+    "available_but_not_integrated": [
+      "sim/snr_channel_parameters.py reproduces legacy and published model-prior equations but is not yet wired into the bridge kernels",
+      "the inhibitory conductance clamp is bridge-integrated but not yet consumed by a sealed Stage B runner",
+      "physiology metrics are pure validated functions but must be recomputed from digest-bound raw traces inside the future scorer"
     ],
     "fixed_stageA_assumptions_not_yet_measurements": [
       "constant E_Ca",
