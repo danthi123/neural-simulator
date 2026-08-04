@@ -7,8 +7,11 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import platform
 import re
+import socket
 import subprocess
+import sys
 from typing import Any
 
 import numpy as np
@@ -162,6 +165,47 @@ def _validate_artifact_digest(artifact: dict, label: str) -> None:
 
 def _source_identity() -> dict[str, str]:
     return {path: _sha256((ROOT / path).read_bytes()) for path in SOURCE_PATHS}
+
+
+def _source_manifest() -> dict[str, Any]:
+    files = _source_identity()
+    return {
+        "schema": "v13-backend-state-transplant-source-manifest-v1",
+        "files": files,
+        "sha256": _sha256(_canonical(files)),
+    }
+
+
+def _execution_environment() -> dict[str, str]:
+    xp, backend = get_backend()
+    return {
+        "backend": backend,
+        "backend_library_version": str(getattr(xp, "__version__", "unknown")),
+        "hostname": socket.gethostname(),
+        "machine": platform.machine(),
+        "numpy_version": np.__version__,
+        "platform": platform.platform(),
+        "python": sys.version,
+        "sim_backend_env": os.environ.get("SIM_BACKEND", ""),
+    }
+
+
+def _environment_record_valid(record: Any, backend: str) -> bool:
+    required = {
+        "backend", "backend_library_version", "hostname", "machine",
+        "numpy_version", "platform", "python", "sim_backend_env",
+    }
+    return bool(
+        isinstance(record, dict)
+        and set(record) == required
+        and record.get("backend") == backend
+        and record.get("sim_backend_env") == backend
+        and all(isinstance(record[name], str) and record[name] for name in required - {"sim_backend_env"})
+    )
+
+
+def _trajectory_step_hashes(value: np.ndarray) -> list[str]:
+    return [_sha256(np.ascontiguousarray(row).tobytes(order="C")) for row in value]
 
 
 def _expected_runtime_config(spec: dict, mode: str) -> dict:
@@ -576,6 +620,8 @@ def _capture_bundle_payload(bridge, spec: dict, spec_sha256: str,
         "verdict": spec["verdict"],
         "spec_sha256": spec_sha256,
         "source_identity": _source_identity(),
+        "source_manifest": _source_manifest(),
+        "execution_environment": _execution_environment(),
         "source_anchor_sha": spec["source_anchor_sha"],
         "seed": spec["seed"],
         "origin": origin_backend,
@@ -689,6 +735,10 @@ def _load_bundle(path: Path, spec: dict, spec_sha256: str) -> dict:
         "verdict": artifact.get("verdict") == spec["verdict"],
         "spec": artifact.get("spec_sha256") == spec_sha256,
         "source": artifact.get("source_identity") == _source_identity(),
+        "source_manifest": artifact.get("source_manifest") == _source_manifest(),
+        "execution_environment": _environment_record_valid(
+            artifact.get("execution_environment"), artifact.get("origin")
+        ),
         "anchor": artifact.get("source_anchor_sha") == spec["source_anchor_sha"],
         "seed": artifact.get("seed") == spec["seed"] and artifact.get("seed") not in FORBIDDEN_V13_SEEDS,
         "origin": artifact.get("origin") in spec["origins"],
@@ -894,6 +944,8 @@ def execute_bundle(spec_path: Path, spec_sha256: str, bundle_path: Path,
             "verdict": spec["verdict"],
             "spec_sha256": locked_digest,
             "source_identity": _source_identity(),
+            "source_manifest": _source_manifest(),
+            "execution_environment": _execution_environment(),
             "source_anchor_sha": spec["source_anchor_sha"],
             "bundle_artifact_sha256": bundle["artifact_sha256"],
             "bundle_file_sha256": _sha256(bundle_path.read_bytes()),
@@ -928,6 +980,9 @@ def execute_bundle(spec_path: Path, spec_sha256: str, bundle_path: Path,
             "pre_step_restore_verification": restore,
             "trajectories": encoded,
             "trajectory_sha256": {name: encoded[name]["sha256"] for name in TRAJECTORIES},
+            "trajectory_step_sha256": {
+                name: _trajectory_step_hashes(trajectories[name]) for name in TRAJECTORIES
+            },
             "audit_arrays": {
                 "source_spikes": _encode_array(source_spikes),
                 "target_external_current": _encode_array(target_external),
@@ -960,6 +1015,10 @@ def _load_run(path: Path, spec: dict, spec_sha256: str) -> dict:
         "verdict": artifact.get("verdict") == spec["verdict"],
         "spec": artifact.get("spec_sha256") == spec_sha256,
         "source": artifact.get("source_identity") == _source_identity(),
+        "source_manifest": artifact.get("source_manifest") == _source_manifest(),
+        "execution_environment": _environment_record_valid(
+            artifact.get("execution_environment"), artifact.get("execution_backend")
+        ),
         "anchor": artifact.get("source_anchor_sha") == spec["source_anchor_sha"],
         "seed": artifact.get("seed") == spec["seed"] and artifact.get("seed") not in FORBIDDEN_V13_SEEDS,
         "origin": artifact.get("origin") in spec["origins"],
@@ -1036,6 +1095,10 @@ def _load_run(path: Path, spec: dict, spec_sha256: str) -> dict:
             raise ValueError(f"run trajectory {name} shape mismatch")
         if artifact.get("trajectory_sha256", {}).get(name) != records[name]["sha256"]:
             raise ValueError(f"run trajectory {name} hash mismatch")
+        if artifact.get("trajectory_step_sha256", {}).get(name) != _trajectory_step_hashes(
+            arrays[name]
+        ):
+            raise ValueError(f"run trajectory {name} per-step hashes mismatch")
     if arrays["spikes"].dtype != np.bool_:
         raise ValueError("spike trajectory must be boolean")
 

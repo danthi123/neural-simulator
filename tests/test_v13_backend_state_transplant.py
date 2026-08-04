@@ -214,6 +214,16 @@ def fake_runtime(monkeypatch):
     monkeypatch.setattr(transplant, "_build_bridge_from_spec", build)
     monkeypatch.setattr(transplant, "_anchor_is_ancestor", lambda anchor: True)
     monkeypatch.setattr(transplant, "synchronize", lambda: None)
+    monkeypatch.setattr(transplant, "_execution_environment", lambda: {
+        "backend": active["backend"],
+        "backend_library_version": "test",
+        "hostname": "test-host",
+        "machine": "test-machine",
+        "numpy_version": np.__version__,
+        "platform": "test-platform",
+        "python": "test-python",
+        "sim_backend_env": active["backend"],
+    })
     return {"active": active, "built": built}
 
 
@@ -282,6 +292,8 @@ def test_bundle_captures_every_cp_array_and_restores_exactly(tmp_path, fake_runt
         "claim_of_no_rng_call": False,
     }
     assert bundle["runtime_config_contract"]["runtime_random_processes_disabled"]
+    assert bundle["source_manifest"]["files"] == bundle["source_identity"]
+    assert bundle["execution_environment"]["backend"] == "numpy"
     assert "cp_extra_dynamic" in bundle["cp_arrays"]
     assert transplant._decode_array(
         bundle["cp_arrays"]["cp_extra_dynamic"], "extra"
@@ -327,6 +339,10 @@ def test_run_binds_modes_and_records_required_audits(tmp_path, fake_runtime):
         assert run["runtime_config_contract"]["runtime_random_processes_disabled"]
         assert run["runtime_config_contract"]["contract_valid"]
         assert set(run["trajectories"]) == set(transplant.TRAJECTORIES)
+        assert all(
+            len(run["trajectory_step_sha256"][name]) == 1200
+            for name in transplant.TRAJECTORIES
+        )
         assert transplant._decode_array(run["trajectories"]["g_e"], "g_e").shape == (1200, 60)
         assert run["source_spike_counts_by_phase"] == {
             "baseline": 0, "inhibition": 4000, "release": 0,
@@ -349,6 +365,7 @@ def _mutate_trajectory(run, name, step, neuron, delta):
     array[step, neuron] += np.asarray(delta, dtype=array.dtype)
     changed["trajectories"][name] = transplant._encode_array(array)
     changed["trajectory_sha256"][name] = changed["trajectories"][name]["sha256"]
+    changed["trajectory_step_sha256"][name] = transplant._trajectory_step_hashes(array)
     return transplant._seal_artifact(changed)
 
 
@@ -397,12 +414,23 @@ def test_pair_comparison_reports_byte_and_tolerance_divergence(tmp_path, fake_ru
     spike_changed["trajectory_sha256"]["spikes"] = spike_changed["trajectories"][
         "spikes"
     ]["sha256"]
+    spike_changed["trajectory_step_sha256"]["spikes"] = (
+        transplant._trajectory_step_hashes(spikes)
+    )
     spike_changed = transplant._seal_artifact(spike_changed)
     spike_comparison = transplant._pair_comparison(
         numpy_run, spike_changed, transplant._comparison_tolerance(_locked_spec())
     )
     assert not spike_comparison["spikes_exact"]
     assert spike_comparison["first_tolerance_divergence_by_trajectory"]["spikes"] is None
+
+    bad_step_hashes = copy.deepcopy(cupy_run)
+    bad_step_hashes["trajectory_step_sha256"]["v"][0] = "0" * 64
+    bad_step_hashes = transplant._seal_artifact(bad_step_hashes)
+    bad_step_path = tmp_path / "bad-step-hashes.json"
+    _write_artifact(bad_step_path, bad_step_hashes)
+    with pytest.raises(ValueError, match="per-step hashes mismatch"):
+        transplant._load_run(bad_step_path, _locked_spec(), digest)
 
     wrong_mode = copy.deepcopy(cupy_run)
     wrong_mode["mode"] = "deterministic_transpose_matvec"
