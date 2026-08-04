@@ -88,6 +88,11 @@ class BrainRegion:
     hh_neuron_type: str = None
     adex_neuron_type: str = None
 
+    # Construction-time effective intrinsic drive in pA. This reduced-model
+    # field represents unresolved cell-autonomous conductances; it is not a
+    # sensory stimulus and is currently supported only by Izhikevich regions.
+    intrinsic_current_pA: float = 0.0
+
     # Per-region GABA_A reversal potential override in mV. None = use global
     # cfg.syn_reversal_potential_i. Used to model regions with different
     # chloride homeostasis (e.g., striatal MSNs ~−60 mV per PBR-160 ch 6;

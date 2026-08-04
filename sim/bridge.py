@@ -445,7 +445,8 @@ class SimulationBridge:
         self._graded_lateral_slice = None
         self.cp_graded_lateral_coact = None
         self.cp_conductance_g_nmda_rise = None
-        self.cp_external_input_current = None 
+        self.cp_external_input_current = None
+        self.cp_intrinsic_current_pA = None
         self.cp_firing_states = None        
         self.cp_prev_firing_states = None   
         self.cp_traits = None               
@@ -1423,6 +1424,22 @@ class SimulationBridge:
             # Sim thread should not directly modify global_gui_state.
             pass # UI thread manages stopping recording/playback before commanding re-init.
 
+        if (getattr(self.core_config, "enable_brain_region_framework", False)
+                and getattr(self.core_config, "brain_regions", None)):
+            for region in self.core_config.brain_regions:
+                value = float(getattr(region, "intrinsic_current_pA", 0.0))
+                if not math.isfinite(value):
+                    raise ValueError(
+                        f"Region {region.name!r} intrinsic_current_pA must be finite"
+                    )
+                if (value != 0.0
+                        and self.core_config.neuron_model_type
+                        != NeuronModel.IZHIKEVICH.name):
+                    raise ValueError(
+                        "BrainRegion.intrinsic_current_pA currently supports only "
+                        f"IZHIKEVICH, not {self.core_config.neuron_model_type}"
+                    )
+
         try:
             cfg = self.core_config
 
@@ -1480,6 +1497,25 @@ class SimulationBridge:
             else:
                 # Izhikevich and other models default to zero external drive unless overridden
                 self.cp_external_input_current = cp.zeros(n, dtype=cp.float32)
+
+            # Region-scoped reduced intrinsic drive. Keep this physically and
+            # semantically separate from mutable external stimuli so stimulus
+            # clears and input normalization cannot alter cell-autonomous drive.
+            self.cp_intrinsic_current_pA = None
+            if self.region_manager is not None:
+                intrinsic_host = np.zeros(n, dtype=np.float32)
+                has_intrinsic_drive = False
+                for region in self.region_manager.regions():
+                    value = float(getattr(region, "intrinsic_current_pA", 0.0))
+                    if value == 0.0:
+                        continue
+                    indices = self.region_manager.indices(region.name)
+                    intrinsic_host[np.asarray(indices, dtype=np.int64)] = value
+                    has_intrinsic_drive = True
+                if has_intrinsic_drive:
+                    self.cp_intrinsic_current_pA = cp.asarray(
+                        intrinsic_host, dtype=cp.float32
+                    )
             self.cp_firing_states = cp.zeros(n, dtype=bool)
             self.cp_prev_firing_states = cp.zeros(n, dtype=bool)
             # Start with a generic random trait assignment
@@ -2715,7 +2751,8 @@ class SimulationBridge:
         attrs_to_clear = [
             'cp_membrane_potential_v','cp_recovery_variable_u', 'cp_conductance_g_e','cp_conductance_g_i',
             *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
-            'cp_external_input_current', 'cp_firing_states','cp_prev_firing_states','cp_traits',
+            'cp_external_input_current', 'cp_intrinsic_current_pA',
+            'cp_firing_states','cp_prev_firing_states','cp_traits',
             'cp_neuron_positions_3d','cp_connections', 'cp_refractory_timers', 'cp_viz_activity_timers',
             'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
             'cp_izh_C', 'cp_izh_k', 'cp_izh_vr', 'cp_izh_vt', 'cp_izh_vpeak',
@@ -4509,7 +4546,7 @@ class SimulationBridge:
             'cp_conductance_g_e', 'cp_conductance_g_i', 'cp_recovery_variable_u',
             'cp_gating_variable_m', 'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
-            'cp_adex_w', 'cp_ou_current'
+            'cp_adex_w', 'cp_ou_current', 'cp_intrinsic_current_pA'
         ]
 
         # Synaptic data is often 10-20x larger than neuron data
@@ -4640,7 +4677,8 @@ class SimulationBridge:
             'cp_gating_variable_h', 'cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             'cp_conductance_g_e',
-            'cp_conductance_g_i', 'cp_external_input_current', 'cp_refractory_timers',
+            'cp_conductance_g_i', 'cp_external_input_current', 'cp_intrinsic_current_pA',
+            'cp_refractory_timers',
             'cp_viz_activity_timers', 'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
             'cp_firing_states', 'cp_prev_firing_states',
             'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
@@ -6071,6 +6109,9 @@ class SimulationBridge:
         if is_initial_state: 
             _apply_to_cp_array("cp_traits", "cp_traits", default_dtype=cp.int32)
             _apply_to_cp_array("cp_neuron_positions_3d", "cp_neuron_positions_3d")
+            _apply_to_cp_array(
+                "cp_intrinsic_current_pA", "cp_intrinsic_current_pA"
+            )
             if self.core_config.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                 for param in ['C', 'k', 'vr', 'vt', 'vpeak', 'a', 'b', 'c_reset', 'd_increment']:
                     _apply_to_cp_array(f"cp_izh_{param}", f"cp_izh_{param}")
@@ -6618,13 +6659,17 @@ class SimulationBridge:
         refractory_reset = cp.int32(max(0, cfg.refractory_period_steps - 1))
 
         # --- ONE fused element-wise launch: decay + I_syn + increment + total + dynamics + threshold + reset.
+        dynamics_current = self.cp_external_input_current
+        if self.cp_intrinsic_current_pA is not None:
+            dynamics_current = dynamics_current + self.cp_intrinsic_current_pA
+
         (g_e_new, g_i_new, v_new, u_new, fired_this_step,
          refractory_new) = fused_readonly_izh_step(
             self.cp_conductance_g_e, self.cp_conductance_g_i, g_e_increase, g_i_increase,
             self._cached_decay_e, self._cached_decay_i,
             cfg.syn_reversal_potential_e, E_inh_to_use,
             self.cp_membrane_potential_v, self.cp_recovery_variable_u,
-            self.cp_external_input_current, ou_current,
+            dynamics_current, ou_current,
             self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
             self.cp_izh_a, self.cp_izh_b,
             self.cp_izh_vpeak, self.cp_izh_c_reset, self.cp_izh_d_increment,
@@ -6835,6 +6880,10 @@ class SimulationBridge:
         # fired-neuron refractory reset (matches the fast_spike_reset off-by-one: period_steps - 1).
         refractory_reset = cp.int32(max(0, cfg.refractory_period_steps - 1))
 
+        dynamics_current = self.cp_external_input_current
+        if self.cp_intrinsic_current_pA is not None:
+            dynamics_current = dynamics_current + self.cp_intrinsic_current_pA
+
         threads = 128
         blocks = (n + threads - 1) // threads
         kern((blocks,), (threads,), (
@@ -6842,7 +6891,7 @@ class SimulationBridge:
             self._step_v2_exc_flag, self.cp_prev_firing_states,
             self.cp_conductance_g_e, self.cp_conductance_g_i,
             self.cp_membrane_potential_v, self.cp_recovery_variable_u, self.cp_refractory_timers,
-            self.cp_external_input_current, ou_current,
+            dynamics_current, ou_current,
             self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
             self.cp_izh_a, self.cp_izh_b, self.cp_izh_vpeak,
             self.cp_izh_c_reset, self.cp_izh_d_increment,
@@ -7729,6 +7778,11 @@ class SimulationBridge:
                         cp.float32(0.0),
                     )
                 total_input_current_pA = total_input_current_pA + ou_current
+
+            if self.cp_intrinsic_current_pA is not None:
+                total_input_current_pA = (
+                    total_input_current_pA + self.cp_intrinsic_current_pA
+                )
 
             if _profiling: _backend_synchronize(); _prof['t_syn'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 3. Neuron Model Dynamics Update ---
@@ -9368,7 +9422,8 @@ class SimulationBridge:
                 arrays_to_save_direct = [
                     'cp_membrane_potential_v', 'cp_conductance_g_e', 'cp_conductance_g_i',
                     *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
-                    'cp_external_input_current', 'cp_firing_states', 'cp_prev_firing_states',
+                    'cp_external_input_current', 'cp_intrinsic_current_pA',
+                    'cp_firing_states', 'cp_prev_firing_states',
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
                     'cp_adex_w', 'cp_ou_current'
@@ -9700,6 +9755,28 @@ class SimulationBridge:
                     setattr(self, attr_name, _load_cp_array_from_h5(h5_key, 
                             default_val_func=lambda size_n, dt=dtype: cp.zeros(size_n, dtype=dt), 
                             default_dtype_for_empty=dtype))
+
+                # Optional immutable construction state. An old checkpoint
+                # without this dataset intentionally restores the legacy None
+                # state instead of manufacturing a zero vector.
+                if "cp_intrinsic_current_pA" in state_group:
+                    intrinsic_host = np.asarray(
+                        state_group["cp_intrinsic_current_pA"][:], dtype=np.float32
+                    )
+                    if (intrinsic_host.ndim != 1
+                            or int(intrinsic_host.size) != int(n)):
+                        raise ValueError(
+                            "Checkpoint intrinsic-current vector does not match neuron count"
+                        )
+                    if not np.all(np.isfinite(intrinsic_host)):
+                        raise ValueError(
+                            "Checkpoint intrinsic-current vector must be finite"
+                        )
+                    self.cp_intrinsic_current_pA = cp.asarray(
+                        intrinsic_host, dtype=cp.float32
+                    )
+                else:
+                    self.cp_intrinsic_current_pA = None
 
                 # Slow conductances are live state. Old checkpoints do not
                 # contain these datasets, so rebuild each buffer according to
