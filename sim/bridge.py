@@ -112,6 +112,17 @@ def _deterministic_ei_transpose_spmv(connections, excitatory_drive, inhibitory_d
     return connections_t_csr @ excitatory_drive, connections_t_csr @ inhibitory_drive
 
 
+def _backend_neutral_random_state(seed, *, stream_name):
+    """Create the version-locked host RNG used by opt-in initialization."""
+    if isinstance(seed, np.integer):
+        seed = int(seed)
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise ValueError(f"{stream_name} seed must be an integer")
+    if not 0 <= seed <= np.iinfo(np.uint32).max:
+        raise ValueError(f"{stream_name} seed must be in [0, 2**32 - 1]")
+    return np.random.RandomState(seed)
+
+
 # --- Optional dependencies ---
 try:
     import hdf5plugin
@@ -1486,8 +1497,28 @@ class SimulationBridge:
                 self._log_console(f"Number of neurons ({n}) must be positive. Initialization failed.", "warning")
                 self.is_initialized = False; return
 
-            # Use centralized RNG initialization
-            self._initialize_rng(cfg.seed)
+            # Use centralized RNG initialization. The opt-in correction uses a
+            # private host stream so NumPy and CuPy consume the same algorithm,
+            # values, dtypes, and draw order for Izhikevich population state.
+            actual_seed = self._initialize_rng(cfg.seed)
+            backend_neutral_izh = getattr(
+                cfg, "backend_neutral_izh_initialization", False
+            )
+            if type(backend_neutral_izh) is not bool:
+                raise ValueError(
+                    "backend_neutral_izh_initialization must be a boolean"
+                )
+            if (backend_neutral_izh
+                    and cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name):
+                raise ValueError(
+                    "backend_neutral_izh_initialization supports only IZHIKEVICH"
+                )
+            initialization_rng = (
+                _backend_neutral_random_state(
+                    actual_seed, stream_name="Izhikevich initialization"
+                )
+                if backend_neutral_izh else None
+            )
 
             # Initialize external input current
             # HH and AdEx neurons generally need some baseline drive to spike; Izhikevich can be spontaneous.
@@ -1532,8 +1563,17 @@ class SimulationBridge:
                     )
             self.cp_firing_states = cp.zeros(n, dtype=bool)
             self.cp_prev_firing_states = cp.zeros(n, dtype=bool)
-            # Start with a generic random trait assignment
-            self.cp_traits = cp.random.randint(0, max(1, cfg.num_traits), (n,), dtype=cp.int32) if n > 0 else cp.array([], dtype=cp.int32)
+            # Start with a generic random trait assignment. Traits feed the
+            # initial Izhikevich type IDs even when explicit wiring later
+            # overrides transmission polarity, so they are part of the
+            # backend-neutral population contract.
+            if backend_neutral_izh:
+                host_traits = initialization_rng.randint(
+                    0, max(1, cfg.num_traits), size=n
+                ).astype(np.int32)
+                self.cp_traits = cp.asarray(host_traits, dtype=cp.int32)
+            else:
+                self.cp_traits = cp.random.randint(0, max(1, cfg.num_traits), (n,), dtype=cp.int32) if n > 0 else cp.array([], dtype=cp.int32)
 
             # If a structured neural profile is selected, override trait distribution on host
             profile_name = getattr(cfg, "neural_profile_name", "GENERIC_UNSTRUCTURED")
@@ -1586,7 +1626,10 @@ class SimulationBridge:
                 if start < n and trait_defs:
                     np_traits[start:n] = int(trait_defs[0]["trait_index"])
                 if n > 1:
-                    np.random.shuffle(np_traits)
+                    if backend_neutral_izh:
+                        initialization_rng.shuffle(np_traits)
+                    else:
+                        np.random.shuffle(np_traits)
                 self.cp_traits = cp.asarray(np_traits, dtype=cp.int32)
                 # Ensure num_traits is at least large enough to index all configured traits
                 max_trait_idx = max(td["trait_index"] for td in trait_defs)
@@ -1877,13 +1920,27 @@ class SimulationBridge:
                 thresh_base = (cfg.homeostasis_threshold_min + cfg.homeostasis_threshold_max) / 2.0
                 thresh_var = (cfg.homeostasis_threshold_max - cfg.homeostasis_threshold_min) / 2.0
                 if thresh_var < 0: thresh_var = 1.0 
-                self.cp_neuron_firing_thresholds = cp.random.uniform(
-                    thresh_base - thresh_var, thresh_base + thresh_var, n
-                ).astype(cp.float32) if n > 0 else cp.array([], dtype=cp.float32)
-                if n > 0:
-                    cp.clip(self.cp_neuron_firing_thresholds,
-                            cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max,
-                            out=self.cp_neuron_firing_thresholds)
+                if backend_neutral_izh:
+                    host_thresholds = initialization_rng.uniform(
+                        thresh_base - thresh_var, thresh_base + thresh_var, n
+                    ).astype(np.float32)
+                    np.clip(
+                        host_thresholds,
+                        cfg.homeostasis_threshold_min,
+                        cfg.homeostasis_threshold_max,
+                        out=host_thresholds,
+                    )
+                    self.cp_neuron_firing_thresholds = cp.asarray(
+                        host_thresholds, dtype=cp.float32
+                    )
+                else:
+                    self.cp_neuron_firing_thresholds = cp.random.uniform(
+                        thresh_base - thresh_var, thresh_base + thresh_var, n
+                    ).astype(cp.float32) if n > 0 else cp.array([], dtype=cp.float32)
+                    if n > 0:
+                        cp.clip(self.cp_neuron_firing_thresholds,
+                                cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max,
+                                out=self.cp_neuron_firing_thresholds)
 
                 np_traits_host = _backend_to_host(self.cp_traits)
                 defined_izh2007_types = [
@@ -2095,7 +2152,28 @@ class SimulationBridge:
             # the legacy gate (only the global flag matters).
             if (cfg.enable_parameter_heterogeneity
                     or self.cp_heterogeneity_neuron_mask is not None) and n > 0:
-                self._apply_parameter_heterogeneity(cfg, n)
+                self._apply_parameter_heterogeneity(
+                    cfg, n, backend_neutral=backend_neutral_izh
+                )
+
+            # Multiplying a negative b by zero produces backend-dependent
+            # signed-zero bytes. Recompute the initial recovery state through
+            # the same host contract after region overrides and heterogeneity.
+            if backend_neutral_izh:
+                host_b = np.asarray(
+                    _backend_to_host(self.cp_izh_b), dtype=np.float32
+                )
+                host_v = np.asarray(
+                    _backend_to_host(self.cp_membrane_potential_v),
+                    dtype=np.float32,
+                )
+                host_vr = np.asarray(
+                    _backend_to_host(self.cp_izh_vr), dtype=np.float32
+                )
+                host_u = (host_b * (host_v - host_vr)).astype(np.float32)
+                self.cp_recovery_variable_u = cp.asarray(
+                    host_u, dtype=cp.float32
+                )
             
             # B4: Initialize OU process state if enabled
             if cfg.enable_ou_process and n > 0:
@@ -2107,7 +2185,10 @@ class SimulationBridge:
             
             self._log_console(f"Generating 3D neuron positions for {n} neurons...")
             if n > 0:
-                np_positions_3d = np.random.uniform(
+                position_rng = (
+                    initialization_rng if backend_neutral_izh else np.random
+                )
+                np_positions_3d = position_rng.uniform(
                     low=[self.viz_config.volume_min_x, self.viz_config.volume_min_y, self.viz_config.volume_min_z],
                     high=[self.viz_config.volume_max_x, self.viz_config.volume_max_y, self.viz_config.volume_max_z],
                     size=(n,3)).astype(np.float32)
@@ -2490,7 +2571,7 @@ class SimulationBridge:
             # actually needs HH-mode regions.
             # AdEx per-region override likewise deferred.
 
-    def _apply_parameter_heterogeneity(self, cfg, n):
+    def _apply_parameter_heterogeneity(self, cfg, n, *, backend_neutral=False):
         """Applies parameter heterogeneity by drawing per-neuron values from distributions.
         
         Uses scientifically-grounded distributions based on:
@@ -2510,7 +2591,15 @@ class SimulationBridge:
         
         # Set separate RNG state for heterogeneity (deterministic if seed provided)
         het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
-        if het_seed >= 0:
+        if backend_neutral:
+            resolved_het_seed = (
+                het_seed if het_seed >= 0
+                else self.runtime_state.actual_seed_used
+            )
+            heterogeneity_rng = _backend_neutral_random_state(
+                resolved_het_seed, stream_name="Izhikevich heterogeneity"
+            )
+        elif het_seed >= 0:
             rng_state = _backend_get_random_state()
             cp.random.seed(het_seed)
         
@@ -2532,33 +2621,96 @@ class SimulationBridge:
         for param_name, dist_spec in cfg.heterogeneity_distributions.items():
             target_array = param_map.get(param_name)
             if target_array is None or target_array.size != n:
+                if backend_neutral:
+                    raise ValueError(
+                        f"Backend-neutral heterogeneity target {param_name!r} "
+                        "is unavailable for this population"
+                    )
                 continue
-            
+
+            if backend_neutral and not isinstance(dist_spec, dict):
+                raise ValueError(
+                    f"Heterogeneity distribution for {param_name} must be a mapping"
+                )
             dist_type = dist_spec.get("type")
             if dist_type == "lognormal":
                 # CuPy lognormal takes mean and sigma of underlying normal distribution
-                samples = cp.random.lognormal(
-                    mean=dist_spec["mean_log"],
-                    sigma=dist_spec["sigma_log"],
-                    size=n
-                ).astype(cp.float32)
+                if backend_neutral:
+                    mean_log = float(dist_spec["mean_log"])
+                    sigma_log = float(dist_spec["sigma_log"])
+                    if (not math.isfinite(mean_log)
+                            or not math.isfinite(sigma_log)
+                            or sigma_log < 0.0):
+                        raise ValueError(
+                            f"Invalid lognormal parameters for {param_name}"
+                        )
+                    samples_host = heterogeneity_rng.lognormal(
+                        mean=mean_log,
+                        sigma=sigma_log,
+                        size=n,
+                    ).astype(np.float32)
+                else:
+                    samples = cp.random.lognormal(
+                        mean=dist_spec["mean_log"],
+                        sigma=dist_spec["sigma_log"],
+                        size=n
+                    ).astype(cp.float32)
             elif dist_type == "gaussian":
-                samples = cp.random.normal(
-                    loc=dist_spec["mean"],
-                    scale=dist_spec["std"],
-                    size=n
-                ).astype(cp.float32)
+                if backend_neutral:
+                    mean = float(dist_spec["mean"])
+                    std = float(dist_spec["std"])
+                    if (not math.isfinite(mean)
+                            or not math.isfinite(std)
+                            or std < 0.0):
+                        raise ValueError(
+                            f"Invalid gaussian parameters for {param_name}"
+                        )
+                    samples_host = heterogeneity_rng.normal(
+                        loc=mean,
+                        scale=std,
+                        size=n,
+                    ).astype(np.float32)
+                else:
+                    samples = cp.random.normal(
+                        loc=dist_spec["mean"],
+                        scale=dist_spec["std"],
+                        size=n
+                    ).astype(cp.float32)
                 # Clip to prevent non-physical values (~0.1x to 3x magnitude from mean)
-                mean_val = dist_spec["mean"]
+                mean_val = mean if backend_neutral else dist_spec["mean"]
                 if mean_val > 0:
-                    samples = cp.clip(samples, mean_val * 0.1, mean_val * 3.0)
+                    if backend_neutral:
+                        np.clip(
+                            samples_host, mean_val * 0.1, mean_val * 3.0,
+                            out=samples_host,
+                        )
+                    else:
+                        samples = cp.clip(samples, mean_val * 0.1, mean_val * 3.0)
                 elif mean_val < 0:
                     # For negative parameters (e.g., izh_b = -2.0 nS): clip symmetrically around mean
-                    samples = cp.clip(samples, mean_val * 3.0, mean_val * 0.1)
+                    if backend_neutral:
+                        np.clip(
+                            samples_host, mean_val * 3.0, mean_val * 0.1,
+                            out=samples_host,
+                        )
+                    else:
+                        samples = cp.clip(samples, mean_val * 3.0, mean_val * 0.1)
                 # else mean == 0: no clipping (allow both positive and negative)
             else:
+                if backend_neutral:
+                    raise ValueError(
+                        f"Unsupported backend-neutral heterogeneity distribution "
+                        f"{dist_type!r} for {param_name}"
+                    )
                 self._log_console(f"Unknown distribution type '{dist_type}' for {param_name}", "warning")
                 continue
+
+            if backend_neutral and not np.isfinite(samples_host).all():
+                raise ValueError(
+                    f"Heterogeneity draw for {param_name} produced non-finite values"
+                )
+            if backend_neutral:
+                samples = cp.asarray(samples_host, dtype=cp.float32)
             
             # Apply heterogeneity. Three cases (mirrors the per-region
             # homeostasis-mask semantics: global flag wins, else mask restricts):
@@ -2577,7 +2729,7 @@ class SimulationBridge:
             applied_count += 1
         
         # Restore RNG state
-        if het_seed >= 0:
+        if not backend_neutral and het_seed >= 0:
             _backend_set_random_state(rng_state)
         
         self._log_console(f"Applied heterogeneity to {applied_count} parameters.")

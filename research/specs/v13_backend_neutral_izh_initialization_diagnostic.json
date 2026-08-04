@@ -1,0 +1,90 @@
+{
+  "schema": "sim-experiment-spec-v0",
+  "id": "gateB-v13-backend-neutral-izh-initialization-diagnostic-v1",
+  "status": "preregistered_not_executed",
+  "date": "2026-08-04",
+  "provenance_exempt": "non-executed preregistration protocol; contains no measured result",
+  "device": "not_applicable_non_executed_protocol",
+  "promotion_value": "none",
+  "source_evidence": {
+    "aggregate_path": "research/findings/raw/v13_backend_state_transplant/aggregate.json",
+    "aggregate_file_sha256": "2f94905eebfddec69e4264ccae75f618bbffc720eb95126be9270d6a3aa5a8c6",
+    "aggregate_artifact_sha256": "3fc135870cf42434078ea4129364f15be10100abb5f5ed07d89ae935d21d1ae4",
+    "aggregate_commit": "a3edf28abfc4a85d978142326274689a8660f28f"
+  },
+  "correction": {
+    "config_flag": "backend_neutral_izh_initialization",
+    "default": false,
+    "canonical_rng": "numpy.random.RandomState",
+    "canonical_dtype_policy": "draw_on_host_cast_to_declared_numpy_dtype_then_transfer_once",
+    "streams": {
+      "population": "CoreSimConfig.seed after -1 resolution",
+      "heterogeneity": "CoreSimConfig.heterogeneity_seed, falling back to resolved population seed"
+    },
+    "scope": [
+      "generic trait assignment feeding Izhikevich neuron type IDs",
+      "structured-profile trait shuffle",
+      "Izhikevich firing-threshold uniform draw",
+      "all configured Izhikevich gaussian and lognormal heterogeneity draws",
+      "initial 3D neuron positions"
+    ],
+    "excluded": [
+      "connectivity",
+      "runtime noise",
+      "simulation arithmetic",
+      "Hodgkin-Huxley initialization",
+      "AdEx initialization"
+    ]
+  },
+  "diagnostic_partition": {
+    "seed": 6556023,
+    "role": "paired_initialization_only",
+    "formal": false,
+    "held_out": false,
+    "derivation_input": "V13_BACKEND_NEUTRAL_INITIALIZATION_CORRECTION_DIAGNOSTIC_V1|aggregate_sha256=3fc135870cf42434078ea4129364f15be10100abb5f5ed07d89ae935d21d1ae4|role=paired_initialization",
+    "derivation_sha256": "b636ce6a34b79424f4ee62125ca9cd9a94336e01f66eacfdd50b9676ac3fd841",
+    "derivation_rule": "2000000 + (integer(first_12_hex, 16) mod 7000000)",
+    "collision_check": "no exact seed occurrence in repository before preregistration"
+  },
+  "paired_backends": [
+    "numpy",
+    "cupy"
+  ],
+  "required_exact_arrays": [
+    "cp_traits",
+    "cp_neuron_type_ids",
+    "cp_neuron_firing_thresholds",
+    "cp_neuron_positions_3d",
+    "cp_izh_C",
+    "cp_izh_k",
+    "cp_izh_vr",
+    "cp_izh_vt",
+    "cp_izh_vpeak",
+    "cp_izh_a",
+    "cp_izh_b",
+    "cp_izh_c_reset",
+    "cp_izh_d_increment",
+    "cp_membrane_potential_v",
+    "cp_recovery_variable_u"
+  ],
+  "acceptance": {
+    "same_source_identity": true,
+    "flag_enabled_on_both_backends": true,
+    "array_dtype_shape_and_bytes_identical": true,
+    "legacy_default_remains_false": true,
+    "no_simulation_steps": true,
+    "no_scientific_verdict": true
+  },
+  "fail_closed": [
+    "reject non-boolean correction flag",
+    "reject correction on non-Izhikevich models",
+    "reject invalid seed range",
+    "reject unavailable heterogeneity targets",
+    "reject unsupported or malformed distributions",
+    "reject non-finite draws",
+    "reject pre-existing output paths"
+  ],
+  "output_directory": "research/findings/raw/v13_backend_neutral_izh_initialization_diagnostic",
+  "execution_state": "sealed_until_a_create_only_runner_and_source_manifest_are_frozen",
+  "test_seed_prohibition": "Tests must not execute seed 6556023 or any V13 formal or held-out seed."
+}

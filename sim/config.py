@@ -110,6 +110,10 @@ class CoreSimConfig:
     heterogeneity_seed: int = -1  # Separate from main seed for reproducibility (-1 = use main seed)
     # Distribution specifications: {"param_name": {"type": "lognormal"|"gaussian", "mean_log"|"mean": X, "sigma_log"|"std": Y}}
     heterogeneity_distributions: dict = field(default_factory=dict)  # Empty by default, populated on demand
+    # Diagnostic correction: draw every stochastic Izhikevich population field
+    # from one host-side NumPy contract before transferring it to the backend.
+    # Default-off preserves the established backend-native initialization path.
+    backend_neutral_izh_initialization: bool = False
 
     # B4: Enhanced Channel Noise (White et al. 2000, Destexhe & Rudolph-Lilith 2012)
     # Conductance noise (multiplicative, applied to HH channels)
