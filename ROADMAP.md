@@ -101,10 +101,15 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     routes only the learned trace-to-expectation synapses through it and passes
     its fixed engagement ladder at locked center `2`. Late rewarded-channel
     expectation is `167` spikes versus `48` in the other channel, zero without
-    learning, and `1` under the learned-route dendritic lesion. Phase 2 is
-    preregistered to freeze learning before matched GABA-B reward and omission
-    probes. Formal seeds remain sealed until graded suppression, causal omission,
-    cross-backend agreement, and an independent audit pass.
+    learning, and `1` under the learned-route dendritic lesion. The first output
+    implementation was invalid because it omitted the retained baseline trial.
+    A preregistered correction restored that timing and passed every protocol
+    check, but its matched four-probe blocks always produced action `1`, no clean
+    action, action `1`, no clean action. Rewarded action `0` was never expressed,
+    so GABA-B reward suppression and omission remain undefined. The run may not
+    be repeated or extended. Formal seeds remain sealed while a new evidence
+    gate investigates post-training neural action-policy expression without
+    host-forced actions or GABA-B tuning.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

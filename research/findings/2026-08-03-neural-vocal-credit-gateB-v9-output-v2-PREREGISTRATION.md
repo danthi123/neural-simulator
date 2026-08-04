@@ -1,12 +1,16 @@
 ---
 type: preregistration
-status: live
+status: superseded
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v9-gabab-output-v2
 runner: research/runners/_vocal_action_credit_gate_v9_graded_dendritic.py
 ---
 
 # Gate B v9 Phase 2 v2: fixed contingent probe blocks
+
+> **Executed once on the reserved CuPy seed and superseded by an undefined
+> result.** Every protocol check passed, but no block sampled trained action
+> `0`. See the [finding](2026-08-03-neural-vocal-credit-gateB-v9-output-v2-UNDEFINED-no-trained-action.md).
 
 **Filed after the first output protocol was undefined and before replacement
 code or execution.** The undefined artifact omitted the passing engagement

@@ -66,7 +66,15 @@ reserved-seed smoke passed at the first valid center, `2`. Intact late
 expectation was `167` rewarded-channel spikes versus `48` in the other channel,
 zero with learning disabled, and `1` with only the learned route's dendritic
 mask removed. Center `2` is locked. The output phase is separately
-preregistered; formal phases remain sealed.
+preregistered; formal phases remain sealed. Its first implementation was
+invalid because it omitted the retained baseline trial. The documented v2
+correction restored that timing and passed every protocol check on the RTX
+3090: `12/12` clean training actions, six rewards, confined plasticity, frozen
+probe weights, and matched lesion sequences. It is nevertheless UNDEFINED.
+Every reward and omission block produced `[1, null, 1, null]`, so rewarded
+action `0` was never expressed and no output effect could be evaluated. The
+stop rule forbids a repeat, longer block, NumPy agreement, center change, or
+GABA-B tuning. V9 engagement remains qualified; its output remains untested.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -117,12 +125,13 @@ is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Build and run the preregistered v9 Phase-2 output smoke at locked center `2`.
-   Train with expectation output closed, freeze learning, then compare matched
-   output-intact, output-lesion, and expectation-learning-lesion reward and
-   omission probes. Require at least 20% dopamine-burst suppression plus causal
-   LHb/RMTg omission and dopamine dip before NumPy/CuPy agreement or an
-   independent audit. Do not reopen the center ladder or assign formal seeds.
+1. File a new evidence gate for post-training neural action-policy expression.
+   Use the preserved v9 training and probe telemetry plus the project record and
+   primary action-selection literature to distinguish loss of clean commitment
+   from failure to express the learned action. A successor must make the
+   rewarded action recur without host selection before GABA-B output can be
+   tested. Do not repeat or extend v9, tune its output, reopen its center ladder,
+   run NumPy agreement, or assign formal seeds.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a
