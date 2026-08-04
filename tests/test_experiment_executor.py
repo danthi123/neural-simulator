@@ -121,6 +121,119 @@ def _jobs(manifest: dict) -> list[dict]:
     ]
 
 
+def _adaptive_same_pair() -> tuple[dict, list[dict]]:
+    manifest = _materialization()
+    arms = manifest["arms"]
+    cells = []
+    for order, (candidate_id, parameters) in enumerate((
+        ("candidate-alpha", {"gain": 0.4}),
+        ("candidate-beta", {"gain": 0.7}),
+    )):
+        candidate_document = {
+            "schema": "sim-adaptive-candidate-v1",
+            "candidate_id": candidate_id,
+            "parameters": parameters,
+        }
+        candidate_sha256 = _digest(candidate_document)
+        for arm in arms:
+            cell = {
+                "candidate_id": candidate_id,
+                "candidate_order": order,
+                "candidate_document": candidate_document,
+                "candidate_sha256": candidate_sha256,
+                "arm": arm["name"],
+                "role": arm["role"],
+                "candidate_parameters": parameters,
+                "arm_parameters": arm["parameters"],
+                "effective_parameters": {**parameters, **arm["parameters"]},
+                "backend": "numpy",
+                "partition": "calibration",
+                "resource_lane": "local_cpu",
+                "device": "cpu",
+            }
+            if arm["role"] == "lesion":
+                cell["lesion_target"] = arm["target"]
+            cell["materialization_id"] = _digest(cell)[:24]
+            cells.append(cell)
+    manifest.update({
+        "sealed_expanded_job_count": len(cells),
+        "backend_partition_pairs": [{"backend": "numpy", "partition": "calibration"}],
+        "materialization_count": len(cells),
+        "materializations": cells,
+        "receipt_contract": {
+            "schema": "sim-experiment-controller-execution-receipt-v1",
+            "required_materialization_ids": [cell["materialization_id"] for cell in cells],
+            "status": "accepted_non_dispatching",
+            "exact_set_required": True,
+        },
+    })
+    manifest["sha256"] = _digest({key: value for key, value in manifest.items() if key != "sha256"})
+    return manifest, [_adaptive_job(manifest, cell) for cell in cells]
+
+
+def _adaptive_job(manifest: dict, cell: dict, seed: int = 11) -> dict:
+    output = (
+        "research/findings/raw/executor/calibration/numpy/"
+        f"{cell['candidate_id']}-{cell['arm']}-{seed}.json"
+    )
+    parameter_document = {
+        "schema": "sim-adaptive-run-parameters-v1",
+        "candidate_id": cell["candidate_id"],
+        "candidate_sha256": cell["candidate_sha256"],
+        "candidate_parameters": cell["candidate_parameters"],
+        "arm": cell["arm"],
+        "arm_parameters": cell["arm_parameters"],
+        "effective_parameters": cell["effective_parameters"],
+    }
+    identity = {
+        "experiment_id": manifest["experiment_id"],
+        "spec_sha256": manifest["spec_sha256"],
+        "execution_manifest_sha256": manifest["sealed_execution_manifest_sha256"],
+        "corpus_check_sha256": "5" * 64,
+        "source": manifest["source"],
+        "partition": "calibration",
+        "backend": "numpy",
+        "device": "cpu",
+        "arm": cell["arm"],
+        "seed": seed,
+        "output": output,
+        "candidate_id": cell["candidate_id"],
+        "candidate_sha256": cell["candidate_sha256"],
+        "parameter_document": parameter_document,
+    }
+    job_id = _digest(identity)[:20]
+    runner = [
+        ".venv/bin/python", "-m", "research.runners.fixture",
+        "--seed", str(seed), "--phase", "calibration", "--arm", cell["arm"], "--out", output,
+        "--adaptive-parameter-document",
+        json.dumps(parameter_document, sort_keys=True, separators=(",", ":"), ensure_ascii=True),
+    ]
+    contract = {
+        "schema": "sim-experiment-job-contract-v1",
+        "job_id": job_id,
+        **identity,
+        "execution_snapshot": {"manifest_sha256": manifest["sealed_execution_manifest_sha256"]},
+        "runner_command": runner,
+        "environment": {"SIM_BACKEND": "numpy"},
+        "claim_stale_seconds": 60,
+    }
+    encoded = base64.urlsafe_b64encode(json.dumps(
+        contract, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+    ).encode("utf-8")).decode("ascii")
+    command = shlex.join([
+        ".venv/bin/python", "tools/experiment.py", "execute-job", "--contract", encoded, "--", *runner,
+    ])
+    return {
+        "schema": "sim-experiment-plan-v1",
+        "job_id": job_id,
+        **identity,
+        "sealed": True,
+        "lane": "local",
+        "command": command,
+        "enqueue_command": None,
+        "output_claim": output + ".claim",
+        "execution_contract": contract,
+    }
 @pytest.fixture
 def exact() -> tuple[dict, list[dict], dict]:
     materialization = _materialization()
@@ -194,6 +307,67 @@ def test_ambiguous_candidate_binding_fails_closed() -> None:
 
     with pytest.raises(ExecutorError, match="exactly one candidate/arm cell"):
         build_executor_manifest(_jobs(materialization), materialization)
+
+
+def test_digest_binds_multiple_candidates_on_same_backend_partition() -> None:
+    materialization, jobs = _adaptive_same_pair()
+
+    plan = build_executor_manifest(jobs, materialization)
+
+    assert plan["job_count"] == 6
+    assert {job["candidate_id"] for job in plan["jobs"]} == {"candidate-alpha", "candidate-beta"}
+    assert {job["materialization_id"] for job in plan["jobs"]} == {
+        cell["materialization_id"] for cell in materialization["materializations"]
+    }
+    for job in plan["jobs"]:
+        command = shlex.split(job["command"])
+        assert "--adaptive-parameter-document" in command
+        encoded = command[command.index("--adaptive-parameter-document") + 1]
+        assert json.loads(encoded) == job["parameter_document"]
+
+
+def test_adaptive_success_requires_exact_runner_echo(tmp_path: Path) -> None:
+    materialization, jobs = _adaptive_same_pair()
+    plan = build_executor_manifest(jobs, materialization)
+    state = initialize_state(plan, tmp_path / "state", owner_root=tmp_path)
+    job = plan["jobs"][0]
+    claim = claim_job(plan, state, job["job_id"], worker_id="adaptive-worker")
+    output = tmp_path / job["output"]
+    output.parent.mkdir(parents=True)
+    output.write_text(json.dumps({"adaptive_candidate": {
+        "candidate_id": job["candidate_id"],
+        "candidate_sha256": job["candidate_sha256"],
+        "effective_parameters": job["parameter_document"]["effective_parameters"],
+    }}), encoding="utf-8")
+    Path(str(output) + ".prov.json").write_text(json.dumps(_provenance(job)), encoding="utf-8")
+
+    receipt = finish_job(
+        plan, state, job["job_id"], claim["claim_token"], status="succeeded", exit_code=0, root=tmp_path,
+    )
+
+    assert receipt["result"]["candidate_sha256"] == job["candidate_sha256"]
+
+
+def test_adaptive_success_rejects_wrong_effective_parameters(tmp_path: Path) -> None:
+    materialization, jobs = _adaptive_same_pair()
+    plan = build_executor_manifest(jobs, materialization)
+    state = initialize_state(plan, tmp_path / "state", owner_root=tmp_path)
+    job = plan["jobs"][0]
+    claim = claim_job(plan, state, job["job_id"], worker_id="adaptive-worker")
+    output = tmp_path / job["output"]
+    output.parent.mkdir(parents=True)
+    output.write_text(json.dumps({"adaptive_candidate": {
+        "candidate_id": job["candidate_id"],
+        "candidate_sha256": job["candidate_sha256"],
+        "effective_parameters": {"gain": 999},
+    }}), encoding="utf-8")
+    Path(str(output) + ".prov.json").write_text(json.dumps(_provenance(job)), encoding="utf-8")
+
+    with pytest.raises(ExecutorError, match="does not echo"):
+        finish_job(
+            plan, state, job["job_id"], claim["claim_token"], status="succeeded", exit_code=0,
+            root=tmp_path,
+        )
 
 
 def test_durable_claim_success_and_provenance_verification(exact, tmp_path: Path) -> None:

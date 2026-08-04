@@ -86,7 +86,10 @@ _SEAL_SCHEMA = "sim-experiment-seal-v1"
 _MANIFEST_SCHEMA = "sim-execution-manifest-v1"
 _CORPUS_SCHEMA = "sim-corpus-check-v1"
 _CONTRACT_SCHEMA = "sim-experiment-job-contract-v1"
-_ALLOWED_PLACEHOLDERS = frozenset(("arm", "backend", "device", "output", "partition", "seed", "spec"))
+_ALLOWED_PLACEHOLDERS = frozenset((
+    "arm", "backend", "candidate", "candidate_sha256", "device", "output",
+    "parameter_document", "partition", "seed", "spec",
+))
 _CODE_ROOTS = ("sim", "research/runners", "experiment", "tools")
 _RUNTIME_LOGS = frozenset((
     "research/findings/raw/_provenance/runs.jsonl",
@@ -344,6 +347,103 @@ def _execution_contract(spec):
     return command, output, arms, normalized_targets, corpus, stale
 
 
+def _adaptive_candidates(spec, arms):
+    """Return sealed adaptive candidates, or ``None`` for a legacy job matrix."""
+    execution = spec["execution"]
+    raw = execution.get("candidates")
+    if raw is None:
+        return None
+    if not isinstance(raw, dict) or not raw:
+        raise HarnessError("execution.candidates must be a non-empty object when declared")
+    if execution.get("adaptive_parameter_merge") != "arm_overrides_candidate":
+        raise HarnessError(
+            "adaptive execution must explicitly declare adaptive_parameter_merge="
+            "'arm_overrides_candidate'"
+        )
+    raw_arms = execution.get("arms")
+    if not isinstance(raw_arms, dict):
+        raise HarnessError("adaptive execution requires structured arm definitions")
+    arm_parameters = {}
+    for arm in arms:
+        definition = raw_arms.get(arm)
+        parameters = definition.get("parameters") if isinstance(definition, dict) else None
+        if not isinstance(parameters, dict):
+            raise HarnessError(f"adaptive arm {arm!r} requires an object-valued parameters field")
+        arm_parameters[arm] = dict(parameters)
+
+    candidates = []
+    orders = set()
+    for identifier, definition in raw.items():
+        if (not isinstance(identifier, str) or not identifier.strip()
+                or any(not (character.isalnum() or character in "-._") for character in identifier)
+                or not isinstance(definition, dict)):
+            raise HarnessError("adaptive candidates must map non-empty identifiers to objects")
+        if set(definition) != {"order", "parameters", "backend", "partition"}:
+            raise HarnessError(f"adaptive candidate {identifier!r} has missing or extra fields")
+        order = definition.get("order")
+        parameters = definition.get("parameters")
+        backend = definition.get("backend")
+        partition = definition.get("partition")
+        if (isinstance(order, bool) or not isinstance(order, int) or order < 0 or order in orders
+                or not isinstance(parameters, dict)
+                or any(str(key).lower() == "seed" for key in parameters)
+                or backend not in spec["backends"] or partition not in spec["partitions"]):
+            raise HarnessError(f"adaptive candidate {identifier!r} has invalid parameters or mapping")
+        orders.add(order)
+        document = {
+            "schema": "sim-adaptive-candidate-v1",
+            "candidate_id": identifier,
+            "parameters": dict(parameters),
+        }
+        candidates.append({
+            "candidate_id": identifier,
+            "order": order,
+            "parameters": dict(parameters),
+            "backend": backend,
+            "partition": partition,
+            "candidate_sha256": _sha256_bytes(_canonical_json(document)),
+            "arm_parameters": arm_parameters,
+        })
+    candidates.sort(key=lambda item: item["order"])
+    if [item["order"] for item in candidates] != list(range(len(candidates))):
+        raise HarnessError("adaptive candidate order must be contiguous from zero")
+
+    command = execution["command"]
+    output = execution["output"]
+    command_fields = {
+        field for token in command for _, field, _, _ in string.Formatter().parse(token) if field
+    }
+    output_fields = {field for _, field, _, _ in string.Formatter().parse(output) if field}
+    if ("parameter_document" not in command_fields
+            or command[-2:] != ["--adaptive-parameter-document", "{parameter_document}"]):
+        raise HarnessError(
+            "adaptive execution command must end with "
+            "['--adaptive-parameter-document', '{parameter_document}']"
+        )
+    if "candidate" not in output_fields:
+        raise HarnessError("adaptive execution output must include {candidate} to prevent collisions")
+    return candidates
+
+
+def _adaptive_values(candidate, arm):
+    parameters = candidate["parameters"]
+    arm_parameters = candidate["arm_parameters"][arm]
+    parameter_document = {
+        "schema": "sim-adaptive-run-parameters-v1",
+        "candidate_id": candidate["candidate_id"],
+        "candidate_sha256": candidate["candidate_sha256"],
+        "candidate_parameters": parameters,
+        "arm": arm,
+        "arm_parameters": arm_parameters,
+        "effective_parameters": {**parameters, **arm_parameters},
+    }
+    return {
+        "candidate": candidate["candidate_id"],
+        "candidate_sha256": candidate["candidate_sha256"],
+        "parameter_document": _canonical_json(parameter_document).decode("ascii"),
+    }, parameter_document
+
+
 def _file_declarations(execution, key):
     values = execution.get(key, [])
     if not isinstance(values, list):
@@ -432,23 +532,36 @@ def _portable_output_path(template, values, root):
 
 def _runtime_paths(spec, root, output_template, arms, targets):
     paths = set(_RUNTIME_LOGS)
+    primary_outputs = set()
     extra_templates = spec["execution"].get("runtime_outputs", [])
     if not isinstance(extra_templates, list):
         raise HarnessError("execution.runtime_outputs must be a JSON list")
     spec_relative = Path(spec["_spec_path"]).relative_to(root).as_posix()
+    candidates = _adaptive_candidates(spec, arms)
     for partition, seeds in spec["partitions"].items():
         for backend in sorted(spec["backends"]):
-            for arm in arms:
-                for seed in sorted(seeds):
-                    values = {"arm": arm, "backend": backend, "device": targets[backend]["device"],
-                              "partition": partition, "seed": seed, "spec": spec_relative, "output": ""}
-                    output, _ = _portable_output_path(output_template, values, root)
-                    values["output"] = output
-                    paths.update((output, output + ".prov.json", output + ".claim"))
-                    for template in extra_templates:
-                        rendered = template.format_map(values)
-                        _repository_path(rendered, root, "runtime output")
-                        paths.add(PurePosixPath(rendered).as_posix())
+            mapped = ([candidate for candidate in candidates
+                       if candidate["backend"] == backend and candidate["partition"] == partition]
+                      if candidates is not None else [None])
+            for candidate in mapped:
+                for arm in arms:
+                    adaptive_values = _adaptive_values(candidate, arm)[0] if candidate is not None else {}
+                    for seed in sorted(seeds):
+                        values = {
+                            "arm": arm, "backend": backend, "device": targets[backend]["device"],
+                            "partition": partition, "seed": seed, "spec": spec_relative, "output": "",
+                            **adaptive_values,
+                        }
+                        output, _ = _portable_output_path(output_template, values, root)
+                        if output in primary_outputs:
+                            raise HarnessError(f"runtime matrix maps more than one job to output {output!r}")
+                        primary_outputs.add(output)
+                        values["output"] = output
+                        paths.update((output, output + ".prov.json", output + ".claim"))
+                        for template in extra_templates:
+                            rendered = template.format_map(values)
+                            _repository_path(rendered, root, "runtime output")
+                            paths.add(PurePosixPath(rendered).as_posix())
     return sorted(paths)
 
 
@@ -587,6 +700,7 @@ def _runtime_snapshot(manifest):
         "inputs": manifest["inputs"],
         "runtime_paths_sha256": _sha256_bytes(_canonical_json(manifest["runtime_paths"])),
         "runtime_path_count": len(manifest["runtime_paths"]),
+        "command_template_sha256": _sha256_bytes(_canonical_json(manifest["command_template"])),
         "corpus_check": manifest["corpus_check"],
     }
 
@@ -628,7 +742,14 @@ def _verify_runtime_snapshot(contract, root):
     _validated_corpus_check(spec, root, snapshot.get("corpus_check", {}))
     spec_with_path = dict(spec)
     spec_with_path["_spec_path"] = str(spec_path)
-    _, output_template, arms, targets, _, _ = _execution_contract(spec_with_path)
+    command_template, output_template, arms, targets, _, claim_stale = _execution_contract(spec_with_path)
+    if (contract.get("experiment_id") != spec.get("id")
+            or contract.get("spec_sha256") != _sha256_bytes(_canonical_json(spec))
+            or contract.get("execution_manifest_sha256") != snapshot.get("manifest_sha256")
+            or contract.get("corpus_check_sha256") != snapshot.get("corpus_check", {}).get("sha256")):
+        raise HarnessError("job identities differ from the sealed experiment specification")
+    if _sha256_bytes(_canonical_json(command_template)) != snapshot.get("command_template_sha256"):
+        raise HarnessError("runner command template differs from the sealed execution contract")
     runtime_paths = _runtime_paths(spec_with_path, root, output_template, arms, targets)
     if (len(runtime_paths) != snapshot.get("runtime_path_count")
             or _sha256_bytes(_canonical_json(runtime_paths)) != snapshot.get("runtime_paths_sha256")):
@@ -637,6 +758,51 @@ def _verify_runtime_snapshot(contract, root):
     _validate_worktree_dirt(root, pseudo_manifest)
     if contract.get("output") not in set(runtime_paths):
         raise HarnessError("job output is not an allowed path in the sealed execution manifest")
+    values = {
+        "arm": contract.get("arm"),
+        "backend": contract.get("backend"),
+        "device": contract.get("device"),
+        "partition": contract.get("partition"),
+        "seed": contract.get("seed"),
+        "spec": spec_path.relative_to(root).as_posix(),
+        "output": contract.get("output"),
+    }
+    candidates = _adaptive_candidates(spec_with_path, arms)
+    if candidates is not None:
+        candidate = next(
+            (item for item in candidates if item["candidate_id"] == contract.get("candidate_id")), None
+        )
+        if (candidate is None or candidate["backend"] != contract.get("backend")
+                or candidate["partition"] != contract.get("partition")
+                or candidate["candidate_sha256"] != contract.get("candidate_sha256")):
+            raise HarnessError("adaptive job candidate is not present in the sealed experiment specification")
+        adaptive_values, parameter_document = _adaptive_values(candidate, contract.get("arm"))
+        if parameter_document != contract.get("parameter_document"):
+            raise HarnessError("adaptive job parameters differ from the sealed experiment specification")
+        values.update(adaptive_values)
+    expected_command = [token.format_map(values) for token in command_template]
+    if contract.get("runner_command") != expected_command:
+        raise HarnessError("runner command differs from the sealed execution template")
+    target = targets.get(contract.get("backend"))
+    expected_environment = ({"SIM_BACKEND": contract.get("backend"), **target["env"]}
+                            if isinstance(target, dict) else None)
+    if (contract.get("device") != (target or {}).get("device")
+            or contract.get("environment") != expected_environment
+            or contract.get("claim_stale_seconds") != claim_stale):
+        raise HarnessError("job runtime settings differ from the sealed execution target")
+    identity_keys = (
+        "experiment_id", "spec_sha256", "execution_manifest_sha256", "corpus_check_sha256",
+        "source", "partition", "backend", "device", "arm", "seed", "output",
+    )
+    identity = {key: contract.get(key) for key in identity_keys}
+    if candidates is not None:
+        identity.update({
+            "candidate_id": contract.get("candidate_id"),
+            "candidate_sha256": contract.get("candidate_sha256"),
+            "parameter_document": contract.get("parameter_document"),
+        })
+    if contract.get("job_id") != _sha256_bytes(_canonical_json(identity))[:20]:
+        raise HarnessError("job identity differs from the sealed execution values")
     return snapshot
 
 
@@ -759,6 +925,7 @@ def expand_experiment_jobs(spec_path, partitions, seal_path=None, root=ROOT):
     _check_prerequisites(spec, selected, root)
     _check_stop_rules(spec, selected, root, spec_sha256)
     command_template, output_template, arms, targets, _, claim_stale = _execution_contract(spec)
+    candidates = _adaptive_candidates(spec, arms)
     snapshot = _runtime_snapshot(manifest)
     reason = "corpus-check:" + manifest["corpus_check"]["sha256"][:16]
 
@@ -767,44 +934,62 @@ def expand_experiment_jobs(spec_path, partitions, seal_path=None, root=ROOT):
     for partition in selected:
         for backend in sorted(spec["backends"]):
             target = targets[backend]
-            for arm in arms:
-                for seed in sorted(spec["partitions"][partition]):
-                    values = {
+            mapped = ([candidate for candidate in candidates
+                       if candidate["backend"] == backend and candidate["partition"] == partition]
+                      if candidates is not None else [None])
+            for candidate in mapped:
+                for arm in arms:
+                    adaptive_values, parameter_document = (
+                        _adaptive_values(candidate, arm) if candidate is not None else ({}, None)
+                    )
+                    for seed in sorted(spec["partitions"][partition]):
+                        values = {
                         "arm": arm,
                         "backend": backend,
                         "device": target["device"],
                         "partition": partition,
                         "seed": seed,
                         "spec": spec_relative,
-                    }
-                    output, absolute_output = _portable_output_path(output_template, {**values, "output": ""}, root)
-                    values["output"] = output
-                    if output in outputs:
-                        raise HarnessError(f"job matrix maps more than one job to output {output!r}")
-                    outputs.add(output)
-                    claim_path = Path(str(absolute_output) + ".claim")
-                    if claim_path.exists() and _claim_is_stale(claim_path, claim_stale):
-                        claim_path.unlink()
-                    if absolute_output.exists() or claim_path.exists():
-                        raise HarnessError(f"refusing mutable output collision at {output!r} (or its claim)")
-                    tokens = [token.format_map(values) for token in command_template]
-                    identity = {
+                        **adaptive_values,
+                        }
+                        output, absolute_output = _portable_output_path(
+                            output_template, {**values, "output": ""}, root
+                        )
+                        values["output"] = output
+                        if output in outputs:
+                            raise HarnessError(f"job matrix maps more than one job to output {output!r}")
+                        outputs.add(output)
+                        claim_path = Path(str(absolute_output) + ".claim")
+                        if claim_path.exists() and _claim_is_stale(claim_path, claim_stale):
+                            claim_path.unlink()
+                        if absolute_output.exists() or claim_path.exists():
+                            raise HarnessError(f"refusing mutable output collision at {output!r} (or its claim)")
+                        tokens = [token.format_map(values) for token in command_template]
+                        identity = {
                         "experiment_id": spec["id"], "spec_sha256": spec_sha256,
                         "execution_manifest_sha256": manifest["sha256"],
                         "corpus_check_sha256": manifest["corpus_check"]["sha256"],
                         "source": manifest["source"], "partition": partition, "backend": backend,
                         "device": target["device"], "arm": arm, "seed": seed, "output": output,
-                    }
-                    job_id = _sha256_bytes(_canonical_json(identity))[:20]
-                    environment = {"SIM_BACKEND": backend, **target["env"]}
-                    contract = {"schema": _CONTRACT_SCHEMA, "job_id": job_id, **identity,
-                                "execution_snapshot": snapshot, "runner_command": tokens,
-                                "environment": environment, "claim_stale_seconds": claim_stale}
-                    command = _job_command(contract, tokens)
-                    enqueue = None
-                    if target["lane"] in ("gpu", "pool"):
-                        enqueue = shlex.join(["bash", "tools/queue_add.sh", target["lane"], command, reason])
-                    jobs.append({
+                        }
+                        if candidate is not None:
+                            identity.update({
+                            "candidate_id": candidate["candidate_id"],
+                            "candidate_sha256": candidate["candidate_sha256"],
+                            "parameter_document": parameter_document,
+                            })
+                        job_id = _sha256_bytes(_canonical_json(identity))[:20]
+                        environment = {"SIM_BACKEND": backend, **target["env"]}
+                        contract = {"schema": _CONTRACT_SCHEMA, "job_id": job_id, **identity,
+                                    "execution_snapshot": snapshot, "runner_command": tokens,
+                                    "environment": environment, "claim_stale_seconds": claim_stale}
+                        command = _job_command(contract, tokens)
+                        enqueue = None
+                        if target["lane"] in ("gpu", "pool"):
+                            enqueue = shlex.join([
+                                "bash", "tools/queue_add.sh", target["lane"], command, reason,
+                            ])
+                        jobs.append({
                         "schema": _PLAN_SCHEMA,
                         "job_id": job_id,
                         **identity,
@@ -814,7 +999,7 @@ def expand_experiment_jobs(spec_path, partitions, seal_path=None, root=ROOT):
                         "enqueue_command": enqueue,
                         "output_claim": output + ".claim",
                         "execution_contract": contract,
-                    })
+                        })
     return jobs
 
 

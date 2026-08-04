@@ -33,6 +33,7 @@ EXECUTION_RECEIPT_SCHEMA = "sim-experiment-controller-execution-receipt-v1"
 LANE_NAMES = {"local": "local_cpu", "gpu": "local_gpu", "pool": "mini_pc_cluster"}
 REQUIRED_TARGET_FIELDS = ("device", "lane")
 ARM_ROLES = ("treatment", "control", "lesion")
+CANDIDATE_SCHEMA = "sim-adaptive-candidate-v1"
 
 
 class ControllerError(ValueError):
@@ -300,10 +301,100 @@ def build_dry_run_plan(design_path: str | Path, *, root: str | Path = ROOT) -> d
     return body
 
 
+def materialize_candidate_spec(
+    plan: Mapping[str, Any], destination: str | Path, *, root: str | Path = ROOT,
+) -> Path:
+    """Write a derived preregistration whose candidate matrix can be sealed by the harness."""
+    if (not isinstance(plan, Mapping) or plan.get("schema") != SCHEMA or not _valid_digest(plan)
+            or plan.get("decision") != "propose"):
+        raise ControllerError("candidate-spec materialization requires a valid proposing plan")
+    root = Path(root).resolve()
+    handoff = plan.get("experiment_handoff")
+    relative = PurePosixPath(handoff.get("spec_path", "")) if isinstance(handoff, Mapping) else None
+    if relative is None or relative.is_absolute() or ".." in relative.parts or not relative.name:
+        raise ControllerError("candidate-spec materialization has no valid base spec path")
+    base_path = root.joinpath(*relative.parts)
+    try:
+        spec = load_experiment_spec(base_path)
+    except (HarnessError, OSError, TypeError) as exc:
+        raise ControllerError(f"cannot load base experiment spec: {exc}") from exc
+    materialization = plan.get("candidate_materialization")
+    candidates = materialization.get("candidates") if isinstance(materialization, Mapping) else None
+    if not isinstance(candidates, list) or not candidates or materialization.get("count") != len(candidates):
+        raise ControllerError("candidate-spec materialization requires a non-empty exact candidate batch")
+
+    candidate_contract = {}
+    for index, candidate in enumerate(candidates):
+        if not isinstance(candidate, Mapping) or candidate.get("order") != index:
+            raise ControllerError("candidate-spec materialization has invalid candidate ordering")
+        identifier = candidate.get("candidate_id")
+        parameters = candidate.get("parameters")
+        backend = candidate.get("backend")
+        partition = candidate.get("partition")
+        if (not isinstance(identifier, str) or not identifier.strip() or identifier in candidate_contract
+                or any(not (character.isalnum() or character in "-._") for character in identifier)
+                or not isinstance(parameters, Mapping) or _contains_forbidden_data(parameters)
+                or backend not in spec["backends"] or partition not in spec["partitions"]
+                or "heldout" in "".join(character for character in partition.lower()
+                                          if character.isalnum())):
+            raise ControllerError(f"candidate {identifier!r} cannot be materialized into a sealed spec")
+        candidate_contract[identifier] = {
+            "order": index,
+            "parameters": dict(parameters),
+            "backend": backend,
+            "partition": partition,
+        }
+
+    derived = json.loads(json.dumps(spec))
+    execution = derived.get("execution")
+    if not isinstance(execution, dict):
+        raise ControllerError("base experiment spec has no execution contract")
+    if "candidates" in execution:
+        raise ControllerError("base experiment spec already contains adaptive candidates")
+    command = execution.get("command")
+    if not isinstance(command, list):
+        raise ControllerError("base experiment command is malformed")
+    suffix = ["--adaptive-parameter-document", "{parameter_document}"]
+    if command[-2:] != suffix:
+        if any("parameter_document" in str(token) for token in command):
+            raise ControllerError("base experiment command has an ambiguous adaptive parameter argument")
+        command.extend(suffix)
+    output = execution.get("output")
+    if not isinstance(output, str) or not output:
+        raise ControllerError("base experiment output template is malformed")
+    if "{candidate}" not in output:
+        path = PurePosixPath(output)
+        execution["output"] = (path.parent / "{candidate}" / path.name).as_posix()
+    runtime_outputs = execution.get("runtime_outputs", [])
+    if any(isinstance(value, str) and "{candidate}" not in value for value in runtime_outputs):
+        raise ControllerError("adaptive runtime-output templates must include {candidate}")
+    execution["candidates"] = candidate_contract
+    execution["adaptive_parameter_merge"] = "arm_overrides_candidate"
+    execution["adaptive_lineage"] = {
+        "controller_plan_sha256": plan["sha256"],
+        "design_sha256": plan.get("design", {}).get("sha256"),
+    }
+
+    destination = Path(destination).expanduser().absolute()
+    if not _inside(destination, root):
+        raise ControllerError("candidate spec must be written inside the repository")
+    _reject_symlink_parents(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with destination.open("x", encoding="utf-8") as handle:
+            json.dump(derived, handle, sort_keys=True, indent=2, ensure_ascii=True)
+            handle.write("\n")
+    except FileExistsError as exc:
+        raise ControllerError(f"refusing to replace existing candidate spec: {destination}") from exc
+    destination.chmod(0o444)
+    return destination
+
+
 def validate_experiment_handoff(
     plan: Mapping[str, Any],
     *,
     seal_path: str | Path | None = None,
+    materialized_spec_path: str | Path | None = None,
     root: str | Path = ROOT,
 ) -> dict[str, Any]:
     """Validate a dry-run plan against a pre-existing sealed, non-held-out job matrix."""
@@ -371,7 +462,12 @@ def validate_experiment_handoff(
         raise ControllerError("experiment handoff does not preserve the sealed harness sequence")
 
     root = Path(root).resolve()
-    spec_relative = handoff.get("spec_path")
+    spec_relative = materialized_spec_path if materialized_spec_path is not None else handoff.get("spec_path")
+    if isinstance(spec_relative, Path):
+        try:
+            spec_relative = spec_relative.resolve().relative_to(root).as_posix()
+        except ValueError as exc:
+            raise ControllerError("materialized experiment spec is outside the repository") from exc
     if not isinstance(spec_relative, str) or not spec_relative.strip():
         raise ControllerError("experiment handoff requires a repository-relative spec path")
     relative = PurePosixPath(spec_relative)
@@ -421,6 +517,23 @@ def validate_experiment_handoff(
 
     if seal_path is None:
         raise ControllerError("an existing experiment seal is required for handoff validation")
+    sealed_candidates = spec.get("execution", {}).get("candidates")
+    expected_candidates = {
+        candidate["candidate_id"]: {
+            "order": candidate["order"],
+            "parameters": dict(candidate["parameters"]),
+            "backend": candidate["backend"],
+            "partition": candidate["partition"],
+        }
+        for candidate in candidates
+    }
+    lineage = spec.get("execution", {}).get("adaptive_lineage")
+    if sealed_candidates != expected_candidates or lineage != {
+        "controller_plan_sha256": plan["sha256"],
+        "design_sha256": plan.get("design", {}).get("sha256"),
+    }:
+        raise ControllerError("materialized experiment spec does not exactly bind the proposed candidates")
+
     try:
         seal = Path(seal_path).expanduser().absolute()
     except (TypeError, ValueError) as exc:
@@ -456,6 +569,19 @@ def validate_experiment_handoff(
     invalid_arm_sets = sorted(pair for pair, names in expanded_arms.items() if names != expected_arms)
     if invalid_arm_sets:
         raise ControllerError(f"sealed expansion has extra or missing arms for mappings: {invalid_arm_sets}")
+    job_candidate_ids = {job.get("candidate_id") for job in jobs}
+    if job_candidate_ids != set(expected_candidates):
+        raise ControllerError("sealed expansion has extra or missing adaptive candidates")
+    for job in jobs:
+        candidate = expected_candidates.get(job.get("candidate_id"))
+        document = job.get("parameter_document")
+        if (candidate is None or job.get("candidate_sha256") != _digest({
+                "schema": CANDIDATE_SCHEMA,
+                "candidate_id": job.get("candidate_id"),
+                "parameters": candidate["parameters"],
+        }) or not isinstance(document, Mapping)
+                or document.get("candidate_parameters") != candidate["parameters"]):
+            raise ControllerError("sealed expansion candidate parameters differ from the controller plan")
     identity_fields = ("spec_sha256", "execution_manifest_sha256", "source")
     identities = {
         field: {_canonical(job.get(field)) for job in jobs}
@@ -480,6 +606,7 @@ def validate_experiment_handoff(
             for backend, partition in sorted(pairs)
         ],
         "expanded_job_count": len(jobs),
+        "adaptive_expanded_job_count": len(jobs),
         "seeds_selected": False,
         "held_out_partitions_accessed": [],
     }
@@ -587,14 +714,24 @@ def materialize_execution_manifest(
         parameters = candidate.get("parameters")
         if not isinstance(identifier, str) or not identifier.strip() or not isinstance(parameters, Mapping):
             raise ControllerError("candidate materialization is malformed")
+        candidate_document = {
+            "schema": CANDIDATE_SCHEMA,
+            "candidate_id": identifier,
+            "parameters": dict(parameters),
+        }
+        candidate_sha256 = _digest(candidate_document)
         for arm in arms:
+            effective_parameters = {**parameters, **arm["parameters"]}
             cell = {
                 "candidate_id": identifier,
                 "candidate_order": candidate.get("order"),
+                "candidate_document": candidate_document,
+                "candidate_sha256": candidate_sha256,
                 "arm": arm["name"],
                 "role": arm["role"],
                 "candidate_parameters": dict(parameters),
                 "arm_parameters": dict(arm["parameters"]),
+                "effective_parameters": effective_parameters,
                 "backend": candidate.get("backend"),
                 "partition": candidate.get("partition"),
                 "resource_lane": candidate.get("resource_lane"),
@@ -614,7 +751,7 @@ def materialize_execution_manifest(
         "spec_path": handoff.get("spec_path"),
         "spec_sha256": handoff.get("spec_sha256"),
         "sealed_execution_manifest_sha256": handoff.get("execution_manifest_sha256"),
-        "sealed_expanded_job_count": handoff.get("expanded_job_count"),
+        "sealed_expanded_job_count": handoff.get("adaptive_expanded_job_count"),
         "source": handoff.get("source"),
         "arms": arms,
         "required_roles": roles,
@@ -716,6 +853,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", default=str(ROOT))
     parser.add_argument("--output")
     parser.add_argument("--owner-root")
+    parser.add_argument("--materialized-spec-output")
     args = parser.parse_args(argv)
     try:
         plan = build_dry_run_plan(args.design, root=args.root)
@@ -723,6 +861,8 @@ def main(argv: list[str] | None = None) -> int:
             if not args.owner_root:
                 raise ControllerError("--owner-root is required when --output is supplied")
             write_dry_run_plan(plan, args.output, owner_root=args.owner_root)
+        if args.materialized_spec_output:
+            materialize_candidate_spec(plan, args.materialized_spec_output, root=args.root)
         print(json.dumps(plan, sort_keys=True, indent=2))
         return 0
     except ControllerError as exc:

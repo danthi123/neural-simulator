@@ -9,18 +9,20 @@ import time
 import pytest
 
 import tools.experiment_controller as controller
-from tools.experiment import create_experiment_seal
+from tools.experiment import create_experiment_seal, expand_experiment_jobs
 from tools.experiment_controller import (
     ControllerError,
     EXECUTION_MANIFEST_SCHEMA,
     EXECUTION_RECEIPT_SCHEMA,
     SCHEMA,
     build_dry_run_plan,
+    materialize_candidate_spec,
     materialize_execution_manifest,
     validate_experiment_handoff,
     validate_execution_receipt,
     write_dry_run_plan,
 )
+from tools.experiment_executor import build_executor_manifest
 
 
 def _spec() -> dict:
@@ -144,9 +146,14 @@ def _plan_with_gpu_candidate(fixture_repo: Path) -> dict:
 
 def _sealed_handoff(fixture_repo: Path, tmp_path: Path) -> tuple[dict, dict]:
     plan = _plan_with_gpu_candidate(fixture_repo)
+    materialized = materialize_candidate_spec(
+        plan, fixture_repo / "research/specs/materialized.json", root=fixture_repo,
+    )
     seal_path = tmp_path / "controller.seal.json"
-    create_experiment_seal(fixture_repo / "research/specs/experiment.json", seal_path, root=fixture_repo)
-    return plan, validate_experiment_handoff(plan, seal_path=seal_path, root=fixture_repo)
+    create_experiment_seal(materialized, seal_path, root=fixture_repo)
+    return plan, validate_experiment_handoff(
+        plan, seal_path=seal_path, materialized_spec_path=materialized, root=fixture_repo,
+    )
 
 
 def _receipt(manifest: dict) -> dict:
@@ -218,10 +225,15 @@ def test_controller_rejects_design_outside_repository(fixture_repo: Path, tmp_pa
 
 def test_valid_plan_maps_to_existing_sealed_expansion_contract(fixture_repo: Path, tmp_path: Path) -> None:
     plan = _plan_with_gpu_candidate(fixture_repo)
+    materialized = materialize_candidate_spec(
+        plan, fixture_repo / "research/specs/materialized.json", root=fixture_repo,
+    )
     seal_path = tmp_path / "controller.seal.json"
-    create_experiment_seal(fixture_repo / "research/specs/experiment.json", seal_path, root=fixture_repo)
+    create_experiment_seal(materialized, seal_path, root=fixture_repo)
 
-    handoff = validate_experiment_handoff(plan, seal_path=seal_path, root=fixture_repo)
+    handoff = validate_experiment_handoff(
+        plan, seal_path=seal_path, materialized_spec_path=materialized, root=fixture_repo,
+    )
 
     assert handoff["schema"] == "sim-experiment-controller-handoff-v1"
     assert handoff["experiment_id"] == "controller-fixture"
@@ -230,7 +242,8 @@ def test_valid_plan_maps_to_existing_sealed_expansion_contract(fixture_repo: Pat
         {"backend": "cupy", "partition": "calibration"},
         {"backend": "numpy", "partition": "calibration"},
     ]
-    assert handoff["expanded_job_count"] == 6
+    assert handoff["expanded_job_count"] == 9
+    assert handoff["adaptive_expanded_job_count"] == 9
     assert [arm["role"] for arm in handoff["arms"]] == ["treatment", "lesion", "control"]
     assert len(handoff["sha256"]) == 64
     assert handoff["seeds_selected"] is False
@@ -241,11 +254,25 @@ def test_valid_plan_maps_to_existing_sealed_expansion_contract(fixture_repo: Pat
 
 def test_expansion_cannot_widen_candidate_backend_set(fixture_repo: Path, tmp_path: Path) -> None:
     plan = build_dry_run_plan(fixture_repo / "research/specs/adaptive.json", root=fixture_repo)
+    materialized = materialize_candidate_spec(
+        plan, fixture_repo / "research/specs/materialized.json", root=fixture_repo,
+    )
+    materialized.chmod(0o644)
+    spec = json.loads(materialized.read_text())
+    spec["execution"]["candidates"]["unexpected"] = {
+        "order": len(spec["execution"]["candidates"]),
+        "parameters": {"gain": 0.9},
+        "backend": "cupy",
+        "partition": "calibration",
+    }
+    materialized.write_text(json.dumps(spec), encoding="utf-8")
     seal_path = tmp_path / "controller.seal.json"
-    create_experiment_seal(fixture_repo / "research/specs/experiment.json", seal_path, root=fixture_repo)
+    create_experiment_seal(materialized, seal_path, root=fixture_repo)
 
-    with pytest.raises(ControllerError, match="widened"):
-        validate_experiment_handoff(plan, seal_path=seal_path, root=fixture_repo)
+    with pytest.raises(ControllerError, match="exactly bind"):
+        validate_experiment_handoff(
+            plan, seal_path=seal_path, materialized_spec_path=materialized, root=fixture_repo,
+        )
 
 
 def test_malformed_plan_fails_closed_before_expansion(fixture_repo: Path, tmp_path: Path) -> None:
@@ -278,7 +305,7 @@ def test_materialization_is_deterministic_exact_and_seed_free(fixture_repo: Path
     assert first == second
     assert first["schema"] == EXECUTION_MANIFEST_SCHEMA
     assert first["materialization_count"] == 9
-    assert first["sealed_expanded_job_count"] == 6
+    assert first["sealed_expanded_job_count"] == 9
     assert first["required_roles"] == {
         "treatment": ["candidate"], "control": ["matched-control"], "lesion": ["gain-lesion"],
     }
@@ -288,6 +315,41 @@ def test_materialization_is_deterministic_exact_and_seed_free(fixture_repo: Path
     encoded = json.dumps(first, sort_keys=True)
     assert '"seed"' not in encoded and "held_out\": [99]" not in encoded
     assert all("command" not in cell and "output" not in cell for cell in first["materializations"])
+    assert len({
+        (cell["candidate_id"], cell["candidate_sha256"])
+        for cell in first["materializations"]
+    }) == 3
+    assert all(cell["candidate_document"]["parameters"] == cell["candidate_parameters"]
+               for cell in first["materializations"])
+    assert next(cell for cell in first["materializations"] if cell["arm"] == "gain-lesion")[
+        "effective_parameters"
+    ]["adaptive_gain"] == 0.0
+
+
+def test_materialized_spec_expands_into_executor_accepted_adaptive_jobs(
+    fixture_repo: Path, tmp_path: Path,
+) -> None:
+    plan = _plan_with_gpu_candidate(fixture_repo)
+    materialized = materialize_candidate_spec(
+        plan, fixture_repo / "research/specs/materialized.json", root=fixture_repo,
+    )
+    seal_path = tmp_path / "controller.seal.json"
+    create_experiment_seal(materialized, seal_path, root=fixture_repo)
+    handoff = validate_experiment_handoff(
+        plan, seal_path=seal_path, materialized_spec_path=materialized, root=fixture_repo,
+    )
+    manifest = materialize_execution_manifest(plan, handoff, root=fixture_repo)
+    jobs = expand_experiment_jobs(
+        materialized, ["calibration"], seal_path=seal_path, root=fixture_repo,
+    )
+
+    executor = build_executor_manifest(jobs, manifest)
+
+    assert executor["job_count"] == 9
+    assert {job["candidate_id"] for job in executor["jobs"]} == {
+        candidate["candidate_id"] for candidate in plan["candidate_materialization"]["candidates"]
+    }
+    assert all(job["parameter_document"] is not None for job in executor["jobs"])
 
 
 def test_materialization_does_not_reopen_spec_or_expand_seed_jobs(

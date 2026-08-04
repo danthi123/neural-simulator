@@ -1,17 +1,19 @@
 # Adaptive experiment design
 
 `tools/adaptive_experiment.py` proposes the next bounded parameter batch. It does not run simulations or replace
-the experiment harness. Every proposed candidate must still be added as an arm to a preregistered experiment spec,
-sealed by `tools/experiment.py`, expanded into its normal jobs, and executed through those digest-bound job
-contracts.
+the experiment harness. Treatment, control, and lesion remain experiment arms. Proposed parameter vectors are a
+separate candidate dimension that must be materialized into a derived preregistration before sealing. The sealed
+harness then expands candidate by arm by seed and emits the only executable digest-bound job contracts.
 
 ## What a design contains
 
 - A repository-relative `experiment.spec_path`. Its declared backends and partitions are authoritative.
 - Continuous, discrete, and categorical parameters with finite bounds or choices.
 - Hard constraints expressed as JSON predicates. Each constraint requires a biological source or rationale.
-- Objectives covering physiology, behavior, robustness, compute cost, and scaffold penalty. Each has a direction,
-  weight, meaningful normalization range, and optional success target.
+- Objectives covering physiology, robustness, compute cost, scaffold penalty, and at least one domain outcome:
+  behavior for integrated tasks or mechanism for isolated mechanism calibration. A design may include both. Each
+  objective has a direction, weight, meaningful normalization range, and optional success target. Existing designs
+  with a behavior objective remain valid without changes.
 - Exactly three ordered fidelity tiers: NumPy CPU screening, CuPy GPU evaluation, and CuPy replication. Calibration
   and replication partitions are allowed; any held-out partition is rejected.
 - Completed observations from non-held-out partitions and a deterministic policy seed.
@@ -44,15 +46,24 @@ The decision is one of:
 ```bash
 python tools/adaptive_experiment.py research/specs/my-adaptive-design.json \
   --output research/queue/my-next-batch.json
+
+python tools/experiment_controller.py research/specs/my-adaptive-design.json \
+  --output research/queue/my-controller-plan.json \
+  --owner-root research/queue \
+  --materialized-spec-output research/specs/my-materialized-experiment.json
 ```
 
-The output is created with exclusive-create semantics, made read-only, and carries a self-digest. Re-running with
-the same output path fails rather than overwriting evidence.
+The outputs use exclusive-create semantics and carry self-digests where applicable. Re-running with the same paths
+fails rather than overwriting evidence. The derived spec records the controller-plan and design digests, embeds the
+exact candidate parameters and backend/partition mappings, adds candidate-specific output paths, and passes a
+canonical effective-parameter document to the runner. Commit that spec, create the normal experiment seal, and use
+`expand_experiment_jobs`; the executor does not add or mutate candidates after sealing. A successful adaptive
+output must echo the exact candidate digest and effective parameters before its receipt can be accepted.
 
 ## Current limits
 
 This first layer uses a scalarized multi-objective utility for acquisition; the Pareto report is diagnostic rather
 than a full multi-objective optimizer. Its RBF uncertainty is useful for ranking bounded searches but is not a
 calibrated probability. It assumes completed observations report every objective, does not model censored or failed
-runs, and proposes values only; materializing candidate arms remains an explicit preregistration step so the layer
+runs, and proposes values only. Candidate materialization remains an explicit pre-seal step, so the proposal layer
 cannot weaken `tools/experiment.py` seals or job contracts.

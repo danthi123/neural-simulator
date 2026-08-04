@@ -42,6 +42,7 @@ JOB_FIELDS = {
     "output", "sealed", "lane", "command", "enqueue_command", "output_claim",
     "execution_contract",
 }
+ADAPTIVE_FIELDS = {"candidate_id", "candidate_sha256", "parameter_document"}
 CONTRACT_FIELDS = {
     "schema", "job_id", "experiment_id", "spec_sha256", "execution_manifest_sha256",
     "corpus_check_sha256", "source", "partition", "backend", "device", "arm", "seed",
@@ -51,6 +52,9 @@ IDENTITY_FIELDS = (
     "job_id", "experiment_id", "spec_sha256", "execution_manifest_sha256",
     "corpus_check_sha256", "source", "partition", "backend", "device", "arm", "seed", "output",
 )
+PARAMETER_ARGUMENT = "--adaptive-parameter-document"
+CANDIDATE_SCHEMA = "sim-adaptive-candidate-v1"
+PARAMETER_DOCUMENT_SCHEMA = "sim-adaptive-run-parameters-v1"
 
 
 class ExecutorError(ValueError):
@@ -186,6 +190,24 @@ def _validate_materialization(manifest: Mapping[str, Any]) -> None:
                 or _held_out(cell.get("partition"))):
             raise ExecutorError("materialization manifest has malformed, widened, or duplicate cells")
         cell_ids.add(cell["materialization_id"])
+        adaptive_markers = {"candidate_document", "candidate_sha256", "effective_parameters"}
+        adaptive_fields = {
+            "candidate_document", "candidate_sha256", "candidate_parameters", "effective_parameters"
+        }
+        if adaptive_markers & set(cell) and not adaptive_fields.issubset(cell):
+            raise ExecutorError("materialization manifest has an incomplete adaptive candidate binding")
+        if adaptive_fields.issubset(cell):
+            candidate = cell.get("candidate_document")
+            if (not isinstance(candidate, Mapping) or candidate.get("schema") != CANDIDATE_SCHEMA
+                    or candidate.get("candidate_id") != cell.get("candidate_id")
+                    or candidate.get("parameters") != cell.get("candidate_parameters")
+                    or cell.get("candidate_sha256") != _digest(candidate)
+                    or not HEX_64.fullmatch(str(cell.get("candidate_sha256", "")))
+                    or not isinstance(cell.get("arm_parameters"), Mapping)
+                    or cell.get("effective_parameters") != {
+                        **cell["candidate_parameters"], **cell["arm_parameters"]
+                    }):
+                raise ExecutorError("materialization manifest has an invalid adaptive candidate digest")
     pairs = manifest.get("backend_partition_pairs")
     if (not isinstance(pairs, list) or any(not isinstance(row, Mapping)
             or set(row) != {"backend", "partition"} or _held_out(row.get("partition")) for row in pairs)):
@@ -196,10 +218,15 @@ def _validate_materialization(manifest: Mapping[str, Any]) -> None:
 
 
 def _validate_job(job: Mapping[str, Any], manifest: Mapping[str, Any]) -> dict[str, Any]:
-    if set(job) != JOB_FIELDS or job.get("schema") != JOB_SCHEMA or job.get("sealed") is not True:
+    job_fields = set(job)
+    adaptive = job_fields == JOB_FIELDS | ADAPTIVE_FIELDS
+    if (job_fields not in (JOB_FIELDS, JOB_FIELDS | ADAPTIVE_FIELDS)
+            or job.get("schema") != JOB_SCHEMA or job.get("sealed") is not True):
         raise ExecutorError("expanded job has an invalid shape or is not sealed")
     contract = job.get("execution_contract")
-    if not isinstance(contract, Mapping) or set(contract) != CONTRACT_FIELDS or contract.get("schema") != CONTRACT_SCHEMA:
+    expected_contract_fields = CONTRACT_FIELDS | ADAPTIVE_FIELDS if adaptive else CONTRACT_FIELDS
+    if (not isinstance(contract, Mapping) or set(contract) != expected_contract_fields
+            or contract.get("schema") != CONTRACT_SCHEMA):
         raise ExecutorError(f"job {job.get('job_id')!r} has an invalid execution contract")
     if (not HEX_20.fullmatch(str(job.get("job_id", "")))
             or any(not HEX_64.fullmatch(str(job.get(field, ""))) for field in (
@@ -217,6 +244,8 @@ def _validate_job(job: Mapping[str, Any], manifest: Mapping[str, Any]) -> dict[s
         raise ExecutorError(f"job {job.get('job_id')!r} has no sealed source revision")
     if any(job.get(field) != contract.get(field) for field in IDENTITY_FIELDS):
         raise ExecutorError(f"job {job.get('job_id')!r} differs from its execution contract")
+    if adaptive and any(job.get(field) != contract.get(field) for field in ADAPTIVE_FIELDS):
+        raise ExecutorError(f"job {job.get('job_id')!r} differs from its adaptive execution contract")
     if (job.get("experiment_id") != manifest.get("experiment_id")
             or job.get("spec_sha256") != manifest.get("spec_sha256")
             or job.get("execution_manifest_sha256") != manifest.get("sealed_execution_manifest_sha256")
@@ -245,17 +274,44 @@ def _validate_job(job: Mapping[str, Any], manifest: Mapping[str, Any]) -> dict[s
         if isinstance(cell, Mapping) and cell.get("arm") == job.get("arm")
         and cell.get("backend") == job.get("backend") and cell.get("partition") == job.get("partition")
         and cell.get("resource_lane") == LANES[lane] and cell.get("device") == job.get("device")
+        and (not adaptive or (cell.get("candidate_id") == job.get("candidate_id")
+                              and cell.get("candidate_sha256") == job.get("candidate_sha256")))
     ]
     if len(matches) != 1:
         raise ExecutorError(
             f"job {job.get('job_id')!r} must map to exactly one candidate/arm cell; found {len(matches)}"
         )
     cell = matches[0]
+    parameter_document = None
+    if adaptive:
+        parameter_document = job.get("parameter_document")
+        expected_document = {
+            "schema": PARAMETER_DOCUMENT_SCHEMA,
+            "candidate_id": cell["candidate_id"],
+            "candidate_sha256": cell["candidate_sha256"],
+            "candidate_parameters": cell["candidate_parameters"],
+            "arm": cell["arm"],
+            "arm_parameters": cell["arm_parameters"],
+            "effective_parameters": cell["effective_parameters"],
+        }
+        if parameter_document != expected_document:
+            raise ExecutorError(f"job {job.get('job_id')!r} has the wrong adaptive parameter document")
+        expected_suffix = [PARAMETER_ARGUMENT, _canonical(parameter_document).decode("ascii")]
+        if contract["runner_command"][-2:] != expected_suffix:
+            raise ExecutorError(
+                f"job {job.get('job_id')!r} does not pass its adaptive parameter document to the runner"
+            )
+        identity = {field: contract[field] for field in IDENTITY_FIELDS[1:]}
+        identity.update({field: contract[field] for field in sorted(ADAPTIVE_FIELDS)})
+        if job["job_id"] != _digest(identity)[:20]:
+            raise ExecutorError(f"job {job.get('job_id')!r} is not digest-bound to its adaptive candidate")
     return {
         "job_id": job["job_id"],
         "job_sha256": _digest(job),
         "materialization_id": cell["materialization_id"],
         "candidate_id": cell["candidate_id"],
+        "candidate_sha256": cell.get("candidate_sha256"),
+        "parameter_document": parameter_document,
         "arm": job["arm"],
         "role": cell["role"],
         "backend": job["backend"],
@@ -292,6 +348,14 @@ def build_executor_manifest(
     outputs = [item["output"] for item in authorized]
     if len(set(job_ids)) != len(job_ids) or len(set(outputs)) != len(outputs):
         raise ExecutorError("expanded job set has duplicate identities or outputs")
+    adaptive_cells = {
+        cell["materialization_id"] for cell in materialization["materializations"]
+        if isinstance(cell, Mapping) and "candidate_sha256" in cell
+    }
+    if adaptive_cells:
+        if (any(item["parameter_document"] is None for item in authorized)
+                or {item["materialization_id"] for item in authorized} != adaptive_cells):
+            raise ExecutorError("expanded adaptive job set has extra or missing candidate/arm bindings")
 
     expected_pairs = {
         (row.get("backend"), row.get("partition"))
@@ -460,6 +524,21 @@ def finish_job(
             provenance_path = root.joinpath(*PurePosixPath(job["provenance"]).parts)
             provenance = _validate_provenance(provenance_path, job)
             result["provenance_run_id"] = provenance["run_id"]
+            parameter_document = job.get("parameter_document")
+            if parameter_document is not None:
+                output_path = root.joinpath(*PurePosixPath(job["output"]).parts)
+                output_value = _load_json(output_path, "adaptive job output")
+                expected_echo = {
+                    "candidate_id": parameter_document["candidate_id"],
+                    "candidate_sha256": parameter_document["candidate_sha256"],
+                    "effective_parameters": parameter_document["effective_parameters"],
+                }
+                if (not isinstance(output_value, Mapping)
+                        or output_value.get("adaptive_candidate") != expected_echo):
+                    raise ExecutorError(
+                        "adaptive runner output does not echo the candidate digest and effective parameters"
+                    )
+                result["candidate_sha256"] = parameter_document["candidate_sha256"]
         receipt.update({"status": status, "updated_at": time.time() if now is None else float(now),
                         "claim": None, "result": result})
         receipt["sha256"] = _digest({key: value for key, value in receipt.items() if key != "sha256"})

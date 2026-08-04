@@ -315,6 +315,32 @@ def test_all_required_objective_classes_must_be_present(adaptive_repo):
         propose_next_batch(design, root=adaptive_repo)
 
 
+def test_mechanism_objective_can_replace_behavior_for_isolated_calibration(adaptive_repo):
+    design = _design()
+    design["objectives"][1] = {
+        "name": "pacemaker_signature",
+        "category": "mechanism",
+        "direction": "maximize",
+        "weight": 4,
+        "range": [0, 1],
+        "target": 0.75,
+    }
+
+    batch = propose_next_batch(design, root=adaptive_repo)
+
+    assert batch["decision"] == "propose"
+
+
+def test_behavior_or_mechanism_objective_is_required(adaptive_repo):
+    design = _design()
+    design["objectives"] = [
+        objective for objective in design["objectives"] if objective["category"] != "behavior"
+    ]
+
+    with pytest.raises(AdaptiveExperimentError, match="at least one of behavior or mechanism"):
+        propose_next_batch(design, root=adaptive_repo)
+
+
 def test_duplicate_completed_cell_is_rejected(adaptive_repo):
     design = _design()
     point = _screen_points()[0]

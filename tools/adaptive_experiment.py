@@ -38,7 +38,10 @@ SCHEMA = "sim-adaptive-experiment-v1"
 BATCH_SCHEMA = "sim-adaptive-experiment-batch-v1"
 CANONICALIZATION = "json-sort-keys-compact-ascii-v1"
 OBJECTIVE_CATEGORIES = frozenset(
-    ("physiology", "behavior", "robustness", "compute", "scaffold_penalty")
+    ("physiology", "behavior", "mechanism", "robustness", "compute", "scaffold_penalty")
+)
+REQUIRED_OBJECTIVE_CATEGORIES = frozenset(
+    ("physiology", "robustness", "compute", "scaffold_penalty")
 )
 FIDELITY_KINDS = ("cpu_screen", "gpu", "replication")
 PARAMETER_TYPES = frozenset(("continuous", "discrete", "categorical"))
@@ -266,8 +269,10 @@ def _validate_objectives(raw: Any) -> list[dict[str, Any]]:
         total_weight += weight
         result.append({"name": name, "category": category, "direction": direction,
                        "weight": weight, "range": [low, high], "target": target})
-    missing = sorted(OBJECTIVE_CATEGORIES - categories)
+    missing = sorted(REQUIRED_OBJECTIVE_CATEGORIES - categories)
     _require(not missing, f"objectives must cover all required categories; missing {missing}")
+    _require(categories & {"behavior", "mechanism"},
+             "objectives must include at least one of behavior or mechanism")
     for item in result:
         item["weight"] /= total_weight
     return result

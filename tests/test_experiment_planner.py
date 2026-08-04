@@ -107,11 +107,17 @@ def experiment_repo(tmp_path):
     runner.write_text(
         "import argparse, json, pathlib\n"
         "p=argparse.ArgumentParser(); p.add_argument('--seed'); p.add_argument('--phase'); "
-        "p.add_argument('--arm'); p.add_argument('--out'); p.add_argument('--fail', action='store_true')\n"
+        "p.add_argument('--arm'); p.add_argument('--out'); p.add_argument('--fail', action='store_true'); "
+        "p.add_argument('--adaptive-parameter-document')\n"
         "a=p.parse_args();\n"
         "if a.fail: raise SystemExit(7)\n"
         "pathlib.Path(a.out).parent.mkdir(parents=True, exist_ok=True); "
-        "pathlib.Path(a.out).write_text(json.dumps({'seed': a.seed}))\n",
+        "payload={'seed': a.seed}; "
+        "doc=json.loads(a.adaptive_parameter_document) if a.adaptive_parameter_document else None; "
+        "payload.update({'adaptive_candidate': {'candidate_id': doc['candidate_id'], "
+        "'candidate_sha256': doc['candidate_sha256'], "
+        "'effective_parameters': doc['effective_parameters']}} if doc else {}); "
+        "pathlib.Path(a.out).write_text(json.dumps(payload))\n",
         encoding="utf-8",
     )
     spec_path = root / "research/specs/test.json"
@@ -282,7 +288,7 @@ def test_failed_job_releases_claim_and_stale_claim_is_recoverable(experiment_rep
     contract = json.loads(json.dumps(job["execution_contract"]))
     failed_command = [*contract["runner_command"], "--fail"]
     contract["runner_command"] = failed_command
-    with pytest.raises(HarnessError, match="exit code 7"):
+    with pytest.raises(HarnessError, match="sealed execution template"):
         execute_job_contract(contract, failed_command, root=root)
     claim = root / job["output_claim"]
     assert not claim.exists()
@@ -293,6 +299,100 @@ def test_failed_job_releases_claim_and_stale_claim_is_recoverable(experiment_rep
     assert result["status"] == "complete"
     assert not claim.exists()
     assert (root / job["output"]).is_file()
+
+
+def _install_adaptive_spec(root, spec_path):
+    spec = json.loads(spec_path.read_text())
+    spec["backends"] = ["numpy"]
+    spec["partitions"]["calibration"] = [11]
+    spec["execution"]["targets"] = {
+        "numpy": {"device": "cpu", "lane": "local"},
+    }
+    spec["execution"]["arms"] = {
+        "candidate": {"role": "treatment", "parameters": {}},
+        "control": {"role": "control", "parameters": {"adaptive_enabled": False}},
+        "lesion": {"role": "lesion", "target": "gain", "parameters": {"gain": 0.0}},
+    }
+    spec["execution"]["candidates"] = {
+        "candidate-alpha": {
+            "order": 0, "parameters": {"gain": 0.4},
+            "backend": "numpy", "partition": "calibration",
+        },
+        "candidate-beta": {
+            "order": 1, "parameters": {"gain": 0.7},
+            "backend": "numpy", "partition": "calibration",
+        },
+    }
+    spec["execution"]["adaptive_parameter_merge"] = "arm_overrides_candidate"
+    spec["execution"]["command"].extend([
+        "--adaptive-parameter-document", "{parameter_document}",
+    ])
+    spec["execution"]["output"] = (
+        "research/findings/raw/planner/{partition}/{backend}/{candidate}/{arm}-{seed}.json"
+    )
+    spec_path.write_text(json.dumps(spec, indent=2), encoding="utf-8")
+    _commit(root, "adaptive planner fixture")
+    return spec
+
+
+def test_adaptive_candidates_are_sealed_expanded_and_executable(experiment_repo):
+    root, spec_path, outside = experiment_repo
+    _install_adaptive_spec(root, spec_path)
+    seal_path = outside / "adaptive.seal.json"
+    create_experiment_seal(spec_path, seal_path, root=root)
+
+    jobs = expand_experiment_jobs(spec_path, ["calibration"], seal_path=seal_path, root=root)
+
+    assert len(jobs) == 6
+    assert {job["candidate_id"] for job in jobs} == {"candidate-alpha", "candidate-beta"}
+    assert len({job["output"] for job in jobs}) == 6
+    job = next(item for item in jobs if item["candidate_id"] == "candidate-alpha"
+               and item["arm"] == "candidate")
+    assert job["parameter_document"]["effective_parameters"] == {"gain": 0.4}
+    result = execute_job_contract(
+        job["execution_contract"], job["execution_contract"]["runner_command"], root=root,
+    )
+    assert result["status"] == "complete"
+    output = json.loads((root / job["output"]).read_text())
+    assert output["adaptive_candidate"]["candidate_sha256"] == job["candidate_sha256"]
+
+
+@pytest.mark.parametrize(
+    "mutation", ["candidate", "parameters", "command", "output", "job_id", "environment", "claim"],
+)
+def test_adaptive_contract_mutations_fail_at_execution_boundary(experiment_repo, mutation):
+    root, spec_path, _ = experiment_repo
+    _install_adaptive_spec(root, spec_path)
+    job = expand_experiment_jobs(spec_path, ["calibration"], root=root)[0]
+    contract = json.loads(json.dumps(job["execution_contract"]))
+    if mutation == "candidate":
+        contract["candidate_id"] = "candidate-beta"
+    elif mutation == "parameters":
+        contract["parameter_document"]["effective_parameters"]["gain"] = 999
+    elif mutation == "command":
+        contract["runner_command"].append("--fail")
+    elif mutation == "output":
+        contract["output"] = contract["output"].replace("candidate-alpha", "candidate-beta")
+    elif mutation == "environment":
+        contract["environment"]["UNSEALED"] = "1"
+    elif mutation == "claim":
+        contract["claim_stale_seconds"] = 999
+    else:
+        contract["job_id"] = "0" * 20
+    with pytest.raises(HarnessError):
+        execute_job_contract(contract, contract["runner_command"], root=root)
+
+
+def test_adaptive_output_template_requires_candidate_identity(experiment_repo):
+    root, spec_path, _ = experiment_repo
+    _install_adaptive_spec(root, spec_path)
+    spec = json.loads(spec_path.read_text())
+    spec["execution"]["output"] = (
+        "research/findings/raw/planner/{partition}/{backend}/{arm}-{seed}.json"
+    )
+    spec_path.write_text(json.dumps(spec, indent=2), encoding="utf-8")
+    with pytest.raises(HarnessError, match="must include.*candidate"):
+        expand_experiment_jobs(spec_path, ["calibration"], root=root)
 
 
 def test_active_claim_and_successful_output_block_duplicates(experiment_repo):
