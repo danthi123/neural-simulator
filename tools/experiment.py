@@ -41,11 +41,13 @@ not a linter you run at the end. It is the only door to a reportable result.
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
 import shlex
+import socket
 import string
 import subprocess
 import sys
@@ -79,9 +81,19 @@ class HarnessError(LeverError):
     """
 
 
-_PLAN_SCHEMA = "sim-experiment-plan-v0"
-_SEAL_SCHEMA = "sim-experiment-seal-v0"
+_PLAN_SCHEMA = "sim-experiment-plan-v1"
+_SEAL_SCHEMA = "sim-experiment-seal-v1"
+_MANIFEST_SCHEMA = "sim-execution-manifest-v1"
+_CORPUS_SCHEMA = "sim-corpus-check-v1"
+_CONTRACT_SCHEMA = "sim-experiment-job-contract-v1"
 _ALLOWED_PLACEHOLDERS = frozenset(("arm", "backend", "device", "output", "partition", "seed", "spec"))
+_CODE_ROOTS = ("sim", "research/runners", "experiment", "tools")
+_RUNTIME_LOGS = frozenset((
+    "research/findings/raw/_provenance/runs.jsonl",
+    "research/queue/.corpus_checks.jsonl",
+))
+_DEPENDENCY_NAMES = ("requirements.txt", "requirements-dev.txt", "pyproject.toml", "setup.cfg",
+                     "setup.py", "poetry.lock", "uv.lock")
 
 
 def _canonical_json(value):
@@ -203,12 +215,8 @@ def _read_source_revision(root):
         source_path = root / relative
         if not source_path.is_file() or _sha256_file(source_path) != digest:
             raise HarnessError(f"exported source digest mismatch: {relative}")
-    return {
-        "kind": "git_archive",
-        "revision": values["git_sha"],
-        "source_manifest_sha256": expected,
-        "clean": True,
-    }
+    return {"kind": "git_archive", "revision": values["git_sha"],
+            "source_manifest_sha256": expected}
 
 
 def _source_identity(root):
@@ -220,58 +228,53 @@ def _source_identity(root):
         revision = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=root, check=True, capture_output=True, text=True, timeout=10
         ).stdout.strip()
-        status = subprocess.run(
-            ["git", "status", "--porcelain=v1", "--untracked-files=all"],
-            cwd=root, check=True, capture_output=True, text=True, timeout=30,
-        ).stdout.strip()
     except (OSError, subprocess.SubprocessError) as exc:
         raise HarnessError(f"cannot identify experiment source: {exc}") from None
-    return {"kind": "git", "revision": revision, "clean": not bool(status)}
+    return {"kind": "git", "revision": revision}
 
 
-def _write_new_readonly_json(path, value):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    data = json.dumps(value, sort_keys=True, indent=2, ensure_ascii=True) + "\n"
+def _repository_path(relative, root, context):
+    path = PurePosixPath(relative)
+    if path.is_absolute() or ".." in path.parts or not path.name:
+        raise HarnessError(f"{context} must be a safe repository-relative path, got {relative!r}")
+    absolute = Path(root, *path.parts).resolve()
+    if os.path.commonpath((str(Path(root).resolve()), str(absolute))) != str(Path(root).resolve()):
+        raise HarnessError(f"{context} escapes repository root: {relative!r}")
+    return absolute
+
+
+def _git_paths(root, args):
     try:
-        with path.open("x", encoding="utf-8") as fh:
-            fh.write(data)
-    except FileExistsError:
-        raise HarnessError(f"refusing to replace immutable file {path}") from None
-    path.chmod(0o444)
+        raw = subprocess.run(["git", *args, "-z"], cwd=root, check=True, capture_output=True,
+                             timeout=30).stdout
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise HarnessError(f"cannot inspect Git worktree: {exc}") from None
+    return {item.decode("utf-8", "surrogateescape") for item in raw.split(b"\0") if item}
 
 
-def create_experiment_seal(spec_path, seal_path, root=ROOT):
-    """Seal a committed source revision and exact preregistration without running it."""
-    spec_path = Path(spec_path).resolve()
-    spec = load_experiment_spec(spec_path)
-    source = _source_identity(root)
-    if not source["clean"]:
-        raise HarnessError("cannot seal a dirty source tree; commit or remove every source/config change first")
-    seal = {
-        "schema": _SEAL_SCHEMA,
-        "experiment_id": spec["id"],
-        "spec_sha256": _sha256_bytes(_canonical_json(spec)),
-        "source": source,
-    }
-    _write_new_readonly_json(seal_path, seal)
-    return seal
+def _git_dirty_paths(root):
+    if _read_source_revision(root) is not None:
+        return set(), set()
+    changed = _git_paths(root, ["diff", "--name-only"]) | _git_paths(root, ["diff", "--cached", "--name-only"])
+    untracked = _git_paths(root, ["ls-files", "--others", "--exclude-standard"])
+    return changed | untracked, untracked
 
 
-def _validated_seal(spec, seal_path, root):
-    try:
-        seal = json.loads(Path(seal_path).read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise HarnessError(f"cannot load experiment seal {seal_path}: {exc}") from None
-    if seal.get("schema") != _SEAL_SCHEMA or seal.get("experiment_id") != spec["id"]:
-        raise HarnessError("experiment seal has the wrong schema or experiment id")
-    expected_spec = _sha256_bytes(_canonical_json(spec))
-    if seal.get("spec_sha256") != expected_spec:
-        raise HarnessError("experiment spec changed after sealing")
-    source = _source_identity(root)
-    if not source["clean"] or seal.get("source") != source:
-        raise HarnessError("experiment source changed or became dirty after sealing")
-    return seal
+def _code_file_records(root):
+    records = []
+    paths = set()
+    for relative_root in _CODE_ROOTS:
+        source_root = root / relative_root
+        if not source_root.is_dir():
+            continue
+        for path in source_root.rglob("*"):
+            if path.is_file() and "__pycache__" not in path.parts and path.suffix in (".py", ".sh"):
+                paths.add(path.relative_to(root).as_posix())
+    if (root / "research/__init__.py").is_file():
+        paths.add("research/__init__.py")
+    for relative in sorted(paths):
+        records.append({"path": relative, "sha256": _sha256_file(root / relative)})
+    return records
 
 
 def _execution_contract(spec):
@@ -285,35 +288,29 @@ def _execution_contract(spec):
     if not any(token.endswith(".venv/bin/python") or token == ".venv/bin/python" for token in command):
         raise HarnessError("execution.command must use the sanctioned .venv/bin/python interpreter")
     try:
-        module_index = command.index("-m") + 1
-        module = command[module_index]
+        module = command[command.index("-m") + 1]
     except (ValueError, IndexError):
         raise HarnessError("execution.command must invoke a runner with '-m research.runners.<name>'") from None
     if not module.startswith("research.runners."):
         raise HarnessError("execution.command must invoke research.runners so automatic provenance remains active")
 
-    template = _required_text(execution, "output", "execution contract")
+    output = _required_text(execution, "output", "execution contract")
     fields = set()
-    for value in list(command) + [template]:
+    for value in list(command) + [output] + list(execution.get("runtime_outputs", [])):
+        if not isinstance(value, str) or not value:
+            raise HarnessError("execution templates must be non-empty strings")
         try:
-            parsed = list(string.Formatter().parse(value))
+            fields.update(field for _, field, _, _ in string.Formatter().parse(value) if field)
         except ValueError as exc:
             raise HarnessError(f"invalid execution template {value!r}: {exc}") from None
-        fields.update(field for _, field, _, _ in parsed if field)
     unknown = fields - _ALLOWED_PLACEHOLDERS
     if unknown:
         raise HarnessError(f"execution templates use unsupported placeholders: {sorted(unknown)}")
-    required = {"seed", "partition", "output"}
-    if not required.issubset(fields):
-        raise HarnessError(f"execution templates must expose placeholders {sorted(required)}")
+    if not {"seed", "partition", "output"}.issubset(fields):
+        raise HarnessError("execution templates must expose placeholders ['output', 'partition', 'seed']")
 
     raw_arms = execution.get("arms", spec.get("arms", ["default"]))
-    if isinstance(raw_arms, dict):
-        arms = sorted(raw_arms)
-    elif isinstance(raw_arms, list):
-        arms = sorted(raw_arms)
-    else:
-        raise HarnessError("execution arms must be a JSON list or object")
+    arms = sorted(raw_arms) if isinstance(raw_arms, (dict, list)) else None
     if not arms or any(not isinstance(arm, str) or not arm.strip() for arm in arms):
         raise HarnessError("execution requires at least one non-empty arm name")
     if len(arms) > 1 and "arm" not in fields:
@@ -338,9 +335,202 @@ def _execution_contract(spec):
         if "SIM_BACKEND" in env and env["SIM_BACKEND"] != backend:
             raise HarnessError(f"backend {backend!r} target contradicts SIM_BACKEND={env['SIM_BACKEND']!r}")
         normalized_targets[backend] = {"device": device, "lane": lane, "env": dict(env)}
-    reason = _required_text(execution, "corpus_reason", "execution contract")
-    return command, template, arms, normalized_targets, reason
+    corpus = execution.get("corpus_check")
+    if not isinstance(corpus, dict):
+        raise HarnessError("execution requires a machine-readable 'corpus_check' contract")
+    stale = execution.get("claim_stale_seconds", 6 * 3600)
+    if isinstance(stale, bool) or not isinstance(stale, int) or stale < 60:
+        raise HarnessError("execution.claim_stale_seconds must be an integer >= 60")
+    return command, output, arms, normalized_targets, corpus, stale
 
+
+def _file_declarations(execution, key):
+    values = execution.get(key, [])
+    if not isinstance(values, list):
+        raise HarnessError(f"execution.{key} must be a JSON list")
+    declarations = []
+    for item in values:
+        if isinstance(item, str):
+            declarations.append({"path": item})
+        elif isinstance(item, dict):
+            declarations.append(dict(item))
+        else:
+            raise HarnessError(f"execution.{key} entries must be paths or objects")
+    return declarations
+
+
+def _validated_corpus_check(spec, root, contract):
+    relative = _required_text(contract, "path", "corpus check")
+    expected = _required_text(contract, "sha256", "corpus check")
+    query = _required_text(contract, "query", "corpus check")
+    max_age = contract.get("max_age_seconds", 24 * 3600)
+    if len(expected) != 64:
+        raise HarnessError("corpus check sha256 must contain 64 hexadecimal characters")
+    if isinstance(max_age, bool) or not isinstance(max_age, int) or max_age <= 0:
+        raise HarnessError("corpus check max_age_seconds must be a positive integer")
+    path = _repository_path(relative, root, "corpus check")
+    if not path.is_file() or _sha256_file(path) != expected:
+        raise HarnessError("corpus/RAG check is missing or its digest does not match the execution contract")
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HarnessError(f"corpus/RAG check is not valid machine-readable JSON: {exc}") from None
+    rag = record.get("rag")
+    if (record.get("schema") != _CORPUS_SCHEMA or record.get("status") != "success"
+            or record.get("experiment_id") != spec["id"] or record.get("query") != query
+            or not isinstance(rag, dict) or rag.get("status") != "success"
+            or not isinstance(rag.get("index_digest"), str) or not rag["index_digest"]):
+        raise HarnessError("corpus/RAG check does not record a successful matching retrieval")
+    completed = record.get("completed_at")
+    if isinstance(completed, bool) or not isinstance(completed, (int, float)):
+        raise HarnessError("corpus/RAG check completed_at must be an epoch timestamp")
+    age = time.time() - float(completed)
+    if age < -300 or age > max_age:
+        raise HarnessError(f"corpus/RAG check is stale or future-dated (age={age:.0f}s, max={max_age}s)")
+    return {"path": relative, "sha256": expected, "query": query, "completed_at": completed,
+            "rag_index_digest": rag["index_digest"], "max_age_seconds": max_age}
+
+
+def _input_records(spec_path, spec, root, corpus):
+    execution = spec["execution"]
+    records = {}
+    spec_relative = spec_path.relative_to(root).as_posix()
+    declarations = [({"path": spec_relative}, "spec"), ({"path": corpus["path"]}, "corpus_check")]
+    for name in _DEPENDENCY_NAMES:
+        if (root / name).is_file():
+            declarations.append(({"path": name}, "dependency"))
+    declarations.extend((item, "dependency") for item in _file_declarations(execution, "dependencies"))
+    declarations.extend((item, "input") for item in _file_declarations(execution, "inputs"))
+    for rule in spec.get("prerequisites", []):
+        if isinstance(rule, dict) and isinstance(rule.get("path"), str):
+            declarations.append(({"path": rule["path"], "sha256": rule.get("sha256")}, "prerequisite"))
+    for rule in spec.get("stop_rules", []):
+        if isinstance(rule, dict) and isinstance(rule.get("decision_file"), str):
+            decision = _repository_path(rule["decision_file"], root, "stop-rule decision")
+            if decision.is_file():
+                declarations.append(({"path": rule["decision_file"]}, "decision"))
+    for declaration, role in declarations:
+        relative = _required_text(declaration, "path", f"execution {role}")
+        path = _repository_path(relative, root, f"execution {role}")
+        if not path.is_file():
+            raise HarnessError(f"declared execution {role} is missing: {relative}")
+        digest = _sha256_file(path)
+        supplied = declaration.get("sha256")
+        if supplied is not None and supplied != digest:
+            raise HarnessError(f"declared execution {role} has the wrong sha256: {relative}")
+        prior = records.get(relative)
+        if prior and prior["sha256"] != digest:
+            raise HarnessError(f"execution input {relative!r} has conflicting digests")
+        records.setdefault(relative, {"path": relative, "sha256": digest, "roles": []})["roles"].append(role)
+    return [{**record, "roles": sorted(set(record["roles"]))} for _, record in sorted(records.items())]
+
+
+def _portable_output_path(template, values, root):
+    rendered = template.format_map(values)
+    return PurePosixPath(rendered).as_posix(), _repository_path(rendered, root, "output")
+
+
+def _runtime_paths(spec, root, output_template, arms, targets):
+    paths = set(_RUNTIME_LOGS)
+    extra_templates = spec["execution"].get("runtime_outputs", [])
+    if not isinstance(extra_templates, list):
+        raise HarnessError("execution.runtime_outputs must be a JSON list")
+    spec_relative = Path(spec["_spec_path"]).relative_to(root).as_posix()
+    for partition, seeds in spec["partitions"].items():
+        for backend in sorted(spec["backends"]):
+            for arm in arms:
+                for seed in sorted(seeds):
+                    values = {"arm": arm, "backend": backend, "device": targets[backend]["device"],
+                              "partition": partition, "seed": seed, "spec": spec_relative, "output": ""}
+                    output, _ = _portable_output_path(output_template, values, root)
+                    values["output"] = output
+                    paths.update((output, output + ".prov.json", output + ".claim"))
+                    for template in extra_templates:
+                        rendered = template.format_map(values)
+                        _repository_path(rendered, root, "runtime output")
+                        paths.add(PurePosixPath(rendered).as_posix())
+    return sorted(paths)
+
+
+def _manifest_digest(manifest):
+    body = {key: value for key, value in manifest.items() if key != "sha256"}
+    return _sha256_bytes(_canonical_json(body))
+
+
+def _build_execution_manifest(spec_path, spec, root):
+    root = Path(root).resolve()
+    spec_path = Path(spec_path).resolve()
+    spec = dict(spec)
+    spec["_spec_path"] = str(spec_path)
+    command, output, arms, targets, corpus_contract, _ = _execution_contract(spec)
+    corpus = _validated_corpus_check(spec, root, corpus_contract)
+    code_files = _code_file_records(root)
+    manifest = {
+        "schema": _MANIFEST_SCHEMA,
+        "experiment_id": spec["id"],
+        "source": _source_identity(root),
+        "code_files": code_files,
+        "code_sha256": _sha256_bytes(_canonical_json(code_files)),
+        "inputs": _input_records(spec_path, spec, root, corpus),
+        "runtime_paths": _runtime_paths(spec, root, output, arms, targets),
+        "corpus_check": corpus,
+        "command_template": command,
+    }
+    manifest["sha256"] = _manifest_digest(manifest)
+    return manifest
+
+
+def _validate_worktree_dirt(root, manifest):
+    dirty, untracked = _git_dirty_paths(root)
+    trusted_untracked_inputs = {item["path"] for item in manifest["inputs"]} & untracked
+    allowed = set(manifest["runtime_paths"]) | trusted_untracked_inputs
+    unexpected = sorted(dirty - allowed)
+    if unexpected:
+        raise HarnessError(f"execution source/config has unsealed worktree changes: {unexpected[:5]}")
+
+
+def _write_new_readonly_json(path, value):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    data = json.dumps(value, sort_keys=True, indent=2, ensure_ascii=True) + "\n"
+    try:
+        with path.open("x", encoding="utf-8") as fh:
+            fh.write(data)
+    except FileExistsError:
+        raise HarnessError(f"refusing to replace immutable file {path}") from None
+    path.chmod(0o444)
+
+
+def create_experiment_seal(spec_path, seal_path, root=ROOT):
+    """Seal exact executable code, configuration, dependencies, inputs, and allowed outputs."""
+    root = Path(root).resolve()
+    spec_path = Path(spec_path).resolve()
+    spec = load_experiment_spec(spec_path)
+    manifest = _build_execution_manifest(spec_path, spec, root)
+    _validate_worktree_dirt(root, manifest)
+    seal = {"schema": _SEAL_SCHEMA, "experiment_id": spec["id"],
+            "spec_sha256": _sha256_bytes(_canonical_json(spec)), "manifest": manifest}
+    _write_new_readonly_json(seal_path, seal)
+    return seal
+
+
+def _validated_seal(spec_path, spec, seal_path, root):
+    try:
+        seal = json.loads(Path(seal_path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HarnessError(f"cannot load experiment seal {seal_path}: {exc}") from None
+    if seal.get("schema") != _SEAL_SCHEMA or seal.get("experiment_id") != spec["id"]:
+        raise HarnessError("experiment seal has the wrong schema or experiment id")
+    if seal.get("spec_sha256") != _sha256_bytes(_canonical_json(spec)):
+        raise HarnessError("experiment spec changed after sealing")
+    current = _build_execution_manifest(spec_path, spec, root)
+    _validate_worktree_dirt(root, current)
+    sealed = seal.get("manifest")
+    if not isinstance(sealed, dict) or sealed.get("sha256") != _manifest_digest(sealed):
+        raise HarnessError("experiment seal contains an invalid execution manifest digest")
+    if current != sealed:
+        raise HarnessError("sealed execution source, config, dependency, or input changed")
+    return seal
 
 def _check_prerequisites(spec, selected, root):
     rules = spec.get("prerequisites", [])
@@ -388,30 +578,161 @@ def _check_stop_rules(spec, selected, root, spec_sha256):
             raise HarnessError(f"stop rule {rule_id!r} requires an explicit 'continue' or 'stop' decision")
 
 
-def _repository_path(relative, root, context):
-    path = PurePosixPath(relative)
-    if path.is_absolute() or ".." in path.parts or not path.name:
-        raise HarnessError(f"{context} must be a safe repository-relative path, got {relative!r}")
-    absolute = Path(root, *path.parts).resolve()
-    if os.path.commonpath((str(Path(root).resolve()), str(absolute))) != str(Path(root).resolve()):
-        raise HarnessError(f"{context} escapes repository root: {relative!r}")
-    return absolute
+def _runtime_snapshot(manifest):
+    return {
+        "manifest_sha256": manifest["sha256"],
+        "source": manifest["source"],
+        "code_sha256": manifest["code_sha256"],
+        "code_file_count": len(manifest["code_files"]),
+        "inputs": manifest["inputs"],
+        "runtime_paths_sha256": _sha256_bytes(_canonical_json(manifest["runtime_paths"])),
+        "runtime_path_count": len(manifest["runtime_paths"]),
+        "corpus_check": manifest["corpus_check"],
+    }
 
 
-def _portable_output_path(template, values, root):
-    rendered = template.format_map(values)
-    path = PurePosixPath(rendered)
-    absolute = _repository_path(rendered, root, "output")
-    return path.as_posix(), absolute
+def _verify_runtime_snapshot(contract, root):
+    root = Path(root).resolve()
+    if contract.get("schema") != _CONTRACT_SCHEMA:
+        raise HarnessError("job has an unsupported execution-contract schema")
+    snapshot = contract.get("execution_snapshot")
+    if not isinstance(snapshot, dict):
+        raise HarnessError("job is missing its sealed execution snapshot")
+    actual_source = _source_identity(root)
+    expected_source = snapshot.get("source", {})
+    if actual_source.get("revision") != expected_source.get("revision"):
+        raise HarnessError(
+            f"execution source revision mismatch: expected {expected_source.get('revision')}, "
+            f"found {actual_source.get('revision')}"
+        )
+    code_files = _code_file_records(root)
+    if (len(code_files) != snapshot.get("code_file_count")
+            or _sha256_bytes(_canonical_json(code_files)) != snapshot.get("code_sha256")):
+        raise HarnessError("execution code manifest differs from the sealed source")
+    inputs = snapshot.get("inputs")
+    if not isinstance(inputs, list):
+        raise HarnessError("execution snapshot has no input manifest")
+    spec = None
+    spec_path = None
+    for item in inputs:
+        if not isinstance(item, dict) or not isinstance(item.get("roles"), list):
+            raise HarnessError("execution snapshot contains an invalid input record")
+        path = _repository_path(item.get("path"), root, "sealed execution input")
+        if not path.is_file() or _sha256_file(path) != item.get("sha256"):
+            raise HarnessError(f"sealed execution input changed or is missing: {item.get('path')}")
+        if "spec" in item["roles"]:
+            spec = load_experiment_spec(path)
+            spec_path = path
+    if spec is None or spec.get("id") != contract.get("experiment_id"):
+        raise HarnessError("sealed experiment specification is missing or belongs to another experiment")
+    _validated_corpus_check(spec, root, snapshot.get("corpus_check", {}))
+    spec_with_path = dict(spec)
+    spec_with_path["_spec_path"] = str(spec_path)
+    _, output_template, arms, targets, _, _ = _execution_contract(spec_with_path)
+    runtime_paths = _runtime_paths(spec_with_path, root, output_template, arms, targets)
+    if (len(runtime_paths) != snapshot.get("runtime_path_count")
+            or _sha256_bytes(_canonical_json(runtime_paths)) != snapshot.get("runtime_paths_sha256")):
+        raise HarnessError("allowed runtime-output manifest differs from the sealed contract")
+    pseudo_manifest = {"inputs": inputs, "runtime_paths": runtime_paths}
+    _validate_worktree_dirt(root, pseudo_manifest)
+    if contract.get("output") not in set(runtime_paths):
+        raise HarnessError("job output is not an allowed path in the sealed execution manifest")
+    return snapshot
 
 
-def _job_command(tokens, backend, target, output):
-    parent = PurePosixPath(output).parent.as_posix()
-    claim = output + ".claim"
-    env = {"SIM_BACKEND": backend, **target["env"]}
-    environment = ["env"] + [f"{key}={env[key]}" for key in sorted(env)]
-    run = shlex.join(environment + tokens)
-    return f"mkdir -p {shlex.quote(parent)} && mkdir {shlex.quote(claim)} && exec {run}", claim
+def _encoded_contract(contract):
+    return base64.urlsafe_b64encode(_canonical_json(contract)).decode("ascii")
+
+
+def _decoded_contract(value):
+    try:
+        contract = json.loads(base64.urlsafe_b64decode(value.encode("ascii")))
+    except (ValueError, UnicodeError, json.JSONDecodeError) as exc:
+        raise HarnessError(f"cannot decode execution contract: {exc}") from None
+    if not isinstance(contract, dict):
+        raise HarnessError("execution contract must decode to a JSON object")
+    return contract
+
+
+def _pid_is_alive(pid):
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except PermissionError:
+        return True
+    except (ProcessLookupError, TypeError, ValueError):
+        return False
+
+
+def _claim_is_stale(path, stale_seconds):
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+        started = float(record["started_at"])
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError):
+        try:
+            started = path.stat().st_mtime
+        except OSError:
+            return True
+        record = {}
+    age = max(0.0, time.time() - started)
+    if record.get("hostname") == socket.gethostname() and _pid_is_alive(record.get("pid")):
+        return False
+    return age > stale_seconds
+
+
+def _acquire_claim(path, job_id, stale_seconds):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        if not _claim_is_stale(path, stale_seconds):
+            raise HarnessError(f"output claim is active: {path}")
+        try:
+            path.unlink()
+        except OSError as exc:
+            raise HarnessError(f"cannot clear stale output claim {path}: {exc}") from None
+    record = {"schema": "sim-experiment-claim-v1", "job_id": job_id, "pid": os.getpid(),
+              "hostname": socket.gethostname(), "started_at": time.time()}
+    try:
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o444)
+    except FileExistsError:
+        raise HarnessError(f"output claim raced with another worker: {path}") from None
+    with os.fdopen(descriptor, "w", encoding="utf-8") as fh:
+        json.dump(record, fh, sort_keys=True)
+        fh.write("\n")
+
+
+def execute_job_contract(contract, command, root=ROOT):
+    """Verify sealed state, own the output, run once, and release failed/stale claims."""
+    root = Path(root).resolve()
+    command = list(command)
+    if command != contract.get("runner_command"):
+        raise HarnessError("runner command differs from the digest-bound job contract")
+    _verify_runtime_snapshot(contract, root)
+    output = _repository_path(contract.get("output"), root, "job output")
+    claim = Path(str(output) + ".claim")
+    if output.exists():
+        raise HarnessError(f"successful output already exists and is immutable: {contract.get('output')}")
+    _acquire_claim(claim, contract.get("job_id"), contract.get("claim_stale_seconds", 6 * 3600))
+    env = os.environ.copy()
+    env.update(contract.get("environment", {}))
+    try:
+        result = subprocess.run(command, cwd=root, env=env, check=False)
+        if result.returncode:
+            raise HarnessError(f"experiment runner failed with exit code {result.returncode}")
+        if not output.is_file():
+            raise HarnessError("experiment runner exited successfully without creating its declared output")
+    finally:
+        try:
+            claim.unlink()
+        except FileNotFoundError:
+            pass
+    return {"job_id": contract.get("job_id"), "output": contract.get("output"), "status": "complete"}
+
+
+def _job_command(contract, tokens):
+    encoded = _encoded_contract(contract)
+    wrapper = [".venv/bin/python", "tools/experiment.py", "execute-job", "--contract", encoded, "--", *tokens]
+    return shlex.join(wrapper)
 
 
 def expand_experiment_jobs(spec_path, partitions, seal_path=None, root=ROOT):
@@ -431,12 +752,15 @@ def expand_experiment_jobs(spec_path, partitions, seal_path=None, root=ROOT):
         raise HarnessError(f"unknown experiment partitions: {sorted(unknown)}")
     if any(_heldout_partition(name) for name in selected) and seal_path is None:
         raise HarnessError("held-out jobs are locked until a clean source/config seal is supplied")
-    seal = _validated_seal(spec, seal_path, root) if seal_path is not None else None
-    source = seal["source"] if seal else _source_identity(root)
+    seal = _validated_seal(spec_path, spec, seal_path, root) if seal_path is not None else None
+    manifest = seal["manifest"] if seal else _build_execution_manifest(spec_path, spec, root)
+    _validate_worktree_dirt(root, manifest)
     spec_sha256 = _sha256_bytes(_canonical_json(spec))
     _check_prerequisites(spec, selected, root)
     _check_stop_rules(spec, selected, root, spec_sha256)
-    command_template, output_template, arms, targets, reason = _execution_contract(spec)
+    command_template, output_template, arms, targets, _, claim_stale = _execution_contract(spec)
+    snapshot = _runtime_snapshot(manifest)
+    reason = "corpus-check:" + manifest["corpus_check"]["sha256"][:16]
 
     jobs = []
     outputs = set()
@@ -459,16 +783,24 @@ def expand_experiment_jobs(spec_path, partitions, seal_path=None, root=ROOT):
                         raise HarnessError(f"job matrix maps more than one job to output {output!r}")
                     outputs.add(output)
                     claim_path = Path(str(absolute_output) + ".claim")
+                    if claim_path.exists() and _claim_is_stale(claim_path, claim_stale):
+                        claim_path.unlink()
                     if absolute_output.exists() or claim_path.exists():
                         raise HarnessError(f"refusing mutable output collision at {output!r} (or its claim)")
                     tokens = [token.format_map(values) for token in command_template]
-                    command, claim = _job_command(tokens, backend, target, output)
                     identity = {
                         "experiment_id": spec["id"], "spec_sha256": spec_sha256,
-                        "source": source, "partition": partition, "backend": backend,
+                        "execution_manifest_sha256": manifest["sha256"],
+                        "corpus_check_sha256": manifest["corpus_check"]["sha256"],
+                        "source": manifest["source"], "partition": partition, "backend": backend,
                         "device": target["device"], "arm": arm, "seed": seed, "output": output,
                     }
                     job_id = _sha256_bytes(_canonical_json(identity))[:20]
+                    environment = {"SIM_BACKEND": backend, **target["env"]}
+                    contract = {"schema": _CONTRACT_SCHEMA, "job_id": job_id, **identity,
+                                "execution_snapshot": snapshot, "runner_command": tokens,
+                                "environment": environment, "claim_stale_seconds": claim_stale}
+                    command = _job_command(contract, tokens)
                     enqueue = None
                     if target["lane"] in ("gpu", "pool"):
                         enqueue = shlex.join(["bash", "tools/queue_add.sh", target["lane"], command, reason])
@@ -480,7 +812,8 @@ def expand_experiment_jobs(spec_path, partitions, seal_path=None, root=ROOT):
                         "lane": target["lane"],
                         "command": command,
                         "enqueue_command": enqueue,
-                        "output_claim": claim,
+                        "output_claim": output + ".claim",
+                        "execution_contract": contract,
                     })
     return jobs
 
@@ -707,7 +1040,7 @@ class Experiment:
 def _main(argv=None):
     parser = argparse.ArgumentParser(description="Validate, seal, and expand machine-readable experiments.")
     subparsers = parser.add_subparsers(dest="action", required=True)
-    seal_parser = subparsers.add_parser("seal", help="seal a clean source revision and exact spec")
+    seal_parser = subparsers.add_parser("seal", help="seal executable source, inputs, and exact outputs")
     seal_parser.add_argument("--spec", required=True)
     seal_parser.add_argument("--seal", required=True)
     plan_parser = subparsers.add_parser("plan", help="write immutable job commands and manifests")
@@ -715,12 +1048,18 @@ def _main(argv=None):
     plan_parser.add_argument("--partition", action="append", required=True)
     plan_parser.add_argument("--seal")
     plan_parser.add_argument("--plan-dir", required=True)
+    execute_parser = subparsers.add_parser("execute-job", help=argparse.SUPPRESS)
+    execute_parser.add_argument("--contract", required=True)
+    execute_parser.add_argument("runner_command", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     if args.action == "seal":
         result = create_experiment_seal(args.spec, args.seal)
-    else:
+    elif args.action == "plan":
         jobs = expand_experiment_jobs(args.spec, args.partition, seal_path=args.seal)
         result = write_experiment_plan(jobs, args.plan_dir)
+    else:
+        command = args.runner_command[1:] if args.runner_command[:1] == ["--"] else args.runner_command
+        result = execute_job_contract(_decoded_contract(args.contract), command)
     print(json.dumps(result, sort_keys=True, indent=2))
     return 0
 
