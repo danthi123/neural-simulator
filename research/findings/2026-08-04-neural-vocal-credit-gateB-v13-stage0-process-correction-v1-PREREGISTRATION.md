@@ -75,15 +75,15 @@ The controller must enforce this order without bypass or rerun:
    five-point calibration on CuPy.
 3. Merge the two validated calibration artifacts and select the lowest common
    passing ladder point. If none exists, stop with `CALIBRATION_NO_GO`.
-4. Run and validate replication on NumPy at only the selected point.
-5. Only after the NumPy replication is sealed, run and validate replication on
-   CuPy. Any replication failure stops Stage 0.
-6. After both replication GO artifacts are sealed, run and validate held-out
+4. Run replication on NumPy and CuPy at only the selected point. These two
+   backend cells may run concurrently after the selection is sealed. Any
+   replication failure stops Stage 0.
+5. After both replication GO artifacts are sealed, run and validate held-out
    CuPy, then held-out NumPy, preserving the original held-out backend order.
 
-Thus NumPy-before-CuPy is exact for both replacement calibration and
-replacement replication. Held-out evaluation remains deliberately
-CuPy-before-NumPy and continues to use its still-sealed original seed.
+Thus NumPy-before-CuPy is exact for replacement calibration, replication is a
+parallel backend pair, and held-out evaluation remains deliberately
+CuPy-before-NumPy. Held-out continues to use its still-sealed original seed.
 
 ## Promotion boundaries
 

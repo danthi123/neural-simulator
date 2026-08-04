@@ -31,11 +31,10 @@
   "forbidden_consumed_seeds": [1013, 1019],
   "execution_order": [
     "calibration_numpy",
-    "calibration_cupy",
+    "calibration_cupy_after_numpy_sealed",
     "merge_calibration",
-    "replication_numpy",
-    "replication_cupy",
-    "held_out_cupy",
-    "held_out_numpy"
+    "replication_numpy_and_cupy_after_selection",
+    "held_out_cupy_after_both_replication_go",
+    "held_out_numpy_after_cupy_sealed"
   ]
 }
