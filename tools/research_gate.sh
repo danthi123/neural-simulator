@@ -22,7 +22,7 @@
 # the raw results, with the canonical path and a ready-to-run read command -- the same trick
 # device_check.sh uses, because a finding buried mid-scroll is a finding you skip.
 set -uo pipefail
-ROOT=/home/dant123/Projects/sim
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 Q="${1:?usage: research_gate.sh \"<question>\"}"
 N="${2:-8}"
 OUT=$(mktemp)
