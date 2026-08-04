@@ -402,6 +402,9 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   and active overhead (`1.171x`) passed, while direct output reached `0.937x`
   of unfused and missed its `0.85x` requirement. Bank the performance NO-GO
   and profile the exact launch sequence before expanding fusion.
+  A subsequent exact HH state/spike fusion reached `0.916x` in its own sealed
+  matrix, still NO-GO; the remaining measured boundary is the separate SNr
+  current plus effective-current subtraction before HH.
 - **Research and cost-control infrastructure:** RAG-first scholarly discovery
   now retrieves and hash-binds full text while keeping extracted locators
   pending review. The local Qwen fallback has also completed an isolated

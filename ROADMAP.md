@@ -145,9 +145,11 @@ its controls and lesions, and is tested at the required seed coverage.
    now restore the explicit CUDA toolkit root and fail loudly on step errors;
    bounded timing also removed repeated scalar transfers from the direct-output
    path. The repaired 12-worker matrix then completed: default-off and active
-   overhead passed, but direct outputs reached only `0.937x` of unfused rather
-   than the required `0.85x`. Launch-level profiling and a larger exact fusion
-   boundary remain open; this performance NO-GO has no physiology effect.
+   overhead passed, but direct outputs first reached `0.937x` of unfused rather
+   than the required `0.85x`. Exact in-place HH state/spike fusion then improved
+   the sealed result to `0.916x`, still a NO-GO. The measured next boundary
+   combines SNr current and HH state in one CuPy-generated graph; these
+   performance verdicts have no physiology effect.
 
 A failed method is a method verdict, not permission to close the capability.
 Bank the method, preserve its controls and diagnosis, and choose the next
