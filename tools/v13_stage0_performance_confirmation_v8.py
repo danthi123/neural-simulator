@@ -20,10 +20,10 @@ SPEC_PATH = "research/specs/v13_tonic_output_stage0_performance_confirmation_v8.
 RAW_PATH = "research/findings/raw/v13_tonic_output_stage0_performance_confirmation_v8"
 V6_RAW = "research/findings/raw/v13_tonic_output_stage0_process_correction_v6"
 V6_CONFIG = "research/specs/v13_stage0_controller_config_v8.json"
-V6_CONFIG_FILE_SHA256 = "6367b975df3ae1664cad5ea7d4ed747c44ec7c0ea21f6d36d5af1f43364b93"
-CANDIDATE_REVISION = "8505c54ff"
+V6_CONFIG_FILE_SHA256 = "6367b975df3ae1664cad5ea5a7d4ed747c44ec7c0ea21f6d36d5af1f43364b93"
+CANDIDATE_REVISION = "1ecc85cd698539a6ef92e112d2c49092cfa21f1e"
 CANDIDATE_MANIFEST = "research/specs/v13_stage0_candidate_source_v10.sha256"
-CANDIDATE_MANIFEST_SHA256 = "TO_BE_BOUND"
+CANDIDATE_MANIFEST_SHA256 = "04214978e26efbe3a7014fa2ced6a52f8600419ef4b8ffd6df40bd466cc05a73"
 LEGACY_TRANSFER = "legacy-baseline"
 CANDIDATE_RUNTIME = f"{RAW_PATH}/candidate-runtime"
 
