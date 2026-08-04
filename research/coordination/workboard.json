@@ -459,63 +459,56 @@
         "tools/v14_stageA_performance_v3.py",
         "tests/test_v14_stageA_performance_v3.py"
       ]
+    },
+    "019fce98-4af3-7282-9bfe-bdd27bf5fc16": {
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "model": "inherited",
+      "next_action": "Return exact preparation metadata and locators.",
+      "started_at": "2026-08-04T21:11:22+00:00",
+      "status": "running",
+      "task": "Stage B primary-source metadata completion",
+      "write_set": []
+    },
+    "019fce9d-4eb7-7f12-a1ba-e176cf868227": {
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "model": "inherited",
+      "next_action": "Implement and test pure metrics.",
+      "started_at": "2026-08-04T21:11:22+00:00",
+      "status": "running",
+      "task": "Stage B physiology trace metrics",
+      "write_set": [
+        "tools/new",
+        "tests/new"
+      ]
+    },
+    "019fce9d-53d2-7920-b0a1-da98fe0490df": {
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "model": "inherited",
+      "next_action": "Implement and test per-region HH overrides.",
+      "started_at": "2026-08-04T21:11:22+00:00",
+      "status": "running",
+      "task": "Stage B intrinsic SNr parameter surface slice",
+      "write_set": [
+        "sim/config.py",
+        "sim/regions.py",
+        "sim/bridge.py",
+        "tests/new"
+      ]
+    },
+    "019fce9d-5991-7a20-bd61-010d70f692dd": {
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "model": "inherited",
+      "next_action": "Implement and test standalone protocol substrate.",
+      "started_at": "2026-08-04T21:11:22+00:00",
+      "status": "running",
+      "task": "Stage B biexponential conductance clamp substrate",
+      "write_set": [
+        "experiment/new",
+        "tests/new"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gpu-execution-efficiency"
-    },
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcdd3-3734-7ae2-bf0a-57c98596ebb8"
-    },
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "parameter-research-discovery"
-    },
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcdd3-cb7c-7691-8c09-6a19097d4444"
-    },
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "experiment-executor"
-    },
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcdd3-ed7b-7391-932f-10c8d1e33910"
-    },
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
-    {
-      "at": "2026-08-04T17:31:05+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
-      "at": "2026-08-04T17:34:40+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
     {
       "at": "2026-08-04T17:41:22+00:00",
       "detail": "completed",
@@ -1061,6 +1054,60 @@
       "detail": "completed",
       "kind": "lane-update",
       "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-source-metadata"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-intrinsic-surface"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-physiology-metrics"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-conductance-clamp"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce98-4af3-7282-9bfe-bdd27bf5fc16"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce9d-53d2-7920-b0a1-da98fe0490df"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce9d-4eb7-7f12-a1ba-e176cf868227"
+    },
+    {
+      "at": "2026-08-04T21:11:22+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce9d-5991-7a20-bd61-010d70f692dd"
     }
   ],
   "lanes": {
@@ -1144,6 +1191,20 @@
       "resource": "agent_cpu_network",
       "status": "completed"
     },
+    "gateb-v14-conductance-clamp": {
+      "agent_id": "019fce9d-5991-7a20-bd61-010d70f692dd",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "next_action": "Implement standalone biexponential inhibitory clamp schedules and unit conversion before bridge integration.",
+      "owner": "Maxwell-2",
+      "priority": 1,
+      "resource": "local_cpu",
+      "status": "running",
+      "write_set": [
+        "experiment/new",
+        "tests/new"
+      ]
+    },
     "gateb-v14-config": {
       "agent_id": "019fcd79-a78d-7883-9bd5-03368ad7a07d",
       "delegation": "agent",
@@ -1157,6 +1218,22 @@
         "sim/regions.py",
         "sim/config.py",
         "tests/test_snr_conductance_config.py"
+      ]
+    },
+    "gateb-v14-intrinsic-surface": {
+      "agent_id": "019fce9d-53d2-7920-b0a1-da98fe0490df",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "next_action": "Implement default-preserving per-region SNr HH conductance, reversal, and capacitance overrides with focused tests.",
+      "owner": "Russell-2",
+      "priority": 1,
+      "resource": "local_cpu",
+      "status": "running",
+      "write_set": [
+        "sim/config.py",
+        "sim/regions.py",
+        "sim/bridge.py",
+        "tests/new"
       ]
     },
     "gateb-v14-kernel": {
@@ -1191,16 +1268,40 @@
         "research/findings"
       ]
     },
+    "gateb-v14-physiology-metrics": {
+      "agent_id": "019fce9d-4eb7-7f12-a1ba-e176cf868227",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "next_action": "Implement deterministic pure trace metrics with synthetic positive and anti-cheat fixtures.",
+      "owner": "Laplace-2",
+      "priority": 1,
+      "resource": "local_cpu",
+      "status": "running",
+      "write_set": [
+        "tools/new",
+        "tests/new"
+      ]
+    },
+    "gateb-v14-source-metadata": {
+      "agent_id": "019fce98-4af3-7282-9bfe-bdd27bf5fc16",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "next_action": "Resolve exact Atherton 2005, Ding 2011, and Lutas 2016 preparation metadata and source locators without inferred gates.",
+      "owner": "Ohm-2",
+      "priority": 1,
+      "resource": "online_research",
+      "status": "running"
+    },
     "gateb-v14-stageA": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T21:02:34+00:00",
-      "next_action": "Resolve the remaining transferred-channel source metadata and SNr parameter-surface gaps, then implement source-derived scorer fixtures; do not write or seal the executable Stage B spec while current_readiness is READINESS_UNDEFINED.",
+      "heartbeat_at": "2026-08-04T21:11:22+00:00",
+      "next_action": "Stage A complete; Stage B readiness authority committed.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "Use the corrected direct-versus-pallidal target packet and readiness open-gate list; no calibration or reserved seed may open before READINESS_GO.",
       "resource": "local_cpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "research/specs/v14_snr_stageB_readiness.json",
         "research/specs/v14_snr_stageB_target_packet.json",
@@ -1483,5 +1584,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T21:02:35+00:00"
+  "updated_at": "2026-08-04T21:11:22+00:00"
 }
