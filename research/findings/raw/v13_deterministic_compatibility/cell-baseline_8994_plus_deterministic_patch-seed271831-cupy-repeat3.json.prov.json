@@ -1,0 +1,40 @@
+{
+ "run_id": "1785824409-2403855",
+ "runner": "research/runners/_v13_deterministic_compatibility.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/runners/_v13_deterministic_compatibility.py",
+  "cell",
+  "--source-twin",
+  "baseline_8994_plus_deterministic_patch",
+  "--seed",
+  "271831",
+  "--backend",
+  "cupy",
+  "--repeat",
+  "3",
+  "--deterministic-patch-commit",
+  "385092814",
+  "--output-root",
+  "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility",
+  "--out",
+  "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-cupy-repeat3.json"
+ ],
+ "git_sha": "5c1d345f6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T02:20:09",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-cupy-repeat3.json"
+}

@@ -1,0 +1,40 @@
+{
+ "run_id": "1785824376-560114",
+ "runner": "research/runners/_v13_deterministic_compatibility.py",
+ "argv": [
+  "/home/node/derisk-pool/v13-baseline-b-5c1d345f6/research/runners/_v13_deterministic_compatibility.py",
+  "cell",
+  "--source-twin",
+  "baseline_8994_plus_deterministic_patch",
+  "--seed",
+  "271843",
+  "--backend",
+  "numpy",
+  "--repeat",
+  "2",
+  "--deterministic-patch-commit",
+  "385092814",
+  "--output-root",
+  "/home/node/derisk-pool/v13-baseline-b-5c1d345f6/research/findings/raw/v13_deterministic_compatibility",
+  "--out",
+  "/home/node/derisk-pool/v13-baseline-b-5c1d345f6/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-numpy-repeat2.json"
+ ],
+ "git_sha": "5c1d345f6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T02:19:36",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-numpy-repeat2.json"
+}

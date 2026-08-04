@@ -1,0 +1,350 @@
+{
+  "acceptance_checks": {
+    "all_seven_hashes_exact_within_repeats": true,
+    "topology_exact_within_repeats": true
+  },
+  "disabled_processes": [],
+  "go": true,
+  "input_artifacts": [
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271829-cupy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271829-cupy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271829-cupy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271829-numpy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271829-numpy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271829-numpy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-cupy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-cupy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-cupy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-numpy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-numpy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271831-numpy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271837-cupy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271837-cupy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271837-cupy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271837-numpy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271837-numpy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271837-numpy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-cupy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-cupy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-cupy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-numpy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-numpy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271843-numpy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271849-cupy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271849-cupy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271849-cupy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271849-numpy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271849-numpy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271849-numpy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271853-cupy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271853-cupy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271853-cupy-repeat3.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271853-numpy-repeat1.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271853-numpy-repeat2.json",
+    "/home/dant123/Projects/sim-worktrees/v13-deterministic-baseline/research/findings/raw/v13_deterministic_compatibility/cell-baseline_8994_plus_deterministic_patch-seed271853-numpy-repeat3.json"
+  ],
+  "matrix": {
+    "271829:cupy": {
+      "artifact_sha256": [
+        "12419329e53fa29d71f8dc81e9185f836cd4cf307db252c66bd59bc2df2c76b8",
+        "e39a7817774e6b2ead80dbc205a654e47c1c895a97b1fa5bdc0d4d44450aabff",
+        "3521e87c2d41a01094342565b65e98ecb2d588f7c3f163c988e0e768622e82b4"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "6eb01dafe4a8956545149d8f28cc5baa143ddd00141c7a06cf9947d0852eb8f3",
+        "g_i": "cbbeea7584859d2f7496fd8d5f86b206e39b38d7cf23267111da2cd25248c700",
+        "raster": "5c977b37e9e4fff4fe95f39f68d32596b3161465d7f93703ba481cc3ef2cb7c9",
+        "u": "bc369568752e8df8a1559dece37a36cc4546133263d4653e0f4655a1ce7345b9",
+        "v": "ec26a303d128b98c393f8da0efc08480b0fe1ca7f935641429001a76b6b2aaed",
+        "weights": "1f4c075ce3995bca0f2897c72e635f3d5ae80b4bda358067a065f149b09a9c1b"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "8f0c690188e912a26594da7c3b8cba7c01b81b9112a4b6345e5ce219f19d8d6b"
+    },
+    "271829:numpy": {
+      "artifact_sha256": [
+        "2fccd8768337630f838ef3e7db3137ae04f512f64e126820f933063951d53150",
+        "9ae7a81d12c85e6acb7cd71d1f8c3af2388a4d6bca352f94add5dd53888ffb84",
+        "ff7abde18ce8d46925cfc499854175ffd264ef37465d00fa8fbee3d898c1bcb8"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "31615136024eabbebacaaf6b76b7a68b6155054c8fbf85f6c7023e1bcf0b3db4",
+        "g_i": "70ee8919937131cfb0e69ef4d6877d3542053584b7cec0e16b7aa26a4d2ba4e6",
+        "raster": "bc065936e62920ba462ec283031e1ea9e677f243d5d3cf6575410520af4a9f84",
+        "u": "8bcb0db6d165da875575b0a8314611a47c5d54196dd57afe700045281376553a",
+        "v": "99f0ca5a8053fde75a50228cb92559cf9f1685b77b20efc51d7a51005029209a",
+        "weights": "1f4c075ce3995bca0f2897c72e635f3d5ae80b4bda358067a065f149b09a9c1b"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "8f0c690188e912a26594da7c3b8cba7c01b81b9112a4b6345e5ce219f19d8d6b"
+    },
+    "271831:cupy": {
+      "artifact_sha256": [
+        "3ba27db6717b23a54a4a385252eccf714d9130ee72da5fca631f10354ac5d3d1",
+        "cbb6d2cbbb0a81c6b91a4fd97e9a0bde84b061a28b1faeb93070f61429bebd45",
+        "1946425aaad24b3d2dc91a7c69973733b0d6f9fcfc94b58ee68143439adfa013"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "ad967c54620f71d45dcf93d6217b27b02a7623604f975960e1ad60a4ad292bd4",
+        "g_i": "626a0dec5bb387a9d6293f35e7cd3adddda0dc240fa527d9a460091689cbfeac",
+        "raster": "5399002a55e7dc8f2deeb6b92e9f0a774c16af26dc2edddef97a62067c71318d",
+        "u": "ef493c733a3a40b4df0b3afc57049a239241d6a40c522eb1c610be7c27a2c254",
+        "v": "11b9e729837af177dd241f61573bd1d7637bd6331ef48f7cc6c6f51faa290bed",
+        "weights": "b794131f845608be41a1715192d23e49b5c4c5f3e65d1b5cc22dfaa5bd297c18"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "868cf8e631bdd005b641a0fc6aa7df1275dbf8bccacc1f16ad8e6d4721b4d3e5"
+    },
+    "271831:numpy": {
+      "artifact_sha256": [
+        "8efa9bb4a6528fd45f4829fc7ff27ce7a31f1d5e259f85a246658de3277aad04",
+        "e615e16e0e9b47298fff5f2a6d0b3745193ff492b0a096ca1227d716d9798738",
+        "a1c6f90771be9d01e45353906fabf076410769ceefb797ec3416d0c9740257c7"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "df31a6ad17c63163f1dbe37f26d212fb8dacee87b873132f317c9b363de897f4",
+        "g_i": "64c103ef2f386b7529c51ad97bd3f6c911927320787d8e7b7c2ecaaa952cf5a8",
+        "raster": "e5b60ad1d4a66d46d33eb1cad4cfab89e7f562ed0b1e168d0d59bc188615871c",
+        "u": "7ddf9a2f059772a1736d0d36196ab1382dc0196405bfc85084c398304ae6bfcd",
+        "v": "6861e8fdc0dac87755b889795eb0ed984300c9bda3365c0d36f0eba97f96c926",
+        "weights": "b794131f845608be41a1715192d23e49b5c4c5f3e65d1b5cc22dfaa5bd297c18"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "868cf8e631bdd005b641a0fc6aa7df1275dbf8bccacc1f16ad8e6d4721b4d3e5"
+    },
+    "271837:cupy": {
+      "artifact_sha256": [
+        "83cac45ba9752dfb671f459da19965333b8df24664039779f5f5a23eabed6075",
+        "ed8bdcaa75db2057ca441b9050cf0f7f5f378e365696eb95bde3d0e35bf7846b",
+        "baec17d3998dd888cddc9e3c84840df60fba1a99d505ffcb15cd60678598cf0e"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "a6daf35fb4d0e61ae1872937c65110a5f9e46660c00dc3d7d2d10e7d6672f04d",
+        "g_i": "a3e0e7238a2c02e2427385085508c8a414b78fd42c4e9c4b3c645d8aee52da7c",
+        "raster": "25b28ebe3d8e2b4d175b9b07115ab919dfac80957c49f7ef059266a489670f50",
+        "u": "1dd54e5243585fff94af83942c91da177d088b833fa89b7dc62fecd33146abb1",
+        "v": "390e7b9dbb826fe6fe41b2d6be8bd8dd010927283109223d46f6f9077926c881",
+        "weights": "24d25fc9a7078800ff131aa13e868f8c1f66e18a38d2fcf4d61625d2270f8b0e"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "250fd77856634a09b0cc044e4691b7ce834e9d6b8ca565f2afaf1dbb953167e8"
+    },
+    "271837:numpy": {
+      "artifact_sha256": [
+        "0ddcd09121ea7490d4ec4dc721943db07658704db2db664f2ab5d43077dcc35b",
+        "fdde3772e43cc8cb0c673165a632811856ad1e01920779dcda9d28d6504139f9",
+        "5236f11d97b1622a2a01f1a0ff4723bb6e8484223ee28e8f2d4c1d2efae7b15e"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "8890f8616436205366743349d46a0d9845c4c59044977aeb02bf683c7e97c4e7",
+        "g_i": "cd59b1eb5d7e244ccaef2b0905e24c8decc13d88afcabf2909fd4441fbff6e33",
+        "raster": "c9447511891e31e12b61c744d04c2cb0064a675067bb02b0712a9c0900168600",
+        "u": "cd7d0b84c1cc0f89083d1f2a309e08954fc6bc8bf87788ffacfe76150839f514",
+        "v": "587d1951f658b37d87db0c06ae8aa6190db06aa89a3255919c3c4bfde15521da",
+        "weights": "24d25fc9a7078800ff131aa13e868f8c1f66e18a38d2fcf4d61625d2270f8b0e"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "250fd77856634a09b0cc044e4691b7ce834e9d6b8ca565f2afaf1dbb953167e8"
+    },
+    "271843:cupy": {
+      "artifact_sha256": [
+        "187a2d7a4774f976fa7cce18497834772a253dc7f9046dd473148a32004ec9fd",
+        "80d7ff4899772f08e2b1c31f6b67e4e4b91f90e2be52d856d52e46e8fa00ebd5",
+        "3fa90f0440ee5eac862132baaaf7929386dc4df459f4547e5c13821da6a1c3fd"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "dccf1bd551f8777f60dd9c27036d3599c945af278176ba024294317da45b5aab",
+        "g_i": "0b4442d5c500ec64f8868004d81f2806df19bf1d6b90bd0fd3c2d0d0ab1ede66",
+        "raster": "ea792044aad8afd4d5081cae900359f390f47169f56dad95ecdce6215a016363",
+        "u": "17c9a0fa64606baa1260cdc67e08bb03669ce33cd775d36e4803fbd9a7057def",
+        "v": "2946ab7d5cb89bfbbcb5c606a0e45ec41245e3851d5058384575a9e6451e2ea2",
+        "weights": "e3fec8bceb8f2c0e77c28fdf789496680f5307b6f11a99d94176937b55852753"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "7e4b5e23c5bf2984e9b0bc0dee4732f988ea23bbff32c51b9140179abb9302c5"
+    },
+    "271843:numpy": {
+      "artifact_sha256": [
+        "4c7b0e44d17226f28b6f531522597c940f667fd44c83107b8d227927b420b599",
+        "82356f8551fc20b14f4ae483164034d991fa1e576516b5e0fec0d20b1bfd4074",
+        "5e735ca0888d89a56159204c4e73f1fc5c24d8ca41096f242b00d837a95afb52"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "fe8a6cb276a997fdf52371b391e477e608be657aa72796a5316049b3ad28fd94",
+        "g_i": "577d8a9d20eb5057789ab352462bded111cadc1eb72cae93b20e8c7e6ac169f3",
+        "raster": "a3f6fd9b833e8d979ae1d8ec1a6c033bde76df8ca44660521e9cfc9501193aba",
+        "u": "ab0f5d8371ed762ba46da97fd3980bd5c6ab14fc7b936ab23c2fb39b2069ac19",
+        "v": "899e80b6d39ad5d890eae5367c3089e4f54fdf8af435c9aa4bdbe87f3b5b758f",
+        "weights": "e3fec8bceb8f2c0e77c28fdf789496680f5307b6f11a99d94176937b55852753"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "7e4b5e23c5bf2984e9b0bc0dee4732f988ea23bbff32c51b9140179abb9302c5"
+    },
+    "271849:cupy": {
+      "artifact_sha256": [
+        "16818a0d45cef32dea08d173f9adf963a3e68b8b27d05a3918a56dbe826a0a5a",
+        "78bff1815b2faae0b24bc8f9e07df887aa1d94d7c621d5080ec8e38966d5b94d",
+        "6f2cc1b339c89b34c45d4515b3f75cf83e6cb9fb6c12791b7ee6e4f61bcf266b"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "9f7d801092f9c69aeb3a46706c74bdeb44815f21dd1d3a17dbd90c073d9fdbf1",
+        "g_i": "1d5cd74471acf5dad1a37910dbcaac0f16fec77fcff77d1dcf402c3c1101e42c",
+        "raster": "779abd12e1b792c5a340dcb54eb959f1f8f0490216f0c6af00fbe3473a37dc0d",
+        "u": "4bec3847209f073e8bfa97c1f72d38c6aa7ee32cfb3db1873562f04ad6bcf079",
+        "v": "373610a3c41233a7e36021d5363144f064d4d715a76083b4e466a5d485ba457d",
+        "weights": "6ea0a15722d556a3a460378d33fc1ea4688b5f6d28565fd430a4144cb4166127"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "ea430314cf52b1cef66be33f2621e7d39d7afe76e4af980c183b235438e9aaab"
+    },
+    "271849:numpy": {
+      "artifact_sha256": [
+        "ed90bb85884c449883fd6ab717f19dba2e969496722ca41c6388da160ef90dc2",
+        "7195ec29f9f81ee32c95e9c8cbf279744bf78aaec71f4ba9201c4c6a83478ace",
+        "ca1f680cb545d108bca33ed03c2b3bf9ed968dc46bd8521a372830070963fac7"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "1ffd0897cdca466c9ba0ed8bc7c4f224b0032b5edc3727a11c3ad9db3cc7e6c0",
+        "g_i": "6bde449ec8c6e10c6941647e198f405383922e43694c2ec5911d5473c4b78214",
+        "raster": "317410d8d22063ffc40bdc3ce111b653df444b27304fb592ea00ca0f54a8eec0",
+        "u": "35b26029bf8797ccf1f5ef601afc69fbb47a1a686f952496ea38b62390bc5bc5",
+        "v": "ded76860accaa338e30b9d78b62e0566e74a893ec335fdee2ad5467f0dca2cc2",
+        "weights": "6ea0a15722d556a3a460378d33fc1ea4688b5f6d28565fd430a4144cb4166127"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "ea430314cf52b1cef66be33f2621e7d39d7afe76e4af980c183b235438e9aaab"
+    },
+    "271853:cupy": {
+      "artifact_sha256": [
+        "c463d0aa9878070bf30102c3f029b52ae584a4d83458d949b2b8be115f2e5eaf",
+        "bf69094d8c783ddb9a517895aac3db9cff15f5031541bf27f26dcb5972bbcdb2",
+        "6b8da484aaf261107ff5a474f5202241b5df563288c1f52fe5e47f2c94425c3a"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "3aa339ab679b9fff80adaa47496cf9df4b7565ef06f0b0c807d1c2bd7629ac20",
+        "g_i": "b61dea7b1af0c178901af1534ccb4716dffe0247e0cc710701707cbc2c5ccb40",
+        "raster": "9186e44d0d0997f81f00279560a9e9bbe5cdffab45270a37589eb0020e901113",
+        "u": "ae43e77b6e07e5eb1dfae875b2b47233682cf7aaf0b3bc3497a1cfab9f1be266",
+        "v": "48d59580ff4c388746766c04ba73fcb33c41685cfec4c965bedf0afa3d4d7d61",
+        "weights": "68ab5c390b0c12298b43edca45406dbe652e7e182b3c17a7ad4f6858df589ba3"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "70f74a635fea2cfdbad471a84a996f22911a7fcbee9d46a8cc7cd2d1dfcbdcc8"
+    },
+    "271853:numpy": {
+      "artifact_sha256": [
+        "b1905ab9989c59a8f4e905760ccdc8b1b61b60668adb2ef682dec670a6c20d5b",
+        "baac4d640dbe6458dcfedaab6b6221b906e78bf11779afb0230c9f13cc6f837e",
+        "357b39cffc98d640828585fd22c00dd9f6ef87893ef0cc27dde5ca49ef38586d"
+      ],
+      "hashes": {
+        "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551",
+        "g_e": "63067c8a5bbaa1e03dbcd1350b65098541e09bf2e5146d34efbc40c57c701ff8",
+        "g_i": "b6054549b1f662eb569c2e9d1bd90959a918d53cb15804ce31cb9a83f94c6cc3",
+        "raster": "5b5781db9b3721eb208167c0377454ae7e7168f934945ce707c4fd72836e95d3",
+        "u": "372c0932f3b4c91a0ed958c38d6e56b7a33ac1151bfe3bafb7bad044c19017ed",
+        "v": "8c8bb4bf501aaa9f1dca50f55686248814f080c8e18953ba93fa4290e82df99e",
+        "weights": "68ab5c390b0c12298b43edca45406dbe652e7e182b3c17a7ad4f6858df589ba3"
+      },
+      "repeat_hashes_exact": true,
+      "repeat_topology_exact": true,
+      "separate_processes": true,
+      "topology_sha256": "70f74a635fea2cfdbad471a84a996f22911a7fcbee9d46a8cc7cd2d1dfcbdcc8"
+    }
+  },
+  "outcome": "DETERMINISM_GO",
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "exact 6x2x3 matrix",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "all inputs carry earned GO verdicts",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "one sealed source identity",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "three distinct processes per cell",
+      "note": "",
+      "ok": true
+    }
+  ],
+  "schema": "v13-deterministic-compatibility-source-bundle-v1",
+  "source_identity": {
+    "complete_tree_manifest_sha256": "c0ab05d7ae6d875f04c3367f99261a59376ee2adeb930c14366dda5f7770efc3",
+    "deterministic_patch_id": "18bd23624a3247cb0f205795081b7a540c15ed89",
+    "execution_manifest_sha256": "900a33883d78871c18d86db6ca8f49efa983cae523a7913c7a93b58b30a0d63b",
+    "git_sha": "5c1d345f6d59e05ce46183e8b7723bed43c9d205",
+    "preregistration_sha256": "d475d968ff9ba94c6d9249d6a48f917fb7f1da3bdad5b2997872cf39505a18ae",
+    "runner_sha256": "2a8eb41a27d0dea96f0636cb15aa15f75759bfbc5d3677a6e4aea5853e88ffc9",
+    "source_twin": "baseline_8994_plus_deterministic_patch",
+    "spec_sha256": "c9300af5b87a39f382fcaf5e238a54b7d813f72da94adf42fca778d9d4057f70"
+  },
+  "source_twin": "baseline_8994_plus_deterministic_patch",
+  "source_twin_contract": {
+    "base_is_ancestor": true,
+    "base_revision": "8994b5102",
+    "brain_region_has_intrinsic_field": false,
+    "changed_paths_from_base": [
+      "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-deterministic-compatibility-correction-PREREGISTRATION.md",
+      "research/runners/_v13_deterministic_compatibility.py",
+      "research/specs/v13_tonic_output_deterministic_compatibility.json",
+      "sim/bridge.py",
+      "tests/test_deterministic_sparse_matvec.py",
+      "tests/test_v13_deterministic_compatibility.py"
+    ],
+    "contract_valid": true,
+    "source_twin": "baseline_8994_plus_deterministic_patch",
+    "unexpected_paths_from_base": []
+  },
+  "stage": "source_twin_merge",
+  "undefined_reasons": [],
+  "verdict_status": "GO"
+}
