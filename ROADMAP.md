@@ -138,8 +138,11 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     passing point, `100 pA`, but the chain failed closed before CuPy: file-byte
     and canonical-JSON digests were conflated, and the provenance sidecar was
     not included in the evidence seal. Process correction v1 is undefined and
-    its CPU observation is diagnostic only. The next step is a preregistered v2
-    evidence contract with fresh mechanically derived partitions. Held-out seed
+    its CPU observation is diagnostic only. Process correction v2 is now
+    preregistered with separate digest domains, provenance-sidecar sealing, and
+    fresh mechanically derived calibration and replication partitions. Its
+    controls are implemented and test-verified; source and configuration must
+    be re-frozen before any v2 command is emitted. Held-out seed
     `1021` and Stage-1 seed `1031` remain sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
