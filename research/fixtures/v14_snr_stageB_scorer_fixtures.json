@@ -1,0 +1,138 @@
+{
+  "schema": "v14-snr-stageB-scorer-fixtures-v1",
+  "status": "readiness-only-not-executable",
+  "provenance_exempt": "non-executed scorer fixtures; contains no measured simulation result",
+  "device": "not_applicable_non_executed_protocol",
+  "source_target_packet": {
+    "path": "research/specs/v14_snr_stageB_target_packet.json",
+    "sha256": "0e12120dc23580b72c21e81212eeec5c93a3b3007d758516a2c7102211bd63d3"
+  },
+  "fixtures": [
+    {
+      "id": "adult-autonomous-rate-observed-range",
+      "target_id": "adult-autonomous-rate-support",
+      "source_id": "Simmons-et-al-2018",
+      "cohort": "adult mouse, either sex, 60-90 days; acute SNr slice",
+      "pathway": "SNr intrinsic autonomous firing",
+      "metric": "post-burn-in population firing rate",
+      "units": "spikes/s",
+      "score_kind": "bounded-interval",
+      "interval": {"low": 9.6, "high": 27.8},
+      "evidence": {
+        "interval_provenance": "source-derived",
+        "uncertainty": "observed sample range; source also reports mean 13.6, SD 5.7, n=11",
+        "source_locator": "Simmons et al. 2018 Results, baseline sample associated with Fig. 1",
+        "preparation": {
+          "species_age": "mouse, either sex, 60-90 days",
+          "slice": "300 um parasagittal acute slice containing SNr",
+          "temperature": "33-35 C recording; slices stored at 28 C for at least 2 h",
+          "recording_modes": ["gramicidin perforated-patch current clamp"],
+          "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+          "blockers": ["NBQX 5 uM", "CPP 5 uM"]
+        }
+      }
+    },
+    {
+      "id": "direct-pathway-unitary-peak-observed-range",
+      "target_id": "adult-inhibitory-conductance-support",
+      "source_id": "Simmons-et-al-2018",
+      "cohort": "adult mouse, either sex, 60-90 days; acute SNr slice",
+      "pathway": "striato-nigral direct-pathway input",
+      "metric": "unitary inhibitory peak conductance",
+      "units": "nS",
+      "score_kind": "bounded-interval",
+      "interval": {"low": 0.35, "high": 6.4},
+      "evidence": {
+        "interval_provenance": "source-derived",
+        "uncertainty": "observed peak range in n=10 cells",
+        "source_locator": "Simmons et al. 2018 Results and Fig. 3",
+        "preparation": {
+          "species_age": "mouse, either sex, 60-90 days",
+          "slice": "300 um parasagittal acute slice containing SNr",
+          "temperature": "33-35 C recording; slices stored at 28 C for at least 2 h",
+          "recording_modes": ["whole-cell voltage clamp"],
+          "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+          "blockers": ["NBQX 5 uM", "CPP 5 uM"]
+        }
+      }
+    },
+    {
+      "id": "pallidonigral-unitary-peak-observed-range",
+      "target_id": "adult-pallidonigral-unitary-support",
+      "source_id": "Simmons-et-al-2020",
+      "cohort": "adult mouse, either sex, 60-90 days; acute SNr slice",
+      "pathway": "GPe-to-SNr pallido-nigral unitary input",
+      "metric": "unitary inhibitory peak conductance",
+      "units": "nS",
+      "score_kind": "bounded-interval",
+      "interval": {"low": 2.4, "high": 25.1},
+      "evidence": {
+        "interval_provenance": "source-derived",
+        "uncertainty": "observed peak range in 17 SNr neurons from 7 mice",
+        "source_locator": "Simmons et al. 2020 p. 803 and Fig. 2",
+        "preparation": {
+          "species_age": "mouse, either sex, 60-90 days",
+          "slice": "300 um parasagittal acute slice containing SNr",
+          "temperature": "33-35 C recording; slices stored at 28 C for at least 2 h",
+          "recording_modes": ["whole-cell voltage clamp"],
+          "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+          "blockers": ["NBQX 5 uM", "CPP 5 uM"]
+        }
+      }
+    },
+    {
+      "id": "pallidonigral-barrage-peak-selected-range",
+      "target_id": "adult-pallidonigral-depressed-barrage",
+      "source_id": "Simmons-et-al-2020",
+      "cohort": "adult mouse, either sex, 60-90 days; acute SNr slice",
+      "pathway": "GPe-to-SNr pallido-nigral Poisson barrage",
+      "metric": "per-cell selected event peak conductance",
+      "units": "nS",
+      "score_kind": "bounded-interval",
+      "interval": {"low": 1.6, "high": 2.4},
+      "evidence": {
+        "interval_provenance": "source-derived",
+        "uncertainty": "per-cell selected peak range for 20-50% firing-rate reduction; not a population confidence interval",
+        "source_locator": "Simmons et al. 2020 pp. 801 and 804 and Fig. 3",
+        "preparation": {
+          "species_age": "mouse, either sex, 60-90 days",
+          "slice": "300 um parasagittal acute slice containing SNr",
+          "temperature": "33-35 C recording; slices stored at 28 C for at least 2 h",
+          "recording_modes": ["gramicidin perforated-patch current clamp", "conductance clamp"],
+          "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
+          "blockers": ["NBQX 5 uM", "CPP 5 uM"]
+        }
+      }
+    },
+    {
+      "id": "hcn-baseline-non-significance-boundary",
+      "target_id": "HCN-baseline-directional-target",
+      "source_id": "Atherton-and-Bevan-2005",
+      "cohort": "transferred SNr slice preparation",
+      "pathway": "SNr intrinsic HCN contribution at baseline",
+      "metric": "baseline firing-rate effect",
+      "units": "qualitative statistical result",
+      "score_kind": "non-significance-boundary",
+      "interpretation": "no-equivalence-claim",
+      "evidence": {
+        "interval_provenance": "not-an-interval",
+        "uncertainty": "reported non-significant baseline-rate effect; no preregistered equivalence margin",
+        "source_locator": "Atherton and Bevan 2005; transferred directional result pending exact page/figure packet transcription",
+        "preparation": {
+          "species_age": "juvenile rat SNr slice preparation",
+          "slice": "acute midbrain slice containing SNr",
+          "temperature": "source preparation temperature must be verified before this fixture can become a gate",
+          "recording_modes": ["whole-cell current clamp"],
+          "solution": "source solution must be verified before this fixture can become a gate",
+          "blockers": ["source blocker conditions must be verified before this fixture can become a gate"]
+        }
+      }
+    }
+  ],
+  "blocked_model_derived_target": {
+    "target_id": "nalcn-lesion-ratio",
+    "interval_provenance": "model-derived",
+    "interval": {"low": 0.45, "high": 0.68},
+    "reason": "Lutas et al. 2016 temperature, exact scoring solution, and blocker metadata remain unresolved; no score fixture is valid yet"
+  }
+}
