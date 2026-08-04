@@ -25,6 +25,8 @@ def test_earned_compatibility_correction_is_bound_to_committed_evidence():
     result = v13._load_compatibility_correction(v13.COMPATIBILITY_CORRECTION_PATH)
     assert result["outcome"] == "DETERMINISTIC_COMPATIBILITY_GO"
     assert result["deterministic_patch_id"] == v13.DETERMINISTIC_PATCH_ID
+    assert result["baseline_bundle_present_in_candidate_source"] is True
+    assert result["twin_intrinsic_states_valid"] is True
 
 
 def test_compatibility_correction_refuses_noncanonical_artifact(tmp_path):

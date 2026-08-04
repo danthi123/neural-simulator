@@ -39,3 +39,28 @@ inhibition or recovery, lesion causality, checkpoint continuation, selector
 behavior, learning, or performance. It does not erase the original failed
 compatibility finding or promote replication, held-out, or Stage 1 seeds; those
 remain governed by their own preregistered gates.
+
+## Audit limitations
+
+The sealed baseline finished before candidate execution began, with a measured
+gap of 137.85 seconds. Candidate cell invocations did not themselves read the
+baseline bundle, so that ordering was operational rather than an executor-level
+dependency. The Stage-0 runner now verifies that the candidate source commit
+already contained the byte-identical sealed baseline bundle, and the comparison
+runner loaded and hashed that bundle before issuing this verdict. Future
+compatibility executors should make the baseline bundle digest a required
+candidate-cell input instead of relying on orchestration order.
+
+The preregistration describes the baseline both as lacking the new intrinsic
+field and, elsewhere, as reporting that field as `None`. Those statements cannot
+both be literal. The executed source-twin contract uses the correction's stated
+purpose: all 36 baseline cells prove the field is absent, while all 36 candidate
+cells prove it exists with a default value of `None`. The Stage-0 runner now
+rejects the compatibility evidence unless that distinction is intact.
+
+All 72 run sidecars exist, but the shared `runs.jsonl` ledger contains only 18
+of the 72 cell records. The bundles bind every cell artifact by digest and the
+commits seal the sidecars, so this does not change the numerical verdict. It is
+still a provenance completeness defect. A deterministic artifact-and-sidecar
+manifest is being added for future distributed evidence; this finding does not
+claim the historical shared ledger was complete.

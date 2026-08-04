@@ -211,10 +211,53 @@ def _load_compatibility_correction(path: Path) -> dict:
     ).stdout.splitlines()
     if changed:
         raise ValueError(f"compatibility-covered simulator inputs changed: {changed}")
+
+    baseline_relative = str(bundles["baseline"].relative_to(ROOT))
+    committed_baseline = subprocess.run(
+        ["git", "show", f"{candidate_sha}:{baseline_relative}"],
+        cwd=ROOT, check=True, capture_output=True,
+    ).stdout
+    if committed_baseline != bundles["baseline"].read_bytes():
+        raise ValueError("candidate source did not contain the sealed baseline bundle")
+
+    baseline_contract = json.loads(bundles["baseline"].read_text()).get(
+        "source_twin_contract", {}
+    )
+    candidate_contract = candidate.get("source_twin_contract", {})
+    baseline_cells = [
+        json.loads(item.read_text())
+        for item in sorted(COMPATIBILITY_ROOT.glob("cell-baseline_8994_plus_deterministic_patch-*.json"))
+        if not item.name.endswith(".prov.json")
+    ]
+    candidate_cells = [
+        json.loads(item.read_text())
+        for item in sorted(COMPATIBILITY_ROOT.glob("cell-candidate_v13-*.json"))
+        if not item.name.endswith(".prov.json")
+    ]
+    intrinsic_states_valid = (
+        len(baseline_cells) == 36
+        and len(candidate_cells) == 36
+        and baseline_contract.get("contract_valid") is True
+        and baseline_contract.get("brain_region_has_intrinsic_field") is False
+        and candidate_contract.get("contract_valid") is True
+        and candidate_contract.get("brain_region_has_intrinsic_field") is True
+        and all(
+            item.get("intrinsic_default_state", {}).get("bridge_state")
+            == "attribute_absent" for item in baseline_cells
+        )
+        and all(
+            item.get("intrinsic_default_state", {}).get("bridge_value_is_none")
+            is True for item in candidate_cells
+        )
+    )
+    if not intrinsic_states_valid:
+        raise ValueError("source twins do not carry the required feature-absent/default-None states")
     return {
         "path": str(path.relative_to(ROOT)),
         "sha256": _canonical_artifact_digest(artifact),
         "candidate_source_sha": candidate_sha,
+        "baseline_bundle_present_in_candidate_source": True,
+        "twin_intrinsic_states_valid": True,
         "deterministic_patch_id": DETERMINISTIC_PATCH_ID,
         "outcome": artifact["outcome"],
     }
