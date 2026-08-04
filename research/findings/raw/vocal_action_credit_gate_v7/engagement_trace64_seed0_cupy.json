@@ -1,0 +1,3379 @@
+{
+  "artifact_schema_version": 1,
+  "backend": "cupy",
+  "checks": {
+    "at_least_90pct_clean_action_epochs": true,
+    "formal_execution_remains_sealed": true,
+    "learning_lesion_blocks_route_change": true,
+    "learning_lesion_removes_80pct_of_delay_expectation": false,
+    "plasticity_confined_to_declared_routes": true,
+    "reserved_seed_only": true,
+    "responsible_expectation_fires_before_outcome": false,
+    "rewarded_route_learns_and_separates": true
+  },
+  "conditions": {
+    "expectation_learning_lesion": {
+      "changed_outside_declared_routes": 0,
+      "changed_synapses": 1152,
+      "clean_trials": 11,
+      "expectation_weight_after": [
+        0.10000000149011612,
+        0.10000000149011612
+      ],
+      "expectation_weight_before": [
+        0.10000000149011612,
+        0.10000000149011612
+      ],
+      "mode": "expectation_learning_lesion",
+      "rewarded_trials": 6,
+      "rows": [
+        {
+          "action": {
+            "actor": [
+              0,
+              648
+            ],
+            "commit": [
+              0,
+              1546
+            ],
+            "dopamine_last": 0.5000221752274705,
+            "dopamine_max": 0.5040742450741459,
+            "dopamine_min": 0.49913823501153254,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2297
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2930,
+              4316
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5041089240143599,
+            "dopamine_max": 0.5074114822735722,
+            "dopamine_min": 0.49594798750965174,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              151
+            ],
+            "commit": [
+              0,
+              369
+            ],
+            "dopamine_last": 0.4999966289083695,
+            "dopamine_max": 0.5006585126542867,
+            "dopamine_min": 0.4991229876730046,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              536
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              614
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083695,
+          "dopamine_burst_depth": 0.0010099919509775068,
+          "dopamine_dip_depth": 0.004194815334353286,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0,
+              38.649462670608635
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              60
+            ],
+            "commit": [
+              0,
+              146
+            ],
+            "dopamine_last": 0.4958018135740162,
+            "dopamine_max": 0.501006620859347,
+            "dopamine_min": 0.4958018135740162,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              216
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              143
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              675
+            ],
+            "commit": [
+              0,
+              1642
+            ],
+            "dopamine_last": 0.5000221752266845,
+            "dopamine_max": 0.503798899354101,
+            "dopamine_min": 0.4991382055206871,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2420
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2930,
+              4435
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5037889184730351,
+            "dopamine_max": 0.5064678979867778,
+            "dopamine_min": 0.49434285592531724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              153
+            ],
+            "commit": [
+              0,
+              372
+            ],
+            "dopamine_last": 0.4999966289083416,
+            "dopamine_max": 0.5006585126541838,
+            "dopamine_min": 0.49912298767293317,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              540
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              628
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083416,
+          "dopamine_burst_depth": 0.001009991950992939,
+          "dopamine_dip_depth": 0.0041948153343326355,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0,
+              39.26062672428033
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              63
+            ],
+            "commit": [
+              0,
+              143
+            ],
+            "dopamine_last": 0.495801813574009,
+            "dopamine_max": 0.5010066208593346,
+            "dopamine_min": 0.495801813574009,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              221
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              145
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              646
+            ],
+            "commit": [
+              0,
+              1574
+            ],
+            "dopamine_last": 0.5000221752266845,
+            "dopamine_max": 0.503798899354101,
+            "dopamine_min": 0.4991382055206871,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2336
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2930,
+              4346
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5037889184730351,
+            "dopamine_max": 0.5064678979867778,
+            "dopamine_min": 0.49434285592531724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              151
+            ],
+            "commit": [
+              0,
+              372
+            ],
+            "dopamine_last": 0.4999966289083416,
+            "dopamine_max": 0.5006585126541838,
+            "dopamine_min": 0.49912298767293317,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              540
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              622
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083416,
+          "dopamine_burst_depth": 0.001009991950992939,
+          "dopamine_dip_depth": 0.0041948153343326355,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0,
+              38.65396223800925
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              59
+            ],
+            "commit": [
+              0,
+              148
+            ],
+            "dopamine_last": 0.495801813574009,
+            "dopamine_max": 0.5010066208593346,
+            "dopamine_min": 0.495801813574009,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              216
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              142
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              784,
+              0
+            ],
+            "commit": [
+              1801,
+              0
+            ],
+            "dopamine_last": 0.5000221752266845,
+            "dopamine_max": 0.503798899354101,
+            "dopamine_min": 0.4991382055206871,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2540,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4593,
+              2962
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5037889184730351,
+            "dopamine_max": 0.5064678979867778,
+            "dopamine_min": 0.49434285592531724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              164,
+              0
+            ],
+            "commit": [
+              378,
+              0
+            ],
+            "dopamine_last": 0.4999966289083416,
+            "dopamine_max": 0.5006585126541838,
+            "dopamine_min": 0.49912298767293317,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              531,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              654,
+              74
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083416,
+          "dopamine_burst_depth": 0.06510173529632945,
+          "dopamine_dip_depth": 0.00013388149199106136,
+          "eligibility_before_outcome": {
+            "actor": [
+              43.22037373543011,
+              0.29814949742907104
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              64,
+              0
+            ],
+            "commit": [
+              152,
+              0
+            ],
+            "dopamine_last": 0.5650983642046711,
+            "dopamine_max": 0.5650983642046711,
+            "dopamine_min": 0.49986274741635056,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              216,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 127,
+            "trace": [
+              164,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              442
+            ],
+            "commit": [
+              0,
+              1078
+            ],
+            "dopamine_last": 0.5000221752261782,
+            "dopamine_max": 0.5036223303276429,
+            "dopamine_min": 0.49913818653909214,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              1601
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2960,
+              3937
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5035837965621712,
+            "dopamine_max": 0.5060708354507263,
+            "dopamine_min": 0.49338357244104475,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              153
+            ],
+            "commit": [
+              0,
+              368
+            ],
+            "dopamine_last": 0.4999966289083235,
+            "dopamine_max": 0.5006585126541174,
+            "dopamine_min": 0.49912298767288715,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              540
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              75,
+              639
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083235,
+          "dopamine_burst_depth": 0.001009991951003042,
+          "dopamine_dip_depth": 0.004194815334319313,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.33259944231632776,
+              33.19831324829417
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              59
+            ],
+            "commit": [
+              0,
+              146
+            ],
+            "dopamine_last": 0.4958018135740042,
+            "dopamine_max": 0.5010066208593266,
+            "dopamine_min": 0.4958018135740042,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              215
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              149
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              682
+            ],
+            "commit": [
+              0,
+              1655
+            ],
+            "dopamine_last": 0.5000221752266845,
+            "dopamine_max": 0.503798899354101,
+            "dopamine_min": 0.4991382055206871,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2432
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2932,
+              4434
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5037889184730351,
+            "dopamine_max": 0.5064678979867778,
+            "dopamine_min": 0.49434285592531724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              150
+            ],
+            "commit": [
+              0,
+              367
+            ],
+            "dopamine_last": 0.4999966289083416,
+            "dopamine_max": 0.5006585126541838,
+            "dopamine_min": 0.49912298767293317,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              542
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              629
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083416,
+          "dopamine_burst_depth": 0.001009991950992939,
+          "dopamine_dip_depth": 0.0041948153343326355,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0024357926406797827,
+              39.33351332597286
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              64
+            ],
+            "commit": [
+              0,
+              148
+            ],
+            "dopamine_last": 0.495801813574009,
+            "dopamine_max": 0.5010066208593346,
+            "dopamine_min": 0.495801813574009,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              221
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              152
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              775,
+              0
+            ],
+            "commit": [
+              1410,
+              0
+            ],
+            "dopamine_last": 0.5000221752266845,
+            "dopamine_max": 0.503798899354101,
+            "dopamine_min": 0.4991382055206871,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              1993,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4228,
+              2969
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5037889184730351,
+            "dopamine_max": 0.5064678979867778,
+            "dopamine_min": 0.49434285592531724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              165,
+              0
+            ],
+            "commit": [
+              376,
+              0
+            ],
+            "dopamine_last": 0.4999966289083416,
+            "dopamine_max": 0.5006585126541838,
+            "dopamine_min": 0.49912298767293317,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              535,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              666,
+              75
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083416,
+          "dopamine_burst_depth": 0.0652623993922925,
+          "dopamine_dip_depth": 0.00013388149199106136,
+          "eligibility_before_outcome": {
+            "actor": [
+              47.82366961291084,
+              0.30332801967543116
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              61,
+              0
+            ],
+            "commit": [
+              152,
+              0
+            ],
+            "dopamine_last": 0.5652590283006341,
+            "dopamine_max": 0.5652590283006341,
+            "dopamine_min": 0.49986274741635056,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              211,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 127,
+            "trace": [
+              164,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1072,
+              0
+            ],
+            "commit": [
+              1636,
+              0
+            ],
+            "dopamine_last": 0.5000221752262444,
+            "dopamine_max": 0.5036456807931743,
+            "dopamine_min": 0.49913818902170737,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2307,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4366,
+              2960
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5036109567719202,
+            "dopamine_max": 0.5061238505290708,
+            "dopamine_min": 0.4935379792934984,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              165,
+              0
+            ],
+            "commit": [
+              381,
+              0
+            ],
+            "dopamine_last": 0.4999966289083262,
+            "dopamine_max": 0.5006585126541263,
+            "dopamine_min": 0.49912298767289337,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              537,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              623,
+              69
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083262,
+          "dopamine_burst_depth": 0.06510173529634067,
+          "dopamine_dip_depth": 0.00013388149198961807,
+          "eligibility_before_outcome": {
+            "actor": [
+              58.81480515323306,
+              0.002221423321975056
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              66,
+              0
+            ],
+            "commit": [
+              148,
+              0
+            ],
+            "dopamine_last": 0.5650983642046669,
+            "dopamine_max": 0.5650983642046669,
+            "dopamine_min": 0.4998627474163366,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              208,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 127,
+            "trace": [
+              151,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1724,
+              0
+            ],
+            "commit": [
+              2043,
+              0
+            ],
+            "dopamine_last": 0.5000221752261782,
+            "dopamine_max": 0.5036223303276429,
+            "dopamine_min": 0.49913818653909214,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              3093,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4750,
+              2959
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              172,
+              0
+            ],
+            "commit": [
+              238,
+              0
+            ],
+            "dopamine_last": 0.5035837965621712,
+            "dopamine_max": 0.5060708354507263,
+            "dopamine_min": 0.49338357244104475,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              307,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              358,
+              0
+            ]
+          },
+          "cue_matches_executed_action": true,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              164,
+              0
+            ],
+            "commit": [
+              368,
+              0
+            ],
+            "dopamine_last": 0.4999966289083235,
+            "dopamine_max": 0.5006585126541174,
+            "dopamine_min": 0.49912298767288715,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              533,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              625,
+              69
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083235,
+          "dopamine_burst_depth": 0.06510173529634289,
+          "dopamine_dip_depth": 0.00013388149198934052,
+          "eligibility_before_outcome": {
+            "actor": [
+              74.00508051605442,
+              1.6268597872016476e-05
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              64,
+              0
+            ],
+            "commit": [
+              154,
+              0
+            ],
+            "dopamine_last": 0.5650983642046664,
+            "dopamine_max": 0.5650983642046664,
+            "dopamine_min": 0.4998627474163342,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              208,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 127,
+            "trace": [
+              153,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1837,
+              0
+            ],
+            "commit": [
+              1583,
+              0
+            ],
+            "dopamine_last": 0.5000221752261782,
+            "dopamine_max": 0.5036223303276429,
+            "dopamine_min": 0.49913818653909214,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2572,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4351,
+              2959
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              258,
+              0
+            ],
+            "commit": [
+              236,
+              0
+            ],
+            "dopamine_last": 0.5035837965621712,
+            "dopamine_max": 0.5060708354507263,
+            "dopamine_min": 0.49338357244104475,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              349,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              397,
+              0
+            ]
+          },
+          "cue_matches_executed_action": true,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              152,
+              0
+            ],
+            "commit": [
+              390,
+              0
+            ],
+            "dopamine_last": 0.4999966289083235,
+            "dopamine_max": 0.5006585126541174,
+            "dopamine_min": 0.49912298767288715,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              516,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              627,
+              69
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083235,
+          "dopamine_burst_depth": 0.06510173529634289,
+          "dopamine_dip_depth": 0.00013388149198934052,
+          "eligibility_before_outcome": {
+            "actor": [
+              78.08379725880779,
+              1.1914310708058325e-07
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              65,
+              0
+            ],
+            "commit": [
+              150,
+              0
+            ],
+            "dopamine_last": 0.5650983642046664,
+            "dopamine_max": 0.5650983642046664,
+            "dopamine_min": 0.4998627474163342,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              217,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 127,
+            "trace": [
+              148,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1666,
+              395
+            ],
+            "commit": [
+              622,
+              979
+            ],
+            "dopamine_last": 0.5000221752261782,
+            "dopamine_max": 0.5036223303276429,
+            "dopamine_min": 0.49913818653909214,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              996,
+              1469
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              3699,
+              3830
+            ]
+          },
+          "arousal_winner": null,
+          "cue": {
+            "actor": [
+              314,
+              0
+            ],
+            "commit": [
+              213,
+              0
+            ],
+            "dopamine_last": 0.5035837965621712,
+            "dopamine_max": 0.5060708354507263,
+            "dopamine_min": 0.49338357244104475,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              341,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              387,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              19,
+              155
+            ],
+            "commit": [
+              0,
+              368
+            ],
+            "dopamine_last": 0.4999966289083235,
+            "dopamine_max": 0.5006585126541174,
+            "dopamine_min": 0.49912298767288715,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              540
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              82,
+              623
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083235,
+          "dopamine_burst_depth": 0.001009991951003042,
+          "dopamine_dip_depth": 0.004194815334319313,
+          "eligibility_before_outcome": {
+            "actor": [
+              60.43898387530089,
+              31.56426167719795
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              62
+            ],
+            "commit": [
+              0,
+              150
+            ],
+            "dopamine_last": 0.4958018135740042,
+            "dopamine_max": 0.5010066208593266,
+            "dopamine_min": 0.4958018135740042,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              225
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              149
+            ]
+          },
+          "reward_delivered": false,
+          "winner": null
+        },
+        {
+          "action": {
+            "actor": [
+              1927,
+              0
+            ],
+            "commit": [
+              1298,
+              3
+            ],
+            "dopamine_last": 0.5000221752266845,
+            "dopamine_max": 0.503798899354101,
+            "dopamine_min": 0.4991382055206871,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2077,
+              27
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4247,
+              2968
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              303,
+              0
+            ],
+            "commit": [
+              210,
+              0
+            ],
+            "dopamine_last": 0.5037889184730351,
+            "dopamine_max": 0.5064678979867778,
+            "dopamine_min": 0.49434285592531724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              335,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              377,
+              0
+            ]
+          },
+          "cue_matches_executed_action": true,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              134,
+              0
+            ],
+            "commit": [
+              336,
+              0
+            ],
+            "dopamine_last": 0.4999966289083416,
+            "dopamine_max": 0.5006585126541838,
+            "dopamine_min": 0.49912298767293317,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              449,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              582,
+              73
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083416,
+          "dopamine_burst_depth": 0.06510173529632945,
+          "dopamine_dip_depth": 0.00013388149199106136,
+          "eligibility_before_outcome": {
+            "actor": [
+              80.28409014375228,
+              0.24598420680523958
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              66,
+              0
+            ],
+            "commit": [
+              155,
+              0
+            ],
+            "dopamine_last": 0.5650983642046711,
+            "dopamine_max": 0.5650983642046711,
+            "dopamine_min": 0.49986274741635056,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              216,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 127,
+            "trace": [
+              160,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        }
+      ],
+      "trace_size": 64
+    },
+    "intact": {
+      "changed_outside_declared_routes": 0,
+      "changed_synapses": 2728,
+      "clean_trials": 11,
+      "expectation_weight_after": [
+        1.2468579749071043,
+        0.12950287429796742
+      ],
+      "expectation_weight_before": [
+        0.10000000149011612,
+        0.10000000149011612
+      ],
+      "mode": "intact",
+      "rewarded_trials": 6,
+      "rows": [
+        {
+          "action": {
+            "actor": [
+              0,
+              648
+            ],
+            "commit": [
+              0,
+              1546
+            ],
+            "dopamine_last": 0.5000221752274705,
+            "dopamine_max": 0.5040742450741459,
+            "dopamine_min": 0.49913823501153254,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2297
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2930,
+              4316
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5041089240143599,
+            "dopamine_max": 0.5074114822735722,
+            "dopamine_min": 0.49594798750965174,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              151
+            ],
+            "commit": [
+              0,
+              369
+            ],
+            "dopamine_last": 0.4999966289083695,
+            "dopamine_max": 0.5006585126542867,
+            "dopamine_min": 0.4991229876730046,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              536
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              614
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083695,
+          "dopamine_burst_depth": 0.0010099919509775068,
+          "dopamine_dip_depth": 0.004194815334353286,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0,
+              38.649462670608635
+            ],
+            "expectation": [
+              0.0,
+              0.0
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              60
+            ],
+            "commit": [
+              0,
+              146
+            ],
+            "dopamine_last": 0.4958018135740162,
+            "dopamine_max": 0.501006620859347,
+            "dopamine_min": 0.4958018135740162,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              216
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              143
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              675
+            ],
+            "commit": [
+              0,
+              1642
+            ],
+            "dopamine_last": 0.5000221752266845,
+            "dopamine_max": 0.503798899354101,
+            "dopamine_min": 0.4991382055206871,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2420
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2930,
+              4435
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5037889184730351,
+            "dopamine_max": 0.5064678979867778,
+            "dopamine_min": 0.49434285592531724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              153
+            ],
+            "commit": [
+              0,
+              372
+            ],
+            "dopamine_last": 0.4999966289083416,
+            "dopamine_max": 0.5006585126541838,
+            "dopamine_min": 0.49912298767293317,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              540
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              628
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083416,
+          "dopamine_burst_depth": 0.001009991950992939,
+          "dopamine_dip_depth": 0.0036507080577264928,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0,
+              39.26062672428033
+            ],
+            "expectation": [
+              0.002810002821924368,
+              0.014665120156755217
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              63
+            ],
+            "commit": [
+              0,
+              143
+            ],
+            "dopamine_last": 0.49634592085061513,
+            "dopamine_max": 0.5010066208593346,
+            "dopamine_min": 0.49634592085061513,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              221
+            ],
+            "rmtg": 0,
+            "snc": 42,
+            "trace": [
+              0,
+              145
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              646
+            ],
+            "commit": [
+              0,
+              1574
+            ],
+            "dopamine_last": 0.5000221752272003,
+            "dopamine_max": 0.5039786870397513,
+            "dopamine_min": 0.4991382248747919,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2336
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2930,
+              4346
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5039977471466887,
+            "dopamine_max": 0.5070426722874163,
+            "dopamine_min": 0.4952931971494527,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              151
+            ],
+            "commit": [
+              0,
+              372
+            ],
+            "dopamine_last": 0.49999662890835994,
+            "dopamine_max": 0.5006585126542514,
+            "dopamine_min": 0.4991229876729801,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              540
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              622
+            ]
+          },
+          "dopamine_before_outcome": 0.49999662890835994,
+          "dopamine_burst_depth": 0.0010099919509827249,
+          "dopamine_dip_depth": 0.0036507080577402595,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0,
+              38.65396223800925
+            ],
+            "expectation": [
+              0.0028305819105012738,
+              0.014989952409398872
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              59
+            ],
+            "commit": [
+              0,
+              148
+            ],
+            "dopamine_last": 0.4963459208506197,
+            "dopamine_max": 0.5010066208593427,
+            "dopamine_min": 0.4963459208506197,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              216
+            ],
+            "rmtg": 0,
+            "snc": 42,
+            "trace": [
+              0,
+              142
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              784,
+              0
+            ],
+            "commit": [
+              1801,
+              0
+            ],
+            "dopamine_last": 0.5000221752271936,
+            "dopamine_max": 0.5039763711156868,
+            "dopamine_min": 0.49913822462398194,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2540,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4593,
+              2962
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5039950589677902,
+            "dopamine_max": 0.5070341172667041,
+            "dopamine_min": 0.4952824528450724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              164,
+              0
+            ],
+            "commit": [
+              378,
+              0
+            ],
+            "dopamine_last": 0.4999966289083596,
+            "dopamine_max": 0.5006585126542503,
+            "dopamine_min": 0.49912298767297925,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              531,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              654,
+              74
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083596,
+          "dopamine_burst_depth": 0.06510173529631624,
+          "dopamine_dip_depth": 0.0001338814919927822,
+          "eligibility_before_outcome": {
+            "actor": [
+              43.22037373543011,
+              0.29814949742907104
+            ],
+            "expectation": [
+              0.0028307326214951313,
+              0.014744332512619812
+            ]
+          },
+          "outcome": {
+            "actor": [
+              64,
+              0
+            ],
+            "commit": [
+              152,
+              0
+            ],
+            "dopamine_last": 0.5650983642046759,
+            "dopamine_max": 0.5650983642046759,
+            "dopamine_min": 0.4998627474163668,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              216,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 127,
+            "trace": [
+              164,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              442
+            ],
+            "commit": [
+              0,
+              1078
+            ],
+            "dopamine_last": 0.500022175226183,
+            "dopamine_max": 0.5036241106424691,
+            "dopamine_min": 0.49913818672649646,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              1601
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2960,
+              3937
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5035858696398483,
+            "dopamine_max": 0.5060749118609308,
+            "dopamine_min": 0.4933972184265071,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              153
+            ],
+            "commit": [
+              0,
+              368
+            ],
+            "dopamine_last": 0.49999662890832364,
+            "dopamine_max": 0.5006585126541181,
+            "dopamine_min": 0.4991229876728875,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              540
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              75,
+              639
+            ]
+          },
+          "dopamine_before_outcome": 0.49999662890832364,
+          "dopamine_burst_depth": 0.001009991951002931,
+          "dopamine_dip_depth": 0.0036507080577133366,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.33259944231632776,
+              33.19831324829417
+            ],
+            "expectation": [
+              0.01566009440136393,
+              0.002975188347217248
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              59
+            ],
+            "commit": [
+              0,
+              146
+            ],
+            "dopamine_last": 0.4963459208506103,
+            "dopamine_max": 0.5010066208593266,
+            "dopamine_min": 0.4963459208506103,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              215
+            ],
+            "rmtg": 0,
+            "snc": 42,
+            "trace": [
+              0,
+              149
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              0,
+              682
+            ],
+            "commit": [
+              0,
+              1655
+            ],
+            "dopamine_last": 0.5000221752271936,
+            "dopamine_max": 0.5039763711156868,
+            "dopamine_min": 0.49913822462398194,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              2432
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              2932,
+              4434
+            ]
+          },
+          "arousal_winner": 1,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5039950589677902,
+            "dopamine_max": 0.5070341172667041,
+            "dopamine_min": 0.4952824528450724,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              0,
+              150
+            ],
+            "commit": [
+              0,
+              367
+            ],
+            "dopamine_last": 0.4999966289083596,
+            "dopamine_max": 0.5006585126542503,
+            "dopamine_min": 0.49912298767297925,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              542
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              72,
+              629
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083596,
+          "dopamine_burst_depth": 0.001009991950982836,
+          "dopamine_dip_depth": 0.003650708057739982,
+          "eligibility_before_outcome": {
+            "actor": [
+              0.0024357926406797827,
+              39.33351332597286
+            ],
+            "expectation": [
+              0.0029632188584896666,
+              0.015093931990667196
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              64
+            ],
+            "commit": [
+              0,
+              148
+            ],
+            "dopamine_last": 0.4963459208506196,
+            "dopamine_max": 0.5010066208593424,
+            "dopamine_min": 0.4963459208506196,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              221
+            ],
+            "rmtg": 0,
+            "snc": 42,
+            "trace": [
+              0,
+              152
+            ]
+          },
+          "reward_delivered": false,
+          "winner": 1
+        },
+        {
+          "action": {
+            "actor": [
+              775,
+              0
+            ],
+            "commit": [
+              1410,
+              0
+            ],
+            "dopamine_last": 0.5000221752271936,
+            "dopamine_max": 0.5039763712496232,
+            "dopamine_min": 0.49913822462399415,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              1993,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4228,
+              2969
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5039950591260066,
+            "dopamine_max": 0.5070341179294265,
+            "dopamine_min": 0.49528245571175766,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              165,
+              0
+            ],
+            "commit": [
+              376,
+              0
+            ],
+            "dopamine_last": 0.4999966289083596,
+            "dopamine_max": 0.5006585126542503,
+            "dopamine_min": 0.49912298767297925,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              535,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              666,
+              75
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083596,
+          "dopamine_burst_depth": 0.0664529884739794,
+          "dopamine_dip_depth": 0.0001338814919927822,
+          "eligibility_before_outcome": {
+            "actor": [
+              47.82812615253047,
+              0.30332801967543116
+            ],
+            "expectation": [
+              0.0028366554075112487,
+              0.015187949697737117
+            ]
+          },
+          "outcome": {
+            "actor": [
+              61,
+              0
+            ],
+            "commit": [
+              152,
+              0
+            ],
+            "dopamine_last": 0.566449617382339,
+            "dopamine_max": 0.566449617382339,
+            "dopamine_min": 0.4998627474163668,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              211,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 130,
+            "trace": [
+              164,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1077,
+              0
+            ],
+            "commit": [
+              1638,
+              0
+            ],
+            "dopamine_last": 0.5000221752260767,
+            "dopamine_max": 0.5035862169346109,
+            "dopamine_min": 0.4991381827282939,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2315,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4378,
+              2960
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              0,
+              0
+            ],
+            "commit": [
+              0,
+              0
+            ],
+            "dopamine_last": 0.5035417559296131,
+            "dopamine_max": 0.5059883169168,
+            "dopamine_min": 0.49311607496662785,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              0,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": null,
+          "delay": {
+            "actor": [
+              167,
+              0
+            ],
+            "commit": [
+              380,
+              0
+            ],
+            "dopamine_last": 0.49999662890831986,
+            "dopamine_max": 0.5006585126541042,
+            "dopamine_min": 0.49912298767287794,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              533,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              626,
+              69
+            ]
+          },
+          "dopamine_before_outcome": 0.49999662890831986,
+          "dopamine_burst_depth": 0.06333597924003509,
+          "dopamine_dip_depth": 0.00013388149198900745,
+          "eligibility_before_outcome": {
+            "actor": [
+              59.151068404054676,
+              0.002221423321975056
+            ],
+            "expectation": [
+              0.01586499079626787,
+              0.002993393761102821
+            ]
+          },
+          "outcome": {
+            "actor": [
+              65,
+              0
+            ],
+            "commit": [
+              149,
+              0
+            ],
+            "dopamine_last": 0.563332608148355,
+            "dopamine_max": 0.563332608148355,
+            "dopamine_min": 0.49986274741633085,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              209,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 124,
+            "trace": [
+              149,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1729,
+              0
+            ],
+            "commit": [
+              2050,
+              0
+            ],
+            "dopamine_last": 0.5000221752268144,
+            "dopamine_max": 0.5038436834279839,
+            "dopamine_min": 0.4991382104011963,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              3100,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4791,
+              2959
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              171,
+              0
+            ],
+            "commit": [
+              239,
+              0
+            ],
+            "dopamine_last": 0.5038408637511661,
+            "dopamine_max": 0.5065789566145291,
+            "dopamine_min": 0.49452021822348424,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              309,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              357,
+              0
+            ]
+          },
+          "cue_matches_executed_action": true,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              163,
+              0
+            ],
+            "commit": [
+              373,
+              0
+            ],
+            "dopamine_last": 0.4999966289083462,
+            "dopamine_max": 0.5006585126542008,
+            "dopamine_min": 0.4991229876729449,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              528,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              639,
+              69
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083462,
+          "dopamine_burst_depth": 0.0618595084141188,
+          "dopamine_dip_depth": 0.00013388149199150545,
+          "eligibility_before_outcome": {
+            "actor": [
+              74.17610231878182,
+              1.6268597872016476e-05
+            ],
+            "expectation": [
+              0.015675752095035324,
+              0.0028553664625790235
+            ]
+          },
+          "outcome": {
+            "actor": [
+              67,
+              0
+            ],
+            "commit": [
+              151,
+              0
+            ],
+            "dopamine_last": 0.561856137322465,
+            "dopamine_max": 0.561856137322465,
+            "dopamine_min": 0.49986274741635467,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              211,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              151,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1847,
+              0
+            ],
+            "commit": [
+              1631,
+              0
+            ],
+            "dopamine_last": 0.5000221752259447,
+            "dopamine_max": 0.5035396398462182,
+            "dopamine_min": 0.49913817778396713,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2626,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4401,
+              2959
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              253,
+              0
+            ],
+            "commit": [
+              241,
+              0
+            ],
+            "dopamine_last": 0.5034875701026071,
+            "dopamine_max": 0.5058824263666328,
+            "dopamine_min": 0.4928003632805941,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              358,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              406,
+              0
+            ]
+          },
+          "cue_matches_executed_action": true,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              145,
+              0
+            ],
+            "commit": [
+              374,
+              0
+            ],
+            "dopamine_last": 0.4999966289083152,
+            "dopamine_max": 0.5006585126540868,
+            "dopamine_min": 0.4991229876728659,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              502,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              614,
+              69
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083152,
+          "dopamine_burst_depth": 0.0596605129573754,
+          "dopamine_dip_depth": 0.00013388149198856336,
+          "eligibility_before_outcome": {
+            "actor": [
+              78.11573394998443,
+              1.1914310708058325e-07
+            ],
+            "expectation": [
+              0.015854719262564067,
+              0.0028509877613815296
+            ]
+          },
+          "outcome": {
+            "actor": [
+              63,
+              0
+            ],
+            "commit": [
+              151,
+              0
+            ],
+            "dopamine_last": 0.5596571418656906,
+            "dopamine_max": 0.5596571418656906,
+            "dopamine_min": 0.49986274741632664,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              213,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              144,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        },
+        {
+          "action": {
+            "actor": [
+              1640,
+              375
+            ],
+            "commit": [
+              650,
+              927
+            ],
+            "dopamine_last": 0.5000221752262827,
+            "dopamine_max": 0.5036568338678274,
+            "dopamine_min": 0.4991381904571761,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              1037,
+              1418
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              3777,
+              3762
+            ]
+          },
+          "arousal_winner": null,
+          "cue": {
+            "actor": [
+              303,
+              0
+            ],
+            "commit": [
+              212,
+              0
+            ],
+            "dopamine_last": 0.5036236243677229,
+            "dopamine_max": 0.5061446038642509,
+            "dopamine_min": 0.4933626875129635,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              336,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              379,
+              0
+            ]
+          },
+          "cue_matches_executed_action": false,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              19,
+              149
+            ],
+            "commit": [
+              0,
+              367
+            ],
+            "dopamine_last": 0.4999966289083272,
+            "dopamine_max": 0.5006585126541311,
+            "dopamine_min": 0.4991229876728967,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              536
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              84,
+              615
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083272,
+          "dopamine_burst_depth": 0.0010099919510009325,
+          "dopamine_dip_depth": 0.004194815334322144,
+          "eligibility_before_outcome": {
+            "actor": [
+              59.24859277315222,
+              30.621635542529436
+            ],
+            "expectation": [
+              0.01528406198261572,
+              0.002850963963993139
+            ]
+          },
+          "outcome": {
+            "actor": [
+              0,
+              64
+            ],
+            "commit": [
+              0,
+              149
+            ],
+            "dopamine_last": 0.49580181357400505,
+            "dopamine_max": 0.5010066208593281,
+            "dopamine_min": 0.49580181357400505,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              0,
+              215
+            ],
+            "rmtg": 0,
+            "snc": 40,
+            "trace": [
+              0,
+              151
+            ]
+          },
+          "reward_delivered": false,
+          "winner": null
+        },
+        {
+          "action": {
+            "actor": [
+              1868,
+              0
+            ],
+            "commit": [
+              1269,
+              25
+            ],
+            "dopamine_last": 0.5000221752266768,
+            "dopamine_max": 0.5037965003565195,
+            "dopamine_min": 0.49913820524149616,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              2045,
+              70
+            ],
+            "rmtg": 0,
+            "snc": 720,
+            "trace": [
+              4108,
+              2989
+            ]
+          },
+          "arousal_winner": 0,
+          "cue": {
+            "actor": [
+              297,
+              0
+            ],
+            "commit": [
+              230,
+              0
+            ],
+            "dopamine_last": 0.5037861575593202,
+            "dopamine_max": 0.5064628928281943,
+            "dopamine_min": 0.4943510612194188,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              350,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 125,
+            "trace": [
+              387,
+              0
+            ]
+          },
+          "cue_matches_executed_action": true,
+          "cue_winner": 0,
+          "delay": {
+            "actor": [
+              184,
+              0
+            ],
+            "commit": [
+              391,
+              0
+            ],
+            "dopamine_last": 0.4999966289083414,
+            "dopamine_max": 0.5006585126541827,
+            "dopamine_min": 0.49912298767293234,
+            "expectation": [
+              0,
+              0
+            ],
+            "lhb": 0,
+            "motor": [
+              565,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 119,
+            "trace": [
+              681,
+              75
+            ]
+          },
+          "dopamine_before_outcome": 0.4999966289083414,
+          "dopamine_burst_depth": 0.0579411794828828,
+          "dopamine_dip_depth": 0.00013388149199106136,
+          "eligibility_before_outcome": {
+            "actor": [
+              81.41972449441023,
+              0.23997606244406436
+            ],
+            "expectation": [
+              0.0033281616601803917,
+              0.014665469488965183
+            ]
+          },
+          "outcome": {
+            "actor": [
+              67,
+              0
+            ],
+            "commit": [
+              155,
+              0
+            ],
+            "dopamine_last": 0.5579378083912242,
+            "dopamine_max": 0.5579378083912242,
+            "dopamine_min": 0.49986274741635034,
+            "expectation": [
+              24,
+              24
+            ],
+            "lhb": 0,
+            "motor": [
+              210,
+              0
+            ],
+            "rmtg": 0,
+            "snc": 117,
+            "trace": [
+              152,
+              0
+            ]
+          },
+          "reward_delivered": true,
+          "winner": 0
+        }
+      ],
+      "trace_size": 64
+    }
+  },
+  "config": {
+    "ach_decay_tau_ms": 20.0,
+    "ach_pause_sensitivity": -1000.0,
+    "ach_window_ms": 5.0,
+    "action_tag_center": 300.0,
+    "action_tag_max_loser_ratio": 0.1,
+    "action_tag_slope": 0.2,
+    "action_tag_strength": 2.0,
+    "action_tag_tau_decay_ms": 500.0,
+    "action_tag_tau_rise_ms": 2.0,
+    "actor_plasticity_gain": 0.3,
+    "actor_to_gpi_weight": 60.0,
+    "arousal_to_value_weight": 18.0,
+    "coactivity_scale": 20.0,
+    "coactivity_threshold": 0.001,
+    "coactivity_trace_tau_ms": 80.0,
+    "collateral_steps": 30,
+    "commit_to_value_weight": 22.0,
+    "cue_lead_steps": 100,
+    "cue_pA": 6000.0,
+    "cue_to_actor_weight": 0.1,
+    "dopamine_decay_tau_ms": 30.0,
+    "dopamine_sensitivity": 40.0,
+    "dopamine_window_ms": 20.0,
+    "eligibility_tau_ms": 300.0,
+    "enable_action_value_critic": true,
+    "expectation_reset_weight": 16.0,
+    "expectation_to_omission_weight": 8.0,
+    "expectation_to_snc_weight": 160.0,
+    "gabab_propagation_strength": 4e-05,
+    "gabab_tau_decay_ms": 150.0,
+    "lhb_to_rmtg_weight": 18.0,
+    "max_outcome_loser_ratio": 0.1,
+    "min_outcome_event_fraction": 0.1,
+    "min_outcome_excitation_fraction": 0.1,
+    "min_outcome_inhibition_fraction": 0.2,
+    "min_plateau_outcome_fraction": 0.2,
+    "motor_to_actor_weight": 20.0,
+    "motor_to_value_fs_weight": 20.0,
+    "motor_to_value_weight": 20.0,
+    "n_actor": 24,
+    "n_cue": 24,
+    "n_expectation": 24,
+    "n_lhb": 24,
+    "n_omission_gate": 20,
+    "n_outcome": 24,
+    "n_reward_us": 24,
+    "n_reward_veto": 16,
+    "n_rmtg": 20,
+    "n_snc": 20,
+    "n_value": 64,
+    "n_value_fs": 12,
+    "omission_gate_to_lhb_weight": 16.0,
+    "omission_gate_tonic_pA": 350.0,
+    "outcome_pA": 1000.0,
+    "outcome_to_expectation_weight": 22.0,
+    "outcome_to_lhb_weight": 16.0,
+    "outcome_to_value_fs_weight": 18.0,
+    "outcome_to_value_weight": 2.0,
+    "post_reward_steps": 500,
+    "reward_delay_steps": 100,
+    "reward_learning_rate": 0.06,
+    "reward_pA": 1000.0,
+    "reward_steps": 40,
+    "reward_to_snc_weight": 100.0,
+    "reward_to_veto_weight": 20.0,
+    "reward_veto_to_lhb_weight": 20.0,
+    "rmtg_to_snc_weight": 18.0,
+    "smoke_action_steps": 600,
+    "smoke_gap_steps": 100,
+    "smoke_outcome_steps": 60,
+    "smoke_training_trials": 12,
+    "smoke_warmup_steps": 120,
+    "snc_tonic_calibration_steps": 1000,
+    "snc_tonic_pA": 350.0,
+    "trace_to_expectation_density": 0.5,
+    "trace_to_expectation_weight": 0.1,
+    "value_fs_to_value_weight": 12.0,
+    "value_to_omission_gate_weight": 8.0,
+    "value_to_snc_weight": 10.0,
+    "weight_max": 80.0
+  },
+  "config_sha256": "d02ef32c3a380c97debb825024b96ea5a53a2985bc21f611599a0fe6ebf8ea87",
+  "delay_expectation_attributable_to_learning": null,
+  "device": "NVIDIA GeForce RTX 3090",
+  "host_boundary": {
+    "desired_channel_current": false,
+    "fixed_action_epoch": true,
+    "formal_execution_open": false,
+    "generic_cue_timing": true,
+    "generic_outcome_timing": true,
+    "host_action_timed_transmission_window": false,
+    "host_action_winner_latch": false,
+    "host_calibrates_tonic_production_threshold": true,
+    "host_clears_residual_girk_between_measured_trials": true,
+    "host_copies_action_to_outcome": false,
+    "host_dense_trace_injection": false,
+    "host_eligibility_assignment": false,
+    "host_expected_value_state": false,
+    "host_initializes_dopamine_baseline": true,
+    "host_prediction_error_calculation": false,
+    "host_trialwise_dopamine_assignment": false,
+    "host_weight_update": false,
+    "sensory_reward_presence": true,
+    "shared_outcome_afferent_identical_across_channels": true
+  },
+  "late_rewarded_delay_expectation_spikes": {
+    "expectation_learning_lesion": [
+      0,
+      0
+    ],
+    "intact": [
+      0,
+      0
+    ]
+  },
+  "preconditions": [
+    {
+      "expected": 0,
+      "name": "reserved_smoke_seed_only",
+      "observed": 0,
+      "ok": true
+    },
+    {
+      "expected": [],
+      "name": "formal_execution_remains_sealed",
+      "observed": [],
+      "ok": true
+    },
+    {
+      "expected": 12,
+      "name": "both_conditions_completed_fixed_trial_count",
+      "observed": {
+        "expectation_learning_lesion": 12,
+        "intact": 12
+      },
+      "ok": true
+    },
+    {
+      "expected": "greater than zero in both conditions",
+      "name": "presynaptic_trace_engaged_before_outcome",
+      "observed": {
+        "expectation_learning_lesion": 8406,
+        "intact": 8505
+      },
+      "ok": true
+    },
+    {
+      "expected_max_absolute_weight_change": 1e-07,
+      "name": "learning_lesion_arm_is_inert",
+      "observed_max_absolute_weight_change": 0.0,
+      "ok": true
+    }
+  ],
+  "probe": "vocal_action_credit_gate_b_v7_dense_engagement",
+  "science_seed_executed": false,
+  "seed": 0,
+  "status": "ENGAGEMENT_FAIL",
+  "trace_size": 64
+}

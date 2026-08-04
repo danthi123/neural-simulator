@@ -88,10 +88,14 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     recruit the LHb/RMTg path. The repaired project search recovered the prior
     requirement that expectation fire before reward and overlap it. A
     preregistered four-point increase in sparse trace-route weight did not create
-    any pre-outcome expectation spikes, so that route is retired. The current v7
-    successor tests dense convergent action-context input into the same MSN-D1
-    expectation cells, following an earlier project diagnostic of this exact
-    firing boundary. Formal seeds remain sealed until reserved smoke shows
+    any pre-outcome expectation spikes. V7 then increased a single learned
+    action-context afferent from 24 to 200 cells; the intended route learned at
+    every size, but expectation still emitted zero spikes before reward. Both
+    mechanisms are retired. The prior MSN firing-and-learning diagnostic used a fixed
+    convergent up-state afferent plus a separate plastic context afferent, so a
+    new bounded preregistration must test that distinct architecture without
+    allowing the fixed arm to predict by itself. Formal seeds remain sealed
+    until reserved smoke shows
     learned pre-outcome expectation, graded GABA-B suppression, causal omission,
     cross-backend agreement, and an independent audit.
 After local credit is reliable, return to same-brain adaptation,

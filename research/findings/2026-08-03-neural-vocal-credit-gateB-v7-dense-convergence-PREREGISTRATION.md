@@ -1,6 +1,6 @@
 ---
 type: preregistration
-status: live
+status: retired-no-go
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v7-dense-convergence
 runner: research/runners/_vocal_action_credit_gate_v7_dense_convergence.py
@@ -97,3 +97,11 @@ still fails, consult the banked cooperative/saturating GABA-B design before a
 simulator edit. If omission remains silent after expectation engagement, test
 only the declared expectation-to-omission strength ladder under a new filed
 amendment. Never hide a failed component behind the whole-smoke summary.
+
+## Recorded outcome
+
+The complete `24/64/128/200` ladder failed on reserved seed `0` and CuPy. Every
+size produced zero pre-outcome expectation spikes despite an active trace and
+growth of the rewarded local route. The full dynamics smoke did not run, no
+formal seed was assigned, and this mechanism is retired. See
+`2026-08-03-neural-vocal-credit-gateB-v7-dense-convergence-NO-GO.md`.

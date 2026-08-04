@@ -8,7 +8,7 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
-## STATE OF THE PROJECT - 2026-08-03 19:40 EDT (read first; below this is history)
+## STATE OF THE PROJECT - 2026-08-03 20:15 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
 plain-language source of truth is `docs/CURRENT-STATE.md`; `ROADMAP.md` defines
@@ -49,10 +49,15 @@ neurons. The repaired RAG index recovered the prior June critic diagnosis:
 direct GABA-A is weak at these dopamine cells, and GABA-B needs an expectation
 signal that starts before and overlaps reward. A preregistered v6 four-point
 route-weight ladder still produced zero pre-outcome expectation spikes (`0.1`,
-`1.0`, `2.0`, `4.0`) and was retired without a runner or scientific seeds. V7
-is preregistered to test the prior evidence-backed remedy: dense convergent
-neural action context into the same MSN-D1 expectation cells. Formal phases
-remain sealed.
+`1.0`, `2.0`, `4.0`) and was retired without a runner or scientific seeds. V7's
+complete `24/64/128/200` trace-size ladder also produced zero pre-outcome
+expectation spikes. The rewarded local route learned at every size and its
+lesion remained inert, so v7 retires population size as the missing lever for
+the single plastic afferent. The repaired project search recovered the relevant
+distinction in the earlier N9 result: MSN firing used a fixed convergent
+up-state afferent plus a separate plastic context afferent. A new mechanism may
+test that architecture only under a filed bounded preregistration. Formal
+phases remain sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -96,14 +101,19 @@ GitHub and Gitea are both configured and synchronized after each coherent
 evidence or workflow commit. The canonical RAG catalog and project-history
 index now resolve from linked worktrees; executable pre/post-commit hooks
 enforce evidence gates and refresh the main-branch index automatically.
+Five independent mini-PC regression lanes completed alongside v7: 95 CPU-
+compatible tests passed. Ten GPU-specific tests are not eligible on those nodes
+because they import CuPy directly despite the nodes having no CUDA device; this
+is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Implement and structurally audit Gate B v7's reserved seed-zero dense-
-   convergence ladder. Stop at the first preregistered trace size that creates
-   learned pre-outcome expectation, then test graded GABA-B suppression and the
-   LHb/RMTg omission path on NumPy and CuPy. Do not assign or open formal seeds
-   unless the complete smoke and independent audit pass.
+1. File a new Gate B preregistration for a dual-afferent MSN mechanism: one
+   fixed convergent input that remains subthreshold by itself and one separate
+   plastic action-context input. Run only a bounded reserved-seed engagement
+   smoke first. Do not reopen v6/v7 ladders, test downstream GABA-B/omission, or
+   assign formal seeds until learned pre-outcome expectation and its learning
+   lesion both pass.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a
