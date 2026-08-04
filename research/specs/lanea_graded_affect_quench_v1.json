@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "locked",
+  "id": "laneA-graded-affect-quench-v1",
+  "authority": "research/findings/2026-08-04-laneA-graded-affect-quench-v1-PREREGISTRATION.md",
+  "source_anchor_parent_sha": "4c8b0460040f32125064323bb7e30e5627d6f10d",
+  "promotion_scope": "graded persistent affect with active clearing on one bridge only",
+  "backend": "numpy",
+  "seed_derivation": {
+    "namespace": "LANEA_GRADED_QUENCH_V1",
+    "formula": "3000000 + (integer(first_12_sha256_hex) mod 6000000)",
+    "material_template": "LANEA_GRADED_QUENCH_V1|4c8b0460040f32125064323bb7e30e5627d6f10d|role={role}|index={index}"
+  },
+  "seeds": {
+    "diagnostic": [6158765, 7695139],
+    "formal": [8981258, 3822995, 7318565, 7957896, 8575633, 8803404]
+  },
+  "seed_sha256_prefixes": {
+    "diagnostic": ["78080ec982ed", "9004987e7c63"],
+    "formal": ["3a22131d38ca", "b76796a3aad3", "047abc7532e5", "c709bba79fc8", "14e5f1f73251", "35492ec8e88c"]
+  },
+  "output_root": "research/findings/raw/affect/graded_quench_v1",
+  "diagnostic": {
+    "promotion_value": "none",
+    "recurrent_weight_ladder": [10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0],
+    "selection_rule": "Among weights passing every gate on both diagnostic seeds, select the weight with the largest minimum normalized gate margin; ties select the lower weight. If none pass, formal remains sealed."
+  },
+  "formal": {
+    "minimum_passing_seeds": 5,
+    "requires_diagnostic_selection": true
+  },
+  "bridge": {
+    "class": "research.runners._affect_eviction_derisk.EvictionAffectBrain",
+    "opponent_style": "cross",
+    "nmda_ratio": 0.5,
+    "ou_current_pA": 8.0,
+    "gabab_enabled": false,
+    "eviction_feedback_wiring": false,
+    "brain_quench": true,
+    "quench_fs_neurons": 30,
+    "quench_gaba_a_weight": 15.0,
+    "quench_drive_pA": 250.0,
+    "quench_duration_ms": 150
+  },
+  "protocol": {
+    "settle_ms": 40,
+    "baseline_read_ms": 100,
+    "drive_ms": 120,
+    "post_drive_ms": 300,
+    "read_ms": 100,
+    "persistence_levels": [-0.8, 0.8],
+    "magnitude_levels": [-1.0, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1.0],
+    "sign_crossing_levels": [-1.0, -0.75, -0.5, -0.25, 0.0, 0.25, 0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, -0.25, -0.5, -0.75, -1.0],
+    "sign_event_ms": 80,
+    "reignite_level": -0.8
+  },
+  "thresholds": {
+    "persistence_min_each_sign": 0.5,
+    "persistence_mean_min": 0.62,
+    "nmda_off_persistence_max": 0.1,
+    "magnitude_pearson_min": 0.6,
+    "magnitude_span_min": 0.02,
+    "magnitude_polarity_accuracy_min": 0.875,
+    "sign_crossing_pearson_min": 0.6,
+    "sign_accuracy_min": 0.75,
+    "sign_crossing_count_min": 2,
+    "zero_band_fraction_max": 0.5,
+    "largest_step_fraction_max": 0.6,
+    "eviction_ratio_max": 0.6,
+    "reignition_ratio_min": 0.6,
+    "quench_lesion_residual_min": 0.9,
+    "quench_lesion_gap_min": 0.3,
+    "quench_fs_during_rate_min": 0.1,
+    "quench_fs_read_rate_max": 0.02,
+    "quench_drive_at_read_max": 0.000001
+  },
+  "controls": [
+    "matched NMDA-off persistence control",
+    "same-bridge quench_out transmission-gate lesion",
+    "quench_fs fires during clear but is undriven and quiet at read",
+    "fixed bipolar sign-crossing schedule"
+  ],
+  "scaffolds": [
+    "appraisal valence and clear timing are host-issued protocol inputs",
+    "recurrent gain is selected from a host-defined diagnostic ladder",
+    "core affect is not yet grounded in interoception or learned appraisal",
+    "only valence is tested; arousal and downstream speech colouring are outside this package"
+  ]
+}
