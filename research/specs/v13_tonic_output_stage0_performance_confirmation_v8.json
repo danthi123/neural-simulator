@@ -1,6 +1,6 @@
 {
   "candidate_manifest": "research/specs/v13_stage0_candidate_source_v10.sha256",
-  "candidate_revision": "8505c54ff",
+  "candidate_revision": "1ecc85cd698539a6ef92e112d2c49092cfa21f1e",
   "backend": "cupy",
   "device": "NVIDIA GeForce RTX 3090",
   "mechanism": "v13-stage0-performance-confirmation-v8",
@@ -18,5 +18,5 @@
     "candidate_artifact_inside_raw_evidence_root": true,
     "stage1_seed_1031": "sealed-not-read-or-executed"
   },
-  "sha256": "79cf6dc08592ff17d4540e202e736c69ae841f69a65a763c24733368b13f93b1"
+  "sha256": "d1c191e81223e92f5059906f48793dd908859afae595c2461c7168c4ee678b90"
 }

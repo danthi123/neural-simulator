@@ -1,0 +1,46 @@
+{
+  "artifact": {
+    "path": "_run/legacy_performance_baseline.json",
+    "sha256": "869cde4dcb978fc9eafd2799358caf94654405506b6ad5d3fd840ce9e1b602d1",
+    "size_bytes": 487
+  },
+  "command": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-B",
+    "-m",
+    "research.runners._vocal_action_credit_gate_v13_tonic_output",
+    "--legacy-performance-baseline",
+    "--out",
+    "/tmp/v13-v7-legacy-package/_run/legacy_performance_baseline.json"
+  ],
+  "device": "NVIDIA GeForce RTX 3090",
+  "environment_controls": {
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_IDENTITY": ".source_identity.git",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHOME": "absent",
+    "PYTHONPATH": "absent",
+    "SIM_BACKEND": "cupy",
+    "SIM_NO_PROVENANCE": "1"
+  },
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "package": {
+    "base_revision": "8994b5102b39a8a6aa6abdeb9fde02579b7db6a8",
+    "lock_file_sha256": "ec0a8e13143a692ddaad9c815c61cfc709342f958018e52b89fff14a40619a74",
+    "lock_path": ".legacy_source_package.json",
+    "lock_sha256": "8f3e55d350efc933fe95795ca8ee6a769e488475ae2bc61524431e8785c95ce6",
+    "overlay_revision": "d091fa6692bdf8115c8073af6fd31fc9626921a8",
+    "source_manifest_path": ".source_manifest.sha256",
+    "source_manifest_sha256": "5e21f324b97fac758c52334b029e4a7d2ea78d15bab7a6dc3dfa33ba78baed68"
+  },
+  "schema": "v13-legacy-execution-receipt-v1",
+  "sha256": "ec5a7460fdb527898baa6731d64fc9583a658096fd99b038e307c9ab72c0bfee",
+  "status": "completed",
+  "timing": {
+    "duration_ns": 18747808263,
+    "ended_utc_ns": 1785845463506721859,
+    "started_utc_ns": 1785845444758911989
+  },
+  "working_directory": "."
+}

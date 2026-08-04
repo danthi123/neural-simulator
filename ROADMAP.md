@@ -166,9 +166,10 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     (`1.0220` versus `1.02`) and the v2 active/default ceiling materially
     (`1.1504` versus `1.10`). Its post-command receipt failed because the output
     was outside the provenance scanner; a one-way recovery preserved only the
-    measured negative and prohibited a retry or positive verdict. Stage 0 is not
-    promoted. Profile and reduce v2 active-path overhead, fix output placement,
-    then preregister confirmation. Stage-1 seed `1031` remains sealed.
+    measured negative and prohibited a retry or positive verdict. V8 then fixed
+    the v2 active-path overhead (`1.006836` active/default) and corrected output
+    placement, but normal default/old still failed (`1.059092` versus `1.02`),
+    so Stage 0 remains unpromoted. Stage-1 seed `1031` remains sealed.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 

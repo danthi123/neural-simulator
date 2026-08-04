@@ -1,0 +1,37 @@
+{
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "files": {
+    "performance-candidate.json": {
+      "sha256": "5b79f241e1ded1c241f2a66269944f46be012dbd449ee8baaa48052bab1c6c3d",
+      "size_bytes": 6140
+    },
+    "performance-candidate.json.prov.json": {
+      "sha256": "a0e449443f3485439e89613e48795639f3a50da10de79a3c9751ba8aeff9902e",
+      "size_bytes": 1454
+    },
+    "performance-candidate.receipt.json": {
+      "sha256": "669c270b1d2348e4fad0466b3210ef3b88b60f72365e92cd9491350f11343c11",
+      "size_bytes": 1897
+    }
+  },
+  "provenance": {
+    "receipt_sha256": "669c270b1d2348e4fad0466b3210ef3b88b60f72365e92cd9491350f11343c11",
+    "sidecar_sha256": "a0e449443f3485439e89613e48795639f3a50da10de79a3c9751ba8aeff9902e"
+  },
+  "receipt_source": {
+    "file_count": 55,
+    "git_sha": "1ecc85cd698539a6ef92e112d2c49092cfa21f1e",
+    "kind": "git",
+    "manifest": "research/specs/v13_stage0_candidate_source_v10.sha256",
+    "manifest_sha256": "04214978e26efbe3a7014fa2ced6a52f8600419ef4b8ffd6df40bd466cc05a73",
+    "tree_sha256": "04214978e26efbe3a7014fa2ced6a52f8600419ef4b8ffd6df40bd466cc05a73"
+  },
+  "runner": "tools/v13_stage0_performance_confirmation_v8.py",
+  "schema": "v13-stage0-candidate-performance-transfer-v1",
+  "seed": 314159,
+  "sha256": "0ccbb868a5299cc92514f6a14af1e8048b762e90ca3c1a8d6a55ab0e368958df",
+  "source_manifest_sha256": "04214978e26efbe3a7014fa2ced6a52f8600419ef4b8ffd6df40bd466cc05a73",
+  "source_revision": "1ecc85cd698539a6ef92e112d2c49092cfa21f1e",
+  "status": "transferred"
+}

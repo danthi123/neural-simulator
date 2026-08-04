@@ -1,0 +1,245 @@
+{
+  "probe": "gateB_v13_tonic_output_performance",
+  "stage": "performance",
+  "seed": 314159,
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "source_sha": "1ecc85cd698539a6ef92e112d2c49092cfa21f1e",
+  "source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "e395c04ed5545a30b12018e841c9c4c0110c2be309a4879ad4ef0e1694a5e2a7",
+    "sim/bridge.py": "21c0e9f4764c6fc7bd6384a1e18b659891f90098a5b5e10e138e6d55dcf2ef91",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28",
+    "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+    "research/specs/v13_tonic_output_stage0_process_correction_v6.json": "e9600d6268ab0f2ba9c229fd9045978766d1ec3c60021dcc5797203a6b4a3be9"
+  },
+  "old_baseline_artifact": "/tmp/sim-v13-candidate-v8/research/findings/raw/v13_tonic_output_stage0_performance_confirmation_v8/candidate-runtime/legacy_performance_baseline.json",
+  "old_baseline": {
+    "probe": "gateB_v13_legacy_default_performance",
+    "stage": "legacy_performance_baseline",
+    "seed": 314159,
+    "backend": "cupy",
+    "device": "NVIDIA GeForce RTX 3090",
+    "source_sha": "8994b5102b39a8a6aa6abdeb9fde02579b7db6a8",
+    "wall_seconds": [
+      5.8334135839977534,
+      5.78883048100397,
+      5.77220255600696
+    ],
+    "median_seconds": 5.78883048100397,
+    "median_step_seconds": 0.0002894415240501985,
+    "outcome": "BASELINE_RECORDED",
+    "elapsed_seconds": 17.394446621008683
+  },
+  "cells": {
+    "normal_default": {
+      "active": false,
+      "step_mode": "normal",
+      "wall_seconds": [
+        6.047026608008309,
+        6.130905688012717,
+        6.153650043997914
+      ],
+      "median_seconds": 6.130905688012717,
+      "median_step_seconds": 0.0003065452844006359,
+      "feature_bytes": [
+        0,
+        0,
+        0
+      ],
+      "memory_pool_used_bytes": [
+        860160,
+        860160,
+        860160
+      ],
+      "megakernel_dispatch": [
+        false,
+        false,
+        false
+      ]
+    },
+    "normal_active": {
+      "active": true,
+      "step_mode": "normal",
+      "wall_seconds": [
+        6.1271429889893625,
+        6.151485413996852,
+        6.196727519010892
+      ],
+      "median_seconds": 6.151485413996852,
+      "median_step_seconds": 0.0003075742706998426,
+      "feature_bytes": [
+        2400,
+        2400,
+        2400
+      ],
+      "memory_pool_used_bytes": [
+        862720,
+        862720,
+        862720
+      ],
+      "megakernel_dispatch": [
+        false,
+        false,
+        false
+      ]
+    },
+    "v1_default": {
+      "active": false,
+      "step_mode": "v1",
+      "wall_seconds": [
+        4.9688455240102485,
+        4.9740084759978345,
+        5.075013900990598
+      ],
+      "median_seconds": 4.9740084759978345,
+      "median_step_seconds": 0.00024870042379989175,
+      "feature_bytes": [
+        0,
+        0,
+        0
+      ],
+      "memory_pool_used_bytes": [
+        862720,
+        862720,
+        862720
+      ],
+      "megakernel_dispatch": [
+        true,
+        true,
+        true
+      ]
+    },
+    "v1_active": {
+      "active": true,
+      "step_mode": "v1",
+      "wall_seconds": [
+        5.085609437999665,
+        5.0688485839928035,
+        5.245699663995765
+      ],
+      "median_seconds": 5.085609437999665,
+      "median_step_seconds": 0.00025428047189998324,
+      "feature_bytes": [
+        2400,
+        2400,
+        2400
+      ],
+      "memory_pool_used_bytes": [
+        865280,
+        865280,
+        865280
+      ],
+      "megakernel_dispatch": [
+        true,
+        true,
+        true
+      ]
+    },
+    "v2_default": {
+      "active": false,
+      "step_mode": "v2",
+      "wall_seconds": [
+        0.848019604003639,
+        0.8030463730101474,
+        0.8387055170023814
+      ],
+      "median_seconds": 0.8387055170023814,
+      "median_step_seconds": 4.193527585011907e-05,
+      "feature_bytes": [
+        0,
+        0,
+        0
+      ],
+      "memory_pool_used_bytes": [
+        1242624,
+        1242624,
+        1242624
+      ],
+      "megakernel_dispatch": [
+        true,
+        true,
+        true
+      ]
+    },
+    "v2_active": {
+      "active": true,
+      "step_mode": "v2",
+      "wall_seconds": [
+        0.8444387310009915,
+        0.8234685220086249,
+        0.8559152870002436
+      ],
+      "median_seconds": 0.8444387310009915,
+      "median_step_seconds": 4.222193655004958e-05,
+      "feature_bytes": [
+        2400,
+        2400,
+        2400
+      ],
+      "memory_pool_used_bytes": [
+        1245184,
+        1245184,
+        1245184
+      ],
+      "megakernel_dispatch": [
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "ratios": {
+    "default_vs_old": 1.0590922826521292,
+    "normal_active": 1.003356718734782,
+    "v1_active": 1.0224368258599403,
+    "v2_active": 1.0068357890611013
+  },
+  "checks": {
+    "old_baseline_supplied": true,
+    "default_off_ratio": false,
+    "normal_active_ratio": true,
+    "v1_active_ratio": true,
+    "v2_active_ratio": true,
+    "feature_storage": true,
+    "default_does_not_allocate": true,
+    "v1_dispatches": true,
+    "v2_dispatches": true
+  },
+  "verdict_status": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "RTX 3090 CuPy lane",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all six benchmark cells measured",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "three repetitions per cell",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "legacy baseline supplied",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "go": false,
+  "outcome": "PERFORMANCE_NO_GO",
+  "elapsed_seconds": 74.88030858999991
+}

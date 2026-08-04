@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -65,7 +67,57 @@ def run_candidate(*, root: Path, candidate_root: Path) -> dict:
 
 
 def transfer_candidate(*, root: Path, candidate_root: Path) -> dict:
-    return v7.transfer_candidate(root=root, candidate_root=candidate_root)
+    readiness(root=root)
+    candidate_root = candidate_root.resolve(strict=True)
+    if v7._git_head(candidate_root) != CANDIDATE_REVISION:
+        raise v7.ContinuationError("candidate checkout identity changed before transfer")
+    paths = _candidate_paths(candidate_root)
+    relative_receipt = paths["receipt"].relative_to(candidate_root).as_posix()
+    try:
+        receipt = v7.execution_receipt.verify_receipt(candidate_root, relative_receipt)
+    except v7.execution_receipt.ReceiptError as exc:
+        raise v7.ContinuationError(f"candidate receipt is invalid: {exc}") from exc
+    destination = root / RAW_PATH / "candidate-performance"
+    if os.path.lexists(destination):
+        raise v7.ContinuationError(f"refusing existing candidate transfer: {destination}")
+    destination.mkdir(parents=True, mode=0o755)
+    records: dict[str, dict[str, int | str]] = {}
+    try:
+        for name, source in (
+            ("performance-candidate.json", paths["artifact"]),
+            ("performance-candidate.receipt.json", paths["receipt"]),
+            ("performance-candidate.json.prov.json", paths["sidecar"]),
+        ):
+            data = v7._regular(source, f"candidate {name}")
+            (destination / name).write_bytes(data)
+            records[name] = {"sha256": v7._sha256(data), "size_bytes": len(data)}
+        artifact = json.loads(v7._regular(paths["artifact"], "candidate performance artifact"))
+        env = receipt.get("env_allowlist", {})
+        backend = env.get("SIM_BACKEND")
+        if not isinstance(backend, str) or not isinstance(receipt.get("device"), str):
+            raise v7.ContinuationError("candidate receipt lacks backend or device identity")
+        value = {
+            "schema": "v13-stage0-candidate-performance-transfer-v1",
+            "status": "transferred",
+            "backend": backend,
+            "device": receipt["device"],
+            "seed": artifact.get("seed"),
+            "runner": "tools/v13_stage0_performance_confirmation_v8.py",
+            "source_revision": CANDIDATE_REVISION,
+            "source_manifest_sha256": CANDIDATE_MANIFEST_SHA256,
+            "receipt_source": receipt["source"],
+            "provenance": {
+                "receipt_sha256": records["performance-candidate.receipt.json"]["sha256"],
+                "sidecar_sha256": records["performance-candidate.json.prov.json"]["sha256"],
+            },
+            "files": records,
+        }
+        value["sha256"] = v7._canonical_digest(value)
+        v7._write_exclusive(destination / "transfer-manifest.json", value)
+    except Exception:
+        shutil.rmtree(destination)
+        raise
+    return value
 
 
 def finalize(*, root: Path = ROOT) -> dict:
@@ -102,11 +154,11 @@ def finalize(*, root: Path = ROOT) -> dict:
         "device": "NumPy CPU and NVIDIA GeForce RTX 3090",
         "runner": "tools/v13_stage0_performance_confirmation_v8.py",
         "config": SPEC_PATH,
-        "preconditions": {
-            "sealed_v6_physiology": True,
-            "candidate_measurement_complete": True,
-            "candidate_receipt_complete": True,
-        },
+        "preconditions": [
+            {"name": "sealed_v6_physiology", "ok": True},
+            {"name": "candidate_measurement_complete", "ok": True},
+            {"name": "candidate_receipt_complete", "ok": True},
+        ],
         "selected_current_pA": 100.0,
         "checks": {"sealed_v6_physiology": True, "performance": performance_go},
         "v6_inputs": accepted,
