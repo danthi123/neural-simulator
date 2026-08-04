@@ -1,0 +1,482 @@
+#!/usr/bin/env python3
+"""Build and verify the frozen V13 legacy scientific source package.
+
+The builder reads Git objects only. It never imports or executes scientific
+code, creates command envelopes, or reads experiment seed configuration.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path, PurePosixPath
+import shutil
+import stat
+import subprocess
+import sys
+from typing import Any, Mapping
+import re
+
+
+ROOT = Path(__file__).resolve().parents[1]
+BASE_REVISION = "8994b5102b39a8a6aa6abdeb9fde02579b7db6a8"
+CANDIDATE_REVISION = "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+OVERLAY_PATH = "research/runners/_vocal_action_credit_gate_v13_tonic_output.py"
+MANIFEST_NAME = ".source_manifest.sha256"
+LOCK_NAME = ".legacy_source_package.json"
+LOCK_SCHEMA = "v13-legacy-scientific-source-package-v1"
+_HEX40 = re.compile(r"^[0-9a-f]{40}$")
+_HEX64 = re.compile(r"^[0-9a-f]{64}$")
+
+# Import closure established by the independent legacy-package audit. The
+# overlay is intentionally absent: it is sourced only from CANDIDATE_REVISION.
+BASE_PATHS = (
+    "experiment/__init__.py",
+    "experiment/engine.py",
+    "experiment/groups.py",
+    "experiment/presets.py",
+    "experiment/readout.py",
+    "experiment/stimulus.py",
+    "experiment/training.py",
+    "research/__init__.py",
+    "research/runners/__init__.py",
+    "research/runners/_vocal_action_selector_gate.py",
+    "sim/__init__.py",
+    "sim/backend.py",
+    "sim/bridge.py",
+    "sim/config.py",
+    "sim/connectivity.py",
+    "sim/enums.py",
+    "sim/kernels.py",
+    "sim/neuromodulators.py",
+    "sim/profiles.py",
+    "sim/regions.py",
+    "sim/synapse_storage.py",
+    "sim/text_embeddings.py",
+    "tools/lab.py",
+    "tools/verdict.py",
+)
+EXPECTED_OVERLAYS = {OVERLAY_PATH: CANDIDATE_REVISION}
+SOURCE_PATHS = tuple(sorted((*BASE_PATHS, OVERLAY_PATH)))
+
+
+class PackageError(RuntimeError):
+    """Raised when the package cannot be constructed or verified exactly."""
+
+
+def _canonical_digest(value: Mapping[str, Any]) -> str:
+    body = dict(value)
+    body.pop("sha256", None)
+    payload = json.dumps(
+        body, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+    ).encode("ascii")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def _safe_path(value: str) -> str:
+    path = PurePosixPath(value)
+    if (
+        not value
+        or path.is_absolute()
+        or not path.name
+        or "." in path.parts
+        or ".." in path.parts
+        or path.as_posix() != value
+    ):
+        raise PackageError(f"unsafe package path: {value!r}")
+    return value
+
+
+def _git(root: Path, *args: str, binary: bool = False) -> str | bytes:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=root,
+        capture_output=True,
+        text=not binary,
+        check=False,
+    )
+    if result.returncode != 0:
+        error = (
+            result.stderr.decode("utf-8", "replace")
+            if binary
+            else result.stderr
+        )
+        raise PackageError(f"git {' '.join(args)} failed: {error.strip()}")
+    return result.stdout
+
+
+def _resolve_exact_commit(root: Path, revision: str) -> str:
+    resolved = str(_git(root, "rev-parse", f"{revision}^{{commit}}")).strip()
+    if resolved != revision:
+        raise PackageError(
+            f"revision identity mismatch: expected {revision}, found {resolved}"
+        )
+    return resolved
+
+
+def _commit_tree(root: Path, revision: str) -> str:
+    tree = str(_git(root, "rev-parse", f"{revision}^{{tree}}")).strip()
+    if not tree:
+        raise PackageError(f"revision has no tree: {revision}")
+    return tree
+
+
+def _git_entry(root: Path, revision: str, relative: str) -> dict[str, str]:
+    relative = _safe_path(relative)
+    raw = bytes(_git(root, "ls-tree", "-z", revision, "--", relative, binary=True))
+    records = [record for record in raw.split(b"\0") if record]
+    if len(records) != 1:
+        raise PackageError(
+            f"expected one Git entry for {relative} at {revision}, found {len(records)}"
+        )
+    try:
+        metadata, encoded_path = records[0].split(b"\t", 1)
+        mode, kind, object_id = metadata.decode("ascii").split(" ")
+        actual_path = encoded_path.decode("utf-8")
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise PackageError(f"invalid Git tree entry for {relative}") from exc
+    if actual_path != relative:
+        raise PackageError(f"Git returned an unexpected path for {relative}: {actual_path}")
+    if kind != "blob" or mode not in {"100644", "100755"}:
+        raise PackageError(
+            f"source must be a regular Git blob: {relative} ({mode} {kind})"
+        )
+    return {"path": relative, "mode": mode, "git_blob": object_id}
+
+
+def _blob(root: Path, object_id: str) -> bytes:
+    return bytes(_git(root, "cat-file", "blob", object_id, binary=True))
+
+
+def _validate_overlay_policy(overlays: Mapping[str, str] | None) -> None:
+    supplied = EXPECTED_OVERLAYS if overlays is None else dict(overlays)
+    if supplied != EXPECTED_OVERLAYS:
+        raise PackageError(
+            "overlay policy must contain only the audited V13 runner overlay "
+            f"from {CANDIDATE_REVISION}"
+        )
+
+
+def _inventory(
+    root: Path, overlays: Mapping[str, str] | None = None,
+) -> tuple[list[dict[str, Any]], str, str]:
+    _validate_overlay_policy(overlays)
+    base_revision = _resolve_exact_commit(root, BASE_REVISION)
+    candidate_revision = _resolve_exact_commit(root, CANDIDATE_REVISION)
+    base_tree = _commit_tree(root, base_revision)
+    candidate_tree = _commit_tree(root, candidate_revision)
+
+    records: list[dict[str, Any]] = []
+    for relative in BASE_PATHS:
+        entry = _git_entry(root, base_revision, relative)
+        data = _blob(root, entry["git_blob"])
+        records.append({
+            **entry,
+            "source_revision": base_revision,
+            "sha256": _sha256(data),
+            "data": data,
+        })
+
+    overlay = _git_entry(root, candidate_revision, OVERLAY_PATH)
+    overlay_data = _blob(root, overlay["git_blob"])
+    records.append({
+        **overlay,
+        "source_revision": candidate_revision,
+        "sha256": _sha256(overlay_data),
+        "data": overlay_data,
+    })
+    records.sort(key=lambda item: item["path"])
+    if [item["path"] for item in records] != list(SOURCE_PATHS):
+        raise PackageError("constructed source set differs from the audited closure")
+    if sum(item["source_revision"] == candidate_revision for item in records) != 1:
+        raise PackageError("package must contain exactly one candidate overlay")
+    return records, base_tree, candidate_tree
+
+
+def _reject_symlink_ancestors(path: Path) -> None:
+    absolute = path.absolute()
+    ancestors = list(reversed(absolute.parents))
+    for ancestor in ancestors:
+        try:
+            info = ancestor.lstat()
+        except FileNotFoundError:
+            raise PackageError(f"output parent does not exist: {ancestor}")
+        if stat.S_ISLNK(info.st_mode):
+            raise PackageError(f"output path has a symlink ancestor: {ancestor}")
+        if not stat.S_ISDIR(info.st_mode):
+            raise PackageError(f"output ancestor is not a directory: {ancestor}")
+
+
+def _write_exclusive(path: Path, data: bytes, mode: int = 0o644) -> None:
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(path, flags, mode)
+    with os.fdopen(descriptor, "wb") as handle:
+        os.fchmod(handle.fileno(), mode)
+        handle.write(data)
+        handle.flush()
+        os.fsync(handle.fileno())
+
+
+def _package_file_set_digest(paths: list[str]) -> str:
+    return _sha256("".join(f"{path}\n" for path in sorted(paths)).encode("utf-8"))
+
+
+def _lock(
+    records: list[dict[str, Any]],
+    *,
+    base_tree: str,
+    candidate_tree: str,
+    manifest: bytes,
+) -> dict[str, Any]:
+    files = [
+        {key: record[key] for key in (
+            "path", "mode", "git_blob", "sha256", "source_revision",
+        )}
+        for record in records
+    ]
+    exact_paths = [*SOURCE_PATHS, MANIFEST_NAME, LOCK_NAME]
+    value: dict[str, Any] = {
+        "schema": LOCK_SCHEMA,
+        "status": "frozen",
+        "base": {"revision": BASE_REVISION, "tree": base_tree},
+        "candidate": {"revision": CANDIDATE_REVISION, "tree": candidate_tree},
+        "overlay": {
+            "path": OVERLAY_PATH,
+            "source_revision": CANDIDATE_REVISION,
+            "sha256": next(
+                item["sha256"] for item in records if item["path"] == OVERLAY_PATH
+            ),
+        },
+        "source_manifest": {
+            "path": MANIFEST_NAME,
+            "sha256": _sha256(manifest),
+            "file_count": len(records),
+        },
+        "package_file_set": {
+            "file_count": len(exact_paths),
+            "paths_sha256": _package_file_set_digest(exact_paths),
+        },
+        "files": files,
+    }
+    value["sha256"] = _canonical_digest(value)
+    return value
+
+
+def build_package(
+    *,
+    root: Path,
+    output: Path,
+    overlays: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    """Materialize the audited package without importing or executing it."""
+    root = root.resolve(strict=True)
+    output = output.expanduser().absolute()
+    _reject_symlink_ancestors(output)
+    if os.path.lexists(output):
+        raise PackageError(f"refusing existing output: {output}")
+
+    records, base_tree, candidate_tree = _inventory(root, overlays)
+    created = False
+    try:
+        os.mkdir(output, 0o755)
+        created = True
+        for record in records:
+            destination = output.joinpath(*PurePosixPath(record["path"]).parts)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            if destination.parent.is_symlink():
+                raise PackageError(f"refusing symlinked package directory: {destination.parent}")
+            mode = 0o755 if record["mode"] == "100755" else 0o644
+            _write_exclusive(destination, record["data"], mode)
+
+        manifest = "".join(
+            f"{record['sha256']}  {record['path']}\n" for record in records
+        ).encode("utf-8")
+        _write_exclusive(output / MANIFEST_NAME, manifest)
+        lock = _lock(
+            records,
+            base_tree=base_tree,
+            candidate_tree=candidate_tree,
+            manifest=manifest,
+        )
+        lock_bytes = (json.dumps(lock, indent=2, sort_keys=True) + "\n").encode("ascii")
+        _write_exclusive(output / LOCK_NAME, lock_bytes)
+        verified = verify_package(output)
+    except Exception:
+        if created:
+            shutil.rmtree(output)
+        raise
+    return verified
+
+
+def _regular_files(package: Path) -> dict[str, Path]:
+    found: dict[str, Path] = {}
+    for directory, names, filenames in os.walk(package, followlinks=False):
+        directory_path = Path(directory)
+        directory_info = directory_path.lstat()
+        if stat.S_ISLNK(directory_info.st_mode) or not stat.S_ISDIR(directory_info.st_mode):
+            raise PackageError(f"package contains a non-directory: {directory_path}")
+        for name in names:
+            child = directory_path / name
+            info = child.lstat()
+            if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
+                raise PackageError(f"package contains a symlink or non-directory: {child}")
+        for name in filenames:
+            child = directory_path / name
+            info = child.lstat()
+            if stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode):
+                raise PackageError(f"package contains a symlink or non-regular file: {child}")
+            relative = child.relative_to(package).as_posix()
+            found[_safe_path(relative)] = child
+    return found
+
+
+def verify_package(package: Path) -> dict[str, Any]:
+    """Verify package bytes, modes, provenance, self-digest, and exact file set."""
+    package = package.expanduser().absolute()
+    try:
+        root_info = package.lstat()
+    except FileNotFoundError as exc:
+        raise PackageError(f"package does not exist: {package}") from exc
+    if stat.S_ISLNK(root_info.st_mode) or not stat.S_ISDIR(root_info.st_mode):
+        raise PackageError(f"package root is not a real directory: {package}")
+
+    files_on_disk = _regular_files(package)
+    lock_path = package / LOCK_NAME
+    manifest_path = package / MANIFEST_NAME
+    try:
+        lock = json.loads(lock_path.read_text(encoding="ascii"))
+        manifest = manifest_path.read_bytes()
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise PackageError(f"cannot read package metadata: {exc}") from exc
+
+    expected_lock_fields = {
+        "schema", "status", "base", "candidate", "overlay", "source_manifest",
+        "package_file_set", "files", "sha256",
+    }
+    if not isinstance(lock, dict) or set(lock) != expected_lock_fields:
+        raise PackageError("package lock has missing or extra fields")
+    if lock["schema"] != LOCK_SCHEMA or lock["status"] != "frozen":
+        raise PackageError("package lock schema or status is invalid")
+    if lock.get("sha256") != _canonical_digest(lock):
+        raise PackageError("package lock self-digest is invalid")
+    if lock["base"].get("revision") != BASE_REVISION:
+        raise PackageError("package lock has the wrong base revision")
+    if lock["candidate"].get("revision") != CANDIDATE_REVISION:
+        raise PackageError("package lock has the wrong candidate revision")
+    if not _HEX40.fullmatch(str(lock["base"].get("tree", ""))):
+        raise PackageError("package lock has an invalid base tree")
+    if not _HEX40.fullmatch(str(lock["candidate"].get("tree", ""))):
+        raise PackageError("package lock has an invalid candidate tree")
+    if lock["overlay"].get("path") != OVERLAY_PATH or lock["overlay"].get(
+        "source_revision"
+    ) != CANDIDATE_REVISION:
+        raise PackageError("package lock has an unexpected overlay")
+
+    source_records = lock.get("files")
+    if not isinstance(source_records, list):
+        raise PackageError("package lock files must be a list")
+    record_fields = {"path", "mode", "git_blob", "sha256", "source_revision"}
+    if any(not isinstance(item, dict) or set(item) != record_fields for item in source_records):
+        raise PackageError("package lock contains an invalid source record")
+    if any(
+        item["mode"] not in {"100644", "100755"}
+        or not _HEX40.fullmatch(str(item["git_blob"]))
+        or not _HEX64.fullmatch(str(item["sha256"]))
+        for item in source_records
+    ):
+        raise PackageError("package lock contains invalid source identity fields")
+    record_paths = [item["path"] for item in source_records]
+    if record_paths != list(SOURCE_PATHS) or len(record_paths) != len(set(record_paths)):
+        raise PackageError("package source set differs from the audited closure")
+    overlay_records = [
+        item for item in source_records if item["source_revision"] == CANDIDATE_REVISION
+    ]
+    if len(overlay_records) != 1 or overlay_records[0]["path"] != OVERLAY_PATH:
+        raise PackageError("package contains an unexpected candidate overlay")
+    if any(
+        item["source_revision"] != BASE_REVISION
+        for item in source_records
+        if item["path"] != OVERLAY_PATH
+    ):
+        raise PackageError("package contains a non-base scientific source")
+
+    manifest_lines = manifest.decode("utf-8").splitlines()
+    expected_lines = [f"{item['sha256']}  {item['path']}" for item in source_records]
+    if manifest_lines != expected_lines:
+        raise PackageError("source manifest differs from the locked source records")
+    manifest_binding = lock["source_manifest"]
+    if manifest_binding != {
+        "path": MANIFEST_NAME,
+        "sha256": _sha256(manifest),
+        "file_count": len(source_records),
+    }:
+        raise PackageError("source manifest binding is invalid")
+
+    expected_paths = {*SOURCE_PATHS, MANIFEST_NAME, LOCK_NAME}
+    if set(files_on_disk) != expected_paths:
+        missing = sorted(expected_paths - set(files_on_disk))
+        extra = sorted(set(files_on_disk) - expected_paths)
+        raise PackageError(f"package file set differs: missing={missing}, extra={extra}")
+    file_set = lock["package_file_set"]
+    if file_set != {
+        "file_count": len(expected_paths),
+        "paths_sha256": _package_file_set_digest(list(expected_paths)),
+    }:
+        raise PackageError("package exact-file-set binding is invalid")
+
+    for item in source_records:
+        path = files_on_disk[item["path"]]
+        data = path.read_bytes()
+        if _sha256(data) != item["sha256"]:
+            raise PackageError(f"source digest mismatch: {item['path']}")
+        expected_mode = 0o755 if item["mode"] == "100755" else 0o644
+        if stat.S_IMODE(path.stat().st_mode) != expected_mode:
+            raise PackageError(f"source mode mismatch: {item['path']}")
+    if lock["overlay"].get("sha256") != overlay_records[0]["sha256"]:
+        raise PackageError("overlay digest binding is invalid")
+
+    return {
+        "schema": LOCK_SCHEMA,
+        "status": "verified",
+        "base_revision": BASE_REVISION,
+        "candidate_revision": CANDIDATE_REVISION,
+        "source_file_count": len(source_records),
+        "package_file_count": len(expected_paths),
+        "manifest_sha256": _sha256(manifest),
+        "lock_sha256": lock["sha256"],
+    }
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=ROOT)
+    commands = parser.add_subparsers(dest="command", required=True)
+    build = commands.add_parser("build")
+    build.add_argument("--output", type=Path, required=True)
+    verify = commands.add_parser("verify")
+    verify.add_argument("--package", type=Path, required=True)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parser().parse_args(argv)
+    try:
+        if args.command == "build":
+            result = build_package(root=args.root, output=args.output)
+        else:
+            result = verify_package(args.package)
+    except (PackageError, OSError, ValueError, TypeError) as exc:
+        print(f"v13-legacy-source-package: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
