@@ -139,6 +139,27 @@ def test_selector_builder_can_add_declared_learning_regions_and_settings():
     assert len(bridge.region_manager.indices("test_credit")) == 4
 
 
+def test_commit_nmda_scope_option_is_default_preserving():
+    default_bridge = build_selector_bridge(
+        seed=18, config=selector_config("v2")
+    )
+    scoped_bridge = build_selector_bridge(
+        seed=18,
+        config=selector_config("v2"),
+        commit_enable_nmda=False,
+    )
+
+    default_regions = {
+        region.name: region for region in default_bridge.core_config.brain_regions
+    }
+    scoped_regions = {
+        region.name: region for region in scoped_bridge.core_config.brain_regions
+    }
+    for channel in CHANNELS:
+        assert default_regions[f"commit_{channel}"].enable_nmda is True
+        assert scoped_regions[f"commit_{channel}"].enable_nmda is False
+
+
 def test_d1_d2_asymmetry_uses_vocal_msn_cell_types_not_region_spelling():
     bridge = build_selector_bridge(
         seed=19,
