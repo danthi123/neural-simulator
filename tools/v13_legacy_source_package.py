@@ -13,9 +13,11 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 import shutil
+import socket
 import stat
 import subprocess
 import sys
+import time
 from typing import Any, Mapping
 import re
 import zlib
@@ -39,6 +41,8 @@ IDENTITY_OBJECT = (
 TRANSFER_MANIFEST_NAME = "legacy_transfer_manifest.json"
 TRANSFER_SCHEMA = "v13-legacy-artifact-transfer-v1"
 LEGACY_OUTPUT_NAME = "legacy_performance_baseline.json"
+EXECUTION_RECEIPT_NAME = "legacy_execution_receipt.json"
+EXECUTION_RECEIPT_SCHEMA = "v13-legacy-execution-receipt-v1"
 RUNNER_MODULE = "research.runners._vocal_action_credit_gate_v13_tonic_output"
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -662,6 +666,95 @@ def _validate_legacy_artifact(data: bytes, label: str) -> dict[str, Any]:
     return artifact
 
 
+def _receipt_environment() -> dict[str, str]:
+    return {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "SIM_BACKEND": "cupy",
+        "SIM_NO_PROVENANCE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_IDENTITY": IDENTITY_DIRECTORY,
+        "PYTHONPATH": "absent",
+        "PYTHONHOME": "absent",
+    }
+
+
+def _validate_execution_receipt(
+    data: bytes,
+    *,
+    package: Path,
+    verified: Mapping[str, Any],
+    artifact_bytes: bytes,
+) -> dict[str, Any]:
+    try:
+        receipt = json.loads(data)
+    except json.JSONDecodeError as exc:
+        raise PackageError("legacy execution receipt is not JSON") from exc
+    required = {
+        "schema", "status", "package", "command", "working_directory",
+        "environment_controls", "host", "device", "timing", "exit_code",
+        "artifact", "sha256",
+    }
+    if not isinstance(receipt, dict) or set(receipt) != required:
+        raise PackageError("legacy execution receipt has missing or extra fields")
+    if (
+        receipt["schema"] != EXECUTION_RECEIPT_SCHEMA
+        or receipt["status"] != "completed"
+        or receipt["sha256"] != _canonical_digest(receipt)
+    ):
+        raise PackageError("legacy execution receipt identity is invalid")
+    lock_bytes = (package / LOCK_NAME).read_bytes()
+    manifest_bytes = (package / MANIFEST_NAME).read_bytes()
+    if receipt["package"] != {
+        "lock_path": LOCK_NAME,
+        "lock_file_sha256": _sha256(lock_bytes),
+        "lock_sha256": verified["lock_sha256"],
+        "source_manifest_path": MANIFEST_NAME,
+        "source_manifest_sha256": _sha256(manifest_bytes),
+        "base_revision": BASE_REVISION,
+        "overlay_revision": CANDIDATE_REVISION,
+    }:
+        raise PackageError("legacy execution receipt package binding is invalid")
+    expected_suffix = [
+        "-B", "-m", RUNNER_MODULE, "--legacy-performance-baseline", "--out",
+        str(package / RUN_DIRECTORY / LEGACY_OUTPUT_NAME),
+    ]
+    command = receipt["command"]
+    if (
+        not isinstance(command, list)
+        or len(command) != len(expected_suffix) + 1
+        or not isinstance(command[0], str)
+        or not command[0]
+        or command[1:] != expected_suffix
+    ):
+        raise PackageError("legacy execution receipt command is invalid")
+    if receipt["working_directory"] != ".":
+        raise PackageError("legacy execution receipt working directory is invalid")
+    if receipt["environment_controls"] != _receipt_environment():
+        raise PackageError("legacy execution receipt environment is invalid")
+    timing = receipt["timing"]
+    if (
+        not isinstance(timing, dict)
+        or set(timing) != {"started_utc_ns", "ended_utc_ns", "duration_ns"}
+        or any(isinstance(timing[key], bool) or not isinstance(timing[key], int) for key in timing)
+        or timing["started_utc_ns"] <= 0
+        or timing["ended_utc_ns"] < timing["started_utc_ns"]
+        or timing["duration_ns"] < 0
+    ):
+        raise PackageError("legacy execution receipt timing is invalid")
+    artifact = _validate_legacy_artifact(artifact_bytes, "legacy execution artifact")
+    if receipt["exit_code"] != 0 or receipt["device"] != artifact["device"]:
+        raise PackageError("legacy execution receipt result is invalid")
+    if not isinstance(receipt["host"], str) or not receipt["host"]:
+        raise PackageError("legacy execution receipt host is invalid")
+    if receipt["artifact"] != {
+        "path": f"{RUN_DIRECTORY}/{LEGACY_OUTPUT_NAME}",
+        "sha256": _sha256(artifact_bytes),
+        "size_bytes": len(artifact_bytes),
+    }:
+        raise PackageError("legacy execution receipt artifact binding is invalid")
+    return receipt
+
+
 def probe_execution_package(package: Path, *, python: str = sys.executable) -> dict[str, Any]:
     """Exercise the execution controls without importing or running the simulator."""
     package = package.expanduser().absolute()
@@ -729,10 +822,14 @@ def execute_legacy_baseline(
         python, "-B", "-m", RUNNER_MODULE, "--legacy-performance-baseline",
         "--out", str(output),
     ]
+    started_utc_ns = time.time_ns()
+    started_monotonic_ns = time.monotonic_ns()
     completed = subprocess.run(
         command, cwd=package, env=_execution_environment(package),
         capture_output=True, text=True, check=False,
     )
+    ended_monotonic_ns = time.monotonic_ns()
+    ended_utc_ns = time.time_ns()
     verify_package(package)
     if completed.returncode != 0:
         raise PackageError(
@@ -743,7 +840,47 @@ def execute_legacy_baseline(
     if set(runtime) != {LEGACY_OUTPUT_NAME}:
         raise PackageError("legacy execution produced files outside its one allowed artifact")
     artifact_bytes = runtime[LEGACY_OUTPUT_NAME].read_bytes()
-    _validate_legacy_artifact(artifact_bytes, "legacy execution artifact")
+    artifact = _validate_legacy_artifact(artifact_bytes, "legacy execution artifact")
+    lock_bytes = (package / LOCK_NAME).read_bytes()
+    manifest_bytes = (package / MANIFEST_NAME).read_bytes()
+    receipt: dict[str, Any] = {
+        "schema": EXECUTION_RECEIPT_SCHEMA,
+        "status": "completed",
+        "package": {
+            "lock_path": LOCK_NAME,
+            "lock_file_sha256": _sha256(lock_bytes),
+            "lock_sha256": verified["lock_sha256"],
+            "source_manifest_path": MANIFEST_NAME,
+            "source_manifest_sha256": _sha256(manifest_bytes),
+            "base_revision": BASE_REVISION,
+            "overlay_revision": CANDIDATE_REVISION,
+        },
+        "command": command,
+        "working_directory": ".",
+        "environment_controls": _receipt_environment(),
+        "host": socket.gethostname(),
+        "device": artifact["device"],
+        "timing": {
+            "started_utc_ns": started_utc_ns,
+            "ended_utc_ns": ended_utc_ns,
+            "duration_ns": ended_monotonic_ns - started_monotonic_ns,
+        },
+        "exit_code": completed.returncode,
+        "artifact": {
+            "path": f"{RUN_DIRECTORY}/{LEGACY_OUTPUT_NAME}",
+            "sha256": _sha256(artifact_bytes),
+            "size_bytes": len(artifact_bytes),
+        },
+    }
+    receipt["sha256"] = _canonical_digest(receipt)
+    receipt_bytes = (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode("ascii")
+    _write_exclusive(package / RUN_DIRECTORY / EXECUTION_RECEIPT_NAME, receipt_bytes)
+    runtime = _runtime_files(package)
+    if set(runtime) != {LEGACY_OUTPUT_NAME, EXECUTION_RECEIPT_NAME}:
+        raise PackageError("legacy execution produced files outside its allowed evidence set")
+    _validate_execution_receipt(
+        receipt_bytes, package=package, verified=verified, artifact_bytes=artifact_bytes,
+    )
     return {
         "schema": LOCK_SCHEMA,
         "status": "legacy_baseline_recorded",
@@ -754,6 +891,12 @@ def execute_legacy_baseline(
             "path": f"{RUN_DIRECTORY}/{LEGACY_OUTPUT_NAME}",
             "sha256": _sha256(artifact_bytes),
             "size_bytes": len(artifact_bytes),
+        },
+        "execution_receipt": {
+            "path": f"{RUN_DIRECTORY}/{EXECUTION_RECEIPT_NAME}",
+            "sha256": _sha256(receipt_bytes),
+            "canonical_sha256": receipt["sha256"],
+            "size_bytes": len(receipt_bytes),
         },
     }
 
@@ -767,11 +910,15 @@ def transfer_legacy_artifact(
     package = package.expanduser().absolute()
     verified = verify_package(package)
     runtime = _runtime_files(package)
-    if set(runtime) != {LEGACY_OUTPUT_NAME}:
-        raise PackageError("transfer requires exactly one isolated legacy artifact")
+    if set(runtime) != {LEGACY_OUTPUT_NAME, EXECUTION_RECEIPT_NAME}:
+        raise PackageError("transfer requires exactly one artifact and execution receipt")
     artifact_path = runtime[LEGACY_OUTPUT_NAME]
     artifact_bytes = artifact_path.read_bytes()
     _validate_legacy_artifact(artifact_bytes, "legacy transfer artifact")
+    receipt_bytes = runtime[EXECUTION_RECEIPT_NAME].read_bytes()
+    receipt = _validate_execution_receipt(
+        receipt_bytes, package=package, verified=verified, artifact_bytes=artifact_bytes,
+    )
 
     candidate_evidence = candidate_evidence.expanduser().absolute()
     _reject_symlink_ancestors(candidate_evidence / transfer_name)
@@ -807,6 +954,13 @@ def transfer_legacy_artifact(
             "sha256": _sha256(artifact_bytes),
             "size_bytes": len(artifact_bytes),
         },
+        "execution_receipt": {
+            "package_path": f"{RUN_DIRECTORY}/{EXECUTION_RECEIPT_NAME}",
+            "candidate_evidence_path": f"{transfer_name}/{EXECUTION_RECEIPT_NAME}",
+            "sha256": _sha256(receipt_bytes),
+            "canonical_sha256": receipt["sha256"],
+            "size_bytes": len(receipt_bytes),
+        },
     }
     value["sha256"] = _canonical_digest(value)
     transfer_bytes = (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("ascii")
@@ -816,6 +970,7 @@ def transfer_legacy_artifact(
         os.mkdir(destination, 0o755)
         created = True
         _write_exclusive(destination / LEGACY_OUTPUT_NAME, artifact_bytes)
+        _write_exclusive(destination / EXECUTION_RECEIPT_NAME, receipt_bytes)
         _write_exclusive(destination / TRANSFER_MANIFEST_NAME, transfer_bytes)
     except Exception:
         if created:

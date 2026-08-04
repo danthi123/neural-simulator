@@ -254,7 +254,19 @@ def test_executor_controls_identity_flags_and_isolated_output(
     assert result["artifact"]["path"] == (
         f"{package.RUN_DIRECTORY}/{package.LEGACY_OUTPUT_NAME}"
     )
-    assert set(package._runtime_files(built)) == {package.LEGACY_OUTPUT_NAME}
+    assert set(package._runtime_files(built)) == {
+        package.LEGACY_OUTPUT_NAME, package.EXECUTION_RECEIPT_NAME,
+    }
+    receipt_bytes = (
+        built / package.RUN_DIRECTORY / package.EXECUTION_RECEIPT_NAME
+    ).read_bytes()
+    receipt = json.loads(receipt_bytes)
+    assert receipt["sha256"] == package._canonical_digest(receipt)
+    assert receipt["command"] == observed["argv"]
+    assert receipt["working_directory"] == "."
+    assert receipt["environment_controls"] == package._receipt_environment()
+    assert receipt["artifact"]["sha256"] == result["artifact"]["sha256"]
+    assert result["execution_receipt"]["sha256"] == _sha256(receipt_bytes)
 
 
 def test_executor_requires_an_empty_isolated_runtime(built: Path) -> None:
@@ -264,7 +276,7 @@ def test_executor_requires_an_empty_isolated_runtime(built: Path) -> None:
         package.execute_legacy_baseline(built)
 
 
-def _write_legacy_artifact(built: Path) -> bytes:
+def _write_legacy_artifact(built: Path) -> tuple[bytes, bytes]:
     value = {
         "stage": "legacy_performance_baseline",
         "source_sha": package.BASE_REVISION,
@@ -275,13 +287,55 @@ def _write_legacy_artifact(built: Path) -> bytes:
     }
     data = (json.dumps(value, sort_keys=True) + "\n").encode("ascii")
     (built / package.RUN_DIRECTORY / package.LEGACY_OUTPUT_NAME).write_bytes(data)
-    return data
+    verified = package.verify_package(built)
+    command = [
+        "/exact/python", "-B", "-m", package.RUNNER_MODULE,
+        "--legacy-performance-baseline", "--out",
+        str(built / package.RUN_DIRECTORY / package.LEGACY_OUTPUT_NAME),
+    ]
+    receipt = {
+        "schema": package.EXECUTION_RECEIPT_SCHEMA,
+        "status": "completed",
+        "package": {
+            "lock_path": package.LOCK_NAME,
+            "lock_file_sha256": _sha256((built / package.LOCK_NAME).read_bytes()),
+            "lock_sha256": verified["lock_sha256"],
+            "source_manifest_path": package.MANIFEST_NAME,
+            "source_manifest_sha256": _sha256(
+                (built / package.MANIFEST_NAME).read_bytes()
+            ),
+            "base_revision": package.BASE_REVISION,
+            "overlay_revision": package.CANDIDATE_REVISION,
+        },
+        "command": command,
+        "working_directory": ".",
+        "environment_controls": package._receipt_environment(),
+        "host": "test-host",
+        "device": value["device"],
+        "timing": {
+            "started_utc_ns": 1,
+            "ended_utc_ns": 2,
+            "duration_ns": 1,
+        },
+        "exit_code": 0,
+        "artifact": {
+            "path": f"{package.RUN_DIRECTORY}/{package.LEGACY_OUTPUT_NAME}",
+            "sha256": _sha256(data),
+            "size_bytes": len(data),
+        },
+    }
+    receipt["sha256"] = package._canonical_digest(receipt)
+    receipt_bytes = (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode("ascii")
+    (built / package.RUN_DIRECTORY / package.EXECUTION_RECEIPT_NAME).write_bytes(
+        receipt_bytes
+    )
+    return data, receipt_bytes
 
 
 def test_transfer_is_create_only_and_binds_package_manifest_and_artifact(
     built: Path, tmp_path: Path,
 ) -> None:
-    artifact_bytes = _write_legacy_artifact(built)
+    artifact_bytes, receipt_bytes = _write_legacy_artifact(built)
     evidence = tmp_path / "candidate-evidence"
     evidence.mkdir()
 
@@ -302,7 +356,9 @@ def test_transfer_is_create_only_and_binds_package_manifest_and_artifact(
         (built / package.MANIFEST_NAME).read_bytes()
     )
     assert manifest["artifact"]["sha256"] == _sha256(artifact_bytes)
+    assert manifest["execution_receipt"]["sha256"] == _sha256(receipt_bytes)
     assert (transfer / package.LEGACY_OUTPUT_NAME).read_bytes() == artifact_bytes
+    assert (transfer / package.EXECUTION_RECEIPT_NAME).read_bytes() == receipt_bytes
 
     with pytest.raises(package.PackageError, match="existing transfer destination"):
         package.transfer_legacy_artifact(
@@ -326,6 +382,7 @@ def test_transfer_rejects_symlinked_candidate_evidence(
 
 
 def test_transfer_rejects_wrong_artifact_identity(built: Path, tmp_path: Path) -> None:
+    _write_legacy_artifact(built)
     artifact = built / package.RUN_DIRECTORY / package.LEGACY_OUTPUT_NAME
     artifact.write_text(json.dumps({
         "stage": "legacy_performance_baseline", "source_sha": "0" * 40,
@@ -334,6 +391,23 @@ def test_transfer_rejects_wrong_artifact_identity(built: Path, tmp_path: Path) -
     evidence.mkdir()
 
     with pytest.raises(package.PackageError, match="wrong source"):
+        package.transfer_legacy_artifact(
+            built, candidate_evidence=evidence, transfer_name="legacy-baseline-v2",
+        )
+
+
+def test_transfer_rejects_tampered_execution_receipt(
+    built: Path, tmp_path: Path,
+) -> None:
+    _write_legacy_artifact(built)
+    receipt_path = built / package.RUN_DIRECTORY / package.EXECUTION_RECEIPT_NAME
+    receipt = json.loads(receipt_path.read_text(encoding="ascii"))
+    receipt["host"] = "altered-host"
+    receipt_path.write_text(json.dumps(receipt), encoding="ascii")
+    evidence = tmp_path / "candidate-evidence"
+    evidence.mkdir()
+
+    with pytest.raises(package.PackageError, match="receipt identity"):
         package.transfer_legacy_artifact(
             built, candidate_evidence=evidence, transfer_name="legacy-baseline-v2",
         )
