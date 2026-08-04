@@ -3,24 +3,48 @@
 # The nodes have python3 + internet but NO pip/numpy/repo (reimaged). This is IDEMPOTENT — safe to re-run.
 #   1. rsync the code (sim/ + research/ + experiment/ + tests support) over ssh (repos are private → no clone).
 #   2. create a venv (python3 -m venv) and pip-install numpy + scipy (scipy REQUIRED for SIM_BACKEND=numpy sparse).
-# Usage:  bash tools/pool_provision.sh [--revision <commit>] [pool40 pool41 pool42]
+# Usage:  bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]
 set -uo pipefail
 cd "$(dirname "$0")/.."
 REVISION_REF=HEAD
-if [[ "${1:-}" == "--revision" ]]; then
-  if [[ -z "${2:-}" ]]; then
-    echo "usage: bash tools/pool_provision.sh [--revision <commit>] [pool40 pool41 pool42]" >&2
-    exit 2
-  fi
-  REVISION_REF=$2
-  shift 2
-fi
+ISOLATED=0
+while (( $# )); do
+  case "$1" in
+    --revision)
+      if [[ -z "${2:-}" ]]; then
+        echo "usage: bash tools/pool_provision.sh [--revision <commit>] [--isolated] [pool40 pool41 pool42]" >&2
+        exit 2
+      fi
+      REVISION_REF=$2
+      shift 2
+      ;;
+    --isolated)
+      ISOLATED=1
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "unknown option: $1" >&2
+      exit 2
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
 NODES=("${@:-pool40 pool41 pool42}"); NODES=(${NODES[@]})
-REMOTE_ROOT="derisk-pool/sim"   # matches the prior gaming-window manifest path
 SOURCE_SHA=$(git rev-parse --verify "${REVISION_REF}^{commit}" 2>/dev/null) || {
   echo "invalid source revision: $REVISION_REF" >&2
   exit 2
 }
+if (( ISOLATED )); then
+  REMOTE_ROOT="derisk-pool/revisions/$SOURCE_SHA"
+else
+  REMOTE_ROOT="derisk-pool/sim"   # compatibility path for existing pool jobs
+fi
 STAGE=$(mktemp -d)
 MANIFEST=$(mktemp)
 REVISION=$(mktemp)
@@ -49,7 +73,7 @@ EXCLUDED_DIRTY=$(git status --porcelain -- sim research/runners experiment tools
 printf 'git_sha=%s\nsource_kind=git_archive\nsource_manifest_sha256=%s\nsource_ancestry_sha256=%s\nexcluded_worktree_paths=%s\ncreated_utc=%s\n' \
   "$SOURCE_SHA" "$MANIFEST_SHA" "$ANCESTRY_SHA" "$EXCLUDED_DIRTY" "$(date -u +%FT%TZ)" > "$REVISION"
 for h in "${NODES[@]}"; do
-  echo "=== provisioning $h ==="
+  echo "=== provisioning $h:$REMOTE_ROOT ==="
   ssh -o ConnectTimeout=10 "$h" "mkdir -p ~/$REMOTE_ROOT" || {
     echo "  SSH FAIL $h"
     FAILED_NODES+=("$h:ssh")

@@ -194,3 +194,13 @@ def test_provisioning_can_archive_an_explicit_revision():
     assert 'REVISION_REF=$2' in script
     assert 'git rev-parse --verify "${REVISION_REF}^{commit}"' in script
     assert 'git archive "$SOURCE_SHA"' in script
+
+
+def test_provisioning_supports_revision_isolated_remote_roots():
+    root = Path(__file__).resolve().parents[1]
+    script = (root / "tools/pool_provision.sh").read_text(encoding="utf-8")
+
+    assert 'ISOLATED=0' in script
+    assert '--isolated)' in script
+    assert 'REMOTE_ROOT="derisk-pool/revisions/$SOURCE_SHA"' in script
+    assert 'REMOTE_ROOT="derisk-pool/sim"' in script
