@@ -1,0 +1,1170 @@
+{
+  "backend": "cupy",
+  "created_at_unix": 1785873104.1361854,
+  "harness_sha256": "9b450a8e07ea596cee859ceed8717a9824e67b7e1748f880444a58fc4a2aec9c",
+  "lease_policy": "caller-owned; harness acquires no lease",
+  "preconditions": [
+    {
+      "detail": "Candidate and historical control revisions and governed file hashes are recorded before dispatch.",
+      "kind": "require",
+      "name": "clean source boundaries",
+      "ok": true
+    },
+    {
+      "detail": "This performance matrix opens no calibration, replication, held-out, or selector seed.",
+      "kind": "require",
+      "name": "engineering-only seed boundary",
+      "ok": true
+    }
+  ],
+  "process_order_seed": 20260804,
+  "projected_total_seconds": 6400,
+  "provenance": {
+    "argv": [
+      "tools/v14_stageA_performance.py",
+      "--candidate-root",
+      "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+      "--prechange-control-root",
+      "/tmp/sim-v14-stageA-control",
+      "--out",
+      "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/raw/v14_stageA_performance_0ce6cb274.json"
+    ],
+    "cwd": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean"
+  },
+  "results": [
+    {
+      "backend": "cupy",
+      "cell": "candidate-active",
+      "configuration": {
+        "active": true,
+        "construction_rng_seed": 0,
+        "direct_outputs": true,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873105.6148975,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P3, 45, 1515, 44.41, 53, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873105.0847363,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P5, 43, 840, 34.96, 15, 2497, 24576"
+        }
+      },
+      "rep": 3,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 1,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 28800,
+        "active_bundle_bytes_exact": true,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": false,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.5113815002441406,
+        "host_seconds": 0.5115962260169908
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-default",
+      "configuration": {
+        "active": false,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873106.9641619,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 49, 1800, 113.29, 39, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873106.488048,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 48, 1695, 103.19, 24, 2497, 24576"
+        }
+      },
+      "rep": 2,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 2,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 0,
+        "active_bundle_bytes_exact": false,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": true,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.4565135498046875,
+        "host_seconds": 0.456606922991341
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-default",
+      "configuration": {
+        "active": false,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873108.2403243,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 50, 1800, 119.85, 38, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873107.7914245,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P0, 49, 1800, 116.57, 1, 2497, 24576"
+        }
+      },
+      "rep": 3,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 3,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 0,
+        "active_bundle_bytes_exact": false,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": true,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.4311142272949219,
+        "host_seconds": 0.43120233502122574
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "prechange-control-default",
+      "configuration": {
+        "active": false,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873109.5434637,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 50, 1800, 120.99, 42, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873109.0857627,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 50, 1800, 120.79, 5, 2497, 24576"
+        }
+      },
+      "rep": 1,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 4,
+      "source": {
+        "files": {
+          "sim/backend.py": "a84c20ae59034f8d4e77a2325c33936224cb393b0744287288659a4b92df4db9",
+          "sim/bridge.py": "21c0e9f4764c6fc7bd6384a1e18b659891f90098a5b5e10e138e6d55dcf2ef91",
+          "sim/config.py": "b25a07533a4d8ab525a196a74d166d15d03816b5a4f269bc7e1c7bf93c9f3d75",
+          "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+          "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+        },
+        "revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+        "root": "/tmp/sim-v14-stageA-control",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 0,
+        "active_bundle_bytes_exact": false,
+        "bundle_attributes_present": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "default_bundle_arrays_none": true,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.43925177001953125,
+        "host_seconds": 0.4393412380013615
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-active-unfused",
+      "configuration": {
+        "active": true,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873111.0026166,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 50, 1800, 122.02, 41, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873110.4319236,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P0, 50, 1800, 121.82, 1, 2497, 24576"
+        }
+      },
+      "rep": 3,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 5,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 28800,
+        "active_bundle_bytes_exact": true,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": false,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.5525543823242187,
+        "host_seconds": 0.5526425819844007
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-active-unfused",
+      "configuration": {
+        "active": true,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873112.4824524,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 51, 1800, 122.50, 40, 2509, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873111.9015777,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P0, 50, 1800, 122.05, 1, 2509, 24576"
+        }
+      },
+      "rep": 2,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 6,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 28800,
+        "active_bundle_bytes_exact": true,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": false,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.5621559448242187,
+        "host_seconds": 0.5622452450043056
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-active",
+      "configuration": {
+        "active": true,
+        "construction_rng_seed": 0,
+        "direct_outputs": true,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873113.7457836,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 51, 1755, 119.85, 35, 2507, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873113.3288317,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P0, 50, 1755, 122.06, 1, 2508, 24576"
+        }
+      },
+      "rep": 2,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 7,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 28800,
+        "active_bundle_bytes_exact": true,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": false,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.3981741943359375,
+        "host_seconds": 0.39826443200581707
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-default",
+      "configuration": {
+        "active": false,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873115.0295916,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 51, 1800, 121.61, 37, 2507, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873114.546026,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 51, 1800, 120.80, 8, 2507, 24576"
+        }
+      },
+      "rep": 1,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 8,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 0,
+        "active_bundle_bytes_exact": false,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": true,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.4638153076171875,
+        "host_seconds": 0.4639017959998455
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "prechange-control-default",
+      "configuration": {
+        "active": false,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873116.3390844,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P3, 49, 1335, 103.88, 43, 2507, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873115.8888018,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P3, 51, 1515, 121.98, 1, 2507, 24576"
+        }
+      },
+      "rep": 2,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 9,
+      "source": {
+        "files": {
+          "sim/backend.py": "a84c20ae59034f8d4e77a2325c33936224cb393b0744287288659a4b92df4db9",
+          "sim/bridge.py": "21c0e9f4764c6fc7bd6384a1e18b659891f90098a5b5e10e138e6d55dcf2ef91",
+          "sim/config.py": "b25a07533a4d8ab525a196a74d166d15d03816b5a4f269bc7e1c7bf93c9f3d75",
+          "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+          "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+        },
+        "revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+        "root": "/tmp/sim-v14-stageA-control",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 0,
+        "active_bundle_bytes_exact": false,
+        "bundle_attributes_present": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "default_bundle_arrays_none": true,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.4325539855957031,
+        "host_seconds": 0.4326729169988539
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "prechange-control-default",
+      "configuration": {
+        "active": false,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873117.6388972,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 52, 1800, 121.84, 41, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873117.1904297,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 51, 1800, 111.33, 1, 2498, 24576"
+        }
+      },
+      "rep": 3,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 10,
+      "source": {
+        "files": {
+          "sim/backend.py": "a84c20ae59034f8d4e77a2325c33936224cb393b0744287288659a4b92df4db9",
+          "sim/bridge.py": "21c0e9f4764c6fc7bd6384a1e18b659891f90098a5b5e10e138e6d55dcf2ef91",
+          "sim/config.py": "b25a07533a4d8ab525a196a74d166d15d03816b5a4f269bc7e1c7bf93c9f3d75",
+          "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+          "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+        },
+        "revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+        "root": "/tmp/sim-v14-stageA-control",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 0,
+        "active_bundle_bytes_exact": false,
+        "bundle_attributes_present": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "default_bundle_arrays_none": true,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.4297802734375,
+        "host_seconds": 0.4298696170153562
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-active-unfused",
+      "configuration": {
+        "active": true,
+        "construction_rng_seed": 0,
+        "direct_outputs": false,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873119.0972514,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 52, 1800, 122.32, 42, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873118.5229099,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 51, 1800, 121.88, 16, 2497, 24576"
+        }
+      },
+      "rep": 1,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 11,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 28800,
+        "active_bundle_bytes_exact": true,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": false,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.5558993530273437,
+        "host_seconds": 0.5559868840209674
+      }
+    },
+    {
+      "backend": "cupy",
+      "cell": "candidate-active",
+      "configuration": {
+        "active": true,
+        "construction_rng_seed": 0,
+        "direct_outputs": true,
+        "dt_ms": 0.05,
+        "num_neurons": 600,
+        "scientific_seeds": [],
+        "timed_steps": 2000,
+        "warmup_steps": 500
+      },
+      "nvidia_smi": {
+        "after": {
+          "captured_at_unix": 1785873120.3409958,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P2, 52, 1800, 122.03, 36, 2497, 24576"
+        },
+        "before": {
+          "captured_at_unix": 1785873119.92414,
+          "query": "name,uuid,pci.bus_id,driver_version,pstate,temperature.gpu,clocks.sm,power.draw,utilization.gpu,memory.used,memory.total",
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "NVIDIA GeForce RTX 3090, GPU-186a9605-9d5d-d47b-2c7d-7eee6260962e, 00000000:01:00.0, 610.43.03, P0, 52, 1800, 123.20, 1, 2497, 24576"
+        }
+      },
+      "rep": 1,
+      "runtime": {
+        "cuda_driver_version": 13030,
+        "cuda_runtime_version": 12090,
+        "cupy": "14.1.1",
+        "device": "NVIDIA GeForce RTX 3090",
+        "hostname": "dant123-wk",
+        "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+        "python": "3.11.14 (main, Nov 20 2025, 15:58:12) [GCC 15.2.1 20251112]"
+      },
+      "schema": "v14-stageA-performance-worker-v1",
+      "sequence": 12,
+      "source": {
+        "files": {
+          "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+          "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+          "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+          "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+          "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+        },
+        "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+        "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+        "status_porcelain": ""
+      },
+      "status": "completed",
+      "structural": {
+        "active_bundle_bytes": 28800,
+        "active_bundle_bytes_exact": true,
+        "bundle_attributes_present": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "default_bundle_arrays_none": false,
+        "expected_active_bundle_bytes": 28800,
+        "passed": true
+      },
+      "timing": {
+        "cuda_event_seconds": 0.399359375,
+        "host_seconds": 0.3994465160067193
+      }
+    }
+  ],
+  "run_plan": [
+    {
+      "active": true,
+      "cell": "candidate-active",
+      "direct_outputs": true,
+      "rep": 3,
+      "sequence": 1,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "candidate-default",
+      "direct_outputs": false,
+      "rep": 2,
+      "sequence": 2,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "candidate-default",
+      "direct_outputs": false,
+      "rep": 3,
+      "sequence": 3,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "prechange-control-default",
+      "direct_outputs": false,
+      "rep": 1,
+      "sequence": 4,
+      "source": "prechange-control"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active-unfused",
+      "direct_outputs": false,
+      "rep": 3,
+      "sequence": 5,
+      "source": "candidate"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active-unfused",
+      "direct_outputs": false,
+      "rep": 2,
+      "sequence": 6,
+      "source": "candidate"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active",
+      "direct_outputs": true,
+      "rep": 2,
+      "sequence": 7,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "candidate-default",
+      "direct_outputs": false,
+      "rep": 1,
+      "sequence": 8,
+      "source": "candidate"
+    },
+    {
+      "active": false,
+      "cell": "prechange-control-default",
+      "direct_outputs": false,
+      "rep": 2,
+      "sequence": 9,
+      "source": "prechange-control"
+    },
+    {
+      "active": false,
+      "cell": "prechange-control-default",
+      "direct_outputs": false,
+      "rep": 3,
+      "sequence": 10,
+      "source": "prechange-control"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active-unfused",
+      "direct_outputs": false,
+      "rep": 1,
+      "sequence": 11,
+      "source": "candidate"
+    },
+    {
+      "active": true,
+      "cell": "candidate-active",
+      "direct_outputs": true,
+      "rep": 1,
+      "sequence": 12,
+      "source": "candidate"
+    }
+  ],
+  "schema": "v14-stageA-performance-result-v1",
+  "scientific_seeds": [],
+  "source_roots": {
+    "candidate": {
+      "files": {
+        "sim/backend.py": "37a97146f08491167e601746f41f35a80851bb48dcf11006b7e2ffa23601ba1d",
+        "sim/bridge.py": "4fdb56a3ebdbbf463f539628c191735177ba5c699b1c650093557418f864731c",
+        "sim/config.py": "f8f7e0ec832a6985adc3dfc8d3e4ec8ef234a0b6076923c6294a35ae0f8263a4",
+        "sim/kernels.py": "0d3ee579db6545168064402c33d693736c461a5030ec8be9df443983d410a200",
+        "sim/regions.py": "144c36b0035818dcdf6e15c3f4ece769b8eeb3f34d3cacf10e8d5f5e486cb3ea"
+      },
+      "revision": "0ce6cb274150a5ac76ed6fddb134c73ed0e07286",
+      "root": "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean",
+      "status_porcelain": ""
+    },
+    "prechange_control": {
+      "files": {
+        "sim/backend.py": "a84c20ae59034f8d4e77a2325c33936224cb393b0744287288659a4b92df4db9",
+        "sim/bridge.py": "21c0e9f4764c6fc7bd6384a1e18b659891f90098a5b5e10e138e6d55dcf2ef91",
+        "sim/config.py": "b25a07533a4d8ab525a196a74d166d15d03816b5a4f269bc7e1c7bf93c9f3d75",
+        "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+        "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+      },
+      "revision": "6c9034991ba5d67024786d1faa080436c70347d5",
+      "root": "/tmp/sim-v14-stageA-control",
+      "status_porcelain": ""
+    }
+  },
+  "specification": "research/specs/v14_snr_conductance_stageA_implementation.json",
+  "specification_sha256": "0220c95fabeb29bbeecdb78765755f38c7a2f06b317cb6fcefc064c45514aa7e",
+  "status": "complete",
+  "summary": {
+    "cells": {
+      "candidate-active": {
+        "all_structural_checks_pass": true,
+        "completed_repetitions": 3,
+        "median_cuda_event_seconds": 0.399359375,
+        "median_host_seconds": 0.3994465160067193
+      },
+      "candidate-active-unfused": {
+        "all_structural_checks_pass": true,
+        "completed_repetitions": 3,
+        "median_cuda_event_seconds": 0.5558993530273437,
+        "median_host_seconds": 0.5559868840209674
+      },
+      "candidate-default": {
+        "all_structural_checks_pass": true,
+        "completed_repetitions": 3,
+        "median_cuda_event_seconds": 0.4565135498046875,
+        "median_host_seconds": 0.456606922991341
+      },
+      "prechange-control-default": {
+        "all_structural_checks_pass": true,
+        "completed_repetitions": 3,
+        "median_cuda_event_seconds": 0.4325539855957031,
+        "median_host_seconds": 0.4326729169988539
+      }
+    },
+    "fixed_thresholds": {
+      "active_ratio_max": 1.25,
+      "default_off_ratio_max": 1.02,
+      "direct_output_ratio_max": 0.85
+    },
+    "performance_status": "NO_GO",
+    "physiology_verdict": null,
+    "promotion_effect": "none",
+    "ratios_against_matching_medians": {
+      "active_cuda_event": 0.874802895052863,
+      "active_host": 0.8748148481627257,
+      "default_cuda_event": 1.0553909223053113,
+      "default_host": 1.055316626144526,
+      "direct_output_cuda_event": 0.7184023021886053,
+      "direct_output_host": 0.7184459336843914
+    }
+  },
+  "worker_timeout_seconds": 1800
+}

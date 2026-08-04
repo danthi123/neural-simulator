@@ -147,8 +147,11 @@ its controls and lesions, and is tested at the required seed coverage.
    path. The repaired 12-worker matrix then completed: default-off and active
    overhead passed, but direct outputs first reached `0.937x` of unfused rather
    than the required `0.85x`. Exact in-place HH state/spike fusion then improved
-   the sealed result to `0.916x`, still a NO-GO. The measured next boundary
-   combines SNr current and HH state in one CuPy-generated graph; these
+   the sealed result to `0.916x`, still a NO-GO. Two attempts to combine the
+   SNr and HH graphs changed voltage by `7.629e-6` mV and were rejected before
+   timing. Exact compiled-executor caching then passed the active speed target
+   at `0.718x`, but its sealed default-off ratio was `1.055x` versus the `1.02x`
+   ceiling, so promotion remains blocked pending default-path profiling. These
    performance verdicts have no physiology effect.
 
 A failed method is a method verdict, not permission to close the capability.

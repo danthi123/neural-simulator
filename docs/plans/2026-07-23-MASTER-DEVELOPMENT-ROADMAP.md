@@ -403,8 +403,11 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   of unfused and missed its `0.85x` requirement. Bank the performance NO-GO
   and profile the exact launch sequence before expanding fusion.
   A subsequent exact HH state/spike fusion reached `0.916x` in its own sealed
-  matrix, still NO-GO; the remaining measured boundary is the separate SNr
-  current plus effective-current subtraction before HH.
+  matrix, still NO-GO. Two combined SNr-to-HH graphs then failed byte
+  equivalence and were rejected. Exact CuPy executor caching passed the active
+  speed gate at `0.718x`, but the same sealed matrix measured default-off at
+  `1.055x` versus the `1.02x` ceiling. Overall V14 remains NO-GO; profile the
+  default path before proposing another source-sealed candidate.
 - **Research and cost-control infrastructure:** RAG-first scholarly discovery
   now retrieves and hash-binds full text while keeping extracted locators
   pending review. The local Qwen fallback has also completed an isolated
