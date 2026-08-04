@@ -8,12 +8,17 @@ import time
 
 import pytest
 
+import tools.experiment_controller as controller
 from tools.experiment import create_experiment_seal
 from tools.experiment_controller import (
     ControllerError,
+    EXECUTION_MANIFEST_SCHEMA,
+    EXECUTION_RECEIPT_SCHEMA,
     SCHEMA,
     build_dry_run_plan,
+    materialize_execution_manifest,
     validate_experiment_handoff,
+    validate_execution_receipt,
     write_dry_run_plan,
 )
 
@@ -30,7 +35,13 @@ def _spec() -> dict:
                 "--seed", "{seed}", "--phase", "{partition}", "--arm", "{arm}", "--out", "{output}",
             ],
             "output": "research/findings/raw/controller/{partition}/{backend}/{arm}-{seed}.json",
-            "arms": ["default"],
+            "arms": {
+                "candidate": {"role": "treatment", "parameters": {}},
+                "matched-control": {"role": "control", "parameters": {"adaptive_enabled": False}},
+                "gain-lesion": {
+                    "role": "lesion", "target": "adaptive_gain", "parameters": {"adaptive_gain": 0.0},
+                },
+            },
             "targets": {
                 "numpy": {"device": "cpu", "lane": "local"},
                 "cupy": {"device": "cuda:0", "lane": "gpu"},
@@ -111,6 +122,56 @@ def fixture_repo(tmp_path: Path) -> Path:
     return root
 
 
+def _plan_with_gpu_candidate(fixture_repo: Path) -> dict:
+    plan = build_dry_run_plan(fixture_repo / "research/specs/adaptive.json", root=fixture_repo)
+    candidate = dict(plan["candidate_materialization"]["candidates"][0])
+    candidate.update({
+        "candidate_id": "fixture-cupy-candidate",
+        "order": len(plan["candidate_materialization"]["candidates"]),
+        "backend": "cupy",
+        "resource_lane": "local_gpu",
+        "device": "cuda:0",
+        "reason": "fixture coverage for the declared GPU pair",
+    })
+    plan["candidate_materialization"]["candidates"].append(candidate)
+    plan["candidate_materialization"]["count"] = len(plan["candidate_materialization"]["candidates"])
+    plan["sha256"] = hashlib.sha256(json.dumps(
+        {key: value for key, value in plan.items() if key != "sha256"},
+        sort_keys=True, separators=(",", ":"),
+    ).encode("utf-8")).hexdigest()
+    return plan
+
+
+def _sealed_handoff(fixture_repo: Path, tmp_path: Path) -> tuple[dict, dict]:
+    plan = _plan_with_gpu_candidate(fixture_repo)
+    seal_path = tmp_path / "controller.seal.json"
+    create_experiment_seal(fixture_repo / "research/specs/experiment.json", seal_path, root=fixture_repo)
+    return plan, validate_experiment_handoff(plan, seal_path=seal_path, root=fixture_repo)
+
+
+def _receipt(manifest: dict) -> dict:
+    receipt = {
+        "schema": EXECUTION_RECEIPT_SCHEMA,
+        "execution_manifest_sha256": manifest["sha256"],
+        "materializations": [{
+            "materialization_id": cell["materialization_id"],
+            "candidate_id": cell["candidate_id"],
+            "arm": cell["arm"],
+            "role": cell["role"],
+            "backend": cell["backend"],
+            "partition": cell["partition"],
+            "status": "accepted_non_dispatching",
+        } for cell in manifest["materializations"]],
+        "dispatch": {"performed": False, "commands_emitted": False},
+        "seeds_selected": False,
+        "held_out_partitions_accessed": [],
+    }
+    receipt["sha256"] = hashlib.sha256(json.dumps(
+        receipt, sort_keys=True, separators=(",", ":"),
+    ).encode("utf-8")).hexdigest()
+    return receipt
+
+
 def test_dry_run_is_deterministic_and_describes_lanes_without_dispatch(fixture_repo: Path) -> None:
     design = fixture_repo / "research/specs/adaptive.json"
     first = build_dry_run_plan(design, root=fixture_repo)
@@ -156,24 +217,7 @@ def test_controller_rejects_design_outside_repository(fixture_repo: Path, tmp_pa
 
 
 def test_valid_plan_maps_to_existing_sealed_expansion_contract(fixture_repo: Path, tmp_path: Path) -> None:
-    plan = build_dry_run_plan(fixture_repo / "research/specs/adaptive.json", root=fixture_repo)
-    # The adaptive screen initially proposes only the CPU pair. Materialize a second declared candidate in
-    # this fixture so the sealed expansion covers exactly the pairs named by the handoff.
-    candidate = dict(plan["candidate_materialization"]["candidates"][0])
-    candidate.update({
-        "candidate_id": "fixture-cupy-candidate",
-        "order": len(plan["candidate_materialization"]["candidates"]),
-        "backend": "cupy",
-        "resource_lane": "local_gpu",
-        "device": "cuda:0",
-        "reason": "fixture coverage for the declared GPU pair",
-    })
-    plan["candidate_materialization"]["candidates"].append(candidate)
-    plan["candidate_materialization"]["count"] = len(plan["candidate_materialization"]["candidates"])
-    plan["sha256"] = hashlib.sha256(json.dumps(
-        {key: value for key, value in plan.items() if key != "sha256"},
-        sort_keys=True, separators=(",", ":"),
-    ).encode("utf-8")).hexdigest()
+    plan = _plan_with_gpu_candidate(fixture_repo)
     seal_path = tmp_path / "controller.seal.json"
     create_experiment_seal(fixture_repo / "research/specs/experiment.json", seal_path, root=fixture_repo)
 
@@ -186,7 +230,9 @@ def test_valid_plan_maps_to_existing_sealed_expansion_contract(fixture_repo: Pat
         {"backend": "cupy", "partition": "calibration"},
         {"backend": "numpy", "partition": "calibration"},
     ]
-    assert handoff["expanded_job_count"] == 2
+    assert handoff["expanded_job_count"] == 6
+    assert [arm["role"] for arm in handoff["arms"]] == ["treatment", "lesion", "control"]
+    assert len(handoff["sha256"]) == 64
     assert handoff["seeds_selected"] is False
     assert handoff["held_out_partitions_accessed"] == []
     assert not list(fixture_repo.rglob("*.claim"))
@@ -221,3 +267,112 @@ def test_unsealed_plan_fails_closed(fixture_repo: Path) -> None:
 
     with pytest.raises(ControllerError, match="existing experiment seal"):
         validate_experiment_handoff(plan, root=fixture_repo)
+
+
+def test_materialization_is_deterministic_exact_and_seed_free(fixture_repo: Path, tmp_path: Path) -> None:
+    plan, handoff = _sealed_handoff(fixture_repo, tmp_path)
+
+    first = materialize_execution_manifest(plan, handoff, root=fixture_repo)
+    second = materialize_execution_manifest(plan, handoff, root=fixture_repo)
+
+    assert first == second
+    assert first["schema"] == EXECUTION_MANIFEST_SCHEMA
+    assert first["materialization_count"] == 9
+    assert first["required_roles"] == {
+        "treatment": ["candidate"], "control": ["matched-control"], "lesion": ["gain-lesion"],
+    }
+    assert first["dispatch"] == {"performed": False, "commands_emitted": False}
+    assert first["seeds_selected"] is False
+    assert first["held_out_partitions_accessed"] == []
+    encoded = json.dumps(first, sort_keys=True)
+    assert '"seed"' not in encoded and "held_out\": [99]" not in encoded
+    assert all("command" not in cell and "output" not in cell for cell in first["materializations"])
+
+
+def test_materialization_does_not_reopen_spec_or_expand_seed_jobs(
+    fixture_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    plan, handoff = _sealed_handoff(fixture_repo, tmp_path)
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("seed-bearing experiment API was called")
+
+    monkeypatch.setattr(controller, "load_experiment_spec", forbidden)
+    monkeypatch.setattr(controller, "expand_experiment_jobs", forbidden)
+
+    manifest = materialize_execution_manifest(plan, handoff, root=fixture_repo)
+
+    assert manifest["seeds_selected"] is False
+    assert manifest["held_out_partitions_accessed"] == []
+
+
+def test_exact_non_dispatching_receipt_is_accepted(fixture_repo: Path, tmp_path: Path) -> None:
+    plan, handoff = _sealed_handoff(fixture_repo, tmp_path)
+    manifest = materialize_execution_manifest(plan, handoff, root=fixture_repo)
+
+    result = validate_execution_receipt(manifest, _receipt(manifest))
+
+    assert result["accepted"] is True
+    assert result["materialization_count"] == 9
+    assert result["dispatch_performed"] is False
+    assert result["seeds_selected"] is False
+
+
+@pytest.mark.parametrize("role", ["treatment", "control", "lesion"])
+def test_receipt_rejects_missing_arm_role(fixture_repo: Path, tmp_path: Path, role: str) -> None:
+    plan, handoff = _sealed_handoff(fixture_repo, tmp_path)
+    manifest = materialize_execution_manifest(plan, handoff, root=fixture_repo)
+    receipt = _receipt(manifest)
+    receipt["materializations"] = [row for row in receipt["materializations"] if row["role"] != role]
+    receipt["sha256"] = hashlib.sha256(json.dumps(
+        {key: value for key, value in receipt.items() if key != "sha256"},
+        sort_keys=True, separators=(",", ":"),
+    ).encode("utf-8")).hexdigest()
+
+    with pytest.raises(ControllerError, match="extra, missing, or expanded"):
+        validate_execution_receipt(manifest, receipt)
+
+
+def test_receipt_rejects_backend_partition_or_arm_expansion(fixture_repo: Path, tmp_path: Path) -> None:
+    plan, handoff = _sealed_handoff(fixture_repo, tmp_path)
+    manifest = materialize_execution_manifest(plan, handoff, root=fixture_repo)
+    receipt = _receipt(manifest)
+    extra = dict(receipt["materializations"][0])
+    extra.update({"materialization_id": "extra", "backend": "expanded", "partition": "replication"})
+    receipt["materializations"].append(extra)
+    receipt["sha256"] = hashlib.sha256(json.dumps(
+        {key: value for key, value in receipt.items() if key != "sha256"},
+        sort_keys=True, separators=(",", ":"),
+    ).encode("utf-8")).hexdigest()
+
+    with pytest.raises(ControllerError, match="extra, missing, or expanded"):
+        validate_execution_receipt(manifest, receipt)
+
+
+def test_materialization_rejects_unsealed_or_dirty_archive_source(fixture_repo: Path, tmp_path: Path) -> None:
+    plan, handoff = _sealed_handoff(fixture_repo, tmp_path)
+    unsealed = json.loads(json.dumps(handoff))
+    unsealed["sealed"] = False
+    unsealed["sha256"] = hashlib.sha256(json.dumps(
+        {key: value for key, value in unsealed.items() if key != "sha256"},
+        sort_keys=True, separators=(",", ":"),
+    ).encode("utf-8")).hexdigest()
+    with pytest.raises(ControllerError, match="seed-free sealed handoff"):
+        materialize_execution_manifest(plan, unsealed, root=fixture_repo)
+
+    (fixture_repo / ".source_manifest.sha256").write_text("changed", encoding="utf-8")
+    with pytest.raises(ControllerError, match="source identity changed"):
+        materialize_execution_manifest(plan, handoff, root=fixture_repo)
+
+
+def test_handoff_rejects_missing_control_or_lesion_role(fixture_repo: Path, tmp_path: Path) -> None:
+    spec_path = fixture_repo / "research/specs/experiment.json"
+    spec = json.loads(spec_path.read_text())
+    del spec["execution"]["arms"]["gain-lesion"]
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    plan = build_dry_run_plan(fixture_repo / "research/specs/adaptive.json", root=fixture_repo)
+    seal_path = tmp_path / "controller.seal.json"
+    create_experiment_seal(spec_path, seal_path, root=fixture_repo)
+
+    with pytest.raises(ControllerError, match="missing required roles"):
+        validate_experiment_handoff(plan, seal_path=seal_path, root=fixture_repo)

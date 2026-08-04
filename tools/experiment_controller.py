@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
+import subprocess
 from typing import Any, Mapping
 
 from tools.adaptive_experiment import (
@@ -27,8 +28,11 @@ from tools.experiment import HarnessError, expand_experiment_jobs, load_experime
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "sim-experiment-controller-dry-run-v1"
 HANDOFF_SCHEMA = "sim-experiment-controller-handoff-v1"
+EXECUTION_MANIFEST_SCHEMA = "sim-experiment-controller-execution-manifest-v1"
+EXECUTION_RECEIPT_SCHEMA = "sim-experiment-controller-execution-receipt-v1"
 LANE_NAMES = {"local": "local_cpu", "gpu": "local_gpu", "pool": "mini_pc_cluster"}
 REQUIRED_TARGET_FIELDS = ("device", "lane")
+ARM_ROLES = ("treatment", "control", "lesion")
 
 
 class ControllerError(ValueError):
@@ -41,6 +45,142 @@ def _canonical(value: Any) -> bytes:
 
 def _digest(value: Any) -> str:
     return hashlib.sha256(_canonical(value)).hexdigest()
+
+
+def _digest_file(path: Path) -> str:
+    hasher = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def _without_digest(value: Mapping[str, Any]) -> dict[str, Any]:
+    return {key: item for key, item in value.items() if key != "sha256"}
+
+
+def _valid_digest(value: Mapping[str, Any]) -> bool:
+    try:
+        return value.get("sha256") == _digest(_without_digest(value))
+    except (TypeError, ValueError):
+        return False
+
+
+def _contains_forbidden_data(value: Any) -> bool:
+    """Reject seed and held-out payloads at every depth of a controller contract."""
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            normalized = "".join(character for character in str(key).lower() if character.isalnum())
+            if normalized.endswith(("seed", "seeds")) or normalized.startswith("heldout"):
+                return True
+            if _contains_forbidden_data(item):
+                return True
+    elif isinstance(value, list):
+        return any(_contains_forbidden_data(item) for item in value)
+    return False
+
+
+def _arm_contract(spec: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Normalize explicit treatment/control/lesion definitions without expanding jobs."""
+    execution = spec.get("execution")
+    raw = execution.get("arms") if isinstance(execution, Mapping) else None
+    if not isinstance(raw, Mapping) or not raw:
+        raise ControllerError("arm materialization requires explicit structured arm definitions")
+
+    arms = []
+    role_counts = {role: 0 for role in ARM_ROLES}
+    for name in sorted(raw):
+        definition = raw[name]
+        if not isinstance(name, str) or not name.strip() or not isinstance(definition, Mapping):
+            raise ControllerError("arm definitions must map non-empty names to objects")
+        role = definition.get("role")
+        if role not in ARM_ROLES:
+            raise ControllerError(f"arm {name!r} must declare one of the roles {list(ARM_ROLES)}")
+        expected_fields = {"role", "parameters", "target"} if role == "lesion" else {"role", "parameters"}
+        if set(definition) != expected_fields:
+            raise ControllerError(f"arm {name!r} has missing or extra role fields")
+        parameters = definition.get("parameters")
+        if not isinstance(parameters, Mapping) or _contains_forbidden_data(parameters):
+            raise ControllerError(f"arm {name!r} has invalid, seed-bearing, or held-out parameters")
+        arm = {"name": name, "role": role, "parameters": dict(parameters)}
+        if role == "lesion":
+            target = definition.get("target")
+            if not isinstance(target, str) or not target.strip():
+                raise ControllerError(f"lesion arm {name!r} requires a non-empty target")
+            arm["target"] = target.strip()
+        role_counts[role] += 1
+        arms.append(arm)
+    missing = [role for role, count in role_counts.items() if count == 0]
+    if missing:
+        raise ControllerError(f"arm materialization is missing required roles: {missing}")
+    return arms
+
+
+def _require_clean_sealed_source(source: Any, root: Path) -> None:
+    if not isinstance(source, Mapping) or source.get("kind") not in {"git", "git_archive"}:
+        raise ControllerError("execution materialization requires a sealed source identity")
+    revision = source.get("revision")
+    if not isinstance(revision, str) or not revision.strip():
+        raise ControllerError("sealed source identity has no revision")
+    if source["kind"] == "git_archive":
+        revision_file = root / ".source_revision"
+        manifest = root / ".source_manifest.sha256"
+        if not revision_file.is_file() or not manifest.is_file():
+            raise ControllerError("sealed archive source identity is missing")
+        values = {}
+        for line in revision_file.read_text(encoding="utf-8").splitlines():
+            key, separator, value = line.partition("=")
+            if separator:
+                values[key] = value
+        if (values.get("source_kind") != "git_archive" or values.get("git_sha") != revision
+                or values.get("source_manifest_sha256") != source.get("source_manifest_sha256")
+                or _digest_file(manifest) != source.get("source_manifest_sha256")):
+            raise ControllerError("sealed archive source identity changed after handoff")
+        declared = {}
+        for line in manifest.read_text(encoding="utf-8").splitlines():
+            digest, separator, relative = line.partition("  ")
+            path = PurePosixPath(relative)
+            if (not separator or len(digest) != 64 or path.is_absolute() or ".." in path.parts
+                    or relative in declared):
+                raise ControllerError("sealed archive source manifest is malformed")
+            try:
+                int(digest, 16)
+            except ValueError as exc:
+                raise ControllerError("sealed archive source manifest has an invalid digest") from exc
+            declared[relative] = digest
+        actual = set()
+        for relative_root in ("sim", "research/runners", "experiment", "tools"):
+            source_root = root / relative_root
+            if source_root.is_dir():
+                actual.update(
+                    path.relative_to(root).as_posix()
+                    for path in source_root.rglob("*")
+                    if path.is_file() and "__pycache__" not in path.parts and path.suffix in {".py", ".sh"}
+                )
+        if (root / "research/__init__.py").is_file():
+            actual.add("research/__init__.py")
+        if set(declared) != actual:
+            raise ControllerError("sealed archive source file set changed after handoff")
+        for relative, digest in declared.items():
+            path = root.joinpath(*PurePosixPath(relative).parts)
+            if not path.is_file() or _digest_file(path) != digest:
+                raise ControllerError(f"sealed archive source file changed after handoff: {relative}")
+        return
+
+    try:
+        current = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=root, check=True, capture_output=True, text=True, timeout=10,
+        ).stdout.strip()
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=all"], cwd=root, check=True,
+            capture_output=True, text=True, timeout=30,
+        ).stdout
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise ControllerError(f"cannot verify sealed Git source: {exc}") from exc
+    if current != revision:
+        raise ControllerError("source revision changed after sealed handoff")
+    if dirty:
+        raise ControllerError("execution materialization requires a clean sealed source")
 
 
 def _inside(path: Path, root: Path) -> bool:
@@ -243,6 +383,7 @@ def validate_experiment_handoff(
     try:
         spec = load_experiment_spec(spec_path)
         targets = _execution_targets(spec)
+        arms = _arm_contract(spec)
     except (HarnessError, OSError, KeyError, TypeError) as exc:
         raise ControllerError(f"cannot validate experiment handoff spec: {exc}") from exc
     if handoff.get("experiment_id") != spec["id"]:
@@ -307,19 +448,239 @@ def validate_experiment_handoff(
             "sealed experiment expansion widened the dry-run candidate set with undeclared backend/partition "
             f"pairs: {extra}"
         )
+    expected_arms = {arm["name"] for arm in arms}
+    expanded_arms = {
+        pair: {job.get("arm") for job in jobs if (job.get("backend"), job.get("partition")) == pair}
+        for pair in expanded_pairs
+    }
+    invalid_arm_sets = sorted(pair for pair, names in expanded_arms.items() if names != expected_arms)
+    if invalid_arm_sets:
+        raise ControllerError(f"sealed expansion has extra or missing arms for mappings: {invalid_arm_sets}")
+    identity_fields = ("spec_sha256", "execution_manifest_sha256", "source")
+    identities = {
+        field: {_canonical(job.get(field)) for job in jobs}
+        for field in identity_fields
+    }
+    if any(len(values) != 1 for values in identities.values()):
+        raise ControllerError("sealed expansion contains inconsistent source or manifest identities")
 
-    return {
+    result = {
         "schema": HANDOFF_SCHEMA,
         "plan_sha256": plan["sha256"],
         "experiment_id": spec["id"],
         "spec_path": relative.as_posix(),
+        "spec_sha256": jobs[0]["spec_sha256"],
+        "execution_manifest_sha256": jobs[0]["execution_manifest_sha256"],
+        "source": jobs[0]["source"],
         "sealed": True,
         "candidate_count": len(candidates),
+        "arms": arms,
         "backend_partition_pairs": [
             {"backend": backend, "partition": partition}
             for backend, partition in sorted(pairs)
         ],
         "expanded_job_count": len(jobs),
+        "seeds_selected": False,
+        "held_out_partitions_accessed": [],
+    }
+    result["sha256"] = _digest(result)
+    return result
+
+
+def materialize_execution_manifest(
+    plan: Mapping[str, Any],
+    handoff: Mapping[str, Any],
+    *,
+    root: str | Path = ROOT,
+) -> dict[str, Any]:
+    """Materialize exact candidate/arm cells without selecting seeds or emitting commands."""
+    if (not isinstance(plan, Mapping) or plan.get("schema") != SCHEMA or not _valid_digest(plan)):
+        raise ControllerError("execution materialization requires a valid controller plan")
+    if (not isinstance(handoff, Mapping) or handoff.get("schema") != HANDOFF_SCHEMA
+            or not _valid_digest(handoff)):
+        raise ControllerError("execution materialization requires a valid sealed handoff")
+    if (handoff.get("sealed") is not True or handoff.get("plan_sha256") != plan["sha256"]
+            or handoff.get("seeds_selected") is not False
+            or handoff.get("held_out_partitions_accessed") != []):
+        raise ControllerError("execution materialization requires the matching seed-free sealed handoff")
+    for field in ("spec_sha256", "execution_manifest_sha256"):
+        value = handoff.get(field)
+        if not isinstance(value, str) or len(value) != 64:
+            raise ControllerError(f"sealed handoff has no valid {field}")
+        try:
+            int(value, 16)
+        except ValueError as exc:
+            raise ControllerError(f"sealed handoff has no valid {field}") from exc
+    if _contains_forbidden_data({
+        "arms": handoff.get("arms"),
+        "backend_partition_pairs": handoff.get("backend_partition_pairs"),
+    }):
+        raise ControllerError("sealed handoff exposes seed or held-out data")
+
+    root = Path(root).resolve()
+    _require_clean_sealed_source(handoff.get("source"), root)
+    materialization = plan.get("candidate_materialization")
+    candidates = materialization.get("candidates") if isinstance(materialization, Mapping) else None
+    if (not isinstance(candidates, list) or not candidates
+            or materialization.get("count") != len(candidates)
+            or handoff.get("candidate_count") != len(candidates)):
+        raise ControllerError("sealed handoff has extra or missing candidates")
+
+    raw_arms = handoff.get("arms")
+    if not isinstance(raw_arms, list) or not raw_arms:
+        raise ControllerError("sealed handoff has no arm contract")
+    arm_names = set()
+    roles = {role: [] for role in ARM_ROLES}
+    arms = []
+    for arm in raw_arms:
+        if not isinstance(arm, Mapping):
+            raise ControllerError("sealed handoff contains an invalid arm")
+        name = arm.get("name")
+        role = arm.get("role")
+        expected = {"name", "role", "parameters", "target"} if role == "lesion" else {
+            "name", "role", "parameters"
+        }
+        if (not isinstance(name, str) or not name.strip() or name in arm_names or role not in ARM_ROLES
+                or set(arm) != expected or not isinstance(arm.get("parameters"), Mapping)
+                or _contains_forbidden_data(arm)):
+            raise ControllerError("sealed handoff has extra, duplicate, or malformed arms")
+        if role == "lesion" and (not isinstance(arm.get("target"), str) or not arm["target"].strip()):
+            raise ControllerError(f"lesion arm {name!r} has no target")
+        arm_names.add(name)
+        roles[role].append(name)
+        arms.append(dict(arm))
+    missing_roles = [role for role, names in roles.items() if not names]
+    if missing_roles:
+        raise ControllerError(f"sealed handoff is missing controls or lesions: {missing_roles}")
+    arms.sort(key=lambda item: item["name"])
+    for names in roles.values():
+        names.sort()
+
+    candidate_ids = set()
+    for index, candidate in enumerate(candidates):
+        identifier = candidate.get("candidate_id") if isinstance(candidate, Mapping) else None
+        if (not isinstance(identifier, str) or not identifier.strip() or identifier in candidate_ids
+                or candidate.get("order") != index):
+            raise ControllerError("candidate materialization has an invalid order or duplicate identity")
+        candidate_ids.add(identifier)
+    actual_pairs = {(candidate.get("backend"), candidate.get("partition")) for candidate in candidates}
+    if any(not isinstance(backend, str) or not isinstance(partition, str)
+           or "".join(character for character in partition.lower() if character.isalnum()).startswith("heldout")
+           for backend, partition in actual_pairs):
+        raise ControllerError("candidate materialization contains an invalid or held-out mapping")
+    declared_pairs = handoff.get("backend_partition_pairs")
+    if not isinstance(declared_pairs, list):
+        raise ControllerError("sealed handoff has no backend/partition contract")
+    pair_rows = []
+    for pair in declared_pairs:
+        if not isinstance(pair, Mapping) or set(pair) != {"backend", "partition"}:
+            raise ControllerError("sealed handoff contains an invalid backend/partition mapping")
+        pair_rows.append((pair.get("backend"), pair.get("partition")))
+    if len(set(pair_rows)) != len(pair_rows) or set(pair_rows) != actual_pairs:
+        raise ControllerError("sealed handoff expands or omits a backend/partition mapping")
+
+    cells = []
+    for candidate in candidates:
+        if not isinstance(candidate, Mapping) or _contains_forbidden_data(candidate):
+            raise ControllerError("candidate materialization contains seed or held-out data")
+        identifier = candidate.get("candidate_id")
+        parameters = candidate.get("parameters")
+        if not isinstance(identifier, str) or not identifier.strip() or not isinstance(parameters, Mapping):
+            raise ControllerError("candidate materialization is malformed")
+        for arm in arms:
+            cell = {
+                "candidate_id": identifier,
+                "candidate_order": candidate.get("order"),
+                "arm": arm["name"],
+                "role": arm["role"],
+                "candidate_parameters": dict(parameters),
+                "arm_parameters": dict(arm["parameters"]),
+                "backend": candidate.get("backend"),
+                "partition": candidate.get("partition"),
+                "resource_lane": candidate.get("resource_lane"),
+                "device": candidate.get("device"),
+            }
+            if arm["role"] == "lesion":
+                cell["lesion_target"] = arm["target"]
+            cell["materialization_id"] = _digest(cell)[:24]
+            cells.append(cell)
+    cells.sort(key=lambda item: (item["candidate_order"], item["arm"]))
+
+    manifest = {
+        "schema": EXECUTION_MANIFEST_SCHEMA,
+        "plan_sha256": plan["sha256"],
+        "handoff_sha256": handoff["sha256"],
+        "experiment_id": handoff.get("experiment_id"),
+        "spec_path": handoff.get("spec_path"),
+        "spec_sha256": handoff.get("spec_sha256"),
+        "sealed_execution_manifest_sha256": handoff.get("execution_manifest_sha256"),
+        "source": handoff.get("source"),
+        "arms": arms,
+        "required_roles": roles,
+        "backend_partition_pairs": [
+            {"backend": backend, "partition": partition} for backend, partition in sorted(actual_pairs)
+        ],
+        "materialization_count": len(cells),
+        "materializations": cells,
+        "receipt_contract": {
+            "schema": EXECUTION_RECEIPT_SCHEMA,
+            "required_materialization_ids": [cell["materialization_id"] for cell in cells],
+            "status": "accepted_non_dispatching",
+            "exact_set_required": True,
+        },
+        "dispatch": {"performed": False, "commands_emitted": False},
+        "seeds_selected": False,
+        "held_out_partitions_accessed": [],
+    }
+    manifest["sha256"] = _digest(manifest)
+    return manifest
+
+
+def validate_execution_receipt(manifest: Mapping[str, Any], receipt: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate an exact, seed-free acknowledgement of the non-dispatching materialization."""
+    if (not isinstance(manifest, Mapping) or manifest.get("schema") != EXECUTION_MANIFEST_SCHEMA
+            or not _valid_digest(manifest)):
+        raise ControllerError("execution receipt requires a valid execution manifest")
+    if not isinstance(receipt, Mapping) or set(receipt) != {
+        "schema", "execution_manifest_sha256", "materializations", "dispatch", "seeds_selected",
+        "held_out_partitions_accessed", "sha256",
+    } or receipt.get("schema") != EXECUTION_RECEIPT_SCHEMA or not _valid_digest(receipt):
+        raise ControllerError("execution receipt has an invalid schema, shape, or digest")
+    if (receipt.get("execution_manifest_sha256") != manifest["sha256"]
+            or receipt.get("dispatch") != {"performed": False, "commands_emitted": False}
+            or receipt.get("seeds_selected") is not False
+            or receipt.get("held_out_partitions_accessed") != []
+            or _contains_forbidden_data(receipt.get("materializations"))):
+        raise ControllerError("execution receipt violates the sealed non-dispatching boundary")
+
+    expected = {
+        cell["materialization_id"]: {
+            "materialization_id": cell["materialization_id"],
+            "candidate_id": cell["candidate_id"],
+            "arm": cell["arm"],
+            "role": cell["role"],
+            "backend": cell["backend"],
+            "partition": cell["partition"],
+            "status": "accepted_non_dispatching",
+        }
+        for cell in manifest["materializations"]
+    }
+    rows = receipt.get("materializations")
+    if not isinstance(rows, list) or any(not isinstance(row, Mapping) for row in rows):
+        raise ControllerError("execution receipt materializations must be a list of objects")
+    expected_fields = {"materialization_id", "candidate_id", "arm", "role", "backend", "partition", "status"}
+    if any(set(row) != expected_fields or not isinstance(row.get("materialization_id"), str)
+           for row in rows):
+        raise ControllerError("execution receipt materializations have invalid fields or identities")
+    observed = {row["materialization_id"]: dict(row) for row in rows}
+    if len(observed) != len(rows) or observed != expected:
+        raise ControllerError("execution receipt has extra, missing, or expanded arms, controls, or lesions")
+    return {
+        "schema": EXECUTION_RECEIPT_SCHEMA,
+        "execution_manifest_sha256": manifest["sha256"],
+        "accepted": True,
+        "materialization_count": len(rows),
+        "dispatch_performed": False,
         "seeds_selected": False,
         "held_out_partitions_accessed": [],
     }
