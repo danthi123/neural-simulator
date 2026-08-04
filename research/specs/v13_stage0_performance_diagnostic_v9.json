@@ -1,0 +1,78 @@
+{
+  "schema": "v13-stage0-performance-diagnostic-v9",
+  "status": "preregistered",
+  "purpose": "Explain or bound the V8 normal-default performance comparison without changing the sealed V8 gate",
+  "mechanism": "none-process-only",
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "candidate_source_lineage": "1ecc85cd698539a6ef92e112d2c49092cfa21f1e",
+  "control_source_revision": "1bec3c22ad7c535a2cbb27860e5bf4cfd51d6d6f",
+  "historical_baseline_seconds": 5.78883048100397,
+  "historical_baseline_artifact": "research/findings/raw/v13_tonic_output_stage0_performance_confirmation_v8/candidate-runtime/legacy_performance_baseline.json",
+  "matrix": [
+    {
+      "id": "A",
+      "source": "candidate",
+      "cache_state": "cold-process",
+      "v2_warmup_before_normal": false
+    },
+    {
+      "id": "B",
+      "source": "control",
+      "cache_state": "cold-process",
+      "v2_warmup_before_normal": false
+    },
+    {
+      "id": "C",
+      "source": "candidate",
+      "cache_state": "after-v2-warmup",
+      "v2_warmup_before_normal": true
+    },
+    {
+      "id": "D",
+      "source": "control",
+      "cache_state": "after-v2-warmup",
+      "v2_warmup_before_normal": true
+    }
+  ],
+  "repetitions": 3,
+  "warmup_steps": 500,
+  "timed_steps": 20000,
+  "chunk_steps": 5000,
+  "order_seed": 20260804,
+  "execution": {
+    "one_gpu_process_at_a_time": true,
+    "local_model_must_be_stopped": true,
+    "shared_gpu_lease_required": true,
+    "nonempty_gpu_queue_refuses_run": true,
+    "no_physiology_or_learning_seeds": true,
+    "stage1_seed_1031_remains_sealed": true,
+    "fixed_v8_gate_is_not_replaced": true,
+    "fixed_v8_threshold_is_not_changed": true
+  },
+  "structural_assertions": [
+    "normal path is selected on every timed worker",
+    "v1 and v2 dispatch flags are disabled for the normal timed path",
+    "intrinsic current array is None for the default bridge",
+    "external current is exactly zero",
+    "no host reset occurs during the timed interval",
+    "no learning, reward, physiology, or Stage 1 configuration is loaded"
+  ],
+  "recorded_facts": [
+    "per-repetition host wall time",
+    "per-repetition CUDA event time",
+    "host-minus-device time",
+    "GPU temperature, clocks, power, utilization, and memory before and after timing",
+    "CuPy memory-pool usage before warmup, after warmup, and after timing",
+    "normal-path call and megakernel dispatch counts from a separate short structural trace",
+    "source file digests and Python/CuPy/CUDA/driver metadata"
+  ],
+  "interpretation": {
+    "candidate_and_control_both_slow": "environment-or-runtime remains plausible",
+    "candidate_only_slow": "candidate-source effect remains plausible",
+    "cold_and_after_v2_converge": "cache-or-order effect remains plausible",
+    "device_time_matches_but_host_time_differs": "host dispatch or synchronization effect remains plausible",
+    "interpretation_is_not_an_automatic_gate_verdict": true
+  },
+  "promotion_effect": "none; V8 normal-default NO_GO remains authoritative until a separately reviewed change"
+}
