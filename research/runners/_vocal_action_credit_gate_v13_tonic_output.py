@@ -38,6 +38,11 @@ from tools.verdict import Verdict
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "research/specs/v13_tonic_output_substrate.json"
 RUNNER_PATH = Path(__file__).resolve()
+COMPATIBILITY_ROOT = ROOT / "research/findings/raw/v13_deterministic_compatibility"
+COMPATIBILITY_CORRECTION_PATH = COMPATIBILITY_ROOT / "comparison-baseline-vs-candidate.json"
+COMPATIBILITY_RUNNER_PATH = ROOT / "research/runners/_v13_deterministic_compatibility.py"
+COMPATIBILITY_SPEC_PATH = ROOT / "research/specs/v13_tonic_output_deterministic_compatibility.json"
+DETERMINISTIC_PATCH_ID = "18bd23624a3247cb0f205795081b7a540c15ed89"
 PARTITIONS = {
     "audit_only": [314159],
     "compatibility": [271828],
@@ -143,6 +148,76 @@ def _artifact_verdict_is_earned(artifact: dict) -> bool:
         and not artifact.get("undefined_reasons")
         and artifact.get("verdict_status") in ("GO", "NO-GO")
     )
+
+
+def _canonical_artifact_digest(artifact: dict) -> str:
+    payload = json.dumps(artifact, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _load_compatibility_correction(path: Path) -> dict:
+    path = path.resolve()
+    if path != COMPATIBILITY_CORRECTION_PATH.resolve():
+        raise ValueError(
+            f"compatibility correction must be {COMPATIBILITY_CORRECTION_PATH}"
+        )
+    artifact = json.loads(path.read_text())
+    expected_identity = {
+        "runner_sha256": hashlib.sha256(COMPATIBILITY_RUNNER_PATH.read_bytes()).hexdigest(),
+        "spec_sha256": hashlib.sha256(COMPATIBILITY_SPEC_PATH.read_bytes()).hexdigest(),
+    }
+    valid = (
+        artifact.get("schema") == "v13-deterministic-compatibility-comparison-v1"
+        and artifact.get("stage") == "cross_twin_compare"
+        and artifact.get("outcome") == "DETERMINISTIC_COMPATIBILITY_GO"
+        and artifact.get("go") is True
+        and artifact.get("verdict_status") == "GO"
+        and _artifact_verdict_is_earned(artifact)
+        and artifact.get("acceptance_checks") == {
+            "all_seven_hashes_exact_across_twins": True,
+            "topology_exact_across_twins": True,
+        }
+        and artifact.get("deterministic_patch_id") == DETERMINISTIC_PATCH_ID
+        and artifact.get("executor_identity") == expected_identity
+    )
+    if not valid:
+        raise ValueError("compatibility correction is missing, stale, or not an earned exact GO")
+
+    bundles = {
+        "baseline": COMPATIBILITY_ROOT / "bundle-baseline_8994_plus_deterministic_patch.json",
+        "candidate": COMPATIBILITY_ROOT / "bundle-candidate_v13.json",
+    }
+    for label, bundle_path in bundles.items():
+        bundle = json.loads(bundle_path.read_text())
+        if (
+            _canonical_artifact_digest(bundle) != artifact[f"{label}_bundle_sha256"]
+            or bundle.get("go") is not True
+            or not _artifact_verdict_is_earned(bundle)
+        ):
+            raise ValueError(f"{label} compatibility bundle is missing or changed")
+
+    candidate = json.loads(bundles["candidate"].read_text())
+    candidate_sha = candidate.get("source_identity", {}).get("git_sha")
+    if not candidate_sha:
+        raise ValueError("candidate compatibility bundle has no source revision")
+    critical_paths = (
+        "sim/bridge.py", "sim/regions.py", "sim/kernels.py",
+        "research/runners/_vocal_action_selector_gate.py",
+        "research/specs/v13_tonic_output_substrate.json",
+    )
+    changed = subprocess.run(
+        ["git", "diff", "--name-only", f"{candidate_sha}..HEAD", "--", *critical_paths],
+        cwd=ROOT, check=True, capture_output=True, text=True,
+    ).stdout.splitlines()
+    if changed:
+        raise ValueError(f"compatibility-covered simulator inputs changed: {changed}")
+    return {
+        "path": str(path.relative_to(ROOT)),
+        "sha256": _canonical_artifact_digest(artifact),
+        "candidate_source_sha": candidate_sha,
+        "deterministic_patch_id": DETERMINISTIC_PATCH_ID,
+        "outcome": artifact["outcome"],
+    }
 
 
 def _assert_source_sealed() -> None:
@@ -409,8 +484,9 @@ def _physiology_metrics(run: dict, *, n=40, bin_steps=100) -> dict:
     return {"metrics": metrics, "checks": checks, "pass": all(checks.values())}
 
 
-def run_calibration() -> dict:
+def run_calibration(compatibility_path: Path) -> dict:
     spec = load_locked_spec()
+    compatibility = _load_compatibility_correction(compatibility_path)
     backend = _backend_info()
     started = time.perf_counter()
     rows = []
@@ -443,6 +519,7 @@ def run_calibration() -> dict:
         "source_sha": _git_sha(),
         "source_identity": _source_identity(),
         "spec_sha256": hashlib.sha256(SPEC_PATH.read_bytes()).hexdigest(),
+        "compatibility_correction": compatibility,
         "rows": rows,
         "passing_currents_pA": [row["current_pA"] for row in rows if row["pass"]],
         "elapsed_seconds": float(time.perf_counter() - started),
@@ -462,6 +539,12 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
     identities = [item.get("source_identity") for item in artifacts]
     if not identities[0] or identities[0] != identities[1]:
         raise ValueError("calibration backends did not use identical sealed sources")
+    compatibility = [item.get("compatibility_correction") for item in artifacts]
+    expected_compatibility = _load_compatibility_correction(
+        COMPATIBILITY_CORRECTION_PATH
+    )
+    if compatibility != [expected_compatibility, expected_compatibility]:
+        raise ValueError("calibration artifacts lack the earned compatibility correction")
     common = [
         current for current in LADDER_PA
         if all(current in by_backend[name]["passing_currents_pA"] for name in ("numpy", "cupy"))
@@ -482,6 +565,8 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
             "identical sealed source identities": bool(
                 identities[0] and identities[0] == identities[1]
             ),
+            "earned compatibility correction bound": compatibility
+            == [expected_compatibility, expected_compatibility],
         },
     )
     return {
@@ -492,6 +577,7 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
         "seed": PARTITIONS["calibration"][0],
         "source_shas": {name: by_backend[name]["source_sha"] for name in by_backend},
         "source_identity": identities[0],
+        "compatibility_correction": expected_compatibility,
         "artifacts": {"numpy": str(numpy_path), "cupy": str(cupy_path)},
         "common_passing_currents_pA": common,
         "selected_current_pA": selected,
@@ -514,6 +600,10 @@ def _load_selection(path: Path) -> tuple[dict, float]:
         raise ValueError("selection artifact contains an unlocked current")
     if selection.get("source_identity") != _source_identity():
         raise ValueError("selection source identity differs from executable source")
+    if selection.get("compatibility_correction") != _load_compatibility_correction(
+        COMPATIBILITY_CORRECTION_PATH
+    ):
+        raise ValueError("selection is not bound to the earned compatibility correction")
     return selection, float(current)
 
 
@@ -1013,8 +1103,8 @@ def run_performance(old_baseline_path: Path | None = None) -> dict:
 
 
 def merge_final(paths: list[Path]) -> dict:
-    if len(paths) != 7:
-        raise ValueError("final merge requires 7 artifacts")
+    if len(paths) != 6:
+        raise ValueError("final merge requires 6 artifacts")
     artifacts = [json.loads(path.read_text()) for path in paths]
     if not all(_artifact_verdict_is_earned(artifact) for artifact in artifacts):
         raise ValueError("final merge refuses an artifact without an earned verdict")
@@ -1022,14 +1112,14 @@ def merge_final(paths: list[Path]) -> dict:
     for path, artifact in zip(paths, artifacts):
         by_stage.setdefault(artifact.get("stage"), []).append((path, artifact))
     expected_counts = {
-        "compatibility": 2,
+        "cross_twin_compare": 1,
         "replication": 2,
         "held_out": 2,
         "performance": 1,
     }
     if {stage: len(by_stage.get(stage, [])) for stage in expected_counts} != expected_counts:
         raise ValueError("final artifacts do not contain the required stage/backend matrix")
-    for stage in ("compatibility", "replication", "held_out"):
+    for stage in ("replication", "held_out"):
         backends = {artifact["backend"] for _, artifact in by_stage[stage]}
         if backends != {"numpy", "cupy"}:
             raise ValueError(f"{stage} requires NumPy and CuPy artifacts")
@@ -1041,7 +1131,12 @@ def merge_final(paths: list[Path]) -> dict:
     if len(selected) != 1 or next(iter(selected)) not in LADDER_PA:
         raise ValueError("replication and held-out artifacts disagree on selection")
     checks = {
-        "compatibility": all(item.get("go") for _, item in by_stage["compatibility"]),
+        "compatibility": (
+            by_stage["cross_twin_compare"][0][1]
+            == json.loads(COMPATIBILITY_CORRECTION_PATH.read_text())
+            and _load_compatibility_correction(COMPATIBILITY_CORRECTION_PATH)["outcome"]
+            == "DETERMINISTIC_COMPATIBILITY_GO"
+        ),
         "replication": all(item.get("go") for _, item in by_stage["replication"]),
         "held_out": all(item.get("go") for _, item in by_stage["held_out"]),
         "performance": bool(by_stage["performance"][0][1].get("go")),
@@ -1050,7 +1145,7 @@ def merge_final(paths: list[Path]) -> dict:
         "Gate B v13 Stage 0 final",
         all(checks.values()),
         {
-            "seven earned input verdicts": all(
+            "six earned input verdicts": all(
                 _artifact_verdict_is_earned(artifact) for artifact in artifacts
             ),
             "required stage matrix complete": all(
@@ -1117,17 +1212,20 @@ def main(argv=None):
     stages.add_argument("--compatibility", action="store_true")
     stages.add_argument("--performance", action="store_true")
     stages.add_argument("--legacy-performance-baseline", action="store_true")
-    stages.add_argument("--merge-final", nargs=7, metavar=(
-        "COMPAT_NUMPY", "COMPAT_CUPY", "REPL_NUMPY", "REPL_CUPY",
+    stages.add_argument("--merge-final", nargs=6, metavar=(
+        "COMPATIBILITY_GO", "REPL_NUMPY", "REPL_CUPY",
         "HELD_CUPY", "HELD_NUMPY", "PERFORMANCE",
     ))
     stages.add_argument("--self-check", action="store_true")
     parser.add_argument("--old-baseline")
+    parser.add_argument("--compatibility-correction")
     parser.add_argument("--out", required=True)
     args = parser.parse_args(argv)
 
     if args.calibration:
-        result = run_calibration()
+        if not args.compatibility_correction:
+            parser.error("--calibration requires --compatibility-correction")
+        result = run_calibration(Path(args.compatibility_correction))
     elif args.merge_calibration:
         result = merge_calibration(
             Path(args.merge_calibration[0]), Path(args.merge_calibration[1])

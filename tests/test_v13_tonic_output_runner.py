@@ -21,6 +21,19 @@ def test_locked_spec_matches_runner_and_seed_partitions_do_not_overlap():
     assert v13.PARTITIONS["reserved_for_stage1"] == [1031]
 
 
+def test_earned_compatibility_correction_is_bound_to_committed_evidence():
+    result = v13._load_compatibility_correction(v13.COMPATIBILITY_CORRECTION_PATH)
+    assert result["outcome"] == "DETERMINISTIC_COMPATIBILITY_GO"
+    assert result["deterministic_patch_id"] == v13.DETERMINISTIC_PATCH_ID
+
+
+def test_compatibility_correction_refuses_noncanonical_artifact(tmp_path):
+    substitute = tmp_path / "comparison.json"
+    substitute.write_text(v13.COMPATIBILITY_CORRECTION_PATH.read_text())
+    with pytest.raises(ValueError, match="must be"):
+        v13._load_compatibility_correction(substitute)
+
+
 def test_tonic_builder_has_only_immutable_intrinsic_drive():
     bridge = v13.build_tonic_bridge(7, 100.0)
     assert bridge.cp_intrinsic_current_pA is not None
@@ -65,11 +78,15 @@ def test_checkpoint_continuation_is_exact_on_test_seed():
 
 def test_merge_calibration_selects_lowest_common_passing_point(tmp_path):
     identity = {"runner": "same"}
+    correction = v13._load_compatibility_correction(
+        v13.COMPATIBILITY_CORRECTION_PATH
+    )
     base = {
         "stage": "calibration_backend",
         "seed": 1013,
         "source_sha": "abc",
         "source_identity": identity,
+        "compatibility_correction": correction,
         "rows": [{"current_pA": value} for value in v13.LADDER_PA],
     }
     numpy = {**base, "backend": "numpy", "passing_currents_pA": [100, 125]}
@@ -98,11 +115,25 @@ def test_merge_calibration_refuses_source_mismatch(tmp_path):
         v13.merge_calibration(*paths)
 
 
+def test_merge_calibration_refuses_missing_compatibility_binding(tmp_path):
+    identity = {"runner": "same"}
+    paths = []
+    for backend in ("numpy", "cupy"):
+        path = tmp_path / f"{backend}.json"
+        path.write_text(json.dumps({
+            "backend": backend, "seed": 1013, "source_sha": "abc",
+            "source_identity": identity,
+            "rows": [{"current_pA": value} for value in v13.LADDER_PA],
+            "passing_currents_pA": [100],
+        }))
+        paths.append(path)
+    with pytest.raises(ValueError, match="compatibility correction"):
+        v13.merge_calibration(*paths)
+
+
 def test_final_merge_requires_every_backend_and_gate(tmp_path):
-    artifacts = []
+    artifacts = [v13.COMPATIBILITY_CORRECTION_PATH]
     rows = (
-        ("compatibility", "numpy", True),
-        ("compatibility", "cupy", True),
         ("replication", "numpy", True),
         ("replication", "cupy", True),
         ("held_out", "cupy", True),
@@ -138,7 +169,7 @@ def test_final_merge_refuses_unearned_input_verdict(tmp_path):
     artifact = tmp_path / "invalid.json"
     artifact.write_text(json.dumps({"stage": "compatibility", "go": True}))
     with pytest.raises(ValueError, match="earned verdict"):
-        v13.merge_final([artifact] * 7)
+        v13.merge_final([artifact] * 6)
 
 
 def test_compatibility_artifact_carries_earned_preconditions():
