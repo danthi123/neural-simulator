@@ -18,11 +18,41 @@ import subprocess
 import sys
 from typing import Any
 
+try:
+    from tools import execution_receipt
+except ModuleNotFoundError:  # Direct ``python tools/...`` invocation.
+    import execution_receipt  # type: ignore[no-redef]
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_SCHEMA = "v13-stage0-controller-config-v1"
 MANIFEST_SCHEMA = "v13-stage0-artifact-manifest-v1"
 COMMAND_SCHEMA = "v13-stage0-command-v1"
+MANIFEST_FIELDS = {
+    "schema", "kind", "config_sha256", "source_revision", "artifact",
+    "command_envelope", "execution_receipt", "sha256",
+}
+MANIFEST_ARTIFACT_FIELDS = {"path", "sha256"}
+MANIFEST_COMMAND_REFERENCE_FIELDS = {"path", "sha256"}
+MANIFEST_RECEIPT_REFERENCE_FIELDS = {
+    "path", "sha256", "host", "device", "started_utc_ns", "ended_utc_ns",
+}
+COMMAND_FIELDS = {
+    "schema", "action", "correction_id", "config", "source_revision", "cwd",
+    "env", "argv", "output", "prerequisites", "execution",
+}
+MANIFEST_ACTIONS = {
+    "calibration_numpy": "calibration_numpy",
+    "calibration_cupy": "calibration_cupy",
+    "calibration_selection": "merge_calibration",
+    "replication_numpy": "replication_numpy",
+    "replication_cupy": "replication_cupy",
+    "held_out_cupy": "held_out_cupy",
+    "held_out_numpy": "held_out_numpy",
+    "performance_baseline": "performance_baseline",
+    "performance_candidate": "performance_candidate",
+    "final_stage0": "final_stage0_merge",
+}
 RUNNER_MODULE = "research.runners._vocal_action_credit_gate_v13_tonic_output"
 SEED_SPEC_PATH = "research/specs/v13_tonic_output_substrate.json"
 COMPATIBILITY_PATH = (
@@ -242,6 +272,133 @@ def _manifest_digest(manifest: dict[str, Any]) -> str:
     return _canonical_digest(manifest)
 
 
+def _expected_manifest_source(config: dict[str, Any], kind: str) -> str:
+    if kind == "performance_baseline":
+        return config["legacy_performance"]["source_revision"]
+    return config["candidate_source_revision"]
+
+
+def _expected_manifest_env(kind: str) -> dict[str, str]:
+    if kind.endswith("_numpy"):
+        return {"SIM_BACKEND": "numpy"}
+    if kind in {"calibration_selection", "final_stage0"}:
+        return {}
+    return {"SIM_BACKEND": "cupy"}
+
+
+def _expected_manifest_argv(
+    *, config: dict[str, Any], kind: str, root: Path, output: Path,
+) -> list[str]:
+    paths = _artifact_paths(config, root)
+    prefix = [config["python"], "-m", config["runner_module"]]
+    if kind.startswith("calibration_") and kind != "calibration_selection":
+        return [
+            *prefix, "--calibration", "--compatibility-correction",
+            str((root / COMPATIBILITY_PATH).resolve()), "--out", str(output),
+        ]
+    if kind == "calibration_selection":
+        return [
+            *prefix, "--merge-calibration", str(paths["calibration_numpy"]),
+            str(paths["calibration_cupy"]), "--out", str(output),
+        ]
+    if kind.startswith("replication_"):
+        return [
+            *prefix, "--replication", str(paths["calibration_selection"]),
+            "--out", str(output),
+        ]
+    if kind.startswith("held_out_"):
+        return [
+            *prefix, "--held-out", str(paths["calibration_selection"]),
+            "--out", str(output),
+        ]
+    if kind == "performance_baseline":
+        return [*prefix, "--legacy-performance-baseline", "--out", str(output)]
+    if kind == "performance_candidate":
+        return [
+            *prefix, "--performance", "--old-baseline",
+            str(paths["performance_baseline"]), "--out", str(output),
+        ]
+    compatibility = (root / COMPATIBILITY_PATH).resolve()
+    return [
+        *prefix, "--merge-final", str(compatibility),
+        str(paths["replication_numpy"]), str(paths["replication_cupy"]),
+        str(paths["held_out_cupy"]), str(paths["held_out_numpy"]),
+        str(paths["performance_candidate"]), "--out", str(output),
+    ]
+
+
+def _validate_manifest_envelope(
+    envelope: dict[str, Any], *, config: dict[str, Any], kind: str,
+    root: Path, artifact_path: Path,
+) -> Path:
+    expected_fields = set(COMMAND_FIELDS)
+    if kind == "final_stage0":
+        expected_fields.add("expected_result")
+    _require(set(envelope) == expected_fields,
+             f"{kind} command envelope has missing or extra fields")
+    _require(envelope.get("schema") == COMMAND_SCHEMA,
+             f"{kind} command envelope schema is invalid")
+    _require(envelope.get("action") == MANIFEST_ACTIONS[kind],
+             f"{kind} command envelope action is invalid")
+    _require(envelope.get("correction_id") == config["correction_id"],
+             f"{kind} command envelope correction ID differs from config")
+    config_ref = envelope.get("config")
+    _require(isinstance(config_ref, dict) and set(config_ref) == {"path", "sha256"},
+             f"{kind} command envelope config reference is invalid")
+    _require(config_ref.get("sha256") == config["sha256"],
+             f"{kind} command envelope config digest differs from config")
+    config_path_value = config_ref.get("path")
+    _require(isinstance(config_path_value, str) and Path(config_path_value).is_absolute(),
+             f"{kind} command envelope config path must be absolute")
+    try:
+        config_path = Path(config_path_value).resolve(strict=True)
+        config_path.relative_to(root)
+    except (OSError, ValueError) as exc:
+        raise ControllerError(
+            f"{kind} command envelope config path is outside the source root"
+        ) from exc
+    _require(_load_json(config_path, "envelope correction config") == config,
+             f"{kind} command envelope names different config bytes")
+
+    expected_source = _expected_manifest_source(config, kind)
+    _require(envelope.get("source_revision") == expected_source,
+             f"{kind} command envelope source revision is invalid")
+    _require(envelope.get("execution") == "not_executed",
+             f"{kind} command envelope execution marker is invalid")
+    _require(isinstance(envelope.get("prerequisites"), list),
+             f"{kind} command envelope prerequisites must be a list")
+    cwd_value = envelope.get("cwd")
+    _require(isinstance(cwd_value, str) and Path(cwd_value).is_absolute(),
+             f"{kind} command envelope cwd must be absolute")
+    try:
+        cwd = Path(cwd_value).resolve(strict=True)
+    except OSError as exc:
+        raise ControllerError(f"{kind} command envelope cwd is invalid") from exc
+    _require(cwd.is_dir(), f"{kind} command envelope cwd is not a directory")
+    if kind != "performance_baseline":
+        _require(cwd == root, f"{kind} command envelope cwd differs from source root")
+    else:
+        legacy = config["legacy_performance"]
+        _, runner = _repo_path(cwd, legacy["runner_path"], "legacy runner path")
+        _require(runner.is_file() and _file_digest(runner) == legacy["runner_sha256"],
+                 "performance baseline command envelope has the wrong legacy runner")
+
+    _require(envelope.get("output") == str(artifact_path),
+             f"{kind} command envelope output differs from canonical artifact")
+    expected_argv = _expected_manifest_argv(
+        config=config, kind=kind, root=root, output=artifact_path
+    )
+    _require(envelope.get("argv") == expected_argv,
+             f"{kind} command envelope argv differs from frozen command")
+    _require(envelope.get("env") == _expected_manifest_env(kind),
+             f"{kind} command envelope environment differs from frozen command")
+    if kind == "final_stage0":
+        _require(envelope.get("expected_result") == {
+            "stage": "final_cross_backend", "outcome": "TONIC_OUTPUT_GO", "go": True,
+        }, "final_stage0 command envelope expected result is invalid")
+    return cwd
+
+
 def load_manifest(
     path: Path,
     *,
@@ -249,35 +406,125 @@ def load_manifest(
     kind: str,
     root: Path = ROOT,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
-    manifest = _load_json(path, f"{kind} manifest")
+    root = root.resolve()
+    _require(kind in MANIFEST_ACTIONS, f"unsupported manifest kind: {kind}")
+    manifest_input = path if path.is_absolute() else root / path
+    _require(manifest_input.is_file(), f"{kind} manifest does not exist: {path}")
+    try:
+        manifest_path = manifest_input.resolve(strict=True)
+        manifest_path.relative_to(root)
+    except (OSError, ValueError) as exc:
+        raise ControllerError(f"{kind} manifest path is outside the source root") from exc
+    manifest = _load_json(manifest_path, f"{kind} manifest")
+    _require(set(manifest) == MANIFEST_FIELDS,
+             f"{kind} manifest has missing or extra fields")
     _require(manifest.get("schema") == MANIFEST_SCHEMA, f"{kind} manifest schema is invalid")
     _require(manifest.get("kind") == kind, f"manifest kind is not {kind}")
     _require(manifest.get("config_sha256") == config["sha256"],
              f"{kind} manifest is bound to a different correction config")
-    expected_source = (
-        config["legacy_performance"]["source_revision"]
-        if kind == "performance_baseline" else config["candidate_source_revision"]
-    )
+    expected_source = _expected_manifest_source(config, kind)
     _require(manifest.get("source_revision") == expected_source,
              f"{kind} manifest is bound to the wrong source revision")
     supplied_manifest_digest = _require_digest(manifest.get("sha256"), f"{kind} manifest sha256")
     _require(supplied_manifest_digest == _manifest_digest(manifest),
              f"{kind} manifest self-digest is invalid")
     artifact_ref = manifest.get("artifact")
-    _require(isinstance(artifact_ref, dict), f"{kind} manifest artifact must be an object")
+    _require(isinstance(artifact_ref, dict) and set(artifact_ref) == MANIFEST_ARTIFACT_FIELDS,
+             f"{kind} manifest artifact reference is invalid")
     expected_path = _artifact_paths(config, root)[kind]
     _, artifact_path = _repo_path(root, artifact_ref.get("path"), f"{kind} artifact path")
     _require(artifact_path == expected_path, f"{kind} manifest names a non-canonical artifact path")
     artifact_digest = _require_digest(artifact_ref.get("sha256"), f"{kind} artifact sha256")
     _require(artifact_path.is_file() and _file_digest(artifact_path) == artifact_digest,
              f"{kind} artifact is missing or its digest changed")
+
+    envelope_ref = manifest.get("command_envelope")
+    _require(
+        isinstance(envelope_ref, dict)
+        and set(envelope_ref) == MANIFEST_COMMAND_REFERENCE_FIELDS,
+        f"{kind} command envelope reference is invalid",
+    )
+    envelope_relative, envelope_path = _repo_path(
+        root, envelope_ref.get("path"), f"{kind} command envelope path"
+    )
+    envelope_digest = _require_digest(
+        envelope_ref.get("sha256"), f"{kind} command envelope sha256"
+    )
+    _require(envelope_path.is_file() and _file_digest(envelope_path) == envelope_digest,
+             f"{kind} command envelope is missing or its digest changed")
+    envelope = _load_json(envelope_path, f"{kind} command envelope")
+    cwd = _validate_manifest_envelope(
+        envelope, config=config, kind=kind, root=root, artifact_path=artifact_path
+    )
+    _require(_file_digest(envelope_path) == envelope_digest,
+             f"{kind} command envelope changed while being validated")
+
+    receipt_ref = manifest.get("execution_receipt")
+    _require(
+        isinstance(receipt_ref, dict)
+        and set(receipt_ref) == MANIFEST_RECEIPT_REFERENCE_FIELDS,
+        f"{kind} execution receipt reference is invalid",
+    )
+    receipt_relative, receipt_path = _repo_path(
+        cwd, receipt_ref.get("path"), f"{kind} execution receipt path"
+    )
+    receipt_digest = _require_digest(
+        receipt_ref.get("sha256"), f"{kind} execution receipt sha256"
+    )
+    _require(receipt_path.is_file() and _file_digest(receipt_path) == receipt_digest,
+             f"{kind} execution receipt is missing or its digest changed")
+    host = receipt_ref.get("host")
+    device = receipt_ref.get("device")
+    _require(isinstance(host, str) and host.strip(),
+             f"{kind} execution receipt host must be explicit")
+    _require(isinstance(device, str) and device.strip(),
+             f"{kind} execution receipt device must be explicit")
+    started = receipt_ref.get("started_utc_ns")
+    ended = receipt_ref.get("ended_utc_ns")
+    _require(type(started) is int and type(ended) is int and started <= ended,
+             f"{kind} execution receipt timestamps are invalid")
+    try:
+        receipt = execution_receipt.verify_receipt(cwd, receipt_relative)
+    except execution_receipt.ReceiptError as exc:
+        raise ControllerError(f"{kind} execution receipt is invalid: {exc}") from exc
+    _require(_file_digest(receipt_path) == receipt_digest,
+             f"{kind} execution receipt changed while being validated")
+    _require(receipt.get("argv") == envelope["argv"],
+             f"{kind} receipt argv differs from command envelope")
+    _require(receipt.get("env_allowlist") == envelope["env"],
+             f"{kind} receipt environment differs from command envelope")
+    _require(receipt.get("source", {}).get("git_sha") == expected_source,
+             f"{kind} receipt source revision is invalid")
+    _require(
+        receipt.get("host") == host and receipt.get("device") == device,
+        f"{kind} receipt host or device differs from manifest",
+    )
+    _require(
+        receipt.get("started_utc_ns") == started and receipt.get("ended_utc_ns") == ended,
+        f"{kind} receipt timestamps differ from manifest",
+    )
+    receipt_artifact = receipt.get("artifact")
+    _require(isinstance(receipt_artifact, dict), f"{kind} receipt artifact is invalid")
+    _, receipt_artifact_path = _repo_path(
+        cwd, receipt_artifact.get("path"), f"{kind} receipt artifact path"
+    )
+    _require(receipt_artifact_path == artifact_path,
+             f"{kind} receipt names a non-canonical artifact")
+    _require(receipt_artifact.get("sha256") == artifact_digest,
+             f"{kind} receipt artifact digest differs from manifest")
+    _require(_file_digest(artifact_path) == artifact_digest,
+             f"{kind} artifact changed while evidence was being validated")
     artifact = _load_json(artifact_path, f"{kind} artifact")
     reference = {
         "kind": kind,
-        "manifest_path": str(path.resolve()),
+        "manifest_path": str(manifest_path),
         "manifest_sha256": supplied_manifest_digest,
         "artifact_path": str(artifact_path),
         "artifact_sha256": artifact_digest,
+        "command_envelope_path": envelope_relative,
+        "command_envelope_sha256": envelope_digest,
+        "execution_receipt_path": receipt_relative,
+        "execution_receipt_sha256": receipt_digest,
     }
     return artifact, manifest, reference
 
@@ -701,15 +948,16 @@ def _validate_performance_candidate(
     _require(supplied_baseline.resolve() == _artifact_paths(config, root)["performance_baseline"],
              "performance candidate names a non-canonical baseline artifact")
 
-    bindings = manifest.get("bindings")
-    expected_bindings = {
-        "selection_manifest_sha256": selection_reference["manifest_sha256"],
-        "selected_current_pA": selection["selected_current_pA"],
-        "compatibility_path": config["compatibility"]["path"],
-        "compatibility_sha256": config["compatibility"]["sha256"],
-    }
-    _require(bindings == expected_bindings,
-             "performance manifest selection/current/compatibility bindings do not match")
+    _, command_path = _repo_path(
+        root, manifest["command_envelope"]["path"],
+        "performance command envelope path",
+    )
+    command = _load_json(command_path, "performance command envelope")
+    prerequisites = command.get("prerequisites")
+    _require(
+        isinstance(prerequisites, list) and selection_reference in prerequisites,
+        "performance command envelope is not bound to the selected calibration manifest",
+    )
 
 
 def emit_final_merge(

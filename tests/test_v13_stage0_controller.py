@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from tools import execution_receipt
 from tools import v13_stage0_controller as controller
 
 
@@ -36,13 +37,29 @@ def _seal(value: dict) -> dict:
     return result
 
 
+def _rewrite_sealed(path: Path, mutate) -> dict:
+    value = json.loads(path.read_text())
+    value.pop("sha256", None)
+    mutate(value)
+    sealed = _seal(value)
+    _write_json(path, sealed)
+    return sealed
+
+
+def _load_fixture_manifest(fx: "Fixture", path: Path, kind: str) -> dict:
+    _, manifest, _ = controller.load_manifest(
+        path, config=fx.config, kind=kind, root=fx.root
+    )
+    return manifest
+
+
 class Fixture:
     def __init__(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         self.root = tmp_path / "candidate"
         self.root.mkdir()
         self.legacy_root = tmp_path / "legacy"
         self.legacy_root.mkdir()
-        self.manifest_dir = tmp_path / "manifests"
+        self.manifest_dir = self.root / "manifests"
         self.manifest_dir.mkdir()
 
         compatibility = _write_json(
@@ -72,7 +89,8 @@ class Fixture:
         }
         legacy_runner = self.legacy_root / "research/runners/_vocal_action_credit_gate_v13_tonic_output.py"
         legacy_runner.parent.mkdir(parents=True)
-        legacy_runner.write_text("# sealed old runner\n")
+        candidate_runner = self.root / controller.CRITICAL_SOURCE_PATHS[0]
+        legacy_runner.write_bytes(candidate_runner.read_bytes())
 
         self.artifacts = {
             "calibration_numpy": "evidence/calibration-numpy.json",
@@ -120,23 +138,117 @@ class Fixture:
             controller, "_revision_file_digest",
             lambda root, revision, relative: _digest(root / relative),
         )
+        monkeypatch.setattr(
+            execution_receipt,
+            "_source_revision",
+            lambda root, expected_git_sha, manifest_sha256: "git",
+        )
+        source = self.root / "dummy-source.txt"
+        source.write_text("sealed controller fixture source\n")
+        self.source_manifest = self.root / "source.sha256"
+        self.source_manifest.write_text(f"{_digest(source)}  dummy-source.txt\n")
 
     def artifact_path(self, kind: str) -> Path:
         return self.root / self.artifacts[kind]
 
-    def manifest(self, kind: str, artifact: dict, *, bindings: dict | None = None) -> Path:
+    def manifest(
+        self, kind: str, artifact: dict, *,
+        prerequisites: list[dict] | None = None,
+    ) -> Path:
         artifact_path = _write_json(self.artifact_path(kind), artifact)
         source_revision = LEGACY if kind == "performance_baseline" else CANDIDATE
+        command = {
+            "schema": controller.COMMAND_SCHEMA,
+            "action": controller.MANIFEST_ACTIONS[kind],
+            "correction_id": self.config["correction_id"],
+            "config": {
+                "path": str(self.config_path.resolve()),
+                "sha256": self.config["sha256"],
+            },
+            "source_revision": source_revision,
+            "cwd": str(self.root.resolve()),
+            "env": controller._expected_manifest_env(kind),
+            "argv": controller._expected_manifest_argv(
+                config=self.config, kind=kind, root=self.root,
+                output=artifact_path.resolve(),
+            ),
+            "output": str(artifact_path.resolve()),
+            "prerequisites": prerequisites or [],
+            "execution": "not_executed",
+        }
+        if kind == "final_stage0":
+            command["expected_result"] = {
+                "stage": "final_cross_backend",
+                "outcome": "TONIC_OUTPUT_GO",
+                "go": True,
+            }
+        command_path = _write_json(
+            self.root / f"evidence-commands/{kind}.json", command
+        )
+        source = execution_receipt.verify_source_manifest(self.root, "source.sha256")
+        receipt = {
+            "argv": command["argv"],
+            "artifact": {
+                "path": self.artifacts[kind],
+                "sha256": _digest(artifact_path),
+                "size_bytes": artifact_path.stat().st_size,
+            },
+            "device": "synthetic fixture device",
+            "duration_monotonic_ns": 10,
+            "ended_utc_ns": 110,
+            "env_allowlist": command["env"],
+            "execution_root": ".",
+            "exit_code": 0,
+            "host": "fixture-host",
+            "schema": execution_receipt.SCHEMA,
+            "source": {
+                "file_count": source["file_count"],
+                "git_sha": source_revision,
+                "kind": "git",
+                "manifest": source["manifest"],
+                "manifest_sha256": source["manifest_sha256"],
+                "tree_sha256": source["tree_sha256"],
+            },
+            "started_utc_ns": 100,
+            "status": "success",
+        }
+        receipt_path = _write_json(
+            self.root / f"evidence-receipts/{kind}.json", receipt
+        )
         body = {
             "schema": controller.MANIFEST_SCHEMA,
             "kind": kind,
             "config_sha256": self.config["sha256"],
             "source_revision": source_revision,
             "artifact": {"path": self.artifacts[kind], "sha256": _digest(artifact_path)},
+            "command_envelope": {
+                "path": command_path.relative_to(self.root).as_posix(),
+                "sha256": _digest(command_path),
+            },
+            "execution_receipt": {
+                "path": receipt_path.relative_to(self.root).as_posix(),
+                "sha256": _digest(receipt_path),
+                "host": receipt["host"],
+                "device": receipt["device"],
+                "started_utc_ns": receipt["started_utc_ns"],
+                "ended_utc_ns": receipt["ended_utc_ns"],
+            },
         }
-        if bindings is not None:
-            body["bindings"] = bindings
         return _write_json(self.manifest_dir / f"{kind}.manifest.json", _seal(body))
+
+    def manifest_reference(self, kind: str, path: Path) -> dict:
+        manifest = json.loads(path.read_text())
+        return {
+            "kind": kind,
+            "manifest_path": str(path.resolve()),
+            "manifest_sha256": manifest["sha256"],
+            "artifact_path": str(self.artifact_path(kind).resolve()),
+            "artifact_sha256": manifest["artifact"]["sha256"],
+            "command_envelope_path": manifest["command_envelope"]["path"],
+            "command_envelope_sha256": manifest["command_envelope"]["sha256"],
+            "execution_receipt_path": manifest["execution_receipt"]["path"],
+            "execution_receipt_sha256": manifest["execution_receipt"]["sha256"],
+        }
 
     def calibration(self, backend: str) -> dict:
         rows = []
@@ -243,15 +355,22 @@ class Fixture:
                 "held_out_numpy", self.stage("held_out", "numpy", selection)
             ),
         }
-        selection_seal = json.loads(manifests["selection"].read_text())
-        bindings = performance_bindings or {
-            "selection_manifest_sha256": selection_seal["sha256"],
-            "selected_current_pA": selection["selected_current_pA"],
-            "compatibility_path": controller.COMPATIBILITY_PATH,
-            "compatibility_sha256": self.config["compatibility"]["sha256"],
-        }
+        selection_reference = self.manifest_reference(
+            "calibration_selection", manifests["selection"]
+        )
+        if performance_bindings is not None:
+            expected_bindings = {
+                "selection_manifest_sha256": selection_reference["manifest_sha256"],
+                "selected_current_pA": selection["selected_current_pA"],
+                "compatibility_path": controller.COMPATIBILITY_PATH,
+                "compatibility_sha256": self.config["compatibility"]["sha256"],
+            }
+            if performance_bindings != expected_bindings:
+                selection_reference = dict(selection_reference)
+                selection_reference["manifest_sha256"] = "f" * 64
         manifests["performance"] = self.manifest(
-            "performance_candidate", performance or self.performance(), bindings=bindings
+            "performance_candidate", performance or self.performance(),
+            prerequisites=[selection_reference],
         )
         return manifests
 
@@ -501,6 +620,175 @@ def test_manifest_byte_tamper_and_create_only_outputs_fail_closed(fx: Fixture):
     assert emitted.read_text() == "keep\n"
 
 
+def test_manifest_requires_exact_adapter_field_set(fx: Fixture):
+    path = fx.manifest("calibration_selection", fx.selection())
+    _rewrite_sealed(path, lambda manifest: manifest.__setitem__("unexpected", True))
+
+    with pytest.raises(controller.ControllerError, match="missing or extra fields"):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
+@pytest.mark.parametrize(
+    ("field", "message"),
+    [
+        ("artifact", "artifact reference"),
+        ("command_envelope", "command envelope reference"),
+        ("execution_receipt", "execution receipt reference"),
+    ],
+)
+def test_manifest_requires_exact_nested_reference_fields(
+    fx: Fixture, field: str, message: str,
+):
+    path = fx.manifest("calibration_selection", fx.selection())
+    _rewrite_sealed(
+        path,
+        lambda manifest: manifest[field].__setitem__("unexpected", True),
+    )
+
+    with pytest.raises(controller.ControllerError, match=message):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
+def test_manifest_rejects_unsafe_envelope_and_receipt_paths(fx: Fixture):
+    path = fx.manifest("calibration_selection", fx.selection())
+    _rewrite_sealed(
+        path,
+        lambda manifest: manifest["command_envelope"].__setitem__(
+            "path", "../outside-command.json"
+        ),
+    )
+    with pytest.raises(controller.ControllerError, match="safe repository-relative"):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+    path = fx.manifest("calibration_selection", fx.selection())
+    _rewrite_sealed(
+        path,
+        lambda manifest: manifest["execution_receipt"].__setitem__(
+            "path", "../outside-receipt.json"
+        ),
+    )
+    with pytest.raises(controller.ControllerError, match="safe repository-relative"):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
+@pytest.mark.parametrize(
+    ("reference", "message"),
+    [
+        ("command_envelope", "command envelope is missing or its digest changed"),
+        ("execution_receipt", "execution receipt is missing or its digest changed"),
+    ],
+)
+def test_manifest_rehashes_referenced_evidence(
+    fx: Fixture, reference: str, message: str,
+):
+    path = fx.manifest("calibration_selection", fx.selection())
+    manifest = json.loads(path.read_text())
+    referenced = fx.root / manifest[reference]["path"]
+    referenced.write_text(referenced.read_text() + " ")
+
+    with pytest.raises(controller.ControllerError, match=message):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
+def test_manifest_revalidates_frozen_command_fields(fx: Fixture):
+    path = fx.manifest("calibration_selection", fx.selection())
+    manifest = json.loads(path.read_text())
+    command_path = fx.root / manifest["command_envelope"]["path"]
+    command = json.loads(command_path.read_text())
+    command["env"] = {"SIM_BACKEND": "cupy"}
+    _write_json(command_path, command)
+    _rewrite_sealed(
+        path,
+        lambda value: value["command_envelope"].__setitem__(
+            "sha256", _digest(command_path)
+        ),
+    )
+
+    with pytest.raises(controller.ControllerError, match="environment differs"):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    [
+        ("host", "other-host", "host or device differs"),
+        ("device", "other-device", "host or device differs"),
+        ("started_utc_ns", 111, "timestamps are invalid"),
+    ],
+)
+def test_manifest_revalidates_receipt_identity_and_ordering(
+    fx: Fixture, field: str, value, message: str,
+):
+    path = fx.manifest("calibration_selection", fx.selection())
+    _rewrite_sealed(
+        path,
+        lambda manifest: manifest["execution_receipt"].__setitem__(field, value),
+    )
+
+    with pytest.raises(controller.ControllerError, match=message):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (lambda receipt: receipt.__setitem__("argv", ["false"]), "receipt argv differs"),
+        (
+            lambda receipt: receipt.__setitem__(
+                "env_allowlist", {"SIM_BACKEND": "cupy"}
+            ),
+            "receipt environment differs",
+        ),
+        (
+            lambda receipt: receipt["source"].__setitem__("git_sha", LEGACY),
+            "receipt source revision is invalid",
+        ),
+        (lambda receipt: receipt.__setitem__("status", "failed"), "receipt is invalid"),
+    ],
+)
+def test_manifest_reverifies_receipt_binding_and_success(
+    fx: Fixture, mutation, message: str,
+):
+    path = fx.manifest("calibration_selection", fx.selection())
+    manifest = json.loads(path.read_text())
+    receipt_path = fx.root / manifest["execution_receipt"]["path"]
+    receipt = json.loads(receipt_path.read_text())
+    mutation(receipt)
+    _write_json(receipt_path, receipt)
+    _rewrite_sealed(
+        path,
+        lambda value: value["execution_receipt"].__setitem__(
+            "sha256", _digest(receipt_path)
+        ),
+    )
+
+    with pytest.raises(controller.ControllerError, match=message):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
+def test_manifest_rejects_receipt_for_noncanonical_artifact(fx: Fixture):
+    path = fx.manifest("calibration_selection", fx.selection())
+    manifest = json.loads(path.read_text())
+    other = _write_json(fx.root / "evidence/other.json", {"dummy": "other"})
+    receipt_path = fx.root / manifest["execution_receipt"]["path"]
+    receipt = json.loads(receipt_path.read_text())
+    receipt["artifact"] = {
+        "path": other.relative_to(fx.root).as_posix(),
+        "sha256": _digest(other),
+        "size_bytes": other.stat().st_size,
+    }
+    _write_json(receipt_path, receipt)
+    _rewrite_sealed(
+        path,
+        lambda value: value["execution_receipt"].__setitem__(
+            "sha256", _digest(receipt_path)
+        ),
+    )
+
+    with pytest.raises(controller.ControllerError, match="non-canonical artifact"):
+        _load_fixture_manifest(fx, path, "calibration_selection")
+
+
 def test_existing_scientific_artifact_target_is_never_overwritten(fx: Fixture):
     target = fx.artifact_path("calibration_numpy")
     target.parent.mkdir(parents=True)
@@ -578,7 +866,7 @@ def test_final_merge_refuses_performance_selection_or_compatibility_mismatch(fx:
         "compatibility_path": controller.COMPATIBILITY_PATH,
         "compatibility_sha256": fx.config["compatibility"]["sha256"],
     })
-    with pytest.raises(controller.ControllerError, match="bindings do not match"):
+    with pytest.raises(controller.ControllerError, match="not bound to the selected"):
         _emit_final(fx, manifests)
 
 
