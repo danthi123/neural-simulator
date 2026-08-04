@@ -384,75 +384,45 @@
       "status": "completed",
       "task": "Audit V14 active-path launch and synchronization call graph",
       "write_set": []
+    },
+    "019fce59-1880-7551-bfb9-1740900605ab": {
+      "completed_at": "2026-08-04T19:59:52+00:00",
+      "heartbeat_at": "2026-08-04T19:59:52+00:00",
+      "model": "inherited",
+      "next_action": "Controller commits exact candidate and uses prospective harness v2.",
+      "result": "Restored one outer opt-in branch around direct SNr outputs; 11 focused CPU tests passed; controller added default short-circuit and broad exactness validation.",
+      "started_at": "2026-08-04T19:56:29+00:00",
+      "status": "completed",
+      "task": "Restore V14 default HH control-flow shape",
+      "write_set": [
+        "sim/bridge.py"
+      ]
+    },
+    "019fce59-1d91-7031-a987-f0d21a79edd4": {
+      "completed_at": "2026-08-04T19:59:52+00:00",
+      "heartbeat_at": "2026-08-04T19:59:52+00:00",
+      "model": "inherited",
+      "next_action": "Implement and seal paired multi-block harness v2 without changing thresholds.",
+      "result": "Audit found 0.43-second windows, 7-13% spreads, telemetry interruption, and unpaired ordering make the old protocol under-resolved for a 2% default gate.",
+      "started_at": "2026-08-04T19:56:29+00:00",
+      "status": "completed",
+      "task": "Audit V14 performance measurement variability",
+      "write_set": []
+    },
+    "019fce5c-2d4c-7fa2-98f7-102bfcc7795f": {
+      "heartbeat_at": "2026-08-04T19:59:52+00:00",
+      "model": "inherited",
+      "next_action": "Return tested new files without GPU use.",
+      "started_at": "2026-08-04T19:59:52+00:00",
+      "status": "running",
+      "task": "Implement prospective V14 performance harness v2",
+      "write_set": [
+        "tools/v14_stageA_performance_v2.py",
+        "tests/test_v14_stageA_performance_v2.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T16:16:10+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd89-b618-7642-9e21-7e4ba5cf4c87"
-    },
-    {
-      "at": "2026-08-04T16:17:40+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
-    {
-      "at": "2026-08-04T16:19:03+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-performance"
-    },
-    {
-      "at": "2026-08-04T16:29:58+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
-    {
-      "at": "2026-08-04T16:29:58+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd9b-d966-7473-85dd-fb7a8bf0d743"
-    },
-    {
-      "at": "2026-08-04T16:29:58+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "experiment-controller"
-    },
-    {
-      "at": "2026-08-04T16:29:58+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd9b-f02f-79b3-b515-8f45c37e6c87"
-    },
-    {
-      "at": "2026-08-04T16:29:58+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
-    {
-      "at": "2026-08-04T16:29:58+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcd9c-0b90-7930-8dd1-d8e69ec70a06"
-    },
-    {
-      "at": "2026-08-04T16:36:59+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcd9b-d966-7473-85dd-fb7a8bf0d743"
-    },
-    {
-      "at": "2026-08-04T16:36:59+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "deep-research-packets"
-    },
     {
       "at": "2026-08-04T16:36:59+00:00",
       "detail": "completed",
@@ -986,6 +956,72 @@
       "detail": "blocked",
       "kind": "lane-update",
       "subject": "gateb-v14-stageA"
+    },
+    {
+      "at": "2026-08-04T19:56:29+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-default-path-profile"
+    },
+    {
+      "at": "2026-08-04T19:56:29+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-default-control-flow"
+    },
+    {
+      "at": "2026-08-04T19:56:29+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce59-1880-7551-bfb9-1740900605ab"
+    },
+    {
+      "at": "2026-08-04T19:56:29+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-performance-variance-audit"
+    },
+    {
+      "at": "2026-08-04T19:56:29+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce59-1d91-7031-a987-f0d21a79edd4"
+    },
+    {
+      "at": "2026-08-04T19:59:52+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce59-1880-7551-bfb9-1740900605ab"
+    },
+    {
+      "at": "2026-08-04T19:59:52+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fce59-1d91-7031-a987-f0d21a79edd4"
+    },
+    {
+      "at": "2026-08-04T19:59:52+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-default-control-flow"
+    },
+    {
+      "at": "2026-08-04T19:59:52+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-performance-variance-audit"
+    },
+    {
+      "at": "2026-08-04T19:59:52+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "v14-performance-harness-v2"
+    },
+    {
+      "at": "2026-08-04T19:59:52+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fce5c-2d4c-7fa2-98f7-102bfcc7795f"
     }
   ],
   "lanes": {
@@ -1251,15 +1287,30 @@
         "research/findings"
       ]
     },
-    "v14-default-path-profile": {
-      "delegation": "controller",
-      "heartbeat_at": "2026-08-04T19:53:01+00:00",
-      "next_action": "Profile candidate and historical default paths under the sealed configuration; identify a source-level default-safe performance hypothesis before any new matrix.",
+    "v14-default-control-flow": {
+      "agent_id": "019fce59-1880-7551-bfb9-1740900605ab",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T19:59:52+00:00",
+      "next_action": "Outer opt-in branch plus default short-circuit passed 172 CPU and 98 GPU tests; bounded alternating default ratio 1.0155 passed.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If no reproducible source-level cause exists, retain the NO-GO rather than tuning the harness or thresholds.",
+      "recovery_action": "Keep exact source candidate; do not use old under-resolved protocol for a new promotion decision.",
+      "resource": "agent_cpu",
+      "status": "completed",
+      "write_set": [
+        "sim/bridge.py",
+        "tests/test_hh_snr_megakernel_dispatch.py"
+      ]
+    },
+    "v14-default-path-profile": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T19:56:29+00:00",
+      "next_action": "Alternating 8x diagnostic reproduced a 1.027x median; a short-circuit-only source change did not improve a noisy 6x screen and was rejected uncommitted.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Restore historical default HH control-flow shape and separately harden measurement diagnostics without weakening the gate.",
       "resource": "local_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/v14_stageA_performance.py",
         "tests",
@@ -1281,6 +1332,32 @@
         "tests",
         "research/findings"
       ]
+    },
+    "v14-performance-harness-v2": {
+      "agent_id": "019fce5c-2d4c-7fa2-98f7-102bfcc7795f",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T19:59:52+00:00",
+      "next_action": "Implement prospective paired, multi-block, dispersion-gated harness v2 and focused CPU tests.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Do not edit the v1 harness, prior receipts, thresholds, or scientific seed boundaries.",
+      "resource": "agent_cpu",
+      "status": "running",
+      "write_set": [
+        "tools/v14_stageA_performance_v2.py",
+        "tests/test_v14_stageA_performance_v2.py"
+      ]
+    },
+    "v14-performance-variance-audit": {
+      "agent_id": "019fce59-1d91-7031-a987-f0d21a79edd4",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T19:59:52+00:00",
+      "next_action": "Prospective v2 must pair AB/BA, lengthen observations, remove telemetry interruption, record blocks, and fail infrastructure-invalid on excessive dispersion.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Prior 0ce6cb274 NO-GO remains banked and unchanged.",
+      "resource": "agent_cpu",
+      "status": "completed"
     },
     "v14-snr-hh-combined-fusion": {
       "delegation": "controller",
@@ -1311,5 +1388,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T19:53:01+00:00"
+  "updated_at": "2026-08-04T19:59:52+00:00"
 }

@@ -8340,109 +8340,108 @@ class SimulationBridge:
                 # Start from synaptic/external input current density
                 effective_input_uA = total_input_current_uA_density_equivalent
 
-                used_snr_direct_outputs = self._snr_direct_outputs_can_dispatch(cfg)
-                if used_snr_direct_outputs:
+                if (cfg.enable_snr_direct_outputs
+                        and self._snr_direct_outputs_can_dispatch(cfg)):
                     fired_this_step = self._run_snr_direct_outputs(
                         cfg, effective_input_uA, dt
                     )
                     firing_state_written_in_place = True
+                else:
+                    if self.cp_snr_g_nalcn_max is not None:
+                        snr_update = fused_snr_conductance_update(
+                            self.cp_membrane_potential_v,
+                            self.cp_snr_nap_activation,
+                            self.cp_snr_nap_inactivation,
+                            self.cp_snr_ca_activation,
+                            self.cp_snr_ca_inactivation,
+                            self.cp_snr_calcium,
+                            self.cp_snr_sk_activation,
+                            self.cp_snr_h_activation,
+                            dt,
+                            self.cp_snr_g_nalcn_max,
+                            self.cp_snr_g_nap_max,
+                            self.cp_snr_g_ca_max,
+                            self.cp_snr_g_sk_max,
+                            self.cp_snr_g_h_max,
+                            cfg.snr_E_nalcn,
+                            cfg.snr_E_nap,
+                            cfg.snr_E_ca,
+                            cfg.snr_E_sk,
+                            cfg.snr_E_h,
+                            cfg.snr_calcium_baseline,
+                            cfg.snr_calcium_influx_scale,
+                            cfg.snr_calcium_decay_tau_ms,
+                            cfg.snr_sk_calcium_half,
+                            cfg.snr_sk_hill_coefficient,
+                            cfg.snr_sk_activation_tau_ms,
+                        )
+                        (
+                            self.cp_snr_nap_activation[:],
+                            self.cp_snr_nap_inactivation[:],
+                            self.cp_snr_ca_activation[:],
+                            self.cp_snr_ca_inactivation[:],
+                            self.cp_snr_calcium[:],
+                            self.cp_snr_sk_activation[:],
+                            self.cp_snr_h_activation[:],
+                            snr_ionic_current,
+                        ) = snr_update
+                        effective_input_uA = effective_input_uA - snr_ionic_current
 
-                if not used_snr_direct_outputs and self.cp_snr_g_nalcn_max is not None:
-                    snr_update = fused_snr_conductance_update(
-                        self.cp_membrane_potential_v,
-                        self.cp_snr_nap_activation,
-                        self.cp_snr_nap_inactivation,
-                        self.cp_snr_ca_activation,
-                        self.cp_snr_ca_inactivation,
-                        self.cp_snr_calcium,
-                        self.cp_snr_sk_activation,
-                        self.cp_snr_h_activation,
-                        dt,
-                        self.cp_snr_g_nalcn_max,
-                        self.cp_snr_g_nap_max,
-                        self.cp_snr_g_ca_max,
-                        self.cp_snr_g_sk_max,
-                        self.cp_snr_g_h_max,
-                        cfg.snr_E_nalcn,
-                        cfg.snr_E_nap,
-                        cfg.snr_E_ca,
-                        cfg.snr_E_sk,
-                        cfg.snr_E_h,
-                        cfg.snr_calcium_baseline,
-                        cfg.snr_calcium_influx_scale,
-                        cfg.snr_calcium_decay_tau_ms,
-                        cfg.snr_sk_calcium_half,
-                        cfg.snr_sk_hill_coefficient,
-                        cfg.snr_sk_activation_tau_ms,
-                    )
-                    (
-                        self.cp_snr_nap_activation[:],
-                        self.cp_snr_nap_inactivation[:],
-                        self.cp_snr_ca_activation[:],
-                        self.cp_snr_ca_inactivation[:],
-                        self.cp_snr_calcium[:],
-                        self.cp_snr_sk_activation[:],
-                        self.cp_snr_h_activation[:],
-                        snr_ionic_current,
-                    ) = snr_update
-                    effective_input_uA = effective_input_uA - snr_ionic_current
+                    # Optional slow K+ M-current: treated as part of ionic current by subtracting I_M from I_syn
+                    if cfg.hh_g_M_max != 0.0:
+                        m_act_new, I_M = fused_hh_m_current_update(
+                            self.cp_membrane_potential_v,
+                            self.cp_hh_m_current_activation,
+                            dt,
+                            cfg.hh_g_M_max,
+                            self.cp_hh_E_K,
+                            cfg.hh_m_current_tau_ms,
+                            hh_phi
+                        )
+                        self.cp_hh_m_current_activation[:] = m_act_new
+                        effective_input_uA = effective_input_uA - I_M
 
-                # Optional slow K+ M-current: treated as part of ionic current by subtracting I_M from I_syn
-                if not used_snr_direct_outputs and cfg.hh_g_M_max != 0.0:
-                    m_act_new, I_M = fused_hh_m_current_update(
-                        self.cp_membrane_potential_v,
-                        self.cp_hh_m_current_activation,
-                        dt,
-                        cfg.hh_g_M_max,
-                        self.cp_hh_E_K,
-                        cfg.hh_m_current_tau_ms,
-                        hh_phi
-                    )
-                    self.cp_hh_m_current_activation[:] = m_act_new
-                    effective_input_uA = effective_input_uA - I_M
+                    # Optional low-threshold Ca2+ current (CaT)
+                    if cfg.hh_g_CaT_max != 0.0:
+                        m_CaT_new, h_CaT_new, I_CaT = fused_hh_CaT_current_update(
+                            self.cp_membrane_potential_v,
+                            self.cp_hh_CaT_m,
+                            self.cp_hh_CaT_h,
+                            dt,
+                            cfg.hh_g_CaT_max,
+                            cfg.hh_E_CaT,
+                            hh_phi
+                        )
+                        self.cp_hh_CaT_m[:] = m_CaT_new
+                        self.cp_hh_CaT_h[:] = h_CaT_new
+                        effective_input_uA = effective_input_uA - I_CaT
 
-                # Optional low-threshold Ca2+ current (CaT)
-                if not used_snr_direct_outputs and cfg.hh_g_CaT_max != 0.0:
-                    m_CaT_new, h_CaT_new, I_CaT = fused_hh_CaT_current_update(
-                        self.cp_membrane_potential_v,
-                        self.cp_hh_CaT_m,
-                        self.cp_hh_CaT_h,
-                        dt,
-                        cfg.hh_g_CaT_max,
-                        cfg.hh_E_CaT,
-                        hh_phi
-                    )
-                    self.cp_hh_CaT_m[:] = m_CaT_new
-                    self.cp_hh_CaT_h[:] = h_CaT_new
-                    effective_input_uA = effective_input_uA - I_CaT
+                    # Optional hyperpolarization-activated current (I_h)
+                    if cfg.hh_g_h_max != 0.0:
+                        q_new, I_h = fused_hh_h_current_update(
+                            self.cp_membrane_potential_v,
+                            self.cp_hh_h_current_q,
+                            dt,
+                            cfg.hh_g_h_max,
+                            cfg.hh_E_h,
+                            hh_phi
+                        )
+                        self.cp_hh_h_current_q[:] = q_new
+                        effective_input_uA = effective_input_uA - I_h
 
-                # Optional hyperpolarization-activated current (I_h)
-                if not used_snr_direct_outputs and cfg.hh_g_h_max != 0.0:
-                    q_new, I_h = fused_hh_h_current_update(
-                        self.cp_membrane_potential_v,
-                        self.cp_hh_h_current_q,
-                        dt,
-                        cfg.hh_g_h_max,
-                        cfg.hh_E_h,
-                        hh_phi
-                    )
-                    self.cp_hh_h_current_q[:] = q_new
-                    effective_input_uA = effective_input_uA - I_h
+                    # Optional persistent Na+ current (NaP)
+                    if cfg.hh_g_NaP_max != 0.0:
+                        p_new, I_NaP = fused_hh_NaP_current_update(
+                            self.cp_membrane_potential_v,
+                            self.cp_hh_NaP_activation,
+                            dt,
+                            cfg.hh_g_NaP_max,
+                            self.cp_hh_E_Na,
+                            hh_phi
+                        )
+                        self.cp_hh_NaP_activation[:] = p_new
+                        effective_input_uA = effective_input_uA - I_NaP
 
-                # Optional persistent Na+ current (NaP)
-                if not used_snr_direct_outputs and cfg.hh_g_NaP_max != 0.0:
-                    p_new, I_NaP = fused_hh_NaP_current_update(
-                        self.cp_membrane_potential_v,
-                        self.cp_hh_NaP_activation,
-                        dt,
-                        cfg.hh_g_NaP_max,
-                        self.cp_hh_E_Na,
-                        hh_phi
-                    )
-                    self.cp_hh_NaP_activation[:] = p_new
-                    effective_input_uA = effective_input_uA - I_NaP
-
-                if not used_snr_direct_outputs:
                     # Per-gate Q10 (precomputed phi values cached on bridge)
                     v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
                         self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
