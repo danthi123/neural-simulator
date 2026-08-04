@@ -1,12 +1,16 @@
 ---
 type: preregistration
-status: live
+status: superseded
 date: 2026-08-03
 mechanism: neural-vocal-action-credit-v9-graded-dendritic-readout
 runner: research/runners/_vocal_action_credit_gate_v9_graded_dendritic.py
 ---
 
 # Gate B v9: learned action context through a graded dendrite
+
+> **Engagement complete:** center `2` is the first passing point and is locked.
+> See the [qualified finding](2026-08-03-neural-vocal-credit-gateB-v9-graded-dendritic-engagement-GO.md)
+> and the [Phase-2 preregistration](2026-08-03-neural-vocal-credit-gateB-v9-output-PREREGISTRATION.md).
 
 **Filed before the v9 runner exists.** This is a reserved-seed engagement
 smoke. Seed `0` is the only executable seed. No scientific manifest exists and

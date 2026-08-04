@@ -62,8 +62,11 @@ without learning, and the learning-lesion control retained or exceeded much of
 the intact activity. V8 is retired without interpolation. The completed v9
 evidence gate selected the bridge's existing graded dendritic plateau as a
 biologically distinct learned-route integration mechanism, and its bounded
-reserved-seed smoke is preregistered. It changes postsynaptic integration,
-not input weight, population size, or fixed drive. Formal phases remain sealed.
+reserved-seed smoke passed at the first valid center, `2`. Intact late
+expectation was `167` rewarded-channel spikes versus `48` in the other channel,
+zero with learning disabled, and `1` with only the learned route's dendritic
+mask removed. Center `2` is locked. The output phase is separately
+preregistered; formal phases remain sealed.
 
 **Source monitoring:** a learned seen/heard/self pathway now co-resides with
 episode, aPFC, and ACC populations. V1 passed calibration but only 2/3 fixed
@@ -114,12 +117,12 @@ is tracked as test-portability/infrastructure debt, not a science regression.
 
 **EXACT NEXT, IN PARALLEL:**
 
-1. Build and run the preregistered v9 reserved-seed smoke. Route only the
-   plastic trace-to-expectation synapses through the existing graded dendritic
-   plateau and test centers `16/8/4/2` in descending order, stopping at the
-   first complete pass. Require both learning and expectation-plateau lesions
-   to remove at least 80% of intact pre-outcome expectation. Do not interpolate,
-   reopen v6-v8, test downstream GABA-B/omission, or assign formal seeds.
+1. Build and run the preregistered v9 Phase-2 output smoke at locked center `2`.
+   Train with expectation output closed, freeze learning, then compare matched
+   output-intact, output-lesion, and expectation-learning-lesion reward and
+   omission probes. Require at least 20% dopamine-burst suppression plus causal
+   LHb/RMTg omission and dopamine dip before NumPy/CuPy agreement or an
+   independent audit. Do not reopen the center ladder or assign formal seeds.
 2. Replace replay v4's failed target-plateau candidate with a different
    mechanism; do not reopen v3 or v4 scientific seeds.
 3. Preregister a fresh source-monitor successor only after smoke establishes a

@@ -92,10 +92,13 @@ fixed convergent state input plus separate plastic context. Its weight-2 point
 was subthreshold but silent after learning; every higher point predicted without
 learning and failed the learning-lesion control. The completed evidence gate
 selected the simulator's existing graded dendritic plateau as a genuinely
-different postsynaptic integration mechanism. A bounded v9 reserved-seed smoke
-is preregistered to test centers `16/8/4/2` with causal learning and dendritic-
-route lesions. Only after learned expectation engages will the existing slow
-GABA-B/GIRK output be tested. Formal seeds remain sealed.
+different postsynaptic integration mechanism. V9 passes its bounded engagement
+smoke at locked center `2`: late rewarded-channel expectation is `167` spikes
+versus `48` in the other channel, zero without learning, and `1` when only the
+learned route's dendritic mask is removed. This is qualified engagement, not
+completed reward prediction. A separate output phase is preregistered to test
+the existing slow GABA-B/GIRK route, omission, and causal lesions while keeping
+formal seeds sealed.
 
 In parallel, replay needs a different mechanism after its first target-plateau
 correction failed smoke seed `216` and was retired. Source-monitor v4 is retired

@@ -98,11 +98,13 @@ and stays below 20 Hz/cell. An independent audit cleared the corrected smoke,
     bootstrap is retired without interpolation. A project-record and primary-
     literature evidence gate selected the existing graded dendritic plateau as
     a biologically distinct postsynaptic integration mechanism. V9 is
-    preregistered to route only the learned trace-to-expectation synapses
-    through it and test fixed centers `16/8/4/2` with causal learning and
-    dendritic-route lesions. Formal seeds remain sealed until reserved smoke shows
-    learned pre-outcome expectation, graded GABA-B suppression, causal omission,
-    cross-backend agreement, and an independent audit.
+    routes only the learned trace-to-expectation synapses through it and passes
+    its fixed engagement ladder at locked center `2`. Late rewarded-channel
+    expectation is `167` spikes versus `48` in the other channel, zero without
+    learning, and `1` under the learned-route dendritic lesion. Phase 2 is
+    preregistered to freeze learning before matched GABA-B reward and omission
+    probes. Formal seeds remain sealed until graded suppression, causal omission,
+    cross-backend agreement, and an independent audit pass.
 After local credit is reliable, return to same-brain adaptation,
 broader meanings and contexts, and removal of the fixed raw-channel decoder.
 
