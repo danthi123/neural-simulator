@@ -457,18 +457,32 @@ def finalize(*, root: Path = ROOT) -> dict[str, Any]:
         or transfer.get("status") != "transferred"
     ):
         raise ContinuationError("candidate transfer schema or status is invalid")
-    outcome = "TONIC_OUTPUT_GO" if performance_go else "TONIC_OUTPUT_NO_GO"
+    outcome = (
+        "TONIC_OUTPUT_GO" if performance_go
+        else "TONIC_OUTPUT_NO_GO" if receipt_complete
+        else "TONIC_OUTPUT_UNDEFINED"
+    )
     final = {
         "schema": "v13-stage0-performance-continuation-final-v1",
         "stage": "final_cross_backend",
         "status": (
             "complete" if receipt_complete
-            else "negative-measurement-receipt-failed"
+            else "undefined-receipt-failed"
         ),
         "go": performance_go,
         "outcome": outcome,
+        "measured_performance_outcome": artifact["outcome"],
         "promotion_eligible": performance_go and receipt_complete,
         "candidate_receipt_complete": receipt_complete,
+        "backend": "cross_backend",
+        "device": "NumPy CPU and NVIDIA GeForce RTX 3090",
+        "runner": "tools/v13_stage0_performance_continuation.py",
+        "config": SPEC_PATH,
+        "preconditions": {
+            "sealed_v6_physiology": True,
+            "candidate_measurement_complete": True,
+            "candidate_receipt_complete": receipt_complete,
+        },
         "selected_current_pA": 100.0,
         "checks": {"sealed_v6_physiology": True, "performance": performance_go},
         "v6_inputs": accepted,
