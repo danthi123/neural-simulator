@@ -2683,8 +2683,23 @@ class SimulationBridge:
 
         self.clear_simulation_state_and_gpu_memory()
 
+        # HDF5/JSON config snapshots store nested region dataclasses as plain
+        # dictionaries. Rehydrate them before region initialization.
+        core_config_dict = dict(full_config_dict.get("core_config") or {})
+        if core_config_dict.get("brain_regions"):
+            from sim.regions import BrainRegion, RegionPathway
+
+            core_config_dict["brain_regions"] = [
+                BrainRegion(**region) if isinstance(region, dict) else region
+                for region in core_config_dict["brain_regions"]
+            ]
+            core_config_dict["region_pathways"] = [
+                RegionPathway(**pathway) if isinstance(pathway, dict) else pathway
+                for pathway in core_config_dict.get("region_pathways", [])
+            ]
+
         # Create new config objects from the provided dictionaries
-        self.core_config = _create_config_from_dict(CoreSimConfig, full_config_dict.get("core_config"))
+        self.core_config = _create_config_from_dict(CoreSimConfig, core_config_dict)
         self.viz_config = _create_config_from_dict(VisualizationConfig, full_config_dict.get("viz_config"))
         # We don't load runtime_state from profiles, so we re-initialize it.
         # Checkpoints might restore it, but that's handled in load_checkpoint.
