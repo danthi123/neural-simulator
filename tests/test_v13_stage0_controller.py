@@ -644,6 +644,13 @@ def test_source_manifest_must_be_bound_to_candidate_revision(
         controller.load_config(fx.config_path, root=fx.root)
 
 
+def test_candidate_source_closure_includes_every_sim_python_file(fx: Fixture):
+    unimported = fx.root / "sim/dynamic_only.py"
+    unimported.write_text("# dynamically selected simulator module\n")
+
+    assert "sim/dynamic_only.py" in controller._required_candidate_source_paths(fx.root)
+
+
 def test_merge_requires_matching_seed_source_compatibility_and_digests(fx: Fixture):
     numpy_manifest = fx.manifest("calibration_numpy", fx.calibration("numpy"))
     bad_cupy = fx.calibration("cupy")

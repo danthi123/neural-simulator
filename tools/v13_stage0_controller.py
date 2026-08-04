@@ -253,6 +253,11 @@ def _required_candidate_source_paths(root: Path) -> tuple[str, ...]:
     """Compute the exact conservative local import closure for Stage-0 execution."""
     root = root.resolve(strict=True)
     closure = set(SOURCE_CLOSURE_DATA_PATHS)
+    closure.update(
+        path.relative_to(root).as_posix()
+        for path in (root / "sim").rglob("*.py")
+        if path.is_file()
+    )
     pending = list(SOURCE_CLOSURE_ROOTS)
     while pending:
         relative = pending.pop()
