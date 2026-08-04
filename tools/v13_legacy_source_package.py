@@ -18,6 +18,7 @@ import subprocess
 import sys
 from typing import Any, Mapping
 import re
+import zlib
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,9 +27,22 @@ CANDIDATE_REVISION = "d091fa6692bdf8115c8073af6fd31fc9626921a8"
 OVERLAY_PATH = "research/runners/_vocal_action_credit_gate_v13_tonic_output.py"
 MANIFEST_NAME = ".source_manifest.sha256"
 LOCK_NAME = ".legacy_source_package.json"
-LOCK_SCHEMA = "v13-legacy-scientific-source-package-v1"
+LOCK_SCHEMA = "v13-legacy-scientific-execution-package-v2"
+RUN_DIRECTORY = "_run"
+IDENTITY_DIRECTORY = ".source_identity.git"
+IDENTITY_REFS_DIRECTORY = f"{IDENTITY_DIRECTORY}/refs"
+IDENTITY_HEAD = f"{IDENTITY_DIRECTORY}/HEAD"
+IDENTITY_CONFIG = f"{IDENTITY_DIRECTORY}/config"
+IDENTITY_OBJECT = (
+    f"{IDENTITY_DIRECTORY}/objects/{BASE_REVISION[:2]}/{BASE_REVISION[2:]}"
+)
+TRANSFER_MANIFEST_NAME = "legacy_transfer_manifest.json"
+TRANSFER_SCHEMA = "v13-legacy-artifact-transfer-v1"
+LEGACY_OUTPUT_NAME = "legacy_performance_baseline.json"
+RUNNER_MODULE = "research.runners._vocal_action_credit_gate_v13_tonic_output"
 _HEX40 = re.compile(r"^[0-9a-f]{40}$")
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
+_TRANSFER_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
 # Import closure established by the independent legacy-package audit. The
 # overlay is intentionally absent: it is sourced only from CANDIDATE_REVISION.
@@ -77,6 +91,14 @@ def _canonical_digest(value: Mapping[str, Any]) -> str:
 
 def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def _git_loose_commit(root: Path) -> bytes:
+    content = bytes(_git(root, "cat-file", "commit", BASE_REVISION, binary=True))
+    uncompressed = f"commit {len(content)}\0".encode("ascii") + content
+    if hashlib.sha1(uncompressed).hexdigest() != BASE_REVISION:
+        raise PackageError("legacy commit object does not match the required identity")
+    return zlib.compress(uncompressed)
 
 
 def _safe_path(value: str) -> str:
@@ -233,6 +255,7 @@ def _lock(
     base_tree: str,
     candidate_tree: str,
     manifest: bytes,
+    identity_files: Mapping[str, bytes],
 ) -> dict[str, Any]:
     files = [
         {key: record[key] for key in (
@@ -240,7 +263,7 @@ def _lock(
         )}
         for record in records
     ]
-    exact_paths = [*SOURCE_PATHS, MANIFEST_NAME, LOCK_NAME]
+    exact_paths = [*SOURCE_PATHS, *identity_files, MANIFEST_NAME, LOCK_NAME]
     value: dict[str, Any] = {
         "schema": LOCK_SCHEMA,
         "status": "frozen",
@@ -257,6 +280,30 @@ def _lock(
             "path": MANIFEST_NAME,
             "sha256": _sha256(manifest),
             "file_count": len(records),
+        },
+        "execution": {
+            "runner": OVERLAY_PATH,
+            "runner_module": RUNNER_MODULE,
+            "python_flags": ["-B"],
+            "environment": {
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "SIM_BACKEND": "cupy",
+                "SIM_NO_PROVENANCE": "1",
+            },
+            "working_directory": ".",
+            "output_directory": RUN_DIRECTORY,
+            "source_identity": {
+                "kind": "package_git_object",
+                "reported_revision": BASE_REVISION,
+                "git_directory": IDENTITY_DIRECTORY,
+                "files": [
+                    {
+                        "path": path,
+                        "sha256": _sha256(data),
+                    }
+                    for path, data in sorted(identity_files.items())
+                ],
+            },
         },
         "package_file_set": {
             "file_count": len(exact_paths),
@@ -282,6 +329,13 @@ def build_package(
         raise PackageError(f"refusing existing output: {output}")
 
     records, base_tree, candidate_tree = _inventory(root, overlays)
+    identity_files = {
+        IDENTITY_HEAD: f"{BASE_REVISION}\n".encode("ascii"),
+        IDENTITY_CONFIG: (
+            b"[core]\n\trepositoryformatversion = 0\n\tbare = false\n"
+        ),
+        IDENTITY_OBJECT: _git_loose_commit(root),
+    }
     created = False
     try:
         os.mkdir(output, 0o755)
@@ -294,6 +348,16 @@ def build_package(
             mode = 0o755 if record["mode"] == "100755" else 0o644
             _write_exclusive(destination, record["data"], mode)
 
+        for relative, data in identity_files.items():
+            destination = output.joinpath(*PurePosixPath(relative).parts)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            _write_exclusive(destination, data)
+
+        (output / IDENTITY_REFS_DIRECTORY).mkdir()
+
+        run_directory = output / RUN_DIRECTORY
+        run_directory.mkdir(mode=0o700)
+
         manifest = "".join(
             f"{record['sha256']}  {record['path']}\n" for record in records
         ).encode("utf-8")
@@ -303,6 +367,7 @@ def build_package(
             base_tree=base_tree,
             candidate_tree=candidate_tree,
             manifest=manifest,
+            identity_files=identity_files,
         )
         lock_bytes = (json.dumps(lock, indent=2, sort_keys=True) + "\n").encode("ascii")
         _write_exclusive(output / LOCK_NAME, lock_bytes)
@@ -321,18 +386,57 @@ def _regular_files(package: Path) -> dict[str, Path]:
         directory_info = directory_path.lstat()
         if stat.S_ISLNK(directory_info.st_mode) or not stat.S_ISDIR(directory_info.st_mode):
             raise PackageError(f"package contains a non-directory: {directory_path}")
+        relative_directory = directory_path.relative_to(package).as_posix()
+        if relative_directory == ".":
+            names[:] = [name for name in names if name != RUN_DIRECTORY]
         for name in names:
             child = directory_path / name
             info = child.lstat()
             if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
                 raise PackageError(f"package contains a symlink or non-directory: {child}")
+            if name == "__pycache__":
+                raise PackageError(f"package contains a bytecode cache directory: {child}")
         for name in filenames:
             child = directory_path / name
             info = child.lstat()
             if stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode):
                 raise PackageError(f"package contains a symlink or non-regular file: {child}")
             relative = child.relative_to(package).as_posix()
+            if child.suffix in {".pyc", ".pyo"}:
+                raise PackageError(f"package contains Python bytecode: {child}")
             found[_safe_path(relative)] = child
+    return found
+
+
+def _runtime_files(package: Path) -> dict[str, Path]:
+    runtime = package / RUN_DIRECTORY
+    try:
+        info = runtime.lstat()
+    except FileNotFoundError as exc:
+        raise PackageError("package runtime directory is missing") from exc
+    if stat.S_ISLNK(info.st_mode) or not stat.S_ISDIR(info.st_mode):
+        raise PackageError("package runtime path is not a real directory")
+
+    found: dict[str, Path] = {}
+    for directory, names, filenames in os.walk(runtime, followlinks=False):
+        directory_path = Path(directory)
+        for name in names:
+            child = directory_path / name
+            child_info = child.lstat()
+            if (
+                name == "__pycache__"
+                or stat.S_ISLNK(child_info.st_mode)
+                or not stat.S_ISDIR(child_info.st_mode)
+            ):
+                raise PackageError(f"invalid runtime directory: {child}")
+        for name in filenames:
+            child = directory_path / name
+            child_info = child.lstat()
+            if stat.S_ISLNK(child_info.st_mode) or not stat.S_ISREG(child_info.st_mode):
+                raise PackageError(f"invalid runtime file: {child}")
+            if child.suffix in {".pyc", ".pyo"}:
+                raise PackageError(f"runtime contains Python bytecode: {child}")
+            found[child.relative_to(runtime).as_posix()] = child
     return found
 
 
@@ -357,7 +461,7 @@ def verify_package(package: Path) -> dict[str, Any]:
 
     expected_lock_fields = {
         "schema", "status", "base", "candidate", "overlay", "source_manifest",
-        "package_file_set", "files", "sha256",
+        "execution", "package_file_set", "files", "sha256",
     }
     if not isinstance(lock, dict) or set(lock) != expected_lock_fields:
         raise PackageError("package lock has missing or extra fields")
@@ -377,6 +481,49 @@ def verify_package(package: Path) -> dict[str, Any]:
         "source_revision"
     ) != CANDIDATE_REVISION:
         raise PackageError("package lock has an unexpected overlay")
+
+    execution = lock.get("execution")
+    if not isinstance(execution, dict) or set(execution) != {
+        "runner", "runner_module", "python_flags", "environment", "working_directory",
+        "output_directory", "source_identity",
+    }:
+        raise PackageError("package execution contract is invalid")
+    if execution != {
+        "runner": OVERLAY_PATH,
+        "runner_module": RUNNER_MODULE,
+        "python_flags": ["-B"],
+        "environment": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "SIM_BACKEND": "cupy",
+            "SIM_NO_PROVENANCE": "1",
+        },
+        "working_directory": ".",
+        "output_directory": RUN_DIRECTORY,
+        "source_identity": execution["source_identity"],
+    }:
+        raise PackageError("package execution controls differ from the frozen contract")
+    identity = execution["source_identity"]
+    identity_paths = [IDENTITY_HEAD, IDENTITY_CONFIG, IDENTITY_OBJECT]
+    if not isinstance(identity, dict) or identity != {
+        "kind": "package_git_object",
+        "reported_revision": BASE_REVISION,
+        "git_directory": IDENTITY_DIRECTORY,
+        "files": identity.get("files"),
+    }:
+        raise PackageError("package source identity is invalid")
+    identity_records = identity.get("files")
+    if (
+        not isinstance(identity_records, list)
+        or [item.get("path") for item in identity_records if isinstance(item, dict)]
+        != identity_paths
+        or any(
+            not isinstance(item, dict)
+            or set(item) != {"path", "sha256"}
+            or not _HEX64.fullmatch(str(item["sha256"]))
+            for item in identity_records
+        )
+    ):
+        raise PackageError("package source identity files are invalid")
 
     source_records = lock.get("files")
     if not isinstance(source_records, list):
@@ -418,7 +565,9 @@ def verify_package(package: Path) -> dict[str, Any]:
     }:
         raise PackageError("source manifest binding is invalid")
 
-    expected_paths = {*SOURCE_PATHS, MANIFEST_NAME, LOCK_NAME}
+    expected_paths = {
+        *SOURCE_PATHS, *identity_paths, MANIFEST_NAME, LOCK_NAME,
+    }
     if set(files_on_disk) != expected_paths:
         missing = sorted(expected_paths - set(files_on_disk))
         extra = sorted(set(files_on_disk) - expected_paths)
@@ -441,6 +590,24 @@ def verify_package(package: Path) -> dict[str, Any]:
     if lock["overlay"].get("sha256") != overlay_records[0]["sha256"]:
         raise PackageError("overlay digest binding is invalid")
 
+    for item in identity_records:
+        path = files_on_disk[item["path"]]
+        if _sha256(path.read_bytes()) != item["sha256"]:
+            raise PackageError(f"source identity digest mismatch: {item['path']}")
+        if stat.S_IMODE(path.stat().st_mode) != 0o644:
+            raise PackageError(f"source identity mode mismatch: {item['path']}")
+    refs = package / IDENTITY_REFS_DIRECTORY
+    if not refs.is_dir() or refs.is_symlink() or any(refs.iterdir()):
+        raise PackageError("package source identity refs directory is invalid")
+    _runtime_files(package)
+
+    identity_result = subprocess.run(
+        ["git", "rev-parse", "HEAD^{commit}"], cwd=package,
+        env=_execution_environment(package), capture_output=True, text=True, check=False,
+    )
+    if identity_result.returncode != 0 or identity_result.stdout.strip() != BASE_REVISION:
+        raise PackageError("package-owned Git identity cannot report the legacy revision")
+
     return {
         "schema": LOCK_SCHEMA,
         "status": "verified",
@@ -450,7 +617,211 @@ def verify_package(package: Path) -> dict[str, Any]:
         "package_file_count": len(expected_paths),
         "manifest_sha256": _sha256(manifest),
         "lock_sha256": lock["sha256"],
+        "reported_source_revision": BASE_REVISION,
     }
+
+
+def _execution_environment(package: Path) -> dict[str, str]:
+    environment = os.environ.copy()
+    for name in tuple(environment):
+        if name.startswith(("SIM_", "GIT_")):
+            environment.pop(name)
+    environment.update({
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "SIM_BACKEND": "cupy",
+        "SIM_NO_PROVENANCE": "1",
+        "GIT_DIR": str(package / IDENTITY_DIRECTORY),
+        "GIT_WORK_TREE": str(package),
+        "GIT_CEILING_DIRECTORIES": str(package.parent),
+        "GIT_CONFIG_NOSYSTEM": "1",
+    })
+    environment.pop("PYTHONPATH", None)
+    environment.pop("PYTHONHOME", None)
+    return environment
+
+
+def _validate_legacy_artifact(data: bytes, label: str) -> dict[str, Any]:
+    try:
+        artifact = json.loads(data)
+    except json.JSONDecodeError as exc:
+        raise PackageError(f"{label} is not JSON") from exc
+    if (
+        not isinstance(artifact, dict)
+        or artifact.get("stage") != "legacy_performance_baseline"
+        or artifact.get("source_sha") != BASE_REVISION
+        or artifact.get("outcome") != "BASELINE_RECORDED"
+        or artifact.get("backend") != "cupy"
+        or "3090" not in str(artifact.get("device", ""))
+        or not isinstance(artifact.get("median_seconds"), (int, float))
+        or isinstance(artifact.get("median_seconds"), bool)
+        or artifact["median_seconds"] <= 0
+    ):
+        raise PackageError(
+            f"{label} has the wrong source, stage, backend, device, or outcome"
+        )
+    return artifact
+
+
+def probe_execution_package(package: Path, *, python: str = sys.executable) -> dict[str, Any]:
+    """Exercise the execution controls without importing or running the simulator."""
+    package = package.expanduser().absolute()
+    verified = verify_package(package)
+    probe = (
+        "import json,os,subprocess,sys;"
+        "print(json.dumps({'bytecode':sys.dont_write_bytecode,"
+        "'revision':subprocess.run(['git','rev-parse','HEAD^{commit}'],"
+        "check=True,capture_output=True,text=True).stdout.strip(),"
+        "'cwd':os.getcwd()}))"
+    )
+    completed = subprocess.run(
+        [python, "-B", "-c", probe], cwd=package,
+        env=_execution_environment(package), capture_output=True, text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise PackageError(f"execution-package probe failed: {completed.stderr.strip()}")
+    try:
+        observation = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise PackageError("execution-package probe returned invalid JSON") from exc
+    if observation != {
+        "bytecode": True,
+        "revision": BASE_REVISION,
+        "cwd": str(package),
+    }:
+        raise PackageError("execution-package probe did not enforce its controls")
+    runner_probe = subprocess.run(
+        [python, "-B", "-m", RUNNER_MODULE, "--help"], cwd=package,
+        env=_execution_environment(package), capture_output=True, text=True,
+        check=False,
+    )
+    if runner_probe.returncode != 0 or "--legacy-performance-baseline" not in (
+        runner_probe.stdout
+    ):
+        raise PackageError(
+            "frozen runner cannot start under the execution-package controls: "
+            f"{runner_probe.stderr.strip()}"
+        )
+    if _runtime_files(package):
+        raise PackageError("seed-free execution-package probe changed the runtime area")
+    verify_package(package)
+    return {
+        "schema": LOCK_SCHEMA,
+        "status": "execution_controls_verified",
+        "lock_sha256": verified["lock_sha256"],
+        "manifest_sha256": verified["manifest_sha256"],
+        "reported_source_revision": BASE_REVISION,
+        "python_no_bytecode": True,
+        "runtime_file_count": 0,
+    }
+
+
+def execute_legacy_baseline(
+    package: Path, *, python: str = sys.executable,
+) -> dict[str, Any]:
+    """Run only the frozen legacy baseline, with output isolated under ``_run``."""
+    package = package.expanduser().absolute()
+    verified = verify_package(package)
+    if _runtime_files(package):
+        raise PackageError("legacy execution requires an empty runtime directory")
+    output = package / RUN_DIRECTORY / LEGACY_OUTPUT_NAME
+    command = [
+        python, "-B", "-m", RUNNER_MODULE, "--legacy-performance-baseline",
+        "--out", str(output),
+    ]
+    completed = subprocess.run(
+        command, cwd=package, env=_execution_environment(package),
+        capture_output=True, text=True, check=False,
+    )
+    verify_package(package)
+    if completed.returncode != 0:
+        raise PackageError(
+            "legacy baseline execution failed under the package contract: "
+            f"{completed.stderr.strip()}"
+        )
+    runtime = _runtime_files(package)
+    if set(runtime) != {LEGACY_OUTPUT_NAME}:
+        raise PackageError("legacy execution produced files outside its one allowed artifact")
+    artifact_bytes = runtime[LEGACY_OUTPUT_NAME].read_bytes()
+    _validate_legacy_artifact(artifact_bytes, "legacy execution artifact")
+    return {
+        "schema": LOCK_SCHEMA,
+        "status": "legacy_baseline_recorded",
+        "lock_sha256": verified["lock_sha256"],
+        "manifest_sha256": verified["manifest_sha256"],
+        "reported_source_revision": BASE_REVISION,
+        "artifact": {
+            "path": f"{RUN_DIRECTORY}/{LEGACY_OUTPUT_NAME}",
+            "sha256": _sha256(artifact_bytes),
+            "size_bytes": len(artifact_bytes),
+        },
+    }
+
+
+def transfer_legacy_artifact(
+    package: Path, *, candidate_evidence: Path, transfer_name: str,
+) -> dict[str, Any]:
+    """Create a collision-proof evidence transfer containing artifact and manifest."""
+    if not _TRANSFER_NAME.fullmatch(transfer_name) or transfer_name in {".", ".."}:
+        raise PackageError(f"invalid transfer name: {transfer_name!r}")
+    package = package.expanduser().absolute()
+    verified = verify_package(package)
+    runtime = _runtime_files(package)
+    if set(runtime) != {LEGACY_OUTPUT_NAME}:
+        raise PackageError("transfer requires exactly one isolated legacy artifact")
+    artifact_path = runtime[LEGACY_OUTPUT_NAME]
+    artifact_bytes = artifact_path.read_bytes()
+    _validate_legacy_artifact(artifact_bytes, "legacy transfer artifact")
+
+    candidate_evidence = candidate_evidence.expanduser().absolute()
+    _reject_symlink_ancestors(candidate_evidence / transfer_name)
+    try:
+        evidence_info = candidate_evidence.lstat()
+    except FileNotFoundError as exc:
+        raise PackageError("candidate evidence root does not exist") from exc
+    if stat.S_ISLNK(evidence_info.st_mode) or not stat.S_ISDIR(evidence_info.st_mode):
+        raise PackageError("candidate evidence root is not a real directory")
+    destination = candidate_evidence / transfer_name
+    if os.path.lexists(destination):
+        raise PackageError(f"refusing existing transfer destination: {destination}")
+
+    lock_bytes = (package / LOCK_NAME).read_bytes()
+    manifest_bytes = (package / MANIFEST_NAME).read_bytes()
+    if _sha256(manifest_bytes) != verified["manifest_sha256"]:
+        raise PackageError("source manifest changed before evidence transfer")
+    transferred_relative = f"{transfer_name}/{LEGACY_OUTPUT_NAME}"
+    value: dict[str, Any] = {
+        "schema": TRANSFER_SCHEMA,
+        "status": "transferred",
+        "package": {
+            "lock_path": LOCK_NAME,
+            "lock_file_sha256": _sha256(lock_bytes),
+            "lock_sha256": verified["lock_sha256"],
+            "source_manifest_path": MANIFEST_NAME,
+            "source_manifest_sha256": _sha256(manifest_bytes),
+            "reported_source_revision": BASE_REVISION,
+        },
+        "artifact": {
+            "package_path": f"{RUN_DIRECTORY}/{LEGACY_OUTPUT_NAME}",
+            "candidate_evidence_path": transferred_relative,
+            "sha256": _sha256(artifact_bytes),
+            "size_bytes": len(artifact_bytes),
+        },
+    }
+    value["sha256"] = _canonical_digest(value)
+    transfer_bytes = (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("ascii")
+
+    created = False
+    try:
+        os.mkdir(destination, 0o755)
+        created = True
+        _write_exclusive(destination / LEGACY_OUTPUT_NAME, artifact_bytes)
+        _write_exclusive(destination / TRANSFER_MANIFEST_NAME, transfer_bytes)
+    except Exception:
+        if created:
+            shutil.rmtree(destination)
+        raise
+    return value
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -461,6 +832,14 @@ def _parser() -> argparse.ArgumentParser:
     build.add_argument("--output", type=Path, required=True)
     verify = commands.add_parser("verify")
     verify.add_argument("--package", type=Path, required=True)
+    probe = commands.add_parser("probe-execution")
+    probe.add_argument("--package", type=Path, required=True)
+    execute = commands.add_parser("execute-legacy-baseline")
+    execute.add_argument("--package", type=Path, required=True)
+    transfer = commands.add_parser("transfer")
+    transfer.add_argument("--package", type=Path, required=True)
+    transfer.add_argument("--candidate-evidence", type=Path, required=True)
+    transfer.add_argument("--transfer-name", required=True)
     return parser
 
 
@@ -469,8 +848,17 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "build":
             result = build_package(root=args.root, output=args.output)
-        else:
+        elif args.command == "verify":
             result = verify_package(args.package)
+        elif args.command == "probe-execution":
+            result = probe_execution_package(args.package)
+        elif args.command == "execute-legacy-baseline":
+            result = execute_legacy_baseline(args.package)
+        else:
+            result = transfer_legacy_artifact(
+                args.package, candidate_evidence=args.candidate_evidence,
+                transfer_name=args.transfer_name,
+            )
     except (PackageError, OSError, ValueError, TypeError) as exc:
         print(f"v13-legacy-source-package: {exc}", file=sys.stderr)
         return 2
