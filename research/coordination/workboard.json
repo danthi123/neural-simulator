@@ -121,6 +121,12 @@
       "detail": "completed",
       "kind": "lane-update",
       "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T14:24:56+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "rag-freshness"
     }
   ],
   "lanes": {
@@ -165,8 +171,8 @@
     },
     "rag-freshness": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T14:15:47+00:00",
-      "next_action": "Commit the verified RAG migration repair and coordinator, then push both remotes.",
+      "heartbeat_at": "2026-08-04T14:24:56+00:00",
+      "next_action": "Keep the CPU-only RAG refresh path current; after project-prose changes, verify manifest freshness and the labeled Llama hit@3/MRR gate.",
       "owner": "controller",
       "priority": 1,
       "resource": "local_cpu",
@@ -204,5 +210,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T14:21:14+00:00"
+  "updated_at": "2026-08-04T14:24:56+00:00"
 }
