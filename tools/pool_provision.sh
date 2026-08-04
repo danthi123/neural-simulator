@@ -14,7 +14,8 @@ MANIFEST=$(mktemp)
 REVISION=$(mktemp)
 FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
-git archive HEAD sim research/__init__.py research/runners research/specs experiment tools tests requirements.txt \
+git archive HEAD sim research/__init__.py research/runners research/specs experiment tools tests \
+  docs ROADMAP.md requirements.txt requirements-dev.txt \
   | tar -x -C "$STAGE"
 # Execute the generator extracted from HEAD. A dirty worktree copy must not mint
 # the trust record for a different archived source revision.
@@ -28,7 +29,8 @@ ANCESTRY_SHA=$(sha256sum "$STAGE/.source_ancestry.json" | awk '{print $1}')
   find sim research/runners experiment tools tests -type f \
     \( -name '*.py' -o -name '*.sh' \) -print0; \
   find research/specs -type f -name '*.json' -print0; \
-  printf 'research/__init__.py\0.source_ancestry.json\0'; \
+  find docs -type f -name '*.md' -print0; \
+  printf 'research/__init__.py\0ROADMAP.md\0requirements-dev.txt\0.source_ancestry.json\0'; \
 } | sort -z | xargs -0 sha256sum) > "$MANIFEST"
 MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
 EXCLUDED_DIRTY=$(git status --porcelain -- sim research/runners experiment tools 2>/dev/null | wc -l)
@@ -56,7 +58,10 @@ for h in "${NODES[@]}"; do
   rsync -az --delete --exclude='__pycache__' "$STAGE/tools/" "$h:~/$REMOTE_ROOT/tools/" 2>/dev/null
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' \
     "$STAGE/tests/" "$h:~/$REMOTE_ROOT/tests/"
+  rsync -az --delete "$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"
+  rsync -az "$STAGE/ROADMAP.md" "$h:~/$REMOTE_ROOT/ROADMAP.md"
   rsync -az "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
+  rsync -az "$STAGE/requirements-dev.txt" "$h:~/$REMOTE_ROOT/requirements-dev.txt" 2>/dev/null
   rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
   rsync -az "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
   rsync -az "$STAGE/.source_ancestry.json" "$h:~/$REMOTE_ROOT/.source_ancestry.json"
@@ -70,7 +75,7 @@ for h in "${NODES[@]}"; do
     { test -x .venv/bin/python && .venv/bin/python -m pip --version >/dev/null 2>&1 || \
       { rm -rf .venv; python3 -m venv .venv; }; } && \
     .venv/bin/python -m pip -q install --upgrade pip >/dev/null 2>&1; \
-    .venv/bin/python -m pip -q install numpy scipy h5py pyyaml 2>&1 | tail -1; \
+    .venv/bin/python -m pip -q install numpy scipy h5py pyyaml pytest 2>&1 | tail -1; \
     echo -n '  numpy/scipy=' ; .venv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
     echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1"
   ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,numpy,scipy,h5py,yaml; json.dump({\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pyyaml\":yaml.__version__},open(\".pool_environment.json\",\"w\"),sort_keys=True,indent=2)'"

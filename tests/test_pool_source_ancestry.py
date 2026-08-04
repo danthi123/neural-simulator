@@ -171,5 +171,9 @@ def test_provisioning_executes_the_generator_extracted_from_head():
     assert archive < staged_generator
     assert "python3 tools/pool/provisioning/ancestry_attestation.py create" not in script
     assert '--repo . --revision "$SOURCE_SHA"' in script
-    assert "printf 'research/__init__.py\\0.source_ancestry.json\\0'" in script
+    assert "docs ROADMAP.md requirements.txt requirements-dev.txt" in script
+    assert "find docs -type f -name '*.md' -print0" in script
+    assert "ROADMAP.md\\0requirements-dev.txt\\0.source_ancestry.json\\0" in script
+    assert '"$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"' in script
+    assert "numpy scipy h5py pyyaml pytest" in script
     assert 'source_ancestry_sha256=%s' in script
