@@ -31,9 +31,10 @@ NUM_NEURONS = 600
 ACTIVE_BYTES_PER_NEURON = 48
 DEFAULT_RATIO_MAX = 1.02
 ACTIVE_RATIO_MAX = 1.25
+DIRECT_OUTPUT_RATIO_MAX = 0.85
 CONSTRUCTION_RNG_SEED = 0
 WORKER_TIMEOUT_SECONDS = 1800
-PROJECTED_TOTAL_SECONDS = 4800
+PROJECTED_TOTAL_SECONDS = 6400
 
 BUNDLE_ARRAYS = (
     "cp_snr_g_nalcn_max",
@@ -51,9 +52,14 @@ BUNDLE_ARRAYS = (
 )
 
 CELL_DEFINITIONS = {
-    "candidate-default": {"source": "candidate", "active": False},
-    "prechange-control-default": {"source": "prechange-control", "active": False},
-    "candidate-active": {"source": "candidate", "active": True},
+    "candidate-default": {"source": "candidate", "active": False, "direct_outputs": False},
+    "prechange-control-default": {
+        "source": "prechange-control", "active": False, "direct_outputs": False,
+    },
+    "candidate-active-unfused": {
+        "source": "candidate", "active": True, "direct_outputs": False,
+    },
+    "candidate-active": {"source": "candidate", "active": True, "direct_outputs": True},
 }
 
 
@@ -114,7 +120,7 @@ def _nvidia_smi() -> dict:
     }
 
 
-def _build_bridge(*, active: bool):
+def _build_bridge(*, active: bool, direct_outputs: bool):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, GPUConfig, RuntimeState, VisualizationConfig
     from sim.enums import NeuronModel
@@ -152,6 +158,7 @@ def _build_bridge(*, active: bool):
         enable_structural_plasticity=False,
         enable_ou_process=False,
         hh_external_drive_scale=0.0,
+        enable_snr_direct_outputs=direct_outputs,
     )
     bridge = SimulationBridge(
         core_config=config,
@@ -176,7 +183,9 @@ def worker(*, source_root: Path, cell: str) -> dict:
     definition = CELL_DEFINITIONS[cell]
     if definition["active"] and definition["source"] != "candidate":
         raise RuntimeError("active cell is candidate-only")
-    bridge = _build_bridge(active=definition["active"])
+    bridge = _build_bridge(
+        active=definition["active"], direct_outputs=definition["direct_outputs"]
+    )
     try:
         arrays = [getattr(bridge, name, None) for name in BUNDLE_ARRAYS]
         attributes_present = [hasattr(bridge, name) for name in BUNDLE_ARRAYS]
@@ -230,6 +239,7 @@ def worker(*, source_root: Path, cell: str) -> dict:
                 "construction_rng_seed": CONSTRUCTION_RNG_SEED,
                 "scientific_seeds": [],
                 "active": definition["active"],
+                "direct_outputs": definition["direct_outputs"],
             },
             "structural": {
                 "bundle_attributes_present": attributes_present,
@@ -334,6 +344,12 @@ def summarize(rows: list[dict]) -> dict:
         "default_cuda_event": ratio("candidate-default", "prechange-control-default", "median_cuda_event_seconds"),
         "active_host": ratio("candidate-active", "candidate-default", "median_host_seconds"),
         "active_cuda_event": ratio("candidate-active", "candidate-default", "median_cuda_event_seconds"),
+        "direct_output_host": ratio(
+            "candidate-active", "candidate-active-unfused", "median_host_seconds"
+        ),
+        "direct_output_cuda_event": ratio(
+            "candidate-active", "candidate-active-unfused", "median_cuda_event_seconds"
+        ),
     }
     complete = all(cell["completed_repetitions"] == REPETITIONS for cell in cells.values())
     structural = all(cell["all_structural_checks_pass"] for cell in cells.values())
@@ -342,6 +358,8 @@ def summarize(rows: list[dict]) -> dict:
         and ratios["default_cuda_event"] <= DEFAULT_RATIO_MAX
         and ratios["active_host"] <= ACTIVE_RATIO_MAX
         and ratios["active_cuda_event"] <= ACTIVE_RATIO_MAX
+        and ratios["direct_output_host"] <= DIRECT_OUTPUT_RATIO_MAX
+        and ratios["direct_output_cuda_event"] <= DIRECT_OUTPUT_RATIO_MAX
     )
     return {
         "cells": cells,
@@ -349,6 +367,7 @@ def summarize(rows: list[dict]) -> dict:
         "fixed_thresholds": {
             "default_off_ratio_max": DEFAULT_RATIO_MAX,
             "active_ratio_max": ACTIVE_RATIO_MAX,
+            "direct_output_ratio_max": DIRECT_OUTPUT_RATIO_MAX,
         },
         "performance_status": "GO" if structural and thresholds_pass else "NO_GO",
         "physiology_verdict": None,

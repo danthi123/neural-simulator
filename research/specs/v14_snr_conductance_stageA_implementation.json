@@ -83,8 +83,11 @@
     "measured_steps": 2000,
     "repetitions": 3,
     "worker_timeout_seconds": 1800,
-    "projected_total_seconds": 4800,
-    "protocol_amendment": "Reduced from 20000 measured steps after the first prechange-control cell emitted no timing result and hit the preregistered 3600-second infrastructure timeout. No performance value was observed; cells, ordering, repetitions, warmup, and thresholds are unchanged.",
+    "projected_total_seconds": 6400,
+    "protocol_amendments": [
+      "Reduced from 20000 measured steps after the first prechange-control cell emitted no timing result and hit the preregistered 3600-second infrastructure timeout. No performance value was observed; original cells, ordering seed, repetitions, warmup, and thresholds remained unchanged.",
+      "Before any replacement timing was observed, added a candidate-active-unfused control and enabled exact direct-output SNr fusion only in candidate-active. This responds to the measured launch-bound infrastructure failure and the owner's requirement to optimize kernels before rerunning. The optimization must preserve byte-exact state and reduce both host and CUDA median duration to at most 0.85 of active-unfused."
+    ],
     "active_numerical_conductances": {
       "snr_g_nalcn_max": 0.01,
       "snr_g_nap_max": 0.02,
@@ -95,6 +98,13 @@
     "active_values_scope": "numerical path engagement only; no physiology claim",
     "default_off_ratio_max": 1.02,
     "active_ratio_max": 1.25,
+    "direct_output_ratio_max": 0.85,
+    "performance_cells": [
+      "prechange-control-default",
+      "candidate-default",
+      "candidate-active-unfused",
+      "candidate-active"
+    ],
     "comparison": "contemporaneous randomized candidate/control processes",
     "execute_after": "complete StageA correctness and compatibility pass"
   },

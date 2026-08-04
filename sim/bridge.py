@@ -88,6 +88,7 @@ from sim.kernels import (
                          fused_hh_h_current_update,
                          fused_hh_NaP_current_update,
                          fused_snr_conductance_update,
+                         fused_snr_conductance_update_into,
                          fused_adex_dynamics_update,
                          fused_conductance_decay_and_current,
                          fused_readonly_izh_step,
@@ -522,6 +523,7 @@ class SimulationBridge:
         self.cp_hh_NaP_activation = None
         for attr_name in _SNR_CONDUCTANCE_ARRAYS:
             setattr(self, attr_name, None)
+        self.cp_snr_ionic_current_scratch = None
  
         self.cp_hh_C_m = None; self.cp_hh_g_Na_max = None; self.cp_hh_g_K_max = None; self.cp_hh_g_L = None
         self.cp_hh_E_Na = None; self.cp_hh_E_K = None; self.cp_hh_E_L = None; self.cp_hh_v_peak = None
@@ -3067,6 +3069,7 @@ class SimulationBridge:
             'cp_gating_variable_m','cp_gating_variable_h','cp_gating_variable_n',
             'cp_hh_m_current_activation', 'cp_hh_CaT_m', 'cp_hh_CaT_h', 'cp_hh_h_current_q', 'cp_hh_NaP_activation',
             *_SNR_CONDUCTANCE_ARRAYS,
+            'cp_snr_ionic_current_scratch',
             'cp_hh_C_m','cp_hh_g_Na_max','cp_hh_g_K_max','cp_hh_g_L',
             'cp_hh_E_Na','cp_hh_E_K','cp_hh_E_L', 'cp_hh_v_peak',
             'cp_neuron_firing_thresholds', 'cp_neuron_activity_ema',
@@ -7256,6 +7259,97 @@ class SimulationBridge:
         # -- separate arrays -> race-free -- so copy firing -> prev_firing here for the next step).
         self.cp_prev_firing_states[:] = self.cp_firing_states
 
+    def _snr_direct_outputs_can_dispatch(self, cfg):
+        """Return whether exact direct-output SNr fusion is applicable."""
+        if not getattr(cfg, "enable_snr_direct_outputs", False):
+            return False
+        if not is_gpu_backend():
+            return False
+        if cfg.neuron_model_type != NeuronModel.HODGKIN_HUXLEY.name:
+            return False
+        if self.cp_snr_g_nalcn_max is None:
+            return False
+        if getattr(cfg, "enable_conductance_noise", False):
+            return False
+        unfused_currents = (
+            "hh_g_M_max", "hh_g_CaT_max", "hh_g_h_max", "hh_g_NaP_max",
+        )
+        return all(float(getattr(cfg, name, 0.0)) == 0.0 for name in unfused_currents)
+
+    def _run_snr_direct_outputs(self, cfg, input_current, dt):
+        """Advance SNr in place, then retain the established HH update."""
+        if getattr(self, "cp_snr_ionic_current_scratch", None) is None:
+            self.cp_snr_ionic_current_scratch = cp.empty_like(
+                self.cp_membrane_potential_v
+            )
+        snr_inputs = (
+            self.cp_membrane_potential_v,
+            self.cp_snr_nap_activation,
+            self.cp_snr_nap_inactivation,
+            self.cp_snr_ca_activation,
+            self.cp_snr_ca_inactivation,
+            self.cp_snr_calcium,
+            self.cp_snr_sk_activation,
+            self.cp_snr_h_activation,
+            dt,
+            self.cp_snr_g_nalcn_max,
+            self.cp_snr_g_nap_max,
+            self.cp_snr_g_ca_max,
+            self.cp_snr_g_sk_max,
+            self.cp_snr_g_h_max,
+            cfg.snr_E_nalcn,
+            cfg.snr_E_nap,
+            cfg.snr_E_ca,
+            cfg.snr_E_sk,
+            cfg.snr_E_h,
+            cfg.snr_calcium_baseline,
+            cfg.snr_calcium_influx_scale,
+            cfg.snr_calcium_decay_tau_ms,
+            cfg.snr_sk_calcium_half,
+            cfg.snr_sk_hill_coefficient,
+            cfg.snr_sk_activation_tau_ms,
+        )
+        snr_outputs = (
+            self.cp_snr_nap_activation,
+            self.cp_snr_nap_inactivation,
+            self.cp_snr_ca_activation,
+            self.cp_snr_ca_inactivation,
+            self.cp_snr_calcium,
+            self.cp_snr_sk_activation,
+            self.cp_snr_h_activation,
+            self.cp_snr_ionic_current_scratch,
+        )
+        fused_snr_conductance_update_into(snr_inputs, snr_outputs)
+        effective_input = input_current - self.cp_snr_ionic_current_scratch
+        hh_inputs = (
+            self.cp_membrane_potential_v,
+            self.cp_gating_variable_m,
+            self.cp_gating_variable_h,
+            self.cp_gating_variable_n,
+            effective_input,
+            dt,
+            self.cp_hh_C_m,
+            self.cp_hh_g_Na_max,
+            self.cp_hh_g_K_max,
+            self.cp_hh_g_L,
+            self.cp_hh_E_Na,
+            self.cp_hh_E_K,
+            self.cp_hh_E_L,
+            self._cached_hh_phi_m,
+            self._cached_hh_phi_h,
+            self._cached_hh_phi_n,
+        )
+        v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
+            *hh_inputs
+        )
+        fired = ((self.cp_membrane_potential_v < self.cp_hh_v_peak)
+                 & (v_new >= self.cp_hh_v_peak))
+        self.cp_membrane_potential_v[:] = v_new
+        self.cp_gating_variable_m[:] = m_new
+        self.cp_gating_variable_h[:] = h_new
+        self.cp_gating_variable_n[:] = n_new
+        return fired
+
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
@@ -8221,7 +8315,13 @@ class SimulationBridge:
                 # Start from synaptic/external input current density
                 effective_input_uA = total_input_current_uA_density_equivalent
 
-                if self.cp_snr_g_nalcn_max is not None:
+                used_snr_direct_outputs = self._snr_direct_outputs_can_dispatch(cfg)
+                if used_snr_direct_outputs:
+                    fired_this_step = self._run_snr_direct_outputs(
+                        cfg, effective_input_uA, dt
+                    )
+
+                if not used_snr_direct_outputs and self.cp_snr_g_nalcn_max is not None:
                     snr_update = fused_snr_conductance_update(
                         self.cp_membrane_potential_v,
                         self.cp_snr_nap_activation,
@@ -8262,7 +8362,7 @@ class SimulationBridge:
                     effective_input_uA = effective_input_uA - snr_ionic_current
 
                 # Optional slow K+ M-current: treated as part of ionic current by subtracting I_M from I_syn
-                if cfg.hh_g_M_max != 0.0:
+                if not used_snr_direct_outputs and cfg.hh_g_M_max != 0.0:
                     m_act_new, I_M = fused_hh_m_current_update(
                         self.cp_membrane_potential_v,
                         self.cp_hh_m_current_activation,
@@ -8276,7 +8376,7 @@ class SimulationBridge:
                     effective_input_uA = effective_input_uA - I_M
 
                 # Optional low-threshold Ca2+ current (CaT)
-                if cfg.hh_g_CaT_max != 0.0:
+                if not used_snr_direct_outputs and cfg.hh_g_CaT_max != 0.0:
                     m_CaT_new, h_CaT_new, I_CaT = fused_hh_CaT_current_update(
                         self.cp_membrane_potential_v,
                         self.cp_hh_CaT_m,
@@ -8291,7 +8391,7 @@ class SimulationBridge:
                     effective_input_uA = effective_input_uA - I_CaT
 
                 # Optional hyperpolarization-activated current (I_h)
-                if cfg.hh_g_h_max != 0.0:
+                if not used_snr_direct_outputs and cfg.hh_g_h_max != 0.0:
                     q_new, I_h = fused_hh_h_current_update(
                         self.cp_membrane_potential_v,
                         self.cp_hh_h_current_q,
@@ -8304,7 +8404,7 @@ class SimulationBridge:
                     effective_input_uA = effective_input_uA - I_h
 
                 # Optional persistent Na+ current (NaP)
-                if cfg.hh_g_NaP_max != 0.0:
+                if not used_snr_direct_outputs and cfg.hh_g_NaP_max != 0.0:
                     p_new, I_NaP = fused_hh_NaP_current_update(
                         self.cp_membrane_potential_v,
                         self.cp_hh_NaP_activation,
@@ -8316,20 +8416,21 @@ class SimulationBridge:
                     self.cp_hh_NaP_activation[:] = p_new
                     effective_input_uA = effective_input_uA - I_NaP
 
-                # Per-gate Q10 (precomputed phi values cached on bridge)
-                v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
-                    self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
-                    effective_input_uA, dt,
-                    self.cp_hh_C_m, g_Na_effective, g_K_effective, self.cp_hh_g_L,
-                    self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
-                    self._cached_hh_phi_m, self._cached_hh_phi_h, self._cached_hh_phi_n,
-                )
-                fired_this_step = (self.cp_membrane_potential_v < self.cp_hh_v_peak) & (v_new >= self.cp_hh_v_peak) 
+                if not used_snr_direct_outputs:
+                    # Per-gate Q10 (precomputed phi values cached on bridge)
+                    v_new, m_new, h_new, n_new = fused_hodgkin_huxley_dynamics_update(
+                        self.cp_membrane_potential_v, self.cp_gating_variable_m, self.cp_gating_variable_h, self.cp_gating_variable_n,
+                        effective_input_uA, dt,
+                        self.cp_hh_C_m, g_Na_effective, g_K_effective, self.cp_hh_g_L,
+                        self.cp_hh_E_Na, self.cp_hh_E_K, self.cp_hh_E_L,
+                        self._cached_hh_phi_m, self._cached_hh_phi_h, self._cached_hh_phi_n,
+                    )
+                    fired_this_step = (self.cp_membrane_potential_v < self.cp_hh_v_peak) & (v_new >= self.cp_hh_v_peak)
 
-                self.cp_membrane_potential_v[:] = v_new
-                self.cp_gating_variable_m[:] = m_new
-                self.cp_gating_variable_h[:] = h_new
-                self.cp_gating_variable_n[:] = n_new
+                    self.cp_membrane_potential_v[:] = v_new
+                    self.cp_gating_variable_m[:] = m_new
+                    self.cp_gating_variable_h[:] = h_new
+                    self.cp_gating_variable_n[:] = n_new
 
             elif cfg.neuron_model_type == NeuronModel.ADEX.name:
                 v_new, w_new = fused_adex_dynamics_update(

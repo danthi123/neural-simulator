@@ -455,6 +455,63 @@ def fused_snr_conductance_update(
     )
 
 
+def _fusion_memo_key(values):
+    """Reproduce CuPy Fusion's dtype/rank key for a fixed argument list."""
+    key = []
+    for value in values:
+        if isinstance(value, _BACKEND_ARRAY_TYPE):
+            key.extend((value.dtype.char, value.ndim))
+        elif hasattr(value, "dtype"):
+            key.append(cp.dtype(value.dtype).char)
+        else:
+            key.extend((cp.asarray(value).dtype.char, type(value)))
+    return tuple(key)
+
+
+def _run_cupy_fusion_into(fusion, inputs, outputs):
+    """Run an established CuPy fusion graph directly into persistent arrays.
+
+    The public Fusion wrapper allocates outputs. Its cached ElementwiseKernel
+    accepts those outputs positionally, preserving the generated operation
+    graph while avoiding separate copy-back launches. The first signature
+    encounter compiles through the public wrapper and copies once; subsequent
+    calls use the exact cached kernel.
+    """
+    if _backend_name != "cupy":
+        raise RuntimeError("direct fusion outputs require the CuPy backend")
+    inputs = tuple(inputs)
+    outputs = tuple(outputs)
+    key = _fusion_memo_key(inputs)
+    cached = getattr(fusion, "_memo", {}).get(key)
+    if cached is None:
+        values = fusion(*inputs)
+        if not isinstance(values, tuple):
+            values = (values,)
+        if len(values) != len(outputs):
+            raise RuntimeError("compiled fusion output count changed")
+        cached = getattr(fusion, "_memo", {}).get(key)
+        if cached is None:
+            raise RuntimeError("CuPy did not expose the compiled fusion signature")
+        if (not isinstance(cached, tuple) or len(cached) != 2
+                or not callable(cached[0]) or cached[1]):
+            raise RuntimeError("unsupported CuPy Fusion cache entry")
+        for destination, value in zip(outputs, values):
+            destination[:] = value
+        return False
+    if (not isinstance(cached, tuple) or len(cached) != 2
+            or not callable(cached[0]) or cached[1]):
+        raise RuntimeError("unsupported CuPy Fusion cache entry")
+    cached[0](*inputs, *outputs)
+    return True
+
+
+def fused_snr_conductance_update_into(inputs, outputs):
+    """Run the established SNr graph into seven states plus current scratch."""
+    if len(outputs) != 8:
+        raise ValueError("SNr direct output requires eight arrays")
+    return _run_cupy_fusion_into(fused_snr_conductance_update, inputs, outputs)
+
+
 @fuse()
 def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, tau_w):
     """Fused kernel for Adaptive Exponential Integrate-and-Fire (AdEx) dynamics.

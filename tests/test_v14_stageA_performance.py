@@ -15,17 +15,18 @@ def test_fixed_contract_matches_preregistration():
     assert performance.CONSTRUCTION_RNG_SEED == spec["performance"]["construction_rng_seed"] == 0
     assert performance.PROCESS_ORDER_SEED == spec["performance"]["process_order_seed"] == 20260804
     assert performance.WORKER_TIMEOUT_SECONDS == spec["performance"]["worker_timeout_seconds"] == 1800
-    assert performance.PROJECTED_TOTAL_SECONDS == spec["performance"]["projected_total_seconds"] == 4800
+    assert performance.PROJECTED_TOTAL_SECONDS == spec["performance"]["projected_total_seconds"] == 6400
     assert performance.DEFAULT_RATIO_MAX == spec["performance"]["default_off_ratio_max"]
     assert performance.ACTIVE_RATIO_MAX == spec["performance"]["active_ratio_max"]
+    assert performance.DIRECT_OUTPUT_RATIO_MAX == spec["performance"]["direct_output_ratio_max"]
     assert performance.ACTIVE_BYTES_PER_NEURON == 48
 
 
 def test_run_plan_is_deterministic_complete_and_seed_free():
     assert performance.build_run_plan() == performance.build_run_plan()
     plan = performance.build_run_plan()
-    assert len(plan) == 9
-    assert [job["sequence"] for job in plan] == list(range(1, 10))
+    assert len(plan) == 12
+    assert [job["sequence"] for job in plan] == list(range(1, 13))
     assert {(job["cell"], job["rep"]) for job in plan} == {
         (cell, rep)
         for cell in performance.CELL_DEFINITIONS
@@ -34,11 +35,12 @@ def test_run_plan_is_deterministic_complete_and_seed_free():
     assert all("seed" not in job for job in plan)
 
 
-def _rows(candidate_default=10.0, control_default=10.0, active=12.0):
+def _rows(candidate_default=10.0, control_default=10.0, active=8.0, active_unfused=10.0):
     durations = {
         "candidate-default": candidate_default,
         "prechange-control-default": control_default,
         "candidate-active": active,
+        "candidate-active-unfused": active_unfused,
     }
     return [
         {
@@ -60,8 +62,10 @@ def test_summary_reports_matching_host_and_cuda_median_ratios():
     ratios = summary["ratios_against_matching_medians"]
     assert ratios["default_host"] == pytest.approx(1.0)
     assert ratios["default_cuda_event"] == pytest.approx(1.0)
-    assert ratios["active_host"] == pytest.approx(1.2)
-    assert ratios["active_cuda_event"] == pytest.approx(11.0 / 9.0)
+    assert ratios["active_host"] == pytest.approx(0.8)
+    assert ratios["active_cuda_event"] == pytest.approx(7.0 / 9.0)
+    assert ratios["direct_output_host"] == pytest.approx(0.8)
+    assert ratios["direct_output_cuda_event"] == pytest.approx(7.0 / 9.0)
     assert summary["performance_status"] == "GO"
     assert summary["physiology_verdict"] is None
     assert summary["promotion_effect"] == "none"
@@ -73,6 +77,7 @@ def test_summary_preserves_fixed_failure_thresholds():
     assert summary["fixed_thresholds"] == {
         "default_off_ratio_max": 1.02,
         "active_ratio_max": 1.25,
+        "direct_output_ratio_max": 0.85,
     }
 
 
@@ -98,6 +103,7 @@ def test_worker_subprocess_receives_explicit_source_root(monkeypatch, tmp_path):
         "cell": "candidate-default",
         "source": "candidate",
         "active": False,
+        "direct_outputs": False,
         "sequence": 1,
         "rep": 1,
     }
@@ -124,6 +130,7 @@ def test_worker_timeout_becomes_durable_infrastructure_failure(monkeypatch, tmp_
         "cell": "candidate-default",
         "source": "candidate",
         "active": False,
+        "direct_outputs": False,
         "sequence": 1,
         "rep": 1,
     }

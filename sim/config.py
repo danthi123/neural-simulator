@@ -256,6 +256,14 @@ class CoreSimConfig:
     # See tests/test_step_megakernel.py + docs/plans/2026-07-23-general-step-megakernel-design.md +
     # research/findings/2026-07-23-v2-megakernel-is-byte-identical-OU-confound.md.
     enable_step_megakernel_v2: bool = True
+    # Opt-in direct-output SNr fusion. This reuses the established CuPy SNr
+    # fusion graph but binds its outputs directly to persistent state,
+    # eliminating seven copy-back launches without changing its arithmetic.
+    # The bridge dispatches only when
+    # conductance noise and every unfused extended HH current are disabled;
+    # all other configurations retain the established path. Kept off until
+    # exact-state equivalence and the fixed V14 timing protocol are complete.
+    enable_snr_direct_outputs: bool = False
     # Opt-in RF DENSE complex-weight mode (O-2-purity, default OFF -> byte-identical to the sparse complex-CSR path).
     # When True, rf_set_complex_weights ALSO materializes a DENSE complex weight `cp_rf_w_dense` (= W_re + i*W_im) from
     # the SAME weights, and the RF matvec uses a single dense cuBLAS GEMV (W_dense @ z) instead of four sparse SpMVs
