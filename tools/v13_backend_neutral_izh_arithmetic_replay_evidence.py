@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import hashlib
 import json
 import os
@@ -27,12 +28,47 @@ _REVISION = re.compile(r"^[0-9a-f]{40}$")
 EvidenceError = shared.EvidenceError
 
 
+@dataclass(frozen=True)
+class EvidenceProtocol:
+    """Immutable evidence namespace for one replay protocol version."""
+
+    replay_protocol: replay.ReplayProtocol
+    command_schema: str
+    final_manifest_schema: str
+    output_directory: str
+
+
+V1_PROTOCOL = EvidenceProtocol(
+    replay_protocol=replay.V1_PROTOCOL,
+    command_schema=SCHEMA,
+    final_manifest_schema=FINAL_MANIFEST_SCHEMA,
+    output_directory=OUTPUT_DIR,
+)
+
+
+def _protocol_source_paths(root: Path, protocol: EvidenceProtocol) -> tuple[str, ...]:
+    if protocol is V1_PROTOCOL:
+        return replay.source_paths(root)
+    return replay.source_paths(root, protocol=protocol.replay_protocol)
+
+
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _require_protocol_output(
+    relative: str, protocol: EvidenceProtocol, label: str,
+) -> None:
+    if not protocol.replay_protocol.enforce_output_directory:
+        return
+    prefix = protocol.output_directory.rstrip("/") + "/"
+    if not relative.startswith(prefix):
+        raise EvidenceError(f"{label} must be inside {protocol.output_directory}")
+
+
 def freeze_source_manifest(
     *, root: Path, revision: str, out: str | Path,
+    protocol: EvidenceProtocol = V1_PROTOCOL,
 ) -> dict[str, Any]:
     root = root.resolve(strict=True)
     if _REVISION.fullmatch(revision) is None:
@@ -40,7 +76,8 @@ def freeze_source_manifest(
     if shared._git_head(root) != revision:
         raise EvidenceError("source checkout is not at the requested revision")
     relative_out, output = shared._safe_relative(root, out, "source manifest")
-    paths = set(replay.source_paths(root))
+    _require_protocol_output(relative_out, protocol, "source manifest")
+    paths = set(_protocol_source_paths(root, protocol))
     local_sim = {
         relative for relative in paths
         if relative.startswith("sim/") and relative.endswith(".py")
@@ -71,8 +108,8 @@ def freeze_source_manifest(
     }
 
 
-def _paths() -> dict[str, str]:
-    base = OUTPUT_DIR
+def _paths(protocol: EvidenceProtocol = V1_PROTOCOL) -> dict[str, str]:
+    base = protocol.output_directory
     return {
         "source_manifest": f"{base}/source.sha256",
         "numpy_artifact": f"{base}/cell-numpy.json",
@@ -87,12 +124,13 @@ def _paths() -> dict[str, str]:
 
 def _inner_command(
     *, root: Path, action: str, revision: str, paths: dict[str, str], python: str,
+    protocol: EvidenceProtocol = V1_PROTOCOL,
 ) -> list[str]:
-    module = "research.runners._v13_backend_neutral_izh_arithmetic_replay"
+    replay_protocol = protocol.replay_protocol
     common = [
-        python, "-m", module,
-        "--spec", str((root / replay.SPEC_RELATIVE_PATH).resolve()),
-        "--spec-sha256", replay.SPEC_SHA256,
+        python, "-m", replay_protocol.runner_module,
+        "--spec", str((root / replay_protocol.spec_relative_path).resolve()),
+        "--spec-sha256", replay_protocol.spec_sha256,
     ]
     if action.startswith("run_"):
         backend = action.removeprefix("run_")
@@ -115,6 +153,7 @@ def _inner_command(
 def emit_command(
     *, root: Path, action: str, revision: str, host: str, device: str,
     out: str | Path, python: str = sys.executable,
+    protocol: EvidenceProtocol = V1_PROTOCOL,
 ) -> dict[str, Any]:
     root = root.resolve(strict=True)
     if action not in ACTIONS:
@@ -128,9 +167,10 @@ def emit_command(
     ):
         raise EvidenceError("python must be an absolute executable path")
     relative_out, output = shared._safe_relative(root, out, "command envelope")
+    _require_protocol_output(relative_out, protocol, "command envelope")
     if os.path.lexists(output):
         raise EvidenceError(f"refusing stale output path: {relative_out}")
-    paths = _paths()
+    paths = _paths(protocol)
     manifest = root / paths["source_manifest"]
     if not manifest.is_file():
         raise EvidenceError("frozen source manifest is missing")
@@ -141,11 +181,12 @@ def emit_command(
         execution_receipt._source_revision(root, revision, snapshot["manifest_sha256"])
     except execution_receipt.ReceiptError as exc:
         raise EvidenceError(f"source manifest verification failed: {exc}") from exc
-    if set(snapshot["files"]) != set(replay.source_paths(root)):
+    if set(snapshot["files"]) != set(_protocol_source_paths(root, protocol)):
         raise EvidenceError("source manifest contains the wrong source set")
 
     inner = _inner_command(
         root=root, action=action, revision=revision, paths=paths, python=python,
+        protocol=protocol,
     )
     backend = action.removeprefix("run_") if action.startswith("run_") else "numpy"
     artifact_key = (
@@ -175,7 +216,7 @@ def emit_command(
         "--env", "SIM_BACKEND", "--", *inner,
     ]
     envelope = {
-        "schema": SCHEMA,
+        "schema": protocol.command_schema,
         "action": action,
         "promotion_value": replay.PROMOTION_VALUE,
         "diagnostic_only": True,
@@ -205,12 +246,14 @@ def emit_command(
 
 def _expected_comparison_argv(
     *, root: Path, artifact_file: Path, artifact: dict[str, Any], python: str,
+    protocol: EvidenceProtocol = V1_PROTOCOL,
 ) -> list[str]:
+    replay_protocol = protocol.replay_protocol
     cells = artifact["cell_artifacts"]
     return [
-        python, "-m", "research.runners._v13_backend_neutral_izh_arithmetic_replay",
-        "--spec", str((root / replay.SPEC_RELATIVE_PATH).resolve()),
-        "--spec-sha256", replay.SPEC_SHA256,
+        python, "-m", replay_protocol.runner_module,
+        "--spec", str((root / replay_protocol.spec_relative_path).resolve()),
+        "--spec-sha256", replay_protocol.spec_sha256,
         "--compare",
         "--numpy-artifact", str((root / cells["numpy"]["path"]).resolve()),
         "--numpy-receipt", str((root / cells["numpy"]["receipt_path"]).resolve()),
@@ -223,6 +266,7 @@ def _expected_comparison_argv(
 def finalize_evidence(
     *, root: Path, artifact_path: str | Path, receipt_path: str | Path,
     out: str | Path,
+    protocol: EvidenceProtocol = V1_PROTOCOL,
 ) -> dict[str, Any]:
     root = root.resolve(strict=True)
     artifact_relative, artifact_file = shared._safe_relative(
@@ -231,19 +275,22 @@ def finalize_evidence(
     receipt_relative, receipt_file = shared._safe_relative(
         root, receipt_path, "comparison receipt"
     )
-    _, output = shared._safe_relative(root, out, "evidence manifest")
+    output_relative, output = shared._safe_relative(root, out, "evidence manifest")
+    _require_protocol_output(artifact_relative, protocol, "comparison artifact")
+    _require_protocol_output(receipt_relative, protocol, "comparison receipt")
+    _require_protocol_output(output_relative, protocol, "evidence manifest")
     try:
         artifact = json.loads(artifact_file.read_text(encoding="ascii"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise EvidenceError("comparison artifact is missing or invalid") from exc
     if (
         not isinstance(artifact, dict)
-        or artifact.get("schema") != replay.SCHEMA_COMPARISON
+        or artifact.get("schema") != protocol.replay_protocol.comparison_schema
         or artifact.get("sha256") != replay._artifact_digest(artifact)
         or artifact.get("promotion_value") != "none"
         or artifact.get("diagnostic_only") is not True
         or artifact.get("scientific_verdict") is not None
-        or artifact.get("spec_sha256") != replay.SPEC_SHA256
+        or artifact.get("spec_sha256") != protocol.replay_protocol.spec_sha256
         or artifact.get("simulation_steps_compared")
         != {"numpy": replay.TOTAL_STEPS, "cupy": replay.TOTAL_STEPS}
     ):
@@ -280,6 +327,7 @@ def finalize_evidence(
         or not Path(argv[0]).is_absolute()
         or argv != _expected_comparison_argv(
             root=root, artifact_file=artifact_file, artifact=artifact, python=argv[0],
+            protocol=protocol,
         )
     ):
         raise EvidenceError(
@@ -288,10 +336,11 @@ def finalize_evidence(
     for backend in replay.BACKENDS:
         record = cells[backend]
         replay._load_cell(
-            root / record["path"], root / record["receipt_path"], backend
+            root / record["path"], root / record["receipt_path"], backend,
+            protocol=protocol.replay_protocol,
         )
     manifest = {
-        "schema": FINAL_MANIFEST_SCHEMA,
+        "schema": protocol.final_manifest_schema,
         "promotion_value": "none",
         "diagnostic_only": True,
         "scientific_verdict": None,
@@ -317,13 +366,15 @@ def finalize_evidence(
     return manifest
 
 
-def _parser() -> argparse.ArgumentParser:
+def _parser(protocol: EvidenceProtocol = V1_PROTOCOL) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     freeze = commands.add_parser("freeze-source")
     freeze.add_argument("--root", type=Path, default=ROOT)
     freeze.add_argument("--revision", required=True)
-    freeze.add_argument("--out", default=f"{OUTPUT_DIR}/source.sha256")
+    freeze.add_argument(
+        "--out", default=f"{protocol.output_directory}/source.sha256",
+    )
     emit = commands.add_parser("emit")
     emit.add_argument("--root", type=Path, default=ROOT)
     emit.add_argument("--action", choices=ACTIONS, required=True)
@@ -335,32 +386,35 @@ def _parser() -> argparse.ArgumentParser:
     finalize = commands.add_parser("finalize")
     finalize.add_argument("--root", type=Path, default=ROOT)
     finalize.add_argument(
-        "--artifact", default=f"{OUTPUT_DIR}/comparison.json"
+        "--artifact", default=f"{protocol.output_directory}/comparison.json"
     )
     finalize.add_argument(
-        "--receipt", default=f"{OUTPUT_DIR}/comparison.receipt.json"
+        "--receipt", default=f"{protocol.output_directory}/comparison.receipt.json"
     )
     finalize.add_argument(
-        "--out", default=f"{OUTPUT_DIR}/evidence-manifest.json"
+        "--out", default=f"{protocol.output_directory}/evidence-manifest.json"
     )
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
+def main(
+    argv: list[str] | None = None, *, protocol: EvidenceProtocol = V1_PROTOCOL,
+) -> int:
+    args = _parser(protocol).parse_args(argv)
     if args.command == "freeze-source":
         result = freeze_source_manifest(
-            root=args.root, revision=args.revision, out=args.out,
+            root=args.root, revision=args.revision, out=args.out, protocol=protocol,
         )
     elif args.command == "emit":
         result = emit_command(
             root=args.root, action=args.action, revision=args.revision,
             host=args.host, device=args.device, out=args.out, python=args.python,
+            protocol=protocol,
         )
     else:
         result = finalize_evidence(
             root=args.root, artifact_path=args.artifact,
-            receipt_path=args.receipt, out=args.out,
+            receipt_path=args.receipt, out=args.out, protocol=protocol,
         )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

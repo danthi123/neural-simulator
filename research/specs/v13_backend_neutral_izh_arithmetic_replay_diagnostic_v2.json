@@ -1,0 +1,88 @@
+{
+  "schema": "sim-experiment-spec-v0",
+  "id": "gateB-v13-backend-neutral-izh-arithmetic-replay-diagnostic-v2",
+  "status": "preregistered_not_executed",
+  "date": "2026-08-04",
+  "provenance_exempt": "non-executed diagnostic protocol; contains no new scientific measurement",
+  "device": "not_applicable_non_executed_protocol",
+  "promotion_value": "none",
+  "diagnostic_only": true,
+  "scientific_verdict": null,
+  "completed_input": {
+    "aggregate": {
+      "artifact_sha256": "3fc135870cf42434078ea4129364f15be10100abb5f5ed07d89ae935d21d1ae4",
+      "file_sha256": "2f94905eebfddec69e4264ccae75f618bbffc720eb95126be9270d6a3aa5a8c6",
+      "path": "research/findings/raw/v13_backend_state_transplant/aggregate.json",
+      "receipt_file_sha256": "ce302c3c9fb77a0052f2a55164c2d59f2230d365dec8e5f8ed3ee250ecc8a822",
+      "receipt_path": "research/findings/raw/v13_backend_state_transplant/receipt-aggregate.json"
+    },
+    "bundle": {
+      "artifact_sha256": "ee2650f6ddadfb57b2fb2ccc83a659f22a1c37767a738b8742a04c51eaf6746e",
+      "file_sha256": "5f9750ff1f26c38df8676525bc698571102e5aeefeae7d3787b8f2b3f6aa943b",
+      "origin": "numpy",
+      "path": "research/findings/raw/v13_backend_state_transplant/bundle-numpy.json",
+      "receipt_file_sha256": "83f885a87e97ac235fc3bd575824079f3eb5299f2008b39e4e8890cdffd8b365",
+      "receipt_path": "research/findings/raw/v13_backend_state_transplant/receipt-bundle-numpy.json"
+    },
+    "source_manifest": {
+      "file_sha256": "4a91ec11cc7023129fb12f75369e9c0e84c7bef1a00322deb11d780d087de7ca",
+      "path": "research/findings/raw/v13_backend_state_transplant/source-manifest.sha256",
+      "tree_sha256": "5a91edf380a4125d1b99222d7cc722e2b98e2f527af32b7a7f0185cf6648e6a0"
+    },
+    "source_revision": "74f3dcd60ba1e5f866a7639986e1fb96fcbd541b",
+    "transplant_spec": {
+      "file_sha256": "cd29d694d5e4d413167d83f0817532c1e31695ccb0d9a72490e81671c8ff920f",
+      "path": "research/specs/v13_backend_state_transplant.json"
+    }
+  },
+  "execution": {
+    "backends": ["numpy", "cupy"],
+    "config_flag": "backend_neutral_izh_arithmetic",
+    "config_flag_value": true,
+    "default_value": false,
+    "mode": "default",
+    "trajectory_arrays": ["v", "u", "spikes"],
+    "source_binding": "exact committed source manifest generated immediately before execution"
+  },
+  "correction_under_test": {
+    "scope": "strict GPU arithmetic preserves float32 subnormal operands and results",
+    "default_path_unchanged": true,
+    "source_revision_is_bound_by_execution_manifest": true
+  },
+  "replay": {
+    "baseline_steps": 500,
+    "inhibition_steps": 200,
+    "release_steps": 500,
+    "total_steps": 1200,
+    "dt_ms": 1.0,
+    "source_current_pA": 1000.0,
+    "target_external_current_pA": 0.0
+  },
+  "rng": {
+    "allocation_before_restore_may_use_rng": true,
+    "allocation_state_must_be_fully_overwritten": true,
+    "measured_replay_allowed": false,
+    "measured_replay_seed": null,
+    "replay_boundary": "after exact bundle restoration and before the first simulation step"
+  },
+  "acceptance": {
+    "all_1200_v_rows_byte_exact": true,
+    "all_1200_u_rows_byte_exact": true,
+    "all_1200_spike_rows_byte_exact": true,
+    "create_only_outputs": true,
+    "no_rng_call_during_measured_replay": true,
+    "no_scientific_verdict": true,
+    "no_tolerance_fallback": true,
+    "source_and_receipt_binding_required": true
+  },
+  "exclusions": [
+    "initialization correction acceptance",
+    "scientific calibration",
+    "parameter tuning",
+    "promotion or release of held-out seeds",
+    "modification or replacement of completed V13 transplant evidence",
+    "modification or replacement of V13 strict-arithmetic replay v1 evidence"
+  ],
+  "output_directory": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2",
+  "diagnostic_schema": "v13-backend-neutral-izh-arithmetic-replay-spec-v2"
+}

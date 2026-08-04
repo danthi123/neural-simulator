@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+from dataclasses import dataclass
 import hashlib
 import json
 import os
@@ -38,8 +39,10 @@ AUTHORITY_SOURCE_PATHS = (
     "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
     "research/runners/_v13_backend_state_transplant.py",
     "research/runners/_v13_backend_neutral_izh_arithmetic_replay.py",
-    "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-backend-arithmetic-correction-DIAGNOSTIC-PREREGISTRATION.md",
-    "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-arithmetic-replay-DIAGNOSTIC-PREREGISTRATION.md",
+    "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-backend-"
+    "arithmetic-correction-DIAGNOSTIC-PREREGISTRATION.md",
+    "research/findings/2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-"
+    "izh-arithmetic-replay-DIAGNOSTIC-PREREGISTRATION.md",
     "research/specs/v13_backend_arithmetic_localizer.json",
     "research/specs/v13_backend_neutral_izh_arithmetic_replay_diagnostic.json",
     "research/specs/v13_backend_state_transplant.json",
@@ -55,6 +58,38 @@ AUTHORITY_SOURCE_PATHS = (
 )
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _REVISION = re.compile(r"^[0-9a-f]{40}$")
+
+
+@dataclass(frozen=True)
+class ReplayProtocol:
+    """Immutable names and authorities for one replay protocol version."""
+
+    spec_relative_path: Path
+    spec_sha256: str
+    spec_id: str
+    output_directory: str
+    diagnostic_schema: str
+    runner_module: str
+    cell_schema: str
+    comparison_schema: str
+    authority_source_paths: tuple[str, ...]
+    enforce_output_directory: bool
+
+
+V1_PROTOCOL = ReplayProtocol(
+    spec_relative_path=SPEC_RELATIVE_PATH,
+    spec_sha256=SPEC_SHA256,
+    spec_id="gateB-v13-backend-neutral-izh-arithmetic-replay-diagnostic-v1",
+    output_directory=(
+        "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic"
+    ),
+    diagnostic_schema="v13-backend-neutral-izh-arithmetic-replay-spec-v1",
+    runner_module="research.runners._v13_backend_neutral_izh_arithmetic_replay",
+    cell_schema=SCHEMA_CELL,
+    comparison_schema=SCHEMA_COMPARISON,
+    authority_source_paths=AUTHORITY_SOURCE_PATHS,
+    enforce_output_directory=False,
+)
 
 
 def _canonical(value: Any) -> bytes:
@@ -100,7 +135,27 @@ def _write_new_json(path: Path, value: dict[str, Any]) -> None:
         raise
 
 
-def source_paths(root: Path | None = None) -> tuple[str, ...]:
+def _require_protocol_output(
+    path: Path, protocol: ReplayProtocol, label: str,
+) -> None:
+    if not protocol.enforce_output_directory:
+        return
+    root = ROOT.resolve(strict=True)
+    expected = (root / protocol.output_directory).resolve(strict=False)
+    resolved = path.resolve(strict=False)
+    try:
+        relative = resolved.relative_to(expected)
+    except ValueError as exc:
+        raise ValueError(
+            f"{label} must be inside {protocol.output_directory}"
+        ) from exc
+    if not relative.parts:
+        raise ValueError(f"{label} must name a file inside the output directory")
+
+
+def source_paths(
+    root: Path | None = None, *, protocol: ReplayProtocol = V1_PROTOCOL,
+) -> tuple[str, ...]:
     """Return every simulator Python input and exact replay authority."""
     resolved = (ROOT if root is None else root).resolve(strict=True)
     simulator = (
@@ -108,12 +163,15 @@ def source_paths(root: Path | None = None) -> tuple[str, ...]:
         for path in (resolved / "sim").rglob("*.py")
         if path.is_file()
     )
-    return tuple(sorted(set(simulator).union(AUTHORITY_SOURCE_PATHS)))
+    return tuple(sorted(set(simulator).union(protocol.authority_source_paths)))
 
 
 def load_locked_spec(
-    path: Path = SPEC_PATH, expected_sha256: str = SPEC_SHA256,
+    path: Path | None = None, expected_sha256: str | None = None, *,
+    protocol: ReplayProtocol = V1_PROTOCOL,
 ) -> dict[str, Any]:
+    path = ROOT / protocol.spec_relative_path if path is None else path
+    expected_sha256 = protocol.spec_sha256 if expected_sha256 is None else expected_sha256
     if _SHA256.fullmatch(expected_sha256) is None:
         raise ValueError("spec SHA-256 must be a lowercase digest")
     raw = path.read_bytes()
@@ -129,8 +187,7 @@ def load_locked_spec(
     acceptance = spec.get("acceptance", {})
     checks = {
         "schema": spec.get("schema") == "sim-experiment-spec-v0",
-        "id": spec.get("id")
-        == "gateB-v13-backend-neutral-izh-arithmetic-replay-diagnostic-v1",
+        "id": spec.get("id") == protocol.spec_id,
         "status": spec.get("status") == "preregistered_not_executed",
         "device": spec.get("device") == "not_applicable_non_executed_protocol",
         "promotion": spec.get("promotion_value") == PROMOTION_VALUE,
@@ -154,15 +211,18 @@ def load_locked_spec(
             "all_1200_spike_rows_byte_exact", "no_rng_call_during_measured_replay",
             "no_tolerance_fallback", "source_and_receipt_binding_required",
         )),
-        "output": spec.get("output_directory")
-        == "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic",
+        "output": spec.get("output_directory") == protocol.output_directory,
+        "diagnostic_schema": spec.get("diagnostic_schema")
+        == protocol.diagnostic_schema,
     }
     if not all(checks.values()):
         raise ValueError(f"runner/spec disagreement: {checks}")
     return spec
 
 
-def _source_snapshot(manifest: Path, revision: str) -> dict[str, Any]:
+def _source_snapshot(
+    manifest: Path, revision: str, *, protocol: ReplayProtocol = V1_PROTOCOL,
+) -> dict[str, Any]:
     if _REVISION.fullmatch(revision) is None:
         raise ValueError("source revision must be a full lowercase Git SHA")
     try:
@@ -171,7 +231,7 @@ def _source_snapshot(manifest: Path, revision: str) -> dict[str, Any]:
         raise ValueError("source manifest must be inside the repository") from exc
     snapshot = execution_receipt.verify_source_manifest(ROOT, relative)
     kind = execution_receipt._source_revision(ROOT, revision, snapshot["manifest_sha256"])
-    if set(snapshot["files"]) != set(source_paths()):
+    if set(snapshot["files"]) != set(source_paths(protocol=protocol)):
         raise ValueError("source manifest does not contain the exact replay source set")
     return {
         "file_count": snapshot["file_count"],
@@ -372,12 +432,15 @@ def _runtime_contract(bridge, transplant_spec: dict[str, Any]) -> dict[str, Any]
 
 def run_cell(
     *, backend: str, out: Path, source_manifest: Path, source_revision: str,
-    spec_path: Path = SPEC_PATH, spec_sha256: str = SPEC_SHA256,
+    spec_path: Path | None = None, spec_sha256: str | None = None,
+    protocol: ReplayProtocol = V1_PROTOCOL,
 ) -> dict[str, Any]:
     if backend not in BACKENDS:
         raise ValueError("backend must be numpy or cupy")
-    spec = load_locked_spec(spec_path, spec_sha256)
-    source = _source_snapshot(source_manifest, source_revision)
+    _require_protocol_output(out, protocol, "cell output")
+    spec_sha256 = protocol.spec_sha256 if spec_sha256 is None else spec_sha256
+    spec = load_locked_spec(spec_path, spec_sha256, protocol=protocol)
+    source = _source_snapshot(source_manifest, source_revision, protocol=protocol)
     assert_backend(backend, note="V13 strict-arithmetic matched-state replay")
     _, actual_backend = get_backend()
     if actual_backend != backend or os.environ.get("SIM_BACKEND") != backend:
@@ -457,7 +520,7 @@ def run_cell(
             name: transplant._encode_array(trajectories[name]) for name in TRAJECTORIES
         }
         artifact = _seal({
-            "schema": SCHEMA_CELL,
+            "schema": protocol.cell_schema,
             "promotion_value": PROMOTION_VALUE,
             "diagnostic_only": True,
             "scientific_verdict": None,
@@ -512,12 +575,12 @@ def run_cell(
 
 def _expected_cell_argv(
     *, root: Path, artifact: Path, backend: str, source: dict[str, Any],
-    python: str,
+    python: str, protocol: ReplayProtocol = V1_PROTOCOL,
 ) -> list[str]:
     return [
-        python, "-m", "research.runners._v13_backend_neutral_izh_arithmetic_replay",
-        "--spec", str((root / SPEC_RELATIVE_PATH).resolve()),
-        "--spec-sha256", SPEC_SHA256,
+        python, "-m", protocol.runner_module,
+        "--spec", str((root / protocol.spec_relative_path).resolve()),
+        "--spec-sha256", protocol.spec_sha256,
         "--run", "--backend", backend,
         "--source-manifest", str((root / source["manifest"]).resolve()),
         "--source-revision", source["git_sha"],
@@ -525,12 +588,15 @@ def _expected_cell_argv(
     ]
 
 
-def _load_cell(path: Path, receipt_path: Path, backend: str) -> dict[str, Any]:
+def _load_cell(
+    path: Path, receipt_path: Path, backend: str, *,
+    protocol: ReplayProtocol = V1_PROTOCOL,
+) -> dict[str, Any]:
     try:
         value = json.loads(path.read_text(encoding="ascii"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"cannot read {backend} replay cell") from exc
-    if not isinstance(value, dict) or value.get("schema") != SCHEMA_CELL:
+    if not isinstance(value, dict) or value.get("schema") != protocol.cell_schema:
         raise ValueError(f"invalid {backend} replay cell schema")
     if value.get("sha256") != _artifact_digest(value):
         raise ValueError(f"invalid {backend} replay cell digest")
@@ -539,7 +605,7 @@ def _load_cell(path: Path, receipt_path: Path, backend: str) -> dict[str, Any]:
         "diagnostic": value.get("diagnostic_only") is True,
         "verdict": value.get("scientific_verdict") is None,
         "backend": value.get("backend") == backend,
-        "spec": value.get("spec_sha256") == SPEC_SHA256,
+        "spec": value.get("spec_sha256") == protocol.spec_sha256,
         "steps": value.get("simulation_steps_executed") == TOTAL_STEPS,
         "instrument": value.get("instrument_valid") is True,
         "rng": value.get("measured_replay_rng", {}).get("allowed") is False
@@ -575,7 +641,7 @@ def _load_cell(path: Path, receipt_path: Path, backend: str) -> dict[str, Any]:
         or not Path(argv[0]).is_absolute()
         or argv != _expected_cell_argv(
             root=ROOT, artifact=path, backend=backend, source=receipt["source"],
-            python=argv[0],
+            python=argv[0], protocol=protocol,
         )
     ):
         raise ValueError(f"{backend} replay receipt command differs from the frozen run command")
@@ -612,15 +678,28 @@ def _first_difference(left: np.ndarray, right: np.ndarray) -> dict[str, Any] | N
 
 def compare_cells(
     *, numpy_artifact: Path, numpy_receipt: Path, cupy_artifact: Path,
-    cupy_receipt: Path, out: Path, spec_path: Path = SPEC_PATH,
-    spec_sha256: str = SPEC_SHA256,
+    cupy_receipt: Path, out: Path, spec_path: Path | None = None,
+    spec_sha256: str | None = None, protocol: ReplayProtocol = V1_PROTOCOL,
 ) -> dict[str, Any]:
-    load_locked_spec(spec_path, spec_sha256)
+    spec_sha256 = protocol.spec_sha256 if spec_sha256 is None else spec_sha256
+    for path, label in (
+        (numpy_artifact, "NumPy artifact"),
+        (numpy_receipt, "NumPy receipt"),
+        (cupy_artifact, "CuPy artifact"),
+        (cupy_receipt, "CuPy receipt"),
+        (out, "comparison output"),
+    ):
+        _require_protocol_output(path, protocol, label)
+    load_locked_spec(spec_path, spec_sha256, protocol=protocol)
     if os.path.lexists(out):
         raise FileExistsError(f"output artifact already exists: {out}")
     cells = {
-        "numpy": _load_cell(numpy_artifact, numpy_receipt, "numpy"),
-        "cupy": _load_cell(cupy_artifact, cupy_receipt, "cupy"),
+        "numpy": _load_cell(
+            numpy_artifact, numpy_receipt, "numpy", protocol=protocol,
+        ),
+        "cupy": _load_cell(
+            cupy_artifact, cupy_receipt, "cupy", protocol=protocol,
+        ),
     }
     if cells["numpy"]["source"] != cells["cupy"]["source"]:
         raise ValueError("replay cells use different source snapshots")
@@ -652,7 +731,7 @@ def compare_cells(
         ))
     passed = all(row["exact"] for row in comparisons.values())
     artifact = _seal({
-        "schema": SCHEMA_COMPARISON,
+        "schema": protocol.comparison_schema,
         "promotion_value": PROMOTION_VALUE,
         "diagnostic_only": True,
         "scientific_verdict": None,
@@ -680,14 +759,16 @@ def compare_cells(
     return artifact
 
 
-def _parser() -> argparse.ArgumentParser:
+def _parser(protocol: ReplayProtocol = V1_PROTOCOL) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument("--run", action="store_true")
     action.add_argument("--compare", action="store_true")
     parser.add_argument("--backend", choices=BACKENDS)
-    parser.add_argument("--spec", type=Path, default=SPEC_PATH)
-    parser.add_argument("--spec-sha256", default=SPEC_SHA256)
+    parser.add_argument(
+        "--spec", type=Path, default=ROOT / protocol.spec_relative_path,
+    )
+    parser.add_argument("--spec-sha256", default=protocol.spec_sha256)
     parser.add_argument("--source-manifest", type=Path)
     parser.add_argument("--source-revision")
     parser.add_argument("--numpy-artifact", type=Path)
@@ -698,8 +779,10 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
+def main(
+    argv: list[str] | None = None, *, protocol: ReplayProtocol = V1_PROTOCOL,
+) -> int:
+    args = _parser(protocol).parse_args(argv)
     if args.run:
         if args.backend is None or args.source_manifest is None or args.source_revision is None:
             raise SystemExit("--run requires --backend, --source-manifest, and --source-revision")
@@ -710,7 +793,7 @@ def main(argv: list[str] | None = None) -> int:
         result = run_cell(
             backend=args.backend, out=args.out, source_manifest=args.source_manifest,
             source_revision=args.source_revision, spec_path=args.spec,
-            spec_sha256=args.spec_sha256,
+            spec_sha256=args.spec_sha256, protocol=protocol,
         )
     else:
         required = (
@@ -724,6 +807,7 @@ def main(argv: list[str] | None = None) -> int:
             numpy_artifact=args.numpy_artifact, numpy_receipt=args.numpy_receipt,
             cupy_artifact=args.cupy_artifact, cupy_receipt=args.cupy_receipt,
             out=args.out, spec_path=args.spec, spec_sha256=args.spec_sha256,
+            protocol=protocol,
         )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
