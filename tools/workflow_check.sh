@@ -15,6 +15,62 @@
 #   bash tools/workflow_check.sh            # full report + exit 1 if any rule is violated
 set -uo pipefail
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+
+queue_health() {
+  local queue="$1" now="$2" max_age="$3"
+  awk -F'\t' -v now="$now" -v max_age="$max_age" '
+    $0 ~ /^[[:space:]]*(#|$)/ {next}
+    !($1 ~ /^[0-9]+$/ && NF > 1) {malformed++; next}
+    {total++; if ($1 >= now-max_age) live++; else stale++}
+    END {printf "%d\t%d\t%d\t%d\n", live+0, stale+0, malformed+0, total+0}
+  ' "$queue" 2>/dev/null
+}
+
+classify_pool_status() {
+  local status_file="$1" sim_root="$2" now="$3" max_age="$4"
+  local f1 f2 f3 f4 extra epoch rc cmd payload age out day_epoch
+  [ -f "$status_file" ] || return 0
+  while IFS=$'\t' read -r f1 f2 f3 f4 extra; do
+    epoch=""; rc=""; cmd=""
+    if [ "$f1" = "v2" ]; then
+      epoch="$f2"; rc="$f3"; payload="$f4"
+      [ -z "$extra" ] || continue
+      [[ "$epoch" =~ ^[0-9]+$ && "$rc" =~ ^[0-9]+$ && -n "$payload" ]] || continue
+      cmd=$(printf '%s' "$payload" | base64 -d 2>/dev/null) || continue
+    else
+      # Legacy records had no date and could contain raw newlines. Accept only
+      # structurally valid, recent rows during migration; malformed fragments
+      # cannot be trusted and are ignored.
+      rc="$f1"
+      [[ "$rc" =~ ^[0-9]+$ && "$f2" =~ ^[0-9]{2}:[0-9]{2}:[0-9]{2}$ && -n "$f3" ]] || continue
+      cmd="$f3${f4:+$'\t'$f4}${extra:+$'\t'$extra}"
+      day_epoch=$(date -d "$(date -d "@$now" +%F) $f2" +%s 2>/dev/null) || continue
+      [ "$day_epoch" -le "$now" ] || day_epoch=$((day_epoch - 86400))
+      epoch="$day_epoch"
+    fi
+    age=$((now - epoch))
+    [ "$age" -ge 0 ] && [ "$age" -le "$max_age" ] || continue
+    [ "$rc" -ne 0 ] || continue
+    out=$(printf '%s' "$cmd" | grep -oE '\-\-out +[^ ]+' | awk '{print $2}' | head -1)
+    if [ -n "$out" ] && [ -f "$sim_root/$out" ]; then
+      printf 'V\t%s\t%s\n' "$rc" "$out"
+    else
+      printf 'C\t%s\t%s\n' "$rc" "$(printf '%s' "$cmd" | tr '\n\t' '  ' | cut -c1-90)"
+    fi
+  done < "$status_file"
+}
+
+if [ "${1:-}" = "--queue-health" ]; then
+  [ "$#" -eq 4 ] || { echo "usage: $0 --queue-health <queue> <now-epoch> <max-age>" >&2; exit 2; }
+  queue_health "$2" "$3" "$4"
+  exit $?
+fi
+if [ "${1:-}" = "--classify-pool-status" ]; then
+  [ "$#" -eq 5 ] || { echo "usage: $0 --classify-pool-status <log> <sim-root> <now-epoch> <max-age>" >&2; exit 2; }
+  classify_pool_status "$2" "$3" "$4" "$5"
+  exit $?
+fi
+
 cd "$ROOT" || exit 0
 FAIL=0
 
@@ -209,10 +265,14 @@ printf "%b" "$POOL_LINES"
 # `grep -c` prints "0" AND exits 1 on no match, so `$(... || echo 0)` yields a TWO-LINE "0\n0" and the integer
 # test below silently errors instead of firing. This is the SAME defect I fixed for pgrep earlier in this file
 # tonight and then reintroduced here verbatim -- take the first line and default it.
-QDEPTH=$(bash "$ROOT/tools/pool_queue.sh" depth 2>/dev/null | head -1); QDEPTH=${QDEPTH:-0}
-QMALFORMED=$(bash "$ROOT/tools/pool_queue.sh" malformed-depth 2>/dev/null | head -1); QMALFORMED=${QMALFORMED:-0}
+QUEUE_PATH="${POOL_QUEUE_PATH:-$ROOT/research/queue/pool.queue}"
+IFS=$'\t' read -r QDEPTH QSTALE QMALFORMED QTOTAL <<< "$(queue_health "$QUEUE_PATH" "$(date +%s)" "${POOL_JOB_MAX_AGE:-43200}")"
+QDEPTH=${QDEPTH:-0}; QSTALE=${QSTALE:-0}; QMALFORMED=${QMALFORMED:-0}; QTOTAL=${QTOTAL:-0}
 DISPATCH=$(pgrep -fc '[p]ool_autodispatch' 2>/dev/null | head -1); DISPATCH=${DISPATCH:-0}
-echo "  queue depth=$QDEPTH  dispatcher=$([ "${DISPATCH:-0}" -gt 0 ] && echo LIVE || echo DEAD)"
+echo "  queue depth=$QDEPTH live, $QSTALE stale  dispatcher=$([ "${DISPATCH:-0}" -gt 0 ] && echo LIVE || echo DEAD)"
+if [ "$QSTALE" -gt 0 ]; then
+  echo "  · ignoring $QSTALE queue record(s) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h; dispatcher will not launch them."
+fi
 if [ "${QMALFORMED:-0}" -gt 0 ]; then
   echo "  ⛔ $QMALFORMED MALFORMED POOL QUEUE RECORD(S) — monitoring will not count unexecutable work."
   echo "     They will be preserved in pool.queue.malformed; requeue via tools/pool_queue.sh."
@@ -266,11 +326,11 @@ fi
 # job whose --out is MISSING truly spent compute for nothing (a crash / argparse / module-not-found).
 CRASHED=""; VERDICTS=""
 for H in pool40 pool41 pool42; do
-  R=$(timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" '
-    awk -F"\t" "\$1 != 0 {print}" ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -5 | while IFS="	" read rc t cmd; do
-      out=$(printf "%s" "$cmd" | grep -oE "\-\-out +[^ ]+" | awk "{print \$2}" | head -1)
-      if [ -n "$out" ] && [ -f "$HOME/derisk-pool/sim/$out" ]; then echo "V	$rc	$out"; else echo "C	$rc	$(printf "%s" "$cmd" | cut -c1-90)"; fi
-    done' 2>/dev/null)
+  R=$({
+    declare -f classify_pool_status
+    printf '\nclassify_pool_status "$HOME/derisk-pool/sim/job_status.log" "$HOME/derisk-pool/sim" %q %q\n' \
+      "$(date +%s)" "${POOL_STATUS_MAX_AGE:-3600}"
+  } | timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" 'bash -s' 2>/dev/null)
   while IFS=$'\t' read -r kind rc rest; do
     [ -z "$kind" ] && continue
     [ "$kind" = "C" ] && CRASHED="$CRASHED\n  $H rc=$rc: $rest"

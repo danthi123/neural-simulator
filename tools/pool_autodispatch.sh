@@ -37,6 +37,20 @@ node_is_idle() {
   awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c/4)}'
 }
 
+remote_launch_command() {
+  # Encode both the job and the fixed wrapper so shell metacharacters, tabs, and
+  # newlines cannot corrupt the remote command or its one-line status record.
+  local job_b64 wrapper wrapper_b64
+  job_b64=$(printf '%s' "$1" | base64 -w0) || return 1
+  wrapper='job=$(printf "%s" "$JOB_B64" | base64 -d) || exit 125
+bash -c "$job" > autodispatch.out 2>&1
+rc=$?
+printf "v2\t%s\t%s\t%s\n" "$(date +%s)" "$rc" "$JOB_B64" >> job_status.log'
+  wrapper_b64=$(printf '%s' "$wrapper" | base64 -w0) || return 1
+  printf "cd ~/derisk-pool/sim && JOB_B64='%s' WRAPPER_B64='%s' setsid bash -c 'printf \"%%s\" \"\$WRAPPER_B64\" | base64 -d | bash' </dev/null >/dev/null 2>&1 & exit 0" \
+    "$job_b64" "$wrapper_b64"
+}
+
 pop_job() {
   # Atomically take the first non-comment line. flock keeps two dispatcher instances from claiming the same job.
   local job=""
@@ -116,6 +130,11 @@ if [ "${1:-}" = "--pop-once" ]; then
   pop_job
   exit $?
 fi
+if [ "${1:-}" = "--render-remote-command" ]; then
+  [ "$#" -eq 2 ] || { echo "usage: $0 --render-remote-command '<job>'" >&2; exit 2; }
+  remote_launch_command "$2"
+  exit $?
+fi
 
 # SINGLETON GUARD (2026-07-31): repeated restarts during testing left THREE dispatchers polling at once. flock
 # in pop_job stops two of them claiming the same job, so correctness was safe -- but three pollers triple the ssh
@@ -149,10 +168,13 @@ while true; do
       # CAPTURE THE EXIT STATUS (2026-07-31). Previously this logged that a job was LAUNCHED and nothing more,
       # so a job that died was indistinguishable from one that succeeded. Nine jobs died instantly on an argparse
       # error and went unnoticed for an hour, because the only evidence of failure sat in autodispatch.out on a
-      # node nobody reads. The wrapper appends "<rc>\t<when>\t<job>" to job_status.log; the heartbeat reports
-      # any non-zero. A job that fails is now LOUD rather than merely absent.
-      ssh -f -n -o BatchMode=yes "$NODE" \
-        "cd ~/derisk-pool/sim && setsid bash -c '{ $JOB; } > autodispatch.out 2>&1; printf \"%s\t%s\t%s\n\" \"\$?\" \"\$(date +%H:%M:%S)\" \"$JOB\" >> job_status.log' </dev/null >/dev/null 2>&1 & exit 0" 2>/dev/null
+      # node nobody reads. The wrapper appends a timestamped v2 record with a numeric rc and base64-encoded job;
+      # the encoding keeps multiline pytest expressions from becoming fake status rows.
+      REMOTE_COMMAND=$(remote_launch_command "$JOB") || {
+        echo "[pool-dispatch] failed to encode job for $NODE" >&2
+        continue
+      }
+      ssh -f -n -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
       sleep 5     # let the launch register before this node is polled again
     fi
   done
