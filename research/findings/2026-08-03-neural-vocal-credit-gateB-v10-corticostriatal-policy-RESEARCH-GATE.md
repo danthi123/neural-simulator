@@ -192,11 +192,19 @@ missing neural policy. These are forbidden.
 - Keep policy-route plasticity gains enabled so coactivity can form
   eligibility, but set reward learning rate to exactly zero. Assert nonzero
   route gain and byte-identical weights before and after engagement.
-- Run a matched zero-eligibility, zero-teaching-signal clip control and require
-  byte-identical policy weights. Any movement in engagement or that control is
-  an implementation failure, not learning. Rescaling the initial policy
-  weights would require a new Gate A physiology result before proceeding.
+- Run a matched zero-eligibility, zero-learning-rate clip-path control. Use a
+  nonzero diagnostic scalar only to enter the bridge's update-and-clip branch;
+  it is not a scientific teaching condition and must not alter a weight.
+  Require byte-identical policy weights. Any movement in engagement or that
+  control is an implementation failure, not learning. Rescaling the initial
+  policy weights would require a new Gate A physiology result before
+  proceeding.
 - Measure D1 and D2 route eligibility at the fixed pre-outcome time.
+- Neutral OU activity must not preload the presynaptic coactivity trace. A
+  symmetric engagement-only input gate may suppress new additions to that
+  trace while still allowing exponential decay; it may not change neural
+  dynamics, select a channel, inspect a winner, or clear trace state. Track it
+  as measurement instrumentation, not part of the learned-policy candidate.
 - Assert D2 route signs are negative and D1 route signs are positive.
 - Preregister winner-minus-loser eligibility, winner/loser ratio, and
   cross-channel leakage ceilings separately for D1 and D2. Require each in
@@ -266,6 +274,8 @@ per-action simulator copy is out of scope.
 `PROCEED TO V10 ENGAGEMENT PREREGISTRATION`.
 
 The candidate targets the whole-brain functional gap exposed by V9: learned
-consequences must change future action selection. A failed engagement gate
-retires natural coactivity on the present selector operating point; it does not
-authorize host attribution or stronger actor-bypass tuning.
+consequences must change future action selection. A failed reserved-seed
+engagement smoke rejects only that locked run and does not establish cross-seed
+retirement. Any successor must be justified and preregistered before another
+seed or operating point is opened; failure does not authorize host attribution
+or stronger actor-bypass tuning.
