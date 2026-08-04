@@ -23,6 +23,22 @@ def test_fixed_contract_matches_preregistration():
     assert performance.ACTIVE_BYTES_PER_NEURON == 48
 
 
+def test_source_snapshot_records_backend_toolchain_boundary(tmp_path, monkeypatch):
+    tracked = (
+        "sim/backend.py", "sim/bridge.py", "sim/config.py", "sim/kernels.py",
+        "sim/regions.py",
+    )
+    for relative in tracked:
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(relative, encoding="utf-8")
+    monkeypatch.setattr(performance, "_git", lambda *args: "clean")
+
+    snapshot = performance.source_snapshot(tmp_path)
+
+    assert tuple(snapshot["files"]) == tracked
+
+
 def test_performance_bridge_fails_loudly_on_step_errors():
     source = inspect.getsource(performance._build_bridge)
     assert "bridge.strict_step_errors = True" in source

@@ -76,7 +76,13 @@ def _git(root: Path, *args: str) -> str | None:
 
 def source_snapshot(root: Path) -> dict:
     root = root.resolve()
-    rels = ("sim/bridge.py", "sim/config.py", "sim/kernels.py", "sim/regions.py")
+    rels = (
+        "sim/backend.py",
+        "sim/bridge.py",
+        "sim/config.py",
+        "sim/kernels.py",
+        "sim/regions.py",
+    )
     return {
         "root": str(root),
         "revision": _git(root, "rev-parse", "HEAD"),
