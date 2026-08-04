@@ -138,21 +138,16 @@ its controls and lesions, and is tested at the required seed coverage.
 7. **The deep-credit and scaling frontier remains open.** The project must
    distinguish a narrow mechanism de-risk from a local learning rule that can
    grow useful structure on the real shared substrate.
-8. **Compute is scheduled, not assumed.** The V14 immutable replacement matrix
-   reached its fixed 1,800-second timeout in its first active worker, configured
-   for 500 warmup plus 2,000 measured steps. The cause was a hidden repeated
-   CuPy cold-compile failure, not a steady-state timing result. Benchmark workers
-   now restore the explicit CUDA toolkit root and fail loudly on step errors;
-   bounded timing also removed repeated scalar transfers from the direct-output
-   path. The repaired 12-worker matrix then completed: default-off and active
-   overhead passed, but direct outputs first reached `0.937x` of unfused rather
-   than the required `0.85x`. Exact in-place HH state/spike fusion then improved
-   the sealed result to `0.916x`, still a NO-GO. Two attempts to combine the
-   SNr and HH graphs changed voltage by `7.629e-6` mV and were rejected before
-   timing. Exact compiled-executor caching then passed the active speed target
-   at `0.718x`, but its sealed default-off ratio was `1.055x` versus the `1.02x`
-   ceiling, so promotion remains blocked pending default-path profiling. These
-   performance verdicts have no physiology effect.
+8. **Compute is scheduled and measured under controlled conditions.** Early
+   V14 performance attempts exposed repeated CuPy compilation, insufficient
+   fusion, and unstable host/GPU conditions; each failed candidate remains
+   banked. The prospective V3 matrix used persistent source-isolated workers,
+   adjacent pairing, fixed CPU/GPU controls, and a host-heavy-work lease. It
+   passed the sealed engineering gate: default-off behavior was effectively
+   unchanged, the active path was faster, and direct output was about one
+   quarter faster than its unfused comparison. This removes V14's performance
+   blocker only. Physiology and behavior still require their own preregistered
+   validation.
 
 A failed method is a method verdict, not permission to close the capability.
 Bank the method, preserve its controls and diagnosis, and choose the next

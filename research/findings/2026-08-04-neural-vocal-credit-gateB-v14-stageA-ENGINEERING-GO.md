@@ -1,11 +1,11 @@
 ---
 type: research-finding
-status: correctness-go-performance-pending
+status: stageA-go
 date: 2026-08-04
 mechanism: neural-vocal-action-credit-v14-explicit-snr-pacemaker-stageA
 ---
 
-# Gate B v14 Stage A: correctness GO, performance pending
+# Gate B v14 Stage A: engineering GO
 
 ## Verdict boundary
 
@@ -13,9 +13,14 @@ The default-off, region-scoped SNr conductance substrate passes its equation,
 state, isolation, checkpoint, backend, memory, and default-off compatibility
 checks at commit `a3d72420fc1a1d4c35db73a121c32b1e647c8ae0`.
 
-Stage A is not complete or promoted. The preregistered RTX 3090 performance
-matrix remains pending. This result does not open calibration seed `590297`,
-replication, held-out, future selector seed `790326`, or V13 seed `1031`.
+The prospective V3 RTX 3090 matrix subsequently passed every fixed performance
+and dispersion threshold at candidate `2c88daaac`. Stage A is therefore an
+engineering GO. The timing receipt is
+`research/findings/raw/v14_stageA_performance_v3_2c88daaac.json`.
+
+This authorizes writing and source-sealing a separate Stage B calibration
+specification. It does not itself open calibration seed `590297`, replication,
+held-out, future selector seed `790326`, or V13 seed `1031`.
 
 ## Implemented substrate
 
@@ -66,10 +71,19 @@ V13's constant-current physiology remains engineering context only and its
 until a later preparation-matched ensemble passes the required causal lesions
 and then works inside a continuous selector.
 
+## Performance closure
+
+<!--derived-->
+The sealed V3 matrix completed all twelve observations. Its median paired host
+ratios were `0.9975` for default-off behavior, `0.9407` for active execution,
+and `0.7493` for direct output relative to unfused output. These pass the fixed
+ceilings of `1.02`, `1.25`, and `0.85`. All telemetry and dispersion checks
+passed. This evidence affects engineering feasibility only and makes no
+physiology or behavior claim.
+
 ## Next exact action
 
-Run the preregistered seed-free contemporaneous performance matrix under the
-shared GPU lease. Default-off must be at most `1.02x` the pre-change control and
-active execution at most `1.25x` matching default HH. A valid failure is a
-Stage-A performance NO-GO; missing or invalid evidence is `UNDEFINED`.
-
+Write a preparation-matched Stage B calibration specification around the
+adult SNr pacemaking role, causal channel lesions, and the already reserved
+seed sequence. Hash and commit that protocol before opening calibration seed
+`590297`.

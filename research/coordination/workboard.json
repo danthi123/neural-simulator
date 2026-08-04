@@ -1061,6 +1061,18 @@
       "detail": "completed",
       "kind": "agent-finish",
       "subject": "019fce6a-7bf3-7d40-a109-0f6c5b0fe7e8"
+    },
+    {
+      "at": "2026-08-04T20:30:45+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "v14-performance-v3"
+    },
+    {
+      "at": "2026-08-04T20:30:45+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "gateb-v14-stageA"
     }
   ],
   "lanes": {
@@ -1185,15 +1197,15 @@
       ]
     },
     "gateb-v14-stageA": {
-      "blocker": "V2 performance run completed but benchmark infrastructure was invalid: up to 20.6% inner spread and about 7.3% paired default spread.",
+      "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T20:08:01+00:00",
-      "next_action": "Stabilize the benchmark environment before any further performance or physiology promotion.",
+      "heartbeat_at": "2026-08-04T20:30:45+00:00",
+      "next_action": "Write and source-seal the preparation-matched Stage B physiology calibration specification before opening reserved calibration seed 590297.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Keep candidate exactness and active-path speed evidence, but require a complete infrastructure-valid sealed matrix.",
+      "recovery_action": "Stage A engineering GO has no physiology effect; retain causal channel lesions and reserved seed partitions in Stage B.",
       "resource": "local_gpu",
-      "status": "blocked",
+      "status": "ready",
       "write_set": [
         "sim/kernels.py",
         "sim/bridge.py",
@@ -1421,13 +1433,13 @@
     },
     "v14-performance-v3": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T20:26:15+00:00",
-      "next_action": "Commit/push the hash-bound v3 protocol and environment guards, wait for post-commit RAG refresh to finish, then run the sealed matrix through the reversible launcher.",
+      "heartbeat_at": "2026-08-04T20:30:45+00:00",
+      "next_action": "Sealed matrix completed with infrastructure-valid engineering GO: default 0.9975x, active 0.9407x, and direct/unfused 0.7493x; physiology verdict remains null.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "Bank GO, NO-GO, or infrastructure-invalid exactly; retain all existing thresholds and no physiology effect.",
       "resource": "local_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/v14_stageA_performance_v3.py",
         "tools/run_v14_stageA_performance_v3.py",
@@ -1477,5 +1489,5 @@
     "heartbeat_seconds": 900,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T20:26:15+00:00"
+  "updated_at": "2026-08-04T20:30:45+00:00"
 }
