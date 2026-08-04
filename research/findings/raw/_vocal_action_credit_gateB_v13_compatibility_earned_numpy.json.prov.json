@@ -1,0 +1,29 @@
+{
+ "run_id": "1785822918-2354573",
+ "runner": "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+  "--compatibility",
+  "--out",
+  "research/findings/raw/_vocal_action_credit_gateB_v13_compatibility_earned_numpy.json"
+ ],
+ "git_sha": "da0ea65e6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-04T01:55:18",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3008.3,
+ "corpus_check_query": "continuous basal ganglia action selection autonomous GPi SNr tonic firing initialization hyperdirect stopping host reset --top-k 12",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_vocal_action_credit_gateB_v13_compatibility_earned_numpy.json"
+}

@@ -1,0 +1,87 @@
+{
+  "probe": "gateB_v13_default_off_compatibility",
+  "stage": "compatibility",
+  "seed": 271828,
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "source_sha": "da0ea65e6f3cd1c3149706e59c893525254d7305",
+  "source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "fae4854790765529298a18e4191903fd92749bf4d65e2da67008dd4b29bf2300",
+    "sim/bridge.py": "90ecf3755e573e4dfc08fdae7694b20c285f435d99dd349a640cd45eca99b4d2",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28",
+    "sim/kernels.py": "acdd398c0450363abddc603d84b748c8f5473f34626e936fdeb2bf4ae97ba73d",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936"
+  },
+  "intrinsic_is_none": true,
+  "actual_hashes": {
+    "raster": "4bfec7fa4c4865db6e31dced73d3d1385820682cf062439a547190853ef3c79d",
+    "v": "2e848ed2673a192408f118d66fcded3cf9a21719ae909ef4190eab9fc76ff54b",
+    "u": "cd1b254e7482a26b6a3054777edd411d7a7deff30d3bb1207ae2e474da7b7313",
+    "g_e": "33e31475a067f8ac34cc85462b2db8386191d2101eda91421f06d61c80c29b3a",
+    "g_i": "65b329f4d6992523da618e1ce43aca126ca0ceb1d339bfa8af6c07e21dc81890",
+    "weights": "a9021bcda62b216e67ff1c14c46b011b8590056352514e8672234613b6704b82",
+    "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551"
+  },
+  "expected_hashes": {
+    "raster": "4bfec7fa4c4865db6e31dced73d3d1385820682cf062439a547190853ef3c79d",
+    "v": "2e848ed2673a192408f118d66fcded3cf9a21719ae909ef4190eab9fc76ff54b",
+    "u": "cd1b254e7482a26b6a3054777edd411d7a7deff30d3bb1207ae2e474da7b7313",
+    "g_e": "33e31475a067f8ac34cc85462b2db8386191d2101eda91421f06d61c80c29b3a",
+    "g_i": "65b329f4d6992523da618e1ce43aca126ca0ceb1d339bfa8af6c07e21dc81890",
+    "weights": "a9021bcda62b216e67ff1c14c46b011b8590056352514e8672234613b6704b82",
+    "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551"
+  },
+  "checks": {
+    "raster": true,
+    "v": true,
+    "u": true,
+    "g_e": true,
+    "g_i": true,
+    "weights": true,
+    "external": true,
+    "intrinsic_is_none": true
+  },
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "locked spec loaded",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "explicit supported backend",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "locked compatibility seed used",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "complete 300-step raster captured",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "complete expected hash set measured",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "go": true,
+  "outcome": "COMPATIBILITY_GO",
+  "elapsed_seconds": 0.08644855799502693
+}

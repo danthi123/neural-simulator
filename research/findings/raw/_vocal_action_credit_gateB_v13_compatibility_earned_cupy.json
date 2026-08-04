@@ -1,0 +1,87 @@
+{
+  "probe": "gateB_v13_default_off_compatibility",
+  "stage": "compatibility",
+  "seed": 271828,
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "source_sha": "da0ea65e6f3cd1c3149706e59c893525254d7305",
+  "source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "fae4854790765529298a18e4191903fd92749bf4d65e2da67008dd4b29bf2300",
+    "sim/bridge.py": "90ecf3755e573e4dfc08fdae7694b20c285f435d99dd349a640cd45eca99b4d2",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28",
+    "sim/kernels.py": "acdd398c0450363abddc603d84b748c8f5473f34626e936fdeb2bf4ae97ba73d",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936"
+  },
+  "intrinsic_is_none": true,
+  "actual_hashes": {
+    "raster": "690867e2c44ac456ee1f3a0cb8db9addeef8448753170b587561767c6e51ec2b",
+    "v": "33b46c9205febe7a51ce230a83885b085bc9793ac0ce8ec6a59b1a99acddb4ce",
+    "u": "9e93ccd32ad453c0917033fdcff4dfd3a613e3c3ee3fb28f4b36492b511bd8a6",
+    "g_e": "11fc8612831e72007d6540dc997d2159d833448d1a3d73b5a29b90f267ba29bc",
+    "g_i": "e90cf792505bfb06e51516937a76672428c204eb7a2e389bd5fe73111ac99448",
+    "weights": "a9021bcda62b216e67ff1c14c46b011b8590056352514e8672234613b6704b82",
+    "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551"
+  },
+  "expected_hashes": {
+    "raster": "690867e2c44ac456ee1f3a0cb8db9addeef8448753170b587561767c6e51ec2b",
+    "v": "d1706d17f1a1136a57672546fb643e10f991476c32098ae1906b3b3ec88683df",
+    "u": "f319dbcfcb1d09f983ad86ddf912484820d3fce94a2b93e135d73b0219c96317",
+    "g_e": "11fc8612831e72007d6540dc997d2159d833448d1a3d73b5a29b90f267ba29bc",
+    "g_i": "90b3c1c3825eba353c19bbf18017254a498007bdb8cf2cbab4e59acacd61f305",
+    "weights": "a9021bcda62b216e67ff1c14c46b011b8590056352514e8672234613b6704b82",
+    "external": "4b36942def742bbd214715a7d3e387fb111051ff213935eff1b346e346c2c551"
+  },
+  "checks": {
+    "raster": true,
+    "v": false,
+    "u": false,
+    "g_e": true,
+    "g_i": false,
+    "weights": true,
+    "external": true,
+    "intrinsic_is_none": true
+  },
+  "verdict_status": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "locked spec loaded",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "explicit supported backend",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "locked compatibility seed used",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "complete 300-step raster captured",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "complete expected hash set measured",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "go": false,
+  "outcome": "COMPATIBILITY_NO_GO",
+  "elapsed_seconds": 0.48159716799273156
+}
