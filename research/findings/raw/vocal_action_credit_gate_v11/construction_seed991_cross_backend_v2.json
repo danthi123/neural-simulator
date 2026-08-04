@@ -1,0 +1,45 @@
+{
+  "probe": "vocal_action_credit_gate_v11_boundary_construction",
+  "stage": "construction_cross_backend",
+  "seed": 991,
+  "reserved_seed": 1,
+  "formal_execution_open": false,
+  "recurrence_weights": [
+    0.25,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "selected_recurrence_weight": null,
+  "construction_go": false,
+  "backend_artifacts": {
+    "numpy": "research/findings/raw/vocal_action_credit_gate_v11/construction_seed991_numpy_v2.json",
+    "cupy": "research/findings/raw/vocal_action_credit_gate_v11/construction_seed991_cupy_v2.json"
+  },
+  "backend_selected_weights": {
+    "numpy": null,
+    "cupy": null
+  },
+  "shared_pass_by_weight": [
+    {
+      "recurrence_weight": 0.25,
+      "numpy_pass": false,
+      "cupy_pass": false
+    },
+    {
+      "recurrence_weight": 0.5,
+      "numpy_pass": false,
+      "cupy_pass": false
+    },
+    {
+      "recurrence_weight": 1.0,
+      "numpy_pass": false,
+      "cupy_pass": false
+    },
+    {
+      "recurrence_weight": 2.0,
+      "numpy_pass": false,
+      "cupy_pass": false
+    }
+  ]
+}
