@@ -106,7 +106,45 @@ def test_measured_trial_reset_clears_girk_and_target_state(gate):
 def test_numpy_construction_smoke(gate):
     result = gate.run_construction_smoke(64)
     assert result["science_seed_executed"] is False
+    assert result["trace_size"] == 64
+    assert result["preconditions"]
+    assert all(item["ok"] for item in result["preconditions"])
     assert result["status"] == "CONSTRUCTION_PASS", result["checks"]
+
+
+def test_engagement_result_carries_measured_preconditions(gate, monkeypatch):
+    def condition(mode, config, *, seed):
+        intact = mode == "intact"
+        rows = [
+            {
+                "winner": 0,
+                "reward_delivered": True,
+                "delay": {
+                    "trace": [1, 0],
+                    "expectation": [1 if intact else 0, 0],
+                },
+            }
+            for _ in range(config.smoke_training_trials)
+        ]
+        return {
+            "mode": mode,
+            "trace_size": config.n_value,
+            "expectation_weight_before": [0.1, 0.1],
+            "expectation_weight_after": [0.2, 0.1] if intact else [0.1, 0.1],
+            "clean_trials": len(rows),
+            "rewarded_trials": len(rows),
+            "changed_synapses": 1 if intact else 0,
+            "changed_outside_declared_routes": 0,
+            "rows": rows,
+        }
+
+    monkeypatch.setattr(gate, "run_engagement_condition", condition)
+    result = gate.run_engagement_smoke(64)
+    assert result["trace_size"] == 64
+    assert result["config_sha256"]
+    assert result["preconditions"]
+    assert all(item["ok"] for item in result["preconditions"])
+    assert result["status"] == "ENGAGEMENT_PASS", result["checks"]
 
 
 def test_cli_rejects_nonreserved_seed(gate):

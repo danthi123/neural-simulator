@@ -33,6 +33,7 @@ from research.runners._vocal_action_selector_gate import (
     selector_config,
 )
 from sim.backend import get_backend, to_host
+from tools.lab import attributable_to
 
 
 OPEN_PHASES: tuple[str, ...] = ()
@@ -301,6 +302,12 @@ def run_engagement_smoke(
     )
     intact_delay = _late_delay_expectation(intact)
     lesion_delay = _late_delay_expectation(lesion)
+    delay_expectation_attribution = attributable_to(
+        "pre-outcome expectation from local trace learning",
+        intact_delay[0],
+        lesion_delay[0],
+        warn_below=0.80,
+    )
     checks = {
         "reserved_seed_only": int(seed) == SMOKE_SEED,
         "formal_execution_remains_sealed": OPEN_PHASES == (),
@@ -326,20 +333,87 @@ def run_engagement_smoke(
             for condition in conditions.values()
         ),
     }
+    preconditions = [
+        {
+            "name": "reserved_smoke_seed_only",
+            "ok": int(seed) == SMOKE_SEED,
+            "observed": int(seed),
+            "expected": SMOKE_SEED,
+        },
+        {
+            "name": "formal_execution_remains_sealed",
+            "ok": OPEN_PHASES == (),
+            "observed": list(OPEN_PHASES),
+            "expected": [],
+        },
+        {
+            "name": "both_conditions_completed_fixed_trial_count",
+            "ok": all(
+                len(condition["rows"]) == config.smoke_training_trials
+                for condition in conditions.values()
+            ),
+            "observed": {
+                mode: len(condition["rows"])
+                for mode, condition in conditions.items()
+            },
+            "expected": config.smoke_training_trials,
+        },
+        {
+            "name": "presynaptic_trace_engaged_before_outcome",
+            "ok": all(
+                sum(sum(row["delay"]["trace"]) for row in condition["rows"]) > 0
+                for condition in conditions.values()
+            ),
+            "observed": {
+                mode: int(
+                    sum(sum(row["delay"]["trace"]) for row in condition["rows"])
+                )
+                for mode, condition in conditions.items()
+            },
+            "expected": "greater than zero in both conditions",
+        },
+        {
+            "name": "learning_lesion_arm_is_inert",
+            "ok": lesion_delta <= 1e-7,
+            "observed_max_absolute_weight_change": lesion_delta,
+            "expected_max_absolute_weight_change": 1e-7,
+        },
+    ]
+    prerequisites_hold = all(item["ok"] for item in preconditions)
+    xp, _ = get_backend()
+    config_payload = json.dumps(
+        asdict(config), sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
     return {
         "artifact_schema_version": 1,
         "probe": "vocal_action_credit_gate_b_v7_dense_engagement",
+        "trace_size": int(trace_size),
         "seed": int(seed),
         "science_seed_executed": False,
-        "backend": "cupy" if get_backend()[0].__name__ == "cupy" else "numpy",
+        "backend": "cupy" if xp.__name__ == "cupy" else "numpy",
+        "device": (
+            xp.cuda.runtime.getDeviceProperties(0)["name"].decode("utf-8")
+            if xp.__name__ == "cupy"
+            else platform.processor() or platform.machine() or "CPU"
+        ),
+        "config_sha256": hashlib.sha256(config_payload).hexdigest(),
+        "host_boundary": dict(HOST_BOUNDARY),
+        "preconditions": preconditions,
         "config": asdict(config),
         "conditions": conditions,
         "late_rewarded_delay_expectation_spikes": {
             "intact": intact_delay,
             "expectation_learning_lesion": lesion_delay,
         },
+        "delay_expectation_attributable_to_learning": delay_expectation_attribution,
         "checks": checks,
-        "status": "ENGAGEMENT_PASS" if all(checks.values()) else "ENGAGEMENT_FAIL",
+        "status": (
+            "ENGAGEMENT_PASS"
+            if prerequisites_hold and all(checks.values())
+            else "ENGAGEMENT_FAIL"
+            if prerequisites_hold
+            else "UNDEFINED"
+        ),
     }
 
 
@@ -399,9 +473,31 @@ def run_construction_smoke(
             and audit["coincidence"]["disabled_inside_intended_routes"] == 0
         ),
     }
+    preconditions = [
+        {
+            "name": "reserved_smoke_seed_only",
+            "ok": int(seed) == SMOKE_SEED,
+            "observed": int(seed),
+            "expected": SMOKE_SEED,
+        },
+        {
+            "name": "formal_execution_remains_sealed",
+            "ok": OPEN_PHASES == (),
+            "observed": list(OPEN_PHASES),
+            "expected": [],
+        },
+        {
+            "name": "trace_size_is_preregistered",
+            "ok": config.n_value in TRACE_SIZE_LADDER,
+            "observed": config.n_value,
+            "expected": list(TRACE_SIZE_LADDER),
+        },
+    ]
+    prerequisites_hold = all(item["ok"] for item in preconditions)
     return {
         "artifact_schema_version": 1,
         "probe": "vocal_action_credit_gate_b_v7_dense_construction",
+        "trace_size": config.n_value,
         "seed": int(seed),
         "science_seed_executed": False,
         "backend": "cupy" if xp.__name__ == "cupy" else "numpy",
@@ -413,9 +509,16 @@ def run_construction_smoke(
         "config": asdict(config),
         "config_sha256": hashlib.sha256(config_payload).hexdigest(),
         "host_boundary": dict(HOST_BOUNDARY),
+        "preconditions": preconditions,
         "audit": audit,
         "checks": checks,
-        "status": "CONSTRUCTION_PASS" if all(checks.values()) else "CONSTRUCTION_FAIL",
+        "status": (
+            "CONSTRUCTION_PASS"
+            if prerequisites_hold and all(checks.values())
+            else "CONSTRUCTION_FAIL"
+            if prerequisites_hold
+            else "UNDEFINED"
+        ),
     }
 
 
