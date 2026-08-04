@@ -121,3 +121,24 @@ def test_archive_manifest_verification_rejects_tampering_and_extra_source(tmp_pa
     result = provenance.verify_immutable_source_manifest(captured)
     assert result["source_manifest_verified"] is False
     assert "manifest file digest" in result["source_manifest_verification_error"]
+
+
+def test_archive_manifest_accepts_bound_specs_and_ancestry_attestation(tmp_path, monkeypatch):
+    _write_archive_snapshot(
+        tmp_path,
+        {
+            ".source_ancestry.json": '{"schema":"sim-source-ancestry-v1"}\n',
+            "research/__init__.py": "\n",
+            "research/runners/example.py": "VALUE = 1\n",
+            "research/specs/locked.json": '{}\n',
+            "tools/pool/provisioning/ancestry_attestation.py": "SCHEMA = 'test'\n",
+        },
+    )
+    monkeypatch.setattr(provenance, "_ROOT", str(tmp_path))
+
+    result = provenance.verify_immutable_source_manifest()
+
+    assert result == {
+        "source_manifest_verified": True,
+        "source_manifest_verification_error": None,
+    }

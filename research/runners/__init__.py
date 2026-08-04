@@ -115,6 +115,15 @@ def verify_immutable_source_manifest(snapshot=None):
         research_init = os.path.join(_ROOT, "research", "__init__.py")
         if os.path.isfile(research_init):
             actual_files.add("research/__init__.py")
+        specs_root = os.path.join(_ROOT, "research", "specs")
+        if os.path.isdir(specs_root):
+            for dirpath, _, filenames in os.walk(specs_root):
+                for filename in filenames:
+                    if filename.endswith(".json"):
+                        actual_files.add(os.path.relpath(os.path.join(dirpath, filename), _ROOT))
+        ancestry_attestation = os.path.join(_ROOT, ".source_ancestry.json")
+        if os.path.isfile(ancestry_attestation):
+            actual_files.add(".source_ancestry.json")
         if actual_files != set(expected_files):
             missing = sorted(set(expected_files) - actual_files)[:3]
             extra = sorted(actual_files - set(expected_files))[:3]

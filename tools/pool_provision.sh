@@ -16,16 +16,24 @@ FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
 git archive HEAD sim research/__init__.py research/runners research/specs experiment tools tests requirements.txt \
   | tar -x -C "$STAGE"
+# Execute the generator extracted from HEAD. A dirty worktree copy must not mint
+# the trust record for a different archived source revision.
+python3 "$STAGE/tools/pool/provisioning/ancestry_attestation.py" create \
+  --repo . --revision "$SOURCE_SHA" --output "$STAGE/.source_ancestry.json" >/dev/null || {
+    echo "SOURCE ANCESTRY ATTESTATION FAIL" >&2
+    exit 1
+  }
+ANCESTRY_SHA=$(sha256sum "$STAGE/.source_ancestry.json" | awk '{print $1}')
 (cd "$STAGE" && { \
   find sim research/runners experiment tools tests -type f \
     \( -name '*.py' -o -name '*.sh' \) -print0; \
   find research/specs -type f -name '*.json' -print0; \
-  printf 'research/__init__.py\0'; \
+  printf 'research/__init__.py\0.source_ancestry.json\0'; \
 } | sort -z | xargs -0 sha256sum) > "$MANIFEST"
 MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
 EXCLUDED_DIRTY=$(git status --porcelain -- sim research/runners experiment tools 2>/dev/null | wc -l)
-printf 'git_sha=%s\nsource_kind=git_archive\nsource_manifest_sha256=%s\nexcluded_worktree_paths=%s\ncreated_utc=%s\n' \
-  "$SOURCE_SHA" "$MANIFEST_SHA" "$EXCLUDED_DIRTY" "$(date -u +%FT%TZ)" > "$REVISION"
+printf 'git_sha=%s\nsource_kind=git_archive\nsource_manifest_sha256=%s\nsource_ancestry_sha256=%s\nexcluded_worktree_paths=%s\ncreated_utc=%s\n' \
+  "$SOURCE_SHA" "$MANIFEST_SHA" "$ANCESTRY_SHA" "$EXCLUDED_DIRTY" "$(date -u +%FT%TZ)" > "$REVISION"
 for h in "${NODES[@]}"; do
   echo "=== provisioning $h ==="
   ssh -o ConnectTimeout=10 "$h" "mkdir -p ~/$REMOTE_ROOT" || {
@@ -51,6 +59,7 @@ for h in "${NODES[@]}"; do
   rsync -az "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
   rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
   rsync -az "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
+  rsync -az "$STAGE/.source_ancestry.json" "$h:~/$REMOTE_ROOT/.source_ancestry.json"
   # 2. ensurepip/venv are missing on these Ubuntu 22.04 nodes -> install via passwordless sudo (verified available)
   ssh "$h" "python3 -c 'import ensurepip' 2>/dev/null || { echo '  installing python3.10-venv+pip'; \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1 || \
@@ -76,12 +85,12 @@ for h in "${NODES[@]}"; do
     FAILED_NODES+=("$h:source-verify")
     continue
   }
-  ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | while IFS= read -r path; do chmod a-w -- \"\$path\" || exit 1; done && chmod a-w .source_manifest.sha256 .source_revision" || {
+  ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | while IFS= read -r path; do chmod a-w -- \"\$path\" || exit 1; done && chmod a-w .source_manifest.sha256 .source_revision .source_ancestry.json" || {
     echo "  SOURCE READ-ONLY FAIL" >&2
     FAILED_NODES+=("$h:read-only")
     continue
   }
-  echo "  source git=$SOURCE_SHA manifest=$MANIFEST_SHA excluded_worktree_paths=$EXCLUDED_DIRTY"
+  echo "  source git=$SOURCE_SHA manifest=$MANIFEST_SHA ancestry=$ANCESTRY_SHA excluded_worktree_paths=$EXCLUDED_DIRTY"
   echo "  done $h"
 done
 if ((${#FAILED_NODES[@]})); then
