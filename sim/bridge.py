@@ -3095,15 +3095,18 @@ class SimulationBridge:
         # modulated weight update will multiply by this sign so D2 synapses
         # move opposite to reward direction. Only allocated when the flag is
         # on and a region_manager is present (so we can resolve which post-
-        # neurons belong to str_D2_* regions).
+        # neurons use the D2 MSN preset).
         if (getattr(self.core_config, "enable_d1_d2_asymmetry", False)
                 and self.region_manager is not None):
             # 2026-06-08 bugfix: capacity-sized (see cp_plasticity_rate_gain above).
             self.cp_d1_d2_sign = cp.ones(self._synapse_capacity, dtype=cp.float32)
-            # Collect post-neuron indices for all str_D2_* regions.
+            # Use cell identity rather than a region-name convention. This also
+            # covers small probes whose region names are not the flagship's
+            # uppercase str_D2_* form.
             d2_post_indices: List[int] = []
+            d2_type = NeuronType.IZH2007_STRIATAL_MSN_D2.name
             for region in self.region_manager.regions():
-                if region.name.startswith("str_D2_"):
+                if region.izh_neuron_type == d2_type:
                     d2_post_indices.extend(self.region_manager.indices(region.name))
             if d2_post_indices:
                 d2_set_gpu = cp.asarray(

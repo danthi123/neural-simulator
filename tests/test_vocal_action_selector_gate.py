@@ -139,6 +139,22 @@ def test_selector_builder_can_add_declared_learning_regions_and_settings():
     assert len(bridge.region_manager.indices("test_credit")) == 4
 
 
+def test_d1_d2_asymmetry_uses_vocal_msn_cell_types_not_region_spelling():
+    bridge = build_selector_bridge(
+        seed=19,
+        config=selector_config("v2"),
+        core_config_updates={"enable_d1_d2_asymmetry": True},
+    )
+    postsynaptic = np.asarray(to_host(bridge.cp_connections.indices))
+    signs = np.asarray(to_host(bridge.cp_d1_d2_sign))[:postsynaptic.size]
+
+    for channel in CHANNELS:
+        d1 = np.asarray(bridge.region_manager.indices(f"str_d1_{channel}"))
+        d2 = np.asarray(bridge.region_manager.indices(f"str_d2_{channel}"))
+        assert np.all(signs[np.isin(postsynaptic, d1)] == 1.0)
+        assert np.all(signs[np.isin(postsynaptic, d2)] == -1.0)
+
+
 def test_selector_smoke_records_neural_threshold_without_argmax():
     result = run_condition(7, trials=2, config=SelectorConfig(
         warmup_steps=5,
