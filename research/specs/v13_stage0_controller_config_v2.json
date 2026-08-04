@@ -1,0 +1,67 @@
+{
+  "artifacts": {
+    "calibration_cupy": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-cupy.json",
+    "calibration_numpy": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-numpy.json",
+    "calibration_selection": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/calibration-selection.json",
+    "final_stage0": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/final-stage0.json",
+    "held_out_cupy": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/held-out-cupy.json",
+    "held_out_numpy": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/held-out-numpy.json",
+    "performance_baseline": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/performance-baseline.json",
+    "performance_candidate": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/performance-candidate.json",
+    "replication_cupy": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/replication-cupy.json",
+    "replication_numpy": "research/findings/raw/v13_tonic_output_stage0_process_correction_v1/replication-numpy.json"
+  },
+  "candidate_source_identity": {
+    "research/runners/_vocal_action_credit_gate_v13_tonic_output.py": "addb4f3b8409a19953892ebc49e086e98d3db9f477e3404e3c62f07adc98a863",
+    "research/specs/v13_tonic_output_stage0_process_correction_v1.json": "347a310bea269ea91ffc7945309c21605e3f6bec2ebcf54c98184a7e023f0657",
+    "research/specs/v13_tonic_output_substrate.json": "0cd863dacf5d050f171d962f4bd6c8974da919f5ba95c548e8208a125b1d2936",
+    "sim/bridge.py": "09564a6485e299d5c59c8b16bfdcb9fc4164b06e14a71e9a54223fb882e1f1a3",
+    "sim/kernels.py": "5eb18ecea38413cf159d94c68c3444e5329c21af134eb329a98c5e9a18d663cb",
+    "sim/regions.py": "0700053b1deb8d85daf0e4a1460589c4dcad8e556f53c6d26db6da4ff19f1e28"
+  },
+  "candidate_source_manifest": {
+    "file_count": 54,
+    "path": "research/specs/v13_stage0_candidate_source_v1.sha256",
+    "sha256": "fde52278ad00ba4d521fa3d0ef514398647f3658bd14d67bb88dc4a2b68d75c5",
+    "tree_sha256": "fde52278ad00ba4d521fa3d0ef514398647f3658bd14d67bb88dc4a2b68d75c5"
+  },
+  "candidate_source_revision": "98fab5d65498a96ce238b2c22a3c7695002d41f6",
+  "compatibility": {
+    "path": "research/findings/raw/v13_deterministic_compatibility/comparison-baseline-vs-candidate.json",
+    "sha256": "eec19a34d4112fb6660a097ec3e24af08399e4de5ca4d0d32bc03b4c7be18971"
+  },
+  "correction_id": "v13-stage0-process-correction-v1",
+  "legacy_performance": {
+    "runner_path": "research/runners/_vocal_action_credit_gate_v13_tonic_output.py",
+    "runner_sha256": "addb4f3b8409a19953892ebc49e086e98d3db9f477e3404e3c62f07adc98a863",
+    "source_revision": "8994b5102b39a8a6aa6abdeb9fde02579b7db6a8"
+  },
+  "python": "/home/dant123/Projects/sim/.venv/bin/python",
+  "runner_module": "research.runners._vocal_action_credit_gate_v13_tonic_output",
+  "schema": "v13-stage0-controller-config-v2",
+  "seed_binding": {
+    "path": "research/specs/v13_tonic_output_stage0_process_correction_v1.json",
+    "sha256": "347a310bea269ea91ffc7945309c21605e3f6bec2ebcf54c98184a7e023f0657"
+  },
+  "seed_derivation": {
+    "algorithm": "sha256-first-12-mod-900000-plus-100000-v1",
+    "namespace": "V13_STAGE0_PROCESS_CORRECTION_V1",
+    "original_seeds": {
+      "calibration": 1013,
+      "replication": 1019
+    },
+    "source_revision": "b3d57494b7dd7d99d5e91088489da44d89a85bf3"
+  },
+  "seeds": {
+    "calibration": 840860,
+    "held_out": 1021,
+    "replication": 687979
+  },
+  "sha256": "7a0703bfb44adc672062970670eaa823d63388e482dec0d8230f4d4cf6f53bce",
+  "status": "frozen",
+  "strict_arithmetic_replay": {
+    "path": "research/findings/raw/v13_backend_neutral_izh_arithmetic_replay_diagnostic_v2/evidence-manifest.json",
+    "sha256": "c9ceda9eaa263c542c88240f9df6661d808352c800abc8e3b79431f8e1578ecf",
+    "source_revision": "c2db1becbe0948424958faec0f706f492de447c9"
+  }
+}
