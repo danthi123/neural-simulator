@@ -1,12 +1,27 @@
-"""Experiment system package.
+"""Experiment system package with lightweight, lazy public exports."""
 
-Provides programmable stimulus injection, I/O neuron group management,
-training protocols, readout/analysis, and multi-phase experiment execution.
-"""
+from __future__ import annotations
 
-from experiment.engine import ExperimentEngine
-from experiment.presets import ExperimentPresets
-from experiment.readout import ReadoutEngine
-from experiment.training import TrainingProtocolEngine
-from experiment.stimulus import StimulusManager
-from experiment.groups import NeuronGroupManager
+from importlib import import_module
+
+
+_EXPORTS = {
+    "ExperimentEngine": ("experiment.engine", "ExperimentEngine"),
+    "ExperimentPresets": ("experiment.presets", "ExperimentPresets"),
+    "ReadoutEngine": ("experiment.readout", "ReadoutEngine"),
+    "TrainingProtocolEngine": ("experiment.training", "TrainingProtocolEngine"),
+    "StimulusManager": ("experiment.stimulus", "StimulusManager"),
+    "NeuronGroupManager": ("experiment.groups", "NeuronGroupManager"),
+}
+
+__all__ = list(_EXPORTS)
+
+
+def __getattr__(name: str):
+    try:
+        module_name, attribute = _EXPORTS[name]
+    except KeyError as exc:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from exc
+    value = getattr(import_module(module_name), attribute)
+    globals()[name] = value
+    return value
