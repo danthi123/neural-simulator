@@ -1,9 +1,18 @@
 """Focused regressions for deterministic excitatory/inhibitory sparse propagation."""
 
 import hashlib
+from functools import lru_cache
+import json
 import os
+from pathlib import Path
+import subprocess
+import sys
 
-os.environ.setdefault("SIM_BACKEND", "numpy")
+# Pin NumPy only when this module is the first simulator importer.  Changing the
+# environment after sim.bridge has bound its module-level backend splits the
+# process between the old module backend and the new backend registry.
+if "sim.bridge" not in sys.modules:
+    os.environ.setdefault("SIM_BACKEND", "numpy")
 
 import numpy as np  # noqa: E402
 import scipy.sparse as scipy_sparse  # noqa: E402
@@ -35,6 +44,53 @@ def _backend_csr(host_matrix):
 def _digest(array):
     host = np.ascontiguousarray(to_host(array))
     return hashlib.sha256(host.tobytes()).hexdigest()
+
+
+@lru_cache(maxsize=1)
+def _isolated_numpy_trajectory():
+    """Run the frozen NumPy trajectory in a backend-clean child process."""
+    test_path = Path(__file__).resolve()
+    marker = "__NUMPY_TRAJECTORY__="
+    code = f"""
+import importlib.util
+import json
+
+spec = importlib.util.spec_from_file_location("isolated_sparse_matvec", {str(test_path)!r})
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+import sim.connectivity as connectivity
+import sim.kernels as kernels
+
+_, registry_backend = module.get_backend()
+payload = {{
+    "registry_backend": registry_backend,
+    "bridge_backend": module.bridge_module._backend_name,
+    "bridge_array_module": module.bridge_module.cp.__name__,
+    "connectivity_array_module": connectivity.cp.__name__,
+    "kernels_array_module": kernels.cp.__name__,
+    "trajectory": module._run_trajectory(deterministic=False),
+}}
+print({marker!r} + json.dumps(payload, sort_keys=True))
+"""
+    env = os.environ.copy()
+    env["SIM_BACKEND"] = "numpy"
+    completed = subprocess.run(
+        [sys.executable, "-c", code],
+        cwd=test_path.parents[1],
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise AssertionError(
+            "isolated NumPy trajectory failed\n"
+            f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}"
+        )
+    lines = [line for line in completed.stdout.splitlines() if line.startswith(marker)]
+    assert len(lines) == 1, completed.stdout
+    return json.loads(lines[0][len(marker):])
 
 
 def _build_bridge(*, deterministic):
@@ -191,11 +247,28 @@ def test_deterministic_trajectory_repeats_exactly():
     assert first == second
 
 
+def test_active_backend_registry_matches_bound_simulator_modules():
+    import sim.connectivity as connectivity
+    import sim.kernels as kernels
+
+    _, registry_backend = get_backend()
+    assert bridge_module._backend_name == registry_backend
+    assert bridge_module.cp.__name__ == registry_backend
+    assert connectivity.cp.__name__ == registry_backend
+    assert kernels.cp.__name__ == registry_backend
+
+
+def test_frozen_numpy_trajectory_uses_coherent_isolated_backend():
+    result = _isolated_numpy_trajectory()
+    assert result["registry_backend"] == "numpy"
+    assert result["bridge_backend"] == "numpy"
+    assert result["bridge_array_module"] == "numpy"
+    assert result["connectivity_array_module"] == "numpy"
+    assert result["kernels_array_module"] == "numpy"
+
+
 def test_default_false_matches_frozen_pre_correction_numpy_trajectory():
-    _, backend = get_backend()
-    if backend != "numpy":
-        return
-    assert _run_trajectory(deterministic=False) == {
+    assert _isolated_numpy_trajectory()["trajectory"] == {
         "raster": "068826f850a3749a26e1cbb4afe490532cd9a389a4abd26e9280da10b96a772e",
         "v": "ad7081253888123fe22c38a062466863ed2fff8122647abb0f780c6628b9399d",
         "u": "05379f3507dda7c164614f45afacb72b5c9e32990c445cd94be57d98ab68ceef",
