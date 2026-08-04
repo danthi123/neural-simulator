@@ -111,7 +111,15 @@ def test_final_merge_requires_every_backend_and_gate(tmp_path):
     )
     for index, (stage, backend, go) in enumerate(rows):
         path = tmp_path / f"{index}.json"
-        payload = {"stage": stage, "backend": backend, "go": go, "outcome": "GO"}
+        payload = {
+            "stage": stage,
+            "backend": backend,
+            "go": go,
+            "outcome": "GO",
+            "verdict_status": "GO" if go else "NO-GO",
+            "preconditions": [{"name": "fixture", "ok": True}],
+            "undefined_reasons": [],
+        }
         if stage in ("replication", "held_out"):
             payload["selected_current_pA"] = 100
         path.write_text(json.dumps(payload))
@@ -124,3 +132,18 @@ def test_final_merge_requires_every_backend_and_gate(tmp_path):
     artifacts[-1].write_text(json.dumps(failed))
     merged = v13.merge_final(artifacts)
     assert merged["outcome"] == "TONIC_OUTPUT_NO_GO"
+
+
+def test_final_merge_refuses_unearned_input_verdict(tmp_path):
+    artifact = tmp_path / "invalid.json"
+    artifact.write_text(json.dumps({"stage": "compatibility", "go": True}))
+    with pytest.raises(ValueError, match="earned verdict"):
+        v13.merge_final([artifact] * 7)
+
+
+def test_compatibility_artifact_carries_earned_preconditions():
+    result = v13.run_compatibility()
+    assert result["preconditions"]
+    assert all(item["ok"] is True for item in result["preconditions"])
+    assert result["verdict_status"] in {"GO", "NO-GO"}
+    assert result["intrinsic_is_none"] is result["checks"]["intrinsic_is_none"]

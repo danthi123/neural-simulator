@@ -32,6 +32,7 @@ from sim.backend import get_backend, is_gpu_backend, synchronize, to_host
 from sim.enums import NeuronType
 from sim.regions import BrainRegion, RegionPathway
 from tools.lab import assert_backend, project_cost
+from tools.verdict import Verdict
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -110,6 +111,38 @@ def _source_identity() -> dict[str, str]:
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in paths
     }
+
+
+def _earned_verdict(label: str, go: bool, requirements: dict[str, bool]) -> dict:
+    verdict = Verdict(label)
+    for name, measured in requirements.items():
+        verdict.require(name, bool(measured), expect=True)
+    decided = verdict.decide(go=bool(go), verbose=False)
+    return {
+        "verdict_status": decided["status"],
+        "preconditions": decided["preconditions"],
+        "disabled_processes": decided["disabled_processes"],
+        "undefined_reasons": decided["undefined_reasons"],
+        "go": decided["go"],
+    }
+
+
+def _outcome(prefix: str, verdict: dict) -> str:
+    status = verdict["verdict_status"]
+    if status == "UNDEFINED":
+        return f"{prefix}_UNDEFINED"
+    return f"{prefix}_GO" if verdict["go"] else f"{prefix}_NO_GO"
+
+
+def _artifact_verdict_is_earned(artifact: dict) -> bool:
+    preconditions = artifact.get("preconditions")
+    return bool(
+        isinstance(preconditions, list)
+        and preconditions
+        and all(item.get("ok") is True for item in preconditions)
+        and not artifact.get("undefined_reasons")
+        and artifact.get("verdict_status") in ("GO", "NO-GO")
+    )
 
 
 def _assert_source_sealed() -> None:
@@ -434,7 +467,23 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
         if all(current in by_backend[name]["passing_currents_pA"] for name in ("numpy", "cupy"))
     ]
     selected = min(common) if common else None
-    outcome = "CALIBRATION_GO" if selected is not None else "CALIBRATION_NO_GO"
+    verdict = _earned_verdict(
+        "Gate B v13 cross-backend calibration",
+        selected is not None,
+        {
+            "numpy and cupy artifacts present": set(by_backend) == {"numpy", "cupy"},
+            "locked calibration seed used": all(
+                item["seed"] == PARTITIONS["calibration"][0] for item in artifacts
+            ),
+            "locked ladder used": all(
+                [row["current_pA"] for row in item["rows"]] == LADDER_PA
+                for item in artifacts
+            ),
+            "identical sealed source identities": bool(
+                identities[0] and identities[0] == identities[1]
+            ),
+        },
+    )
     return {
         "probe": "gateB_v13_tonic_output_calibration",
         "stage": "calibration_cross_backend",
@@ -446,8 +495,9 @@ def merge_calibration(numpy_path: Path, cupy_path: Path) -> dict:
         "artifacts": {"numpy": str(numpy_path), "cupy": str(cupy_path)},
         "common_passing_currents_pA": common,
         "selected_current_pA": selected,
-        "outcome": outcome,
-        "calibration_go": selected is not None,
+        **verdict,
+        "outcome": _outcome("CALIBRATION", verdict),
+        "calibration_go": verdict["go"],
     }
 
 
@@ -457,6 +507,8 @@ def _load_selection(path: Path) -> tuple[dict, float]:
         raise ValueError("selection artifact is not a cross-backend calibration")
     if not selection.get("calibration_go"):
         raise ValueError("calibration did not open replication")
+    if not _artifact_verdict_is_earned(selection):
+        raise ValueError("calibration selection has no earned precondition block")
     current = selection.get("selected_current_pA")
     if current not in LADDER_PA:
         raise ValueError("selection artifact contains an unlocked current")
@@ -661,6 +713,19 @@ def run_replication(selection_path: Path, *, held_out=False) -> dict:
         "checkpoint": True if checkpoint is None else checkpoint["pass"],
     }
     stage = "held_out" if held_out else "replication"
+    verdict = _earned_verdict(
+        f"Gate B v13 {stage}",
+        all(checks.values()),
+        {
+            "selection verdict earned": _artifact_verdict_is_earned(selection),
+            "selected current is locked": current in LADDER_PA,
+            "complete gate set measured": set(checks) == {
+                "population_audit", "intact_physiology", "intrinsic_lesion",
+                "inhibitory_response", "checkpoint",
+            },
+            "held-out omits no required checkpoint": not held_out or checkpoint is None,
+        },
+    )
     return {
         "probe": "gateB_v13_tonic_output",
         "stage": stage,
@@ -683,14 +748,14 @@ def run_replication(selection_path: Path, *, held_out=False) -> dict:
         "inhibitory_response": inhibitory,
         "checkpoint": checkpoint,
         "checks": checks,
-        "outcome": f"{stage.upper()}_GO" if all(checks.values()) else f"{stage.upper()}_NO_GO",
-        "go": all(checks.values()),
+        **verdict,
+        "outcome": _outcome(stage.upper(), verdict),
         "elapsed_seconds": float(time.perf_counter() - started),
     }
 
 
 def run_compatibility() -> dict:
-    load_locked_spec()
+    spec = load_locked_spec()
     backend = _backend_info()
     started = time.perf_counter()
     config = selector_config("v2")
@@ -729,6 +794,20 @@ def run_compatibility() -> dict:
     checks = {
         name: actual[name] == expected[name] for name in expected
     }
+    checks["intrinsic_is_none"] = bridge.cp_intrinsic_current_pA is None
+    verdict = _earned_verdict(
+        "Gate B v13 default-off compatibility",
+        all(checks.values()),
+        {
+            "locked spec loaded": spec["partitions"] == PARTITIONS,
+            "explicit supported backend": backend["backend"] in DEFAULT_HASHES,
+            "locked compatibility seed used": bridge.core_config.seed
+            == PARTITIONS["compatibility"][0],
+            "complete 300-step raster captured": raster.shape
+            == (300, bridge.core_config.num_neurons),
+            "complete expected hash set measured": set(actual) == set(expected),
+        },
+    )
     return {
         "probe": "gateB_v13_default_off_compatibility",
         "stage": "compatibility",
@@ -741,8 +820,8 @@ def run_compatibility() -> dict:
         "actual_hashes": actual,
         "expected_hashes": expected,
         "checks": checks,
-        "outcome": "COMPATIBILITY_GO" if all(checks.values()) else "COMPATIBILITY_NO_GO",
-        "go": all(checks.values()),
+        **verdict,
+        "outcome": _outcome("COMPATIBILITY", verdict),
         "elapsed_seconds": float(time.perf_counter() - started),
     }
 
@@ -819,7 +898,6 @@ def run_legacy_performance_baseline() -> dict:
         "wall_seconds": times,
         "median_seconds": float(np.median(times)),
         "median_step_seconds": float(np.median(times) / 20000.0),
-        "go": True,
         "outcome": "BASELINE_RECORDED",
         "elapsed_seconds": float(sum(times)),
     }
@@ -902,6 +980,19 @@ def run_performance(old_baseline_path: Path | None = None) -> dict:
         "v1_dispatches": all(cells["v1_active"]["megakernel_dispatch"]),
         "v2_dispatches": all(cells["v2_active"]["megakernel_dispatch"]),
     }
+    verdict = _earned_verdict(
+        "Gate B v13 performance",
+        all(checks.values()),
+        {
+            "RTX 3090 CuPy lane": backend["backend"] == "cupy"
+            and "3090" in backend["device"],
+            "all six benchmark cells measured": len(cells) == 6,
+            "three repetitions per cell": all(
+                len(row["wall_seconds"]) == 3 for row in cells.values()
+            ),
+            "legacy baseline supplied": old is not None,
+        },
+    )
     return {
         "probe": "gateB_v13_tonic_output_performance",
         "stage": "performance",
@@ -915,8 +1006,8 @@ def run_performance(old_baseline_path: Path | None = None) -> dict:
         "cells": cells,
         "ratios": ratios,
         "checks": checks,
-        "outcome": "PERFORMANCE_GO" if all(checks.values()) else "PERFORMANCE_NO_GO",
-        "go": all(checks.values()),
+        **verdict,
+        "outcome": _outcome("PERFORMANCE", verdict),
         "elapsed_seconds": float(time.perf_counter() - started),
     }
 
@@ -925,6 +1016,8 @@ def merge_final(paths: list[Path]) -> dict:
     if len(paths) != 7:
         raise ValueError("final merge requires 7 artifacts")
     artifacts = [json.loads(path.read_text()) for path in paths]
+    if not all(_artifact_verdict_is_earned(artifact) for artifact in artifacts):
+        raise ValueError("final merge refuses an artifact without an earned verdict")
     by_stage = {}
     for path, artifact in zip(paths, artifacts):
         by_stage.setdefault(artifact.get("stage"), []).append((path, artifact))
@@ -953,6 +1046,21 @@ def merge_final(paths: list[Path]) -> dict:
         "held_out": all(item.get("go") for _, item in by_stage["held_out"]),
         "performance": bool(by_stage["performance"][0][1].get("go")),
     }
+    verdict = _earned_verdict(
+        "Gate B v13 Stage 0 final",
+        all(checks.values()),
+        {
+            "seven earned input verdicts": all(
+                _artifact_verdict_is_earned(artifact) for artifact in artifacts
+            ),
+            "required stage matrix complete": all(
+                len(by_stage.get(stage, [])) == count
+                for stage, count in expected_counts.items()
+            ),
+            "single locked selected current": len(selected) == 1
+            and next(iter(selected)) in LADDER_PA,
+        },
+    )
     return {
         "probe": "gateB_v13_tonic_output",
         "stage": "final_cross_backend",
@@ -961,8 +1069,8 @@ def merge_final(paths: list[Path]) -> dict:
         "selected_current_pA": next(iter(selected)),
         "artifacts": {str(path): artifact.get("outcome") for path, artifact in zip(paths, artifacts)},
         "checks": checks,
-        "outcome": "TONIC_OUTPUT_GO" if all(checks.values()) else "TONIC_OUTPUT_NO_GO",
-        "go": all(checks.values()),
+        **verdict,
+        "outcome": _outcome("TONIC_OUTPUT", verdict),
     }
 
 
@@ -978,6 +1086,15 @@ def self_check() -> dict:
         "external_zero": run["external_zero"],
         "intrinsic_immutable": run["intrinsic_hash_before"] == run["intrinsic_hash_after"],
     }
+    verdict = _earned_verdict(
+        "Gate B v13 runner self-check",
+        all(checks.values()),
+        {
+            "unregistered engineering seed": bridge.core_config.seed == 7,
+            "locked spec available": spec["partitions"] == PARTITIONS,
+            "all self-checks measured": len(checks) == 5,
+        },
+    )
     return {
         "probe": "gateB_v13_tonic_output_runner_self_check",
         "stage": "self_check",
@@ -985,8 +1102,8 @@ def self_check() -> dict:
         "backend": _backend_info()["backend"],
         "device": _backend_info()["device"],
         "checks": checks,
-        "go": all(checks.values()),
-        "outcome": "SELF_CHECK_GO" if all(checks.values()) else "SELF_CHECK_NO_GO",
+        **verdict,
+        "outcome": _outcome("SELF_CHECK", verdict),
     }
 
 
