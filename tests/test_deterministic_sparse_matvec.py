@@ -1,0 +1,189 @@
+"""Focused regressions for deterministic excitatory/inhibitory sparse propagation."""
+
+import hashlib
+import os
+
+os.environ.setdefault("SIM_BACKEND", "numpy")
+
+import numpy as np  # noqa: E402
+import scipy.sparse as scipy_sparse  # noqa: E402
+
+import sim.bridge as bridge_module  # noqa: E402
+from sim import (  # noqa: E402
+    CoreSimConfig,
+    GPUConfig,
+    RuntimeState,
+    SimulationBridge,
+    VisualizationConfig,
+)
+from sim.backend import get_backend, get_sparse_module, to_host  # noqa: E402
+
+
+def _backend_csr(host_matrix):
+    xp, _ = get_backend()
+    sparse = get_sparse_module()
+    return sparse.csr_matrix(
+        (
+            xp.asarray(host_matrix.data, dtype=xp.float32),
+            xp.asarray(host_matrix.indices, dtype=xp.int32),
+            xp.asarray(host_matrix.indptr, dtype=xp.int32),
+        ),
+        shape=host_matrix.shape,
+    )
+
+
+def _digest(array):
+    host = np.ascontiguousarray(to_host(array))
+    return hashlib.sha256(host.tobytes()).hexdigest()
+
+
+def _build_bridge(*, deterministic):
+    cfg = CoreSimConfig(
+        num_neurons=192,
+        connections_per_neuron=64,
+        seed=271828,
+        dt_ms=1.0,
+        deterministic_transpose_matvec=deterministic,
+        enable_step_megakernel=False,
+        enable_step_megakernel_v2=False,
+        enable_hebbian_learning=False,
+        enable_short_term_plasticity=False,
+        enable_homeostasis=False,
+        enable_stdp=False,
+        enable_structural_plasticity=False,
+        enable_reward_modulation=False,
+        enable_ou_process=False,
+    )
+    bridge = SimulationBridge(
+        core_config=cfg,
+        viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(),
+        gpu_config=GPUConfig(enable_profiling=False),
+    )
+    bridge._initialize_simulation_data()
+    return bridge
+
+
+def _run_trajectory():
+    bridge = _build_bridge(deterministic=True)
+    xp, _ = get_backend()
+    raster = []
+    for _ in range(180):
+        bridge.cp_external_input_current[:] = xp.float32(210.0)
+        bridge._run_one_simulation_step()
+        raster.append(np.asarray(to_host(bridge.cp_firing_states), dtype=np.bool_))
+    result = {
+        "raster": _digest(np.stack(raster)),
+        "v": _digest(bridge.cp_membrane_potential_v),
+        "u": _digest(bridge.cp_recovery_variable_u),
+        "g_e": _digest(bridge.cp_conductance_g_e),
+        "g_i": _digest(bridge.cp_conductance_g_i),
+    }
+    bridge.clear_simulation_state_and_gpu_memory()
+    return result
+
+
+def test_split_primitive_executes_two_one_dimensional_spmvs():
+    class FakeCSR:
+        def __init__(self):
+            self.operands = []
+
+        def __matmul__(self, operand):
+            operand = np.asarray(operand)
+            self.operands.append(operand)
+            return operand + len(self.operands)
+
+    class FakeTranspose:
+        def __init__(self, csr):
+            self.csr = csr
+            self.tocsr_calls = 0
+
+        def tocsr(self):
+            self.tocsr_calls += 1
+            return self.csr
+
+    class FakeConnections:
+        def __init__(self):
+            self.csr = FakeCSR()
+            self.transpose = FakeTranspose(self.csr)
+
+        @property
+        def T(self):
+            return self.transpose
+
+    connections = FakeConnections()
+    excitatory = np.arange(8, dtype=np.float32)
+    inhibitory = np.arange(8, dtype=np.float32) + 10.0
+
+    actual_e, actual_i = bridge_module._deterministic_ei_transpose_spmv(
+        connections, excitatory, inhibitory
+    )
+
+    assert connections.transpose.tocsr_calls == 1
+    assert len(connections.csr.operands) == 2
+    assert all(operand.ndim == 1 for operand in connections.csr.operands)
+    assert np.array_equal(actual_e, excitatory + 1.0)
+    assert np.array_equal(actual_i, inhibitory + 2.0)
+
+
+def test_repeated_split_spmvs_are_bit_exact():
+    rng = np.random.default_rng(20260804)
+    n = 2048
+    fan_in = 64
+    host_matrix = scipy_sparse.random(
+        n,
+        n,
+        density=fan_in / n,
+        format="csr",
+        dtype=np.float32,
+        random_state=rng,
+        data_rvs=lambda size: rng.uniform(0.01, 8.0, size).astype(np.float32),
+    )
+    matrix = _backend_csr(host_matrix)
+    xp, _ = get_backend()
+    excitatory = xp.asarray(rng.uniform(0.0, 1.0, n), dtype=xp.float32)
+    inhibitory = xp.asarray(rng.uniform(0.0, 1.0, n), dtype=xp.float32)
+
+    hashes = []
+    for _ in range(100):
+        result_e, result_i = bridge_module._deterministic_ei_transpose_spmv(
+            matrix, excitatory, inhibitory
+        )
+        hashes.append((_digest(result_e), _digest(result_i)))
+
+    assert len(set(hashes)) == 1
+    expected_e = host_matrix.T @ np.asarray(to_host(excitatory))
+    expected_i = host_matrix.T @ np.asarray(to_host(inhibitory))
+    assert np.allclose(to_host(result_e), expected_e, rtol=2e-6, atol=2e-5)
+    assert np.allclose(to_host(result_i), expected_i, rtol=2e-6, atol=2e-5)
+
+
+def test_normal_step_routes_only_deterministic_mode_through_split_primitive(monkeypatch):
+    original = bridge_module._deterministic_ei_transpose_spmv
+    calls = []
+
+    def recording_split(connections, excitatory, inhibitory):
+        calls.append((excitatory.ndim, inhibitory.ndim))
+        return original(connections, excitatory, inhibitory)
+
+    monkeypatch.setattr(
+        bridge_module, "_deterministic_ei_transpose_spmv", recording_split
+    )
+    deterministic = _build_bridge(deterministic=True)
+    deterministic.cp_prev_firing_states[::7] = True
+    deterministic._run_one_simulation_step()
+    deterministic.clear_simulation_state_and_gpu_memory()
+    assert calls == [(1, 1)]
+
+    calls.clear()
+    default = _build_bridge(deterministic=False)
+    default.cp_prev_firing_states[::7] = True
+    default._run_one_simulation_step()
+    default.clear_simulation_state_and_gpu_memory()
+    assert calls == []
+
+
+def test_deterministic_trajectory_repeats_exactly():
+    first = _run_trajectory()
+    second = _run_trajectory()
+    assert first == second
