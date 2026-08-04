@@ -5,7 +5,8 @@
   "device": "NVIDIA GeForce RTX 3090",
   "expected_model_ids": [
     "qwen3.6-27b",
-    "Qwen3.6-27B-Q4_K_M.gguf"
+    "Qwen3.6-27B-Q4_K_M.gguf",
+    "/models/qwen3.6-27b-gguf/unsloth-mtp-q4km/Qwen3.6-27B-Q4_K_M.gguf"
   ],
   "timeout_seconds": 120,
   "max_output_tokens": 1200,

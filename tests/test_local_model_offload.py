@@ -59,6 +59,38 @@ def test_malformed_model_listing_is_rejected() -> None:
         raise AssertionError("malformed model listing was accepted")
 
 
+def test_exact_configured_full_model_path_is_accepted(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    served_path = "/models/qwen3.6-27b-gguf/unsloth-mtp-q4km/Qwen3.6-27B-Q4_K_M.gguf"
+    config["expected_model_ids"].append(served_path)
+
+    result = offload.probe_service(
+        config,
+        request_json=lambda *args, **kwargs: {"data": [{"id": served_path}]},
+    )
+
+    assert result["model_id"] == served_path
+
+
+def test_unconfigured_path_with_same_model_basename_is_rejected(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    config["expected_model_ids"].append(
+        "/models/qwen3.6-27b-gguf/unsloth-mtp-q4km/Qwen3.6-27B-Q4_K_M.gguf"
+    )
+
+    try:
+        offload.probe_service(
+            config,
+            request_json=lambda *args, **kwargs: {
+                "data": [{"id": "/untrusted/Qwen3.6-27B-Q4_K_M.gguf"}]
+            },
+        )
+    except offload.OffloadError as exc:
+        assert "expected local model is not served" in str(exc)
+    else:
+        raise AssertionError("unconfigured model path was accepted by basename")
+
+
 def test_forbidden_task_is_rejected_before_endpoint_access(tmp_path: Path) -> None:
     called = False
 
@@ -343,3 +375,54 @@ def test_broker_clears_authorization_then_stops_service_before_releasing_lease(t
     available = offload.acquire_gpu_lease(Path(config["lease_path"]))
     assert available is not None
     offload.release_gpu_lease(available)
+
+
+def test_broker_interrupt_cleans_up_without_reraising(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    events = []
+
+    class InterruptedProcess:
+        def wait(self):
+            assert offload.verify_service_ownership(config)["state"] == "service_owned"
+            events.append("interrupted")
+            raise KeyboardInterrupt
+
+    def fake_popen(command, *, pass_fds):
+        events.append("spawn")
+        return InterruptedProcess()
+
+    def fake_stop(command, *, check, timeout):
+        assert not Path(config["ownership_path"]).exists()
+        assert offload.acquire_gpu_lease(Path(config["lease_path"])) is None
+        events.append("stop_while_locked")
+
+    result = offload.run_service_broker(config, popen=fake_popen, run_command=fake_stop)
+
+    assert result["status"] == "service_interrupted"
+    assert result["return_code"] == 130
+    assert events == ["spawn", "interrupted", "stop_while_locked"]
+    assert not Path(config["ownership_path"]).exists()
+    available = offload.acquire_gpu_lease(Path(config["lease_path"]))
+    assert available is not None
+    offload.release_gpu_lease(available)
+
+
+def test_broker_command_reports_interrupt_without_traceback(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    config_path = tmp_path / "config.json"
+    offload.write_result(config_path, _config(tmp_path))
+    monkeypatch.setattr(
+        offload,
+        "run_service_broker",
+        lambda config: {
+            "schema": offload.OWNER_SCHEMA,
+            "status": "service_interrupted",
+            "return_code": 130,
+        },
+    )
+
+    assert offload.main(["--config", str(config_path), "broker"]) == 130
+    captured = capsys.readouterr()
+    assert '"status": "service_interrupted"' in captured.out
+    assert captured.err == ""

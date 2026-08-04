@@ -519,18 +519,18 @@ def run_service_broker(
         raise OffloadError("local-model offload is disabled by configuration")
     lease, record = claim_service_ownership(config)
     process = None
+    interrupted = False
+    return_code = 1
     try:
         # The foreground service child inherits the same open-file description.
         # If the broker is killed, the kernel lease remains held until that
         # child exits, preventing an experiment from racing an orphan service.
         process = popen(list(config["service_command"]), pass_fds=(lease.fileno(),))
-        return_code = int(process.wait())
-        return {
-            "schema": OWNER_SCHEMA,
-            "status": "service_stopped" if return_code == 0 else "service_failed",
-            "return_code": return_code,
-            "owner": record,
-        }
+        try:
+            return_code = int(process.wait())
+        except KeyboardInterrupt:
+            interrupted = True
+            return_code = 130
     finally:
         # Deny new requests first, stop the endpoint fully, then release GPU 0.
         try:
@@ -542,6 +542,16 @@ def run_service_broker(
                         run_command(list(config["service_stop_command"]), check=False, timeout=60)
             finally:
                 release_gpu_lease(lease)
+    return {
+        "schema": OWNER_SCHEMA,
+        "status": (
+            "service_interrupted"
+            if interrupted
+            else "service_stopped" if return_code == 0 else "service_failed"
+        ),
+        "return_code": return_code,
+        "owner": record,
+    }
 
 
 def request_completion(
@@ -694,7 +704,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "broker":
             result = run_service_broker(config)
             _emit(result, None)
-            return 0 if result["status"] == "service_stopped" else 1
+            if result["status"] == "service_stopped":
+                return 0
+            return 130 if result["status"] == "service_interrupted" else 1
         if args.command == "owner-status":
             _emit({"schema": OWNER_SCHEMA, "status": "active", "owner": verify_service_ownership(config)}, None)
             return 0
