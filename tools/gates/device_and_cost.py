@@ -52,6 +52,12 @@ LONG_RUN_S = 8 * 3600.0
 def _is_structural_record(obj):
     """True for create-only commands/configs that record no completed run."""
     schema = obj.get("schema")
+    # Operational state is not a scientific result.  The persistent coordinator
+    # deliberately records lanes, agents, and resource observations separately;
+    # forcing it to pretend it has a completed backend/cost receipt would make
+    # the provenance gate less precise, not more protective.
+    if schema == "sim-autonomous-workboard-v1":
+        return True
     if obj.get("execution") == "not_executed" and isinstance(obj.get("argv"), list):
         return True
     return (
@@ -179,4 +185,8 @@ def selftest():
         )
         if any(_check_one(p, os.path.basename(p)) for p in structural):
             bad.append("FALSE POSITIVE: treated a frozen command/config as a completed result")
+        # 11. NEGATIVE CONTROL — operational workboard state is not a completed result.
+        if _check_one(w("workboard.json", {"schema": "sim-autonomous-workboard-v1", "lanes": {}}),
+                      "research/coordination/workboard.json"):
+            bad.append("FALSE POSITIVE: treated coordinator state as a completed result")
     return bad

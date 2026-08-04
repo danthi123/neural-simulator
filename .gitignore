@@ -157,3 +157,9 @@ deploy/
 # so git history cannot restore them -- archiving rather than deleting is the only reversible option. The
 # tarball is safe to delete once you are satisfied nothing needed it.
 attic/
+
+# Autonomous coordinator runtime snapshots. The workboard itself is tracked;
+# live heartbeats and generated handoffs are local resume state.
+research/coordination/status.json
+research/coordination/heartbeats.jsonl
+research/coordination/HANDOFF.md

@@ -1,5 +1,14 @@
 # PROJECT HANDOFF — read this first
 
+The persistent execution ledger is research/coordination/workboard.json, with a generated resume view at
+research/coordination/HANDOFF.md. Before choosing work, run:
+
+    python tools/autonomous_coordinator.py status
+    python tools/autonomous_coordinator.py next
+
+The workboard records active lanes, delegated agents, resource use, blockers, heartbeats, and exact next actions.
+This handoff supplies the project context; the workboard supplies the live task state.
+
 > **You are picking up an in-flight research project: a simulated spiking brain meant to become a genuine
 > conversational mind.** This document is your single entry point. It tells you the goal, the architecture, the
 > plan, the current state, and — critically — **how development is done here** (the discipline, the failure modes,

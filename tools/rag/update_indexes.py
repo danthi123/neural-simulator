@@ -17,6 +17,11 @@ Run with the canonical checkout's RAG interpreter:
   "$CANONICAL/.venv-rag/bin/python" tools/rag/update_indexes.py [--rebuild] [--force]
 """
 import os, sys, time, json, hashlib, shutil, glob, argparse, subprocess
+from pathlib import Path
+
+# RAG refreshes run as a background maintenance lane. Keep them off the
+# experiment GPU unless an operator explicitly opts in with CUDA_VISIBLE_DEVICES.
+os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_llamaindex_full as B   # SOURCES + load_docs (+ PERSIST)
@@ -30,6 +35,7 @@ DOCUMENT_ID_SCHEMA = "repo-relative-v1"
 _SOMA_ROOT = os.environ.get("SIM_SOMA_ROOT") or os.path.join(os.path.dirname(B.SIM), "soma_bundles")
 SOMA_BUNDLE = os.path.join(_SOMA_ROOT, "sim_kb")
 SOMA_MANIFEST = os.path.join(_SOMA_ROOT, ".soma_kb_manifest.json")
+SOMA_BATCH_SIZE = 256
 # evolving source types SOMA covers (Kandel excluded — static)
 SOMA_TYPES = {"finding", "plan", "doc", "catalog"}
 PROJECT_PROSE_PATHS = [
@@ -170,16 +176,37 @@ def refresh_llamaindex(rebuild=False):
             f"{ndel} deleted)", candidate_root, candidate)
 
 
-def _store_file(mem, chunk_markdown, load_text, f):
-    """Store all chunks of file f into the memory layer; return the list of node_ids (empty if unreadable/empty).
-    The ids are recorded in the manifest so a later EDIT/DELETE can forget exactly this file's chunks."""
-    from pathlib import Path
+def _file_records(chunk_markdown, load_text, f):
+    """Return SOMA text/metadata records for one source file."""
     text = load_text(Path(f))                                # _load_doc_text expects a Path (uses .suffix)
     if text is None:
         return []
+    return [
+        (
+            ch.text,
+            {"path": ch.path, "heading": getattr(ch, "heading", ""), "src": f},
+        )
+        for ch in chunk_markdown(text, path=os.path.basename(f))
+    ]
+
+
+def _store_file(mem, chunk_markdown, load_text, f):
+    """Store one file in bounded batches and return its node_ids.
+
+    Batch writes avoid one filesystem lock/WAL fsync per chunk. Keeping a
+    bounded batch size avoids holding all corpus embeddings in one temporary
+    encode allocation during a rebuild.
+    """
+    records = _file_records(chunk_markdown, load_text, f)
     ids = []
-    for ch in chunk_markdown(text, path=os.path.basename(f)):
-        ids.append(mem.store(ch.text, metadata={"path": ch.path, "heading": getattr(ch, "heading", ""), "src": f}))
+    for start in range(0, len(records), SOMA_BATCH_SIZE):
+        batch = records[start:start + SOMA_BATCH_SIZE]
+        ids.extend(
+            mem.store_batch(
+                [text for text, _ in batch],
+                metadatas=[metadata for _, metadata in batch],
+            )
+        )
     return ids
 
 
@@ -187,54 +214,135 @@ def _load_soma_manifest():
     if not os.path.exists(SOMA_MANIFEST):
         return {}
     try:
-        return json.load(open(SOMA_MANIFEST))
+        with open(SOMA_MANIFEST, encoding="utf-8") as handle:
+            return json.load(handle)
     except Exception:
         return {}
 
 
+def _soma_manifest_needs_rebuild(manifest):
+    """Reject legacy absolute-path manifests before incremental work.
+
+    The first SOMA index was produced on another machine and used absolute
+    Windows paths. A stable document key plus the recorded source path is the
+    current schema; anything else is rebuilt into a clean candidate bundle.
+    """
+    if not isinstance(manifest, dict) or not manifest:
+        return True
+    for key, record in manifest.items():
+        if not isinstance(key, str) or key.split(":", 1)[0] not in {"sim", "catalog"}:
+            return True
+        if not isinstance(record, dict):
+            return True
+        if not isinstance(record.get("path"), str) or not os.path.isabs(record["path"]):
+            return True
+        if not isinstance(record.get("mtime"), int) or not isinstance(record.get("ids"), list):
+            return True
+    return False
+
+
+def _soma_corpus():
+    """Return stable SOMA document keys mapped to current source metadata."""
+    current = {}
+    for stype, f in evolving_files():
+        if stype not in SOMA_TYPES or not os.path.exists(f):
+            continue
+        current[B.document_id(stype, f)] = {
+            "path": f,
+            "mtime": int(os.stat(f).st_mtime),
+        }
+    return current
+
+
+def _write_json_atomic(path, value):
+    """Publish a JSON sidecar only after its complete contents are written."""
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    temporary = f"{path}.tmp-{os.getpid()}"
+    try:
+        with open(temporary, "w", encoding="utf-8") as handle:
+            json.dump(value, handle, indent=2)
+            handle.write("\n")
+        os.replace(temporary, path)
+    finally:
+        try:
+            os.remove(temporary)
+        except OSError:
+            pass
+
+
+def _publish_soma_candidate(candidate):
+    """Atomically replace the live SOMA bundle with a complete candidate."""
+    previous = f"{SOMA_BUNDLE}.previous-{os.getpid()}"
+    moved_previous = False
+    try:
+        if os.path.isdir(SOMA_BUNDLE):
+            os.replace(SOMA_BUNDLE, previous)
+            moved_previous = True
+        os.replace(candidate, SOMA_BUNDLE)
+        if moved_previous:
+            shutil.rmtree(previous, ignore_errors=True)
+    except Exception:
+        if moved_previous and not os.path.exists(SOMA_BUNDLE) and os.path.isdir(previous):
+            os.replace(previous, SOMA_BUNDLE)
+        raise
+    finally:
+        shutil.rmtree(candidate, ignore_errors=True)
+
+
 def refresh_soma(rebuild=False):
-    """Keep the SOMA bundle in sync with the evolving corpus, FULLY INCREMENTAL for new/edited/deleted files: a
-    changed/deleted file's old chunks are forgotten by their recorded node_ids and (for an edit) the new chunks are
-    stored -- so a single edit no longer forces a full re-embed of the whole corpus. Manifest schema is
-    {path: {"mtime": int, "ids": [node_id, ...]}}. FULL rebuild (fresh MemoryLayer) only when: --rebuild, the bundle
-    is missing, or the manifest predates the node-id schema (a one-time migration to record ids)."""
+    """Keep SOMA current with a worktree-safe manifest and clean rebuild path.
+
+    Incremental updates forget only changed/deleted files. A legacy manifest
+    (including the old absolute Windows-path format) triggers a fresh
+    in-memory build, which is saved to a candidate directory and atomically
+    promoted so stale WAL sidecars cannot be replayed into the new index.
+    """
     from soma.memory.api import MemoryLayer
     from soma._cli_commands.wiki_chat import chunk_markdown, _load_doc_text
-    cur = {f: int(os.stat(f).st_mtime) for stype, f in evolving_files() if stype in SOMA_TYPES and os.path.exists(f)}
+    cur = _soma_corpus()
     prev = _load_soma_manifest()
-    old_schema = any(not isinstance(v, dict) for v in prev.values())   # pre-node-id manifest -> one-time migrate
-    full = rebuild or (not os.path.isdir(SOMA_BUNDLE)) or old_schema or (not prev)
+    full = rebuild or (not os.path.isdir(SOMA_BUNDLE)) or _soma_manifest_needs_rebuild(prev)
 
     if full:
-        mem = MemoryLayer.with_sbert()
+        mem = MemoryLayer.with_sbert(device="cpu")
         man, cc = {}, 0
-        for f in cur:
-            ids = _store_file(mem, chunk_markdown, _load_doc_text, f)
-            man[f] = {"mtime": cur[f], "ids": ids}; cc += len(ids)
-        mem.save(SOMA_BUNDLE)
-        json.dump(man, open(SOMA_MANIFEST, "w"))
+        for key, source in cur.items():
+            ids = _store_file(mem, chunk_markdown, _load_doc_text, source["path"])
+            man[key] = {"path": source["path"], "mtime": source["mtime"], "ids": ids}
+            cc += len(ids)
+        candidate = f"{SOMA_BUNDLE}.candidate-{os.getpid()}"
+        shutil.rmtree(candidate, ignore_errors=True)
+        mem.save(candidate)
+        _publish_soma_candidate(candidate)
+        _write_json_atomic(SOMA_MANIFEST, man)
         return f"soma FULL rebuild ({len(cur)} files / {cc} chunks)"
 
-    new     = [f for f in cur if f not in prev]
-    changed = [f for f in cur if f in prev and cur[f] != prev[f]["mtime"]]
-    deleted = [f for f in prev if f not in cur]
+    new     = [key for key in cur if key not in prev]
+    changed = [key for key in cur if key in prev and cur[key]["mtime"] != prev[key]["mtime"]]
+    deleted = [key for key in prev if key not in cur]
     if not (new or changed or deleted):
         return "soma up to date (no changes)"
 
-    mem = MemoryLayer.load_with_sbert(SOMA_BUNDLE)
-    man = {f: dict(v) for f, v in prev.items()}
+    mem = MemoryLayer.load_with_sbert(SOMA_BUNDLE, device="cpu")
+    man = {key: dict(value) for key, value in prev.items()}
+    for key, source in cur.items():
+        if key in man:
+            man[key]["path"] = source["path"]
+            man[key]["mtime"] = source["mtime"]
     n_forgot = 0
-    for f in changed + deleted:                              # drop the file's old chunks by their recorded node_ids
-        for nid in prev[f].get("ids", []):
+    for key in changed + deleted:                             # drop old chunks by their recorded node_ids
+        for nid in prev[key].get("ids", []):
             if mem.forget(nid):
                 n_forgot += 1
-        man.pop(f, None)
+        man.pop(key, None)
     cc = 0
-    for f in new + changed:                                  # (re)store new/edited files, recording fresh node_ids
-        ids = _store_file(mem, chunk_markdown, _load_doc_text, f)
-        man[f] = {"mtime": cur[f], "ids": ids}; cc += len(ids)
+    for key in new + changed:                                 # (re)store new/edited files
+        source = cur[key]
+        ids = _store_file(mem, chunk_markdown, _load_doc_text, source["path"])
+        man[key] = {"path": source["path"], "mtime": source["mtime"], "ids": ids}
+        cc += len(ids)
     mem.save(SOMA_BUNDLE)
-    json.dump(man, open(SOMA_MANIFEST, "w"))
+    _write_json_atomic(SOMA_MANIFEST, man)
     return (f"soma incremental (+{len(new)} new, ~{len(changed)} changed, -{len(deleted)} deleted; "
             f"{cc} chunks stored, {n_forgot} forgotten)")
 

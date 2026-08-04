@@ -4,6 +4,11 @@
 first, act on the CURRENT STATE section, update it every cycle. You do NOT need the owner to run `/neural-simulator`
 — this board carries the anchor.**
 
+**Persistent execution anchor:** read [research/coordination/workboard.json](research/coordination/workboard.json)
+and run the autonomous coordinator status command before choosing work. It records active lanes, delegated agents,
+resource use, blockers, heartbeats, and exact next actions so parallel work does not depend on chat memory. The
+operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.md).
+
 > **To SKIM the project in plain language, read [`ROADMAP.md`](ROADMAP.md)** (what's done / in progress / left, no shorthand; its "Project shorthand" table decodes FHRR/BTSP/BDSP/GNW/gap#N/DR-N/RANK-N/EMERGE/the-moat/the-composer/slot-binder). The forward-looking PLAN is [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md). **This board's CURRENT STATE → STATE-OF-THE-PROJECT header is the live RESUME point.**
 
 ---

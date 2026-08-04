@@ -1,0 +1,208 @@
+{
+  "agents": {
+    "019fcd10-4042-7bb1-9f70-ffcc9d656460": {
+      "completed_at": "2026-08-04T09:50:00+00:00",
+      "heartbeat_at": "2026-08-04T09:50:00+00:00",
+      "model": "gpt-5.6-luna",
+      "result": "Audited the research escalation workflow; identified structured claim packets and prior-failure links as the smallest high-value addition.",
+      "started_at": "2026-08-04T09:42:00+00:00",
+      "status": "completed",
+      "task": "Read-only audit of deep-research and reference-catalog workflows.",
+      "write_set": []
+    },
+    "019fcd10-47be-7a80-82a8-a922ccddac53": {
+      "completed_at": "2026-08-04T09:50:00+00:00",
+      "heartbeat_at": "2026-08-04T09:50:00+00:00",
+      "model": "gpt-5.6-luna",
+      "result": "Audited the experiment stack; identified the missing screen-to-confirmation controller as the highest-value first engine slice.",
+      "started_at": "2026-08-04T09:42:00+00:00",
+      "status": "completed",
+      "task": "Read-only audit of adaptive experiments, queues, receipts, and gates.",
+      "write_set": []
+    },
+    "019fcd20-193e-7a32-8e32-9a092634580c": {
+      "completed_at": "2026-08-04T14:21:05+00:00",
+      "heartbeat_at": "2026-08-04T14:21:05+00:00",
+      "model": "gpt-5.6-luna",
+      "next_action": "Review packet validator, then integrate it with source intake/escalation.",
+      "result": "Implemented and unit-tested fail-closed research-packet validation; commit cda86e7d2 pushed to GitHub and Gitea. Next: connect packet output to source intake/escalation after review.",
+      "started_at": "2026-08-04T14:15:24+00:00",
+      "status": "completed",
+      "task": "Implement structured research packet slice",
+      "write_set": [
+        "tools/research_packet.py",
+        "tests/test_research_packet.py"
+      ]
+    },
+    "019fcd20-1dc2-7bc0-b5f0-d885202da561": {
+      "completed_at": "2026-08-04T14:21:11+00:00",
+      "heartbeat_at": "2026-08-04T14:21:11+00:00",
+      "model": "gpt-5.6-luna",
+      "next_action": "Review dry-run controller against the sealed-job APIs; keep execution disabled until its integration is gated.",
+      "result": "Implemented and unit-tested deterministic dry-run adaptive experiment controller; commit dc904f52c pushed to GitHub and Gitea. Next: review against sealed-job APIs before allowing any dispatch integration.",
+      "started_at": "2026-08-04T14:15:28+00:00",
+      "status": "completed",
+      "task": "Implement dry-run experiment controller slice",
+      "write_set": [
+        "tools/experiment_controller.py",
+        "tests/test_experiment_controller.py"
+      ]
+    }
+  },
+  "events": [
+    {
+      "at": "2026-08-04T09:50:00+00:00",
+      "detail": "Created after the Claude handoff audit; preserve anti-stall and fan-out rules as a machine-readable resume point.",
+      "kind": "workboard-created",
+      "subject": "autonomous-coordinator"
+    },
+    {
+      "at": "2026-08-04T14:14:39+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T14:14:44+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T14:15:24+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd20-193e-7a32-8e32-9a092634580c"
+    },
+    {
+      "at": "2026-08-04T14:15:26+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T14:15:28+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcd20-1dc2-7bc0-b5f0-d885202da561"
+    },
+    {
+      "at": "2026-08-04T14:15:31+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
+    },
+    {
+      "at": "2026-08-04T14:15:47+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "rag-freshness"
+    },
+    {
+      "at": "2026-08-04T14:21:05+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd20-193e-7a32-8e32-9a092634580c"
+    },
+    {
+      "at": "2026-08-04T14:21:08+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "deep-research-packets"
+    },
+    {
+      "at": "2026-08-04T14:21:11+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcd20-1dc2-7bc0-b5f0-d885202da561"
+    },
+    {
+      "at": "2026-08-04T14:21:14+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "experiment-controller"
+    }
+  ],
+  "lanes": {
+    "deep-research-packets": {
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T14:21:08+00:00",
+      "next_action": "Use the validated packet format in the existing source-intake/escalation workflow; require prior-work links and human review before catalog promotion.",
+      "owner": "controller",
+      "priority": 2,
+      "resource": "agent_cpu_network",
+      "status": "completed",
+      "write_set": [
+        "tools/research_packet.py",
+        "tests/test_research_packet.py"
+      ]
+    },
+    "experiment-controller": {
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T14:21:14+00:00",
+      "next_action": "Review dry-run plan against sealed experiment APIs; add dispatch only behind explicit preregistration, receipt, control, lesion, seed, and held-out gates.",
+      "owner": "controller",
+      "priority": 2,
+      "resource": "local_cpu_plus_pool",
+      "status": "completed",
+      "write_set": [
+        "tools/experiment_controller.py",
+        "tests/test_experiment_controller.py"
+      ]
+    },
+    "local-model-offload": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T09:50:00+00:00",
+      "next_action": "Keep the service stopped during GPU experiments; use it only for bounded documentation/catalog triage when the lease is free.",
+      "owner": "controller",
+      "priority": 3,
+      "resource": "local_gpu_gated",
+      "status": "ready",
+      "write_set": [
+        "config/local_model_offload.json",
+        "tools/local_model_offload.py"
+      ]
+    },
+    "rag-freshness": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T14:15:47+00:00",
+      "next_action": "Commit the verified RAG migration repair and coordinator, then push both remotes.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "local_cpu",
+      "status": "completed",
+      "write_set": [
+        "tools/rag/update_indexes.py",
+        "tests/test_rag_soma_manifest.py"
+      ]
+    },
+    "v13-performance-diagnostic": {
+      "blocker": "Canonical GPU queue is occupied by the eprop K=16 job.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-04T09:50:00+00:00",
+      "next_action": "Do not consume GPU until readiness becomes true; then execute V9 controller.",
+      "owner": "controller",
+      "priority": 1,
+      "recovery_action": "Recheck queue and shared lease; run the preregistered four-cell diagnostic when both are clear.",
+      "resource": "local_gpu",
+      "status": "blocked",
+      "write_set": [
+        "research/specs/v13_stage0_performance_diagnostic_v9.json",
+        "tools/v13_stage0_performance_diagnostic_v9.py"
+      ]
+    }
+  },
+  "mission": "Advance a grounded, integrated, continuously learning mind on a shared fully spiking substrate; preserve biology, honest gates, scaffold burn-down, consumer hardware, and efficient development.",
+  "schema": "sim-autonomous-workboard-v1",
+  "session_rules": {
+    "agents_build_or_audit_but_do_not_own_long_sweeps": true,
+    "controller_runs_experiments": true,
+    "disjoint_work_must_run_concurrently": true,
+    "every_blocker_has_a_recovery_action": true,
+    "every_lane_has_a_next_action": true,
+    "gpu_requires_shared_lease_and_empty_running_queue_claim": true,
+    "heartbeat_seconds": 900,
+    "source_of_truth": "research/coordination/workboard.json"
+  },
+  "updated_at": "2026-08-04T14:21:14+00:00"
+}
