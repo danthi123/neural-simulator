@@ -614,6 +614,7 @@ def materialize_execution_manifest(
         "spec_path": handoff.get("spec_path"),
         "spec_sha256": handoff.get("spec_sha256"),
         "sealed_execution_manifest_sha256": handoff.get("execution_manifest_sha256"),
+        "sealed_expanded_job_count": handoff.get("expanded_job_count"),
         "source": handoff.get("source"),
         "arms": arms,
         "required_roles": roles,

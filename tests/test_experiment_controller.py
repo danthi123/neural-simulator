@@ -278,6 +278,7 @@ def test_materialization_is_deterministic_exact_and_seed_free(fixture_repo: Path
     assert first == second
     assert first["schema"] == EXECUTION_MANIFEST_SCHEMA
     assert first["materialization_count"] == 9
+    assert first["sealed_expanded_job_count"] == 6
     assert first["required_roles"] == {
         "treatment": ["candidate"], "control": ["matched-control"], "lesion": ["gain-lesion"],
     }
