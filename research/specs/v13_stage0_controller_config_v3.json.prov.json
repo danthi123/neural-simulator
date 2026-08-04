@@ -1,0 +1,7 @@
+{
+  "artifact": "research/specs/v13_stage0_controller_config_v3.json",
+  "device": "not_applicable_non_executed_controller_config",
+  "execution": "not_executed",
+  "generator": "tools/v13_stage0_freeze.py config",
+  "source_revision": "d091fa6692bdf8115c8073af6fd31fc9626921a8"
+}
