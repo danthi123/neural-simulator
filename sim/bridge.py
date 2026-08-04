@@ -216,6 +216,22 @@ def load_dict_from_hdf5_attrs(h5_group_or_file):
     return data_dict
 
 
+# Feature flag controlling allocation for each slow conductance checkpoint
+# buffer. Global NMDA buffers are always allocated; None records that contract.
+_SLOW_CONDUCTANCE_FEATURE_FLAGS = {
+    'cp_conductance_g_nmda': None,
+    'cp_conductance_g_nmda_rise': None,
+    'cp_conductance_g_nmda_recurrent': 'enable_nmda_recurrent',
+    'cp_conductance_g_nmda_recurrent_rise': 'enable_nmda_recurrent',
+    'cp_conductance_g_gabab': 'enable_gabab',
+    'cp_conductance_g_gabab_slow': 'enable_td_value_derivative',
+    'cp_conductance_g_coincidence': 'enable_coincidence_detection',
+    'cp_conductance_g_coincidence_rise': 'enable_coincidence_detection',
+    'cp_conductance_g_graded_plateau': 'enable_graded_dendritic_plateau',
+    'cp_conductance_g_graded_plateau_rise': 'enable_graded_dendritic_plateau',
+}
+
+
 class SimulationBridge:
     @property
     def xp(self):
@@ -2697,7 +2713,8 @@ class SimulationBridge:
         """Clears all CuPy arrays and resets the initialization flag."""
         self._log_console("Clearing simulation state and GPU memory...")
         attrs_to_clear = [
-            'cp_membrane_potential_v','cp_recovery_variable_u', 'cp_conductance_g_e','cp_conductance_g_i','cp_conductance_g_nmda','cp_conductance_g_nmda_rise',
+            'cp_membrane_potential_v','cp_recovery_variable_u', 'cp_conductance_g_e','cp_conductance_g_i',
+            *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
             'cp_external_input_current', 'cp_firing_states','cp_prev_firing_states','cp_traits',
             'cp_neuron_positions_3d','cp_connections', 'cp_refractory_timers', 'cp_viz_activity_timers',
             'cp_synapse_pulse_timers', 'cp_synapse_pulse_progress',
@@ -9350,10 +9367,7 @@ class SimulationBridge:
                 # and handled separately with pre-allocation slicing
                 arrays_to_save_direct = [
                     'cp_membrane_potential_v', 'cp_conductance_g_e', 'cp_conductance_g_i',
-                    'cp_conductance_g_nmda', 'cp_conductance_g_nmda_rise',
-                    'cp_conductance_g_nmda_recurrent',
-                    'cp_conductance_g_nmda_recurrent_rise',
-                    'cp_conductance_g_gabab', 'cp_conductance_g_gabab_slow',
+                    *_SLOW_CONDUCTANCE_FEATURE_FLAGS,
                     'cp_external_input_current', 'cp_firing_states', 'cp_prev_firing_states',
                     'cp_traits', 'cp_refractory_timers', 'cp_neuron_positions_3d',
                     'cp_neuron_activity_ema', 'cp_viz_activity_timers',
@@ -9690,17 +9704,9 @@ class SimulationBridge:
                 # Slow conductances are live state. Old checkpoints do not
                 # contain these datasets, so rebuild each buffer according to
                 # its initialization contract: global NMDA is always allocated,
-                # while recurrent NMDA and GABA_B are feature-gated. A present
-                # dataset wins even if configuration changed before the save.
-                slow_conductance_flags = {
-                    'cp_conductance_g_nmda': None,
-                    'cp_conductance_g_nmda_rise': None,
-                    'cp_conductance_g_nmda_recurrent': 'enable_nmda_recurrent',
-                    'cp_conductance_g_nmda_recurrent_rise': 'enable_nmda_recurrent',
-                    'cp_conductance_g_gabab': 'enable_gabab',
-                    'cp_conductance_g_gabab_slow': 'enable_td_value_derivative',
-                }
-                for attr_name, enable_flag in slow_conductance_flags.items():
+                # while the other mechanisms are feature-gated. A present dataset
+                # wins even if configuration changed before the save.
+                for attr_name, enable_flag in _SLOW_CONDUCTANCE_FEATURE_FLAGS.items():
                     has_saved_state = (
                         attr_name in state_group
                         or f"{attr_name}_is_empty" in state_group.attrs

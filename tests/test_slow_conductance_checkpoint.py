@@ -16,6 +16,10 @@ SLOW_CONDUCTANCE_ARRAYS = (
     "cp_conductance_g_nmda_recurrent_rise",
     "cp_conductance_g_gabab",
     "cp_conductance_g_gabab_slow",
+    "cp_conductance_g_coincidence",
+    "cp_conductance_g_coincidence_rise",
+    "cp_conductance_g_graded_plateau",
+    "cp_conductance_g_graded_plateau_rise",
 )
 
 
@@ -50,6 +54,8 @@ def _build_bridge(*, enable_slow_conductances: bool):
         enable_nmda_recurrent=enable_slow_conductances,
         enable_gabab=enable_slow_conductances,
         enable_td_value_derivative=enable_slow_conductances,
+        enable_coincidence_detection=enable_slow_conductances,
+        enable_graded_dendritic_plateau=enable_slow_conductances,
     )
     bridge = SimulationBridge(
         core_config=config,
@@ -98,7 +104,9 @@ def test_legacy_checkpoint_rebuilds_enabled_slow_conductances(numpy_backend, tmp
         np.testing.assert_array_equal(value, np.zeros(bridge.core_config.num_neurons, np.float32))
 
 
-def test_default_checkpoint_keeps_slow_conductances_unallocated(numpy_backend, tmp_path):
+def test_default_checkpoint_keeps_optional_slow_conductances_unallocated(
+    numpy_backend, tmp_path
+):
     bridge = _build_bridge(enable_slow_conductances=False)
     checkpoint = tmp_path / "default.simstate.h5"
     assert bridge.save_checkpoint(str(checkpoint)) is True
@@ -119,3 +127,12 @@ def test_default_checkpoint_keeps_slow_conductances_unallocated(numpy_backend, t
         np.zeros(bridge.core_config.num_neurons, np.float32),
     )
     assert all(getattr(restored, attr_name) is None for attr_name in SLOW_CONDUCTANCE_ARRAYS[2:])
+
+
+def test_clear_releases_all_slow_conductance_state(numpy_backend):
+    bridge = _build_bridge(enable_slow_conductances=True)
+    assert all(getattr(bridge, attr_name) is not None for attr_name in SLOW_CONDUCTANCE_ARRAYS)
+
+    bridge.clear_simulation_state_and_gpu_memory()
+
+    assert all(getattr(bridge, attr_name) is None for attr_name in SLOW_CONDUCTANCE_ARRAYS)
