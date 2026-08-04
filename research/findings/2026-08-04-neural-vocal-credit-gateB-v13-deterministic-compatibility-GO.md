@@ -60,7 +60,10 @@ rejects the compatibility evidence unless that distinction is intact.
 
 All 72 run sidecars exist, but the shared `runs.jsonl` ledger contains only 18
 of the 72 cell records. The bundles bind every cell artifact by digest and the
-commits seal the sidecars, so this does not change the numerical verdict. It is
-still a provenance completeness defect. A deterministic artifact-and-sidecar
-manifest is being added for future distributed evidence; this finding does not
-claim the historical shared ledger was complete.
+commits seal the sidecars, so this does not change the numerical verdict. The
+create-only `provenance-manifest-cells.json` now also binds all 72 artifact and
+sidecar byte hashes and records the historical source limitations: 66 sidecars
+reported a dirty checkout and none carried a source-manifest digest. This
+closes artifact enumeration, not the original provenance completeness defect;
+the finding does not claim the historical shared ledger or source seals were
+complete.
