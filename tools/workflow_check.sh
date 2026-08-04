@@ -14,7 +14,7 @@
 #
 #   bash tools/workflow_check.sh            # full report + exit 1 if any rule is violated
 set -uo pipefail
-ROOT=/home/dant123/Projects/sim
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$ROOT" || exit 0
 FAIL=0
 
