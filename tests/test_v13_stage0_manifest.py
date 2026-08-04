@@ -153,18 +153,7 @@ class Fixture:
             ),
             "held_out": controller.LOCKED_HELD_OUT_SEED,
         }
-        self.seed_derivation = {
-            "algorithm": controller.SEED_DERIVATION_ALGORITHM,
-            "namespace": controller.SEED_DERIVATION_NAMESPACE,
-            "source_anchor": {
-                "revision": controller.SEED_DERIVATION_SOURCE_REVISION,
-                "committed_at": controller.SEED_DERIVATION_SOURCE_COMMITTED_AT,
-                "relation_to_v1_observation": controller.SEED_DERIVATION_SOURCE_RELATION,
-            },
-            "material_template": "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}",
-            "prior_partition_seeds": controller.PRIOR_PARTITION_SEEDS,
-            "result_exclusion": controller.SEED_DERIVATION_RESULT_EXCLUSION,
-        }
+        self.seed_derivation = controller._expected_seed_derivation()
         spec_path = self.root / controller.SEED_SPEC_PATH
         for relative in controller.REQUIRED_SOURCE_MANIFEST_PATHS:
             path = self.root / relative

@@ -360,7 +360,7 @@ def _expected_seed_derivation() -> dict[str, Any]:
         "source_anchor": {
             "revision": SEED_DERIVATION_SOURCE_REVISION,
             "committed_at": SEED_DERIVATION_SOURCE_COMMITTED_AT,
-            "relation_to_v1_observation": SEED_DERIVATION_SOURCE_RELATION,
+            "relation_to_v2_observation": SEED_DERIVATION_SOURCE_RELATION,
         },
         "material_template": (
             "{namespace}|{source_anchor_revision}|role={role}|prior_seed={prior_seed}"
