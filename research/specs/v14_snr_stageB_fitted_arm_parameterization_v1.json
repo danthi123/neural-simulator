@@ -1,0 +1,79 @@
+{
+  "schema": "v14-snr-stageB-fitted-arm-parameterization-v1",
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "prospective parameterization and custody protocol; contains no execution result",
+  "status": "preregistered_before_three_way_target_adjudication_and_candidate_fitting",
+  "scientific_verdict": null,
+  "optimization_allowed": false,
+  "authorities": {
+    "parameter_evidence_review": {
+      "path": "research/findings/2026-08-05-v14-stageB-parameter-identification-bounds-research.md",
+      "sha256": "e0b0afce6cc9254f319b081867d9d26a0492afefef1148548362fc7aba9096ca"
+    },
+    "parameterization": {
+      "path": "tools/v14_stageB_source_parameterization.py",
+      "sha256": "c8cccf4b94e3368a6295ba156b6ed55deb40b6a3cddefbf29649ba8050e50456"
+    },
+    "sodium_source_models": {
+      "path": "sim/sodium_source_models.py",
+      "sha256": "8c53b8b5df0940a63e0e3199c64daa699818aa46c13120ae0134886ce5e51be7"
+    },
+    "kv3_source_models": {
+      "path": "sim/kv3_source_models.py",
+      "sha256": "e997953d0d61014b6be058c0e49c071cb1882ffff43abf44eb91cc81656dc8c4"
+    }
+  },
+  "model_ids": [
+    "khaliq_raman_13_state",
+    "balbi_nav16_six_state",
+    "labro_2015_four_state",
+    "desai_2008_control"
+  ],
+  "arm_separation": {
+    "unmodified_source_arm": "exact published point vectors remain banked and immutable",
+    "fitted_arm": "new source-centered contrast documents only; never overwrite source defaults",
+    "hybrid_graphs_allowed": false,
+    "conductance_compensation_allowed": false,
+    "stage2_integration_allowed": false
+  },
+  "coordinate_contract": {
+    "numeric_biological_bounds_available": false,
+    "positive_rate_amplitudes": "source_value_times_exp_contrast",
+    "signed_voltage_terms": "source_sign_times_abs_source_value_times_exp_contrast",
+    "voltage_midpoints": "source_value_plus_contrast_mV",
+    "khaliq_voltage_independence_sentinels": "fixed_exact_source_representation",
+    "balbi_q10_and_reference_temperature": "fixed",
+    "source_topology_algebra_open_states_and_exponents": "fixed",
+    "contrast_limits_are_biological_priors": false
+  },
+  "calibration_sensitivity_scale": {
+    "visible_partition": "calibration_only",
+    "baseline": "zero_contrast_source_vector",
+    "probe_shape": "centered_positive_and_negative_single_coordinate_pairs",
+    "response": "root_mean_square_change_in_candidate_predictions_divided_by_total_target_standard_uncertainty",
+    "target_response": "one_total_target_standard_uncertainty",
+    "step_selection": "deterministic_bracket_by_powers_of_two_then_bisect_in_contrast_magnitude",
+    "initial_step": "square_root_machine_epsilon_in_float64_contrast_coordinates",
+    "maximum_bracket_expansions": 64,
+    "maximum_bisections": 53,
+    "physical_validity_mesh_required": true,
+    "nonfinite_or_invalid_state": "stop_direction_and_report_unresolved",
+    "no_target_response_before_invalidity": "report_locally_unidentifiable",
+    "selected_step_is_a_biological_bound": false
+  },
+  "identifiable_subspace": {
+    "input": "centered_calibration_sensitivity_pairs_at_data_scaled_steps",
+    "method": "scaled_jacobian_singular_value_decomposition",
+    "fit_coordinates": "only_rank_supported_singular_combinations",
+    "flat_or_correlated_directions": "fixed_at_source_or_reported_unresolved",
+    "rank_and_equivalent_fit_classification_authority": "tools/v14_stageB_identifiability.py",
+    "validation_or_held_out_data_may_select_subspace": false
+  },
+  "release_conditions": [
+    "all population panels are three-way resolved or explicitly adjudicated unavailable",
+    "custody-separated calibration validation and held-out packets are compiled",
+    "candidate-batch NumPy and CuPy predictions pass pointwise oracle parity",
+    "family-level assay runner predicts every available calibration target from one shared sodium vector and one shared Kv3 vector",
+    "this specification is superseded by an execution specification with exact artifact digests and optimization_allowed true"
+  ]
+}
