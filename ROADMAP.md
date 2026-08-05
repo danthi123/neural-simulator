@@ -136,8 +136,12 @@ its controls and lesions, and is tested at the required seed coverage.
    total-AHP assay. V3 automatically executed authenticated same-cell NaP and
    paired HCN assays. HCN passed in both; NaP exposed depolarized silence in
    both, making candidate 404 a formal failure and 284 unavailable on its
-   slightly unstable baseline. The heterogeneous 12-cell SK cohort remains
-   unavailable; delayed
+   slightly unstable baseline. The GPU engine now runs that same continuous
+   2-second-intact/1-second-lesion NaP assay and automatically rejects unstable
+   baselines, post-lesion spikes, or a non-negative voltage shift before CPU
+   confirmation. The next step is a fresh V3-bound search using wider GPU
+   batches; candidates 284 and 404 remain closed. The heterogeneous 12-cell SK
+   cohort remains unavailable; delayed
    action-reward learning and its unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a

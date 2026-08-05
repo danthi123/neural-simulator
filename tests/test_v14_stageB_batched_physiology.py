@@ -18,6 +18,7 @@ from research.runners.v14_stageB_batched_physiology import (
     EVENT_TIMEOUT_STEPS,
     NAP_STEPS,
     OUTPUT_SCHEMA,
+    PHASED_OUTPUT_SCHEMA,
     StageBBatchedPhysiologyError,
     load_batch_declaration,
     run_authenticated_gpu_batch,
@@ -42,18 +43,19 @@ def _digest(value) -> str:
     return _digest_bytes(canonical_bytes(value))
 
 
-def _copy_protocol_contract(root: Path) -> dict[str, str]:
+def _copy_protocol_contract(root: Path, version: int = 1) -> dict[str, str]:
+    suffix = "" if version == 1 else f"_v{version}"
     for relative in (
-        Path("research/specs/v14_snr_stageB_causal_gates.json"),
-        Path("research/specs/v14_snr_stageB_intrinsic_protocol.json"),
+        Path(f"research/specs/v14_snr_stageB_causal_gates{suffix}.json"),
+        Path(f"research/specs/v14_snr_stageB_intrinsic_protocol{suffix}.json"),
         Path("research/specs/v14_snr_stageB_target_packet.json"),
     ):
         destination = root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes((ROOT / relative).read_bytes())
-    protocol = root / "research/specs/v14_snr_stageB_intrinsic_protocol.json"
+    protocol = root / f"research/specs/v14_snr_stageB_intrinsic_protocol{suffix}.json"
     return {
-        "path": "research/specs/v14_snr_stageB_intrinsic_protocol.json",
+        "path": f"research/specs/v14_snr_stageB_intrinsic_protocol{suffix}.json",
         "sha256": _digest_bytes(protocol.read_bytes()),
     }
 
@@ -109,12 +111,13 @@ def _write_declaration(
     root: Path,
     *,
     arm: str = "intact_autonomous",
+    protocol_version: int = 1,
     mutate=None,
 ) -> tuple[Path, str, dict[str, object]]:
     body = {
         "schema": DECLARATION_SCHEMA,
         "arm": arm,
-        "analysis_protocol": _copy_protocol_contract(root),
+        "analysis_protocol": _copy_protocol_contract(root, protocol_version),
         "candidates": [_write_candidate(root, 0), _write_candidate(root, 1)],
     }
     if mutate is not None:
@@ -324,6 +327,39 @@ def test_nap_arm_runs_exactly_20000_steps_and_records_complete_lesion(tmp_path: 
         assert row["runtime_intervention"]["after"] == 0.0
 
 
+def test_v3_nap_arm_runs_same_cells_intact_then_lesions_at_exact_onset(tmp_path: Path):
+    path, digest, _ = _write_declaration(
+        tmp_path, arm="nap_lesion", protocol_version=3
+    )
+
+    result = run_authenticated_gpu_batch(
+        path,
+        digest,
+        repository_root=tmp_path,
+        chunk_steps=4096,
+        _runtime=_fake_runtime(),
+    )
+
+    assert result["schema"] == PHASED_OUTPUT_SCHEMA
+    assert result["execution"]["same_cell_phased_nap"] is True
+    assert result["execution"]["bridge_steps_executed"] == 60_000
+    assert result["execution"]["intact_baseline_s"] == [0.0, 2.0]
+    assert result["execution"]["post_lesion_s"] == [2.0, 3.0]
+    assert _FakeBridge.latest.step == 60_000
+    for row in result["candidates"]:
+        trace = row["trace"]
+        intervention = row["runtime_intervention"]
+        assert trace["sample_count"] == 60_000
+        assert trace["voltage_mV"][39_998] < trace["voltage_mV"][39_999]
+        assert intervention["before"] > 0.0
+        assert intervention["after"] == 0.0
+        assert intervention["timestamp_s"] == 2.0
+        assert intervention["lesion_onset_sample_index"] == 39_999
+        assert intervention["lesion_onset_sample_number"] == 40_000
+        assert intervention["last_intact_sample_s"] == pytest.approx(1.99995)
+        assert intervention["first_lesion_sample_s"] == 2.0
+
+
 @pytest.mark.parametrize(
     ("mutation", "message"),
     [
@@ -430,4 +466,28 @@ def test_two_candidate_real_gpu_nap_smoke(tmp_path: Path):
     assert result["device"] == "cuda"
     assert len(result["candidates"]) == 2
     assert all(row["trace"]["sample_count"] == NAP_STEPS for row in result["candidates"])
+    assert result["scientific_verdict"] is None
+
+
+@pytest.mark.skipif(
+    os.environ.get("RUN_V14_STAGEB_REAL_GPU") != "1",
+    reason="set RUN_V14_STAGEB_REAL_GPU=1 for the V3 same-cell RTX/CuPy integration",
+)
+def test_two_candidate_real_gpu_phased_nap_smoke(tmp_path: Path):
+    path, digest, _ = _write_declaration(
+        tmp_path, arm="nap_lesion", protocol_version=3
+    )
+
+    result = run_authenticated_gpu_batch(
+        path,
+        digest,
+        repository_root=tmp_path,
+        chunk_steps=4096,
+    )
+
+    assert result["schema"] == PHASED_OUTPUT_SCHEMA
+    assert result["execution"]["bridge_steps_executed"] == 60_000
+    assert len(result["candidates"]) == 2
+    assert all(row["trace"]["sample_count"] == 60_000 for row in result["candidates"])
+    assert all(row["runtime_intervention"]["after"] == 0.0 for row in result["candidates"])
     assert result["scientific_verdict"] is None

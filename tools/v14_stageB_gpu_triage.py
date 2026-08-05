@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import sys
 from collections import Counter
 from collections.abc import Mapping, Sequence
@@ -19,11 +20,18 @@ if __package__ in {None, ""}:
 
 from sim.snr_executable_packet import canonical_bytes
 from tools.compact_trace import CompactTraceError, load_compact_trace
-from tools.v14_stageB_campaign import CAMPAIGN_SCHEMA, GPU_BATCH_RECEIPT_SCHEMA
+from tools.v14_stageB_campaign import (
+    CAMPAIGN_SCHEMA,
+    GPU_BATCH_RECEIPT_SCHEMA,
+    PHASED_CAMPAIGN_SCHEMA,
+    PHASED_GPU_BATCH_RECEIPT_SCHEMA,
+)
+from tools.v14_stageB_physiology_metrics import phased_nap_voltage_measure
 
 
 ROOT = Path(__file__).resolve().parents[1]
 TRIAGE_SCHEMA = "v14-snr-stageB-gpu-triage-v1"
+PHASED_TRIAGE_SCHEMA = "v14-snr-stageB-gpu-triage-v2"
 ARMS = (
     "intact_autonomous",
     "nap_lesion",
@@ -103,6 +111,74 @@ def _event_metrics(spikes: np.ndarray, times: np.ndarray) -> dict[str, Any]:
     return result
 
 
+def _nap_metrics(
+    spikes: np.ndarray, times: np.ndarray, voltage_mV: np.ndarray
+) -> dict[str, Any]:
+    """Preserve V1 metrics or recompute the complete V3 same-cell assay."""
+
+    if len(times) != 60_000:
+        return _event_metrics(spikes, times)
+    if len(voltage_mV) != len(times):
+        raise StageBGPUTriageError("phased NaP trace changed its voltage shape")
+    dt = 0.00005
+    if not np.allclose(
+        times, np.arange(1, 60_001, dtype=np.float64) * dt, rtol=0.0, atol=1e-12
+    ):
+        raise StageBGPUTriageError("phased NaP trace changed its filed sampling schedule")
+    measured = phased_nap_voltage_measure(
+        times,
+        voltage_mV,
+        times[spikes],
+        time_unit="s",
+        voltage_unit="mV",
+        sample_interval_s=dt,
+        recording_start_s=dt,
+        recording_end_s=3.0 + dt,
+        burn_in_start_s=dt,
+        burn_in_end_s=1.0,
+        stability_comparison_start_s=1.0,
+        stability_comparison_end_s=1.5,
+        baseline_start_s=1.5,
+        baseline_end_s=2.0,
+        post_lesion_start_s=2.0,
+        post_lesion_end_s=3.0,
+    )
+    return {
+        "spike_count": measured["post_lesion_spike_count"],
+        "firing_rate_hz": None,
+        "isi_cv": None,
+        "same_cell_phased": True,
+        "baseline_stable": abs(float(measured["stability_delta_mV"])) <= 0.5,
+        **measured,
+    }
+
+
+def _validate_phased_nap_intervention(value: Any) -> None:
+    fixed = {
+        "kind": "complete_intrinsic_current_lesion",
+        "operation": "set_conductance_density_to_zero_between_post_update_samples",
+        "target": "nap",
+        "runtime_conductance_field": "cp_snr_g_nap_max",
+        "conductance_density_unit": "mS/cm^2",
+        "after": 0.0,
+        "timestamp_s": 2.0,
+        "lesion_onset_sample_index": 39_999,
+        "lesion_onset_sample_number": 40_000,
+        "last_intact_sample_s": 1.99995,
+        "first_lesion_sample_s": 2.0,
+    }
+    if (
+        not isinstance(value, Mapping)
+        or set(value) != set(fixed) | {"before"}
+        or any(value.get(key) != expected for key, expected in fixed.items())
+        or isinstance(value.get("before"), bool)
+        or not isinstance(value.get("before"), (int, float))
+        or not np.isfinite(float(value["before"]))
+        or float(value["before"]) <= 0.0
+    ):
+        raise StageBGPUTriageError("phased NaP receipt does not prove the exact lesion")
+
+
 def _classify(metrics: Mapping[str, Mapping[str, Any]]) -> tuple[str, list[dict[str, Any]]]:
     intact = metrics["intact_autonomous"]
     nap = metrics["nap_lesion"]
@@ -132,6 +208,21 @@ def _classify(metrics: Mapping[str, Mapping[str, Any]]) -> tuple[str, list[dict[
             "passed": None if hcn_rate_change is None else hcn_rate_change <= 0.2,
         },
     ]
+    if nap.get("same_cell_phased") is True:
+        checks[1:1] = [
+            {
+                "gate_id": "nap-complete-lesion",
+                "metric": "baseline_stable",
+                "observed": nap["stability_delta_mV"],
+                "passed": nap["baseline_stable"],
+            },
+            {
+                "gate_id": "nap-complete-lesion",
+                "metric": "median_membrane_voltage_change_mV",
+                "observed": nap["post_lesion_delta_mV"],
+                "passed": float(nap["post_lesion_delta_mV"]) < 0.0,
+            },
+        ]
     if any(item["passed"] is False for item in checks):
         classification = "engineering_fail"
     elif any(item["passed"] is None for item in checks):
@@ -159,12 +250,20 @@ def triage_gpu_campaign(
         raise StageBGPUTriageError("campaign must be inside repository_root") from exc
     campaign = _load_json(campaign_file, campaign_sha256, "campaign")
     campaign_body = {key: value for key, value in campaign.items() if key != "sha256"}
+    phased_campaign = campaign.get("schema") == PHASED_CAMPAIGN_SCHEMA
+    batch_size = campaign.get("batch_size")
+    expected_batches = None
+    if phased_campaign and isinstance(batch_size, int) and not isinstance(batch_size, bool) and batch_size > 0:
+        expected_batches = len(ARMS) * math.ceil(512 / batch_size)
     if (
-        campaign.get("schema") != CAMPAIGN_SCHEMA
+        campaign.get("schema") not in {CAMPAIGN_SCHEMA, PHASED_CAMPAIGN_SCHEMA}
         or campaign.get("sha256") != _digest(campaign_body)
         or campaign.get("candidate_count") != 512
         or campaign.get("arm_count") != len(ARMS)
-        or campaign.get("batch_count") != 40
+        or (
+            campaign.get("batch_count")
+            != (expected_batches if phased_campaign else 40)
+        )
     ):
         raise StageBGPUTriageError("campaign is not the exact materialized 512-candidate screen")
     results = Path(results_root).expanduser()
@@ -199,7 +298,8 @@ def triage_gpu_campaign(
         receipt = _load_json(receipt_path, _digest_bytes(receipt_path.read_bytes()), "GPU receipt")
         receipt_body = {key: value for key, value in receipt.items() if key != "sha256"}
         if (
-            receipt.get("schema") != GPU_BATCH_RECEIPT_SCHEMA
+            receipt.get("schema")
+            not in {GPU_BATCH_RECEIPT_SCHEMA, PHASED_GPU_BATCH_RECEIPT_SCHEMA}
             or receipt.get("sha256") != _digest(receipt_body)
             or receipt.get("campaign") != campaign_binding
             or receipt.get("declaration") != {
@@ -214,6 +314,10 @@ def triage_gpu_campaign(
             or receipt.get("numpy_confirmation_required") is not True
         ):
             raise StageBGPUTriageError("GPU receipt changed identity or scientific boundary")
+        if (receipt.get("schema") == PHASED_GPU_BATCH_RECEIPT_SCHEMA) != (
+            campaign.get("schema") == PHASED_CAMPAIGN_SCHEMA
+        ):
+            raise StageBGPUTriageError("GPU receipt schema does not match campaign revision")
         observed_candidates = {
             item.get("candidate_id"): item.get("candidate_sha256")
             for item in receipt.get("traces", [])
@@ -242,9 +346,15 @@ def triage_gpu_campaign(
             })
             if entry["candidate_sha256"] != candidate_sha or arm in entry["metrics"]:
                 raise StageBGPUTriageError("candidate identity is duplicated or inconsistent")
-            entry["metrics"][arm] = _event_metrics(arrays["spikes"], arrays["time"])
+            if phased_campaign and arm == "nap_lesion":
+                _validate_phased_nap_intervention(trace.get("runtime_intervention"))
+            entry["metrics"][arm] = (
+                _nap_metrics(arrays["spikes"], arrays["time"], arrays["voltage"])
+                if arm == "nap_lesion"
+                else _event_metrics(arrays["spikes"], arrays["time"])
+            )
 
-    if declaration_count != 40 or len(by_candidate) != 512:
+    if declaration_count != campaign["batch_count"] or len(by_candidate) != 512:
         raise StageBGPUTriageError("GPU result set is incomplete")
     output_candidates = []
     for candidate_id in sorted(by_candidate):
@@ -258,8 +368,12 @@ def triage_gpu_campaign(
             "resolved_checks": checks,
         })
     counts = Counter(item["classification"] for item in output_candidates)
+    phased_nap = all(
+        item["metrics"]["nap_lesion"].get("same_cell_phased") is True
+        for item in output_candidates
+    )
     body = {
-        "schema": TRIAGE_SCHEMA,
+        "schema": PHASED_TRIAGE_SCHEMA if phased_nap else TRIAGE_SCHEMA,
         "process_status": "completed",
         "engineering_screening_only": True,
         "scientific_verdict": None,

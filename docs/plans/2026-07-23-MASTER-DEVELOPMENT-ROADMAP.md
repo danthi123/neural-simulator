@@ -433,9 +433,12 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   directional total-AHP assay. V3 authenticated same-cell NaP and paired HCN
   current-family traces now execute and replay independently. HCN passes both
   survivors; NaP removal stops spikes but depolarizes both, making 404 a formal
-  failure and 284 unavailable on baseline stability. Add NaP voltage direction
-  to the next engineering screen rather than retuning either survivor. The
-  heterogeneous 12-cell SK cohort remains fail-closed.
+  failure and 284 unavailable on baseline stability. The versioned GPU engine
+  now executes the same continuous V3 NaP phases and triages baseline stability,
+  post-lesion spikes, and voltage direction from authenticated raw traces. A
+  fresh V3-bound search with wider GPU batches comes next; neither survivor may
+  be retuned or reopened. The heterogeneous 12-cell SK cohort remains
+  fail-closed.
 - **CPU/GPU, primary:** V13 deterministic compatibility earned GO, but calibration seed `1013` violated its locked CPU-first order. It and dependent replication seed `1019` are consumed and procedurally undefined; held-out seed `1021` and Stage-1 seed `1031` remain sealed.
   The backend-origin diagnostic traced the large response split to initialization, and the correction passed byte-exact NumPy/RTX parity across all 15 checked arrays at step zero. Replay v1 localized the remaining difference to GPU flush-to-zero at a subnormal recovery update on step 1,114. The corrected strict path then passed replay v2 with all 1,200 voltage, recovery, and spike rows byte-exact. This is engineering validation, not a new brain capability. Derive replacement calibration and replication seeds through the controller next.
 - **CPU pool, memory:** replay v3 was UNDEFINED because its required sleep relay and inhibitory loops never activated. V4's target-plateau correction then suppressed the intact target on smoke seed `216` and was retired. A different mechanism needs a new preregistration and fresh seeds.

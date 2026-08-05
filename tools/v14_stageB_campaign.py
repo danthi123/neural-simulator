@@ -19,6 +19,8 @@ if __package__ in {None, ""}:
 
 from research.runners.v14_stageB_batched_physiology import (
     DECLARATION_SCHEMA,
+    PHASED_ANALYSIS_PROTOCOL_SCHEMA,
+    PHASED_OUTPUT_SCHEMA,
     READINESS_ARMS,
     run_authenticated_gpu_batch,
 )
@@ -35,7 +37,9 @@ from tools.compact_trace import save_compact_trace
 
 ROOT = Path(__file__).resolve().parents[1]
 CAMPAIGN_SCHEMA = "v14-snr-stageB-screen-campaign-v1"
+PHASED_CAMPAIGN_SCHEMA = "v14-snr-stageB-screen-campaign-v2"
 GPU_BATCH_RECEIPT_SCHEMA = "v14-snr-stageB-gpu-batch-receipt-v1"
+PHASED_GPU_BATCH_RECEIPT_SCHEMA = "v14-snr-stageB-gpu-batch-receipt-v2"
 DEFAULT_BATCH_SIZE = 64
 
 
@@ -191,9 +195,10 @@ def materialize_campaign(
         root, candidate_manifest_path, candidate_manifest_sha256, "candidate manifest"
     )
     candidates = _validated_candidates(manifest)
-    protocol_ref, _ = _load_bound_json(
+    protocol_ref, protocol = _load_bound_json(
         root, analysis_protocol_path, analysis_protocol_sha256, "analysis protocol"
     )
+    phased_protocol = protocol.get("schema") == PHASED_ANALYSIS_PROTOCOL_SCHEMA
     template = manifest.get("template")
     if not isinstance(template, Mapping) or set(template) != {"path", "sha256", "template_id"}:
         raise StageBCampaignError("candidate manifest has an invalid template binding")
@@ -265,7 +270,7 @@ def materialize_campaign(
                 })
 
         body = {
-            "schema": CAMPAIGN_SCHEMA,
+            "schema": PHASED_CAMPAIGN_SCHEMA if phased_protocol else CAMPAIGN_SCHEMA,
             "status": "materialized-not-executed",
             "engineering_screening_only": True,
             "scientific_verdict": None,
@@ -305,7 +310,7 @@ def run_gpu_batch(
     )
     body = {key: value for key, value in campaign.items() if key != "sha256"}
     if (
-        campaign.get("schema") != CAMPAIGN_SCHEMA
+        campaign.get("schema") not in {CAMPAIGN_SCHEMA, PHASED_CAMPAIGN_SCHEMA}
         or campaign.get("sha256") != _digest(body)
         or campaign.get("status") != "materialized-not-executed"
         or campaign.get("scientific_verdict") is not None
@@ -346,6 +351,7 @@ def run_gpu_batch(
             or result.get("numpy_confirmation_required") is not True
         ):
             raise StageBCampaignError("GPU runner changed its engineering-only boundary")
+        phased_result = result.get("schema") == PHASED_OUTPUT_SCHEMA
         traces = []
         for candidate in result["candidates"]:
             trace = candidate["trace"]
@@ -358,7 +364,7 @@ def run_gpu_batch(
             voltage = np.asarray(trace["voltage_mV"], dtype=np.float64)
             archive = output / f"{candidate['candidate_id']}.trace.zip"
             archive_sha = save_compact_trace(archive, times, voltage, spikes)
-            traces.append({
+            trace_receipt = {
                 "candidate_id": candidate["candidate_id"],
                 "candidate_sha256": candidate["candidate_sha256"],
                 "termination": candidate["termination"],
@@ -367,9 +373,18 @@ def run_gpu_batch(
                     "sha256": archive_sha,
                     "sample_count": sample_count,
                 },
-            })
+            }
+            if phased_result:
+                trace_receipt["runtime_intervention"] = candidate["runtime_intervention"]
+            traces.append(trace_receipt)
+        if phased_result != (campaign.get("schema") == PHASED_CAMPAIGN_SCHEMA):
+            raise StageBCampaignError("GPU result schema does not match campaign protocol revision")
         receipt_body = {
-            "schema": GPU_BATCH_RECEIPT_SCHEMA,
+            "schema": (
+                PHASED_GPU_BATCH_RECEIPT_SCHEMA
+                if phased_result
+                else GPU_BATCH_RECEIPT_SCHEMA
+            ),
             "process_status": "completed",
             "engineering_screening_only": True,
             "scientific_verdict": None,

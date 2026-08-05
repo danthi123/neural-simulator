@@ -26,7 +26,9 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 DECLARATION_SCHEMA = "v14-snr-stageB-authenticated-gpu-batch-v1"
 OUTPUT_SCHEMA = "v14-snr-stageB-gpu-batched-physiology-v1"
+PHASED_OUTPUT_SCHEMA = "v14-snr-stageB-gpu-batched-physiology-v2"
 ANALYSIS_PROTOCOL_SCHEMA = "v14-snr-stageB-intrinsic-protocol-v1"
+PHASED_ANALYSIS_PROTOCOL_SCHEMA = "v14-snr-stageB-intrinsic-protocol-v3"
 READINESS_ARMS = frozenset(
     {
         "intact_autonomous",
@@ -64,6 +66,8 @@ DT_MS = 0.05
 EVENT_TARGET_SPIKES = 101
 EVENT_TIMEOUT_STEPS = 400_000
 NAP_STEPS = 20_000
+NAP_PHASED_BASELINE_STEPS = 40_000
+NAP_PHASED_POST_STEPS = 20_000
 
 
 class StageBBatchedPhysiologyError(ValueError):
@@ -267,7 +271,11 @@ def _validate_analysis_protocol(
         "arms",
         "scientific_boundaries",
     }
-    if set(protocol) != required or protocol.get("schema") != ANALYSIS_PROTOCOL_SCHEMA:
+    protocol_schema = protocol.get("schema")
+    if set(protocol) != required or protocol_schema not in {
+        ANALYSIS_PROTOCOL_SCHEMA,
+        PHASED_ANALYSIS_PROTOCOL_SCHEMA,
+    }:
         raise StageBBatchedPhysiologyError("analysis protocol has an invalid schema or shape")
     if protocol.get("status") != "production-measurement-partial":
         raise StageBBatchedPhysiologyError("analysis protocol changed its scientific status")
@@ -311,15 +319,33 @@ def _validate_analysis_protocol(
     termination = arm_protocol.get("termination")
     spike_metrics = arm_protocol.get("spike_metrics")
     if arm == "nap_lesion":
-        if termination != {
+        expected_termination = {
             "duration_s": 1.0,
             "duration_evidence_class": "project_operational_from_filed_causal_gate",
             "mode": "fixed_duration",
-        } or spike_metrics != {
+        }
+        if termination != expected_termination or spike_metrics != {
             "source_evidence_class": "project_operational",
             "window_s": 1.0,
         }:
             raise StageBBatchedPhysiologyError("Nap arm changed the filed one-second protocol")
+        if protocol_schema == PHASED_ANALYSIS_PROTOCOL_SCHEMA:
+            phased = arm_protocol.get("mean_voltage_change")
+            if (
+                not isinstance(phased, Mapping)
+                or phased.get("same_cell_requirement")
+                != "one continuously simulated cell; do not substitute independently initialized intact and lesion traces"
+                or phased.get("phase_schedule")
+                != {
+                    "intact_baseline_duration_s": 2.0,
+                    "lesion_onset_s": 2.0,
+                    "post_lesion_duration_s": 1.0,
+                    "total_duration_s": 3.0,
+                }
+            ):
+                raise StageBBatchedPhysiologyError(
+                    "V3 Nap arm changed the filed same-cell phase schedule"
+                )
     elif termination != {
         "maximum_duration_s": 20.0,
         "maximum_duration_evidence_class": (
@@ -334,6 +360,7 @@ def _validate_analysis_protocol(
     ):
         raise StageBBatchedPhysiologyError("event-count arm changed the 101-spike timeout protocol")
     return binding, {
+        "schema": protocol_schema,
         "arm": dict(arm_protocol),
         "causal_gate_authority": {"path": authority_path, "role": authority["role"]},
         "target_packet": target_binding,
@@ -696,7 +723,12 @@ def run_authenticated_gpu_batch(
     xp = runtime.xp
     candidates = declaration["candidates"]
     arm = declaration["arm"]
-    if arm == "nap_lesion":
+    protocol_v3 = declaration["protocol"]["schema"] == PHASED_ANALYSIS_PROTOCOL_SCHEMA
+    phased_nap = arm == "nap_lesion" and protocol_v3
+    if phased_nap:
+        maximum_steps = NAP_PHASED_BASELINE_STEPS + NAP_PHASED_POST_STEPS
+        target_spikes = None
+    elif arm == "nap_lesion":
         maximum_steps = NAP_STEPS
         target_spikes = None
     else:
@@ -739,15 +771,67 @@ def run_authenticated_gpu_batch(
                 )
             binding_provenance[candidate["region_name"]] = _binding_provenance(binding)
         manifest_sha256 = _digest_bytes(runtime.runtime_binding_manifest_bytes(bindings))
-        interventions = _apply_intervention(bridge, arm, len(candidates), xp)
-        voltages, spikes, terminations, bridge_steps, sync_boundaries = _run_trace_chunks(
-            bridge,
-            xp=xp,
-            candidate_count=len(candidates),
-            maximum_steps=maximum_steps,
-            target_spikes=target_spikes,
-            chunk_steps=chunk_steps,
-        )
+        if phased_nap:
+            baseline_v, baseline_s, _, baseline_steps, baseline_syncs = _run_trace_chunks(
+                bridge,
+                xp=xp,
+                candidate_count=len(candidates),
+                maximum_steps=NAP_PHASED_BASELINE_STEPS - 1,
+                target_spikes=None,
+                chunk_steps=chunk_steps,
+            )
+            interventions = _apply_intervention(bridge, arm, len(candidates), xp)
+            post_v, post_s, _, post_steps, post_syncs = _run_trace_chunks(
+                bridge,
+                xp=xp,
+                candidate_count=len(candidates),
+                maximum_steps=NAP_PHASED_POST_STEPS + 1,
+                target_spikes=None,
+                chunk_steps=chunk_steps,
+            )
+            voltages = [
+                np.concatenate((before, after)).astype(np.float32, copy=False)
+                for before, after in zip(baseline_v, post_v, strict=True)
+            ]
+            spikes = [
+                np.concatenate((before, after)).astype(bool, copy=False)
+                for before, after in zip(baseline_s, post_s, strict=True)
+            ]
+            bridge_steps = baseline_steps + post_steps
+            sync_boundaries = baseline_syncs + post_syncs
+            terminations = [
+                {
+                    "mode": "fixed_duration",
+                    "reason": "same_cell_phased_duration_complete",
+                    "steps_executed": int(trace.size),
+                    "spikes_observed": int(np.count_nonzero(trace)),
+                    "target_spike_count": None,
+                    "maximum_steps": maximum_steps,
+                    "timeout_is_physiology_failure": False,
+                }
+                for trace in spikes
+            ]
+            for intervention in interventions:
+                intervention.update(
+                    {
+                        "operation": "set_conductance_density_to_zero_between_post_update_samples",
+                        "timestamp_s": 2.0,
+                        "lesion_onset_sample_index": NAP_PHASED_BASELINE_STEPS - 1,
+                        "lesion_onset_sample_number": NAP_PHASED_BASELINE_STEPS,
+                        "last_intact_sample_s": 2.0 - DT_MS / 1000.0,
+                        "first_lesion_sample_s": 2.0,
+                    }
+                )
+        else:
+            interventions = _apply_intervention(bridge, arm, len(candidates), xp)
+            voltages, spikes, terminations, bridge_steps, sync_boundaries = _run_trace_chunks(
+                bridge,
+                xp=xp,
+                candidate_count=len(candidates),
+                maximum_steps=maximum_steps,
+                target_spikes=target_spikes,
+                chunk_steps=chunk_steps,
+            )
     finally:
         bridge.clear_simulation_state_and_gpu_memory()
 
@@ -783,7 +867,7 @@ def run_authenticated_gpu_batch(
         )
 
     return {
-        "schema": OUTPUT_SCHEMA,
+        "schema": PHASED_OUTPUT_SCHEMA if protocol_v3 else OUTPUT_SCHEMA,
         "process_status": "completed",
         "backend": "cupy",
         "device": "cuda",
@@ -814,6 +898,15 @@ def run_authenticated_gpu_batch(
             "bridge_steps_executed": bridge_steps,
             "trace_synchronization_boundaries": sync_boundaries,
             "trace_transfer_policy": "device-resident chunks copied only at bounded chunk boundaries",
+            **(
+                {
+                    "same_cell_phased_nap": True,
+                    "intact_baseline_s": [0.0, 2.0],
+                    "post_lesion_s": [2.0, 3.0],
+                }
+                if phased_nap
+                else {}
+            ),
         },
         "candidates": candidate_results,
         "provenance": {
@@ -830,6 +923,8 @@ __all__ = [
     "ANALYSIS_PROTOCOL_SCHEMA",
     "DECLARATION_SCHEMA",
     "OUTPUT_SCHEMA",
+    "PHASED_ANALYSIS_PROTOCOL_SCHEMA",
+    "PHASED_OUTPUT_SCHEMA",
     "READINESS_ARMS",
     "StageBBatchedPhysiologyError",
     "load_batch_declaration",
