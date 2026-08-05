@@ -1,0 +1,8 @@
+{
+  "artifact": "research/specs/v14_stageB_fast_channel_primary_research.json",
+  "device": "not_applicable_non_executed_research_plan",
+  "execution": "not_executed",
+  "generator": "manual_source_gap_specification",
+  "scientific_claim": false,
+  "source_revision": "22ec30b769b1cf272feec7dde0a1eb9667abd779"
+}

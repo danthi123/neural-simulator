@@ -1,0 +1,35 @@
+{
+  "gaps": [
+    {
+      "id": "fast-sodium-primary",
+      "missing_fields": [
+        "value",
+        "units"
+      ],
+      "parameter": "fast sodium activation, inactivation, recovery, and resurgent-current parameters",
+      "preparation": "juvenile rat acute substantia nigra pars reticulata slice recording",
+      "species": "rat",
+      "units": null,
+      "value": null
+    },
+    {
+      "id": "kv3-primary",
+      "missing_fields": [
+        "value",
+        "units"
+      ],
+      "parameter": "Kv3-like potassium activation, inactivation, rise, and deactivation parameters",
+      "preparation": "juvenile rat acute substantia nigra pars reticulata slice recording",
+      "species": "rat",
+      "units": null,
+      "value": null
+    }
+  ],
+  "question": {
+    "id": "v14-stageB-fast-channel-primary",
+    "kind": "parameter",
+    "requested_measurement": "direct voltage-clamp parameter values, units, uncertainty, and exact source locators",
+    "target": "substantia nigra pars reticulata fast spike-current equations",
+    "text": "Which primary experiments report the quantitative fast sodium and Kv3-like current parameters needed to represent SNr spike generation?"
+  }
+}

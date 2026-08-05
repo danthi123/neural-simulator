@@ -1,0 +1,56 @@
+[
+  {
+    "authors": [
+      "Shengyuan Ding",
+      "Wei Wei",
+      "Fu-Ming Zhou"
+    ],
+    "canonical_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3234097/",
+    "doi": "10.1152/jn.00305.2011",
+    "full_text_url_leads": [
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC3234097/"
+    ],
+    "provider_records": [
+      {
+        "provider": "pmc",
+        "provider_id": "PMC3234097"
+      }
+    ],
+    "query_ids": [
+      "fast-sodium-primary-Q1",
+      "fast-sodium-primary-Q2",
+      "fast-sodium-primary-Q3",
+      "fast-sodium-primary-Q4"
+    ],
+    "title": "Molecular and functional differences in voltage-activated sodium currents between GABA projection neurons and dopamine neurons in the substantia nigra",
+    "type": "article",
+    "year": 2011
+  },
+  {
+    "authors": [
+      "Shengyuan Ding",
+      "Shannon G Matta",
+      "Fu-Ming Zhou"
+    ],
+    "canonical_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3059163/",
+    "doi": "10.1152/jn.00707.2010",
+    "full_text_url_leads": [
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC3059163/"
+    ],
+    "provider_records": [
+      {
+        "provider": "pmc",
+        "provider_id": "PMC3059163"
+      }
+    ],
+    "query_ids": [
+      "kv3-primary-Q1",
+      "kv3-primary-Q2",
+      "kv3-primary-Q3",
+      "kv3-primary-Q4"
+    ],
+    "title": "Kv3-Like Potassium Channels Are Required for Sustained High-Frequency Firing in Basal Ganglia Output Neurons",
+    "type": "article",
+    "year": 2010
+  }
+]

@@ -1,0 +1,1812 @@
+{
+  "candidates": [],
+  "created_at": "2026-08-04",
+  "fulltext_retrievals": [],
+  "gaps": [
+    {
+      "id": "fast-sodium-primary",
+      "missing_fields": [
+        "value",
+        "units"
+      ],
+      "parameter": "fast sodium activation, inactivation, recovery, and resurgent-current parameters",
+      "preparation": "juvenile rat acute substantia nigra pars reticulata slice recording",
+      "species": "rat",
+      "units": null,
+      "value": null
+    },
+    {
+      "id": "kv3-primary",
+      "missing_fields": [
+        "value",
+        "units"
+      ],
+      "parameter": "Kv3-like potassium activation, inactivation, rise, and deactivation parameters",
+      "preparation": "juvenile rat acute substantia nigra pars reticulata slice recording",
+      "species": "rat",
+      "units": null,
+      "value": null
+    }
+  ],
+  "local_checks": [
+    {
+      "id": "LC1",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement",
+      "query_id": "fast-sodium-primary-Q1",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement   (4.27s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -1.5290000438690186  (catalog) source-62386b3450572efe-simmons-et-al-2020-indirect-pathway-control-of-firing-rate-and-p.md\n      at /home/dant123/Projects/sim-catalog/references/source-62386b3450572efe-simmons-et-al-2020-indirect-pathway-control-of-firing-rate-and-p.md:1\n      # External source intake: Simmons et al. 2020, Indirect pathway control of firing rate and pattern in the substantia nigra pars reticulata - Intake ID: `source-62386b3450572efe` - Source URL: https://pmc.ncbi.nlm.nih.go\n  [2] -1.784999966621399  (catalog) source-90ccd824f762867c-simmons-et-al-2018-predicting-responses-to-inhibitory-synaptic-i.md\n      at /home/dant123/Projects/sim-catalog/references/source-90ccd824f762867c-simmons-et-al-2018-predicting-responses-to-inhibitory-synaptic-i.md:1\n      # External source intake: Simmons et al. 2018, Predicting responses to inhibitory synaptic input in substantia nigra pars reticulata neurons - Intake ID: `source-90ccd824f762867c` - Source URL: https://pmc.ncbi.nlm.nih.\n  [3] -3.184000015258789  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n  [4] -8.270000457763672  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:5\n      --- type: research-finding status: complete date: 2026-08-04 mechanism: v14-stageB-snr-executable-parameter-evidence claim_check: synthesis --- # V14 Stage B SNr executable-parameter evidence ## Decision No located so\n  [5] -0.010999999940395355  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC2",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement NO-GO failed boundary",
+      "query_id": "fast-sodium-primary-Q1",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement NO-GO failed boundary   (4.29s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -3.2309999465942383  (finding) 2026-08-04-parameter-research-live-discovery-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-live-discovery-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Live Discovery Smoke Date: 2026-08-04 The parameter-gap workflow's live scholarly adapter was checked against the\n  [2] -3.5759999752044678  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n  [3] -6.991000175476074  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [4] -6.992000102996826  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:109\n      2025](https://doi.org/10.1073/pnas.2528602122), [Johnson and McIntyre 2008](https://doi.org/10.1152/jn.90372.2008), and [Hirschberg et al. 1998](https://doi.org/10.1085/jgp.111.4.565). ## Unresolved values - resting an\n  [5] -7.460999965667725  (finding) 2026-07-25-dendritic-spike-count-read-research-gate.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md:125\n      ** \"when a distal stimulus is paired with a proximal stimulus, the backpropagating spike summates with the distal EPSP to trigger a **long-lasting type of dendritic spike called a plateau potential**, which depends\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC3",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table",
+      "query_id": "fast-sodium-primary-Q2",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table   (4.43s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -0.19599999487400055  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [2] -0.746999979019165  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:21356\n      (2004) Discharge rate of substantia nigra pars reticulata neurons is reduced in non-parkinsonian monkeys with apo- morphine-induced orofacial dyskinesia. J. Neurophysiol., 92: 1973\u20131981. Nicola, S.M., Yun, I.A., Wakabaya\n  [3] -1.1729999780654907  (kandel) full-book.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt:14576\n      The relative refractory period corresponds to partial recovery from inactivation. The relative refractory period is also influenced by a residual increase in K+ conductance that follows the action potential. It t\n  [4] -1.1979999542236328  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15918\n      Wittmann, M., Marino, M.J., Bradley, S.R. and Conn, P.J. (2001) Activation of group III mGluRs inhibits GABAergic and glutamatergic transmission in the substantia nigra pars reticulata. J. Neurophysiol., 85: 1960\u20131968. W\n  [5] -1.5759999752044678  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:19602\n      Hip- pocampus, 14: 836\u2013848. Matsuda, Y., Fujimura, K. and Yoshida, S. (1987) Two types of neurons in the substantia nigra pars compacta studied in a slice preparation. Neurosci. Res., 5: 172\u2013179. Mailly, P., Charpier, S.\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC4",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table NO-GO failed boundary",
+      "query_id": "fast-sodium-primary-Q2",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table NO-GO failed boundary   (4.35s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -1.2860000133514404  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n  [2] -1.6139999628067017  (finding) 2026-08-04-parameter-research-live-discovery-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-live-discovery-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Live Discovery Smoke Date: 2026-08-04 The parameter-gap workflow's live scholarly adapter was checked against the\n  [3] -5.9079999923706055  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [4] -7.4710001945495605  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:109\n      2025](https://doi.org/10.1073/pnas.2528602122), [Johnson and McIntyre 2008](https://doi.org/10.1152/jn.90372.2008), and [Hirschberg et al. 1998](https://doi.org/10.1085/jgp.111.4.565). ## Unresolved values - resting an\n  [5] -7.798999786376953  (finding) 2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md:5\n      --- type: research-finding status: engineering-substrate date: 2026-08-04 mechanism: v14-snr-authenticated-packet-runtime-equations claim_check: synthesis --- # V14 authenticated SNr packet runtime equations ## Boundar\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC5",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density",
+      "query_id": "fast-sodium-primary-Q3",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density   (4.29s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -0.4269999861717224  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [2] -0.5879999995231628  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:24252\n      Neuroscience, 122: 317\u2013328. Yanovsky, Y., Zhang, W. and Misgeld, U. (2005) Two pathways for the activation of small-conductance potassium channels in neurons of substantia nigra pars reticulata. Neuroscience, 136: 1027\u20131\n  [3] -0.7879999876022339  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:21356\n      (2004) Discharge rate of substantia nigra pars reticulata neurons is reduced in non-parkinsonian monkeys with apo- morphine-induced orofacial dyskinesia. J. Neurophysiol., 92: 1973\u20131981. Nicola, S.M., Yun, I.A., Wakabaya\n  [4] -1.534000039100647  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15918\n      Wittmann, M., Marino, M.J., Bradley, S.R. and Conn, P.J. (2001) Activation of group III mGluRs inhibits GABAergic and glutamatergic transmission in the substantia nigra pars reticulata. J. Neurophysiol., 85: 1960\u20131968. W\n  [5] -1.5920000076293945  (kandel) full-book.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt:14576\n      The relative refractory period corresponds to partial recovery from inactivation. The relative refractory period is also influenced by a residual increase in K+ conductance that follows the action potential. It t\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC6",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density NO-GO failed boundary",
+      "query_id": "fast-sodium-primary-Q3",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density NO-GO failed boundary   (4.37s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -7.031000137329102  (finding) 2026-06-08-gabab-girk-conductance-design.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-06-08-gabab-girk-conductance-design.md:499\n      **C.28** TD error. (Stage-B context.) ### Peer-reviewed literature (verified via search this session) - **Eshel N., Bukwich M., Rao V., Hemmelder V., Tian J., Uchida N. (2015)** \"Arithmetic and local circuitry underlyin\n  [2] -7.3979997634887695  (finding) 2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md:5\n      --- type: research-finding status: engineering-substrate date: 2026-08-04 mechanism: v14-snr-authenticated-packet-runtime-equations claim_check: synthesis --- # V14 authenticated SNr packet runtime equations ## Boundar\n  [3] -7.960999965667725  (finding) 2026-07-25-dendritic-spike-count-read-research-gate.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md:125\n      ** \"when a distal stimulus is paired with a proximal stimulus, the backpropagating spike summates with the distal EPSP to trigger a **long-lasting type of dendritic spike called a plateau potential**, which depends\n  [4] -10.154000282287598  (finding) 2026-07-13-PAST-RESERVOIR-RUNG4a-conductance-shunt-input-modulated-leak-survives.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-13-PAST-RESERVOIR-RUNG4a-conductance-shunt-input-modulated-leak-survives.md:1\n      # Past the reservoir bound, Rung 4a (the spiking-realization ladder, step 1): the selective SSM's input-modulated leak SURVIVES a BIOLOGICAL conductance-based shunt \u2014 how a real neuron modulates its time constant \u2014 green\n  [5] -10.170000076293945  (finding) 2026-06-08-gabab-girk-conductance-design.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-06-08-gabab-girk-conductance-design.md:478\n      --- ## 7. Sources ### Project code (verified file:line this session) - Inhibitory current kernel (`I_syn = g_e\u00b7(E_e\u2212V) + g_i\u00b7(E_i\u2212V)`, the GABA_A-only model): `sim/kernels.py:207\u2013215`. - NMDA kernel (the second-conduct\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC7",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods",
+      "query_id": "fast-sodium-primary-Q4",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods   (4.30s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -0.1979999989271164  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [2] -0.49300000071525574  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:24252\n      Neuroscience, 122: 317\u2013328. Yanovsky, Y., Zhang, W. and Misgeld, U. (2005) Two pathways for the activation of small-conductance potassium channels in neurons of substantia nigra pars reticulata. Neuroscience, 136: 1027\u20131\n  [3] -0.9459999799728394  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:21356\n      (2004) Discharge rate of substantia nigra pars reticulata neurons is reduced in non-parkinsonian monkeys with apo- morphine-induced orofacial dyskinesia. J. Neurophysiol., 92: 1973\u20131981. Nicola, S.M., Yun, I.A., Wakabaya\n  [4] -1.2059999704360962  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15918\n      Wittmann, M., Marino, M.J., Bradley, S.R. and Conn, P.J. (2001) Activation of group III mGluRs inhibits GABAergic and glutamatergic transmission in the substantia nigra pars reticulata. J. Neurophysiol., 85: 1960\u20131968. W\n  [5] -1.3329999446868896  (kandel) full-book.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt:14576\n      The relative refractory period corresponds to partial recovery from inactivation. The relative refractory period is also influenced by a residual increase in K+ conductance that follows the action potential. It t\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC8",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods NO-GO failed boundary",
+      "query_id": "fast-sodium-primary-Q4",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods NO-GO failed boundary   (4.20s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -7.998000144958496  (finding) 2026-07-25-dendritic-spike-count-read-research-gate.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md:125\n      ** \"when a distal stimulus is paired with a proximal stimulus, the backpropagating spike summates with the distal EPSP to trigger a **long-lasting type of dendritic spike called a plateau potential**, which depends\n  [2] -7.998000144958496  (finding) 2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md:5\n      --- type: research-finding status: engineering-substrate date: 2026-08-04 mechanism: v14-snr-authenticated-packet-runtime-equations claim_check: synthesis --- # V14 authenticated SNr packet runtime equations ## Boundar\n  [3] -10.430000305175781  (finding) 2026-08-04-neural-vocal-credit-gateB-v12-disinhibitory-boundary-CONSTRUCTION-NO-GO.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-neural-vocal-credit-gateB-v12-disinhibitory-boundary-CONSTRUCTION-NO-GO.md:6\n      --- type: finding status: complete date: 2026-08-04 verdict: CONSTRUCTION_NO_GO mechanism: neural-vocal-disinhibitory-action-boundary-v12 runner: research/runners/_vocal_action_credit_gate_v12_disinhibitory.py artifacts:\n  [4] -0.25999999046325684  (finding) 2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md:101\n      | | Fast Na inactivation | `Vhalf -63.3 mV`, slope `8.1 mV`; recovery `0.59/35.1 ms` | Measured juvenile rat; preserve two recovery timescales. | | Persistent Na density | `0.00010-0.00025 S/cm2`; start `0.000175` | Mode\n  [5] -1.347000002861023  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC9",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement",
+      "query_id": "kv3-primary-Q1",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement   (4.31s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] 0.15399999916553497  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [2] -1.9620000123977661  (catalog) source-62386b3450572efe-simmons-et-al-2020-indirect-pathway-control-of-firing-rate-and-p.md\n      at /home/dant123/Projects/sim-catalog/references/source-62386b3450572efe-simmons-et-al-2020-indirect-pathway-control-of-firing-rate-and-p.md:1\n      # External source intake: Simmons et al. 2020, Indirect pathway control of firing rate and pattern in the substantia nigra pars reticulata - Intake ID: `source-62386b3450572efe` - Source URL: https://pmc.ncbi.nlm.nih.go\n  [3] -3.934000015258789  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n  [4] -6.873000144958496  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:109\n      2025](https://doi.org/10.1073/pnas.2528602122), [Johnson and McIntyre 2008](https://doi.org/10.1152/jn.90372.2008), and [Hirschberg et al. 1998](https://doi.org/10.1085/jgp.111.4.565). ## Unresolved values - resting an\n  [5] 0.24799999594688416  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:24252\n      Neuroscience, 122: 317\u2013328. Yanovsky, Y., Zhang, W. and Misgeld, U. (2005) Two pathways for the activation of small-conductance potassium channels in neurons of substantia nigra pars reticulata. Neuroscience, 136: 1027\u20131\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC10",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement NO-GO failed boundary",
+      "query_id": "kv3-primary-Q1",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement NO-GO failed boundary   (4.33s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] 0.03500000014901161  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [2] -3.0450000762939453  (finding) 2026-08-04-parameter-research-live-discovery-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-live-discovery-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Live Discovery Smoke Date: 2026-08-04 The parameter-gap workflow's live scholarly adapter was checked against the\n  [3] -3.374000072479248  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n  [4] -6.853000164031982  (finding) 2026-07-25-dendritic-spike-count-read-research-gate.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md:125\n      ** \"when a distal stimulus is paired with a proximal stimulus, the backpropagating spike summates with the distal EPSP to trigger a **long-lasting type of dendritic spike called a plateau potential**, which depends\n  [5] -6.921999931335449  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:109\n      2025](https://doi.org/10.1073/pnas.2528602122), [Johnson and McIntyre 2008](https://doi.org/10.1152/jn.90372.2008), and [Hirschberg et al. 1998](https://doi.org/10.1085/jgp.111.4.565). ## Unresolved values - resting an\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC11",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table",
+      "query_id": "kv3-primary-Q2",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table   (4.22s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] 1.2400000095367432  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [2] -6.5970001220703125  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:109\n      2025](https://doi.org/10.1073/pnas.2528602122), [Johnson and McIntyre 2008](https://doi.org/10.1152/jn.90372.2008), and [Hirschberg et al. 1998](https://doi.org/10.1085/jgp.111.4.565). ## Unresolved values - resting an\n  [3] 1.680999994277954  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:24252\n      Neuroscience, 122: 317\u2013328. Yanovsky, Y., Zhang, W. and Misgeld, U. (2005) Two pathways for the activation of small-conductance potassium channels in neurons of substantia nigra pars reticulata. Neuroscience, 136: 1027\u20131\n  [4] -0.7620000243186951  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15918\n      Wittmann, M., Marino, M.J., Bradley, S.R. and Conn, P.J. (2001) Activation of group III mGluRs inhibits GABAergic and glutamatergic transmission in the substantia nigra pars reticulata. J. Neurophysiol., 85: 1960\u20131968. W\n  [5] -0.9390000104904175  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15706\n      (1970) Observations on the \ufb01ne structure of the substantia nigra in the cat. Exp. Brain Res., 11: 229\u2013248. Rinvik, E., Grofova, I. and Ottersen, O.P. (1976) Demonstra- tion of nigrotectal and nigroreticular projections i\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC12",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table NO-GO failed boundary",
+      "query_id": "kv3-primary-Q2",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table NO-GO failed boundary   (4.22s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] 0.656000018119812  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [2] -1.8229999542236328  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n  [3] -1.86899995803833  (finding) 2026-08-04-parameter-research-live-discovery-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-live-discovery-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Live Discovery Smoke Date: 2026-08-04 The parameter-gap workflow's live scholarly adapter was checked against the\n  [4] -6.922999858856201  (finding) 2026-07-25-dendritic-spike-count-read-research-gate.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md:125\n      ** \"when a distal stimulus is paired with a proximal stimulus, the backpropagating spike summates with the distal EPSP to trigger a **long-lasting type of dendritic spike called a plateau potential**, which depends\n  [5] -7.326000213623047  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:109\n      2025](https://doi.org/10.1073/pnas.2528602122), [Johnson and McIntyre 2008](https://doi.org/10.1152/jn.90372.2008), and [Hirschberg et al. 1998](https://doi.org/10.1085/jgp.111.4.565). ## Unresolved values - resting an\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC13",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density",
+      "query_id": "kv3-primary-Q3",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density   (4.19s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] 0.984000027179718  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:24252\n      Neuroscience, 122: 317\u2013328. Yanovsky, Y., Zhang, W. and Misgeld, U. (2005) Two pathways for the activation of small-conductance potassium channels in neurons of substantia nigra pars reticulata. Neuroscience, 136: 1027\u20131\n  [2] -0.20100000500679016  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [3] -1.2330000400543213  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15918\n      Wittmann, M., Marino, M.J., Bradley, S.R. and Conn, P.J. (2001) Activation of group III mGluRs inhibits GABAergic and glutamatergic transmission in the substantia nigra pars reticulata. J. Neurophysiol., 85: 1960\u20131968. W\n  [4] -1.2730000019073486  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:19602\n      Hip- pocampus, 14: 836\u2013848. Matsuda, Y., Fujimura, K. and Yoshida, S. (1987) Two types of neurons in the substantia nigra pars compacta studied in a slice preparation. Neurosci. Res., 5: 172\u2013179. Mailly, P., Charpier, S.\n  [5] -1.7289999723434448  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15121\n      Brain Res., 104: 152\u2013156. Deniau, J.M., Hammond, C., Chevalier, G. and Feger, J. (1978a) Evidence for branched subthalamic nucleus projec- tions to susbtantia nigra, entopeduncular nucleus and globus pallidus. Neurosci.\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC14",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density NO-GO failed boundary",
+      "query_id": "kv3-primary-Q3",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density NO-GO failed boundary   (4.36s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -6.52400016784668  (finding) 2026-06-08-gabab-girk-conductance-design.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-06-08-gabab-girk-conductance-design.md:499\n      **C.28** TD error. (Stage-B context.) ### Peer-reviewed literature (verified via search this session) - **Eshel N., Bukwich M., Rao V., Hemmelder V., Tian J., Uchida N. (2015)** \"Arithmetic and local circuitry underlyin\n  [2] -6.98799991607666  (finding) 2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md:5\n      --- type: research-finding status: engineering-substrate date: 2026-08-04 mechanism: v14-snr-authenticated-packet-runtime-equations claim_check: synthesis --- # V14 authenticated SNr packet runtime equations ## Boundar\n  [3] -7.333000183105469  (finding) 2026-07-25-dendritic-spike-count-read-research-gate.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md:125\n      ** \"when a distal stimulus is paired with a proximal stimulus, the backpropagating spike summates with the distal EPSP to trigger a **long-lasting type of dendritic spike called a plateau potential**, which depends\n  [4] -7.857999801635742  (finding) 2026-06-08-gabab-girk-conductance-design.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-06-08-gabab-girk-conductance-design.md:78\n      The anti-cheat is a **conductance lesion**: zero `g_gabab` (or the GABA_B mask) \u2192 the subtraction must vanish, proving it is carried by the new conductance, not host arithmetic or the weak GABA_A path. **Honest uncertai\n  [5] -9.692000389099121  (finding) 2026-07-13-PAST-RESERVOIR-RUNG4a-conductance-shunt-input-modulated-leak-survives.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-13-PAST-RESERVOIR-RUNG4a-conductance-shunt-input-modulated-leak-survives.md:1\n      # Past the reservoir bound, Rung 4a (the spiking-realization ladder, step 1): the selective SSM's input-modulated leak SURVIVES a BIOLOGICAL conductance-based shunt \u2014 how a real neuron modulates its time constant \u2014 green\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC15",
+      "purpose": "project_rag",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods",
+      "query_id": "kv3-primary-Q4",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods   (4.23s, top 5, corpus=all, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] 1.3109999895095825  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:24252\n      Neuroscience, 122: 317\u2013328. Yanovsky, Y., Zhang, W. and Misgeld, U. (2005) Two pathways for the activation of small-conductance potassium channels in neurons of substantia nigra pars reticulata. Neuroscience, 136: 1027\u20131\n  [2] 0.9909999966621399  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [3] -0.8019999861717224  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15918\n      Wittmann, M., Marino, M.J., Bradley, S.R. and Conn, P.J. (2001) Activation of group III mGluRs inhibits GABAergic and glutamatergic transmission in the substantia nigra pars reticulata. J. Neurophysiol., 85: 1960\u20131968. W\n  [4] -1.2680000066757202  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:15126\n      (1978) Electrophysiological properties of identi\ufb01ed output neurons of the rat substantia nigra (pars compacta and pars re- ticulata): evidences for the existence of branched neurons. Exp. Brain Res., 32: 409\u2013422. Deniau,\n  [5] -1.4529999494552612  (paper) TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt\n      at /home/dant123/Projects/sim-catalog/references/textbooks/basal-ganglia-reviews/TepperAbercrombieBolam-2007-GABAandTheBasalGanglia-PBR160.txt:24398\n      The electrophysiological properties of fast- spiking GABAergic interneurons just described are believed to critically depend on their mole- cular make-up, in particular the expression of the Kv3.1 potassium channel (Yoko\n\nLLM is explicitly disabled. Using MockLLM."
+    },
+    {
+      "id": "LC16",
+      "purpose": "prior_failures",
+      "query": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods NO-GO failed boundary",
+      "query_id": "kv3-primary-Q4",
+      "returncode": 0,
+      "status": "complete",
+      "summary": "Q: substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods NO-GO failed boundary   (4.30s, top 5, corpus=finding, index=/home/dant123/Projects/rag_index/llamaindex_full)\n  [1] -7.210000038146973  (finding) 2026-07-25-dendritic-spike-count-read-research-gate.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-07-25-dendritic-spike-count-read-research-gate.md:125\n      ** \"when a distal stimulus is paired with a proximal stimulus, the backpropagating spike summates with the distal EPSP to trigger a **long-lasting type of dendritic spike called a plateau potential**, which depends\n  [2] -7.545000076293945  (finding) 2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md:5\n      --- type: research-finding status: engineering-substrate date: 2026-08-04 mechanism: v14-snr-authenticated-packet-runtime-equations claim_check: synthesis --- # V14 authenticated SNr packet runtime equations ## Boundar\n  [3] 0.7450000047683716  (finding) 2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md:69\n      Source: [Ding, Wei, and Zhou 2011](https://doi.org/10.1152/jn.00305.2011), Table 3 and Figures 5-7 and 10-13. - Kv3-like current: peak composite potassium current at +40 mV `772.8 +/- 91.8 pA/pF`; Kv3 fraction at +20\n  [4] -2.0799999237060547  (finding) 2026-08-04-parameter-research-fulltext-retrieval-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-fulltext-retrieval-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Full-Text Retrieval Smoke The complete parameter-research handoff was exercised on the question of NALCN conductanc\n  [5] -2.377000093460083  (finding) 2026-08-04-parameter-research-live-discovery-smoke.md\n      at /home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/findings/2026-08-04-parameter-research-live-discovery-smoke.md:8\n      --- status: qualified lane: parameter-research date: 2026-08-04 type: finding --- # Parameter Research Live Discovery Smoke Date: 2026-08-04 The parameter-gap workflow's live scholarly adapter was checked against the\n\nLLM is explicitly disabled. Using MockLLM."
+    }
+  ],
+  "metadata_leads": [
+    {
+      "authors": [
+        "Mahmoud M. Iravani",
+        "Zygmunt L. Kruk"
+      ],
+      "canonical_url": "https://doi.org/10.1002/(sici)1098-2396(199701)25:1<93::aid-syn11>3.0.co;2-",
+      "content_status": "metadata_only",
+      "doi": "10.1002/(sici)1098-2396(199701)25:1<93::aid-syn11>3.0.co;2-#",
+      "full_text_url_leads": [
+        "https://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1002%2F(SICI)1098-2396(199701)25:1%3C93::AID-SYN11%3E3.0.CO;2-",
+        "https://onlinelibrary.wiley.com/doi/pdf/10.1002/%28SICI%291098-2396%28199701%2925%3A1%3C93%3A%3AAID-SYN11%3E3.0.CO%3B2-%23"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD1",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1002/(sici)1098-2396(199701)25:1<93::aid-syn11>3.0.co;2-#"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Real\u2010time measurement of stimulated 5\u2010hydroxytryptamine release in rat substantia nigra pars reticulata brain slices",
+      "type": "journal-article",
+      "year": 1997
+    },
+    {
+      "authors": [
+        "Mahmoud M. Iravani",
+        "Zygmunt L. Kruk"
+      ],
+      "canonical_url": "https://doi.org/10.1002/(sici)1098-2396(199701)25:1<93::aid-syn11>3.3.co;2-a",
+      "content_status": "metadata_only",
+      "doi": "10.1002/(sici)1098-2396(199701)25:1<93::aid-syn11>3.3.co;2-a",
+      "full_text_url_leads": [
+        "http://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1002%2F(SICI)1098-2396(199701)25:1%3C93::AID-SYN11%3E3.3.CO;2-A"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD2",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1002/(sici)1098-2396(199701)25:1<93::aid-syn11>3.3.co;2-a"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Real\u2010time measurement of stimulated 5\u2010hydroxytryptamine release in rat substantia nigra pars reticulata brain slices",
+      "type": "journal-article",
+      "year": 1997
+    },
+    {
+      "authors": [],
+      "canonical_url": "https://doi.org/10.1007/978-3-540-29678-2_5724",
+      "content_status": "metadata_only",
+      "doi": "10.1007/978-3-540-29678-2_5724",
+      "full_text_url_leads": [
+        "https://link.springer.com/content/pdf/10.1007/978-3-540-29678-2_5724"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD3",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1007/978-3-540-29678-2_5724"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Substantia Nigra, Pars Reticulata",
+      "type": "book-chapter",
+      "year": 2009
+    },
+    {
+      "authors": [
+        "Jing Zhang",
+        "Arthur S. Freeman"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0006-8993(94)90330-1",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0006-8993(94)90330-1",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0006899394903301?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0006899394903301?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD4",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0006-8993(94)90330-1"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Electrophysiological effects of cholecystokinin on neurons in rat substantia nigra pars reticulata",
+      "type": "journal-article",
+      "year": 1994
+    },
+    {
+      "authors": [
+        "O. Stork",
+        "T. Hashimoto",
+        "K. Obata"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0006-8993(94)91542-3",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0006-8993(94)91542-3",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0006899394915423?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0006899394915423?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD5",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0006-8993(94)91542-3"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Haloperidol activates tyrosine hydroxylase gene-expression in the rat substantia nigra, pars reticulata",
+      "type": "journal-article",
+      "year": 1994
+    },
+    {
+      "authors": [
+        "Keith B.J Franklin",
+        "Joanne Wolfe"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0031-9384(87)90277-0",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0031-9384(87)90277-0",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0031938487902770?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0031938487902770?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD6",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0031-9384(87)90277-0"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Opposed locomotor asymmetries following lesions of the medial and lateral substantia nigra pars compacta or pars reticulata in the rat",
+      "type": "journal-article",
+      "year": 1987
+    },
+    {
+      "authors": [
+        "Masahiro Sakamoto",
+        "Okihide Hikosaka"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0168-0102(89)90061-8",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0168-0102(89)90061-8",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0168010289900618?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0168010289900618?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD7",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0168-0102(89)90061-8"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Eye movements induced by microinjection of GABA agonist in the rat substantia nigra pars reticulata",
+      "type": "journal-article",
+      "year": 1989
+    },
+    {
+      "authors": [
+        "P. Sanderson",
+        "R. Mavoungou",
+        "D. Albe-Fessard"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0304-3940(86)90202-8",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0304-3940(86)90202-8",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0304394086902028?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0304394086902028?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD8",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0304-3940(86)90202-8"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Changes in substantia nigra pars reticulata activity following lesions of the substantia nigra pars compacta",
+      "type": "journal-article",
+      "year": 1986
+    },
+    {
+      "authors": [
+        "K. Fujimoto",
+        "H. Kita"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0304-3940(92)90630-p",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0304-3940(92)90630-p",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:030439409290630P?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:030439409290630P?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD9",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0304-3940(92)90630-p"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Responses of rat substantia nigra pars reticulata units to cortical stimulation",
+      "type": "journal-article",
+      "year": 1992
+    },
+    {
+      "authors": [
+        "J.M. Deniau",
+        "G. Chevalier"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0306-4522(92)90058-a",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0306-4522(92)90058-a",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:030645229290058A?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:030645229290058A?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD10",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0306-4522(92)90058-a"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "The lamellar organization of the rat substantia nigra pars reticulata: Distribution of projection neurons",
+      "type": "journal-article",
+      "year": 1992
+    },
+    {
+      "authors": [
+        "C.E. Rick",
+        "I.M. Stanford",
+        "M.G. Lacey"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0306-4522(95)00283-o",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0306-4522(95)00283-o",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:030645229500283O?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:030645229500283O?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD11",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0306-4522(95)00283-o"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Excitation of rat substantia nigra pars reticulata neurons by 5-hydroxytryptaminein vitro: Evidence for a direct action mediated by 5-hydroxytryptamine2C receptors",
+      "type": "journal-article",
+      "year": 1995
+    },
+    {
+      "authors": [
+        "I.M Stanford",
+        "M.G Lacey"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0306-4522(96)00151-0",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0306-4522(96)00151-0",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0306452296001510?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0306452296001510?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD12",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0306-4522(96)00151-0"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Electrophysiological investigation of adenosine trisphosphate-sensitive potassium channels in the rat substantia nigra pars reticulata",
+      "type": "journal-article",
+      "year": 1996
+    },
+    {
+      "authors": [
+        "M. Takada",
+        "Z.K. Li",
+        "T. Hattori"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0361-9230(87)90004-9",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0361-9230(87)90004-9",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0361923087900049?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0361923087900049?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD13",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0361-9230(87)90004-9"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q2",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "A note on the projections of pars compacta neurons within pars reticulata of the substantia nigra in the rat",
+      "type": "journal-article",
+      "year": 1987
+    },
+    {
+      "authors": [
+        "Si-Young Song",
+        "Shiro Konishi"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0921-8696(90)90346-5",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0921-8696(90)90346-5",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0921869690903465?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0921869690903465?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD14",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0921-8696(90)90346-5"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "kv3-primary-Q1"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Synaptic responses of pars compacta neurons of the rat substantia nigra in the slice preparation studied with whole-cell voltage clamp recording",
+      "type": "journal-article",
+      "year": 1990
+    },
+    {
+      "authors": [
+        "Si-Young Song",
+        "Shiro Konishi"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0921-8696(90)90769-y",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0921-8696(90)90769-y",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:092186969090769Y?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:092186969090769Y?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD15",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0921-8696(90)90769-y"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "kv3-primary-Q1"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Synaptic responses of pars compacta neurons of the rat substantia nigra in the slice preparation studied with whole-cell voltage clamp recording",
+      "type": "journal-article",
+      "year": 1990
+    },
+    {
+      "authors": [
+        "Oliver Stork",
+        "Takanori Hashimoto",
+        "Kunihiko Obata"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0921-8696(92)90938-w",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0921-8696(92)90938-w",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:092186969290938W?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:092186969290938W?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD16",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0921-8696(92)90938-w"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Transcriptional activation of tyrosine hydroxylase in the rat substantia nigra pars reticulata during picrotoxin induced generalized motor seizure",
+      "type": "journal-article",
+      "year": 1992
+    },
+    {
+      "authors": [
+        "Carolina Cebri\u00e1n",
+        "Andr\u00e9 Parent",
+        "Luc\u00eda Prensa"
+      ],
+      "canonical_url": "https://doi.org/10.1016/j.neures.2006.09.008",
+      "content_status": "metadata_only",
+      "doi": "10.1016/j.neures.2006.09.008",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0168010206002471?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0168010206002471?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD17",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/j.neures.2006.09.008"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "The somatodendritic domain of substantia nigra pars reticulata projection neurons in the rat",
+      "type": "journal-article",
+      "year": 2007
+    },
+    {
+      "authors": [
+        "T Ravizza",
+        "J Vel\u00cd\u0161kov\u00e1",
+        "S.L Mosh\u00e9"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0304-3940(02)01317-4",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0304-3940(02)01317-4",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0304394002013174?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0304394002013174?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD18",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0304-3940(02)01317-4"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Testosterone regulates androgen and estrogen receptor immunoreactivity in rat substantia nigra pars reticulata",
+      "type": "journal-article",
+      "year": 2003
+    },
+    {
+      "authors": [
+        "P Celada",
+        "C.A Paladini",
+        "J.M Tepper"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0306-4522(98)00356-x",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0306-4522(98)00356-x",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S030645229800356X?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S030645229800356X?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD19",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0306-4522(98)00356-x"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Gabaergic control of rat substantia nigra dopaminergic neurons: role of globus pallidus and substantia nigra pars reticulata",
+      "type": "journal-article",
+      "year": 1999
+    },
+    {
+      "authors": [],
+      "canonical_url": "https://doi.org/10.1016/s0924-977x(05)80761-8",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0924-977x(05)80761-8",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0924977X05807618?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0924977X05807618?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD20",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0924-977x(05)80761-8"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "P.1.036 Role of GABAA receptors in the substantia nigra pars reticulata in rat turning behaviour",
+      "type": "journal-article",
+      "year": 2005
+    },
+    {
+      "authors": [
+        "Atsushi Yoshida",
+        "Okihide Hikosaka"
+      ],
+      "canonical_url": "https://doi.org/10.1101/2023.07.25.550377",
+      "content_status": "metadata_only",
+      "doi": "10.1101/2023.07.25.550377",
+      "full_text_url_leads": [
+        "https://syndication.highwire.org/content/doi/10.1101/2023.07.25.550377"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD21",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1101/2023.07.25.550377"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Opposing functions of glutamatergic inputs between the globus pallidus external segment and substantia nigra pars reticulata",
+      "type": "posted-content",
+      "year": 2023
+    },
+    {
+      "authors": [
+        "Nassim Stegamat",
+        "Rupert Smit",
+        "Jacquelynn Rajavong",
+        "Thomas Campion",
+        "Sraavya Pinjala",
+        "George Smith"
+      ],
+      "canonical_url": "https://doi.org/10.1101/2025.08.28.672861",
+      "content_status": "metadata_only",
+      "doi": "10.1101/2025.08.28.672861",
+      "full_text_url_leads": [
+        "https://syndication.highwire.org/content/doi/10.1101/2025.08.28.672861"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD22",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1101/2025.08.28.672861"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Chemogenetic Manipulation of the Subthalamic Nucleus-Substantia Nigra Pars Reticulata Pathway Promotes Recovery in HemiParkinsonian Rat Models",
+      "type": "posted-content",
+      "year": 2025
+    },
+    {
+      "authors": [
+        "Sanne M Casello",
+        "Adam G Carter"
+      ],
+      "canonical_url": "https://doi.org/10.64898/2026.01.13.699372",
+      "content_status": "metadata_only",
+      "doi": "10.64898/2026.01.13.699372",
+      "full_text_url_leads": [
+        "https://syndication.highwire.org/content/doi/10.64898/2026.01.13.699372"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD23",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.64898/2026.01.13.699372"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Substantia nigra pars reticulata regulates prefrontal cortex via ventromedial thalamus",
+      "type": "posted-content",
+      "year": 2026
+    },
+    {
+      "authors": [
+        "Racha Al Tannir"
+      ],
+      "canonical_url": "https://doi.org/10.70675/4be5bdacz774dz4df5zb522z4d5efd2b5a43",
+      "content_status": "metadata_only",
+      "doi": "10.70675/4be5bdacz774dz4df5zb522z4d5efd2b5a43",
+      "full_text_url_leads": [],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD24",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.70675/4be5bdacz774dz4df5zb522z4d5efd2b5a43"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "The influence of Substantia nigra pars reticulata on the brainstem in normal and pathological condition",
+      "type": "dissertation",
+      "year": null
+    },
+    {
+      "authors": [
+        "Lorena Delgado Zabalza"
+      ],
+      "canonical_url": "https://doi.org/10.70675/90f9bd82zfaa9z473dzae40zc95f929f11b9",
+      "content_status": "metadata_only",
+      "doi": "10.70675/90f9bd82zfaa9z473dzae40zc95f929f11b9",
+      "full_text_url_leads": [],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD25",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.70675/90f9bd82zfaa9z473dzae40zc95f929f11b9"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Electrophysiological characterization of neuronal diversity in the substantia nigra pars reticulata in control and parkinsonian mice",
+      "type": "dissertation",
+      "year": null
+    },
+    {
+      "authors": [
+        "Chihiro Yokoyama",
+        "Yasuhiko Ibata"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0168-0102(96)88746-3",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0168-0102(96)88746-3",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0168010296887463?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0168010296887463?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD26",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0168-0102(96)88746-3"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q2"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "502 Effect of haloperidol on cytochrome oxidase activity in the substantia nigra pars reticulata : histochemical study in rat brain",
+      "type": "journal-article",
+      "year": 1996
+    },
+    {
+      "authors": [
+        "Priscilla K.Y Chan",
+        "Wing-Ho Yung"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0304-3940(98)00396-6",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0304-3940(98)00396-6",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0304394098003966?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0304394098003966?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD27",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0304-3940(98)00396-6"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q2",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Occlusion of the presynaptic action of cannabinoids in rat substantia nigra pars reticulata by cadmium",
+      "type": "journal-article",
+      "year": 1998
+    },
+    {
+      "authors": [
+        "L Stefanis"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0306-4522(96)00175-3",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0306-4522(96)00175-3",
+      "full_text_url_leads": [
+        "http://api.elsevier.com/content/article/PII:S0306-4522(96)00175-3?httpAccept=text/plain",
+        "http://api.elsevier.com/content/article/PII:S0306-4522(96)00175-3?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD28",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0306-4522(96)00175-3"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Transneuronal degeneration in substantia nigra pars reticulata following striatal excitotoxic injury in adult rat: time-course, distribution and morphology of cell death",
+      "type": "journal-article",
+      "year": 1996
+    },
+    {
+      "authors": [
+        "Alessandro E.P. Villa",
+        "Victoria M. Bajo Lorenzana"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0361-9230(96)00337-1",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0361-9230(96)00337-1",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0361923096003371?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0361923096003371?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD29",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0361-9230(96)00337-1"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q4",
+        "kv3-primary-Q2"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Ketamine Modulation of the Temporal Pattern of Discharges and Spike Train Interactions in the Rat Substantia Nigra Pars Reticulata",
+      "type": "journal-article",
+      "year": 1997
+    },
+    {
+      "authors": [
+        "G. Mereu",
+        "G. L. Gessa"
+      ],
+      "canonical_url": "https://doi.org/10.1097/00002826-198406001-00042",
+      "content_status": "metadata_only",
+      "doi": "10.1097/00002826-198406001-00042",
+      "full_text_url_leads": [
+        "http://journals.lww.com/00002826-198406001-00042"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD30",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1097/00002826-198406001-00042"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q2"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "OPPSITE EFFECTS OF ETHANOL ON SUBSTANTIA NIGRA PARS RETICULATA AND PARS COMPACTA DOPAMINE NEURONS",
+      "type": "journal-article",
+      "year": 1984
+    },
+    {
+      "authors": [
+        "H. Nakanishi",
+        "H. Kita",
+        "S.T. Kitai"
+      ],
+      "canonical_url": "https://doi.org/10.1016/0006-8993(87)91525-3",
+      "content_status": "metadata_only",
+      "doi": "10.1016/0006-8993(87)91525-3",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:0006899387915253?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:0006899387915253?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD31",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/0006-8993(87)91525-3"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q3",
+        "kv3-primary-Q3"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Intracellular study of rat substantia nigra pars reticulata neurons in an in vitro slice preparation: electrical membrane properties and response characteristics to subthalamic stimulation",
+      "type": "journal-article",
+      "year": 1987
+    },
+    {
+      "authors": [
+        "Y. Yanovsky",
+        "W. Zhang",
+        "U. Misgeld"
+      ],
+      "canonical_url": "https://doi.org/10.1016/j.neuroscience.2005.08.026",
+      "content_status": "metadata_only",
+      "doi": "10.1016/j.neuroscience.2005.08.026",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0306452205009012?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0306452205009012?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD32",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/j.neuroscience.2005.08.026"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q3",
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Two pathways for the activation of small-conductance potassium channels in neurons of substantia nigra pars reticulata",
+      "type": "journal-article",
+      "year": 2005
+    },
+    {
+      "authors": [
+        "Gui-Ian Ye",
+        "Andrew C.O. Tse",
+        "Wing-ho Yung"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0006-8993(96)01427-8",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0006-8993(96)01427-8",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0006899396014278?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0006899396014278?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD33",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0006-8993(96)01427-8"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q3",
+        "kv3-primary-Q3"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Taurine inhibits rat substantia nigra pars reticulata neurons by activation of GABA- and glycine-linked chloride conductance",
+      "type": "journal-article",
+      "year": 1997
+    },
+    {
+      "authors": [
+        "Hiroshi Nakanishi",
+        "Hitoshi Kita",
+        "S.T. Kitai"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0021-5198(19)59090-4",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0021-5198(19)59090-4",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0021519819590904?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0021519819590904?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD34",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0021-5198(19)59090-4"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q3",
+        "kv3-primary-Q3"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Intracellular study of rat substantia nigra pars reticulata (SNR) neurons in in vitro slice preparation: Electrical membrane properties and response characteristic to subthalamic (STH) stimulation",
+      "type": "journal-article",
+      "year": 1986
+    },
+    {
+      "authors": [
+        "G.L Ye",
+        "Chris K.S Leung",
+        "W.H Yung"
+      ],
+      "canonical_url": "https://doi.org/10.1016/s0006-8993(96)01473-4",
+      "content_status": "metadata_only",
+      "doi": "10.1016/s0006-8993(96)01473-4",
+      "full_text_url_leads": [
+        "https://api.elsevier.com/content/article/PII:S0006899396014734?httpAccept=text/plain",
+        "https://api.elsevier.com/content/article/PII:S0006899396014734?httpAccept=text/xml"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD35",
+      "provider_records": [
+        {
+          "provider": "crossref",
+          "provider_id": "10.1016/s0006-8993(96)01473-4"
+        }
+      ],
+      "query_ids": [
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Pre-synaptic effect of the ATP-sensitive potassium channel opener diazoxide on rat substantia nigra pars reticulata neurons",
+      "type": "journal-article",
+      "year": 1997
+    },
+    {
+      "authors": [
+        "Shengyuan Ding",
+        "Wei Wei",
+        "Fu-Ming Zhou"
+      ],
+      "canonical_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3234097",
+      "content_status": "metadata_only",
+      "doi": "10.1152/jn.00305.2011",
+      "full_text_url_leads": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3234097"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD36",
+      "provider_records": [
+        {
+          "provider": "pmc",
+          "provider_id": "PMC3234097"
+        }
+      ],
+      "query_ids": [
+        "fast-sodium-primary-Q1",
+        "fast-sodium-primary-Q2",
+        "fast-sodium-primary-Q3",
+        "fast-sodium-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Molecular and functional differences in voltage-activated sodium currents between GABA projection neurons and dopamine neurons in the substantia nigra",
+      "type": "article",
+      "year": 2011
+    },
+    {
+      "authors": [
+        "Shengyuan Ding",
+        "Shannon G Matta",
+        "Fu-Ming Zhou"
+      ],
+      "canonical_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3059163",
+      "content_status": "metadata_only",
+      "doi": "10.1152/jn.00707.2010",
+      "full_text_url_leads": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3059163"
+      ],
+      "fulltext_retrieval_ids": [],
+      "id": "LEAD37",
+      "provider_records": [
+        {
+          "provider": "pmc",
+          "provider_id": "PMC3059163"
+        }
+      ],
+      "query_ids": [
+        "kv3-primary-Q1",
+        "kv3-primary-Q2",
+        "kv3-primary-Q3",
+        "kv3-primary-Q4"
+      ],
+      "record_kind": "metadata_candidate",
+      "title": "Kv3-Like Potassium Channels Are Required for Sustained High-Frequency Firing in Basal Ganglia Output Neurons",
+      "type": "article",
+      "year": 2010
+    }
+  ],
+  "metadata_searches": [
+    {
+      "lead_ids": [
+        "LEAD1",
+        "LEAD10",
+        "LEAD11",
+        "LEAD12",
+        "LEAD13",
+        "LEAD14",
+        "LEAD15",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD2",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD3",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+direct+voltage-clamp+parameter+values%2C+units%2C+uncertainty%2C+and+exact+source+locators+quantitative+measurement&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+direct+voltage-clamp+parameter+values%2C+units%2C+uncertainty%2C+and+exact+source+locators+quantitative+measurement&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "fast-sodium-primary-Q1",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD10",
+        "LEAD12",
+        "LEAD13",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD26",
+        "LEAD27",
+        "LEAD28",
+        "LEAD29",
+        "LEAD3",
+        "LEAD30",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+methods+results+parameter+table&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+methods+results+parameter+table&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "fast-sodium-primary-Q2",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD10",
+        "LEAD12",
+        "LEAD13",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD27",
+        "LEAD3",
+        "LEAD31",
+        "LEAD32",
+        "LEAD33",
+        "LEAD34",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+mean+range+variance+dose+response+kinetics+conductance+density&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+mean+range+variance+dose+response+kinetics+conductance+density&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "fast-sodium-primary-Q3",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD1",
+        "LEAD10",
+        "LEAD12",
+        "LEAD13",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD2",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD27",
+        "LEAD28",
+        "LEAD29",
+        "LEAD3",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+measurement+units+methods&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+fast+sodium+activation%2C+inactivation%2C+recovery%2C+and+resurgent-current+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+measurement+units+methods&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "fast-sodium-primary-Q4",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD1",
+        "LEAD10",
+        "LEAD12",
+        "LEAD14",
+        "LEAD15",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD2",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD3",
+        "LEAD32",
+        "LEAD35",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+direct+voltage-clamp+parameter+values%2C+units%2C+uncertainty%2C+and+exact+source+locators+quantitative+measurement&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+direct+voltage-clamp+parameter+values%2C+units%2C+uncertainty%2C+and+exact+source+locators+quantitative+measurement&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "kv3-primary-Q1",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD10",
+        "LEAD12",
+        "LEAD13",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD27",
+        "LEAD28",
+        "LEAD29",
+        "LEAD3",
+        "LEAD32",
+        "LEAD35",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+methods+results+parameter+table&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+methods+results+parameter+table&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "kv3-primary-Q2",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD10",
+        "LEAD12",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD28",
+        "LEAD3",
+        "LEAD31",
+        "LEAD32",
+        "LEAD33",
+        "LEAD34",
+        "LEAD35",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+mean+range+variance+dose+response+kinetics+conductance+density&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+mean+range+variance+dose+response+kinetics+conductance+density&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "kv3-primary-Q3",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    },
+    {
+      "lead_ids": [
+        "LEAD1",
+        "LEAD10",
+        "LEAD12",
+        "LEAD13",
+        "LEAD16",
+        "LEAD17",
+        "LEAD18",
+        "LEAD19",
+        "LEAD2",
+        "LEAD20",
+        "LEAD21",
+        "LEAD22",
+        "LEAD23",
+        "LEAD24",
+        "LEAD25",
+        "LEAD27",
+        "LEAD3",
+        "LEAD32",
+        "LEAD35",
+        "LEAD4",
+        "LEAD5",
+        "LEAD6",
+        "LEAD7",
+        "LEAD8",
+        "LEAD9"
+      ],
+      "provider_searches": [
+        {
+          "attempts": 1,
+          "metadata_records": 0,
+          "provider": "openalex",
+          "search_url": "https://api.openalex.org/works?search=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+measurement+units+methods&per-page=25&select=id%2Cdoi%2Ctitle%2Cauthorships%2Cpublication_year%2Ctype%2Cprimary_location%2Cbest_oa_location%2Copen_access"
+        },
+        {
+          "attempts": 1,
+          "metadata_records": 25,
+          "provider": "crossref",
+          "search_url": "https://api.crossref.org/works?query.bibliographic=substantia+nigra+pars+reticulata+fast+spike-current+equations+Kv3-like+potassium+activation%2C+inactivation%2C+rise%2C+and+deactivation+parameters+rat+juvenile+rat+acute+substantia+nigra+pars+reticulata+slice+recording+measurement+units+methods&rows=25&select=DOI%2CURL%2Ctitle%2Cauthor%2Cpublished%2Ctype%2Clink%2Cresource"
+        }
+      ],
+      "query_id": "kv3-primary-Q4",
+      "schema_version": "scholarly-discovery-v1",
+      "searched_at": "2026-08-04"
+    }
+  ],
+  "queries": [
+    {
+      "gap_id": "fast-sodium-primary",
+      "id": "fast-sodium-primary-Q1",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement"
+    },
+    {
+      "gap_id": "fast-sodium-primary",
+      "id": "fast-sodium-primary-Q2",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table"
+    },
+    {
+      "gap_id": "fast-sodium-primary",
+      "id": "fast-sodium-primary-Q3",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density"
+    },
+    {
+      "gap_id": "fast-sodium-primary",
+      "id": "fast-sodium-primary-Q4",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations fast sodium activation, inactivation, recovery, and resurgent-current parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods"
+    },
+    {
+      "gap_id": "kv3-primary",
+      "id": "kv3-primary-Q1",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording direct voltage-clamp parameter values, units, uncertainty, and exact source locators quantitative measurement"
+    },
+    {
+      "gap_id": "kv3-primary",
+      "id": "kv3-primary-Q2",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording methods results parameter table"
+    },
+    {
+      "gap_id": "kv3-primary",
+      "id": "kv3-primary-Q3",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording mean range variance dose response kinetics conductance density"
+    },
+    {
+      "gap_id": "kv3-primary",
+      "id": "kv3-primary-Q4",
+      "status": "planned",
+      "text": "substantia nigra pars reticulata fast spike-current equations Kv3-like potassium activation, inactivation, rise, and deactivation parameters rat juvenile rat acute substantia nigra pars reticulata slice recording measurement units methods"
+    }
+  ],
+  "question": {
+    "id": "v14-stageB-fast-channel-primary",
+    "kind": "parameter",
+    "requested_measurement": "direct voltage-clamp parameter values, units, uncertainty, and exact source locators",
+    "target": "substantia nigra pars reticulata fast spike-current equations",
+    "text": "Which primary experiments report the quantitative fast sodium and Kv3-like current parameters needed to represent SNr spike generation?"
+  },
+  "searches": [],
+  "state_version": "parameter-research-v1",
+  "updated_at": "2026-08-05"
+}

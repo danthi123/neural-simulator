@@ -451,6 +451,223 @@ def _metadata_keys(candidate: Mapping[str, Any]) -> set[tuple[str, str]]:
     return keys
 
 
+_KNOWN_METADATA_LEAD_FIELDS = frozenset({
+    "record_kind", "content_status", "title", "doi", "canonical_url",
+    "full_text_url_leads", "authors", "year", "type", "provider_records",
+    "query_ids",
+})
+_PROVIDER_RECORD_FIELDS = frozenset({"provider", "provider_id"})
+
+
+def _normalize_known_provider_records(value: Any) -> list[dict[str, str]]:
+    if not isinstance(value, list) or not value:
+        raise ParameterResearchError("known metadata lead requires provider_records")
+    records: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for index, raw in enumerate(value):
+        if not isinstance(raw, Mapping):
+            raise ParameterResearchError("known metadata provider records must be objects")
+        if set(raw) != _PROVIDER_RECORD_FIELDS:
+            raise ParameterResearchError(
+                "known metadata provider records must contain exactly provider and provider_id"
+            )
+        provider = _text(raw.get("provider"), f"known_metadata_lead.provider_records[{index}].provider")
+        provider_id = _text(
+            raw.get("provider_id"), f"known_metadata_lead.provider_records[{index}].provider_id"
+        )
+        identity = (provider, provider_id)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        records.append({"provider": provider, "provider_id": provider_id})
+    return sorted(records, key=lambda item: (item["provider"], item["provider_id"]))
+
+
+def _canonical_url_doi(value: str | None) -> str | None:
+    if value is None:
+        return None
+    parsed = urlsplit(value)
+    if parsed.hostname not in {"doi.org", "dx.doi.org"}:
+        return None
+    if parsed.query or parsed.fragment or not parsed.path:
+        raise ParameterResearchError("known metadata canonical DOI URL is not canonical")
+    try:
+        return normalize_doi(parsed.path.lstrip("/"))
+    except ParameterResearchError as exc:
+        raise ParameterResearchError("known metadata canonical URL contains an invalid DOI") from exc
+
+
+def _normalize_known_metadata_lead(
+    raw: Mapping[str, Any], *, query_ids: set[str], index: int,
+) -> dict[str, Any]:
+    if not isinstance(raw, Mapping):
+        raise ParameterResearchError("known metadata leads must be objects")
+    unknown = set(raw) - _KNOWN_METADATA_LEAD_FIELDS
+    if unknown:
+        raise ParameterResearchError(
+            "known metadata lead contains widened or unsupported fields: "
+            + ", ".join(sorted(unknown))
+        )
+    if raw.get("record_kind", "metadata_candidate") != "metadata_candidate":
+        raise ParameterResearchError("known metadata lead must remain a metadata_candidate")
+    if raw.get("content_status", "metadata_only") != "metadata_only":
+        raise ParameterResearchError("known metadata lead must remain metadata_only")
+    title = _text(raw.get("title"), f"known_metadata_lead[{index}].title")
+
+    raw_query_ids = raw.get("query_ids")
+    if not isinstance(raw_query_ids, list) or not raw_query_ids:
+        raise ParameterResearchError("known metadata lead requires one or more query_ids")
+    normalized_query_ids = [_text(item, f"known_metadata_lead[{index}].query_ids") for item in raw_query_ids]
+    if len(normalized_query_ids) != len(set(normalized_query_ids)):
+        raise ParameterResearchError("known metadata lead query_ids must be unique")
+    unknown_queries = set(normalized_query_ids) - query_ids
+    if unknown_queries:
+        raise ParameterResearchError(
+            "known metadata lead refers to unknown query id(s): " + ", ".join(sorted(unknown_queries))
+        )
+
+    raw_doi = raw.get("doi")
+    if raw_doi is not None and not isinstance(raw_doi, str):
+        raise ParameterResearchError(f"known_metadata_lead[{index}].doi must be a string")
+    doi = normalize_doi(raw_doi) if raw_doi is not None else None
+    canonical_url = raw.get("canonical_url")
+    if canonical_url is not None:
+        canonical_url = normalize_url(_url(canonical_url, f"known_metadata_lead[{index}].canonical_url"))
+    if doi is None and canonical_url is None:
+        raise ParameterResearchError("known metadata lead requires a DOI or canonical_url")
+    canonical_doi = _canonical_url_doi(canonical_url)
+    if doi is not None and canonical_doi is not None and doi != canonical_doi:
+        raise ParameterResearchError("known metadata lead DOI disagreement with canonical_url")
+
+    raw_fulltext = raw.get("full_text_url_leads")
+    if not isinstance(raw_fulltext, list):
+        raise ParameterResearchError("known metadata lead requires full_text_url_leads as a list")
+    fulltext_urls = sorted({
+        normalize_url(_url(url, f"known_metadata_lead[{index}].full_text_url_leads"))
+        for url in raw_fulltext
+    })
+
+    raw_authors = raw.get("authors", [])
+    if raw_authors is None:
+        raw_authors = []
+    if not isinstance(raw_authors, list):
+        raise ParameterResearchError("known metadata lead authors must be a list")
+    authors: list[str] = []
+    for author in raw_authors:
+        normalized_author = _text(author, f"known_metadata_lead[{index}].authors")
+        if normalized_author not in authors:
+            authors.append(normalized_author)
+
+    year = raw.get("year")
+    if year is not None and (isinstance(year, bool) or not isinstance(year, int) or not 1000 <= year <= 9999):
+        raise ParameterResearchError("known metadata lead year must be a four-digit integer")
+    work_type = raw.get("type")
+    if work_type is not None:
+        work_type = _text(work_type, f"known_metadata_lead[{index}].type")
+
+    return {
+        "record_kind": "metadata_candidate",
+        "content_status": "metadata_only",
+        "provider_records": _normalize_known_provider_records(raw.get("provider_records")),
+        "doi": doi,
+        "canonical_url": canonical_url,
+        "full_text_url_leads": fulltext_urls,
+        "title": title,
+        "authors": authors,
+        "year": year,
+        "type": work_type,
+        "query_ids": normalized_query_ids,
+        "fulltext_retrieval_ids": [],
+    }
+
+
+def _metadata_text_identity(value: Any) -> str:
+    return " ".join(str(value).split()).casefold()
+
+
+def _merge_known_metadata_lead(existing: dict[str, Any], incoming: Mapping[str, Any]) -> None:
+    existing_doi = normalize_doi(existing.get("doi"))
+    incoming_doi = normalize_doi(incoming.get("doi"))
+    if existing_doi and incoming_doi and existing_doi != incoming_doi:
+        raise ParameterResearchError("duplicate metadata lead has a DOI disagreement")
+    for field in ("title", "year", "type"):
+        left, right = existing.get(field), incoming.get(field)
+        if left is not None and right is not None:
+            same = (
+                _metadata_text_identity(left) == _metadata_text_identity(right)
+                if field != "year" else left == right
+            )
+            if not same:
+                raise ParameterResearchError(f"duplicate metadata lead has conflicting {field}")
+    if existing_doi is None and incoming_doi is not None:
+        existing["doi"] = incoming_doi
+    if existing.get("canonical_url") is None and incoming.get("canonical_url") is not None:
+        existing["canonical_url"] = incoming["canonical_url"]
+    if existing.get("year") is None:
+        existing["year"] = incoming.get("year")
+    if existing.get("type") is None:
+        existing["type"] = incoming.get("type")
+    existing["query_ids"] = list(dict.fromkeys(existing["query_ids"] + incoming["query_ids"]))
+    existing["authors"] = list(dict.fromkeys(existing.get("authors", []) + incoming.get("authors", [])))
+    existing["provider_records"] = sorted(
+        {tuple(sorted(record.items())) for record in existing["provider_records"] + incoming["provider_records"]}
+    )
+    existing["provider_records"] = [dict(record) for record in existing["provider_records"]]
+    existing["full_text_url_leads"] = sorted(set(
+        existing["full_text_url_leads"] + incoming["full_text_url_leads"]
+    ))
+
+
+def import_known_metadata_leads(
+    state: Mapping[str, Any], leads: Sequence[Mapping[str, Any]], *, imported_at: str | None = None,
+) -> dict[str, Any]:
+    """Import exact metadata leads without creating evidence or retrieval records.
+
+    This is intentionally pure: the input state and lead records are never
+    mutated. Callers persist the validated result with ``save_state`` so a
+    malformed list cannot leave a partially imported checkpoint.
+    """
+    result = validate_state(state)
+    if any(check["status"] != "complete" for check in result["local_checks"]):
+        raise ParameterResearchError("external discovery requires successful local checks first")
+    if not isinstance(leads, Sequence) or isinstance(leads, (str, bytes)):
+        raise ParameterResearchError("known metadata leads must be a JSON list")
+    imported_at = imported_at or dt.date.today().isoformat()
+    _date(imported_at, "imported_at")
+    result = json.loads(json.dumps(result))
+    planned_query_ids = {query["id"] for query in result["queries"]}
+    identities: dict[tuple[str, str], str] = {}
+    for existing in result["metadata_leads"]:
+        for key in _metadata_keys(existing):
+            prior = identities.get(key)
+            if prior is not None and prior != existing["id"]:
+                raise ParameterResearchError("existing metadata leads have conflicting identities")
+            identities[key] = existing["id"]
+    for index, raw in enumerate(leads):
+        incoming = _normalize_known_metadata_lead(raw, query_ids=planned_query_ids, index=index)
+        keys = _metadata_keys(incoming)
+        matching_ids = {identities[key] for key in keys if key in identities}
+        if len(matching_ids) > 1:
+            raise ParameterResearchError("known metadata lead identities conflict with multiple existing leads")
+        if matching_ids:
+            existing_id = next(iter(matching_ids))
+            existing = next(lead for lead in result["metadata_leads"] if lead["id"] == existing_id)
+            _merge_known_metadata_lead(existing, incoming)
+        else:
+            incoming["id"] = f"LEAD{len(result['metadata_leads']) + 1}"
+            result["metadata_leads"].append(incoming)
+            existing = incoming
+        for key in _metadata_keys(existing):
+            identities[key] = existing["id"]
+    if leads:
+        result["updated_at"] = imported_at
+    return validate_state(result)
+
+
+# Keep the shorter name available for callers that use the CLI terminology.
+import_known_leads = import_known_metadata_leads
+
+
 def add_discovery_results(
     state: Mapping[str, Any], *, adapter: DiscoveryAdapter, searched_at: str | None = None
 ) -> dict[str, Any]:
@@ -848,6 +1065,10 @@ def _main() -> int:
     discover = sub.add_parser("import-results")
     discover.add_argument("--state", required=True, type=Path)
     discover.add_argument("--results", required=True, type=Path)
+    known = sub.add_parser("import-known-leads")
+    known.add_argument("--state", required=True, type=Path)
+    known.add_argument("--leads", required=True, type=Path)
+    known.add_argument("--imported-at", type=str)
     live = sub.add_parser("discover-live")
     live.add_argument("--state", required=True, type=Path)
     live.add_argument("--user-agent", default="sim-neural-research/1.0")
@@ -881,6 +1102,12 @@ def _main() -> int:
         elif args.command == "import-results":
             records = json.loads(args.results.read_text(encoding="utf-8"))
             save_state(args.state, add_discovery_results(load_state(args.state), adapter=_fixture_adapter(records)))
+        elif args.command == "import-known-leads":
+            leads = json.loads(args.leads.read_text(encoding="utf-8"))
+            state = import_known_metadata_leads(
+                load_state(args.state), leads, imported_at=args.imported_at,
+            )
+            save_state(args.state, state)
         elif args.command == "discover-live":
             client = scholarly_discovery.ScholarlyDiscoveryClient(
                 user_agent=args.user_agent,

@@ -1,0 +1,8 @@
+{
+  "artifact": "research/parameter_research/v14_stageB_fast_channel_primary_state.json",
+  "device": "not_applicable_metadata_research_state",
+  "execution": "metadata_discovery_and_validated_lead_import_only",
+  "generator": "tools/parameter_research.py",
+  "scientific_claim": false,
+  "source_revision": "22ec30b769b1cf272feec7dde0a1eb9667abd779"
+}

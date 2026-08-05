@@ -90,6 +90,22 @@ def _metadata_response(query: dict, *, doi: str = "10.1234/example.1") -> dict:
     }
 
 
+def _known_lead(query_ids, **overrides) -> dict:
+    lead = {
+        "title": "NALCN supports autonomous firing",
+        "doi": "https://doi.org/10.1234/EXAMPLE.1",
+        "canonical_url": "https://doi.org/10.1234/example.1",
+        "full_text_url_leads": ["https://repository.test/paper.pdf"],
+        "authors": ["A. Example"],
+        "year": 2024,
+        "type": "article",
+        "provider_records": [{"provider": "openalex", "provider_id": "W123"}],
+        "query_ids": list(query_ids),
+    }
+    lead.update(overrides)
+    return lead
+
+
 def _fulltext_receipt(lead: dict, store: Path, *, request_sha: str = "a" * 64) -> dict:
     content = b"NALCN conductance was fitted in mS/cm^2.\n"
     digest = sha256(content).hexdigest()
@@ -235,6 +251,113 @@ def test_live_metadata_rejects_claims_smuggled_into_provider_output():
 
     with pytest.raises(pr.ParameterResearchError, match="cannot contain evidence or claims"):
         pr.add_scholarly_metadata(state, discoverer=bad, searched_at="2026-08-04")
+
+
+def test_known_metadata_leads_import_as_metadata_only_without_mutating_input_state():
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    original = copy.deepcopy(state)
+    query_ids = [state["queries"][0]["id"], state["queries"][1]["id"]]
+
+    result = pr.import_known_metadata_leads(
+        state, [_known_lead(query_ids)], imported_at="2026-08-04"
+    )
+
+    assert state == original
+    assert len(result["metadata_leads"]) == 1
+    lead = result["metadata_leads"][0]
+    assert lead["doi"] == "10.1234/example.1"
+    assert lead["canonical_url"] == "https://doi.org/10.1234/example.1"
+    assert lead["query_ids"] == query_ids
+    assert lead["fulltext_retrieval_ids"] == []
+    assert not {"claims", "exact_locator", "evidence"}.intersection(lead)
+    assert result["metadata_searches"] == []
+    assert result["fulltext_retrievals"] == []
+
+
+def test_known_metadata_leads_deduplicate_by_doi_and_merge_nonconflicting_metadata():
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    first, second = state["queries"][0]["id"], state["queries"][1]["id"]
+    state = pr.import_known_metadata_leads(state, [_known_lead([first])], imported_at="2026-08-04")
+    result = pr.import_known_metadata_leads(state, [_known_lead(
+        [second], canonical_url="https://publisher.test/article/", authors=["B. Researcher"],
+        provider_records=[{"provider": "crossref", "provider_id": "10.1234/example.1"}],
+        full_text_url_leads=["https://repository.test/paper.pdf", "https://publisher.test/article.pdf"],
+    )], imported_at="2026-08-04")
+
+    assert len(result["metadata_leads"]) == 1
+    lead = result["metadata_leads"][0]
+    assert set(lead["query_ids"]) == {first, second}
+    assert {record["provider"] for record in lead["provider_records"]} == {"openalex", "crossref"}
+    assert lead["full_text_url_leads"] == [
+        "https://publisher.test/article.pdf", "https://repository.test/paper.pdf"
+    ]
+
+
+def test_known_metadata_leads_reject_doi_disagreement_and_conflicting_duplicate():
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    query_id = state["queries"][0]["id"]
+    state = pr.import_known_metadata_leads(state, [_known_lead([query_id])], imported_at="2026-08-04")
+
+    with pytest.raises(pr.ParameterResearchError, match="DOI disagreement"):
+        pr.import_known_metadata_leads(
+            state, [_known_lead([query_id], canonical_url="https://doi.org/10.9999/other")],
+            imported_at="2026-08-04",
+        )
+    with pytest.raises(pr.ParameterResearchError, match="conflicting title"):
+        pr.import_known_metadata_leads(
+            state, [_known_lead([query_id], title="A different paper")], imported_at="2026-08-04"
+        )
+
+
+@pytest.mark.parametrize("mutator, message", [
+    (lambda lead, query_id: lead.update(query_ids=["UNKNOWN"]), "unknown query"),
+    (lambda lead, query_id: lead.update(full_text_url_leads=["file:///tmp/paper.pdf"]), "http"),
+    (lambda lead, query_id: lead.update(claims=[]), "widened"),
+    (lambda lead, query_id: lead.pop("provider_records"), "provider_records"),
+    (lambda lead, query_id: lead.pop("full_text_url_leads"), "full_text_url_leads"),
+])
+def test_known_metadata_leads_reject_malformed_or_widened_records(mutator, message):
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    query_id = state["queries"][0]["id"]
+    lead = _known_lead([query_id])
+    mutator(lead, query_id)
+    with pytest.raises(pr.ParameterResearchError, match=message):
+        pr.import_known_metadata_leads(state, [lead], imported_at="2026-08-04")
+
+
+def test_import_known_leads_cli_writes_one_validated_atomic_state(tmp_path: Path, monkeypatch):
+    state_path = tmp_path / "state.json"
+    leads_path = tmp_path / "known-leads.json"
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    query_id = state["queries"][0]["id"]
+    pr.save_state(state_path, state)
+    leads_path.write_text(json.dumps([_known_lead([query_id])]), encoding="utf-8")
+
+    monkeypatch.setattr("sys.argv", [
+        "parameter_research.py", "import-known-leads", "--state", str(state_path),
+        "--leads", str(leads_path), "--imported-at", "2026-08-04",
+    ])
+    assert pr._main() == 0
+    saved = pr.load_state(state_path)
+    assert len(saved["metadata_leads"]) == 1
+    assert saved["updated_at"] == "2026-08-04"
+
+
+def test_import_known_leads_cli_does_not_checkpoint_invalid_batch(tmp_path: Path, monkeypatch):
+    state_path = tmp_path / "state.json"
+    leads_path = tmp_path / "known-leads.json"
+    state = pr.create_plan(question=QUESTION, gaps=GAPS, local_search=_local, created_at="2026-08-04")
+    pr.save_state(state_path, state)
+    original_bytes = state_path.read_bytes()
+    leads_path.write_text(json.dumps([_known_lead(["UNKNOWN"])]), encoding="utf-8")
+
+    monkeypatch.setattr("sys.argv", [
+        "parameter_research.py", "import-known-leads", "--state", str(state_path),
+        "--leads", str(leads_path), "--imported-at", "2026-08-04",
+    ])
+    with pytest.raises(SystemExit):
+        pr._main()
+    assert state_path.read_bytes() == original_bytes
 
 
 def test_fulltext_receipt_and_locators_are_linked_but_remain_nonclaims(tmp_path: Path):
