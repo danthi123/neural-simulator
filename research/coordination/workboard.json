@@ -893,12 +893,6 @@
   "events": [
     {
       "at": "2026-08-04T20:08:01+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v14-performance-v2-execution"
-    },
-    {
-      "at": "2026-08-04T20:08:01+00:00",
       "detail": "ready",
       "kind": "lane-update",
       "subject": "v14-benchmark-environment"
@@ -1490,6 +1484,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T01:45:46+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
     }
   ],
   "lanes": {
@@ -1780,8 +1780,8 @@
     "gateb-v14-scorer-integration": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T01:44:31+00:00",
-      "next_action": "Bank the low-endpoint five-arm receipt, then run and audit the high endpoint so HCN and every other lesion starts from nonzero conductance.",
+      "heartbeat_at": "2026-08-05T01:45:46+00:00",
+      "next_action": "Implement source-bound 101-spike event-count production traces with bounded no-spike timeout; keep medium-AHP, HCN current-step, and SK cohort contracts unavailable until fully specified.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "If any source cannot authorize an exact fixed value, keep that leaf explicitly model-prior or searched and leave readiness undefined; do not invent measured authority.",
@@ -2123,5 +2123,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T01:44:31+00:00"
+  "updated_at": "2026-08-05T01:45:46+00:00"
 }

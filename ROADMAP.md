@@ -120,9 +120,13 @@ its controls and lesions, and is tested at the required seed coverage.
 1. **Integration is the main blocker.** The project has more tested parts than
    integrated behavior. The next meaningful milestone is a small world, body,
    social interaction, and grounded reason to communicate running together.
-2. **Gate B delayed credit is unresolved.** The current calibration must show
-   causal action-reward learning and defeat the unrelated-reward control before
-   same-brain adaptation can be trusted.
+2. **Gate B physiology and delayed credit are unresolved.** The V14 engine now
+   compiles and independently verifies pinned SNr candidates, runs intact plus
+   four intrinsic-current lesions, recomputes metrics from bound raw traces,
+   and records provenance. This is engineering readiness only. Scientific
+   scoring remains unavailable until source-bound 101-spike, AHP, HCN
+   current-step, and SK cohort protocols are executable; delayed action-reward
+   learning and its unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
    biological consistency signal rather than an exact composer metadata read.
@@ -161,8 +165,10 @@ required integrated form.
 - Give the brain a minimal world, body, social interaction, and a reason to
   communicate. Make speech an action selected from internal state and
   expected consequence, not a free-standing text completion.
-- Finish the Gate B v2 calibration without opening reserved development or
-  held-out seeds early. Report a no-go if the causal controls fail.
+- Finish V14 Stage B production protocols and causal controls without opening
+  reserved scientific partitions early. The next runner records 101-spike
+  event-count traces with a bounded no-spike timeout; AHP, HCN current-step,
+  and SK cohort gates stay unavailable until their protocols are fully filed.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another
@@ -237,8 +243,11 @@ maintenance is workflow support, not biological evidence.
 ## Experiment Engine Workflow
 
 The experiment engine is a planner and controller for reproducible experiments;
-it is not a result generator. The current board records a deterministic dry-run
-controller and sealed handoff validation. Execution integration remains gated.
+it is not a result generator. It now authenticates candidate packets, executes
+real readiness traces and four intrinsic-current lesions, binds raw artifacts
+to an automatic scorer, and emits revision-bound receipts. The latest endpoint
+runs correctly returned `UNAVAILABLE`, not a scientific verdict, because the
+remaining biological analysis protocols are not executable yet.
 
 1. **Plan.** Materialize the treatment, controls, lesions, anti-cheats, exact
    variables, seed partitions, expected artifacts, and resource budget.
