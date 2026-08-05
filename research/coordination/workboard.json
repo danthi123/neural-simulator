@@ -1105,33 +1105,31 @@
       "write_set": [
         "tests/test_experiment_observation.py"
       ]
+    },
+    "019fd0f4-3742-7202-a93e-b10eb5c662bf": {
+      "completed_at": "2026-08-05T08:15:30+00:00",
+      "heartbeat_at": "2026-08-05T08:15:30+00:00",
+      "model": "gpt-5.6-luna",
+      "next_action": "Complete V2 clamp implementation and preregister execution",
+      "result": "Primary-source audit found V1 conductance/gate inconsistency, missing recovery ladder, and unidentified tau(V) laws; correction incorporated into V2.",
+      "started_at": "2026-08-05T08:04:59+00:00",
+      "status": "completed",
+      "task": "Stage 1 fast-Na/Kv3 source-to-kinetics audit",
+      "write_set": []
+    },
+    "019fd0fe-229d-7862-9afa-b2640b8224e6": {
+      "heartbeat_at": "2026-08-05T08:15:48+00:00",
+      "model": "gpt-5.6-luna",
+      "started_at": "2026-08-05T08:15:48+00:00",
+      "status": "running",
+      "task": "V2 fast-channel clamp runner and focused tests",
+      "write_set": [
+        "research/runners/v14_stageB_fast_channel_clamp.py",
+        "tests/test_v14_stageB_fast_channel_clamp_runner.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T21:26:33+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fceab-a658-7833-8a6c-a5ddf854f609"
-    },
-    {
-      "at": "2026-08-04T21:32:25+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcea5-ee57-77f3-83bf-466e6724b746"
-    },
-    {
-      "at": "2026-08-04T21:32:25+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-clamp-integration"
-    },
-    {
-      "at": "2026-08-04T21:32:25+00:00",
-      "detail": "planned",
-      "kind": "lane-update",
-      "subject": "gateb-v14-clamp-megakernel"
-    },
     {
       "at": "2026-08-04T21:34:43+00:00",
       "detail": "completed",
@@ -1707,6 +1705,30 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T08:04:59+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd0f4-3742-7202-a93e-b10eb5c662bf"
+    },
+    {
+      "at": "2026-08-05T08:15:30+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0f4-3742-7202-a93e-b10eb5c662bf"
+    },
+    {
+      "at": "2026-08-05T08:15:48+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd0fe-229d-7862-9afa-b2640b8224e6"
+    },
+    {
+      "at": "2026-08-05T08:21:28+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -1967,17 +1989,19 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T08:03:04+00:00",
-      "next_action": "Implement successor Stages 0-1: executable unit/equation assertions and source-exact isolated fast-Na/Kv3 voltage-clamp kernels; calibration remains forbidden until architecture transfer gates pass.",
+      "heartbeat_at": "2026-08-05T08:21:28+00:00",
+      "next_action": "Complete and seal the V2 vectorized fast-channel clamp runner and execution contract, then run independent NumPy authority and leased-CuPy parity evidence; no parameter sweep is authorized.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
-      "resource": "local_cpu",
+      "resource": "agent_cpu_network",
       "status": "running",
       "write_set": [
         "sim/kernels.py",
-        "research/runners/v14_stageB_structural_successor.py",
-        "tests/test_v14_stageB_structural_successor.py"
+        "sim/snr_structural_successor.py",
+        "research/runners/v14_stageB_fast_channel_clamp.py",
+        "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
+        "tools/v14_stageB_fast_channel_clamp_analysis.py"
       ]
     },
     "gateb-v14-packet-authority": {
@@ -2366,5 +2390,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T08:03:04+00:00"
+  "updated_at": "2026-08-05T08:21:28+00:00"
 }

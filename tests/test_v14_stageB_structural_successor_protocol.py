@@ -4,8 +4,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL = ROOT / "research/specs/v14_snr_stageB_structural_successor_v1.json"
-PROTOCOL_SHA256 = "aa64ea9784584eabae6391d2d8cbb1f66c8693f735a966b6e2a054193fc8d01e"
+PROTOCOL = ROOT / "research/specs/v14_snr_stageB_structural_successor_v2.json"
+PROTOCOL_SHA256 = "c0ab042b65cb7be21b640d9a14cddb13582a1662f3f0aa3159093aa1d13792c4"
 
 
 def _load():
@@ -44,6 +44,12 @@ def test_architecture_keeps_local_calcium_load_bearing_and_axial_current_conserv
         "equal magnitude and opposite sign before compartment area normalization"
     )
     equations = architecture["equation_contract"]
+    assert equations["steady_state_forms"]["fast_na_activation_gate"].startswith(
+        "m_inf(V)=A_fast_na_inf(V)^(1/3)"
+    )
+    assert equations["steady_state_forms"]["kv3_activation_gate"].startswith(
+        "n_inf(V)=A_kv3_inf(V)^(1/4)"
+    )
     assert "dV_soma/dt" in equations["soma_balance"]
     assert "dN_local/dt" in equations["calcium_mass_balance"]["local"]
     assert equations["fixed_update_order"][-1].endswith("without resetting either compartment")
@@ -95,6 +101,10 @@ def test_fast_channel_commands_and_performance_budget_are_frozen():
     assert "10 s prepulses from -110 through 0 mV" in clamp["source_command_protocols"][
         "kv3_steady_state_inactivation"
     ]
+    assert clamp["project_operational_recovery_duration_ladder_ms"] == [
+        0.0, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0,
+    ]
+    assert "model prior" in clamp["kinetic_model_prior_boundary"]["tau_interpolation"]
     numerics = stages[2]
     assert numerics["fixed_environment"]["software_identity"]["cupy"] == "14.1.1"
     assert any("100000 complete simulation steps per second" in gate for gate in numerics["hard_gates"])

@@ -141,7 +141,9 @@ its controls and lesions, and is tested at the required seed coverage.
    SK cohort remains unavailable. The next build is a source-bound fast-Na/Kv3,
    soma/proximal-dendrite, local-Cav2.2-SK packet. Its seven-stage architecture-
    first contract is filed in
-   `research/specs/v14_snr_stageB_structural_successor_v1.json`; implementation
+   `research/specs/v14_snr_stageB_structural_successor_v2.json`; V1 was
+   superseded before execution after an audit found that powered activation
+   gates changed the source-measured conductance curves. Implementation
    and execution have not begun. Delayed action-reward learning and its
    unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins

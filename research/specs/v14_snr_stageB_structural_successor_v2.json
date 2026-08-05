@@ -1,0 +1,386 @@
+{
+  "schema": "v14-snr-stageB-structural-successor-protocol-v2",
+  "protocol_id": "v14-snr-stageB-fast-channel-two-compartment-local-calcium-v2",
+  "status": "preregistered_not_implemented_not_executed",
+  "scientific_verdict": null,
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "non-executed architecture and validation contract; contains no simulation result",
+  "scope": {
+    "cell_family": "SNr GABAergic projection neuron",
+    "engineering_purpose": "replace the retired single-compartment packet before any further parameter search",
+    "not_authorized": [
+      "candidate calibration or promotion before a versioned calibration protocol is filed after Stage 4",
+      "reuse or widening of the V1-V3 packet search ranges",
+      "reopening candidates 284 or 404",
+      "access to held-out learning seeds",
+      "transfer of SNr parameters to GPi or EP",
+      "claims that transferred juvenile-rat kinetics are adult-mouse measurements"
+    ]
+  },
+  "predecessor_evidence": [
+    {
+      "path": "research/specs/v14_snr_stageB_structural_successor_v1.json",
+      "sha256": "aa64ea9784584eabae6391d2d8cbb1f66c8693f735a966b6e2a054193fc8d01e",
+      "decision": "supersede before execution because powered activation gates changed the measured conductance curves"
+    },
+    {
+      "path": "research/findings/2026-08-05-v14-stageB-successor-preregistration-audit-CORRECTION.md",
+      "sha256": "7dce472c5302000b3994392b0d1bf9716f223421ff35798ca3f105b6f95f3f04",
+      "decision": "preserve measured conductance Boltzmann curves through equation-derived activation-gate roots and label kinetic interpolation priors"
+    },
+    {
+      "path": "research/findings/2026-08-05-v14-stageB-v3-failure-diagnostic-STRUCTURAL-NO-GO.md",
+      "sha256": "45f277c52ffc85f20c6053d26534ac579815ba99ff76a8213d664357ee72cf93",
+      "decision": "retire the current single-compartment packet"
+    },
+    {
+      "path": "research/findings/2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md",
+      "sha256": "a61512da521d4cd9ad5040cce89251c2055406fe6b59cc7a3f4d1b6cf6d5fd33",
+      "decision": "preserve measured transfers, preparation targets, and model priors as separate evidence classes"
+    },
+    {
+      "path": "research/findings/2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md",
+      "sha256": "962b2442b20b80b57e202aa95e503e63ddb1012038882b5868cf767e48ea6ba0",
+      "decision": "build a separate SNr family around sodium drive and Cav2.2-SK recovery"
+    }
+  ],
+  "source_transfers": {
+    "fast_sodium": {
+      "source": "Ding, Wei, and Zhou 2011",
+      "doi": "10.1152/jn.00305.2011",
+      "preparation": "juvenile rat SNr GABA neurons",
+      "evidence_class": "direct_measured_transfer",
+      "constraints": {
+        "activation_vhalf_mV": {"mean": -30.2, "sem": 0.6},
+        "activation_slope_mV": {"mean": 6.2, "sem": 0.2},
+        "inactivation_vhalf_mV": {"mean": -63.3, "sem": 1.3},
+        "inactivation_slope_mV": {"mean": 8.1, "sem": 0.5},
+        "recovery_fast_tau_ms": {"mean": 0.59, "sem": 0.07},
+        "recovery_slow_tau_ms": {"mean": 35.1, "sem": 6.4},
+        "recovery_fast_fraction": {"mean": 0.526, "sem": 0.057},
+        "activation_10_90_at_0_mV_ms": {"mean": 0.085, "sem": 0.005},
+        "inactivation_10_90_at_0_mV_ms": {"mean": 0.191, "sem": 0.012},
+        "deactivation_at_minus_40_mV_ms": {"mean": 0.099, "sem": 0.0089},
+        "peak_current_density_pA_per_pF": {"mean": 148.9, "sem": 17.8},
+        "conductance_density_pS_per_pF": {"mean": 2481.8, "sem": 296.2},
+        "resurgent_current_at_minus_40_mV_pA_per_pF": {"mean": 3.3, "sem": 0.5}
+      },
+      "unresolved": [
+        "adult-mouse kinetics and Q10",
+        "effective whole-cell conductance after morphology and space-clamp correction",
+        "resurgent-current state equation and conductance"
+      ]
+    },
+    "kv3_like": {
+      "source": "Ding, Matta, and Zhou 2011",
+      "doi": "10.1152/jn.00707.2010",
+      "preparation": "juvenile rat SNr GABA neurons",
+      "evidence_class": "direct_measured_transfer",
+      "constraints": {
+        "activation_vhalf_mV": {"mean": -8.5, "sem": 1.6},
+        "activation_slope_mV": {"mean": 8.9, "sem": 0.6},
+        "inactivation_vhalf_mV": {"mean": -49.2, "sem": 1.6},
+        "inactivation_slope_mV": {"mean": 8.7, "sem": 0.6},
+        "rise_20_80_at_plus_40_mV_ms": {"mean": 0.41, "sem": 0.03},
+        "deactivation_tau_ms": [
+          {"command_mV": -60.0, "mean": 0.82, "sem": 0.06},
+          {"command_mV": -50.0, "mean": 1.35, "sem": 0.12},
+          {"command_mV": -40.0, "mean": 1.87, "sem": 0.16}
+        ],
+        "peak_composite_current_at_plus_40_mV_pA_per_pF": {"mean": 772.8, "sem": 91.8},
+        "kv3_fraction_at_plus_20_mV": {"mean": 0.588, "sem": 0.053}
+      },
+      "unresolved": [
+        "adult-mouse kinetics and Q10",
+        "Kv3 conductance density",
+        "somatic versus dendritic distribution",
+        "separation of Kv3 from the measured composite potassium current"
+      ]
+    }
+  },
+  "architecture": {
+    "shared_substrate_requirement": "both compartments and every intrinsic state advance inside the production spiking bridge; host code may schedule clamps and measure traces but may not substitute for a biological current or state transition",
+    "soma": {
+      "placement_evidence": "model_prior_selected_for_minimal_identifiability; not a measured localization",
+      "state": ["voltage_mV", "fast_na_activation", "fast_na_recovery_fast", "fast_na_recovery_slow", "kv3_activation", "kv3_inactivation", "nap_activation", "nap_inactivation", "hcn_activation"],
+      "currents": ["fast_na", "kv3_like", "nap", "nalcn_like", "passive_leak", "hcn", "axial"]
+    },
+    "proximal_dendrite": {
+      "placement_evidence": "model_prior_selected_to make Cav2.2-SK coupling explicit; not a measured localization or distance",
+      "state": ["voltage_mV", "cav2_2_activation", "cav2_2_inactivation", "calcium_local_uM", "calcium_bulk_uM", "sk_activation"],
+      "currents": ["cav2_2", "sk", "passive_leak", "axial"]
+    },
+    "equation_contract": {
+      "sign_convention": "ionic and axial currents are outward-positive; inward Cav2.2 and sodium currents are negative",
+      "units": {
+        "voltage": "mV",
+        "time": "ms",
+        "specific_capacitance": "uF/cm2",
+        "conductance_density": "mS/cm2",
+        "current_density": "uA/cm2",
+        "absolute_axial_conductance": "uS",
+        "absolute_axial_current": "nA",
+        "calcium_concentration": "uM",
+        "calcium_amount": "fmol"
+      },
+      "soma_balance": "C_soma * dV_soma/dt = -(I_fast_na + I_kv3 + I_nap + I_nalcn + I_leak_soma + I_hcn + I_axial_soma) + I_syn_soma + I_clamp_soma",
+      "dendrite_balance": "C_dendrite * dV_dendrite/dt = -(I_cav2_2 + I_sk + I_leak_dendrite + I_axial_dendrite) + I_syn_dendrite + I_clamp_dendrite",
+      "current_forms": {
+        "fast_na": "g_fast_na * m_na^3 * (w_fast*h_fast + (1-w_fast)*h_slow) * (V_soma-E_na)",
+        "kv3_like": "g_kv3 * n_kv3^4 * q_kv3 * (V_soma-E_k)",
+        "nap": "g_nap * m_nap * h_nap * (V_soma-E_na)",
+        "nalcn_like": "g_nalcn * (V_soma-E_nalcn)",
+        "hcn": "g_hcn * r_hcn * (V_soma-E_hcn)",
+        "cav2_2": "g_cav2_2 * m_cav^2 * h_cav * (V_dendrite-E_ca_dynamic)",
+        "sk": "g_sk * s_sk * (V_dendrite-E_k)",
+        "leak": "g_leak_compartment * (V_compartment-E_leak_compartment)"
+      },
+      "steady_state_forms": {
+        "measured_normalized_conductance_activation": "A_inf(V)=1/(1+exp(-(V-Vhalf)/slope))",
+        "fast_na_activation_gate": "m_inf(V)=A_fast_na_inf(V)^(1/3); the root is equation-derived, not a measured gate curve",
+        "kv3_activation_gate": "n_inf(V)=A_kv3_inf(V)^(1/4); the root is equation-derived, not a measured gate curve",
+        "inactivation": "h_inf(V)=1/(1+exp((V-Vhalf)/slope))",
+        "sk_calcium": "s_inf(Ca_local)=Ca_local^hill/(Ca_local^hill+K_sk^hill)"
+      },
+      "gate_dynamics": "dx/dt=(x_inf(V)-x)/tau_x(V); source-measured current endpoints constrain explicit packet functions, while current-to-gate conversion and log-linear interpolation are labelled equation-derived model priors; no generic HH tau may be inherited silently",
+      "fast_na_recovery": "availability=w_fast*h_fast+(1-w_fast)*h_slow; w_fast is fixed to the transferred recovery fraction for Stage 1 and h_fast/h_slow retain separate voltage-dependent tau functions constrained by the double-pulse assay",
+      "calcium_mass_balance": {
+        "local": "dN_local/dt = -A_dendrite*I_cav2_2/(2*F) - J_local_to_bulk - J_pump_local",
+        "bulk": "dN_bulk/dt = J_local_to_bulk - J_pump_bulk",
+        "exchange": "J_local_to_bulk=k_local_bulk*(Ca_local-Ca_bulk)*volume_local",
+        "concentration": "Ca_pool=N_pool/volume_pool; both volumes, buffering factors, exchange, and pump constants are explicit unresolved model priors",
+        "sk_dependency": "only Ca_local enters s_inf; Ca_bulk has no direct edge to SK"
+      },
+      "initialization": "V_soma and V_dendrite use one explicit packet prior; every voltage gate starts at its own x_inf(V); both calcium pools start at the declared resting concentration; no spike or reset state is injected",
+      "fixed_update_order": [
+        "snapshot both compartment voltages, all gates, and both calcium amounts",
+        "compute every gate steady state and tau from the snapshot",
+        "compute all ionic and equal-and-opposite axial currents from the snapshot",
+        "compute calcium fluxes and both membrane derivatives from the same current snapshot",
+        "advance gates by the exponential Rush-Larsen form and advance calcium amounts and voltages by the declared float32 step",
+        "derive spike events from continuous soma threshold crossing without resetting either compartment"
+      ]
+    },
+    "axial_coupling": {
+      "absolute_soma_current_nA": "g_axial_uS * (V_soma - V_dendrite)",
+      "absolute_dendrite_current_nA": "-I_axial_soma_nA",
+      "density_conversion": "divide the same absolute current by each compartment's declared membrane area; never apply one compartment's area to the other",
+      "conservation": "equal magnitude and opposite sign before compartment area normalization",
+      "g_axial_status": "unresolved model prior"
+    },
+    "calcium_compartments": {
+      "local": "receives proximal-dendritic Cav2.2 influx and is the only calcium state allowed to drive SK",
+      "bulk": "receives declared calcium influx and clearance but cannot directly drive SK",
+      "geometry_status": "shell volume, buffering, clearance, and Cav2.2-SK distance are unresolved model priors",
+      "dynamic_calcium_reversal": "required before held-out promotion"
+    },
+    "production_bridge_ownership": {
+      "dispatch": "one opt-in SNr structural-successor mask owns both compartments and all listed currents in the production bridge",
+      "double_counting_guard": "masked SNr successor cells bypass the generic HH Na, K, and leak update and the retired V14 single-compartment intrinsic packet; no listed current may execute twice",
+      "default_off": "when the mask is empty, no successor array is allocated or launched and all existing neuron-family state and output remain byte-identical",
+      "runner_boundary": "runners may set preregistered clamps and lesions and read traces; they may not write internal gate, voltage, calcium, axial, or spike state",
+      "kernel_boundary": "axial transfer, calcium mass balance, channel gates, currents, voltages, and continuous spike detection all execute in the production NumPy/CuPy substrate"
+    },
+    "localization_sensitivity": {
+      "required_before_calibration": [
+        "move a preregistered fraction of fast Na and Kv3-like conductance to the proximal dendrite while preserving total conductance",
+        "move Cav2.2-SK to soma while preserving total conductance and calcium-volume priors",
+        "compare one-compartment collapse with finite and zero axial coupling"
+      ],
+      "interpretation": "placement is retained only if it improves independently held waveform and lesion effects; intact rate cannot decide localization"
+    },
+    "excluded_from_v1": [
+      "BK current",
+      "T-type rebound current",
+      "a generic combined GPi/SNr family",
+      "host-side spike reset, pacemaker current, or calcium-to-SK shortcut",
+      "copied fast-channel density in both compartments"
+    ]
+  },
+  "validation_ladder": [
+    {
+      "stage": 0,
+      "id": "contract_and_units",
+      "promotion": "implementation may begin",
+      "hard_gates": [
+        "all state variables, currents, signs, areas, and unit conversions are explicit",
+        "every measured transfer and every unresolved prior retains its evidence label",
+        "source and predecessor digests authenticate",
+        "default-off behavior of existing neuron families remains unchanged"
+      ]
+    },
+    {
+      "stage": 1,
+      "id": "isolated_fast_channel_voltage_clamp",
+      "promotion": "compartment integration may begin",
+      "source_command_protocols": {
+        "fast_na_activation": "hold -100 mV; 20 ms tests from -80 through +30 mV in 5 mV steps; fit normalized conductance using source Erev +50 mV",
+        "fast_na_steady_state_inactivation": "hold -100 mV; 50 ms prepulses from -120 through -20 mV in 10 mV steps; 20 ms test at 0 mV; fit normalized test current",
+        "fast_na_recovery": "hold -90 mV; 50 ms at -120 mV; 300 ms at 0 mV; recover at -120 mV for the filed duration ladder; 20 ms test at 0 mV; fit a biexponential",
+        "fast_na_deactivation": "hold -90 mV; 50 ms at -120 mV; 0.2 ms at 0 mV; 50 ms tests from -100 through -20 mV in 10 mV steps; fit each tail with one exponential",
+        "kv3_activation": "hold -100 mV; 100 ms tests from -80 through +50 mV in 10 mV steps; fit normalized conductance",
+        "kv3_steady_state_inactivation": "hold -90 mV; 10 s prepulses from -110 through 0 mV in 10 mV steps; 100 ms test at +50 mV; fit normalized test current",
+        "kv3_deactivation": "hold -90 mV; 100 ms at +20 mV; step separately to -30, -40, -50, -60, and -70 mV; fit each tail with one exponential"
+      },
+      "project_operational_recovery_duration_ladder_ms": [0.0, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0],
+      "kinetic_model_prior_boundary": {
+        "activation_gate_roots": "equation-derived transformations required to preserve source-measured normalized conductance curves under m^3 and n^4 currents",
+        "powered_gate_time_conversion": "conditional equation-derived initialization only; composite simulated currents are scored",
+        "tau_interpolation": "explicit model prior: positivity-preserving log-linear interpolation between identified anchors with nearest-endpoint clamping outside the identified range",
+        "kv3_inactivation_tau": "unresolved constant model prior; no source-measured endpoint was located",
+        "recovery_duration_ladder": "project-operational sampling of the source-reported biexponential assay; the paper text does not enumerate durations",
+        "instrument_boundary": "fast-Na source traces were sampled at 50 kHz and filtered at 10 kHz; matching is a transferred operational target, not proof of unfiltered channel equivalence"
+      },
+      "estimators": {
+        "boltzmann": "least-squares Vhalf and positive slope over the complete filed voltage ladder",
+        "rise_decay": "linear-interpolated 10-90 or 20-80 crossing duration at the source command voltage",
+        "recovery": "least-squares biexponential with both amplitudes nonnegative and summing to one",
+        "deactivation": "single-exponential least-squares tail fit beginning after the command transition artifact"
+      },
+      "hard_gates": [
+        "the powered activation gates reproduce the source-measured normalized conductance Boltzmann curves after applying m^3 or n^4; gate roots are not presented as measurements",
+        "fast-Na activation and inactivation Vhalf and slopes reproduce each transferred mean within two SEM under the source command protocol",
+        "fast-Na activation rise, inactivation decay, and -40 mV deactivation reproduce each transferred mean within two SEM",
+        "biexponential fast-Na recovery preserves separate fast and slow components and reproduces both time constants and the fast-component fraction within two SEM",
+        "Kv3-like activation and inactivation Vhalf and slopes reproduce each transferred mean within two SEM",
+        "Kv3-like 20-80 percent rise at +40 mV reproduces the transferred mean within two SEM",
+        "Kv3-like deactivation at -60, -50, and -40 mV independently reproduces each transferred mean within two SEM",
+        "conductance scale cannot compensate for failed kinetics"
+      ],
+      "reported_not_promoting": [
+        "fast-Na peak current and conductance densities",
+        "resurgent current",
+        "composite potassium peak and Kv3 fraction"
+      ]
+    },
+    {
+      "stage": 2,
+      "id": "two_compartment_numerics",
+      "promotion": "causal calcium tests may begin",
+      "fixed_environment": {
+        "dtype": "float32",
+        "reference_dt_ms": 0.025,
+        "production_dt_ms": 0.05,
+        "parity_backends": ["NumPy", "CuPy"],
+        "parity_workload": "one fixed source-bound packet, both compartments, all currents active, clamps off, 20000 steps",
+        "performance_workload": "512 independent two-compartment cells, all currents active, 20000 steps, no trace capture",
+        "performance_device": "NVIDIA GeForce RTX 3090 24 GiB",
+        "software_identity": {"python": "3.11.14", "numpy": "2.4.6", "cupy": "14.1.1", "cuda_runtime": 12090, "cuda_driver_api": 13030},
+        "environment_change_policy": "a different numeric or GPU environment requires a new prospective parity/performance protocol; it cannot inherit this gate"
+      },
+      "hard_gates": [
+        "isolated zero-axial limit reproduces independently advanced soma and dendrite equations",
+        "axial current is equal and opposite before area normalization with absolute closure residual at most 1e-7 uA",
+        "complete membrane current closure residual is at most 1e-4 uA/cm2 per compartment",
+        "NumPy and CuPy state and spike traces are byte-exact for the fixed float32 replay packet",
+        "relative to the 0.025 ms reference with linearly interpolated threshold crossings, dt 0.05 ms changes firing rate and AP half-width by at most 2 percent and AP threshold by at most 1 mV",
+        "checkpoint-resume is byte-exact",
+        "the 512-cell performance workload reaches at least 100000 complete simulation steps per second, uses at most 20 GiB peak device memory, performs no host synchronization inside a step, and uses no more than two fused successor-kernel launches per step"
+      ]
+    },
+    {
+      "stage": 3,
+      "id": "local_bulk_calcium_separation",
+      "promotion": "absolute waveform authority may be tested; calibration remains prohibited",
+      "voltage_clamp_arms": ["intact", "cav2_2_lesion", "sk_lesion", "local_calcium_to_sk_coupling_lesion", "bulk_calcium_sink_control"],
+      "hard_gates": [
+        "SK current reads calcium_local_uM and never calcium_bulk_uM",
+        "under an identical voltage command, SK lesion leaves both calcium traces byte-exact",
+        "under an identical voltage command, local-calcium-to-SK coupling lesion removes SK activation while preserving both calcium traces byte-exact",
+        "under an identical voltage command, Cav2.2 lesion reduces local calcium influx and SK activation in the declared direction",
+        "bulk calcium sink changes bulk calcium without directly changing SK activation under the identical command",
+        "free-running lesion effects are reported separately because voltage feedback can alter calcium indirectly"
+      ]
+    },
+    {
+      "stage": 4,
+      "id": "absolute_waveform_transfer_gate",
+      "promotion": "a separate versioned calibration protocol may be designed; this protocol still cannot calibrate candidates",
+      "source_transfers": {
+        "ding_wei_zhou_2011": {
+          "preparation": "juvenile rat SNr GABA neurons; transferred waveform constraints",
+          "spike_threshold_mV": {"mean": -40.3, "sem": 0.5, "estimator": "sharpest pre-spike voltage inflection"},
+          "spike_base_duration_ms": {"mean": 1.1, "sem": 0.1, "estimator": "threshold crossing to return crossing at the same voltage"},
+          "spike_10_90_rise_ms": {"mean": 0.27, "sem": 0.02},
+          "spike_amplitude_mV": {"mean": 69.5, "sem": 1.6, "status": "reported_not_hard_gate_until_amplitude_reference_is_source_resolved"}
+        },
+        "atherton_bevan_2005": {
+          "preparation": "juvenile rat SNr slice; transferred whole-AHP constraint",
+          "whole_ahp_minimum_mV": {"mean": -68.49, "sd": 4.93, "estimator": "project-operational minimum between consecutive spike thresholds"}
+        }
+      },
+      "hard_gates": [
+        "threshold, base duration, and 10-90 rise reproduce each Ding transferred mean within two SEM without fitting those held endpoints",
+        "the project-operational whole-AHP nadir lies within the Atherton transferred mean plus or minus two SD without fitting that held endpoint",
+        "every metric is computed from complete uncropped spikes after baseline stability and none can be replaced by firing rate",
+        "the localization sensitivity arms preserve or improve these held waveform metrics before one placement prior is retained"
+      ]
+    },
+    {
+      "stage": 5,
+      "id": "future_calibration_and_causal_confirmation",
+      "status": "blocked_until_stage_4_passes_and_a_separate_digest_bound_calibration_protocol_exists",
+      "promotion": "held-out physiology may begin only under the future protocol",
+      "required_future_calibration_contract": [
+        "preparation-matched McElvain firing-rate and ISI-CV objectives without pooling mature-adult or juvenile transfer endpoints",
+        "explicit unresolved parameter ranges and transforms",
+        "candidate count, calibration and replication seeds, fixed search budget, and stop rules",
+        "retained ensemble and diversity rule rather than one optimum",
+        "multi-objective acceptance with waveform, causal, robustness, performance, and scaffold penalties",
+        "non-identifiability, parameter covariance, and failed-run policy",
+        "no access to inhibition, temperature, mature-adult, selector, learning, or behavioral held-out partitions"
+      ],
+      "predecessor_contract": {
+        "path": "research/specs/v14_snr_stageB_causal_gates_v3.json",
+        "sha256": "5d67e8859955e6d0da839bddfb9ee8fca17b07a66343c9493b2fb5ba614a78d9"
+      },
+      "required_arms": [
+        "phase-matched intact continuation",
+        "NaP complete lesion",
+        "Cav2.2 complete lesion",
+        "SK complete lesion",
+        "HCN complete lesion during baseline and hyperpolarization",
+        "NALCN reduction",
+        "local-calcium-to-SK coupling lesion"
+      ],
+      "hard_gates": [
+        "the future protocol maps every inherited predecessor causal gate ID and metric to an exact runner output path; prose substitution is forbidden",
+        "the intact continuation resolves the V1 diagnostic's spike-phase confound before any immediate-voltage claim",
+        "rate alone cannot promote a candidate",
+        "Cav2.2, SK, and local-coupling lesions must separate their predicted calcium and AHP effects",
+        "the unavailable heterogeneous twelve-cell SK depolarization-block endpoint remains unavailable"
+      ]
+    },
+    {
+      "stage": 6,
+      "id": "held_out_context_and_behavioral_integration",
+      "promotion": "the reduced tonic-output scaffold may be considered for replacement",
+      "sealed_until_the_future_stage_5_protocol_passes": [
+        "adult inhibitory pause and release waveforms",
+        "pallidal barrage versus matched step",
+        "mature-adult intrinsic context",
+        "second temperature after a sourced Q10 exists",
+        "continuous selector behavior and delayed action-credit controls",
+        "learning and held-out behavioral seeds"
+      ],
+      "hard_gates": [
+        "all physiology remains on the shared spiking substrate",
+        "same-brain adaptation is used where the capability requires learning",
+        "consumer-hardware memory and throughput budgets pass",
+        "the reduced intrinsic-current scaffold is removed rather than retained as a hidden fallback"
+      ]
+    }
+  ],
+  "stop_rules": [
+    "stop and repair the equations when any Stage 1-3 architecture gate fails; do not compensate with parameter search",
+    "stop and escalate to source research when a required numeric boundary is absent; do not invent one",
+    "do not begin calibration under this architecture protocol; Stage 5 requires a separate prospective contract with its own bounded budget and stop rule",
+    "bank every negative or unavailable result before changing architecture, ranges, objectives, or partitions"
+  ],
+  "resource_policy": {
+    "local_cpu": "unit tests, NumPy authority, clamp analysis, and deterministic receipt compilation",
+    "local_gpu": "CuPy parity, fused-kernel profiling, and engineering diagnostics under the shared lease; this protocol authorizes no calibration screen",
+    "mini_pc_pool": "independent NumPy replicas and non-GPU source/analysis work only when it adds evidence rather than duplicating a local run",
+    "parallelism_boundary": "no concurrent job may contend for the same evidence file, held-out partition, or GPU lease"
+  }
+}

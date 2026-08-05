@@ -659,6 +659,138 @@ def fused_snr_packet_conductance_update(
     )
 
 
+@fuse()
+def fused_snr_fast_channel_clamp_update(
+    voltage_mv,
+    na_activation_old,
+    na_inactivation_fast_old,
+    na_inactivation_slow_old,
+    kv3_activation_old,
+    kv3_inactivation_old,
+    dt_ms,
+    na_activation_half_mv,
+    na_activation_slope_mv,
+    na_inactivation_half_mv,
+    na_inactivation_slope_mv,
+    na_activation_tau_zero_ms,
+    na_deactivation_gate_tau_minus_40_ms,
+    na_recovery_fast_tau_minus_120_ms,
+    na_recovery_slow_tau_minus_120_ms,
+    na_inactivation_tau_zero_ms,
+    na_recovery_fast_fraction,
+    kv3_activation_half_mv,
+    kv3_activation_slope_mv,
+    kv3_inactivation_half_mv,
+    kv3_inactivation_slope_mv,
+    kv3_activation_tau_plus_40_ms,
+    kv3_deactivation_gate_tau_minus_60_ms,
+    kv3_deactivation_gate_tau_minus_50_ms,
+    kv3_deactivation_gate_tau_minus_40_ms,
+    kv3_inactivation_tau_ms,
+    sodium_reversal_mv,
+    potassium_reversal_mv,
+):
+    """Advance the source-bound isolated SNr fast-channel packet.
+
+    Voltage is externally clamped, while every gate and current remains in the
+    NumPy/CuPy production substrate. Log-linear interpolation between measured
+    kinetic endpoints is an explicit model prior; no conductance scale appears.
+    """
+    na_conductance_activation_inf = 1.0 / (
+        1.0 + cp.exp(-(voltage_mv - na_activation_half_mv) / na_activation_slope_mv)
+    )
+    na_activation_inf = cp.power(na_conductance_activation_inf, 1.0 / 3.0)
+    na_inactivation_inf = 1.0 / (
+        1.0 + cp.exp((voltage_mv - na_inactivation_half_mv) / na_inactivation_slope_mv)
+    )
+    na_activation_fraction = cp.clip((voltage_mv + 40.0) / 40.0, 0.0, 1.0)
+    na_activation_tau = cp.exp(
+        cp.log(na_deactivation_gate_tau_minus_40_ms)
+        + na_activation_fraction
+        * (cp.log(na_activation_tau_zero_ms) - cp.log(na_deactivation_gate_tau_minus_40_ms))
+    )
+    na_recovery_fraction = cp.clip((voltage_mv + 120.0) / 120.0, 0.0, 1.0)
+    na_inactivation_fast_tau = cp.exp(
+        cp.log(na_recovery_fast_tau_minus_120_ms)
+        + na_recovery_fraction
+        * (cp.log(na_inactivation_tau_zero_ms) - cp.log(na_recovery_fast_tau_minus_120_ms))
+    )
+    na_inactivation_slow_tau = cp.exp(
+        cp.log(na_recovery_slow_tau_minus_120_ms)
+        + na_recovery_fraction
+        * (cp.log(na_inactivation_tau_zero_ms) - cp.log(na_recovery_slow_tau_minus_120_ms))
+    )
+
+    na_activation = na_activation_inf + (
+        na_activation_old - na_activation_inf
+    ) * cp.exp(-dt_ms / na_activation_tau)
+    na_inactivation_fast = na_inactivation_inf + (
+        na_inactivation_fast_old - na_inactivation_inf
+    ) * cp.exp(-dt_ms / na_inactivation_fast_tau)
+    na_inactivation_slow = na_inactivation_inf + (
+        na_inactivation_slow_old - na_inactivation_inf
+    ) * cp.exp(-dt_ms / na_inactivation_slow_tau)
+
+    kv3_conductance_activation_inf = 1.0 / (
+        1.0 + cp.exp(-(voltage_mv - kv3_activation_half_mv) / kv3_activation_slope_mv)
+    )
+    kv3_activation_inf = cp.power(kv3_conductance_activation_inf, 1.0 / 4.0)
+    kv3_inactivation_inf = 1.0 / (
+        1.0 + cp.exp((voltage_mv - kv3_inactivation_half_mv) / kv3_inactivation_slope_mv)
+    )
+    kv3_tau_low = cp.where(
+        voltage_mv <= -50.0,
+        cp.exp(
+            cp.log(kv3_deactivation_gate_tau_minus_60_ms)
+            + cp.clip((voltage_mv + 60.0) / 10.0, 0.0, 1.0)
+            * (cp.log(kv3_deactivation_gate_tau_minus_50_ms)
+               - cp.log(kv3_deactivation_gate_tau_minus_60_ms))
+        ),
+        cp.exp(
+            cp.log(kv3_deactivation_gate_tau_minus_50_ms)
+            + cp.clip((voltage_mv + 50.0) / 10.0, 0.0, 1.0)
+            * (cp.log(kv3_deactivation_gate_tau_minus_40_ms)
+               - cp.log(kv3_deactivation_gate_tau_minus_50_ms))
+        ),
+    )
+    kv3_activation_tau = cp.where(
+        voltage_mv <= -40.0,
+        kv3_tau_low,
+        cp.exp(
+            cp.log(kv3_deactivation_gate_tau_minus_40_ms)
+            + cp.clip((voltage_mv + 40.0) / 80.0, 0.0, 1.0)
+            * (cp.log(kv3_activation_tau_plus_40_ms)
+               - cp.log(kv3_deactivation_gate_tau_minus_40_ms))
+        ),
+    )
+    kv3_activation = kv3_activation_inf + (
+        kv3_activation_old - kv3_activation_inf
+    ) * cp.exp(-dt_ms / kv3_activation_tau)
+    kv3_inactivation = kv3_inactivation_inf + (
+        kv3_inactivation_old - kv3_inactivation_inf
+    ) * cp.exp(-dt_ms / kv3_inactivation_tau_ms)
+
+    na_availability = (
+        na_recovery_fast_fraction * na_inactivation_fast
+        + (1.0 - na_recovery_fast_fraction) * na_inactivation_slow
+    )
+    na_current = (
+        na_activation**3 * na_availability * (voltage_mv - sodium_reversal_mv)
+    )
+    kv3_current = (
+        kv3_activation**4 * kv3_inactivation * (voltage_mv - potassium_reversal_mv)
+    )
+    return (
+        cp.clip(na_activation, 0.0, 1.0),
+        cp.clip(na_inactivation_fast, 0.0, 1.0),
+        cp.clip(na_inactivation_slow, 0.0, 1.0),
+        cp.clip(kv3_activation, 0.0, 1.0),
+        cp.clip(kv3_inactivation, 0.0, 1.0),
+        na_current,
+        kv3_current,
+    )
+
+
 def _fusion_memo_key(values):
     """Reproduce CuPy Fusion's dtype/rank key for a fixed argument list."""
     key = []
