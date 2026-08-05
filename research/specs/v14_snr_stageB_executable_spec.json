@@ -213,10 +213,10 @@
     "completed_readiness_primitives": [
       "seed-free two-candidate real-model transport dry run completed at source revision 8cb8cf4c9e81a5fa70651df2f1f4dabe926d5548",
       "authenticated low- and high-endpoint five-arm intrinsic readiness transport completed with automatic raw-trace scorer invocation and null scientific verdict",
-      "source-bound 101-spike and one-second Nap production protocol is implemented and adversarially tested; long-run performance and endpoint execution remain pending"
+      "source-bound production endpoints executed at aff9fa7bb: low is silent and UNAVAILABLE; high FAILS Nap silence and Cav2.2 CV while SK CV and HCN baseline subgates pass"
     ],
     "current_blockers": [
-      "production event-count execution is still launch-bound and must be benchmarked before long endpoint runs",
+      "candidate screening is still one-candidate serial execution; batched GPU trajectories and compact timeout traces are not implemented",
       "medium-AHP, HCN current-step resistance, SK cohort block, and Nap voltage estimators remain underspecified and unavailable",
       "dynamic Nernst calcium-reversal held-out sensitivity is not implemented",
       "fast-potassium equation-mismatch sensitivity is not implemented",

@@ -123,10 +123,12 @@ its controls and lesions, and is tested at the required seed coverage.
 2. **Gate B physiology and delayed credit are unresolved.** The V14 engine now
    compiles and independently verifies pinned SNr candidates, runs intact plus
    four intrinsic-current lesions, recomputes metrics from bound raw traces,
-   and records provenance. This is engineering readiness only. Scientific
-   scoring remains unavailable until source-bound 101-spike, AHP, HCN
-   current-step, and SK cohort protocols are executable; delayed action-reward
-   learning and its unrelated-reward control come afterward.
+   and records provenance. Its authority-pinned production runner now records
+   101-spike event-count traces or an operational timeout. The low endpoint was
+   silent and `UNAVAILABLE`; the high endpoint failed Nap-silence and Cav2.2-CV
+   signs. AHP, HCN current-step, SK cohort, and Nap voltage protocols remain
+   unavailable; delayed action-reward learning and its unrelated-reward
+   control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
    biological consistency signal rather than an exact composer metadata read.
@@ -165,10 +167,11 @@ required integrated form.
 - Give the brain a minimal world, body, social interaction, and a reason to
   communicate. Make speech an action selected from internal state and
   expected consequence, not a free-standing text completion.
-- Finish V14 Stage B production protocols and causal controls without opening
-  reserved scientific partitions early. The next runner records 101-spike
-  event-count traces with a bounded no-spike timeout; AHP, HCN current-step,
-  and SK cohort gates stay unavailable until their protocols are fully filed.
+- Use the V14 Stage B production runner for batched, authenticated candidate
+  screening under resolved causal subgates without opening reserved scientific
+  partitions early. Add compact trace storage and preregistered stop rules;
+  AHP, HCN current-step, SK cohort, and Nap voltage gates stay unavailable
+  until their source-faithful protocols are fully filed.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another

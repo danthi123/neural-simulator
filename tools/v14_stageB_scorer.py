@@ -491,15 +491,6 @@ def _score_intrinsic_hard_gate(
         "evidence_class": evidence_class,
         "source_equivalence_claimed": False,
     }
-    if gate_id != "nap-complete-lesion" and any(
-        trace.get("analysis_protocol", {}).get("termination", {}).get("reason")
-        == "maximum_duration_reached"
-        for trace in (intact, lesion)
-    ):
-        return _unavailable_hard_gate(
-            contract,
-            "the source-bound 101-spike event count was not completed before the operational timeout",
-        )
     if metric == "depolarization_block_count":
         return _unavailable_hard_gate(
             contract, "sealed 12-cell SK cohort depolarization-block traces are not available"
@@ -512,6 +503,20 @@ def _score_intrinsic_hard_gate(
         return _unavailable_hard_gate(
             contract,
             "the source does not define a matched stable-baseline voltage estimator for this trace",
+        )
+    if metric == "medium_ahp_depth_mV":
+        return _unavailable_hard_gate(
+            contract,
+            "the source-bound event-aligned medium-AHP measurement window is not specified",
+        )
+    if gate_id != "nap-complete-lesion" and any(
+        trace.get("analysis_protocol", {}).get("termination", {}).get("reason")
+        == "maximum_duration_reached"
+        for trace in (intact, lesion)
+    ):
+        return _unavailable_hard_gate(
+            contract,
+            "the source-bound 101-spike event count was not completed before the operational timeout",
         )
     if intact.get("status") != "recomputed" or lesion.get("status") != "recomputed":
         return _unavailable_hard_gate(

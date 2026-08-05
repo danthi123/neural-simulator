@@ -892,12 +892,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T20:08:01+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
       "at": "2026-08-04T20:26:15+00:00",
       "detail": "completed",
       "kind": "lane-update",
@@ -1490,6 +1484,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T02:32:13+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
     }
   ],
   "lanes": {
@@ -1780,24 +1780,20 @@
     "gateb-v14-scorer-integration": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T02:12:24+00:00",
-      "next_action": "Commit and push the authenticated production protocol, then execute the low and high Stage B endpoints from clean source; preserve UNAVAILABLE boundaries and profile actual timeout behavior before GPU batching.",
+      "heartbeat_at": "2026-08-05T02:32:13+00:00",
+      "next_action": "Connect Stage B production arms to batched authenticated candidate screening with compact trace storage and preregistered stop-rule aggregation; use resolved readiness subgates only and preserve missing-contract UNAVAILABLE boundaries.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If an endpoint reaches the 20-second resource timeout, record UNAVAILABLE rather than physiology failure; do not invent a waveform, AHP, HCN resistance, SK cohort, or Nap voltage estimator.",
-      "resource": "local_cpu",
+      "recovery_action": "Do not tune against missing AHP, HCN current-step, SK cohort, or Nap voltage outcomes; do not treat an operational timeout as physiology failure or open reserved scientific partitions.",
+      "resource": "local_gpu",
       "status": "running",
       "write_set": [
+        "tools/experiment_controller.py",
+        "tools/experiment_executor.py",
+        "tools/adaptive_experiment.py",
         "research/runners/v14_stageB_physiology.py",
-        "research/specs/v14_snr_stageB_intrinsic_protocol.json",
-        "research/specs/v14_snr_stageB_causal_gates.json",
-        "research/specs/v14_snr_stageB_executable_spec.json",
         "tools/v14_stageB_scorer.py",
-        "tools/v14_stageB_intrinsic_readiness.py",
-        "tests/test_v14_stageB_runner.py",
-        "tests/test_v14_stageB_scorer.py",
-        "tests/test_v14_stageB_intrinsic_readiness.py",
-        "tests/test_v14_stageB_packet_template.py",
+        "research/specs/v14_snr_stageB_intrinsic_protocol.json",
         "research/coordination/workboard.json"
       ]
     },
@@ -2128,5 +2124,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T02:12:24+00:00"
+  "updated_at": "2026-08-05T02:32:13+00:00"
 }

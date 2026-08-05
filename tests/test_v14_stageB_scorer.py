@@ -380,6 +380,23 @@ def test_event_count_timeout_is_unavailable_never_a_physiology_failure():
     assert result["passed"] is None
     assert "operational timeout" in result["reason"]
 
+    for gate_id, metric, reason in (
+        ("sk-complete-lesion", "depolarization_block_count", "12-cell"),
+        ("hcn-complete-lesion", "hyperpolarized_input_resistance_MOhm", "current-step"),
+        ("cav2.2-complete-lesion", "medium_ahp_depth_mV", "medium-AHP"),
+    ):
+        unavailable = _score_intrinsic_hard_gate(
+            gate_id,
+            {
+                "metric": metric, "operator": "lesion_greater_than_intact",
+                "evidence_class": "source_reported_direction",
+            },
+            trace,
+            trace,
+        )
+        assert unavailable["status"] == "unavailable"
+        assert reason in unavailable["reason"]
+
 
 def test_intrinsic_scorer_accepts_production_runner_artifacts_as_unavailable(tmp_path):
     from research.runners.v14_stageB_physiology import run_readiness_arm
