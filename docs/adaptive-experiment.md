@@ -85,8 +85,41 @@ python tools/experiment_observation.py \
 ```
 
 The resulting rows exactly match the adaptive design's observation shape; a separate top-level `evidence` ledger
-binds each row to its receipts. A controlled update must append accepted rows to a new design version before another
-proposal is generated. The compiler does not edit the design or launch the next batch.
+binds each row to its receipts. `tools/adaptive_design_update.py` authenticates that binding, rejects duplicate
+parameter/fidelity cells, writes a create-only next design version, and emits a self-digested lineage receipt. It
+does not issue a scientific verdict or launch the next batch.
+
+```bash
+python tools/adaptive_design_update.py \
+  --design research/specs/my-adaptive-design-v1.json \
+  --observations research/findings/raw/my-observations.json \
+  --output research/specs/my-adaptive-design-v2.json \
+  --receipt-output research/findings/raw/my-adaptive-design-v2.update.json \
+  --new-id my-adaptive-design-v2 \
+  --repository-root "$PWD"
+```
+
+## Resumable supervision
+
+`tools/adaptive_campaign_supervisor.py` advances exactly one lifecycle transition per invocation. It creates or
+authorizes the next controller plan, candidate spec, seal, sealed expansion, executor state, exact job, observation
+compilation, or design update. Every transition is a create-only, self-digested state-chain record. Repeated calls
+with unchanged evidence return the same authorization rather than duplicating work.
+
+```bash
+python tools/adaptive_campaign_supervisor.py \
+  --design research/specs/my-adaptive-design-v1.json \
+  --campaign-dir research/queue/my-campaign-v1 \
+  --repository-root "$PWD" \
+  --observation-contract research/specs/my-observation-contract.json \
+  --next-design-id my-adaptive-design-v2
+```
+
+The supervisor does not run commands itself, choose retry policy, reconcile remote queue results, open held-out
+partitions, or issue scientific verdicts. It reauthenticates the deterministic proposal, sealed handoff,
+materialization, executor manifest, and every receipt before authorizing the next transition. A worker loop may
+execute the emitted `authorized_command` and call the supervisor again; failed jobs and unreconciled queued jobs
+stop for explicit handling.
 
 ## Current limits
 
