@@ -1,0 +1,35 @@
+{
+ "run_id": "3b6dfe040afff51ab8a709a571d6f33f1dcae170bc4dbc15640b27605b0f94a9",
+ "runner": "research/runners/v14_source_model_neuron_oracle.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/v14_source_model_neuron_oracle.py",
+  "--spec",
+  "research/specs/v14_khaliq_native_initialization_oracle_v1.json",
+  "--spec-sha256",
+  "5d3023df6f27f4658fc550904e14e0bc7840ea794c86554888fa95f433b6759d",
+  "--out",
+  "research/findings/raw/v14_khaliq_native_initialization_oracle_v1.json"
+ ],
+ "git_sha": "b5f1ffa557867b1001a5d440de47657a7d841a3e",
+ "git_dirty": false,
+ "source_kind": "git",
+ "source_manifest_sha256": "a6a25353fd19edf7de240075c69f6f7caa88036f1ffd23061060ce53be8a0ebe",
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-05T06:32:21",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 1707.8,
+ "corpus_check_query": "SNr transient sodium and Kv3 complete voltage-clamp current state model activation deactivation transition rates",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v14_khaliq_native_initialization_oracle_v1.json",
+ "schema": "sim-run-provenance-v2",
+ "started_utc_ns": 1785925941152273510,
+ "ended_utc_ns": 1785925942786291211
+}

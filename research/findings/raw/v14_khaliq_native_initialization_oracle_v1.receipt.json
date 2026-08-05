@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/tmp/v14-neuron-oracle/bin/python",
+    "-m",
+    "research.runners.v14_source_model_neuron_oracle",
+    "--spec",
+    "research/specs/v14_khaliq_native_initialization_oracle_v1.json",
+    "--spec-sha256",
+    "5d3023df6f27f4658fc550904e14e0bc7840ea794c86554888fa95f433b6759d",
+    "--out",
+    "research/findings/raw/v14_khaliq_native_initialization_oracle_v1.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v14_khaliq_native_initialization_oracle_v1.json",
+    "sha256": "ab5146ec496db5346d38aded1e90ed629b45a7c20656d31e4d646f5d705f2511",
+    "size_bytes": 6745
+  },
+  "device": "cpu",
+  "duration_monotonic_ns": 1713592762,
+  "ended_utc_ns": 1785925942843975105,
+  "env_allowlist": {
+    "PATH": "/home/dant123/.codex/packages/standalone/releases/0.146.0-x86_64-unknown-linux-musl/codex-path:/home/dant123/.codex/tmp/arg0/codex-arg0eez5Yq:/home/dant123/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/home/dant123/.local/bin:/opt/codex-desktop/resources/node-runtime/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/opt/cuda/bin:/var/lib/flatpak/exports/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin:/home/dant123/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/home/dant123/.codex/packages/standalone/releases/0.146.0-x86_64-unknown-linux-musl/bin",
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "local-cachyos-rtx3090",
+  "provenance": {
+    "ended_utc_ns": 1785925942786291211,
+    "path": "research/findings/raw/v14_khaliq_native_initialization_oracle_v1.json.prov.json",
+    "run_id": "3b6dfe040afff51ab8a709a571d6f33f1dcae170bc4dbc15640b27605b0f94a9",
+    "sha256": "c2075856be102131d05f86b7b027d8a77309e2d18eab3b037f3ca478f13be06a",
+    "started_utc_ns": 1785925941152273510
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 3,
+    "git_sha": "b5f1ffa557867b1001a5d440de47657a7d841a3e",
+    "kind": "git",
+    "manifest": "research/specs/v14_khaliq_native_initialization_source_manifest_v1.sha256",
+    "manifest_sha256": "a6a25353fd19edf7de240075c69f6f7caa88036f1ffd23061060ce53be8a0ebe",
+    "tree_sha256": "a6a25353fd19edf7de240075c69f6f7caa88036f1ffd23061060ce53be8a0ebe"
+  },
+  "started_utc_ns": 1785925941130380649,
+  "status": "success"
+}

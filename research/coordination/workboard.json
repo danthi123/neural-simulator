@@ -2046,11 +2046,11 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T10:14:53+00:00",
-      "next_action": "Preregister the four unmodified source-transfer arms with exact source and code hashes, original temperature conventions, initial occupancy rules, sealed Ding waveforms, CPU authority, GPU parity tolerance, and independent stop rules; then implement and execute Stage 1 before any calibration or Stage 2 integration.",
+      "heartbeat_at": "2026-08-05T10:33:23+00:00",
+      "next_action": "Seal the corrected four-model transfer contract: Khaliq kinetic-graph stationary initialization with the native defect disclosed, Balbi at source-package 22 C, Labro across the preregistered room-temperature envelope, and temperature-independent Desai; bind exact model, runner, scorer, CPU authority, GPU parity, consumption ledger, and independent stop rules before execution.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "Do not treat cross-preparation models as SNr truth, graft unsupported transitions, tune conductance, or enter Stage 2. Each comparator must run unmodified under the sealed Ding commands first.",
+      "recovery_action": "Do not call Khaliq graph-equilibrium initialization source-native, treat cross-preparation models as SNr truth, graft unsupported transitions, tune conductance, or enter Stage 2. Preserve each comparator's explicit source and correction boundary under the sealed Ding commands.",
       "resource": "local_cpu_then_gpu",
       "status": "running",
       "write_set": [
@@ -2447,5 +2447,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T10:14:53+00:00"
+  "updated_at": "2026-08-05T10:33:23+00:00"
 }
