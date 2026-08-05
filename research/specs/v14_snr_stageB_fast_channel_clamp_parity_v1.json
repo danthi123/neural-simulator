@@ -1,0 +1,123 @@
+{
+  "schema": "v14-snr-stageB-fast-channel-clamp-parity-v1",
+  "protocol_id": "v14-snr-stageB-v2-fast-channel-clamp-numpy-cupy-parity-v1",
+  "status": "prospectively_preregistered_before_numeric_comparison",
+  "scientific_verdict": null,
+  "parity_verdict": null,
+  "artifact_blinding": {
+    "declaration": "This protocol was written after the two sealed executions existed but before the protocol author inspected, summarized, or used their numeric CPU/CuPy differences.",
+    "forbidden_inputs_to_criteria": [
+      "observed pointwise differences in either raw artifact",
+      "observed fitted-metric differences between backends",
+      "the observed distance of either backend from a biological gate boundary"
+    ],
+    "change_policy": "Any change to a numeric criterion after comparison begins requires a new protocol and cannot adjudicate these artifacts."
+  },
+  "authority": {
+    "purpose": "Establish whether the already-sealed CuPy clamp is a numerically faithful acceleration of the NumPy reference for Stage 1 analysis.",
+    "does_not_authorize": [
+      "candidate calibration",
+      "conductance-scale fitting",
+      "a biological Stage 1 GO",
+      "whole-cell or compartment integration",
+      "replacement of the byte-exact Stage 2 replay gate"
+    ]
+  },
+  "sealed_execution_binding": {
+    "path": "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
+    "sha256": "d99ed6a8fd3f1c6e871ded2358c69bf3807549ba62f4e178689ff5a29c1e330e",
+    "git_commit_containing_contract": "62490b23595fc7c4bf53ba644605f11c62a6437a",
+    "numpy_artifact": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_numpy_v1.json",
+    "cupy_artifact": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_cupy_v1.json",
+    "artifact_selection_rule": "Only the create-once outputs at the paths sealed by the bound execution contract are eligible; no rerun may replace either member of the pair."
+  },
+  "reference_conventions": {
+    "dtype": "float32",
+    "reference_backend": "numpy_cpu",
+    "candidate_backend": "cupy_cuda_0",
+    "repository_numeric_precedents": [
+      {
+        "path": "tests/test_snr_packet_kernels.py",
+        "criterion": "production SNR packet equation-oracle comparisons use rtol 5e-6 and atol 2e-6"
+      },
+      {
+        "path": "tests/test_v14_stageB_structural_successor_cupy.py",
+        "criterion": "the same fast-channel CuPy kernel's powered steady-state gates use atol 2e-6"
+      },
+      {
+        "path": "research/specs/v13_backend_state_transplant.json",
+        "criterion": "an earlier continuous-state backend diagnostic uses rtol 1e-6 and atol 1e-6"
+      },
+      {
+        "path": "research/specs/v14_snr_stageB_structural_successor_v2.json",
+        "criterion": "later full-compartment Stage 2 replay remains byte-exact and is not weakened by this clamp-only protocol"
+      }
+    ],
+    "float32_basis": "IEEE-754 binary32 unit roundoff is 2^-24, approximately 5.96e-8. NumPy and CUDA elementary-function implementations may differ by multiple ulps for exp and powered-gate arithmetic even when both correctly evaluate the filed equations. The mixed tolerance below adopts the repository's production SNR kernel envelope; the absolute term handles values near zero where relative error is ill-conditioned.",
+    "classification": "engineering_criterion_not_biological_measurement"
+  },
+  "authentication_gate": {
+    "requirements": [
+      "authenticate this protocol and the sealed execution contract by exact file SHA-256",
+      "authenticate each artifact's semantic digest and provenance sidecar",
+      "authenticate the protocol, parameter-module, production-kernel, and runner bindings inherited from the sealed execution contract",
+      "require NumPy backend on CPU for the reference and CuPy backend on cuda:0 for the candidate",
+      "require float32 state, a 0.005 ms sample interval, all nine assays, all filed command ladders, 26 segment launches, no per-time-step host loop, and final-serialization-only host transfer",
+      "require identical array shapes, field sets, command ordering, and finite-value masks"
+    ],
+    "failure_status": "PARITY_INCONCLUSIVE_INVALID_EVIDENCE"
+  },
+  "comparison_domain": {
+    "exact_fields": [
+      "assay names and field names",
+      "all command dictionaries",
+      "command-voltage and prepulse-voltage arrays",
+      "elapsed-time and recovery-duration arrays",
+      "array shapes and ordering",
+      "dtype, sample interval, implementation bindings, evidence labels, units, and execution counters"
+    ],
+    "toleranced_fields": "Every finite numeric leaf under assays that is produced from channel-state, current, conductance, peak, or normalization arithmetic, including complete time traces and all derived ladders. No subsampling or summary-only comparison is allowed.",
+    "excluded_differences": [
+      "the expected backend and device identity strings",
+      "artifact self-digests and provenance fields that necessarily identify distinct executions",
+      "wall-clock timing and device-description metadata"
+    ]
+  },
+  "pointwise_numeric_gate": {
+    "classification": "engineering_criterion",
+    "formula": "abs(cupy - numpy) <= absolute_tolerance + relative_tolerance * abs(numpy)",
+    "relative_tolerance": 0.000005,
+    "absolute_tolerance": 0.000002,
+    "reference": "numpy",
+    "aggregation": "Every compared numeric leaf must pass; report maximum absolute error, maximum scaled error, failing count, and the path and index of each maximum. An aggregate mean, percentile, correlation, or score cannot compensate for any failed leaf.",
+    "nonfinite_policy": "Any nonfinite dynamic value is a parity failure even if both backends place it at the same index.",
+    "zero_policy": "Signed zero is equivalent. Exact zeros required by command metadata remain governed by the exact-fields gate."
+  },
+  "functional_decision_sensitivity_gate": {
+    "classification": "scientific_decision_preservation_gate",
+    "analysis": "Run the sealed Stage 1 estimators independently on the NumPy and CuPy artifacts with identical estimator code, bounds, initialization, source targets, and source mean-plus-or-minus-two-SEM hard gates. Do not fit one backend from the other backend's solution.",
+    "requirements": [
+      "both analyses converge without fallback or altered bounds",
+      "each promoting scalar receives the same PASS or FAIL classification on both backends",
+      "for a PASS scalar, the closed interval spanning the two backend estimates lies wholly inside the source mean plus or minus two SEM acceptance interval",
+      "for a FAIL scalar, the closed interval spanning the two backend estimates lies wholly outside the same source boundary on the same side",
+      "the overall Stage 1 verdict and every named reason code are identical across backends"
+    ],
+    "boundary_policy": "Touching a source acceptance boundary, straddling either boundary, or failing on opposite sides is a functional parity failure. This makes backend uncertainty unable to change a biological promotion decision without inventing a post-hoc metric tolerance.",
+    "reported_not_promoting": "Reported-only quantities are still subject to the pointwise numeric gate but cannot promote or veto scientific Stage 1 status through this decision-sensitivity gate."
+  },
+  "verdict_rule": {
+    "PARITY_GO": "Authentication and exact-field gates pass, every dynamic numeric leaf passes the pointwise mixed tolerance, and every functional decision-sensitivity requirement passes.",
+    "PARITY_NO_GO": "Evidence authenticates, but any exact-field, pointwise numeric, nonfinite, fit-convergence, or functional decision-sensitivity requirement fails.",
+    "PARITY_INCONCLUSIVE_INVALID_EVIDENCE": "A required artifact, digest, provenance record, implementation binding, assay, or source target cannot be authenticated or is incomplete.",
+    "no_compensation": "Performance, biological agreement, or agreement of aggregate verdict alone cannot compensate for failed parity criteria."
+  },
+  "interpretation": {
+    "on_parity_go": "CuPy is established as a faithful accelerator for this isolated Stage 1 clamp and these exact sealed artifacts only. Biological promotion still requires an independent NumPy Stage 1 GO under the sealed source-transfer contract.",
+    "on_parity_no_go": "Do not use the CuPy artifact for Stage 1 authority. Diagnose arithmetic or serialization divergence prospectively; do not widen this protocol's tolerance.",
+    "on_biological_no_go": "A shared biological failure on both backends remains a biological structural NO-GO, not evidence against numeric parity.",
+    "stage2_boundary": "The Stage 2 full-compartment byte-exact replay requirement remains unchanged."
+  },
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "non-executed prospective comparison protocol; contains no simulation result or observed artifact difference"
+}

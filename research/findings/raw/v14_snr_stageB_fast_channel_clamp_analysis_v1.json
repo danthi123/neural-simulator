@@ -1,0 +1,273 @@
+{
+  "analysis_contract": {
+    "authority": "only the separate analyzer may assign a Stage 1 verdict; runner outputs are verdict-free observations",
+    "deactivation": "bounded single-exponential current-tail fit with an asymptote, beginning one sample after the command transition",
+    "recovery": "bounded least-squares biexponential with nonnegative component fractions summing to one",
+    "rise_decay": "linear interpolation between adjacent samples at 10 and 90 percent of fast-Na peak or 20 and 80 percent of Kv3 asymptote/peak as declared by the source endpoint",
+    "steady_state": "least-squares normalized-conductance Boltzmann fit over every filed command voltage; activation is computed from current divided by driving force and the powered gate, never from the unpowered gate",
+    "uncertainty_gate": "each promoting scalar must lie within source mean plus or minus two SEM; no aggregate score may compensate for a failed scalar",
+    "verdicts": [
+      "STAGE1_GO",
+      "STAGE1_STRUCTURAL_NO_GO",
+      "INCONCLUSIVE_INVALID_EVIDENCE"
+    ]
+  },
+  "backend_parity": {
+    "metric_absolute_differences": {
+      "fast_na.activation_10_90_at_0_mV_ms": 2.572306873060981e-08,
+      "fast_na.activation_slope_mV": 2.7585450652622967e-06,
+      "fast_na.activation_vhalf_mV": 3.4747432877679785e-06,
+      "fast_na.deactivation_at_minus_40_mV_ms": 2.678824939650326e-10,
+      "fast_na.inactivation_10_90_at_0_mV_ms": 1.5050708290775816e-08,
+      "fast_na.inactivation_slope_mV": 2.7079698430299004e-06,
+      "fast_na.inactivation_vhalf_mV": 1.8071559253485248e-06,
+      "fast_na.recovery_fast_fraction": 1.8372117382980946e-08,
+      "fast_na.recovery_fast_tau_ms": 1.8138238955245356e-07,
+      "fast_na.recovery_slow_tau_ms": 1.6534390816502764e-05,
+      "kv3_like.activation_slope_mV": 4.63561004693247e-07,
+      "kv3_like.activation_vhalf_mV": 3.6016264104432594e-07,
+      "kv3_like.deactivation_at_minus_40_mV_ms": 4.500704520182808e-08,
+      "kv3_like.deactivation_at_minus_50_mV_ms": 1.8805282797629275e-07,
+      "kv3_like.deactivation_at_minus_60_mV_ms": 8.583581023735576e-08,
+      "kv3_like.inactivation_slope_mV": 3.366428602546989e-06,
+      "kv3_like.inactivation_vhalf_mV": 3.4806586342028822e-06,
+      "kv3_like.rise_20_80_at_plus_40_mV_ms": 8.63244106197314e-08
+    },
+    "promoting": false,
+    "reason": "the sealed execution contract requires parity but declares no numerical tolerance",
+    "status": "NOT_ESTABLISHED_NO_PREREGISTERED_TOLERANCE"
+  },
+  "candidate_calibration_allowed": false,
+  "cupy_descriptive_metrics": {
+    "fast_na.activation_10_90_at_0_mV_ms": 0.03772393967360778,
+    "fast_na.activation_slope_mV": 8.000348915404365,
+    "fast_na.activation_vhalf_mV": -21.558700354849606,
+    "fast_na.deactivation_at_minus_40_mV_ms": 0.19194913595830043,
+    "fast_na.inactivation_10_90_at_0_mV_ms": 0.2040953391254911,
+    "fast_na.inactivation_slope_mV": 8.144278503336425,
+    "fast_na.inactivation_vhalf_mV": -61.998537746945296,
+    "fast_na.recovery_fast_fraction": 0.5112561929116622,
+    "fast_na.recovery_fast_tau_ms": 0.46005469886246003,
+    "fast_na.recovery_slow_tau_ms": 32.967021141658904,
+    "kv3_like.activation_slope_mV": 9.156043187549837,
+    "kv3_like.activation_vhalf_mV": -6.601549413459492,
+    "kv3_like.deactivation_at_minus_40_mV_ms": 3.5778210628611937,
+    "kv3_like.deactivation_at_minus_50_mV_ms": 2.2157911051303896,
+    "kv3_like.deactivation_at_minus_60_mV_ms": 1.1896114775172992,
+    "kv3_like.inactivation_slope_mV": 8.678537522900625,
+    "kv3_like.inactivation_vhalf_mV": -49.16076758268161,
+    "kv3_like.rise_20_80_at_plus_40_mV_ms": 0.3996903035485244
+  },
+  "execution_spec": {
+    "path": "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
+    "sha256": "d99ed6a8fd3f1c6e871ded2358c69bf3807549ba62f4e178689ff5a29c1e330e"
+  },
+  "failed_metric_count": 7,
+  "inputs": {
+    "cupy": {
+      "path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_cupy_v1.json",
+      "provenance_path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_cupy_v1.json.prov.json",
+      "provenance_sha256": "948e0d1389f0af039a4b6e5384228bfe167607708d141d641279d8e117901bf2",
+      "run_id": "1785918608-777866",
+      "self_sha256": "bb5b923511795c44a555fb68b7f8643b6512639e64dfc990312e8679814ad5a3",
+      "sha256": "ce56648072b03d8f6b1211aa27f9b0f4f2db773677e3c9e9cf8da99e17a9d9a5"
+    },
+    "numpy": {
+      "path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_numpy_v1.json",
+      "provenance_path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_numpy_v1.json.prov.json",
+      "provenance_sha256": "b92959f9886f5a8b88ce16d4c2ccba10b0b52aab0d1948a8c911159b10bcf608",
+      "run_id": "1785918608-777856",
+      "self_sha256": "f699ee1e8a13e8c8916f15b0790195dfe0f5c03144f51291167457eb1fd4198e",
+      "sha256": "a0694627ec36247e5d69e75c6f96712620fb44f0b4d6cd480e017dab6e9aeac6"
+    }
+  },
+  "numpy_reference_metrics": {
+    "fast_na.activation_10_90_at_0_mV_ms": 0.03772396539667651,
+    "fast_na.activation_slope_mV": 8.00035167394943,
+    "fast_na.activation_vhalf_mV": -21.558696880106318,
+    "fast_na.deactivation_at_minus_40_mV_ms": 0.19194913622618293,
+    "fast_na.inactivation_10_90_at_0_mV_ms": 0.2040953541761994,
+    "fast_na.inactivation_slope_mV": 8.144275795366582,
+    "fast_na.inactivation_vhalf_mV": -61.99853593978937,
+    "fast_na.recovery_fast_fraction": 0.5112561745395449,
+    "fast_na.recovery_fast_tau_ms": 0.4600545174800705,
+    "fast_na.recovery_slow_tau_ms": 32.96700460726809,
+    "kv3_like.activation_slope_mV": 9.156042723988833,
+    "kv3_like.activation_vhalf_mV": -6.601549773622133,
+    "kv3_like.deactivation_at_minus_40_mV_ms": 3.5778210178541485,
+    "kv3_like.deactivation_at_minus_50_mV_ms": 2.2157909170775616,
+    "kv3_like.deactivation_at_minus_60_mV_ms": 1.1896115633531095,
+    "kv3_like.inactivation_slope_mV": 8.678540889329227,
+    "kv3_like.inactivation_vhalf_mV": -49.16077106334024,
+    "kv3_like.rise_20_80_at_plus_40_mV_ms": 0.39969038987293504
+  },
+  "schema": "v14-snr-stageB-fast-channel-clamp-analysis-v1",
+  "scientific_verdict": "STAGE1_STRUCTURAL_NO_GO",
+  "sha256": "5044e632533f36bc829896ac02ca03a5950fa4e991341fee186bb2019c901d40",
+  "source_transfer_gates": [
+    {
+      "lower_2sem": 0.07500000000000001,
+      "metric": "fast_na.activation_10_90_at_0_mV_ms",
+      "passed": false,
+      "source_mean": 0.085,
+      "source_sem": 0.005,
+      "upper_2sem": 0.095,
+      "value": 0.03772396539667651
+    },
+    {
+      "lower_2sem": 5.8,
+      "metric": "fast_na.activation_slope_mV",
+      "passed": false,
+      "source_mean": 6.2,
+      "source_sem": 0.2,
+      "upper_2sem": 6.6000000000000005,
+      "value": 8.00035167394943
+    },
+    {
+      "lower_2sem": -31.4,
+      "metric": "fast_na.activation_vhalf_mV",
+      "passed": false,
+      "source_mean": -30.2,
+      "source_sem": 0.6,
+      "upper_2sem": -29.0,
+      "value": -21.558696880106318
+    },
+    {
+      "lower_2sem": 0.08120000000000001,
+      "metric": "fast_na.deactivation_at_minus_40_mV_ms",
+      "passed": false,
+      "source_mean": 0.099,
+      "source_sem": 0.0089,
+      "upper_2sem": 0.1168,
+      "value": 0.19194913622618293
+    },
+    {
+      "lower_2sem": 0.167,
+      "metric": "fast_na.inactivation_10_90_at_0_mV_ms",
+      "passed": true,
+      "source_mean": 0.191,
+      "source_sem": 0.012,
+      "upper_2sem": 0.215,
+      "value": 0.2040953541761994
+    },
+    {
+      "lower_2sem": 7.1,
+      "metric": "fast_na.inactivation_slope_mV",
+      "passed": true,
+      "source_mean": 8.1,
+      "source_sem": 0.5,
+      "upper_2sem": 9.1,
+      "value": 8.144275795366582
+    },
+    {
+      "lower_2sem": -65.89999999999999,
+      "metric": "fast_na.inactivation_vhalf_mV",
+      "passed": true,
+      "source_mean": -63.3,
+      "source_sem": 1.3,
+      "upper_2sem": -60.699999999999996,
+      "value": -61.99853593978937
+    },
+    {
+      "lower_2sem": 0.41200000000000003,
+      "metric": "fast_na.recovery_fast_fraction",
+      "passed": true,
+      "source_mean": 0.526,
+      "source_sem": 0.057,
+      "upper_2sem": 0.64,
+      "value": 0.5112561745395449
+    },
+    {
+      "lower_2sem": 0.44999999999999996,
+      "metric": "fast_na.recovery_fast_tau_ms",
+      "passed": true,
+      "source_mean": 0.59,
+      "source_sem": 0.07,
+      "upper_2sem": 0.73,
+      "value": 0.4600545174800705
+    },
+    {
+      "lower_2sem": 22.3,
+      "metric": "fast_na.recovery_slow_tau_ms",
+      "passed": true,
+      "source_mean": 35.1,
+      "source_sem": 6.4,
+      "upper_2sem": 47.900000000000006,
+      "value": 32.96700460726809
+    },
+    {
+      "lower_2sem": 7.7,
+      "metric": "kv3_like.activation_slope_mV",
+      "passed": true,
+      "source_mean": 8.9,
+      "source_sem": 0.6,
+      "upper_2sem": 10.1,
+      "value": 9.156042723988833
+    },
+    {
+      "lower_2sem": -11.7,
+      "metric": "kv3_like.activation_vhalf_mV",
+      "passed": true,
+      "source_mean": -8.5,
+      "source_sem": 1.6,
+      "upper_2sem": -5.3,
+      "value": -6.601549773622133
+    },
+    {
+      "lower_2sem": 1.55,
+      "metric": "kv3_like.deactivation_at_minus_40_mV_ms",
+      "passed": false,
+      "source_mean": 1.87,
+      "source_sem": 0.16,
+      "upper_2sem": 2.19,
+      "value": 3.5778210178541485
+    },
+    {
+      "lower_2sem": 1.11,
+      "metric": "kv3_like.deactivation_at_minus_50_mV_ms",
+      "passed": false,
+      "source_mean": 1.35,
+      "source_sem": 0.12,
+      "upper_2sem": 1.59,
+      "value": 2.2157909170775616
+    },
+    {
+      "lower_2sem": 0.7,
+      "metric": "kv3_like.deactivation_at_minus_60_mV_ms",
+      "passed": false,
+      "source_mean": 0.82,
+      "source_sem": 0.06,
+      "upper_2sem": 0.94,
+      "value": 1.1896115633531095
+    },
+    {
+      "lower_2sem": 7.499999999999999,
+      "metric": "kv3_like.inactivation_slope_mV",
+      "passed": true,
+      "source_mean": 8.7,
+      "source_sem": 0.6,
+      "upper_2sem": 9.899999999999999,
+      "value": 8.678540889329227
+    },
+    {
+      "lower_2sem": -52.400000000000006,
+      "metric": "kv3_like.inactivation_vhalf_mV",
+      "passed": true,
+      "source_mean": -49.2,
+      "source_sem": 1.6,
+      "upper_2sem": -46.0,
+      "value": -49.16077106334024
+    },
+    {
+      "lower_2sem": 0.35,
+      "metric": "kv3_like.rise_20_80_at_plus_40_mV_ms",
+      "passed": true,
+      "source_mean": 0.41,
+      "source_sem": 0.03,
+      "upper_2sem": 0.47,
+      "value": 0.39969038987293504
+    }
+  ],
+  "source_transfer_status": "STRUCTURAL_NO_GO",
+  "whole_cell_promotion_allowed": false
+}

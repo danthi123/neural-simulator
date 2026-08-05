@@ -1992,19 +1992,21 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T08:29:13+00:00",
-      "next_action": "Commit the sealed V2 vectorized clamp runner and execution contract, then run the exact NumPy authority and leased-CuPy parity matrix; no parameter sweep or pool replication is authorized.",
+      "heartbeat_at": "2026-08-05T08:39:28+00:00",
+      "next_action": "Escalate focused source research for complete-current fast-Na activation/deactivation and Kv3 deactivation state models, then preregister a replacement Stage 1 family; do not tune conductance or begin compartment integration.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
-      "resource": "local_gpu",
+      "recovery_action": "Preserve the authenticated 7-of-18 source-gate failure. Do not compensate with conductance, widen source intervals, reinterpret gate-level taus as composite-current taus, or begin Stage 2 before a prospectively filed Stage 1 successor passes.",
+      "resource": "source_research",
       "status": "running",
       "write_set": [
         "sim/kernels.py",
         "sim/snr_structural_successor.py",
         "research/runners/v14_stageB_fast_channel_clamp.py",
         "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
-        "tools/v14_stageB_fast_channel_clamp_analysis.py"
+        "research/specs/v14_snr_stageB_fast_channel_clamp_parity_v1.json",
+        "tools/v14_stageB_fast_channel_clamp_analysis.py",
+        "research/findings/2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md"
       ]
     },
     "gateb-v14-packet-authority": {
@@ -2393,5 +2395,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T08:29:13+00:00"
+  "updated_at": "2026-08-05T08:39:28+00:00"
 }

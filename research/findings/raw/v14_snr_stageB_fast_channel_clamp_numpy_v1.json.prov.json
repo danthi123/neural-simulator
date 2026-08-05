@@ -1,0 +1,34 @@
+{
+ "run_id": "1785918608-777856",
+ "runner": "research/runners/v14_stageB_fast_channel_clamp.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/v14_stageB_fast_channel_clamp.py",
+  "--spec",
+  "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
+  "--spec-sha256",
+  "d99ed6a8fd3f1c6e871ded2358c69bf3807549ba62f4e178689ff5a29c1e330e",
+  "--backend",
+  "numpy",
+  "--out",
+  "research/findings/raw/v14_snr_stageB_fast_channel_clamp_numpy_v1.json"
+ ],
+ "git_sha": "62490b235",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-05T04:30:08",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8603.8,
+ "corpus_check_query": "Stage B V3 successor has no candidate satisfying Cav2.2 variability and NaP hyperpolarization while maintaining stable autonomous pacemaking",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_numpy_v1.json"
+}

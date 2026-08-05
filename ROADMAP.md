@@ -143,9 +143,16 @@ its controls and lesions, and is tested at the required seed coverage.
    first contract is filed in
    `research/specs/v14_snr_stageB_structural_successor_v2.json`; V1 was
    superseded before execution after an audit found that powered activation
-   gates changed the source-measured conductance curves. Implementation
-   and execution have not begun. Delayed action-reward learning and its
-   unrelated-reward control come afterward.
+   gates changed the source-measured conductance curves. Stage 1 is now
+   implemented as a fused 26-segment clamp and executed on both NumPy/CPU and
+   CuPy/CUDA. The authenticated analyzer found 11 of 18 source endpoints in
+   range but issued a structural NO-GO: fast-Na activation and deactivation,
+   plus all three Kv3 deactivation tails, fail their independent source gates.
+   Conductance calibration and Stage 2 compartment integration remain
+   forbidden. The next build revises those state equations from focused source
+   evidence and must pass complete-current CPU clamps before another search.
+   Delayed action-reward learning and its unrelated-reward control come
+   afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
    biological consistency signal rather than an exact composer metadata read.
@@ -291,13 +298,17 @@ remains blocked on unresolved biological protocols, and arbitrary new
 objectives must not be invented from partial evidence. Unspecified subgates
 remain fail-closed.
 
-The latest authenticated diagnostic localized the current failure to model
-structure rather than an unsearched corner of the filed parameter ranges. Its
-36 traces are now automatically analyzed, but the engine still does not turn a
-completed receipt into the next sealed experiment without an explicit
-scientific handoff. Receipt ingestion and bounded observation generation are
-the next automation slice; architecture changes remain source-reviewed and
-preregistered rather than optimizer-generated.
+The latest authenticated diagnostic localized the old packet failure to model
+structure rather than an unsearched corner of its parameter ranges. Receipt
+ingestion and bounded observation generation are now implemented. The new
+successor's Stage 1 clamp also executes and analyzes automatically: sealed
+CPU/GPU observations are authenticated, all 18 source endpoints are re-fit,
+and uncompensated gates assign the verdict. It found seven structural failures.
+The engine still does not independently research a replacement state family,
+append a new design version, preregister its successor, and dispatch it without
+a scientific handoff. Those architecture changes remain source-reviewed and
+prospectively sealed; automating that controlled handoff is the next engine
+slice.
 
 A versioned V2 contract resolves the post-spike AHP direction without
 pretending the paper specified a medium-AHP window: the scorer recomputes the
