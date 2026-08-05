@@ -791,68 +791,50 @@
       ]
     },
     "019fcf61-3937-70f1-aad6-a10a1a9f0c05": {
-      "heartbeat_at": "2026-08-05T00:44:49+00:00",
+      "completed_at": "2026-08-05T01:04:30+00:00",
+      "heartbeat_at": "2026-08-05T01:04:30+00:00",
       "model": "gpt-5.6-sol-high",
-      "next_action": "Implement and test disjoint template/spec files without promoting model priors to measurements.",
+      "next_action": "Controller validates actual candidate docs, commits source, and runs two-candidate real readiness transport.",
+      "result": "Built canonical 69-leaf template and non-executable source-bound spec; follow-up corrected fast potassium density to searched 2-8 mS/cm2 and added explicit held-out calcium geometry/current-fraction equivalence controls.",
       "started_at": "2026-08-05T00:44:49+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Build source-bound Stage B 69-leaf packet template and executable spec",
       "write_set": [
         "research/specs/v14_snr_stageB_packet_template.json",
         "research/specs/v14_snr_stageB_executable_spec.json",
         "tests/test_v14_stageB_packet_template.py"
       ]
+    },
+    "019fcf64-fa62-7700-87ae-d9cc0ddc6622": {
+      "completed_at": "2026-08-05T01:00:15+00:00",
+      "heartbeat_at": "2026-08-05T01:00:15+00:00",
+      "model": "gpt-5.6-luna-high",
+      "next_action": "Controller commits source, then executes the two pinned readiness candidates through the committed tool.",
+      "result": "Implemented exact two-candidate real readiness orchestrator with compiler/verifier/runner identity checks, cleanup, null physiology verdict, and tests; controller added provenance/device sidecars and receipt fields.",
+      "started_at": "2026-08-05T00:48:56+00:00",
+      "status": "completed",
+      "task": "Implement real two-candidate Stage B readiness orchestrator",
+      "write_set": [
+        "tools/v14_stageB_real_readiness.py",
+        "tests/test_v14_stageB_real_readiness.py"
+      ]
+    },
+    "019fcf72-e3b4-7703-bfdf-ea2116630ee7": {
+      "completed_at": "2026-08-05T01:10:19+00:00",
+      "heartbeat_at": "2026-08-05T01:10:19+00:00",
+      "model": "gpt-5.6-luna-high",
+      "next_action": "Controller retrieves, reviews, catalogs, and RAG-indexes the two validated PMC primary full texts.",
+      "result": "Implemented validated metadata-only known-source lead intake with DOI/URL deduplication, conflict rejection, query binding, atomic CLI persistence, and 28 passing tests.",
+      "started_at": "2026-08-05T01:04:12+00:00",
+      "status": "completed",
+      "task": "Implement exact known-source lead intake for parameter research",
+      "write_set": [
+        "tools/parameter_research.py",
+        "tests/test_parameter_research.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T19:31:46+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-active-path-fusion"
-    },
-    {
-      "at": "2026-08-04T19:38:43+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-active-path-fusion"
-    },
-    {
-      "at": "2026-08-04T19:40:52+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v14-active-path-fusion"
-    },
-    {
-      "at": "2026-08-04T19:40:52+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-snr-hh-combined-fusion"
-    },
-    {
-      "at": "2026-08-04T19:40:52+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
-      "at": "2026-08-04T19:51:07+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v14-snr-hh-combined-fusion"
-    },
-    {
-      "at": "2026-08-04T19:51:07+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-cupy-dispatch-cache"
-    },
-    {
-      "at": "2026-08-04T19:51:07+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
     {
       "at": "2026-08-04T19:53:01+00:00",
       "detail": "completed",
@@ -1404,6 +1386,54 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T00:48:56+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcf64-fa62-7700-87ae-d9cc0ddc6622"
+    },
+    {
+      "at": "2026-08-05T00:53:17+00:00",
+      "detail": "planned",
+      "kind": "lane-update",
+      "subject": "gateb-primary-source-fulltext-intake"
+    },
+    {
+      "at": "2026-08-05T01:00:15+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf64-fa62-7700-87ae-d9cc0ddc6622"
+    },
+    {
+      "at": "2026-08-05T01:04:12+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-primary-source-fulltext-intake"
+    },
+    {
+      "at": "2026-08-05T01:04:12+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcf72-e3b4-7703-bfdf-ea2116630ee7"
+    },
+    {
+      "at": "2026-08-05T01:04:30+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf61-3937-70f1-aad6-a10a1a9f0c05"
+    },
+    {
+      "at": "2026-08-05T01:10:19+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf72-e3b4-7703-bfdf-ea2116630ee7"
+    },
+    {
+      "at": "2026-08-05T01:10:19+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-primary-source-fulltext-intake"
     }
   ],
   "lanes": {
@@ -1466,6 +1496,24 @@
       "priority": 1,
       "resource": "agent_cpu_network",
       "status": "completed"
+    },
+    "gateb-primary-source-fulltext-intake": {
+      "blocker": "Current RAG has project summaries and Simmons metadata intake but not the decisive primary full texts; paper queries fall back to a 2007 review.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T01:10:19+00:00",
+      "next_action": "Retrieve, review, catalog, and RAG-index the validated Ding sodium and Kv3 PMC primary full texts; keep metadata separate from extracted parameter evidence.",
+      "owner": "controller",
+      "priority": 2,
+      "recovery_action": "Use the validated scholarly full-text retrieval workflow and source-intake review path; locators remain pending until direct source reading.",
+      "resource": "network_io",
+      "status": "running",
+      "write_set": [
+        "tools/parameter_research.py",
+        "tests/test_parameter_research.py",
+        "research/parameter_research",
+        "research/specs/v14_stageB_fast_channel_primary_research.json",
+        "research/coordination/workboard.json"
+      ]
     },
     "gateb-process-audit": {
       "agent_id": "019fcd6c-f34c-7681-a635-6d67d51d683b",
@@ -2019,5 +2067,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T00:47:32+00:00"
+  "updated_at": "2026-08-05T01:10:19+00:00"
 }

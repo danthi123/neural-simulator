@@ -1,0 +1,8 @@
+{
+  "artifact": "research/specs/v14_snr_stageB_packet_template.json",
+  "device": "not_applicable_non_executed_parameter_template",
+  "execution": "not_executed",
+  "generator": "source_bound_stageB_template_authoring",
+  "scientific_claim": false,
+  "source_revision": "22ec30b769b1cf272feec7dde0a1eb9667abd779"
+}

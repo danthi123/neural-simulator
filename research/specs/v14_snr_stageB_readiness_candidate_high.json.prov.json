@@ -1,0 +1,8 @@
+{
+  "artifact": "research/specs/v14_snr_stageB_readiness_candidate_high.json",
+  "device": "not_applicable_non_executed_readiness_candidate",
+  "execution": "not_executed",
+  "generator": "template_endpoint_candidate_generation",
+  "scientific_claim": false,
+  "source_revision": "22ec30b769b1cf272feec7dde0a1eb9667abd779"
+}
