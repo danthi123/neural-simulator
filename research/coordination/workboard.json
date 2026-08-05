@@ -1812,12 +1812,12 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T04:55:40+00:00",
-      "next_action": "Commit and provision the V3 same-cell NaP and paired HCN companion pipeline, execute candidates 284 and 404 concurrently on authoritative NumPy workers, independently replay both collections, and report candidate-specific results without retuning; keep the heterogeneous 12-cell SK cohort unavailable.",
+      "heartbeat_at": "2026-08-05T05:12:36+00:00",
+      "next_action": "Bank the verified V3 result: HCN passes both survivors; NaP exposes depolarized silence (404 FAIL, 284 UNAVAILABLE on baseline stability with adverse raw direction). Diagnose the NaP depolarized fixed point from authenticated traces, add stable-baseline plus negative voltage delta to batched engineering screening, and preregister a fresh search without reopening candidates 284 or 404; keep the SK cohort unavailable.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "If either V3 assay fails, bank the candidate-specific negative result without changing the filed protocol. If transport or authentication fails, use pool42 recovery and keep the affected gate unavailable until an exact replay succeeds.",
-      "resource": "local_cpu_plus_pool40_pool41_recovery_pool42",
+      "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
+      "resource": "local_gpu_screen_plus_pool40_pool41_confirmation",
       "status": "running",
       "write_set": [
         "research/specs",
@@ -2216,5 +2216,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T04:55:40+00:00"
+  "updated_at": "2026-08-05T05:12:36+00:00"
 }

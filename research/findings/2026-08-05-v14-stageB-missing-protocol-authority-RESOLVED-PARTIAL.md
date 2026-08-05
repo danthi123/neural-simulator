@@ -91,10 +91,36 @@ hyperpolarized input resistance, and the heterogeneous 12-cell SK cohort were
 not executable under V2. Evidence is in
 `research/experiment-runtime/v14-stageB-v2-total-ahp/results/`.
 
+V3 then added authenticated same-cell NaP and paired HCN companion traces. The
+first dispatch was infrastructure-invalid because the three-second companion
+schedule accidentally replaced the established one-second base-arm schedule;
+revision `df1811d9dbc8a92a6b66bd5afb3490174ef26551` separates those contracts and
+passed 84 focused integration tests before the corrected dispatch. Both
+corrected collections independently replay locally.
+
+| Candidate | NaP baseline drift (mV) | NaP post-lesion delta (mV) | NaP spikes | HCN intact / lesion (MOhm) | V3 result |
+|---|---:|---:|---:|---:|---|
+| Sobol 284 | 0.516438 | +0.847782 | 0 | 181.579 / 291.648 | `UNAVAILABLE` |
+| Sobol 404 | 0.085104 | +1.442343 | 0 | 576.446 / 1023.489 | `FAIL` |
+
+HCN passes the filed source-supported direction in both candidates. Candidate
+404 has a stable NaP baseline but depolarizes after complete NaP removal, the
+opposite of the source-supported direction. Candidate 284 exceeds the filed
+0.5 mV stability tolerance by 0.016438 mV and is therefore formally
+`UNAVAILABLE`; its unscored raw voltage direction is also depolarizing. Both
+cells stop spiking, so the former spike-silence-only check was accepting
+depolarized silence rather than the biologically intended hyperpolarized
+quiescence. No threshold or candidate was retuned after observing this result.
+
+Corrected V3 evidence is in
+`research/experiment-runtime/v14-stageB-v3-companion-r2/results/`.
+
 ## Result and next action
 
-Status is **RESOLVED-PARTIAL**. The total-AHP contract is implemented and passed
-by both survivors. NaP and HCN now have filed V3 project-operational contracts and
-are being connected to separately authenticated companion traces. The SK cohort
-must remain unavailable. Next, execute and independently score the V3 phased NaP
-and paired HCN assays for both survivors.
+Status is **RESOLVED-PARTIAL**. Total-AHP and HCN contracts are implemented and
+pass in both survivors. The V3 NaP contract exposed an adverse mechanism hidden
+by the earlier silence-only check: neither survivor demonstrates hyperpolarized
+quiescence after NaP removal. The SK cohort remains unavailable. Next, add the
+stable-baseline and negative NaP-voltage direction to engineering screening,
+diagnose the depolarized fixed point without reopening these candidates, and
+run a new preregistered search rather than tuning either observed survivor.
