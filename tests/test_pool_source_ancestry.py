@@ -175,14 +175,13 @@ def test_provisioning_executes_the_generator_extracted_from_head():
         "docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md "
         "requirements.txt requirements-dev.txt"
     ) in script
-    assert "find docs -type f -name '*.md' -print0" in script
-    assert (
-        "CLAUDE.md\\0GAP_CLOSURE_MISSION.md\\0README.md\\0ROADMAP.md\\0"
-        "requirements-dev.txt\\0.source_ancestry.json\\0"
-    ) in script
+    assert 'python3 "$STAGE/tools/pool/provisioning/source_manifest.py" create' in script
+    assert '--root "$STAGE" --output "$MANIFEST"' in script
     assert '"$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"' in script
     assert '"$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md"' in script
-    assert "numpy scipy h5py pyyaml pytest" in script
+    assert "numpy==2.2.6 scipy==1.15.3 h5py==3.16.0" in script
+    assert "pyyaml==6.0.3 pytest==8.4.1" in script
+    assert "COMPLETE SOURCE FILE SET VERIFY FAIL" in script
     assert 'source_ancestry_sha256=%s' in script
 
 

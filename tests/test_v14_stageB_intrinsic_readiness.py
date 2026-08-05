@@ -15,6 +15,7 @@ from tools.v14_stageB_intrinsic_readiness import (
     ARMS,
     RECEIPT_SCHEMA,
     StageBIntrinsicReadinessError,
+    _source_identity,
     run_intrinsic_readiness,
 )
 
@@ -169,6 +170,69 @@ def test_dirty_git_source_is_rejected_before_output_creation(tmp_path):
             template, template_sha, candidate, candidate_sha,
             causal_gate, gate_sha, tmp_path / "readiness", repository_root=tmp_path,
         )
+
+
+def _archive_attestation(root: Path) -> dict:
+    ancestry = root / ".source_ancestry.json"
+    source = root / "tools/example.py"
+    source.parent.mkdir(parents=True, exist_ok=True)
+    ancestry.write_bytes(b'{"schema":"test-ancestry"}')
+    source.write_bytes(b"VALUE = 1\n")
+    rows = []
+    for path in (ancestry, source):
+        rows.append(
+            f"{hashlib.sha256(path.read_bytes()).hexdigest()}  "
+            f"{path.relative_to(root).as_posix()}\n"
+        )
+    manifest = root / ".source_manifest.sha256"
+    manifest.write_text("".join(sorted(rows)), encoding="ascii")
+    manifest_sha = hashlib.sha256(manifest.read_bytes()).hexdigest()
+    ancestry_sha = hashlib.sha256(ancestry.read_bytes()).hexdigest()
+    revision = "a" * 40
+    (root / ".source_revision").write_text(
+        "\n".join(
+            (
+                f"git_sha={revision}",
+                "source_kind=git_archive",
+                f"source_manifest_sha256={manifest_sha}",
+                f"source_ancestry_sha256={ancestry_sha}",
+                "excluded_worktree_paths=0",
+                "created_utc=2026-08-05T00:00:00Z",
+            )
+        ) + "\n",
+        encoding="ascii",
+    )
+    return {
+        "kind": "git_archive",
+        "revision": revision,
+        "source_manifest_sha256": manifest_sha,
+        "source_ancestry_sha256": ancestry_sha,
+        "authoritative": True,
+    }
+
+
+def test_verified_archive_source_is_authoritative_without_git(tmp_path):
+    expected = _archive_attestation(tmp_path)
+    assert _source_identity(tmp_path, require_authoritative=True) == expected
+
+
+def test_archive_source_tamper_and_missing_attestation_fail_closed(tmp_path):
+    _archive_attestation(tmp_path)
+    (tmp_path / "tools/example.py").write_bytes(b"VALUE = 2\n")
+    with pytest.raises(StageBIntrinsicReadinessError, match="source digest mismatch"):
+        _source_identity(tmp_path, require_authoritative=True)
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    with pytest.raises(StageBIntrinsicReadinessError, match="requires a clean Git checkout"):
+        _source_identity(empty, require_authoritative=True)
+
+
+def test_nested_outer_git_checkout_does_not_override_archive_identity(tmp_path):
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    archive = tmp_path / "archive"
+    archive.mkdir()
+    expected = _archive_attestation(archive)
+    assert _source_identity(archive, require_authoritative=True) == expected
 
 
 def test_rejects_pinned_candidate_digest_tamper_without_output(tmp_path):

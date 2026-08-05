@@ -61,15 +61,9 @@ python3 "$STAGE/tools/pool/provisioning/ancestry_attestation.py" create \
     exit 1
   }
 ANCESTRY_SHA=$(sha256sum "$STAGE/.source_ancestry.json" | awk '{print $1}')
-(cd "$STAGE" && { \
-  find sim research/runners experiment tools tests -type f \
-    \( -name '*.py' -o -name '*.sh' \) -print0; \
-  find research/fixtures -type f \
-    \( -name '*.py' -o -name '*.sh' -o -name '*.json' \) -print0; \
-  find research/specs -type f -name '*.json' -print0; \
-  find docs -type f -name '*.md' -print0; \
-  printf 'research/__init__.py\0CLAUDE.md\0GAP_CLOSURE_MISSION.md\0README.md\0ROADMAP.md\0requirements-dev.txt\0.source_ancestry.json\0'; \
-} | sort -z | xargs -0 sha256sum) > "$MANIFEST"
+rm -f "$MANIFEST"
+python3 "$STAGE/tools/pool/provisioning/source_manifest.py" create \
+  --root "$STAGE" --output "$MANIFEST" >/dev/null
 MANIFEST_SHA=$(sha256sum "$MANIFEST" | awk '{print $1}')
 EXCLUDED_DIRTY=$(git status --porcelain -- sim research/runners experiment tools 2>/dev/null | wc -l)
 printf 'git_sha=%s\nsource_kind=git_archive\nsource_manifest_sha256=%s\nsource_ancestry_sha256=%s\nexcluded_worktree_paths=%s\ncreated_utc=%s\n' \
@@ -124,10 +118,11 @@ for h in "${NODES[@]}"; do
     { test -x .venv/bin/python && .venv/bin/python -m pip --version >/dev/null 2>&1 || \
       { rm -rf .venv; python3 -m venv .venv; }; } && \
     .venv/bin/python -m pip -q install --upgrade pip >/dev/null 2>&1; \
-    .venv/bin/python -m pip -q install numpy scipy h5py pyyaml pytest 2>&1 | tail -1; \
+    .venv/bin/python -m pip -q install \
+      numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pyyaml==6.0.3 pytest==8.4.1 2>&1 | tail -1; \
     echo -n '  numpy/scipy=' ; .venv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
     echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1"
-  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,numpy,scipy,h5py,yaml; json.dump({\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pyyaml\":yaml.__version__},open(\".pool_environment.json\",\"w\"),sort_keys=True,indent=2)'"
+  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,yaml; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pyyaml\":yaml.__version__},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
   REMOTE_MANIFEST=$(ssh "$h" "cd ~/$REMOTE_ROOT && sha256sum .source_manifest.sha256 | awk '{print \$1}'")
   if [ "$REMOTE_MANIFEST" != "$MANIFEST_SHA" ]; then
     echo "  MANIFEST FAIL local=$MANIFEST_SHA remote=$REMOTE_MANIFEST" >&2
@@ -137,6 +132,11 @@ for h in "${NODES[@]}"; do
   ssh "$h" "cd ~/$REMOTE_ROOT && sha256sum -c .source_manifest.sha256 >/dev/null" || {
     echo "  SOURCE FILE VERIFY FAIL" >&2
     FAILED_NODES+=("$h:source-verify")
+    continue
+  }
+  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python tools/pool/provisioning/source_manifest.py verify --root . --manifest .source_manifest.sha256 --expected-sha256 '$MANIFEST_SHA' >/dev/null" || {
+    echo "  COMPLETE SOURCE FILE SET VERIFY FAIL" >&2
+    FAILED_NODES+=("$h:complete-source-verify")
     continue
   }
   ssh "$h" "cd ~/$REMOTE_ROOT && sed 's/^[0-9a-f]\\{64\\}  //' .source_manifest.sha256 | while IFS= read -r path; do chmod a-w -- \"\$path\" || exit 1; done && chmod a-w .source_manifest.sha256 .source_revision .source_ancestry.json" || {

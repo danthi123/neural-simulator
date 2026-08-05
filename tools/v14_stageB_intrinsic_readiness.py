@@ -32,6 +32,7 @@ from tools.v14_stageB_packet_verifier import (
     StageBPacketVerifierError,
     verify_candidate,
 )
+from tools.pool.provisioning.source_manifest import SourceManifestError, verify_manifest
 from tools.v14_stageB_scorer import (
     INTRINSIC_LESION_SCHEMA,
     StageBScorerError,
@@ -179,13 +180,91 @@ def _load_pinned_candidate(
     return source, digest, document, {"candidate_id": candidate_id, "parameters": numeric}
 
 
-def _source_revision(root: Path) -> str:
+def _valid_source_digest(value: str, context: str) -> str:
+    if len(value) != 64 or any(character not in "0123456789abcdef" for character in value):
+        raise StageBIntrinsicReadinessError(f"{context} is not a lowercase SHA-256 digest")
+    return value
+
+
+def _archive_source_identity(root: Path) -> dict[str, Any] | None:
+    revision_path = root / ".source_revision"
+    manifest_path = root / ".source_manifest.sha256"
+    if not revision_path.exists() and not manifest_path.exists():
+        return None
+    if any(path.is_symlink() or not path.is_file() for path in (revision_path, manifest_path)):
+        raise StageBIntrinsicReadinessError("archive source attestation must use regular files")
+    fields: dict[str, str] = {}
+    for line in revision_path.read_text(encoding="ascii").splitlines():
+        if not line or "=" not in line:
+            raise StageBIntrinsicReadinessError("archive source revision has malformed fields")
+        key, value = line.split("=", 1)
+        if not key or key in fields or not value:
+            raise StageBIntrinsicReadinessError("archive source revision has duplicate or empty fields")
+        fields[key] = value
+    required = {
+        "git_sha", "source_kind", "source_manifest_sha256",
+        "source_ancestry_sha256", "excluded_worktree_paths", "created_utc",
+    }
+    if set(fields) != required or fields["source_kind"] != "git_archive":
+        raise StageBIntrinsicReadinessError("archive source revision has an invalid shape")
+    revision = fields["git_sha"]
+    if len(revision) != 40 or any(character not in "0123456789abcdef" for character in revision):
+        raise StageBIntrinsicReadinessError("archive source revision has an invalid Git identity")
+    if fields["excluded_worktree_paths"] != "0":
+        raise StageBIntrinsicReadinessError("archive source includes excluded dirty worktree paths")
+    manifest_sha = _valid_source_digest(
+        fields["source_manifest_sha256"], "archive source manifest digest"
+    )
+    ancestry_sha = _valid_source_digest(
+        fields["source_ancestry_sha256"], "archive source ancestry digest"
+    )
+    if _digest_bytes(manifest_path.read_bytes()) != manifest_sha:
+        raise StageBIntrinsicReadinessError("archive source manifest file digest does not match")
+    try:
+        verify_manifest(root, manifest_path, manifest_sha)
+    except (SourceManifestError, OSError, ValueError) as exc:
+        raise StageBIntrinsicReadinessError(f"archive source verification failed: {exc}") from exc
+    ancestry_path = root / ".source_ancestry.json"
+    if (
+        ancestry_path.is_symlink() or not ancestry_path.is_file()
+        or _digest_bytes(ancestry_path.read_bytes()) != ancestry_sha
+    ):
+        raise StageBIntrinsicReadinessError("archive source ancestry is absent or mismatched")
+    return {
+        "kind": "git_archive",
+        "revision": revision,
+        "source_manifest_sha256": manifest_sha,
+        "source_ancestry_sha256": ancestry_sha,
+        "authoritative": True,
+    }
+
+
+def _source_identity(root: Path, *, require_authoritative: bool) -> dict[str, Any]:
     revision = subprocess.run(
         ["git", "rev-parse", "--verify", "HEAD"], cwd=root,
         capture_output=True, text=True, check=False,
     )
-    if revision.returncode != 0:
-        return "non-git-test-fixture"
+    git_root = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"], cwd=root,
+        capture_output=True, text=True, check=False,
+    )
+    is_exact_git_root = (
+        git_root.returncode == 0
+        and Path(git_root.stdout.strip()).expanduser().resolve() == root
+    )
+    if revision.returncode != 0 or not is_exact_git_root:
+        identity = _archive_source_identity(root)
+        if identity is not None:
+            return identity
+        if require_authoritative:
+            raise StageBIntrinsicReadinessError(
+                "authoritative readiness requires a clean Git checkout or verified archive source"
+            )
+        return {
+            "kind": "test_fixture", "revision": "non-git-test-fixture",
+            "source_manifest_sha256": None, "source_ancestry_sha256": None,
+            "authoritative": False,
+        }
     status = subprocess.run(
         ["git", "status", "--porcelain"], cwd=root,
         capture_output=True, text=True, check=False,
@@ -199,7 +278,11 @@ def _source_revision(root: Path) -> str:
     value = revision.stdout.strip()
     if len(value) != 40 or any(character not in "0123456789abcdef" for character in value):
         raise StageBIntrinsicReadinessError("repository revision is not a full Git SHA-1")
-    return value
+    return {
+        "kind": "git_checkout", "revision": value,
+        "source_manifest_sha256": None, "source_ancestry_sha256": None,
+        "authoritative": True,
+    }
 
 
 def _load_release_bindings(
@@ -375,7 +458,7 @@ def _verify_runner_artifact(
 
 def _write_sidecars(
     root: Path, *, repository_root: Path, candidate_sha256: str,
-    source_revision: str, argv: Sequence[str], compact_artifacts: Sequence[Mapping[str, Any]],
+    source_identity: Mapping[str, Any], argv: Sequence[str], compact_artifacts: Sequence[Mapping[str, Any]],
 ) -> None:
     for artifact in sorted(root.rglob("*.json")):
         if artifact.name.endswith(".prov.json"):
@@ -386,7 +469,8 @@ def _write_sidecars(
             "artifact": _relative(repository_root, artifact, "provenance artifact"),
             "runner": "tools/v14_stageB_intrinsic_readiness.py",
             "argv": list(argv),
-            "source_revision": source_revision,
+            "source_revision": source_identity["revision"],
+            "source_identity": dict(source_identity),
             "backend": "numpy",
             "device": "cpu",
             "candidate_sha256": candidate_sha256,
@@ -406,6 +490,9 @@ def run_intrinsic_readiness(
     analysis_protocol_path: str | Path | None = None,
     analysis_protocol_sha256: str | None = None,
     execution_argv: Sequence[str] | None = None,
+    require_authoritative_source: bool = False,
+    expected_source_revision: str | None = None,
+    expected_source_manifest_sha256: str | None = None,
 ) -> dict[str, Any]:
     """Run exactly one pinned candidate through five authenticated arms and score it."""
 
@@ -465,7 +552,18 @@ def run_intrinsic_readiness(
     template_id = template_document.get("template_id")
     if not isinstance(template_id, str) or not template_id:
         raise StageBIntrinsicReadinessError("packet template has no valid template_id")
-    source_revision = _source_revision(root)
+    source_identity = _source_identity(
+        root, require_authoritative=require_authoritative_source,
+    )
+    if require_authoritative_source:
+        if expected_source_revision is None or expected_source_manifest_sha256 is None:
+            raise StageBIntrinsicReadinessError(
+                "authoritative readiness requires expected revision and source manifest digests"
+            )
+        if source_identity.get("revision") != expected_source_revision:
+            raise StageBIntrinsicReadinessError("source revision does not match the confirmation job")
+        if source_identity.get("source_manifest_sha256") != expected_source_manifest_sha256:
+            raise StageBIntrinsicReadinessError("source manifest does not match the confirmation job")
     argv = list(sys.argv if execution_argv is None else execution_argv)
     if not argv or any(not isinstance(item, str) or not item for item in argv):
         raise StageBIntrinsicReadinessError("execution_argv must contain nonempty text arguments")
@@ -475,6 +573,14 @@ def run_intrinsic_readiness(
     output = _inside_root(output_dir, root, "output directory")
     if output == root or output.exists():
         raise StageBIntrinsicReadinessError("output directory must be a new child of repository_root")
+    if require_authoritative_source:
+        runtime_root = (root / "research/experiment-runtime").resolve()
+        try:
+            output.relative_to(runtime_root)
+        except ValueError as exc:
+            raise StageBIntrinsicReadinessError(
+                "authoritative readiness output must remain in research/experiment-runtime"
+            ) from exc
     output.mkdir(parents=True)
     candidate_dir = output / pinned_sha
     authentication = candidate_dir / "authentication"
@@ -542,9 +648,14 @@ def run_intrinsic_readiness(
         ]
         _write_sidecars(
             candidate_dir, repository_root=root, candidate_sha256=pinned_sha,
-            source_revision=source_revision, argv=argv,
+            source_identity=source_identity, argv=argv,
             compact_artifacts=compact_artifacts,
         )
+        exit_source_identity = _source_identity(
+            root, require_authoritative=require_authoritative_source,
+        )
+        if exit_source_identity != source_identity:
+            raise StageBIntrinsicReadinessError("source identity changed during readiness execution")
         receipt = {
             "schema": RECEIPT_SCHEMA,
             "process_status": "completed",
@@ -554,7 +665,10 @@ def run_intrinsic_readiness(
             "provenance": {
                 "runner": "tools/v14_stageB_intrinsic_readiness.py",
                 "argv": argv,
-                "source_revision": source_revision,
+                "source_revision": source_identity["revision"],
+                "source_identity": source_identity,
+                "source_verified_at_start": source_identity.get("authoritative") is True,
+                "source_verified_at_exit": exit_source_identity.get("authoritative") is True,
             },
             "readiness_only": {
                 **READINESS_ONLY,
@@ -613,7 +727,10 @@ def run_intrinsic_readiness(
                 "artifact": _relative(root, receipt_path, "receipt"),
                 "runner": "tools/v14_stageB_intrinsic_readiness.py",
                 "argv": argv,
-                "source_revision": source_revision,
+                "source_revision": source_identity["revision"],
+                "source_identity": source_identity,
+                "source_verified_at_start": source_identity.get("authoritative") is True,
+                "source_verified_at_exit": exit_source_identity.get("authoritative") is True,
                 "backend": "numpy",
                 "device": "cpu",
                 "candidate_sha256": pinned_sha,
@@ -642,6 +759,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--repository-root", required=True)
     parser.add_argument("--analysis-protocol")
     parser.add_argument("--analysis-protocol-sha256")
+    parser.add_argument("--require-authoritative-source", action="store_true")
+    parser.add_argument("--expected-source-revision")
+    parser.add_argument("--expected-source-manifest-sha256")
     args = parser.parse_args(argv)
     try:
         result = run_intrinsic_readiness(
@@ -650,6 +770,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             repository_root=args.repository_root,
             analysis_protocol_path=args.analysis_protocol,
             analysis_protocol_sha256=args.analysis_protocol_sha256,
+            require_authoritative_source=args.require_authoritative_source,
+            expected_source_revision=args.expected_source_revision,
+            expected_source_manifest_sha256=args.expected_source_manifest_sha256,
         )
     except (
         OSError, PacketError, StageBPacketCompilerError, StageBPacketVerifierError,

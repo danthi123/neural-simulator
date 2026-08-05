@@ -114,60 +114,8 @@ def verify_immutable_source_manifest(snapshot=None):
         return result
     manifest_path = os.path.join(_ROOT, ".source_manifest.sha256")
     try:
-        with open(manifest_path, "rb") as fh:
-            manifest_bytes = fh.read()
-        actual_manifest_hash = hashlib.sha256(manifest_bytes).hexdigest()
-        if actual_manifest_hash != expected_manifest_hash:
-            raise ValueError("manifest file digest does not match .source_revision")
-
-        expected_files = {}
-        for raw_line in manifest_bytes.decode("utf-8").splitlines():
-            digest, separator, relative_path = raw_line.partition("  ")
-            if not separator or len(digest) != 64 or not relative_path:
-                raise ValueError("manifest contains a malformed line")
-            int(digest, 16)
-            normalized = os.path.normpath(relative_path)
-            if normalized != relative_path or os.path.isabs(normalized) or normalized.startswith(".." + os.sep):
-                raise ValueError("manifest contains an unsafe path")
-            if normalized in expected_files:
-                raise ValueError("manifest contains a duplicate path")
-            expected_files[normalized] = digest
-
-        actual_files = set()
-        for relative_root in ("sim", "research/runners", "experiment", "tools", "tests"):
-            root = os.path.join(_ROOT, relative_root)
-            for dirpath, dirnames, filenames in os.walk(root):
-                dirnames[:] = [name for name in dirnames if name != "__pycache__"]
-                for filename in filenames:
-                    if not filename.endswith((".py", ".sh")):
-                        continue
-                    path = os.path.join(dirpath, filename)
-                    relative_path = os.path.relpath(path, _ROOT)
-                    actual_files.add(relative_path)
-        research_init = os.path.join(_ROOT, "research", "__init__.py")
-        if os.path.isfile(research_init):
-            actual_files.add("research/__init__.py")
-        specs_root = os.path.join(_ROOT, "research", "specs")
-        if os.path.isdir(specs_root):
-            for dirpath, _, filenames in os.walk(specs_root):
-                for filename in filenames:
-                    if filename.endswith(".json"):
-                        actual_files.add(os.path.relpath(os.path.join(dirpath, filename), _ROOT))
-        ancestry_attestation = os.path.join(_ROOT, ".source_ancestry.json")
-        if os.path.isfile(ancestry_attestation):
-            actual_files.add(".source_ancestry.json")
-        if actual_files != set(expected_files):
-            missing = sorted(set(expected_files) - actual_files)[:3]
-            extra = sorted(actual_files - set(expected_files))[:3]
-            raise ValueError(f"source file set differs from manifest; missing={missing}, extra={extra}")
-
-        for relative_path, expected_digest in expected_files.items():
-            hasher = hashlib.sha256()
-            with open(os.path.join(_ROOT, relative_path), "rb") as fh:
-                for chunk in iter(lambda: fh.read(1024 * 1024), b""):
-                    hasher.update(chunk)
-            if hasher.hexdigest() != expected_digest:
-                raise ValueError(f"source digest mismatch: {relative_path}")
+        from tools.pool.provisioning.source_manifest import verify_manifest
+        verify_manifest(_ROOT, manifest_path, expected_manifest_hash)
         result["source_manifest_verified"] = True
     except Exception as exc:
         result["source_manifest_verification_error"] = str(exc)
