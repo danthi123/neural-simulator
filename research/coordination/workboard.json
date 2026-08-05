@@ -1321,15 +1321,28 @@
       ]
     },
     "019fd200-d78a-71c3-8055-d7cfee9e788d": {
-      "heartbeat_at": "2026-08-05T13:02:53+00:00",
+      "completed_at": "2026-08-05T13:08:59+00:00",
+      "heartbeat_at": "2026-08-05T13:08:59+00:00",
       "model": "gpt-5.6-terra-xhigh",
       "next_action": "Controller reviews vectorized tail-fit agreement against the SciPy authority and integrates it into the family assay runner.",
+      "result": "Implemented vectorized candidate-command deactivation fits with analytic nuisance coefficients and deterministic log-tau search; 46 CUDA-enabled authority, source-trace, and parity tests pass.",
       "started_at": "2026-08-05T13:02:53+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Implement candidate-batched NumPy/CuPy deactivation-tail estimation",
       "write_set": [
         "tools/v14_stageB_batch_curve_metrics.py",
         "tests/test_v14_stageB_batch_curve_metrics.py"
+      ]
+    },
+    "019fd20a-3dfc-77d3-a06b-221b91397562": {
+      "heartbeat_at": "2026-08-05T13:08:59+00:00",
+      "model": "gpt-5.6-sol-xhigh",
+      "next_action": "Controller applies the sealed four-way consensus without exposing D to earlier extractions.",
+      "started_at": "2026-08-05T13:08:59+00:00",
+      "status": "running",
+      "task": "Fourth fully blind native-pixel extraction D for all unresolved Stage B population panels",
+      "write_set": [
+        "research/measurements/v14-stageB/extractor_d"
       ]
     }
   },
@@ -1969,6 +1982,18 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fd200-d78a-71c3-8055-d7cfee9e788d"
+    },
+    {
+      "at": "2026-08-05T13:08:59+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd200-d78a-71c3-8055-d7cfee9e788d"
+    },
+    {
+      "at": "2026-08-05T13:08:59+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd20a-3dfc-77d3-a06b-221b91397562"
     }
   ],
   "lanes": {
