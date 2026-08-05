@@ -192,46 +192,158 @@ def _trace_vectors(raw: Any, arm: str) -> tuple[list[float], list[float], list[f
     return times, voltages, spike_times, dict(protocol) if protocol is not None else None
 
 
-def _recompute_trace_metrics(raw: Mapping[str, Any], arm: str) -> dict[str, Any]:
+def _load_trace_protocol(
+    root: Path, protocol: Mapping[str, Any], arm: str,
+    causal_gate_packet: Mapping[str, str],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if set(protocol) != {"binding", "termination"}:
+        raise StageBScorerError(f"runner artifact {arm!r} has an invalid analysis protocol")
+    path, document = _load_bound_json(root, protocol["binding"], f"{arm} analysis protocol")
+    required = {
+        "device", "provenance_exempt",
+        "schema", "protocol_id", "status", "causal_gate_authority",
+        "target_packet", "primary_source", "analysis_conventions", "execution",
+        "arms", "scientific_boundaries",
+    }
+    if (set(document) != required
+            or document.get("schema") != "v14-snr-stageB-intrinsic-protocol-v1"
+            or document.get("status") != "production-measurement-partial"):
+        raise StageBScorerError(f"runner artifact {arm!r} analysis protocol changed schema or status")
+    if document.get("analysis_conventions") != {
+        "cv_method": "population standard deviation of the 100 complete interspike intervals divided by their mean",
+        "cv_method_evidence_class": "project_analysis_convention",
+        "frequency_method": "100 divided by the elapsed time from the first through the 101st spike",
+        "frequency_method_evidence_class": "project_analysis_convention",
+    }:
+        raise StageBScorerError(f"runner artifact {arm!r} changed the project analysis formulas")
+    gate_path, gate_document = _load_bound_json(root, causal_gate_packet, "causal gate authority")
+    authority = document.get("causal_gate_authority")
+    if (not isinstance(authority, Mapping)
+            or authority.get("path") != gate_path.relative_to(root).as_posix()
+            or gate_document.get("authorized_analysis_protocol") != {
+                "path": path.relative_to(root).as_posix(),
+                "sha256": _digest_bytes(path.read_bytes()),
+            }):
+        raise StageBScorerError(f"runner artifact {arm!r} protocol is not authorized by the causal gate")
+    execution = document.get("execution")
+    if execution != {
+        "dt_ms": 0.05,
+        "dt_status": "project_operational_discretization_requires_timestep_convergence_before_waveform_claims",
+        "trace_policy": "uncropped_post_update_voltage_and_spike_state",
+    }:
+        raise StageBScorerError(f"runner artifact {arm!r} protocol changed execution settings")
+    arms = document.get("arms")
+    if not isinstance(arms, Mapping) or set(arms) != set(_INTRINSIC_ARMS):
+        raise StageBScorerError("analysis protocol does not define exactly the intrinsic arms")
+    arm_protocol = arms.get(arm)
+    if not isinstance(arm_protocol, Mapping):
+        raise StageBScorerError(f"analysis protocol has no valid arm {arm!r}")
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "sha256": _digest_bytes(path.read_bytes()),
+    }, dict(arm_protocol)
+
+
+def _event_count_spike_metrics(spike_times: list[float]) -> dict[str, Any]:
+    if len(spike_times) != 101:
+        raise StageBScorerError("completed event-count trace must contain exactly 101 spikes")
+    intervals = [right - left for left, right in zip(spike_times, spike_times[1:])]
+    if len(intervals) != 100 or any(interval <= 0.0 for interval in intervals):
+        raise StageBScorerError("event-count trace does not contain 100 complete positive ISIs")
+    mean_isi = sum(intervals) / len(intervals)
+    variance = sum((interval - mean_isi) ** 2 for interval in intervals) / len(intervals)
+    return {
+        "window_convention": "first-through-101st-spike",
+        "spike_count": 101,
+        "complete_isi_count": 100,
+        "firing_rate_hz": 1.0 / mean_isi,
+        "isi_cv": math.sqrt(variance) / mean_isi,
+        "isi_cv2": (
+            sum(
+                2.0 * abs(right - left) / (right + left)
+                for left, right in zip(intervals, intervals[1:])
+            ) / (len(intervals) - 1)
+        ),
+    }
+
+
+def _recompute_trace_metrics(
+    raw: Mapping[str, Any], arm: str, *, root: Path,
+    causal_gate_packet: Mapping[str, str],
+) -> dict[str, Any]:
     times, voltages, spike_times, protocol = _trace_vectors(raw, arm)
     if protocol is None:
         return {"status": "unavailable", "reason": "runner trace has no sealed analysis protocol"}
-    if set(protocol) != {"spike_metrics", "medium_ahp"}:
-        raise StageBScorerError(f"runner artifact {arm!r} has an invalid analysis protocol")
-    spike_protocol = protocol["spike_metrics"]
-    ahp_protocol = protocol["medium_ahp"]
-    spike_fields = {"burn_in_start_s", "burn_in_end_s", "window_start_s", "window_end_s"}
-    ahp_fields = {
-        "burn_in_start_s", "burn_in_end_s", "reference_voltage_mV",
-        "window_start_s", "window_end_s",
+    binding, arm_protocol = _load_trace_protocol(root, protocol, arm, causal_gate_packet)
+    termination = protocol["termination"]
+    termination_fields = {
+        "mode", "reason", "steps_executed", "spikes_observed", "target_spike_count",
+        "maximum_steps", "timeout_is_physiology_failure",
     }
-    if not isinstance(spike_protocol, Mapping) or set(spike_protocol) != spike_fields:
-        raise StageBScorerError(f"runner artifact {arm!r} has an invalid spike analysis protocol")
-    if not isinstance(ahp_protocol, Mapping) or set(ahp_protocol) != ahp_fields:
-        raise StageBScorerError(f"runner artifact {arm!r} has an invalid AHP analysis protocol")
-    common = {
-        "time_unit": raw["time_unit"],
-        "sample_interval_s": raw["sample_interval_s"],
-        "recording_start_s": raw["recording_start_s"],
-    }
-    try:
-        spikes = spike_train_metrics(
-            spike_times,
-            **common,
-            recording_end_s=raw["recording_end_s"],
-            **spike_protocol,
-        )
-        ahp = ahp_depth(
-            times,
-            voltages,
-            **common,
-            voltage_unit=raw["voltage_unit"],
-            **ahp_protocol,
-        )
-    except (TypeError, ValueError) as exc:
-        raise StageBScorerError(f"runner artifact {arm!r} analysis protocol is invalid: {exc}") from exc
-    window_start = float(spike_protocol["window_start_s"])
-    window_end = float(spike_protocol["window_end_s"])
+    if not isinstance(termination, Mapping) or set(termination) != termination_fields:
+        raise StageBScorerError(f"runner artifact {arm!r} has invalid termination evidence")
+    observed_spikes = sum(1 for row in raw["spike_states"] if row[0])
+    if (termination.get("steps_executed") != len(times)
+            or termination.get("spikes_observed") != observed_spikes
+            or termination.get("timeout_is_physiology_failure") is not False):
+        raise StageBScorerError(f"runner artifact {arm!r} termination does not match its trace")
+    filed_termination = arm_protocol.get("termination")
+    filed_spikes = arm_protocol.get("spike_metrics")
+    if not isinstance(filed_termination, Mapping) or not isinstance(filed_spikes, Mapping):
+        raise StageBScorerError(f"runner artifact {arm!r} protocol arm is incomplete")
+
+    dt = float(raw["sample_interval_s"])
+    if arm == "nap_lesion":
+        maximum_steps = int(round(float(filed_termination.get("duration_s", 0.0)) / dt))
+        if (filed_termination.get("mode") != "fixed_duration"
+                or filed_spikes.get("window_s") != 1.0
+                or termination.get("mode") != "fixed_duration"
+                or termination.get("reason") != "fixed_duration_complete"
+                or termination.get("target_spike_count") is not None
+                or termination.get("maximum_steps") != maximum_steps
+                or len(times) != maximum_steps):
+            raise StageBScorerError("Nap trace does not implement the filed one-second protocol")
+        window_start = float(raw["recording_start_s"])
+        window_end = float(raw["recording_end_s"])
+        spikes = {
+            "window_convention": "full-filed-one-second-window",
+            "spike_count": len(spike_times),
+            "firing_rate_hz": len(spike_times) / (window_end - window_start),
+            "isi_cv": None,
+            "isi_cv2": None,
+        }
+    else:
+        target = filed_spikes.get("target_spike_count")
+        maximum_steps = int(round(
+            float(filed_termination.get("maximum_duration_s", 0.0)) / dt
+        ))
+        if (filed_termination.get("mode") != "event_count_or_timeout"
+                or target != 101
+                or filed_spikes.get("target_spike_count_evidence_class") != "source_reported"
+                or termination.get("mode") != "event_count_or_timeout"
+                or termination.get("target_spike_count") != 101
+                or termination.get("maximum_steps") != maximum_steps):
+            raise StageBScorerError(f"runner artifact {arm!r} changed the 101-spike contract")
+        window_start = float(raw["recording_start_s"])
+        window_end = float(raw["recording_end_s"])
+        if termination.get("reason") == "target_spike_count_reached":
+            if len(times) > maximum_steps:
+                raise StageBScorerError("event-count trace exceeded its operational maximum")
+            spikes = _event_count_spike_metrics(spike_times)
+        elif termination.get("reason") == "maximum_duration_reached":
+            if len(times) != maximum_steps or observed_spikes >= 101:
+                raise StageBScorerError("event-count timeout does not match its trace")
+            spikes = {
+                "window_convention": "event-count-timeout",
+                "spike_count": observed_spikes,
+                "complete_isi_count": max(0, observed_spikes - 1),
+                "firing_rate_hz": None,
+                "isi_cv": None,
+                "isi_cv2": None,
+                "unavailable_reason": "101-spike source-bound event count was not reached before the operational timeout",
+            }
+        else:
+            raise StageBScorerError(f"runner artifact {arm!r} has an invalid termination reason")
     selected_voltage = [
         voltage for time, voltage in zip(times, voltages, strict=True)
         if window_start <= time < window_end
@@ -242,8 +354,19 @@ def _recompute_trace_metrics(raw: Mapping[str, Any], arm: str) -> dict[str, Any]
         "status": "recomputed",
         "spike_metrics": spikes,
         "mean_membrane_voltage_mV": sum(selected_voltage) / len(selected_voltage),
-        "medium_ahp": ahp,
-        "analysis_protocol": protocol,
+        "medium_ahp": {
+            "status": "unavailable",
+            "ahp_depth_mV": None,
+            "reason": str(arm_protocol.get("medium_ahp", {}).get("reason", "not specified")),
+        },
+        "analysis_protocol": {
+            "binding": binding,
+            "termination": dict(termination),
+            "spike_metrics": {
+                "window_start_s": window_start,
+                "window_end_s": window_end,
+            },
+        },
     }
 
 
@@ -293,10 +416,15 @@ def _load_intrinsic_runner_artifacts(
         "candidate_release": provenance.get("candidate_release"),
         "bindings": provenance.get("bindings"),
         "raw_protocol": {
-            key: intact["raw_observation"].get(key) for key in (
-                "time_unit", "voltage_unit", "sample_interval_s", "recording_start_s",
-                "recording_end_s", "uncropped", "time_s", "sample_semantics", "analysis_protocol",
-            )
+            "time_unit": intact["raw_observation"].get("time_unit"),
+            "voltage_unit": intact["raw_observation"].get("voltage_unit"),
+            "sample_interval_s": intact["raw_observation"].get("sample_interval_s"),
+            "recording_start_s": intact["raw_observation"].get("recording_start_s"),
+            "uncropped": intact["raw_observation"].get("uncropped"),
+            "sample_semantics": intact["raw_observation"].get("sample_semantics"),
+            "analysis_protocol_binding": (
+                intact["raw_observation"].get("analysis_protocol") or {}
+            ).get("binding"),
         },
     }
     for arm, document in documents.items():
@@ -308,7 +436,15 @@ def _load_intrinsic_runner_artifacts(
             "candidate_release": arm_provenance.get("candidate_release"),
             "bindings": arm_provenance.get("bindings"),
             "raw_protocol": {
-                key: document["raw_observation"].get(key) for key in identity["raw_protocol"]
+                "time_unit": document["raw_observation"].get("time_unit"),
+                "voltage_unit": document["raw_observation"].get("voltage_unit"),
+                "sample_interval_s": document["raw_observation"].get("sample_interval_s"),
+                "recording_start_s": document["raw_observation"].get("recording_start_s"),
+                "uncropped": document["raw_observation"].get("uncropped"),
+                "sample_semantics": document["raw_observation"].get("sample_semantics"),
+                "analysis_protocol_binding": (
+                    document["raw_observation"].get("analysis_protocol") or {}
+                ).get("binding"),
             },
         }
         if comparison != identity:
@@ -363,6 +499,11 @@ def _score_intrinsic_hard_gate(
         return _unavailable_hard_gate(
             contract, "sealed HCN hyperpolarized intact/lesion current-step traces are not available"
         )
+    if gate_id == "nap-complete-lesion" and metric == "mean_membrane_voltage_change_mV":
+        return _unavailable_hard_gate(
+            contract,
+            "the source does not define a matched stable-baseline voltage estimator for this trace",
+        )
     if intact.get("status") != "recomputed" or lesion.get("status") != "recomputed":
         return _unavailable_hard_gate(
             contract, "paired runner traces do not contain a sealed analysis protocol"
@@ -377,8 +518,8 @@ def _score_intrinsic_hard_gate(
         if metric not in metric_paths:
             raise StageBScorerError(f"{gate_id} has unsupported directional metric {metric!r}")
         group, name = metric_paths[metric]
-        intact_value = intact[group][name]
-        lesion_value = lesion[group][name]
+        intact_value = intact[group].get(name)
+        lesion_value = lesion[group].get(name)
         if intact_value is None or lesion_value is None:
             return _unavailable_hard_gate(
                 contract, f"paired raw traces cannot resolve {metric} with the recorded spike count"
@@ -392,8 +533,14 @@ def _score_intrinsic_hard_gate(
         return {**result, "status": "scored", "observed": observed, "passed": passed}
 
     if metric == "absolute_baseline_rate_change_fraction":
-        intact_rate = float(intact["spike_metrics"]["firing_rate_hz"])
-        lesion_rate = float(lesion["spike_metrics"]["firing_rate_hz"])
+        intact_rate_raw = intact["spike_metrics"].get("firing_rate_hz")
+        lesion_rate_raw = lesion["spike_metrics"].get("firing_rate_hz")
+        if intact_rate_raw is None or lesion_rate_raw is None:
+            return _unavailable_hard_gate(
+                contract, "paired raw traces did not complete the 101-spike rate protocol"
+            )
+        intact_rate = float(intact_rate_raw)
+        lesion_rate = float(lesion_rate_raw)
         if intact_rate <= 0.0:
             raise StageBScorerError("HCN baseline rate change is undefined when intact rate is zero")
         observed_value = abs(lesion_rate - intact_rate) / intact_rate
@@ -479,8 +626,15 @@ def score_intrinsic_lesion_observations(
     artifacts, artifact_bindings, candidate = _load_intrinsic_runner_artifacts(
         root_path, document.get("runner_observations")
     )
+    causal_gate_binding = {
+        "path": gate_path.relative_to(root_path).as_posix(),
+        "sha256": _digest_bytes(gate_path.read_bytes()),
+    }
     recomputed = {
-        arm: _recompute_trace_metrics(artifact["raw_observation"], arm)
+        arm: _recompute_trace_metrics(
+            artifact["raw_observation"], arm, root=root_path,
+            causal_gate_packet=causal_gate_binding,
+        )
         for arm, artifact in artifacts.items()
     }
 

@@ -893,12 +893,6 @@
   "events": [
     {
       "at": "2026-08-04T20:08:01+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "v14-benchmark-environment"
-    },
-    {
-      "at": "2026-08-04T20:08:01+00:00",
       "detail": "blocked",
       "kind": "lane-update",
       "subject": "gateb-v14-stageA"
@@ -1490,6 +1484,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T02:12:24+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
     }
   ],
   "lanes": {
@@ -1780,18 +1780,23 @@
     "gateb-v14-scorer-integration": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T01:45:46+00:00",
-      "next_action": "Implement source-bound 101-spike event-count production traces with bounded no-spike timeout; keep medium-AHP, HCN current-step, and SK cohort contracts unavailable until fully specified.",
+      "heartbeat_at": "2026-08-05T02:12:24+00:00",
+      "next_action": "Commit and push the authenticated production protocol, then execute the low and high Stage B endpoints from clean source; preserve UNAVAILABLE boundaries and profile actual timeout behavior before GPU batching.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "If any source cannot authorize an exact fixed value, keep that leaf explicitly model-prior or searched and leave readiness undefined; do not invent measured authority.",
-      "resource": "controller",
+      "recovery_action": "If an endpoint reaches the 20-second resource timeout, record UNAVAILABLE rather than physiology failure; do not invent a waveform, AHP, HCN resistance, SK cohort, or Nap voltage estimator.",
+      "resource": "local_cpu",
       "status": "running",
       "write_set": [
         "research/runners/v14_stageB_physiology.py",
-        "tests/test_v14_stageB_runner.py",
-        "research/specs/v14_snr_stageB_packet_template.json",
+        "research/specs/v14_snr_stageB_intrinsic_protocol.json",
+        "research/specs/v14_snr_stageB_causal_gates.json",
         "research/specs/v14_snr_stageB_executable_spec.json",
+        "tools/v14_stageB_scorer.py",
+        "tools/v14_stageB_intrinsic_readiness.py",
+        "tests/test_v14_stageB_runner.py",
+        "tests/test_v14_stageB_scorer.py",
+        "tests/test_v14_stageB_intrinsic_readiness.py",
         "tests/test_v14_stageB_packet_template.py",
         "research/coordination/workboard.json"
       ]
@@ -2123,5 +2128,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T01:45:46+00:00"
+  "updated_at": "2026-08-05T02:12:24+00:00"
 }

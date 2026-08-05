@@ -21,6 +21,7 @@ from tools.v14_stageB_intrinsic_readiness import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CAUSAL_GATE = Path("research/specs/v14_snr_stageB_causal_gates.json")
+ANALYSIS_PROTOCOL = Path("research/specs/v14_snr_stageB_intrinsic_protocol.json")
 
 
 def _write(path: Path, value: dict) -> str:
@@ -93,6 +94,43 @@ def test_one_candidate_runs_all_five_arms_scores_and_writes_one_receipt(tmp_path
     assert json.loads(score.read_text())["scientific_verdict"] is None
     assert json.loads((output / "readiness-receipt.json").read_bytes()) == receipt
     _assert_sidecars(output)
+
+
+def test_production_protocol_is_forwarded_to_all_arms_and_bound_in_receipt(
+    tmp_path, monkeypatch,
+):
+    from sim.bridge import SimulationBridge
+
+    template, template_sha, candidate, candidate_sha, causal_gate, gate_sha = _inputs(tmp_path)
+    protocol = tmp_path / ANALYSIS_PROTOCOL
+    protocol.parent.mkdir(parents=True, exist_ok=True)
+    protocol.write_bytes((ROOT / ANALYSIS_PROTOCOL).read_bytes())
+    protocol_sha = hashlib.sha256(protocol.read_bytes()).hexdigest()
+
+    def synthetic_spike_step(bridge):
+        bridge.cp_membrane_potential_v[:] = -55.0
+        bridge.cp_firing_states[:] = True
+
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", synthetic_spike_step)
+    output = tmp_path / "production-readiness"
+    receipt = run_intrinsic_readiness(
+        template, template_sha, candidate, candidate_sha,
+        causal_gate, gate_sha, output, repository_root=tmp_path,
+        analysis_protocol_path=protocol,
+        analysis_protocol_sha256=protocol_sha,
+        execution_argv=["test-v14-stageB-production-readiness"],
+    )
+
+    assert receipt["analysis_protocol"] == {
+        "path": ANALYSIS_PROTOCOL.as_posix(), "sha256": protocol_sha,
+    }
+    for arm, arm_receipt in receipt["arms"].items():
+        raw = json.loads((tmp_path / arm_receipt["path"]).read_text())
+        assert raw["raw_observation"]["analysis_protocol"]["binding"] == receipt[
+            "analysis_protocol"
+        ]
+        expected_samples = 20_000 if arm == "nap_lesion" else 101
+        assert arm_receipt["trace_samples"] == expected_samples
 
 
 def test_failure_cleans_partial_output_and_refuses_overwrite(tmp_path, monkeypatch):

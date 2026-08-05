@@ -18,6 +18,7 @@ from tools.v14_stageB_scorer import (
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_RELATIVE = Path("research/fixtures/v14_snr_stageB_scorer_fixtures.json")
 CAUSAL_GATE_RELATIVE = Path("research/specs/v14_snr_stageB_causal_gates.json")
+ANALYSIS_PROTOCOL_RELATIVE = Path("research/specs/v14_snr_stageB_intrinsic_protocol.json")
 
 
 def _digest(path: Path) -> str:
@@ -109,6 +110,7 @@ def _copy_causal_contract(root: Path) -> None:
     for relative in (
         CAUSAL_GATE_RELATIVE,
         Path("research/specs/v14_snr_stageB_target_packet.json"),
+        ANALYSIS_PROTOCOL_RELATIVE,
     ):
         destination = root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -119,22 +121,42 @@ def _spike_states(times: list[float], spikes: set[float]) -> list[list[bool]]:
     return [[any(abs(time - spike) < 1e-9 for spike in spikes)] for time in times]
 
 
+def _event_spike_steps(intervals: tuple[int, ...]) -> list[int]:
+    steps = [20]
+    while len(steps) < 101:
+        steps.append(steps[-1] + intervals[(len(steps) - 1) % len(intervals)])
+    return steps
+
+
 def _runner_artifact(arm: str) -> dict:
-    times = [round(index * 0.1, 10) for index in range(1, 13)]
-    spikes = {
-        "intact_autonomous": {0.3, 0.5, 0.7, 0.9},
-        "nap_lesion": set(),
-        "cav2_2_lesion": {0.3, 0.4, 0.6, 0.9, 1.1},
-        "sk_lesion": {0.3, 0.4, 0.6, 0.9, 1.1},
-        "hcn_baseline_lesion": {0.3, 0.5, 0.7, 0.9},
-    }[arm]
-    voltages = [-65.0] * len(times)
+    dt = 0.00005
     if arm == "nap_lesion":
-        voltages = [-70.0] * len(times)
-    elif arm in {"cav2_2_lesion", "sk_lesion"}:
-        voltages[2:5] = [-65.0, -70.0, -66.0]
+        n_steps = 20_000
+        spike_steps: list[int] = []
+        termination = {
+            "mode": "fixed_duration", "reason": "fixed_duration_complete",
+            "steps_executed": n_steps, "spikes_observed": 0,
+            "target_spike_count": None, "maximum_steps": n_steps,
+            "timeout_is_physiology_failure": False,
+        }
     else:
-        voltages[2:5] = [-65.0, -75.0, -68.0]
+        intervals = {
+            "intact_autonomous": (20,),
+            "cav2_2_lesion": (10, 20),
+            "sk_lesion": (10, 20),
+            "hcn_baseline_lesion": (21,),
+        }[arm]
+        spike_steps = _event_spike_steps(intervals)
+        n_steps = spike_steps[-1]
+        termination = {
+            "mode": "event_count_or_timeout", "reason": "target_spike_count_reached",
+            "steps_executed": n_steps, "spikes_observed": 101,
+            "target_spike_count": 101, "maximum_steps": 400_000,
+            "timeout_is_physiology_failure": False,
+        }
+    times = [(index + 1) * dt for index in range(n_steps)]
+    spike_indices = set(spike_steps)
+    voltages = [-70.0 if arm == "nap_lesion" else -65.0] * n_steps
     lesion = _INTRINSIC_ARMS[arm]
     if lesion is None:
         intervention = {
@@ -180,28 +202,20 @@ def _runner_artifact(arm: str) -> dict:
             "kind": "packet_voltage_spike_trace",
             "time_unit": "s",
             "voltage_unit": "mV",
-            "sample_interval_s": 0.1,
-            "recording_start_s": 0.1,
-            "recording_end_s": 1.3,
+            "sample_interval_s": dt,
+            "recording_start_s": dt,
+            "recording_end_s": (n_steps + 1) * dt,
             "uncropped": True,
             "time_s": times,
             "sample_semantics": "post-update state at the declared time",
             "voltage_mV": [[value] for value in voltages],
-            "spike_states": _spike_states(times, spikes),
+            "spike_states": [[index + 1 in spike_indices] for index in range(n_steps)],
             "analysis_protocol": {
-                "spike_metrics": {
-                    "burn_in_start_s": 0.1,
-                    "burn_in_end_s": 0.2,
-                    "window_start_s": 0.2,
-                    "window_end_s": 1.2,
+                "binding": {
+                    "path": ANALYSIS_PROTOCOL_RELATIVE.as_posix(),
+                    "sha256": _digest(ROOT / ANALYSIS_PROTOCOL_RELATIVE),
                 },
-                "medium_ahp": {
-                    "burn_in_start_s": 0.1,
-                    "burn_in_end_s": 0.2,
-                    "reference_voltage_mV": -60.0,
-                    "window_start_s": 0.3,
-                    "window_end_s": 0.6,
-                },
+                "termination": termination,
             },
         },
         "provenance": {
@@ -256,6 +270,23 @@ def _rewrite_arm(root: Path, document: dict, arm: str, mutate) -> None:
     document["runner_observations"][arm] = _write_runner_artifact(root, artifact, arm)
 
 
+def _set_event_intervals(artifact: dict, intervals: tuple[int, ...]) -> None:
+    raw = artifact["raw_observation"]
+    dt = raw["sample_interval_s"]
+    spike_steps = _event_spike_steps(intervals)
+    n_steps = spike_steps[-1]
+    spike_indices = set(spike_steps)
+    raw["time_s"] = [(index + 1) * dt for index in range(n_steps)]
+    raw["recording_end_s"] = (n_steps + 1) * dt
+    raw["voltage_mV"] = [[-65.0] for _ in range(n_steps)]
+    raw["spike_states"] = [[index + 1 in spike_indices] for index in range(n_steps)]
+    raw["analysis_protocol"]["termination"].update({
+        "steps_executed": n_steps,
+        "spikes_observed": 101,
+        "reason": "target_spike_count_reached",
+    })
+
+
 def _intrinsic_results(result: dict) -> dict[str, dict]:
     return {item["gate_id"]: item for item in result["results"]}
 
@@ -274,10 +305,14 @@ def test_intrinsic_scorer_recomputes_raw_traces_and_reports_missing_protocol_arm
     nap = {item["metric"]: item for item in by_gate["nap-complete-lesion"]["hard_gates"]}
     assert nap["spike_count"]["observed"] == 0.0
     assert nap["spike_count"]["window_s"] == 1.0
-    assert nap["mean_membrane_voltage_change_mV"]["observed"] < 0.0
+    assert nap["mean_membrane_voltage_change_mV"]["status"] == "unavailable"
     cav = {item["metric"]: item for item in by_gate["cav2.2-complete-lesion"]["hard_gates"]}
-    assert all(item["status"] == "scored" and item["passed"] for item in cav.values())
+    assert "firing_rate_hz" not in cav
+    assert cav["isi_cv"]["status"] == "scored" and cav["isi_cv"]["passed"]
+    assert cav["medium_ahp_depth_mV"]["status"] == "unavailable"
     sk = {item["metric"]: item for item in by_gate["sk-complete-lesion"]["hard_gates"]}
+    assert sk["isi_cv"]["status"] == "scored" and sk["isi_cv"]["passed"]
+    assert sk["medium_ahp_depth_mV"]["status"] == "unavailable"
     assert sk["depolarization_block_count"]["status"] == "unavailable"
     assert "12-cell" in sk["depolarization_block_count"]["reason"]
     hcn = {item["metric"]: item for item in by_gate["hcn-complete-lesion"]["hard_gates"]}
@@ -369,53 +404,14 @@ def test_intrinsic_scorer_accepts_production_runner_artifacts_as_unavailable(tmp
     ("arm", "metric", "mutation"),
     [
         (
-            "nap_lesion",
-            "mean_membrane_voltage_change_mV",
-            lambda artifact: artifact["raw_observation"].update(
-                {"voltage_mV": [[-55.0]] * len(artifact["raw_observation"]["time_s"])}
-            ),
-        ),
-        (
-            "cav2_2_lesion",
-            "firing_rate_hz",
-            lambda artifact: artifact["raw_observation"].update(
-                {"spike_states": _spike_states(artifact["raw_observation"]["time_s"], {0.3, 0.6})}
-            ),
-        ),
-        (
             "cav2_2_lesion",
             "isi_cv",
-            lambda artifact: artifact["raw_observation"].update(
-                {"spike_states": _spike_states(
-                    artifact["raw_observation"]["time_s"], {0.3, 0.5, 0.7, 0.9}
-                )}
-            ),
-        ),
-        (
-            "cav2_2_lesion",
-            "medium_ahp_depth_mV",
-            lambda artifact: artifact["raw_observation"]["voltage_mV"].__setitem__(3, [-80.0]),
+            lambda artifact: _set_event_intervals(artifact, (20,)),
         ),
         (
             "sk_lesion",
             "isi_cv",
-            lambda artifact: artifact["raw_observation"].update(
-                {"spike_states": _spike_states(
-                    artifact["raw_observation"]["time_s"], {0.3, 0.5, 0.7, 0.9}
-                )}
-            ),
-        ),
-        (
-            "sk_lesion",
-            "medium_ahp_depth_mV",
-            lambda artifact: artifact["raw_observation"]["voltage_mV"].__setitem__(3, [-80.0]),
-        ),
-        (
-            "hcn_baseline_lesion",
-            "lesion_spike_count",
-            lambda artifact: artifact["raw_observation"].update(
-                {"spike_states": [[False]] * len(artifact["raw_observation"]["time_s"])}
-            ),
+            lambda artifact: _set_event_intervals(artifact, (20,)),
         ),
     ],
 )
@@ -450,7 +446,7 @@ def test_intrinsic_scorer_rejects_mismatched_runner_identities(tmp_path, identit
         if identity == "candidate":
             artifact["adaptive_candidate"]["candidate_id"] = "other-candidate"
         elif identity == "protocol":
-            artifact["raw_observation"]["analysis_protocol"]["spike_metrics"]["window_end_s"] = 1.1
+            artifact["raw_observation"]["analysis_protocol"]["binding"]["sha256"] = "e" * 64
         else:
             artifact["provenance"]["candidate_release"]["sha256"] = "e" * 64
 

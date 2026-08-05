@@ -14,9 +14,13 @@ import hashlib
 import json
 import math
 import os
+import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path, PurePosixPath
 from typing import Any
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 # This is a reference-equation readiness runner.  Set the backend before any
 # simulator imports so a direct CLI invocation cannot silently select CuPy.
@@ -40,6 +44,7 @@ from sim.snr_packet_runtime import (
 
 PARAMETER_SCHEMA = "sim-adaptive-run-parameters-v1"
 OUTPUT_SCHEMA = "v14-snr-stageB-physiology-observation-v1"
+ANALYSIS_PROTOCOL_SCHEMA = "v14-snr-stageB-intrinsic-protocol-v1"
 READINESS_ARM = "intact_autonomous"
 READINESS_ARMS = frozenset(
     {
@@ -265,6 +270,129 @@ def _load_candidate_release(
     return dict(release)
 
 
+def _load_analysis_protocol(
+    root: Path, path_value: str | Path, digest_value: str, arm: str,
+) -> dict[str, Any]:
+    """Load one digest-bound production protocol and validate its execution boundary."""
+
+    digest = _sha256(digest_value, "analysis protocol sha256")
+    path = Path(path_value).expanduser().resolve()
+    try:
+        relative = path.relative_to(root)
+        raw = path.read_bytes()
+        protocol = json.loads(raw)
+    except (ValueError, OSError, json.JSONDecodeError) as exc:
+        raise StageBPhysiologyRunnerError(f"cannot load analysis protocol: {exc}") from exc
+    if path.is_symlink() or not path.is_file():
+        raise StageBPhysiologyRunnerError("analysis protocol must be a regular file")
+    if _sha256_bytes(raw) != digest:
+        raise StageBPhysiologyRunnerError("analysis protocol digest does not match")
+    required = {
+        "device", "provenance_exempt",
+        "schema", "protocol_id", "status", "causal_gate_authority",
+        "target_packet", "primary_source", "analysis_conventions", "execution",
+        "arms", "scientific_boundaries",
+    }
+    if not isinstance(protocol, Mapping) or set(protocol) != required:
+        raise StageBPhysiologyRunnerError("analysis protocol has an invalid shape")
+    if protocol.get("schema") != ANALYSIS_PROTOCOL_SCHEMA:
+        raise StageBPhysiologyRunnerError("analysis protocol has the wrong schema")
+    if protocol.get("status") != "production-measurement-partial":
+        raise StageBPhysiologyRunnerError("analysis protocol changed its scientific status")
+    if protocol.get("analysis_conventions") != {
+        "cv_method": "population standard deviation of the 100 complete interspike intervals divided by their mean",
+        "cv_method_evidence_class": "project_analysis_convention",
+        "frequency_method": "100 divided by the elapsed time from the first through the 101st spike",
+        "frequency_method_evidence_class": "project_analysis_convention",
+    }:
+        raise StageBPhysiologyRunnerError("analysis protocol changed the preregistered project formulas")
+    execution = protocol.get("execution")
+    if not isinstance(execution, Mapping) or set(execution) != {
+        "dt_ms", "dt_status", "trace_policy",
+    }:
+        raise StageBPhysiologyRunnerError("analysis protocol has invalid execution settings")
+    if execution != {
+        "dt_ms": 0.05,
+        "dt_status": "project_operational_discretization_requires_timestep_convergence_before_waveform_claims",
+        "trace_policy": "uncropped_post_update_voltage_and_spike_state",
+    }:
+        raise StageBPhysiologyRunnerError("analysis protocol changed the filed execution settings")
+    authority = protocol.get("causal_gate_authority")
+    if not isinstance(authority, Mapping) or set(authority) != {"path", "role"}:
+        raise StageBPhysiologyRunnerError("analysis protocol has no causal-gate authority")
+    gate_relative = _canonical_relative_path(authority.get("path"), "causal gate path")
+    gate_path = root.joinpath(*PurePosixPath(gate_relative).parts).resolve()
+    try:
+        gate_path.relative_to(root)
+    except ValueError as exc:
+        raise StageBPhysiologyRunnerError("causal gate path escapes repository_root") from exc
+    if gate_path.is_symlink() or not gate_path.is_file():
+        raise StageBPhysiologyRunnerError("analysis protocol causal-gate authority does not verify")
+    try:
+        gate_document = json.loads(gate_path.read_bytes())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise StageBPhysiologyRunnerError(f"cannot load causal-gate authority: {exc}") from exc
+    authorized = gate_document.get("authorized_analysis_protocol") if isinstance(gate_document, Mapping) else None
+    expected_authorization = {"path": PurePosixPath(*relative.parts).as_posix(), "sha256": digest}
+    if authorized != expected_authorization:
+        raise StageBPhysiologyRunnerError("causal gate does not authorize this analysis protocol")
+    target = protocol.get("target_packet")
+    if not isinstance(target, Mapping) or set(target) != {"path", "sha256"}:
+        raise StageBPhysiologyRunnerError("analysis protocol has no target-packet binding")
+    target_relative = _canonical_relative_path(target.get("path"), "target packet path")
+    target_digest = _sha256(target.get("sha256"), "target packet sha256")
+    target_path = root.joinpath(*PurePosixPath(target_relative).parts).resolve()
+    try:
+        target_path.relative_to(root)
+    except ValueError as exc:
+        raise StageBPhysiologyRunnerError("target packet path escapes repository_root") from exc
+    if target_path.is_symlink() or not target_path.is_file() or _sha256_file(target_path) != target_digest:
+        raise StageBPhysiologyRunnerError("analysis protocol target-packet binding does not verify")
+    arms = protocol.get("arms")
+    if not isinstance(arms, Mapping) or set(arms) != READINESS_ARMS:
+        raise StageBPhysiologyRunnerError("analysis protocol must define exactly the readiness arms")
+    arm_protocol = arms.get(arm)
+    if not isinstance(arm_protocol, Mapping):
+        raise StageBPhysiologyRunnerError(f"analysis protocol has no valid arm {arm!r}")
+    termination = arm_protocol.get("termination")
+    spike_metrics = arm_protocol.get("spike_metrics")
+    if not isinstance(termination, Mapping) or not isinstance(spike_metrics, Mapping):
+        raise StageBPhysiologyRunnerError("analysis protocol arm lacks termination or spike metrics")
+    if arm == "nap_lesion":
+        if termination != {
+            "duration_s": 1.0,
+            "duration_evidence_class": "project_operational_from_filed_causal_gate",
+            "mode": "fixed_duration",
+        } or spike_metrics != {
+            "source_evidence_class": "project_operational", "window_s": 1.0,
+        }:
+            raise StageBPhysiologyRunnerError("Nap arm changed the filed one-second protocol")
+    else:
+        if termination != {
+            "maximum_duration_s": 20.0,
+            "maximum_duration_evidence_class": (
+                "project_operational_resource_bound_not_a_physiology_gate"
+            ),
+            "mode": "event_count_or_timeout",
+        }:
+            raise StageBPhysiologyRunnerError("event-count arm changed the operational timeout")
+        if (
+            set(spike_metrics) != {
+                "source_locator", "target_spike_count",
+                "target_spike_count_evidence_class",
+            }
+            or spike_metrics.get("target_spike_count_evidence_class") != "source_reported"
+            or spike_metrics.get("target_spike_count") != 101
+        ):
+            raise StageBPhysiologyRunnerError("event-count arm changed the source-bound 101-spike contract")
+    return {
+        "path": PurePosixPath(*relative.parts).as_posix(),
+        "sha256": digest,
+        "causal_gate_authority": dict(authority),
+        "arm": dict(arm_protocol),
+    }
+
+
 def _build_config(references: Mapping[str, str]) -> CoreSimConfig:
     return CoreSimConfig(
         total_simulation_time_ms=1.0,
@@ -365,6 +493,8 @@ def _output_document(
     root: Path,
     candidate_release: Mapping[str, Any],
     runtime_intervention: Mapping[str, Any],
+    analysis_protocol: Mapping[str, Any] | None,
+    termination: Mapping[str, Any] | None,
 ) -> dict[str, Any]:
     steps = len(voltage_millivolts)
     if steps != len(spike_states) or steps == 0:
@@ -372,6 +502,29 @@ def _output_document(
     binding = bindings.get("snr")
     if binding is None or len(bindings) != 1:
         raise StageBPhysiologyRunnerError("runner requires exactly one authenticated SNr binding")
+    raw_observation: dict[str, Any] = {
+        "kind": "packet_voltage_spike_trace",
+        "time_unit": "s",
+        "voltage_unit": "mV",
+        "sample_interval_s": dt_ms / 1000.0,
+        "recording_start_s": dt_ms / 1000.0,
+        "recording_end_s": (steps + 1) * dt_ms / 1000.0,
+        "uncropped": True,
+        "time_s": [(index + 1) * dt_ms / 1000.0 for index in range(steps)],
+        "sample_semantics": "post-update state at the declared time",
+        "voltage_mV": voltage_millivolts,
+        "spike_states": spike_states,
+    }
+    if analysis_protocol is not None:
+        if termination is None:
+            raise StageBPhysiologyRunnerError("production trace has no termination record")
+        raw_observation["analysis_protocol"] = {
+            "binding": {
+                "path": analysis_protocol["path"],
+                "sha256": analysis_protocol["sha256"],
+            },
+            "termination": dict(termination),
+        }
     return {
         "schema": OUTPUT_SCHEMA,
         "process_status": "completed",
@@ -387,19 +540,7 @@ def _output_document(
         "arm": document["arm"],
         "runtime_intervention": dict(runtime_intervention),
         "adaptive_candidate": _candidate_echo(document),
-        "raw_observation": {
-            "kind": "packet_voltage_spike_trace",
-            "time_unit": "s",
-            "voltage_unit": "mV",
-            "sample_interval_s": dt_ms / 1000.0,
-            "recording_start_s": dt_ms / 1000.0,
-            "recording_end_s": (steps + 1) * dt_ms / 1000.0,
-            "uncropped": True,
-            "time_s": [(index + 1) * dt_ms / 1000.0 for index in range(steps)],
-            "sample_semantics": "post-update state at the declared time",
-            "voltage_mV": voltage_millivolts,
-            "spike_states": spike_states,
-        },
+        "raw_observation": raw_observation,
         "provenance": {
             "runner": "research/runners/v14_stageB_physiology.py",
             "repository_root": str(root),
@@ -421,6 +562,8 @@ def run_readiness_arm(
     output: str | Path,
     *,
     repository_root: str | Path,
+    analysis_protocol_path: str | Path | None = None,
+    analysis_protocol_sha256: str | None = None,
 ) -> dict[str, Any]:
     """Execute one authenticated SNr readiness arm and write one new raw artifact."""
 
@@ -431,11 +574,20 @@ def run_readiness_arm(
     destination = Path(output).expanduser().resolve()
     if destination.exists():
         raise StageBPhysiologyRunnerError("refusing to replace an existing raw observation")
+    if (analysis_protocol_path is None) != (analysis_protocol_sha256 is None):
+        raise StageBPhysiologyRunnerError(
+            "analysis protocol path and sha256 must be supplied together"
+        )
     backend, backend_name = get_backend()
     if backend_name != "numpy" or backend is not np:
         raise StageBPhysiologyRunnerError("V14 Stage B readiness runner did not acquire NumPy")
 
     candidate_release = _load_candidate_release(root, document["references"], document)
+    analysis_protocol = None
+    if analysis_protocol_path is not None and analysis_protocol_sha256 is not None:
+        analysis_protocol = _load_analysis_protocol(
+            root, analysis_protocol_path, analysis_protocol_sha256, document["arm"]
+        )
     config = _build_config(document["references"])
     bindings = load_runtime_snr_packet_bindings(config, source_root=root)
     binding = bindings.get("snr")
@@ -458,6 +610,7 @@ def run_readiness_arm(
     )
     voltage_millivolts: list[list[float]] = []
     spike_states: list[list[bool]] = []
+    termination: dict[str, Any] | None = None
     try:
         bridge._initialize_simulation_data()
         if not bridge.is_initialized:
@@ -465,8 +618,27 @@ def run_readiness_arm(
         if set(bridge.snr_packet_bindings) != {"snr"}:
             raise StageBPhysiologyRunnerError("bridge did not retain the authenticated SNr binding")
         runtime_intervention = _apply_runtime_intervention(bridge, document["arm"])
-        steps = int(round(config.total_simulation_time_ms / config.dt_ms))
-        for _ in range(steps):
+        if analysis_protocol is None:
+            maximum_steps = int(round(config.total_simulation_time_ms / config.dt_ms))
+            target_spikes = None
+            mode = "readiness_fixed_duration"
+        else:
+            filed_termination = analysis_protocol["arm"]["termination"]
+            mode = str(filed_termination["mode"])
+            if mode == "fixed_duration":
+                maximum_steps = int(round(
+                    float(filed_termination["duration_s"]) * 1000.0 / config.dt_ms
+                ))
+                target_spikes = None
+            else:
+                maximum_steps = int(round(
+                    float(filed_termination["maximum_duration_s"]) * 1000.0 / config.dt_ms
+                ))
+                target_spikes = int(
+                    analysis_protocol["arm"]["spike_metrics"]["target_spike_count"]
+                )
+        observed_spikes = 0
+        for _ in range(maximum_steps):
             bridge._run_one_simulation_step()
             voltage = np.asarray(to_host(bridge.cp_membrane_potential_v), dtype=np.float64)
             spikes = np.asarray(to_host(bridge.cp_firing_states), dtype=bool)
@@ -476,6 +648,25 @@ def run_readiness_arm(
                 raise StageBPhysiologyRunnerError("SNr bridge produced non-finite voltage")
             voltage_millivolts.append([float(value) for value in voltage])
             spike_states.append([bool(value) for value in spikes])
+            observed_spikes += int(spikes[0])
+            if target_spikes is not None and observed_spikes >= target_spikes:
+                break
+        if analysis_protocol is not None:
+            if mode == "fixed_duration":
+                reason = "fixed_duration_complete"
+            elif observed_spikes >= int(target_spikes):
+                reason = "target_spike_count_reached"
+            else:
+                reason = "maximum_duration_reached"
+            termination = {
+                "mode": mode,
+                "reason": reason,
+                "steps_executed": len(spike_states),
+                "spikes_observed": observed_spikes,
+                "target_spike_count": target_spikes,
+                "maximum_steps": maximum_steps,
+                "timeout_is_physiology_failure": False,
+            }
     finally:
         bridge.clear_simulation_state_and_gpu_memory()
 
@@ -488,6 +679,8 @@ def run_readiness_arm(
         root=root,
         candidate_release=candidate_release,
         runtime_intervention=runtime_intervention,
+        analysis_protocol=analysis_protocol,
+        termination=termination,
     )
     destination.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -504,6 +697,8 @@ def run_readiness_intact(
     output: str | Path,
     *,
     repository_root: str | Path,
+    analysis_protocol_path: str | Path | None = None,
+    analysis_protocol_sha256: str | None = None,
 ) -> dict[str, Any]:
     """Compatibility entry point for the authenticated intact readiness arm."""
 
@@ -516,6 +711,8 @@ def run_readiness_intact(
         adaptive_parameter_document,
         output,
         repository_root=repository_root,
+        analysis_protocol_path=analysis_protocol_path,
+        analysis_protocol_sha256=analysis_protocol_sha256,
     )
 
 
@@ -525,6 +722,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--adaptive-parameter-document", required=True, help="sealed adaptive parameter JSON")
     parser.add_argument("--output", required=True, help="new raw-observation JSON path")
     parser.add_argument("--repository-root", required=True, help="root that owns packet and policy artifacts")
+    parser.add_argument("--analysis-protocol-path", help="optional digest-bound production protocol")
+    parser.add_argument("--analysis-protocol-sha256", help="expected production protocol digest")
     args = parser.parse_args(argv)
     if not args.readiness:
         parser.exit(2, "Stage B runner infrastructure failure: --readiness is required\n")
@@ -533,6 +732,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.adaptive_parameter_document,
             args.output,
             repository_root=args.repository_root,
+            analysis_protocol_path=args.analysis_protocol_path,
+            analysis_protocol_sha256=args.analysis_protocol_sha256,
         )
     except (OSError, StageBPhysiologyRunnerError, ValueError, TypeError) as exc:
         parser.exit(2, f"Stage B runner infrastructure failure: {exc}\n")

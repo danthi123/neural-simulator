@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -19,6 +21,16 @@ from sim.snr_executable_packet import canonical_bytes
 from tests.test_v14_stageB_packet_compiler import _candidate, _template
 from tools.v14_stageB_packet_compiler import compile_candidate
 from tools.v14_stageB_packet_verifier import verify_candidate
+
+
+def test_runner_is_directly_executable_from_repository_root():
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, str(root / "research/runners/v14_stageB_physiology.py"), "--help"],
+        cwd=root, capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "--analysis-protocol-path" in result.stdout
 
 
 def _write_authenticated_artifacts(root: Path) -> tuple[dict[str, float], dict[str, str]]:
@@ -128,6 +140,83 @@ def test_readiness_runner_executes_real_authenticated_packet_and_writes_uncroppe
     assert binding[0]["authority_policy_sha256"] == references["snr_authority_policy_sha256"]
     assert result["provenance"]["candidate_release"]["sha256"] == references["snr_candidate_release_sha256"]
     assert len(result["provenance"]["runtime_binding_manifest_sha256"]) == 64
+
+
+def test_production_runner_stops_at_source_bound_101_spikes_and_binds_protocol(
+    tmp_path, monkeypatch,
+):
+    from sim.bridge import SimulationBridge
+
+    for relative in (
+        Path("research/specs/v14_snr_stageB_causal_gates.json"),
+        Path("research/specs/v14_snr_stageB_intrinsic_protocol.json"),
+        Path("research/specs/v14_snr_stageB_target_packet.json"),
+    ):
+        destination = tmp_path / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((Path(__file__).resolve().parents[1] / relative).read_bytes())
+    candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
+    parameter_document = _parameter_document(candidate_parameters, references)
+    protocol = tmp_path / "research/specs/v14_snr_stageB_intrinsic_protocol.json"
+    protocol_sha = hashlib.sha256(protocol.read_bytes()).hexdigest()
+
+    def synthetic_spike_step(bridge):
+        bridge.cp_membrane_potential_v[:] = -55.0
+        bridge.cp_firing_states[:] = True
+
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", synthetic_spike_step)
+    output = tmp_path / "output" / "production.json"
+    result = run_readiness_intact(
+        parameter_document, output, repository_root=tmp_path,
+        analysis_protocol_path=protocol, analysis_protocol_sha256=protocol_sha,
+    )
+
+    raw = result["raw_observation"]
+    assert len(raw["time_s"]) == 101
+    assert sum(row[0] for row in raw["spike_states"]) == 101
+    assert raw["analysis_protocol"]["binding"] == {
+        "path": "research/specs/v14_snr_stageB_intrinsic_protocol.json",
+        "sha256": protocol_sha,
+    }
+    assert raw["analysis_protocol"]["termination"] == {
+        "mode": "event_count_or_timeout",
+        "reason": "target_spike_count_reached",
+        "steps_executed": 101,
+        "spikes_observed": 101,
+        "target_spike_count": 101,
+        "maximum_steps": 400_000,
+        "timeout_is_physiology_failure": False,
+    }
+
+
+def test_production_runner_rejects_protocol_timeout_redefinition(tmp_path):
+    for relative in (
+        Path("research/specs/v14_snr_stageB_causal_gates.json"),
+        Path("research/specs/v14_snr_stageB_intrinsic_protocol.json"),
+        Path("research/specs/v14_snr_stageB_target_packet.json"),
+    ):
+        destination = tmp_path / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((Path(__file__).resolve().parents[1] / relative).read_bytes())
+    candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
+    protocol = tmp_path / "research/specs/v14_snr_stageB_intrinsic_protocol.json"
+    document = json.loads(protocol.read_text(encoding="ascii"))
+    document["arms"]["intact_autonomous"]["termination"]["maximum_duration_s"] = 1.0
+    protocol.write_text(
+        json.dumps(document, sort_keys=True, separators=(",", ":")), encoding="ascii"
+    )
+    changed_digest = hashlib.sha256(protocol.read_bytes()).hexdigest()
+    gate = tmp_path / "research/specs/v14_snr_stageB_causal_gates.json"
+    gate_document = json.loads(gate.read_text(encoding="ascii"))
+    gate_document["authorized_analysis_protocol"]["sha256"] = changed_digest
+    gate.write_text(json.dumps(gate_document), encoding="ascii")
+
+    with pytest.raises(StageBPhysiologyRunnerError, match="operational timeout"):
+        run_readiness_intact(
+            _parameter_document(candidate_parameters, references), tmp_path / "raw.json",
+            repository_root=tmp_path, analysis_protocol_path=protocol,
+            analysis_protocol_sha256=changed_digest,
+        )
 
 
 @pytest.mark.parametrize(

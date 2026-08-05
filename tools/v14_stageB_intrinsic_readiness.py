@@ -275,6 +275,7 @@ def _write_once(path: Path, value: Mapping[str, Any]) -> str:
 def _verify_runner_artifact(
     result: Mapping[str, Any], parameter_document: Mapping[str, Any],
     references: Mapping[str, str], arm: str, raw_path: Path, root: Path,
+    analysis_protocol: Mapping[str, str] | None = None,
 ) -> dict[str, str | int]:
     if result.get("schema") != RUNNER_SCHEMA or result.get("process_status") != "completed":
         raise StageBIntrinsicReadinessError(f"{arm} runner did not return a completed readiness artifact")
@@ -317,6 +318,16 @@ def _verify_runner_artifact(
         raise StageBIntrinsicReadinessError(f"cannot reload {arm} raw artifact: {exc}") from exc
     if persisted != dict(result):
         raise StageBIntrinsicReadinessError(f"{arm} returned trace does not match persisted raw artifact")
+    raw_protocol = result.get("raw_observation", {}).get("analysis_protocol")
+    if analysis_protocol is None:
+        if raw_protocol is not None:
+            raise StageBIntrinsicReadinessError(f"{arm} runner injected an undeclared analysis protocol")
+    elif (
+        not isinstance(raw_protocol, Mapping)
+        or raw_protocol.get("binding") != analysis_protocol
+        or not isinstance(raw_protocol.get("termination"), Mapping)
+    ):
+        raise StageBIntrinsicReadinessError(f"{arm} runner protocol identity does not match")
     return {
         "path": _relative(root, raw_path, f"{arm} raw artifact"),
         "sha256": _digest_bytes(raw_path.read_bytes()),
@@ -352,6 +363,8 @@ def run_intrinsic_readiness(
     candidate_path: str | Path, candidate_sha256: str,
     causal_gate_path: str | Path, causal_gate_sha256: str,
     output_dir: str | Path, *, repository_root: str | Path,
+    analysis_protocol_path: str | Path | None = None,
+    analysis_protocol_sha256: str | None = None,
     execution_argv: Sequence[str] | None = None,
 ) -> dict[str, Any]:
     """Run exactly one pinned candidate through five authenticated arms and score it."""
@@ -361,6 +374,10 @@ def run_intrinsic_readiness(
         raise StageBIntrinsicReadinessError("repository_root must be a directory")
     _sha256(template_sha256, "template expected digest")
     _sha256(causal_gate_sha256, "causal gate expected digest")
+    if (analysis_protocol_path is None) != (analysis_protocol_sha256 is None):
+        raise StageBIntrinsicReadinessError(
+            "analysis protocol path and sha256 must be supplied together"
+        )
     template = _inside_root(template_path, root, "packet template")
     causal_gate = _inside_root(causal_gate_path, root, "causal gate packet")
     if not template.is_file() or template.is_symlink():
@@ -375,6 +392,36 @@ def run_intrinsic_readiness(
         raise StageBIntrinsicReadinessError("causal gate packet digest does not match")
     if gate_document.get("schema") != "v14-snr-stageB-causal-gates-v1":
         raise StageBIntrinsicReadinessError("causal gate packet has the wrong schema")
+    analysis_protocol: dict[str, str] | None = None
+    protocol_file: Path | None = None
+    if analysis_protocol_path is not None and analysis_protocol_sha256 is not None:
+        _sha256(analysis_protocol_sha256, "analysis protocol expected digest")
+        protocol_file = _inside_root(analysis_protocol_path, root, "analysis protocol")
+        if not protocol_file.is_file() or protocol_file.is_symlink():
+            raise StageBIntrinsicReadinessError("analysis protocol must be a regular file")
+        try:
+            protocol_document = json.loads(protocol_file.read_bytes())
+        except (OSError, json.JSONDecodeError) as exc:
+            raise StageBIntrinsicReadinessError(
+                f"cannot load analysis protocol: {exc}"
+            ) from exc
+        if not isinstance(protocol_document, dict):
+            raise StageBIntrinsicReadinessError("analysis protocol must contain an object")
+        if _digest_bytes(protocol_file.read_bytes()) != analysis_protocol_sha256:
+            raise StageBIntrinsicReadinessError("analysis protocol digest does not match")
+        if protocol_document.get("schema") != "v14-snr-stageB-intrinsic-protocol-v1":
+            raise StageBIntrinsicReadinessError("analysis protocol has the wrong schema")
+        analysis_protocol = {
+            "path": _relative(root, protocol_file, "analysis protocol"),
+            "sha256": analysis_protocol_sha256,
+        }
+        authority = protocol_document.get("causal_gate_authority")
+        if not isinstance(authority, Mapping) or authority.get("path") != _relative(
+            root, causal_gate, "causal gate packet"
+        ):
+            raise StageBIntrinsicReadinessError("analysis protocol names a different causal authority")
+        if gate_document.get("authorized_analysis_protocol") != analysis_protocol:
+            raise StageBIntrinsicReadinessError("causal gate does not authorize this analysis protocol")
     template_id = template_document.get("template_id")
     if not isinstance(template_id, str) or not template_id:
         raise StageBIntrinsicReadinessError("packet template has no valid template_id")
@@ -417,9 +464,14 @@ def run_intrinsic_readiness(
                 canonical_bytes(parameter_document).decode("ascii"),
                 raw_path,
                 repository_root=root,
+                analysis_protocol_path=protocol_file,
+                analysis_protocol_sha256=(
+                    analysis_protocol["sha256"] if analysis_protocol is not None else None
+                ),
             )
             arm_receipt = _verify_runner_artifact(
-                result, parameter_document, references, arm, raw_path, root
+                result, parameter_document, references, arm, raw_path, root,
+                analysis_protocol=analysis_protocol,
             )
             runner_observations[arm] = {
                 "path": str(arm_receipt["path"]),
@@ -502,6 +554,8 @@ def run_intrinsic_readiness(
                 "all_intrinsic_lesion_gates_passed": score["all_intrinsic_lesion_gates_passed"],
             },
         }
+        if analysis_protocol is not None:
+            receipt["analysis_protocol"] = dict(analysis_protocol)
         receipt_path = output / "readiness-receipt.json"
         _write_once(receipt_path, receipt)
         _write_once(
@@ -537,12 +591,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--causal-gate-packet-sha256", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--repository-root", required=True)
+    parser.add_argument("--analysis-protocol")
+    parser.add_argument("--analysis-protocol-sha256")
     args = parser.parse_args(argv)
     try:
         result = run_intrinsic_readiness(
             args.template, args.template_sha256, args.candidate, args.candidate_sha256,
             args.causal_gate_packet, args.causal_gate_packet_sha256, args.output_dir,
             repository_root=args.repository_root,
+            analysis_protocol_path=args.analysis_protocol,
+            analysis_protocol_sha256=args.analysis_protocol_sha256,
         )
     except (
         OSError, PacketError, StageBPacketCompilerError, StageBPacketVerifierError,

@@ -131,7 +131,7 @@ def test_potassium_is_searched_while_confounded_geometry_has_held_out_sensitivit
     ]
 
 
-def test_status_honestly_withholds_execution_while_real_arms_are_missing():
+def test_status_honestly_withholds_promotion_while_protocols_and_controls_are_missing():
     spec = _load(SPEC_PATH)
     readiness = _load(ROOT / spec["source_bindings"]["readiness_spec"]["path"])
     execution = spec["readiness_only_execution"]
@@ -148,10 +148,18 @@ def test_status_honestly_withholds_execution_while_real_arms_are_missing():
     assert execution["scientific_parameter_search"] is False
     assert execution["physiology_verdict"] is False
     assert execution["allowed_partitions"] == ["readiness"]
-    assert execution["implemented_runner_arms"] == ["intact_autonomous"]
+    assert execution["implemented_runner_arms"] == [
+        "intact_autonomous", "nap_lesion", "cav2_2_lesion", "sk_lesion",
+        "hcn_baseline_lesion",
+    ]
     assert execution["missing_runner_arms"]
     assert execution["missing_scorer_contracts"]
-    assert set(execution["implemented_scorer_contracts"]) == bounded_fixture_ids
+    implemented = set(execution["implemented_scorer_contracts"])
+    assert bounded_fixture_ids <= implemented
+    assert {
+        "nap-complete-lesion-partial", "cav2.2-complete-lesion-partial",
+        "sk-complete-lesion-partial", "hcn-complete-lesion-partial",
+    } <= implemented
     assert "forbidden" in execution["scientific_seed_material"]
 
 
