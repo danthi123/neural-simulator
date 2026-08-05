@@ -20,6 +20,20 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _write_versioned_contract_fixture(root: Path) -> tuple[Path, Path]:
+    causal_gate = root / "research/specs/custom-causal-gate.json"
+    analysis_protocol = root / "research/specs/custom-analysis-protocol.json"
+    analysis_protocol.write_bytes(canonical_bytes({"schema": "test-analysis-protocol"}))
+    causal_gate.write_bytes(canonical_bytes({
+        "schema": "test-causal-gate",
+        "authorized_analysis_protocol": {
+            "path": "research/specs/custom-analysis-protocol.json",
+            "sha256": _sha(analysis_protocol),
+        },
+    }))
+    return causal_gate, analysis_protocol
+
+
 def _fixture(tmp_path: Path) -> tuple[Path, Path, Path]:
     root = tmp_path / "repository"
     specs = root / "research/specs"
@@ -137,11 +151,16 @@ def test_run_binds_selected_candidate_and_requires_authoritative_source(
         manifest_path, _sha(manifest_path), "a" * 40, "b" * 64,
         assignments, repository_root=root,
     )
+    assert plan["schema"] == "v14-snr-stageB-numpy-confirmation-job-plan-v1"
+    assert "causal_gate" not in plan
+    assert "analysis_protocol" not in plan
     plan_path = root / "runtime/job-plan.json"
     confirmation.write_job_plan(plan, plan_path, repository_root=root)
     observed = {}
 
     def fake_run(*args, **kwargs):
+        observed["causal_gate_path"] = args[4]
+        observed["causal_gate_sha256"] = args[5]
         observed.update(kwargs)
         output = Path(args[6])
         output.mkdir(parents=True)
@@ -199,6 +218,18 @@ def test_run_binds_selected_candidate_and_requires_authoritative_source(
         job_id=f"confirm-{selected['point_index']}",
     )
     assert observed["require_authoritative_source"] is True
+    assert Path(observed["causal_gate_path"]) == (
+        root / "research/specs/v14_snr_stageB_causal_gates.json"
+    )
+    assert observed["causal_gate_sha256"] == _sha(
+        root / "research/specs/v14_snr_stageB_causal_gates.json"
+    )
+    assert Path(observed["analysis_protocol_path"]) == (
+        root / "research/specs/v14_snr_stageB_intrinsic_protocol.json"
+    )
+    assert observed["analysis_protocol_sha256"] == _sha(
+        root / "research/specs/v14_snr_stageB_intrinsic_protocol.json"
+    )
     assert receipt["candidate"]["candidate_sha256"] == selected["candidate_sha256"]
     assert receipt["source_identity"]["authoritative"] is True
     assert receipt["environment"] == confirmation.EXPECTED_ENVIRONMENT
@@ -216,4 +247,134 @@ def test_run_binds_selected_candidate_and_requires_authoritative_source(
     with pytest.raises(confirmation.StageBConfirmationError, match="corrupt"):
         confirmation.verify_collected_confirmation(
             receipt_path, _sha(receipt_path), repository_root=root,
+        )
+
+
+def test_job_plan_v2_binds_exact_causal_gate_and_analysis_protocol(
+    tmp_path: Path,
+) -> None:
+    root, candidates, triage = _fixture(tmp_path)
+    manifest = confirmation.build_confirmation_manifest(
+        candidates, _sha(candidates), triage, _sha(triage), repository_root=root,
+    )
+    manifest_path = root / "research/specs/confirmation.json"
+    confirmation.write_manifest(manifest, manifest_path, repository_root=root)
+    causal_gate, analysis_protocol = _write_versioned_contract_fixture(root)
+    assignments = [
+        {
+            "candidate_id": item["candidate_id"],
+            "primary_host": "primary-host",
+            "recovery_host": "recovery-host",
+        }
+        for item in manifest["selected_candidates"]
+    ]
+
+    plan = confirmation.build_job_plan(
+        manifest_path,
+        _sha(manifest_path),
+        "a" * 40,
+        "b" * 64,
+        assignments,
+        repository_root=root,
+        causal_gate_path=causal_gate,
+        causal_gate_sha256=_sha(causal_gate),
+        analysis_protocol_path=analysis_protocol,
+        analysis_protocol_sha256=_sha(analysis_protocol),
+    )
+
+    assert plan["schema"] == "v14-snr-stageB-numpy-confirmation-job-plan-v2"
+    assert plan["contract"]["causal_gate"] == {
+        "path": "research/specs/custom-causal-gate.json",
+        "sha256": _sha(causal_gate),
+    }
+    assert plan["contract"]["analysis_protocol"] == {
+        "path": "research/specs/custom-analysis-protocol.json",
+        "sha256": _sha(analysis_protocol),
+    }
+    assert plan["sha256"] == confirmation._digest({
+        key: value for key, value in plan.items() if key != "sha256"
+    })
+
+
+def test_v2_run_uses_bound_contract_files_and_rejects_digest_tampering(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    root, candidates, triage = _fixture(tmp_path)
+    template = root / "research/specs/v14_snr_stageB_packet_template.json"
+    template.write_bytes(
+        (ROOT / "research/specs/v14_snr_stageB_packet_template.json").read_bytes()
+    )
+    causal_gate, analysis_protocol = _write_versioned_contract_fixture(root)
+    manifest = confirmation.build_confirmation_manifest(
+        candidates, _sha(candidates), triage, _sha(triage), repository_root=root,
+    )
+    manifest_path = root / "research/specs/confirmation.json"
+    confirmation.write_manifest(manifest, manifest_path, repository_root=root)
+    selected = manifest["selected_candidates"][0]
+    assignments = [
+        {
+            "candidate_id": item["candidate_id"],
+            "primary_host": "primary-host",
+            "recovery_host": "recovery-host",
+        }
+        for item in manifest["selected_candidates"]
+    ]
+    plan = confirmation.build_job_plan(
+        manifest_path,
+        _sha(manifest_path),
+        "a" * 40,
+        "b" * 64,
+        assignments,
+        repository_root=root,
+        causal_gate_path=causal_gate,
+        causal_gate_sha256=_sha(causal_gate),
+        analysis_protocol_path=analysis_protocol,
+        analysis_protocol_sha256=_sha(analysis_protocol),
+    )
+    plan_path = root / "runtime/job-plan.json"
+    confirmation.write_job_plan(plan, plan_path, repository_root=root)
+    observed: dict[str, object] = {}
+
+    def stop_after_binding(*args, **kwargs):
+        observed["causal_gate_path"] = args[4]
+        observed["causal_gate_sha256"] = args[5]
+        observed.update(kwargs)
+        raise RuntimeError("binding observed")
+
+    monkeypatch.setattr(confirmation, "run_intrinsic_readiness", stop_after_binding)
+    monkeypatch.setattr(
+        confirmation, "_runtime_environment", lambda: dict(confirmation.EXPECTED_ENVIRONMENT)
+    )
+    monkeypatch.setattr(confirmation.socket, "gethostname", lambda: "primary-host")
+    run_kwargs = {
+        "repository_root": root,
+        "execution_argv": ["test-confirmation"],
+        "expected_source_revision": "a" * 40,
+        "expected_source_manifest_sha256": "b" * 64,
+        "job_plan_path": plan_path,
+        "job_plan_sha256": _sha(plan_path),
+        "job_id": f"confirm-{selected['point_index']}",
+    }
+
+    with pytest.raises(RuntimeError, match="binding observed"):
+        confirmation.run_confirmation_candidate(
+            manifest_path,
+            _sha(manifest_path),
+            selected["candidate_id"],
+            root / "runtime/result",
+            **run_kwargs,
+        )
+    assert Path(observed["causal_gate_path"]) == causal_gate
+    assert observed["causal_gate_sha256"] == _sha(causal_gate)
+    assert Path(observed["analysis_protocol_path"]) == analysis_protocol
+    assert observed["analysis_protocol_sha256"] == _sha(analysis_protocol)
+
+    causal_gate.write_bytes(canonical_bytes({"schema": "tampered-causal-gate"}))
+    with pytest.raises(confirmation.StageBConfirmationError, match="digest"):
+        confirmation.run_confirmation_candidate(
+            manifest_path,
+            _sha(manifest_path),
+            selected["candidate_id"],
+            root / "runtime/tampered-result",
+            **run_kwargs,
         )

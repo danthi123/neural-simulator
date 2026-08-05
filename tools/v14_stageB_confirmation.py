@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_SCHEMA = "v14-snr-stageB-numpy-confirmation-manifest-v1"
 RECEIPT_SCHEMA = "v14-snr-stageB-numpy-confirmation-receipt-v1"
 JOB_PLAN_SCHEMA = "v14-snr-stageB-numpy-confirmation-job-plan-v1"
+JOB_PLAN_SCHEMA_V2 = "v14-snr-stageB-numpy-confirmation-job-plan-v2"
 ARMS = (
     "intact_autonomous",
     "nap_lesion",
@@ -280,6 +281,10 @@ def build_job_plan(
     assignments: Sequence[Mapping[str, str]],
     *,
     repository_root: str | Path = ROOT,
+    causal_gate_path: str | Path | None = None,
+    causal_gate_sha256: str | None = None,
+    analysis_protocol_path: str | Path | None = None,
+    analysis_protocol_sha256: str | None = None,
 ) -> dict[str, Any]:
     """Bind every confirmation survivor to one primary and one recovery host."""
 
@@ -324,8 +329,44 @@ def build_job_plan(
         })
     if observed != set(selected):
         raise StageBConfirmationError("job plan must assign all and only selected candidates")
+    contract_values = (
+        causal_gate_path,
+        causal_gate_sha256,
+        analysis_protocol_path,
+        analysis_protocol_sha256,
+    )
+    if any(value is not None for value in contract_values) and not all(
+        value is not None for value in contract_values
+    ):
+        raise StageBConfirmationError(
+            "versioned contract requires both paths and both digests"
+        )
+    contract = None
+    if all(value is not None for value in contract_values):
+        causal_path, causal = _load_bound_json(
+            root, causal_gate_path, str(causal_gate_sha256), "causal gate contract"
+        )
+        protocol_path, _ = _load_bound_json(
+            root, analysis_protocol_path, str(analysis_protocol_sha256),
+            "intrinsic analysis protocol",
+        )
+        protocol_binding = {
+            "path": _relative(root, protocol_path),
+            "sha256": _digest_bytes(protocol_path.read_bytes()),
+        }
+        if causal.get("authorized_analysis_protocol") != protocol_binding:
+            raise StageBConfirmationError(
+                "causal gate contract does not authorize the selected analysis protocol"
+            )
+        contract = {
+            "causal_gate": {
+                "path": _relative(root, causal_path),
+                "sha256": _digest_bytes(causal_path.read_bytes()),
+            },
+            "analysis_protocol": protocol_binding,
+        }
     body = {
-        "schema": JOB_PLAN_SCHEMA,
+        "schema": JOB_PLAN_SCHEMA_V2 if contract is not None else JOB_PLAN_SCHEMA,
         "status": "ready-for-dispatch",
         "confirmation_manifest": {
             "path": _relative(root, manifest_path),
@@ -341,6 +382,8 @@ def build_job_plan(
         "arm_splitting_permitted": False,
         "jobs": sorted(jobs, key=lambda item: item["job_id"]),
     }
+    if contract is not None:
+        body["contract"] = contract
     return {**body, "sha256": _digest(body)}
 
 
@@ -349,7 +392,7 @@ def _validate_job_plan(
 ) -> tuple[Path, dict[str, Any]]:
     path, plan = _load_bound_json(root, path_value, expected_sha256, "confirmation job plan")
     if (
-        plan.get("schema") != JOB_PLAN_SCHEMA
+        plan.get("schema") not in {JOB_PLAN_SCHEMA, JOB_PLAN_SCHEMA_V2}
         or plan.get("sha256") != _digest({
             key: value for key, value in plan.items() if key != "sha256"
         })
@@ -359,6 +402,32 @@ def _validate_job_plan(
         or plan.get("arm_splitting_permitted") is not False
     ):
         raise StageBConfirmationError("confirmation job plan changed its execution boundary")
+    if plan.get("schema") == JOB_PLAN_SCHEMA_V2:
+        contract = plan.get("contract")
+        if not isinstance(contract, Mapping) or set(contract) != {
+            "causal_gate", "analysis_protocol"
+        }:
+            raise StageBConfirmationError("versioned job plan has no exact contract binding")
+        causal_path, causal = _load_bound_json(
+            root, contract["causal_gate"].get("path"),
+            contract["causal_gate"].get("sha256"), "job-plan causal gate contract",
+        )
+        protocol_path, _ = _load_bound_json(
+            root, contract["analysis_protocol"].get("path"),
+            contract["analysis_protocol"].get("sha256"),
+            "job-plan intrinsic analysis protocol",
+        )
+        if causal.get("authorized_analysis_protocol") != {
+            "path": _relative(root, protocol_path),
+            "sha256": _digest_bytes(protocol_path.read_bytes()),
+        }:
+            raise StageBConfirmationError(
+                "job-plan causal gate does not authorize its analysis protocol"
+            )
+        if _relative(root, causal_path) != contract["causal_gate"].get("path"):
+            raise StageBConfirmationError("job-plan causal gate path is not canonical")
+    elif "contract" in plan:
+        raise StageBConfirmationError("V1 job plan cannot contain a versioned contract")
     return path, plan
 
 
@@ -369,7 +438,7 @@ def write_job_plan(
     path = _inside(root, destination, "confirmation job plan output", require_file=False)
     if path.exists() or path.is_symlink():
         raise StageBConfirmationError("refusing to replace confirmation job plan")
-    if plan.get("schema") != JOB_PLAN_SCHEMA or plan.get("sha256") != _digest({
+    if plan.get("schema") not in {JOB_PLAN_SCHEMA, JOB_PLAN_SCHEMA_V2} or plan.get("sha256") != _digest({
         key: value for key, value in plan.items() if key != "sha256"
     }):
         raise StageBConfirmationError("confirmation job plan is invalid")
@@ -435,8 +504,18 @@ def run_confirmation_candidate(
         candidate_input.unlink(missing_ok=True)
         raise StageBConfirmationError("staged candidate digest does not match selection")
     template = root / "research/specs/v14_snr_stageB_packet_template.json"
-    causal = root / "research/specs/v14_snr_stageB_causal_gates.json"
-    protocol = root / "research/specs/v14_snr_stageB_intrinsic_protocol.json"
+    contract = plan.get("contract")
+    if contract is None:
+        causal = root / "research/specs/v14_snr_stageB_causal_gates.json"
+        protocol = root / "research/specs/v14_snr_stageB_intrinsic_protocol.json"
+    else:
+        causal = _inside(
+            root, contract["causal_gate"]["path"], "job-plan causal gate", require_file=True
+        )
+        protocol = _inside(
+            root, contract["analysis_protocol"]["path"],
+            "job-plan analysis protocol", require_file=True,
+        )
     argv = list(sys.argv if execution_argv is None else execution_argv)
     expected_revision = expected_source_revision
     if len(expected_revision) != 40 or any(
@@ -530,6 +609,8 @@ def run_confirmation_candidate(
             },
             "score": dict(inner["score"]),
         }
+        if contract is not None:
+            body["contract"] = dict(contract)
         receipt = {**body, "sha256": _digest(body)}
         receipt_path = output / "confirmation-receipt.json"
         with receipt_path.open("xb") as handle:
@@ -589,6 +670,14 @@ def verify_collected_confirmation(
         or job_binding.get("execution_host")
         not in {jobs[0].get("primary_host"), jobs[0].get("recovery_host")}
         or plan.get("expected_source") != receipt.get("expected_source")
+        or (
+            plan.get("schema") == JOB_PLAN_SCHEMA_V2
+            and receipt.get("contract") != plan.get("contract")
+        )
+        or (
+            plan.get("schema") == JOB_PLAN_SCHEMA
+            and "contract" in receipt
+        )
     ):
         raise StageBConfirmationError("collected receipt does not match its confirmation job")
     output = path.parent
@@ -670,6 +759,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     plan.add_argument("--confirmation-manifest-sha256", required=True)
     plan.add_argument("--expected-source-revision", required=True)
     plan.add_argument("--expected-source-manifest-sha256", required=True)
+    plan.add_argument("--causal-gate")
+    plan.add_argument("--causal-gate-sha256")
+    plan.add_argument("--analysis-protocol")
+    plan.add_argument("--analysis-protocol-sha256")
     plan.add_argument(
         "--assignment", action="append", required=True,
         help="candidate_id,primary_hostname,recovery_hostname",
@@ -704,6 +797,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.confirmation_manifest, args.confirmation_manifest_sha256,
                 args.expected_source_revision, args.expected_source_manifest_sha256,
                 assignments, repository_root=args.repository_root,
+                causal_gate_path=args.causal_gate,
+                causal_gate_sha256=args.causal_gate_sha256,
+                analysis_protocol_path=args.analysis_protocol,
+                analysis_protocol_sha256=args.analysis_protocol_sha256,
             )
             write_job_plan(result, args.output, repository_root=args.repository_root)
         elif args.action == "run":
