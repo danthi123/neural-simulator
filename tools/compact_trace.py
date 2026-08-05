@@ -272,6 +272,24 @@ def hmac_compare(left: str, right: str) -> bool:
         return False
 
 
+def _validate_archive_metadata(
+    infos: list[zipfile.ZipInfo], archive_comment: bytes,
+) -> None:
+    if archive_comment:
+        raise CompactTraceError("archive metadata is not canonical")
+    for info in infos:
+        if (
+            info.date_time != (1980, 1, 1, 0, 0, 0)
+            or info.compress_type != zipfile.ZIP_DEFLATED
+            or info.create_system != 3
+            or info.external_attr != 0o600 << 16
+            or info.extra or info.comment or info.flag_bits != 0
+            or info.create_version != 20 or info.extract_version != 20
+            or info.internal_attr != 0 or info.volume != 0
+        ):
+            raise CompactTraceError("archive metadata is not canonical")
+
+
 def load_compact_trace(
     path: str | os.PathLike[str],
     expected_sha256: str | None = None,
@@ -313,6 +331,7 @@ def load_compact_trace(
                 raise CompactTraceError("archive contains an invalid member")
             if any(info.compress_type != zipfile.ZIP_DEFLATED for info in infos):
                 raise CompactTraceError("archive compression mismatch")
+            _validate_archive_metadata(infos, archive.comment)
 
             manifest_bytes = archive.read("manifest.json")
             manifest = json.loads(
@@ -353,8 +372,6 @@ def load_compact_trace(
             if _npy_bytes(np.ascontiguousarray(array, dtype=expected_dtype)) != member_bytes:
                 raise CompactTraceError(f"{name} member is not canonical")
             result[name] = np.array(array, dtype=expected_dtype, copy=True)
-        if _archive_bytes(result) != payload:
-            raise CompactTraceError("archive is not canonical")
     return result
 
 

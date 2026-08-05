@@ -31,7 +31,11 @@ def _members(path: Path) -> list[tuple[str, bytes]]:
 def _write_members(path: Path, members: list[tuple[str, bytes]]) -> None:
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for name, payload in members:
-            archive.writestr(name, payload)
+            info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.create_system = 3
+            info.external_attr = 0o600 << 16
+            archive.writestr(info, payload, compresslevel=1)
 
 
 def test_round_trip_preserves_exact_values_and_dtypes(tmp_path):
@@ -58,6 +62,31 @@ def test_serialization_is_byte_deterministic(tmp_path):
 
     assert first.read_bytes() == second.read_bytes()
     assert first_digest == second_digest
+
+
+def test_loading_does_not_depend_on_local_deflate_reserialization(tmp_path, monkeypatch):
+    path = tmp_path / "trace.ct"
+    digest = _save(path)
+
+    monkeypatch.setattr(
+        "tools.compact_trace._archive_bytes",
+        lambda arrays: (_ for _ in ()).throw(AssertionError("must not recompress on load")),
+    )
+
+    loaded = load_compact_trace(path, expected_sha256=digest)
+    assert np.array_equal(loaded["voltage"], VOLTAGE)
+
+
+def test_rejects_noncanonical_zip_metadata(tmp_path):
+    source = tmp_path / "source.ct"
+    broken = tmp_path / "broken.ct"
+    _save(source)
+    with zipfile.ZipFile(broken, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for name, payload in _members(source):
+            archive.writestr(name, payload)
+
+    with pytest.raises(CompactTraceError, match="metadata is not canonical"):
+        load_compact_trace(broken)
 
 
 def test_write_once_rejects_existing_destination(tmp_path):

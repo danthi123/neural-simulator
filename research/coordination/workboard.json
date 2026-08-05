@@ -970,18 +970,6 @@
       "at": "2026-08-04T21:11:22+00:00",
       "detail": "running",
       "kind": "lane-update",
-      "subject": "gateb-v14-source-metadata"
-    },
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-intrinsic-surface"
-    },
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "lane-update",
       "subject": "gateb-v14-physiology-metrics"
     },
     {
@@ -1565,6 +1553,18 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T04:09:56+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T04:09:57+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -1810,6 +1810,24 @@
         "tests/test_snr_conductance_kernels.py"
       ]
     },
+    "gateb-v14-missing-protocol-authority": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T04:09:57+00:00",
+      "next_action": "Resolve the source-bound Nap stable-baseline voltage estimator, event-aligned medium-AHP window, paired HCN hyperpolarized current-step protocol, and sealed 12-cell SK depolarization-block cohort; implement only contracts supported by direct primary evidence.",
+      "owner": "codex",
+      "priority": 1,
+      "recovery_action": "If a direct source does not provide a required numerical or measurement definition, record the contract as unavailable and research a preparation-matched primary source rather than inventing a threshold.",
+      "resource": "remote_agent_network_plus_local_cpu",
+      "status": "running",
+      "write_set": [
+        "research/specs",
+        "tools/v14_stageB_scorer.py",
+        "research/runners",
+        "tests",
+        "research/findings",
+        "ROADMAP.md"
+      ]
+    },
     "gateb-v14-packet-authority": {
       "agent_id": "019fcef2-1ac3-77d0-9412-ee6353c92d22",
       "delegation": "agent",
@@ -1855,18 +1873,17 @@
     "gateb-v14-scorer-integration": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T03:35:02+00:00",
-      "next_action": "Authoritatively rerun the two GPU engineering-pass candidates (Sobol 284 and 404) across all five Stage B arms with NumPy on local CPU and freshly provisioned pool nodes; score only recomputed authenticated observations, then decide whether timed-out engineering-inconclusive candidates need bounded follow-up.",
+      "heartbeat_at": "2026-08-05T04:09:56+00:00",
+      "next_action": "Two authenticated NumPy survivors pass all five resolved checks but remain UNAVAILABLE; proceed to the separate missing-protocol authority lane before any new candidate search.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "Do not tune against missing AHP, HCN current-step, SK cohort, or Nap voltage outcomes; do not treat an operational timeout as physiology failure or open reserved scientific partitions.",
+      "recovery_action": "Do not tune against missing AHP, HCN current-step, SK cohort, or Nap voltage outcomes; do not treat GPU timeout as physiology failure or open reserved partitions.",
       "resource": "local_cpu_plus_pool",
-      "status": "running",
+      "status": "completed",
       "write_set": [
-        "tools/v14_stageB_campaign.py",
-        "tools/v14_stageB_gpu_triage.py",
+        "tools/v14_stageB_confirmation.py",
+        "tools/compact_trace.py",
         "research/findings",
-        "docs",
         "ROADMAP.md"
       ]
     },
@@ -2197,5 +2214,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T03:35:02+00:00"
+  "updated_at": "2026-08-05T04:09:57+00:00"
 }
