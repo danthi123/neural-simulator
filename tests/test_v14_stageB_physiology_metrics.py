@@ -8,6 +8,7 @@ from tools.v14_stageB_physiology_metrics import (
     detect_depolarization_block,
     inhibitory_release_metrics,
     input_resistance,
+    peak_conductance,
     spike_train_metrics,
 )
 
@@ -51,6 +52,37 @@ def test_spike_train_reports_insufficient_isi_metrics_without_inventing_values()
     )
     assert result["isi_cv"] is None
     assert result["isi_cv2"] is None
+
+
+def test_peak_conductance_uses_uncropped_post_burn_in_trace():
+    result = peak_conductance(
+        [0.0, 0.001, 0.002, 0.003, 0.004, 0.005],
+        [9.0, 1.0, 2.0, 4.0, 3.0, 0.0],
+        time_unit="s", conductance_unit="nS", sample_interval_s=0.001,
+        recording_start_s=0.0, burn_in_start_s=0.0, burn_in_end_s=0.002,
+        window_start_s=0.002, window_end_s=0.005,
+    )
+    assert result == {"peak_conductance_nS": 4.0, "peak_time_s": 0.003}
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        ({"conductance_unit": "uS"}, "conductance_unit"),
+        ({"recording_start_s": -0.001}, "cropped"),
+        ({"conductance_nS": [0.0, -1.0, 1.0]}, "nonnegative"),
+    ],
+)
+def test_peak_conductance_rejects_wrong_units_cropping_and_negative_values(change, message):
+    kwargs = {
+        "time_s": [0.0, 0.001, 0.002], "conductance_nS": [0.0, 1.0, 0.0],
+        "time_unit": "s", "conductance_unit": "nS", "sample_interval_s": 0.001,
+        "recording_start_s": 0.0, "burn_in_start_s": 0.0, "burn_in_end_s": 0.001,
+        "window_start_s": 0.001, "window_end_s": 0.003,
+    }
+    kwargs.update(change)
+    with pytest.raises(PhysiologyMetricError, match=message):
+        peak_conductance(**kwargs)
 
 
 def test_action_potential_threshold_rule_and_interpolated_half_width():

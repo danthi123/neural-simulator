@@ -185,6 +185,58 @@ def spike_train_metrics(
     }
 
 
+def peak_conductance(
+    time_s: Sequence[float],
+    conductance_nS: Sequence[float],
+    *,
+    time_unit: str,
+    conductance_unit: str,
+    sample_interval_s: float,
+    recording_start_s: float,
+    burn_in_start_s: float,
+    burn_in_end_s: float,
+    window_start_s: float,
+    window_end_s: float,
+) -> dict[str, float]:
+    """Return the discrete peak from an uncropped conductance trace."""
+    _require_unit(time_unit, "s", "time_unit")
+    _require_unit(conductance_unit, "nS", "conductance_unit")
+    dt = _finite_number(sample_interval_s, "sample_interval_s")
+    if dt <= 0:
+        raise PhysiologyMetricError("sample_interval_s must be positive")
+    time = _as_vector(time_s, "time_s", minimum_size=2)
+    conductance = _as_vector(conductance_nS, "conductance_nS", minimum_size=2)
+    if time.size != conductance.size:
+        raise PhysiologyMetricError("time_s and conductance_nS must have equal length")
+    if np.any(np.diff(time) <= 0) or not np.allclose(
+        np.diff(time), dt, rtol=1e-9, atol=max(1e-12, dt * 1e-9)
+    ):
+        raise PhysiologyMetricError("time_s must be strictly increasing at sample_interval_s")
+    if np.any(conductance < 0):
+        raise PhysiologyMetricError("conductance_nS must be nonnegative")
+
+    recording_start = _finite_number(recording_start_s, "recording_start_s")
+    burn_start, burn_end = _validate_window(burn_in_start_s, burn_in_end_s, "burn_in")
+    tolerance = max(1e-12, dt * 1e-9)
+    if not math.isclose(time[0], recording_start, abs_tol=tolerance):
+        raise PhysiologyMetricError("trace is cropped or does not begin at recording_start_s")
+    if not math.isclose(burn_start, recording_start, abs_tol=tolerance):
+        raise PhysiologyMetricError("burn_in_start_s must equal recording_start_s")
+    window_time, window_conductance = _trace_window(
+        time,
+        conductance,
+        start_s=window_start_s,
+        end_s=window_end_s,
+        burn_in_end_s=burn_end,
+        name="conductance window",
+    )
+    index = int(np.argmax(window_conductance))
+    return {
+        "peak_conductance_nS": float(window_conductance[index]),
+        "peak_time_s": float(window_time[index]),
+    }
+
+
 def action_potential_shape(
     time_s: Sequence[float],
     voltage_mV: Sequence[float],
