@@ -788,6 +788,168 @@ def prepare_fused_hh_state_and_spike_update_into(inputs):
 
 
 @fuse()
+def fused_snr_diagnostic_capture_into(
+    pre_voltage,
+    post_voltage,
+    fired,
+    fast_na_activation,
+    fast_na_inactivation,
+    fast_k_activation,
+    nap_activation,
+    nap_inactivation,
+    cav22_activation,
+    cav22_inactivation,
+    calcium_um,
+    sk_activation,
+    hcn_activation,
+    snr_effective_input_scratch,
+    out_pre_voltage,
+    out_post_voltage,
+    out_fired,
+    out_fast_na_activation,
+    out_fast_na_inactivation,
+    out_fast_k_activation,
+    out_nap_activation,
+    out_nap_inactivation,
+    out_cav22_activation,
+    out_cav22_inactivation,
+    out_calcium_um,
+    out_sk_activation,
+    out_hcn_activation,
+    out_snr_effective_input_scratch,
+):
+    """Capture all exact Stage B diagnostic states in one opt-in launch."""
+    out_pre_voltage[:] = pre_voltage
+    out_post_voltage[:] = post_voltage
+    out_fired[:] = fired
+    out_fast_na_activation[:] = fast_na_activation
+    out_fast_na_inactivation[:] = fast_na_inactivation
+    out_fast_k_activation[:] = fast_k_activation
+    out_nap_activation[:] = nap_activation
+    out_nap_inactivation[:] = nap_inactivation
+    out_cav22_activation[:] = cav22_activation
+    out_cav22_inactivation[:] = cav22_inactivation
+    out_calcium_um[:] = calcium_um
+    out_sk_activation[:] = sk_activation
+    out_hcn_activation[:] = hcn_activation
+    out_snr_effective_input_scratch[:] = snr_effective_input_scratch
+
+
+def prepare_fused_snr_diagnostic_capture_into(inputs):
+    """Compile one fixed-shape alias-aware telemetry capture executor."""
+    if _backend_name != "cupy":
+        raise RuntimeError("fused diagnostic capture requires the CuPy backend")
+    inputs = tuple(inputs)
+    local_fusion = fuse()(fused_snr_diagnostic_capture_into.func)
+    local_fusion(*inputs)
+    compiled = getattr(local_fusion, "new_fusion", None)
+    if compiled is None:
+        key = _fusion_memo_key(inputs)
+        cached = getattr(local_fusion, "_memo", {}).get(key)
+        if (
+            not isinstance(cached, tuple)
+            or len(cached) != 2
+            or not callable(cached[0])
+            or cached[1]
+        ):
+            raise RuntimeError("unsupported CuPy diagnostic capture cache")
+
+        def execute_legacy(*values):
+            if len(values) != len(inputs):
+                raise ValueError("diagnostic capture executor argument count changed")
+            cached[0](*values)
+
+        return execute_legacy
+    cache = getattr(compiled, "_cache", None)
+    if not isinstance(cache, dict) or len(cache) != 1:
+        raise RuntimeError("unsupported CuPy diagnostic capture cache")
+    shape_variants, kernels = next(iter(cache.values()))
+    if (
+        not isinstance(shape_variants, dict)
+        or len(shape_variants) != 1
+        or not isinstance(kernels, list)
+        or len(kernels) != 1
+    ):
+        raise RuntimeError("ambiguous CuPy diagnostic capture cache")
+    kernel, shapes = next(iter(shape_variants.values()))
+    if kernel is not kernels[0] or not callable(getattr(kernel, "execute", None)):
+        raise RuntimeError("unsupported CuPy diagnostic capture executor")
+
+    def execute(*values):
+        if len(values) != len(inputs):
+            raise ValueError("diagnostic capture executor argument count changed")
+        kernel.execute(tuple(values), shapes)
+
+    return execute
+
+
+@fuse()
+def fused_snr_packet_diagnostic_currents(
+    pre_voltage,
+    fast_na_activation,
+    fast_na_inactivation,
+    fast_k_activation,
+    nap_activation,
+    nap_inactivation,
+    cav22_activation,
+    cav22_inactivation,
+    sk_activation,
+    hcn_activation,
+    g_fast_na,
+    g_fast_k,
+    g_leak,
+    g_nalcn,
+    g_nap,
+    g_cav22,
+    g_sk,
+    g_hcn,
+    e_na,
+    e_k,
+    e_leak,
+    e_nalcn,
+    e_ca,
+    e_hcn,
+    cav22_activation_power,
+):
+    """Re-express currents used by the fused update from its exact saved state.
+
+    ``pre_voltage`` is the voltage supplied to both production kernels. Gate
+    arrays are their newly advanced values, which are the values those kernels
+    used to calculate current for that same step. This kernel is diagnostic
+    arithmetic only and never feeds back into simulation state.
+    """
+    i_fast_na = (
+        g_fast_na * fast_na_activation**3 * fast_na_inactivation
+        * (pre_voltage - e_na)
+    )
+    i_fast_k = g_fast_k * fast_k_activation**4 * (pre_voltage - e_k)
+    i_leak = g_leak * (pre_voltage - e_leak)
+    i_nalcn = g_nalcn * (pre_voltage - e_nalcn)
+    i_nap = g_nap * nap_activation * nap_inactivation * (pre_voltage - e_na)
+    i_cav22 = (
+        g_cav22 * cav22_activation**cav22_activation_power
+        * cav22_inactivation * (pre_voltage - e_ca)
+    )
+    i_sk = g_sk * sk_activation * (pre_voltage - e_k)
+    i_hcn = g_hcn * hcn_activation * (pre_voltage - e_hcn)
+    i_total = (
+        i_fast_na + i_fast_k + i_leak + i_nalcn + i_nap
+        + i_cav22 + i_sk + i_hcn
+    )
+    return (
+        i_fast_na,
+        i_fast_k,
+        i_leak,
+        i_nalcn,
+        i_nap,
+        i_cav22,
+        i_sk,
+        i_hcn,
+        i_total,
+    )
+
+
+@fuse()
 def fused_adex_dynamics_update(V, w, I_syn, dt, C, g_L, E_L, V_T, Delta_T, a, tau_w):
     """Fused kernel for Adaptive Exponential Integrate-and-Fire (AdEx) dynamics.
 

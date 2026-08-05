@@ -1,0 +1,34 @@
+{
+ "run_id": "1785914845-693009",
+ "runner": "research/runners/v14_stageB_failure_diagnostic_analysis.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/v14_stageB_failure_diagnostic_analysis.py",
+  "--receipt",
+  "research/experiment-runtime/v14-stageB-v3-failure-diagnostic-r2/receipt.json",
+  "--receipt-sha256",
+  "fe8948ace8e328da72521b90efae8ee7086feaa251ad2f6deedc6c5db064dbaf",
+  "--repository-root",
+  ".",
+  "--output",
+  "research/findings/raw/v14_stageB_v3_failure_diagnostic_r2_analysis.json"
+ ],
+ "git_sha": "6a8bd328a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-05T03:27:25",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4850.8,
+ "corpus_check_query": "Stage B V3 successor has no candidate satisfying Cav2.2 variability and NaP hyperpolarization while maintaining stable autonomous pacemaking",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v14_stageB_v3_failure_diagnostic_r2_analysis.json"
+}

@@ -1005,63 +1005,63 @@
       "status": "completed",
       "task": "Diagnose Stage B V3 mechanism/protocol mismatch from local and primary sources",
       "write_set": []
+    },
+    "019fd09e-45af-7e50-8b3b-0afc1726d2cd": {
+      "completed_at": "2026-08-05T06:38:42+00:00",
+      "heartbeat_at": "2026-08-05T06:38:42+00:00",
+      "model": "inherited",
+      "next_action": "Implement opt-in fused telemetry and diagnostic runner.",
+      "result": "Read-only audit confirmed separate diagnostic assay, exact kernel-emitted currents, fused capture, sham/rescue arms, and compact_trace v1 preservation.",
+      "started_at": "2026-08-05T06:31:06+00:00",
+      "status": "completed",
+      "task": "Audit minimal Stage B diagnostic packet implementation interfaces and risks",
+      "write_set": [
+        ""
+      ]
+    },
+    "019fd09f-bf9c-7d70-afdb-128a2a711eb2": {
+      "completed_at": "2026-08-05T06:38:42+00:00",
+      "heartbeat_at": "2026-08-05T06:38:42+00:00",
+      "model": "inherited",
+      "next_action": "Validate simulator diagnostic trace archive and integrate with diagnostic runner.",
+      "result": "Diagnostic archive implementation reviewed; initial fork targeted wrong repository, files removed there and implementation applied in simulator worktree.",
+      "started_at": "2026-08-05T06:32:44+00:00",
+      "status": "completed",
+      "task": "Implement deterministic authenticated multichannel diagnostic trace archive",
+      "write_set": [
+        "tools/diagnostic_trace.py",
+        "tests/test_diagnostic_trace.py"
+      ]
+    },
+    "019fd0a9-b5c2-7e80-9670-629906d5ada6": {
+      "completed_at": "2026-08-05T06:54:56+00:00",
+      "heartbeat_at": "2026-08-05T06:54:56+00:00",
+      "model": "inherited",
+      "next_action": "Review runner, run focused tests and a bounded one-arm GPU smoke before full preregistered diagnostic.",
+      "result": "Authenticated Stage B failure diagnostic runner implemented; focused tests and real validate-only passed; full GPU diagnostic remains controller-owned.",
+      "started_at": "2026-08-05T06:43:35+00:00",
+      "status": "completed",
+      "task": "Implement authenticated fused Stage B failure diagnostic runner and focused tests",
+      "write_set": [
+        "research/runners/v14_stageB_failure_diagnostic.py",
+        "tests/test_v14_stageB_failure_diagnostic.py"
+      ]
+    },
+    "019fd0b7-37b6-7601-9094-56ee4ea4f4e6": {
+      "completed_at": "2026-08-05T07:09:05+00:00",
+      "heartbeat_at": "2026-08-05T07:09:05+00:00",
+      "model": "inherited",
+      "next_action": "Bank diagnostic result and preregister source-bound SNr fast-channel/local-calcium successor.",
+      "result": "Independent authenticated analysis found calcium collapse in all nine, SK collapse in six, voltage leading SK collapse, sodium availability recovery in all, and sustained firing rescue in none; structural model replacement recommended.",
+      "started_at": "2026-08-05T06:58:20+00:00",
+      "status": "completed",
+      "task": "Independently analyze authenticated Stage B failure diagnostic mechanisms",
+      "write_set": [
+        ""
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-source-metadata"
-    },
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-intrinsic-surface"
-    },
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-physiology-metrics"
-    },
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-conductance-clamp"
-    },
-    {
-      "at": "2026-08-04T21:19:32+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-04T21:19:32+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "gateb-v14-clamp-integration"
-    },
-    {
-      "at": "2026-08-04T21:19:32+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "gateb-v14-channel-kinetics"
-    },
-    {
-      "at": "2026-08-04T21:20:20+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-clamp-integration"
-    },
-    {
-      "at": "2026-08-04T21:20:21+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-channel-kinetics"
-    },
     {
       "at": "2026-08-04T21:20:21+00:00",
       "detail": "running",
@@ -1607,6 +1607,60 @@
       "detail": "completed",
       "kind": "agent-finish",
       "subject": "019fd08f-ab61-7001-b528-c47b37fc12bf"
+    },
+    {
+      "at": "2026-08-05T06:31:06+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd09e-45af-7e50-8b3b-0afc1726d2cd"
+    },
+    {
+      "at": "2026-08-05T06:32:44+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd09f-bf9c-7d70-afdb-128a2a711eb2"
+    },
+    {
+      "at": "2026-08-05T06:38:42+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd09e-45af-7e50-8b3b-0afc1726d2cd"
+    },
+    {
+      "at": "2026-08-05T06:38:42+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd09f-bf9c-7d70-afdb-128a2a711eb2"
+    },
+    {
+      "at": "2026-08-05T06:43:35+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd0a9-b5c2-7e80-9670-629906d5ada6"
+    },
+    {
+      "at": "2026-08-05T06:54:56+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0a9-b5c2-7e80-9670-629906d5ada6"
+    },
+    {
+      "at": "2026-08-05T06:58:20+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd0b7-37b6-7601-9094-56ee4ea4f4e6"
+    },
+    {
+      "at": "2026-08-05T07:09:05+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0b7-37b6-7601-9094-56ee4ea4f4e6"
+    },
+    {
+      "at": "2026-08-05T07:16:58+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -1867,22 +1921,31 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T06:05:10+00:00",
-      "next_action": "Fresh V3 GPU campaign completed all 2,560 traces; strict triage found 421 failures, 91 inconclusive, and zero engineering passes. Bank the negative result; no CPU confirmation is eligible. Then derive a new biology-bound successor without reopening candidates 284/404 or the sealed 512-1023 partition; keep the SK cohort unavailable.",
+      "heartbeat_at": "2026-08-05T07:16:58+00:00",
+      "next_action": "Bank the authenticated V3 structural diagnostic, then preregister and implement the source-bound fast-Na/Kv3 soma-proximal-dendrite packet with separate local Cav2.2-SK and bulk calcium; no V3 range widening or candidate reopening.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
       "resource": "local_gpu_screen_plus_pool40_pool41_confirmation",
       "status": "running",
       "write_set": [
-        "research/specs",
-        "tools/v14_stageB_scorer.py",
-        "tools/v14_stageB_physiology_metrics.py",
-        "tools/v14_stageB_intrinsic_readiness.py",
-        "research/runners",
-        "tests",
-        "research/findings",
-        "ROADMAP.md"
+        "sim/kernels.py",
+        "tools/diagnostic_trace.py",
+        "tools/v14_stageB_failure_diagnostic_analysis.py",
+        "research/runners/v14_stageB_failure_diagnostic.py",
+        "research/runners/v14_stageB_failure_diagnostic_analysis.py",
+        "research/specs/v14_snr_stageB_failure_diagnostic_v1.json",
+        "research/findings/2026-08-05-v14-stageB-v3-failure-diagnostic-STRUCTURAL-NO-GO.md",
+        "research/findings/raw/v14_stageB_v3_failure_diagnostic_receipt.json",
+        "research/findings/raw/v14_stageB_v3_failure_diagnostic_analysis.json",
+        "tests/test_diagnostic_trace.py",
+        "tests/test_snr_diagnostic_telemetry.py",
+        "tests/test_v14_stageB_failure_diagnostic.py",
+        "tests/test_v14_stageB_failure_diagnostic_analysis.py",
+        "ROADMAP.md",
+        "docs/CURRENT-STATE.md",
+        "docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md",
+        "research/FAILURE_LOG.md"
       ]
     },
     "gateb-v14-packet-authority": {
@@ -2271,5 +2334,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T06:29:54+00:00"
+  "updated_at": "2026-08-05T07:16:58+00:00"
 }

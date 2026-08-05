@@ -1,0 +1,27 @@
+{
+  "run_id": "1785914722-690800",
+  "runner": "research/runners/v14_stageB_failure_diagnostic.py",
+  "argv": [
+    "research/runners/v14_stageB_failure_diagnostic.py",
+    "--protocol",
+    "research/specs/v14_snr_stageB_failure_diagnostic_v1.json",
+    "--protocol-sha256",
+    "45ab095d0f4b3dde22729e9f4d9edb49a600179fef718b0c3d01473a497a17c0",
+    "--repository-root",
+    ".",
+    "--output",
+    "research/experiment-runtime/v14-stageB-v3-failure-diagnostic-r2/receipt.json",
+    "--chunk-steps",
+    "4096"
+  ],
+  "git_sha": "6a8bd328a",
+  "git_dirty": true,
+  "started": "2026-08-05T03:25:22",
+  "env": {
+    "SIM_BACKEND": "cupy"
+  },
+  "sim_backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "promoted_from": "research/experiment-runtime/v14-stageB-v3-failure-diagnostic-r2/receipt.json",
+  "artifact": "research/findings/raw/v14_stageB_v3_failure_diagnostic_r2_receipt.json"
+}

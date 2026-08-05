@@ -133,9 +133,14 @@ its controls and lesions, and is tested at the required seed coverage.
    failures, 91 engineering-inconclusive candidates, and 0 engineering passes.
    This is an engineering-only negative result; no candidate is eligible for
    authoritative CPU confirmation. Batch-width benchmarking selected width
-   512. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK
-   cohort remains unavailable. Delayed action-reward learning and its unrelated-
-   reward control come afterward.
+   512. A preregistered 36-trace failure diagnostic then showed that restoring
+   simplified fast-sodium availability almost never restores firing and that
+   calcium-to-SK behavior splits into incompatible regimes. The current
+   single-compartment packet is therefore retired as a structural engineering
+   NO-GO. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell
+   SK cohort remains unavailable. The next build is a source-bound fast-Na/Kv3,
+   soma/proximal-dendrite, local-Cav2.2-SK packet. Delayed action-reward learning
+   and its unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
    biological consistency signal rather than an exact composer metadata read.
@@ -181,7 +186,10 @@ required integrated form.
   inconclusive candidates, and 0 passes. No CPU confirmation is eligible.
   Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK
   cohort remains unavailable until independently justified cells and a block
-  detector are preregistered.
+  detector are preregistered. The follow-up diagnostic retires the current
+  single-compartment equations; preregister measured fast-Na/Kv3 kinetics,
+  soma/proximal-dendrite coupling, and separate local versus bulk calcium
+  validation before another parameter search.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another
@@ -277,6 +285,14 @@ recomputes each score. Generation of a scientifically valid next search
 remains blocked on unresolved biological protocols, and arbitrary new
 objectives must not be invented from partial evidence. Unspecified subgates
 remain fail-closed.
+
+The latest authenticated diagnostic localized the current failure to model
+structure rather than an unsearched corner of the filed parameter ranges. Its
+36 traces are now automatically analyzed, but the engine still does not turn a
+completed receipt into the next sealed experiment without an explicit
+scientific handoff. Receipt ingestion and bounded observation generation are
+the next automation slice; architecture changes remain source-reviewed and
+preregistered rather than optimizer-generated.
 
 A versioned V2 contract resolves the post-spike AHP direction without
 pretending the paper specified a medium-AHP window: the scorer recomputes the

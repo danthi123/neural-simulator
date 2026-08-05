@@ -1,0 +1,124 @@
+{
+  "schema": "v14-snr-stageB-failure-diagnostic-protocol-v1",
+  "protocol_id": "v14-stageB-v3-nap-silent-state-localizer-v1",
+  "status": "preregistered-engineering-diagnostic-not-executed",
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "non-executed diagnostic protocol; contains no simulation result",
+  "purpose": "Distinguish NaP-removal inward-current loss, secondary Cav2.2/SK collapse, and fast-sodium depolarization block before changing the SNr model or reopening calibration.",
+  "boundaries": {
+    "engineering_only": true,
+    "scientific_verdict": null,
+    "candidate_promotion_allowed": false,
+    "parameter_tuning_allowed": false,
+    "range_expansion_allowed": false,
+    "source_equivalence_claimed": false,
+    "forbidden_interpretations": [
+      "The selected candidates are biologically valid or preferred.",
+      "The rescue-current amplitudes reproduce an unpublished Atherton and Bevan protocol.",
+      "A diagnostic classification is a Stage B pass or scientific verdict.",
+      "Post hoc current reconstruction on the host is equivalent to currents used by the fused voltage update."
+    ]
+  },
+  "source_screen": {
+    "campaign": {
+      "path": "research/findings/raw/v14_stageB_v3_successor_campaign.json",
+      "sha256": "b6a659bdefbc920c9a7dadf9c5a4d3f1a03778cae0460b807d153be49f75a997"
+    },
+    "triage": {
+      "path": "research/findings/raw/v14_stageB_v3_successor_gpu_triage.json",
+      "sha256": "40ec99d4c8626bbdf21a968436a3612b693fef49cec5054e255fc0e8d195f703"
+    },
+    "observed_counts": {
+      "candidate_count": 512,
+      "engineering_fail": 421,
+      "engineering_inconclusive": 91,
+      "engineering_pass": 0
+    }
+  },
+  "selection": {
+    "post_hoc_disclosed": true,
+    "rule": "Select every V3 candidate with no unresolved check and exactly one failed resolved check, where that failure is the NaP median membrane-voltage direction. Preserve candidate-id order from the authenticated triage artifact.",
+    "candidate_count": 9,
+    "candidates": [
+      {"candidate_id": "v14-stageB-v3-sobol-0628-d2eaa93190ac", "candidate_sha256": "1c2655231617e818eb6cf6233bf87e3a71c398859b0409a2269f8759610bdbea"},
+      {"candidate_id": "v14-stageB-v3-sobol-0756-6d8e2f95b7f9", "candidate_sha256": "16df8ddd673a3dff4b0fdcbcc941aefc2443d273854638eb95cf7c375ce39047"},
+      {"candidate_id": "v14-stageB-v3-sobol-0771-7b5ec8c73929", "candidate_sha256": "088f0b30d0446ed8e4f681feff4e27a78fe3076e524b78a8dba2be6fef364764"},
+      {"candidate_id": "v14-stageB-v3-sobol-0816-4f32e6b9d15a", "candidate_sha256": "3cfa25974f0cd95b70c00ab8c6984c3362de72f5905a4591cc6d7532eedfb5cf"},
+      {"candidate_id": "v14-stageB-v3-sobol-0869-8d3233911ad2", "candidate_sha256": "299d0ae0bc4ace4a1ec2f377fec5b61662971bcb482648128a2c4c205936e76c"},
+      {"candidate_id": "v14-stageB-v3-sobol-0923-01dba8058443", "candidate_sha256": "b9746537d814244542a010dffd78675813ef87f7a76b9f02296cfa1aea67ca35"},
+      {"candidate_id": "v14-stageB-v3-sobol-0961-dea82b0ba466", "candidate_sha256": "4ccee463da977404f1727c437ef3e6c72f9b61a5b8106d74685cf974e9532d9b"},
+      {"candidate_id": "v14-stageB-v3-sobol-0999-ccdb750c02c4", "candidate_sha256": "7e86aff05f03dbe16ee4c90091b2fd4a020a66f6df676ee5d8c34262e7cd2e89"},
+      {"candidate_id": "v14-stageB-v3-sobol-1010-e3e90562e351", "candidate_sha256": "598230093005017218791bcefbc8a5d17271bd518e2f9ca25c47aa8aa20e7c45"}
+    ]
+  },
+  "biological_basis": [
+    {
+      "source": "Ding, Wei, and Zhou 2011",
+      "locator": "Figure 11, Table 3, and associated Results",
+      "constraint": "NaP blockade ceased spontaneous firing and produced sustained hyperpolarization; the diagnostic must resolve immediate and late voltage effects separately."
+    },
+    {
+      "source": "Atherton and Bevan 2005",
+      "locator": "Figure 5 and associated Results",
+      "constraint": "SK blockade caused depolarization block in a subset of cells and firing could often be restored by hyperpolarizing current, but the rescue amplitude was not reported."
+    },
+    {
+      "source": "Yanovsky et al. 2006",
+      "locator": "current-clamp firing-rate response reported for injected direct current below 30 pA",
+      "constraint": "Use only a small project-operational rescue family at or below 30 pA; do not claim source-exact rescue amplitude."
+    }
+  ],
+  "execution": {
+    "backend": "cupy",
+    "dt_ms": 0.05,
+    "noise": false,
+    "plasticity": false,
+    "connections": 0,
+    "identical_initial_state_across_rescue_arms": true,
+    "one_continuously_simulated_cell_within_each_arm": true,
+    "rescue_current_pA": [0.0, -10.0, -20.0, -30.0],
+    "membrane_area_um2": 2000.0,
+    "phases": [
+      {"name": "intact_baseline", "start_s": 0.0, "end_s": 2.0, "g_nap": "packet_value", "external_current_pA": 0.0},
+      {"name": "nap_lesion", "start_s": 2.0, "end_s": 3.0, "g_nap": 0.0, "external_current_pA": 0.0},
+      {"name": "hyperpolarizing_pulse", "start_s": 3.0, "end_s": 3.5, "g_nap": 0.0, "external_current_pA": "arm_value"},
+      {"name": "post_pulse_release", "start_s": 3.5, "end_s": 4.5, "g_nap": 0.0, "external_current_pA": 0.0}
+    ],
+    "performance_contract": "Current decomposition and state capture must remain device-side and fused or chunk-vectorized. The production screening megakernel must remain unchanged when diagnostics are disabled."
+  },
+  "required_channels": {
+    "state": [
+      "pre_update_voltage_mV", "post_update_voltage_mV", "spikes",
+      "fast_na_activation", "fast_na_inactivation", "fast_k_activation",
+      "nap_activation", "nap_inactivation", "cav22_activation",
+      "cav22_inactivation", "calcium_um", "sk_activation", "hcn_activation"
+    ],
+    "current_density_uA_per_cm2": [
+      "i_fast_na", "i_fast_k", "i_leak", "i_nalcn", "i_nap",
+      "i_cav22", "i_sk", "i_hcn", "i_total_ionic", "i_external"
+    ],
+    "current_semantics": "Each ionic current must be the current actually used for that voltage update, evaluated from pre-update voltage and the gate state used by the fused update."
+  },
+  "analysis": {
+    "windows": {
+      "immediate_post_lesion_ms": [0.0, 20.0],
+      "late_post_lesion_ms": [500.0, 1000.0],
+      "pulse_ms": [0.0, 500.0],
+      "post_release_ms": [0.0, 1000.0]
+    },
+    "questions": [
+      "Does removing NaP first remove inward current and hyperpolarize before calcium and SK outward current collapse?",
+      "Does calcium decline temporally precede SK-current loss and late depolarization?",
+      "Is fast-sodium availability low in the late silent state and restored during a hyperpolarizing pulse?",
+      "Does pulse release restore any spikes while NaP remains absent?",
+      "Are conclusions stable across all nine disclosed candidates and the zero-current control?"
+    ],
+    "classification_only": true,
+    "no_pass_fail_gate": true
+  },
+  "next_decision": {
+    "coupling_collapse_supported": "Implement source-bound fast Na and Kv3 kinetics plus separate local and bulk calcium in the successor packet before calibration.",
+    "depolarization_block_supported": "Add a source-bound sodium recovery/resurgent mechanism and validate recovery controls before calibration.",
+    "neither_supported": "Escalate research and inspect numerical convergence and missing compartmental currents; do not widen the V3 search."
+  }
+}
