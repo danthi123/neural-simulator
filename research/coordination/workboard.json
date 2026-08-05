@@ -1171,12 +1171,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T22:12:52+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fced1-2fc9-7ee2-9604-dfe4f1c165b5"
-    },
-    {
       "at": "2026-08-04T22:13:40+00:00",
       "detail": "running",
       "kind": "agent-register",
@@ -1769,6 +1763,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T10:07:18+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -2046,18 +2046,19 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T09:47:05+00:00",
-      "next_action": "Commit the reviewed-packet intake retry fix, rerun retry-retrieval from a clean tree so all ten indexed source records become promotable, resolve P1-P3 and W1-W2, then preregister unmodified Khaliq/Raman, Labro, and Desai comparators.",
+      "heartbeat_at": "2026-08-05T10:07:18+00:00",
+      "next_action": "Bind retrievable Khaliq/Raman evidence to P1/P2/W1 and Labro plus Desai evidence to P3/W2, resolve all five gate questions with explicit transfer limits, finalize the unmodified comparator experiment, then preregister and execute Stage 1.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "Do not manually flip intake flags. The retry must independently retrieve each stable source ID. Preserve the unsupported-hybrid rejection and Stage 2 stop.",
+      "recovery_action": "Do not treat cross-preparation models as SNr truth, graft unsupported transitions, tune conductance, or enter Stage 2. Each comparator must run unmodified under the sealed Ding commands first.",
       "resource": "local_cpu_then_gpu",
       "status": "running",
       "write_set": [
-        "tools/research_escalation.py",
-        "tests/test_research_escalation.py",
         "research/findings/2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md",
-        "research/coordination/workboard.json"
+        "research/specs",
+        "research/coordination/workboard.json",
+        "sim",
+        "tests"
       ]
     },
     "gateb-v14-packet-authority": {
@@ -2446,5 +2447,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T09:47:05+00:00"
+  "updated_at": "2026-08-05T10:07:18+00:00"
 }
