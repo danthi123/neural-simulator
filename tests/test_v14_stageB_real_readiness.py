@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -36,6 +38,20 @@ def _inputs(tmp_path: Path) -> tuple[Path, str, Path, str, Path, str]:
     first_sha = _write(candidate_a, first)
     second_sha = _write(candidate_b, second)
     return template, template_sha, candidate_a, first_sha, candidate_b, second_sha
+
+
+def test_direct_cli_launcher_can_import_repository_modules():
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, str(root / "tools/v14_stageB_real_readiness.py"), "--help"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "two-candidate" in result.stdout
 
 
 def test_two_candidates_compile_verify_run_real_traces_and_write_one_receipt(tmp_path):

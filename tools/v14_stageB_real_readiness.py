@@ -19,6 +19,9 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from research.runners.v14_stageB_physiology import run_readiness_intact
 from sim.snr_executable_packet import PacketError, canonical_bytes
 from tools.v14_stageB_packet_compiler import StageBPacketCompilerError, compile_candidate
