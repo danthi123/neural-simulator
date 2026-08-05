@@ -33,6 +33,8 @@ _MODEL_WIDTHS = {
 }
 _BOLTZMANN_J_PER_K = 1.380649e-23
 _ELEMENTARY_CHARGE_C = 1.602176634e-19
+_SODIUM_UNIFORMIZATION_TERMS = 32
+_SODIUM_UNIFORMIZATION_MAX_MU = 0.5
 
 __all__ = [
     "BALBI_NAV16_SIX_STATE",
@@ -139,18 +141,56 @@ def trace_batch(
     if elapsed.ndim != 1 or elapsed.size == 0:
         raise ValueError("elapsed_ms must be a nonempty one-dimensional array")
 
-    expanded_voltage = xp.expand_dims(voltage, axis=-1)
-    expanded_states = xp.expand_dims(xp.asarray(states, dtype=xp.float64), axis=-2)
-    expanded_elapsed = elapsed.reshape((1,) * voltage.ndim + (elapsed.size,))
-    return advance_batch(
-        model_id,
-        candidate_parameters,
-        expanded_voltage,
-        expanded_states,
-        expanded_elapsed,
-        temperature_c,
+    if model_id not in _SODIUM_MODELS:
+        expanded_voltage = xp.expand_dims(voltage, axis=-1)
+        expanded_states = xp.expand_dims(
+            xp.asarray(states, dtype=xp.float64), axis=-2
+        )
+        expanded_elapsed = elapsed.reshape((1,) * voltage.ndim + (elapsed.size,))
+        return advance_batch(
+            model_id,
+            candidate_parameters,
+            expanded_voltage,
+            expanded_states,
+            expanded_elapsed,
+            temperature_c,
+            xp,
+        )
+
+    parameters = _pack_parameters(model_id, candidate_parameters, xp)
+    count = parameters["_count"]
+    temperature = _candidate_temperatures(model_id, temperature_c, count, xp)
+    state_array = _validated_states(model_id, states, count, xp)
+    try:
+        command_shape = np.broadcast_shapes(state_array.shape[1:-1], voltage.shape)
+    except ValueError as exc:
+        raise ValueError("voltage_mv and states command dimensions must broadcast") from exc
+    state_command_shape = state_array.shape[1:-1]
+    state_array = xp.broadcast_to(
+        state_array.reshape(
+            (count,)
+            + (1,) * (len(command_shape) - len(state_command_shape))
+            + state_command_shape
+            + (_MODEL_WIDTHS[model_id],)
+        ),
+        (count,) + command_shape + (_MODEL_WIDTHS[model_id],),
+    )
+    voltage = xp.broadcast_to(voltage, command_shape)
+    generator = _sodium_generator(model_id, parameters, voltage, temperature, xp)
+    propagator = _sodium_uniformized_propagator(
+        generator,
+        elapsed.reshape((1,) * len(command_shape) + (elapsed.size,)),
         xp,
     )
+    result = xp.einsum(
+        "...tij,...j->...ti", propagator, state_array
+    )
+    result = xp.where(
+        (elapsed == 0.0).reshape((1,) * (result.ndim - 2) + (elapsed.size, 1)),
+        state_array[..., None, :],
+        result,
+    )
+    return _validated_result(model_id, result, xp)
 
 
 def open_probability_batch(model_id: str, states: Any, xp: Any) -> Any:
@@ -182,6 +222,7 @@ def _validate_xp(xp: Any) -> None:
         "broadcast_to",
         "concatenate",
         "cumsum",
+        "diagonal",
         "einsum",
         "exp",
         "expand_dims",
@@ -509,16 +550,67 @@ def _sodium_advance(
     xp: Any,
 ) -> Any:
     generator = _sodium_generator(model_id, parameters, voltage, temperature, xp)
-    eigenvalues, eigenvectors = xp.linalg.eig(generator)
-    coefficients = xp.linalg.solve(eigenvectors, states[..., :, None])[..., 0]
-    evolved = xp.matmul(
-        eigenvectors,
-        (xp.exp(eigenvalues * duration[None, ..., None]) * coefficients)[..., None],
-    )[..., 0]
-    imaginary_scale = xp.max(xp.abs(xp.imag(evolved)))
-    if _scalar_bool(imaginary_scale > 1e-9):
-        raise FloatingPointError("transition-matrix exponential produced a complex state")
-    return xp.real(evolved)
+    propagator = _sodium_uniformized_propagator(generator, duration, xp)
+    return xp.einsum("...ij,...j->...i", propagator, states)
+
+
+def _sodium_uniformized_propagator(generator: Any, duration: Any, xp: Any) -> Any:
+    """Return exp(generator * duration) through fixed-order CTMC uniformization.
+
+    ``generator`` has leading axes ``(candidate, *command)``.  ``duration``
+    has the command axes and may add trailing elapsed-time axes.  The series
+    and squaring loops are fixed-order numerical operations, never loops over
+    candidates, commands, or elapsed times.
+    """
+
+    if not _scalar_bool(xp.all(xp.isfinite(generator))):
+        raise ValueError("voltage_mv produces non-finite source rates")
+    command_ndim = generator.ndim - 3
+    trailing_duration_ndim = duration.ndim - command_ndim
+    if trailing_duration_ndim < 0:
+        raise ValueError("duration_ms command dimensions are incompatible")
+
+    exit_rate = -xp.diagonal(generator, axis1=-2, axis2=-1)
+    uniform_rate = xp.max(exit_rate, axis=-1)
+    if _scalar_bool(xp.any(uniform_rate <= 0.0)):
+        raise FloatingPointError("sodium generator has a nonpositive exit rate")
+
+    expanded_rate = uniform_rate.reshape(
+        uniform_rate.shape + (1,) * trailing_duration_ndim
+    )
+    mu = expanded_rate * duration.reshape((1,) + duration.shape)
+    largest_mu = float(xp.max(mu))
+    if not math.isfinite(largest_mu):
+        raise ValueError("duration_ms and voltage_mv produce a non-finite sodium scale")
+    squarings = (
+        max(0, math.ceil(math.log2(largest_mu / _SODIUM_UNIFORMIZATION_MAX_MU)))
+        if largest_mu > _SODIUM_UNIFORMIZATION_MAX_MU
+        else 0
+    )
+    if squarings > 60:
+        raise ValueError("duration_ms and voltage_mv make the sodium solve ill-conditioned")
+
+    matrix_size = generator.shape[-1]
+    identity = xp.eye(matrix_size, dtype=xp.float64)
+    stochastic = identity + generator / uniform_rate[..., None, None]
+    matrix_shape = mu.shape + (matrix_size, matrix_size)
+    trailing_axes = (1,) * trailing_duration_ndim
+    transition = stochastic.reshape(
+        stochastic.shape[:-2] + trailing_axes + stochastic.shape[-2:]
+    )
+    term = xp.broadcast_to(identity, matrix_shape).copy()
+    scaled_mu = mu / (2**squarings)
+    weight = xp.exp(-scaled_mu)
+    propagator = weight[..., None, None] * term
+
+    # The Poisson tail at mu <= 0.5 after 32 terms is below float64 noise.
+    for order in range(1, _SODIUM_UNIFORMIZATION_TERMS + 1):
+        term = xp.matmul(term, transition)
+        weight = weight * scaled_mu / order
+        propagator = propagator + weight[..., None, None] * term
+    for _ in range(squarings):
+        propagator = xp.matmul(propagator, propagator)
+    return propagator
 
 
 def _kv3_rates(

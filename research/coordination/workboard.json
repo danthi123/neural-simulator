@@ -1267,11 +1267,13 @@
       ]
     },
     "019fd1e6-18da-7782-8e05-7504258c21ad": {
-      "heartbeat_at": "2026-08-05T12:29:13+00:00",
+      "completed_at": "2026-08-05T13:02:53+00:00",
+      "heartbeat_at": "2026-08-05T13:02:53+00:00",
       "model": "gpt-5.6-sol-xhigh",
-      "next_action": "Controller adjudicates each panel against frozen A/B evidence.",
+      "next_action": "Controller seals a prospective fourth-extractor consensus rule for panels and commands unresolved after A/B/C.",
+      "result": "Completed seven blind native-pixel records with 81 numeric points and four point-level unavailable cells; all hashes and deterministic re-digitizations pass. Three-way adjudication remains unresolved and exposed a biological-error availability comparison defect plus unequal digitized-x command counts.",
       "started_at": "2026-08-05T12:29:13+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Third blind native-pixel Stage B population extraction C for all disputed panels",
       "write_set": [
         "research/measurements/v14-stageB/extractor_c"
@@ -1305,15 +1307,29 @@
       ]
     },
     "019fd1f8-ab44-7a70-bc2e-52d97d7b92a5": {
-      "heartbeat_at": "2026-08-05T12:49:28+00:00",
+      "completed_at": "2026-08-05T13:02:53+00:00",
+      "heartbeat_at": "2026-08-05T13:02:53+00:00",
       "model": "gpt-5.6-terra-xhigh",
       "next_action": "Controller reviews strict oracle parity and before/after GPU timings before accepting the solver.",
+      "result": "Replaced batched sodium eigensolves with fixed-order CTMC uniformization and scaling/squaring. Independent CUDA verification passed 104 tests; 128-candidate median fell to 107.3 ms Khaliq and 21.3 ms Balbi.",
       "started_at": "2026-08-05T12:49:28+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Replace slow sodium batched eigensolver with a strict-parity static-shape solver",
       "write_set": [
         "sim/source_model_candidate_batch.py",
         "tests/test_source_model_candidate_batch.py"
+      ]
+    },
+    "019fd200-d78a-71c3-8055-d7cfee9e788d": {
+      "heartbeat_at": "2026-08-05T13:02:53+00:00",
+      "model": "gpt-5.6-terra-xhigh",
+      "next_action": "Controller reviews vectorized tail-fit agreement against the SciPy authority and integrates it into the family assay runner.",
+      "started_at": "2026-08-05T13:02:53+00:00",
+      "status": "running",
+      "task": "Implement candidate-batched NumPy/CuPy deactivation-tail estimation",
+      "write_set": [
+        "tools/v14_stageB_batch_curve_metrics.py",
+        "tests/test_v14_stageB_batch_curve_metrics.py"
       ]
     }
   },
@@ -1935,6 +1951,24 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fd1f8-ab44-7a70-bc2e-52d97d7b92a5"
+    },
+    {
+      "at": "2026-08-05T13:02:53+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1e6-18da-7782-8e05-7504258c21ad"
+    },
+    {
+      "at": "2026-08-05T13:02:53+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1f8-ab44-7a70-bc2e-52d97d7b92a5"
+    },
+    {
+      "at": "2026-08-05T13:02:53+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd200-d78a-71c3-8055-d7cfee9e788d"
     }
   ],
   "lanes": {

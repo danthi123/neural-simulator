@@ -19,6 +19,15 @@ MODELS = (
     (batch.DESAI_2008_CONTROL, kv3, None),
 )
 
+SODIUM_ASSAY_EXTREME_VOLTAGES_MV = np.array(
+    [-120.0, -100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0,
+     -30.0, -20.0, -10.0, 0.0, 30.0]
+)
+SODIUM_ASSAY_EXTREME_ELAPSED_MS = np.array(
+    [0.0, 0.005, 0.01, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 20.0,
+     50.0, 100.0, 200.0, 300.0]
+)
+
 
 def _parameters(model_id: str, module, count: int) -> list[dict]:
     result = []
@@ -178,6 +187,69 @@ def test_trace_batch_matches_oracle_across_multiple_voltages_and_durations(
     np.testing.assert_array_equal(actual[..., 0, :], np.broadcast_to(initial[:, None, :], (count, 3, initial.shape[-1])))
 
 
+@pytest.mark.parametrize(
+    "model_id,temperatures",
+    [
+        (batch.KHALIQ_RAMAN_13_STATE, None),
+        (batch.BALBI_NAV16_SIX_STATE, np.array([20.0, 24.0, 31.0])),
+    ],
+)
+def test_sodium_trace_matches_immutable_oracle_at_assay_extremes(
+    model_id, temperatures
+):
+    """Exercise both sodium graphs at every current Stage B voltage/time edge."""
+
+    parameters = _parameters(model_id, sodium, 3)
+    initial = batch.equilibrium_batch(model_id, parameters, -100.0, temperatures, np)
+    actual = batch.trace_batch(
+        model_id,
+        parameters,
+        SODIUM_ASSAY_EXTREME_VOLTAGES_MV,
+        initial,
+        SODIUM_ASSAY_EXTREME_ELAPSED_MS,
+        temperatures,
+        np,
+    )
+    expected = _oracle_trace(
+        model_id,
+        sodium,
+        parameters,
+        SODIUM_ASSAY_EXTREME_VOLTAGES_MV,
+        initial,
+        SODIUM_ASSAY_EXTREME_ELAPSED_MS,
+        temperatures,
+    )
+
+    np.testing.assert_allclose(actual, expected, rtol=5e-8, atol=5e-10)
+    np.testing.assert_allclose(actual.sum(axis=-1), 1.0, rtol=0.0, atol=1e-8)
+    assert np.all(actual >= -1e-9)
+
+
+@pytest.mark.parametrize(
+    "model_id,temperatures",
+    [
+        (batch.KHALIQ_RAMAN_13_STATE, None),
+        (batch.BALBI_NAV16_SIX_STATE, np.array([20.0, 24.0, 31.0])),
+    ],
+)
+def test_sodium_trace_preserves_voltage_specific_initial_states(
+    model_id, temperatures
+):
+    parameters = _parameters(model_id, sodium, 3)
+    voltage = np.array([-100.0, -65.0, -30.0, 0.0])
+    initial = batch.equilibrium_batch(model_id, parameters, voltage, temperatures, np)
+    elapsed = np.array([0.0, 0.005, 0.2, 50.0])
+
+    actual = batch.trace_batch(
+        model_id, parameters, voltage, initial, elapsed, temperatures, np
+    )
+    expected = _oracle_trace(
+        model_id, sodium, parameters, voltage, initial, elapsed, temperatures
+    )
+
+    np.testing.assert_allclose(actual, expected, rtol=5e-8, atol=5e-10)
+
+
 @pytest.mark.parametrize("model_id,module,temperatures", MODELS)
 def test_candidate_batch_is_deterministic(model_id, module, temperatures):
     parameters = _parameters(model_id, module, 3)
@@ -189,6 +261,13 @@ def test_candidate_batch_is_deterministic(model_id, module, temperatures):
     advanced_first = batch.advance_batch(model_id, parameters, voltage, first, 0.75, temperature, np)
     advanced_second = batch.advance_batch(model_id, parameters, voltage, second, 0.75, temperature, np)
     np.testing.assert_array_equal(advanced_first, advanced_second)
+    trace_first = batch.trace_batch(
+        model_id, parameters, voltage, first, np.array([0.0, 0.02, 0.5]), temperature, np
+    )
+    trace_second = batch.trace_batch(
+        model_id, parameters, voltage, second, np.array([0.0, 0.02, 0.5]), temperature, np
+    )
+    np.testing.assert_array_equal(trace_first, trace_second)
 
 
 @pytest.mark.parametrize(
@@ -246,3 +325,53 @@ def test_optional_cupy_candidate_batch_parity():
         expected = batch.trace_batch(model_id, parameters, voltage, expected_equilibrium, np.array([0.0, 0.02, 0.5]), temperature, np)
         actual = batch.trace_batch(model_id, parameters, cupy.asarray(voltage), actual_equilibrium, cupy.asarray([0.0, 0.02, 0.5]), temperature, cupy)
         np.testing.assert_allclose(cupy.asnumpy(actual), expected, rtol=5e-8, atol=5e-10)
+
+
+@pytest.mark.parametrize(
+    "model_id,temperatures",
+    [
+        (batch.KHALIQ_RAMAN_13_STATE, None),
+        (batch.BALBI_NAV16_SIX_STATE, np.array([20.0, 24.0, 31.0])),
+    ],
+)
+def test_optional_cupy_sodium_assay_extreme_trace_parity(model_id, temperatures):
+    cupy = pytest.importorskip("cupy")
+    try:
+        if cupy.cuda.runtime.getDeviceCount() < 1:
+            pytest.skip("no CUDA device")
+    except cupy.cuda.runtime.CUDARuntimeError:
+        pytest.skip("CUDA runtime unavailable")
+
+    parameters = _parameters(model_id, sodium, 3)
+    initial = batch.equilibrium_batch(model_id, parameters, -100.0, temperatures, np)
+    expected = batch.trace_batch(
+        model_id,
+        parameters,
+        SODIUM_ASSAY_EXTREME_VOLTAGES_MV,
+        initial,
+        SODIUM_ASSAY_EXTREME_ELAPSED_MS,
+        temperatures,
+        np,
+    )
+    actual = batch.trace_batch(
+        model_id,
+        parameters,
+        cupy.asarray(SODIUM_ASSAY_EXTREME_VOLTAGES_MV),
+        cupy.asarray(initial),
+        cupy.asarray(SODIUM_ASSAY_EXTREME_ELAPSED_MS),
+        temperatures,
+        cupy,
+    )
+    repeated = batch.trace_batch(
+        model_id,
+        parameters,
+        cupy.asarray(SODIUM_ASSAY_EXTREME_VOLTAGES_MV),
+        cupy.asarray(initial),
+        cupy.asarray(SODIUM_ASSAY_EXTREME_ELAPSED_MS),
+        temperatures,
+        cupy,
+    )
+    np.testing.assert_allclose(
+        cupy.asnumpy(actual), expected, rtol=5e-8, atol=5e-10
+    )
+    cupy.testing.assert_array_equal(actual, repeated)
