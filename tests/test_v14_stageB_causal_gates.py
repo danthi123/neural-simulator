@@ -2,6 +2,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from sim.snr_executable_packet import canonical_bytes
+
 
 ROOT = Path(__file__).resolve().parents[1]
 GATE_PATH = ROOT / "research/specs/v14_snr_stageB_causal_gates.json"
@@ -9,6 +11,10 @@ GATE_PATH = ROOT / "research/specs/v14_snr_stageB_causal_gates.json"
 
 def _spec():
     return json.loads(GATE_PATH.read_text(encoding="utf-8"))
+
+
+def test_causal_gate_contract_is_canonical_for_authenticated_execution():
+    assert GATE_PATH.read_bytes() == canonical_bytes(_spec())
 
 
 def test_causal_gate_contract_is_bound_to_current_target_packet():
