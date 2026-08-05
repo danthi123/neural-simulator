@@ -1335,11 +1335,13 @@
       ]
     },
     "019fd20a-3dfc-77d3-a06b-221b91397562": {
-      "heartbeat_at": "2026-08-05T13:24:34+00:00",
+      "completed_at": "2026-08-05T13:53:36+00:00",
+      "heartbeat_at": "2026-08-05T13:53:36+00:00",
       "model": "gpt-5.6-sol-xhigh",
-      "next_action": "Controller applies the sealed four-way consensus without exposing D to earlier extractions.",
+      "next_action": "Do not issue target packets or fit. Seek original numeric data or higher-fidelity/vector source under a new prospective acquisition protocol.",
+      "result": "Completed seven fully blind D records: 83 numeric and four unavailable cells. Controller independently authenticated all hashes and exact redigitizations; prospective four-way consensus leaves all seven panels unresolved.",
       "started_at": "2026-08-05T13:08:59+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Fourth fully blind native-pixel extraction D for all unresolved Stage B population panels",
       "write_set": [
         "research/measurements/v14-stageB/extractor_d"
@@ -1363,24 +1365,6 @@
     }
   },
   "events": [
-    {
-      "at": "2026-08-05T01:33:45+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T01:42:01+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf8e-008e-76e3-85c6-0f73e987bf52"
-    },
-    {
-      "at": "2026-08-05T01:43:10+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
     {
       "at": "2026-08-05T01:44:31+00:00",
       "detail": "running",
@@ -1962,6 +1946,24 @@
       "detail": "ready",
       "kind": "lane-update",
       "subject": "gateb-v14-sensitivity-runner-adapter"
+    },
+    {
+      "at": "2026-08-05T13:53:36+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd20a-3dfc-77d3-a06b-221b91397562"
+    },
+    {
+      "at": "2026-08-05T13:53:36+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-source-constrained-identification"
+    },
+    {
+      "at": "2026-08-05T13:58:45+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "gateb-v14-sensitivity-runner-adapter"
     }
   ],
   "lanes": {
@@ -2315,11 +2317,11 @@
     },
     "gateb-v14-sensitivity-runner-adapter": {
       "delegation": "local-model",
-      "heartbeat_at": "2026-08-05T13:38:39+00:00",
-      "next_action": "Implement a bounded calibration-only adapter in tools/v14_stageB_sensitivity_runner.py with tests/test_v14_stageB_sensitivity_runner.py. Prefix and concatenate the exact coordinates from v14_stageB_source_parameterization for one sodium and one Kv3 source model; consume DataScaledProbeController.probe_matrix; split/decode each candidate contrast vector; evaluate only decodable paired candidates through predict_population_targets; restore deterministic target order with NaN plus a row valid_mask for invalid decodes; feed observe without reading validation/held_out packets. Expose no optimizer, no parameter bounds, no scientific verdict, no file writer, no target fabrication, and no experiment dispatch. Test exact probe ordering, source baseline, one-family perturbations, invalid-decode masking, withheld-packet rejection, and NumPy runner integration. Commit locally only for later frontier review.",
+      "heartbeat_at": "2026-08-05T13:58:45+00:00",
+      "next_action": "Run sim-local-continue --target . --continuous. Implement only the bounded calibration sensitivity adapter already specified; commit in isolated fallback clone for frontier review.",
       "owner": "local-fallback",
       "priority": 2,
-      "resource": "local_cpu",
+      "resource": "local_model_gpu",
       "status": "ready",
       "write_set": [
         "tools/v14_stageB_sensitivity_runner.py",
@@ -2327,21 +2329,20 @@
       ]
     },
     "gateb-v14-source-constrained-identification": {
-      "agent_id": "019fd20a-3dfc-77d3-a06b-221b91397562",
-      "blocker": "Official source assets are now hash-bound, but numeric population command-response targets and their pixel-error model are not yet sealed. Raw complete current waveforms are unavailable, and representative single-cell traces cannot be treated as population means.",
+      "blocker": "Four blind native-pixel extractions remain unresolved under the preregistered consensus for all seven panels; partial packets and threshold changes are forbidden.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T13:36:29+00:00",
-      "next_action": "Await extractor D completion without inspecting its blind work; validate all seven records, apply committed four-way consensus a040f4628, and issue no target packet unless every panel resolves or reaches consensus unavailable. Pool40-42 are provisioned at a040f4628 and passed 110 CPU tests.",
+      "heartbeat_at": "2026-08-05T13:53:36+00:00",
+      "next_action": "Complete bounded primary-source data-availability search for Ding sodium/Kv3 numeric tables, vector PDFs, supplements, author repositories, or data archives; record exact negative/positive result before designing another acquisition method.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "Do not hybridize source graphs, tune conductance to mask kinetic failures, reuse evaluation voltages as training evidence, or enter Stage 2 without a new prospective passing decision.",
-      "resource": "local_cpu_gpu_pool",
+      "recovery_action": "Search primary repositories, APS/PMC author artifacts, supplements, and direct numeric archives for original point data or vector figures. If stronger authority exists, preregister its acquisition and error model before inspection. Otherwise document the data-acquisition dependency; do not add a fifth extractor under a post-hoc rule.",
+      "resource": "online_research_local_cpu",
       "status": "running",
       "write_set": [
-        "research/measurements/v14-stageB/extractor_d",
+        "research/findings",
+        "research/specs",
         "research/measurements/v14-stageB",
-        "tools/v14_stageB_population_targets.py",
-        "tools/population_curve_digitization.py"
+        "ROADMAP.md"
       ]
     },
     "gateb-v14-source-metadata": {
@@ -2671,5 +2672,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T13:38:39+00:00"
+  "updated_at": "2026-08-05T13:58:45+00:00"
 }

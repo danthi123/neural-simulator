@@ -157,10 +157,15 @@ its controls and lesions, and is tested at the required seed coverage.
    Primary research found no defensible continuous biological bounds for the
    microscopic constants and no published population mean current-time
    waveforms. Full-resolution official population command-response figures are
-   hash-bound. The exact next step is prospective digitization with a pixel
-   error model, followed by a discrete source-vector screen and identifiable
-   fitting only where the measured outputs support it. Stage 2 remains
-   forbidden.
+   hash-bound. Four independent, blind native-pixel extractions have now been
+   completed under a prospective error model and consensus rule. All seven
+   panels remain unresolved: some points have three-extractor agreement, but
+   every panel retains a point, command-set, or panel-status disagreement.
+   Partial target packets are forbidden, so no fitting packet or optimization
+   run was issued. The exact next step is to seek stronger measurement
+   authority, such as original numeric data or a higher-fidelity/vector source,
+   then preregister any replacement acquisition method before inspecting its
+   result. Existing thresholds must not be loosened. Stage 2 remains forbidden.
    Delayed action-reward learning and its unrelated-reward control come
    afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
@@ -213,10 +218,13 @@ required integrated form.
   soma/proximal-dendrite coupling, and separate local versus bulk calcium
   validation before another parameter search. The source-model transfer is now
   a no-go, continuous microscopic "biological bounds" are unsupported, and the
-  official population command-response figures are hash-bound. Digitize those
-  population curves prospectively, preserve representative traces as
-  single-cell context only, then run the sealed discrete-vector/identifiability
-  campaign through the resumable adaptive supervisor.
+  official population command-response figures are hash-bound. Four blind
+  extractions and a preregistered four-way consensus still leave all seven
+  panels unresolved, so no target packet exists and fitting remains forbidden.
+  Acquire stronger numeric or vector measurement authority, preserving
+  representative traces as single-cell context only. Only after the complete
+  target gate resolves may the sealed discrete-vector/identifiability campaign
+  run through the resumable adaptive supervisor.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another

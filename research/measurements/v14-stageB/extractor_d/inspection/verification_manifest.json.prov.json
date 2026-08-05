@@ -1,0 +1,1 @@
+{"artifact":{"filename":"verification_manifest.json","sha256":"69053c05bdbc87db31e1888e6564f35a7a0498c14f3233a9861513599db6e65e"},"device":"local_cpu","role":"numpy_measurement_derivation","schema":"v14-snr-stageB-manual-measurement-provenance-v1","scientific_verdict":null,"sha256":"86360e1c48b212b5c6654b5a3f4d7d28fa99c8da13f97ae6ad7918a5a98de58f","sim_backend":"numpy"}
