@@ -522,26 +522,36 @@ def _append_retrieval_attempt(state: dict[str, Any], attempt: dict[str, Any]) ->
         state["retrieval_recovered_at"] = attempt["completed_at"]
 
 
-def _refresh_and_verify_intake(root: Path, intake: dict[str, Any]) -> dict[str, Any]:
+def _refresh_rag(root: Path) -> dict[str, Any]:
     try:
         paths = resolve_paths(root)
     except (OSError, subprocess.SubprocessError) as exc:
-        failure = {
+        return {
             "command": ["resolve-rag-paths"],
             "returncode": 1,
             "captured_at": _utc_now(),
             "output": str(exc),
             "truncated": False,
         }
-        return {
-            "retrievable": False,
-            "reason": f"RAG paths unavailable: {exc}",
-            "update": failure,
-            "verification": failure,
-        }
-    update = _run(
+    return _run(
         [str(paths.rag_python), "tools/rag/update_indexes.py", "--force"], root
     )
+
+
+def _refresh_and_verify_intake(
+    root: Path,
+    intake: dict[str, Any],
+    *,
+    shared_update: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    update = shared_update if shared_update is not None else _refresh_rag(root)
+    if update["command"] == ["resolve-rag-paths"]:
+        return {
+            "retrievable": False,
+            "reason": f"RAG paths unavailable: {update['output']}",
+            "update": update,
+            "verification": update,
+        }
     verify = _run(
         [
             "bash",
@@ -617,10 +627,11 @@ def retry_retrieval(args: argparse.Namespace, root: Path) -> Path:
     path = Path(args.gate).resolve()
     with _gate_lock(path):
         state = _load(path)
-        pending = [source for source in state.get("sources", []) if not source.get("intake", {}).get("retrievable")]
-        for source in pending:
-            verification = _refresh_and_verify_intake(root, source["intake"])
-            source["intake"].update(verification)
+        pending_intakes = [
+            source["intake"]
+            for source in state.get("sources", [])
+            if not source.get("intake", {}).get("retrievable")
+        ]
         for record in state.get("packets", []):
             packet = record.get("packet", {})
             if record.get("status") != "accepted":
@@ -628,8 +639,16 @@ def retry_retrieval(args: argparse.Namespace, root: Path) -> Path:
             for source in packet.get("sources", []):
                 intake = source.get("intake")
                 if isinstance(intake, dict) and not intake.get("retrievable"):
-                    intake.update(_refresh_and_verify_intake(root, intake))
-            record["promotable"] = _packet_is_promotable(packet)
+                    pending_intakes.append(intake)
+        shared_update = _refresh_rag(root) if pending_intakes else None
+        for intake in pending_intakes:
+            intake.update(
+                _refresh_and_verify_intake(root, intake, shared_update=shared_update)
+            )
+        for record in state.get("packets", []):
+            packet = record.get("packet", {})
+            if record.get("status") == "accepted":
+                record["promotable"] = _packet_is_promotable(packet)
         attempt = _run_retrieval(state["query"], root)
         unresolved_sources = any(
             not source.get("intake", {}).get("retrievable") for source in state.get("sources", [])

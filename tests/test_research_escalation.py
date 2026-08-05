@@ -304,6 +304,10 @@ def test_retry_retrieval_refreshes_reviewed_packet_intakes(tmp_path, monkeypatch
     stored = escalation._load(gate)["packets"][0]
     assert stored["promotable"] is True
     assert stored["packet"]["sources"][0]["intake"]["retrievable"] is True
+    update_calls = [
+        command for command in fake.calls if any(item.endswith("update_indexes.py") for item in command)
+    ]
+    assert len(update_calls) == 2
 
     escalation.answer(
         argparse.Namespace(
