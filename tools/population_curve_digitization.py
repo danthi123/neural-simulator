@@ -895,7 +895,42 @@ def compare_blind_extractions(first: Mapping[str, Any], second: Mapping[str, Any
         return core
     left_points = {point["command_id"]: point for point in left["points"]}
     right_points = {point["command_id"]: point for point in right["points"]}
-    _require(set(left_points) == set(right_points), "blind extractions have different command sets")
+    if set(left_points) != set(right_points):
+        core = {
+            "schema": COMPARISON_SCHEMA,
+            "scientific_verdict": None,
+            "optimization_command": None,
+            "optimization_allowed": False,
+            "promotion_status": "measurement_only",
+            "runtime": _runtime(),
+            "first": {
+                "record_id": left["record"]["record_id"],
+                "raw_record_sha256": left["raw_record_sha256"],
+                "sha256": left["sha256"],
+            },
+            "second": {
+                "record_id": right["record"]["record_id"],
+                "raw_record_sha256": right["raw_record_sha256"],
+                "sha256": right["sha256"],
+            },
+            "panel_availability": {
+                "accepted": True,
+                "both_available": True,
+                "first": {"status": "available", "unavailable_reason": None},
+                "second": {"status": "available", "unavailable_reason": None},
+                "resolved_unavailable_reason": None,
+            },
+            "command_set_agreement": {
+                "accepted": False,
+                "first": sorted(left_points),
+                "second": sorted(right_points),
+            },
+            "points": [],
+            "status": "third_blind_independent_extraction_required",
+            "third_extraction_required": True,
+        }
+        core["sha256"] = digest(core)
+        return core
     threshold = authority["document"]["agreement_and_adjudication"]["threshold"]
     raw_left = validate_extraction_record(first, authority, root=root)
     raw_right = validate_extraction_record(second, authority, root=root)
@@ -954,24 +989,40 @@ def compare_blind_extractions(first: Mapping[str, Any], second: Mapping[str, Any
             compared_channels.append("x")
         left_bio = left_output["biological_error"]
         right_bio = right_output["biological_error"]
-        _require(
-            left_bio.get("status") == right_bio.get("status")
-            and left_bio.get("kind") == right_bio.get("kind"),
-            "blind extractions disagree on biological error availability or kind",
-        )
-        biological: dict[str, Any] = {
-            key: left_bio[key] for key in ("status", "kind", "side") if key in left_bio
+        endpoint_channels = ("lower_endpoint", "upper_endpoint", "endpoint")
+        left_endpoint_channels = {
+            channel for channel in endpoint_channels if channel in left_samples
         }
+        right_endpoint_channels = {
+            channel for channel in endpoint_channels if channel in right_samples
+        }
+        left_bio_signature = {
+            key: left_bio.get(key) for key in ("status", "kind", "side")
+            if key in left_bio
+        }
+        right_bio_signature = {
+            key: right_bio.get(key) for key in ("status", "kind", "side")
+            if key in right_bio
+        }
+        biological_compatible = (
+            left_bio_signature == right_bio_signature
+            and left_endpoint_channels == right_endpoint_channels
+        )
+        biological: dict[str, Any] = (
+            dict(left_bio_signature)
+            if biological_compatible
+            else {
+                "status": "extractor_disagreement",
+                "first": left_bio_signature,
+                "second": right_bio_signature,
+            }
+        )
         for channel, output_key in (
             ("lower_endpoint", "lower_endpoint_digitization"),
             ("upper_endpoint", "upper_endpoint_digitization"),
             ("endpoint", "endpoint_digitization"),
         ):
-            if channel in left_samples or channel in right_samples:
-                _require(
-                    channel in left_samples and channel in right_samples,
-                    "blind extractions disagree on biological error endpoints",
-                )
+            if biological_compatible and channel in left_endpoint_channels:
                 statistics[channel] = _agreement_statistic(
                     left_bio[output_key], right_bio[output_key]
                 )
@@ -979,7 +1030,9 @@ def compare_blind_extractions(first: Mapping[str, Any], second: Mapping[str, Any
                 biological[output_key] = _quantiles(
                     np.concatenate((left_samples[channel], right_samples[channel]))
                 )
-        accepted = all(statistics[channel] <= threshold for channel in compared_channels)
+        accepted = biological_compatible and all(
+            statistics[channel] <= threshold for channel in compared_channels
+        )
         third_required = third_required or not accepted
         y_mixture = np.concatenate((left_samples["y"], right_samples["y"]))
         x_mixture = np.concatenate((left_samples["x"], right_samples["x"]))
@@ -999,6 +1052,11 @@ def compare_blind_extractions(first: Mapping[str, Any], second: Mapping[str, Any
                 ) / 2.0,
             },
             "biological_error": biological,
+            "biological_error_agreement": {
+                "accepted": biological_compatible,
+                "first": left_bio_signature,
+                "second": right_bio_signature,
+            },
             "availability": {"first": "available", "second": "available", "unavailable_reason": None},
         })
     core = {
@@ -1024,6 +1082,11 @@ def compare_blind_extractions(first: Mapping[str, Any], second: Mapping[str, Any
             "first": {"status": "available", "unavailable_reason": None},
             "second": {"status": "available", "unavailable_reason": None},
             "resolved_unavailable_reason": None,
+        },
+        "command_set_agreement": {
+            "accepted": True,
+            "first": sorted(left_points),
+            "second": sorted(right_points),
         },
         "points": rows,
         "status": (

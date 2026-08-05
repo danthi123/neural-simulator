@@ -163,6 +163,61 @@ def test_third_extraction_resolves_only_one_original_pair(tmp_path: Path) -> Non
     assert result["promotion_status"] == "measurement_only"
 
 
+def test_third_extraction_resolves_biological_error_availability_disagreement(
+    tmp_path: Path,
+) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    first = _record(protocol_path, protocol, extractor="extractor_a", y=50)
+    second = _record(protocol_path, protocol, extractor="extractor_b", y=50)
+    third = _record(protocol_path, protocol, extractor="extractor_c", y=50)
+    second["measurement"]["points"][0]["biological_error"] = {
+        "status": "unavailable"
+    }
+
+    comparison = digitizer.compare_blind_extractions(
+        first, second, authority, root=root
+    )
+    point = comparison["points"][0]
+    assert point["accepted"] is False
+    assert point["biological_error"]["status"] == "extractor_disagreement"
+    assert point["biological_error_agreement"]["accepted"] is False
+    assert comparison["third_extraction_required"] is True
+
+    result = digitizer.adjudicate_three_extractions(
+        first, second, third, authority, root=root
+    )
+    assert result["status"] == "three_extractions_resolved"
+    assert result["points"][0]["resolved_pair"] == "first_third"
+    assert result["points"][0]["measurement"]["biological_error"]["status"] == "available"
+
+
+def test_different_digitized_marker_counts_require_more_blind_evidence(
+    tmp_path: Path,
+) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path, digitized_x=True)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    first = _record(protocol_path, protocol, extractor="extractor_a", x=50)
+    second = _record(protocol_path, protocol, extractor="extractor_b", x=50)
+    extra = json.loads(json.dumps(second["measurement"]["points"][0]))
+    extra["command_id"] = "command_002"
+    extra["marker_center_region"] = _region(70, 50)
+    extra["biological_error"]["lower_endpoint_region"] = _region(70, 55)
+    extra["biological_error"]["upper_endpoint_region"] = _region(70, 45)
+    second["measurement"]["points"].append(extra)
+
+    comparison = digitizer.compare_blind_extractions(
+        first, second, authority, root=root
+    )
+    assert comparison["third_extraction_required"] is True
+    assert comparison["points"] == []
+    assert comparison["command_set_agreement"] == {
+        "accepted": False,
+        "first": ["command_001"],
+        "second": ["command_001", "command_002"],
+    }
+
+
 def test_exact_panel_bounds_command_set_and_error_kind_are_enforced(tmp_path: Path) -> None:
     root, protocol_path, protocol = _fixture_root(tmp_path)
     authority = digitizer.load_protocol(protocol_path, root=root)

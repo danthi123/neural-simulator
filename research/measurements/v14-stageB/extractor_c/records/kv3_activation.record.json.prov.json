@@ -1,0 +1,1 @@
+{"artifact":{"filename":"kv3_activation.record.json","sha256":"4eab25c194c671531547c92d08673fdca04dbcba6439cc6f6ac7125c00bd83d5"},"device":"local_cpu","role":"numpy_measurement_derivation","schema":"v14-snr-stageB-manual-measurement-provenance-v1","scientific_verdict":null,"sha256":"7b9ab877a47784537c91952ae590cb36a6b56e69ba8f9954b80d8e66039ca6a6","sim_backend":"numpy"}

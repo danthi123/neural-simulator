@@ -1,0 +1,1 @@
+{"artifact":{"filename":"extraction-groups-v1.json","sha256":"0fdf3c08728128ad395363781cab1b44920980dacac149675b777508256f95fc"},"device":"local_cpu","role":"numpy_measurement_derivation","schema":"v14-snr-stageB-manual-measurement-provenance-v1","scientific_verdict":null,"sha256":"79d1e28a4799cfdba7b1345816ac8ca7b0db542fa9e86112870926873ce0edc6","sim_backend":"numpy"}
