@@ -1278,11 +1278,13 @@
       ]
     },
     "019fd1e9-3973-7211-a902-776efc6aa92f": {
-      "heartbeat_at": "2026-08-05T12:32:36+00:00",
+      "completed_at": "2026-08-05T12:48:33+00:00",
+      "heartbeat_at": "2026-08-05T12:48:33+00:00",
       "model": "gpt-5.6-terra-xhigh",
       "next_action": "Controller converts only supported bounds into a prospective parameter-space spec.",
+      "result": "Primary-source and local-RAG review found no defensible continuous microscopic parameter bounds; documented exact source constraints, coupled transforms, direct SNr output targets, and a hierarchical identification route without invented percentage boxes.",
       "started_at": "2026-08-05T12:32:36+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Deep research source-backed Stage B parameter bounds and constraints",
       "write_set": [
         "research/findings/2026-08-05-v14-stageB-parameter-identification-bounds-research.md"
@@ -1297,6 +1299,18 @@
       "started_at": "2026-08-05T12:36:06+00:00",
       "status": "completed",
       "task": "Implement vectorized source-model candidate batch engine",
+      "write_set": [
+        "sim/source_model_candidate_batch.py",
+        "tests/test_source_model_candidate_batch.py"
+      ]
+    },
+    "019fd1f8-ab44-7a70-bc2e-52d97d7b92a5": {
+      "heartbeat_at": "2026-08-05T12:49:28+00:00",
+      "model": "gpt-5.6-terra-xhigh",
+      "next_action": "Controller reviews strict oracle parity and before/after GPU timings before accepting the solver.",
+      "started_at": "2026-08-05T12:49:28+00:00",
+      "status": "running",
+      "task": "Replace slow sodium batched eigensolver with a strict-parity static-shape solver",
       "write_set": [
         "sim/source_model_candidate_batch.py",
         "tests/test_source_model_candidate_batch.py"
@@ -1909,6 +1923,18 @@
       "detail": "completed",
       "kind": "agent-finish",
       "subject": "019fd1ec-6ffa-7ae1-8378-f7607c780482"
+    },
+    {
+      "at": "2026-08-05T12:48:33+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1e9-3973-7211-a902-776efc6aa92f"
+    },
+    {
+      "at": "2026-08-05T12:49:28+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1f8-ab44-7a70-bc2e-52d97d7b92a5"
     }
   ],
   "lanes": {
