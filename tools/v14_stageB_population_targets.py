@@ -151,14 +151,20 @@ def command_partition(command_id: str) -> str:
     return "calibration"
 
 
-def _measurement_rows(result: Mapping[str, Any], count: int) -> list[dict[str, Any]]:
+def _measurement_rows(
+    result: Mapping[str, Any], count: int
+) -> tuple[list[dict[str, Any]], str | None]:
     if count == 2:
         _fail(
             result.get("schema") == digitizer.COMPARISON_SCHEMA
-            and result.get("status") == "two_extractions_agree"
             and result.get("third_extraction_required") is False,
             "two blind extractions have not agreed",
         )
+        if result.get("status") == "two_extractions_agree_panel_unavailable":
+            reason = result["panel_availability"].get("resolved_unavailable_reason")
+            _fail(isinstance(reason, str) and reason, "panel unavailability lacks a reason")
+            return [], reason
+        _fail(result.get("status") == "two_extractions_agree", "blind agreement status is invalid")
         rows = result.get("points")
     else:
         _fail(
@@ -167,12 +173,23 @@ def _measurement_rows(result: Mapping[str, Any], count: int) -> list[dict[str, A
             and result.get("unresolved") is False,
             "three-way adjudication remains unresolved",
         )
+        panel_resolution = result.get("panel_resolution")
+        if (
+            isinstance(panel_resolution, Mapping)
+            and isinstance(panel_resolution.get("selected_panel_availability"), Mapping)
+            and panel_resolution["selected_panel_availability"].get("both_available") is False
+        ):
+            reason = panel_resolution["selected_panel_availability"].get(
+                "resolved_unavailable_reason"
+            )
+            _fail(isinstance(reason, str) and reason, "adjudicated panel unavailability lacks a reason")
+            return [], reason
         rows = []
         for point in result.get("points", []):
             _fail(point.get("status") == "resolved", "adjudication contains an unresolved point")
             rows.append(point["measurement"])
     _fail(isinstance(rows, list) and rows, "measurement result has no points")
-    return [dict(row) for row in rows]
+    return [dict(row) for row in rows], None
 
 
 def _target(
@@ -250,6 +267,7 @@ def compile_target_packets(
 
     targets: list[dict[str, Any]] = []
     evidence: list[dict[str, Any]] = []
+    unavailable_panels: list[dict[str, str]] = []
     seen_panels: set[tuple[str, str]] = set()
     for group_index, group in enumerate(extraction_groups):
         _fail(isinstance(group, Mapping) and set(group) == {"records"}, f"extraction group {group_index} is invalid")
@@ -273,21 +291,33 @@ def compile_target_packets(
             if len(loaded) == 2
             else digitizer.adjudicate_three_extractions(*loaded, authority, root=root)
         )
-        rows = _measurement_rows(result, len(loaded))
-        reference_points = {
-            point["command_id"]: point for point in first_output.get("points", [])
-        }
-        _fail(
-            set(reference_points) == {row.get("command_id") for row in rows},
-            f"panel {panel_key} agreement commands differ from the authenticated extraction",
-        )
-        panel_targets = [
-            _target(panel_protocol, reference_points[row["command_id"]], row)
-            for row in rows
-        ]
-        _fail(len(panel_targets) >= partition["assignment"]["minimum_commands_per_panel"], f"panel {panel_key} has too few commands")
-        present = {target["partition"] for target in panel_targets}
-        _fail(present == set(PARTITIONS), f"panel {panel_key} does not populate every partition")
+        rows, unavailable_reason = _measurement_rows(result, len(loaded))
+        if unavailable_reason is not None:
+            unavailable_panels.append(
+                {
+                    "target_family": panel_protocol["target_family"],
+                    "asset_id": panel_key[0],
+                    "panel": panel_key[1],
+                    "unavailable_reason": unavailable_reason,
+                }
+            )
+            panel_targets = []
+        else:
+            reference_points = {
+                point["command_id"]: point for point in first_output.get("points", [])
+            }
+            _fail(
+                set(reference_points) == {row.get("command_id") for row in rows},
+                f"panel {panel_key} agreement commands differ from the authenticated extraction",
+            )
+            panel_targets = [
+                _target(panel_protocol, reference_points[row["command_id"]], row)
+                for row in rows
+            ]
+        if panel_targets:
+            _fail(len(panel_targets) >= partition["assignment"]["minimum_commands_per_panel"], f"panel {panel_key} has too few commands")
+            present = {target["partition"] for target in panel_targets}
+            _fail(present == set(PARTITIONS), f"panel {panel_key} does not populate every partition")
         targets.extend(panel_targets)
         evidence.append(
             {
@@ -303,6 +333,7 @@ def compile_target_packets(
     _fail(seen_panels == expected_panels, "extraction groups do not cover every eligible panel exactly once")
     targets.sort(key=lambda row: (row["target_family"], row["command_id"]))
     evidence.sort(key=lambda row: (row["asset_id"], row["panel"]))
+    unavailable_panels.sort(key=lambda row: (row["target_family"], row["panel"]))
     packets: dict[str, dict[str, Any]] = {}
     for name in PARTITIONS:
         core = {
@@ -316,6 +347,7 @@ def compile_target_packets(
             "measurement_protocol": protocol_binding,
             "partition_protocol": partition_binding,
             "evidence": evidence,
+            "unavailable_panels": unavailable_panels,
             "targets": [target for target in targets if target["partition"] == name],
         }
         _fail(core["targets"], f"{name} target packet is empty")

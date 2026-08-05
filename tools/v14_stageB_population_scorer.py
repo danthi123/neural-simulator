@@ -155,7 +155,7 @@ def _packet_targets(packet: Any) -> tuple[str, list[dict[str, Any]]]:
     required = {
         "schema", "scientific_verdict", "optimization_command", "optimization_allowed", "status",
         "partition", "proposal_visible", "measurement_protocol", "partition_protocol", "evidence",
-        "targets", "sha256",
+        "unavailable_panels", "targets", "sha256",
     }
     if set(packet) != required or packet.get("schema") != population_targets.PACKET_SCHEMA:
         _fail("target packet has an invalid shape")
@@ -170,6 +170,9 @@ def _packet_targets(packet: Any) -> tuple[str, list[dict[str, Any]]]:
     ):
         _fail("target packet must be the proposal-visible calibration partition")
     rows = packet.get("targets")
+    unavailable_panels = packet.get("unavailable_panels")
+    if not isinstance(unavailable_panels, list):
+        _fail("target packet unavailable_panels must be a list")
     if not isinstance(rows, list) or not rows:
         _fail("target packet targets must be a non-empty list")
     normalized: list[dict[str, Any]] = []

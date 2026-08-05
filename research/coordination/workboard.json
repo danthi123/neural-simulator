@@ -1167,111 +1167,118 @@
       "status": "completed",
       "task": "Adversarial review of authenticated analysis-to-research handoff",
       "write_set": []
+    },
+    "019fd1ab-b8b6-7f31-99ee-71f84863fbd2": {
+      "completed_at": "2026-08-05T11:33:35+00:00",
+      "heartbeat_at": "2026-08-05T11:33:35+00:00",
+      "result": "Implemented deterministic safe PMC tiled-asset acquisition with create-only self-digested receipts; 17 tests and live acquisition passed",
+      "started_at": "2026-08-05T11:30:44+00:00",
+      "status": "completed",
+      "task": "Implement deterministic official PMC tile acquisition and tamper-evident receipts",
+      "write_set": [
+        "tools/pmc_tile_asset.py",
+        "tests/test_pmc_tile_asset.py"
+      ]
+    },
+    "019fd1ab-c05b-7492-8db9-d80a20ab4278": {
+      "completed_at": "2026-08-05T11:33:29+00:00",
+      "heartbeat_at": "2026-08-05T11:33:29+00:00",
+      "result": "Verified native-resolution aggregate panels, crop bounds, axes, source command ambiguity, and log-scale Kv3 deactivation; no files modified",
+      "started_at": "2026-08-05T11:30:44+00:00",
+      "status": "completed",
+      "task": "Audit Stage B source panels, axes, crop coordinates, and ambiguity rules",
+      "write_set": [
+        "none"
+      ]
+    },
+    "019fd1b9-fbb7-7fa1-8c52-ef5b01b25c7d": {
+      "completed_at": "2026-08-05T11:49:01+00:00",
+      "heartbeat_at": "2026-08-05T11:49:01+00:00",
+      "result": "Implemented strict Stage B extraction validation, authenticated custody, deterministic linear/log Monte Carlo uncertainty, and blind duplicate comparison; focused harness 6 passed",
+      "started_at": "2026-08-05T11:40:59+00:00",
+      "status": "completed",
+      "task": "Implement strict Stage B population digitization validation, uncertainty propagation, and duplicate-extraction comparison",
+      "write_set": [
+        "tools/population_curve_digitization.py",
+        "tests/test_population_curve_digitization.py"
+      ]
+    },
+    "019fd1c2-6120-7e82-a76c-0bb9767ee246": {
+      "completed_at": "2026-08-05T11:58:10+00:00",
+      "heartbeat_at": "2026-08-05T11:58:10+00:00",
+      "result": "Adversarial review found command-association, strict receipt, extraction-provenance, feature-bound, calibration-span, SEM-agreement, adjudication, and reproducibility gaps; no files modified",
+      "started_at": "2026-08-05T11:50:09+00:00",
+      "status": "completed",
+      "task": "Adversarial review of Stage B digitization custody, calibration, authority, and agreement gates",
+      "write_set": [
+        "none"
+      ]
+    },
+    "019fd1d1-d2f1-7851-8239-3a8d3b30bde4": {
+      "completed_at": "2026-08-05T12:26:29+00:00",
+      "heartbeat_at": "2026-08-05T12:26:29+00:00",
+      "next_action": "Controller runs pairwise agreement and dispatches third blind adjudication for disagreements.",
+      "result": "Completed seven blind native-pixel records: five numerically available and two fail-closed unavailable; controller independently reproduced all records and annotation bindings.",
+      "started_at": "2026-08-05T12:07:08+00:00",
+      "status": "completed",
+      "task": "Blind native-pixel Stage B population extraction A",
+      "write_set": [
+        "research/measurements/v14-stageB/extractor_a"
+      ]
+    },
+    "019fd1d1-d9de-78d3-9a77-094174ad8e71": {
+      "completed_at": "2026-08-05T12:17:18+00:00",
+      "heartbeat_at": "2026-08-05T12:17:18+00:00",
+      "next_action": "Controller validates records and compares against extractor A without relaxing source or calibration rules.",
+      "result": "Completed seven blind native-pixel panel records: three numerically available and four fail-closed unavailable; controller audit pending.",
+      "started_at": "2026-08-05T12:07:09+00:00",
+      "status": "completed",
+      "task": "Blind native-pixel Stage B population extraction B",
+      "write_set": [
+        "research/measurements/v14-stageB/extractor_b"
+      ]
+    },
+    "019fd1d5-f660-7021-a2de-0d76a5be4a47": {
+      "completed_at": "2026-08-05T12:17:18+00:00",
+      "heartbeat_at": "2026-08-05T12:17:18+00:00",
+      "model": "gpt-5.6-terra",
+      "next_action": "Controller integrates diagnostic with sealed fit records.",
+      "result": "Implemented deterministic calibration-only Jacobian, SVD, equivalent-fit ensemble, and conservative parameter classification diagnostics; eight focused tests pass.",
+      "started_at": "2026-08-05T12:17:18+00:00",
+      "status": "completed",
+      "task": "Implement Stage B identifiability diagnostics",
+      "write_set": [
+        "tools/v14_stageB_identifiability.py",
+        "tests/test_v14_stageB_identifiability.py"
+      ]
+    },
+    "019fd1dd-f1b0-7b20-937a-46d0299ac723": {
+      "completed_at": "2026-08-05T12:26:29+00:00",
+      "heartbeat_at": "2026-08-05T12:26:29+00:00",
+      "model": "gpt-5.6-terra",
+      "next_action": "Integrate scorer with reconciled target packets and parameterized assay runner.",
+      "result": "Implemented calibration-only source target scorer with strict withheld-data rejection; controller added exact published-command compatibility; eight focused scorer tests pass.",
+      "started_at": "2026-08-05T12:20:16+00:00",
+      "status": "completed",
+      "task": "Implement calibration-only Stage B population target scorer",
+      "write_set": [
+        "tools/v14_stageB_population_scorer.py",
+        "tests/test_v14_stageB_population_scorer.py"
+      ]
+    },
+    "019fd1e6-18da-7782-8e05-7504258c21ad": {
+      "heartbeat_at": "2026-08-05T12:29:13+00:00",
+      "model": "gpt-5.6-sol-xhigh",
+      "next_action": "Controller adjudicates each panel against frozen A/B evidence.",
+      "started_at": "2026-08-05T12:29:13+00:00",
+      "status": "running",
+      "task": "Third blind native-pixel Stage B population extraction C for all disputed panels",
+      "write_set": [
+        "research/measurements/v14-stageB/extractor_c"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T22:22:12+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcedf-2d88-7b63-9150-a22ffa1a3bff"
-    },
-    {
-      "at": "2026-08-04T22:22:14+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcedf-327a-7d12-a1d0-580e237dd154"
-    },
-    {
-      "at": "2026-08-04T22:30:20+00:00",
-      "detail": "interrupted",
-      "kind": "agent-finish",
-      "subject": "019fced6-a735-7da0-ad56-5b8822ae14ef"
-    },
-    {
-      "at": "2026-08-04T22:30:20+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcee6-78b0-73d1-9ad9-8ca9e5a01581"
-    },
-    {
-      "at": "2026-08-05T00:41:58+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T00:42:07+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf57-48f4-7b12-9d09-431a227f30bd"
-    },
-    {
-      "at": "2026-08-05T00:42:07+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf57-48f4-7b12-9d09-431a227f30bd"
-    },
-    {
-      "at": "2026-08-05T00:42:38+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T00:44:49+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf61-3937-70f1-aad6-a10a1a9f0c05"
-    },
-    {
-      "at": "2026-08-05T00:47:32+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T00:48:56+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf64-fa62-7700-87ae-d9cc0ddc6622"
-    },
-    {
-      "at": "2026-08-05T00:53:17+00:00",
-      "detail": "planned",
-      "kind": "lane-update",
-      "subject": "gateb-primary-source-fulltext-intake"
-    },
-    {
-      "at": "2026-08-05T01:00:15+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf64-fa62-7700-87ae-d9cc0ddc6622"
-    },
-    {
-      "at": "2026-08-05T01:04:12+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-primary-source-fulltext-intake"
-    },
-    {
-      "at": "2026-08-05T01:04:12+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf72-e3b4-7703-bfdf-ea2116630ee7"
-    },
-    {
-      "at": "2026-08-05T01:04:30+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf61-3937-70f1-aad6-a10a1a9f0c05"
-    },
-    {
-      "at": "2026-08-05T01:10:19+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf72-e3b4-7703-bfdf-ea2116630ee7"
-    },
     {
       "at": "2026-08-05T01:10:19+00:00",
       "detail": "running",
@@ -1769,6 +1776,108 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-source-constrained-identification"
+    },
+    {
+      "at": "2026-08-05T11:30:44+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1ab-b8b6-7f31-99ee-71f84863fbd2"
+    },
+    {
+      "at": "2026-08-05T11:30:44+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1ab-c05b-7492-8db9-d80a20ab4278"
+    },
+    {
+      "at": "2026-08-05T11:33:29+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1ab-c05b-7492-8db9-d80a20ab4278"
+    },
+    {
+      "at": "2026-08-05T11:33:35+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1ab-b8b6-7f31-99ee-71f84863fbd2"
+    },
+    {
+      "at": "2026-08-05T11:40:59+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1b9-fbb7-7fa1-8c52-ef5b01b25c7d"
+    },
+    {
+      "at": "2026-08-05T11:49:01+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1b9-fbb7-7fa1-8c52-ef5b01b25c7d"
+    },
+    {
+      "at": "2026-08-05T11:50:09+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1c2-6120-7e82-a76c-0bb9767ee246"
+    },
+    {
+      "at": "2026-08-05T11:58:10+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1c2-6120-7e82-a76c-0bb9767ee246"
+    },
+    {
+      "at": "2026-08-05T12:07:08+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1d1-d2f1-7851-8239-3a8d3b30bde4"
+    },
+    {
+      "at": "2026-08-05T12:07:09+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1d1-d9de-78d3-9a77-094174ad8e71"
+    },
+    {
+      "at": "2026-08-05T12:17:18+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1d1-d9de-78d3-9a77-094174ad8e71"
+    },
+    {
+      "at": "2026-08-05T12:17:18+00:00",
+      "detail": "completed",
+      "kind": "agent-register",
+      "subject": "019fd1d5-f660-7021-a2de-0d76a5be4a47"
+    },
+    {
+      "at": "2026-08-05T12:17:18+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1d5-f660-7021-a2de-0d76a5be4a47"
+    },
+    {
+      "at": "2026-08-05T12:20:16+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1dd-f1b0-7b20-937a-46d0299ac723"
+    },
+    {
+      "at": "2026-08-05T12:26:29+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1d1-d2f1-7851-8239-3a8d3b30bde4"
+    },
+    {
+      "at": "2026-08-05T12:26:29+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd1dd-f1b0-7b20-937a-46d0299ac723"
+    },
+    {
+      "at": "2026-08-05T12:29:13+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1e6-18da-7782-8e05-7504258c21ad"
     }
   ],
   "lanes": {
@@ -2121,9 +2230,9 @@
       ]
     },
     "gateb-v14-source-constrained-identification": {
-      "delegation": "controller",
       "blocker": "Official source assets are now hash-bound, but numeric population command-response targets and their pixel-error model are not yet sealed. Raw complete current waveforms are unavailable, and representative single-cell traces cannot be treated as population means.",
-      "heartbeat_at": "2026-08-05T11:21:58+00:00",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T11:48:30+00:00",
       "next_action": "Digitize the full-resolution, hash-bound Ding population command-response panels with a prospective pixel calibration/error model, preserve tabulated values as higher authority, and mark unsupported command cells unavailable. The parameterized source-model APIs and resumable non-held-out campaign supervisor are implemented; do not execute optimization before the target-data gate passes.",
       "owner": "codex",
       "priority": 1,
@@ -2466,5 +2575,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T10:56:10+00:00"
+  "updated_at": "2026-08-05T12:29:13+00:00"
 }

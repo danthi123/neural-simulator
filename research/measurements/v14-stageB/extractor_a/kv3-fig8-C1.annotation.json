@@ -1,0 +1,451 @@
+{
+  "axis_audit": {
+    "x_axis": {
+      "all_legible_major_ticks_included": true,
+      "anchors": [
+        {
+          "pixel_region": {
+            "x_max": 275.0,
+            "x_min": 271.0,
+            "y_max": 2746.0,
+            "y_min": 2742.0
+          },
+          "value": -90
+        },
+        {
+          "pixel_region": {
+            "x_max": 426.0,
+            "x_min": 422.0,
+            "y_max": 2746.0,
+            "y_min": 2742.0
+          },
+          "value": -60
+        },
+        {
+          "pixel_region": {
+            "x_max": 578.0,
+            "x_min": 574.0,
+            "y_max": 2746.0,
+            "y_min": 2742.0
+          },
+          "value": -30
+        },
+        {
+          "pixel_region": {
+            "x_max": 730.0,
+            "x_min": 726.0,
+            "y_max": 2746.0,
+            "y_min": 2742.0
+          },
+          "value": 0
+        },
+        {
+          "pixel_region": {
+            "x_max": 882.0,
+            "x_min": 878.0,
+            "y_max": 2746.0,
+            "y_min": 2742.0
+          },
+          "value": 30
+        },
+        {
+          "pixel_region": {
+            "x_max": 1032.0,
+            "x_min": 1028.0,
+            "y_max": 2746.0,
+            "y_min": 2742.0
+          },
+          "value": 60
+        }
+      ],
+      "axis_spine_region": {
+        "x_max": 1033.0,
+        "x_min": 270.0,
+        "y_max": 2747.0,
+        "y_min": 2741.0
+      },
+      "outermost_ticks_included": true,
+      "scale": "linear"
+    },
+    "y_axis": {
+      "all_legible_major_ticks_included": true,
+      "anchors": [
+        {
+          "pixel_region": {
+            "x_max": 274.0,
+            "x_min": 270.0,
+            "y_max": 2709.0,
+            "y_min": 2705.0
+          },
+          "value": 0
+        },
+        {
+          "pixel_region": {
+            "x_max": 274.0,
+            "x_min": 270.0,
+            "y_max": 2513.0,
+            "y_min": 2509.0
+          },
+          "value": 0.5
+        },
+        {
+          "pixel_region": {
+            "x_max": 274.0,
+            "x_min": 270.0,
+            "y_max": 2320.0,
+            "y_min": 2316.0
+          },
+          "value": 1.0
+        }
+      ],
+      "axis_spine_region": {
+        "x_max": 275.0,
+        "x_min": 269.0,
+        "y_max": 2710.0,
+        "y_min": 2313.0
+      },
+      "outermost_ticks_included": true,
+      "scale": "linear"
+    }
+  },
+  "biological_error_policy": {
+    "endpoint_records_are_separate_from_mean_markers": true,
+    "hidden_endpoint_inference": false,
+    "kind": "standard_error",
+    "mean_preserved_when_endpoint_unavailable": true
+  },
+  "blindness": {
+    "blind_to_other_extractions": true,
+    "sibling_extractor_outputs_read": false,
+    "source_pixels_resampled": false
+  },
+  "extractor_id": "extractor_a",
+  "measurement_status": "available",
+  "occlusion_audit": "Filled SNr markers were distinct from open DA markers at the recorded centers. Connecting curves were not sampled. SEM endpoints were retained as unavailable when not separately bounded.",
+  "optimization_allowed": false,
+  "panel": {
+    "bounds_original_pixels": {
+      "x_max": 1500,
+      "x_min": 0,
+      "y_max": 2952,
+      "y_min": 1950
+    },
+    "id": "C1",
+    "series_id": "filled_circle_SNr_GABA"
+  },
+  "points": [
+    {
+      "authoritative_x": -80,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_001",
+      "marker_center_region": {
+        "x_max": 327.0,
+        "x_min": 319.0,
+        "y_max": 2703.0,
+        "y_min": 2695.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -70,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_002",
+      "marker_center_region": {
+        "x_max": 378.0,
+        "x_min": 370.0,
+        "y_max": 2702.0,
+        "y_min": 2694.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -60,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_003",
+      "marker_center_region": {
+        "x_max": 428.0,
+        "x_min": 420.0,
+        "y_max": 2702.0,
+        "y_min": 2694.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -50,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_004",
+      "marker_center_region": {
+        "x_max": 479.0,
+        "x_min": 471.0,
+        "y_max": 2699.0,
+        "y_min": 2691.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -40,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_005",
+      "marker_center_region": {
+        "x_max": 529.0,
+        "x_min": 521.0,
+        "y_max": 2693.0,
+        "y_min": 2685.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -30,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_006",
+      "marker_center_region": {
+        "x_max": 580.0,
+        "x_min": 572.0,
+        "y_max": 2676.0,
+        "y_min": 2668.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -20,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_007",
+      "marker_center_region": {
+        "x_max": 630.0,
+        "x_min": 622.0,
+        "y_max": 2609.0,
+        "y_min": 2601.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -10,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_008",
+      "marker_center_region": {
+        "x_max": 681.0,
+        "x_min": 673.0,
+        "y_max": 2508.0,
+        "y_min": 2500.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 0,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_009",
+      "marker_center_region": {
+        "x_max": 731.0,
+        "x_min": 723.0,
+        "y_max": 2414.0,
+        "y_min": 2406.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 10,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_010",
+      "marker_center_region": {
+        "x_max": 782.0,
+        "x_min": 774.0,
+        "y_max": 2357.0,
+        "y_min": 2349.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 20,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_011",
+      "marker_center_region": {
+        "x_max": 832.0,
+        "x_min": 824.0,
+        "y_max": 2325.0,
+        "y_min": 2317.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 30,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_012",
+      "marker_center_region": {
+        "x_max": 883.0,
+        "x_min": 875.0,
+        "y_max": 2316.0,
+        "y_min": 2308.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 40,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_013",
+      "marker_center_region": {
+        "x_max": 933.0,
+        "x_min": 925.0,
+        "y_max": 2318.0,
+        "y_min": 2310.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 50,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_014",
+      "marker_center_region": {
+        "x_max": 984.0,
+        "x_min": 976.0,
+        "y_max": 2314.0,
+        "y_min": 2306.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    }
+  ],
+  "schema": "v14-snr-stageB-native-pixel-annotation-v1",
+  "scientific_verdict": null,
+  "source": {
+    "asset_id": "ding-matta-zhou-2011-figure-8",
+    "coordinate_system": "original_image_pixels_x_right_y_down",
+    "display_policy": "nearest_neighbor_only_for_inspection",
+    "image_path": "research/experiment-runtime/stageB-source-assets/kv3-fig8-full.png",
+    "image_sha256": "bcab30f4baeb96bb9d013fce1a062ddec953a05ae3d3764d75016e7e2dd5c38a",
+    "pixel_sha256": "047bfe561833e5910c5c1506667b32447ba734edc98f36e45bd6d5eeb3c13a2f",
+    "receipt_file_sha256": "b641c221648831c439d95e9f3756013e339894e2f22fde5d0659b6ad1c82c708",
+    "receipt_path": "research/experiment-runtime/stageB-source-assets/kv3-fig8-full.receipt.json",
+    "receipt_self_sha256": "ef45716104b9bf6092bb3b5b9f97ce31254a991fb4223308355ec4fd7194e82a"
+  },
+  "tool": {
+    "name": "manual_native_pixel_annotation",
+    "version": "1"
+  },
+  "unavailable_reason": null,
+  "workflow_id": "workflow_a_kv3_fig8_c1"
+}

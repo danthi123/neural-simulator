@@ -1,0 +1,421 @@
+{
+  "axis_audit": {
+    "x_axis": {
+      "all_legible_major_ticks_included": true,
+      "anchors": [
+        {
+          "pixel_region": {
+            "x_max": 541.0,
+            "x_min": 537.0,
+            "y_max": 5598.0,
+            "y_min": 5594.0
+          },
+          "value": -60
+        },
+        {
+          "pixel_region": {
+            "x_max": 959.0,
+            "x_min": 955.0,
+            "y_max": 5598.0,
+            "y_min": 5594.0
+          },
+          "value": -40
+        },
+        {
+          "pixel_region": {
+            "x_max": 1378.0,
+            "x_min": 1374.0,
+            "y_max": 5598.0,
+            "y_min": 5594.0
+          },
+          "value": -20
+        },
+        {
+          "pixel_region": {
+            "x_max": 1791.0,
+            "x_min": 1787.0,
+            "y_max": 5598.0,
+            "y_min": 5594.0
+          },
+          "value": 0
+        }
+      ],
+      "axis_spine_region": {
+        "x_max": 1927.0,
+        "x_min": 535.0,
+        "y_max": 5598.0,
+        "y_min": 5594.0
+      },
+      "outermost_ticks_included": true,
+      "scale": "linear"
+    },
+    "y_axis": {
+      "all_legible_major_ticks_included": true,
+      "anchors": [
+        {
+          "pixel_region": {
+            "x_max": 541.0,
+            "x_min": 537.0,
+            "y_max": 5550.0,
+            "y_min": 5546.0
+          },
+          "value": 0
+        },
+        {
+          "pixel_region": {
+            "x_max": 541.0,
+            "x_min": 537.0,
+            "y_max": 5067.0,
+            "y_min": 5063.0
+          },
+          "value": 0.5
+        },
+        {
+          "pixel_region": {
+            "x_max": 541.0,
+            "x_min": 537.0,
+            "y_max": 4584.0,
+            "y_min": 4580.0
+          },
+          "value": 1.0
+        }
+      ],
+      "axis_spine_region": {
+        "x_max": 543.0,
+        "x_min": 535.0,
+        "y_max": 5551.0,
+        "y_min": 4579.0
+      },
+      "outermost_ticks_included": true,
+      "scale": "linear"
+    }
+  },
+  "biological_error_policy": {
+    "endpoint_records_are_separate_from_mean_markers": true,
+    "hidden_endpoint_inference": false,
+    "kind": "standard_error",
+    "mean_preserved_when_endpoint_unavailable": true
+  },
+  "blindness": {
+    "blind_to_other_extractions": true,
+    "sibling_extractor_outputs_read": false,
+    "source_pixels_resampled": false
+  },
+  "extractor_id": "extractor_a",
+  "measurement_status": "available",
+  "occlusion_audit": "All filled SNr means except the first corner marker have bounded centers. SEM endpoints were not used where marker/curve overlap prevented a separate endpoint rectangle; means are retained.",
+  "optimization_allowed": false,
+  "panel": {
+    "bounds_original_pixels": {
+      "x_max": 2500,
+      "x_min": 0,
+      "y_max": 5988,
+      "y_min": 4500
+    },
+    "id": "A4",
+    "series_id": "filled_circle_SNr_GABA"
+  },
+  "points": [
+    {
+      "authoritative_x": -60,
+      "biological_error": null,
+      "command_id": "command_001",
+      "marker_center_region": null,
+      "occlusion": null,
+      "status": "unavailable",
+      "unavailable_reason": "occlusion_prevents_bounded_marker_center"
+    },
+    {
+      "authoritative_x": -55,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_002",
+      "marker_center_region": {
+        "x_max": 647.0,
+        "x_min": 639.0,
+        "y_max": 5544.0,
+        "y_min": 5536.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -50,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_003",
+      "marker_center_region": {
+        "x_max": 751.0,
+        "x_min": 743.0,
+        "y_max": 5506.0,
+        "y_min": 5498.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -45,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_004",
+      "marker_center_region": {
+        "x_max": 856.0,
+        "x_min": 848.0,
+        "y_max": 5457.0,
+        "y_min": 5449.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -40,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_005",
+      "marker_center_region": {
+        "x_max": 960.0,
+        "x_min": 952.0,
+        "y_max": 5375.0,
+        "y_min": 5367.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -35,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_006",
+      "marker_center_region": {
+        "x_max": 1064.0,
+        "x_min": 1056.0,
+        "y_max": 5241.0,
+        "y_min": 5233.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -30,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_007",
+      "marker_center_region": {
+        "x_max": 1168.0,
+        "x_min": 1160.0,
+        "y_max": 5047.0,
+        "y_min": 5039.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -25,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_008",
+      "marker_center_region": {
+        "x_max": 1272.0,
+        "x_min": 1264.0,
+        "y_max": 4864.0,
+        "y_min": 4856.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -20,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_009",
+      "marker_center_region": {
+        "x_max": 1376.0,
+        "x_min": 1368.0,
+        "y_max": 4738.0,
+        "y_min": 4730.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -15,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_010",
+      "marker_center_region": {
+        "x_max": 1480.0,
+        "x_min": 1472.0,
+        "y_max": 4665.0,
+        "y_min": 4657.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -10,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_011",
+      "marker_center_region": {
+        "x_max": 1585.0,
+        "x_min": 1577.0,
+        "y_max": 4590.0,
+        "y_min": 4582.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": -5,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_012",
+      "marker_center_region": {
+        "x_max": 1689.0,
+        "x_min": 1681.0,
+        "y_max": 4590.0,
+        "y_min": 4582.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 0,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_013",
+      "marker_center_region": {
+        "x_max": 1793.0,
+        "x_min": 1785.0,
+        "y_max": 4604.0,
+        "y_min": 4596.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    },
+    {
+      "authoritative_x": 5,
+      "biological_error": {
+        "status": "unavailable"
+      },
+      "command_id": "command_014",
+      "marker_center_region": {
+        "x_max": 1897.0,
+        "x_min": 1889.0,
+        "y_max": 4569.0,
+        "y_min": 4561.0
+      },
+      "occlusion": {
+        "bounded_without_curve_interpolation": true,
+        "opposing_marker_edges_visible": true,
+        "partial": false,
+        "unique_series_identity": true
+      },
+      "status": "available",
+      "unavailable_reason": null
+    }
+  ],
+  "schema": "v14-snr-stageB-native-pixel-annotation-v1",
+  "scientific_verdict": null,
+  "source": {
+    "asset_id": "ding-wei-zhou-2011-figure-6",
+    "coordinate_system": "original_image_pixels_x_right_y_down",
+    "display_policy": "nearest_neighbor_only_for_inspection",
+    "image_path": "research/experiment-runtime/stageB-source-assets/sodium-fig6-full.png",
+    "image_sha256": "952ed17f99ed0b443caf602394a2af9c05eec7a29d40e533da3877998d225435",
+    "pixel_sha256": "b2f54f423ffe8df75f1d451ccfe63f54635d4f09c9746e99f30f395ea18251c6",
+    "receipt_file_sha256": "6590a4109f258b03877b17f2201b6c4b845e222d99395c734c32bf37ef672b28",
+    "receipt_path": "research/experiment-runtime/stageB-source-assets/sodium-fig6-full.receipt.json",
+    "receipt_self_sha256": "6731cfec1597bd1df04f28abae6d963d58ee51aa2afe030d5d4c0a2c20169b05"
+  },
+  "tool": {
+    "name": "manual_native_pixel_annotation",
+    "version": "1"
+  },
+  "unavailable_reason": null,
+  "workflow_id": "workflow_a_sodium_fig6_a4"
+}

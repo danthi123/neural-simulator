@@ -35,6 +35,7 @@ RECORD_SCHEMA = "v14-snr-stageB-population-curve-extraction-v1"
 OUTPUT_SCHEMA = "v14-snr-stageB-population-curve-digitization-v1"
 COMPARISON_SCHEMA = "v14-snr-stageB-population-curve-agreement-v1"
 ADJUDICATION_SCHEMA = "v14-snr-stageB-population-curve-adjudication-v1"
+PROVENANCE_SCHEMA = "v14-snr-stageB-manual-measurement-provenance-v1"
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_-]{0,63}")
 _UNAVAILABLE_REASONS = frozenset(
@@ -842,7 +843,56 @@ def compare_blind_extractions(first: Mapping[str, Any], second: Mapping[str, Any
     )
     for key in ("asset", "panel", "protocol"):
         _require(left["record"][key] == right["record"][key], f"blind extraction {key} differs")
-    _require(left["record"]["status"] == right["record"]["status"] == "available", "unavailable records cannot be silently compared")
+    left_status = left["record"]["status"]
+    right_status = right["record"]["status"]
+    if left_status != "available" or right_status != "available":
+        accepted = (
+            left_status == right_status == "unavailable"
+            and left["record"]["unavailable_reason"]
+            == right["record"]["unavailable_reason"]
+        )
+        core = {
+            "schema": COMPARISON_SCHEMA,
+            "scientific_verdict": None,
+            "optimization_command": None,
+            "optimization_allowed": False,
+            "promotion_status": "measurement_only",
+            "runtime": _runtime(),
+            "first": {
+                "record_id": left["record"]["record_id"],
+                "raw_record_sha256": left["raw_record_sha256"],
+                "sha256": left["sha256"],
+            },
+            "second": {
+                "record_id": right["record"]["record_id"],
+                "raw_record_sha256": right["raw_record_sha256"],
+                "sha256": right["sha256"],
+            },
+            "panel_availability": {
+                "accepted": accepted,
+                "both_available": False,
+                "first": {
+                    "status": left_status,
+                    "unavailable_reason": left["record"]["unavailable_reason"],
+                },
+                "second": {
+                    "status": right_status,
+                    "unavailable_reason": right["record"]["unavailable_reason"],
+                },
+                "resolved_unavailable_reason": (
+                    left["record"]["unavailable_reason"] if accepted else None
+                ),
+            },
+            "points": [],
+            "status": (
+                "two_extractions_agree_panel_unavailable"
+                if accepted
+                else "third_blind_independent_extraction_required"
+            ),
+            "third_extraction_required": not accepted,
+        }
+        core["sha256"] = digest(core)
+        return core
     left_points = {point["command_id"]: point for point in left["points"]}
     right_points = {point["command_id"]: point for point in right["points"]}
     _require(set(left_points) == set(right_points), "blind extractions have different command sets")
@@ -968,6 +1018,13 @@ def compare_blind_extractions(first: Mapping[str, Any], second: Mapping[str, Any
             "raw_record_sha256": right["raw_record_sha256"],
             "sha256": right["sha256"],
         },
+        "panel_availability": {
+            "accepted": True,
+            "both_available": True,
+            "first": {"status": "available", "unavailable_reason": None},
+            "second": {"status": "available", "unavailable_reason": None},
+            "resolved_unavailable_reason": None,
+        },
         "points": rows,
         "status": (
             "third_blind_independent_extraction_required"
@@ -993,6 +1050,75 @@ def adjudicate_three_extractions(
     _require(ab["third_extraction_required"] is True, "third extraction is not authorized when the blind pair agrees")
     ac = compare_blind_extractions(first, third, authority, root=root)
     bc = compare_blind_extractions(second, third, authority, root=root)
+    comparisons = {
+        "first_second": ab,
+        "first_third": ac,
+        "second_third": bc,
+    }
+    if any(not item["panel_availability"]["both_available"] for item in comparisons.values()):
+        accepted_pairs = [
+            name
+            for name in ("first_third", "second_third")
+            if comparisons[name]["third_extraction_required"] is False
+        ]
+        selected = accepted_pairs[0] if len(accepted_pairs) == 1 else None
+        selected_comparison = comparisons[selected] if selected is not None else None
+        rows = []
+        if selected_comparison is not None and selected_comparison["panel_availability"]["both_available"]:
+            for point in selected_comparison["points"]:
+                rows.append(
+                    {
+                        "command_id": point["command_id"],
+                        "resolved_pair": selected,
+                        "status": "resolved",
+                        "measurement": point,
+                        "pair_acceptance": {
+                            name: not comparisons[name]["third_extraction_required"]
+                            for name in comparisons
+                        },
+                    }
+                )
+        bindings = []
+        for record in (first, second, third):
+            output = digitize_record(record, authority, root=root)
+            bindings.append(
+                {
+                    "record_id": output["record"]["record_id"],
+                    "raw_record_sha256": output["raw_record_sha256"],
+                    "sha256": output["sha256"],
+                }
+            )
+        unresolved = selected is None
+        core = {
+            "schema": ADJUDICATION_SCHEMA,
+            "scientific_verdict": None,
+            "optimization_command": None,
+            "optimization_allowed": False,
+            "promotion_status": "measurement_only",
+            "runtime": _runtime(),
+            "records": bindings,
+            "pair_comparisons": {
+                name: item["sha256"] for name, item in comparisons.items()
+            },
+            "panel_resolution": {
+                "status": "unresolved" if unresolved else "resolved",
+                "resolved_pair": selected,
+                "selected_panel_availability": (
+                    selected_comparison["panel_availability"]
+                    if selected_comparison is not None
+                    else None
+                ),
+                "pair_acceptance": {
+                    name: not item["third_extraction_required"]
+                    for name, item in comparisons.items()
+                },
+            },
+            "points": rows,
+            "status": "three_extractions_unresolved" if unresolved else "three_extractions_resolved",
+            "unresolved": unresolved,
+        }
+        core["sha256"] = digest(core)
+        return core
     pair_rows = {
         "first_second": {row["command_id"]: row for row in ab["points"]},
         "first_third": {row["command_id"]: row for row in ac["points"]},
@@ -1046,6 +1172,12 @@ def adjudicate_three_extractions(
             "first_third": ac["sha256"],
             "second_third": bc["sha256"],
         },
+        "panel_resolution": {
+            "status": "resolved" if not unresolved else "unresolved",
+            "resolved_pair": "per_command",
+            "selected_panel_availability": None,
+            "pair_acceptance": None,
+        },
         "points": rows,
         "status": "three_extractions_unresolved" if unresolved else "three_extractions_resolved",
         "unresolved": unresolved,
@@ -1070,6 +1202,42 @@ def create_output(path: Path, value: Mapping[str, Any]) -> None:
         raise PopulationCurveDigitizationError(f"refusing to overwrite existing output: {target}") from exc
     except OSError as exc:
         raise PopulationCurveDigitizationError(f"cannot create output: {target}") from exc
+
+
+def create_provenance_sidecar(path: Path, *, role: str) -> Path:
+    """Bind a manual annotation or NumPy-derived measurement to its device role."""
+
+    supplied = Path(path)
+    _require(not supplied.is_symlink(), "provenance artifact must not be a symbolic link")
+    artifact = supplied.resolve()
+    _require(
+        artifact.is_file() and not artifact.is_symlink(),
+        "provenance artifact must be a regular file",
+    )
+    _require(
+        role in {"manual_native_pixel_annotation", "numpy_measurement_derivation"},
+        "provenance role is invalid",
+    )
+    sidecar = Path(str(artifact) + ".prov.json")
+    core = {
+        "schema": PROVENANCE_SCHEMA,
+        "scientific_verdict": None,
+        "artifact": {"filename": artifact.name, "sha256": _file_digest(artifact)},
+        "role": role,
+        "device": (
+            "human_visual_native_pixels"
+            if role == "manual_native_pixel_annotation"
+            else "local_cpu"
+        ),
+        "sim_backend": (
+            "not_applicable_manual_annotation"
+            if role == "manual_native_pixel_annotation"
+            else "numpy"
+        ),
+    }
+    core["sha256"] = digest(core)
+    create_output(sidecar, core)
+    return sidecar
 
 
 def _record_from_path(path: Path) -> Mapping[str, Any]:

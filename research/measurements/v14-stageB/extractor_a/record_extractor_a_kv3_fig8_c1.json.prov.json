@@ -1,0 +1,1 @@
+{"artifact":{"filename":"record_extractor_a_kv3_fig8_c1.json","sha256":"1f740cde4a21b391cb280429571cdc2f4aca85035d2ae8b9be0827a336166ee5"},"device":"local_cpu","role":"numpy_measurement_derivation","schema":"v14-snr-stageB-manual-measurement-provenance-v1","scientific_verdict":null,"sha256":"6332f7091343a329ffe1ff757808ce1406fb0211c0b4ea77421c9313c4f4ae06","sim_backend":"numpy"}

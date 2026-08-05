@@ -194,3 +194,18 @@ def test_compiler_rejects_symlinked_evidence(tmp_path: Path, monkeypatch) -> Non
     groups[0]["records"][0]["sha256"] = hashlib.sha256(moved.read_bytes()).hexdigest()
     with pytest.raises(targets.PopulationTargetError, match="symbolic links"):
         targets.compile_target_packets(protocol, partition, groups, repository_root=root)
+
+
+def test_measurement_rows_preserve_agreed_panel_unavailability() -> None:
+    result = {
+        "schema": digitizer.COMPARISON_SCHEMA,
+        "status": "two_extractions_agree_panel_unavailable",
+        "third_extraction_required": False,
+        "panel_availability": {
+            "resolved_unavailable_reason": "occlusion_prevents_bounded_marker_center"
+        },
+        "points": [],
+    }
+    rows, reason = targets._measurement_rows(result, 2)
+    assert rows == []
+    assert reason == "occlusion_prevents_bounded_marker_center"

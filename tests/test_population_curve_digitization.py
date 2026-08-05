@@ -207,6 +207,60 @@ def test_published_command_cell_can_remain_explicitly_unavailable(tmp_path: Path
     assert comparison["points"][0]["availability"]["unavailable_reason"] == "occlusion_prevents_bounded_marker_center"
 
 
+def _whole_panel_unavailable(record: dict, reason: str) -> dict:
+    record["status"] = "unavailable"
+    record["unavailable_reason"] = reason
+    record["measurement"] = None
+    return record
+
+
+def test_blind_whole_panel_unavailability_is_compared_explicitly(tmp_path: Path) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    first = _whole_panel_unavailable(
+        _record(protocol_path, protocol, extractor="extractor_a"),
+        "occlusion_prevents_bounded_marker_center",
+    )
+    second = _whole_panel_unavailable(
+        _record(protocol_path, protocol, extractor="extractor_b"),
+        "occlusion_prevents_bounded_marker_center",
+    )
+    comparison = digitizer.compare_blind_extractions(first, second, authority, root=root)
+    assert comparison["status"] == "two_extractions_agree_panel_unavailable"
+    assert comparison["third_extraction_required"] is False
+    assert comparison["points"] == []
+    assert comparison["panel_availability"]["resolved_unavailable_reason"] == "occlusion_prevents_bounded_marker_center"
+
+
+def test_third_extraction_can_resolve_panel_availability_either_way(tmp_path: Path) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    available = _record(protocol_path, protocol, extractor="extractor_a", y=50)
+    unavailable = _whole_panel_unavailable(
+        _record(protocol_path, protocol, extractor="extractor_b"),
+        "overlap_prevents_unique_series_assignment",
+    )
+    third_available = _record(protocol_path, protocol, extractor="extractor_c", y=51)
+    numeric = digitizer.adjudicate_three_extractions(
+        available, unavailable, third_available, authority, root=root
+    )
+    assert numeric["status"] == "three_extractions_resolved"
+    assert numeric["panel_resolution"]["resolved_pair"] == "first_third"
+    assert len(numeric["points"]) == 1
+
+    third_unavailable = _whole_panel_unavailable(
+        _record(protocol_path, protocol, extractor="extractor_d"),
+        "overlap_prevents_unique_series_assignment",
+    )
+    withheld = digitizer.adjudicate_three_extractions(
+        available, unavailable, third_unavailable, authority, root=root
+    )
+    assert withheld["status"] == "three_extractions_resolved"
+    assert withheld["panel_resolution"]["resolved_pair"] == "second_third"
+    assert withheld["points"] == []
+    assert withheld["panel_resolution"]["selected_panel_availability"]["resolved_unavailable_reason"] == "overlap_prevents_unique_series_assignment"
+
+
 def test_create_only_output_is_canonical_and_refuses_replacement(tmp_path: Path) -> None:
     path = tmp_path / "output.json"
     value = {"schema": "test", "scientific_verdict": None, "optimization_command": None}
@@ -214,3 +268,22 @@ def test_create_only_output_is_canonical_and_refuses_replacement(tmp_path: Path)
     assert path.read_bytes() == digitizer.canonical_bytes(value) + b"\n"
     with pytest.raises(digitizer.PopulationCurveDigitizationError, match="overwrite"):
         digitizer.create_output(path, value)
+
+
+def test_manual_measurement_provenance_is_bound_and_create_only(tmp_path: Path) -> None:
+    artifact = tmp_path / "annotation.json"
+    artifact.write_bytes(b"{}\n")
+    sidecar = digitizer.create_provenance_sidecar(
+        artifact, role="manual_native_pixel_annotation"
+    )
+    document = json.loads(sidecar.read_bytes())
+    assert document["artifact"]["sha256"] == _sha(artifact)
+    assert document["device"] == "human_visual_native_pixels"
+    assert document["sim_backend"] == "not_applicable_manual_annotation"
+    assert document["sha256"] == digitizer.digest(
+        {key: value for key, value in document.items() if key != "sha256"}
+    )
+    with pytest.raises(digitizer.PopulationCurveDigitizationError, match="overwrite"):
+        digitizer.create_provenance_sidecar(
+            artifact, role="manual_native_pixel_annotation"
+        )

@@ -1,0 +1,1 @@
+{"artifact":{"filename":"kv3_steady_state_inactivation.json","sha256":"6a5e06ce19ec740946b98f21a2d259f1a2de905afb287a136a9b1241f41d9d6b"},"device":"local_cpu","role":"numpy_measurement_derivation","schema":"v14-snr-stageB-manual-measurement-provenance-v1","scientific_verdict":null,"sha256":"72af6d62606adddbda4a34883f9aa435688d5ac020e4f74819a910cc8497c8b0","sim_backend":"numpy"}

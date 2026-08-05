@@ -1,0 +1,1 @@
+{"artifact":{"filename":"fast_na_activation.json","sha256":"e976445bdc2aa26d9d6f0528d2d7553669e70ce69c0d5c666b5bf429942b5912"},"device":"local_cpu","role":"numpy_measurement_derivation","schema":"v14-snr-stageB-manual-measurement-provenance-v1","scientific_verdict":null,"sha256":"8d34882708ddf28770b09658ab5e6699382278f949513ad6f29171c013e8429e","sim_backend":"numpy"}

@@ -80,6 +80,7 @@ def _packet() -> dict:
         "measurement_protocol": {"path": "specs/protocol.json", "sha256": "a" * 64},
         "partition_protocol": {"path": "specs/partition.json", "sha256": "b" * 64},
         "evidence": [],
+        "unavailable_panels": [],
         "targets": [
             _target(
                 "kv3:command_001", "kv3", -40.0, 0.6,
