@@ -115,6 +115,13 @@ def test_v3_contract_binds_operational_nap_hcn_assays_and_keeps_sk_unavailable()
     protocol_document = json.loads(protocol_path.read_text(encoding="ascii"))
     assert protocol_document["schema"] == "v14-snr-stageB-intrinsic-protocol-v3"
     assert protocol_document["status"] == "production-measurement-partial"
+    nap_arm = protocol_document["arms"]["nap_lesion"]
+    assert nap_arm["termination"] == {
+        "duration_evidence_class": "project_operational_from_filed_causal_gate",
+        "duration_s": 1.0,
+        "mode": "fixed_duration",
+    }
+    assert nap_arm["mean_voltage_change"]["phase_schedule"]["total_duration_s"] == 3.0
 
     gates = {gate["id"]: gate for gate in v3["causal_gates"]}
     nap_metrics = {item["metric"] for item in gates["nap-complete-lesion"]["hard_gates"]}

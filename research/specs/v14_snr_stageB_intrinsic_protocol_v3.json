@@ -189,8 +189,8 @@
         "window_s": 1.0
       },
       "termination": {
-        "duration_evidence_class": "project_operational_from_filed_same_cell_phased_contract",
-        "duration_s": 3.0,
+        "duration_evidence_class": "project_operational_from_filed_causal_gate",
+        "duration_s": 1.0,
         "mode": "fixed_duration"
       }
     },

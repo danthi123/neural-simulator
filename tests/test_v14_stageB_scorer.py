@@ -498,16 +498,6 @@ def _intrinsic_v3_document(root: Path, *, unstable_nap: bool = False) -> dict:
             "path": ANALYSIS_PROTOCOL_V3_RELATIVE.as_posix(),
             "sha256": _digest(root / ANALYSIS_PROTOCOL_V3_RELATIVE),
         }
-        if arm == "nap_lesion":
-            raw = artifact["raw_observation"]
-            dt = raw["sample_interval_s"]
-            raw["time_s"] = [(index + 1) * dt for index in range(60_000)]
-            raw["voltage_mV"] = [[-70.0] for _ in range(60_000)]
-            raw["spike_states"] = [[False] for _ in range(60_000)]
-            raw["recording_end_s"] = 60_001 * dt
-            raw["analysis_protocol"]["termination"].update({
-                "steps_executed": 60_000, "maximum_steps": 60_000,
-            })
         declarations[arm] = _write_runner_artifact(root, artifact, arm)
     companion = {
         "nap": _write_runner_artifact(root, _nap_companion(root, unstable=unstable_nap), "companion-nap"),
