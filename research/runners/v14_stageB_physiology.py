@@ -41,6 +41,21 @@ from sim.snr_packet_runtime import (
 PARAMETER_SCHEMA = "sim-adaptive-run-parameters-v1"
 OUTPUT_SCHEMA = "v14-snr-stageB-physiology-observation-v1"
 READINESS_ARM = "intact_autonomous"
+READINESS_ARMS = frozenset(
+    {
+        READINESS_ARM,
+        "nap_lesion",
+        "cav2_2_lesion",
+        "sk_lesion",
+        "hcn_baseline_lesion",
+    }
+)
+_LESION_RUNTIME_FIELDS = {
+    "nap_lesion": ("nap", "cp_snr_g_nap_max"),
+    "cav2_2_lesion": ("cav2.2", "cp_snr_g_ca_max"),
+    "sk_lesion": ("sk", "cp_snr_g_sk_max"),
+    "hcn_baseline_lesion": ("hcn", "cp_snr_g_h_max"),
+}
 _REFERENCE_KEYS = frozenset(
     {
         "snr_candidate_release_path",
@@ -129,9 +144,10 @@ def _load_parameter_document(value: str) -> dict[str, Any]:
         raise StageBPhysiologyRunnerError("adaptive parameter document has the wrong schema")
     if not isinstance(document["candidate_id"], str) or not document["candidate_id"]:
         raise StageBPhysiologyRunnerError("adaptive parameter document has an invalid candidate_id")
-    if document["arm"] != READINESS_ARM:
+    if not isinstance(document["arm"], str) or document["arm"] not in READINESS_ARMS:
         raise StageBPhysiologyRunnerError(
-            f"unsupported Stage B arm {document['arm']!r}; only {READINESS_ARM!r} is implemented"
+            f"unsupported Stage B arm {document['arm']!r}; implemented readiness arms are "
+            f"{sorted(READINESS_ARMS)!r}"
         )
     candidate_parameters = document["candidate_parameters"]
     arm_parameters = document["arm_parameters"]
@@ -159,7 +175,7 @@ def _load_parameter_document(value: str) -> dict[str, Any]:
         )
     if set(arm_parameters) != _REFERENCE_KEYS:
         raise StageBPhysiologyRunnerError(
-            "intact autonomous arm parameters must contain packet, policy, and release references"
+            "readiness arm parameters must contain only packet, policy, and release references"
         )
     if set(effective_parameters) != set(candidate_parameters) | _REFERENCE_KEYS:
         raise StageBPhysiologyRunnerError(
@@ -295,6 +311,50 @@ def _binding_provenance(binding: RuntimeSNrPacketBinding) -> dict[str, str]:
     }
 
 
+def _apply_runtime_intervention(bridge: SimulationBridge, arm: str) -> dict[str, Any]:
+    if arm == READINESS_ARM:
+        return {
+            "kind": "none",
+            "operation": "authenticated_packet_intact",
+            "target": None,
+            "runtime_conductance_field": None,
+            "conductance_density_unit": "mS/cm^2",
+            "before": None,
+            "after": None,
+        }
+
+    try:
+        target, field = _LESION_RUNTIME_FIELDS[arm]
+    except KeyError as exc:  # Defensive: document validation should make this unreachable.
+        raise StageBPhysiologyRunnerError(
+            f"no runtime intervention is defined for {arm!r}"
+        ) from exc
+    conductance = getattr(bridge, field, None)
+    if conductance is None:
+        raise StageBPhysiologyRunnerError(f"lesion target {field} was not initialized")
+    before_array = np.asarray(to_host(conductance), dtype=np.float64)
+    if before_array.shape != (1,) or not np.all(np.isfinite(before_array)):
+        raise StageBPhysiologyRunnerError(
+            f"lesion target {field} has an invalid runtime shape or value"
+        )
+    if np.any(before_array < 0.0):
+        raise StageBPhysiologyRunnerError(f"lesion target {field} has a negative conductance")
+
+    conductance[...] = 0.0
+    after_array = np.asarray(to_host(conductance), dtype=np.float64)
+    if after_array.shape != (1,) or not np.array_equal(after_array, np.zeros(1)):
+        raise StageBPhysiologyRunnerError(f"complete lesion did not zero {field}")
+    return {
+        "kind": "complete_intrinsic_current_lesion",
+        "operation": "set_conductance_density_to_zero_after_authenticated_packet_initialization",
+        "target": target,
+        "runtime_conductance_field": field,
+        "conductance_density_unit": "mS/cm^2",
+        "before": [float(value) for value in before_array],
+        "after": [float(value) for value in after_array],
+    }
+
+
 def _output_document(
     document: Mapping[str, Any],
     bindings: Mapping[str, RuntimeSNrPacketBinding],
@@ -304,6 +364,7 @@ def _output_document(
     dt_ms: float,
     root: Path,
     candidate_release: Mapping[str, Any],
+    runtime_intervention: Mapping[str, Any],
 ) -> dict[str, Any]:
     steps = len(voltage_millivolts)
     if steps != len(spike_states) or steps == 0:
@@ -323,7 +384,8 @@ def _output_document(
         },
         "backend": "numpy",
         "device": "cpu",
-        "arm": READINESS_ARM,
+        "arm": document["arm"],
+        "runtime_intervention": dict(runtime_intervention),
         "adaptive_candidate": _candidate_echo(document),
         "raw_observation": {
             "kind": "packet_voltage_spike_trace",
@@ -354,13 +416,13 @@ def _output_document(
     }
 
 
-def run_readiness_intact(
+def run_readiness_arm(
     adaptive_parameter_document: str,
     output: str | Path,
     *,
     repository_root: str | Path,
 ) -> dict[str, Any]:
-    """Execute an authenticated intact SNr packet and write one new raw artifact."""
+    """Execute one authenticated SNr readiness arm and write one new raw artifact."""
 
     document = _load_parameter_document(adaptive_parameter_document)
     root = Path(repository_root).expanduser().resolve(strict=True)
@@ -402,6 +464,7 @@ def run_readiness_intact(
             raise StageBPhysiologyRunnerError("authenticated SNr bridge initialization failed")
         if set(bridge.snr_packet_bindings) != {"snr"}:
             raise StageBPhysiologyRunnerError("bridge did not retain the authenticated SNr binding")
+        runtime_intervention = _apply_runtime_intervention(bridge, document["arm"])
         steps = int(round(config.total_simulation_time_ms / config.dt_ms))
         for _ in range(steps):
             bridge._run_one_simulation_step()
@@ -424,6 +487,7 @@ def run_readiness_intact(
         dt_ms=config.dt_ms,
         root=root,
         candidate_release=candidate_release,
+        runtime_intervention=runtime_intervention,
     )
     destination.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -433,6 +497,26 @@ def run_readiness_intact(
     except FileExistsError as exc:
         raise StageBPhysiologyRunnerError("refusing to replace an existing raw observation") from exc
     return result
+
+
+def run_readiness_intact(
+    adaptive_parameter_document: str,
+    output: str | Path,
+    *,
+    repository_root: str | Path,
+) -> dict[str, Any]:
+    """Compatibility entry point for the authenticated intact readiness arm."""
+
+    document = _load_parameter_document(adaptive_parameter_document)
+    if document["arm"] != READINESS_ARM:
+        raise StageBPhysiologyRunnerError(
+            f"run_readiness_intact requires arm {READINESS_ARM!r}"
+        )
+    return run_readiness_arm(
+        adaptive_parameter_document,
+        output,
+        repository_root=repository_root,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -445,7 +529,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.readiness:
         parser.exit(2, "Stage B runner infrastructure failure: --readiness is required\n")
     try:
-        result = run_readiness_intact(
+        result = run_readiness_arm(
             args.adaptive_parameter_document,
             args.output,
             repository_root=args.repository_root,

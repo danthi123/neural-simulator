@@ -10,7 +10,9 @@ import pytest
 
 from research.runners.v14_stageB_physiology import (
     OUTPUT_SCHEMA,
+    READINESS_ARMS,
     StageBPhysiologyRunnerError,
+    run_readiness_arm,
     run_readiness_intact,
 )
 from sim.snr_executable_packet import canonical_bytes
@@ -89,6 +91,15 @@ def test_readiness_runner_executes_real_authenticated_packet_and_writes_uncroppe
     assert result["process_status"] == "completed"
     assert result["backend"] == "numpy"
     assert result["device"] == "cpu"
+    assert result["runtime_intervention"] == {
+        "kind": "none",
+        "operation": "authenticated_packet_intact",
+        "target": None,
+        "runtime_conductance_field": None,
+        "conductance_density_unit": "mS/cm^2",
+        "before": None,
+        "after": None,
+    }
     assert result["readiness_only"] == {
         "enabled": True,
         "reserved_seed_count": 0,
@@ -119,17 +130,82 @@ def test_readiness_runner_executes_real_authenticated_packet_and_writes_uncroppe
     assert len(result["provenance"]["runtime_binding_manifest_sha256"]) == 64
 
 
-def test_readiness_runner_rejects_unsupported_arm_without_creating_raw_artifact(tmp_path):
+@pytest.mark.parametrize(
+    ("arm", "target", "runtime_field"),
+    [
+        ("nap_lesion", "nap", "cp_snr_g_nap_max"),
+        ("cav2_2_lesion", "cav2.2", "cp_snr_g_ca_max"),
+        ("sk_lesion", "sk", "cp_snr_g_sk_max"),
+        ("hcn_baseline_lesion", "hcn", "cp_snr_g_h_max"),
+    ],
+)
+def test_readiness_runner_executes_authenticated_complete_intrinsic_current_lesions(
+    tmp_path, arm, target, runtime_field,
+):
+    candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
+    parameter_document = _parameter_document(candidate_parameters, references, arm=arm)
+    output = tmp_path / "output" / f"{arm}.json"
+
+    result = run_readiness_arm(parameter_document, output, repository_root=tmp_path)
+
+    assert json.loads(output.read_text(encoding="ascii")) == result
+    assert result["arm"] == arm
+    assert result["adaptive_candidate"] == {
+        "candidate_id": "packet-backed-readiness-intact",
+        "candidate_sha256": json.loads(parameter_document)["candidate_sha256"],
+        "effective_parameters": {**candidate_parameters, **references},
+    }
+    intervention = result["runtime_intervention"]
+    assert intervention["kind"] == "complete_intrinsic_current_lesion"
+    assert intervention["operation"] == (
+        "set_conductance_density_to_zero_after_authenticated_packet_initialization"
+    )
+    assert intervention["target"] == target
+    assert intervention["runtime_conductance_field"] == runtime_field
+    assert intervention["conductance_density_unit"] == "mS/cm^2"
+    assert intervention["before"][0] > 0.0
+    assert intervention["after"] == [0.0]
+    assert result["readiness_only"]["scientific_seed"] is None
+    assert "scientific_verdict" not in result
+    assert result["provenance"]["candidate_release"]["sha256"] == references[
+        "snr_candidate_release_sha256"
+    ]
+    binding = result["provenance"]["bindings"][0]
+    assert binding["packet_path"] == references["snr_executable_packet_path"]
+    assert binding["packet_file_sha256"] == references["snr_executable_packet_sha256"]
+    assert binding["authority_policy_sha256"] == references[
+        "snr_authority_policy_sha256"
+    ]
+
+
+@pytest.mark.parametrize("arm", ["nalcn_lesion", "hcn_hyperpolarization_lesion"])
+def test_readiness_runner_rejects_unsupported_arm_without_creating_raw_artifact(tmp_path, arm):
     candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
     output = tmp_path / "output" / "raw.json"
 
     with pytest.raises(StageBPhysiologyRunnerError, match="unsupported Stage B arm"):
-        run_readiness_intact(
-            _parameter_document(candidate_parameters, references, arm="nalcn_lesion"),
+        run_readiness_arm(
+            _parameter_document(candidate_parameters, references, arm=arm),
             output, repository_root=tmp_path
         )
 
     assert not output.exists()
+
+
+def test_intact_compatibility_entry_point_rejects_lesion_arm(tmp_path):
+    candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
+
+    with pytest.raises(StageBPhysiologyRunnerError, match="requires arm 'intact_autonomous'"):
+        run_readiness_intact(
+            _parameter_document(candidate_parameters, references, arm="nap_lesion"),
+            tmp_path / "raw.json",
+            repository_root=tmp_path,
+        )
+
+    assert READINESS_ARMS == {
+        "intact_autonomous", "nap_lesion", "cav2_2_lesion", "sk_lesion",
+        "hcn_baseline_lesion",
+    }
 
 
 def test_readiness_runner_fails_closed_when_sealed_packet_digest_is_wrong(tmp_path):

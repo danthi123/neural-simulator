@@ -845,50 +845,34 @@
       ]
     },
     "019fcf7d-6bf0-7693-91e1-94c0fdbcd6d1": {
-      "heartbeat_at": "2026-08-05T01:15:46+00:00",
+      "completed_at": "2026-08-05T01:21:27+00:00",
+      "heartbeat_at": "2026-08-05T01:21:27+00:00",
       "model": "gpt-5.6-sol-high",
-      "next_action": "Implement and test Nap, Cav2.2, SK, and HCN readiness-only lesion arms without scientific scoring.",
+      "next_action": "Integrate lesion runner arms with authenticated multi-arm orchestration and causal scorer contracts.",
+      "result": "Implemented authenticated Nap, Cav2.2, SK, and baseline HCN complete-lesion readiness arms with before/after conductance evidence; controller verified 60 focused tests.",
       "started_at": "2026-08-05T01:15:46+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Implement authenticated Stage B intrinsic-current lesion runner arms",
       "write_set": [
         "research/runners/v14_stageB_physiology.py",
-        "tests/test_v14_stageB_runner.py",
-        "tests/test_v14_stageB_physiology_metrics.py"
+        "tests/test_v14_stageB_runner.py"
+      ]
+    },
+    "019fcf7f-abf3-7461-ab37-64435480823d": {
+      "heartbeat_at": "2026-08-05T01:18:04+00:00",
+      "model": "gpt-5.6-sol-high",
+      "next_action": "Implement strict Nap, Cav2.2, SK, and HCN causal scorer contracts from filed gates.",
+      "started_at": "2026-08-05T01:18:04+00:00",
+      "status": "running",
+      "task": "Implement Stage B intrinsic-lesion scorer contracts",
+      "write_set": [
+        "tools/v14_stageB_scorer.py",
+        "tests/test_v14_stageB_scorer.py",
+        "tests/test_v14_stageB_scorer_fixtures.py"
       ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T19:56:29+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-default-control-flow"
-    },
-    {
-      "at": "2026-08-04T19:56:29+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce59-1880-7551-bfb9-1740900605ab"
-    },
-    {
-      "at": "2026-08-04T19:56:29+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-performance-variance-audit"
-    },
-    {
-      "at": "2026-08-04T19:56:29+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce59-1d91-7031-a987-f0d21a79edd4"
-    },
-    {
-      "at": "2026-08-04T19:59:52+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce59-1880-7551-bfb9-1740900605ab"
-    },
     {
       "at": "2026-08-04T19:59:52+00:00",
       "detail": "completed",
@@ -1458,6 +1442,36 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-primary-source-fulltext-intake"
+    },
+    {
+      "at": "2026-08-05T01:18:04+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcf7f-abf3-7461-ab37-64435480823d"
+    },
+    {
+      "at": "2026-08-05T01:18:17+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T01:18:34+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T01:18:34+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-primary-source-fulltext-intake"
+    },
+    {
+      "at": "2026-08-05T01:21:27+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf7d-6bf0-7693-91e1-94c0fdbcd6d1"
     }
   ],
   "lanes": {
@@ -1525,12 +1539,12 @@
       "agent_id": "019fcf7d-6673-79b3-afe3-7ef6b9ca82dc",
       "blocker": "Current RAG has project summaries and Simmons metadata intake but not the decisive primary full texts; paper queries fall back to a 2007 review.",
       "delegation": "agent",
-      "heartbeat_at": "2026-08-05T01:15:46+00:00",
+      "heartbeat_at": "2026-08-05T01:18:34+00:00",
       "next_action": "Retrieve, review, catalog, and RAG-index the validated Ding sodium and Kv3 PMC primary full texts.",
       "owner": "controller",
       "priority": 2,
       "recovery_action": "Use the validated scholarly full-text retrieval workflow and source-intake review path; locators remain pending until direct source reading.",
-      "resource": "agent_cpu_network",
+      "resource": "remote_agent_network",
       "status": "running",
       "write_set": [
         "tools/parameter_research.py",
@@ -1747,15 +1761,14 @@
       ]
     },
     "gateb-v14-scorer-integration": {
-      "agent_id": "019fcf7d-6bf0-7693-91e1-94c0fdbcd6d1",
       "blocker": "",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-05T01:15:46+00:00",
-      "next_action": "Bank completed two-candidate transport receipt while the agent implements authenticated intrinsic-current lesion runner arms.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T01:18:34+00:00",
+      "next_action": "Integrate the parallel intrinsic-lesion runner and scorer outputs, then extend authenticated candidate execution across those causal arms without opening scientific partitions.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "If any source cannot authorize an exact fixed value, keep that leaf explicitly model-prior or searched and leave readiness undefined; do not invent measured authority.",
-      "resource": "agent_cpu",
+      "resource": "remote_agent",
       "status": "running",
       "write_set": [
         "research/runners/v14_stageB_physiology.py",
@@ -2093,5 +2106,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T01:15:46+00:00"
+  "updated_at": "2026-08-05T01:21:27+00:00"
 }
