@@ -1,0 +1,45 @@
+{
+  "schema": "v14-source-model-neuron-initialization-oracle-v1",
+  "oracle_id": "v14-khaliq-rsg-native-initialization-v1",
+  "status": "preregistered_not_executed",
+  "scientific_verdict": null,
+  "purpose": "Resolve whether the author-supplied seqinitial equations produce the same valid stationary occupancy as the kinetic transition graph before sealing the Stage B source transfer.",
+  "source": {
+    "citation": "Khaliq, Gouwens, and Raman 2003 author-supplied ModelDB 48332 rsg.mod",
+    "commit": "c96405173a17d18999d2a8d63d40899a76d02bdf",
+    "git_blob": "1992a31e3b0cde7797c88fbd4300629c541eeb88",
+    "file_name": "rsg.mod",
+    "url": "https://raw.githubusercontent.com/ModelDBRepository/48332/c96405173a17d18999d2a8d63d40899a76d02bdf/rsg.mod",
+    "sha256": "1a3382714bd0962665ec31f7dfac2aa3a9e403a5e3d23e29851afec232c4543e"
+  },
+  "runner": {
+    "path": "research/runners/v14_source_model_neuron_oracle.py",
+    "sha256": "947318c49f65095cd64f0a92897e9c885ca48a40917ff2d114186ac4394d6d24"
+  },
+  "runtime": {
+    "engine": "NEURON",
+    "version_policy": "record exact installed version in the output; do not alter source NMODL",
+    "compile_policy": "compile the authenticated source alone in a fresh temporary directory",
+    "voltage_control": "SEClamp at each initialization voltage with 1e-9 Mohm series resistance",
+    "temperature_policy": "not applicable; rsg.mod contains no temperature or Q10 term"
+  },
+  "state_order": ["C1", "C2", "C3", "C4", "C5", "I1", "I2", "I3", "I4", "I5", "O", "B", "I6"],
+  "voltages_mV": [-120.0, -100.0, -90.0, -40.0, 0.0, 30.0],
+  "fixed_voltage_step_ms": 0.001,
+  "observations": [
+    "all 13 native occupancies immediately after finitialize",
+    "occupancy sum and minimum",
+    "names of negative occupancies",
+    "all occupancies after one fixed-voltage 0.001 ms source-native step",
+    "maximum absolute state change after that step"
+  ],
+  "decision_rules": {
+    "SOURCE_NATIVE_VALID_STATIONARY": "Every initial occupancy is nonnegative, sums to one within 1e-10, and changes by at most 1e-8 after one fixed-voltage step at every voltage.",
+    "SOURCE_NATIVE_INITIALIZATION_DEFECT": "Any native occupancy is negative or any maximum one-step change exceeds 1e-8 while voltage remains fixed.",
+    "INCONCLUSIVE_INVALID_EVIDENCE": "Source, runner, compiler, runtime, output, or voltage control cannot be authenticated."
+  },
+  "boundary": "This diagnostic may classify source-native initialization only. It cannot authorize graph-equilibrium substitution, parameter fitting, conductance fitting, Stage B promotion, or whole-cell integration.",
+  "output": "research/findings/raw/v14_khaliq_native_initialization_oracle_v1.json",
+  "device": "cpu",
+  "provenance_exempt": "prospective non-executed oracle contract; contains no observed result"
+}
