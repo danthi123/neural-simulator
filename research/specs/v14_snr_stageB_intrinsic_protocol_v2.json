@@ -1,0 +1,147 @@
+{
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "non-executed source-bound analysis and termination contract; contains no simulation result",
+  "analysis_conventions": {
+    "cv_method": "population standard deviation of the 100 complete interspike intervals divided by their mean",
+    "cv_method_evidence_class": "project_analysis_convention",
+    "frequency_method": "100 divided by the elapsed time from the first through the 101st spike",
+    "frequency_method_evidence_class": "project_analysis_convention"
+  },
+  "arms": {
+    "cav2_2_lesion": {
+      "spike_metrics": {
+        "source_locator": "Atherton and Bevan 2005 Methods, Data analysis",
+        "target_spike_count": 101,
+        "target_spike_count_evidence_class": "source_reported"
+      },
+      "termination": {
+        "maximum_duration_s": 20.0,
+        "maximum_duration_evidence_class": "project_operational_resource_bound_not_a_physiology_gate",
+        "mode": "event_count_or_timeout"
+      },
+      "interspike_voltage_nadir": {
+        "status": "production-project-analysis-convention",
+        "metric": "median_interspike_voltage_nadir_mV",
+        "event_selection": "all 100 complete half-open interspike intervals from the first through 101st spike",
+        "per_event_estimator": "discrete minimum membrane voltage in [spike_i, spike_i+1)",
+        "aggregation": "median across all 100 per-interval nadirs",
+        "evidence_class": "project_analysis_convention_over_source_reported_direction",
+        "source_locator": "Atherton and Bevan 2005 Results and Figures 5-6",
+        "interpretation_boundary": "directional total-AHP assay; not a source-measured medium-AHP amplitude or numerical source-equivalence test"
+      }
+    },
+    "hcn_baseline_lesion": {
+      "hyperpolarized_input_resistance": {
+        "reason": "the source does not fully specify the current-clamp input-resistance protocol needed by this simulator",
+        "status": "unavailable"
+      },
+      "medium_ahp": {
+        "reason": "not required for the filed HCN baseline gate",
+        "status": "unavailable"
+      },
+      "spike_metrics": {
+        "source_locator": "Atherton and Bevan 2005 Methods, Data analysis",
+        "target_spike_count": 101,
+        "target_spike_count_evidence_class": "source_reported"
+      },
+      "termination": {
+        "maximum_duration_s": 20.0,
+        "maximum_duration_evidence_class": "project_operational_resource_bound_not_a_physiology_gate",
+        "mode": "event_count_or_timeout"
+      }
+    },
+    "intact_autonomous": {
+      "spike_metrics": {
+        "source_locator": "Atherton and Bevan 2005 Methods, Data analysis",
+        "target_spike_count": 101,
+        "target_spike_count_evidence_class": "source_reported"
+      },
+      "termination": {
+        "maximum_duration_s": 20.0,
+        "maximum_duration_evidence_class": "project_operational_resource_bound_not_a_physiology_gate",
+        "mode": "event_count_or_timeout"
+      },
+      "interspike_voltage_nadir": {
+        "status": "production-project-analysis-convention",
+        "metric": "median_interspike_voltage_nadir_mV",
+        "event_selection": "all 100 complete half-open interspike intervals from the first through 101st spike",
+        "per_event_estimator": "discrete minimum membrane voltage in [spike_i, spike_i+1)",
+        "aggregation": "median across all 100 per-interval nadirs",
+        "evidence_class": "project_analysis_convention_over_source_reported_direction",
+        "source_locator": "Atherton and Bevan 2005 Results and Figures 5-6",
+        "interpretation_boundary": "directional total-AHP assay; not a source-measured medium-AHP amplitude or numerical source-equivalence test"
+      }
+    },
+    "nap_lesion": {
+      "mean_voltage_change": {
+        "reason": "Ding et al. report slow hyperpolarization from a stable baseline but do not define a one-second mean-voltage estimator or a matched baseline window",
+        "status": "unavailable"
+      },
+      "medium_ahp": {
+        "reason": "not required for the filed Nap lesion gate",
+        "status": "unavailable"
+      },
+      "spike_metrics": {
+        "source_evidence_class": "project_operational",
+        "window_s": 1.0
+      },
+      "termination": {
+        "duration_s": 1.0,
+        "duration_evidence_class": "project_operational_from_filed_causal_gate",
+        "mode": "fixed_duration"
+      }
+    },
+    "sk_lesion": {
+      "depolarization_block_cohort": {
+        "reason": "a sealed twelve-cell cohort protocol is not yet available",
+        "status": "unavailable"
+      },
+      "spike_metrics": {
+        "source_locator": "Atherton and Bevan 2005 Methods, Data analysis",
+        "target_spike_count": 101,
+        "target_spike_count_evidence_class": "source_reported"
+      },
+      "termination": {
+        "maximum_duration_s": 20.0,
+        "maximum_duration_evidence_class": "project_operational_resource_bound_not_a_physiology_gate",
+        "mode": "event_count_or_timeout"
+      },
+      "interspike_voltage_nadir": {
+        "status": "production-project-analysis-convention",
+        "metric": "median_interspike_voltage_nadir_mV",
+        "event_selection": "all 100 complete half-open interspike intervals from the first through 101st spike",
+        "per_event_estimator": "discrete minimum membrane voltage in [spike_i, spike_i+1)",
+        "aggregation": "median across all 100 per-interval nadirs",
+        "evidence_class": "project_analysis_convention_over_source_reported_direction",
+        "source_locator": "Atherton and Bevan 2005 Results and Figures 5-6",
+        "interpretation_boundary": "directional total-AHP assay; not a source-measured medium-AHP amplitude or numerical source-equivalence test"
+      }
+    }
+  },
+  "causal_gate_authority": {
+    "path": "research/specs/v14_snr_stageB_causal_gates_v2.json",
+    "role": "this causal-gate artifact authorizes the exact protocol digest"
+  },
+  "execution": {
+    "dt_ms": 0.05,
+    "dt_status": "project_operational_discretization_requires_timestep_convergence_before_waveform_claims",
+    "trace_policy": "uncropped_post_update_voltage_and_spike_state"
+  },
+  "primary_source": {
+    "doi": "10.1523/JNEUROSCI.1475-05.2005",
+    "locator": "Atherton and Bevan 2005 Methods, Data analysis",
+    "pmcid": "PMC6725542"
+  },
+  "protocol_id": "v14-stageB-intrinsic-101spike-v2",
+  "schema": "v14-snr-stageB-intrinsic-protocol-v2",
+  "scientific_boundaries": {
+    "event_count_timeout": "resource-safety termination only; reaching it cannot by itself produce a physiology failure",
+    "host_analysis": "measurement and orchestration only; no simulated neural function is replaced",
+    "scientific_verdict": "this protocol can resolve only filed gates with complete measurement contracts; underspecified gates remain unavailable"
+  },
+  "status": "production-measurement-partial",
+  "target_packet": {
+    "path": "research/specs/v14_snr_stageB_target_packet.json",
+    "sha256": "50fde698cc5468dfabc5076d0b36cfda90e165c4ca599fda6582d121998b802a"
+  }
+}

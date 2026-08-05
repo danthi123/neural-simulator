@@ -269,9 +269,17 @@ atomic CPU confirmation on separate pool machines. The controller pins source,
 dependencies, host assignments, recovery hosts, artifact sets, and receipts;
 local collection independently authenticates and recomputes each score. It is
 not yet a fully autonomous research loop: generation of a scientifically valid
-next search is blocked on four unresolved biological protocols, and arbitrary
+next search is blocked on unresolved biological protocols, and arbitrary
 new objectives must not be invented from partial evidence. Unspecified
 subgates remain fail-closed.
+
+A versioned V2 contract now resolves the post-spike AHP direction without
+pretending the paper specified a medium-AHP window: the scorer recomputes the
+median voltage nadir across all 100 complete interspike intervals. The original
+V1 files remain byte-identical for historical replay. NaP voltage and HCN input
+resistance have source-supported directions but require explicitly
+project-operational companion protocols; the 12-cell SK result remains
+unavailable until independently justified cell parameterizations exist.
 
 1. **Plan.** Materialize the treatment, controls, lesions, anti-cheats, exact
    variables, seed partitions, expected artifacts, and resource budget.

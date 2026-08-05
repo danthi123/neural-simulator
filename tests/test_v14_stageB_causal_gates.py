@@ -7,6 +7,7 @@ from sim.snr_executable_packet import canonical_bytes
 
 ROOT = Path(__file__).resolve().parents[1]
 GATE_PATH = ROOT / "research/specs/v14_snr_stageB_causal_gates.json"
+GATE_V2_PATH = ROOT / "research/specs/v14_snr_stageB_causal_gates_v2.json"
 
 
 def _spec():
@@ -76,3 +77,27 @@ def test_analysis_protocols_preserve_event_count_and_under_specified_boundaries(
     sk = protocols["sk_depolarization_block"]
     assert "4 of 12" in sk["source_reported"]
     assert "not an exact block-onset target" in sk["boundary"]
+
+
+def test_v2_contract_adds_directional_total_ahp_assay_without_rewriting_v1():
+    v1 = _spec()
+    v2 = json.loads(GATE_V2_PATH.read_text(encoding="ascii"))
+    assert GATE_V2_PATH.read_bytes() == canonical_bytes(v2)
+    assert v2["schema"] == "v14-snr-stageB-causal-gates-v2"
+    assert v1["analysis_protocol_boundaries"]["medium_ahp"]["status"] == (
+        "protocol_under_specified"
+    )
+    nadir = v2["analysis_protocol_boundaries"]["post_spike_voltage_nadir"]
+    assert nadir["status"] == "production_project_analysis_convention"
+    assert "does not define" in nadir["boundary"]
+    assert "medium-AHP amplitude" in nadir["boundary"]
+    protocol = v2["authorized_analysis_protocol"]
+    protocol_path = ROOT / protocol["path"]
+    assert hashlib.sha256(protocol_path.read_bytes()).hexdigest() == protocol["sha256"]
+
+    gates = {gate["id"]: gate for gate in v2["causal_gates"]}
+    for gate_id in ("cav2.2-complete-lesion", "sk-complete-lesion"):
+        metrics = {item["metric"]: item for item in gates[gate_id]["hard_gates"]}
+        assay = metrics["median_interspike_voltage_nadir_mV"]
+        assert assay["operator"] == "lesion_greater_than_intact"
+        assert assay["evidence_class"] == "source_reported_direction"

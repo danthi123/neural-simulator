@@ -11,7 +11,12 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from tools.compact_trace import CompactTraceError, load_compact_trace
-from tools.v14_stageB_physiology_metrics import ahp_depth, peak_conductance, spike_train_metrics
+from tools.v14_stageB_physiology_metrics import (
+    ahp_depth,
+    interspike_voltage_nadirs,
+    peak_conductance,
+    spike_train_metrics,
+)
 from tools.v14_stageB_scorer_fixtures import StageBFixtureError, score_observation, validate_fixture
 
 
@@ -259,7 +264,10 @@ def _load_trace_protocol(
         "arms", "scientific_boundaries",
     }
     if (set(document) != required
-            or document.get("schema") != "v14-snr-stageB-intrinsic-protocol-v1"
+            or document.get("schema") not in {
+                "v14-snr-stageB-intrinsic-protocol-v1",
+                "v14-snr-stageB-intrinsic-protocol-v2",
+            }
             or document.get("status") != "production-measurement-partial"):
         raise StageBScorerError(f"runner artifact {arm!r} analysis protocol changed schema or status")
     if document.get("analysis_conventions") != {
@@ -403,6 +411,42 @@ def _recompute_trace_metrics(
     ]
     if not selected_voltage:
         raise StageBScorerError(f"runner artifact {arm!r} scoring window contains no voltage samples")
+    nadir_contract = arm_protocol.get("interspike_voltage_nadir")
+    if nadir_contract is None:
+        nadir = {
+            "status": "unavailable",
+            "median_interspike_voltage_nadir_mV": None,
+            "reason": "the filed arm does not require the total-AHP directional assay",
+        }
+    elif (
+        not isinstance(nadir_contract, Mapping)
+        or nadir_contract.get("status") != "production-project-analysis-convention"
+    ):
+        raise StageBScorerError(f"runner artifact {arm!r} has an invalid voltage-nadir contract")
+    elif len(spike_times) != 101:
+        nadir = {
+            "status": "unavailable",
+            "median_interspike_voltage_nadir_mV": None,
+            "reason": "the 101-spike trace required for 100 complete interspike intervals is unavailable",
+        }
+    else:
+        measured = interspike_voltage_nadirs(
+            times,
+            voltages,
+            spike_times,
+            time_unit="s",
+            voltage_unit="mV",
+            sample_interval_s=dt,
+            recording_start_s=float(raw["recording_start_s"]),
+            recording_end_s=float(raw["recording_end_s"]),
+            burn_in_start_s=float(raw["recording_start_s"]),
+            burn_in_end_s=float(spike_times[0]),
+        )
+        nadir = {
+            "status": "recomputed",
+            **measured,
+            "source_equivalence_claimed": False,
+        }
     return {
         "status": "recomputed",
         "spike_metrics": spikes,
@@ -412,6 +456,7 @@ def _recompute_trace_metrics(
             "ahp_depth_mV": None,
             "reason": str(arm_protocol.get("medium_ahp", {}).get("reason", "not specified")),
         },
+        "interspike_voltage_nadir": nadir,
         "analysis_protocol": {
             "binding": binding,
             "termination": dict(termination),
@@ -581,6 +626,10 @@ def _score_intrinsic_hard_gate(
             "firing_rate_hz": ("spike_metrics", "firing_rate_hz"),
             "isi_cv": ("spike_metrics", "isi_cv"),
             "medium_ahp_depth_mV": ("medium_ahp", "ahp_depth_mV"),
+            "median_interspike_voltage_nadir_mV": (
+                "interspike_voltage_nadir",
+                "median_interspike_voltage_nadir_mV",
+            ),
         }
         if metric not in metric_paths:
             raise StageBScorerError(f"{gate_id} has unsupported directional metric {metric!r}")
@@ -671,7 +720,10 @@ def score_intrinsic_lesion_observations(
     gate_path, packet = _load_bound_json(
         root_path, document.get("causal_gate_packet"), "causal gate packet"
     )
-    if packet.get("schema") != "v14-snr-stageB-causal-gates-v1":
+    if packet.get("schema") not in {
+        "v14-snr-stageB-causal-gates-v1",
+        "v14-snr-stageB-causal-gates-v2",
+    }:
         raise StageBScorerError("causal gate packet has the wrong schema")
     _, target = _load_bound_json(root_path, packet.get("target_packet"), "causal target packet")
     if target.get("schema") != "v14-snr-stageB-target-packet-v1":

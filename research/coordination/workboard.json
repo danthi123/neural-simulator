@@ -970,12 +970,6 @@
       "at": "2026-08-04T21:11:22+00:00",
       "detail": "running",
       "kind": "lane-update",
-      "subject": "gateb-v14-physiology-metrics"
-    },
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "lane-update",
       "subject": "gateb-v14-conductance-clamp"
     },
     {
@@ -1565,6 +1559,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T04:29:19+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -1812,16 +1812,18 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T04:09:57+00:00",
-      "next_action": "Resolve the source-bound Nap stable-baseline voltage estimator, event-aligned medium-AHP window, paired HCN hyperpolarized current-step protocol, and sealed 12-cell SK depolarization-block cohort; implement only contracts supported by direct primary evidence.",
+      "heartbeat_at": "2026-08-05T04:29:19+00:00",
+      "next_action": "Commit and provision the versioned total-AHP V2 contract, rerun candidates 284 and 404 on authoritative NumPy workers, then implement authenticated same-cell NaP and paired HCN project-operational companion traces; keep the SK cohort unavailable.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "If a direct source does not provide a required numerical or measurement definition, record the contract as unavailable and research a preparation-matched primary source rather than inventing a threshold.",
-      "resource": "remote_agent_network_plus_local_cpu",
+      "recovery_action": "If V2 nadir direction fails, report the candidate-specific negative result without retuning. If companion protocols cannot preserve exact raw-trace authentication, keep those gates unavailable rather than accepting runner summaries.",
+      "resource": "local_cpu_plus_pool40_pool41",
       "status": "running",
       "write_set": [
         "research/specs",
         "tools/v14_stageB_scorer.py",
+        "tools/v14_stageB_physiology_metrics.py",
+        "tools/v14_stageB_intrinsic_readiness.py",
         "research/runners",
         "tests",
         "research/findings",
@@ -2214,5 +2216,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T04:09:57+00:00"
+  "updated_at": "2026-08-05T04:29:19+00:00"
 }

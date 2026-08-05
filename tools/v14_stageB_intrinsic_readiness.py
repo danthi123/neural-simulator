@@ -517,7 +517,10 @@ def run_intrinsic_readiness(
         raise StageBIntrinsicReadinessError("packet template digest does not match")
     if _digest_bytes(causal_gate.read_bytes()) != causal_gate_sha256:
         raise StageBIntrinsicReadinessError("causal gate packet digest does not match")
-    if gate_document.get("schema") != "v14-snr-stageB-causal-gates-v1":
+    if gate_document.get("schema") not in {
+        "v14-snr-stageB-causal-gates-v1",
+        "v14-snr-stageB-causal-gates-v2",
+    }:
         raise StageBIntrinsicReadinessError("causal gate packet has the wrong schema")
     analysis_protocol: dict[str, str] | None = None
     protocol_file: Path | None = None
@@ -536,7 +539,10 @@ def run_intrinsic_readiness(
             raise StageBIntrinsicReadinessError("analysis protocol must contain an object")
         if _digest_bytes(protocol_file.read_bytes()) != analysis_protocol_sha256:
             raise StageBIntrinsicReadinessError("analysis protocol digest does not match")
-        if protocol_document.get("schema") != "v14-snr-stageB-intrinsic-protocol-v1":
+        if protocol_document.get("schema") not in {
+            "v14-snr-stageB-intrinsic-protocol-v1",
+            "v14-snr-stageB-intrinsic-protocol-v2",
+        }:
             raise StageBIntrinsicReadinessError("analysis protocol has the wrong schema")
         analysis_protocol = {
             "path": _relative(root, protocol_file, "analysis protocol"),

@@ -45,7 +45,10 @@ from tools.compact_trace import CompactTraceError, save_compact_trace
 
 PARAMETER_SCHEMA = "sim-adaptive-run-parameters-v1"
 OUTPUT_SCHEMA = "v14-snr-stageB-physiology-observation-v1"
-ANALYSIS_PROTOCOL_SCHEMA = "v14-snr-stageB-intrinsic-protocol-v1"
+ANALYSIS_PROTOCOL_SCHEMAS = frozenset({
+    "v14-snr-stageB-intrinsic-protocol-v1",
+    "v14-snr-stageB-intrinsic-protocol-v2",
+})
 READINESS_ARM = "intact_autonomous"
 READINESS_ARMS = frozenset(
     {
@@ -296,7 +299,7 @@ def _load_analysis_protocol(
     }
     if not isinstance(protocol, Mapping) or set(protocol) != required:
         raise StageBPhysiologyRunnerError("analysis protocol has an invalid shape")
-    if protocol.get("schema") != ANALYSIS_PROTOCOL_SCHEMA:
+    if protocol.get("schema") not in ANALYSIS_PROTOCOL_SCHEMAS:
         raise StageBPhysiologyRunnerError("analysis protocol has the wrong schema")
     if protocol.get("status") != "production-measurement-partial":
         raise StageBPhysiologyRunnerError("analysis protocol changed its scientific status")

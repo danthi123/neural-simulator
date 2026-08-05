@@ -8,6 +8,7 @@ from tools.v14_stageB_physiology_metrics import (
     detect_depolarization_block,
     inhibitory_release_metrics,
     input_resistance,
+    interspike_voltage_nadirs,
     peak_conductance,
     spike_train_metrics,
 )
@@ -123,6 +124,40 @@ def test_ahp_depth_uses_explicit_reference_and_discrete_minimum():
         "minimum_time_s": pytest.approx(0.006),
         "ahp_depth_mV": 15.0,
     }
+
+
+def test_interspike_voltage_nadirs_use_every_complete_interval():
+    time = np.arange(0.0, 0.013, 0.001)
+    voltage = np.array(
+        [-65, -65, 20, -60, -70, -68, 20, -61, -74, -69, 20, -62, -72],
+        dtype=float,
+    )
+    result = interspike_voltage_nadirs(
+        time,
+        voltage,
+        [0.002, 0.006, 0.010],
+        **TRACE_CONTRACT,
+        recording_end_s=0.013,
+    )
+    assert result == {
+        "event_selection": "all-complete-half-open-interspike-intervals",
+        "complete_interspike_interval_count": 2,
+        "median_interspike_voltage_nadir_mV": -72.0,
+        "interspike_voltage_nadirs_mV": [-70.0, -74.0],
+    }
+
+
+def test_interspike_voltage_nadirs_require_complete_post_burn_in_intervals():
+    time = np.arange(0.0, 0.007, 0.001)
+    voltage = np.full(time.shape, -65.0)
+    with pytest.raises(PhysiologyMetricError, match="at least two spikes"):
+        interspike_voltage_nadirs(
+            time, voltage, [0.003], **TRACE_CONTRACT, recording_end_s=0.007
+        )
+    with pytest.raises(PhysiologyMetricError, match="before burn-in"):
+        interspike_voltage_nadirs(
+            time, voltage, [0.001, 0.004], **TRACE_CONTRACT, recording_end_s=0.007
+        )
 
 
 def test_depolarization_block_requires_spike_free_plateau_of_requested_duration():

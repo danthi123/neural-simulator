@@ -371,6 +371,67 @@ def ahp_depth(
     }
 
 
+def interspike_voltage_nadirs(
+    time_s: Sequence[float],
+    voltage_mV: Sequence[float],
+    spike_times_s: Sequence[float],
+    *,
+    time_unit: str,
+    voltage_unit: str,
+    sample_interval_s: float,
+    recording_start_s: float,
+    recording_end_s: float,
+    burn_in_start_s: float,
+    burn_in_end_s: float,
+) -> dict[str, float | int | str | list[float]]:
+    """Measure the voltage nadir in every complete interspike interval.
+
+    This is a project analysis convention for a directional total-AHP assay. It
+    is not a reconstruction of a source-reported medium-AHP amplitude.
+    """
+
+    time, voltage, dt, burn_end = _validate_trace(
+        time_s,
+        voltage_mV,
+        time_unit=time_unit,
+        voltage_unit=voltage_unit,
+        sample_interval_s=sample_interval_s,
+        recording_start_s=recording_start_s,
+        burn_in_start_s=burn_in_start_s,
+        burn_in_end_s=burn_in_end_s,
+    )
+    recording_end = _finite_number(recording_end_s, "recording_end_s")
+    if not math.isclose(
+        recording_end, time[-1] + dt, abs_tol=max(1e-12, dt * 1e-9)
+    ):
+        raise PhysiologyMetricError(
+            "recording_end_s must equal one sample interval past the final sample"
+        )
+    spikes = _spikes(
+        spike_times_s,
+        time_unit=time_unit,
+        recording_start_s=recording_start_s,
+        recording_end_s=recording_end,
+    )
+    if spikes.size < 2:
+        raise PhysiologyMetricError("at least two spikes are required for an interspike nadir")
+    if spikes[0] < burn_end:
+        raise PhysiologyMetricError("the first complete interspike interval begins before burn-in ends")
+
+    nadirs: list[float] = []
+    for start, end in zip(spikes[:-1], spikes[1:], strict=True):
+        mask = (time >= start) & (time < end)
+        if not np.any(mask):
+            raise PhysiologyMetricError("an interspike interval contains no voltage samples")
+        nadirs.append(float(np.min(voltage[mask])))
+    return {
+        "event_selection": "all-complete-half-open-interspike-intervals",
+        "complete_interspike_interval_count": len(nadirs),
+        "median_interspike_voltage_nadir_mV": float(np.median(nadirs)),
+        "interspike_voltage_nadirs_mV": nadirs,
+    }
+
+
 def detect_depolarization_block(
     time_s: Sequence[float],
     voltage_mV: Sequence[float],

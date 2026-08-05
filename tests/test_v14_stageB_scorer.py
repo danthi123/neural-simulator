@@ -22,6 +22,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_RELATIVE = Path("research/fixtures/v14_snr_stageB_scorer_fixtures.json")
 CAUSAL_GATE_RELATIVE = Path("research/specs/v14_snr_stageB_causal_gates.json")
 ANALYSIS_PROTOCOL_RELATIVE = Path("research/specs/v14_snr_stageB_intrinsic_protocol.json")
+CAUSAL_GATE_V2_RELATIVE = Path("research/specs/v14_snr_stageB_causal_gates_v2.json")
+ANALYSIS_PROTOCOL_V2_RELATIVE = Path("research/specs/v14_snr_stageB_intrinsic_protocol_v2.json")
 
 
 def _digest(path: Path) -> str:
@@ -159,7 +161,14 @@ def _runner_artifact(arm: str) -> dict:
         }
     times = [(index + 1) * dt for index in range(n_steps)]
     spike_indices = set(spike_steps)
-    voltages = [-70.0 if arm == "nap_lesion" else -65.0] * n_steps
+    baseline_voltage = {
+        "intact_autonomous": -70.0,
+        "nap_lesion": -70.0,
+        "cav2_2_lesion": -65.0,
+        "sk_lesion": -65.0,
+        "hcn_baseline_lesion": -65.0,
+    }[arm]
+    voltages = [baseline_voltage] * n_steps
     lesion = _INTRINSIC_ARMS[arm]
     if lesion is None:
         intervention = {
@@ -265,6 +274,34 @@ def _intrinsic_document(root: Path) -> dict:
     }
 
 
+def _intrinsic_v2_document(root: Path) -> dict:
+    _copy_causal_contract(root)
+    for relative in (CAUSAL_GATE_V2_RELATIVE, ANALYSIS_PROTOCOL_V2_RELATIVE):
+        destination = root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((ROOT / relative).read_bytes())
+    declarations = {}
+    for arm in _INTRINSIC_ARMS:
+        artifact = _runner_artifact(arm)
+        artifact["raw_observation"]["analysis_protocol"]["binding"] = {
+            "path": ANALYSIS_PROTOCOL_V2_RELATIVE.as_posix(),
+            "sha256": _digest(ROOT / ANALYSIS_PROTOCOL_V2_RELATIVE),
+        }
+        declarations[arm] = _write_runner_artifact(root, artifact, arm)
+    gate_path = root / CAUSAL_GATE_V2_RELATIVE
+    return {
+        "schema": "v14-snr-stageB-intrinsic-lesion-observations-v1",
+        "readiness_only": {
+            "enabled": True,
+            "reserved_seed_count": 0,
+            "scientific_seed": None,
+        },
+        "causal_gate_packet": {
+            "path": CAUSAL_GATE_V2_RELATIVE.as_posix(),
+            "sha256": _digest(gate_path),
+        },
+        "runner_observations": declarations,
+    }
 def _rewrite_arm(root: Path, document: dict, arm: str, mutate) -> None:
     declaration = document["runner_observations"][arm]
     path = root / declaration["path"]
@@ -345,6 +382,21 @@ def test_intrinsic_scorer_recomputes_raw_traces_and_reports_missing_protocol_arm
         hard_gate["source_equivalence_claimed"] is False
         for gate in result["results"] for hard_gate in gate["hard_gates"]
     )
+
+
+def test_intrinsic_v2_scorer_resolves_total_ahp_direction_without_source_equivalence(tmp_path):
+    result = score_intrinsic_lesion_observations(
+        _intrinsic_v2_document(tmp_path), root=tmp_path
+    )
+    by_gate = _intrinsic_results(result)
+    for gate_id in ("cav2.2-complete-lesion", "sk-complete-lesion"):
+        gates = {item["metric"]: item for item in by_gate[gate_id]["hard_gates"]}
+        nadir = gates["median_interspike_voltage_nadir_mV"]
+        assert nadir["status"] == "scored"
+        assert nadir["passed"] is True
+        assert nadir["source_equivalence_claimed"] is False
+        assert nadir["observed"] == {"intact": -70.0, "lesion": -65.0}
+    assert result["readiness_contract_result"] == "UNAVAILABLE"
 
 
 def test_intrinsic_scorer_compact_trace_metrics_match_inline_traces(tmp_path):
