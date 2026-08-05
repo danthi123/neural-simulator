@@ -177,6 +177,8 @@ def test_provisioning_executes_the_generator_extracted_from_head():
     ) in script
     assert 'python3 "$STAGE/tools/pool/provisioning/source_manifest.py" create' in script
     assert '--root "$STAGE" --output "$MANIFEST"' in script
+    assert "research/findings ':(exclude)research/findings/raw'" in script
+    assert '"$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"' in script
     assert '"$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"' in script
     assert '"$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md"' in script
     assert "numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pillow==12.0.0" in script

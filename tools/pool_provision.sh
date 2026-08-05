@@ -50,7 +50,8 @@ MANIFEST=$(mktemp)
 REVISION=$(mktemp)
 FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
-git archive "$SOURCE_SHA" sim research/__init__.py research/runners research/specs research/fixtures experiment tools tests \
+git archive "$SOURCE_SHA" sim research/__init__.py research/runners research/specs research/fixtures \
+  research/findings ':(exclude)research/findings/raw' experiment tools tests \
   docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md requirements.txt requirements-dev.txt \
   | tar -x -C "$STAGE"
 # Execute the generator extracted from HEAD. A dirty worktree copy must not mint
@@ -94,6 +95,8 @@ for h in "${NODES[@]}"; do
     "$STAGE/research/runners/" "$h:~/$REMOTE_ROOT/research/runners/"
   rsync -az --delete "$STAGE/research/specs/" "$h:~/$REMOTE_ROOT/research/specs/"
   rsync -az --delete "$STAGE/research/fixtures/" "$h:~/$REMOTE_ROOT/research/fixtures/"
+  rsync -az --delete --exclude='raw/' \
+    "$STAGE/research/findings/" "$h:~/$REMOTE_ROOT/research/findings/"
   rsync -az "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
   rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null
