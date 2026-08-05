@@ -9,6 +9,7 @@ import hashlib
 import json
 import math
 import platform
+import sys
 import time
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
@@ -16,6 +17,9 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Callable
 
 import numpy as np
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from research.runners.v14_stageB_batched_physiology import (
     DECLARATION_SCHEMA,
