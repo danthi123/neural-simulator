@@ -5,7 +5,12 @@ from pathlib import Path
 
 import pytest
 
-from tools.v14_stageB_scorer import StageBScorerError, score_raw_observations
+from tools.v14_stageB_scorer import (
+    StageBScorerError,
+    _main,
+    score_raw_observation_file,
+    score_raw_observations,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +66,26 @@ def _document() -> dict:
                     "window_end_s": 0.5,
                 },
             },
+            {
+                "fixture_id": "nalcn-lesion-ratio-4mM-model-derived",
+                "raw": {
+                    "kind": "paired_spike_rate_ratio",
+                    "intact": {
+                        "spike_times_s": [0.11 + 0.025 * index for index in range(12)],
+                        "time_unit": "s", "sample_interval_s": 0.001,
+                        "recording_start_s": 0.0, "recording_end_s": 0.6,
+                        "burn_in_start_s": 0.0, "burn_in_end_s": 0.1,
+                        "window_start_s": 0.1, "window_end_s": 0.5,
+                    },
+                    "lesion": {
+                        "spike_times_s": [0.11 + 0.05 * index for index in range(7)],
+                        "time_unit": "s", "sample_interval_s": 0.001,
+                        "recording_start_s": 0.0, "recording_end_s": 0.6,
+                        "burn_in_start_s": 0.0, "burn_in_end_s": 0.1,
+                        "window_start_s": 0.1, "window_end_s": 0.5,
+                    },
+                },
+            },
             _conductance("direct-pathway-unitary-peak-observed-range", 1.0),
             _conductance("pallidonigral-unitary-peak-observed-range", 5.0),
             _conductance("pallidonigral-barrage-peak-selected-range", 2.0),
@@ -79,6 +104,10 @@ def test_raw_scorer_recomputes_all_bounded_fixtures_and_preserves_boundary():
     rate = by_id["adult-autonomous-rate-observed-range"]
     assert rate["value"] == 20.0
     assert rate["raw_metrics"]["spike_count"] == 8
+    ratio = by_id["nalcn-lesion-ratio-4mM-model-derived"]
+    assert ratio["value"] == pytest.approx(7 / 12)
+    assert ratio["interval_provenance"] == "model-derived"
+    assert ratio["raw_metrics"]["persistent_lesion_firing"] is True
 
 
 def test_out_of_band_trace_is_valid_scientific_failure_not_scorer_error():
@@ -113,6 +142,21 @@ def test_scorer_rejects_missing_duplicate_and_unknown_fixtures():
         score_raw_observations(duplicate, root=ROOT)
 
 
+def test_ratio_requires_matched_protocols_and_zero_firing_is_scientific_no_go():
+    mismatch = _document()
+    ratio_raw = mismatch["observations"][1]["raw"]
+    ratio_raw["lesion"]["window_end_s"] = 0.4
+    with pytest.raises(StageBScorerError, match="protocols must match exactly"):
+        score_raw_observations(mismatch, root=ROOT)
+
+    silent = _document()
+    silent["observations"][1]["raw"]["lesion"]["spike_times_s"] = []
+    result = score_raw_observations(silent, root=ROOT)
+    assert result["scientific_verdict"] == "NO_GO"
+    ratio = next(item for item in result["results"] if item["fixture_id"].startswith("nalcn"))
+    assert ratio["raw_metrics"]["persistent_lesion_firing"] is False
+
+
 def test_scorer_rejects_fixture_digest_tampering(tmp_path: Path):
     document = _document()
     document["fixture_packet"]["sha256"] = "0" * 64
@@ -125,3 +169,32 @@ def test_scorer_rejects_malformed_candidate_echo():
     document["adaptive_candidate"]["candidate_sha256"] = "not-a-digest"
     with pytest.raises(StageBScorerError, match="adaptive_candidate is malformed"):
         score_raw_observations(document, root=ROOT)
+
+
+def test_file_boundary_writes_completed_no_go_but_no_infrastructure_result(tmp_path: Path):
+    valid_input = tmp_path / "valid.json"
+    valid_output = tmp_path / "valid-score.json"
+    document = _document()
+    document["observations"][0]["raw"]["spike_times_s"] = [0.2]
+    valid_input.write_text(json.dumps(document), encoding="utf-8")
+    result = score_raw_observation_file(valid_input, valid_output, root=ROOT)
+    assert result["scientific_verdict"] == "NO_GO"
+    assert json.loads(valid_output.read_text())["process_status"] == "completed"
+
+    invalid_input = tmp_path / "invalid.json"
+    invalid_output = tmp_path / "invalid-score.json"
+    document["fixture_packet"]["sha256"] = "0" * 64
+    invalid_input.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises(StageBScorerError, match="digest does not match"):
+        score_raw_observation_file(invalid_input, invalid_output, root=ROOT)
+    assert not invalid_output.exists()
+
+
+def test_cli_exits_nonzero_without_result_on_infrastructure_failure(tmp_path: Path):
+    source = tmp_path / "bad.json"
+    output = tmp_path / "score.json"
+    source.write_text("not JSON", encoding="utf-8")
+    with pytest.raises(SystemExit) as raised:
+        _main(["--input", str(source), "--output", str(output), "--root", str(ROOT)])
+    assert raised.value.code == 2
+    assert not output.exists()

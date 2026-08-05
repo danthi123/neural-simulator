@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SPEC_PATH = ROOT / "research/specs/v14_snr_stageB_readiness.json"
 TARGET_PATH = ROOT / "research/specs/v14_snr_stageB_target_packet.json"
+FIXTURE_PATH = ROOT / "research/fixtures/v14_snr_stageB_scorer_fixtures.json"
 
 
 def _sha256(path):
@@ -22,12 +23,23 @@ def _targets():
 
 def test_parent_lineage_is_hash_bound():
     spec = _spec()
-    for record in spec["parent_lineage"].values():
+    for name, record in spec["parent_lineage"].items():
         if not isinstance(record, dict) or "path" not in record:
+            continue
+        if name == "target_packet":
             continue
         path = ROOT / record["path"]
         assert path.is_file()
         assert _sha256(path) == record["sha256"]
+
+
+def test_revised_target_packet_is_hash_bound_without_rewriting_readiness():
+    readiness_target = _spec()["parent_lineage"]["target_packet"]
+    fixture_packet = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+    fixture_target = fixture_packet["source_target_packet"]
+    assert fixture_target["path"] == readiness_target["path"]
+    assert fixture_target["path"] == "research/specs/v14_snr_stageB_target_packet.json"
+    assert fixture_target["sha256"] == _sha256(TARGET_PATH)
 
 
 def test_seed_partitions_are_disjoint_and_readiness_opens_none():
@@ -65,6 +77,9 @@ def test_target_packet_separates_pathways_and_records_source_conditions():
         "Simmons-et-al-2018",
         "Simmons-et-al-2020",
         "Lutas-et-al-2016",
+        "McElvain-et-al-2021",
+        "Sitzia-et-al-2022",
+        "Thompson-et-al-2025",
         "Atherton-and-Bevan-2005",
         "Ding-Wei-Zhou-2011",
     ):
@@ -84,6 +99,22 @@ def test_target_packet_separates_pathways_and_records_source_conditions():
     assert transferred["juvenile-rat-atherton-baseline"]["values"]["perforated_cv_mean"] == 0.060
     assert transferred["juvenile-rat-ding-action-potential"]["values"]["base_duration_mean_ms"] == 1.1
     assert "not an adult" in transferred["juvenile-rat-atherton-baseline"]["use"]
+    lutas_figure5 = transferred["juvenile-mouse-lutas-figure5-k-unresolved"]
+    assert lutas_figure5["bath_KCl_mM"] == "unresolved_2.5_or_4"
+    assert lutas_figure5["evidence_label"] == "blocked-unscorable-transfer-evidence"
+    assert lutas_figure5["scorable"] is False
+    assert "prohibited from executable accepted targets" in lutas_figure5["use"]
+    sitzia = transferred["mature-adult-mouse-sitzia-waveform-ahp-regularity"]
+    assert sitzia["evidence_label"] == "transfer-only-held-out-context"
+    assert sitzia["scorable"] is False
+    assert sitzia["values"]["ap_half_width_mean_ms"] == 0.53
+    assert "AP amplitude is not AP peak" in sitzia["uncertainty"]
+
+    excluded = {item["id"]: item for item in packet["excluded_source_observations"]}
+    thompson = excluded["adult-mouse-thompson-waveform-distributions"]
+    assert thompson["evidence_label"] == "plot-only-excluded"
+    assert thompson["scorable"] is False
+    assert "plot digitization is not preregistered" in thompson["reason"]
 
     targets = {target["id"]: target for target in packet["accepted_targets"]}
     direct = targets["adult-inhibitory-conductance-support"]
@@ -104,9 +135,30 @@ def test_target_packet_separates_pathways_and_records_source_conditions():
         "target_rate_reduction_low_percent": 20.0,
         "target_rate_reduction_high_percent": 50.0,
     }
-    nalcn = targets["nalcn-lesion-ratio"]
-    assert "model-derived" in nalcn["uncertainty"]
-    assert "0.45-0.68" in nalcn["use"]
+    assert "nalcn-lesion-ratio" not in targets
+    nalcn = targets["nalcn-lesion-ratio-4mM"]
+    assert nalcn["value"]["intact_mean_hz"] == 30.2
+    assert nalcn["value"]["lesion_mean_hz"] == 16.8
+    assert nalcn["condition"].endswith("4 mM extracellular KCl")
+    assert nalcn["evidence_label"] == "measured-source-statistics-with-model-derived-interval"
+    assert nalcn["model_derived_interval"]["status"] == "model-derived-not-source-measured"
+    assert "Figure 6-figure supplement 1A" in nalcn["source_locator"]
+    mcelvain = targets["young-adult-intrinsic-isi-cv-point"]
+    assert mcelvain["value"] == {"mean": 0.10, "sem": 0.10, "n": 120}
+    assert mcelvain["acceptance_bound"] is None
+    assert "no pass/fail scorer fixture" in mcelvain["use"]
+    assert "no pooling" in mcelvain["use"]
+
+    decisions = {item["decision"]: item for item in packet["evidence_scope_decisions"]}
+    assert decisions["blocked-unscorable-transfer-only"]["record_id"] == lutas_figure5["id"]
+    assert decisions["include-model-derived-transfer-fixture"]["target_id"] == nalcn["id"]
+    assert decisions["include-separate-cohort-point-only"]["target_id"] == mcelvain["id"]
+    assert decisions["transfer-only-held-out-context"]["record_id"] == sitzia["id"]
+    assert decisions["plot-only-excluded"]["record_id"] == thompson["id"]
+
+    unresolved_evidence = " ".join(packet["unresolved_before_executable_spec"])
+    assert "Lutas Figure 5" not in unresolved_evidence
+    assert "adult intrinsic CV or CV2" not in unresolved_evidence
     hcn = next(value for value in packet["directional_targets"] if value.startswith("HCN"))
     assert "did not show a statistically significant" in hcn
     assert "no equivalence claim" in hcn
@@ -139,10 +191,11 @@ def test_readiness_keeps_required_controls_and_parameter_gaps_visible():
         "hh_E_K_override",
         "hh_E_L_override",
     } <= set(surface["already_population_scoped"])
-    unresolved = " ".join(surface["must_be_resolved_before_calibration"])
+    integrated = " ".join(surface["executable_packet_integrated"])
     for mechanism in ("fast sodium", "potassium", "NaP", "Cav2.2", "Ih", "calcium", "SK"):
-        assert mechanism in unresolved
-    assert "passive leak" not in unresolved
+        assert mechanism in integrated
+    assert "not yet wired into the bridge" not in json.dumps(surface)
+    assert "packet-backed runner" in " ".join(surface["remaining_runner_integration"])
 
 
 def test_future_search_budget_and_order_are_fixed():

@@ -31,7 +31,7 @@
     },
     "target_packet": {
       "path": "research/specs/v14_snr_stageB_target_packet.json",
-      "sha256": "55bed7db16932f56cd27df01375b1b853214af9f6ad0ca670c56fece62705a14"
+      "sha256": "50fde698cc5468dfabc5076d0b36cfda90e165c4ca599fda6582d121998b802a"
     }
   },
   "partitions": {
@@ -52,10 +52,10 @@
   "current_readiness": {
     "verdict": "READINESS_UNDEFINED",
     "open_gates": [
-      "resolve the explicitly recorded Lutas potassium ambiguity and adult AP/AHP/regularity include-or-exclude decisions",
-      "resolve or explicitly exclude the missing SNr parameter surface",
-      "integrate the conductance-clamp and trace metrics into the physiology scorer and complete negative fixtures",
-      "complete a seed-free multi-candidate dry run through the committed sealed source",
+      "source-bind executable search ranges and include-or-exclude decisions for passive properties, HCN baseline equivalence, calcium/SK priors, and transferred fast-spike kinetics",
+      "complete causal lesion, depolarization-block, rate-only compensation, release, and checkpoint-continuation scorer controls",
+      "build candidate-specific authenticated packet compilation and a packet-backed physiology runner",
+      "complete a seed-free two-candidate real-model dry run through the committed sealed source; the synthetic transport proof alone is not sufficient",
       "write and source-seal the separate executable Stage B specification"
     ],
     "completed_primitives": [
@@ -65,7 +65,11 @@
       "standalone peak-normalized inhibitory conductance-clamp protocols",
       "population-scoped HH capacitance, fast sodium, delayed-rectifier potassium, and passive-leak densities and reversals",
       "versioned NaP, Cav2.2, HCN, calcium, and SK parameter records with measured-versus-model-prior provenance, explicit units, temperature guards, and NumPy/CuPy parity",
-      "device-resident region/pathway inhibitory conductance clamp with checkpoint continuation"
+      "device-resident region/pathway inhibitory conductance clamp with checkpoint continuation",
+      "all 69 authenticated packet leaves materialized into the fused mixed-region NumPy/CuPy runtime with dynamic-only checkpoint continuation",
+      "source-bound raw-trace scoring for adult rate, direct and pallidal conductance, and the K-resolved 4 mM NALCN transfer ratio",
+      "seed-free two-candidate synthetic transport proof with isolated artifacts and distinct completed NO-GO versus infrastructure-failure semantics",
+      "explicit evidence decisions for Lutas Figure 5, McElvain regularity, Sitzia waveform/AHP context, and Thompson plot-only distributions"
     ]
   },
   "preparation_cohorts": [
@@ -124,7 +128,7 @@
       "hh_E_K_override",
       "hh_E_L_override"
     ],
-    "must_be_resolved_before_calibration": [
+    "executable_packet_integrated": [
       "fast sodium and delayed-rectifier potassium gating kinetics and temperature scaling",
       "NaP activation and inactivation kinetics",
       "Cav2.2-like activation and inactivation kinetics",
@@ -132,15 +136,20 @@
       "calcium influx conversion and decay",
       "SK calcium half-activation, Hill coefficient, and time constant"
     ],
-    "available_but_not_integrated": [
-      "sim/snr_channel_parameters.py reproduces legacy and published model-prior equations but is not yet wired into the bridge kernels",
-      "the inhibitory conductance clamp is bridge-integrated but not yet consumed by a sealed Stage B runner",
-      "physiology metrics are pure validated functions but must be recomputed from digest-bound raw traces inside the future scorer"
+    "authority_decisions_required_before_calibration": [
+      "adult capacitance and input resistance are excluded or separately authorized without pooling the Cs-internal mixed-identity cohort",
+      "HCN baseline non-significance is not converted into an equivalence gate without a filed margin",
+      "calcium/SK geometry, affinity, kinetics, and constant-versus-dynamic calcium reversal remain explicitly labelled model priors or searched unknowns",
+      "transferred fast-sodium and potassium kinetics and every Q10 remain labelled transfers or model assumptions rather than adult-mouse measurements"
     ],
-    "fixed_stageA_assumptions_not_yet_measurements": [
-      "constant E_Ca",
-      "arbitrary nonnegative calcium concentration unit",
-      "generic HH spike-current kinetics"
+    "remaining_runner_integration": [
+      "the inhibitory conductance clamp is bridge-integrated but not yet consumed by a sealed Stage B runner",
+      "the raw-trace scorer is operational but the packet-backed runner does not yet emit all required lesion, release, and checkpoint traces"
+    ],
+    "implemented_but_not_measurements": [
+      "physical micromolar calcium conversion is executable but its accessible volume and current fraction are model priors",
+      "constant calcium reversal is executable but the constant-versus-dynamic choice remains an experimental arm decision",
+      "fast spike-current kinetics are population-scoped and executable but are not preparation-matched adult-mouse measurements"
     ]
   },
   "required_arms": [

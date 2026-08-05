@@ -1,6 +1,7 @@
 import copy
 import hashlib
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -66,6 +67,48 @@ def test_source_derived_fixtures_match_target_packet_and_score_boundaries():
         assert score_observation(fixture, _observation(fixture, high + 100))["passed"] is False
 
 
+def test_k_resolved_nalcn_fixture_recomputes_its_model_derived_interval():
+    packet = json.loads(TARGET_PATH.read_text(encoding="utf-8"))
+    targets = {target["id"]: target for target in packet["accepted_targets"]}
+    assert "nalcn-lesion-ratio" not in targets
+
+    target = targets["nalcn-lesion-ratio-4mM"]
+    fixture = _fixtures()["nalcn-lesion-ratio-4mM-model-derived"]
+    measurements = fixture["evidence"]["source_measurements"]
+    assert measurements == {
+        "bath_KCl_mM": 4.0,
+        "intact_mean_hz": 30.2,
+        "intact_sem_hz": 3.9,
+        "intact_n": 18,
+        "lesion_mean_hz": 16.8,
+        "lesion_sem_hz": 2.0,
+        "lesion_n": 13,
+        "confidence_multiplier": 1.96,
+    }
+
+    ratio = measurements["lesion_mean_hz"] / measurements["intact_mean_hz"]
+    ratio_se = ratio * math.sqrt(
+        (measurements["lesion_sem_hz"] / measurements["lesion_mean_hz"]) ** 2
+        + (measurements["intact_sem_hz"] / measurements["intact_mean_hz"]) ** 2
+    )
+    expected_interval = {
+        "low": ratio - measurements["confidence_multiplier"] * ratio_se,
+        "high": ratio + measurements["confidence_multiplier"] * ratio_se,
+    }
+
+    assert target["value"]["lesion_over_intact"] == pytest.approx(ratio)
+    assert target["model_derived_interval"]["low"] == pytest.approx(expected_interval["low"])
+    assert target["model_derived_interval"]["high"] == pytest.approx(expected_interval["high"])
+    assert fixture["interval"]["low"] == pytest.approx(expected_interval["low"])
+    assert fixture["interval"]["high"] == pytest.approx(expected_interval["high"])
+    assert fixture["evidence"]["interval_provenance"] == "model-derived"
+    assert "first-order delta method" in fixture["evidence"]["derivation_method"]
+    assert "Figure 6-figure supplement 1A" in fixture["evidence"]["source_locator"]
+    assert validate_fixture(fixture)["interval"] == pytest.approx(expected_interval)
+    assert score_observation(fixture, _observation(fixture, ratio))["passed"] is True
+    assert score_observation(fixture, _observation(fixture, expected_interval["high"] + 0.01))["passed"] is False
+
+
 def test_direct_and_pallidal_pathways_cannot_be_cross_scored():
     fixtures = _fixtures()
     direct = fixtures["direct-pathway-unitary-peak-observed-range"]
@@ -120,12 +163,28 @@ def test_source_derived_interval_cannot_hide_model_derivation():
         validate_fixture(fixture)
 
 
-def test_nalcn_model_interval_remains_blocked_by_unresolved_preparation():
-    blocked = _packet()["blocked_model_derived_target"]
-    assert blocked["interval_provenance"] == "model-derived"
-    assert blocked["interval"] == {"low": 0.45, "high": 0.68}
-    assert "does not explicitly map Figure 5" in blocked["reason"]
-    assert all(fixture["target_id"] != blocked["target_id"] for fixture in _fixtures().values())
+def test_lutas_figure5_remains_blocked_and_has_no_executable_target_or_fixture():
+    packet = _packet()
+    blocked = packet["blocked_unscorable_source_observation"]
+    assert blocked["record_id"] == "juvenile-mouse-lutas-figure5-k-unresolved"
+    assert blocked["bath_KCl_mM"] == "unresolved_2.5_or_4"
+    assert blocked["evidence_label"] == "blocked-unscorable-transfer-evidence"
+    assert blocked["scorable"] is False
+    assert "no target_id, interval, or scorer fixture" in blocked["reason"]
+    assert "target_id" not in blocked
+    assert "interval" not in blocked
+    assert all(fixture["target_id"] != "nalcn-lesion-ratio" for fixture in _fixtures().values())
+
+
+def test_mcelvain_cv_point_target_has_no_acceptance_fixture():
+    targets = {
+        target["id"]: target
+        for target in json.loads(TARGET_PATH.read_text(encoding="utf-8"))["accepted_targets"]
+    }
+    target = targets["young-adult-intrinsic-isi-cv-point"]
+    assert target["acceptance_bound"] is None
+    assert target["evidence_label"] == "separate-cohort-source-measured-point-target"
+    assert all(fixture["target_id"] != target["id"] for fixture in _fixtures().values())
 
 
 def test_non_significance_is_never_scored_as_equivalence():

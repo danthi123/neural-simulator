@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from collections.abc import Mapping
@@ -63,6 +64,16 @@ def _candidate_echo(value: Any) -> dict[str, Any]:
             "effective_parameters": dict(parameters)}
 
 
+def _spike_metrics(raw: Mapping[str, Any]) -> dict[str, Any]:
+    return spike_train_metrics(
+        raw.get("spike_times_s", []),
+        **{key: raw[key] for key in (
+            "time_unit", "sample_interval_s", "recording_start_s", "recording_end_s",
+            "burn_in_start_s", "burn_in_end_s", "window_start_s", "window_end_s",
+        )},
+    )
+
+
 def _raw_value(fixture: Mapping[str, Any], raw: Any) -> tuple[float, dict[str, Any]]:
     if not isinstance(raw, Mapping):
         raise StageBScorerError(f"fixture {fixture['id']!r} has no raw observation")
@@ -71,14 +82,33 @@ def _raw_value(fixture: Mapping[str, Any], raw: Any) -> tuple[float, dict[str, A
         if kind == "spike_train":
             if fixture["units"] != "spikes/s":
                 raise StageBScorerError("spike-train raw data cannot score this fixture unit")
-            metrics = spike_train_metrics(
-                raw.get("spike_times_s", []),
-                **{key: raw[key] for key in (
-                    "time_unit", "sample_interval_s", "recording_start_s", "recording_end_s",
-                    "burn_in_start_s", "burn_in_end_s", "window_start_s", "window_end_s",
-                )},
-            )
+            metrics = _spike_metrics(raw)
             return float(metrics["firing_rate_hz"]), metrics
+        if kind == "paired_spike_rate_ratio":
+            if fixture["units"] != "dimensionless ratio":
+                raise StageBScorerError("paired spike-rate raw data cannot score this fixture unit")
+            intact = raw.get("intact")
+            lesion = raw.get("lesion")
+            if not isinstance(intact, Mapping) or not isinstance(lesion, Mapping):
+                raise StageBScorerError("paired spike-rate raw data requires intact and lesion traces")
+            protocol_fields = (
+                "time_unit", "sample_interval_s", "recording_start_s", "recording_end_s",
+                "burn_in_start_s", "burn_in_end_s", "window_start_s", "window_end_s",
+            )
+            if any(intact.get(field) != lesion.get(field) for field in protocol_fields):
+                raise StageBScorerError("intact and lesion spike-rate protocols must match exactly")
+            intact_metrics = _spike_metrics(intact)
+            lesion_metrics = _spike_metrics(lesion)
+            intact_rate = float(intact_metrics["firing_rate_hz"])
+            lesion_rate = float(lesion_metrics["firing_rate_hz"])
+            ratio = lesion_rate / intact_rate if intact_rate > 0.0 else 0.0
+            return ratio, {
+                "intact": intact_metrics,
+                "lesion": lesion_metrics,
+                "lesion_over_intact": ratio,
+                "persistent_intact_firing": intact_rate > 0.0,
+                "persistent_lesion_firing": lesion_rate > 0.0,
+            }
         if kind == "conductance_trace":
             if fixture["units"] != "nS":
                 raise StageBScorerError("conductance raw data cannot score this fixture unit")
@@ -153,3 +183,45 @@ def score_raw_observations(document: Mapping[str, Any], *, root: str | Path) -> 
             item["id"] for item in contracts if item["score_kind"] != "bounded-interval"
         ),
     }
+
+
+def score_raw_observation_file(
+    input_path: str | Path,
+    output_path: str | Path,
+    *,
+    root: str | Path,
+) -> dict[str, Any]:
+    """Validate one raw artifact and create its result without overwriting evidence."""
+    source = Path(input_path)
+    destination = Path(output_path)
+    try:
+        document = json.loads(source.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise StageBScorerError(f"cannot load raw observation file: {exc}") from exc
+    result = score_raw_observations(document, root=root)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with destination.open("x", encoding="ascii") as handle:
+            json.dump(result, handle, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+                      allow_nan=False)
+            handle.write("\n")
+    except FileExistsError as exc:
+        raise StageBScorerError(f"refusing to replace existing score: {destination}") from exc
+    return result
+
+
+def _main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input", required=True, help="raw observation JSON")
+    parser.add_argument("--output", required=True, help="new score JSON")
+    parser.add_argument("--root", default=str(Path(__file__).resolve().parents[1]))
+    args = parser.parse_args(argv)
+    try:
+        score_raw_observation_file(args.input, args.output, root=args.root)
+    except StageBScorerError as exc:
+        parser.exit(2, f"Stage B scorer infrastructure failure: {exc}\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(_main())

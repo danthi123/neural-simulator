@@ -5,7 +5,7 @@
   "device": "not_applicable_non_executed_protocol",
   "source_target_packet": {
     "path": "research/specs/v14_snr_stageB_target_packet.json",
-    "sha256": "55bed7db16932f56cd27df01375b1b853214af9f6ad0ca670c56fece62705a14"
+    "sha256": "50fde698cc5468dfabc5076d0b36cfda90e165c4ca599fda6582d121998b802a"
   },
   "fixtures": [
     {
@@ -29,6 +29,41 @@
           "recording_modes": ["gramicidin perforated-patch current clamp"],
           "solution": "ACSF: 126 NaCl, 2.5 KCl, 1.25 NaH2PO4, 2 CaCl2, 2 MgSO4, 10 glucose, 26 NaHCO3 mM; 95% O2/5% CO2",
           "blockers": ["NBQX 5 uM", "CPP 5 uM"]
+        }
+      }
+    },
+    {
+      "id": "nalcn-lesion-ratio-4mM-model-derived",
+      "target_id": "nalcn-lesion-ratio-4mM",
+      "source_id": "Lutas-et-al-2016",
+      "cohort": "juvenile mouse, P14-P21; acute coronal SNr slice; explicitly reported 4 mM extracellular KCl",
+      "pathway": "SNr intrinsic NALCN genetic lesion transfer constraint",
+      "metric": "lesion-to-intact autonomous firing-rate ratio",
+      "units": "dimensionless ratio",
+      "score_kind": "bounded-interval",
+      "interval": {"low": 0.3647861714392232, "high": 0.7477966100177306},
+      "evidence": {
+        "interval_provenance": "model-derived",
+        "uncertainty": "source reports independent-group means plus/minus SEM; ratio and approximate 95% interval are model-derived and are not source-measured bounds",
+        "source_locator": "Lutas et al. 2016 Figure 6-figure supplement 1A and caption",
+        "derivation_method": "ratio = lesion_mean_hz / intact_mean_hz; ratio_se = ratio * sqrt((lesion_sem_hz / lesion_mean_hz)^2 + (intact_sem_hz / intact_mean_hz)^2); interval = ratio plus/minus 1.96 * ratio_se; first-order delta method, independent groups, normal approximation, no clipping",
+        "source_measurements": {
+          "bath_KCl_mM": 4.0,
+          "intact_mean_hz": 30.2,
+          "intact_sem_hz": 3.9,
+          "intact_n": 18,
+          "lesion_mean_hz": 16.8,
+          "lesion_sem_hz": 2.0,
+          "lesion_n": 13,
+          "confidence_multiplier": 1.96
+        },
+        "preparation": {
+          "species_age": "male and female mouse, P14-P21; conditional Nalcn cohort",
+          "slice": "275 um acute coronal midbrain slice containing SNr",
+          "temperature": "34 C recording; 35 min recovery at 37 C followed by 25 min to 3 h at room temperature",
+          "recording_modes": ["cell-attached spontaneous firing"],
+          "solution": "ACSF: 125 NaCl, 4 KCl, 25 NaHCO3, 1.25 NaH2PO4, 1.5 CaCl2, 1 MgCl2, 10 glucose mM; approximately 300 mOsm, pH 7.4",
+          "blockers": ["kynurenic acid 1 mM", "picrotoxin 100 uM"]
         }
       }
     },
@@ -129,10 +164,13 @@
       }
     }
   ],
-  "blocked_model_derived_target": {
-    "target_id": "nalcn-lesion-ratio",
-    "interval_provenance": "model-derived",
-    "interval": {"low": 0.45, "high": 0.68},
-    "reason": "Lutas et al. 2016 permits 2.5 or 4 mM extracellular KCl but does not explicitly map Figure 5 to one concentration; no score fixture is valid until that ambiguity is resolved or explicitly modeled"
+  "blocked_unscorable_source_observation": {
+    "record_id": "juvenile-mouse-lutas-figure5-k-unresolved",
+    "source_id": "Lutas-et-al-2016",
+    "source_locator": "Lutas et al. 2016 Materials and methods, Solutions; Figure 5C and caption",
+    "bath_KCl_mM": "unresolved_2.5_or_4",
+    "evidence_label": "blocked-unscorable-transfer-evidence",
+    "scorable": false,
+    "reason": "Figure 5 reports group rates but does not explicitly map the permitted 2.5 or 4 mM extracellular KCl condition; it has no target_id, interval, or scorer fixture"
   }
 }

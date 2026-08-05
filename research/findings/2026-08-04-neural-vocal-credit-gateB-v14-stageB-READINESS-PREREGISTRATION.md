@@ -85,21 +85,23 @@ or conversational capability.
   pallido-nigral unitary input and depressed barrage-versus-step protocol.
 - [Lutas et al. (2016)](https://elifesciences.org/articles/15271), conditional
   NALCN loss.
+- [McElvain et al. (2021)](https://doi.org/10.1016/j.neuron.2021.03.017),
+  separate-cohort young-adult intrinsic regularity.
+- [Sitzia et al. (2022)](https://doi.org/10.3390/biom12111635), mature-adult
+  waveform context that is not promoted into Stage B bounds.
 
-The target packet keeps direct and pallidal conductances separate. It now
-records the exact Atherton, Ding, and Lutas slice conditions and keeps their
-juvenile observations separate from adult calibration support. Its NALCN ratio
-tolerance is explicitly model-derived from the reported group means and SEM
-values, and the HCN observation is recorded as non-significance rather than
-equivalence. Lutas permits two extracellular potassium concentrations without
-mapping Figure 5 to one of them, so that lesion target remains blocked from the
-executable scorer.
+The target packet keeps direct and pallidal conductances separate. Lutas Figure
+5 remains unscorable because its bath potassium is ambiguous. Figure 6-figure
+supplement 1 explicitly reports 4 mM KCl, so its measured group statistics now
+support a separately labelled, model-derived transfer ratio. McElvain regularity
+is a separate-cohort point objective without an acceptance interval. Sitzia
+waveform and AHP values remain held-out context, and Thompson plot-only
+distributions are not digitized. HCN non-significance is still not equivalence.
 
 ## Next Exact Action
 
-Finish the missing SNr parameter surface and integrate the conductance-clamp
-and physiology-metric primitives into the source-bound scorer. The checked
-primary text did not yield preparation-matched adult AP, AHP, or intrinsic
-regularity bounds, so each must be explicitly excluded, sourced elsewhere, or
-represented as a transfer-only constraint before the executable specification
-is sealed. Then run the entire pipeline without a reserved seed.
+File the remaining authority decisions and operational causal tolerances, then
+build candidate-specific authenticated packet compilation and the packet-backed
+physiology runner. Extend the scorer through every lesion, release, block, and
+checkpoint control. Run two real candidates through the sealed source without a
+reserved seed before writing the executable Stage B specification.

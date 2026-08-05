@@ -1,0 +1,1 @@
+{"backend":"numpy","device":"cpu","partition":"readiness","reserved_seed_count":0,"runner":"tools/v14_stageB_readiness_dry_run.py","seed":null}

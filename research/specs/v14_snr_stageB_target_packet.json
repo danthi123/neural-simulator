@@ -59,8 +59,56 @@
         "solution": "ACSF: 125 NaCl, 2.5 or 4 KCl depending on experiment, 25 NaHCO3, 1.25 NaH2PO4, 1.5 CaCl2, 1 MgCl2, 10 glucose mM; approximately 300 mOsm, pH 7.4; Figure 5 KCl concentration is not explicitly mapped",
         "blockers": ["kynurenic acid 1 mM", "picrotoxin 100 uM", "whole-cell experiments additionally used Na-lidocaine 1 mM and TEA 1 mM"]
       },
-      "source_locator": "Materials and methods, acute slice preparation and electrophysiology; Figure 5C and associated source data",
-      "role": "transferred causal NALCN rate ratio"
+      "source_locator": "Materials and methods, Solutions and Electrophysiology; Figure 5C; Figure 6 and Figure 6-figure supplement 1",
+      "role": "juvenile-mouse transferred causal NALCN evidence, separated by explicitly reported bath KCl condition"
+    },
+    {
+      "id": "McElvain-et-al-2021",
+      "citation": "McElvain LE, Chen Y, Moore JD, et al. Specific populations of basal ganglia output neurons target distinct brain stem areas while collateralizing throughout the diencephalon. Neuron. 2021;109:1721-1738.e4.",
+      "doi": "10.1016/j.neuron.2021.03.017",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8169061/",
+      "preparation": {
+        "species_age": "C57BL/6J mouse, both sexes, 4-6 weeks",
+        "slice": "250-300 um coronal acute slice containing SNr",
+        "temperature": "34 C recording after 30 min recovery at 34 C and room-temperature rest",
+        "recording_modes": ["whole-cell current clamp"],
+        "solution": "Ringer: 125 NaCl, 3.5 KCl, 1 MgSO4, 26 NaHCO3, 1.5 CaCl2, 1 NaH2PO4, 11 dextrose mM",
+        "blockers": ["picrotoxin 100 uM", "kynurenic acid 2 mM"]
+      },
+      "source_locator": "STAR Methods, Experimental Model and Subject Details and Electrophysiological recordings; Figure 3A",
+      "role": "separate-cohort young-adult intrinsic firing regularity point target"
+    },
+    {
+      "id": "Sitzia-et-al-2022",
+      "citation": "Sitzia G, et al. Neuronal Firing and Glutamatergic Synapses in the Substantia Nigra Pars Reticulata of LRRK2-G2019S Mice. Biomolecules. 2022;12:1635.",
+      "doi": "10.3390/biom12111635",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9687271/",
+      "preparation": {
+        "species_age": "male and female WT littermate mouse, 10-12 months",
+        "slice": "200-250 um coronal acute midbrain hemisection containing SNr",
+        "temperature": "recording temperature not stated; slices incubated at 32 C for 1 h and then held at 28 C",
+        "recording_modes": ["cell-attached spontaneous firing", "whole-cell current clamp"],
+        "solution": "aCSF: 126 NaCl, 2.5 KCl, 1.2 NaH2PO4, 1.3 MgCl2, 2.4 CaCl2, 10 glucose, 26 NaHCO3 mM; current-clamp internal included 10 mM EGTA",
+        "blockers": ["no fast-synaptic-input blockers reported for intrinsic cell-attached or current-clamp measurements"]
+      },
+      "source_locator": "Methods sections 2.1-2.2; Results section 3.1; Figure 1D-G and Table 1",
+      "role": "mature-adult transfer-only waveform, AHP, and regularity context"
+    },
+    {
+      "id": "Thompson-et-al-2025",
+      "citation": "Thompson WS, Hjorth JJJ, Kozlov A, et al. Synaptic integration and competition in the substantia nigra pars reticulata-an experimental and in silico analysis. Proc Natl Acad Sci USA. 2025;122:e2528602122.",
+      "doi": "10.1073/pnas.2528602122",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12772157/",
+      "preparation": {
+        "species_age": "adult C57BL/6J mouse, both sexes",
+        "slice": "acute ex vivo SNr slice electrophysiology",
+        "temperature": "see primary article SI Appendix; no numerical target is transcribed from the preparation",
+        "recording_modes": ["whole-cell patch clamp"],
+        "solution": "see primary article SI Appendix; no numerical target is transcribed from the preparation",
+        "blockers": ["see primary article SI Appendix; no numerical target is transcribed from the preparation"]
+      },
+      "source_locator": "Results, Single neuron simulation; Figure 2G and caption",
+      "role": "plot-only experimental distributions excluded from numerical target transcription"
     },
     {
       "id": "Atherton-and-Bevan-2005",
@@ -119,6 +167,40 @@
       "uncertainty": "mean plus/minus SEM; SNr sample size is not explicitly attached to the Table 3 column; base duration is threshold-to-return, not half-width",
       "source_locator": "Ding et al. 2011 Table 3",
       "use": "juvenile rat waveform support only; not an adult half-width gate"
+    },
+    {
+      "id": "juvenile-mouse-lutas-figure5-k-unresolved",
+      "source": "Lutas-et-al-2016",
+      "values": {"intact_mean_hz": 21.0, "intact_sem_hz": 1.3, "intact_n": 45, "lesion_mean_hz": 11.9, "lesion_sem_hz": 0.9, "lesion_n": 43},
+      "bath_KCl_mM": "unresolved_2.5_or_4",
+      "evidence_label": "blocked-unscorable-transfer-evidence",
+      "scorable": false,
+      "blocker": "Methods permit 2.5 or 4 mM KCl, but Figure 5 and its caption do not explicitly identify the bath KCl concentration",
+      "uncertainty": "source-reported means plus/minus SEM; no ratio interval may be scored from this condition-ambiguous record",
+      "source_locator": "Lutas et al. 2016 Materials and methods, Solutions; Figure 5C and caption",
+      "use": "descriptive juvenile-mouse transfer evidence only; prohibited from executable accepted targets and scorer fixtures"
+    },
+    {
+      "id": "mature-adult-mouse-sitzia-waveform-ahp-regularity",
+      "source": "Sitzia-et-al-2022",
+      "values": {"firing_rate_mean_hz": 16.32, "firing_rate_sem_hz": 1.90, "firing_rate_n": 11, "isi_cv_reported_mean": 15.0, "isi_cv_reported_sem": 1.51, "isi_cv_n": 11, "interspike_membrane_potential_mean_mV": -51.92, "interspike_membrane_potential_sem_mV": 1.39, "ap_amplitude_mean_mV": 62.71, "ap_amplitude_sem_mV": 2.33, "ap_half_width_mean_ms": 0.53, "ap_half_width_sem_ms": 0.04, "ap_threshold_mean_mV": -38.80, "ap_threshold_sem_mV": 0.95, "reported_ahp_amplitude_mean_mV": -47.89, "reported_ahp_amplitude_sem_mV": 1.95, "ahp_duration_mean_ms": 1.90, "ahp_duration_sem_ms": 0.26, "waveform_n": 11},
+      "evidence_label": "transfer-only-held-out-context",
+      "scorable": false,
+      "uncertainty": "source reports mean plus/minus SEM; ISI CV scale is not explicitly identified as fraction versus percent; AP amplitude is not AP peak; the negative reported AHP amplitude must not be silently redefined as AHP depth",
+      "source_locator": "Sitzia et al. 2022 Methods sections 2.1-2.2; Figure 1D-G; Table 1",
+      "use": "mature-adult context only; preparation differs in age, recording mode, synaptic isolation, intracellular calcium buffering, and unstated recording temperature"
+    }
+  ],
+  "excluded_source_observations": [
+    {
+      "id": "adult-mouse-thompson-waveform-distributions",
+      "source": "Thompson-et-al-2025",
+      "evidence_label": "plot-only-excluded",
+      "scorable": false,
+      "excluded_metrics": ["action-potential threshold", "action-potential half-width", "action-potential peak or amplitude", "AHP depth or minimum"],
+      "reason": "Figure 2G displays experimental population distributions without tabulated numerical bounds in the primary article text; plot digitization is not preregistered",
+      "source_locator": "Thompson et al. 2025 Results, Single neuron simulation; Figure 2G and caption",
+      "use": "no numerical target, bound, or fixture may be transcribed from the plot; repository model outputs are derived model results rather than measured experimental bounds"
     }
   ],
   "accepted_targets": [
@@ -134,15 +216,47 @@
       "use": "primary calibration support interval, not a universal SNr limit"
     },
     {
-      "id": "nalcn-lesion-ratio",
+      "id": "nalcn-lesion-ratio-4mM",
       "source": "Lutas-et-al-2016",
-      "value": {"intact_hz": 21.0, "intact_sem": 1.3, "intact_n": 45, "lesion_hz": 11.9, "lesion_sem": 0.9, "lesion_n": 43, "lesion_over_intact": 0.567},
-      "units": "spikes/s and ratio",
-      "condition": "juvenile mouse transferred causal constraint",
-      "uncertainty": "source reports SEM; model-derived ratio interval 0.45-0.68 uses first-order independent-group propagation of the two reported SEM values (approximately 95%)",
-      "source_locator": "Lutas et al. 2016 Fig. 5C and source data",
-      "simulator_representation": "lesion/intact autonomous-rate ratio on the same parameter vector",
-      "use": "require persistent firing and lesion/intact ratio 0.45-0.68 as an explicitly model-derived tolerance; do not infer adult density"
+      "value": {
+        "intact_mean_hz": 30.2,
+        "intact_sem_hz": 3.9,
+        "intact_n": 18,
+        "lesion_mean_hz": 16.8,
+        "lesion_sem_hz": 2.0,
+        "lesion_n": 13,
+        "lesion_over_intact": 0.5562913907284769
+      },
+      "units": "spikes/s and dimensionless ratio",
+      "condition": "juvenile mouse SNr cell-attached spontaneous firing in explicitly reported 4 mM extracellular KCl",
+      "evidence_label": "measured-source-statistics-with-model-derived-interval",
+      "model_derived_interval": {
+        "low": 0.3647861714392232,
+        "high": 0.7477966100177306,
+        "ratio_formula": "lesion_mean_hz / intact_mean_hz",
+        "standard_error_formula": "ratio * sqrt((lesion_sem_hz / lesion_mean_hz)^2 + (intact_sem_hz / intact_mean_hz)^2)",
+        "confidence_multiplier": 1.96,
+        "interval_formula": "ratio plus/minus confidence_multiplier * standard_error",
+        "derivation_method": "first-order delta-method propagation of independent-group source-reported SEM values; normal approximation; no clipping",
+        "status": "model-derived-not-source-measured"
+      },
+      "uncertainty": "group means and SEM values are source-measured; ratio and approximate 95% interval are model-derived under the filed formulas and assumptions",
+      "source_locator": "Lutas et al. 2016 Figure 6-figure supplement 1A and caption",
+      "simulator_representation": "lesion/intact autonomous-rate ratio on the same parameter vector under the separate 4 mM KCl transfer condition",
+      "use": "transfer-only causal NALCN lesion fixture; require persistent firing and derived ratio 0.3647861714392232-0.7477966100177306; do not infer an adult density or pool with adult calibration targets"
+    },
+    {
+      "id": "young-adult-intrinsic-isi-cv-point",
+      "source": "McElvain-et-al-2021",
+      "value": {"mean": 0.10, "sem": 0.10, "n": 120},
+      "units": "dimensionless ISI coefficient of variation",
+      "condition": "young-adult mouse SNr, 4-6 weeks, coronal whole-cell recording at 34 C in 3.5 mM KCl with fast GABAergic and ionotropic glutamatergic transmission blocked",
+      "evidence_label": "separate-cohort-source-measured-point-target",
+      "acceptance_bound": null,
+      "uncertainty": "Figure 3A reports mean 0.10 plus/minus 0.10; the article's general statistical convention is mean plus/minus SEM; this is not an observed population range and does not authorize a hard acceptance interval",
+      "source_locator": "McElvain et al. 2021 Figure 3A and caption; STAR Methods, Electrophysiological recordings and Quantification and statistical analysis",
+      "simulator_representation": "post-burn-in population ISI CV reported separately for the McElvain preparation cohort",
+      "use": "secondary point objective only; no pass/fail scorer fixture, no CV2 substitution, and no pooling with the Simmons 60-90 day parasagittal gramicidin cohort"
     },
     {
       "id": "adult-direct-pathway-ipsg",
@@ -212,12 +326,40 @@
     "E_NALCN": {"low": -10.0, "high": 40.0},
     "E_h": {"low": -35.0, "high": -20.0}
   },
+  "evidence_scope_decisions": [
+    {
+      "decision": "blocked-unscorable-transfer-only",
+      "source": "Lutas-et-al-2016",
+      "record_id": "juvenile-mouse-lutas-figure5-k-unresolved",
+      "scope": "Figure 5 values remain descriptive and are prohibited from accepted targets and scorer fixtures because bath KCl is not explicitly mapped"
+    },
+    {
+      "decision": "include-model-derived-transfer-fixture",
+      "source": "Lutas-et-al-2016",
+      "target_id": "nalcn-lesion-ratio-4mM",
+      "scope": "Figure 6-figure supplement 1 explicitly reports 4 mM KCl; measured source statistics and model-derived ratio interval remain separately labeled"
+    },
+    {
+      "decision": "include-separate-cohort-point-only",
+      "source": "McElvain-et-al-2021",
+      "target_id": "young-adult-intrinsic-isi-cv-point",
+      "scope": "ISI CV is a point target without acceptance bound or scorer fixture and is not pooled with the Simmons preparation"
+    },
+    {
+      "decision": "transfer-only-held-out-context",
+      "source": "Sitzia-et-al-2022",
+      "record_id": "mature-adult-mouse-sitzia-waveform-ahp-regularity",
+      "scope": "reported waveform, AHP, and regularity statistics are not preparation-matched numerical acceptance bounds"
+    },
+    {
+      "decision": "plot-only-excluded",
+      "source": "Thompson-et-al-2025",
+      "record_id": "adult-mouse-thompson-waveform-distributions",
+      "scope": "no plot-derived numerical bound is permitted without a preregistered extraction method"
+    }
+  ],
   "unresolved_before_executable_spec": [
-    "preparation-matched adult AP threshold and width bounds remain absent from checked primary-source text",
-    "preparation-matched adult AHP minimum bound remains absent from checked primary-source text",
-    "preparation-matched adult intrinsic CV or CV2 bound remains absent from checked primary-source text",
     "adult capacitance and input-resistance values exist only in a Cs-internal mixed-identity voltage-clamp cohort and require an explicit include-or-exclude decision",
-    "Lutas Figure 5 extracellular KCl concentration is not explicitly mapped between the permitted 2.5 and 4 mM solutions",
     "operational scorer tolerance for directional lesion effects",
     "HCN baseline equivalence margin",
     "calcium concentration units and influx conversion",
@@ -229,6 +371,9 @@
     "40-80 Hz is an isolated-slice calibration target",
     "the NALCN search prior is a measured adult density",
     "juvenile rat and adult mouse waveforms are one matched preparation",
+    "the McElvain 4-6 week coronal whole-cell CV point is pooled with the Simmons 60-90 day parasagittal gramicidin cohort or converted into an acceptance interval",
+    "Sitzia AP amplitude is silently converted to AP peak or the reported negative AHP amplitude is silently converted to AHP depth",
+    "Thompson Figure 2G distributions are digitized into numerical targets without a preregistered extraction method",
     "rate alone establishes the channel mechanism",
     "BK may be added as a compensating search knob"
   ]
