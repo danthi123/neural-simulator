@@ -1,0 +1,171 @@
+{
+  "schema": "v14-snr-stageB-source-model-transfer-v1",
+  "execution_id": "v14-snr-stageB-source-model-transfer-v1",
+  "status": "preregistered_not_executed",
+  "scientific_verdict": null,
+  "candidate_calibration_allowed": false,
+  "hybridization_allowed": false,
+  "stage2_integration_allowed": false,
+  "purpose": "Test four unmodified, source-backed fast-channel comparators under the previously sealed Ding SNr clamp commands before any fitting or compartment integration.",
+  "command_authority": {
+    "path": "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
+    "sha256": "d99ed6a8fd3f1c6e871ded2358c69bf3807549ba62f4e178689ff5a29c1e330e"
+  },
+  "target_authority": {
+    "path": "research/specs/v14_snr_stageB_structural_successor_v2.json",
+    "sha256": "c0ab042b65cb7be21b640d9a14cddb13582a1662f3f0aa3159093aa1d13792c4"
+  },
+  "research_gate": {
+    "path": "research/findings/2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md",
+    "sha256": "a77e8ba56693df26c945cd2dc99083238f665582f8ebf1ee514de09f709a96e5"
+  },
+  "khaliq_initialization_correction": {
+    "path": "research/findings/2026-08-05-v14-khaliq-native-initialization-CORRECTION.md",
+    "sha256": "f566d04d2796ae35f019b26b94482d48b3ab3b0b219461fad4ac79d3dc1dca6d"
+  },
+  "implementation": {
+    "sodium_models": {
+      "path": "sim/sodium_source_models.py",
+      "sha256": "7aa487e105279b6a4776618293f7ca3f2920100eb4c480661993c827f909defa"
+    },
+    "kv3_models": {
+      "path": "sim/kv3_source_models.py",
+      "sha256": "d6000313564a20298f359b6923221ea18c18dff364a33e409e2e897fde82b0ad"
+    },
+    "runner": {
+      "path": "research/runners/v14_stageB_source_model_transfer.py",
+      "sha256": "d60ce9c33167b920892af641e22327c7a64627503bc33b525d6e8e976e2d3f27"
+    }
+  },
+  "model_fingerprint_contract": "SHA-256 of canonical compact sorted ASCII JSON containing model_id, exact implementation SHA-256, exact source SHA-256 identity, initialization policy, and temperature policy.",
+  "models": [
+    {
+      "model_id": "khaliq_raman_13_state",
+      "family": "fast_sodium",
+      "model_fingerprint": "a4b3f29d006a2b4f9fd101e8be407168eda854ab0454c34cdd6aacf37d5a0d95",
+      "source_identity": {
+        "kind": "author_supplied_modeldb_nmodl",
+        "commit": "c96405173a17d18999d2a8d63d40899a76d02bdf",
+        "file": "rsg.mod",
+        "sha256": "1a3382714bd0962665ec31f7dfac2aa3a9e403a5e3d23e29851afec232c4543e"
+      },
+      "initialization": "kinetic_graph_stationary",
+      "source_reversal_mV": 60.0,
+      "assay_reversal_mV": 50.0,
+      "boundary": "Transitions and rates are unchanged, but graph-stationary initialization replaces defective native seqinitial and Ding assay reversal replaces source reversal; this is not an exact native source-code replay.",
+      "fixed_voltage_solver": "float64 eigendecomposition matrix exponential",
+      "calibration_allowed": false,
+      "conductance_fitting_allowed": false,
+      "unavailable_assays": [],
+      "conditions": [
+        {"condition_id": "graph_stationary", "temperature_c": null}
+      ]
+    },
+    {
+      "model_id": "balbi_nav16_six_state",
+      "family": "fast_sodium",
+      "model_fingerprint": "7e20c47ef3fb60014f4c01db9f81c3352aa528899724949fc08a871146f07d22",
+      "source_identity": {
+        "kind": "author_supplied_modeldb_nmodl",
+        "commit": "815a1d7762d0cdccc3a3c6e6bed3a678d15888e4",
+        "file": "Nav16_a.mod",
+        "sha256": "69931ced1587944070edb3169a865e9e3e2a42f715b19a8b7b57e72e831ba71d"
+      },
+      "initialization": "source_stationary",
+      "source_reversal_mV": 65.0,
+      "assay_reversal_mV": 50.0,
+      "boundary": "Transitions, rates, source-package 22 C temperature, and stationary initialization are unchanged; Ding assay reversal replaces source reversal.",
+      "fixed_voltage_solver": "float64 eigendecomposition matrix exponential",
+      "calibration_allowed": false,
+      "conductance_fitting_allowed": false,
+      "unavailable_assays": [],
+      "conditions": [
+        {"condition_id": "source_22c", "temperature_c": 22.0}
+      ]
+    },
+    {
+      "model_id": "labro_2015_four_state",
+      "family": "kv3",
+      "model_fingerprint": "1e49ff10c9bbff5b7b5300a5189feb2bf91bdba1b16296553242319271bea4ce",
+      "source_identity": {
+        "kind": "peer_reviewed_primary_and_official_supplement",
+        "main_pdf_sha256": "3ee88c2be52f1f1b2c329836ddd6dd9e2cfe2d445397d04b13e8232eb2bc5b60",
+        "supplement_pdf_sha256": "d0eb5e8d565d715588543120739fc4d82fff7629f1064b6e5d87d50f9c41a882"
+      },
+      "initialization": "source_graph_stationary",
+      "source_reversal_mV": -58.0,
+      "assay_reversal_mV": -90.0,
+      "boundary": "The source only reports room temperature, so 20, 22.5, and 25 C are a prospective uncertainty envelope without Q10; Ding assay reversal replaces source reversal.",
+      "fixed_voltage_solver": "float64 uniformization matrix exponential",
+      "calibration_allowed": false,
+      "conductance_fitting_allowed": false,
+      "unavailable_assays": ["kv3_inactivation"],
+      "conditions": [
+        {"condition_id": "room_20c", "temperature_c": 20.0},
+        {"condition_id": "room_22p5c", "temperature_c": 22.5},
+        {"condition_id": "room_25c", "temperature_c": 25.0}
+      ]
+    },
+    {
+      "model_id": "desai_2008_control",
+      "family": "kv3",
+      "model_fingerprint": "024bf592ec2d76e0b3d345cc7cbd683d195318154964c8f682cba62df5b0b0cd",
+      "source_identity": {
+        "kind": "peer_reviewed_primary_equations",
+        "pmc_snapshot_sha256": "4c04b05905e8a976a3590b0d19302e8ec4c03841ff8760a67f07dc39e1da9878"
+      },
+      "initialization": "source_gate_equilibrium",
+      "source_reversal_mV": -80.0,
+      "assay_reversal_mV": -90.0,
+      "boundary": "Published equations have no temperature term and none is invented; Ding assay reversal replaces source reversal.",
+      "fixed_voltage_solver": "float64 analytic independent-gate exponential",
+      "calibration_allowed": false,
+      "conductance_fitting_allowed": false,
+      "unavailable_assays": [],
+      "conditions": [
+        {"condition_id": "no_temperature", "temperature_c": null}
+      ]
+    }
+  ],
+  "analysis_contract": {
+    "analyzer_authority": {
+      "path": "tools/v14_stageB_source_model_transfer_analysis.py",
+      "sha256": "11af117d320fc8e51673bdea76c7128dce3fd1d5a2522d39ef3d48149af3eff5"
+    },
+    "estimator_authority": {
+      "path": "tools/v14_stageB_fast_channel_clamp_analysis.py",
+      "sha256": "76b7fb9106c842c03f1f1103bce9f8bd26f55eff93317eb2e7783d88dad1cce0"
+    },
+    "estimator_policy": "Reuse the previously filed Boltzmann, rise/decay, biexponential recovery, and deactivation estimators unchanged.",
+    "model_scope": "Score each model independently; missing source states are explicit failures or unavailable endpoints and cannot be supplied by another model.",
+    "labro_temperature_policy": "Report all three temperatures and use the envelope only to decide whether the unmodified Labro model can satisfy each available endpoint anywhere in the sealed room-temperature range.",
+    "cpu_gpu_parity": {"rtol": 5e-8, "atol": 5e-10, "pointwise": true},
+    "compensation_allowed": false,
+    "per_model_verdicts": ["SOURCE_TRANSFER_GO", "SOURCE_TRANSFER_NO_GO", "INCONCLUSIVE_INVALID_EVIDENCE"],
+    "stage2_verdict_allowed": false
+  },
+  "execution_matrix": [
+    {"model_id":"khaliq_raman_13_state","condition_id":"graph_stationary","backend":"numpy","device":"cpu","authority":"cpu_reference","output":"research/findings/raw/v14_stageB_source_khaliq_graph_stationary_numpy_v1.json","receipt":"research/findings/raw/v14_stageB_source_khaliq_graph_stationary_numpy_v1.receipt.json"},
+    {"model_id":"khaliq_raman_13_state","condition_id":"graph_stationary","backend":"cupy","device":"cuda:0","authority":"gpu_parity_only","output":"research/findings/raw/v14_stageB_source_khaliq_graph_stationary_cupy_v1.json","receipt":"research/findings/raw/v14_stageB_source_khaliq_graph_stationary_cupy_v1.receipt.json"},
+    {"model_id":"balbi_nav16_six_state","condition_id":"source_22c","backend":"numpy","device":"cpu","authority":"cpu_reference","output":"research/findings/raw/v14_stageB_source_balbi_22c_numpy_v1.json","receipt":"research/findings/raw/v14_stageB_source_balbi_22c_numpy_v1.receipt.json"},
+    {"model_id":"balbi_nav16_six_state","condition_id":"source_22c","backend":"cupy","device":"cuda:0","authority":"gpu_parity_only","output":"research/findings/raw/v14_stageB_source_balbi_22c_cupy_v1.json","receipt":"research/findings/raw/v14_stageB_source_balbi_22c_cupy_v1.receipt.json"},
+    {"model_id":"labro_2015_four_state","condition_id":"room_20c","backend":"numpy","device":"cpu","authority":"cpu_reference","output":"research/findings/raw/v14_stageB_source_labro_20c_numpy_v1.json","receipt":"research/findings/raw/v14_stageB_source_labro_20c_numpy_v1.receipt.json"},
+    {"model_id":"labro_2015_four_state","condition_id":"room_20c","backend":"cupy","device":"cuda:0","authority":"gpu_parity_only","output":"research/findings/raw/v14_stageB_source_labro_20c_cupy_v1.json","receipt":"research/findings/raw/v14_stageB_source_labro_20c_cupy_v1.receipt.json"},
+    {"model_id":"labro_2015_four_state","condition_id":"room_22p5c","backend":"numpy","device":"cpu","authority":"cpu_reference","output":"research/findings/raw/v14_stageB_source_labro_22p5c_numpy_v1.json","receipt":"research/findings/raw/v14_stageB_source_labro_22p5c_numpy_v1.receipt.json"},
+    {"model_id":"labro_2015_four_state","condition_id":"room_22p5c","backend":"cupy","device":"cuda:0","authority":"gpu_parity_only","output":"research/findings/raw/v14_stageB_source_labro_22p5c_cupy_v1.json","receipt":"research/findings/raw/v14_stageB_source_labro_22p5c_cupy_v1.receipt.json"},
+    {"model_id":"labro_2015_four_state","condition_id":"room_25c","backend":"numpy","device":"cpu","authority":"cpu_reference","output":"research/findings/raw/v14_stageB_source_labro_25c_numpy_v1.json","receipt":"research/findings/raw/v14_stageB_source_labro_25c_numpy_v1.receipt.json"},
+    {"model_id":"labro_2015_four_state","condition_id":"room_25c","backend":"cupy","device":"cuda:0","authority":"gpu_parity_only","output":"research/findings/raw/v14_stageB_source_labro_25c_cupy_v1.json","receipt":"research/findings/raw/v14_stageB_source_labro_25c_cupy_v1.receipt.json"},
+    {"model_id":"desai_2008_control","condition_id":"no_temperature","backend":"numpy","device":"cpu","authority":"cpu_reference","output":"research/findings/raw/v14_stageB_source_desai_numpy_v1.json","receipt":"research/findings/raw/v14_stageB_source_desai_numpy_v1.receipt.json"},
+    {"model_id":"desai_2008_control","condition_id":"no_temperature","backend":"cupy","device":"cuda:0","authority":"gpu_parity_only","output":"research/findings/raw/v14_stageB_source_desai_cupy_v1.json","receipt":"research/findings/raw/v14_stageB_source_desai_cupy_v1.receipt.json"}
+  ],
+  "analysis_output": "research/findings/raw/v14_snr_stageB_source_model_transfer_analysis_v1.json",
+  "consumption_ledger": "research/findings/raw/v14_snr_stageB_source_model_transfer_consumption_v1.json",
+  "stop_rules": [
+    "Stop a model independently as SOURCE_TRANSFER_NO_GO when any available noncompensable Ding endpoint fails; do not tune it.",
+    "Stop as INCONCLUSIVE_INVALID_EVIDENCE when source, implementation, spec, receipt, provenance, backend, matrix completeness, or pointwise CPU/GPU parity cannot be authenticated.",
+    "Labro cannot pass the unavailable Kv3 inactivation endpoint and cannot borrow Desai availability; report its activation/deactivation scope separately.",
+    "No source-transfer outcome authorizes Stage 2 integration, model hybridization, conductance fitting, or candidate calibration."
+  ],
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "prospective preregistration containing no simulation result"
+}

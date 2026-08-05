@@ -214,6 +214,22 @@ def test_advance_obeys_fixed_voltage_semigroup(model_id, temperature):
     np.testing.assert_allclose(composed, direct, rtol=2e-9, atol=2e-11)
 
 
+@pytest.mark.parametrize("model_id,temperature", [(KHALIQ, None), (BALBI, 22.0)])
+def test_trace_matches_independent_advances_without_repeated_decomposition(model_id, temperature):
+    voltage = np.array([-80.0, -20.0, 20.0])
+    initial = sodium.equilibrium(model_id, np.full(3, -100.0), temperature, np)
+    elapsed = np.array([0.0, 0.005, 0.1, 1.0])
+    actual = sodium.trace(model_id, voltage, initial, elapsed, temperature, np)
+    expected = np.stack(
+        [sodium.advance(model_id, voltage, initial, duration, temperature, np) for duration in elapsed],
+        axis=1,
+    )
+
+    assert actual.shape == expected.shape
+    np.testing.assert_allclose(actual, expected, rtol=2e-9, atol=2e-11)
+    np.testing.assert_array_equal(actual[:, 0], initial)
+
+
 @pytest.mark.parametrize("model_id", [KHALIQ, BALBI])
 def test_zero_duration_is_exact_identity(model_id):
     temperature = _temperature(model_id, 37.0)

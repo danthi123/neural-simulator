@@ -80,6 +80,7 @@ __all__ = [
     "equilibrium",
     "model_metadata",
     "open_probability",
+    "trace",
 ]
 
 
@@ -155,6 +156,47 @@ def advance(
     return _validated_result(evolved, xp)
 
 
+def trace(
+    model_id: str,
+    voltage_mv: Any,
+    states: Any,
+    elapsed_ms: Any,
+    temperature_c: Any,
+    xp: Any,
+) -> Any:
+    """Evaluate every elapsed time after one decomposition per voltage."""
+
+    model_id = _validated_model_id(model_id)
+    voltage = _validated_voltage(voltage_mv, xp)
+    temperature = _validated_temperature(model_id, temperature_c, xp)
+    elapsed = _validated_duration(elapsed_ms, xp)
+    if elapsed.ndim != 1 or elapsed.size == 0:
+        raise ValueError("elapsed_ms must be a nonempty one-dimensional array")
+
+    state_array = _validated_states(model_id, states, xp)
+    try:
+        voltage, state_probe = xp.broadcast_arrays(voltage, state_array[..., 0])
+    except ValueError as exc:
+        raise ValueError("voltage_mv and states batch dimensions are incompatible") from exc
+    state_array = xp.broadcast_to(state_array, state_probe.shape + (state_array.shape[-1],))
+
+    generator = _generator(model_id, voltage, temperature, xp)
+    eigenvalues, eigenvectors = xp.linalg.eig(generator)
+    coefficients = xp.linalg.solve(eigenvectors, state_array[..., :, None])[..., 0]
+    evolved_coefficients = (
+        xp.exp(eigenvalues[..., None, :] * elapsed.reshape((1,) * voltage.ndim + (-1, 1)))
+        * coefficients[..., None, :]
+    )
+    evolved = xp.einsum("...ij,...tj->...ti", eigenvectors, evolved_coefficients)
+    imaginary_scale = xp.max(xp.abs(xp.imag(evolved)))
+    if _scalar_bool(imaginary_scale > 1e-9):
+        raise FloatingPointError("transition-matrix trace produced a complex state")
+    evolved = xp.real(evolved)
+    zero_mask = elapsed.reshape((1,) * voltage.ndim + (-1, 1)) == 0.0
+    evolved = xp.where(zero_mask, state_array[..., None, :], evolved)
+    return _validated_result(evolved, xp)
+
+
 def open_probability(model_id: str, states: Any, xp: Any) -> Any:
     """Return source-defined open probability from state probabilities."""
 
@@ -221,9 +263,12 @@ def _validated_states(model_id: str, states: Any, xp: Any) -> Any:
         raise ValueError(f"states must have final dimension {expected}")
     if not _scalar_bool(xp.all(xp.isfinite(state_array))):
         raise ValueError("states must be finite")
-    if _scalar_bool(xp.any(state_array < -1e-12)):
+    # Chained command segments must accept every state that the propagator's
+    # conservation contract accepts; GPU eigensolvers can differ in the last
+    # few float64 digits from the CPU path.
+    if _scalar_bool(xp.any(state_array < -1e-9)):
         raise ValueError("states must be nonnegative probabilities")
-    if not _scalar_bool(xp.all(xp.abs(xp.sum(state_array, axis=-1) - 1.0) <= 1e-10)):
+    if not _scalar_bool(xp.all(xp.abs(xp.sum(state_array, axis=-1) - 1.0) <= 1e-8)):
         raise ValueError("states must sum to one")
     return state_array
 
