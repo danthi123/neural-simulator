@@ -14,6 +14,7 @@ import pytest
 
 from research.runners.v14_stageB_batched_physiology import (
     DECLARATION_SCHEMA,
+    DT_MS,
     EVENT_TIMEOUT_STEPS,
     NAP_STEPS,
     OUTPUT_SCHEMA,
@@ -316,6 +317,9 @@ def test_nap_arm_runs_exactly_20000_steps_and_records_complete_lesion(tmp_path: 
             "timeout_is_physiology_failure": False,
         }
         assert row["trace"]["sample_count"] == NAP_STEPS
+        assert row["trace"]["recording_end_s"] == pytest.approx(
+            (NAP_STEPS + 1) * DT_MS / 1000.0
+        )
         assert row["runtime_intervention"]["target"] == "nap"
         assert row["runtime_intervention"]["after"] == 0.0
 

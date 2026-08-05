@@ -50,7 +50,7 @@ MANIFEST=$(mktemp)
 REVISION=$(mktemp)
 FAILED_NODES=()
 trap 'rm -rf "$STAGE"; rm -f "$MANIFEST" "$REVISION"' EXIT
-git archive "$SOURCE_SHA" sim research/__init__.py research/runners research/specs experiment tools tests \
+git archive "$SOURCE_SHA" sim research/__init__.py research/runners research/specs research/fixtures experiment tools tests \
   docs CLAUDE.md GAP_CLOSURE_MISSION.md README.md ROADMAP.md requirements.txt requirements-dev.txt \
   | tar -x -C "$STAGE"
 # Execute the generator extracted from HEAD. A dirty worktree copy must not mint
@@ -64,6 +64,8 @@ ANCESTRY_SHA=$(sha256sum "$STAGE/.source_ancestry.json" | awk '{print $1}')
 (cd "$STAGE" && { \
   find sim research/runners experiment tools tests -type f \
     \( -name '*.py' -o -name '*.sh' \) -print0; \
+  find research/fixtures -type f \
+    \( -name '*.py' -o -name '*.sh' -o -name '*.json' \) -print0; \
   find research/specs -type f -name '*.json' -print0; \
   find docs -type f -name '*.md' -print0; \
   printf 'research/__init__.py\0CLAUDE.md\0GAP_CLOSURE_MISSION.md\0README.md\0ROADMAP.md\0requirements-dev.txt\0.source_ancestry.json\0'; \
@@ -78,6 +80,7 @@ for h in "${NODES[@]}"; do
     ~/$REMOTE_ROOT/sim \
     ~/$REMOTE_ROOT/research/runners \
     ~/$REMOTE_ROOT/research/specs \
+    ~/$REMOTE_ROOT/research/fixtures \
     ~/$REMOTE_ROOT/research/findings/raw \
     ~/$REMOTE_ROOT/experiment \
     ~/$REMOTE_ROOT/tools \
@@ -96,6 +99,7 @@ for h in "${NODES[@]}"; do
   rsync -az --delete --exclude='__pycache__' --exclude='*.pyc' --exclude='findings/raw/' \
     "$STAGE/research/runners/" "$h:~/$REMOTE_ROOT/research/runners/"
   rsync -az --delete "$STAGE/research/specs/" "$h:~/$REMOTE_ROOT/research/specs/"
+  rsync -az --delete "$STAGE/research/fixtures/" "$h:~/$REMOTE_ROOT/research/fixtures/"
   rsync -az "$STAGE/research/__init__.py" "$h:~/$REMOTE_ROOT/research/__init__.py"
   ssh "$h" "mkdir -p ~/$REMOTE_ROOT/research/findings/raw"
   rsync -az --delete --exclude='__pycache__' "$STAGE/experiment/" "$h:~/$REMOTE_ROOT/experiment/" 2>/dev/null

@@ -1168,9 +1168,15 @@ class CoreSimConfig:
                 errors.append("SNr executable packets require HODGKIN_HUXLEY")
             if not self.enable_brain_region_framework:
                 errors.append("SNr executable packets require the brain-region framework")
-            if policy_path is None or policy_sha256 is None:
+            regions_without_policy = [
+                region.name
+                for region in packet_regions
+                if getattr(region, "snr_authority_policy_path", None) is None
+            ]
+            if regions_without_policy and (policy_path is None or policy_sha256 is None):
                 errors.append(
-                    "SNr executable packets require an authenticated authority policy"
+                    "SNr executable packets require a global or region-local authenticated "
+                    f"authority policy; missing for {sorted(regions_without_policy)}"
                 )
 
         # Network parameters

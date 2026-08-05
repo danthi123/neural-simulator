@@ -107,6 +107,55 @@ def test_packet_mode_requires_hh_region_framework_and_policy() -> None:
         _config([region], enable_brain_region_framework=False)
 
 
+def test_region_local_policy_can_replace_global_policy_and_round_trip() -> None:
+    region = BrainRegion(
+        name="snr",
+        n_neurons=2,
+        internal_density=0.0,
+        snr_executable_packet_path=_PACKET_PATH,
+        snr_executable_packet_sha256=_DIGEST,
+        snr_authority_policy_path=_POLICY_PATH,
+        snr_authority_policy_sha256=_POLICY_DIGEST,
+    )
+    config = _config(
+        [region], snr_authority_policy_path=None, snr_authority_policy_sha256=None,
+    )
+
+    serialized = config.to_dict()
+    restored = core_sim_config_from_dict(serialized)
+
+    assert restored.to_dict() == serialized
+    assert restored.brain_regions[0].snr_authority_policy_path == _POLICY_PATH
+    assert restored.brain_regions[0].snr_authority_policy_sha256 == _POLICY_DIGEST
+
+
+def test_region_local_policy_requires_packet_canonical_path_and_digest() -> None:
+    with pytest.raises(ValueError, match="requires an executable packet"):
+        BrainRegion(
+            name="snr",
+            n_neurons=2,
+            snr_authority_policy_path=_POLICY_PATH,
+            snr_authority_policy_sha256=_POLICY_DIGEST,
+        )
+    with pytest.raises(ValueError, match="must be set together"):
+        BrainRegion(
+            name="snr",
+            n_neurons=2,
+            snr_executable_packet_path=_PACKET_PATH,
+            snr_executable_packet_sha256=_DIGEST,
+            snr_authority_policy_path=_POLICY_PATH,
+        )
+    with pytest.raises(ValueError, match="canonical and relative"):
+        BrainRegion(
+            name="snr",
+            n_neurons=2,
+            snr_executable_packet_path=_PACKET_PATH,
+            snr_executable_packet_sha256=_DIGEST,
+            snr_authority_policy_path="../policy.json",
+            snr_authority_policy_sha256=_POLICY_DIGEST,
+        )
+
+
 def test_policy_reference_is_paired_canonical_and_digest_pinned() -> None:
     with pytest.raises(ValueError, match="must be set together"):
         CoreSimConfig(snr_authority_policy_path=_POLICY_PATH)

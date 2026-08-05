@@ -121,6 +121,10 @@ class BrainRegion:
     # two authorities inside one region.
     snr_executable_packet_path: Optional[str] = None
     snr_executable_packet_sha256: Optional[str] = None
+    # Optional region-local trust root for batched authenticated packets.
+    # When absent, the CoreSimConfig global policy remains the authority.
+    snr_authority_policy_path: Optional[str] = None
+    snr_authority_policy_sha256: Optional[str] = None
 
     # Per-region GABA_A reversal potential override in mV. None = use global
     # cfg.syn_reversal_potential_i. Used to model regions with different
@@ -320,6 +324,8 @@ class BrainRegion:
 
         packet_path = self.snr_executable_packet_path
         packet_sha256 = self.snr_executable_packet_sha256
+        policy_path = self.snr_authority_policy_path
+        policy_sha256 = self.snr_authority_policy_sha256
         if (packet_path is None) != (packet_sha256 is None):
             raise ValueError(
                 "snr_executable_packet_path and sha256 must be set together"
@@ -356,6 +362,43 @@ class BrainRegion:
             if self.snr_conductance_bundle_enabled:
                 raise ValueError(
                     "SNr packet references cannot be combined with legacy conductance maxima"
+                )
+        if (policy_path is None) != (policy_sha256 is None):
+            raise ValueError(
+                "snr_authority_policy_path and sha256 must be set together"
+            )
+        if policy_path is not None:
+            if packet_path is None:
+                raise ValueError(
+                    "region-local SNr authority policy requires an executable packet"
+                )
+            if (
+                not isinstance(policy_path, str)
+                or not policy_path
+                or policy_path != policy_path.strip()
+                or "\\" in policy_path
+                or "\x00" in policy_path
+                or any(ord(character) > 127 for character in policy_path)
+            ):
+                raise ValueError(
+                    "snr_authority_policy_path must be trimmed ASCII POSIX text"
+                )
+            parsed_policy = PurePosixPath(policy_path)
+            if (
+                parsed_policy.is_absolute()
+                or str(parsed_policy) != policy_path
+                or any(part in {"", ".", ".."} for part in parsed_policy.parts)
+            ):
+                raise ValueError(
+                    "snr_authority_policy_path must be canonical and relative"
+                )
+            if (
+                not isinstance(policy_sha256, str)
+                or len(policy_sha256) != 64
+                or any(character not in "0123456789abcdef" for character in policy_sha256)
+            ):
+                raise ValueError(
+                    "snr_authority_policy_sha256 must be a lowercase SHA-256 digest"
                 )
 
     @property

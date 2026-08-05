@@ -9,17 +9,28 @@ from pathlib import Path
 
 import pytest
 
+import tools.v14_stageB_screen_aggregator as aggregator
 from sim.snr_executable_packet import canonical_bytes
 from tools.v14_stageB_screen_aggregator import (
     REQUIRED_METRICS,
     RESULT_SCHEMA,
     StageBScreenAggregatorError,
     aggregate_stageB_screen,
+    main,
 )
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CAUSAL_SOURCE = ROOT / "research/specs/v14_snr_stageB_causal_gates.json"
+REAL_REGENERATE = aggregator._regenerate_candidate_manifest
+
+
+@pytest.fixture(autouse=True)
+def _isolate_structural_aggregator_tests(monkeypatch):
+    # Candidate regeneration and raw-trace rescoring have their own focused
+    # suites. These fixtures exercise the aggregator's join/classification.
+    monkeypatch.setattr(aggregator, "_regenerate_candidate_manifest", lambda _root, value: value)
+    monkeypatch.setattr(aggregator, "_recompute_scorer", lambda _root, value: value)
 
 
 def _write_json(path: Path, value: dict) -> str:
@@ -51,6 +62,8 @@ def _fixture(tmp_path: Path, count: int = 1):
     manifest_body = {
         "schema": "v14-snr-stageB-sobol-candidate-manifest-v1",
         "status": "preregistered-seed-free-candidate-generation",
+        "device": "not_applicable_non_executed_candidate_design",
+        "provenance_exempt": "deterministic non-executed Sobol candidate design; contains no measured result",
         "template": {},
         "design": {"scientific_seed": None},
         "search_space": {},
@@ -197,6 +210,48 @@ def test_candidate_parameter_mismatch_and_tampering_are_rejected(tmp_path: Path)
         aggregate_stageB_screen({"path": manifest_path.name, "sha256": manifest_sha}, [{"path": path.name, "sha256": "0" * 64}], root=tmp_path)
 
 
+def test_recomputed_score_mismatch_is_rejected(tmp_path: Path, monkeypatch):
+    manifest_path, manifest_sha, candidates, score = _fixture(tmp_path)
+    document = score(*candidates[0], outcomes={key: True for key in REQUIRED_METRICS})
+    path = tmp_path / "score.json"
+    digest = _write_json(path, document)
+    recomputed = copy.deepcopy(document)
+    recomputed["results"][0]["hard_gates"][0]["passed"] = False
+    monkeypatch.setattr(aggregator, "_recompute_scorer", lambda _root, _value: recomputed)
+    with pytest.raises(StageBScreenAggregatorError, match="does not equal the score recomputed"):
+        aggregate_stageB_screen(
+            {"path": manifest_path.name, "sha256": manifest_sha},
+            [{"path": path.name, "sha256": digest}],
+            root=tmp_path,
+        )
+
+
+def test_manifest_must_equal_exact_regenerated_sobol_design(tmp_path: Path, monkeypatch):
+    specs = tmp_path / "research/specs"
+    specs.mkdir(parents=True)
+    for name in (
+        "v14_snr_stageB_sobol_candidates.json",
+        "v14_snr_stageB_packet_template.json",
+    ):
+        (specs / name).write_bytes((ROOT / "research/specs" / name).read_bytes())
+    manifest_path = specs / "v14_snr_stageB_sobol_candidates.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    manifest["candidates"] = manifest["candidates"][:-1]
+    manifest["design"]["exact_count"] -= 1
+    body = {key: value for key, value in manifest.items() if key != "sha256"}
+    manifest["sha256"] = hashlib.sha256(canonical_bytes(body)).hexdigest()
+    manifest_path.write_bytes(canonical_bytes(manifest))
+    monkeypatch.setattr(aggregator, "_regenerate_candidate_manifest", REAL_REGENERATE)
+    with pytest.raises(StageBScreenAggregatorError, match="exact regenerated Sobol design"):
+        aggregator._validate_candidate_manifest(
+            tmp_path,
+            {
+                "path": manifest_path.relative_to(tmp_path).as_posix(),
+                "sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+            },
+        )
+
+
 @pytest.mark.parametrize(
     ("field", "value", "message"),
     [
@@ -242,3 +297,23 @@ def test_mixed_causal_gate_bindings_are_rejected(tmp_path: Path):
             [{"path": first_path.name, "sha256": first_sha}, {"path": second_path.name, "sha256": second_digest}],
             root=tmp_path,
         )
+
+
+def test_cli_writes_once_to_new_repository_relative_output(tmp_path: Path):
+    manifest_path, manifest_sha, candidates, score = _fixture(tmp_path)
+    outcomes = {key: True for key in REQUIRED_METRICS}
+    score_path = tmp_path / "score.json"
+    score_sha = _write_json(score_path, score(*candidates[0], outcomes=outcomes))
+    argv = [
+        "--root", str(tmp_path),
+        "--candidate-manifest", manifest_path.name,
+        "--candidate-manifest-sha256", manifest_sha,
+        "--scorer", score_path.name, score_sha,
+        "--output", "aggregate.json",
+    ]
+
+    assert main(argv) == 0
+    output = json.loads((tmp_path / "aggregate.json").read_text(encoding="ascii"))
+    assert output["candidates"][0]["classification"] == "screen_pass"
+    with pytest.raises(SystemExit):
+        main(argv)

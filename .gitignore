@@ -160,3 +160,7 @@ research/coordination/status.json
 research/coordination/heartbeats.jsonl
 research/coordination/HANDOFF.md
 research/queue/.corpus_checks.jsonl
+
+# Regenerable authenticated experiment campaigns. Source manifests and final
+# evidence stay tracked; thousands of compiled candidate packet files do not.
+research/experiment-runtime/

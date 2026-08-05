@@ -123,12 +123,17 @@ its controls and lesions, and is tested at the required seed coverage.
 2. **Gate B physiology and delayed credit are unresolved.** The V14 engine now
    compiles and independently verifies pinned SNr candidates, runs intact plus
    four intrinsic-current lesions, recomputes metrics from bound raw traces,
-   and records provenance. Its authority-pinned production runner now records
-   101-spike event-count traces or an operational timeout. The low endpoint was
-   silent and `UNAVAILABLE`; the high endpoint failed Nap-silence and Cav2.2-CV
-   signs. AHP, HCN current-step, SK cohort, and Nap voltage protocols remain
-   unavailable; delayed action-reward learning and its unrelated-reward
-   control come afterward.
+   and records provenance. Production runs write authenticated compact traces
+   and stop at 101 spikes or the operational timeout. An exact 512-candidate,
+   24-dimensional Sobol screen is filed. The engine materialized all 512
+   independently verified candidates, executed all 2,560 GPU arm traces, and
+   reduced them by strict noncompensating triage to 2 engineering passes, 101
+   inconclusive candidates, and 409 failures. A strict
+   aggregator reports only the five resolved subgates; NumPy/CPU confirmation
+   remains authoritative. The low endpoint was silent and `UNAVAILABLE`; the
+   high endpoint failed Nap-silence and Cav2.2-CV signs. AHP, HCN current-step,
+   SK cohort, and Nap voltage protocols remain unavailable; delayed
+   action-reward learning and its unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
    biological consistency signal rather than an exact composer metadata read.
@@ -169,9 +174,10 @@ required integrated form.
   expected consequence, not a free-standing text completion.
 - Use the V14 Stage B production runner for batched, authenticated candidate
   screening under resolved causal subgates without opening reserved scientific
-  partitions early. Add compact trace storage and preregistered stop rules;
-  AHP, HCN current-step, SK cohort, and Nap voltage gates stay unavailable
-  until their source-faithful protocols are fully filed.
+  partitions early. Run the exact filed 512-candidate Sobol manifest through
+  GPU engineering screening, then confirm candidates with authoritative
+  NumPy/CPU runs. AHP, HCN current-step, SK cohort, and Nap voltage gates stay
+  unavailable until their source-faithful protocols are fully filed.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another
@@ -245,12 +251,22 @@ maintenance is workflow support, not biological evidence.
 
 ## Experiment Engine Workflow
 
-The experiment engine is a planner and controller for reproducible experiments;
-it is not a result generator. It now authenticates candidate packets, executes
-real readiness traces and four intrinsic-current lesions, binds raw artifacts
-to an automatic scorer, and emits revision-bound receipts. The latest endpoint
-runs correctly returned `UNAVAILABLE`, not a scientific verdict, because the
-remaining biological analysis protocols are not executable yet.
+The experiment engine now automates a bounded Stage B screening path, not the
+full research loop. It authenticates candidate packets, supports a distinct
+authority policy for each candidate, executes readiness traces and four
+intrinsic-current lesions, stores compact authenticated traces, binds artifacts
+to scoring receipts, and strictly aggregates the five resolved subgates. The
+exact 512-point Sobol candidate manifest is deterministic and filed. The GPU
+batch path accelerates engineering screening; NumPy/CPU execution remains the
+scientific authority.
+
+The exact filed campaign now materializes, dispatches, persists, and triages
+end to end. Its first full GPU screen completed 2,560 arm traces and nominated
+Sobol candidates 284 and 404 for authority runs. It is not yet a fully
+autonomous research loop: authoritative CPU confirmation, recovery across
+machines, and generation of a subsequent search from confirmed results are not
+integrated end to end. Unspecified biological subgates remain fail-closed
+rather than being inferred from partial evidence.
 
 1. **Plan.** Materialize the treatment, controls, lesions, anti-cheats, exact
    variables, seed partitions, expected artifacts, and resource budget.

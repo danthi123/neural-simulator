@@ -146,15 +146,19 @@ def packet_trust_reference_document(config) -> dict[str, object] | None:
         path = getattr(region, "snr_executable_packet_path", None)
         if path is None:
             continue
-        records.append(
-            {
-                "packet_file_sha256": getattr(
-                    region, "snr_executable_packet_sha256", None
-                ),
-                "packet_path": path,
-                "region_name": getattr(region, "name", None),
-            }
-        )
+        record = {
+            "packet_file_sha256": getattr(
+                region, "snr_executable_packet_sha256", None
+            ),
+            "packet_path": path,
+            "region_name": getattr(region, "name", None),
+        }
+        regional_policy_path = getattr(region, "snr_authority_policy_path", None)
+        regional_policy_sha256 = getattr(region, "snr_authority_policy_sha256", None)
+        if regional_policy_path is not None or regional_policy_sha256 is not None:
+            record["authority_policy_path"] = regional_policy_path
+            record["authority_policy_sha256"] = regional_policy_sha256
+        records.append(record)
     if not records:
         return None
     records.sort(key=lambda record: str(record["region_name"]))
@@ -205,26 +209,36 @@ def load_runtime_snr_packet_bindings(
                 f"packet-backed region {name!r} requires a lowercase SHA-256 digest"
             )
 
-    policy_path = getattr(config, "snr_authority_policy_path", None)
-    policy_sha256 = getattr(config, "snr_authority_policy_sha256", None)
-    if not isinstance(policy_path, str) or not isinstance(policy_sha256, str):
-        raise PacketError("packet-backed regions require a pinned authority policy")
-
     root = resolve_simulation_source_root(source_root)
-    policy: AuthorityPolicy = load_authority_policy_file(
-        policy_path,
-        artifact_root=root,
-        expected_sha256=policy_sha256,
-    )
+    global_policy_path = getattr(config, "snr_authority_policy_path", None)
+    global_policy_sha256 = getattr(config, "snr_authority_policy_sha256", None)
+    policies: dict[tuple[str, str], AuthorityPolicy] = {}
     config_sha256 = hashlib.sha256(canonical_bytes(config.to_dict())).hexdigest()
     bindings: dict[str, RuntimeSNrPacketBinding] = {}
     loaded_packets: dict[
-        tuple[str, str], tuple[ExecutablePacket, MaterializedPacket]
+        tuple[str, str, str, str], tuple[ExecutablePacket, MaterializedPacket]
     ] = {}
     for region in regions:
         path = region.snr_executable_packet_path
         file_sha256 = region.snr_executable_packet_sha256
-        key = (path, file_sha256)
+        policy_path = getattr(region, "snr_authority_policy_path", None) or global_policy_path
+        policy_sha256 = (
+            getattr(region, "snr_authority_policy_sha256", None) or global_policy_sha256
+        )
+        if not isinstance(policy_path, str) or not isinstance(policy_sha256, str):
+            raise PacketError(
+                f"packet-backed region {region.name!r} requires a pinned authority policy"
+            )
+        policy_key = (policy_path, policy_sha256)
+        policy = policies.get(policy_key)
+        if policy is None:
+            policy = load_authority_policy_file(
+                policy_path,
+                artifact_root=root,
+                expected_sha256=policy_sha256,
+            )
+            policies[policy_key] = policy
+        key = (path, file_sha256, policy_path, policy_sha256)
         cached = loaded_packets.get(key)
         if cached is None:
             packet = load_packet_file(

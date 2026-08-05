@@ -22,6 +22,15 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from sim.snr_executable_packet import PacketError, canonical_bytes
+from tools.v14_stageB_candidate_batch import (
+    StageBCandidateBatchError,
+    build_candidate_manifest,
+)
+from tools.v14_stageB_scorer import (
+    INTRINSIC_LESION_SCHEMA,
+    StageBScorerError,
+    score_intrinsic_lesion_observations,
+)
 
 
 RESULT_SCHEMA = "v14-snr-stageB-resolved-screen-aggregate-v1"
@@ -61,7 +70,8 @@ _SCORE_KEYS = {
     "results",
 }
 _MANIFEST_KEYS = {
-    "schema", "status", "template", "design", "search_space", "candidates", "sha256"
+    "schema", "status", "device", "provenance_exempt", "template", "design",
+    "search_space", "candidates", "sha256",
 }
 _CANDIDATE_ROW_KEYS = {"point_index", "candidate_sha256", "candidate"}
 _CANDIDATE_KEYS = {"schema", "candidate_id", "parameters"}
@@ -114,6 +124,28 @@ def _repository_relative(root: Path, value: Any, context: str) -> Path:
         raise StageBScreenAggregatorError(f"{context} path escapes the repository") from exc
     if path.is_symlink() or not path.is_file():
         raise StageBScreenAggregatorError(f"{context} must be a regular file")
+    return path
+
+
+def _repository_output(root: Path, value: Any) -> Path:
+    if not isinstance(value, str) or not value:
+        raise StageBScreenAggregatorError("output path must be repository-relative")
+    relative = PurePosixPath(value)
+    if (
+        relative.is_absolute()
+        or not relative.name
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
+        raise StageBScreenAggregatorError("output path must be repository-relative")
+    path = root.joinpath(*relative.parts).resolve()
+    try:
+        path.relative_to(root)
+    except ValueError as exc:
+        raise StageBScreenAggregatorError("output path escapes the repository") from exc
+    if path.exists() or path.is_symlink():
+        raise StageBScreenAggregatorError("refusing to replace an existing output")
+    if not path.parent.is_dir() or path.parent.is_symlink():
+        raise StageBScreenAggregatorError("output parent must be an existing regular directory")
     return path
 
 
@@ -173,6 +205,35 @@ def _numeric_parameters(value: Any, context: str) -> dict[str, Any]:
     return result
 
 
+def _regenerate_candidate_manifest(root: Path, manifest: Mapping[str, Any]) -> dict[str, Any]:
+    template = manifest.get("template")
+    if not isinstance(template, Mapping) or set(template) != {"path", "sha256", "template_id"}:
+        raise StageBScreenAggregatorError("candidate manifest has an invalid template binding")
+    try:
+        return build_candidate_manifest(
+            root / str(template["path"]), str(template["sha256"]), root=root,
+        )
+    except (StageBCandidateBatchError, OSError, TypeError, ValueError) as exc:
+        raise StageBScreenAggregatorError(
+            f"candidate manifest cannot be regenerated from its template: {exc}"
+        ) from exc
+
+
+def _recompute_scorer(root: Path, score: Mapping[str, Any]) -> dict[str, Any]:
+    request = {
+        "schema": INTRINSIC_LESION_SCHEMA,
+        "readiness_only": score.get("readiness_only"),
+        "causal_gate_packet": score.get("causal_gate_packet"),
+        "runner_observations": score.get("runner_observations"),
+    }
+    try:
+        return score_intrinsic_lesion_observations(request, root=root)
+    except (StageBScorerError, OSError, TypeError, ValueError) as exc:
+        raise StageBScreenAggregatorError(
+            f"scorer JSON cannot be reproduced from authenticated runner observations: {exc}"
+        ) from exc
+
+
 def _validate_candidate_manifest(root: Path, declaration: Any) -> tuple[dict[str, str], dict[str, dict[str, Any]]]:
     path, manifest = _load_bound_json(root, declaration, "candidate manifest")
     if set(manifest) != _MANIFEST_KEYS or manifest.get("schema") != MANIFEST_SCHEMA:
@@ -182,6 +243,16 @@ def _validate_candidate_manifest(root: Path, declaration: Any) -> tuple[dict[str
         raise StageBScreenAggregatorError("candidate manifest self digest is invalid")
     if manifest.get("status") != "preregistered-seed-free-candidate-generation":
         raise StageBScreenAggregatorError("candidate manifest is not the seed-free preregistered design")
+    if (
+        manifest.get("device") != "not_applicable_non_executed_candidate_design"
+        or manifest.get("provenance_exempt")
+        != "deterministic non-executed Sobol candidate design; contains no measured result"
+    ):
+        raise StageBScreenAggregatorError("candidate manifest changed its non-executed evidence boundary")
+    if manifest != _regenerate_candidate_manifest(root, manifest):
+        raise StageBScreenAggregatorError(
+            "candidate manifest does not equal the exact regenerated Sobol design"
+        )
     design = manifest.get("design")
     if not isinstance(design, Mapping) or design.get("scientific_seed") is not None:
         raise StageBScreenAggregatorError("candidate manifest contains seed data")
@@ -413,6 +484,11 @@ def _validate_score(
     if score.get("readiness_contract_result") != expected_contract_result:
         raise StageBScreenAggregatorError("scorer readiness summary is inconsistent with its gates")
 
+    if score != _recompute_scorer(root, score):
+        raise StageBScreenAggregatorError(
+            "scorer JSON does not equal the score recomputed from authenticated runner observations"
+        )
+
     return (
         {"path": path.relative_to(root).as_posix(), "sha256": _digest_bytes(path.read_bytes())},
         score,
@@ -544,10 +620,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     scorers = [{"path": path, "sha256": digest} for path, digest in args.scorer]
     try:
         result = aggregate_stageB_screen(binding, scorers, root=args.root)
-        output = _repository_relative(Path(args.root).expanduser().resolve(strict=True), args.output, "output")
-        if output.exists():
-            raise StageBScreenAggregatorError("refusing to replace an existing output")
-        output.write_bytes(canonical_bytes(result) + b"\n")
+        output = _repository_output(
+            Path(args.root).expanduser().resolve(strict=True), args.output,
+        )
+        try:
+            with output.open("xb") as handle:
+                handle.write(canonical_bytes(result) + b"\n")
+        except FileExistsError as exc:
+            raise StageBScreenAggregatorError(
+                "refusing to replace an existing output"
+            ) from exc
     except (StageBScreenAggregatorError, OSError, PacketError) as exc:
         parser.error(str(exc))
     return 0

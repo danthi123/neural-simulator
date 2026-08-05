@@ -767,7 +767,7 @@ def run_authenticated_gpu_batch(
                     "sample_semantics": "post-update state at the declared time",
                     "sample_count": sample_count,
                     "recording_start_s": DT_MS / 1000.0,
-                    "recording_end_s": sample_count * DT_MS / 1000.0,
+                    "recording_end_s": (sample_count + 1) * DT_MS / 1000.0,
                     "uncropped": True,
                     "voltage_mV": voltages[index],
                     "spike_states_packed": np.packbits(spikes[index], bitorder="little"),

@@ -115,6 +115,19 @@ experiment seal, verifies the real expansion contract, rejects extra backend/par
 seeds, writes claims, dispatches jobs, executes code, or touches held-out data. Execution integration is a later
 lane with its own preregistration and receipt gates.
 
+Stage B has a bounded execution path beyond that generic controller. It can generate the exact deterministic
+512-point Sobol manifest, compile candidates with separate authority policies, write compact authenticated traces,
+batch candidates on the GPU for engineering screening, persist campaign receipts, and strictly triage the five
+resolved subgates. The first complete screen ran all 2,560 candidate-arm traces and selected two engineering passes
+for confirmation. GPU results accelerate screening but are not scientific authority; candidates require NumPy/CPU
+confirmation.
+
+This is not a fully autonomous research loop. Exact campaign materialization, GPU dispatch, compact publication,
+and result-driven triage now run end to end. The project does not yet recover campaigns across machines, confirm
+selected candidates on CPU automatically, or generate and repeat the next search until a stopping rule is met.
+Until those pieces are integrated, the controller owns confirmation and iteration, and unspecified subgates remain
+unavailable.
+
 ## Failure Policy
 
 An idle or stale lane is not silently accepted. Run check, dispatch a disjoint ready lane, or record a real blocker

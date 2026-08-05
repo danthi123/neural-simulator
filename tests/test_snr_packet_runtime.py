@@ -37,11 +37,20 @@ class _Config:
         return {**self._payload, "regions": [region.name for region in self.brain_regions]}
 
 
-def _region(name: str, path: str = _PACKET_PATH, digest: str = _PACKET_DIGEST):
+def _region(
+    name: str,
+    path: str = _PACKET_PATH,
+    digest: str = _PACKET_DIGEST,
+    *,
+    policy_path: str | None = None,
+    policy_digest: str | None = None,
+):
     return SimpleNamespace(
         name=name,
         snr_executable_packet_path=path,
         snr_executable_packet_sha256=digest,
+        snr_authority_policy_path=policy_path,
+        snr_authority_policy_sha256=policy_digest,
     )
 
 
@@ -140,6 +149,47 @@ def test_policy_loaded_once_and_packet_cached_across_two_regions(monkeypatch, tm
     assert bindings["snr-a"].materialized is materialized
     assert bindings["snr-b"].materialized is materialized
     assert calls == {"policy": 1, "packet": 1, "materialize": 1}
+
+
+def test_region_local_policies_are_loaded_and_packets_cached_per_authority(monkeypatch, tmp_path):
+    materialized = _materialized_packet()
+    executable = _executable_packet(materialized)
+    policy_a = object()
+    policy_b = object()
+    policies = {
+        ("packets/policy-a.json", "1" * 64): policy_a,
+        ("packets/policy-b.json", "2" * 64): policy_b,
+    }
+    policy_calls = []
+    packet_calls = []
+
+    def load_policy(path, *, artifact_root, expected_sha256):
+        policy_calls.append((path, expected_sha256))
+        assert artifact_root == tmp_path.resolve()
+        return policies[(path, expected_sha256)]
+
+    def load_packet(path, *, artifact_root, expected_sha256, authority_policy):
+        packet_calls.append((path, expected_sha256, authority_policy))
+        return executable
+
+    monkeypatch.setattr(runtime, "load_authority_policy_file", load_policy)
+    monkeypatch.setattr(runtime, "load_packet_file", load_packet)
+    monkeypatch.setattr(runtime, "materialize_packet", lambda packet, receipt: materialized)
+    monkeypatch.setattr(runtime, "materialize_runtime_parameters", lambda packet: object())
+    regions = [
+        _region("snr-a", policy_path="packets/policy-a.json", policy_digest="1" * 64),
+        _region("snr-b", policy_path="packets/policy-b.json", policy_digest="2" * 64),
+        _region("snr-c", policy_path="packets/policy-a.json", policy_digest="1" * 64),
+    ]
+
+    bindings = runtime.load_runtime_snr_packet_bindings(_Config(regions), source_root=tmp_path)
+
+    assert set(bindings) == {"snr-a", "snr-b", "snr-c"}
+    assert sorted(policy_calls) == sorted(policies)
+    assert len(packet_calls) == 2
+    assert bindings["snr-a"].authority_policy_sha256 == "1" * 64
+    assert bindings["snr-b"].authority_policy_sha256 == "2" * 64
+    assert bindings["snr-c"].authority_policy_sha256 == "1" * 64
 
 
 def test_digests_are_deterministic_for_same_config_and_materialization(monkeypatch, tmp_path):
@@ -252,3 +302,19 @@ def test_packet_trust_references_are_explicit_and_sorted():
         ],
     }
     assert runtime.packet_trust_reference_document(_Config([])) is None
+
+
+def test_packet_trust_references_include_region_local_policy():
+    config = _Config([
+        _region(
+            "snr", policy_path="packets/local-policy.json", policy_digest="1" * 64,
+        )
+    ])
+
+    assert runtime.packet_trust_reference_document(config)["regions"] == [{
+        "authority_policy_path": "packets/local-policy.json",
+        "authority_policy_sha256": "1" * 64,
+        "packet_file_sha256": _PACKET_DIGEST,
+        "packet_path": _PACKET_PATH,
+        "region_name": "snr",
+    }]
