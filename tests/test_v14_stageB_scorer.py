@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+import numpy as np
 
 from tools.v14_stageB_scorer import (
     INTRINSIC_LESION_RESULT_SCHEMA,
@@ -14,6 +15,7 @@ from tools.v14_stageB_scorer import (
     score_raw_observation_file,
     score_raw_observations,
 )
+from tools.compact_trace import save_compact_trace
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -271,6 +273,26 @@ def _rewrite_arm(root: Path, document: dict, arm: str, mutate) -> None:
     document["runner_observations"][arm] = _write_runner_artifact(root, artifact, arm)
 
 
+def _replace_with_compact_trace(root: Path, document: dict, arm: str) -> Path:
+    declaration = document["runner_observations"][arm]
+    path = root / declaration["path"]
+    artifact = json.loads(path.read_text(encoding="ascii"))
+    raw = artifact["raw_observation"]
+    archive = path.with_name(f"{path.stem}.trace.zip")
+    digest = save_compact_trace(
+        archive,
+        np.asarray(raw.pop("time_s"), dtype=np.dtype("<f8")),
+        np.asarray([row[0] for row in raw.pop("voltage_mV")], dtype=np.dtype("<f8")),
+        np.asarray([row[0] for row in raw.pop("spike_states")], dtype=np.dtype("|b1")),
+    )
+    raw["compact_trace"] = {
+        "path": archive.relative_to(root).as_posix(),
+        "sha256": digest,
+    }
+    document["runner_observations"][arm] = _write_runner_artifact(root, artifact, arm)
+    return archive
+
+
 def _set_event_intervals(artifact: dict, intervals: tuple[int, ...]) -> None:
     raw = artifact["raw_observation"]
     dt = raw["sample_interval_s"]
@@ -323,6 +345,39 @@ def test_intrinsic_scorer_recomputes_raw_traces_and_reports_missing_protocol_arm
         hard_gate["source_equivalence_claimed"] is False
         for gate in result["results"] for hard_gate in gate["hard_gates"]
     )
+
+
+def test_intrinsic_scorer_compact_trace_metrics_match_inline_traces(tmp_path):
+    document = _intrinsic_document(tmp_path)
+    inline = score_intrinsic_lesion_observations(copy.deepcopy(document), root=tmp_path)
+    for arm in _INTRINSIC_ARMS:
+        _replace_with_compact_trace(tmp_path, document, arm)
+
+    compact = score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    assert compact["readiness_contract_result"] == inline["readiness_contract_result"]
+    assert compact["all_intrinsic_lesion_gates_passed"] == inline["all_intrinsic_lesion_gates_passed"]
+    assert compact["results"] == inline["results"]
+
+
+def test_intrinsic_scorer_rejects_tampered_or_path_escaping_compact_trace(tmp_path):
+    document = _intrinsic_document(tmp_path)
+    archive = _replace_with_compact_trace(tmp_path, document, "intact_autonomous")
+    archive.write_bytes(archive.read_bytes() + b"tamper")
+    with pytest.raises(StageBScorerError, match="compact trace is invalid"):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    archive.unlink()
+    document = _intrinsic_document(tmp_path)
+    _replace_with_compact_trace(tmp_path, document, "intact_autonomous")
+    _rewrite_arm(
+        tmp_path, document, "intact_autonomous",
+        lambda artifact: artifact["raw_observation"]["compact_trace"].update(
+            {"path": "../outside.trace.zip"}
+        ),
+    )
+    with pytest.raises(StageBScorerError, match="repository-relative"):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
 
 
 def test_intrinsic_scorer_rejects_caller_supplied_aggregate_measurements(tmp_path):

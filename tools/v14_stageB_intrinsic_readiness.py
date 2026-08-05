@@ -23,6 +23,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from sim.snr_executable_packet import PacketError, canonical_bytes
+from tools.compact_trace import CompactTraceError, load_compact_trace
 from tools.v14_stageB_packet_compiler import (
     StageBPacketCompilerError,
     compile_candidate,
@@ -276,7 +277,7 @@ def _verify_runner_artifact(
     result: Mapping[str, Any], parameter_document: Mapping[str, Any],
     references: Mapping[str, str], arm: str, raw_path: Path, root: Path,
     analysis_protocol: Mapping[str, str] | None = None,
-) -> dict[str, str | int]:
+) -> dict[str, Any]:
     if result.get("schema") != RUNNER_SCHEMA or result.get("process_status") != "completed":
         raise StageBIntrinsicReadinessError(f"{arm} runner did not return a completed readiness artifact")
     if result.get("backend") != "numpy" or result.get("device") != "cpu":
@@ -328,16 +329,53 @@ def _verify_runner_artifact(
         or not isinstance(raw_protocol.get("termination"), Mapping)
     ):
         raise StageBIntrinsicReadinessError(f"{arm} runner protocol identity does not match")
-    return {
+    raw_observation = result.get("raw_observation")
+    if not isinstance(raw_observation, Mapping):
+        raise StageBIntrinsicReadinessError(f"{arm} runner returned no raw observation")
+    trace_samples = len(raw_observation.get("time_s", []))
+    compact_receipt: dict[str, str | int] | None = None
+    compact_binding = raw_observation.get("compact_trace")
+    if compact_binding is not None:
+        if not isinstance(compact_binding, Mapping) or set(compact_binding) != {"path", "sha256"}:
+            raise StageBIntrinsicReadinessError(f"{arm} runner compact trace binding is invalid")
+        relative = PurePosixPath(str(compact_binding.get("path", "")))
+        if relative.is_absolute() or ".." in relative.parts or not relative.name:
+            raise StageBIntrinsicReadinessError(f"{arm} runner compact trace path is not repository-relative")
+        archive = root.joinpath(*relative.parts)
+        if archive.is_symlink() or not archive.is_file():
+            raise StageBIntrinsicReadinessError(f"{arm} runner compact trace is not a regular file")
+        try:
+            archive.resolve().relative_to(root)
+            arrays = load_compact_trace(archive, expected_sha256=compact_binding["sha256"])
+        except (CompactTraceError, OSError, TypeError, ValueError) as exc:
+            raise StageBIntrinsicReadinessError(
+                f"{arm} runner compact trace cannot be authenticated: {exc}"
+            ) from exc
+        trace_samples = len(arrays["time"])
+        compact_receipt = {
+            "path": _relative(root, archive, f"{arm} compact trace"),
+            "sha256": str(compact_binding["sha256"]),
+            "trace_samples": trace_samples,
+        }
+    if analysis_protocol is not None and compact_receipt is None:
+        raise StageBIntrinsicReadinessError(f"{arm} production runner did not write a compact trace")
+    if compact_receipt is not None and any(
+        key in raw_observation for key in ("time_s", "voltage_mV", "spike_states")
+    ):
+        raise StageBIntrinsicReadinessError(f"{arm} compact trace duplicated inline vectors")
+    receipt: dict[str, Any] = {
         "path": _relative(root, raw_path, f"{arm} raw artifact"),
         "sha256": _digest_bytes(raw_path.read_bytes()),
-        "trace_samples": len(result.get("raw_observation", {}).get("time_s", [])),
+        "trace_samples": trace_samples,
     }
+    if compact_receipt is not None:
+        receipt["compact_trace"] = compact_receipt
+    return receipt
 
 
 def _write_sidecars(
     root: Path, *, repository_root: Path, candidate_sha256: str,
-    source_revision: str, argv: Sequence[str],
+    source_revision: str, argv: Sequence[str], compact_artifacts: Sequence[Mapping[str, Any]],
 ) -> None:
     for artifact in sorted(root.rglob("*.json")):
         if artifact.name.endswith(".prov.json"):
@@ -355,6 +393,8 @@ def _write_sidecars(
             "scientific_seed": None,
             "scientific_verdict": None,
         }
+        if compact_artifacts:
+            sidecar_document["compact_trace_artifacts"] = [dict(item) for item in compact_artifacts]
         _write_once(sidecar, sidecar_document)
 
 
@@ -468,6 +508,7 @@ def run_intrinsic_readiness(
                 analysis_protocol_sha256=(
                     analysis_protocol["sha256"] if analysis_protocol is not None else None
                 ),
+                compact_trace=analysis_protocol is not None,
             )
             arm_receipt = _verify_runner_artifact(
                 result, parameter_document, references, arm, raw_path, root,
@@ -494,9 +535,15 @@ def run_intrinsic_readiness(
             raise StageBIntrinsicReadinessError("intrinsic readiness scorer returned a scientific verdict")
         score_path = candidate_dir / "intrinsic-lesion-score.json"
         score_sha256 = _write_once(score_path, score)
+        compact_artifacts = [
+            {"arm": arm, **dict(arm_receipts[arm]["compact_trace"])}
+            for arm in ARMS
+            if "compact_trace" in arm_receipts[arm]
+        ]
         _write_sidecars(
             candidate_dir, repository_root=root, candidate_sha256=pinned_sha,
             source_revision=source_revision, argv=argv,
+            compact_artifacts=compact_artifacts,
         )
         receipt = {
             "schema": RECEIPT_SCHEMA,
@@ -543,6 +590,7 @@ def run_intrinsic_readiness(
             },
             },
             "arms": arm_receipts,
+            "compact_trace_artifacts": compact_artifacts,
             "scorer_input": {
                 "path": _relative(root, scorer_input_path, "scorer input"),
                 "sha256": scorer_input_sha256,
@@ -571,6 +619,7 @@ def run_intrinsic_readiness(
                 "candidate_sha256": pinned_sha,
                 "scientific_seed": None,
                 "scientific_verdict": None,
+                "compact_trace_artifacts": compact_artifacts,
             },
         )
         return receipt

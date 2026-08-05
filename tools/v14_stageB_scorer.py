@@ -10,6 +10,7 @@ from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+from tools.compact_trace import CompactTraceError, load_compact_trace
 from tools.v14_stageB_physiology_metrics import ahp_depth, peak_conductance, spike_train_metrics
 from tools.v14_stageB_scorer_fixtures import StageBFixtureError, score_observation, validate_fixture
 
@@ -142,15 +143,52 @@ def _validate_runner_intervention(arm: str, value: Any) -> dict[str, Any]:
     return intervention
 
 
-def _trace_vectors(raw: Any, arm: str) -> tuple[list[float], list[float], list[float], dict[str, Any] | None]:
+def _load_compact_trace_vectors(
+    root: Path, declaration: Any, arm: str,
+) -> tuple[list[float], list[float], list[bool]]:
+    if not isinstance(declaration, Mapping) or set(declaration) != {"path", "sha256"}:
+        raise StageBScorerError(f"runner artifact {arm!r} compact trace must bind only path and sha256")
+    relative = PurePosixPath(str(declaration.get("path", "")))
+    if relative.is_absolute() or ".." in relative.parts or not relative.name:
+        raise StageBScorerError(f"runner artifact {arm!r} compact trace path must be repository-relative")
+    archive = root.joinpath(*relative.parts)
+    if archive.is_symlink() or not archive.is_file():
+        raise StageBScorerError(f"runner artifact {arm!r} compact trace must be a regular file")
+    resolved = archive.resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as exc:
+        raise StageBScorerError(
+            f"runner artifact {arm!r} compact trace path escapes the repository"
+        ) from exc
+    try:
+        arrays = load_compact_trace(resolved, expected_sha256=declaration["sha256"])
+    except (CompactTraceError, OSError, TypeError, ValueError) as exc:
+        raise StageBScorerError(f"runner artifact {arm!r} compact trace is invalid: {exc}") from exc
+    return (
+        [float(value) for value in arrays["time"]],
+        [float(value) for value in arrays["voltage"]],
+        [bool(value) for value in arrays["spikes"]],
+    )
+
+
+def _trace_vectors(
+    raw: Any, arm: str, *, root: Path,
+) -> tuple[list[float], list[float], list[float], dict[str, Any] | None]:
     base_fields = {
         "kind", "time_unit", "voltage_unit", "sample_interval_s", "recording_start_s",
-        "recording_end_s", "uncropped", "time_s", "sample_semantics", "voltage_mV",
-        "spike_states",
+        "recording_end_s", "uncropped", "sample_semantics",
     }
     raw_fields = set(raw) if isinstance(raw, Mapping) else set()
-    if (not isinstance(raw, Mapping) or
-            (raw_fields != base_fields and raw_fields != base_fields | {"analysis_protocol"})):
+    inline_fields = base_fields | {"time_s", "voltage_mV", "spike_states"}
+    compact_fields = base_fields | {"compact_trace"}
+    allowed_shapes = {
+        frozenset(inline_fields),
+        frozenset(inline_fields | {"analysis_protocol"}),
+        frozenset(compact_fields),
+        frozenset(compact_fields | {"analysis_protocol"}),
+    }
+    if not isinstance(raw, Mapping) or frozenset(raw_fields) not in allowed_shapes:
         raise StageBScorerError(f"runner artifact {arm!r} raw trace has an invalid shape")
     if (raw.get("kind") != "packet_voltage_spike_trace" or raw.get("time_unit") != "s"
             or raw.get("voltage_unit") != "mV" or raw.get("uncropped") is not True
@@ -161,24 +199,39 @@ def _trace_vectors(raw: Any, arm: str) -> tuple[list[float], list[float], list[f
     end = _finite_number(raw.get("recording_end_s"), f"{arm}.recording_end_s")
     if dt <= 0.0 or end <= start:
         raise StageBScorerError(f"runner artifact {arm!r} has invalid trace timing")
-    times_raw = raw.get("time_s")
-    voltages_raw = raw.get("voltage_mV")
-    spikes_raw = raw.get("spike_states")
-    if (not isinstance(times_raw, list) or not times_raw or not isinstance(voltages_raw, list)
-            or not isinstance(spikes_raw, list) or len(times_raw) != len(voltages_raw)
-            or len(times_raw) != len(spikes_raw)):
+    compact = "compact_trace" in raw
+    if compact:
+        times, voltages, spikes = _load_compact_trace_vectors(
+            root, raw["compact_trace"], arm
+        )
+    else:
+        times_raw = raw.get("time_s")
+        voltages_raw = raw.get("voltage_mV")
+        spikes_raw = raw.get("spike_states")
+        if (not isinstance(times_raw, list) or not times_raw or not isinstance(voltages_raw, list)
+                or not isinstance(spikes_raw, list) or len(times_raw) != len(voltages_raw)
+                or len(times_raw) != len(spikes_raw)):
+            raise StageBScorerError(f"runner artifact {arm!r} has incomplete trace vectors")
+        times = [_finite_number(value, f"{arm}.time_s[]") for value in times_raw]
+        voltages = []
+        spikes = []
+        for voltage_row, spike_row in zip(voltages_raw, spikes_raw, strict=True):
+            if not isinstance(voltage_row, list) or len(voltage_row) != 1:
+                raise StageBScorerError(f"runner artifact {arm!r} voltage trace is not single-cell")
+            if (not isinstance(spike_row, list) or len(spike_row) != 1
+                    or not isinstance(spike_row[0], bool)):
+                raise StageBScorerError(f"runner artifact {arm!r} spike trace is not single-cell boolean")
+            voltages.append(_finite_number(voltage_row[0], f"{arm}.voltage_mV[]"))
+            spikes.append(spike_row[0])
+    if not times or len(times) != len(voltages) or len(times) != len(spikes):
         raise StageBScorerError(f"runner artifact {arm!r} has incomplete trace vectors")
-    times = [_finite_number(value, f"{arm}.time_s[]") for value in times_raw]
-    voltages: list[float] = []
+    times = [_finite_number(value, f"{arm}.time_s[]") for value in times]
+    voltages = [_finite_number(value, f"{arm}.voltage_mV[]") for value in voltages]
     spike_times: list[float] = []
-    for time, voltage_row, spike_row in zip(times, voltages_raw, spikes_raw, strict=True):
-        if not isinstance(voltage_row, list) or len(voltage_row) != 1:
-            raise StageBScorerError(f"runner artifact {arm!r} voltage trace is not single-cell")
-        if (not isinstance(spike_row, list) or len(spike_row) != 1
-                or not isinstance(spike_row[0], bool)):
+    for time, spike in zip(times, spikes, strict=True):
+        if not isinstance(spike, bool):
             raise StageBScorerError(f"runner artifact {arm!r} spike trace is not single-cell boolean")
-        voltages.append(_finite_number(voltage_row[0], f"{arm}.voltage_mV[]"))
-        if spike_row[0]:
+        if spike:
             spike_times.append(time)
     tolerance = max(1e-12, dt * 1e-9)
     if (not math.isclose(times[0], start, abs_tol=tolerance)
@@ -271,7 +324,7 @@ def _recompute_trace_metrics(
     raw: Mapping[str, Any], arm: str, *, root: Path,
     causal_gate_packet: Mapping[str, str],
 ) -> dict[str, Any]:
-    times, voltages, spike_times, protocol = _trace_vectors(raw, arm)
+    times, voltages, spike_times, protocol = _trace_vectors(raw, arm, root=root)
     if protocol is None:
         return {"status": "unavailable", "reason": "runner trace has no sealed analysis protocol"}
     binding, arm_protocol = _load_trace_protocol(root, protocol, arm, causal_gate_packet)
@@ -282,7 +335,7 @@ def _recompute_trace_metrics(
     }
     if not isinstance(termination, Mapping) or set(termination) != termination_fields:
         raise StageBScorerError(f"runner artifact {arm!r} has invalid termination evidence")
-    observed_spikes = sum(1 for row in raw["spike_states"] if row[0])
+    observed_spikes = len(spike_times)
     if (termination.get("steps_executed") != len(times)
             or termination.get("spikes_observed") != observed_spikes
             or termination.get("timeout_is_physiology_failure") is not False):

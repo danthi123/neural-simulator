@@ -40,6 +40,7 @@ from sim.snr_packet_runtime import (
     load_runtime_snr_packet_bindings,
     runtime_binding_manifest_bytes,
 )
+from tools.compact_trace import CompactTraceError, save_compact_trace
 
 
 PARAMETER_SCHEMA = "sim-adaptive-run-parameters-v1"
@@ -495,6 +496,7 @@ def _output_document(
     runtime_intervention: Mapping[str, Any],
     analysis_protocol: Mapping[str, Any] | None,
     termination: Mapping[str, Any] | None,
+    compact_trace: Mapping[str, str] | None,
 ) -> dict[str, Any]:
     steps = len(voltage_millivolts)
     if steps != len(spike_states) or steps == 0:
@@ -510,11 +512,18 @@ def _output_document(
         "recording_start_s": dt_ms / 1000.0,
         "recording_end_s": (steps + 1) * dt_ms / 1000.0,
         "uncropped": True,
-        "time_s": [(index + 1) * dt_ms / 1000.0 for index in range(steps)],
         "sample_semantics": "post-update state at the declared time",
-        "voltage_mV": voltage_millivolts,
-        "spike_states": spike_states,
     }
+    if compact_trace is None:
+        raw_observation.update({
+            "time_s": [(index + 1) * dt_ms / 1000.0 for index in range(steps)],
+            "voltage_mV": voltage_millivolts,
+            "spike_states": spike_states,
+        })
+    else:
+        if set(compact_trace) != {"path", "sha256"}:
+            raise StageBPhysiologyRunnerError("compact trace binding has an invalid shape")
+        raw_observation["compact_trace"] = dict(compact_trace)
     if analysis_protocol is not None:
         if termination is None:
             raise StageBPhysiologyRunnerError("production trace has no termination record")
@@ -557,6 +566,37 @@ def _output_document(
     }
 
 
+def _compact_trace_binding(root: Path, destination: Path, *, dt_ms: float,
+                           voltage_millivolts: list[list[float]],
+                           spike_states: list[list[bool]]) -> tuple[Path, dict[str, str]]:
+    """Publish a lossless trace archive adjacent to a production observation."""
+
+    try:
+        destination.relative_to(root)
+    except ValueError as exc:
+        raise StageBPhysiologyRunnerError(
+            "compact trace output must be inside repository_root"
+        ) from exc
+    archive = destination.with_name(f"{destination.stem}.trace.zip")
+    try:
+        relative = archive.relative_to(root).as_posix()
+    except ValueError as exc:  # Defensive: ``with_name`` must remain adjacent.
+        raise StageBPhysiologyRunnerError(
+            "compact trace archive must be repository-relative"
+        ) from exc
+    steps = len(voltage_millivolts)
+    time_s = np.arange(1, steps + 1, dtype=np.dtype("<f8")) * (dt_ms / 1000.0)
+    voltage_mV = np.asarray(voltage_millivolts, dtype=np.dtype("<f8"))
+    spikes = np.asarray(spike_states, dtype=np.dtype("|b1"))
+    if voltage_mV.shape != (steps, 1) or spikes.shape != (steps, 1):
+        raise StageBPhysiologyRunnerError("runner trace is not a single-cell compact trace")
+    try:
+        digest = save_compact_trace(archive, time_s, voltage_mV[:, 0], spikes[:, 0])
+    except (CompactTraceError, OSError, TypeError, ValueError) as exc:
+        raise StageBPhysiologyRunnerError(f"could not write compact trace: {exc}") from exc
+    return archive, {"path": relative, "sha256": digest}
+
+
 def run_readiness_arm(
     adaptive_parameter_document: str,
     output: str | Path,
@@ -564,6 +604,7 @@ def run_readiness_arm(
     repository_root: str | Path,
     analysis_protocol_path: str | Path | None = None,
     analysis_protocol_sha256: str | None = None,
+    compact_trace: bool = False,
 ) -> dict[str, Any]:
     """Execute one authenticated SNr readiness arm and write one new raw artifact."""
 
@@ -574,6 +615,8 @@ def run_readiness_arm(
     destination = Path(output).expanduser().resolve()
     if destination.exists():
         raise StageBPhysiologyRunnerError("refusing to replace an existing raw observation")
+    if not isinstance(compact_trace, bool):
+        raise StageBPhysiologyRunnerError("compact_trace must be a boolean")
     if (analysis_protocol_path is None) != (analysis_protocol_sha256 is None):
         raise StageBPhysiologyRunnerError(
             "analysis protocol path and sha256 must be supplied together"
@@ -670,25 +713,43 @@ def run_readiness_arm(
     finally:
         bridge.clear_simulation_state_and_gpu_memory()
 
-    result = _output_document(
-        document,
-        bindings,
-        voltage_millivolts=voltage_millivolts,
-        spike_states=spike_states,
-        dt_ms=config.dt_ms,
-        root=root,
-        candidate_release=candidate_release,
-        runtime_intervention=runtime_intervention,
-        analysis_protocol=analysis_protocol,
-        termination=termination,
-    )
+    compact_archive: Path | None = None
+    compact_binding: dict[str, str] | None = None
+    published_json = False
     destination.parent.mkdir(parents=True, exist_ok=True)
     try:
+        if compact_trace:
+            compact_archive, compact_binding = _compact_trace_binding(
+                root, destination, dt_ms=config.dt_ms,
+                voltage_millivolts=voltage_millivolts, spike_states=spike_states,
+            )
+        result = _output_document(
+            document,
+            bindings,
+            voltage_millivolts=voltage_millivolts,
+            spike_states=spike_states,
+            dt_ms=config.dt_ms,
+            root=root,
+            candidate_release=candidate_release,
+            runtime_intervention=runtime_intervention,
+            analysis_protocol=analysis_protocol,
+            termination=termination,
+            compact_trace=compact_binding,
+        )
         with destination.open("x", encoding="ascii") as handle:
             json.dump(result, handle, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False)
             handle.write("\n")
+        published_json = True
     except FileExistsError as exc:
+        if compact_archive is not None:
+            compact_archive.unlink(missing_ok=True)
         raise StageBPhysiologyRunnerError("refusing to replace an existing raw observation") from exc
+    except Exception:
+        if compact_archive is not None:
+            compact_archive.unlink(missing_ok=True)
+        if not published_json:
+            destination.unlink(missing_ok=True)
+        raise
     return result
 
 
@@ -699,6 +760,7 @@ def run_readiness_intact(
     repository_root: str | Path,
     analysis_protocol_path: str | Path | None = None,
     analysis_protocol_sha256: str | None = None,
+    compact_trace: bool = False,
 ) -> dict[str, Any]:
     """Compatibility entry point for the authenticated intact readiness arm."""
 
@@ -713,6 +775,7 @@ def run_readiness_intact(
         repository_root=repository_root,
         analysis_protocol_path=analysis_protocol_path,
         analysis_protocol_sha256=analysis_protocol_sha256,
+        compact_trace=compact_trace,
     )
 
 
@@ -724,6 +787,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--repository-root", required=True, help="root that owns packet and policy artifacts")
     parser.add_argument("--analysis-protocol-path", help="optional digest-bound production protocol")
     parser.add_argument("--analysis-protocol-sha256", help="expected production protocol digest")
+    parser.add_argument("--compact-trace", action="store_true", help="store production trace in a compact archive")
     args = parser.parse_args(argv)
     if not args.readiness:
         parser.exit(2, "Stage B runner infrastructure failure: --readiness is required\n")
@@ -734,6 +798,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             repository_root=args.repository_root,
             analysis_protocol_path=args.analysis_protocol_path,
             analysis_protocol_sha256=args.analysis_protocol_sha256,
+            compact_trace=args.compact_trace,
         )
     except (OSError, StageBPhysiologyRunnerError, ValueError, TypeError) as exc:
         parser.exit(2, f"Stage B runner infrastructure failure: {exc}\n")

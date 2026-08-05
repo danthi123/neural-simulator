@@ -21,6 +21,7 @@ from sim.snr_executable_packet import canonical_bytes
 from tests.test_v14_stageB_packet_compiler import _candidate, _template
 from tools.v14_stageB_packet_compiler import compile_candidate
 from tools.v14_stageB_packet_verifier import verify_candidate
+from tools.compact_trace import load_compact_trace
 
 
 def test_runner_is_directly_executable_from_repository_root():
@@ -187,6 +188,51 @@ def test_production_runner_stops_at_source_bound_101_spikes_and_binds_protocol(
         "maximum_steps": 400_000,
         "timeout_is_physiology_failure": False,
     }
+
+
+def test_compact_trace_mode_writes_lossless_archive_without_inline_vectors(tmp_path, monkeypatch):
+    from sim.bridge import SimulationBridge
+
+    candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
+
+    def synthetic_step(bridge):
+        bridge.cp_membrane_potential_v[:] = -55.0
+        bridge.cp_firing_states[:] = True
+
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", synthetic_step)
+    output = tmp_path / "output" / "raw-observation.json"
+    result = run_readiness_intact(
+        _parameter_document(candidate_parameters, references), output,
+        repository_root=tmp_path, compact_trace=True,
+    )
+
+    raw = result["raw_observation"]
+    assert set(raw["compact_trace"]) == {"path", "sha256"}
+    assert not {"time_s", "voltage_mV", "spike_states"} & set(raw)
+    archive = tmp_path / raw["compact_trace"]["path"]
+    assert archive == output.with_name("raw-observation.trace.zip")
+    arrays = load_compact_trace(archive, raw["compact_trace"]["sha256"])
+    assert arrays["time"].shape == arrays["voltage"].shape == arrays["spikes"].shape == (20,)
+    assert arrays["spikes"].all()
+
+
+def test_compact_trace_failure_removes_new_archive(tmp_path, monkeypatch):
+    import research.runners.v14_stageB_physiology as runner
+
+    candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
+    output = tmp_path / "output" / "raw-observation.json"
+
+    def fail_after_archive(*args, **kwargs):
+        raise RuntimeError("test JSON output failure")
+
+    monkeypatch.setattr(runner.json, "dump", fail_after_archive)
+    with pytest.raises(RuntimeError, match="test JSON output failure"):
+        run_readiness_intact(
+            _parameter_document(candidate_parameters, references), output,
+            repository_root=tmp_path, compact_trace=True,
+        )
+    assert not output.exists()
+    assert not output.with_name("raw-observation.trace.zip").exists()
 
 
 def test_production_runner_rejects_protocol_timeout_redefinition(tmp_path):
