@@ -996,22 +996,18 @@
       ]
     },
     "019fd08f-ab61-7001-b528-c47b37fc12bf": {
-      "heartbeat_at": "2026-08-05T06:15:11+00:00",
+      "completed_at": "2026-08-05T06:29:54+00:00",
+      "heartbeat_at": "2026-08-05T06:29:54+00:00",
       "model": "gpt-5.6-luna",
-      "next_action": "Return ranked biology-bound successor and discriminating measurements without tuning consumed candidates.",
+      "next_action": "Write and preregister the diagnostic measurement packet; do not widen or retune the consumed V3 search.",
+      "result": "Read-only catalog and primary-source diagnosis completed: prioritize current/state diagnostics and rescue arms before search; then source-bound fast Na/Kv3 kinetics, local Cav2.2-SK calcium, and minimal soma/dendrite architecture.",
       "started_at": "2026-08-05T06:15:11+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Diagnose Stage B V3 mechanism/protocol mismatch from local and primary sources",
       "write_set": []
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce9d-5991-7a20-bd61-010d70f692dd"
-    },
     {
       "at": "2026-08-04T21:19:31+00:00",
       "detail": "completed",
@@ -1605,6 +1601,12 @@
       "detail": "completed",
       "kind": "lane-update",
       "subject": "experiment-campaign-supervisor"
+    },
+    {
+      "at": "2026-08-05T06:29:54+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd08f-ab61-7001-b528-c47b37fc12bf"
     }
   ],
   "lanes": {
@@ -2269,5 +2271,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T06:21:29+00:00"
+  "updated_at": "2026-08-05T06:29:54+00:00"
 }
