@@ -1,0 +1,30 @@
+{
+  "run_id": "1785908836-543679",
+  "runner": "tools/v14_stageB_campaign.py",
+  "argv": [
+    "tools/v14_stageB_campaign.py",
+    "--candidate-manifest",
+    "research/specs/v14_snr_stageB_sobol_candidates_v3.json",
+    "--candidate-manifest-sha256",
+    "79ae472e451b06aefeabc3cb6b040cb6eab0167df4f94399751dd4069a464016",
+    "--analysis-protocol",
+    "research/specs/v14_snr_stageB_intrinsic_protocol_v3.json",
+    "--analysis-protocol-sha256",
+    "d25dc452ac09f1f70bbcd807ef5108ae106eb111b7bf7edd50837aaeed5bb1a4",
+    "--output-dir",
+    "research/experiment-runtime/v14-stageB-sobol-v3-512",
+    "--repository-root",
+    ".",
+    "--batch-size",
+    "512",
+    "--workers",
+    "32"
+  ],
+  "git_sha": "77dcff085",
+  "git_dirty": true,
+  "started": "2026-08-05T01:47:16",
+  "env": {},
+  "sim_backend": "not_applicable",
+  "device": "not_applicable_non_executed_campaign_materialization",
+  "artifact": "research/findings/raw/v14_stageB_v3_successor_campaign.json"
+}

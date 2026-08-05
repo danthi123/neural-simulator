@@ -426,6 +426,11 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+> ## STATE OF THE PROJECT — 2026-08-05 (read first; below the next anchor is HISTORY)
+> **Stage B GPU screen:** the fresh V3-bound successor partition at global Sobol indices 512-1023 completed all five GPU arms for 512 candidates, 2,560 candidate-arm executions in total. Strict triage recorded 421 engineering failures, 91 engineering-inconclusive candidates, and 0 engineering passes. This is engineering screening only; no CPU confirmation is eligible and no scientific verdict is claimed. Batch-width benchmarking selected width 512. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK cohort remains unavailable.
+> **EXACT NEXT:** keep the fresh negative result banked, resolve the missing biological measurement contracts, and do not retune candidates from this screen. The first digest-bound campaign supervisor can resume and advance one exact GPU batch per invocation, but it is not yet an unattended search or confirmation loop.
+>
+
 > ## STATE OF THE PROJECT — 2026-08-03 00:05 (read first; below the next anchor is HISTORY)
 > **GPU lane still active:** run4/d2048 267M RF spiking-forward full six-seed promotion remains in flight on the local RTX 3090. Do not claim the result until `research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json` exists and validates.
 > **CPU lane C production scaffold advanced:** the normal conversation known-fact path now has a default-off

@@ -963,57 +963,49 @@
         "tests/test_v14_stageB_scorer.py",
         "tests/test_v14_stageB_real_readiness.py"
       ]
+    },
+    "019fd086-46f7-7703-b089-795a7ec11d5c": {
+      "completed_at": "2026-08-05T06:14:50+00:00",
+      "heartbeat_at": "2026-08-05T06:14:50+00:00",
+      "model": "gpt-5.6-luna",
+      "next_action": "Complete bounded task and return changed paths plus verification.",
+      "result": "Banked V3 successor GPU engineering NO-GO finding and synced governed roadmap/current-state documents; focused checks passed.",
+      "started_at": "2026-08-05T06:05:00+00:00",
+      "status": "completed",
+      "task": "Bank Stage B V3 no-pass result and sync governed docs",
+      "write_set": [
+        "research/findings",
+        "ROADMAP.md",
+        "docs/CURRENT-STATE.md",
+        "GAP_CLOSURE_MISSION.md",
+        "docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md"
+      ]
+    },
+    "019fd086-4cf8-7092-acae-113cb73412b0": {
+      "completed_at": "2026-08-05T06:19:47+00:00",
+      "heartbeat_at": "2026-08-05T06:19:47+00:00",
+      "model": "gpt-5.6-luna",
+      "next_action": "Complete bounded task and return changed paths plus verification.",
+      "result": "Implemented resumable Stage B campaign supervisor with fail-closed receipt recovery, deterministic one-batch advancement, GPU environment preflight, and strict final triage; independently refined virtualenv identity and verified 20 focused/adjacent tests.",
+      "started_at": "2026-08-05T06:05:00+00:00",
+      "status": "completed",
+      "task": "Implement resumable Stage B campaign supervisor slice",
+      "write_set": [
+        "tools/v14_stageB_campaign_supervisor.py",
+        "tests/test_v14_stageB_campaign_supervisor.py"
+      ]
+    },
+    "019fd08f-ab61-7001-b528-c47b37fc12bf": {
+      "heartbeat_at": "2026-08-05T06:15:11+00:00",
+      "model": "gpt-5.6-luna",
+      "next_action": "Return ranked biology-bound successor and discriminating measurements without tuning consumed candidates.",
+      "started_at": "2026-08-05T06:15:11+00:00",
+      "status": "running",
+      "task": "Diagnose Stage B V3 mechanism/protocol mismatch from local and primary sources",
+      "write_set": []
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-conductance-clamp"
-    },
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce98-4af3-7282-9bfe-bdd27bf5fc16"
-    },
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce9d-53d2-7920-b0a1-da98fe0490df"
-    },
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce9d-4eb7-7f12-a1ba-e176cf868227"
-    },
-    {
-      "at": "2026-08-04T21:11:22+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce9d-5991-7a20-bd61-010d70f692dd"
-    },
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce98-4af3-7282-9bfe-bdd27bf5fc16"
-    },
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce9d-4eb7-7f12-a1ba-e176cf868227"
-    },
-    {
-      "at": "2026-08-04T21:19:31+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce9d-53d2-7920-b0a1-da98fe0490df"
-    },
     {
       "at": "2026-08-04T21:19:31+00:00",
       "detail": "completed",
@@ -1565,6 +1557,54 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T06:05:00+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd086-46f7-7703-b089-795a7ec11d5c"
+    },
+    {
+      "at": "2026-08-05T06:05:00+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd086-4cf8-7092-acae-113cb73412b0"
+    },
+    {
+      "at": "2026-08-05T06:05:10+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T06:05:10+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "experiment-campaign-supervisor"
+    },
+    {
+      "at": "2026-08-05T06:14:50+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd086-46f7-7703-b089-795a7ec11d5c"
+    },
+    {
+      "at": "2026-08-05T06:15:11+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd08f-ab61-7001-b528-c47b37fc12bf"
+    },
+    {
+      "at": "2026-08-05T06:19:47+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd086-4cf8-7092-acae-113cb73412b0"
+    },
+    {
+      "at": "2026-08-05T06:21:29+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "experiment-campaign-supervisor"
     }
   ],
   "lanes": {
@@ -1581,6 +1621,19 @@
         "tools/rag/source_intake.py",
         "tests/test_research_escalation.py",
         "tests/test_rag_source_intake.py"
+      ]
+    },
+    "experiment-campaign-supervisor": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T06:21:29+00:00",
+      "next_action": "Use the verified one-batch resumable supervisor for future sealed Stage B campaigns; next automation slice is a persistent scheduler/distributed lock plus automatic confirmation eligibility, not more per-batch wrappers.",
+      "owner": "codex",
+      "priority": 1,
+      "resource": "local_cpu",
+      "status": "completed",
+      "write_set": [
+        "tools/v14_stageB_campaign_supervisor.py",
+        "tests/test_v14_stageB_campaign_supervisor.py"
       ]
     },
     "experiment-controller": {
@@ -1812,8 +1865,8 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T06:10:00+00:00",
-      "next_action": "The unexecuted successor V2 draft is superseded; exact-regenerated V3 Sobol 512-1023 and the consumed-candidate batch-width benchmark are filed. Execute the benchmark, materialize at the selected safe width, then dispatch strict GPU triage and CPU confirmation without reopening candidates 284 or 404; keep the SK cohort unavailable.",
+      "heartbeat_at": "2026-08-05T06:05:10+00:00",
+      "next_action": "Fresh V3 GPU campaign completed all 2,560 traces; strict triage found 421 failures, 91 inconclusive, and zero engineering passes. Bank the negative result; no CPU confirmation is eligible. Then derive a new biology-bound successor without reopening candidates 284/404 or the sealed 512-1023 partition; keep the SK cohort unavailable.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
@@ -2216,5 +2269,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T05:12:36+00:00"
+  "updated_at": "2026-08-05T06:21:29+00:00"
 }

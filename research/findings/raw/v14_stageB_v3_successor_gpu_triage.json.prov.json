@@ -1,0 +1,32 @@
+{
+  "run_id": "1785909717-561882",
+  "runner": "tools/v14_stageB_gpu_triage.py",
+  "argv": [
+    "tools/v14_stageB_gpu_triage.py",
+    "--campaign",
+    "research/experiment-runtime/v14-stageB-sobol-v3-512/campaign.json",
+    "--campaign-sha256",
+    "b6a659bdefbc920c9a7dadf9c5a4d3f1a03778cae0460b807d153be49f75a997",
+    "--results-root",
+    "research/experiment-runtime/v14-stageB-sobol-v3-512-results",
+    "--repository-root",
+    ".",
+    "--output",
+    "research/experiment-runtime/v14-stageB-sobol-v3-512-results/triage.json"
+  ],
+  "git_sha": "77dcff085",
+  "git_dirty": true,
+  "started": "2026-08-05T02:01:57",
+  "env": {},
+  "sim_backend": "numpy",
+  "source_backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "source_gpu_run_ids": [
+    "1785908935-545309",
+    "1785909189-552112",
+    "1785909316-554806",
+    "1785909453-557172",
+    "1785909577-559304"
+  ],
+  "artifact": "research/findings/raw/v14_stageB_v3_successor_gpu_triage.json"
+}

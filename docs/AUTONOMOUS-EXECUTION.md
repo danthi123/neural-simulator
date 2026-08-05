@@ -122,11 +122,19 @@ resolved subgates. The first complete screen ran all 2,560 candidate-arm traces 
 for confirmation. GPU results accelerate screening but are not scientific authority; candidates require NumPy/CPU
 confirmation.
 
-This is not a fully autonomous research loop. Exact campaign materialization, GPU dispatch, compact publication,
-and result-driven triage now run end to end. The project does not yet recover campaigns across machines, confirm
-selected candidates on CPU automatically, or generate and repeat the next search until a stopping rule is met.
-Until those pieces are integrated, the controller owns confirmation and iteration, and unspecified subgates remain
-unavailable.
+`tools/v14_stageB_campaign_supervisor.py` now provides one durable, fail-closed
+campaign step. It authenticates the campaign and existing trace archives,
+reconciles valid receipt additions, records digest-bound state, selects the
+next declaration in the fixed NaP-first order, executes at most one GPU batch,
+and runs strict triage only after all declarations are complete. `--status`
+and `--dry-run` are read-only. Execution fails unless it is already running
+inside the sanctioned project virtual environment with a usable CuPy device.
+
+This is not a fully autonomous research loop. The supervisor is invoked once
+per batch and has no persistent daemon, distributed lock, automatic CPU
+confirmation, successor generation, or scientific decision policy. Until
+those pieces are integrated, the controller owns confirmation and iteration,
+and unspecified subgates remain unavailable.
 
 ## Failure Policy
 

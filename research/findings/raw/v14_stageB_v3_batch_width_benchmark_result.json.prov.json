@@ -1,0 +1,24 @@
+{
+  "run_id": "1785908612-538820",
+  "runner": "tools/v14_stageB_batch_width_benchmark.py",
+  "argv": [
+    "tools/v14_stageB_batch_width_benchmark.py",
+    "--spec",
+    "research/specs/v14_snr_stageB_v3_batch_width_benchmark.json",
+    "--spec-sha256",
+    "c6d5b15f18560d054cf35c5509ad04ce55841625cd3cd9865c2d5002825a57a0",
+    "--output-dir",
+    "research/experiment-runtime/v14-stageB-v3-batch-width-benchmark-r1",
+    "--repository-root",
+    "."
+  ],
+  "git_sha": "77dcff085",
+  "git_dirty": false,
+  "started": "2026-08-05T01:43:32",
+  "env": {
+    "SIM_BACKEND": "cupy"
+  },
+  "sim_backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "artifact": "research/findings/raw/v14_stageB_v3_batch_width_benchmark_result.json"
+}

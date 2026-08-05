@@ -8,7 +8,7 @@ board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
 Short, medium, and long describe dependency horizons, not promised dates.
-Status below reflects the records available at the 2026-08-04 audit.
+Status below reflects the records available at the 2026-08-05 audit.
 
 ## Purpose
 
@@ -125,29 +125,17 @@ its controls and lesions, and is tested at the required seed coverage.
    four intrinsic-current lesions, recomputes metrics from bound raw traces,
    and records provenance. Production runs write authenticated compact traces
    and stop at 101 spikes or the operational timeout. An exact 512-candidate,
-   24-dimensional Sobol screen is filed. The engine materialized all 512
-   independently verified candidates, executed all 2,560 GPU arm traces, and
-   reduced them by strict noncompensating triage to 2 engineering passes, 101
-   inconclusive candidates, and 409 failures. Both engineering passes have now
-   completed authenticated five-arm NumPy confirmation on separate mini-PCs,
-   and independent local replay exactly reproduced their scores. Both pass all
-   five currently computable checks, but the strict result remains
-   `UNAVAILABLE`, not GO. Both candidates then passed the V2 directional
-   total-AHP assay. V3 automatically executed authenticated same-cell NaP and
-   paired HCN assays. HCN passed in both; NaP exposed depolarized silence in
-   both, making candidate 404 a formal failure and 284 unavailable on its
-   slightly unstable baseline. The GPU engine now runs that same continuous
-   2-second-intact/1-second-lesion NaP assay and automatically rejects unstable
-   baselines, post-lesion spikes, or a non-negative voltage shift before CPU
-   confirmation. A fresh V3-bound, seed-free successor partition is now filed
-   at global Sobol indices 512-1023 and mechanically bound to the consumed
-   0-511 manifest. Its first V2 draft was superseded before execution because
-   candidate-ID-dependent overlap checks were insufficient; executable V3 now
-   binds full design identities and exact regeneration across the generator,
-   campaign, and aggregator. Batch-width benchmarking on consumed candidates comes before
-   executing it; candidates 284 and 404 remain closed. The heterogeneous 12-cell SK
-   cohort remains unavailable; delayed
-   action-reward learning and its unrelated-reward control come afterward.
+   24-dimensional Sobol screen is filed. The first 0-511 screen remains
+   historical: it produced two engineering passes, which later failed or
+   remained unavailable under the V3 NaP direction. The fresh, seed-free V3
+   successor partition at global Sobol indices 512-1023 has now completed all
+   2,560 GPU arm traces. Strict triage classified it as 421 engineering
+   failures, 91 engineering-inconclusive candidates, and 0 engineering passes.
+   This is an engineering-only negative result; no candidate is eligible for
+   authoritative CPU confirmation. Batch-width benchmarking selected width
+   512. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK
+   cohort remains unavailable. Delayed action-reward learning and its unrelated-
+   reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
    biological consistency signal rather than an exact composer metadata read.
@@ -188,14 +176,12 @@ required integrated form.
   expected consequence, not a free-standing text completion.
 - Use the V14 Stage B production runner for batched, authenticated candidate
   screening under resolved causal subgates without opening reserved scientific
-  partitions early. Run the exact filed 512-candidate Sobol manifest through
-  GPU engineering screening, then confirm candidates with authoritative
-  NumPy/CPU runs. The first exact campaign and its two CPU confirmations are
-  complete, and both candidates pass the V2 total-AHP and V3 HCN directions.
-  Neither passes the V3 NaP hyperpolarization requirement. Add that measurement
-  to engineering screening and run a new preregistered search without retuning
-  observed candidates. Keep the heterogeneous 12-cell SK cohort unavailable
-  until independently justified cells and a block detector are preregistered.
+  partitions early. The fresh V3 successor screen at Sobol indices 512-1023
+  is complete and is an engineering-only negative result: 421 failures, 91
+  inconclusive candidates, and 0 passes. No CPU confirmation is eligible.
+  Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK
+  cohort remains unavailable until independently justified cells and a block
+  detector are preregistered.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another
@@ -278,16 +264,19 @@ exact 512-point Sobol candidate manifest is deterministic and filed. The GPU
 batch path accelerates engineering screening; NumPy/CPU execution remains the
 scientific authority.
 
-The exact filed campaign now materializes, dispatches, persists, triages, and
-confirms survivors end to end. Its first full GPU screen completed 2,560 arm
-traces; Sobol candidates 284 and 404 then completed authenticated, candidate-
-atomic CPU confirmation on separate pool machines. The controller pins source,
-dependencies, host assignments, recovery hosts, artifact sets, and receipts;
-local collection independently authenticates and recomputes each score. It is
-not yet a fully autonomous research loop: generation of a scientifically valid
-next search is blocked on unresolved biological protocols, and arbitrary
-new objectives must not be invented from partial evidence. Unspecified
-subgates remain fail-closed.
+The exact filed campaign materializes, dispatches, persists, triages, and
+confirms survivors end to end. A digest-bound supervisor now authenticates
+existing receipts, resumes valid partial progress, advances one deterministic
+GPU batch per invocation, and runs strict triage after completion. It is not
+yet a fully autonomous research loop. The fresh V3 successor screen completed 2,560 GPU
+arm traces and produced no engineering passes, so no CPU confirmation was
+launched. Batch width 512 was selected by a separate engineering benchmark.
+The controller pins source, dependencies, host assignments, recovery hosts,
+artifact sets, and receipts; local collection independently authenticates and
+recomputes each score. Generation of a scientifically valid next search
+remains blocked on unresolved biological protocols, and arbitrary new
+objectives must not be invented from partial evidence. Unspecified subgates
+remain fail-closed.
 
 A versioned V2 contract resolves the post-spike AHP direction without
 pretending the paper specified a medium-AHP window: the scorer recomputes the
