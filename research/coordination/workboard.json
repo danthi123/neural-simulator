@@ -834,14 +834,17 @@
       ]
     },
     "019fcf7d-6673-79b3-afe3-7ef6b9ca82dc": {
-      "heartbeat_at": "2026-08-05T01:15:46+00:00",
+      "completed_at": "2026-08-05T01:27:08+00:00",
+      "heartbeat_at": "2026-08-05T01:27:08+00:00",
       "model": "gpt-5.6-luna-high",
-      "next_action": "Retrieve and validate the two exact PMC full texts, then verify catalog and RAG intake.",
+      "next_action": "Use exact reviewed source locators to define equation-level fast sodium/Kv3 sensitivities without promoting generic HH equivalence.",
+      "result": "Retrieved and content-hashed both exact PMC primary papers, added FT1/FT2 receipts and pending-review catalog intake records, refreshed RAG, and controller verified both as top retrieval results plus 28 tests.",
       "started_at": "2026-08-05T01:15:46+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Retrieve, review, catalog, and RAG-index exact Stage B primary papers",
       "write_set": [
-        "research/parameter_research/v14_stageB_fast_channel_primary_state.json"
+        "research/parameter_research/v14_stageB_fast_channel_primary_state.json",
+        "research/parameter_research/v14_stageB_fast_channel_primary_state.json.prov.json"
       ]
     },
     "019fcf7d-6bf0-7693-91e1-94c0fdbcd6d1": {
@@ -873,18 +876,6 @@
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T19:59:52+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce59-1d91-7031-a987-f0d21a79edd4"
-    },
-    {
-      "at": "2026-08-04T19:59:52+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v14-default-control-flow"
-    },
     {
       "at": "2026-08-04T19:59:52+00:00",
       "detail": "completed",
@@ -1472,6 +1463,18 @@
       "detail": "completed",
       "kind": "agent-finish",
       "subject": "019fcf7d-6bf0-7693-91e1-94c0fdbcd6d1"
+    },
+    {
+      "at": "2026-08-05T01:27:08+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf7d-6673-79b3-afe3-7ef6b9ca82dc"
+    },
+    {
+      "at": "2026-08-05T01:27:08+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-primary-source-fulltext-intake"
     }
   ],
   "lanes": {
@@ -1536,16 +1539,15 @@
       "status": "completed"
     },
     "gateb-primary-source-fulltext-intake": {
-      "agent_id": "019fcf7d-6673-79b3-afe3-7ef6b9ca82dc",
       "blocker": "Current RAG has project summaries and Simmons metadata intake but not the decisive primary full texts; paper queries fall back to a 2007 review.",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-05T01:18:34+00:00",
-      "next_action": "Retrieve, review, catalog, and RAG-index the validated Ding sodium and Kv3 PMC primary full texts.",
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T01:27:08+00:00",
+      "next_action": "Primary full-text intake is banked; equation-level mapping remains a separate scientific design task.",
       "owner": "controller",
       "priority": 2,
       "recovery_action": "Use the validated scholarly full-text retrieval workflow and source-intake review path; locators remain pending until direct source reading.",
       "resource": "remote_agent_network",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "tools/parameter_research.py",
         "tests/test_parameter_research.py",
@@ -2106,5 +2108,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T01:21:27+00:00"
+  "updated_at": "2026-08-05T01:27:08+00:00"
 }

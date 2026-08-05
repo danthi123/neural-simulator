@@ -1,8 +1,16 @@
 {
   "artifact": "research/parameter_research/v14_stageB_fast_channel_primary_state.json",
   "device": "not_applicable_metadata_research_state",
-  "execution": "metadata_discovery_and_validated_lead_import_only",
-  "generator": "tools/parameter_research.py",
+  "execution": "metadata_lead_import_validated_primary_fulltext_retrieval_and_pending_evidence_catalog_intake",
+  "generator": "tools/parameter_research.py; tools/scholarly_fulltext.py; tools/rag/source_intake.py",
   "scientific_claim": false,
-  "source_revision": "22ec30b769b1cf272feec7dde0a1eb9667abd779"
+  "source_revision": "22ec30b769b1cf272feec7dde0a1eb9667abd779",
+  "fulltext_receipts": {
+    "FT1": "40d92568987ea3db64cdc8b5e08fd0d11cdce6c6989f885cad50e203f888603b",
+    "FT2": "ba1f2746487817851a52d6490e7d47d344ccbf54484b24182818f33d4caf5351"
+  },
+  "catalog_intakes": [
+    "source-7842bd4596c87642",
+    "source-0e9002067340eb4a"
+  ]
 }
