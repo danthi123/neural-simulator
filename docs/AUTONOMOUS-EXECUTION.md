@@ -121,6 +121,12 @@ scalar reductions, and emits verdict-free rows for the adaptive design. It canno
 the design in place. That design-version-and-proposal transition remains explicit, so the generic engine is not yet
 an unattended perpetual research loop.
 
+`tools/analysis_research_handoff.py` now handles the next bounded transition. A separately authored contract binds
+an exact analysis, provenance sidecar, governing experiment, expected failure set, prior attempts, and fixed
+metric-to-question routes. When the authenticated verdict matches that contract, it opens a research gate and writes
+a self-digested receipt. It cannot invent questions, accept source claims, choose a replacement model, or dispatch a
+successor. External research still enters as a pending packet and requires independent source review.
+
 Stage B has a specialized bounded execution path beyond the generic controller. It can generate the exact deterministic
 512-point Sobol manifest, compile candidates with separate authority policies, write compact authenticated traces,
 batch candidates on the GPU for engineering screening, persist campaign receipts, and strictly triage the five
@@ -137,10 +143,12 @@ and `--dry-run` are read-only. Execution fails unless it is already running
 inside the sanctioned project virtual environment with a usable CuPy device.
 
 This is not a fully autonomous research loop. The supervisor is invoked once
-per batch and has no persistent daemon, distributed lock, automatic CPU
-confirmation, successor generation, or scientific decision policy. Until
-those pieces are integrated, the controller owns confirmation and iteration,
-and unspecified subgates remain unavailable.
+per batch and has no persistent daemon, distributed lock, or automatic CPU
+confirmation. Failed analyses can now open a bounded research gate without
+manual transcription, but source adjudication, successor preregistration, and
+scientific decision policy remain explicit. Until those pieces are integrated,
+the controller owns confirmation and iteration, and unspecified subgates remain
+unavailable.
 
 ## Failure Policy
 

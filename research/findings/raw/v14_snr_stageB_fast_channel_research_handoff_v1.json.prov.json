@@ -1,0 +1,9 @@
+{
+  "artifact": "research/findings/raw/v14_snr_stageB_fast_channel_research_handoff_v1.json",
+  "artifact_sha256": "c9a040f2fd135ca2f009fa0a3ac3b35e554c0315b9aa79a6ade7abbf72c12b70",
+  "backend": "numpy",
+  "device": "local CPU; retrieval subprocesses used the canonical RAG CPU environment",
+  "generated_by": "python -m tools.analysis_research_handoff",
+  "schema": "sim-purpose-built-artifact-provenance-v1",
+  "status": "success"
+}

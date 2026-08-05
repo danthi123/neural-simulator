@@ -1130,63 +1130,46 @@
         "research/runners/v14_stageB_fast_channel_clamp.py",
         "tests/test_v14_stageB_fast_channel_clamp_runner.py"
       ]
+    },
+    "019fd127-a810-7e53-872f-528227741c3e": {
+      "completed_at": "2026-08-05T09:06:25+00:00",
+      "heartbeat_at": "2026-08-05T09:06:25+00:00",
+      "model": "inherited",
+      "next_action": "Correct the pending packet before acceptance; preserve unmodified prospective source transfer.",
+      "result": "Verified all sodium packet claims against immutable sources. Three need bounded wording/locator corrections; Khaliq/Raman is the first executable source-transfer baseline, Balbi is a comparator, and Milescu remains non-executable without its numerical supplement.",
+      "started_at": "2026-08-05T09:01:52+00:00",
+      "status": "completed",
+      "task": "Verify sodium candidate packet claims against immutable primary paper and model sources",
+      "write_set": [
+        "research/findings/2026-08-05-v14-stageB-sodium-candidate-source-review.md"
+      ]
+    },
+    "019fd127-ae4e-76e2-957e-60fb591c20b3": {
+      "completed_at": "2026-08-05T09:15:45+00:00",
+      "heartbeat_at": "2026-08-05T09:15:45+00:00",
+      "model": "inherited",
+      "next_action": "Use Labro and Desai only as prospectively sealed unmodified source transfers before any topology fitting.",
+      "result": "Verified Kv3 packet claims. Corrected unit handling, removed false Q10 application, and replaced unsupported hybrid ranking with unmodified Labro and Desai comparators.",
+      "started_at": "2026-08-05T09:01:52+00:00",
+      "status": "completed",
+      "task": "Verify Kv3 candidate packet claims against immutable primary paper, code, and supplement sources",
+      "write_set": [
+        "research/findings/2026-08-05-v14-stageB-kv3-candidate-source-review.md"
+      ]
+    },
+    "019fd12b-c676-7411-a1cd-fd4f32d55bcc": {
+      "completed_at": "2026-08-05T09:15:45+00:00",
+      "heartbeat_at": "2026-08-05T09:15:45+00:00",
+      "model": "inherited",
+      "next_action": "Re-run focused and workflow validation against regenerated artifacts.",
+      "result": "Found three blocking authority defects and two identity risks in the first handoff implementation. Governing-spec authentication, transaction recovery, sequential question identity, and unsafe runner provenance were corrected before banking.",
+      "started_at": "2026-08-05T09:05:39+00:00",
+      "status": "completed",
+      "task": "Adversarial review of authenticated analysis-to-research handoff",
+      "write_set": []
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T21:34:43+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-channel-kernel-integration"
-    },
-    {
-      "at": "2026-08-04T21:34:43+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fceb3-179e-7f41-9ea5-344da5d425e5"
-    },
-    {
-      "at": "2026-08-04T21:52:09+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcebe-0ee5-70b1-ade4-1b1dd3360ba9"
-    },
-    {
-      "at": "2026-08-04T21:52:09+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-channel-kernel-integration"
-    },
-    {
-      "at": "2026-08-04T22:07:42+00:00",
-      "detail": "blocked",
-      "kind": "agent-finish",
-      "subject": "019fceb3-179e-7f41-9ea5-344da5d425e5"
-    },
-    {
-      "at": "2026-08-04T22:07:43+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-channel-kernel-integration"
-    },
-    {
-      "at": "2026-08-04T22:07:43+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-packet-authority"
-    },
-    {
-      "at": "2026-08-04T22:07:43+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-clamp-megakernel"
-    },
-    {
-      "at": "2026-08-04T22:07:43+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fced1-356a-7570-9955-9bfef11b9d71"
-    },
     {
       "at": "2026-08-04T22:07:43+00:00",
       "detail": "running",
@@ -1732,6 +1715,60 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T09:01:51+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T09:01:52+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "experiment-analysis-research-handoff"
+    },
+    {
+      "at": "2026-08-05T09:01:52+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd127-a810-7e53-872f-528227741c3e"
+    },
+    {
+      "at": "2026-08-05T09:01:52+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd127-ae4e-76e2-957e-60fb591c20b3"
+    },
+    {
+      "at": "2026-08-05T09:05:39+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd12b-c676-7411-a1cd-fd4f32d55bcc"
+    },
+    {
+      "at": "2026-08-05T09:06:25+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd127-a810-7e53-872f-528227741c3e"
+    },
+    {
+      "at": "2026-08-05T09:15:45+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd127-ae4e-76e2-957e-60fb591c20b3"
+    },
+    {
+      "at": "2026-08-05T09:15:45+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd12b-c676-7411-a1cd-fd4f32d55bcc"
+    },
+    {
+      "at": "2026-08-05T09:20:30+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -1748,6 +1785,23 @@
         "tools/rag/source_intake.py",
         "tests/test_research_escalation.py",
         "tests/test_rag_source_intake.py"
+      ]
+    },
+    "experiment-analysis-research-handoff": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T09:01:52+00:00",
+      "next_action": "Use the authenticated compiler whenever a sealed analysis returns the preregistered Stage1 structural no-go; pending research packets still require independent claim review.",
+      "owner": "codex",
+      "priority": 1,
+      "recovery_action": "Do not allow analyzers to author research questions, accept sources, choose successors, or bypass the existing research gate.",
+      "resource": "local_cpu",
+      "status": "completed",
+      "write_set": [
+        "tools/analysis_research_handoff.py",
+        "research/runners/analysis_research_handoff.py",
+        "tests/test_analysis_research_handoff.py",
+        "research/specs/v14_snr_stageB_fast_channel_research_handoff_v1.json",
+        "research/findings/raw/v14_snr_stageB_fast_channel_research_handoff_v1.json"
       ]
     },
     "experiment-campaign-supervisor": {
@@ -1992,21 +2046,22 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T08:39:28+00:00",
-      "next_action": "Escalate focused source research for complete-current fast-Na activation/deactivation and Kv3 deactivation state models, then preregister a replacement Stage 1 family; do not tune conductance or begin compartment integration.",
+      "heartbeat_at": "2026-08-05T09:20:30+00:00",
+      "next_action": "Commit the authenticated handoff and reviewed packet, refresh the canonical RAG index, attach the accepted packet to the gate, resolve each question with durable source intake, then preregister unmodified Khaliq/Raman sodium plus Labro and Desai Kv3 source-transfer comparators.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "Preserve the authenticated 7-of-18 source-gate failure. Do not compensate with conductance, widen source intervals, reinterpret gate-level taus as composite-current taus, or begin Stage 2 before a prospectively filed Stage 1 successor passes.",
-      "resource": "source_research",
+      "recovery_action": "Preserve the 7-of-18 structural no-go. Do not use the rejected unsupported Kv3 hybrid, tune conductance, accept preparation transfer as SNr authority, or dispatch Stage 2.",
+      "resource": "source_review_then_local_cpu_gpu",
       "status": "running",
       "write_set": [
-        "sim/kernels.py",
-        "sim/snr_structural_successor.py",
-        "research/runners/v14_stageB_fast_channel_clamp.py",
-        "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
-        "research/specs/v14_snr_stageB_fast_channel_clamp_parity_v1.json",
-        "tools/v14_stageB_fast_channel_clamp_analysis.py",
-        "research/findings/2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md"
+        "research/findings",
+        "research/packets",
+        "research/specs",
+        "tools/analysis_research_handoff.py",
+        "tests/test_analysis_research_handoff.py",
+        "ROADMAP.md",
+        "docs/AUTONOMOUS-EXECUTION.md",
+        "docs/CURRENT-STATE.md"
       ]
     },
     "gateb-v14-packet-authority": {
@@ -2395,5 +2450,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T08:39:28+00:00"
+  "updated_at": "2026-08-05T09:20:30+00:00"
 }

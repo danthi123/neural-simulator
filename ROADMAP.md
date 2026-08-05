@@ -304,11 +304,13 @@ ingestion and bounded observation generation are now implemented. The new
 successor's Stage 1 clamp also executes and analyzes automatically: sealed
 CPU/GPU observations are authenticated, all 18 source endpoints are re-fit,
 and uncompensated gates assign the verdict. It found seven structural failures.
-The engine still does not independently research a replacement state family,
-append a new design version, preregister its successor, and dispatch it without
-a scientific handoff. Those architecture changes remain source-reviewed and
-prospectively sealed; automating that controlled handoff is the next engine
-slice.
+An authenticated handoff now maps that exact failure set into fixed biological
+questions and opens a research gate without manual transcription. It still
+cannot independently accept source claims, choose a replacement state family,
+append a new design version, preregister its successor, or dispatch it. Those
+architecture changes remain independently source-reviewed and prospectively
+sealed; the active slice is validating candidate state models before the next
+Stage 1 transfer.
 
 A versioned V2 contract resolves the post-spike AHP direction without
 pretending the paper specified a medium-AHP window: the scorer recomputes the

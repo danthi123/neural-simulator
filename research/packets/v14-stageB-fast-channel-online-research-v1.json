@@ -1,0 +1,564 @@
+{
+  "claims": [
+    {
+      "condition": "Voltage-clamp protocols spanning -120 to +20 mV and 50 microseconds to 5 seconds; rates use k_ij(V)=k0_ij*exp(k1_ij*V).",
+      "id": "na-milescu-model-iii-coverage",
+      "limitations": "The preparation was neonatal rat medullary raphe, not adult mouse SNr, and the recorded current may mix sodium isoforms. The paper says the numerical best-fit rates are in Supplemental Table 1, but that legacy supplement was not retrievable from the official record during this search, so this packet does not transfer its numeric parameters.",
+      "locator": "Methods, 'Kinetic modeling'; Figure 1 protocols; Figure 2 simultaneous fits; Figure 3C Model III; Figure 4; Discussion, 'Voltage-clamp data and kinetic modeling'.",
+      "preparation": "Whole-cell voltage clamp of intact neurons in acute brainstem slices, with reduced-sodium solutions and protocols designed to limit space-clamp error.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and corrected per research/findings/2026-08-05-v14-stageB-sodium-candidate-source-review.md.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "milescu-2010"
+      ],
+      "species": "Neonatal rat",
+      "status": "accepted",
+      "uncertainty": "The authors report parameter non-uniqueness: changes of roughly 10-20 percent near the optimum had small effects on goodness of fit.",
+      "units": "State occupancy; transition rates in ms^-1; voltage sensitivities in mV^-1",
+      "value": {
+        "candidate_role": "Highest-priority sodium topology reference",
+        "coverage": [
+          "activation current and stationary activation",
+          "deactivation tails",
+          "fast and slow inactivation",
+          "fast and slow recovery",
+          "activity-dependent inactivation"
+        ],
+        "topology": "Two coupled copies of a 13-state activation/inactivation model. Each copy contains an additional I13/I26 state, but mode 2 is parameterized to have no slow inactivation; I26 is retained mainly for symmetry."
+      }
+    },
+    {
+      "condition": "Original author-supplied NMODL model; no Q10 factor in this 2003 implementation.",
+      "id": "na-khaliq-downloadable-markov",
+      "limitations": "This is a legacy Purkinje-cell model tuned for resurgent sodium and high-frequency firing, not a modern direct fit to the Stage B SNr clamp ladder. Its validation target was neuron firing plus selected sodium-current behavior, so all Stage B clamp waveforms must be rerun prospectively before transfer.",
+      "locator": "rsg.mod lines 16-38 (parameters), 87-101 (13 states), 103-106 (conductance/current), 114-135 (state graph), and 156-195 (voltage-dependent transition rates), at immutable ModelDB commit c96405173a17d18999d2a8d63d40899a76d02bdf.",
+      "preparation": "Khaliq et al. adapted the Raman and Bean 2001 Purkinje sodium scheme, retained most rates, revised coupling factors, and tested it in a model of acutely dissociated P14-P20 mouse Purkinje somata; the sodium-current data source was Raman et al. 1997 rather than a new fit in the 2003 study.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and corrected per research/findings/2026-08-05-v14-stageB-sodium-candidate-source-review.md.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "khaliq-2003-model"
+      ],
+      "species": "Mouse Purkinje neuron",
+      "status": "accepted",
+      "uncertainty": "Exact equations and parameters are available, but their transfer error against the current SNr assays is unknown.",
+      "units": "Rates in ms^-1; voltage scales in mV; conductance in S/cm2",
+      "value": {
+        "candidate_role": "Executable sodium structural baseline",
+        "key_parameters": {
+          "Coff": 0.5,
+          "Con": 0.005,
+          "Ooff": 0.005,
+          "Oon": 0.75,
+          "alpha": 150.0,
+          "beta": 3.0,
+          "delta": 40.0,
+          "epsilon": 1.75,
+          "gamma": 150.0,
+          "x1": 20.0,
+          "x2": -20.0,
+          "x6": -25.0,
+          "zeta": 0.03
+        },
+        "states": [
+          "C1-C5",
+          "O",
+          "I1-I6",
+          "B open-channel-blocked"
+        ]
+      }
+    },
+    {
+      "condition": "Nav1.6 parameters in ModelDB Nav16_a.mod, with Q10=3 referenced to 20 C and current proportional to O1+O2.",
+      "id": "na-balbi-nav16-six-state",
+      "limitations": "The Nav1.6 source data were from heterologously expressed human channel rather than a CNS neuron. The publication/model package demonstrates I-V, conductance-voltage, steady-state availability, and recovery protocols; deactivation-tail reproduction is not identified as a fitted endpoint. It is therefore an equation source and comparator, not a complete Stage B replacement by itself.",
+      "locator": "Nav16_a.mod lines 20-86 (parameters), 105 and 118-127 (Q10, open probability, and current), 108-115 (states), 130-140 (state graph), and 143-160 (rate function and equations), immutable ModelDB commit 815a1d7762d0cdccc3a3c6e6bed3a678d15888e4; ModelDB record 230137 lists the four simulated protocol families.",
+      "preparation": "Human Nav1.6 experimental data from heterologous expression; NEURON channel model.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and corrected per research/findings/2026-08-05-v14-stageB-sodium-candidate-source-review.md.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "balbi-2017-paper",
+        "balbi-nav16-model"
+      ],
+      "species": "Human channel isoform",
+      "status": "accepted",
+      "uncertainty": "Published fit quality does not establish transfer to SNr composite transient sodium current or the Stage B deactivation assay.",
+      "units": "Rates in ms^-1; voltage scales in mV; conductance in mho/cm2",
+      "value": {
+        "candidate_role": "Isoform-specific six-state comparator",
+        "open_probability": "O1+O2",
+        "states": [
+          "C1",
+          "C2",
+          "O1",
+          "O2",
+          "I1",
+          "I2"
+        ],
+        "transition_form": "b/(1+exp((V-V0)/k)), with sums of two such terms on selected reverse or inactivation transitions"
+      }
+    },
+    {
+      "condition": "The 2026 study fitted normalized Channelpedia traces at 15, 25, and 35 C and evaluated model errors on held-out test data.",
+      "id": "kv3-linkevicius-four-protocol-models",
+      "limitations": "The data are homomeric Kv channels in heterologous cell lines, not native SNr Kv3 heteromers with auxiliary subunits. The learned voltage/temperature functions are neural networks and therefore are not an acceptable end-state biological mechanism for this project. Serialized Julia/Pumas model objects also create a substantial runtime and portability dependency.",
+      "locator": "Paper Table 2 gives retained activation/deactivation/inactivation/recovery sweep counts for Kv3.1, Kv3.3, and Kv3.4; Methods equations 8-17 define the two-gate models; Table 3 reports held-out comparisons. Code commit 26dc63b6cd5de79536731f072cf6c4d28328bb00: process_data.jl lines 59-62 identify Kv3 types; protocol_setups.jl lines 1-204 define all four protocols; sciml_models.jl lines 1-121 define the learned gates and current; Models_split and Models_pooled contain serialized fitted models.",
+      "preparation": "Standardized automated patch clamp of homomeric Kv channels expressed in CHO or HEK cells; individual-cell and pooled scientific-machine-learning fits.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and, where required, corrected per research/findings/2026-08-05-v14-stageB-kv3-candidate-source-review.md; sodium ranking also reviewed in the sodium source review.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "linkevicius-2026-paper",
+        "linkevicius-2026-code",
+        "ranjan-2019"
+      ],
+      "species": "Human, mouse, and rat channel orthologs in heterologous cells; exact ortholog varies by Channelpedia cell record",
+      "status": "accepted",
+      "uncertainty": "The study reports population and cell random effects; this packet has not executed the serialized models or independently reproduced their held-out errors.",
+      "units": "Normalized current; voltage in mV; temperature in degrees C; learned positive rate functions in ms^-1",
+      "value": {
+        "candidate_role": "Current waveform oracle and initialization source, not final substrate implementation",
+        "retained_sweeps": {
+          "Kv3.1": {
+            "activation": 2034,
+            "deactivation": 1286,
+            "inactivation": 949,
+            "recovery": 674
+          },
+          "Kv3.3": {
+            "activation": 4104,
+            "deactivation": 1993,
+            "inactivation": 1180,
+            "recovery": 810
+          },
+          "Kv3.4": {
+            "activation": 2430,
+            "deactivation": 527,
+            "inactivation": 364,
+            "recovery": 100
+          }
+        },
+        "state_equations": "dm_i/dt=(m_i_inf(V,T)-m_i)*r_i(V,T), i=1,2; normalized current is proportional to m1*m2*(V-EK)",
+        "trained_definitions_available": true
+      }
+    },
+    {
+      "condition": "Human Kv3.1b in Xenopus oocytes at room temperature; ionic and gating-current activation/deactivation protocols include sub-millisecond depolarizations.",
+      "id": "kv3-labro-four-state-relaxation",
+      "limitations": "The four-state scheme has no inactivation or recovery-from-inactivation states and cannot by itself satisfy the complete Stage B Kv3 requirement. It is heterologous Kv3.1b, not native SNr current, and the authors did not release executable MATLAB code.",
+      "locator": "Main paper Figure 7b-e and Methods 'Simulations'; Supplementary Information, Supplementary Table 1, page containing 'Parameters for 4-State Markov Model'.",
+      "preparation": "Cut-open voltage clamp and gating-current recordings of human Kv3.1b expressed in Xenopus oocytes.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and, where required, corrected per research/findings/2026-08-05-v14-stageB-kv3-candidate-source-review.md; sodium ranking also reviewed in the sodium source review.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "labro-2015-paper",
+        "labro-2015-supplement"
+      ],
+      "species": "Human Kv3.1b channel in Xenopus oocytes",
+      "status": "accepted",
+      "uncertainty": "The model reproduces the reported activation and brief-pulse hooked tails, but no independent implementation check has been performed here.",
+      "units": "Zero-voltage rates in ms^-1; effective valence dimensionless; voltage in mV",
+      "value": {
+        "candidate_role": "Mechanistic activation/deactivation subgraph",
+        "rate_equations": {
+          "alpha": "alpha0*exp(+z*e*(V-6.2 mV)/(k_B*T)), equivalently alpha0*exp(+z*(V-6.2 mV)/V_T) with voltage units consistent",
+          "beta": "beta0*exp(-z*e*(V-6.2 mV)/(k_B*T)), equivalently beta0*exp(-z*(V-6.2 mV)/V_T) with voltage units consistent"
+        },
+        "reference_parameters": {
+          "alpha_l_z_l": [
+            6.0,
+            0.4
+          ],
+          "alpha_p_z_p": [
+            0.05,
+            3.5
+          ],
+          "alpha_s_z_s": [
+            1.0,
+            0.001
+          ],
+          "beta_l_z_l": [
+            0.6,
+            0.4
+          ],
+          "beta_p_z_p": [
+            0.15,
+            3.5
+          ],
+          "beta_s_z_s": [
+            0.8,
+            0.001
+          ]
+        },
+        "topology": "Three nonconducting sequential states followed by one conducting state; the intermediate relaxed-state return rate controls the hooked deactivation tail"
+      }
+    },
+    {
+      "condition": "Kv3.3 fixed classical baseline as distributed in the 2026 comparison; m^4*h current. The code calculates a Q10 factor but does not apply it, so kinetics are temperature invariant apart from reversal-potential and normalization terms.",
+      "id": "kv3-classical-full-gate-equations",
+      "limitations": "This is an empirical two-gate HH model rather than a conformational state model. It was not originally fitted jointly to all four modern Channelpedia protocols, and the 2026 study found the learned models substantially better than the unmodified classical baseline on held-out Kv3.3 traces.",
+      "locator": "SciMLHHModels.jl immutable commit 26dc63b6cd5de79536731f072cf6c4d28328bb00, src/models/baseline_models.jl lines 649-707 for the fixed model and 708-780 for the random-effects form.",
+      "preparation": "Downloaded computational baseline subsequently compared with standardized heterologous Kv3.3 clamp data.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and, where required, corrected per research/findings/2026-08-05-v14-stageB-kv3-candidate-source-review.md; sodium ranking also reviewed in the sodium source review.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "linkevicius-2026-code",
+        "linkevicius-2026-paper"
+      ],
+      "species": "Mammalian Kv3.3 channel model; source baseline provenance requires separate review before biological transfer",
+      "status": "accepted",
+      "uncertainty": "Exact equations are available, but its original source chain and protocol-level fit require review; do not treat the constants as accepted biology.",
+      "units": "Rates in ms^-1; voltage in mV; normalized current",
+      "value": {
+        "candidate_role": "Low-cost executable comparator",
+        "equations": {
+          "activation": "am=7.344/(1+exp(-0.0807*(V-61.6))); bm=0.611/(1+exp(0.08625*(V+33))); m_inf=am/(am+bm)",
+          "inactivation": "h_inf=0.1+0.9/(1+exp((V+29.7)/25)); ah=0.0066/(1+exp((V-10)/-6)); bh=0.01/(1+exp((V+20)/8))",
+          "open_fraction": "m^4*h"
+        }
+      }
+    },
+    {
+      "condition": "Mouse Kv3.3 expressed in CHO cells; activation, steady-state inactivation, recovery after a 2 s +20 mV pulse, and deactivation after a 5 ms +50 mV pulse were measured.",
+      "id": "kv3-desai-validation-protocols",
+      "limitations": "The paper's neuron simulation changes an existing conductance model but does not publish a single downloadable channel definition demonstrated to reproduce all four clamp families. CHO-cell homomeric Kv3.3 omits native SNr heteromeric composition and auxiliary regulation.",
+      "locator": "Figure 3A-E and corresponding Methods: activation; steady-state inactivation; recovery at -100 mV; deactivation from -110 through +40 mV. DOI record and full-text section 'Electrophysiological Analysis'.",
+      "preparation": "Whole-cell voltage clamp of mouse Kv3.3 expressed in CHO cells.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and, where required, corrected per research/findings/2026-08-05-v14-stageB-kv3-candidate-source-review.md; sodium ranking also reviewed in the sodium source review.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "desai-2008"
+      ],
+      "species": "Mouse channel isoform",
+      "status": "accepted",
+      "uncertainty": "The experimental curves are strong validation targets, but numeric trace extraction or source data retrieval has not been performed in this packet.",
+      "units": "Current and normalized current; time in ms; voltage in mV",
+      "value": {
+        "candidate_role": "Independent validation dataset and compact source-backed full-gate comparator for Kv3.3",
+        "protocol_coverage": [
+          "activation",
+          "steady-state inactivation",
+          "recovery from inactivation",
+          "deactivation tails"
+        ],
+        "published_model": {
+          "current": "I_Kv3.3=g_Kv3.3*n^3*(0.23+0.77*p)*(V-E_K)",
+          "gate_equation": "dx/dt=alpha_x(V)*(1-x)-beta_x(V)*x; alpha_x=k_alpha_x*exp(eta_alpha_x*V); beta_x=k_beta_x*exp(eta_beta_x*V)",
+          "parameters": {
+            "eta_alpha_n_mV_inverse": 0.0467,
+            "eta_alpha_p_mV_inverse": -0.18925,
+            "eta_beta_n_mV_inverse": 0.0067,
+            "eta_beta_p_mV_inverse": 0.01075,
+            "k_alpha_n_ms_inverse": 0.039,
+            "k_alpha_p_ms_inverse": 4.5e-05,
+            "k_beta_n_ms_inverse": 0.0868,
+            "k_beta_p_ms_inverse": 0.00246
+          }
+        },
+        "reported_recovery_half_life_ms": 131.0
+      }
+    },
+    {
+      "condition": "Comparison of all located source-backed candidates against the failed Stage B requirement for waveform-level activation, inactivation, recovery, and deactivation.",
+      "id": "fast-channel-candidate-ranking",
+      "limitations": "This is a research recommendation, not an accepted biological claim. No candidate has yet been ported, run under the sealed Stage B commands, or compared on identical temperature and preparation conditions. No directly downloadable SNr-specific full kinetic definition was located in this bounded search, but that is not proof that none exists.",
+      "locator": "Synthesis of the exact model and protocol locators in claims na-milescu-model-iii-coverage through kv3-desai-validation-protocols.",
+      "preparation": "Cross-study synthesis only.",
+      "review": {
+        "decision": "approved",
+        "notes": "Independently verified and, where required, corrected per research/findings/2026-08-05-v14-stageB-kv3-candidate-source-review.md; sodium ranking also reviewed in the sodium source review.",
+        "reviewed_at": "2026-08-05",
+        "reviewer": "codex-controller"
+      },
+      "source_ids": [
+        "milescu-2010",
+        "khaliq-2003-model",
+        "balbi-2017-paper",
+        "linkevicius-2026-paper",
+        "linkevicius-2026-code",
+        "labro-2015-paper",
+        "labro-2015-supplement",
+        "desai-2008"
+      ],
+      "species": "Multiple mammalian channels and CNS preparations",
+      "status": "accepted",
+      "uncertainty": "Ranking is provisional until independent source review and reproduction under the project's exact clamp analyzer.",
+      "units": "Ordinal research priority",
+      "value": {
+        "kv3": [
+          "Use the 2026 individual Kv3.1/Kv3.3/Kv3.4 fits and Channelpedia traces as waveform oracles and parameter-search initialization only.",
+          "Run the unmodified Labro four-state relaxation graph as the mechanistic activation/deactivation candidate and the unmodified Desai n^3*(0.23+0.77*p) definition as the compact full-gate comparator. Do not graft unsupported inactivation transitions onto Labro.",
+          "Retain the compact classical m^4*h definition only as a negative-control baseline."
+        ],
+        "sodium": [
+          "Use Milescu Model III as the most complete CNS waveform-fitted topology reference.",
+          "Use the Khaliq/Raman 13-state model as the immediately executable structural baseline with exact rates.",
+          "Use Balbi Nav1.6 as an isoform-specific comparator, not as sole evidence for deactivation."
+        ]
+      }
+    }
+  ],
+  "created_at": "2026-08-05",
+  "online_searches": [
+    {
+      "claim_absence": false,
+      "databases": [
+        "PubMed",
+        "PubMed Central",
+        "ModelDB"
+      ],
+      "date_from": "2026-08-05",
+      "date_to": "2026-08-05",
+      "id": "search-snr-sodium",
+      "outcome": "Located a comprehensive mammalian CNS pacemaker-neuron sodium model and two downloadable multi-state sodium definitions; no directly downloadable full SNr transient-sodium kinetic fit was identified in this bounded search.",
+      "query_variants": [
+        "substantia nigra pars reticulata transient sodium kinetic Markov model voltage clamp",
+        "mammalian CNS pacemaker neuron sodium activation deactivation inactivation recovery model",
+        "Nav1.6 kinetic model downloadable ModelDB"
+      ],
+      "urls": [
+        "https://pubmed.ncbi.nlm.nih.gov/20826674/",
+        "https://modeldb.science/48332",
+        "https://modeldb.science/230137",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3234097/"
+      ]
+    },
+    {
+      "claim_absence": false,
+      "databases": [
+        "ModelDB",
+        "GitHub ModelDBRepository",
+        "PLOS Computational Biology"
+      ],
+      "date_from": "2026-08-05",
+      "date_to": "2026-08-05",
+      "id": "search-downloadable-sodium",
+      "outcome": "Authenticated immutable downloadable NMODL definitions for the Khaliq/Raman 13-state resurgent model and the Balbi six-state Nav1.6 model, including exact equations and parameter constants.",
+      "query_variants": [
+        "ModelDB resurgent sodium Raman Bean Markov model",
+        "single kinetic model human voltage gated sodium Nav1.6 model code",
+        "Purkinje Nav1.6 NMODL activation deactivation recovery"
+      ],
+      "urls": [
+        "https://github.com/ModelDBRepository/48332",
+        "https://github.com/ModelDBRepository/230137",
+        "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005737"
+      ]
+    },
+    {
+      "claim_absence": false,
+      "databases": [
+        "PubMed Central",
+        "Nature Communications",
+        "Channelpedia",
+        "ModelDB"
+      ],
+      "date_from": "2026-08-05",
+      "date_to": "2026-08-05",
+      "id": "search-kv3-mechanistic",
+      "outcome": "Located a four-state Kv3.1b activation/deactivation relaxation model with a complete supplementary parameter table, a downloadable classical Kv3.3 m4h definition, and Kv3.3 experimental protocols covering all four waveform families; no one mechanistic definition among these sources covers all four families without combining evidence.",
+      "query_variants": [
+        "Kv3.1 Markov model activation deactivation equations supplement",
+        "Kv3.3 kinetic model activation inactivation recovery deactivation",
+        "Kv3 channel NMODL downloadable model"
+      ],
+      "urls": [
+        "https://www.nature.com/articles/ncomms10173",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC2494927/",
+        "https://channelpedia.epfl.ch/ionchannels/11",
+        "https://modeldb.science/229585"
+      ]
+    },
+    {
+      "claim_absence": false,
+      "databases": [
+        "PLOS Computational Biology",
+        "GitHub",
+        "Channelpedia",
+        "Edinburgh DataShare"
+      ],
+      "date_from": "2026-08-05",
+      "date_to": "2026-08-05",
+      "id": "search-current-kv-waveform",
+      "outcome": "Located the 2026 primary study, source code, serialized fits, and raw-data record for models trained on activation, deactivation, inactivation, and recovery traces for Kv3.1, Kv3.3, and Kv3.4.",
+      "query_variants": [
+        "current Kv model activation deactivation inactivation recovery source code",
+        "unification voltage gated potassium models deep nonlinear mixed effects Kv3",
+        "Channelpedia Kv3 four protocol kinetic model"
+      ],
+      "urls": [
+        "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013078",
+        "https://github.com/dom-linkevicius/SciMLHHModels.jl",
+        "https://doi.org/10.7488/ds/8052",
+        "https://channelpedia.epfl.ch/"
+      ]
+    }
+  ],
+  "packet_version": "research-packet-v1",
+  "prior_work_matches": [
+    {
+      "id": "stageb-source-transfer-no-go",
+      "reference": "research/findings/2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md",
+      "relationship": "Direct predecessor experiment defining the failed waveform endpoints and requiring a state-family escalation rather than conductance tuning.",
+      "status": "failed",
+      "summary": "The powered-gate model passed 11 of 18 source gates but failed sodium activation midpoint/slope/rise/deactivation and Kv3 deactivation at -60, -50, and -40 mV."
+    },
+    {
+      "id": "stageb-v2-preregistration",
+      "reference": "research/specs/v14_snr_stageB_structural_successor_v2.json",
+      "relationship": "Defines the exact source command protocols, endpoint estimators, biological targets, and no-invented-parameter boundary this research must serve.",
+      "status": "related",
+      "summary": "Requires waveform-level activation, inactivation, recovery, and deactivation reproduction before compartment integration."
+    },
+    {
+      "id": "stageb-local-source-audit",
+      "reference": "research/findings/2026-08-05-v14-stageB-fast-channel-local-source-audit.md",
+      "relationship": "Parallel local-catalog audit; this packet adds online sources and should be reviewed against it to avoid duplicate or contradictory transfer.",
+      "status": "unresolved",
+      "summary": "Local source review exists in the worktree but is not accepted by this packet and was not modified."
+    }
+  ],
+  "question": {
+    "id": "v14-stageb-fast-channel-online-models",
+    "kind": "mechanism-and-parameter-escalation",
+    "requested_measurement": "Explicit state equations, transition-rate parameters, protocol coverage, downloadable model definitions, preparation match, and limitations for reproducing activation, inactivation, recovery, and deactivation clamp waveforms.",
+    "target": "Mammalian neuronal transient sodium and Kv3 channels, prioritizing SNr neurons and then closely matched fast-spiking CNS neurons or relevant channel isoforms.",
+    "text": "Which source-backed kinetic models can reproduce the complete transient sodium and Kv3 voltage-clamp waveform families needed to replace the failed Stage B powered-gate equations?"
+  },
+  "review_required": true,
+  "sources": [
+    {
+      "citation": "Milescu LS, Yamanishi T, Ptak K, Smith JC. Kinetic properties and functional dynamics of sodium channels during repetitive spiking in a slow pacemaker neuron. J Neurosci. 2010;30:12113-12127.",
+      "doi": "10.1523/JNEUROSCI.0445-10.2010",
+      "evidence": "Primary voltage-clamp/modeling paper simultaneously fitting transient and stationary activation, deactivation, fast/slow inactivation, recovery, and activity-dependent inactivation with explicit exponential transition equations.",
+      "id": "milescu-2010",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Methods 'Kinetic modeling'; Figures 1-4; Discussion 'Voltage-clamp data and kinetic modeling'; numerical values are stated to be in Supplemental Table 1.",
+      "search_id": "search-snr-sodium",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2945634/"
+    },
+    {
+      "citation": "Khaliq ZM, Gouwens NW, Raman IM. The contribution of resurgent sodium current to high-frequency firing in Purkinje neurons: an experimental and modeling study. J Neurosci. 2003;23:4899-4912. Author-supplied ModelDB 48332 rsg.mod.",
+      "doi": "10.1523/JNEUROSCI.23-12-04899.2003",
+      "evidence": "Immutable downloadable 13-state NMODL sodium model with all constants, state transitions, activation/deactivation rates, inactivation paths, recovery paths, and open-channel block.",
+      "id": "khaliq-2003-model",
+      "kind": "peer-reviewed-primary",
+      "license_status": "metadata-only",
+      "locator": "Immutable file rsg.mod at commit c96405173a17d18999d2a8d63d40899a76d02bdf, especially lines 14-43, 88-143, and 168-211.",
+      "search_id": "search-downloadable-sodium",
+      "url": "https://raw.githubusercontent.com/ModelDBRepository/48332/c96405173a17d18999d2a8d63d40899a76d02bdf/rsg.mod"
+    },
+    {
+      "citation": "Balbi P, Massobrio P, Hellgren Kotaleski J. A single Markov-type kinetic model accounting for the macroscopic currents of all human voltage-gated sodium channel isoforms. PLoS Comput Biol. 2017;13:e1005737.",
+      "doi": "10.1371/journal.pcbi.1005737",
+      "evidence": "Primary paper defines a common six-state Markov model and fits isoform-specific parameters to macroscopic I-V, conductance, availability, and recovery behavior for Nav1.1-Nav1.9.",
+      "id": "balbi-2017-paper",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Model definition and Results for Nav1.1-Nav1.9; ModelDB record 230137 links the executable implementation.",
+      "search_id": "search-downloadable-sodium",
+      "url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005737"
+    },
+    {
+      "citation": "Balbi et al. 2017, ModelDB 230137 Nav1.6 author implementation.",
+      "evidence": "Immutable downloadable Nav1.6 NMODL file containing the six states, all voltage-dependent transition equations, every parameter, Q10, and current equation.",
+      "id": "balbi-nav16-model",
+      "kind": "peer-reviewed-primary",
+      "license_status": "metadata-only",
+      "locator": "Nav16_a.mod at commit 815a1d7762d0cdccc3a3c6e6bed3a678d15888e4, lines 20-87 and 110-156.",
+      "search_id": "search-downloadable-sodium",
+      "url": "https://raw.githubusercontent.com/ModelDBRepository/230137/815a1d7762d0cdccc3a3c6e6bed3a678d15888e4/Nav16_a.mod"
+    },
+    {
+      "citation": "Linkevicius D, Chadwick A, Stefan MI, Sterratt DC. One model to rule them all: Unification of voltage-gated potassium channel models via deep non-linear mixed effects modelling. PLoS Comput Biol. 2026;22:e1013078.",
+      "doi": "10.1371/journal.pcbi.1013078",
+      "evidence": "Current primary model study fitting two-gate scientific-machine-learning models to full activation, deactivation, inactivation, and recovery traces for 20 Kv types, including Kv3.1, Kv3.3, and Kv3.4, at three temperatures and evaluating held-out errors.",
+      "id": "linkevicius-2026-paper",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Methods 'Kv channel models' and 'Model fitting'; equations 8-17; Tables 1-3; Supporting Information; Data Availability.",
+      "search_id": "search-current-kv-waveform",
+      "url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013078"
+    },
+    {
+      "citation": "Linkevicius et al. SciMLHHModels.jl source and fitted model artifacts accompanying PLoS Comput Biol 2026.",
+      "evidence": "Downloadable source defines the four clamp protocols, the classical Kv3 baselines, learned two-gate dynamics, training workflow, and committed serialized fitted models.",
+      "id": "linkevicius-2026-code",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Immutable commit 26dc63b6cd5de79536731f072cf6c4d28328bb00: src/models/sciml_models.jl; src/models/baseline_models.jl; src/data_wrangling/protocol_setups.jl; Models_split; Models_pooled.",
+      "search_id": "search-current-kv-waveform",
+      "url": "https://github.com/dom-linkevicius/SciMLHHModels.jl/tree/26dc63b6cd5de79536731f072cf6c4d28328bb00"
+    },
+    {
+      "citation": "Ranjan R et al. A Kinetic Map of the Homomeric Voltage-Gated Potassium Channel Family. Front Cell Neurosci. 2019;13:358.",
+      "doi": "10.3389/fncel.2019.00358",
+      "evidence": "Primary standardized dataset of more than one million Kv traces at 15, 25, and 35 C, with activation, deactivation, inactivation, recovery, empirical voltage-dependent Q10, and public Channelpedia data.",
+      "id": "ranjan-2019",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Methods protocol descriptions; Results 'Voltage-Dependent Q10' and 'A Data Resource of Ion Channel Kinetics'; associated supplementary files and Channelpedia records.",
+      "search_id": "search-current-kv-waveform",
+      "url": "https://www.frontiersin.org/journals/cellular-neuroscience/articles/10.3389/fncel.2019.00358/full"
+    },
+    {
+      "citation": "Labro AJ et al. Kv3.1 uses a timely resurgent K+ current to secure action potential repolarization. Nat Commun. 2015;6:10173.",
+      "doi": "10.1038/ncomms10173",
+      "evidence": "Primary activation/deactivation and gating-current study with a four-state sequential Markov model that reproduces classic activation and pulse-duration-dependent hooked deactivation tails.",
+      "id": "labro-2015-paper",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Figures 1-7, especially Figure 7; Methods 'Data analysis' and 'Simulations'.",
+      "search_id": "search-kv3-mechanistic",
+      "url": "https://www.nature.com/articles/ncomms10173"
+    },
+    {
+      "citation": "Labro et al. 2015 Supplementary Information for Kv3.1 resurgent-current model.",
+      "evidence": "Official downloadable supplement provides the complete zero-voltage rate constants and effective valences for all three reversible transitions of the four-state model.",
+      "id": "labro-2015-supplement",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Supplementary Table 1, 'Parameters for 4-State Markov Model'.",
+      "search_id": "search-kv3-mechanistic",
+      "url": "https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fncomms10173/MediaObjects/41467_2015_BFncomms10173_MOESM1717_ESM.pdf"
+    },
+    {
+      "citation": "Desai R, Kronengold J, Mei J, Forman SA, Kaczmarek LK. Protein kinase C modulates inactivation of Kv3.3 channels. J Biol Chem. 2008;283:22283-22294.",
+      "doi": "10.1074/jbc.M801663200",
+      "evidence": "Primary mouse Kv3.3 study reports matched activation, steady-state inactivation, recovery, and deactivation protocols and waveform-derived kinetics in one expression system.",
+      "id": "desai-2008",
+      "kind": "peer-reviewed-primary",
+      "license_status": "open-access",
+      "locator": "Experimental Procedures electrophysiology; Figure 3A-E and legend; modeling section and Figure 7.",
+      "search_id": "search-kv3-mechanistic",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2494927/"
+    }
+  ]
+}

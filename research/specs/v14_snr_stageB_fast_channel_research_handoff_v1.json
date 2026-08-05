@@ -1,0 +1,124 @@
+{
+  "schema": "sim-analysis-research-handoff-contract-v1",
+  "status": "preregistered",
+  "scientific_verdict": null,
+  "source_claim_acceptance_allowed": false,
+  "successor_dispatch_allowed": false,
+  "implementation": {
+    "compiler": {
+      "path": "tools/analysis_research_handoff.py",
+            "sha256": "5c6d8fd520df7bc461aa4c19cfa85c4d2ccb6721332da606eb89e208d140f680"
+    },
+    "research_escalation": {
+      "path": "tools/research_escalation.py",
+      "sha256": "a6f9a0bba1cba90b3d7a4ede2920fc626a2c2fc909a38fbcf727e3a380605d15"
+    }
+  },
+  "analysis": {
+    "path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_analysis_v1.json",
+    "sha256": "a4cbf8615f3c0877402ee9c94f1d843de04bc771e08c42ed15cead68fa1298c9",
+    "schema": "v14-snr-stageB-fast-channel-clamp-analysis-v1",
+    "governing_binding": {
+      "path": ["execution_spec"],
+      "equals": {
+        "path": "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
+        "sha256": "d99ed6a8fd3f1c6e871ded2358c69bf3807549ba62f4e178689ff5a29c1e330e"
+      }
+    },
+    "provenance": {
+      "path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_analysis_v1.json.prov.json",
+      "sha256": "f4ed7152cc4a4298a37662e46146163c4d1df013d589bf240cfae13701514f24",
+      "runner": "research/runners/v14_stageB_fast_channel_clamp_analysis.py",
+      "backend": "numpy"
+    }
+  },
+  "trigger": {
+    "verdict_path": ["scientific_verdict"],
+    "allowed_verdicts": ["STAGE1_STRUCTURAL_NO_GO"],
+    "items_path": ["source_transfer_gates"],
+    "item_id_field": "metric",
+    "failed_field": "passed",
+    "failed_value": false,
+    "expected_failed_ids": [
+      "fast_na.activation_10_90_at_0_mV_ms",
+      "fast_na.activation_slope_mV",
+      "fast_na.activation_vhalf_mV",
+      "fast_na.deactivation_at_minus_40_mV_ms",
+      "kv3_like.deactivation_at_minus_40_mV_ms",
+      "kv3_like.deactivation_at_minus_50_mV_ms",
+      "kv3_like.deactivation_at_minus_60_mV_ms"
+    ],
+    "reject_unmapped": true
+  },
+  "research_gate": {
+    "slug": "v14-stageb-fast-channel-state-family",
+    "title": "Stage B fast-channel state-family research gate",
+    "blocked_experiment": "The source-command Stage 1 clamp authenticated seven independent failures in fast-sodium activation/deactivation and Kv3-like deactivation, so compartment integration and conductance calibration are stopped.",
+    "wall_reason": "The filed equation-derived gate roots and current-to-gate time conversions preserve some equilibrium endpoints but do not reproduce the complete powered current while activation, inactivation, and recovery states evolve together.",
+    "query": "SNr transient sodium and Kv3 complete voltage-clamp current state model activation deactivation transition rates",
+    "output": "research/findings/2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md"
+  },
+  "prior_attempts": [
+    {
+      "path": "research/findings/2026-08-05-v14-stageB-successor-preregistration-audit-CORRECTION.md",
+      "sha256": "7dce472c5302000b3994392b0d1bf9716f223421ff35798ca3f105b6f95f3f04",
+      "summary": "V1 treated source normalized-conductance Boltzmann curves as unpowered gates and was superseded before execution because m^3 and n^4 shifted the measured curves."
+    },
+    {
+      "path": "research/findings/2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md",
+      "sha256": "d743bd01d4a4f4b20a0d0a506a2250657263ed4c6e7e928bdf7e80b64099012a",
+      "summary": "V2 applied equation-derived roots and conditional current-to-gate time conversions, but seven complete-current source gates failed under the sealed command protocols."
+    }
+  ],
+  "questions": [
+    {
+      "id": "P1",
+      "kind": "parameter",
+      "text": "Which directly reported transition-rate equations or complete-current model parameters reproduce transient sodium activation midpoint, slope, and 10-90 percent rise together under the Ding, Wei, and Zhou SNr command protocol?",
+      "trigger_ids": [
+        "fast_na.activation_10_90_at_0_mV_ms",
+        "fast_na.activation_slope_mV",
+        "fast_na.activation_vhalf_mV"
+      ]
+    },
+    {
+      "id": "P2",
+      "kind": "parameter",
+      "text": "Which directly reported sodium transition rates reproduce the composite transient-current deactivation tail at minus 40 mV without breaking the accepted inactivation and biexponential recovery endpoints?",
+      "trigger_ids": ["fast_na.deactivation_at_minus_40_mV_ms"]
+    },
+    {
+      "id": "P3",
+      "kind": "parameter",
+      "text": "Which directly reported Kv3-like transition-rate equations reproduce complete-current deactivation tails at minus 60, minus 50, and minus 40 mV while preserving the accepted activation, inactivation, and rise endpoints?",
+      "trigger_ids": [
+        "kv3_like.deactivation_at_minus_40_mV_ms",
+        "kv3_like.deactivation_at_minus_50_mV_ms",
+        "kv3_like.deactivation_at_minus_60_mV_ms"
+      ]
+    },
+    {
+      "id": "W1",
+      "kind": "wiring",
+      "text": "Which coupled closed, open, fast-inactivated, slow-recovery, and blocked states are required by primary evidence for the SNr transient sodium current, and which transitions can be omitted without replacing biological channel dynamics with host logic?",
+      "trigger_ids": [
+        "fast_na.activation_10_90_at_0_mV_ms",
+        "fast_na.activation_slope_mV",
+        "fast_na.activation_vhalf_mV",
+        "fast_na.deactivation_at_minus_40_mV_ms"
+      ]
+    },
+    {
+      "id": "W2",
+      "kind": "wiring",
+      "text": "Which Kv3.1 and Kv3.4 subunit or state composition is supported for SNr IDR-fast, and what coupled activation-inactivation topology is required to represent its measured current tails?",
+      "trigger_ids": [
+        "kv3_like.deactivation_at_minus_40_mV_ms",
+        "kv3_like.deactivation_at_minus_50_mV_ms",
+        "kv3_like.deactivation_at_minus_60_mV_ms"
+      ]
+    }
+  ],
+  "receipt_output": "research/findings/raw/v14_snr_stageB_fast_channel_research_handoff_v1.json",
+    "sha256": "edd9dd0379327e2bad733e3d957f6683a15ed78f78d00974241092d0864c4311"
+}

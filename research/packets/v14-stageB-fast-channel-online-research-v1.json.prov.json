@@ -1,0 +1,9 @@
+{
+  "artifact": "research/packets/v14-stageB-fast-channel-online-research-v1.json",
+  "artifact_sha256": "755339c2d6c33617be5c89aded0e81e39e3570073d1ca99021427651515df000",
+  "backend": "not_applicable_primary_source_research",
+  "device": "online primary-source and immutable-code retrieval; no simulator backend",
+  "generated_by": "delegated bounded research plus independent controller review",
+  "schema": "sim-purpose-built-artifact-provenance-v1",
+  "status": "success"
+}

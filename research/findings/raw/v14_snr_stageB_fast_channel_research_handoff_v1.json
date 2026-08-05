@@ -1,0 +1,58 @@
+{
+  "analysis": {
+    "path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_analysis_v1.json",
+    "self_sha256": "5044e632533f36bc829896ac02ca03a5950fa4e991341fee186bb2019c901d40",
+    "sha256": "a4cbf8615f3c0877402ee9c94f1d843de04bc771e08c42ed15cead68fa1298c9"
+  },
+  "analysis_provenance": {
+    "git_dirty": true,
+    "git_sha": "62490b235",
+    "path": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_analysis_v1.json.prov.json",
+    "run_id": "1785919112-789460",
+    "runner": "research/runners/v14_stageB_fast_channel_clamp_analysis.py",
+    "sha256": "f4ed7152cc4a4298a37662e46146163c4d1df013d589bf240cfae13701514f24"
+  },
+  "contract": {
+    "path": "research/specs/v14_snr_stageB_fast_channel_research_handoff_v1.json",
+    "self_sha256": "edd9dd0379327e2bad733e3d957f6683a15ed78f78d00974241092d0864c4311",
+    "sha256": "bd265eaee50988af556e5d0543c21b322d7a11dc6179557f120837ace21114da"
+  },
+  "failed_ids": [
+    "fast_na.activation_10_90_at_0_mV_ms",
+    "fast_na.activation_slope_mV",
+    "fast_na.activation_vhalf_mV",
+    "fast_na.deactivation_at_minus_40_mV_ms",
+    "kv3_like.deactivation_at_minus_40_mV_ms",
+    "kv3_like.deactivation_at_minus_50_mV_ms",
+    "kv3_like.deactivation_at_minus_60_mV_ms"
+  ],
+  "prior_attempts": [
+    {
+      "path": "research/findings/2026-08-05-v14-stageB-successor-preregistration-audit-CORRECTION.md",
+      "sha256": "7dce472c5302000b3994392b0d1bf9716f223421ff35798ca3f105b6f95f3f04",
+      "summary": "V1 treated source normalized-conductance Boltzmann curves as unpowered gates and was superseded before execution because m^3 and n^4 shifted the measured curves."
+    },
+    {
+      "path": "research/findings/2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md",
+      "sha256": "d743bd01d4a4f4b20a0d0a506a2250657263ed4c6e7e928bdf7e80b64099012a",
+      "summary": "V2 applied equation-derived roots and conditional current-to-gate time conversions, but seven complete-current source gates failed under the sealed command protocols."
+    }
+  ],
+  "research_gate": {
+    "path": "research/findings/2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md",
+    "sha256": "8a15bb12b1461f3841fb034d7484197924c3d63eeca3a202258048c3517a0abc"
+  },
+  "schema": "sim-analysis-research-handoff-receipt-v1",
+  "scientific_verdict": null,
+  "selected_question_ids": [
+    "P1",
+    "P2",
+    "P3",
+    "W1",
+    "W2"
+  ],
+  "sha256": "1527499902006d29a59539568d1b9179c3334acbf0daf9233f10e507b07a6f36",
+  "source_claims_accepted": false,
+  "successor_dispatched": false,
+  "triggered_verdict": "STAGE1_STRUCTURAL_NO_GO"
+}
