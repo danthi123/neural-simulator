@@ -1171,18 +1171,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T22:13:40+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fced6-a735-7da0-ad56-5b8822ae14ef"
-    },
-    {
-      "at": "2026-08-04T22:20:30+00:00",
-      "detail": "rejected",
-      "kind": "agent-finish",
-      "subject": "019fceda-5208-7df3-8353-06f5297cd7a1"
-    },
-    {
       "at": "2026-08-04T22:22:12+00:00",
       "detail": "running",
       "kind": "agent-register",
@@ -1769,6 +1757,18 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T10:56:10+00:00",
+      "detail": "completed",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T10:56:10+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-source-constrained-identification"
     }
   ],
   "lanes": {
@@ -2046,13 +2046,13 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T10:33:23+00:00",
-      "next_action": "Seal the corrected four-model transfer contract: Khaliq kinetic-graph stationary initialization with the native defect disclosed, Balbi at source-package 22 C, Labro across the preregistered room-temperature envelope, and temperature-independent Desai; bind exact model, runner, scorer, CPU authority, GPU parity, consumption ledger, and independent stop rules before execution.",
+      "heartbeat_at": "2026-08-05T10:56:10+00:00",
+      "next_action": "Four-model source transfer executed as 12 authenticated CPU/GPU jobs; all parity passed and all four unmodified source models were NO-GO for SNr endpoints. Finding and consumption ledger bank the negative result.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not call Khaliq graph-equilibrium initialization source-native, treat cross-preparation models as SNr truth, graft unsupported transitions, tune conductance, or enter Stage 2. Preserve each comparator's explicit source and correction boundary under the sealed Ding commands.",
       "resource": "local_cpu_then_gpu",
-      "status": "running",
+      "status": "completed",
       "write_set": [
         "research/findings/2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md",
         "research/specs",
@@ -2118,6 +2118,24 @@
         "tools/compact_trace.py",
         "research/findings",
         "ROADMAP.md"
+      ]
+    },
+    "gateb-v14-source-constrained-identification": {
+      "delegation": "controller",
+      "heartbeat_at": "2026-08-05T10:56:10+00:00",
+      "next_action": "Preregister the automated source-constrained SNr kinetic-identification campaign: separate graphs, primary-source parameter bounds, complete-waveform training, held-out commands, identifiability diagnostics, CPU authority, GPU parity, and no-compensation stop rules.",
+      "owner": "codex",
+      "priority": 1,
+      "recovery_action": "Do not hybridize source graphs, tune conductance to mask kinetic failures, reuse evaluation voltages as training evidence, or enter Stage 2 without a new prospective passing decision.",
+      "resource": "local_cpu_then_gpu",
+      "status": "running",
+      "write_set": [
+        "research/specs",
+        "research/findings",
+        "research/coordination",
+        "sim",
+        "tools",
+        "tests"
       ]
     },
     "gateb-v14-source-metadata": {
@@ -2447,5 +2465,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T10:33:23+00:00"
+  "updated_at": "2026-08-05T10:56:10+00:00"
 }

@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners.v14_stageB_source_model_transfer",
+    "--spec",
+    "research/specs/v14_snr_stageB_source_model_transfer_v1.json",
+    "--spec-sha256",
+    "ddb054d8aebdf580c355670cb7082c07bf838310f1dc41d2db19a4bd0a33b5f8",
+    "--model-id",
+    "labro_2015_four_state",
+    "--condition-id",
+    "room_22p5c",
+    "--backend",
+    "numpy",
+    "--out",
+    "research/findings/raw/v14_stageB_source_labro_22p5c_numpy_v1.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v14_stageB_source_labro_22p5c_numpy_v1.json",
+    "sha256": "4c11612121aa0144e39dba428b7651082948b4996f989ff7b99b55e84affff25",
+    "size_bytes": 13627183
+  },
+  "device": "cpu",
+  "duration_monotonic_ns": 3734836985,
+  "ended_utc_ns": 1785927136343540787,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "provenance": {
+    "ended_utc_ns": 1785927136307570231,
+    "path": "research/findings/raw/v14_stageB_source_labro_22p5c_numpy_v1.json.prov.json",
+    "run_id": "fba0424bb08852432c14a44e80feb5c93eba32b5ea50f88c86e0babc1596a90f",
+    "sha256": "def3036c3d26199800e39b51c58abfba653f264b8edafda980788898b921cc56",
+    "started_utc_ns": 1785927132626516999
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 16,
+    "git_sha": "db13579f8fe28c8753d0773f5ddd716dc9c8e30f",
+    "kind": "git",
+    "manifest": "research/specs/v14_stageB_source_model_transfer_source_manifest_v1.sha256",
+    "manifest_sha256": "d3e34923b4bb791fc31ae69bdf4781b393231e3e97deb58267f25e8e8ba07767",
+    "tree_sha256": "ec9e7f68f7e799fca40c3ca3cd4824ea3b3715b6a991cb22cc061d60d0e02e36"
+  },
+  "started_utc_ns": 1785927132608702000,
+  "status": "success"
+}

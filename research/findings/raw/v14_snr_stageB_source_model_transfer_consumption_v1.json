@@ -1,0 +1,23 @@
+{
+  "analysis_output": {
+    "path": "research/findings/raw/v14_snr_stageB_source_model_transfer_analysis_v1.json",
+    "sha256": "0a6df25bd84f395d84ae1d885ab6e198de4d053a3098e5edb9d08bb304b13361"
+  },
+  "analyzer": {
+    "path": "tools/v14_stageB_source_model_transfer_analysis.py",
+    "sha256": "11af117d320fc8e51673bdea76c7128dce3fd1d5a2522d39ef3d48149af3eff5"
+  },
+  "consumption": "one_shot_complete",
+  "execution_spec": {
+    "path": "research/specs/v14_snr_stageB_source_model_transfer_v1.json",
+    "sha256": "ddb054d8aebdf580c355670cb7082c07bf838310f1dc41d2db19a4bd0a33b5f8"
+  },
+  "model_fingerprints": {
+    "balbi_nav16_six_state": "7e20c47ef3fb60014f4c01db9f81c3352aa528899724949fc08a871146f07d22",
+    "desai_2008_control": "024bf592ec2d76e0b3d345cc7cbd683d195318154964c8f682cba62df5b0b0cd",
+    "khaliq_raman_13_state": "a4b3f29d006a2b4f9fd101e8be407168eda854ab0454c34cdd6aacf37d5a0d95",
+    "labro_2015_four_state": "1e49ff10c9bbff5b7b5300a5189feb2bf91bdba1b16296553242319271bea4ce"
+  },
+  "schema": "v14-snr-stageB-source-model-transfer-consumption-v1",
+  "sha256": "f63debfff84470845b24860ba40cd64a9631fc92cf237d7749b0c82710ed7c57"
+}

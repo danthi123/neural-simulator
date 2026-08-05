@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-m",
+    "research.runners.v14_stageB_source_model_transfer",
+    "--spec",
+    "research/specs/v14_snr_stageB_source_model_transfer_v1.json",
+    "--spec-sha256",
+    "ddb054d8aebdf580c355670cb7082c07bf838310f1dc41d2db19a4bd0a33b5f8",
+    "--model-id",
+    "balbi_nav16_six_state",
+    "--condition-id",
+    "source_22c",
+    "--backend",
+    "numpy",
+    "--out",
+    "research/findings/raw/v14_stageB_source_balbi_22c_numpy_v1.json"
+  ],
+  "artifact": {
+    "path": "research/findings/raw/v14_stageB_source_balbi_22c_numpy_v1.json",
+    "sha256": "6834bca4ea45da423258e6dfdcd633ef61145e5cce85ac8539b082da9b5532fa",
+    "size_bytes": 8408374
+  },
+  "device": "cpu",
+  "duration_monotonic_ns": 1135551091,
+  "ended_utc_ns": 1785927133433933563,
+  "env_allowlist": {
+    "SIM_BACKEND": "numpy"
+  },
+  "execution_root": ".",
+  "exit_code": 0,
+  "host": "dant123-wk",
+  "provenance": {
+    "ended_utc_ns": 1785927133302762861,
+    "path": "research/findings/raw/v14_stageB_source_balbi_22c_numpy_v1.json.prov.json",
+    "run_id": "a28393dcd7c1e2ea6e98e4b2d325cc1ba6279c6bbbd7ed94008b19593b7bce46",
+    "sha256": "a69fcf5c482b68596bd27cb119e33b7822853f81595b9ca5c741c25e2564ee44",
+    "started_utc_ns": 1785927132321914325
+  },
+  "schema": "sim-execution-receipt-v2",
+  "source": {
+    "file_count": 16,
+    "git_sha": "db13579f8fe28c8753d0773f5ddd716dc9c8e30f",
+    "kind": "git",
+    "manifest": "research/specs/v14_stageB_source_model_transfer_source_manifest_v1.sha256",
+    "manifest_sha256": "d3e34923b4bb791fc31ae69bdf4781b393231e3e97deb58267f25e8e8ba07767",
+    "tree_sha256": "ec9e7f68f7e799fca40c3ca3cd4824ea3b3715b6a991cb22cc061d60d0e02e36"
+  },
+  "started_utc_ns": 1785927132298381042,
+  "status": "success"
+}

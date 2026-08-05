@@ -1,0 +1,41 @@
+{
+ "run_id": "4a3f1c7bbdd2d0bbfeb1fb470eec2bd0ff72ea1e9d48f824ca726d0d4471e1fd",
+ "runner": "research/runners/v14_stageB_source_model_transfer.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/v14_stageB_source_model_transfer.py",
+  "--spec",
+  "research/specs/v14_snr_stageB_source_model_transfer_v1.json",
+  "--spec-sha256",
+  "ddb054d8aebdf580c355670cb7082c07bf838310f1dc41d2db19a4bd0a33b5f8",
+  "--model-id",
+  "balbi_nav16_six_state",
+  "--condition-id",
+  "source_22c",
+  "--backend",
+  "cupy",
+  "--out",
+  "research/findings/raw/v14_stageB_source_balbi_22c_cupy_v1.json"
+ ],
+ "git_sha": "db13579f8fe28c8753d0773f5ddd716dc9c8e30f",
+ "git_dirty": true,
+ "source_kind": "git",
+ "source_manifest_sha256": "d3e34923b4bb791fc31ae69bdf4781b393231e3e97deb58267f25e8e8ba07767",
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-05T06:52:12",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2899.2,
+ "corpus_check_query": "SNr transient sodium and Kv3 complete voltage-clamp current state model activation deactivation transition rates",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/v14_stageB_source_balbi_22c_cupy_v1.json",
+ "schema": "sim-run-provenance-v2",
+ "started_utc_ns": 1785927132121181471,
+ "ended_utc_ns": 1785927134202813071
+}

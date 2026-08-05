@@ -1,0 +1,29 @@
+{
+  "schema": "sim-artifact-command-envelope-v1",
+  "artifact": {
+    "path": "research/findings/raw/v14_snr_stageB_source_model_transfer_consumption_v1.json",
+    "sha256": "cccf0d50768352d229a5c94442fd771766722afb64a5a011d8a8a1d073ffdc04"
+  },
+  "runner": "tools/v14_stageB_source_model_transfer_analysis.py",
+  "backend": "numpy",
+  "device": "cpu",
+  "git_sha": "db13579f8fe28c8753d0773f5ddd716dc9c8e30f",
+  "source_manifest": "research/specs/v14_stageB_source_model_transfer_source_manifest_v1.sha256",
+  "execution_receipt": {
+    "path": "research/findings/raw/v14_snr_stageB_source_model_transfer_analysis_v1.receipt.json",
+    "sha256": "7570f920d61000257462e61222b478971497d773b2fad523c7df545d9206b27f"
+  },
+  "argv": [
+    "/home/dant123/Projects/sim/.venv/bin/python",
+    "-c",
+    "import research.runners; from tools.v14_stageB_source_model_transfer_analysis import main; raise SystemExit(main())",
+    "--spec",
+    "research/specs/v14_snr_stageB_source_model_transfer_v1.json",
+    "--spec-sha256",
+    "ddb054d8aebdf580c355670cb7082c07bf838310f1dc41d2db19a4bd0a33b5f8",
+    "--out",
+    "research/findings/raw/v14_snr_stageB_source_model_transfer_analysis_v1.json",
+    "--ledger",
+    "research/findings/raw/v14_snr_stageB_source_model_transfer_consumption_v1.json"
+  ]
+}
