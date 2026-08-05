@@ -149,8 +149,18 @@ its controls and lesions, and is tested at the required seed coverage.
    range but issued a structural NO-GO: fast-Na activation and deactivation,
    plus all three Kv3 deactivation tails, fail their independent source gates.
    Conductance calibration and Stage 2 compartment integration remain
-   forbidden. The next build revises those state equations from focused source
-   evidence and must pass complete-current CPU clamps before another search.
+   forbidden. Four unmodified source-backed sodium/Kv3 comparators were then
+   replayed under the sealed commands on CPU and GPU; none passed its available
+   endpoint set, so direct source transfer is closed. The source graphs now
+   accept strict published-constant documents, and the adaptive engine can
+   resume propose-seal-run-ingest-version cycles without manual JSON copying.
+   Primary research found no defensible continuous biological bounds for the
+   microscopic constants and no published population mean current-time
+   waveforms. Full-resolution official population command-response figures are
+   hash-bound. The exact next step is prospective digitization with a pixel
+   error model, followed by a discrete source-vector screen and identifiable
+   fitting only where the measured outputs support it. Stage 2 remains
+   forbidden.
    Delayed action-reward learning and its unrelated-reward control come
    afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
@@ -201,7 +211,12 @@ required integrated form.
   detector are preregistered. The follow-up diagnostic retires the current
   single-compartment equations; preregister measured fast-Na/Kv3 kinetics,
   soma/proximal-dendrite coupling, and separate local versus bulk calcium
-  validation before another parameter search.
+  validation before another parameter search. The source-model transfer is now
+  a no-go, continuous microscopic "biological bounds" are unsupported, and the
+  official population command-response figures are hash-bound. Digitize those
+  population curves prospectively, preserve representative traces as
+  single-cell context only, then run the sealed discrete-vector/identifiability
+  campaign through the resumable adaptive supervisor.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another

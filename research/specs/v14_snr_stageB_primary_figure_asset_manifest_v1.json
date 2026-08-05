@@ -1,0 +1,110 @@
+{
+  "schema": "v14-snr-stageB-primary-figure-asset-manifest-v1",
+  "device": "not_applicable_non_executed_source_manifest",
+  "provenance_exempt": "source-asset metadata and hashes; contains no simulation measurement",
+  "status": "official_assets_acquired_metadata_only_numeric_targets_pending",
+  "scientific_verdict": null,
+  "license_policy": "metadata and derived numeric observations only; source images are not committed",
+  "assets": [
+    {
+      "id": "ding-wei-zhou-2011-figure-6",
+      "doi": "10.1152/jn.00305.2011",
+      "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/0de7/3234097/cf8a0879e21e/z9k0121110480006.jpg",
+      "sha256": "2c04204647ca1b1e3a2771e129f8eccb422554be537e1f8a1d605cfa7009d149",
+      "pixels": [400, 479],
+      "tile_manifest_url": "https://www.ncbi.nlm.nih.gov/corecgi/tileshop/tileshop.fcgi?manifest=1&p=PMC3&id=3234097_z9k0121110480006.jpg&w=1200&h=900",
+      "full_resolution_pixels": [5000, 5988],
+      "tile_view_id": "254430",
+      "tile_satellite": "28",
+      "content": ["representative activation traces", "population activation curve", "representative inactivation traces", "population inactivation curve"],
+      "allowed_numeric_role": "population command-response curves only after prospective digitization; representative traces are single-cell shape context"
+    },
+    {
+      "id": "ding-wei-zhou-2011-figure-7",
+      "doi": "10.1152/jn.00305.2011",
+      "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/0de7/3234097/44a98dcaab15/z9k0121110480007.jpg",
+      "sha256": "5637b395cd4f4757fd7840415df217de8c5dda6e01b6e9954ba9984a3e886d4d",
+      "pixels": [428, 943],
+      "tile_manifest_url": "https://www.ncbi.nlm.nih.gov/corecgi/tileshop/tileshop.fcgi?manifest=1&p=PMC3&id=3234097_z9k0121110480007.jpg&w=1200&h=900",
+      "full_resolution_pixels": [3000, 6607],
+      "tile_view_id": "254436",
+      "tile_satellite": "28",
+      "content": ["recovery protocol", "representative recovery traces", "population recovery curve"],
+      "allowed_numeric_role": "population recovery command-response curve after prospective digitization"
+    },
+    {
+      "id": "ding-wei-zhou-2011-figure-9",
+      "doi": "10.1152/jn.00305.2011",
+      "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/0de7/3234097/9992fa83c6c3/z9k0121110480009.jpg",
+      "sha256": "c9430c9e72fdc98e08d5b65af454724170cd0efb4c45fc891eedad550f0069d3",
+      "pixels": [420, 442],
+      "tile_manifest_url": "https://www.ncbi.nlm.nih.gov/corecgi/tileshop/tileshop.fcgi?manifest=1&p=PMC3&id=3234097_z9k0121110480009.jpg&w=1200&h=900",
+      "full_resolution_pixels": [4200, 4415],
+      "tile_view_id": "254448",
+      "tile_satellite": "28",
+      "content": ["representative deactivation tails", "population deactivation time-constant curve", "protocol"],
+      "allowed_numeric_role": "population time-constant command-response curve after prospective digitization; representative tails are shape context"
+    },
+    {
+      "id": "ding-wei-zhou-2011-figure-12",
+      "doi": "10.1152/jn.00305.2011",
+      "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/0de7/3234097/8c3d89d72c62/z9k0121110480012.jpg",
+      "sha256": "dc31576351cf61415253d7b18577e3ae987b12829dff6c2a52513ed73bed017c",
+      "pixels": [416, 400],
+      "tile_manifest_url": "https://www.ncbi.nlm.nih.gov/corecgi/tileshop/tileshop.fcgi?manifest=1&p=PMC3&id=3234097_z9k0121110480012.jpg&w=1200&h=900",
+      "full_resolution_pixels": [5200, 4999],
+      "tile_view_id": "254466",
+      "tile_satellite": "28",
+      "content": ["25 C representative activation traces", "25 C population current-voltage and activation curves"],
+      "allowed_numeric_role": "separate-temperature validation context only"
+    },
+    {
+      "id": "ding-wei-zhou-2011-figure-13",
+      "doi": "10.1152/jn.00305.2011",
+      "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/0de7/3234097/4fd44c5ba61f/z9k0121110480013.jpg",
+      "sha256": "f65712106d3f7655b61d4f03964a0f5b57c4b2926253650016af6f95c30c688b",
+      "pixels": [420, 558],
+      "tile_manifest_url": "https://www.ncbi.nlm.nih.gov/corecgi/tileshop/tileshop.fcgi?manifest=1&p=PMC3&id=3234097_z9k0121110480013.jpg&w=1200&h=900",
+      "full_resolution_pixels": [4200, 5575],
+      "tile_view_id": "254472",
+      "tile_satellite": "28",
+      "content": ["25 C representative deactivation tails", "25 C population deactivation time-constant curve", "protocol"],
+      "allowed_numeric_role": "separate-temperature validation context only"
+    },
+    {
+      "id": "ding-matta-zhou-2011-figure-8",
+      "doi": "10.1152/jn.00707.2010",
+      "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/83c6/3059163/1909b3f7b5e3/z9k0021105940008.jpg",
+      "sha256": "9cb306d58a3b4f99c7ec288135a2b2bd8295428b178f9b311d52746e9f6690cd",
+      "pixels": [750, 738],
+      "tile_manifest_url": "https://www.ncbi.nlm.nih.gov/corecgi/tileshop/tileshop.fcgi?manifest=1&p=PMC3&id=3059163_z9k0021105940008.jpg&w=1200&h=900",
+      "full_resolution_pixels": [3000, 2952],
+      "tile_view_id": "214180",
+      "tile_satellite": "68",
+      "content": ["representative TEA-subtracted activation traces", "population activation curve", "population inactivation curve"],
+      "allowed_numeric_role": "population command-response curves after prospective digitization; representative traces are single-cell shape context"
+    },
+    {
+      "id": "ding-matta-zhou-2011-figure-9",
+      "doi": "10.1152/jn.00707.2010",
+      "url": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/83c6/3059163/3a3ad63bfd84/z9k0021105940009.jpg",
+      "sha256": "1679a030ce146c6230ce6c1205c4958999311c87292bf6467aabe02b2225f61e",
+      "pixels": [800, 279],
+      "tile_manifest_url": "https://www.ncbi.nlm.nih.gov/corecgi/tileshop/tileshop.fcgi?manifest=1&p=PMC3&id=3059163_z9k0021105940009.jpg&w=1200&h=900",
+      "full_resolution_pixels": [2800, 978],
+      "tile_view_id": "214185",
+      "tile_satellite": "68",
+      "content": ["representative TEA-subtracted deactivation tails", "population deactivation time-constant curve"],
+      "allowed_numeric_role": "population time-constant command-response curve after prospective digitization; representative tails are shape context"
+    }
+  ],
+  "target_policy": {
+    "representative_trace_as_population_mean_allowed": false,
+    "population_curve_digitization_allowed": true,
+    "digitization_must_bind_asset_sha256": true,
+    "pixel_calibration_and_error_model_required": true,
+    "tabulated_source_values_take_precedence": true,
+    "raw_complete_current_waveforms_available": false
+  },
+  "acquisition_result": "No raw numeric dataset or official open-access article package was located. PMC3234097 reports idIsNotOpenAccess. Official full-resolution tiled figures are available and their manifests are bound here, so population command-response panels are digitizable. Representative traces still cannot support population waveform fitting."
+}

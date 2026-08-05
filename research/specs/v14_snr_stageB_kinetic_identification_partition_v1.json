@@ -1,0 +1,93 @@
+{
+  "schema": "v14-snr-stageB-kinetic-identification-partition-v1",
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "prospective command partition; contains no simulation measurement",
+  "status": "blocked_pending_population_target_digitization_and_scope_correction",
+  "scientific_verdict": null,
+  "execution_allowed": false,
+  "command_authority": {
+    "path": "research/specs/v14_snr_stageB_fast_channel_clamp_execution_v1.json",
+    "sha256": "d99ed6a8fd3f1c6e871ded2358c69bf3807549ba62f4e178689ff5a29c1e330e"
+  },
+  "partition_policy": {
+    "calibration": "optimizer-visible",
+    "validation": "separate evaluator; unavailable to proposal generation",
+    "held_out": "one-shot evaluation after candidate, graph, bounds, objectives, and preprocessing are sealed",
+    "reuse_after_held_out_failure": false
+  },
+  "partitions": {
+    "fast_na_activation_test_mV": {
+      "calibration": [-80, -70, -60, -50, -40, -30, -20, -10, 10, 20, 30],
+      "validation": [-75, -55, -35, -15, 5, 25],
+      "held_out": [-65, -45, -25, -5, 0, 15]
+    },
+    "fast_na_inactivation_prepulse_mV": {
+      "calibration": [-120, -100, -80, -60, -40, -20],
+      "validation": [-110, -90, -30],
+      "held_out": [-70, -50]
+    },
+    "fast_na_recovery_duration_ms": {
+      "calibration": [0, 0.2, 0.5, 2, 10, 50, 200],
+      "validation": [1, 5, 100],
+      "held_out": [0.1, 20]
+    },
+    "fast_na_deactivation_test_mV": {
+      "calibration": [-100, -80, -60, -20],
+      "validation": [-90, -70, -50, -30],
+      "held_out": [-40]
+    },
+    "kv3_activation_test_mV": {
+      "calibration": [-80, -60, -40, -20, 0, 20, 50],
+      "validation": [-70, -30, 10, 30],
+      "held_out": [-50, -10, 40]
+    },
+    "kv3_inactivation_prepulse_mV": {
+      "calibration": [-110, -90, -70, -50, -30, -10],
+      "validation": [-100, -60, -20],
+      "held_out": [-80, -40, 0]
+    },
+    "kv3_deactivation_test_mV": {
+      "calibration": [-60, -40],
+      "validation": [-70, -30],
+      "held_out": [-50]
+    }
+  },
+  "source_target_requirements": {
+    "required_per_command": [
+      "source-derived numeric population command-response samples where reported",
+      "physical units and normalization",
+      "primary-source figure or data locator",
+      "digitization or acquisition method",
+      "measurement uncertainty",
+      "immutable source-image or source-data digest"
+    ],
+    "synthetic_targets_allowed": false,
+    "retired_model_outputs_allowed": false,
+    "fitted_summary_curves_as_waveforms_allowed": false,
+    "current_availability": "population command-response curves and scalar kinetics are available in figures/tables but not yet digitized; raw population current-versus-time waveforms are unavailable",
+    "representative_trace_role": "qualitative or secondary single-cell shape evidence only",
+    "population_waveform_reconstruction_allowed": false
+  },
+  "primary_source_figure_map": {
+    "fast_na_activation_and_inactivation": "Ding, Wei, Zhou 2011 Figure 6",
+    "fast_na_recovery": "Ding, Wei, Zhou 2011 Figure 7",
+    "fast_na_deactivation": "Ding, Wei, Zhou 2011 Figure 9; Figure 13 is the separate 25 C context",
+    "fast_na_resurgent": "Ding, Wei, Zhou 2011 Figure 10",
+    "fast_na_persistent": "Ding, Wei, Zhou 2011 Figure 11",
+    "kv3_activation_and_inactivation": "Ding, Matta, Zhou 2011 Figure 8 (population curves and representative traces)",
+    "kv3_deactivation": "Ding, Matta, Zhou 2011 Figure 9 (representative tails and population time-constant curve)",
+    "kv3_functional_lesion": "Ding, Matta, Zhou 2011 Figure 12 (TEA intervention; later whole-cell validation, not kinetic fitting)"
+  },
+  "promotion_gates": {
+    "family_isolation": true,
+    "conductance_compensation_allowed": false,
+    "every_existing_scalar_endpoint_must_pass": true,
+    "multiple_independent_starts_required": true,
+    "equivalent_fit_ensemble_required": true,
+    "unidentified_parameters_remain_unresolved": true,
+    "cpu_scientific_authority": true,
+    "gpu_pointwise_parity": {"rtol": 5e-8, "atol": 5e-10},
+    "sample_and_timestep_convergence_required": true,
+    "no_passing_family_verdict": "NO_GO"
+  }
+}

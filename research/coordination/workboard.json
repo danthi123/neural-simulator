@@ -2122,8 +2122,9 @@
     },
     "gateb-v14-source-constrained-identification": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T10:56:10+00:00",
-      "next_action": "Preregister the automated source-constrained SNr kinetic-identification campaign: separate graphs, primary-source parameter bounds, complete-waveform training, held-out commands, identifiability diagnostics, CPU authority, GPU parity, and no-compensation stop rules.",
+      "blocker": "Official source assets are now hash-bound, but numeric population command-response targets and their pixel-error model are not yet sealed. Raw complete current waveforms are unavailable, and representative single-cell traces cannot be treated as population means.",
+      "heartbeat_at": "2026-08-05T11:21:58+00:00",
+      "next_action": "Digitize the full-resolution, hash-bound Ding population command-response panels with a prospective pixel calibration/error model, preserve tabulated values as higher authority, and mark unsupported command cells unavailable. The parameterized source-model APIs and resumable non-held-out campaign supervisor are implemented; do not execute optimization before the target-data gate passes.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not hybridize source graphs, tune conductance to mask kinetic failures, reuse evaluation voltages as training evidence, or enter Stage 2 without a new prospective passing decision.",
