@@ -141,7 +141,10 @@ its controls and lesions, and is tested at the required seed coverage.
    baselines, post-lesion spikes, or a non-negative voltage shift before CPU
    confirmation. A fresh V3-bound, seed-free successor partition is now filed
    at global Sobol indices 512-1023 and mechanically bound to the consumed
-   0-511 manifest. Batch-width benchmarking on consumed candidates comes before
+   0-511 manifest. Its first V2 draft was superseded before execution because
+   candidate-ID-dependent overlap checks were insufficient; executable V3 now
+   binds full design identities and exact regeneration across the generator,
+   campaign, and aggregator. Batch-width benchmarking on consumed candidates comes before
    executing it; candidates 284 and 404 remain closed. The heterogeneous 12-cell SK
    cohort remains unavailable; delayed
    action-reward learning and its unrelated-reward control come afterward.

@@ -23,8 +23,11 @@ if __package__ in {None, ""}:
 
 from sim.snr_executable_packet import PacketError, canonical_bytes
 from tools.v14_stageB_candidate_batch import (
+    MANIFEST_SCHEMA,
+    SUCCESSOR_MANIFEST_SCHEMA,
     StageBCandidateBatchError,
     build_candidate_manifest,
+    build_successor_candidate_manifest,
 )
 from tools.v14_stageB_scorer import (
     INTRINSIC_LESION_SCHEMA,
@@ -34,7 +37,6 @@ from tools.v14_stageB_scorer import (
 
 
 RESULT_SCHEMA = "v14-snr-stageB-resolved-screen-aggregate-v1"
-MANIFEST_SCHEMA = "v14-snr-stageB-sobol-candidate-manifest-v1"
 SCORE_SCHEMA = "v14-snr-stageB-intrinsic-lesion-score-v1"
 CAUSAL_GATE_SCHEMA = "v14-snr-stageB-causal-gates-v1"
 INTRINSIC_GATE_IDS = frozenset(
@@ -210,9 +212,28 @@ def _regenerate_candidate_manifest(root: Path, manifest: Mapping[str, Any]) -> d
     if not isinstance(template, Mapping) or set(template) != {"path", "sha256", "template_id"}:
         raise StageBScreenAggregatorError("candidate manifest has an invalid template binding")
     try:
-        return build_candidate_manifest(
-            root / str(template["path"]), str(template["sha256"]), root=root,
+        if manifest.get("schema") == SUCCESSOR_MANIFEST_SCHEMA:
+            predecessor = manifest.get("predecessor")
+            if not isinstance(predecessor, Mapping):
+                raise StageBCandidateBatchError("successor manifest lacks predecessor")
+            result = build_successor_candidate_manifest(
+                root / str(template["path"]),
+                str(template["sha256"]),
+                root / str(predecessor["path"]),
+                str(predecessor["sha256"]),
+                root=root,
+            )
+        else:
+            result = build_candidate_manifest(
+                root / str(template["path"]), str(template["sha256"]), root=root,
+            )
+        result["design"]["library_versions"] = manifest.get("design", {}).get(
+            "library_versions"
         )
+        result["sha256"] = _digest(
+            {key: value for key, value in result.items() if key != "sha256"}
+        )
+        return result
     except (StageBCandidateBatchError, OSError, TypeError, ValueError) as exc:
         raise StageBScreenAggregatorError(
             f"candidate manifest cannot be regenerated from its template: {exc}"
@@ -236,20 +257,41 @@ def _recompute_scorer(root: Path, score: Mapping[str, Any]) -> dict[str, Any]:
 
 def _validate_candidate_manifest(root: Path, declaration: Any) -> tuple[dict[str, str], dict[str, dict[str, Any]]]:
     path, manifest = _load_bound_json(root, declaration, "candidate manifest")
-    if set(manifest) != _MANIFEST_KEYS or manifest.get("schema") != MANIFEST_SCHEMA:
+    schema = manifest.get("schema")
+    expected_manifest_keys = set(_MANIFEST_KEYS)
+    if schema == SUCCESSOR_MANIFEST_SCHEMA:
+        expected_manifest_keys.add("predecessor")
+    if set(manifest) != expected_manifest_keys or schema not in {
+        MANIFEST_SCHEMA, SUCCESSOR_MANIFEST_SCHEMA,
+    }:
         raise StageBScreenAggregatorError("candidate manifest has an invalid schema or shape")
     self_digest = _valid_digest(manifest["sha256"], "candidate manifest self digest")
     if self_digest != _digest({key: value for key, value in manifest.items() if key != "sha256"}):
         raise StageBScreenAggregatorError("candidate manifest self digest is invalid")
-    if manifest.get("status") != "preregistered-seed-free-candidate-generation":
+    expected_status = (
+        "preregistered-seed-free-successor-candidate-generation"
+        if schema == SUCCESSOR_MANIFEST_SCHEMA
+        else "preregistered-seed-free-candidate-generation"
+    )
+    if manifest.get("status") != expected_status:
         raise StageBScreenAggregatorError("candidate manifest is not the seed-free preregistered design")
+    expected_provenance = (
+        "deterministic non-executed successor Sobol design; contains no measured result"
+        if schema == SUCCESSOR_MANIFEST_SCHEMA
+        else "deterministic non-executed Sobol candidate design; contains no measured result"
+    )
     if (
         manifest.get("device") != "not_applicable_non_executed_candidate_design"
-        or manifest.get("provenance_exempt")
-        != "deterministic non-executed Sobol candidate design; contains no measured result"
+        or manifest.get("provenance_exempt") != expected_provenance
     ):
         raise StageBScreenAggregatorError("candidate manifest changed its non-executed evidence boundary")
-    if manifest != _regenerate_candidate_manifest(root, manifest):
+    try:
+        regenerated = _regenerate_candidate_manifest(root, manifest)
+    except (StageBCandidateBatchError, OSError, TypeError, ValueError) as exc:
+        raise StageBScreenAggregatorError(
+            f"candidate manifest does not equal the exact regenerated Sobol design: {exc}"
+        ) from exc
+    if manifest != regenerated:
         raise StageBScreenAggregatorError(
             "candidate manifest does not equal the exact regenerated Sobol design"
         )
@@ -264,7 +306,10 @@ def _validate_candidate_manifest(root: Path, declaration: Any) -> tuple[dict[str
     candidates: dict[str, dict[str, Any]] = {}
     digests: set[str] = set()
     for index, row in enumerate(rows):
-        if not isinstance(row, Mapping) or set(row) != _CANDIDATE_ROW_KEYS:
+        expected_row_keys = set(_CANDIDATE_ROW_KEYS)
+        if schema == SUCCESSOR_MANIFEST_SCHEMA:
+            expected_row_keys.add("design_sha256")
+        if not isinstance(row, Mapping) or set(row) != expected_row_keys:
             raise StageBScreenAggregatorError(f"candidate manifest row {index} has an invalid shape")
         candidate_digest = _valid_digest(row["candidate_sha256"], f"candidate {index} digest")
         candidate = row["candidate"]

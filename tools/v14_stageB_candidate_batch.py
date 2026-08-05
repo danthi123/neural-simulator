@@ -21,7 +21,8 @@ ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_SCHEMA = "v14-snr-stageB-packet-template-v1"
 CANDIDATE_SCHEMA = "sim-adaptive-candidate-v1"
 MANIFEST_SCHEMA = "v14-snr-stageB-sobol-candidate-manifest-v1"
-SUCCESSOR_MANIFEST_SCHEMA = "v14-snr-stageB-sobol-candidate-manifest-v2"
+DRAFT_SUCCESSOR_MANIFEST_SCHEMA = "v14-snr-stageB-sobol-candidate-manifest-v2"
+SUCCESSOR_MANIFEST_SCHEMA = "v14-snr-stageB-sobol-candidate-manifest-v3"
 EXACT_SCREEN_COUNT = 512
 SOBOL_EXPONENT = 9
 
@@ -309,22 +310,28 @@ def build_successor_candidate_manifest(
             ),
             "parameters": parameters,
         }
+        design_sha256 = _digest(identity)
         candidates.append(
             {
                 "point_index": point_index,
+                "design_sha256": design_sha256,
                 "candidate_sha256": _digest(candidate),
                 "candidate": candidate,
             }
         )
 
-    predecessor_digests = {
-        row.get("candidate_sha256") for row in predecessor_rows if isinstance(row, Mapping)
+    predecessor_parameters = {
+        _canonical(row.get("candidate", {}).get("parameters"))
+        for row in predecessor_rows
+        if isinstance(row, Mapping) and isinstance(row.get("candidate"), Mapping)
     }
-    successor_digests = {row["candidate_sha256"] for row in candidates}
+    successor_parameters = {
+        _canonical(row["candidate"]["parameters"]) for row in candidates
+    }
     if (
-        len(predecessor_digests) != EXACT_SCREEN_COUNT
-        or len(successor_digests) != EXACT_SCREEN_COUNT
-        or predecessor_digests & successor_digests
+        len(predecessor_parameters) != EXACT_SCREEN_COUNT
+        or len(successor_parameters) != EXACT_SCREEN_COUNT
+        or predecessor_parameters & successor_parameters
     ):
         raise StageBCandidateBatchError(
             "successor candidate generation overlaps the consumed partition"
@@ -368,6 +375,60 @@ def build_successor_candidate_manifest(
     }
     manifest["sha256"] = _digest(manifest)
     return manifest
+
+
+def validate_candidate_manifest_exact(
+    manifest: Mapping[str, Any], *, root: str | Path = ROOT
+) -> None:
+    """Regenerate a V1 or V3 manifest and require exact scientific content."""
+
+    if not isinstance(manifest, Mapping):
+        raise StageBCandidateBatchError("candidate manifest must be an object")
+    root_path = Path(root).expanduser().resolve(strict=True)
+    body = {key: value for key, value in manifest.items() if key != "sha256"}
+    if manifest.get("sha256") != _digest(body):
+        raise StageBCandidateBatchError("candidate manifest self digest is invalid")
+    template = manifest.get("template")
+    if not isinstance(template, Mapping) or set(template) != {"path", "sha256", "template_id"}:
+        raise StageBCandidateBatchError("candidate manifest has an invalid template binding")
+    schema = manifest.get("schema")
+    if schema == MANIFEST_SCHEMA:
+        regenerated = build_candidate_manifest(
+            root_path / str(template["path"]), str(template["sha256"]), root=root_path
+        )
+    elif schema == SUCCESSOR_MANIFEST_SCHEMA:
+        predecessor = manifest.get("predecessor")
+        if not isinstance(predecessor, Mapping) or set(predecessor) != {
+            "path", "sha256", "self_sha256", "consumed_point_start",
+            "consumed_point_stop_exclusive",
+        }:
+            raise StageBCandidateBatchError("successor manifest has an invalid predecessor binding")
+        regenerated = build_successor_candidate_manifest(
+            root_path / str(template["path"]),
+            str(template["sha256"]),
+            root_path / str(predecessor["path"]),
+            str(predecessor["sha256"]),
+            root=root_path,
+        )
+    elif schema == DRAFT_SUCCESSOR_MANIFEST_SCHEMA:
+        raise StageBCandidateBatchError(
+            "draft V2 successor manifest is superseded and cannot be executed"
+        )
+    else:
+        raise StageBCandidateBatchError("candidate manifest has the wrong schema")
+
+    # Library versions are audit metadata, not scientific identity. Regenerated
+    # points, transforms, rows, design identities, and every other field remain exact.
+    regenerated["design"]["library_versions"] = manifest.get("design", {}).get(
+        "library_versions"
+    )
+    regenerated["sha256"] = _digest(
+        {key: value for key, value in regenerated.items() if key != "sha256"}
+    )
+    if regenerated != manifest:
+        raise StageBCandidateBatchError(
+            "candidate manifest does not equal the exact regenerated Sobol design"
+        )
 
 
 def write_manifest(manifest: Mapping[str, Any], destination: str | Path, *, root: str | Path = ROOT) -> Path:

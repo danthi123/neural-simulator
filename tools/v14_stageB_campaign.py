@@ -29,7 +29,9 @@ from sim.snr_executable_packet import canonical_bytes
 from tools.v14_stageB_candidate_batch import (
     EXACT_SCREEN_COUNT,
     MANIFEST_SCHEMA as CANDIDATE_MANIFEST_SCHEMA,
+    StageBCandidateBatchError,
     SUCCESSOR_MANIFEST_SCHEMA as SUCCESSOR_CANDIDATE_MANIFEST_SCHEMA,
+    validate_candidate_manifest_exact,
 )
 from tools.v14_stageB_packet_compiler import compile_candidate
 from tools.v14_stageB_packet_verifier import verify_candidate
@@ -98,8 +100,13 @@ def _load_bound_json(
     return {"path": relative, "sha256": expected}, document
 
 
-def _validated_candidates(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
+def _validated_candidates(manifest: Mapping[str, Any], *, root: Path = ROOT) -> list[dict[str, Any]]:
     manifest_schema = manifest.get("schema")
+    if manifest_schema != CANDIDATE_MANIFEST_SCHEMA:
+        try:
+            validate_candidate_manifest_exact(manifest, root=root)
+        except StageBCandidateBatchError as exc:
+            raise StageBCampaignError(f"candidate manifest cannot be regenerated: {exc}") from exc
     if manifest_schema not in {
         CANDIDATE_MANIFEST_SCHEMA,
         SUCCESSOR_CANDIDATE_MANIFEST_SCHEMA,
@@ -127,9 +134,10 @@ def _validated_candidates(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
     identifiers: set[str] = set()
     digests: set[str] = set()
     for index, row in enumerate(rows):
-        if not isinstance(row, Mapping) or set(row) != {
-            "point_index", "candidate_sha256", "candidate"
-        }:
+        expected_row_keys = {"point_index", "candidate_sha256", "candidate"}
+        if manifest_schema == SUCCESSOR_CANDIDATE_MANIFEST_SCHEMA:
+            expected_row_keys.add("design_sha256")
+        if not isinstance(row, Mapping) or set(row) != expected_row_keys:
             raise StageBCampaignError("candidate row has an invalid shape")
         candidate = row["candidate"]
         if (
@@ -204,7 +212,7 @@ def materialize_campaign(
     manifest_ref, manifest = _load_bound_json(
         root, candidate_manifest_path, candidate_manifest_sha256, "candidate manifest"
     )
-    candidates = _validated_candidates(manifest)
+    candidates = _validated_candidates(manifest, root=root)
     protocol_ref, protocol = _load_bound_json(
         root, analysis_protocol_path, analysis_protocol_sha256, "analysis protocol"
     )

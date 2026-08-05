@@ -437,8 +437,10 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   now executes the same continuous V3 NaP phases and triages baseline stability,
   post-lesion spikes, and voltage direction from authenticated raw traces. A
   fresh V3-bound successor partition at global Sobol indices 512-1023 is now
-  digest-filed and non-overlapping with the consumed 0-511 screen. Benchmark
-  batch width on consumed candidates before executing it; neither survivor may
+  digest-filed and non-overlapping with the consumed 0-511 screen. The first V2
+  draft was superseded before execution after review found its overlap proof
+  depended on candidate IDs; V3 binds full design identities and is regenerated
+  by every intake path. Benchmark batch width on consumed candidates before executing it; neither survivor may
   be retuned or reopened. The heterogeneous 12-cell SK cohort remains
   fail-closed.
 - **CPU/GPU, primary:** V13 deterministic compatibility earned GO, but calibration seed `1013` violated its locked CPU-first order. It and dependent replication seed `1019` are consumed and procedurally undefined; held-out seed `1021` and Stage-1 seed `1031` remain sealed.

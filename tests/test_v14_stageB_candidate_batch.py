@@ -15,6 +15,7 @@ from tools.v14_stageB_candidate_batch import (
     StageBCandidateBatchError,
     build_candidate_manifest,
     build_successor_candidate_manifest,
+    validate_candidate_manifest_exact,
     write_manifest,
 )
 
@@ -68,6 +69,7 @@ def test_successor_is_deterministic_fresh_and_bound_to_consumed_partition() -> N
     assert first["design"]["scientific_seed"] is None
     assert first["design"]["skip"] == EXACT_SCREEN_COUNT
     assert first["predecessor"]["sha256"] == PREDECESSOR_SHA256
+    assert all(len(row["design_sha256"]) == 64 for row in first["candidates"])
     assert [row["point_index"] for row in first["candidates"]] == list(
         range(EXACT_SCREEN_COUNT, 2 * EXACT_SCREEN_COUNT)
     )
@@ -75,6 +77,34 @@ def test_successor_is_deterministic_fresh_and_bound_to_consumed_partition() -> N
         {row["candidate_sha256"] for row in first["candidates"]}
         & {row["candidate_sha256"] for row in predecessor["candidates"]}
     )
+    validate_candidate_manifest_exact(first, root=ROOT)
+
+
+def test_successor_exact_validator_rejects_id_only_overlap_evasion() -> None:
+    manifest = build_successor_candidate_manifest(
+        TEMPLATE, TEMPLATE_SHA256, PREDECESSOR, PREDECESSOR_SHA256, root=ROOT
+    )
+    predecessor = json.loads(PREDECESSOR.read_bytes())
+    manifest["candidates"][0]["candidate"]["parameters"] = predecessor["candidates"][0][
+        "candidate"
+    ]["parameters"]
+    candidate = manifest["candidates"][0]["candidate"]
+    manifest["candidates"][0]["candidate_sha256"] = hashlib.sha256(
+        json.dumps(
+            candidate, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+            allow_nan=False,
+        ).encode("ascii")
+    ).hexdigest()
+    body = {key: value for key, value in manifest.items() if key != "sha256"}
+    manifest["sha256"] = hashlib.sha256(
+        json.dumps(
+            body, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+            allow_nan=False,
+        ).encode("ascii")
+    ).hexdigest()
+
+    with pytest.raises(StageBCandidateBatchError, match="exact regenerated"):
+        validate_candidate_manifest_exact(manifest, root=ROOT)
 
 
 def test_successor_rejects_unauthenticated_predecessor() -> None:

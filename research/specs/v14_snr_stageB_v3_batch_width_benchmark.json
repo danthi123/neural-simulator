@@ -1,0 +1,23 @@
+{
+  "schema": "v14-snr-stageB-v3-batch-width-benchmark-v1",
+  "status": "preregistered-consumed-candidate-performance-only",
+  "device": "local_rtx_3090",
+  "provenance_exempt": "non-executed performance design using only consumed V1 candidates; contains no fresh-candidate result",
+  "consumed_campaign": {
+    "path": "research/experiment-runtime/v14-stageB-sobol-512/campaign.json",
+    "sha256": "0493b3013c7098789678084a59de480d85e7a6a44c636f70ac21d7693afc908d"
+  },
+  "analysis_protocol": {
+    "path": "research/specs/v14_snr_stageB_intrinsic_protocol_v3.json",
+    "sha256": "d25dc452ac09f1f70bbcd807ef5108ae106eb111b7bf7edd50837aaeed5bb1a4"
+  },
+  "arm": "nap_lesion",
+  "warmup_width": 64,
+  "run_order": [64, 128, 256, 512, 512, 256, 128, 64],
+  "selection": {
+    "metric": "median_candidate_steps_per_second",
+    "near_tie_fraction": 0.05,
+    "near_tie_rule": "choose_smallest_width_within_fraction_of_best"
+  },
+  "sha256": "8b0a2e5cd93ea384f59c49dab7b2f12f8626cb09712dd62be489abf9a639e023"
+}

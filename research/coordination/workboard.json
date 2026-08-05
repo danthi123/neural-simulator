@@ -1812,8 +1812,8 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T05:50:00+00:00",
-      "next_action": "The fresh V3-bound Sobol 512-1023 successor manifest is filed. Benchmark batch widths using only consumed candidates, materialize at the fastest safe width, then dispatch strict GPU triage and CPU confirmation without reopening candidates 284 or 404; keep the SK cohort unavailable.",
+      "heartbeat_at": "2026-08-05T06:10:00+00:00",
+      "next_action": "The unexecuted successor V2 draft is superseded; exact-regenerated V3 Sobol 512-1023 and the consumed-candidate batch-width benchmark are filed. Execute the benchmark, materialize at the selected safe width, then dispatch strict GPU triage and CPU confirmation without reopening candidates 284 or 404; keep the SK cohort unavailable.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
