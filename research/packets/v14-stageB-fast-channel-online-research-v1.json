@@ -445,7 +445,7 @@
     }
   ],
   "question": {
-    "id": "v14-stageb-fast-channel-online-models",
+    "id": "P1",
     "kind": "mechanism-and-parameter-escalation",
     "requested_measurement": "Explicit state equations, transition-rate parameters, protocol coverage, downloadable model definitions, preparation match, and limitations for reproducing activation, inactivation, recovery, and deactivation clamp waveforms.",
     "target": "Mammalian neuronal transient sodium and Kv3 channels, prioritizing SNr neurons and then closely matched fast-spiking CNS neurons or relevant channel isoforms.",

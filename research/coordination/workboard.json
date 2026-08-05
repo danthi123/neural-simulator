@@ -1171,12 +1171,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T22:07:43+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fced1-2fc9-7ee2-9604-dfe4f1c165b5"
-    },
-    {
       "at": "2026-08-04T22:10:00+00:00",
       "detail": "completed",
       "kind": "agent-finish",
@@ -1769,6 +1763,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T09:37:48+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -2046,22 +2046,17 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T09:20:30+00:00",
-      "next_action": "Commit the authenticated handoff and reviewed packet, refresh the canonical RAG index, attach the accepted packet to the gate, resolve each question with durable source intake, then preregister unmodified Khaliq/Raman sodium plus Labro and Desai Kv3 source-transfer comparators.",
+      "heartbeat_at": "2026-08-05T09:37:48+00:00",
+      "next_action": "Commit the accepted packet attachment, refresh RAG so the ten durable source-intake records become retrievable, retry the gate, resolve P1-P3 and W1-W2 from reviewed claims, then preregister unmodified Khaliq/Raman, Labro, and Desai source-transfer comparators.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "Preserve the 7-of-18 structural no-go. Do not use the rejected unsupported Kv3 hybrid, tune conductance, accept preparation transfer as SNr authority, or dispatch Stage 2.",
-      "resource": "source_review_then_local_cpu_gpu",
+      "recovery_action": "If any intake remains unretrievable, repair that exact catalog/index record; do not repeat the online search or bypass the retrieval gate. Preserve the rejected unsupported hybrid and Stage 2 stop.",
+      "resource": "local_cpu_then_gpu",
       "status": "running",
       "write_set": [
-        "research/findings",
+        "research/findings/2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md",
         "research/packets",
-        "research/specs",
-        "tools/analysis_research_handoff.py",
-        "tests/test_analysis_research_handoff.py",
-        "ROADMAP.md",
-        "docs/AUTONOMOUS-EXECUTION.md",
-        "docs/CURRENT-STATE.md"
+        "research/coordination/workboard.json"
       ]
     },
     "gateb-v14-packet-authority": {
@@ -2450,5 +2445,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T09:20:30+00:00"
+  "updated_at": "2026-08-05T09:37:48+00:00"
 }
