@@ -862,26 +862,21 @@
       ]
     },
     "019fcf7f-abf3-7461-ab37-64435480823d": {
-      "heartbeat_at": "2026-08-05T01:18:04+00:00",
+      "completed_at": "2026-08-05T01:32:34+00:00",
+      "heartbeat_at": "2026-08-05T01:32:34+00:00",
       "model": "gpt-5.6-sol-high",
-      "next_action": "Implement strict Nap, Cav2.2, SK, and HCN causal scorer contracts from filed gates.",
+      "next_action": "Add sealed analysis protocols to production runner and build authenticated five-arm orchestrator.",
+      "result": "Implemented digest-bound intrinsic-lesion scorer with raw-trace metric recomputation, identity/adversarial checks, null scientific verdict, and explicit unavailable HCN/SK contracts; controller verified 56 focused tests.",
       "started_at": "2026-08-05T01:18:04+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Implement Stage B intrinsic-lesion scorer contracts",
       "write_set": [
         "tools/v14_stageB_scorer.py",
-        "tests/test_v14_stageB_scorer.py",
-        "tests/test_v14_stageB_scorer_fixtures.py"
+        "tests/test_v14_stageB_scorer.py"
       ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T19:59:52+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v14-performance-variance-audit"
-    },
     {
       "at": "2026-08-04T19:59:52+00:00",
       "detail": "running",
@@ -1475,6 +1470,12 @@
       "detail": "completed",
       "kind": "lane-update",
       "subject": "gateb-primary-source-fulltext-intake"
+    },
+    {
+      "at": "2026-08-05T01:32:34+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf7f-abf3-7461-ab37-64435480823d"
     }
   ],
   "lanes": {
@@ -2108,5 +2109,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T01:27:08+00:00"
+  "updated_at": "2026-08-05T01:32:34+00:00"
 }

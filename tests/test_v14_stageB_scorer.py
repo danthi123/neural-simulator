@@ -6,8 +6,10 @@ from pathlib import Path
 import pytest
 
 from tools.v14_stageB_scorer import (
+    INTRINSIC_LESION_RESULT_SCHEMA,
     StageBScorerError,
     _main,
+    score_intrinsic_lesion_observations,
     score_raw_observation_file,
     score_raw_observations,
 )
@@ -15,6 +17,7 @@ from tools.v14_stageB_scorer import (
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_RELATIVE = Path("research/fixtures/v14_snr_stageB_scorer_fixtures.json")
+CAUSAL_GATE_RELATIVE = Path("research/specs/v14_snr_stageB_causal_gates.json")
 
 
 def _digest(path: Path) -> str:
@@ -91,6 +94,376 @@ def _document() -> dict:
             _conductance("pallidonigral-barrage-peak-selected-range", 2.0),
         ],
     }
+
+
+_INTRINSIC_ARMS = {
+    "intact_autonomous": None,
+    "nap_lesion": ("nap", "cp_snr_g_nap_max"),
+    "cav2_2_lesion": ("cav2.2", "cp_snr_g_ca_max"),
+    "sk_lesion": ("sk", "cp_snr_g_sk_max"),
+    "hcn_baseline_lesion": ("hcn", "cp_snr_g_h_max"),
+}
+
+
+def _copy_causal_contract(root: Path) -> None:
+    for relative in (
+        CAUSAL_GATE_RELATIVE,
+        Path("research/specs/v14_snr_stageB_target_packet.json"),
+    ):
+        destination = root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((ROOT / relative).read_bytes())
+
+
+def _spike_states(times: list[float], spikes: set[float]) -> list[list[bool]]:
+    return [[any(abs(time - spike) < 1e-9 for spike in spikes)] for time in times]
+
+
+def _runner_artifact(arm: str) -> dict:
+    times = [round(index * 0.1, 10) for index in range(1, 13)]
+    spikes = {
+        "intact_autonomous": {0.3, 0.5, 0.7, 0.9},
+        "nap_lesion": set(),
+        "cav2_2_lesion": {0.3, 0.4, 0.6, 0.9, 1.1},
+        "sk_lesion": {0.3, 0.4, 0.6, 0.9, 1.1},
+        "hcn_baseline_lesion": {0.3, 0.5, 0.7, 0.9},
+    }[arm]
+    voltages = [-65.0] * len(times)
+    if arm == "nap_lesion":
+        voltages = [-70.0] * len(times)
+    elif arm in {"cav2_2_lesion", "sk_lesion"}:
+        voltages[2:5] = [-65.0, -70.0, -66.0]
+    else:
+        voltages[2:5] = [-65.0, -75.0, -68.0]
+    lesion = _INTRINSIC_ARMS[arm]
+    if lesion is None:
+        intervention = {
+            "kind": "none",
+            "operation": "authenticated_packet_intact",
+            "target": None,
+            "runtime_conductance_field": None,
+            "conductance_density_unit": "mS/cm^2",
+            "before": None,
+            "after": None,
+        }
+    else:
+        target, field = lesion
+        intervention = {
+            "kind": "complete_intrinsic_current_lesion",
+            "operation": "set_conductance_density_to_zero_after_authenticated_packet_initialization",
+            "target": target,
+            "runtime_conductance_field": field,
+            "conductance_density_unit": "mS/cm^2",
+            "before": [0.1],
+            "after": [0.0],
+        }
+    return {
+        "schema": "v14-snr-stageB-physiology-observation-v1",
+        "process_status": "completed",
+        "readiness_only": {
+            "enabled": True,
+            "reserved_seed_count": 0,
+            "scientific_seed": None,
+            "engine_seed": 0,
+            "engine_seed_effect": "none; connectivity, heterogeneity, noise, and plasticity are disabled",
+        },
+        "backend": "numpy",
+        "device": "cpu",
+        "arm": arm,
+        "runtime_intervention": intervention,
+        "adaptive_candidate": {
+            "candidate_id": "candidate-a",
+            "candidate_sha256": "a" * 64,
+            "effective_parameters": {"snr_g_nap_max": 0.01},
+        },
+        "raw_observation": {
+            "kind": "packet_voltage_spike_trace",
+            "time_unit": "s",
+            "voltage_unit": "mV",
+            "sample_interval_s": 0.1,
+            "recording_start_s": 0.1,
+            "recording_end_s": 1.3,
+            "uncropped": True,
+            "time_s": times,
+            "sample_semantics": "post-update state at the declared time",
+            "voltage_mV": [[value] for value in voltages],
+            "spike_states": _spike_states(times, spikes),
+            "analysis_protocol": {
+                "spike_metrics": {
+                    "burn_in_start_s": 0.1,
+                    "burn_in_end_s": 0.2,
+                    "window_start_s": 0.2,
+                    "window_end_s": 1.2,
+                },
+                "medium_ahp": {
+                    "burn_in_start_s": 0.1,
+                    "burn_in_end_s": 0.2,
+                    "reference_voltage_mV": -60.0,
+                    "window_start_s": 0.3,
+                    "window_end_s": 0.6,
+                },
+            },
+        },
+        "provenance": {
+            "runner": "research/runners/v14_stageB_physiology.py",
+            "candidate_release": {
+                "path": "candidate-release.json",
+                "sha256": "b" * 64,
+                "candidate_sha256": "a" * 64,
+            },
+            "bindings": [{
+                "packet_sha256": "c" * 64,
+                "authority_policy_sha256": "d" * 64,
+            }],
+        },
+    }
+
+
+def _write_runner_artifact(root: Path, document: dict, arm: str) -> dict[str, str]:
+    path = root / "artifacts" / f"{arm}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(document, sort_keys=True, separators=(",", ":")), encoding="ascii")
+    return {"path": path.relative_to(root).as_posix(), "sha256": _digest(path)}
+
+
+def _intrinsic_document(root: Path) -> dict:
+    _copy_causal_contract(root)
+    declarations = {
+        arm: _write_runner_artifact(root, _runner_artifact(arm), arm)
+        for arm in _INTRINSIC_ARMS
+    }
+    gate_path = root / CAUSAL_GATE_RELATIVE
+    return {
+        "schema": "v14-snr-stageB-intrinsic-lesion-observations-v1",
+        "readiness_only": {
+            "enabled": True,
+            "reserved_seed_count": 0,
+            "scientific_seed": None,
+        },
+        "causal_gate_packet": {
+            "path": CAUSAL_GATE_RELATIVE.as_posix(),
+            "sha256": _digest(gate_path),
+        },
+        "runner_observations": declarations,
+    }
+
+
+def _rewrite_arm(root: Path, document: dict, arm: str, mutate) -> None:
+    declaration = document["runner_observations"][arm]
+    path = root / declaration["path"]
+    artifact = json.loads(path.read_text(encoding="ascii"))
+    mutate(artifact)
+    document["runner_observations"][arm] = _write_runner_artifact(root, artifact, arm)
+
+
+def _intrinsic_results(result: dict) -> dict[str, dict]:
+    return {item["gate_id"]: item for item in result["results"]}
+
+
+def test_intrinsic_scorer_recomputes_raw_traces_and_reports_missing_protocol_arms(tmp_path):
+    document = _intrinsic_document(tmp_path)
+
+    result = score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    assert result["schema"] == INTRINSIC_LESION_RESULT_SCHEMA
+    assert result["scientific_verdict"] is None
+    assert result["source_equivalence_claimed"] is False
+    assert result["readiness_contract_result"] == "UNAVAILABLE"
+    assert result["all_intrinsic_lesion_gates_passed"] is None
+    by_gate = _intrinsic_results(result)
+    nap = {item["metric"]: item for item in by_gate["nap-complete-lesion"]["hard_gates"]}
+    assert nap["spike_count"]["observed"] == 0.0
+    assert nap["spike_count"]["window_s"] == 1.0
+    assert nap["mean_membrane_voltage_change_mV"]["observed"] < 0.0
+    cav = {item["metric"]: item for item in by_gate["cav2.2-complete-lesion"]["hard_gates"]}
+    assert all(item["status"] == "scored" and item["passed"] for item in cav.values())
+    sk = {item["metric"]: item for item in by_gate["sk-complete-lesion"]["hard_gates"]}
+    assert sk["depolarization_block_count"]["status"] == "unavailable"
+    assert "12-cell" in sk["depolarization_block_count"]["reason"]
+    hcn = {item["metric"]: item for item in by_gate["hcn-complete-lesion"]["hard_gates"]}
+    assert hcn["hyperpolarized_input_resistance_MOhm"]["status"] == "unavailable"
+    assert "current-step" in hcn["hyperpolarized_input_resistance_MOhm"]["reason"]
+    assert all(
+        hard_gate["source_equivalence_claimed"] is False
+        for gate in result["results"] for hard_gate in gate["hard_gates"]
+    )
+
+
+def test_intrinsic_scorer_rejects_caller_supplied_aggregate_measurements(tmp_path):
+    document = _intrinsic_document(tmp_path)
+    document["measurements"] = {"nap-complete-lesion": {"spike_count": 0}}
+    with pytest.raises(StageBScorerError, match="invalid shape"):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    document = _intrinsic_document(tmp_path)
+    _rewrite_arm(
+        tmp_path,
+        document,
+        "nap_lesion",
+        lambda artifact: artifact["raw_observation"].update(
+            {"claimed_metrics": {"spike_count": 0, "mean_membrane_voltage_change_mV": -100.0}}
+        ),
+    )
+    with pytest.raises(StageBScorerError, match="raw trace has an invalid shape"):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
+
+
+def test_intrinsic_scorer_fails_closed_without_sealed_analysis_protocol(tmp_path):
+    document = _intrinsic_document(tmp_path)
+    for arm in _INTRINSIC_ARMS:
+        _rewrite_arm(
+            tmp_path, document, arm,
+            lambda artifact: artifact["raw_observation"].pop("analysis_protocol"),
+        )
+
+    result = score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    assert result["readiness_contract_result"] == "UNAVAILABLE"
+    assert result["all_intrinsic_lesion_gates_passed"] is None
+    assert all(
+        hard_gate["passed"] is None
+        for gate in result["results"] for hard_gate in gate["hard_gates"]
+    )
+
+
+def test_intrinsic_scorer_accepts_production_runner_artifacts_as_unavailable(tmp_path):
+    from research.runners.v14_stageB_physiology import run_readiness_arm
+    from tests.test_v14_stageB_runner import _parameter_document, _write_authenticated_artifacts
+
+    _copy_causal_contract(tmp_path)
+    candidate_parameters, references = _write_authenticated_artifacts(tmp_path)
+    declarations = {}
+    for arm in _INTRINSIC_ARMS:
+        path = tmp_path / "artifacts" / f"{arm}.json"
+        run_readiness_arm(
+            _parameter_document(candidate_parameters, references, arm=arm),
+            path,
+            repository_root=tmp_path,
+        )
+        declarations[arm] = {
+            "path": path.relative_to(tmp_path).as_posix(),
+            "sha256": _digest(path),
+        }
+    document = {
+        "schema": "v14-snr-stageB-intrinsic-lesion-observations-v1",
+        "readiness_only": {
+            "enabled": True,
+            "reserved_seed_count": 0,
+            "scientific_seed": None,
+        },
+        "causal_gate_packet": {
+            "path": CAUSAL_GATE_RELATIVE.as_posix(),
+            "sha256": _digest(tmp_path / CAUSAL_GATE_RELATIVE),
+        },
+        "runner_observations": declarations,
+    }
+
+    result = score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    assert result["readiness_contract_result"] == "UNAVAILABLE"
+    assert result["scientific_verdict"] is None
+    assert result["adaptive_candidate"]["candidate_id"] == "packet-backed-readiness-intact"
+
+
+@pytest.mark.parametrize(
+    ("arm", "metric", "mutation"),
+    [
+        (
+            "nap_lesion",
+            "mean_membrane_voltage_change_mV",
+            lambda artifact: artifact["raw_observation"].update(
+                {"voltage_mV": [[-55.0]] * len(artifact["raw_observation"]["time_s"])}
+            ),
+        ),
+        (
+            "cav2_2_lesion",
+            "firing_rate_hz",
+            lambda artifact: artifact["raw_observation"].update(
+                {"spike_states": _spike_states(artifact["raw_observation"]["time_s"], {0.3, 0.6})}
+            ),
+        ),
+        (
+            "cav2_2_lesion",
+            "isi_cv",
+            lambda artifact: artifact["raw_observation"].update(
+                {"spike_states": _spike_states(
+                    artifact["raw_observation"]["time_s"], {0.3, 0.5, 0.7, 0.9}
+                )}
+            ),
+        ),
+        (
+            "cav2_2_lesion",
+            "medium_ahp_depth_mV",
+            lambda artifact: artifact["raw_observation"]["voltage_mV"].__setitem__(3, [-80.0]),
+        ),
+        (
+            "sk_lesion",
+            "isi_cv",
+            lambda artifact: artifact["raw_observation"].update(
+                {"spike_states": _spike_states(
+                    artifact["raw_observation"]["time_s"], {0.3, 0.5, 0.7, 0.9}
+                )}
+            ),
+        ),
+        (
+            "sk_lesion",
+            "medium_ahp_depth_mV",
+            lambda artifact: artifact["raw_observation"]["voltage_mV"].__setitem__(3, [-80.0]),
+        ),
+        (
+            "hcn_baseline_lesion",
+            "lesion_spike_count",
+            lambda artifact: artifact["raw_observation"].update(
+                {"spike_states": [[False]] * len(artifact["raw_observation"]["time_s"])}
+            ),
+        ),
+    ],
+)
+def test_intrinsic_scorer_rejects_wrong_sign_raw_trace_controls(
+    tmp_path, arm, metric, mutation,
+):
+    document = _intrinsic_document(tmp_path)
+    _rewrite_arm(tmp_path, document, arm, mutation)
+
+    result = score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    gate_id = next(gate for gate, gate_arm in {
+        "nap-complete-lesion": "nap_lesion",
+        "cav2.2-complete-lesion": "cav2_2_lesion",
+        "sk-complete-lesion": "sk_lesion",
+        "hcn-complete-lesion": "hcn_baseline_lesion",
+    }.items() if gate_arm == arm)
+    hard_gate = next(
+        item for item in _intrinsic_results(result)[gate_id]["hard_gates"]
+        if item["metric"] == metric
+    )
+    assert hard_gate["status"] == "scored"
+    assert hard_gate["passed"] is False
+    assert result["readiness_contract_result"] == "FAIL"
+
+
+@pytest.mark.parametrize("identity", ["candidate", "protocol", "release"])
+def test_intrinsic_scorer_rejects_mismatched_runner_identities(tmp_path, identity):
+    document = _intrinsic_document(tmp_path)
+
+    def mutate(artifact):
+        if identity == "candidate":
+            artifact["adaptive_candidate"]["candidate_id"] = "other-candidate"
+        elif identity == "protocol":
+            artifact["raw_observation"]["analysis_protocol"]["spike_metrics"]["window_end_s"] = 1.1
+        else:
+            artifact["provenance"]["candidate_release"]["sha256"] = "e" * 64
+
+    _rewrite_arm(tmp_path, document, "nap_lesion", mutate)
+    with pytest.raises(StageBScorerError, match="candidate/protocol/release identity"):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
+
+
+def test_intrinsic_scorer_rejects_runner_artifact_digest_tampering(tmp_path):
+    document = _intrinsic_document(tmp_path)
+    document["runner_observations"]["nap_lesion"]["sha256"] = "0" * 64
+    with pytest.raises(StageBScorerError, match="runner observation nap_lesion digest does not match"):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
 
 
 def test_raw_scorer_recomputes_all_bounded_fixtures_and_preserves_boundary():

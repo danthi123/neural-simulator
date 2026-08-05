@@ -5,16 +5,39 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from tools.v14_stageB_physiology_metrics import peak_conductance, spike_train_metrics
+from tools.v14_stageB_physiology_metrics import ahp_depth, peak_conductance, spike_train_metrics
 from tools.v14_stageB_scorer_fixtures import StageBFixtureError, score_observation, validate_fixture
 
 
 SCHEMA = "v14-snr-stageB-raw-observations-v1"
 RESULT_SCHEMA = "v14-snr-stageB-score-v1"
+INTRINSIC_LESION_SCHEMA = "v14-snr-stageB-intrinsic-lesion-observations-v1"
+INTRINSIC_LESION_RESULT_SCHEMA = "v14-snr-stageB-intrinsic-lesion-score-v1"
+
+_INTRINSIC_LESION_IDS = (
+    "nap-complete-lesion",
+    "cav2.2-complete-lesion",
+    "sk-complete-lesion",
+    "hcn-complete-lesion",
+)
+_INTRINSIC_ARMS = {
+    "intact_autonomous": None,
+    "nap_lesion": ("nap", "cp_snr_g_nap_max"),
+    "cav2_2_lesion": ("cav2.2", "cp_snr_g_ca_max"),
+    "sk_lesion": ("sk", "cp_snr_g_sk_max"),
+    "hcn_baseline_lesion": ("hcn", "cp_snr_g_h_max"),
+}
+_GATE_ARMS = {
+    "nap-complete-lesion": "nap_lesion",
+    "cav2.2-complete-lesion": "cav2_2_lesion",
+    "sk-complete-lesion": "sk_lesion",
+    "hcn-complete-lesion": "hcn_baseline_lesion",
+}
 
 
 class StageBScorerError(ValueError):
@@ -62,6 +85,450 @@ def _candidate_echo(value: Any) -> dict[str, Any]:
         raise StageBScorerError("adaptive_candidate is malformed")
     return {"candidate_id": identifier, "candidate_sha256": digest,
             "effective_parameters": dict(parameters)}
+
+
+def _contains_seed(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        return any("seed" in str(key).lower() or _contains_seed(item) for key, item in value.items())
+    if isinstance(value, list):
+        return any(_contains_seed(item) for item in value)
+    return False
+
+
+def _finite_number(value: Any, context: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise StageBScorerError(f"{context} must be a finite number")
+    result = float(value)
+    if not math.isfinite(result):
+        raise StageBScorerError(f"{context} must be a finite number")
+    return result
+
+
+def _validate_runner_intervention(arm: str, value: Any) -> dict[str, Any]:
+    expected_keys = {
+        "kind", "operation", "target", "runtime_conductance_field",
+        "conductance_density_unit", "before", "after",
+    }
+    if not isinstance(value, Mapping) or set(value) != expected_keys:
+        raise StageBScorerError(f"runner artifact {arm!r} has an invalid intervention shape")
+    intervention = dict(value)
+    lesion = _INTRINSIC_ARMS[arm]
+    if lesion is None:
+        expected = {
+            "kind": "none", "operation": "authenticated_packet_intact", "target": None,
+            "runtime_conductance_field": None, "conductance_density_unit": "mS/cm^2",
+            "before": None, "after": None,
+        }
+        if intervention != expected:
+            raise StageBScorerError("intact runner artifact carries an intervention")
+        return intervention
+
+    target, field = lesion
+    fixed = {
+        "kind": "complete_intrinsic_current_lesion",
+        "operation": "set_conductance_density_to_zero_after_authenticated_packet_initialization",
+        "target": target,
+        "runtime_conductance_field": field,
+        "conductance_density_unit": "mS/cm^2",
+    }
+    if any(intervention.get(key) != expected for key, expected in fixed.items()):
+        raise StageBScorerError(f"runner artifact {arm!r} does not carry the filed complete lesion")
+    before = intervention.get("before")
+    after = intervention.get("after")
+    if (not isinstance(before, list) or len(before) != 1
+            or _finite_number(before[0], f"{arm}.intervention.before") < 0.0
+            or after != [0.0]):
+        raise StageBScorerError(f"runner artifact {arm!r} did not prove zero conductance")
+    return intervention
+
+
+def _trace_vectors(raw: Any, arm: str) -> tuple[list[float], list[float], list[float], dict[str, Any] | None]:
+    base_fields = {
+        "kind", "time_unit", "voltage_unit", "sample_interval_s", "recording_start_s",
+        "recording_end_s", "uncropped", "time_s", "sample_semantics", "voltage_mV",
+        "spike_states",
+    }
+    raw_fields = set(raw) if isinstance(raw, Mapping) else set()
+    if (not isinstance(raw, Mapping) or
+            (raw_fields != base_fields and raw_fields != base_fields | {"analysis_protocol"})):
+        raise StageBScorerError(f"runner artifact {arm!r} raw trace has an invalid shape")
+    if (raw.get("kind") != "packet_voltage_spike_trace" or raw.get("time_unit") != "s"
+            or raw.get("voltage_unit") != "mV" or raw.get("uncropped") is not True
+            or raw.get("sample_semantics") != "post-update state at the declared time"):
+        raise StageBScorerError(f"runner artifact {arm!r} changed the raw trace contract")
+    dt = _finite_number(raw.get("sample_interval_s"), f"{arm}.sample_interval_s")
+    start = _finite_number(raw.get("recording_start_s"), f"{arm}.recording_start_s")
+    end = _finite_number(raw.get("recording_end_s"), f"{arm}.recording_end_s")
+    if dt <= 0.0 or end <= start:
+        raise StageBScorerError(f"runner artifact {arm!r} has invalid trace timing")
+    times_raw = raw.get("time_s")
+    voltages_raw = raw.get("voltage_mV")
+    spikes_raw = raw.get("spike_states")
+    if (not isinstance(times_raw, list) or not times_raw or not isinstance(voltages_raw, list)
+            or not isinstance(spikes_raw, list) or len(times_raw) != len(voltages_raw)
+            or len(times_raw) != len(spikes_raw)):
+        raise StageBScorerError(f"runner artifact {arm!r} has incomplete trace vectors")
+    times = [_finite_number(value, f"{arm}.time_s[]") for value in times_raw]
+    voltages: list[float] = []
+    spike_times: list[float] = []
+    for time, voltage_row, spike_row in zip(times, voltages_raw, spikes_raw, strict=True):
+        if not isinstance(voltage_row, list) or len(voltage_row) != 1:
+            raise StageBScorerError(f"runner artifact {arm!r} voltage trace is not single-cell")
+        if (not isinstance(spike_row, list) or len(spike_row) != 1
+                or not isinstance(spike_row[0], bool)):
+            raise StageBScorerError(f"runner artifact {arm!r} spike trace is not single-cell boolean")
+        voltages.append(_finite_number(voltage_row[0], f"{arm}.voltage_mV[]"))
+        if spike_row[0]:
+            spike_times.append(time)
+    tolerance = max(1e-12, dt * 1e-9)
+    if (not math.isclose(times[0], start, abs_tol=tolerance)
+            or not math.isclose(times[-1] + dt, end, abs_tol=tolerance)
+            or any(not math.isclose(right - left, dt, abs_tol=tolerance)
+                   for left, right in zip(times, times[1:]))):
+        raise StageBScorerError(f"runner artifact {arm!r} time vector does not match its protocol")
+    protocol = raw.get("analysis_protocol")
+    if protocol is not None and not isinstance(protocol, Mapping):
+        raise StageBScorerError(f"runner artifact {arm!r} analysis_protocol must be an object")
+    return times, voltages, spike_times, dict(protocol) if protocol is not None else None
+
+
+def _recompute_trace_metrics(raw: Mapping[str, Any], arm: str) -> dict[str, Any]:
+    times, voltages, spike_times, protocol = _trace_vectors(raw, arm)
+    if protocol is None:
+        return {"status": "unavailable", "reason": "runner trace has no sealed analysis protocol"}
+    if set(protocol) != {"spike_metrics", "medium_ahp"}:
+        raise StageBScorerError(f"runner artifact {arm!r} has an invalid analysis protocol")
+    spike_protocol = protocol["spike_metrics"]
+    ahp_protocol = protocol["medium_ahp"]
+    spike_fields = {"burn_in_start_s", "burn_in_end_s", "window_start_s", "window_end_s"}
+    ahp_fields = {
+        "burn_in_start_s", "burn_in_end_s", "reference_voltage_mV",
+        "window_start_s", "window_end_s",
+    }
+    if not isinstance(spike_protocol, Mapping) or set(spike_protocol) != spike_fields:
+        raise StageBScorerError(f"runner artifact {arm!r} has an invalid spike analysis protocol")
+    if not isinstance(ahp_protocol, Mapping) or set(ahp_protocol) != ahp_fields:
+        raise StageBScorerError(f"runner artifact {arm!r} has an invalid AHP analysis protocol")
+    common = {
+        "time_unit": raw["time_unit"],
+        "sample_interval_s": raw["sample_interval_s"],
+        "recording_start_s": raw["recording_start_s"],
+    }
+    try:
+        spikes = spike_train_metrics(
+            spike_times,
+            **common,
+            recording_end_s=raw["recording_end_s"],
+            **spike_protocol,
+        )
+        ahp = ahp_depth(
+            times,
+            voltages,
+            **common,
+            voltage_unit=raw["voltage_unit"],
+            **ahp_protocol,
+        )
+    except (TypeError, ValueError) as exc:
+        raise StageBScorerError(f"runner artifact {arm!r} analysis protocol is invalid: {exc}") from exc
+    window_start = float(spike_protocol["window_start_s"])
+    window_end = float(spike_protocol["window_end_s"])
+    selected_voltage = [
+        voltage for time, voltage in zip(times, voltages, strict=True)
+        if window_start <= time < window_end
+    ]
+    if not selected_voltage:
+        raise StageBScorerError(f"runner artifact {arm!r} scoring window contains no voltage samples")
+    return {
+        "status": "recomputed",
+        "spike_metrics": spikes,
+        "mean_membrane_voltage_mV": sum(selected_voltage) / len(selected_voltage),
+        "medium_ahp": ahp,
+        "analysis_protocol": protocol,
+    }
+
+
+def _load_intrinsic_runner_artifacts(
+    root: Path, declarations: Any
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, str]], dict[str, Any]]:
+    if not isinstance(declarations, Mapping) or set(declarations) != set(_INTRINSIC_ARMS):
+        raise StageBScorerError("runner_observations must bind exactly the five intrinsic readiness arms")
+    documents: dict[str, dict[str, Any]] = {}
+    bindings: dict[str, dict[str, str]] = {}
+    expected_top = {
+        "schema", "process_status", "readiness_only", "backend", "device", "arm",
+        "runtime_intervention", "adaptive_candidate", "raw_observation", "provenance",
+    }
+    readiness = {
+        "enabled": True,
+        "reserved_seed_count": 0,
+        "scientific_seed": None,
+        "engine_seed": 0,
+        "engine_seed_effect": "none; connectivity, heterogeneity, noise, and plasticity are disabled",
+    }
+    for arm in _INTRINSIC_ARMS:
+        path, document = _load_bound_json(root, declarations[arm], f"runner observation {arm}")
+        if set(document) != expected_top or document.get("schema") != "v14-snr-stageB-physiology-observation-v1":
+            raise StageBScorerError(f"runner artifact {arm!r} has an invalid shape or schema")
+        if (document.get("process_status") != "completed" or document.get("backend") != "numpy"
+                or document.get("device") != "cpu" or document.get("arm") != arm
+                or document.get("readiness_only") != readiness):
+            raise StageBScorerError(f"runner artifact {arm!r} is not a completed seed-free readiness trace")
+        seed_checked = {key: value for key, value in document.items() if key != "readiness_only"}
+        if _contains_seed(seed_checked):
+            raise StageBScorerError(f"runner artifact {arm!r} contains seed data outside readiness metadata")
+        _validate_runner_intervention(arm, document.get("runtime_intervention"))
+        documents[arm] = document
+        bindings[arm] = {
+            "path": path.relative_to(root).as_posix(),
+            "sha256": _digest_bytes(path.read_bytes()),
+        }
+
+    intact = documents["intact_autonomous"]
+    candidate = _candidate_echo(intact.get("adaptive_candidate"))
+    provenance = intact.get("provenance")
+    if not isinstance(provenance, Mapping):
+        raise StageBScorerError("intact runner artifact has invalid provenance")
+    identity = {
+        "adaptive_candidate": intact.get("adaptive_candidate"),
+        "candidate_release": provenance.get("candidate_release"),
+        "bindings": provenance.get("bindings"),
+        "raw_protocol": {
+            key: intact["raw_observation"].get(key) for key in (
+                "time_unit", "voltage_unit", "sample_interval_s", "recording_start_s",
+                "recording_end_s", "uncropped", "time_s", "sample_semantics", "analysis_protocol",
+            )
+        },
+    }
+    for arm, document in documents.items():
+        arm_provenance = document.get("provenance")
+        if not isinstance(arm_provenance, Mapping):
+            raise StageBScorerError(f"runner artifact {arm!r} has invalid provenance")
+        comparison = {
+            "adaptive_candidate": document.get("adaptive_candidate"),
+            "candidate_release": arm_provenance.get("candidate_release"),
+            "bindings": arm_provenance.get("bindings"),
+            "raw_protocol": {
+                key: document["raw_observation"].get(key) for key in identity["raw_protocol"]
+            },
+        }
+        if comparison != identity:
+            raise StageBScorerError(
+                f"runner artifact {arm!r} does not match the intact candidate/protocol/release identity"
+            )
+    return documents, bindings, candidate
+
+
+def _unavailable_hard_gate(contract: Mapping[str, Any], reason: str) -> dict[str, Any]:
+    return {
+        "metric": contract["metric"],
+        "operator": contract["operator"],
+        "evidence_class": contract["evidence_class"],
+        "source_equivalence_claimed": False,
+        "status": "unavailable",
+        "passed": None,
+        "reason": reason,
+    }
+
+
+def _score_intrinsic_hard_gate(
+    gate_id: str,
+    contract: Mapping[str, Any],
+    intact: Mapping[str, Any],
+    lesion: Mapping[str, Any],
+) -> dict[str, Any]:
+    required = {"metric", "operator", "evidence_class"}
+    if not isinstance(contract, Mapping) or not required.issubset(contract):
+        raise StageBScorerError(f"{gate_id} contains a malformed hard gate")
+    if set(contract) - {"metric", "operator", "evidence_class", "value", "window_s", "cohort_n"}:
+        raise StageBScorerError(f"{gate_id} hard gate contains unsupported fields")
+    metric = contract["metric"]
+    operator = contract["operator"]
+    evidence_class = contract["evidence_class"]
+    if not isinstance(metric, str) or not isinstance(operator, str):
+        raise StageBScorerError(f"{gate_id} hard gate metric/operator must be text")
+    if evidence_class not in {"source_reported_direction", "project_operational"}:
+        raise StageBScorerError(f"{gate_id} hard gate has an unsupported evidence boundary")
+
+    result: dict[str, Any] = {
+        "metric": metric,
+        "operator": operator,
+        "evidence_class": evidence_class,
+        "source_equivalence_claimed": False,
+    }
+    if metric == "depolarization_block_count":
+        return _unavailable_hard_gate(
+            contract, "sealed 12-cell SK cohort depolarization-block traces are not available"
+        )
+    if metric == "hyperpolarized_input_resistance_MOhm":
+        return _unavailable_hard_gate(
+            contract, "sealed HCN hyperpolarized intact/lesion current-step traces are not available"
+        )
+    if intact.get("status") != "recomputed" or lesion.get("status") != "recomputed":
+        return _unavailable_hard_gate(
+            contract, "paired runner traces do not contain a sealed analysis protocol"
+        )
+
+    if operator in {"lesion_greater_than_intact", "lesion_less_than_intact"}:
+        metric_paths = {
+            "firing_rate_hz": ("spike_metrics", "firing_rate_hz"),
+            "isi_cv": ("spike_metrics", "isi_cv"),
+            "medium_ahp_depth_mV": ("medium_ahp", "ahp_depth_mV"),
+        }
+        if metric not in metric_paths:
+            raise StageBScorerError(f"{gate_id} has unsupported directional metric {metric!r}")
+        group, name = metric_paths[metric]
+        intact_value = intact[group][name]
+        lesion_value = lesion[group][name]
+        if intact_value is None or lesion_value is None:
+            return _unavailable_hard_gate(
+                contract, f"paired raw traces cannot resolve {metric} with the recorded spike count"
+            )
+        observed = {"intact": float(intact_value), "lesion": float(lesion_value)}
+        passed = (
+            observed["lesion"] > observed["intact"]
+            if operator == "lesion_greater_than_intact"
+            else observed["lesion"] < observed["intact"]
+        )
+        return {**result, "status": "scored", "observed": observed, "passed": passed}
+
+    if metric == "absolute_baseline_rate_change_fraction":
+        intact_rate = float(intact["spike_metrics"]["firing_rate_hz"])
+        lesion_rate = float(lesion["spike_metrics"]["firing_rate_hz"])
+        if intact_rate <= 0.0:
+            raise StageBScorerError("HCN baseline rate change is undefined when intact rate is zero")
+        observed_value = abs(lesion_rate - intact_rate) / intact_rate
+    elif metric in {"spike_count", "lesion_spike_count"}:
+        observed_value = float(lesion["spike_metrics"]["spike_count"])
+    elif metric == "mean_membrane_voltage_change_mV":
+        observed_value = (
+            float(lesion["mean_membrane_voltage_mV"])
+            - float(intact["mean_membrane_voltage_mV"])
+        )
+    else:
+        raise StageBScorerError(f"{gate_id} has unsupported scalar metric {metric!r}")
+
+    if "value" not in contract:
+        raise StageBScorerError(f"{gate_id} scalar hard gate has no filed value")
+    threshold = _finite_number(contract["value"], f"{gate_id}.{metric}.value")
+    comparisons = {
+        "equal": observed_value == threshold,
+        "less_than": observed_value < threshold,
+        "greater_than": observed_value > threshold,
+        "less_than_or_equal": observed_value <= threshold,
+        "greater_than_or_equal": observed_value >= threshold,
+    }
+    if operator not in comparisons:
+        raise StageBScorerError(f"{gate_id} uses unsupported operator {operator!r}")
+
+    if "window_s" in contract:
+        filed_window = _finite_number(contract["window_s"], f"{gate_id}.{metric}.window_s")
+        spike_protocol = lesion["analysis_protocol"]["spike_metrics"]
+        observed_window = float(spike_protocol["window_end_s"]) - float(
+            spike_protocol["window_start_s"]
+        )
+        if not math.isclose(observed_window, filed_window, rel_tol=0.0, abs_tol=1e-12):
+            return _unavailable_hard_gate(
+                contract, "lesion runner trace does not contain the filed one-second scoring window"
+            )
+        result["window_s"] = filed_window
+    return {**result, "status": "scored", "observed": observed_value, "threshold": threshold,
+            "passed": comparisons[operator]}
+
+
+def score_intrinsic_lesion_observations(
+    document: Mapping[str, Any], *, root: str | Path
+) -> dict[str, Any]:
+    """Recompute filed intrinsic-lesion gates from digest-bound runner traces."""
+
+    required = {
+        "schema", "readiness_only", "causal_gate_packet", "runner_observations",
+    }
+    if (not isinstance(document, Mapping) or set(document) != required
+            or document.get("schema") != INTRINSIC_LESION_SCHEMA):
+        raise StageBScorerError("intrinsic lesion observation document has an invalid shape or schema")
+    readiness = document.get("readiness_only")
+    if readiness != {"enabled": True, "reserved_seed_count": 0, "scientific_seed": None}:
+        raise StageBScorerError("intrinsic lesion scoring is seed-free readiness-only")
+    seed_checked = {key: value for key, value in document.items() if key != "readiness_only"}
+    if _contains_seed(seed_checked):
+        raise StageBScorerError("intrinsic lesion observations must not contain seed data")
+
+    root_path = Path(root).resolve()
+    gate_path, packet = _load_bound_json(
+        root_path, document.get("causal_gate_packet"), "causal gate packet"
+    )
+    if packet.get("schema") != "v14-snr-stageB-causal-gates-v1":
+        raise StageBScorerError("causal gate packet has the wrong schema")
+    _, target = _load_bound_json(root_path, packet.get("target_packet"), "causal target packet")
+    if target.get("schema") != "v14-snr-stageB-target-packet-v1":
+        raise StageBScorerError("causal target packet has the wrong schema")
+
+    gates = packet.get("causal_gates")
+    if not isinstance(gates, list):
+        raise StageBScorerError("causal gate packet has no gate list")
+    selected: dict[str, Mapping[str, Any]] = {}
+    for gate in gates:
+        if isinstance(gate, Mapping) and gate.get("id") in _INTRINSIC_LESION_IDS:
+            gate_id = str(gate["id"])
+            if gate_id in selected:
+                raise StageBScorerError(f"causal gate packet duplicates {gate_id}")
+            selected[gate_id] = gate
+    if set(selected) != set(_INTRINSIC_LESION_IDS):
+        raise StageBScorerError("causal gate packet does not contain exactly the required intrinsic gates")
+
+    artifacts, artifact_bindings, candidate = _load_intrinsic_runner_artifacts(
+        root_path, document.get("runner_observations")
+    )
+    recomputed = {
+        arm: _recompute_trace_metrics(artifact["raw_observation"], arm)
+        for arm, artifact in artifacts.items()
+    }
+
+    results = []
+    for gate_id in _INTRINSIC_LESION_IDS:
+        gate = selected[gate_id]
+        hard_gates = gate.get("hard_gates")
+        if not isinstance(hard_gates, list) or not hard_gates:
+            raise StageBScorerError(f"{gate_id} has no filed hard gates")
+        scored = [
+            _score_intrinsic_hard_gate(
+                gate_id,
+                contract,
+                recomputed["intact_autonomous"],
+                recomputed[_GATE_ARMS[gate_id]],
+            )
+            for contract in hard_gates
+        ]
+        failed = any(item["passed"] is False for item in scored)
+        unavailable = any(item["passed"] is None for item in scored)
+        results.append({
+            "gate_id": gate_id,
+            "source": gate.get("source"),
+            "preparation": gate.get("preparation"),
+            "passed": False if failed else None if unavailable else True,
+            "hard_gates": scored,
+        })
+    any_failed = any(item["passed"] is False for item in results)
+    any_unavailable = any(item["passed"] is None for item in results)
+    all_passed = False if any_failed else None if any_unavailable else True
+    return {
+        "schema": INTRINSIC_LESION_RESULT_SCHEMA,
+        "process_status": "completed",
+        "scientific_verdict": None,
+        "readiness_only": readiness,
+        "adaptive_candidate": candidate,
+        "causal_gate_packet": {
+            "path": gate_path.relative_to(root_path).as_posix(),
+            "sha256": _digest_bytes(gate_path.read_bytes()),
+        },
+        "runner_observations": artifact_bindings,
+        "all_intrinsic_lesion_gates_passed": all_passed,
+        "readiness_contract_result": (
+            "FAIL" if any_failed else "UNAVAILABLE" if any_unavailable else "PASS"
+        ),
+        "source_equivalence_claimed": False,
+        "results": results,
+    }
 
 
 def _spike_metrics(raw: Mapping[str, Any]) -> dict[str, Any]:
