@@ -534,7 +534,7 @@ def _refresh_rag(root: Path) -> dict[str, Any]:
             "truncated": False,
         }
     return _run(
-        [str(paths.rag_python), "tools/rag/update_indexes.py", "--force"], root
+        [str(paths.rag_python), "tools/rag/update_indexes.py"], root
     )
 
 
