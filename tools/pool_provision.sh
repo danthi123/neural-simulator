@@ -119,10 +119,10 @@ for h in "${NODES[@]}"; do
       { rm -rf .venv; python3 -m venv .venv; }; } && \
     .venv/bin/python -m pip -q install --upgrade pip >/dev/null 2>&1; \
     .venv/bin/python -m pip -q install \
-      numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pyyaml==6.0.3 pytest==8.4.1 2>&1 | tail -1; \
+      numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pillow==12.0.0 pyyaml==6.0.3 pytest==8.4.1 2>&1 | tail -1; \
     echo -n '  numpy/scipy=' ; .venv/bin/python -c 'import numpy,scipy; print(numpy.__version__, scipy.__version__)' 2>&1 | tail -1; \
     echo -n '  sim imports=' ; SIM_BACKEND=numpy .venv/bin/python -c 'import sys; sys.path.insert(0,\".\"); from sim.backend import get_backend; print(get_backend()[1])' 2>&1 | tail -1"
-  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,yaml; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pyyaml\":yaml.__version__},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
+  ssh "$h" "cd ~/$REMOTE_ROOT && .venv/bin/python -c 'import json,sys,numpy,scipy,h5py,PIL,yaml; json.dump({\"python_major_minor\":\"%s.%s\" % sys.version_info[:2],\"numpy\":numpy.__version__,\"scipy\":scipy.__version__,\"h5py\":h5py.__version__,\"pillow\":PIL.__version__,\"pyyaml\":yaml.__version__},open(\".pool_environment.json\",\"w\"),sort_keys=True,separators=(\",\",\":\"))'"
   REMOTE_MANIFEST=$(ssh "$h" "cd ~/$REMOTE_ROOT && sha256sum .source_manifest.sha256 | awk '{print \$1}'")
   if [ "$REMOTE_MANIFEST" != "$MANIFEST_SHA" ]; then
     echo "  MANIFEST FAIL local=$MANIFEST_SHA remote=$REMOTE_MANIFEST" >&2

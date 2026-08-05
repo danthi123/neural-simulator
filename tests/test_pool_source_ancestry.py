@@ -179,7 +179,8 @@ def test_provisioning_executes_the_generator_extracted_from_head():
     assert '--root "$STAGE" --output "$MANIFEST"' in script
     assert '"$STAGE/docs/" "$h:~/$REMOTE_ROOT/docs/"' in script
     assert '"$STAGE/CLAUDE.md" "$STAGE/GAP_CLOSURE_MISSION.md" "$STAGE/README.md"' in script
-    assert "numpy==2.2.6 scipy==1.15.3 h5py==3.16.0" in script
+    assert "numpy==2.2.6 scipy==1.15.3 h5py==3.16.0 pillow==12.0.0" in script
+    assert '\\"pillow\\":PIL.__version__' in script
     assert "pyyaml==6.0.3 pytest==8.4.1" in script
     assert "COMPLETE SOURCE FILE SET VERIFY FAIL" in script
     assert 'source_ancestry_sha256=%s' in script
