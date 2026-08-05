@@ -209,3 +209,52 @@ def test_measurement_rows_preserve_agreed_panel_unavailability() -> None:
     rows, reason = targets._measurement_rows(result, 2)
     assert rows == []
     assert reason == "occlusion_prevents_bounded_marker_center"
+
+
+def test_group_manifest_discovers_panel_and_orders_extractors(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root, protocol, _, groups = _fixture(tmp_path, monkeypatch)
+    records = [root / item["path"] for item in reversed(groups[0]["records"])]
+
+    def normalize(record, authority, *, root):
+        return {
+            "extractor_id": record["extractor"],
+            "asset": {"asset_id": "asset"},
+            "panel": {"id": "A4"},
+        }
+
+    monkeypatch.setattr(digitizer, "validate_extraction_record", normalize)
+    manifest = targets.build_extraction_group_manifest(
+        protocol, records, repository_root=root
+    )
+    assert manifest["schema"] == targets.GROUP_MANIFEST_SCHEMA
+    assert manifest["panel_index"][0]["extractor_ids"] == ["a", "b"]
+    assert manifest["sha256"] == targets._digest(
+        {key: value for key, value in manifest.items() if key != "sha256"}
+    )
+    assert [
+        Path(item["path"]).name
+        for item in manifest["extraction_groups"][0]["records"]
+    ] == ["a.json", "b.json"]
+
+
+def test_group_manifest_rejects_incomplete_or_duplicate_extractor_coverage(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root, protocol, _, groups = _fixture(tmp_path, monkeypatch)
+    first = root / groups[0]["records"][0]["path"]
+
+    monkeypatch.setattr(
+        digitizer,
+        "validate_extraction_record",
+        lambda record, authority, *, root: {
+            "extractor_id": "same",
+            "asset": {"asset_id": "asset"},
+            "panel": {"id": "A4"},
+        },
+    )
+    with pytest.raises(targets.PopulationTargetError, match="two or three distinct"):
+        targets.build_extraction_group_manifest(
+            protocol, [first, root / groups[0]["records"][1]["path"]], repository_root=root
+        )

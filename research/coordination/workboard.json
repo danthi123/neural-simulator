@@ -1276,21 +1276,32 @@
       "write_set": [
         "research/measurements/v14-stageB/extractor_c"
       ]
+    },
+    "019fd1e9-3973-7211-a902-776efc6aa92f": {
+      "heartbeat_at": "2026-08-05T12:32:36+00:00",
+      "model": "gpt-5.6-terra-xhigh",
+      "next_action": "Controller converts only supported bounds into a prospective parameter-space spec.",
+      "started_at": "2026-08-05T12:32:36+00:00",
+      "status": "running",
+      "task": "Deep research source-backed Stage B parameter bounds and constraints",
+      "write_set": [
+        "research/findings/2026-08-05-v14-stageB-parameter-identification-bounds-research.md"
+      ]
+    },
+    "019fd1ec-6ffa-7ae1-8378-f7607c780482": {
+      "heartbeat_at": "2026-08-05T12:36:06+00:00",
+      "model": "gpt-5.6-terra-xhigh",
+      "next_action": "Controller benchmarks candidate batching and integrates it into Stage B campaign runner.",
+      "started_at": "2026-08-05T12:36:06+00:00",
+      "status": "running",
+      "task": "Implement vectorized source-model candidate batch engine",
+      "write_set": [
+        "sim/source_model_candidate_batch.py",
+        "tests/test_source_model_candidate_batch.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-05T01:10:19+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-primary-source-fulltext-intake"
-    },
-    {
-      "at": "2026-08-05T01:15:46+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf7d-6bf0-7693-91e1-94c0fdbcd6d1"
-    },
     {
       "at": "2026-08-05T01:15:46+00:00",
       "detail": "running",
@@ -1878,6 +1889,18 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fd1e6-18da-7782-8e05-7504258c21ad"
+    },
+    {
+      "at": "2026-08-05T12:32:36+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1e9-3973-7211-a902-776efc6aa92f"
+    },
+    {
+      "at": "2026-08-05T12:36:06+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd1ec-6ffa-7ae1-8378-f7607c780482"
     }
   ],
   "lanes": {
@@ -2575,5 +2598,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T12:29:13+00:00"
+  "updated_at": "2026-08-05T12:36:06+00:00"
 }

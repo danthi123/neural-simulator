@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PARTITION_SCHEMA = "v14-snr-stageB-population-target-partition-v2"
 PACKET_SCHEMA = "v14-snr-stageB-population-target-packet-v1"
 INDEX_SCHEMA = "v14-snr-stageB-population-target-packet-index-v1"
+GROUP_MANIFEST_SCHEMA = "v14-snr-stageB-population-extraction-group-manifest-v1"
 PARTITIONS = ("calibration", "validation", "held_out")
 _COMMAND = re.compile(r"command_([0-9]{3})\Z")
 
@@ -149,6 +150,78 @@ def command_partition(command_id: str) -> str:
     if index % 5 == 3:
         return "validation"
     return "calibration"
+
+
+def build_extraction_group_manifest(
+    protocol_path: str | Path,
+    record_paths: Sequence[str | Path],
+    *,
+    repository_root: str | Path = ROOT,
+) -> dict[str, Any]:
+    """Discover complete blind panel groups without manually pairing paths."""
+
+    root = Path(repository_root).expanduser().resolve(strict=True)
+    protocol_relative, protocol_absolute = _repo_file(
+        root, str(protocol_path), "measurement protocol"
+    )
+    authority = digitizer.load_protocol(protocol_absolute, root=root)
+    protocol_binding = {
+        "path": protocol_relative,
+        "sha256": _file_digest(protocol_absolute),
+    }
+    _fail(
+        isinstance(record_paths, Sequence)
+        and not isinstance(record_paths, (str, bytes))
+        and bool(record_paths),
+        "record paths must be a non-empty sequence",
+    )
+    grouped: dict[tuple[str, str], list[tuple[str, dict[str, str]]]] = {}
+    seen_paths: set[str] = set()
+    for index, supplied in enumerate(record_paths):
+        relative, path = _repo_file(root, str(supplied), f"record {index}")
+        _fail(relative not in seen_paths, "record paths must be unique")
+        seen_paths.add(relative)
+        try:
+            record = json.loads(path.read_bytes())
+        except json.JSONDecodeError as exc:
+            raise PopulationTargetError(f"record {index} is not valid JSON") from exc
+        normalized = digitizer.validate_extraction_record(record, authority, root=root)
+        key = (normalized["asset"]["asset_id"], normalized["panel"]["id"])
+        grouped.setdefault(key, []).append(
+            (
+                normalized["extractor_id"],
+                {"path": relative, "sha256": _file_digest(path)},
+            )
+        )
+    _fail(set(grouped) == set(authority["panels"]), "records do not cover every eligible panel")
+    extraction_groups: list[dict[str, Any]] = []
+    panel_index: list[dict[str, Any]] = []
+    for key in sorted(grouped):
+        rows = sorted(grouped[key], key=lambda item: item[0])
+        extractor_ids = [item[0] for item in rows]
+        _fail(
+            len(rows) in {2, 3} and len(set(extractor_ids)) == len(rows),
+            f"panel {key} must have two or three distinct extractors",
+        )
+        extraction_groups.append({"records": [item[1] for item in rows]})
+        panel_index.append(
+            {
+                "asset_id": key[0],
+                "panel": key[1],
+                "extractor_ids": extractor_ids,
+            }
+        )
+    core = {
+        "schema": GROUP_MANIFEST_SCHEMA,
+        "scientific_verdict": None,
+        "optimization_allowed": False,
+        "status": "authenticated_blind_extraction_groups",
+        "measurement_protocol": protocol_binding,
+        "panel_index": panel_index,
+        "extraction_groups": extraction_groups,
+    }
+    core["sha256"] = _digest(core)
+    return core
 
 
 def _measurement_rows(
@@ -415,7 +488,34 @@ def main(argv: Sequence[str] | None = None) -> int:
         {"path": groups_relative, "sha256": _file_digest(groups_path)},
         "extraction groups",
     )
-    _fail(set(groups_document) == {"extraction_groups"}, "groups document is invalid")
+    _fail(
+        set(groups_document)
+        == {
+            "schema",
+            "scientific_verdict",
+            "optimization_allowed",
+            "status",
+            "measurement_protocol",
+            "panel_index",
+            "extraction_groups",
+            "sha256",
+        }
+        and groups_document.get("schema") == GROUP_MANIFEST_SCHEMA
+        and groups_document.get("scientific_verdict") is None
+        and groups_document.get("optimization_allowed") is False
+        and groups_document.get("status") == "authenticated_blind_extraction_groups"
+        and groups_document.get("sha256")
+        == _digest({key: value for key, value in groups_document.items() if key != "sha256"}),
+        "groups document is invalid",
+    )
+    expected_protocol = {
+        "path": _repo_file(root, args.protocol, "measurement protocol")[0],
+        "sha256": _file_digest(_repo_file(root, args.protocol, "measurement protocol")[1]),
+    }
+    _fail(
+        groups_document["measurement_protocol"] == expected_protocol,
+        "groups document binds a different measurement protocol",
+    )
     packets = compile_target_packets(
         args.protocol,
         args.partition,
