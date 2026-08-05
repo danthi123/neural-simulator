@@ -631,20 +631,6 @@
         "tests/test_snr_executable_packet.py"
       ]
     },
-    "019fcee6-78b0-73d1-9ad9-8ca9e5a01581": {
-      "completed_at": "2026-08-04T22:42:07+00:00",
-      "heartbeat_at": "2026-08-04T22:42:07+00:00",
-      "model": "gpt-5.6-sol/high",
-      "next_action": "Independent Sol/high adversarial review owns acceptance; do not integrate before its verdict.",
-      "result": "Corrected all seven demonstrated packet-authority defects; 45 focused tests passed in fresh NumPy and CuPy processes, plus py_compile and diff-check.",
-      "started_at": "2026-08-04T22:30:20+00:00",
-      "status": "completed",
-      "task": "Canonical authenticated SNr packet authority Stage 1 correction",
-      "write_set": [
-        "sim/snr_executable_packet.py",
-        "tests/test_snr_executable_packet.py"
-      ]
-    },
     "019fceda-5208-7df3-8353-06f5297cd7a1": {
       "completed_at": "2026-08-04T22:20:30+00:00",
       "heartbeat_at": "2026-08-04T22:20:30+00:00",
@@ -654,17 +640,6 @@
       "started_at": "2026-08-04T22:17:00+00:00",
       "status": "completed",
       "task": "Adversarial canonical SNr packet authority review",
-      "write_set": []
-    },
-    "019fcef2-1ac3-77d0-9412-ee6353c92d22": {
-      "completed_at": "2026-08-04T23:00:19+00:00",
-      "heartbeat_at": "2026-08-04T23:00:19+00:00",
-      "model": "gpt-5.6-sol/high",
-      "next_action": "Proceed to packet-reference configuration and checkpoint binding under the accepted external-trust boundary.",
-      "result": "Initial review rejected self-issued authority, reflection-vulnerable materialized leaves, invalid numeric domains, and resource errors. After controller correction, retesting accepted with no P0-P2 bypass and 54 focused tests passing.",
-      "started_at": "2026-08-04T22:44:32+00:00",
-      "status": "completed",
-      "task": "Independent adversarial review of corrected canonical SNr packet authority",
       "write_set": []
     },
     "019fcedf-2d88-7b63-9150-a22ffa1a3bff": {
@@ -687,6 +662,31 @@
       "started_at": "2026-08-04T22:22:14+00:00",
       "status": "completed",
       "task": "Deep research for adult SNr fast currents and physiology bounds",
+      "write_set": []
+    },
+    "019fcee6-78b0-73d1-9ad9-8ca9e5a01581": {
+      "completed_at": "2026-08-04T22:42:07+00:00",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "model": "gpt-5.6-sol/high",
+      "next_action": "Independent Sol/high adversarial review owns acceptance; do not integrate before its verdict.",
+      "result": "Corrected all seven demonstrated packet-authority defects; 45 focused tests passed in fresh NumPy and CuPy processes, plus py_compile and diff-check.",
+      "started_at": "2026-08-04T22:30:20+00:00",
+      "status": "completed",
+      "task": "Canonical authenticated SNr packet authority Stage 1 correction",
+      "write_set": [
+        "sim/snr_executable_packet.py",
+        "tests/test_snr_executable_packet.py"
+      ]
+    },
+    "019fcef2-1ac3-77d0-9412-ee6353c92d22": {
+      "completed_at": "2026-08-04T23:00:19+00:00",
+      "heartbeat_at": "2026-08-04T23:00:19+00:00",
+      "model": "gpt-5.6-sol/high",
+      "next_action": "Proceed to packet-reference configuration and checkpoint binding under the accepted external-trust boundary.",
+      "result": "Initial review rejected self-issued authority, reflection-vulnerable materialized leaves, invalid numeric domains, and resource errors. After controller correction, retesting accepted with no P0-P2 bypass and 54 focused tests passing.",
+      "started_at": "2026-08-04T22:44:32+00:00",
+      "status": "completed",
+      "task": "Independent adversarial review of corrected canonical SNr packet authority",
       "write_set": []
     },
     "019fcf10-5da9-7390-9fc1-6c44151acb16": {
@@ -754,6 +754,17 @@
         "tests/test_snr_packet_kernels.py"
       ]
     },
+    "019fcf25-dafc-7e82-9afe-df118b4bd13e": {
+      "completed_at": "2026-08-04T23:52:38+00:00",
+      "heartbeat_at": "2026-08-04T23:52:38+00:00",
+      "model": "gpt-5.6-terra/high",
+      "next_action": "Controller validates dynamic-only schema-v2 continuation and tamper rejection.",
+      "result": "Specified packet checkpoint schema-v2 dynamic-only persistence, immutable regeneration, legacy compatibility, and continuation/tamper gates; controller implemented the design.",
+      "started_at": "2026-08-04T23:39:00+00:00",
+      "status": "completed",
+      "task": "Authenticated SNr packet checkpoint design audit",
+      "write_set": []
+    },
     "019fcf25-db1f-7bf3-a7fe-339f43b3b6be": {
       "completed_at": "2026-08-04T23:52:38+00:00",
       "heartbeat_at": "2026-08-04T23:52:38+00:00",
@@ -765,91 +776,22 @@
       "task": "Adversarial mixed-region SNr packet execution audit",
       "write_set": []
     },
-    "019fcf25-dafc-7e82-9afe-df118b4bd13e": {
-      "completed_at": "2026-08-04T23:52:38+00:00",
-      "heartbeat_at": "2026-08-04T23:52:38+00:00",
-      "model": "gpt-5.6-terra/high",
-      "next_action": "Controller validates dynamic-only schema-v2 continuation and tamper rejection.",
-      "result": "Specified packet checkpoint schema-v2 dynamic-only persistence, immutable regeneration, legacy compatibility, and continuation/tamper gates; controller implemented the design.",
-      "started_at": "2026-08-04T23:39:00+00:00",
+    "019fcf57-48f4-7b12-9d09-431a227f30bd": {
+      "completed_at": "2026-08-05T00:42:07+00:00",
+      "heartbeat_at": "2026-08-05T00:42:07+00:00",
+      "model": "gpt-5.6-terra",
+      "next_action": "Controller integrates compiler/verifier with the pinned source-sealed template and real readiness candidates.",
+      "result": "Implemented independent 69-leaf verifier, candidate-specific authority policy, production sealing/materialization, tamper checks, and candidate isolation; controller added late-failure rollback and symlink/exponent tests.",
+      "started_at": "2026-08-05T00:42:07+00:00",
       "status": "completed",
-      "task": "Authenticated SNr packet checkpoint design audit",
-      "write_set": []
+      "task": "Implement independent Stage B packet verifier and tests",
+      "write_set": [
+        "tools/v14_stageB_packet_verifier.py",
+        "tests/test_v14_stageB_packet_verifier.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T19:01:50+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
-    {
-      "at": "2026-08-04T19:01:50+00:00",
-      "detail": "ready",
-      "kind": "lane-update",
-      "subject": "v14-launch-overhead-profile"
-    },
-    {
-      "at": "2026-08-04T19:01:50+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "local-model-offload"
-    },
-    {
-      "at": "2026-08-04T19:11:08+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce15-8093-7c11-9e4b-4d5d2001bbf3"
-    },
-    {
-      "at": "2026-08-04T19:11:08+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce15-7b7f-7e32-ad9d-73587830f58f"
-    },
-    {
-      "at": "2026-08-04T19:15:00+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce33-338b-7172-87de-f73156acbc81"
-    },
-    {
-      "at": "2026-08-04T19:15:00+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce33-2e22-7e81-a666-017fea7d0d85"
-    },
-    {
-      "at": "2026-08-04T19:15:00+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-launch-overhead-profile"
-    },
-    {
-      "at": "2026-08-04T19:23:05+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce33-338b-7172-87de-f73156acbc81"
-    },
-    {
-      "at": "2026-08-04T19:23:05+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce33-2e22-7e81-a666-017fea7d0d85"
-    },
-    {
-      "at": "2026-08-04T19:27:04+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-launch-overhead-profile"
-    },
-    {
-      "at": "2026-08-04T19:28:53+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-launch-overhead-profile"
-    },
     {
       "at": "2026-08-04T19:31:46+00:00",
       "detail": "completed",
@@ -1425,6 +1367,30 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fcee6-78b0-73d1-9ad9-8ca9e5a01581"
+    },
+    {
+      "at": "2026-08-05T00:41:58+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T00:42:07+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcf57-48f4-7b12-9d09-431a227f30bd"
+    },
+    {
+      "at": "2026-08-05T00:42:07+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf57-48f4-7b12-9d09-431a227f30bd"
+    },
+    {
+      "at": "2026-08-05T00:42:38+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
     }
   ],
   "lanes": {
@@ -1507,6 +1473,17 @@
       "priority": 1,
       "resource": "agent_cpu_network",
       "status": "completed"
+    },
+    "gateb-v14-calcium-sk-research": {
+      "agent_id": "019fcedf-2d88-7b63-9150-a22ffa1a3bff",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "next_action": "Materialize accepted model-prior arms without promoting unresolved calcium geometry or coupling to measured authority.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu_network",
+      "status": "completed",
+      "write_set": []
     },
     "gateb-v14-channel-kernel-integration": {
       "delegation": "controller",
@@ -1600,6 +1577,17 @@
         "tests/test_snr_conductance_config.py"
       ]
     },
+    "gateb-v14-fast-hh-adult-physiology-research": {
+      "agent_id": "019fcedf-327a-7d12-a1d0-580e237dd154",
+      "delegation": "agent",
+      "heartbeat_at": "2026-08-04T22:42:07+00:00",
+      "next_action": "Use preparation-matched physiology for screen scoring and preserve juvenile channel values as transfer-bounded constraints.",
+      "owner": "controller",
+      "priority": 1,
+      "resource": "agent_cpu_network",
+      "status": "completed",
+      "write_set": []
+    },
     "gateb-v14-intrinsic-surface": {
       "agent_id": "019fce9d-53d2-7920-b0a1-da98fe0490df",
       "delegation": "agent",
@@ -1640,28 +1628,6 @@
       "resource": "local_cpu",
       "status": "completed"
     },
-    "gateb-v14-calcium-sk-research": {
-      "agent_id": "019fcedf-2d88-7b63-9150-a22ffa1a3bff",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-04T22:42:07+00:00",
-      "next_action": "Materialize accepted model-prior arms without promoting unresolved calcium geometry or coupling to measured authority.",
-      "owner": "controller",
-      "priority": 1,
-      "resource": "agent_cpu_network",
-      "status": "completed",
-      "write_set": []
-    },
-    "gateb-v14-fast-hh-adult-physiology-research": {
-      "agent_id": "019fcedf-327a-7d12-a1d0-580e237dd154",
-      "delegation": "agent",
-      "heartbeat_at": "2026-08-04T22:42:07+00:00",
-      "next_action": "Use preparation-matched physiology for screen scoring and preserve juvenile channel values as transfer-bounded constraints.",
-      "owner": "controller",
-      "priority": 1,
-      "resource": "agent_cpu_network",
-      "status": "completed",
-      "write_set": []
-    },
     "gateb-v14-performance": {
       "blocker": "",
       "delegation": "controller",
@@ -1695,19 +1661,23 @@
       ]
     },
     "gateb-v14-scorer-integration": {
-      "blocker": "No sealed Stage B runner yet emits candidate/job/manifest-bound raw traces for all required arms; caller-supplied metrics are not admissible evidence.",
+      "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-04T21:25:19+00:00",
-      "next_action": "Wait for sealed runner trace contracts; do not accept self-reported metric receipts.",
+      "heartbeat_at": "2026-08-05T00:42:38+00:00",
+      "next_action": "Commit the independent packet compiler/verifier and causal gates, then build the pinned source-sealed 69-leaf template and compile two isolated seed-free readiness candidates for the real runner.",
       "owner": "controller",
       "priority": 1,
-      "recovery_action": "After clamp and kinetics integration, build the runner to emit digest-bound raw traces, then recompute metrics inside a schema-driven scorer covering every readiness arm.",
-      "resource": "local_cpu",
-      "status": "blocked",
+      "recovery_action": "If any source cannot authorize an exact fixed value, keep that leaf explicitly model-prior or searched and leave readiness undefined; do not invent measured authority.",
+      "resource": "controller",
+      "status": "running",
       "write_set": [
-        "tools",
-        "tests",
-        "research/fixtures"
+        "tools/v14_stageB_packet_compiler.py",
+        "tools/v14_stageB_packet_verifier.py",
+        "tests/test_v14_stageB_packet_compiler.py",
+        "tests/test_v14_stageB_packet_verifier.py",
+        "research/specs/v14_snr_stageB_causal_gates.json",
+        "tests/test_v14_stageB_causal_gates.py",
+        "research/coordination/workboard.json"
       ]
     },
     "gateb-v14-source-metadata": {
@@ -2037,5 +2007,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-04T23:52:38+00:00"
+  "updated_at": "2026-08-05T00:42:38+00:00"
 }

@@ -1,0 +1,193 @@
+{
+  "schema": "v14-snr-stageB-causal-gates-v1",
+  "status": "readiness-draft-not-executable",
+  "provenance_exempt": "non-executed causal gate contract; contains no simulation result",
+  "device": "not_applicable_non_executed_protocol",
+  "target_packet": {
+    "path": "research/specs/v14_snr_stageB_target_packet.json",
+    "sha256": "50fde698cc5468dfabc5076d0b36cfda90e165c4ca599fda6582d121998b802a"
+  },
+  "evidence_classes": {
+    "source_reported": "a value and uncertainty stated by the primary article",
+    "derived": "arithmetic over filed source-reported values; not a measured interval",
+    "project_operational": "an explicit simulator decision used to make a directional result testable; not source evidence"
+  },
+  "causal_gates": [
+    {
+      "id": "nap-complete-lesion",
+      "source": "Ding-Wei-Zhou-2011",
+      "preparation": "juvenile rat SNr slice; transferred causal constraint",
+      "source_locator": "Ding, Wei, and Zhou 2011 Figure 11, Table 3, and associated Results",
+      "source_reported": {
+        "persistent_current_activation_approx_mV": -60.0,
+        "persistent_current_peak_voltage_approx_mV": -40.0,
+        "persistent_current_peak_mean_pA": 185.4,
+        "persistent_current_peak_sem_pA": 17.5,
+        "persistent_current_n": 7,
+        "riluzole_uM": 10.0,
+        "riluzole_hyperpolarization_mean_mV": 11.9,
+        "riluzole_hyperpolarization_sem_mV": 1.1,
+        "riluzole_n": 6,
+        "riluzole_cells_ceasing_spontaneous_firing": 6
+      },
+      "hard_gates": [
+        {"metric": "spike_count", "operator": "equal", "value": 0, "window_s": 1.0, "evidence_class": "project_operational"},
+        {"metric": "mean_membrane_voltage_change_mV", "operator": "less_than", "value": 0.0, "evidence_class": "source_reported_direction"}
+      ],
+      "forbidden_interpretations": ["the 11.9 mV hyperpolarization magnitude is an acceptance bound", "the juvenile current defines adult conductance density", "Atherton and Bevan supplied the riluzole result"]
+    },
+    {
+      "id": "cav2.2-complete-lesion",
+      "source": "Atherton-and-Bevan-2005",
+      "preparation": "juvenile rat SNr slice; transferred causal constraint",
+      "source_locator": "Atherton and Bevan 2005 Figure 6 and associated Results",
+      "source_reported": {
+        "omega_conotoxin_gvia_uM": 1.0,
+        "n": 6,
+        "rate_before_mean_hz": 11.22,
+        "rate_before_sd_hz": 4.35,
+        "rate_after_mean_hz": 13.97,
+        "rate_after_sd_hz": 4.84,
+        "cv_before_mean": 0.080,
+        "cv_before_sd": 0.029,
+        "cv_after_mean": 0.140,
+        "cv_after_sd": 0.080,
+        "paired_p": 0.031,
+        "medium_ahp_direction": "decreased"
+      },
+      "derived": {"rate_after_over_before": 1.2450980392156863, "cv_after_over_before": 1.75},
+      "hard_gates": [
+        {"metric": "firing_rate_hz", "operator": "lesion_greater_than_intact", "evidence_class": "source_reported_direction"},
+        {"metric": "isi_cv", "operator": "lesion_greater_than_intact", "evidence_class": "source_reported_direction"},
+        {"metric": "medium_ahp_depth_mV", "operator": "lesion_less_than_intact", "evidence_class": "source_reported_direction"}
+      ],
+      "secondary_objectives": ["rate_after_over_before", "cv_after_over_before"]
+    },
+    {
+      "id": "sk-complete-lesion",
+      "source": "Atherton-and-Bevan-2005",
+      "preparation": "juvenile rat SNr slice; transferred causal constraint",
+      "source_locator": "Atherton and Bevan 2005 Figure 5 and associated Results",
+      "source_reported": {
+        "apamin_nM": 100.0,
+        "total_n": 12,
+        "depolarization_block_n": 4,
+        "analyzed_nonblocked_n": 8,
+        "rate_before_mean_hz": 12.59,
+        "rate_before_sd_hz": 6.09,
+        "rate_after_mean_hz": 16.82,
+        "rate_after_sd_hz": 9.53,
+        "rate_p": 0.20,
+        "cv_before_mean": 0.054,
+        "cv_before_sd": 0.021,
+        "cv_after_mean": 0.162,
+        "cv_after_sd": 0.045,
+        "cv_p": 0.0078,
+        "threshold_before_mean_mV": -44.98,
+        "threshold_before_sd_mV": 4.73,
+        "threshold_after_mean_mV": -42.53,
+        "threshold_after_sd_mV": 5.41,
+        "threshold_p": 0.016,
+        "medium_ahp_direction": "decreased"
+      },
+      "hard_gates": [
+        {"metric": "isi_cv", "operator": "lesion_greater_than_intact", "evidence_class": "source_reported_direction"},
+        {"metric": "medium_ahp_depth_mV", "operator": "lesion_less_than_intact", "evidence_class": "source_reported_direction"},
+        {"metric": "depolarization_block_count", "operator": "greater_than_or_equal", "value": 1, "cohort_n": 12, "evidence_class": "project_operational"}
+      ],
+      "not_a_gate": ["firing-rate increase", "exact 4-of-12 depolarization-block match"]
+    },
+    {
+      "id": "hcn-complete-lesion",
+      "source": "Atherton-and-Bevan-2005",
+      "preparation": "juvenile rat SNr slice; transferred causal constraint",
+      "source_locator": "Atherton and Bevan 2005 Figure 4 and associated Results",
+      "source_reported": {
+        "zd7288_uM": 50.0,
+        "n": 6,
+        "rate_before_mean_hz": 12.86,
+        "rate_before_sd_hz": 4.78,
+        "rate_after_mean_hz": 11.33,
+        "rate_after_sd_hz": 4.23,
+        "rate_p": 0.31,
+        "cv_before_mean": 0.031,
+        "cv_before_sd": 0.004,
+        "cv_after_mean": 0.034,
+        "cv_after_sd": 0.007,
+        "cv_p": 0.84,
+        "activation_tau_mean_ms": 581.75,
+        "activation_tau_sd_ms": 297.74,
+        "functional_direction": "block increases input resistance during hyperpolarization below approximately -60 mV"
+      },
+      "hard_gates": [
+        {"metric": "lesion_spike_count", "operator": "greater_than", "value": 0, "evidence_class": "source_reported_direction"},
+        {"metric": "absolute_baseline_rate_change_fraction", "operator": "less_than_or_equal", "value": 0.20, "evidence_class": "project_operational"},
+        {"metric": "hyperpolarized_input_resistance_MOhm", "operator": "lesion_greater_than_intact", "evidence_class": "source_reported_direction"}
+      ],
+      "boundary": "the 20 percent rate limit is not a source equivalence interval"
+    },
+    {
+      "id": "direct-inhibitory-pause-release",
+      "source": "Simmons-et-al-2018",
+      "preparation": "adult mouse SNr slice, 60-90 days, 33-35 C",
+      "source_locator": "Simmons et al. 2018 Results and Figures 1-3",
+      "source_reported": {
+        "stimulus_peak_nS": 2.0,
+        "stimulus_rise_ms": 1.3,
+        "stimulus_decay_ms": 5.0,
+        "pause_low_ms": 5.0,
+        "pause_high_ms": 30.0,
+        "pause_mean_ms": 13.8,
+        "pause_sd_ms": 5.6,
+        "pause_area_mean_spikes": -0.252,
+        "pause_area_sd_spikes": 0.130
+      },
+      "hard_gates": [
+        {"metric": "pause_duration_ms", "operator": "bounded_interval", "low": 5.0, "high": 30.0, "evidence_class": "source_reported"},
+        {"metric": "pause_area_spikes", "operator": "less_than", "value": 0.0, "evidence_class": "source_reported_direction"},
+        {"metric": "post_release_overshoot_area_spikes", "operator": "greater_than", "value": 0.0, "evidence_class": "source_reported_direction"}
+      ]
+    },
+    {
+      "id": "pallidal-barrage-step-release",
+      "source": "Simmons-et-al-2020",
+      "preparation": "adult mouse SNr slice, 60-90 days, 33-35 C",
+      "source_locator": "Simmons et al. 2020 Methods and Figures 2-4",
+      "source_reported": {
+        "event_rate_hz": 90.0,
+        "event_peak_low_nS": 1.6,
+        "event_peak_high_nS": 2.4,
+        "event_rise_ms": 0.4,
+        "event_decay_ms": 2.1,
+        "rate_reduction_low_fraction": 0.20,
+        "rate_reduction_high_fraction": 0.50,
+        "release_comparison_n": 18,
+        "step_more_inhibitory_p": 0.00028,
+        "step_greater_overshoot_p": 0.00046,
+        "step_over_barrage_overshoot_area_ratio_mean": 2.1,
+        "step_over_barrage_overshoot_area_ratio_sd": 1.6,
+        "first_post_release_isi_vs_baseline_p": 0.62
+      },
+      "hard_gates": [
+        {"metric": "steady_state_rate_reduction_fraction", "operator": "bounded_interval", "low": 0.20, "high": 0.50, "evidence_class": "source_reported"},
+        {"metric": "matched_mean_step_rate_reduction", "operator": "greater_than_barrage", "evidence_class": "source_reported_direction"},
+        {"metric": "barrage_isi_cv", "operator": "greater_than_matched_mean_step", "evidence_class": "source_reported_direction"},
+        {"metric": "release_overshoot_area", "operator": "step_greater_than_barrage", "evidence_class": "source_reported_direction"},
+        {"metric": "first_post_release_isi_change_fraction", "operator": "absolute_less_than_or_equal", "value": 0.05, "evidence_class": "project_operational"}
+      ],
+      "descriptive_not_hard_interval": ["step_over_barrage_overshoot_area_ratio_mean", "step_over_barrage_overshoot_area_ratio_sd"]
+    }
+  ],
+  "scope_decisions": {
+    "adult_capacitance_and_input_resistance": {
+      "decision": "exclude_from_stageB_scoring",
+      "reason": "available values use Cs-internal voltage clamp or otherwise unmatched cohorts",
+      "remaining_role": "capacitance density and passive leak stay explicit model priors or searched parameters and cannot earn biological validation from a rate fit"
+    },
+    "calcium_reversal": {
+      "primary_campaign": "constant packet E_Ca as an explicitly labelled model prior",
+      "held_out_sensitivity": "dynamic Nernst E_Ca must preserve Cav2.2/SK causal signs without extreme-reversal rate rescue or new depolarization block",
+      "engineering_status": "dynamic packet E_Ca mode is not yet implemented and remains a readiness blocker for held-out promotion"
+    }
+  }
+}
