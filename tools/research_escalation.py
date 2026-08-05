@@ -170,6 +170,16 @@ def _validated_packet_record(record: dict[str, Any]) -> tuple[dict[str, Any], bo
     return packet, _packet_is_promotable(packet)
 
 
+def _display_packet_path(raw_path: str) -> str:
+    path = Path(raw_path)
+    if not path.is_absolute():
+        return path.as_posix()
+    try:
+        return path.relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return str(path)
+
+
 def _render(state: dict[str, Any]) -> str:
     questions = state["questions"]
     searches = state.get("searches", [])
@@ -281,14 +291,16 @@ def _render(state: dict[str, Any]) -> str:
     else:
         lines.append("No source has been recorded yet.")
 
-    lines.extend(["", "## External research packets", ""])
+    # Packet values are quotations from independently reviewed external sources,
+    # not measurements produced by a local experiment artifact.
+    lines.extend(["", "## External research packets", "", "<!--derived-->", ""])
     if packets:
         for handoff in packets:
             packet = handoff["packet"]
             lines.extend([
                 f"### {handoff['id']}: question {handoff['question_id']}",
                 "",
-                f"- Packet file: `{_safe_cell(handoff['packet_path'])}`",
+                f"- Packet file: `{_safe_cell(_display_packet_path(handoff['packet_path']))}`",
                 f"- Received: {handoff['received_at']}",
                 f"- Review status: `{handoff['status']}`; promotable as resolved evidence: `{handoff['promotable']}`",
                 "- Prior-work matches:",

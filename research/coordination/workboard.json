@@ -2046,8 +2046,8 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T10:07:18+00:00",
-      "next_action": "Bind retrievable Khaliq/Raman evidence to P1/P2/W1 and Labro plus Desai evidence to P3/W2, resolve all five gate questions with explicit transfer limits, finalize the unmodified comparator experiment, then preregister and execute Stage 1.",
+      "heartbeat_at": "2026-08-05T10:14:53+00:00",
+      "next_action": "Preregister the four unmodified source-transfer arms with exact source and code hashes, original temperature conventions, initial occupancy rules, sealed Ding waveforms, CPU authority, GPU parity tolerance, and independent stop rules; then implement and execute Stage 1 before any calibration or Stage 2 integration.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not treat cross-preparation models as SNr truth, graft unsupported transitions, tune conductance, or enter Stage 2. Each comparator must run unmodified under the sealed Ding commands first.",
@@ -2447,5 +2447,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T10:07:18+00:00"
+  "updated_at": "2026-08-05T10:14:53+00:00"
 }
