@@ -789,21 +789,22 @@
         "tools/v14_stageB_packet_verifier.py",
         "tests/test_v14_stageB_packet_verifier.py"
       ]
+    },
+    "019fcf61-3937-70f1-aad6-a10a1a9f0c05": {
+      "heartbeat_at": "2026-08-05T00:44:49+00:00",
+      "model": "gpt-5.6-sol-high",
+      "next_action": "Implement and test disjoint template/spec files without promoting model priors to measurements.",
+      "started_at": "2026-08-05T00:44:49+00:00",
+      "status": "running",
+      "task": "Build source-bound Stage B 69-leaf packet template and executable spec",
+      "write_set": [
+        "research/specs/v14_snr_stageB_packet_template.json",
+        "research/specs/v14_snr_stageB_executable_spec.json",
+        "tests/test_v14_stageB_packet_template.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T19:31:46+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v14-launch-overhead-profile"
-    },
-    {
-      "at": "2026-08-04T19:31:46+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-stageA"
-    },
     {
       "at": "2026-08-04T19:31:46+00:00",
       "detail": "running",
@@ -1391,6 +1392,18 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T00:44:49+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcf61-3937-70f1-aad6-a10a1a9f0c05"
+    },
+    {
+      "at": "2026-08-05T00:47:32+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
     }
   ],
   "lanes": {
@@ -1663,20 +1676,19 @@
     "gateb-v14-scorer-integration": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T00:42:38+00:00",
-      "next_action": "Commit the independent packet compiler/verifier and causal gates, then build the pinned source-sealed 69-leaf template and compile two isolated seed-free readiness candidates for the real runner.",
+      "heartbeat_at": "2026-08-05T00:47:32+00:00",
+      "next_action": "Commit candidate-release binding in the real runner, integrate the source-bound 69-leaf template/spec from the active scientific agent, then compile and execute two isolated seed-free real-model readiness candidates.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "If any source cannot authorize an exact fixed value, keep that leaf explicitly model-prior or searched and leave readiness undefined; do not invent measured authority.",
       "resource": "controller",
       "status": "running",
       "write_set": [
-        "tools/v14_stageB_packet_compiler.py",
-        "tools/v14_stageB_packet_verifier.py",
-        "tests/test_v14_stageB_packet_compiler.py",
-        "tests/test_v14_stageB_packet_verifier.py",
-        "research/specs/v14_snr_stageB_causal_gates.json",
-        "tests/test_v14_stageB_causal_gates.py",
+        "research/runners/v14_stageB_physiology.py",
+        "tests/test_v14_stageB_runner.py",
+        "research/specs/v14_snr_stageB_packet_template.json",
+        "research/specs/v14_snr_stageB_executable_spec.json",
+        "tests/test_v14_stageB_packet_template.py",
         "research/coordination/workboard.json"
       ]
     },
@@ -2007,5 +2019,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T00:42:38+00:00"
+  "updated_at": "2026-08-05T00:47:32+00:00"
 }

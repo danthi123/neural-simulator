@@ -43,10 +43,25 @@ OUTPUT_SCHEMA = "v14-snr-stageB-physiology-observation-v1"
 READINESS_ARM = "intact_autonomous"
 _REFERENCE_KEYS = frozenset(
     {
+        "snr_candidate_release_path",
+        "snr_candidate_release_sha256",
         "snr_executable_packet_path",
         "snr_executable_packet_sha256",
         "snr_authority_policy_path",
         "snr_authority_policy_sha256",
+    }
+)
+_RELEASE_ARTIFACT_KEYS = frozenset(
+    {
+        "compilation_request_sha256",
+        "evidence_claims_sha256",
+        "authority_claims_sha256",
+        "structural_packet_sha256",
+        "artifacts_verified_packet_sha256",
+        "adjudication_sha256",
+        "authority_policy_sha256",
+        "sealed_packet_sha256",
+        "materialized_sha256",
     }
 )
 
@@ -123,8 +138,6 @@ def _load_parameter_document(value: str) -> dict[str, Any]:
     effective_parameters = document["effective_parameters"]
     if not isinstance(candidate_parameters, Mapping) or not isinstance(arm_parameters, Mapping):
         raise StageBPhysiologyRunnerError("adaptive parameter document parameters must be objects")
-    if arm_parameters:
-        raise StageBPhysiologyRunnerError("intact autonomous readiness has no arm parameters")
     if not isinstance(effective_parameters, Mapping):
         raise StageBPhysiologyRunnerError("effective_parameters must be an object")
     expected_candidate = {
@@ -140,24 +153,38 @@ def _load_parameter_document(value: str) -> dict[str, Any]:
         raise StageBPhysiologyRunnerError(
             "effective_parameters does not exactly merge candidate and arm parameters"
         )
-    if set(effective_parameters) != _REFERENCE_KEYS:
+    if not candidate_parameters or set(candidate_parameters) & _REFERENCE_KEYS:
         raise StageBPhysiologyRunnerError(
-            "effective_parameters must contain only packet and authority-policy references"
+            "candidate_parameters must contain only the numeric compiled candidate"
+        )
+    if set(arm_parameters) != _REFERENCE_KEYS:
+        raise StageBPhysiologyRunnerError(
+            "intact autonomous arm parameters must contain packet, policy, and release references"
+        )
+    if set(effective_parameters) != set(candidate_parameters) | _REFERENCE_KEYS:
+        raise StageBPhysiologyRunnerError(
+            "effective_parameters must contain only candidate values and authenticated references"
         )
     if _contains_seed(document):
         raise StageBPhysiologyRunnerError("readiness parameter documents must not contain seed data")
     references = {
+        "release_path": _canonical_relative_path(
+            arm_parameters["snr_candidate_release_path"], "snr_candidate_release_path"
+        ),
+        "release_sha256": _sha256(
+            arm_parameters["snr_candidate_release_sha256"], "snr_candidate_release_sha256"
+        ),
         "packet_path": _canonical_relative_path(
-            effective_parameters["snr_executable_packet_path"], "snr_executable_packet_path"
+            arm_parameters["snr_executable_packet_path"], "snr_executable_packet_path"
         ),
         "packet_sha256": _sha256(
-            effective_parameters["snr_executable_packet_sha256"], "snr_executable_packet_sha256"
+            arm_parameters["snr_executable_packet_sha256"], "snr_executable_packet_sha256"
         ),
         "policy_path": _canonical_relative_path(
-            effective_parameters["snr_authority_policy_path"], "snr_authority_policy_path"
+            arm_parameters["snr_authority_policy_path"], "snr_authority_policy_path"
         ),
         "policy_sha256": _sha256(
-            effective_parameters["snr_authority_policy_sha256"], "snr_authority_policy_sha256"
+            arm_parameters["snr_authority_policy_sha256"], "snr_authority_policy_sha256"
         ),
     }
     return {**document, "candidate_parameters": dict(candidate_parameters),
@@ -171,6 +198,55 @@ def _candidate_echo(document: Mapping[str, Any]) -> dict[str, Any]:
         "candidate_sha256": document["candidate_sha256"],
         "effective_parameters": dict(document["effective_parameters"]),
     }
+
+
+def _load_candidate_release(
+    root: Path, references: Mapping[str, str], document: Mapping[str, Any]
+) -> dict[str, Any]:
+    release_path = root.joinpath(*PurePosixPath(references["release_path"]).parts).resolve()
+    try:
+        release_path.relative_to(root)
+        raw = release_path.read_bytes()
+        release = json.loads(raw)
+    except (ValueError, OSError, json.JSONDecodeError) as exc:
+        raise StageBPhysiologyRunnerError(f"cannot load candidate release: {exc}") from exc
+    if _sha256_bytes(raw) != references["release_sha256"]:
+        raise StageBPhysiologyRunnerError("candidate release digest does not match")
+    if raw != _canonical_bytes(release):
+        raise StageBPhysiologyRunnerError("candidate release is not canonical JSON")
+    required = {"schema", "template", "candidate", "artifacts", "fitted_value_status"}
+    if not isinstance(release, Mapping) or set(release) != required:
+        raise StageBPhysiologyRunnerError("candidate release has an invalid shape")
+    if release.get("schema") != "v14-snr-stageB-candidate-release-v1":
+        raise StageBPhysiologyRunnerError("candidate release has the wrong schema")
+    template = release.get("template")
+    if (not isinstance(template, Mapping) or set(template) != {"template_id", "sha256"}
+            or not isinstance(template.get("template_id"), str) or not template["template_id"]):
+        raise StageBPhysiologyRunnerError("candidate release has an invalid template binding")
+    _sha256(template.get("sha256"), "candidate release template sha256")
+    candidate = release.get("candidate")
+    if not isinstance(candidate, Mapping) or set(candidate) != {"candidate_id", "sha256"}:
+        raise StageBPhysiologyRunnerError("candidate release has an invalid candidate binding")
+    if (candidate["candidate_id"] != document["candidate_id"]
+            or candidate["sha256"] != document["candidate_sha256"]):
+        raise StageBPhysiologyRunnerError("candidate release does not bind the adaptive candidate")
+    artifacts = release.get("artifacts")
+    if not isinstance(artifacts, Mapping) or set(artifacts) != _RELEASE_ARTIFACT_KEYS:
+        raise StageBPhysiologyRunnerError("candidate release has invalid artifact bindings")
+    for name, digest in artifacts.items():
+        _sha256(digest, f"candidate release {name}")
+    if (artifacts.get("sealed_packet_sha256") != references["packet_sha256"]
+            or artifacts.get("authority_policy_sha256") != references["policy_sha256"]):
+        raise StageBPhysiologyRunnerError("candidate release does not bind the packet and policy")
+    if release.get("fitted_value_status") != (
+        "Fitted values remain derived/model priors, never measurements."
+    ):
+        raise StageBPhysiologyRunnerError("candidate release changed the fitted-value evidence boundary")
+    parent = PurePosixPath(references["release_path"]).parent
+    if (PurePosixPath(references["packet_path"]) != parent / "packet.sealed.json"
+            or PurePosixPath(references["policy_path"]) != parent / "authority-policy.json"):
+        raise StageBPhysiologyRunnerError("candidate release, packet, and policy must be verifier siblings")
+    return dict(release)
 
 
 def _build_config(references: Mapping[str, str]) -> CoreSimConfig:
@@ -227,6 +303,7 @@ def _output_document(
     spike_states: list[list[bool]],
     dt_ms: float,
     root: Path,
+    candidate_release: Mapping[str, Any],
 ) -> dict[str, Any]:
     steps = len(voltage_millivolts)
     if steps != len(spike_states) or steps == 0:
@@ -268,6 +345,11 @@ def _output_document(
                 runtime_binding_manifest_bytes(bindings)
             ),
             "bindings": [_binding_provenance(binding)],
+            "candidate_release": {
+                "path": document["references"]["release_path"],
+                "sha256": document["references"]["release_sha256"],
+                "candidate_sha256": candidate_release["candidate"]["sha256"],
+            },
         },
     }
 
@@ -291,6 +373,7 @@ def run_readiness_intact(
     if backend_name != "numpy" or backend is not np:
         raise StageBPhysiologyRunnerError("V14 Stage B readiness runner did not acquire NumPy")
 
+    candidate_release = _load_candidate_release(root, document["references"], document)
     config = _build_config(document["references"])
     bindings = load_runtime_snr_packet_bindings(config, source_root=root)
     binding = bindings.get("snr")
@@ -340,6 +423,7 @@ def run_readiness_intact(
         spike_states=spike_states,
         dt_ms=config.dt_ms,
         root=root,
+        candidate_release=candidate_release,
     )
     destination.parent.mkdir(parents=True, exist_ok=True)
     try:
