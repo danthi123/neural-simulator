@@ -874,33 +874,23 @@
         "tools/v14_stageB_scorer.py",
         "tests/test_v14_stageB_scorer.py"
       ]
+    },
+    "019fcf8e-008e-76e3-85c6-0f73e987bf52": {
+      "completed_at": "2026-08-05T01:42:01+00:00",
+      "heartbeat_at": "2026-08-05T01:42:01+00:00",
+      "model": "gpt-5.6-luna-high",
+      "next_action": "Commit source, run the orchestrator on a real pinned candidate, then implement event-count production protocols.",
+      "result": "Implemented authenticated one-candidate five-arm intrinsic readiness orchestrator with digest-bound scorer invocation, cleanup, provenance, and unambiguous null-verdict/UNAVAILABLE receipt semantics.",
+      "started_at": "2026-08-05T01:33:45+00:00",
+      "status": "completed",
+      "task": "Implement authenticated five-arm intrinsic readiness orchestrator",
+      "write_set": [
+        "tools/v14_stageB_intrinsic_readiness.py",
+        "tests/test_v14_stageB_intrinsic_readiness.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T19:59:52+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "v14-performance-harness-v2"
-    },
-    {
-      "at": "2026-08-04T19:59:52+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fce5c-2d4c-7fa2-98f7-102bfcc7795f"
-    },
-    {
-      "at": "2026-08-04T20:05:30+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fce5c-2d4c-7fa2-98f7-102bfcc7795f"
-    },
-    {
-      "at": "2026-08-04T20:05:30+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "v14-performance-harness-v2"
-    },
     {
       "at": "2026-08-04T20:05:30+00:00",
       "detail": "running",
@@ -1476,6 +1466,30 @@
       "detail": "completed",
       "kind": "agent-finish",
       "subject": "019fcf7f-abf3-7461-ab37-64435480823d"
+    },
+    {
+      "at": "2026-08-05T01:33:45+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fcf8e-008e-76e3-85c6-0f73e987bf52"
+    },
+    {
+      "at": "2026-08-05T01:33:45+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
+    },
+    {
+      "at": "2026-08-05T01:42:01+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fcf8e-008e-76e3-85c6-0f73e987bf52"
+    },
+    {
+      "at": "2026-08-05T01:43:10+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-scorer-integration"
     }
   ],
   "lanes": {
@@ -1766,12 +1780,12 @@
     "gateb-v14-scorer-integration": {
       "blocker": "",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T01:18:34+00:00",
-      "next_action": "Integrate the parallel intrinsic-lesion runner and scorer outputs, then extend authenticated candidate execution across those causal arms without opening scientific partitions.",
+      "heartbeat_at": "2026-08-05T01:43:10+00:00",
+      "next_action": "Commit the authenticated five-arm orchestrator, run one pinned real candidate, audit the UNAVAILABLE scorer receipt, then implement event-count production protocols.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "If any source cannot authorize an exact fixed value, keep that leaf explicitly model-prior or searched and leave readiness undefined; do not invent measured authority.",
-      "resource": "remote_agent",
+      "resource": "controller",
       "status": "running",
       "write_set": [
         "research/runners/v14_stageB_physiology.py",
@@ -2109,5 +2123,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T01:32:34+00:00"
+  "updated_at": "2026-08-05T01:43:10+00:00"
 }
