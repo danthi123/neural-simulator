@@ -48,6 +48,7 @@ OUTPUT_SCHEMA = "v14-snr-stageB-physiology-observation-v1"
 ANALYSIS_PROTOCOL_SCHEMAS = frozenset({
     "v14-snr-stageB-intrinsic-protocol-v1",
     "v14-snr-stageB-intrinsic-protocol-v2",
+    "v14-snr-stageB-intrinsic-protocol-v3",
 })
 READINESS_ARM = "intact_autonomous"
 READINESS_ARMS = frozenset(

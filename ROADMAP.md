@@ -132,8 +132,11 @@ its controls and lesions, and is tested at the required seed coverage.
    completed authenticated five-arm NumPy confirmation on separate mini-PCs,
    and independent local replay exactly reproduced their scores. Both pass all
    five currently computable checks, but the strict result remains
-   `UNAVAILABLE`, not GO. AHP, HCN current-step, SK cohort, and Nap voltage
-   protocols remain unavailable; delayed
+   `UNAVAILABLE`, not GO. Both candidates then passed the V2 directional
+   total-AHP assay. V3 now files and automatically executes authenticated
+   same-cell NaP and paired HCN current-family assays; authoritative candidate
+   results are pending. The heterogeneous 12-cell SK cohort remains
+   unavailable; delayed
    action-reward learning and its unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
@@ -178,8 +181,10 @@ required integrated form.
   partitions early. Run the exact filed 512-candidate Sobol manifest through
   GPU engineering screening, then confirm candidates with authoritative
   NumPy/CPU runs. The first exact campaign and its two CPU confirmations are
-  complete. AHP, HCN current-step, SK cohort, and Nap voltage gates stay
-  unavailable until their source-faithful protocols are fully filed.
+  complete, and both candidates pass the V2 total-AHP direction. Execute the
+  filed V3 NaP and HCN companion assays next. Keep the heterogeneous 12-cell SK
+  cohort unavailable until independently justified cells and a block detector
+  are preregistered.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
 - Specify and resolve the source-monitoring no-harm tradeoff before another
@@ -273,13 +278,16 @@ next search is blocked on unresolved biological protocols, and arbitrary
 new objectives must not be invented from partial evidence. Unspecified
 subgates remain fail-closed.
 
-A versioned V2 contract now resolves the post-spike AHP direction without
+A versioned V2 contract resolves the post-spike AHP direction without
 pretending the paper specified a medium-AHP window: the scorer recomputes the
 median voltage nadir across all 100 complete interspike intervals. The original
-V1 files remain byte-identical for historical replay. NaP voltage and HCN input
-resistance have source-supported directions but require explicitly
-project-operational companion protocols; the 12-cell SK result remains
-unavailable until independently justified cell parameterizations exist.
+V1 files remain byte-identical for historical replay, and both survivors pass
+the V2 Cav2.2 and SK directions. V3 adds explicit project-operational NaP and
+HCN companion protocols. The controller now generates their raw traces and the
+scorer independently recomputes stable-baseline voltage change, post-lesion
+spiking, and paired hyperpolarized V-I slopes. These are direction tests, not
+claims that simulator lesions reproduce drug protocols. The 12-cell SK result
+remains unavailable until independently justified cell parameterizations exist.
 
 1. **Plan.** Materialize the treatment, controls, lesions, anti-cheats, exact
    variables, seed partitions, expected artifacts, and resource budget.

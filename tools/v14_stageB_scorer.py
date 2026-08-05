@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import math
+import statistics
 from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -13,8 +14,10 @@ from typing import Any
 from tools.compact_trace import CompactTraceError, load_compact_trace
 from tools.v14_stageB_physiology_metrics import (
     ahp_depth,
+    hcn_vi_family_slope,
     interspike_voltage_nadirs,
     peak_conductance,
+    phased_nap_voltage_measure,
     spike_train_metrics,
 )
 from tools.v14_stageB_scorer_fixtures import StageBFixtureError, score_observation, validate_fixture
@@ -23,6 +26,7 @@ from tools.v14_stageB_scorer_fixtures import StageBFixtureError, score_observati
 SCHEMA = "v14-snr-stageB-raw-observations-v1"
 RESULT_SCHEMA = "v14-snr-stageB-score-v1"
 INTRINSIC_LESION_SCHEMA = "v14-snr-stageB-intrinsic-lesion-observations-v1"
+INTRINSIC_LESION_SCHEMA_V2 = "v14-snr-stageB-intrinsic-lesion-observations-v2"
 INTRINSIC_LESION_RESULT_SCHEMA = "v14-snr-stageB-intrinsic-lesion-score-v1"
 
 _INTRINSIC_LESION_IDS = (
@@ -43,6 +47,10 @@ _GATE_ARMS = {
     "cav2.2-complete-lesion": "cav2_2_lesion",
     "sk-complete-lesion": "sk_lesion",
     "hcn-complete-lesion": "hcn_baseline_lesion",
+}
+_COMPANION_ASSAYS = {
+    "nap": ("nap_same_cell_phased_voltage", "nap_lesion"),
+    "hcn": ("hcn_hyperpolarized_current_family", "hcn_baseline_lesion"),
 }
 
 
@@ -267,6 +275,7 @@ def _load_trace_protocol(
             or document.get("schema") not in {
                 "v14-snr-stageB-intrinsic-protocol-v1",
                 "v14-snr-stageB-intrinsic-protocol-v2",
+                "v14-snr-stageB-intrinsic-protocol-v3",
             }
             or document.get("status") != "production-measurement-partial"):
         raise StageBScorerError(f"runner artifact {arm!r} analysis protocol changed schema or status")
@@ -552,6 +561,337 @@ def _load_intrinsic_runner_artifacts(
     return documents, bindings, candidate
 
 
+def _load_companion_trace(
+    root: Path, declaration: Any, context: str,
+) -> tuple[list[float], list[float], list[float], dict[str, Any]]:
+    required = {
+        "path", "sha256", "sample_count", "sample_interval_s", "sample_semantics",
+        "time_unit", "voltage_unit",
+    }
+    if not isinstance(declaration, Mapping) or set(declaration) != required:
+        raise StageBScorerError(f"{context} compact trace has an invalid shape")
+    if (declaration.get("sample_semantics") != "post-update state at the declared time"
+            or declaration.get("time_unit") != "s" or declaration.get("voltage_unit") != "mV"):
+        raise StageBScorerError(f"{context} compact trace changed units or sample semantics")
+    times, voltages, spikes = _load_compact_trace_vectors(
+        root, {key: declaration[key] for key in ("path", "sha256")}, context,
+    )
+    dt = _finite_number(declaration.get("sample_interval_s"), f"{context}.sample_interval_s")
+    if (dt <= 0.0 or declaration.get("sample_count") != len(times)
+            or len(times) != len(voltages) or len(times) != len(spikes)):
+        raise StageBScorerError(f"{context} compact trace metadata does not match its vectors")
+    tolerance = max(1e-12, dt * 1e-9)
+    if (not math.isclose(times[0], dt, abs_tol=tolerance)
+            or any(not math.isclose(right - left, dt, abs_tol=tolerance)
+                   for left, right in zip(times, times[1:]))):
+        raise StageBScorerError(f"{context} compact trace time vector is not the filed uncropped trace")
+    spike_times = [time for time, spike in zip(times, spikes, strict=True) if spike]
+    return times, voltages, spike_times, {
+        "path": str(declaration["path"]), "sha256": str(declaration["sha256"]),
+    }
+
+
+def _validate_companion_parameter_document(
+    root: Path, declaration: Any, *, assay: str, candidate: Mapping[str, Any],
+    base_artifact: Mapping[str, Any],
+) -> dict[str, str]:
+    path, parameter = _load_bound_json(root, declaration, f"{assay} companion parameter document")
+    required = {
+        "schema", "candidate_id", "candidate_sha256", "candidate_parameters", "arm",
+        "arm_parameters", "effective_parameters",
+    }
+    expected_arm = _COMPANION_ASSAYS[assay][1]
+    if (set(parameter) != required or parameter.get("schema") != "sim-adaptive-run-parameters-v1"
+            or parameter.get("arm") != expected_arm):
+        raise StageBScorerError(f"{assay} companion parameter document does not bind its base arm")
+    if _candidate_echo({
+        "candidate_id": parameter.get("candidate_id"),
+        "candidate_sha256": parameter.get("candidate_sha256"),
+        "effective_parameters": parameter.get("effective_parameters"),
+    }) != candidate:
+        raise StageBScorerError(f"{assay} companion parameter document changed candidate identity")
+    candidate_parameters = parameter.get("candidate_parameters")
+    arm_parameters = parameter.get("arm_parameters")
+    if (not isinstance(candidate_parameters, Mapping) or not candidate_parameters
+            or not isinstance(arm_parameters, Mapping)
+            or dict(parameter["effective_parameters"]) != {
+                **dict(candidate_parameters), **dict(arm_parameters),
+            }):
+        raise StageBScorerError(f"{assay} companion parameter document has inconsistent parameters")
+    candidate_payload = {
+        "schema": "sim-adaptive-candidate-v1",
+        "candidate_id": parameter["candidate_id"],
+        "parameters": dict(candidate_parameters),
+    }
+    candidate_digest = _digest_bytes(json.dumps(
+        candidate_payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+    ).encode("ascii"))
+    if candidate_digest != parameter["candidate_sha256"]:
+        raise StageBScorerError(f"{assay} companion parameter document has a false candidate digest")
+    expected_references = {
+        "snr_candidate_release_path", "snr_candidate_release_sha256",
+        "snr_executable_packet_path", "snr_executable_packet_sha256",
+        "snr_authority_policy_path", "snr_authority_policy_sha256",
+    }
+    if set(arm_parameters) != expected_references:
+        raise StageBScorerError(f"{assay} companion parameter document changed reference scope")
+    provenance = base_artifact.get("provenance")
+    release = provenance.get("candidate_release") if isinstance(provenance, Mapping) else None
+    bindings = provenance.get("bindings") if isinstance(provenance, Mapping) else None
+    binding = bindings[0] if isinstance(bindings, list) and len(bindings) == 1 else None
+    if (not isinstance(release, Mapping) or not isinstance(binding, Mapping)
+            or arm_parameters["snr_candidate_release_path"] != release.get("path")
+            or arm_parameters["snr_candidate_release_sha256"] != release.get("sha256")
+            or parameter["candidate_sha256"] != release.get("candidate_sha256")
+            or arm_parameters["snr_executable_packet_path"] != binding.get("packet_path")
+            or arm_parameters["snr_executable_packet_sha256"] != binding.get("packet_file_sha256")
+            or arm_parameters["snr_authority_policy_sha256"] != binding.get("authority_policy_sha256")):
+        raise StageBScorerError(f"{assay} companion parameter document does not match its base arm")
+    return {"path": path.relative_to(root).as_posix(), "sha256": _digest_bytes(path.read_bytes())}
+
+
+def _validate_companion_common(
+    root: Path, assay: str, declaration: Any, *, candidate: Mapping[str, Any],
+    base_artifact: Mapping[str, Any], causal_binding: Mapping[str, str],
+    authorized_protocol: Mapping[str, str],
+) -> tuple[dict[str, Any], dict[str, str], dict[str, str]]:
+    path, document = _load_bound_json(root, declaration, f"{assay} companion observation")
+    required = {
+        "schema", "process_status", "assay", "backend", "device", "scientific_verdict",
+        "adaptive_candidate", "contracts", "provenance", "observation",
+    }
+    expected_assay, _ = _COMPANION_ASSAYS[assay]
+    if (set(document) != required
+            or document.get("schema") != "v14-snr-stageB-companion-physiology-v1"
+            or document.get("process_status") != "completed"
+            or document.get("assay") != expected_assay
+            or document.get("backend") != "numpy" or document.get("device") != "cpu"
+            or document.get("scientific_verdict") is not None):
+        raise StageBScorerError(f"{assay} companion observation is not a completed verdict-free CPU artifact")
+    if _candidate_echo(document.get("adaptive_candidate")) != candidate:
+        raise StageBScorerError(f"{assay} companion observation changed candidate identity")
+    contracts = document.get("contracts")
+    if not isinstance(contracts, Mapping) or set(contracts) != {
+        "parameter_document", "protocol_spec", "causal_gate"
+    }:
+        raise StageBScorerError(f"{assay} companion observation has invalid contract bindings")
+    if contracts.get("protocol_spec") != authorized_protocol or contracts.get("causal_gate") != causal_binding:
+        raise StageBScorerError(f"{assay} companion observation does not bind the scorer's V3 contracts")
+    parameter_binding = _validate_companion_parameter_document(
+        root, contracts.get("parameter_document"), assay=assay, candidate=candidate,
+        base_artifact=base_artifact,
+    )
+    provenance = document.get("provenance")
+    base_provenance = base_artifact.get("provenance")
+    if (not isinstance(provenance, Mapping) or set(provenance) != {
+            "runner", "repository_root", "runtime_binding_manifest_sha256", "bindings",
+            "candidate_release",
+        } or provenance.get("runner") != "research/runners/v14_stageB_companion_physiology.py"
+            or not isinstance(base_provenance, Mapping)
+            or provenance.get("runtime_binding_manifest_sha256")
+            != base_provenance.get("runtime_binding_manifest_sha256")
+            or provenance.get("bindings") != base_provenance.get("bindings")
+            or provenance.get("candidate_release") != base_provenance.get("candidate_release")):
+        raise StageBScorerError(f"{assay} companion provenance does not match its base arm")
+    return document, {
+        "path": path.relative_to(root).as_posix(), "sha256": _digest_bytes(path.read_bytes()),
+    }, parameter_binding
+
+
+def _recompute_nap_companion(root: Path, document: Mapping[str, Any]) -> dict[str, Any]:
+    observation = document.get("observation")
+    if not isinstance(observation, Mapping) or set(observation) != {
+        "kind", "compact_trace", "phase_schedule", "runtime_intervention"
+    } or observation.get("kind") != "same_cell_phased_voltage_spike_trace" or observation.get(
+        "phase_schedule"
+    ) != {"intact_baseline_s": [0.0, 2.0], "post_lesion_s": [2.0, 3.0]}:
+        raise StageBScorerError("nap companion changed the filed same-cell phase schedule")
+    times, voltages, spikes, trace_binding = _load_companion_trace(
+        root, observation.get("compact_trace"), "nap companion",
+    )
+    trace = observation["compact_trace"]
+    dt = float(trace["sample_interval_s"])
+    if len(times) != 60_000 or not math.isclose(dt, 0.00005, abs_tol=1e-15):
+        raise StageBScorerError("nap companion trace does not contain the filed three-second assay")
+    intervention = observation.get("runtime_intervention")
+    fixed = {
+        "kind": "complete_intrinsic_current_lesion",
+        "operation": "set_conductance_density_to_zero_between_post_update_samples",
+        "target": "nap", "timestamp_s": 2.0, "lesion_onset_sample_index": 39_999,
+        "lesion_onset_sample_number": 40_000, "last_intact_sample_s": 1.99995,
+        "first_lesion_sample_s": 2.0, "runtime_conductance_field": "cp_snr_g_nap_max",
+        "conductance_density_unit": "mS/cm^2",
+    }
+    if (not isinstance(intervention, Mapping) or set(intervention) != set(fixed) | {"before", "after"}
+            or any(intervention.get(key) != value for key, value in fixed.items())
+            or not isinstance(intervention.get("before"), list) or len(intervention["before"]) != 1
+            or _finite_number(intervention["before"][0], "nap intervention before") < 0.0
+            or intervention.get("after") != [0.0]):
+        raise StageBScorerError("nap companion does not prove the exact filed lesion onset")
+    measured = phased_nap_voltage_measure(
+        times, voltages, spikes, time_unit="s", voltage_unit="mV", sample_interval_s=dt,
+        recording_start_s=dt, recording_end_s=3.0 + dt,
+        burn_in_start_s=dt, burn_in_end_s=1.0,
+        stability_comparison_start_s=1.0, stability_comparison_end_s=1.5,
+        baseline_start_s=1.5, baseline_end_s=2.0,
+        post_lesion_start_s=2.0, post_lesion_end_s=3.0,
+    )
+    return {
+        "status": "recomputed",
+        "compact_trace": trace_binding,
+        "baseline_stable": abs(float(measured["stability_delta_mV"])) <= 0.5,
+        "stability_tolerance_mV": 0.5,
+        **measured,
+    }
+
+
+def _validate_hcn_interventions(value: Any, condition: str, context: str) -> None:
+    if not isinstance(value, list) or len(value) != 3:
+        raise StageBScorerError(f"{context} does not contain the three filed interventions")
+    expected = {
+        "fast_na": "cp_hh_g_Na_max", "nap": "cp_snr_g_nap_max", "hcn": "cp_snr_g_h_max",
+    }
+    if [item.get("target") if isinstance(item, Mapping) else None for item in value] != list(expected):
+        raise StageBScorerError(f"{context} changed intervention order or targets")
+    for item in value:
+        target = item["target"]
+        if set(item) != {
+            "target", "runtime_conductance_field", "conductance_density_unit", "before", "after"
+        } or item.get("runtime_conductance_field") != expected[target] or item.get(
+            "conductance_density_unit"
+        ) != "mS/cm^2" or not isinstance(item.get("before"), list) or len(item["before"]) != 1:
+            raise StageBScorerError(f"{context} has malformed conductance evidence")
+        before = _finite_number(item["before"][0], f"{context}.{target}.before")
+        expected_after = [before] if target == "hcn" and condition == "intact_hcn" else [0.0]
+        if before < 0.0 or item.get("after") != expected_after:
+            raise StageBScorerError(f"{context} does not prove the filed conductance condition")
+
+
+def _recompute_hcn_companion(
+    root: Path, document: Mapping[str, Any], base_artifact: Mapping[str, Any],
+) -> dict[str, Any]:
+    observation = document.get("observation")
+    currents = [0.0, -20.0, -40.0, -60.0, -80.0, -100.0, -120.0]
+    conditions = ["intact_hcn", "hcn_complete_lesion"]
+    if (not isinstance(observation, Mapping) or set(observation) != {
+            "kind", "current_family_pA", "conditions", "trial_count", "trials"
+        } or observation.get("kind") != "independent_fresh_bridge_current_family"
+            or observation.get("current_family_pA") != currents
+            or observation.get("conditions") != conditions or observation.get("trial_count") != 14):
+        raise StageBScorerError("hcn companion changed the filed independent current family")
+    trials = observation.get("trials")
+    if not isinstance(trials, list) or len(trials) != 14:
+        raise StageBScorerError("hcn companion must contain exactly fourteen trials")
+    expected_pairs = [(condition, current) for condition in conditions for current in currents]
+    seen: list[tuple[str, float]] = []
+    steady: dict[str, list[float]] = {condition: [] for condition in conditions}
+    trace_bindings: list[dict[str, Any]] = []
+    base_provenance = base_artifact["provenance"]
+    for index, trial in enumerate(trials):
+        context = f"hcn companion trial {index}"
+        required = {
+            "condition", "current_pA", "membrane_area_um2", "current_density_uA_per_cm2",
+            "bridge_external_current_numeric", "current_units", "baseline_s", "current_step_s",
+            "current_step_onset_sample_index", "current_step_onset_sample_number",
+            "last_baseline_sample_s", "first_current_step_sample_s", "interventions", "compact_trace",
+            "provenance",
+        }
+        if not isinstance(trial, Mapping) or set(trial) != required:
+            raise StageBScorerError(f"{context} has an invalid shape")
+        condition = trial.get("condition")
+        current = _finite_number(trial.get("current_pA"), f"{context}.current_pA")
+        seen.append((str(condition), current))
+        if seen[-1] != expected_pairs[index]:
+            raise StageBScorerError("hcn companion trials are missing, duplicated, or reordered")
+        area = _finite_number(trial.get("membrane_area_um2"), f"{context}.membrane_area_um2")
+        density = _finite_number(
+            trial.get("current_density_uA_per_cm2"), f"{context}.current_density_uA_per_cm2"
+        )
+        bridge_numeric = _finite_number(
+            trial.get("bridge_external_current_numeric"), f"{context}.bridge_external_current_numeric"
+        )
+        if (area <= 0.0
+                or not math.isclose(density, 100.0 * current / area, abs_tol=1e-12)
+                or not math.isclose(bridge_numeric, current * 1.0e8 / area, abs_tol=1e-9)
+                or trial.get("current_units") != {
+                    "whole_cell": "pA", "membrane_area": "um^2",
+                    "density_equivalent": "uA/cm^2",
+                    "bridge_external_current": "cp_external_input_current numeric; HH kernel scales by 1e-6",
+                } or trial.get("baseline_s") != [0.0, 0.25]
+                or trial.get("current_step_s") != [0.25, 1.25]
+                or trial.get("current_step_onset_sample_index") != 4_999
+                or trial.get("current_step_onset_sample_number") != 5_000
+                or trial.get("last_baseline_sample_s") != 0.24995
+                or trial.get("first_current_step_sample_s") != 0.25):
+            raise StageBScorerError(f"{context} changed the filed current conversion or timing")
+        _validate_hcn_interventions(trial.get("interventions"), str(condition), context)
+        provenance = trial.get("provenance")
+        if (not isinstance(provenance, Mapping) or set(provenance) != {
+                "fresh_bridge", "runtime_binding_manifest_sha256", "binding"
+            } or provenance.get("fresh_bridge") is not True
+                or provenance.get("runtime_binding_manifest_sha256")
+                != base_provenance.get("runtime_binding_manifest_sha256")
+                or [provenance.get("binding")] != base_provenance.get("bindings")):
+            raise StageBScorerError(f"{context} does not prove a fresh authenticated bridge")
+        times, voltages, _, trace_binding = _load_companion_trace(
+            root, trial.get("compact_trace"), context,
+        )
+        if (len(times) != 25_000
+                or not math.isclose(float(trial["compact_trace"]["sample_interval_s"]), 0.00005,
+                                    abs_tol=1e-15)
+                or not math.isclose(times[-1], 1.25, abs_tol=1e-12)):
+            raise StageBScorerError(f"{context} does not contain the filed 1.25-second trace")
+        selected = [voltage for time, voltage in zip(times, voltages, strict=True)
+                    if 1.15 <= time < 1.25]
+        if not selected:
+            raise StageBScorerError(f"{context} steady-state window is empty")
+        steady[str(condition)].append(float(statistics.median(selected)))
+        trace_bindings.append({"condition": condition, "current_pA": current, **trace_binding})
+    slopes = {
+        condition: hcn_vi_family_slope(
+            currents, steady[condition], current_unit="pA", voltage_unit="mV",
+            voltage_ceiling_mV=-60.0,
+        ) for condition in conditions
+    }
+    return {
+        "status": "recomputed", "compact_traces": trace_bindings,
+        "steady_state_window_s": [1.15, 1.25], "steady_voltage_mV": steady,
+        "vi_fits": slopes,
+    }
+
+
+def _load_companion_observations(
+    root: Path, declarations: Any, *, artifacts: Mapping[str, Mapping[str, Any]],
+    candidate: Mapping[str, Any], causal_binding: Mapping[str, str],
+    causal_packet: Mapping[str, Any],
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, str]], dict[str, dict[str, str]]]:
+    if not isinstance(declarations, Mapping) or set(declarations) != set(_COMPANION_ASSAYS):
+        raise StageBScorerError("companion_observations must bind exactly nap and hcn")
+    authorized = causal_packet.get("authorized_analysis_protocol")
+    if (not isinstance(authorized, Mapping) or set(authorized) != {"path", "sha256"}):
+        raise StageBScorerError("V3 causal gate does not bind an exact analysis protocol")
+    _, protocol = _load_bound_json(root, authorized, "V3 companion analysis protocol")
+    if (protocol.get("schema") != "v14-snr-stageB-intrinsic-protocol-v3"
+            or protocol.get("causal_gate_authority", {}).get("path") != causal_binding["path"]):
+        raise StageBScorerError("V3 companion analysis protocol is not bound to the causal gate")
+    results: dict[str, dict[str, Any]] = {}
+    bindings: dict[str, dict[str, str]] = {}
+    parameter_bindings: dict[str, dict[str, str]] = {}
+    for assay, (_, arm) in _COMPANION_ASSAYS.items():
+        document, binding, parameter_binding = _validate_companion_common(
+            root, assay, declarations[assay], candidate=candidate,
+            base_artifact=artifacts[arm], causal_binding=causal_binding,
+            authorized_protocol=dict(authorized),
+        )
+        results[assay] = (
+            _recompute_nap_companion(root, document) if assay == "nap"
+            else _recompute_hcn_companion(root, document, artifacts[arm])
+        )
+        bindings[assay] = binding
+        parameter_bindings[assay] = parameter_binding
+    return results, bindings, parameter_bindings
+
+
 def _unavailable_hard_gate(contract: Mapping[str, Any], reason: str) -> dict[str, Any]:
     return {
         "metric": contract["metric"],
@@ -569,18 +909,26 @@ def _score_intrinsic_hard_gate(
     contract: Mapping[str, Any],
     intact: Mapping[str, Any],
     lesion: Mapping[str, Any],
+    companion: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     required = {"metric", "operator", "evidence_class"}
     if not isinstance(contract, Mapping) or not required.issubset(contract):
         raise StageBScorerError(f"{gate_id} contains a malformed hard gate")
-    if set(contract) - {"metric", "operator", "evidence_class", "value", "window_s", "cohort_n"}:
+    if set(contract) - {
+        "metric", "operator", "evidence_class", "value", "window_s", "cohort_n",
+        "status", "unavailability_reason",
+    }:
         raise StageBScorerError(f"{gate_id} hard gate contains unsupported fields")
     metric = contract["metric"]
     operator = contract["operator"]
     evidence_class = contract["evidence_class"]
     if not isinstance(metric, str) or not isinstance(operator, str):
         raise StageBScorerError(f"{gate_id} hard gate metric/operator must be text")
-    if evidence_class not in {"source_reported_direction", "project_operational"}:
+    if evidence_class not in {
+        "source_reported_direction", "project_operational",
+        "source_reported_direction_over_project_operational_estimator",
+        "source_reported_direction_over_project_operational_protocol",
+    }:
         raise StageBScorerError(f"{gate_id} hard gate has an unsupported evidence boundary")
 
     result: dict[str, Any] = {
@@ -593,11 +941,13 @@ def _score_intrinsic_hard_gate(
         return _unavailable_hard_gate(
             contract, "sealed 12-cell SK cohort depolarization-block traces are not available"
         )
-    if metric == "hyperpolarized_input_resistance_MOhm":
+    if metric in {"hyperpolarized_input_resistance_MOhm", "fitted_hyperpolarized_input_resistance_MOhm"} and companion is None:
         return _unavailable_hard_gate(
             contract, "sealed HCN hyperpolarized intact/lesion current-step traces are not available"
         )
-    if gate_id == "nap-complete-lesion" and metric == "mean_membrane_voltage_change_mV":
+    if gate_id == "nap-complete-lesion" and metric in {
+        "mean_membrane_voltage_change_mV", "median_membrane_voltage_change_mV"
+    } and companion is None:
         return _unavailable_hard_gate(
             contract,
             "the source does not define a matched stable-baseline voltage estimator for this trace",
@@ -620,6 +970,25 @@ def _score_intrinsic_hard_gate(
         return _unavailable_hard_gate(
             contract, "paired runner traces do not contain a sealed analysis protocol"
         )
+
+    if metric == "fitted_hyperpolarized_input_resistance_MOhm":
+        if companion is None:
+            raise StageBScorerError("HCN companion result is missing")
+        fits = companion.get("vi_fits")
+        if not isinstance(fits, Mapping):
+            raise StageBScorerError("HCN companion result has no recomputed V-I fits")
+        intact_resistance = _finite_number(
+            fits.get("intact_hcn", {}).get("input_resistance_MOhm"), "HCN intact resistance"
+        )
+        lesion_resistance = _finite_number(
+            fits.get("hcn_complete_lesion", {}).get("input_resistance_MOhm"),
+            "HCN lesion resistance",
+        )
+        if operator != "lesion_greater_than_intact":
+            raise StageBScorerError("HCN resistance gate changed its directional operator")
+        observed = {"intact": intact_resistance, "lesion": lesion_resistance}
+        return {**result, "status": "scored", "observed": observed,
+                "passed": lesion_resistance > intact_resistance}
 
     if operator in {"lesion_greater_than_intact", "lesion_less_than_intact"}:
         metric_paths = {
@@ -660,13 +1029,29 @@ def _score_intrinsic_hard_gate(
         if intact_rate <= 0.0:
             raise StageBScorerError("HCN baseline rate change is undefined when intact rate is zero")
         observed_value = abs(lesion_rate - intact_rate) / intact_rate
-    elif metric in {"spike_count", "lesion_spike_count"}:
+    elif metric in {"spike_count", "post_lesion_spike_count"} and gate_id == "nap-complete-lesion":
+        if companion is not None:
+            if companion.get("baseline_stable") is not True:
+                return _unavailable_hard_gate(
+                    contract, "NaP baseline stability exceeds the filed 0.5 mV tolerance"
+                )
+            observed_value = float(companion["post_lesion_spike_count"])
+        else:
+            observed_value = float(lesion["spike_metrics"]["spike_count"])
+    elif metric == "lesion_spike_count":
         observed_value = float(lesion["spike_metrics"]["spike_count"])
-    elif metric == "mean_membrane_voltage_change_mV":
-        observed_value = (
-            float(lesion["mean_membrane_voltage_mV"])
-            - float(intact["mean_membrane_voltage_mV"])
-        )
+    elif metric in {"mean_membrane_voltage_change_mV", "median_membrane_voltage_change_mV"}:
+        if companion is not None:
+            if companion.get("baseline_stable") is not True:
+                return _unavailable_hard_gate(
+                    contract, "NaP baseline stability exceeds the filed 0.5 mV tolerance"
+                )
+            observed_value = float(companion["post_lesion_delta_mV"])
+        else:
+            observed_value = (
+                float(lesion["mean_membrane_voltage_mV"])
+                - float(intact["mean_membrane_voltage_mV"])
+            )
     else:
         raise StageBScorerError(f"{gate_id} has unsupported scalar metric {metric!r}")
 
@@ -685,10 +1070,13 @@ def _score_intrinsic_hard_gate(
 
     if "window_s" in contract:
         filed_window = _finite_number(contract["window_s"], f"{gate_id}.{metric}.window_s")
-        spike_protocol = lesion["analysis_protocol"]["spike_metrics"]
-        observed_window = float(spike_protocol["window_end_s"]) - float(
-            spike_protocol["window_start_s"]
-        )
+        if companion is not None and gate_id == "nap-complete-lesion":
+            observed_window = 1.0
+        else:
+            spike_protocol = lesion["analysis_protocol"]["spike_metrics"]
+            observed_window = float(spike_protocol["window_end_s"]) - float(
+                spike_protocol["window_start_s"]
+            )
         if not math.isclose(observed_window, filed_window, rel_tol=0.0, abs_tol=1e-12):
             return _unavailable_hard_gate(
                 contract, "lesion runner trace does not contain the filed one-second scoring window"
@@ -703,11 +1091,12 @@ def score_intrinsic_lesion_observations(
 ) -> dict[str, Any]:
     """Recompute filed intrinsic-lesion gates from digest-bound runner traces."""
 
-    required = {
-        "schema", "readiness_only", "causal_gate_packet", "runner_observations",
-    }
+    schema = document.get("schema") if isinstance(document, Mapping) else None
+    required = {"schema", "readiness_only", "causal_gate_packet", "runner_observations"}
+    if schema == INTRINSIC_LESION_SCHEMA_V2:
+        required = required | {"companion_observations"}
     if (not isinstance(document, Mapping) or set(document) != required
-            or document.get("schema") != INTRINSIC_LESION_SCHEMA):
+            or schema not in {INTRINSIC_LESION_SCHEMA, INTRINSIC_LESION_SCHEMA_V2}):
         raise StageBScorerError("intrinsic lesion observation document has an invalid shape or schema")
     readiness = document.get("readiness_only")
     if readiness != {"enabled": True, "reserved_seed_count": 0, "scientific_seed": None}:
@@ -723,6 +1112,7 @@ def score_intrinsic_lesion_observations(
     if packet.get("schema") not in {
         "v14-snr-stageB-causal-gates-v1",
         "v14-snr-stageB-causal-gates-v2",
+        "v14-snr-stageB-causal-gates-v3",
     }:
         raise StageBScorerError("causal gate packet has the wrong schema")
     _, target = _load_bound_json(root_path, packet.get("target_packet"), "causal target packet")
@@ -756,6 +1146,18 @@ def score_intrinsic_lesion_observations(
         )
         for arm, artifact in artifacts.items()
     }
+    companion_results = None
+    companion_bindings = None
+    companion_parameter_bindings = None
+    if schema == INTRINSIC_LESION_SCHEMA_V2:
+        if packet.get("schema") != "v14-snr-stageB-causal-gates-v3":
+            raise StageBScorerError("V2 intrinsic observations require the V3 causal gate")
+        companion_results, companion_bindings, companion_parameter_bindings = (
+            _load_companion_observations(
+                root_path, document.get("companion_observations"), artifacts=artifacts,
+                candidate=candidate, causal_binding=causal_gate_binding, causal_packet=packet,
+            )
+        )
 
     results = []
     for gate_id in _INTRINSIC_LESION_IDS:
@@ -769,6 +1171,11 @@ def score_intrinsic_lesion_observations(
                 contract,
                 recomputed["intact_autonomous"],
                 recomputed[_GATE_ARMS[gate_id]],
+                (
+                    companion_results["nap"] if gate_id == "nap-complete-lesion"
+                    else companion_results["hcn"] if gate_id == "hcn-complete-lesion"
+                    else None
+                ) if companion_results is not None else None,
             )
             for contract in hard_gates
         ]
@@ -784,7 +1191,7 @@ def score_intrinsic_lesion_observations(
     any_failed = any(item["passed"] is False for item in results)
     any_unavailable = any(item["passed"] is None for item in results)
     all_passed = False if any_failed else None if any_unavailable else True
-    return {
+    output = {
         "schema": INTRINSIC_LESION_RESULT_SCHEMA,
         "process_status": "completed",
         "scientific_verdict": None,
@@ -802,6 +1209,11 @@ def score_intrinsic_lesion_observations(
         "source_equivalence_claimed": False,
         "results": results,
     }
+    if companion_results is not None:
+        output["companion_observations"] = companion_bindings
+        output["companion_parameter_documents"] = companion_parameter_bindings
+        output["companion_results"] = companion_results
+    return output
 
 
 def _spike_metrics(raw: Mapping[str, Any]) -> dict[str, Any]:

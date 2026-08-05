@@ -1812,12 +1812,12 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T04:29:19+00:00",
-      "next_action": "Commit and provision the versioned total-AHP V2 contract, rerun candidates 284 and 404 on authoritative NumPy workers, then implement authenticated same-cell NaP and paired HCN project-operational companion traces; keep the SK cohort unavailable.",
+      "heartbeat_at": "2026-08-05T04:55:40+00:00",
+      "next_action": "Commit and provision the V3 same-cell NaP and paired HCN companion pipeline, execute candidates 284 and 404 concurrently on authoritative NumPy workers, independently replay both collections, and report candidate-specific results without retuning; keep the heterogeneous 12-cell SK cohort unavailable.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "If V2 nadir direction fails, report the candidate-specific negative result without retuning. If companion protocols cannot preserve exact raw-trace authentication, keep those gates unavailable rather than accepting runner summaries.",
-      "resource": "local_cpu_plus_pool40_pool41",
+      "recovery_action": "If either V3 assay fails, bank the candidate-specific negative result without changing the filed protocol. If transport or authentication fails, use pool42 recovery and keep the affected gate unavailable until an exact replay succeeds.",
+      "resource": "local_cpu_plus_pool40_pool41_recovery_pool42",
       "status": "running",
       "write_set": [
         "research/specs",
@@ -2216,5 +2216,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T04:29:19+00:00"
+  "updated_at": "2026-08-05T04:55:40+00:00"
 }

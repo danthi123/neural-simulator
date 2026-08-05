@@ -7,6 +7,7 @@ import pytest
 import numpy as np
 
 from tools.v14_stageB_scorer import (
+    INTRINSIC_LESION_SCHEMA_V2,
     INTRINSIC_LESION_RESULT_SCHEMA,
     StageBScorerError,
     _score_intrinsic_hard_gate,
@@ -24,6 +25,8 @@ CAUSAL_GATE_RELATIVE = Path("research/specs/v14_snr_stageB_causal_gates.json")
 ANALYSIS_PROTOCOL_RELATIVE = Path("research/specs/v14_snr_stageB_intrinsic_protocol.json")
 CAUSAL_GATE_V2_RELATIVE = Path("research/specs/v14_snr_stageB_causal_gates_v2.json")
 ANALYSIS_PROTOCOL_V2_RELATIVE = Path("research/specs/v14_snr_stageB_intrinsic_protocol_v2.json")
+CAUSAL_GATE_V3_RELATIVE = Path("research/specs/v14_snr_stageB_causal_gates_v3.json")
+ANALYSIS_PROTOCOL_V3_RELATIVE = Path("research/specs/v14_snr_stageB_intrinsic_protocol_v3.json")
 
 
 def _digest(path: Path) -> str:
@@ -302,6 +305,223 @@ def _intrinsic_v2_document(root: Path) -> dict:
         },
         "runner_observations": declarations,
     }
+
+
+def _v3_references() -> dict[str, str]:
+    return {
+        "snr_candidate_release_path": "candidate-release.json",
+        "snr_candidate_release_sha256": "b" * 64,
+        "snr_executable_packet_path": "packet.json",
+        "snr_executable_packet_sha256": "c" * 64,
+        "snr_authority_policy_path": "policy.json",
+        "snr_authority_policy_sha256": "d" * 64,
+    }
+
+
+def _v3_binding() -> dict[str, str]:
+    return {
+        "region_name": "snr", "packet_path": "packet.json", "packet_file_sha256": "c" * 64,
+        "packet_sha256": "e" * 64, "structural_sha256": "f" * 64,
+        "materialized_sha256": "1" * 64, "authority_policy_sha256": "d" * 64,
+        "config_sha256": "2" * 64,
+    }
+
+
+def _v3_candidate_sha256() -> str:
+    payload = {
+        "schema": "sim-adaptive-candidate-v1",
+        "candidate_id": "candidate-a",
+        "parameters": {"snr_g_nap_max": 0.01},
+    }
+    return hashlib.sha256(json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+    ).encode("ascii")).hexdigest()
+
+
+def _write_companion_parameter(root: Path, arm: str) -> dict[str, str]:
+    references = _v3_references()
+    candidate_parameters = {"snr_g_nap_max": 0.01}
+    document = {
+        "schema": "sim-adaptive-run-parameters-v1", "candidate_id": "candidate-a",
+        "candidate_sha256": _v3_candidate_sha256(), "candidate_parameters": candidate_parameters,
+        "arm": arm, "arm_parameters": references,
+        "effective_parameters": {**candidate_parameters, **references},
+    }
+    path = root / "parameters" / f"{arm}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(document, sort_keys=True, separators=(",", ":")), encoding="ascii")
+    return {"path": path.relative_to(root).as_posix(), "sha256": _digest(path)}
+
+
+def _companion_common(root: Path, assay: str, arm: str) -> dict:
+    effective = {"snr_g_nap_max": 0.01, **_v3_references()}
+    return {
+        "schema": "v14-snr-stageB-companion-physiology-v1", "process_status": "completed",
+        "assay": assay, "backend": "numpy", "device": "cpu", "scientific_verdict": None,
+        "adaptive_candidate": {
+            "candidate_id": "candidate-a", "candidate_sha256": _v3_candidate_sha256(),
+            "effective_parameters": effective,
+        },
+        "contracts": {
+            "parameter_document": _write_companion_parameter(root, arm),
+            "protocol_spec": {
+                "path": ANALYSIS_PROTOCOL_V3_RELATIVE.as_posix(),
+                "sha256": _digest(root / ANALYSIS_PROTOCOL_V3_RELATIVE),
+            },
+            "causal_gate": {
+                "path": CAUSAL_GATE_V3_RELATIVE.as_posix(),
+                "sha256": _digest(root / CAUSAL_GATE_V3_RELATIVE),
+            },
+        },
+        "provenance": {
+            "runner": "research/runners/v14_stageB_companion_physiology.py",
+            "repository_root": str(root), "runtime_binding_manifest_sha256": "3" * 64,
+            "bindings": [_v3_binding()],
+            "candidate_release": {
+                "path": "candidate-release.json", "sha256": "b" * 64,
+                "candidate_sha256": _v3_candidate_sha256(),
+            },
+        },
+    }
+
+
+def _companion_trace(root: Path, name: str, voltages: np.ndarray, spikes=None) -> dict:
+    dt = 0.00005
+    path = root / "artifacts" / f"{name}.trace.zip"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if spikes is None:
+        spikes = np.zeros(voltages.size, dtype=np.dtype("|b1"))
+    digest = save_compact_trace(
+        path, np.arange(1, voltages.size + 1, dtype=np.dtype("<f8")) * dt,
+        np.asarray(voltages, dtype=np.dtype("<f8")), np.asarray(spikes, dtype=np.dtype("|b1")),
+    )
+    return {
+        "path": path.relative_to(root).as_posix(), "sha256": digest,
+        "sample_count": int(voltages.size), "sample_interval_s": dt,
+        "sample_semantics": "post-update state at the declared time", "time_unit": "s",
+        "voltage_unit": "mV",
+    }
+
+
+def _nap_companion(root: Path, *, unstable: bool = False) -> dict:
+    result = _companion_common(root, "nap_same_cell_phased_voltage", "nap_lesion")
+    voltage = np.full(60_000, -65.0)
+    voltage[19_999:29_999] = -64.0 if unstable else -65.0
+    voltage[29_999:39_999] = -65.0
+    voltage[39_999:59_999] = -70.0
+    result["observation"] = {
+        "kind": "same_cell_phased_voltage_spike_trace",
+        "compact_trace": _companion_trace(root, "nap", voltage),
+        "phase_schedule": {"intact_baseline_s": [0.0, 2.0], "post_lesion_s": [2.0, 3.0]},
+        "runtime_intervention": {
+            "kind": "complete_intrinsic_current_lesion",
+            "operation": "set_conductance_density_to_zero_between_post_update_samples",
+            "target": "nap", "timestamp_s": 2.0, "lesion_onset_sample_index": 39_999,
+            "lesion_onset_sample_number": 40_000, "last_intact_sample_s": 1.99995,
+            "first_lesion_sample_s": 2.0, "runtime_conductance_field": "cp_snr_g_nap_max",
+            "conductance_density_unit": "mS/cm^2", "before": [0.01], "after": [0.0],
+        },
+    }
+    return result
+
+
+def _intervention(target: str, field: str, *, intact=False) -> dict:
+    before = 0.01
+    return {
+        "target": target, "runtime_conductance_field": field,
+        "conductance_density_unit": "mS/cm^2", "before": [before],
+        "after": [before] if intact else [0.0],
+    }
+
+
+def _hcn_companion(root: Path) -> dict:
+    result = _companion_common(root, "hcn_hyperpolarized_current_family", "hcn_baseline_lesion")
+    currents = [0.0, -20.0, -40.0, -60.0, -80.0, -100.0, -120.0]
+    trials = []
+    for condition in ("intact_hcn", "hcn_complete_lesion"):
+        slope = 0.1 if condition == "intact_hcn" else 0.2
+        for index, current in enumerate(currents):
+            steady = -55.0 + slope * current
+            voltage = np.full(25_000, steady)
+            trials.append({
+                "condition": condition, "current_pA": current, "membrane_area_um2": 2000.0,
+                "current_density_uA_per_cm2": 100.0 * current / 2000.0,
+                "bridge_external_current_numeric": current * 1.0e8 / 2000.0,
+                "current_units": {
+                    "whole_cell": "pA", "membrane_area": "um^2",
+                    "density_equivalent": "uA/cm^2",
+                    "bridge_external_current": "cp_external_input_current numeric; HH kernel scales by 1e-6",
+                },
+                "baseline_s": [0.0, 0.25], "current_step_s": [0.25, 1.25],
+                "current_step_onset_sample_index": 4_999,
+                "current_step_onset_sample_number": 5_000,
+                "last_baseline_sample_s": 0.24995, "first_current_step_sample_s": 0.25,
+                "interventions": [
+                    _intervention("fast_na", "cp_hh_g_Na_max"),
+                    _intervention("nap", "cp_snr_g_nap_max"),
+                    _intervention("hcn", "cp_snr_g_h_max", intact=condition == "intact_hcn"),
+                ],
+                "compact_trace": _companion_trace(root, f"hcn-{condition}-{index}", voltage),
+                "provenance": {
+                    "fresh_bridge": True, "runtime_binding_manifest_sha256": "3" * 64,
+                    "binding": _v3_binding(),
+                },
+            })
+    result["observation"] = {
+        "kind": "independent_fresh_bridge_current_family", "current_family_pA": currents,
+        "conditions": ["intact_hcn", "hcn_complete_lesion"], "trial_count": 14,
+        "trials": trials,
+    }
+    return result
+
+
+def _intrinsic_v3_document(root: Path, *, unstable_nap: bool = False) -> dict:
+    _copy_causal_contract(root)
+    for relative in (CAUSAL_GATE_V3_RELATIVE, ANALYSIS_PROTOCOL_V3_RELATIVE):
+        destination = root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((ROOT / relative).read_bytes())
+    declarations = {}
+    effective = {"snr_g_nap_max": 0.01, **_v3_references()}
+    for arm in _INTRINSIC_ARMS:
+        artifact = _runner_artifact(arm)
+        artifact["adaptive_candidate"]["candidate_sha256"] = _v3_candidate_sha256()
+        artifact["adaptive_candidate"]["effective_parameters"] = effective
+        artifact["provenance"]["candidate_release"]["candidate_sha256"] = (
+            _v3_candidate_sha256()
+        )
+        artifact["provenance"].update({
+            "runtime_binding_manifest_sha256": "3" * 64,
+            "bindings": [_v3_binding()],
+        })
+        artifact["raw_observation"]["analysis_protocol"]["binding"] = {
+            "path": ANALYSIS_PROTOCOL_V3_RELATIVE.as_posix(),
+            "sha256": _digest(root / ANALYSIS_PROTOCOL_V3_RELATIVE),
+        }
+        if arm == "nap_lesion":
+            raw = artifact["raw_observation"]
+            dt = raw["sample_interval_s"]
+            raw["time_s"] = [(index + 1) * dt for index in range(60_000)]
+            raw["voltage_mV"] = [[-70.0] for _ in range(60_000)]
+            raw["spike_states"] = [[False] for _ in range(60_000)]
+            raw["recording_end_s"] = 60_001 * dt
+            raw["analysis_protocol"]["termination"].update({
+                "steps_executed": 60_000, "maximum_steps": 60_000,
+            })
+        declarations[arm] = _write_runner_artifact(root, artifact, arm)
+    companion = {
+        "nap": _write_runner_artifact(root, _nap_companion(root, unstable=unstable_nap), "companion-nap"),
+        "hcn": _write_runner_artifact(root, _hcn_companion(root), "companion-hcn"),
+    }
+    return {
+        "schema": INTRINSIC_LESION_SCHEMA_V2,
+        "readiness_only": {"enabled": True, "reserved_seed_count": 0, "scientific_seed": None},
+        "causal_gate_packet": {
+            "path": CAUSAL_GATE_V3_RELATIVE.as_posix(),
+            "sha256": _digest(root / CAUSAL_GATE_V3_RELATIVE),
+        },
+        "runner_observations": declarations, "companion_observations": companion,
+    }
 def _rewrite_arm(root: Path, document: dict, arm: str, mutate) -> None:
     declaration = document["runner_observations"][arm]
     path = root / declaration["path"]
@@ -397,6 +617,106 @@ def test_intrinsic_v2_scorer_resolves_total_ahp_direction_without_source_equival
         assert nadir["source_equivalence_claimed"] is False
         assert nadir["observed"] == {"intact": -70.0, "lesion": -65.0}
     assert result["readiness_contract_result"] == "UNAVAILABLE"
+
+
+def test_intrinsic_v3_scorer_authenticates_and_recomputes_companion_traces(tmp_path):
+    result = score_intrinsic_lesion_observations(_intrinsic_v3_document(tmp_path), root=tmp_path)
+
+    by_gate = _intrinsic_results(result)
+    nap = {item["metric"]: item for item in by_gate["nap-complete-lesion"]["hard_gates"]}
+    assert nap["post_lesion_spike_count"]["observed"] == 0.0
+    assert nap["post_lesion_spike_count"]["passed"] is True
+    assert nap["median_membrane_voltage_change_mV"]["observed"] == -5.0
+    assert nap["median_membrane_voltage_change_mV"]["passed"] is True
+    hcn = {item["metric"]: item for item in by_gate["hcn-complete-lesion"]["hard_gates"]}
+    resistance = hcn["fitted_hyperpolarized_input_resistance_MOhm"]
+    assert resistance["status"] == "scored" and resistance["passed"] is True
+    assert resistance["observed"]["intact"] == pytest.approx(100.0)
+    assert resistance["observed"]["lesion"] == pytest.approx(200.0)
+    assert hcn["lesion_spike_count"]["observed"] == 101.0
+    assert "companion_observations" in result
+    assert "companion_parameter_documents" in result
+    assert result["companion_results"]["nap"]["baseline_stable"] is True
+    assert len(result["companion_results"]["hcn"]["compact_traces"]) == 14
+    assert by_gate["sk-complete-lesion"]["passed"] is None
+    assert result["readiness_contract_result"] == "UNAVAILABLE"
+
+
+def test_intrinsic_v3_unstable_nap_baseline_is_unavailable(tmp_path):
+    result = score_intrinsic_lesion_observations(
+        _intrinsic_v3_document(tmp_path, unstable_nap=True), root=tmp_path
+    )
+    nap = {
+        item["metric"]: item
+        for item in _intrinsic_results(result)["nap-complete-lesion"]["hard_gates"]
+    }
+    assert all(item["status"] == "unavailable" for item in nap.values())
+    assert all("stability" in item["reason"] for item in nap.values())
+
+
+@pytest.mark.parametrize(
+    ("target", "mutation", "message"),
+    [
+        ("nap", lambda artifact: artifact["adaptive_candidate"].update({"candidate_id": "other"}),
+         "candidate identity"),
+        ("nap", lambda artifact: artifact["contracts"]["protocol_spec"].update({"sha256": "0" * 64}),
+         "V3 contracts"),
+        ("nap", lambda artifact: artifact["observation"]["runtime_intervention"].update(
+            {"lesion_onset_sample_index": 40_000}), "lesion onset"),
+        ("hcn", lambda artifact: artifact["observation"]["trials"].pop(), "fourteen trials"),
+        ("hcn", lambda artifact: artifact["observation"]["trials"][0].update(
+            {"current_density_uA_per_cm2": 9.0}), "conversion or timing"),
+        ("hcn", lambda artifact: artifact["observation"]["trials"][0]["provenance"].update(
+            {"fresh_bridge": False}), "fresh authenticated bridge"),
+    ],
+)
+def test_intrinsic_v3_scorer_fails_closed_on_companion_tampering(
+    tmp_path, target, mutation, message,
+):
+    document = _intrinsic_v3_document(tmp_path)
+    declaration = document["companion_observations"][target]
+    path = tmp_path / declaration["path"]
+    artifact = json.loads(path.read_text(encoding="ascii"))
+    mutation(artifact)
+    document["companion_observations"][target] = _write_runner_artifact(
+        tmp_path, artifact, f"tampered-{target}"
+    )
+
+    with pytest.raises(StageBScorerError, match=message):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
+
+
+def test_intrinsic_v3_scorer_rejects_companion_trace_and_parameter_tampering(tmp_path):
+    document = _intrinsic_v3_document(tmp_path)
+    nap_path = tmp_path / document["companion_observations"]["nap"]["path"]
+    nap = json.loads(nap_path.read_text(encoding="ascii"))
+    trace_path = tmp_path / nap["observation"]["compact_trace"]["path"]
+    trace_path.write_bytes(trace_path.read_bytes() + b"tamper")
+    with pytest.raises(StageBScorerError, match="compact trace is invalid"):
+        score_intrinsic_lesion_observations(document, root=tmp_path)
+
+    document = _intrinsic_v3_document(tmp_path / "parameter-case")
+    nap_path = (tmp_path / "parameter-case") / document["companion_observations"]["nap"]["path"]
+    nap = json.loads(nap_path.read_text(encoding="ascii"))
+    parameter_path = (tmp_path / "parameter-case") / nap["contracts"]["parameter_document"]["path"]
+    parameter = json.loads(parameter_path.read_text(encoding="ascii"))
+    parameter["arm"] = "hcn_baseline_lesion"
+    parameter_path.write_text(
+        json.dumps(parameter, sort_keys=True, separators=(",", ":")), encoding="ascii"
+    )
+    nap["contracts"]["parameter_document"]["sha256"] = _digest(parameter_path)
+    document["companion_observations"]["nap"] = _write_runner_artifact(
+        tmp_path / "parameter-case", nap, "tampered-parameter-nap"
+    )
+    with pytest.raises(StageBScorerError, match="base arm"):
+        score_intrinsic_lesion_observations(document, root=tmp_path / "parameter-case")
+
+
+def test_intrinsic_v1_score_output_shape_does_not_gain_companion_fields(tmp_path):
+    result = score_intrinsic_lesion_observations(_intrinsic_document(tmp_path), root=tmp_path)
+    assert "companion_observations" not in result
+    assert "companion_parameter_documents" not in result
+    assert "companion_results" not in result
 
 
 def test_intrinsic_scorer_compact_trace_metrics_match_inline_traces(tmp_path):

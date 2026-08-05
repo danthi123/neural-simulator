@@ -44,6 +44,8 @@ RECEIPT_SCHEMA = "v14-snr-stageB-intrinsic-readiness-v1"
 PARAMETER_SCHEMA = "sim-adaptive-run-parameters-v1"
 CANDIDATE_SCHEMA = "sim-adaptive-candidate-v1"
 RUNNER_SCHEMA = "v14-snr-stageB-physiology-observation-v1"
+COMPANION_RUNNER_SCHEMA = "v14-snr-stageB-companion-physiology-v1"
+INTRINSIC_LESION_SCHEMA_V2 = "v14-snr-stageB-intrinsic-lesion-observations-v2"
 RELEASE_SCHEMA = "v14-snr-stageB-candidate-release-v1"
 ARMS = (
     "intact_autonomous",
@@ -80,6 +82,17 @@ def run_readiness_arm(*args: Any, **kwargs: Any) -> dict[str, Any]:
     )
 
     return execute(*args, **kwargs)
+
+
+def run_companion_assay(assay: str, *args: Any, **kwargs: Any) -> dict[str, Any]:
+    """Load the V3 companion runner after the controller fixes identity."""
+    from research.runners.v14_stageB_companion_physiology import (
+        run_hcn_companion,
+        run_nap_companion,
+    )
+
+    runner = run_nap_companion if assay == "nap" else run_hcn_companion
+    return runner(*args, **kwargs)
 
 
 def _digest_bytes(value: bytes) -> str:
@@ -520,10 +533,12 @@ def run_intrinsic_readiness(
     if gate_document.get("schema") not in {
         "v14-snr-stageB-causal-gates-v1",
         "v14-snr-stageB-causal-gates-v2",
+        "v14-snr-stageB-causal-gates-v3",
     }:
         raise StageBIntrinsicReadinessError("causal gate packet has the wrong schema")
     analysis_protocol: dict[str, str] | None = None
     protocol_file: Path | None = None
+    protocol_document: dict[str, Any] | None = None
     if analysis_protocol_path is not None and analysis_protocol_sha256 is not None:
         _sha256(analysis_protocol_sha256, "analysis protocol expected digest")
         protocol_file = _inside_root(analysis_protocol_path, root, "analysis protocol")
@@ -542,6 +557,7 @@ def run_intrinsic_readiness(
         if protocol_document.get("schema") not in {
             "v14-snr-stageB-intrinsic-protocol-v1",
             "v14-snr-stageB-intrinsic-protocol-v2",
+            "v14-snr-stageB-intrinsic-protocol-v3",
         }:
             raise StageBIntrinsicReadinessError("analysis protocol has the wrong schema")
         analysis_protocol = {
@@ -604,6 +620,7 @@ def run_intrinsic_readiness(
         )
         runner_observations: dict[str, dict[str, str]] = {}
         arm_receipts: dict[str, dict[str, str | int]] = {}
+        parameter_bindings: dict[str, dict[str, str]] = {}
         for arm in ARMS:
             arm_dir = candidate_dir / "arms" / arm
             parameter_path = arm_dir / "adaptive-parameters.json"
@@ -611,7 +628,11 @@ def run_intrinsic_readiness(
             parameter_document = _parameter_document(
                 candidate["candidate_id"], pinned_sha, candidate["parameters"], references, arm
             )
-            _write_once(parameter_path, parameter_document)
+            parameter_sha256 = _write_once(parameter_path, parameter_document)
+            parameter_bindings[arm] = {
+                "path": _relative(root, parameter_path, f"{arm} parameter document"),
+                "sha256": parameter_sha256,
+            }
             result = run_readiness_arm(
                 canonical_bytes(parameter_document).decode("ascii"),
                 raw_path,
@@ -631,8 +652,69 @@ def run_intrinsic_readiness(
                 "sha256": str(arm_receipt["sha256"]),
             }
             arm_receipts[arm] = arm_receipt
+        companion_observations: dict[str, dict[str, str]] | None = None
+        companion_compact_artifacts: list[dict[str, Any]] = []
+        if (
+            isinstance(protocol_document, Mapping)
+            and protocol_document.get("schema") == "v14-snr-stageB-intrinsic-protocol-v3"
+        ):
+            if protocol_file is None or analysis_protocol is None:
+                raise StageBIntrinsicReadinessError("V3 companion execution has no bound protocol")
+            companion_observations = {}
+            companion_dir = candidate_dir / "companions"
+            for assay, arm in (("nap", "nap_lesion"), ("hcn", "hcn_baseline_lesion")):
+                companion_path = companion_dir / f"{assay}-observation.json"
+                result = run_companion_assay(
+                    assay,
+                    root / parameter_bindings[arm]["path"],
+                    parameter_bindings[arm]["sha256"],
+                    protocol_file,
+                    analysis_protocol["sha256"],
+                    causal_gate,
+                    causal_gate_sha256,
+                    companion_path,
+                    repository_root=root,
+                )
+                if (
+                    result.get("schema") != COMPANION_RUNNER_SCHEMA
+                    or result.get("process_status") != "completed"
+                    or result.get("assay")
+                    != ("nap_same_cell_phased_voltage" if assay == "nap" else "hcn_hyperpolarized_current_family")
+                    or result.get("adaptive_candidate", {}).get("candidate_sha256") != pinned_sha
+                    or companion_path.read_bytes() != canonical_bytes(result)
+                ):
+                    raise StageBIntrinsicReadinessError(
+                        f"{assay} companion runner returned an invalid artifact"
+                    )
+                companion_observations[assay] = {
+                    "path": _relative(root, companion_path, f"{assay} companion observation"),
+                    "sha256": _digest_bytes(companion_path.read_bytes()),
+                }
+                observation = result.get("observation")
+                if not isinstance(observation, Mapping):
+                    raise StageBIntrinsicReadinessError(
+                        f"{assay} companion runner omitted its observation"
+                    )
+                if assay == "nap":
+                    traces = [observation.get("compact_trace")]
+                else:
+                    trials = observation.get("trials")
+                    if not isinstance(trials, list):
+                        raise StageBIntrinsicReadinessError("HCN companion omitted its trials")
+                    traces = [trial.get("compact_trace") for trial in trials if isinstance(trial, Mapping)]
+                if any(not isinstance(trace, Mapping) for trace in traces):
+                    raise StageBIntrinsicReadinessError(
+                        f"{assay} companion omitted compact trace bindings"
+                    )
+                companion_compact_artifacts.extend(
+                    {"arm": f"companion_{assay}", **dict(trace)} for trace in traces
+                )
         scorer_input = {
-            "schema": INTRINSIC_LESION_SCHEMA,
+            "schema": (
+                INTRINSIC_LESION_SCHEMA_V2
+                if companion_observations is not None
+                else INTRINSIC_LESION_SCHEMA
+            ),
             "readiness_only": dict(READINESS_ONLY),
             "causal_gate_packet": {
                 "path": _relative(root, causal_gate, "causal gate packet"),
@@ -640,6 +722,8 @@ def run_intrinsic_readiness(
             },
             "runner_observations": runner_observations,
         }
+        if companion_observations is not None:
+            scorer_input["companion_observations"] = companion_observations
         scorer_input_path = candidate_dir / "intrinsic-lesion-observations.json"
         scorer_input_sha256 = _write_once(scorer_input_path, scorer_input)
         score = score_intrinsic_lesion_observations(scorer_input, root=root)
@@ -651,7 +735,7 @@ def run_intrinsic_readiness(
             {"arm": arm, **dict(arm_receipts[arm]["compact_trace"])}
             for arm in ARMS
             if "compact_trace" in arm_receipts[arm]
-        ]
+        ] + companion_compact_artifacts
         _write_sidecars(
             candidate_dir, repository_root=root, candidate_sha256=pinned_sha,
             source_identity=source_identity, argv=argv,

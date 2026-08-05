@@ -546,6 +546,153 @@ def input_resistance(
     }
 
 
+def phased_nap_voltage_measure(
+    time_s: Sequence[float],
+    voltage_mV: Sequence[float],
+    spike_times_s: Sequence[float],
+    *,
+    time_unit: str,
+    voltage_unit: str,
+    sample_interval_s: float,
+    recording_start_s: float,
+    recording_end_s: float,
+    burn_in_start_s: float,
+    burn_in_end_s: float,
+    stability_comparison_start_s: float,
+    stability_comparison_end_s: float,
+    baseline_start_s: float,
+    baseline_end_s: float,
+    post_lesion_start_s: float,
+    post_lesion_end_s: float,
+) -> dict[str, float | int | str]:
+    """Measure voltage stability and post-NaP-lesion change in explicit phases.
+
+    Medians include every voltage sample in each caller-bound half-open window.
+    This function reports measurements only; it defines no stability, voltage,
+    or spike-count acceptance threshold.
+    """
+    time, voltage, dt, burn_end = _validate_trace(
+        time_s,
+        voltage_mV,
+        time_unit=time_unit,
+        voltage_unit=voltage_unit,
+        sample_interval_s=sample_interval_s,
+        recording_start_s=recording_start_s,
+        burn_in_start_s=burn_in_start_s,
+        burn_in_end_s=burn_in_end_s,
+    )
+    recording_end = _finite_number(recording_end_s, "recording_end_s")
+    if not math.isclose(
+        recording_end, time[-1] + dt, abs_tol=max(1e-12, dt * 1e-9)
+    ):
+        raise PhysiologyMetricError(
+            "recording_end_s must equal one sample interval past the final sample"
+        )
+
+    _, stability_voltage = _trace_window(
+        time,
+        voltage,
+        start_s=stability_comparison_start_s,
+        end_s=stability_comparison_end_s,
+        burn_in_end_s=burn_end,
+        name="stability comparison window",
+    )
+    _, baseline_voltage = _trace_window(
+        time,
+        voltage,
+        start_s=baseline_start_s,
+        end_s=baseline_end_s,
+        burn_in_end_s=burn_end,
+        name="baseline window",
+    )
+    _, post_lesion_voltage = _trace_window(
+        time,
+        voltage,
+        start_s=post_lesion_start_s,
+        end_s=post_lesion_end_s,
+        burn_in_end_s=burn_end,
+        name="post-lesion window",
+    )
+    if stability_comparison_end_s > baseline_start_s:
+        raise PhysiologyMetricError(
+            "stability comparison and baseline windows must not overlap"
+        )
+    if baseline_end_s > post_lesion_start_s:
+        raise PhysiologyMetricError(
+            "baseline and post-lesion windows must not overlap"
+        )
+
+    spikes = _spikes(
+        spike_times_s,
+        time_unit=time_unit,
+        recording_start_s=recording_start_s,
+        recording_end_s=recording_end,
+    )
+    stability_median = float(np.median(stability_voltage))
+    baseline_median = float(np.median(baseline_voltage))
+    post_lesion_median = float(np.median(post_lesion_voltage))
+    post_lesion_spikes = spikes[
+        (spikes >= post_lesion_start_s) & (spikes < post_lesion_end_s)
+    ]
+    return {
+        "window_convention": "half-open",
+        "stability_comparison_median_voltage_mV": stability_median,
+        "baseline_median_voltage_mV": baseline_median,
+        "post_lesion_median_voltage_mV": post_lesion_median,
+        "stability_delta_mV": baseline_median - stability_median,
+        "post_lesion_delta_mV": post_lesion_median - baseline_median,
+        "post_lesion_spike_count": int(post_lesion_spikes.size),
+    }
+
+
+def hcn_vi_family_slope(
+    current_pA: Sequence[float],
+    steady_voltage_mV: Sequence[float],
+    *,
+    current_unit: str,
+    voltage_unit: str,
+    voltage_ceiling_mV: float,
+) -> dict[str, float | int | str]:
+    """Fit the V-I slope for observations strictly below a voltage ceiling.
+
+    The least-squares slope has units mV/pA. Multiplication by 1000 converts it
+    to MOhm because 1 mV / 1 pA equals 1000 MOhm.
+    """
+    _require_unit(current_unit, "pA", "current_unit")
+    _require_unit(voltage_unit, "mV", "voltage_unit")
+    currents = _as_vector(current_pA, "current_pA", minimum_size=2)
+    voltages = _as_vector(steady_voltage_mV, "steady_voltage_mV", minimum_size=2)
+    if currents.size != voltages.size:
+        raise PhysiologyMetricError(
+            "current_pA and steady_voltage_mV must have equal length"
+        )
+    ceiling = _finite_number(voltage_ceiling_mV, "voltage_ceiling_mV")
+    selected = voltages < ceiling
+    selected_currents = currents[selected]
+    selected_voltages = voltages[selected]
+    if selected_currents.size < 2:
+        raise PhysiologyMetricError(
+            "at least two observations below voltage_ceiling_mV are required"
+        )
+    if np.unique(selected_currents).size < 2:
+        raise PhysiologyMetricError(
+            "at least two distinct currents below voltage_ceiling_mV are required"
+        )
+
+    design = np.column_stack((selected_currents, np.ones(selected_currents.size)))
+    slope, intercept = np.linalg.lstsq(design, selected_voltages, rcond=None)[0]
+    if not math.isfinite(float(slope)) or not math.isfinite(float(intercept)):
+        raise PhysiologyMetricError("V-I least-squares fit produced a non-finite result")
+    return {
+        "selection_rule": "steady_voltage_mV < voltage_ceiling_mV",
+        "selected_point_count": int(selected_currents.size),
+        "voltage_ceiling_mV": ceiling,
+        "vi_slope_mV_per_pA": float(slope),
+        "vi_intercept_mV": float(intercept),
+        "input_resistance_MOhm": float(slope * 1000.0),
+    }
+
+
 def inhibitory_release_metrics(
     spike_times_s: Sequence[float],
     *,

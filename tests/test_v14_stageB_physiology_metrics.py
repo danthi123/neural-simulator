@@ -6,10 +6,12 @@ from tools.v14_stageB_physiology_metrics import (
     action_potential_shape,
     ahp_depth,
     detect_depolarization_block,
+    hcn_vi_family_slope,
     inhibitory_release_metrics,
     input_resistance,
     interspike_voltage_nadirs,
     peak_conductance,
+    phased_nap_voltage_measure,
     spike_train_metrics,
 )
 
@@ -189,6 +191,110 @@ def test_input_resistance_uses_signed_voltage_and_current_deflection():
     )
     assert result["voltage_deflection_mV"] == -5.0
     assert result["input_resistance_MOhm"] == pytest.approx(50.0)
+
+
+def test_phased_nap_voltage_measure_reports_medians_stability_and_spikes():
+    time = np.arange(0.0, 0.017, 0.001)
+    voltage = np.array(
+        [-70, -69, -60, -58, -59, -57, -56, -58, -57, -56, -55, -66, -67, -68, -66, -65, -64],
+        dtype=float,
+    )
+    result = phased_nap_voltage_measure(
+        time,
+        voltage,
+        [0.003, 0.008, 0.010, 0.012, 0.015],
+        **TRACE_CONTRACT,
+        recording_end_s=0.017,
+        stability_comparison_start_s=0.002,
+        stability_comparison_end_s=0.006,
+        baseline_start_s=0.006,
+        baseline_end_s=0.011,
+        post_lesion_start_s=0.011,
+        post_lesion_end_s=0.016,
+    )
+    assert result == {
+        "window_convention": "half-open",
+        "stability_comparison_median_voltage_mV": -58.5,
+        "baseline_median_voltage_mV": -56.0,
+        "post_lesion_median_voltage_mV": -66.0,
+        "stability_delta_mV": 2.5,
+        "post_lesion_delta_mV": -10.0,
+        "post_lesion_spike_count": 2,
+    }
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        ({"voltage_unit": "V"}, "voltage_unit"),
+        ({"spike_times_s": [0.012, np.inf]}, "finite"),
+        ({"stability_comparison_end_s": 0.007}, "must not overlap"),
+        ({"recording_end_s": 0.015}, "one sample interval"),
+    ],
+)
+def test_phased_nap_voltage_measure_rejects_malformed_contract(change, message):
+    time = np.arange(0.0, 0.017, 0.001)
+    kwargs = {
+        "time_s": time,
+        "voltage_mV": np.full(time.shape, -65.0),
+        "spike_times_s": [],
+        **TRACE_CONTRACT,
+        "recording_end_s": 0.017,
+        "stability_comparison_start_s": 0.002,
+        "stability_comparison_end_s": 0.006,
+        "baseline_start_s": 0.006,
+        "baseline_end_s": 0.010,
+        "post_lesion_start_s": 0.011,
+        "post_lesion_end_s": 0.016,
+    }
+    kwargs.update(change)
+    with pytest.raises(PhysiologyMetricError, match=message):
+        phased_nap_voltage_measure(**kwargs)
+
+
+def test_hcn_vi_family_slope_selects_below_ceiling_and_converts_units():
+    result = hcn_vi_family_slope(
+        [0.0, -20.0, -40.0, -60.0, -80.0],
+        [-50.0, -58.0, -66.0, -74.0, -82.0],
+        current_unit="pA",
+        voltage_unit="mV",
+        voltage_ceiling_mV=-60.0,
+    )
+    assert result["selection_rule"] == "steady_voltage_mV < voltage_ceiling_mV"
+    assert result["selected_point_count"] == 3
+    assert result["vi_slope_mV_per_pA"] == pytest.approx(0.4)
+    assert result["vi_intercept_mV"] == pytest.approx(-50.0)
+    assert result["input_resistance_MOhm"] == pytest.approx(400.0)
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "message"),
+    [
+        (
+            {"current_pA": [0.0, -20.0], "steady_voltage_mV": [-50.0, -70.0],
+             "current_unit": "nA", "voltage_unit": "mV", "voltage_ceiling_mV": -60.0},
+            "current_unit",
+        ),
+        (
+            {"current_pA": [0.0, -20.0], "steady_voltage_mV": [-50.0, np.nan],
+             "current_unit": "pA", "voltage_unit": "mV", "voltage_ceiling_mV": -60.0},
+            "finite array",
+        ),
+        (
+            {"current_pA": [0.0, -20.0], "steady_voltage_mV": [-50.0, -70.0],
+             "current_unit": "pA", "voltage_unit": "mV", "voltage_ceiling_mV": -60.0},
+            "at least two observations",
+        ),
+        (
+            {"current_pA": [-20.0, -20.0], "steady_voltage_mV": [-70.0, -71.0],
+             "current_unit": "pA", "voltage_unit": "mV", "voltage_ceiling_mV": -60.0},
+            "distinct currents",
+        ),
+    ],
+)
+def test_hcn_vi_family_slope_rejects_bad_units_nonfinite_and_underdetermined(kwargs, message):
+    with pytest.raises(PhysiologyMetricError, match=message):
+        hcn_vi_family_slope(**kwargs)
 
 
 def test_release_metrics_report_latency_and_rate_overshoot_without_pass_band():

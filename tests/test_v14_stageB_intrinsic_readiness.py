@@ -7,10 +7,12 @@ import json
 from pathlib import Path
 import subprocess
 
+import numpy as np
 import pytest
 
 from sim.snr_executable_packet import canonical_bytes
 from tests.test_v14_stageB_packet_compiler import _candidate, _template
+from tools.compact_trace import save_compact_trace
 from tools.v14_stageB_intrinsic_readiness import (
     ARMS,
     RECEIPT_SCHEMA,
@@ -23,6 +25,10 @@ from tools.v14_stageB_intrinsic_readiness import (
 ROOT = Path(__file__).resolve().parents[1]
 CAUSAL_GATE = Path("research/specs/v14_snr_stageB_causal_gates.json")
 ANALYSIS_PROTOCOL = Path("research/specs/v14_snr_stageB_intrinsic_protocol.json")
+CAUSAL_GATE_V2 = Path("research/specs/v14_snr_stageB_causal_gates_v2.json")
+ANALYSIS_PROTOCOL_V2 = Path("research/specs/v14_snr_stageB_intrinsic_protocol_v2.json")
+CAUSAL_GATE_V3 = Path("research/specs/v14_snr_stageB_causal_gates_v3.json")
+ANALYSIS_PROTOCOL_V3 = Path("research/specs/v14_snr_stageB_intrinsic_protocol_v3.json")
 
 
 def _write(path: Path, value: dict) -> str:
@@ -57,6 +63,112 @@ def _assert_sidecars(root: Path) -> None:
         assert sidecar_path.is_file(), artifact
         sidecar = json.loads(sidecar_path.read_text())
         assert sidecar["artifact"] == artifact.relative_to(root.parent).as_posix()
+
+
+def _copy_contract(root: Path, causal_path: Path, protocol_path: Path) -> tuple[Path, str, Path, str]:
+    protocol = root / protocol_path
+    protocol.parent.mkdir(parents=True, exist_ok=True)
+    protocol.write_bytes((ROOT / protocol_path).read_bytes())
+    protocol_sha = hashlib.sha256(protocol.read_bytes()).hexdigest()
+    causal = root / causal_path
+    causal.write_bytes((ROOT / causal_path).read_bytes())
+    return causal, hashlib.sha256(causal.read_bytes()).hexdigest(), protocol, protocol_sha
+
+
+def _v3_contract(root: Path) -> tuple[Path, str, Path, str]:
+    protocol = root / ANALYSIS_PROTOCOL_V3
+    protocol.parent.mkdir(parents=True, exist_ok=True)
+    protocol.write_bytes((ROOT / ANALYSIS_PROTOCOL_V3).read_bytes())
+    protocol_sha = hashlib.sha256(protocol.read_bytes()).hexdigest()
+    causal_document = json.loads((ROOT / CAUSAL_GATE_V3).read_text())
+    causal_document["authorized_analysis_protocol"] = {
+        "path": ANALYSIS_PROTOCOL_V3.as_posix(),
+        "sha256": protocol_sha,
+    }
+    causal = root / CAUSAL_GATE_V3
+    causal_sha = _write(causal, causal_document)
+    return causal, causal_sha, protocol, protocol_sha
+
+
+def _synthetic_spike_step(bridge) -> None:
+    bridge.cp_membrane_potential_v[:] = -55.0
+    bridge.cp_firing_states[:] = True
+
+
+def _mock_companion_result(root: Path, assay: str, output: Path, candidate_sha: str) -> dict:
+    def trace(name: str) -> dict[str, str]:
+        archive = output.parent / f"{name}.ct"
+        digest = save_compact_trace(
+            archive,
+            np.asarray([0.0, 0.05], dtype=np.float64),
+            np.asarray([-60.0, -61.0], dtype=np.float64),
+            np.asarray([False, False], dtype=bool),
+        )
+        return {"path": archive.relative_to(root).as_posix(), "sha256": digest}
+
+    if assay == "nap":
+        assay_name = "nap_same_cell_phased_voltage"
+        observation = {"compact_trace": trace("nap-trace")}
+    else:
+        assay_name = "hcn_hyperpolarized_current_family"
+        observation = {
+            "trials": [
+                {"compact_trace": trace(f"hcn-trace-{index}")}
+                for index in range(14)
+            ]
+        }
+    result = {
+        "schema": "v14-snr-stageB-companion-physiology-v1",
+        "process_status": "completed",
+        "assay": assay_name,
+        "adaptive_candidate": {"candidate_sha256": candidate_sha},
+        "observation": observation,
+    }
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(canonical_bytes(result))
+    return result
+
+
+def _isolate_protocol_controller(monkeypatch) -> None:
+    module = __import__(
+        "tools.v14_stageB_intrinsic_readiness", fromlist=["run_readiness_arm"]
+    )
+    original = module.run_readiness_arm
+
+    def arm_runner(parameter_text, output, **kwargs):
+        result = original(
+            parameter_text,
+            output,
+            repository_root=kwargs["repository_root"],
+            analysis_protocol_path=None,
+            analysis_protocol_sha256=None,
+            compact_trace=False,
+        )
+        raw = result["raw_observation"]
+        archive = Path(output).with_name("raw-observation.ct")
+        digest = save_compact_trace(
+            archive,
+            np.asarray(raw.pop("time_s"), dtype=np.float64).reshape(-1),
+            np.asarray(raw.pop("voltage_mV"), dtype=np.float64).reshape(-1),
+            np.asarray(raw.pop("spike_states"), dtype=bool).reshape(-1),
+        )
+        protocol = Path(kwargs["analysis_protocol_path"])
+        root = Path(kwargs["repository_root"])
+        raw["analysis_protocol"] = {
+            "binding": {
+                "path": protocol.relative_to(root).as_posix(),
+                "sha256": kwargs["analysis_protocol_sha256"],
+            },
+            "termination": {"controller_test_fixture": True},
+        }
+        raw["compact_trace"] = {
+            "path": archive.relative_to(root).as_posix(),
+            "sha256": digest,
+        }
+        Path(output).write_bytes(canonical_bytes(result))
+        return result
+
+    monkeypatch.setattr(module, "run_readiness_arm", arm_runner)
 
 
 def test_one_candidate_runs_all_five_arms_scores_and_writes_one_receipt(tmp_path):
@@ -132,6 +244,158 @@ def test_production_protocol_is_forwarded_to_all_arms_and_bound_in_receipt(
         ]
         expected_samples = 20_000 if arm == "nap_lesion" else 101
         assert arm_receipt["trace_samples"] == expected_samples
+
+
+def test_v3_invokes_bound_companions_and_provenance_includes_their_traces(
+    tmp_path, monkeypatch,
+):
+    from sim.bridge import SimulationBridge
+
+    template, template_sha, candidate, candidate_sha, _, _ = _inputs(tmp_path)
+    causal, causal_sha, protocol, protocol_sha = _v3_contract(tmp_path)
+    calls = []
+    scored = []
+
+    def companion(assay, *args, **kwargs):
+        calls.append((assay, args, kwargs))
+        return _mock_companion_result(tmp_path, assay, Path(args[6]), candidate_sha)
+
+    def scorer(document, *, root):
+        scored.append((document, root))
+        return {
+            "scientific_verdict": None,
+            "readiness_contract_result": "UNAVAILABLE",
+            "all_intrinsic_lesion_gates_passed": None,
+        }
+
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", _synthetic_spike_step)
+    _isolate_protocol_controller(monkeypatch)
+    monkeypatch.setattr("tools.v14_stageB_intrinsic_readiness.run_companion_assay", companion)
+    monkeypatch.setattr(
+        "tools.v14_stageB_intrinsic_readiness.score_intrinsic_lesion_observations", scorer,
+    )
+    output = tmp_path / "v3-readiness"
+    receipt = run_intrinsic_readiness(
+        template, template_sha, candidate, candidate_sha,
+        causal, causal_sha, output, repository_root=tmp_path,
+        analysis_protocol_path=protocol,
+        analysis_protocol_sha256=protocol_sha,
+        execution_argv=["test-v14-stageB-v3-readiness"],
+    )
+
+    assert [call[0] for call in calls] == ["nap", "hcn"]
+    expected_arms = ["nap_lesion", "hcn_baseline_lesion"]
+    for (_, args, kwargs), arm in zip(calls, expected_arms):
+        parameter_path, parameter_sha = Path(args[0]), args[1]
+        assert parameter_path == (
+            output / candidate_sha / "arms" / arm / "adaptive-parameters.json"
+        )
+        assert hashlib.sha256(parameter_path.read_bytes()).hexdigest() == parameter_sha
+        assert (Path(args[2]), args[3]) == (protocol, protocol_sha)
+        assert (Path(args[4]), args[5]) == (causal, causal_sha)
+        assert Path(args[6]) == output / candidate_sha / "companions" / (
+            "nap-observation.json" if arm == "nap_lesion" else "hcn-observation.json"
+        )
+        assert kwargs == {"repository_root": tmp_path}
+
+    scorer_input_path = output / candidate_sha / "intrinsic-lesion-observations.json"
+    scorer_input = json.loads(scorer_input_path.read_text())
+    assert scorer_input["schema"] == "v14-snr-stageB-intrinsic-lesion-observations-v2"
+    assert set(scorer_input["companion_observations"]) == {"nap", "hcn"}
+    for assay, binding in scorer_input["companion_observations"].items():
+        artifact = tmp_path / binding["path"]
+        assert artifact.name == f"{assay}-observation.json"
+        assert hashlib.sha256(artifact.read_bytes()).hexdigest() == binding["sha256"]
+    assert scored == [(scorer_input, tmp_path)]
+
+    sidecar = json.loads(scorer_input_path.with_name(
+        "intrinsic-lesion-observations.json.prov.json"
+    ).read_text())
+    companion_traces = [
+        item for item in sidecar["compact_trace_artifacts"]
+        if item["arm"].startswith("companion_")
+    ]
+    assert len(companion_traces) == 15
+    assert [item["arm"] for item in companion_traces].count("companion_nap") == 1
+    assert [item["arm"] for item in companion_traces].count("companion_hcn") == 14
+    assert receipt["compact_trace_artifacts"] == sidecar["compact_trace_artifacts"]
+
+
+@pytest.mark.parametrize(
+    ("causal_path", "protocol_path"),
+    [(CAUSAL_GATE, ANALYSIS_PROTOCOL), (CAUSAL_GATE_V2, ANALYSIS_PROTOCOL_V2)],
+)
+def test_v1_v2_protocols_do_not_invoke_companions(
+    tmp_path, monkeypatch, causal_path, protocol_path,
+):
+    from sim.bridge import SimulationBridge
+
+    template, template_sha, candidate, candidate_sha, _, _ = _inputs(tmp_path)
+    causal, causal_sha, protocol, protocol_sha = _copy_contract(
+        tmp_path, causal_path, protocol_path,
+    )
+
+    def unexpected_companion(*args, **kwargs):
+        raise AssertionError("historical protocols must not invoke V3 companions")
+
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", _synthetic_spike_step)
+    _isolate_protocol_controller(monkeypatch)
+    monkeypatch.setattr(
+        "tools.v14_stageB_intrinsic_readiness.run_companion_assay", unexpected_companion,
+    )
+    monkeypatch.setattr(
+        "tools.v14_stageB_intrinsic_readiness.score_intrinsic_lesion_observations",
+        lambda document, *, root: {
+            "scientific_verdict": None,
+            "readiness_contract_result": "UNAVAILABLE",
+            "all_intrinsic_lesion_gates_passed": None,
+        },
+    )
+    output = tmp_path / f"{protocol_path.stem}-readiness"
+    run_intrinsic_readiness(
+        template, template_sha, candidate, candidate_sha,
+        causal, causal_sha, output, repository_root=tmp_path,
+        analysis_protocol_path=protocol,
+        analysis_protocol_sha256=protocol_sha,
+    )
+
+    scorer_input = json.loads(
+        (output / candidate_sha / "intrinsic-lesion-observations.json").read_text()
+    )
+    assert scorer_input["schema"] == "v14-snr-stageB-intrinsic-lesion-observations-v1"
+    assert "companion_observations" not in scorer_input
+
+
+def test_v3_rejects_companion_result_that_differs_from_persisted_artifact(
+    tmp_path, monkeypatch,
+):
+    from sim.bridge import SimulationBridge
+
+    template, template_sha, candidate, candidate_sha, _, _ = _inputs(tmp_path)
+    causal, causal_sha, protocol, protocol_sha = _v3_contract(tmp_path)
+
+    def tampered_companion(assay, *args, **kwargs):
+        output = Path(args[6])
+        result = _mock_companion_result(tmp_path, assay, output, candidate_sha)
+        persisted = dict(result)
+        persisted["process_status"] = "tampered"
+        output.write_bytes(canonical_bytes(persisted))
+        return result
+
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", _synthetic_spike_step)
+    _isolate_protocol_controller(monkeypatch)
+    monkeypatch.setattr(
+        "tools.v14_stageB_intrinsic_readiness.run_companion_assay", tampered_companion,
+    )
+    output = tmp_path / "tampered-v3-readiness"
+    with pytest.raises(StageBIntrinsicReadinessError, match="invalid artifact"):
+        run_intrinsic_readiness(
+            template, template_sha, candidate, candidate_sha,
+            causal, causal_sha, output, repository_root=tmp_path,
+            analysis_protocol_path=protocol,
+            analysis_protocol_sha256=protocol_sha,
+        )
+    assert not output.exists()
 
 
 def test_failure_cleans_partial_output_and_refuses_overwrite(tmp_path, monkeypatch):

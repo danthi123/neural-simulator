@@ -250,6 +250,26 @@ def test_run_binds_selected_candidate_and_requires_authoritative_source(
         )
 
 
+def test_recomputed_score_comparison_allows_only_machine_scale_float_drift() -> None:
+    stored = {
+        "passed": True,
+        "values": [0.0032847258422412456, -78.3174934387207],
+        "status": "scored",
+    }
+    replayed = {
+        "passed": True,
+        "values": [0.0032847258422412443, -78.31749343872069],
+        "status": "scored",
+    }
+    assert confirmation._recomputed_score_matches(stored, replayed)
+    assert not confirmation._recomputed_score_matches(
+        stored, {**replayed, "values": [0.0033, -78.31749343872069]}
+    )
+    assert not confirmation._recomputed_score_matches(
+        stored, {**replayed, "passed": 1}
+    )
+
+
 def test_job_plan_v2_binds_exact_causal_gate_and_analysis_protocol(
     tmp_path: Path,
 ) -> None:

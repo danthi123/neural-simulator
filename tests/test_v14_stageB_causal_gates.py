@@ -8,6 +8,7 @@ from sim.snr_executable_packet import canonical_bytes
 ROOT = Path(__file__).resolve().parents[1]
 GATE_PATH = ROOT / "research/specs/v14_snr_stageB_causal_gates.json"
 GATE_V2_PATH = ROOT / "research/specs/v14_snr_stageB_causal_gates_v2.json"
+GATE_V3_PATH = ROOT / "research/specs/v14_snr_stageB_causal_gates_v3.json"
 
 
 def _spec():
@@ -101,3 +102,25 @@ def test_v2_contract_adds_directional_total_ahp_assay_without_rewriting_v1():
         assay = metrics["median_interspike_voltage_nadir_mV"]
         assert assay["operator"] == "lesion_greater_than_intact"
         assert assay["evidence_class"] == "source_reported_direction"
+
+
+def test_v3_contract_binds_operational_nap_hcn_assays_and_keeps_sk_unavailable():
+    v3 = json.loads(GATE_V3_PATH.read_text(encoding="ascii"))
+    assert GATE_V3_PATH.read_bytes() == canonical_bytes(v3)
+    assert v3["schema"] == "v14-snr-stageB-causal-gates-v3"
+    assert v3["status"] == "production-measurement-partial"
+    protocol = v3["authorized_analysis_protocol"]
+    protocol_path = ROOT / protocol["path"]
+    assert hashlib.sha256(protocol_path.read_bytes()).hexdigest() == protocol["sha256"]
+    protocol_document = json.loads(protocol_path.read_text(encoding="ascii"))
+    assert protocol_document["schema"] == "v14-snr-stageB-intrinsic-protocol-v3"
+    assert protocol_document["status"] == "production-measurement-partial"
+
+    gates = {gate["id"]: gate for gate in v3["causal_gates"]}
+    nap_metrics = {item["metric"] for item in gates["nap-complete-lesion"]["hard_gates"]}
+    assert nap_metrics == {"post_lesion_spike_count", "median_membrane_voltage_change_mV"}
+    hcn_metrics = {item["metric"] for item in gates["hcn-complete-lesion"]["hard_gates"]}
+    assert "fitted_hyperpolarized_input_resistance_MOhm" in hcn_metrics
+    sk = v3["analysis_protocol_boundaries"]["sk_depolarization_block"]
+    assert sk["status"] == "unavailable"
+    assert "clones" in sk["boundary"]

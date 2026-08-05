@@ -70,10 +70,31 @@ Filed artifacts:
 - `research/specs/v14_snr_stageB_causal_gates_v2.json`
 - `research/specs/v14_snr_stageB_intrinsic_protocol_v2.json`
 
+The two preregistered survivors were then rerun independently on authoritative
+NumPy workers at revision `99cc46c72f32a2b3dcfceed8b11843370eff4efd` and
+collected under digest-bound V2 job plan
+`research/experiment-runtime/v14-stageB-v2-total-ahp/job-plan.json`. Both
+collections passed artifact-manifest verification and independent local score
+recomputation. The verifier permits only machine-scale float drift across NumPy
+versions; structure, text, booleans, integer values, and material numerical
+changes remain exact or fail closed.
+
+V2 total-AHP observations:
+
+| Candidate | Intact nadir (mV) | Cav2.2 lesion (mV) | SK lesion (mV) | Direction |
+|---|---:|---:|---:|---|
+| Sobol 284 | -78.317493 | -74.989601 | -78.297482 | both pass |
+| Sobol 404 | -80.310486 | -77.033806 | -79.314903 | both pass |
+
+The authenticated scores remain `UNAVAILABLE`, not failed: NaP voltage, HCN
+hyperpolarized input resistance, and the heterogeneous 12-cell SK cohort were
+not executable under V2. Evidence is in
+`research/experiment-runtime/v14-stageB-v2-total-ahp/results/`.
+
 ## Result and next action
 
-Status is **RESOLVED-PARTIAL**. One of four missing measurements now has an honest
-executable contract. NaP and HCN have biologically grounded directions but still
-need separately authenticated project-operational companion traces. The SK cohort
-must remain unavailable. Next, rerun the two survivors against V2 on authoritative
-NumPy workers, then implement the phased NaP and paired HCN companion protocols.
+Status is **RESOLVED-PARTIAL**. The total-AHP contract is implemented and passed
+by both survivors. NaP and HCN now have filed V3 project-operational contracts and
+are being connected to separately authenticated companion traces. The SK cohort
+must remain unavailable. Next, execute and independently score the V3 phased NaP
+and paired HCN assays for both survivors.

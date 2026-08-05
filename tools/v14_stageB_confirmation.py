@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import shutil
 import socket
 import sys
@@ -42,10 +43,41 @@ EXPECTED_ENVIRONMENT = {
     "h5py": "3.16.0",
     "pyyaml": "6.0.3",
 }
+RECOMPUTED_FLOAT_REL_TOL = 1e-12
+RECOMPUTED_FLOAT_ABS_TOL = 1e-15
 
 
 class StageBConfirmationError(ValueError):
     """Raised when confirmation identity, source, or execution is invalid."""
+
+
+def _recomputed_score_matches(stored: Any, recomputed: Any) -> bool:
+    """Compare replayed scores while tolerating only machine-scale float drift."""
+    if isinstance(stored, bool) or isinstance(recomputed, bool):
+        return type(stored) is type(recomputed) and stored == recomputed
+    if isinstance(stored, float) or isinstance(recomputed, float):
+        if not isinstance(stored, (int, float)) or not isinstance(recomputed, (int, float)):
+            return False
+        return math.isclose(
+            float(stored),
+            float(recomputed),
+            rel_tol=RECOMPUTED_FLOAT_REL_TOL,
+            abs_tol=RECOMPUTED_FLOAT_ABS_TOL,
+        )
+    if isinstance(stored, Mapping) or isinstance(recomputed, Mapping):
+        if not isinstance(stored, Mapping) or not isinstance(recomputed, Mapping):
+            return False
+        return set(stored) == set(recomputed) and all(
+            _recomputed_score_matches(stored[key], recomputed[key]) for key in stored
+        )
+    if isinstance(stored, list) or isinstance(recomputed, list):
+        if not isinstance(stored, list) or not isinstance(recomputed, list):
+            return False
+        return len(stored) == len(recomputed) and all(
+            _recomputed_score_matches(left, right)
+            for left, right in zip(stored, recomputed, strict=True)
+        )
+    return type(stored) is type(recomputed) and stored == recomputed
 
 
 def _digest_bytes(value: bytes) -> str:
@@ -723,7 +755,7 @@ def verify_collected_confirmation(
         root, score_binding.get("path"), score_binding.get("sha256"), "collected score"
     )
     recomputed = score_intrinsic_lesion_observations(scorer_input, root=root)
-    if recomputed != stored_score:
+    if not _recomputed_score_matches(stored_score, recomputed):
         raise StageBConfirmationError("collected score does not equal local recomputation")
     return {
         "verified": True,
