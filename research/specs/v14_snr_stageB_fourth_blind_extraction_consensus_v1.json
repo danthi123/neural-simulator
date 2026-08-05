@@ -1,0 +1,89 @@
+{
+  "schema": "v14-snr-stageB-fourth-blind-extraction-consensus-v1",
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "prospective consensus protocol sealed before extractor D; contains no execution result",
+  "status": "preregistered_before_extractor_d",
+  "scientific_verdict": null,
+  "optimization_allowed": false,
+  "authorities": {
+    "measurement_protocol": {
+      "path": "research/specs/v14_snr_stageB_population_digitization_protocol_v1.json",
+      "sha256": "af26997454b4d595b70be9a5f82b7e6b060a0fac34bdac23fae2b0bcbbcda557"
+    },
+    "three_extractor_group_manifest": {
+      "path": "research/measurements/v14-stageB/extraction-groups-v1.json",
+      "sha256": "0fdf3c08728128ad395363781cab1b44920980dacac149675b777508256f95fc"
+    }
+  },
+  "unresolved_adjudications": [
+    {
+      "path": "research/measurements/v14-stageB/adjudications/ding-matta-zhou-2011-figure-8--C1.adjudication.json",
+      "sha256": "51a0e5beb4a125cd84cfd52b37d7452c44dbe925d3dc2ee83e1e1c84d839c849"
+    },
+    {
+      "path": "research/measurements/v14-stageB/adjudications/ding-matta-zhou-2011-figure-8--C2.adjudication.json",
+      "sha256": "aa593b5924ca3077e093e0ff94fd7474b35fb5e08fbffff239ff3e1c5b617bf6"
+    },
+    {
+      "path": "research/measurements/v14-stageB/adjudications/ding-matta-zhou-2011-figure-9--B.adjudication.json",
+      "sha256": "e573783a7fb21916d8c20c431cefbc18dacbe3745424f23341e896c531fdd390"
+    },
+    {
+      "path": "research/measurements/v14-stageB/adjudications/ding-wei-zhou-2011-figure-6--A4.adjudication.json",
+      "sha256": "c1430db0c46d0189daa3cb2c82ef0ab8912a83b21c40dd6b26bd241d2f2cb7b9"
+    },
+    {
+      "path": "research/measurements/v14-stageB/adjudications/ding-wei-zhou-2011-figure-6--B4.adjudication.json",
+      "sha256": "808ddf1c48352c5f4901412de8b2e91f966917b49eb7619381221c17881cd14f"
+    },
+    {
+      "path": "research/measurements/v14-stageB/adjudications/ding-wei-zhou-2011-figure-7--D.adjudication.json",
+      "sha256": "965af4b6c49fd4bb8716ba3ea57cac017f3690973ebd14f3b1a1f860c52c8cde"
+    },
+    {
+      "path": "research/measurements/v14-stageB/adjudications/ding-wei-zhou-2011-figure-9--C.adjudication.json",
+      "sha256": "71bbd406e64542130bca218fb29cef0498e2ab26f8a924b2df7bfc5c38762933"
+    }
+  ],
+  "extractor_d_custody": {
+    "extractor_id": "extractor_d",
+    "must_reextract_all_seven_panels": true,
+    "blind_to_extractors_a_b_c": true,
+    "blind_to_pair_comparisons": true,
+    "blind_to_three_way_adjudications": true,
+    "blind_to_target_partitions": true,
+    "native_source_pixels_only": true,
+    "source_pixels_may_be_resampled": false
+  },
+  "four_way_consensus": {
+    "minimum_support": 3,
+    "panel_status": {
+      "available": "at_least_three_records_are_available",
+      "unavailable": "at_least_three_records_are_unavailable",
+      "mixed_unavailable_reasons": "retain_all_preregistered_reasons_and_emit_majority_unavailable_mixed_reasons",
+      "otherwise": "unresolved"
+    },
+    "command_set": {
+      "identity": "exact_sorted_command_id_tuple_after_each_blind_record_applies_the_frozen_protocol",
+      "required": "one_unique_command_set_has_at_least_three_available_record_votes",
+      "nearest_x_or_post_hoc_marker_matching_allowed": false,
+      "otherwise": "unresolved"
+    },
+    "point_measurement": {
+      "pairwise_edge": "the_existing_blind_pair_comparison_accepts_the_complete_point_including_x_when_digitized_y_availability_and_biological_error",
+      "support": "a_complete_pairwise_agreement_clique_among_records_voting_for_the_consensus_command_set",
+      "required_clique_size": 3,
+      "selection": "the_unique_maximum_size_clique",
+      "multiple_maximum_cliques": "unresolved",
+      "no_clique_of_three": "unresolved",
+      "reported_measurement": "lexicographically_first_extractor_pair_inside_the_selected_clique",
+      "reported_between_extractor_component": "maximum_between_extractor_component_across_all_pairs_inside_the_selected_clique"
+    }
+  },
+  "release": {
+    "partial_target_packet_allowed": false,
+    "all_panels_must_be_resolved_or_consensus_unavailable": true,
+    "optimization_remains_forbidden": true,
+    "implementation_and_tests_required_before_consensus_output": true
+  }
+}
