@@ -82,16 +82,34 @@ def _binding(value: Any, field: str) -> dict[str, str]:
     }
 
 
-def _measurement(value: Any, field: str, *, positive_uncertainty: bool) -> dict[str, float]:
-    if not isinstance(value, Mapping) or set(value) != {
-        "median", "standard_uncertainty", "q025", "q975",
-    }:
+def _measurement(
+    value: Any,
+    field: str,
+    *,
+    positive_uncertainty: bool,
+    published_command_allowed: bool = False,
+) -> dict[str, float]:
+    numeric_keys = {"median", "standard_uncertainty", "q025", "q975"}
+    if not isinstance(value, Mapping) or set(value) not in (
+        numeric_keys,
+        numeric_keys | {"authority"},
+    ):
         _fail(f"{field} has an invalid measurement shape")
-    result = {key: _finite(value[key], f"{field} {key}") for key in value}
+    has_authority = "authority" in value
+    if has_authority and (
+        not published_command_allowed or value["authority"] != "published_command"
+    ):
+        _fail(f"{field} has an invalid measurement authority")
+    result = {key: _finite(value[key], f"{field} {key}") for key in numeric_keys}
     if positive_uncertainty and result["standard_uncertainty"] <= 0.0:
         _fail(f"{field} standard_uncertainty must be positive")
     if result["q025"] > result["median"] or result["median"] > result["q975"]:
         _fail(f"{field} quantiles are not ordered")
+    if has_authority and not (
+        result["standard_uncertainty"] == 0.0
+        and result["q025"] == result["median"] == result["q975"]
+    ):
+        _fail(f"{field} published command must be exact")
     return result
 
 
@@ -190,7 +208,12 @@ def _packet_targets(packet: Any) -> tuple[str, list[dict[str, Any]]]:
             continue
         if status != "available" or row["unavailable_reason"] is not None:
             _fail(f"target {target_id} availability is invalid")
-        x = _measurement(row["x"], f"target {target_id} x", positive_uncertainty=False)
+        x = _measurement(
+            row["x"],
+            f"target {target_id} x",
+            positive_uncertainty=False,
+            published_command_allowed=True,
+        )
         y = _measurement(row["y"], f"target {target_id} y", positive_uncertainty=True)
         if not isinstance(row["digitization_uncertainty"], Mapping):
             _fail(f"target {target_id} digitization uncertainty is invalid")

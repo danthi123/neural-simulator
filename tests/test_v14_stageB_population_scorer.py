@@ -22,7 +22,20 @@ def _measurement(median: float, uncertainty: float) -> dict:
     }
 
 
-def _target(identifier: str, family: str, x: float, y: float, *, biological: object = None) -> dict:
+def _target(
+    identifier: str,
+    family: str,
+    x: float,
+    y: float,
+    *,
+    biological: object = None,
+    published_command: bool = False,
+) -> dict:
+    x_measurement = _measurement(x, 0.0)
+    if published_command:
+        x_measurement["q025"] = x
+        x_measurement["q975"] = x
+        x_measurement["authority"] = "published_command"
     return {
         "target_id": identifier,
         "target_family": family,
@@ -39,7 +52,7 @@ def _target(identifier: str, family: str, x: float, y: float, *, biological: obj
         "measurement_limitation": None,
         "status": "available",
         "unavailable_reason": None,
-        "x": _measurement(x, 0.0),
+        "x": x_measurement,
         "y": _measurement(y, 0.1),
         "digitization_uncertainty": {"between_extractor_component": None},
         "biological_error": biological if biological is not None else {"status": "unavailable"},
@@ -184,3 +197,24 @@ def test_rejects_nonpositive_digitization_uncertainty_and_observation_packet_mis
     _redigest(observation)
     with pytest.raises(PopulationScorerError, match="not bound"):
         score_population_calibration(packet, observation)
+
+
+def test_accepts_exact_published_command_x_and_rejects_inexact_authority() -> None:
+    packet = _packet()
+    packet["targets"][0] = _target(
+        "kv3:command_001",
+        "kv3",
+        -40.0,
+        0.6,
+        published_command=True,
+    )
+    _redigest(packet)
+    observation = _observation(packet)
+    result = score_population_calibration(packet, observation)
+    assert result["per_target"][0]["x"] == -40.0
+
+    inexact = copy.deepcopy(packet)
+    inexact["targets"][0]["x"]["q975"] = -39.9
+    _redigest(inexact)
+    with pytest.raises(PopulationScorerError, match="must be exact"):
+        score_population_calibration(inexact, _observation(inexact))

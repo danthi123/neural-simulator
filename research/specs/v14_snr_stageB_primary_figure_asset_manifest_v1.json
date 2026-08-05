@@ -2,9 +2,9 @@
   "schema": "v14-snr-stageB-primary-figure-asset-manifest-v1",
   "device": "not_applicable_non_executed_source_manifest",
   "provenance_exempt": "source-asset metadata and hashes; contains no simulation measurement",
-  "status": "official_assets_acquired_metadata_only_numeric_targets_pending",
+  "status": "official_full_resolution_assets_hash_bound_numeric_targets_pending",
   "scientific_verdict": null,
-  "license_policy": "metadata and derived numeric observations only; source images are not committed",
+  "license_policy": "metadata and derived numeric observations only; source images and full tile receipts remain in ignored local experiment runtime and are not committed",
   "assets": [
     {
       "id": "ding-wei-zhou-2011-figure-6",
@@ -16,6 +16,16 @@
       "full_resolution_pixels": [5000, 5988],
       "tile_view_id": "254430",
       "tile_satellite": "28",
+      "full_resolution_acquisition": {
+        "local_image_path": "research/experiment-runtime/stageB-source-assets/sodium-fig6-full.png",
+        "local_receipt_path": "research/experiment-runtime/stageB-source-assets/sodium-fig6-full.receipt.json",
+        "manifest_sha256": "2bc8f3f0500264661f83f9dc659436aa5c5b4896ff2a4f6ecc78018b78bfafff",
+        "assembled_image_sha256": "952ed17f99ed0b443caf602394a2af9c05eec7a29d40e533da3877998d225435",
+        "pixel_sha256": "b2f54f423ffe8df75f1d451ccfe63f54635d4f09c9746e99f30f395ea18251c6",
+        "receipt_file_sha256": "6590a4109f258b03877b17f2201b6c4b845e222d99395c734c32bf37ef672b28",
+        "receipt_self_sha256": "6731cfec1597bd1df04f28abae6d963d58ee51aa2afe030d5d4c0a2c20169b05",
+        "tile_count": 480
+      },
       "content": ["representative activation traces", "population activation curve", "representative inactivation traces", "population inactivation curve"],
       "allowed_numeric_role": "population command-response curves only after prospective digitization; representative traces are single-cell shape context"
     },
@@ -29,6 +39,16 @@
       "full_resolution_pixels": [3000, 6607],
       "tile_view_id": "254436",
       "tile_satellite": "28",
+      "full_resolution_acquisition": {
+        "local_image_path": "research/experiment-runtime/stageB-source-assets/sodium-fig7-full.png",
+        "local_receipt_path": "research/experiment-runtime/stageB-source-assets/sodium-fig7-full.receipt.json",
+        "manifest_sha256": "f37179814d2cba7fe6f0458b842c07e5512ba1adb7e9047648d734cba3a94721",
+        "assembled_image_sha256": "55bbea404c4278cbae9904d789a20bcca7637954201723cd90424a9cdd646fa7",
+        "pixel_sha256": "f79a98c57d695509d3a4040df97c3a6fa362194e9570da7243d54ed23561b9e9",
+        "receipt_file_sha256": "1b4b1dd5d1702140aef0d0beaa74a75a1a61927f2020568381538f1e474775fa",
+        "receipt_self_sha256": "49caf56bf27eac6ffeb2eb5ebe57cb0eac05499ace181bc50e1fb31fc4e8916c",
+        "tile_count": 312
+      },
       "content": ["recovery protocol", "representative recovery traces", "population recovery curve"],
       "allowed_numeric_role": "population recovery command-response curve after prospective digitization"
     },
@@ -42,6 +62,16 @@
       "full_resolution_pixels": [4200, 4415],
       "tile_view_id": "254448",
       "tile_satellite": "28",
+      "full_resolution_acquisition": {
+        "local_image_path": "research/experiment-runtime/stageB-source-assets/sodium-fig9-full.png",
+        "local_receipt_path": "research/experiment-runtime/stageB-source-assets/sodium-fig9-full.receipt.json",
+        "manifest_sha256": "30f2f5d66e2cca506541ef5f5ce825a86db1b39bd8a775c54a3875c736d9dfc0",
+        "assembled_image_sha256": "7badbea03dcf78264d469b127c23036434d44475e581b08e6a25ea446fb20fa9",
+        "pixel_sha256": "f2371dcf2c1b94f46dea65b70fc8ecc39bfb2dbb2e2291d9ee41bcecd9f58d3f",
+        "receipt_file_sha256": "d35968abca108fb4a0c8cd5930ca78fc00ced68489b999021d4f7b9e5d70a370",
+        "receipt_self_sha256": "7f52bea0442f97fc331f73da7d55f8ad657262166fb668fd00ea6c2a95fda879",
+        "tile_count": 306
+      },
       "content": ["representative deactivation tails", "population deactivation time-constant curve", "protocol"],
       "allowed_numeric_role": "population time-constant command-response curve after prospective digitization; representative tails are shape context"
     },
@@ -81,6 +111,16 @@
       "full_resolution_pixels": [3000, 2952],
       "tile_view_id": "214180",
       "tile_satellite": "68",
+      "full_resolution_acquisition": {
+        "local_image_path": "research/experiment-runtime/stageB-source-assets/kv3-fig8-full.png",
+        "local_receipt_path": "research/experiment-runtime/stageB-source-assets/kv3-fig8-full.receipt.json",
+        "manifest_sha256": "c38ad0dbadf7d87387545e0ab7d438bae72b83cb4c90d3bfb4061adddf1c0831",
+        "assembled_image_sha256": "bcab30f4baeb96bb9d013fce1a062ddec953a05ae3d3764d75016e7e2dd5c38a",
+        "pixel_sha256": "047bfe561833e5910c5c1506667b32447ba734edc98f36e45bd6d5eeb3c13a2f",
+        "receipt_file_sha256": "b641c221648831c439d95e9f3756013e339894e2f22fde5d0659b6ad1c82c708",
+        "receipt_self_sha256": "ef45716104b9bf6092bb3b5b9f97ce31254a991fb4223308355ec4fd7194e82a",
+        "tile_count": 144
+      },
       "content": ["representative TEA-subtracted activation traces", "population activation curve", "population inactivation curve"],
       "allowed_numeric_role": "population command-response curves after prospective digitization; representative traces are single-cell shape context"
     },
@@ -94,6 +134,16 @@
       "full_resolution_pixels": [2800, 978],
       "tile_view_id": "214185",
       "tile_satellite": "68",
+      "full_resolution_acquisition": {
+        "local_image_path": "research/experiment-runtime/stageB-source-assets/kv3-fig9-full.png",
+        "local_receipt_path": "research/experiment-runtime/stageB-source-assets/kv3-fig9-full.receipt.json",
+        "manifest_sha256": "a244a2de5c0766cf8aadb214aee2e0a23a0f3d6d6a6e4fdd8f8a5f8fcb1c21aa",
+        "assembled_image_sha256": "a28351bb130c7207b5c88a5bb86b8e253033fb1ce9a9383fd3e255106c849998",
+        "pixel_sha256": "9270963a265532ccb20635bc23fb1b8f0faf262055a0df1e29bd52627fb8b478",
+        "receipt_file_sha256": "a8312d8d69a074c7648faaaf1ffbaa74553eaf1ba957d61e95513a8c1fe97864",
+        "receipt_self_sha256": "eb380dbe59578f36fd9a84a66dac4b7ab8818d071013db785586b6de7d5679f5",
+        "tile_count": 44
+      },
       "content": ["representative TEA-subtracted deactivation tails", "population deactivation time-constant curve"],
       "allowed_numeric_role": "population time-constant command-response curve after prospective digitization; representative tails are shape context"
     }
@@ -106,5 +156,5 @@
     "tabulated_source_values_take_precedence": true,
     "raw_complete_current_waveforms_available": false
   },
-  "acquisition_result": "No raw numeric dataset or official open-access article package was located. PMC3234097 reports idIsNotOpenAccess. Official full-resolution tiled figures are available and their manifests are bound here, so population command-response panels are digitizable. Representative traces still cannot support population waveform fitting."
+  "acquisition_result": "No raw numeric dataset or official open-access article package was located. PMC3234097 reports idIsNotOpenAccess. Five official full-resolution tiled figures needed for the primary 30 C population targets were assembled from 1,286 exact NCBI tiles; encoded images, raw pixels, tile manifests, and self-digested local receipts are hash-bound here. Representative traces still cannot support population waveform fitting."
 }

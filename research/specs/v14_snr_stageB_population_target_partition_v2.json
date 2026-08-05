@@ -1,0 +1,45 @@
+{
+  "schema": "v14-snr-stageB-population-target-partition-v2",
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "prospective source-independent command partition; contains no biological or simulation measurements",
+  "status": "preregistered_before_blind_extraction_results_inspected",
+  "scientific_verdict": null,
+  "optimization_allowed": false,
+  "supersedes": {
+    "path": "research/specs/v14_snr_stageB_kinetic_identification_partition_v1.json",
+    "sha256": "82954b839c7999ec3d1bda8fd9fafb28d23a257bd7bebc68e8901208d70cf392",
+    "reason": "the v1 operational numeric ladders do not match the source-marker commands in the sodium inactivation and recovery panels and therefore cannot partition the measured source targets"
+  },
+  "measurement_protocol": {
+    "path": "research/specs/v14_snr_stageB_population_digitization_protocol_v1.json",
+    "sha256": "af26997454b4d595b70be9a5f82b7e6b060a0fac34bdac23fae2b0bcbbcda557"
+  },
+  "assignment": {
+    "input": "one-based integer suffix of command_NNN after points are sorted by calibrated source x as required by the frozen measurement protocol",
+    "held_out": "suffix modulo 5 equals 0",
+    "validation": "suffix modulo 5 equals 3",
+    "calibration": "all remaining suffixes",
+    "uses_x_value": false,
+    "uses_y_value": false,
+    "uses_uncertainty": false,
+    "uses_model_output": false,
+    "minimum_commands_per_panel": 5,
+    "required_nonempty_partitions_per_panel": [
+      "calibration",
+      "validation",
+      "held_out"
+    ]
+  },
+  "custody": {
+    "calibration": "optimizer-visible",
+    "validation": "separate evaluator only; unavailable to candidate proposal",
+    "held_out": "one-shot evaluator only after candidate family, parameter bounds, scoring, preprocessing, and identifiability thresholds are sealed",
+    "combined_packet_allowed": false,
+    "reuse_after_held_out_failure": false
+  },
+  "unavailable_measurements": {
+    "retain_partition_assignment": true,
+    "exclude_from_numeric_scoring": true,
+    "do_not_reassign_neighbors": true
+  }
+}

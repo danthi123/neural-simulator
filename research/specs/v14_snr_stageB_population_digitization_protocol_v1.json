@@ -1,0 +1,323 @@
+{
+  "schema": "v14-snr-stageB-population-digitization-protocol-v1",
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "prospective source-measurement protocol; contains no extracted values or simulation measurements",
+  "status": "preregistered_before_numeric_extraction",
+  "scientific_verdict": null,
+  "functional_role": "Provide source-constrained population kinetics for identifying fast sodium and Kv3 mechanisms that support stable high-rate SNr spiking; this is an intrinsic-mechanism constraint, not evidence of whole-brain capability by itself.",
+  "optimization_allowed": false,
+  "authorities": {
+    "asset_manifest": {
+      "path": "research/specs/v14_snr_stageB_primary_figure_asset_manifest_v1.json",
+      "sha256": "2c725c1bb6c3ec66b361685e334a69690fd988bac9ae6040ef78c6c556ac27e6"
+    },
+    "partition": {
+      "path": "research/specs/v14_snr_stageB_kinetic_identification_partition_v1.json",
+      "sha256": "82954b839c7999ec3d1bda8fd9fafb28d23a257bd7bebc68e8901208d70cf392"
+    }
+  },
+  "source_priority": [
+    "author_or_repository_numeric_data",
+    "paper_table_or_text",
+    "official_vector_figure",
+    "official_full_resolution_raster"
+  ],
+  "source_rules": {
+    "asset_sha256_required": true,
+    "original_pixels_required": true,
+    "resampling_allowed": false,
+    "display_zoom": "nearest_neighbor_only",
+    "panel_bounds_in_original_pixels_required": true,
+    "tabulated_values_override_digitized_values": true,
+    "representative_single_cell_traces_as_population_targets": false,
+    "fitted_or_connecting_lines_as_unreported_points": false,
+    "population_waveform_reconstruction_allowed": false
+  },
+  "eligible_panels": [
+    {
+      "target_family": "fast_na_activation",
+      "asset_id": "ding-wei-zhou-2011-figure-6",
+      "panel": "A4",
+      "panel_bounds_original_pixels": [0, 4500, 2500, 5988],
+      "x_quantity": "command_voltage",
+      "x_unit": "mV",
+      "x_scale": "linear",
+      "y_quantity": "normalized_conductance",
+      "y_unit": "G/Gmax",
+      "y_scale": "linear",
+      "series_identity": "filled_circle_SNr_GABA",
+      "command_identity": "source_markers_at_5_mV_steps_from_-60_through_+5; experimental commands outside the displayed range are unavailable",
+      "x_authority_mode": "published_command",
+      "authoritative_x_values": [-60, -55, -50, -45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5],
+      "biological_error_bar": "standard_error",
+      "sample_size": 12,
+      "measurement_limitation": "10_kHz_low_pass_filter_may_underestimate_very_fast_activation"
+    },
+    {
+      "target_family": "fast_na_steady_state_inactivation",
+      "asset_id": "ding-wei-zhou-2011-figure-6",
+      "panel": "B4",
+      "panel_bounds_original_pixels": [2500, 4500, 5000, 5988],
+      "x_quantity": "prepulse_voltage",
+      "x_unit": "mV",
+      "x_scale": "linear",
+      "y_quantity": "normalized_current",
+      "y_unit": "I/Imax",
+      "y_scale": "linear",
+      "series_identity": "filled_circle_SNr_GABA",
+      "command_identity": "source_marker_x_coordinates_only; do not force onto the operational 10_mV partition because the panel appears to use a denser grid",
+      "x_authority_mode": "digitized_source_marker",
+      "authoritative_x_values": null,
+      "biological_error_bar": "standard_error",
+      "sample_size": 12
+    },
+    {
+      "target_family": "fast_na_recovery",
+      "asset_id": "ding-wei-zhou-2011-figure-7",
+      "panel": "D",
+      "panel_bounds_original_pixels": [0, 4800, 3000, 6607],
+      "x_quantity": "recovery_interval",
+      "x_unit": "ms",
+      "x_scale": "linear",
+      "y_quantity": "normalized_current",
+      "y_unit": "In/I1",
+      "y_scale": "linear",
+      "series_identity": "filled_circle_SNr_GABA",
+      "command_identity": "source_marker_x_coordinates_only; the operational recovery ladder is not source-reported",
+      "x_authority_mode": "digitized_source_marker",
+      "authoritative_x_values": null,
+      "biological_error_bar": "standard_error",
+      "sample_size": 5,
+      "clipping_allowed": false
+    },
+    {
+      "target_family": "fast_na_deactivation",
+      "asset_id": "ding-wei-zhou-2011-figure-9",
+      "panel": "C",
+      "panel_bounds_original_pixels": [0, 2750, 2250, 4415],
+      "x_quantity": "deactivation_voltage",
+      "x_unit": "mV",
+      "x_scale": "linear",
+      "y_quantity": "deactivation_time_constant",
+      "y_unit": "ms",
+      "y_scale": "linear",
+      "series_identity": "filled_circle_SNr_GABA",
+      "command_identity": "source_commands_every_10_mV_from_-100_through_-20",
+      "x_authority_mode": "published_command",
+      "authoritative_x_values": [-100, -90, -80, -70, -60, -50, -40, -30, -20],
+      "biological_error_bar": "standard_error",
+      "sample_size": 7,
+      "measurement_limitation": "10_kHz_low_pass_filter_and_stray_capacitance_may_underestimate_very_fast_deactivation"
+    },
+    {
+      "target_family": "kv3_activation",
+      "asset_id": "ding-matta-zhou-2011-figure-8",
+      "panel": "C1",
+      "panel_bounds_original_pixels": [0, 1950, 1500, 2952],
+      "x_quantity": "command_voltage",
+      "x_unit": "mV",
+      "x_scale": "linear",
+      "y_quantity": "normalized_conductance",
+      "y_unit": "G/Gmax",
+      "y_scale": "linear",
+      "series_identity": "filled_circle_SNr_GABA",
+      "command_identity": "source_commands_every_10_mV_from_-80_through_+50",
+      "x_authority_mode": "published_command",
+      "authoritative_x_values": [-80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50],
+      "biological_error_bar": "standard_error",
+      "sample_size": 12
+    },
+    {
+      "target_family": "kv3_steady_state_inactivation",
+      "asset_id": "ding-matta-zhou-2011-figure-8",
+      "panel": "C2",
+      "panel_bounds_original_pixels": [1300, 1950, 3000, 2952],
+      "x_quantity": "prepulse_voltage",
+      "x_unit": "mV",
+      "x_scale": "linear",
+      "y_quantity": "normalized_current",
+      "y_unit": "I/Imax",
+      "y_scale": "linear",
+      "series_identity": "filled_circle_SNr_GABA",
+      "command_identity": "source_commands_every_10_mV_from_-110_through_0",
+      "x_authority_mode": "published_command",
+      "authoritative_x_values": [-110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0],
+      "biological_error_bar": "standard_error",
+      "sample_size": 5
+    },
+    {
+      "target_family": "kv3_deactivation",
+      "asset_id": "ding-matta-zhou-2011-figure-9",
+      "panel": "B",
+      "panel_bounds_original_pixels": [1780, 0, 2800, 978],
+      "x_quantity": "deactivation_voltage",
+      "x_unit": "mV",
+      "x_scale": "linear",
+      "y_quantity": "deactivation_time_constant",
+      "y_unit": "ms",
+      "y_scale": "log10",
+      "series_identity": "filled_circle_SNr_GABA_only; DA kinetics were not measurable",
+      "command_identity": "source_commands_-70_-60_-50_-40_-30_mV",
+      "x_authority_mode": "published_command",
+      "authoritative_x_values": [-70, -60, -50, -40, -30],
+      "biological_error_bar": "standard_error",
+      "sample_size": null,
+      "sample_size_status": "not_reported_for_this_panel"
+    }
+  ],
+  "extraction": {
+    "independent_extractors": 2,
+    "blind_to_other_extraction": true,
+    "each_extractor_recalibrates_axes": true,
+    "tool_name_version_and_annotation_artifact_required": true,
+    "blindness_attestation_required": true,
+    "distinct_workflow_and_annotation_digest_required": true,
+    "raw_extractions_are_immutable": true,
+    "single_extractor_values_can_promote": false
+  },
+  "axis_calibration": {
+    "model": "independent_affine_pixel_to_display_coordinate_transform_per_axis",
+    "scale": "the display coordinate is the printed linear value or log10(value), exactly as declared per panel",
+    "minimum_legible_ticks_per_axis": 3,
+    "use_all_legible_major_ticks": true,
+    "outermost_ticks_required": true,
+    "minimum_calibrated_axis_span_fraction": 0.75,
+    "tick_coordinate": "center_of_tick_axis_intersection",
+    "tick_value_authority": "printed_label",
+    "tick_pixel_region_minimum_half_width": 0.5,
+    "tick_pixel_region_maximum_half_width": 8.0,
+    "fit_method": "Monte_Carlo_pixel_errors_then_affine_least_squares",
+    "axis_fit_residual_model": "independent_zero_mean_normal_in_display_coordinates_with_sigma_equal_to_nominal_rms_axis_residual",
+    "acceptance": {
+      "maximum_standardized_anchor_residual": 2.0,
+      "monotonic_transform_required": true,
+      "all_tick_inverse_checks_required": true
+    },
+    "record": [
+      "axis_anchor_center_regions",
+      "rms_pixels",
+      "maximum_pixels",
+      "rms_axis_units",
+      "maximum_axis_units"
+    ]
+  },
+  "point_measurement": {
+    "command_id_rule": "sort markers by calibrated x value ascending and assign command_001, command_002, and so on",
+    "x_authority": "published_command_when_explicit",
+    "operational_partition_is_not_command_authority": true,
+    "x_role_by_mode": {
+      "published_command": "command_identity_and_calibration_check",
+      "digitized_source_marker": "numeric_source_measurement_with_digitization_uncertainty"
+    },
+    "y_coordinate": "marker_center",
+    "marker_center_record": "rectangle_covering_all_plausible_center_pixels",
+    "marker_center_minimum_half_width_pixels": 0.5,
+    "marker_center_maximum_half_width_pixels": 12.0,
+    "partial_occlusion_requires": [
+      "unique_series_identity",
+      "at_least_two_opposing_marker_edges",
+      "bounded_center_without_curve_interpolation"
+    ],
+    "point_or_line_interpolation_allowed": false
+  },
+  "error_bars": {
+    "published_uncertainty_kind_required": true,
+    "extract_each_visible_endpoint_separately": true,
+    "hidden_endpoint_inference_allowed": false,
+    "endpoint_center_maximum_half_width_pixels": 12.0,
+    "endpoint_x_region_must_overlap_marker_x_region": true,
+    "preserve_one_sided_bars": true,
+    "mean_may_remain_available_when_bar_is_unavailable": true
+  },
+  "digitization_uncertainty": {
+    "monte_carlo_draws": 100000,
+    "deterministic_seed_fields": [
+      "asset_sha256",
+      "panel_id",
+      "series_id",
+      "command_id"
+    ],
+    "per_extractor_components": [
+      "axis_anchor_center_regions",
+      "marker_or_endpoint_center_region",
+      "axis_fit_residuals"
+    ],
+    "combine_extractors": "equal_weight_mixture",
+    "pixel_region_distribution": "independent_continuous_uniform_within_each_preregistered_rectangle",
+    "axis_residual_distribution": "independent_zero_mean_normal_in_display_coordinates",
+    "report": [
+      "median",
+      "standard_uncertainty",
+      "q025",
+      "q975",
+      "axis_calibration_component",
+      "marker_or_endpoint_component",
+      "between_extractor_component"
+    ]
+  },
+  "biological_uncertainty": {
+    "stored_separately_from_digitization_uncertainty": true,
+    "digitization_uncertainty_must_not_be_called_sem": true,
+    "published_asymmetric_bars_preserved": true,
+    "downstream_interval": "propagate digitized mean and visible error-bar endpoint distributions into the preregistered decision interval",
+    "downstream_interval_label": "decision_interval_with_digitization"
+  },
+  "agreement_and_adjudication": {
+    "statistic": "absolute_difference_divided_by_sqrt(u1_squared_plus_u2_squared)",
+    "threshold": 2.0,
+    "failure_action": "third_blind_independent_extraction",
+    "retain_all_original_extractions": true,
+    "consensus_overwrites_raw_extractions": false
+  },
+  "unavailable_if": [
+    "asset digest or original dimensions mismatch",
+    "panel, axis, unit, or series identity is ambiguous",
+    "fewer than three usable ticks exist on either axis",
+    "calibration acceptance fails",
+    "marker is absent and only a line is visible",
+    "overlap prevents unique series assignment",
+    "occlusion prevents a bounded marker center",
+    "digitized x conflicts with the authoritative command",
+    "error-bar endpoint is not distinguishable",
+    "duplicate extractions disagree and adjudication cannot resolve the feature"
+  ],
+  "promotion_gate": {
+    "requires": [
+      "two accepted independent extractions",
+      "accepted calibration",
+      "available population mean",
+      "identified biological uncertainty type for every used error bar",
+      "held-out custody materialized after extraction and before optimization"
+    ],
+    "held_out_values_visible_to_proposal_generation": false,
+    "missing_or_unavailable_commands_are_imputed": false,
+    "optimization_remains_blocked_until_verified_target_packet": true
+  },
+  "method_references": [
+    {
+      "id": "cochrane-handbook-chapter-5",
+      "role": "independent duplicate extraction and prospective disagreement handling",
+      "url": "https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-05"
+    },
+    {
+      "id": "jcgm-gum-6-2020",
+      "role": "measurement model and Monte Carlo uncertainty propagation",
+      "url": "https://www.bipm.org/documents/20126/2071204/JCGM_GUM_6_2020.pdf"
+    },
+    {
+      "id": "kadic-2016",
+      "role": "independent plot digitization evidence",
+      "doi": "10.1016/j.jclinepi.2015.10.013"
+    },
+    {
+      "id": "drevon-2017",
+      "role": "two-coder graphical data extraction reliability evidence",
+      "doi": "10.1177/0145445516673998"
+    },
+    {
+      "id": "burda-2017",
+      "role": "plot-specific digitization error risk",
+      "doi": "10.1002/jrsm.1232"
+    }
+  ]
+}
