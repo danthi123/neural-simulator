@@ -7,6 +7,7 @@ with transitions from the other.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from types import MappingProxyType
 from typing import Any
 import math
@@ -80,12 +81,149 @@ _DESAI_ETA_ALPHA_PER_MV = (0.0467, -0.18925)
 _DESAI_K_BETA_PER_MS = (0.0868, 0.00246)
 _DESAI_ETA_BETA_PER_MV = (0.0067, 0.01075)
 
+SOURCE_PARAMETER_DEFAULTS = MappingProxyType(
+    {
+        LABRO_2015: MappingProxyType(
+            {
+                "alpha0_per_ms": _LABRO_ALPHA0_PER_MS,
+                "beta0_per_ms": _LABRO_BETA0_PER_MS,
+                "z": _LABRO_Z,
+                "vhalf_mv": _LABRO_VHALF_MV,
+            }
+        ),
+        DESAI_2008_CONTROL: MappingProxyType(
+            {
+                "k_alpha_per_ms": _DESAI_K_ALPHA_PER_MS,
+                "eta_alpha_per_mv": _DESAI_ETA_ALPHA_PER_MV,
+                "k_beta_per_ms": _DESAI_K_BETA_PER_MS,
+                "eta_beta_per_mv": _DESAI_ETA_BETA_PER_MV,
+            }
+        ),
+    }
+)
+
+_PARAMETER_WIDTHS = MappingProxyType(
+    {
+        LABRO_2015: MappingProxyType(
+            {"alpha0_per_ms": 3, "beta0_per_ms": 3, "z": 3}
+        ),
+        DESAI_2008_CONTROL: MappingProxyType(
+            {
+                "k_alpha_per_ms": 2,
+                "eta_alpha_per_mv": 2,
+                "k_beta_per_ms": 2,
+                "eta_beta_per_mv": 2,
+            }
+        ),
+    }
+)
+
+_POSITIVE_PARAMETERS = MappingProxyType(
+    {
+        LABRO_2015: frozenset(("alpha0_per_ms", "beta0_per_ms", "z")),
+        DESAI_2008_CONTROL: frozenset(("k_alpha_per_ms", "k_beta_per_ms")),
+    }
+)
+
 
 def _metadata(model_id: str) -> MappingProxyType:
     try:
         return MODEL_METADATA[model_id]
     except (KeyError, TypeError) as exc:
         raise ValueError(f"unknown Kv3 source model: {model_id!r}") from exc
+
+
+def _finite_parameter_scalar(value: Any, name: str) -> float:
+    if isinstance(value, (bool, str, bytes)):
+        raise TypeError(f"{name} must be a finite real scalar")
+    try:
+        result = float(value)
+    except (TypeError, ValueError) as exc:
+        raise TypeError(f"{name} must be a finite real scalar") from exc
+    if not math.isfinite(result):
+        raise ValueError(f"{name} must be finite")
+    return result
+
+
+def validate_source_parameters(
+    model_id: str, parameters: Mapping[str, Any]
+) -> MappingProxyType:
+    """Validate and freeze one complete source-model parameter document."""
+
+    _metadata(model_id)
+    if not isinstance(parameters, Mapping):
+        raise TypeError("parameters must be a mapping")
+
+    defaults = SOURCE_PARAMETER_DEFAULTS[model_id]
+    expected = set(defaults)
+    actual = set(parameters)
+    missing = sorted(expected - actual)
+    extra = sorted(actual - expected)
+    if missing or extra:
+        details = []
+        if missing:
+            details.append(f"missing keys: {missing}")
+        if extra:
+            details.append(f"extra keys: {extra}")
+        raise ValueError("invalid source parameters; " + "; ".join(details))
+
+    widths = _PARAMETER_WIDTHS[model_id]
+    positive = _POSITIVE_PARAMETERS[model_id]
+    validated: dict[str, float | tuple[float, ...]] = {}
+    for name in defaults:
+        value = parameters[name]
+        if name in widths:
+            if isinstance(value, (str, bytes)):
+                raise TypeError(
+                    f"{name} must be a sequence of {widths[name]} scalars"
+                )
+            try:
+                items = tuple(value)
+            except TypeError as exc:
+                raise TypeError(
+                    f"{name} must be a sequence of {widths[name]} scalars"
+                ) from exc
+            if len(items) != widths[name]:
+                raise ValueError(f"{name} must contain exactly {widths[name]} values")
+            canonical = tuple(
+                _finite_parameter_scalar(item, f"{name}[{index}]")
+                for index, item in enumerate(items)
+            )
+            if name in positive and any(item <= 0.0 for item in canonical):
+                raise ValueError(f"{name} values must be positive")
+            validated[name] = canonical
+        else:
+            canonical_scalar = _finite_parameter_scalar(value, name)
+            if name in positive and canonical_scalar <= 0.0:
+                raise ValueError(f"{name} must be positive")
+            validated[name] = canonical_scalar
+    return MappingProxyType(validated)
+
+
+def source_parameters(
+    model_id: str, overrides: Mapping[str, Any] | None = None
+) -> MappingProxyType:
+    """Return immutable exact defaults with optional explicit constant overrides."""
+
+    _metadata(model_id)
+    if overrides is None:
+        return SOURCE_PARAMETER_DEFAULTS[model_id]
+    if not isinstance(overrides, Mapping):
+        raise TypeError("overrides must be a mapping")
+    extra = sorted(set(overrides) - set(SOURCE_PARAMETER_DEFAULTS[model_id]))
+    if extra:
+        raise ValueError(f"invalid source parameter overrides; extra keys: {extra}")
+    merged = dict(SOURCE_PARAMETER_DEFAULTS[model_id])
+    merged.update(overrides)
+    return validate_source_parameters(model_id, merged)
+
+
+def _resolve_parameters(
+    model_id: str, parameters: Mapping[str, Any] | None
+) -> MappingProxyType:
+    if parameters is None:
+        return SOURCE_PARAMETER_DEFAULTS[model_id]
+    return validate_source_parameters(model_id, parameters)
 
 
 def _validate_xp(xp: Any) -> None:
@@ -127,29 +265,37 @@ def _thermal_voltage_mv(temperature_c: float) -> float:
     return 1000.0 * _BOLTZMANN_J_PER_K * kelvin / _ELEMENTARY_CHARGE_C
 
 
-def rates(model_id: str, voltage_mv: Any, temperature_c: float | None, xp: Any):
+def rates(
+    model_id: str,
+    voltage_mv: Any,
+    temperature_c: float | None,
+    xp: Any,
+    *,
+    parameters: Mapping[str, Any] | None = None,
+):
     """Return source rates as ``(alpha, beta)`` with final axis by transition."""
 
     _validate_xp(xp)
     temperature = _validate_temperature(model_id, temperature_c)
+    kinetic = _resolve_parameters(model_id, parameters)
     voltage = _finite_array(voltage_mv, "voltage_mv", xp)
 
     if model_id == LABRO_2015:
-        alpha0 = xp.asarray(_LABRO_ALPHA0_PER_MS, dtype=xp.float64)
-        beta0 = xp.asarray(_LABRO_BETA0_PER_MS, dtype=xp.float64)
-        z = xp.asarray(_LABRO_Z, dtype=xp.float64)
+        alpha0 = xp.asarray(kinetic["alpha0_per_ms"], dtype=xp.float64)
+        beta0 = xp.asarray(kinetic["beta0_per_ms"], dtype=xp.float64)
+        z = xp.asarray(kinetic["z"], dtype=xp.float64)
         exponent = (
-            (voltage[..., None] - _LABRO_VHALF_MV)
+            (voltage[..., None] - kinetic["vhalf_mv"])
             * z
             / _thermal_voltage_mv(temperature)
         )
         alpha = alpha0 * xp.exp(exponent)
         beta = beta0 * xp.exp(-exponent)
     else:
-        k_alpha = xp.asarray(_DESAI_K_ALPHA_PER_MS, dtype=xp.float64)
-        eta_alpha = xp.asarray(_DESAI_ETA_ALPHA_PER_MV, dtype=xp.float64)
-        k_beta = xp.asarray(_DESAI_K_BETA_PER_MS, dtype=xp.float64)
-        eta_beta = xp.asarray(_DESAI_ETA_BETA_PER_MV, dtype=xp.float64)
+        k_alpha = xp.asarray(kinetic["k_alpha_per_ms"], dtype=xp.float64)
+        eta_alpha = xp.asarray(kinetic["eta_alpha_per_mv"], dtype=xp.float64)
+        k_beta = xp.asarray(kinetic["k_beta_per_ms"], dtype=xp.float64)
+        eta_beta = xp.asarray(kinetic["eta_beta_per_mv"], dtype=xp.float64)
         alpha = k_alpha * xp.exp(voltage[..., None] * eta_alpha)
         beta = k_beta * xp.exp(voltage[..., None] * eta_beta)
 
@@ -159,11 +305,18 @@ def rates(model_id: str, voltage_mv: Any, temperature_c: float | None, xp: Any):
 
 
 def equilibrium(
-    model_id: str, voltage_mv: Any, temperature_c: float | None, xp: Any
+    model_id: str,
+    voltage_mv: Any,
+    temperature_c: float | None,
+    xp: Any,
+    *,
+    parameters: Mapping[str, Any] | None = None,
 ):
     """Return the fixed-voltage equilibrium state for one source model."""
 
-    alpha, beta = rates(model_id, voltage_mv, temperature_c, xp)
+    alpha, beta = rates(
+        model_id, voltage_mv, temperature_c, xp, parameters=parameters
+    )
     if model_id == LABRO_2015:
         log_ratio = xp.log(alpha) - xp.log(beta)
         log_weight = xp.concatenate(
@@ -272,11 +425,14 @@ def advance(
     duration_ms: Any,
     temperature_c: float | None,
     xp: Any,
+    *,
+    parameters: Mapping[str, Any] | None = None,
 ):
     """Advance broadcast fixed-voltage intervals without Python time stepping."""
 
     _validate_xp(xp)
     _validate_temperature(model_id, temperature_c)
+    kinetic = _resolve_parameters(model_id, parameters)
     state_array = _validate_state(model_id, state, xp)
     voltage = _finite_array(voltage_mv, "voltage_mv", xp)
     duration = _finite_array(duration_ms, "duration_ms", xp)
@@ -298,7 +454,9 @@ def advance(
     if bool(xp.all(duration == 0.0)):
         return state_array.copy()
 
-    alpha, beta = rates(model_id, voltage, temperature_c, xp)
+    alpha, beta = rates(
+        model_id, voltage, temperature_c, xp, parameters=kinetic
+    )
     if model_id == LABRO_2015:
         result = _labro_advance(state_array, alpha, beta, duration, xp)
         return xp.where((duration == 0.0)[..., None], state_array, result)
@@ -326,6 +484,9 @@ __all__ = [
     "LABRO_2015",
     "DESAI_2008_CONTROL",
     "MODEL_METADATA",
+    "SOURCE_PARAMETER_DEFAULTS",
+    "source_parameters",
+    "validate_source_parameters",
     "rates",
     "equilibrium",
     "advance",
