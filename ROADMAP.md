@@ -139,8 +139,10 @@ its controls and lesions, and is tested at the required seed coverage.
    slightly unstable baseline. The GPU engine now runs that same continuous
    2-second-intact/1-second-lesion NaP assay and automatically rejects unstable
    baselines, post-lesion spikes, or a non-negative voltage shift before CPU
-   confirmation. The next step is a fresh V3-bound search using wider GPU
-   batches; candidates 284 and 404 remain closed. The heterogeneous 12-cell SK
+   confirmation. A fresh V3-bound, seed-free successor partition is now filed
+   at global Sobol indices 512-1023 and mechanically bound to the consumed
+   0-511 manifest. Batch-width benchmarking on consumed candidates comes before
+   executing it; candidates 284 and 404 remain closed. The heterogeneous 12-cell SK
    cohort remains unavailable; delayed
    action-reward learning and its unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins

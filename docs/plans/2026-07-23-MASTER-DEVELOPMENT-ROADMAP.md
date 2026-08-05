@@ -436,7 +436,9 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   failure and 284 unavailable on baseline stability. The versioned GPU engine
   now executes the same continuous V3 NaP phases and triages baseline stability,
   post-lesion spikes, and voltage direction from authenticated raw traces. A
-  fresh V3-bound search with wider GPU batches comes next; neither survivor may
+  fresh V3-bound successor partition at global Sobol indices 512-1023 is now
+  digest-filed and non-overlapping with the consumed 0-511 screen. Benchmark
+  batch width on consumed candidates before executing it; neither survivor may
   be retuned or reopened. The heterogeneous 12-cell SK cohort remains
   fail-closed.
 - **CPU/GPU, primary:** V13 deterministic compatibility earned GO, but calibration seed `1013` violated its locked CPU-first order. It and dependent replication seed `1019` are consumed and procedurally undefined; held-out seed `1021` and Stage-1 seed `1031` remain sealed.

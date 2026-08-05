@@ -29,6 +29,7 @@ from sim.snr_executable_packet import canonical_bytes
 from tools.v14_stageB_candidate_batch import (
     EXACT_SCREEN_COUNT,
     MANIFEST_SCHEMA as CANDIDATE_MANIFEST_SCHEMA,
+    SUCCESSOR_MANIFEST_SCHEMA as SUCCESSOR_CANDIDATE_MANIFEST_SCHEMA,
 )
 from tools.v14_stageB_packet_compiler import compile_candidate
 from tools.v14_stageB_packet_verifier import verify_candidate
@@ -98,7 +99,11 @@ def _load_bound_json(
 
 
 def _validated_candidates(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
-    if manifest.get("schema") != CANDIDATE_MANIFEST_SCHEMA:
+    manifest_schema = manifest.get("schema")
+    if manifest_schema not in {
+        CANDIDATE_MANIFEST_SCHEMA,
+        SUCCESSOR_CANDIDATE_MANIFEST_SCHEMA,
+    }:
         raise StageBCampaignError("candidate manifest has the wrong schema")
     body = {key: value for key, value in manifest.items() if key != "sha256"}
     if manifest.get("sha256") != _digest(body):
@@ -106,7 +111,11 @@ def _validated_candidates(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
     design = manifest.get("design")
     rows = manifest.get("candidates")
     if (
-        manifest.get("status") != "preregistered-seed-free-candidate-generation"
+        manifest.get("status")
+        not in {
+            "preregistered-seed-free-candidate-generation",
+            "preregistered-seed-free-successor-candidate-generation",
+        }
         or not isinstance(design, Mapping)
         or design.get("scientific_seed") is not None
         or design.get("exact_count") != EXACT_SCREEN_COUNT
@@ -124,7 +133,8 @@ def _validated_candidates(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
             raise StageBCampaignError("candidate row has an invalid shape")
         candidate = row["candidate"]
         if (
-            row["point_index"] != index
+            row["point_index"]
+            != (index + (EXACT_SCREEN_COUNT if manifest_schema == SUCCESSOR_CANDIDATE_MANIFEST_SCHEMA else 0))
             or not isinstance(candidate, Mapping)
             or set(candidate) != {"schema", "candidate_id", "parameters"}
             or candidate.get("schema") != "sim-adaptive-candidate-v1"

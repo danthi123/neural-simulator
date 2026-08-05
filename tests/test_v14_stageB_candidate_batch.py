@@ -11,8 +11,10 @@ import pytest
 from tools.v14_stageB_candidate_batch import (
     EXACT_SCREEN_COUNT,
     MANIFEST_SCHEMA,
+    SUCCESSOR_MANIFEST_SCHEMA,
     StageBCandidateBatchError,
     build_candidate_manifest,
+    build_successor_candidate_manifest,
     write_manifest,
 )
 
@@ -20,6 +22,8 @@ from tools.v14_stageB_candidate_batch import (
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "research/specs/v14_snr_stageB_packet_template.json"
 TEMPLATE_SHA256 = hashlib.sha256(TEMPLATE.read_bytes()).hexdigest()
+PREDECESSOR = ROOT / "research/specs/v14_snr_stageB_sobol_candidates.json"
+PREDECESSOR_SHA256 = hashlib.sha256(PREDECESSOR.read_bytes()).hexdigest()
 
 
 def test_filed_template_generates_exact_deterministic_seed_free_batch() -> None:
@@ -48,6 +52,36 @@ def test_every_generated_parameter_stays_inside_filed_transform_bound() -> None:
 
     first = manifest["candidates"][0]["candidate"]["parameters"]
     assert all(first[key] == specification["low"] for key, specification in space.items())
+
+
+def test_successor_is_deterministic_fresh_and_bound_to_consumed_partition() -> None:
+    first = build_successor_candidate_manifest(
+        TEMPLATE, TEMPLATE_SHA256, PREDECESSOR, PREDECESSOR_SHA256, root=ROOT
+    )
+    second = build_successor_candidate_manifest(
+        TEMPLATE, TEMPLATE_SHA256, PREDECESSOR, PREDECESSOR_SHA256, root=ROOT
+    )
+    predecessor = json.loads(PREDECESSOR.read_bytes())
+
+    assert first == second
+    assert first["schema"] == SUCCESSOR_MANIFEST_SCHEMA
+    assert first["design"]["scientific_seed"] is None
+    assert first["design"]["skip"] == EXACT_SCREEN_COUNT
+    assert first["predecessor"]["sha256"] == PREDECESSOR_SHA256
+    assert [row["point_index"] for row in first["candidates"]] == list(
+        range(EXACT_SCREEN_COUNT, 2 * EXACT_SCREEN_COUNT)
+    )
+    assert not (
+        {row["candidate_sha256"] for row in first["candidates"]}
+        & {row["candidate_sha256"] for row in predecessor["candidates"]}
+    )
+
+
+def test_successor_rejects_unauthenticated_predecessor() -> None:
+    with pytest.raises(StageBCandidateBatchError, match="predecessor.*digest"):
+        build_successor_candidate_manifest(
+            TEMPLATE, TEMPLATE_SHA256, PREDECESSOR, "0" * 64, root=ROOT
+        )
 
 
 def test_digest_mismatch_and_noncanonical_template_fail_closed(tmp_path: Path) -> None:
