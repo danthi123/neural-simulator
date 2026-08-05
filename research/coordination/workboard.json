@@ -1344,6 +1344,20 @@
       "write_set": [
         "research/measurements/v14-stageB/extractor_d"
       ]
+    },
+    "019fd20b-63e6-7a03-b9a9-e8d4f555b0d5": {
+      "heartbeat_at": "2026-08-05T13:14:06+00:00",
+      "model": "gpt-5.6-terra-xhigh",
+      "next_action": "Controller validates four-way consensus against sealed protocol before reading extractor D.",
+      "started_at": "2026-08-05T13:14:06+00:00",
+      "status": "running",
+      "task": "Implement sealed four-extractor target consensus and compiler custody",
+      "write_set": [
+        "tools/population_curve_digitization.py",
+        "tools/v14_stageB_population_targets.py",
+        "tests/test_population_curve_digitization.py",
+        "tests/test_v14_stageB_population_targets.py"
+      ]
     }
   },
   "events": [
@@ -1994,6 +2008,12 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fd20a-3dfc-77d3-a06b-221b91397562"
+    },
+    {
+      "at": "2026-08-05T13:14:06+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd20b-63e6-7a03-b9a9-e8d4f555b0d5"
     }
   ],
   "lanes": {
