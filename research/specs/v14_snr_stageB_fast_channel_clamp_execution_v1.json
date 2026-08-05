@@ -1,0 +1,130 @@
+{
+  "schema": "v14-snr-stageB-fast-channel-clamp-execution-v1",
+  "execution_id": "v14-snr-stageB-v2-fast-channel-clamp-transfer-v1",
+  "status": "preregistered_not_executed",
+  "scientific_verdict": null,
+  "candidate_calibration_allowed": false,
+  "conductance_scale_fitting_allowed": false,
+  "whole_cell_promotion_allowed": false,
+  "production_kernel_base_revision": {
+    "kind": "git",
+    "revision": "ba769f3967d9a50fc859ec7cf20587b81280b243",
+    "boundary": "the committed revision containing the bound kernel and parameter module; the runner and this prospective contract are additionally bound by exact file SHA-256"
+  },
+  "protocol": {
+    "path": "research/specs/v14_snr_stageB_structural_successor_v2.json",
+    "sha256": "c0ab042b65cb7be21b640d9a14cddb13582a1662f3f0aa3159093aa1d13792c4"
+  },
+  "implementation": {
+    "parameter_module": {
+      "path": "sim/snr_structural_successor.py",
+      "sha256": "80a5f3496c400e28632d55c2cb1bd7cdaa52b0bcd10b1c656733b1dcb5f16216"
+    },
+    "production_kernel_module": {
+      "path": "sim/kernels.py",
+      "sha256": "903a9ee9e0e8061e3f0e8af9f2496dd64870ada9ddbf1c7819248558c029f8ff"
+    },
+    "runner": {
+      "path": "research/runners/v14_stageB_fast_channel_clamp.py",
+      "sha256": "fa95de191cdd5ae5cbcdd5aed5fc7e693b53625c6ac1d19830e4ced39a99e272"
+    }
+  },
+  "numeric_contract": {
+    "state_dtype": "float32",
+    "clamp_sample_interval_ms": 0.005,
+    "command_transition_sample_semantics": "first sample is one clamp_sample_interval after the voltage transition",
+    "fixed_voltage_update": "one vectorized Rush-Larsen production-kernel launch may evaluate all filed sample times because voltage and kinetic parameters are constant within each command segment",
+    "conductance_scale": 1.0,
+    "sodium_reversal_mV": 50.0,
+    "potassium_reversal_mV": -90.0,
+    "junction_potential_policy": "use source command voltages as reported; the papers calculated but did not correct junction potential",
+    "instrument_boundary": "source fast-Na signals were sampled at 50 kHz and filtered at 10 kHz; no exact recording-filter transfer function is available, so simulated ideal-current timing is an operational transfer test rather than source equivalence"
+  },
+  "commands": {
+    "fast_na_activation": {
+      "hold_mV": -100.0,
+      "test_mV": [-80.0, -75.0, -70.0, -65.0, -60.0, -55.0, -50.0, -45.0, -40.0, -35.0, -30.0, -25.0, -20.0, -15.0, -10.0, -5.0, 0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0],
+      "test_duration_ms": 20.0
+    },
+    "fast_na_inactivation": {
+      "hold_mV": -100.0,
+      "prepulse_mV": [-120.0, -110.0, -100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0],
+      "prepulse_duration_ms": 50.0,
+      "test_mV": 0.0,
+      "test_duration_ms": 20.0
+    },
+    "fast_na_recovery": {
+      "hold_mV": -90.0,
+      "recovery_prepulse_mV": -120.0,
+      "recovery_prepulse_duration_ms": 50.0,
+      "inactivation_mV": 0.0,
+      "inactivation_duration_ms": 300.0,
+      "recovery_mV": -120.0,
+      "recovery_duration_ms": [0.0, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0],
+      "test_mV": 0.0,
+      "test_duration_ms": 20.0,
+      "duration_evidence": "project_operational_sampling_not_source_reported"
+    },
+    "fast_na_deactivation": {
+      "hold_mV": -90.0,
+      "prepulse_mV": -120.0,
+      "prepulse_duration_ms": 50.0,
+      "activation_mV": 0.0,
+      "activation_duration_ms": 0.2,
+      "test_mV": [-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0],
+      "test_duration_ms": 50.0
+    },
+    "kv3_activation": {
+      "hold_mV": -100.0,
+      "test_mV": [-80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0],
+      "test_duration_ms": 100.0
+    },
+    "kv3_inactivation": {
+      "hold_mV": -90.0,
+      "prepulse_mV": [-110.0, -100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0],
+      "prepulse_duration_ms": 10000.0,
+      "test_mV": 50.0,
+      "test_duration_ms": 100.0
+    },
+    "kv3_deactivation": {
+      "hold_mV": -90.0,
+      "activation_mV": 20.0,
+      "activation_duration_ms": 100.0,
+      "test_mV": [-30.0, -40.0, -50.0, -60.0, -70.0],
+      "test_duration_ms": 50.0
+    }
+  },
+  "analysis_contract": {
+    "steady_state": "least-squares normalized-conductance Boltzmann fit over every filed command voltage; activation is computed from current divided by driving force and the powered gate, never from the unpowered gate",
+    "rise_decay": "linear interpolation between adjacent samples at 10 and 90 percent of fast-Na peak or 20 and 80 percent of Kv3 asymptote/peak as declared by the source endpoint",
+    "recovery": "bounded least-squares biexponential with nonnegative component fractions summing to one",
+    "deactivation": "bounded single-exponential current-tail fit with an asymptote, beginning one sample after the command transition",
+    "uncertainty_gate": "each promoting scalar must lie within source mean plus or minus two SEM; no aggregate score may compensate for a failed scalar",
+    "verdicts": ["STAGE1_GO", "STAGE1_STRUCTURAL_NO_GO", "INCONCLUSIVE_INVALID_EVIDENCE"],
+    "authority": "only the separate analyzer may assign a Stage 1 verdict; runner outputs are verdict-free observations"
+  },
+  "execution_matrix": [
+    {
+      "backend": "numpy",
+      "device": "cpu",
+      "authority": "reference",
+      "output": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_numpy_v1.json"
+    },
+    {
+      "backend": "cupy",
+      "device": "cuda:0",
+      "authority": "parity_and_acceleration_only",
+      "output": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_cupy_v1.json",
+      "gpu_lease": "/tmp/sim-local-model-gpu0.lock"
+    }
+  ],
+  "analysis_output": "research/findings/raw/v14_snr_stageB_fast_channel_clamp_analysis_v1.json",
+  "stop_rules": [
+    "stop Stage 1 and revise the state family if any source-transfer hard gate fails; conductance fitting is forbidden",
+    "stop as inconclusive if implementation digests, backend identity, complete command ladders, or provenance cannot be authenticated",
+    "do not begin compartment integration until the NumPy reference is Stage 1 GO and CuPy parity is established",
+    "do not reinterpret a project-operational duration ladder, interpolation, gate root, or instrument-limited target as a source measurement"
+  ],
+  "device": "not_applicable_non_executed_protocol",
+  "provenance_exempt": "non-executed prospective clamp execution contract; contains no simulation result"
+}

@@ -1118,10 +1118,13 @@
       "write_set": []
     },
     "019fd0fe-229d-7862-9afa-b2640b8224e6": {
-      "heartbeat_at": "2026-08-05T08:15:48+00:00",
+      "completed_at": "2026-08-05T08:26:09+00:00",
+      "heartbeat_at": "2026-08-05T08:26:09+00:00",
       "model": "gpt-5.6-luna",
+      "next_action": "Optimize evidence payload, seal exact execution spec, and run authority/parity evidence",
+      "result": "Implemented authenticated vectorized NumPy/CuPy clamp runner; ten focused tests pass.",
       "started_at": "2026-08-05T08:15:48+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "V2 fast-channel clamp runner and focused tests",
       "write_set": [
         "research/runners/v14_stageB_fast_channel_clamp.py",
@@ -1130,18 +1133,6 @@
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T21:34:43+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fceab-a658-7833-8a6c-a5ddf854f609"
-    },
-    {
-      "at": "2026-08-04T21:34:43+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-v14-channel-kinetics"
-    },
     {
       "at": "2026-08-04T21:34:43+00:00",
       "detail": "running",
@@ -1729,6 +1720,18 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T08:26:09+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0fe-229d-7862-9afa-b2640b8224e6"
+    },
+    {
+      "at": "2026-08-05T08:29:13+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -1989,12 +1992,12 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T08:21:28+00:00",
-      "next_action": "Complete and seal the V2 vectorized fast-channel clamp runner and execution contract, then run independent NumPy authority and leased-CuPy parity evidence; no parameter sweep is authorized.",
+      "heartbeat_at": "2026-08-05T08:29:13+00:00",
+      "next_action": "Commit the sealed V2 vectorized clamp runner and execution contract, then run the exact NumPy authority and leased-CuPy parity matrix; no parameter sweep or pool replication is authorized.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
-      "resource": "agent_cpu_network",
+      "resource": "local_gpu",
       "status": "running",
       "write_set": [
         "sim/kernels.py",
@@ -2390,5 +2393,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T08:21:28+00:00"
+  "updated_at": "2026-08-05T08:29:13+00:00"
 }
