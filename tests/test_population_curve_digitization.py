@@ -316,6 +316,245 @@ def test_third_extraction_can_resolve_panel_availability_either_way(tmp_path: Pa
     assert withheld["panel_resolution"]["selected_panel_availability"]["resolved_unavailable_reason"] == "overlap_prevents_unique_series_assignment"
 
 
+def test_four_way_uses_three_of_four_available_panel_vote(tmp_path: Path) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    records = [
+        _record(protocol_path, protocol, extractor=extractor, y=50)
+        for extractor in ("extractor_a", "extractor_b", "extractor_c")
+    ]
+    records.append(
+        _whole_panel_unavailable(
+            _record(protocol_path, protocol, extractor="extractor_d"),
+            "occlusion_prevents_bounded_marker_center",
+        )
+    )
+
+    result = digitizer.adjudicate_four_extractions(*records, authority, root=root)
+
+    assert result["schema"] == digitizer.FOUR_WAY_ADJUDICATION_SCHEMA
+    assert result["status"] == "four_extractions_resolved"
+    assert result["unresolved"] is False
+    assert result["panel_resolution"]["selected_status"] == "available"
+    assert result["points"][0]["selected_clique"] == [
+        "extractor_a",
+        "extractor_b",
+        "extractor_c",
+    ]
+
+
+def test_four_way_retains_mixed_majority_panel_unavailability_reasons(
+    tmp_path: Path,
+) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    records = [
+        _whole_panel_unavailable(
+            _record(protocol_path, protocol, extractor="extractor_a"),
+            "occlusion_prevents_bounded_marker_center",
+        ),
+        _whole_panel_unavailable(
+            _record(protocol_path, protocol, extractor="extractor_b"),
+            "overlap_prevents_unique_series_assignment",
+        ),
+        _whole_panel_unavailable(
+            _record(protocol_path, protocol, extractor="extractor_c"),
+            "occlusion_prevents_bounded_marker_center",
+        ),
+        _record(protocol_path, protocol, extractor="extractor_d"),
+    ]
+
+    result = digitizer.adjudicate_four_extractions(*records, authority, root=root)
+
+    assert result["status"] == "four_extractions_resolved"
+    assert result["panel_resolution"]["status"] == "majority_unavailable_mixed_reasons"
+    assert result["panel_resolution"]["unavailable_reasons"] == [
+        "occlusion_prevents_bounded_marker_center",
+        "overlap_prevents_unique_series_assignment",
+    ]
+    assert result["panel_status_vote"]["unavailable_votes"] == [
+        {
+            "extractor_id": "extractor_a",
+            "unavailable_reason": "occlusion_prevents_bounded_marker_center",
+        },
+        {
+            "extractor_id": "extractor_b",
+            "unavailable_reason": "overlap_prevents_unique_series_assignment",
+        },
+        {
+            "extractor_id": "extractor_c",
+            "unavailable_reason": "occlusion_prevents_bounded_marker_center",
+        },
+    ]
+
+
+def _four_way_graph_comparison(edges: dict[tuple[str, str], bool], components: dict[tuple[str, str], float]):
+    def compare(first, second, authority, *, root):
+        pair = tuple(sorted((first["extractor_id"], second["extractor_id"])))
+        accepted = edges[pair]
+        row = {
+            "command_id": "command_001",
+            "accepted": accepted,
+            "combined_digitized_x": {"median": 5.0, "standard_uncertainty": 0.1},
+            "combined_digitized_y": {"median": 0.5, "standard_uncertainty": 0.02},
+            "combined_digitization_uncertainty": {
+                "between_extractor_component": components[pair]
+            },
+            "biological_error": {"status": "available", "kind": "standard_error"},
+            "availability": {
+                "first": "available",
+                "second": "available",
+                "unavailable_reason": None,
+            },
+        }
+        result = {
+            "schema": digitizer.COMPARISON_SCHEMA,
+            "points": [row],
+            "sha256": "0" * 64,
+        }
+        return result
+
+    return compare
+
+
+def test_four_way_selects_unique_three_clique_and_maximum_between_component(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    records = [
+        _record(protocol_path, protocol, extractor=extractor)
+        for extractor in ("extractor_a", "extractor_b", "extractor_c", "extractor_d")
+    ]
+    edges = {
+        ("extractor_a", "extractor_b"): True,
+        ("extractor_a", "extractor_c"): True,
+        ("extractor_a", "extractor_d"): False,
+        ("extractor_b", "extractor_c"): True,
+        ("extractor_b", "extractor_d"): False,
+        ("extractor_c", "extractor_d"): False,
+    }
+    components = {pair: index / 10 for index, pair in enumerate(sorted(edges), start=1)}
+    monkeypatch.setattr(
+        digitizer,
+        "compare_blind_extractions",
+        _four_way_graph_comparison(edges, components),
+    )
+
+    result = digitizer.adjudicate_four_extractions(*records, authority, root=root)
+
+    point = result["points"][0]
+    assert result["status"] == "four_extractions_resolved"
+    assert point["selected_clique"] == ["extractor_a", "extractor_b", "extractor_c"]
+    assert point["reported_pair"] == ["extractor_a", "extractor_b"]
+    assert point["measurement"]["combined_digitization_uncertainty"][
+        "between_extractor_component"
+    ] == pytest.approx(max(components[pair] for pair in edges if "extractor_d" not in pair))
+
+
+def test_four_way_selects_all_four_clique(tmp_path: Path) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    records = [
+        _record(protocol_path, protocol, extractor=extractor, y=50)
+        for extractor in ("extractor_a", "extractor_b", "extractor_c", "extractor_d")
+    ]
+
+    result = digitizer.adjudicate_four_extractions(*records, authority, root=root)
+
+    assert result["status"] == "four_extractions_resolved"
+    assert result["points"][0]["selected_clique"] == [
+        "extractor_a",
+        "extractor_b",
+        "extractor_c",
+        "extractor_d",
+    ]
+    assert result["points"][0]["reported_pair"] == ["extractor_a", "extractor_b"]
+
+
+def test_four_way_bridge_without_three_clique_is_unresolved(tmp_path: Path, monkeypatch) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    records = [
+        _record(protocol_path, protocol, extractor=extractor)
+        for extractor in ("extractor_a", "extractor_b", "extractor_c", "extractor_d")
+    ]
+    edges = {
+        ("extractor_a", "extractor_b"): True,
+        ("extractor_a", "extractor_c"): False,
+        ("extractor_a", "extractor_d"): False,
+        ("extractor_b", "extractor_c"): True,
+        ("extractor_b", "extractor_d"): False,
+        ("extractor_c", "extractor_d"): True,
+    }
+    monkeypatch.setattr(
+        digitizer,
+        "compare_blind_extractions",
+        _four_way_graph_comparison(edges, {pair: 0.1 for pair in edges}),
+    )
+
+    result = digitizer.adjudicate_four_extractions(*records, authority, root=root)
+
+    assert result["status"] == "four_extractions_unresolved"
+    assert result["points"][0]["status"] == "unresolved"
+    assert result["points"][0]["maximum_cliques"] == []
+
+
+def test_four_way_tied_maximum_cliques_are_unresolved(tmp_path: Path, monkeypatch) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    records = [
+        _record(protocol_path, protocol, extractor=extractor)
+        for extractor in ("extractor_a", "extractor_b", "extractor_c", "extractor_d")
+    ]
+    edges = {
+        ("extractor_a", "extractor_b"): True,
+        ("extractor_a", "extractor_c"): True,
+        ("extractor_a", "extractor_d"): True,
+        ("extractor_b", "extractor_c"): True,
+        ("extractor_b", "extractor_d"): True,
+        ("extractor_c", "extractor_d"): False,
+    }
+    monkeypatch.setattr(
+        digitizer,
+        "compare_blind_extractions",
+        _four_way_graph_comparison(edges, {pair: 0.1 for pair in edges}),
+    )
+
+    result = digitizer.adjudicate_four_extractions(*records, authority, root=root)
+
+    assert result["status"] == "four_extractions_unresolved"
+    assert result["points"][0]["maximum_cliques"] == [
+        ["extractor_a", "extractor_b", "extractor_c"],
+        ["extractor_a", "extractor_b", "extractor_d"],
+    ]
+
+
+def test_four_way_uses_exact_digitized_x_command_set_majority(tmp_path: Path) -> None:
+    root, protocol_path, protocol = _fixture_root(tmp_path, digitized_x=True)
+    authority = digitizer.load_protocol(protocol_path, root=root)
+    records = [
+        _record(protocol_path, protocol, extractor=extractor, x=50, y=50)
+        for extractor in ("extractor_a", "extractor_b", "extractor_c", "extractor_d")
+    ]
+    extra = json.loads(json.dumps(records[-1]["measurement"]["points"][0]))
+    extra["command_id"] = "command_002"
+    extra["marker_center_region"] = _region(70, 50)
+    extra["biological_error"]["lower_endpoint_region"] = _region(70, 55)
+    extra["biological_error"]["upper_endpoint_region"] = _region(70, 45)
+    records[-1]["measurement"]["points"].append(extra)
+
+    result = digitizer.adjudicate_four_extractions(*records, authority, root=root)
+
+    assert result["status"] == "four_extractions_resolved"
+    assert result["command_set_resolution"]["command_ids"] == ["command_001"]
+    assert result["command_set_resolution"]["supporting_extractor_ids"] == [
+        "extractor_a",
+        "extractor_b",
+        "extractor_c",
+    ]
+
+
 def test_create_only_output_is_canonical_and_refuses_replacement(tmp_path: Path) -> None:
     path = tmp_path / "output.json"
     value = {"schema": "test", "scientific_verdict": None, "optimization_command": None}

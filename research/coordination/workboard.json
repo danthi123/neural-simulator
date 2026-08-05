@@ -1335,7 +1335,7 @@
       ]
     },
     "019fd20a-3dfc-77d3-a06b-221b91397562": {
-      "heartbeat_at": "2026-08-05T13:08:59+00:00",
+      "heartbeat_at": "2026-08-05T13:24:34+00:00",
       "model": "gpt-5.6-sol-xhigh",
       "next_action": "Controller applies the sealed four-way consensus without exposing D to earlier extractions.",
       "started_at": "2026-08-05T13:08:59+00:00",
@@ -1346,11 +1346,13 @@
       ]
     },
     "019fd20b-63e6-7a03-b9a9-e8d4f555b0d5": {
-      "heartbeat_at": "2026-08-05T13:14:06+00:00",
+      "completed_at": "2026-08-05T13:24:34+00:00",
+      "heartbeat_at": "2026-08-05T13:24:34+00:00",
       "model": "gpt-5.6-terra-xhigh",
-      "next_action": "Controller validates four-way consensus against sealed protocol before reading extractor D.",
+      "next_action": "Controller completes adversarial audit, commits implementation, then applies it only after extractor D finishes.",
+      "result": "Implemented sealed four-extractor consensus and custody-aware packet compiler; controller review passed 58 focused and adjacent tests.",
       "started_at": "2026-08-05T13:14:06+00:00",
-      "status": "running",
+      "status": "completed",
       "task": "Implement sealed four-extractor target consensus and compiler custody",
       "write_set": [
         "tools/population_curve_digitization.py",
@@ -1361,66 +1363,6 @@
     }
   },
   "events": [
-    {
-      "at": "2026-08-05T01:15:46+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf7d-6673-79b3-afe3-7ef6b9ca82dc"
-    },
-    {
-      "at": "2026-08-05T01:15:46+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T01:15:46+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-primary-source-fulltext-intake"
-    },
-    {
-      "at": "2026-08-05T01:18:04+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf7f-abf3-7461-ab37-64435480823d"
-    },
-    {
-      "at": "2026-08-05T01:18:17+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T01:18:34+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T01:18:34+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-primary-source-fulltext-intake"
-    },
-    {
-      "at": "2026-08-05T01:21:27+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf7d-6bf0-7693-91e1-94c0fdbcd6d1"
-    },
-    {
-      "at": "2026-08-05T01:27:08+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf7d-6673-79b3-afe3-7ef6b9ca82dc"
-    },
-    {
-      "at": "2026-08-05T01:27:08+00:00",
-      "detail": "completed",
-      "kind": "lane-update",
-      "subject": "gateb-primary-source-fulltext-intake"
-    },
     {
       "at": "2026-08-05T01:32:34+00:00",
       "detail": "completed",
@@ -2014,6 +1956,12 @@
       "detail": "running",
       "kind": "agent-register",
       "subject": "019fd20b-63e6-7a03-b9a9-e8d4f555b0d5"
+    },
+    {
+      "at": "2026-08-05T13:24:34+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd20b-63e6-7a03-b9a9-e8d4f555b0d5"
     }
   ],
   "lanes": {
@@ -2368,7 +2316,7 @@
     "gateb-v14-source-constrained-identification": {
       "blocker": "Official source assets are now hash-bound, but numeric population command-response targets and their pixel-error model are not yet sealed. Raw complete current waveforms are unavailable, and representative single-cell traces cannot be treated as population means.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T11:48:30+00:00",
+      "heartbeat_at": "2026-08-05T13:24:34+00:00",
       "next_action": "Digitize the full-resolution, hash-bound Ding population command-response panels with a prospective pixel calibration/error model, preserve tabulated values as higher authority, and mark unsupported command cells unavailable. The parameterized source-model APIs and resumable non-held-out campaign supervisor are implemented; do not execute optimization before the target-data gate passes.",
       "owner": "codex",
       "priority": 1,
@@ -2711,5 +2659,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T12:36:06+00:00"
+  "updated_at": "2026-08-05T13:24:34+00:00"
 }

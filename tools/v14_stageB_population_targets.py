@@ -200,8 +200,8 @@ def build_extraction_group_manifest(
         rows = sorted(grouped[key], key=lambda item: item[0])
         extractor_ids = [item[0] for item in rows]
         _fail(
-            len(rows) in {2, 3} and len(set(extractor_ids)) == len(rows),
-            f"panel {key} must have two or three distinct extractors",
+            len(rows) in {2, 3, 4} and len(set(extractor_ids)) == len(rows),
+            f"panel {key} must have two, three, or four distinct extractors",
         )
         extraction_groups.append({"records": [item[1] for item in rows]})
         panel_index.append(
@@ -239,7 +239,7 @@ def _measurement_rows(
             return [], reason
         _fail(result.get("status") == "two_extractions_agree", "blind agreement status is invalid")
         rows = result.get("points")
-    else:
+    elif count == 3:
         _fail(
             result.get("schema") == digitizer.ADJUDICATION_SCHEMA
             and result.get("status") == "three_extractions_resolved"
@@ -260,6 +260,42 @@ def _measurement_rows(
         rows = []
         for point in result.get("points", []):
             _fail(point.get("status") == "resolved", "adjudication contains an unresolved point")
+            rows.append(point["measurement"])
+    else:
+        _fail(count == 4, "measurement result has an unsupported extractor count")
+        _fail(
+            result.get("schema") == digitizer.FOUR_WAY_ADJUDICATION_SCHEMA
+            and result.get("status") == "four_extractions_resolved"
+            and result.get("unresolved") is False,
+            "four-way adjudication remains unresolved",
+        )
+        panel_resolution = result.get("panel_resolution")
+        _fail(isinstance(panel_resolution, Mapping), "four-way panel resolution is invalid")
+        selected_status = panel_resolution.get("selected_status")
+        if selected_status == "unavailable":
+            reasons = panel_resolution.get("unavailable_reasons")
+            _fail(
+                isinstance(reasons, list)
+                and reasons
+                and all(isinstance(reason, str) and reason for reason in reasons),
+                "four-way panel unavailability lacks its preregistered reasons",
+            )
+            return [], (
+                "majority_unavailable_mixed_reasons"
+                if len(reasons) > 1
+                else reasons[0]
+            )
+        _fail(selected_status == "available", "four-way panel status is invalid")
+        command_resolution = result.get("command_set_resolution")
+        _fail(
+            isinstance(command_resolution, Mapping)
+            and command_resolution.get("status") == "resolved"
+            and isinstance(command_resolution.get("command_ids"), list),
+            "four-way command-set consensus is invalid",
+        )
+        rows = []
+        for point in result.get("points", []):
+            _fail(point.get("status") == "resolved", "four-way adjudication contains an unresolved point")
             rows.append(point["measurement"])
     _fail(isinstance(rows, list) and rows, "measurement result has no points")
     return [dict(row) for row in rows], None
@@ -340,44 +376,71 @@ def compile_target_packets(
 
     targets: list[dict[str, Any]] = []
     evidence: list[dict[str, Any]] = []
-    unavailable_panels: list[dict[str, str]] = []
+    unavailable_panels: list[dict[str, Any]] = []
     seen_panels: set[tuple[str, str]] = set()
     for group_index, group in enumerate(extraction_groups):
         _fail(isinstance(group, Mapping) and set(group) == {"records"}, f"extraction group {group_index} is invalid")
         bindings = group["records"]
-        _fail(isinstance(bindings, list) and len(bindings) in {2, 3}, f"extraction group {group_index} must contain two or three records")
+        _fail(isinstance(bindings, list) and len(bindings) in {2, 3, 4}, f"extraction group {group_index} must contain two, three, or four records")
         loaded: list[dict[str, Any]] = []
         canonical_bindings: list[dict[str, str]] = []
         for record_index, binding in enumerate(bindings):
             canonical, record = _bound_json(root, binding, f"extraction group {group_index} record {record_index}")
             canonical_bindings.append(canonical)
             loaded.append(record)
-        first_output = digitizer.digitize_record(loaded[0], authority, root=root)
+        digitized_outputs = (
+            [digitizer.digitize_record(record, authority, root=root) for record in loaded]
+            if len(loaded) == 4
+            else [digitizer.digitize_record(loaded[0], authority, root=root)]
+        )
+        first_output = digitized_outputs[0]
         panel_record = first_output["record"]
         panel_key = (panel_record["asset"]["asset_id"], panel_record["panel"]["id"])
         _fail(panel_key not in seen_panels, f"duplicate extraction group for panel {panel_key}")
         seen_panels.add(panel_key)
         panel_protocol = authority["panels"].get(panel_key)
         _fail(panel_protocol is not None, f"panel {panel_key} is not eligible")
-        result = (
-            digitizer.compare_blind_extractions(*loaded, authority, root=root)
-            if len(loaded) == 2
-            else digitizer.adjudicate_three_extractions(*loaded, authority, root=root)
-        )
+        if len(loaded) == 2:
+            result = digitizer.compare_blind_extractions(*loaded, authority, root=root)
+        elif len(loaded) == 3:
+            result = digitizer.adjudicate_three_extractions(*loaded, authority, root=root)
+        else:
+            result = digitizer.adjudicate_four_extractions(*loaded, authority, root=root)
         rows, unavailable_reason = _measurement_rows(result, len(loaded))
         if unavailable_reason is not None:
-            unavailable_panels.append(
-                {
-                    "target_family": panel_protocol["target_family"],
-                    "asset_id": panel_key[0],
-                    "panel": panel_key[1],
-                    "unavailable_reason": unavailable_reason,
-                }
-            )
+            unavailable_panel = {
+                "target_family": panel_protocol["target_family"],
+                "asset_id": panel_key[0],
+                "panel": panel_key[1],
+                "unavailable_reason": unavailable_reason,
+            }
+            if len(loaded) == 4:
+                reasons = result["panel_resolution"]["unavailable_reasons"]
+                unavailable_panel["unavailable_reasons"] = list(reasons)
+            unavailable_panels.append(unavailable_panel)
             panel_targets = []
         else:
+            if len(loaded) == 4:
+                command_ids = tuple(result["command_set_resolution"]["command_ids"])
+                supporting_outputs = [
+                    output
+                    for output in digitized_outputs
+                    if output["record"]["status"] == "available"
+                    and tuple(sorted(point["command_id"] for point in output["points"]))
+                    == command_ids
+                ]
+                _fail(
+                    len(supporting_outputs) >= 3,
+                    "four-way consensus lacks three authenticated command-set voters",
+                )
+                reference_output = min(
+                    supporting_outputs,
+                    key=lambda output: output["record"]["extractor_id"],
+                )
+            else:
+                reference_output = first_output
             reference_points = {
-                point["command_id"]: point for point in first_output.get("points", [])
+                point["command_id"]: point for point in reference_output.get("points", [])
             }
             _fail(
                 set(reference_points) == {row.get("command_id") for row in rows},

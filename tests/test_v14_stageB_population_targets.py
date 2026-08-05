@@ -73,6 +73,8 @@ def _fixture(tmp_path: Path, monkeypatch) -> tuple[Path, Path, Path, list[dict]]
             "record": {
                 "asset": {"asset_id": "asset"},
                 "panel": {"id": "A4"},
+                "status": "available",
+                "extractor_id": record["extractor"],
             },
             "points": [
                 {"command_id": f"command_{index:03d}", "authoritative_x": float(index)}
@@ -113,6 +115,56 @@ def _fixture(tmp_path: Path, monkeypatch) -> tuple[Path, Path, Path, list[dict]]
         bindings.append({"path": f"measurements/{name}.json", "sha256": sha})
     groups.append({"records": bindings})
     return root, protocol_path, partition_path, groups
+
+
+def _four_record_group(root: Path, groups: list[dict]) -> list[dict]:
+    bindings = groups[0]["records"]
+    for name in ("c", "d"):
+        path = root / f"measurements/{name}.json"
+        sha = _write(path, {"extractor": name})
+        bindings.append({"path": f"measurements/{name}.json", "sha256": sha})
+    return groups
+
+
+def _resolved_four_way_result() -> dict:
+    rows = []
+    for index in range(1, 6):
+        rows.append(
+            {
+                "command_id": f"command_{index:03d}",
+                "accepted": True,
+                "combined_digitized_x": {
+                    "median": float(index),
+                    "standard_uncertainty": 0.1,
+                },
+                "combined_digitized_y": {
+                    "median": index / 5,
+                    "standard_uncertainty": 0.02,
+                },
+                "combined_digitization_uncertainty": {
+                    "between_extractor_component": 0.01
+                },
+                "biological_error": {"status": "available", "kind": "standard_error"},
+                "availability": {
+                    "first": "available",
+                    "second": "available",
+                    "unavailable_reason": None,
+                },
+            }
+        )
+    result = {
+        "schema": digitizer.FOUR_WAY_ADJUDICATION_SCHEMA,
+        "status": "four_extractions_resolved",
+        "unresolved": False,
+        "panel_resolution": {"selected_status": "available"},
+        "command_set_resolution": {
+            "status": "resolved",
+            "command_ids": [row["command_id"] for row in rows],
+        },
+        "points": [{"status": "resolved", "measurement": row} for row in rows],
+    }
+    result["sha256"] = digitizer.digest(result)
+    return result
 
 
 def test_preregistered_command_assignment_is_value_independent() -> None:
@@ -164,6 +216,35 @@ def test_compiler_rejects_tamper_missing_panel_and_unresolved_pair(tmp_path: Pat
         "sha256": "0" * 64,
     })
     with pytest.raises(targets.PopulationTargetError, match="have not agreed"):
+        targets.compile_target_packets(protocol, partition, groups, repository_root=root)
+
+
+def test_compiler_accepts_only_fully_resolved_four_way_consensus(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root, protocol, partition, groups = _fixture(tmp_path, monkeypatch)
+    groups = _four_record_group(root, groups)
+    monkeypatch.setattr(
+        digitizer, "adjudicate_four_extractions", lambda *args, **kwargs: _resolved_four_way_result()
+    )
+
+    packets = targets.compile_target_packets(protocol, partition, groups, repository_root=root)
+
+    assert packets["calibration"]["evidence"][0]["agreement_schema"] == (
+        digitizer.FOUR_WAY_ADJUDICATION_SCHEMA
+    )
+    assert [len(packets[name]["targets"]) for name in targets.PARTITIONS] == [3, 1, 1]
+
+    monkeypatch.setattr(
+        digitizer,
+        "adjudicate_four_extractions",
+        lambda *args, **kwargs: {
+            "schema": digitizer.FOUR_WAY_ADJUDICATION_SCHEMA,
+            "status": "four_extractions_unresolved",
+            "unresolved": True,
+        },
+    )
+    with pytest.raises(targets.PopulationTargetError, match="four-way adjudication remains unresolved"):
         targets.compile_target_packets(protocol, partition, groups, repository_root=root)
 
 
@@ -239,6 +320,52 @@ def test_group_manifest_discovers_panel_and_orders_extractors(
     ] == ["a.json", "b.json"]
 
 
+def test_group_manifest_accepts_four_distinct_extractors(tmp_path: Path, monkeypatch) -> None:
+    root, protocol, _, groups = _fixture(tmp_path, monkeypatch)
+    groups = _four_record_group(root, groups)
+    records = [root / item["path"] for item in reversed(groups[0]["records"])]
+
+    monkeypatch.setattr(
+        digitizer,
+        "validate_extraction_record",
+        lambda record, authority, *, root: {
+            "extractor_id": record["extractor"],
+            "asset": {"asset_id": "asset"},
+            "panel": {"id": "A4"},
+        },
+    )
+    manifest = targets.build_extraction_group_manifest(
+        protocol, records, repository_root=root
+    )
+
+    assert manifest["panel_index"][0]["extractor_ids"] == ["a", "b", "c", "d"]
+    assert len(manifest["extraction_groups"][0]["records"]) == 4
+
+
+def test_group_manifest_accepts_three_distinct_extractors(tmp_path: Path, monkeypatch) -> None:
+    root, protocol, _, groups = _fixture(tmp_path, monkeypatch)
+    third_path = root / "measurements/c.json"
+    groups[0]["records"].append(
+        {"path": "measurements/c.json", "sha256": _write(third_path, {"extractor": "c"})}
+    )
+    records = [root / item["path"] for item in groups[0]["records"]]
+
+    monkeypatch.setattr(
+        digitizer,
+        "validate_extraction_record",
+        lambda record, authority, *, root: {
+            "extractor_id": record["extractor"],
+            "asset": {"asset_id": "asset"},
+            "panel": {"id": "A4"},
+        },
+    )
+    manifest = targets.build_extraction_group_manifest(
+        protocol, records, repository_root=root
+    )
+
+    assert manifest["panel_index"][0]["extractor_ids"] == ["a", "b", "c"]
+
+
 def test_group_manifest_rejects_incomplete_or_duplicate_extractor_coverage(
     tmp_path: Path, monkeypatch
 ) -> None:
@@ -254,7 +381,7 @@ def test_group_manifest_rejects_incomplete_or_duplicate_extractor_coverage(
             "panel": {"id": "A4"},
         },
     )
-    with pytest.raises(targets.PopulationTargetError, match="two or three distinct"):
+    with pytest.raises(targets.PopulationTargetError, match="two, three, or four distinct"):
         targets.build_extraction_group_manifest(
             protocol, [first, root / groups[0]["records"][1]["path"]], repository_root=root
         )

@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 from collections.abc import Mapping, Sequence
 import hashlib
+from itertools import combinations
 import json
 import math
 import os
@@ -35,6 +36,7 @@ RECORD_SCHEMA = "v14-snr-stageB-population-curve-extraction-v1"
 OUTPUT_SCHEMA = "v14-snr-stageB-population-curve-digitization-v1"
 COMPARISON_SCHEMA = "v14-snr-stageB-population-curve-agreement-v1"
 ADJUDICATION_SCHEMA = "v14-snr-stageB-population-curve-adjudication-v1"
+FOUR_WAY_ADJUDICATION_SCHEMA = "v14-snr-stageB-population-curve-four-way-adjudication-v1"
 PROVENANCE_SCHEMA = "v14-snr-stageB-manual-measurement-provenance-v1"
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_-]{0,63}")
@@ -1249,6 +1251,282 @@ def adjudicate_three_extractions(
     return core
 
 
+def _complete_cliques(
+    vertices: Sequence[str], accepted_edges: Mapping[tuple[str, str], bool]
+) -> list[tuple[str, ...]]:
+    """Return every largest complete agreement clique of at least three vertices."""
+
+    candidates: list[tuple[str, ...]] = []
+    for size in range(3, len(vertices) + 1):
+        for members in combinations(vertices, size):
+            if all(accepted_edges[tuple(sorted(pair))] for pair in combinations(members, 2)):
+                candidates.append(members)
+    if not candidates:
+        return []
+    maximum_size = max(len(members) for members in candidates)
+    return [members for members in candidates if len(members) == maximum_size]
+
+
+def adjudicate_four_extractions(
+    first: Mapping[str, Any],
+    second: Mapping[str, Any],
+    third: Mapping[str, Any],
+    fourth: Mapping[str, Any],
+    authority: Mapping[str, Any],
+    *,
+    root: Path = ROOT,
+) -> dict[str, Any]:
+    """Apply the sealed four-extractor consensus protocol without inference.
+
+    This intentionally does not reuse the three-extractor adjudicator.  Four
+    records have a different preregistered rule: panel and command-set votes
+    need three supporters, while each individual point needs one unique
+    maximum complete-agreement clique of at least three records.
+    """
+
+    supplied = (first, second, third, fourth)
+    outputs = [digitize_record(record, authority, root=root) for record in supplied]
+    ordered = sorted(
+        (
+            output["record"]["extractor_id"],
+            record,
+            output,
+        )
+        for record, output in zip(supplied, outputs)
+    )
+    extractor_ids = [item[0] for item in ordered]
+    _require(len(set(extractor_ids)) == 4, "four blind extractions require distinct extractor ids")
+    for _, _, output in ordered[1:]:
+        for key in ("asset", "panel", "protocol"):
+            _require(
+                output["record"][key] == ordered[0][2]["record"][key],
+                f"blind extraction {key} differs",
+            )
+
+    pair_results: dict[tuple[str, str], dict[str, Any]] = {}
+    for left, right in combinations(ordered, 2):
+        pair = (left[0], right[0])
+        pair_results[pair] = compare_blind_extractions(
+            left[1], right[1], authority, root=root
+        )
+
+    bindings = [
+        {
+            "extractor_id": extractor_id,
+            "record_id": output["record"]["record_id"],
+            "raw_record_sha256": output["raw_record_sha256"],
+            "sha256": output["sha256"],
+        }
+        for extractor_id, _, output in ordered
+    ]
+    comparison_bindings = [
+        {
+            "extractor_ids": list(pair),
+            "sha256": pair_results[pair]["sha256"],
+        }
+        for pair in sorted(pair_results)
+    ]
+    available = [
+        (extractor_id, output)
+        for extractor_id, _, output in ordered
+        if output["record"]["status"] == "available"
+    ]
+    unavailable_votes = [
+        {
+            "extractor_id": extractor_id,
+            "unavailable_reason": output["record"]["unavailable_reason"],
+        }
+        for extractor_id, _, output in ordered
+        if output["record"]["status"] == "unavailable"
+    ]
+    panel_votes = {
+        "available_extractor_ids": [extractor_id for extractor_id, _ in available],
+        "unavailable_votes": unavailable_votes,
+    }
+    base = {
+        "schema": FOUR_WAY_ADJUDICATION_SCHEMA,
+        "scientific_verdict": None,
+        "optimization_command": None,
+        "optimization_allowed": False,
+        "promotion_status": "measurement_only",
+        "runtime": _runtime(),
+        "records": bindings,
+        "pair_comparisons": comparison_bindings,
+        "panel_status_vote": panel_votes,
+    }
+
+    if len(unavailable_votes) >= 3:
+        unavailable_reasons = sorted(
+            {vote["unavailable_reason"] for vote in unavailable_votes}
+        )
+        mixed = len(unavailable_reasons) > 1
+        core = {
+            **base,
+            "panel_resolution": {
+                "status": (
+                    "majority_unavailable_mixed_reasons"
+                    if mixed
+                    else "resolved_unavailable"
+                ),
+                "selected_status": "unavailable",
+                "unavailable_reasons": unavailable_reasons,
+            },
+            "command_set_resolution": {
+                "status": "not_applicable_panel_unavailable",
+                "command_ids": [],
+                "votes": [],
+            },
+            "points": [],
+            "status": "four_extractions_resolved",
+            "unresolved": False,
+        }
+        core["sha256"] = digest(core)
+        return core
+
+    if len(available) < 3:
+        core = {
+            **base,
+            "panel_resolution": {
+                "status": "unresolved",
+                "selected_status": None,
+                "unavailable_reasons": sorted(
+                    {vote["unavailable_reason"] for vote in unavailable_votes}
+                ),
+            },
+            "command_set_resolution": {
+                "status": "not_applicable_panel_status_unresolved",
+                "command_ids": [],
+                "votes": [],
+            },
+            "points": [],
+            "status": "four_extractions_unresolved",
+            "unresolved": True,
+        }
+        core["sha256"] = digest(core)
+        return core
+
+    command_votes: dict[tuple[str, ...], list[str]] = {}
+    for extractor_id, output in available:
+        command_ids = tuple(sorted(point["command_id"] for point in output["points"]))
+        command_votes.setdefault(command_ids, []).append(extractor_id)
+    vote_rows = [
+        {
+            "command_ids": list(command_ids),
+            "extractor_ids": sorted(voters),
+        }
+        for command_ids, voters in sorted(command_votes.items())
+    ]
+    supported_sets = [
+        command_ids
+        for command_ids, voters in command_votes.items()
+        if len(voters) >= 3
+    ]
+    if len(supported_sets) != 1:
+        core = {
+            **base,
+            "panel_resolution": {
+                "status": "resolved_available",
+                "selected_status": "available",
+                "unavailable_reasons": [],
+            },
+            "command_set_resolution": {
+                "status": "unresolved",
+                "command_ids": [],
+                "votes": vote_rows,
+            },
+            "points": [],
+            "status": "four_extractions_unresolved",
+            "unresolved": True,
+        }
+        core["sha256"] = digest(core)
+        return core
+
+    selected_commands = supported_sets[0]
+    supporting_extractors = sorted(command_votes[selected_commands])
+    pair_rows = {
+        pair: {row["command_id"]: row for row in result["points"]}
+        for pair, result in pair_results.items()
+    }
+    points: list[dict[str, Any]] = []
+    unresolved = False
+    for command_id in selected_commands:
+        edge_acceptance: dict[tuple[str, str], bool] = {}
+        for pair in combinations(supporting_extractors, 2):
+            edge_acceptance[pair] = bool(
+                pair_rows[pair].get(command_id, {}).get("accepted") is True
+            )
+        cliques = _complete_cliques(supporting_extractors, edge_acceptance)
+        selected_clique = cliques[0] if len(cliques) == 1 else None
+        pair_acceptance = {
+            "__".join(pair): edge_acceptance[pair]
+            for pair in sorted(edge_acceptance)
+        }
+        if selected_clique is None:
+            unresolved = True
+            points.append(
+                {
+                    "command_id": command_id,
+                    "status": "unresolved",
+                    "selected_clique": None,
+                    "reported_pair": None,
+                    "maximum_cliques": [list(clique) for clique in cliques],
+                    "measurement": None,
+                    "pair_acceptance": pair_acceptance,
+                }
+            )
+            continue
+        reported_pair = tuple(sorted(selected_clique[:2]))
+        measurement = json.loads(canonical_bytes(pair_rows[reported_pair][command_id]))
+        uncertainty = measurement["combined_digitization_uncertainty"]
+        if uncertainty is not None:
+            between_components = [
+                pair_rows[pair][command_id]["combined_digitization_uncertainty"][
+                    "between_extractor_component"
+                ]
+                for pair in combinations(selected_clique, 2)
+            ]
+            _require(
+                all(
+                    type(component) in {int, float}
+                    and math.isfinite(float(component))
+                    and float(component) >= 0
+                    for component in between_components
+                ),
+                "accepted clique has an invalid between-extractor component",
+            )
+            uncertainty["between_extractor_component"] = float(max(between_components))
+        points.append(
+            {
+                "command_id": command_id,
+                "status": "resolved",
+                "selected_clique": list(selected_clique),
+                "reported_pair": list(reported_pair),
+                "maximum_cliques": [list(selected_clique)],
+                "measurement": measurement,
+                "pair_acceptance": pair_acceptance,
+            }
+        )
+    core = {
+        **base,
+        "panel_resolution": {
+            "status": "resolved_available",
+            "selected_status": "available",
+            "unavailable_reasons": [],
+        },
+        "command_set_resolution": {
+            "status": "resolved",
+            "command_ids": list(selected_commands),
+            "supporting_extractor_ids": supporting_extractors,
+            "votes": vote_rows,
+        },
+        "points": points,
+        "status": "four_extractions_unresolved" if unresolved else "four_extractions_resolved",
+        "unresolved": unresolved,
+    }
+    core["sha256"] = digest(core)
+    return core
+
+
 def create_output(path: Path, value: Mapping[str, Any]) -> None:
     """Create one canonical output without replacing any existing evidence."""
     target = Path(path)
@@ -1313,15 +1591,19 @@ def main() -> int:
     parser.add_argument("--record", required=True, type=Path, action="append")
     parser.add_argument("--out", required=True, type=Path)
     args = parser.parse_args()
-    _require(len(args.record) in {1, 2, 3}, "supply one, two blind, or three adjudication extractions")
+    _require(len(args.record) in {1, 2, 3, 4}, "supply one, two blind, three, or four adjudication extractions")
     authority = load_protocol(args.protocol)
     records = [_record_from_path(path) for path in args.record]
     if len(records) == 1:
         output = digitize_record(records[0], authority)
     elif len(records) == 2:
         output = compare_blind_extractions(records[0], records[1], authority)
-    else:
+    elif len(records) == 3:
         output = adjudicate_three_extractions(records[0], records[1], records[2], authority)
+    else:
+        output = adjudicate_four_extractions(
+            records[0], records[1], records[2], records[3], authority
+        )
     create_output(args.out, output)
     return 0
 
