@@ -278,6 +278,33 @@ def test_explicitly_reviewed_packet_is_durably_intaken_without_changing_claim_re
     ledger = [json.loads(line) for line in (catalog / "source-intake.jsonl").read_text().splitlines()]
     assert ledger[0]["parameter_claims"][0]["status"] == "accepted"
 
+
+def test_retry_retrieval_refreshes_reviewed_packet_intakes(tmp_path, monkeypatch):
+    catalog = tmp_path / "catalog"
+    monkeypatch.setenv("SIM_CATALOG", str(catalog))
+    fake = FakeCommands(update_rc=2)
+    root, gate = _start(tmp_path, monkeypatch, fake)
+    packet_path = root / "reviewed.json"
+    packet = accept_claim(
+        _external_packet(),
+        "C1",
+        reviewer="biology-review",
+        reviewed_at="2026-08-04",
+        notes="Conditions and limitation retained.",
+    )
+    packet_path.write_text(json.dumps(packet), encoding="utf-8")
+    escalation.handoff_packet(
+        argparse.Namespace(gate=str(gate), packet=str(packet_path)),
+        root,
+    )
+    assert escalation._load(gate)["packets"][0]["promotable"] is False
+
+    fake.update_rc = 0
+    escalation.retry_retrieval(argparse.Namespace(gate=str(gate)), root)
+    stored = escalation._load(gate)["packets"][0]
+    assert stored["promotable"] is True
+    assert stored["packet"]["sources"][0]["intake"]["retrievable"] is True
+
     escalation.answer(
         argparse.Namespace(
             gate=str(gate), question="P1", status="resolved",

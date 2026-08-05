@@ -1171,12 +1171,6 @@
   },
   "events": [
     {
-      "at": "2026-08-04T22:10:00+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fced1-356a-7570-9955-9bfef11b9d71"
-    },
-    {
       "at": "2026-08-04T22:12:52+00:00",
       "detail": "completed",
       "kind": "agent-finish",
@@ -1769,6 +1763,12 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T09:47:05+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -2046,16 +2046,17 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T09:37:48+00:00",
-      "next_action": "Commit the accepted packet attachment, refresh RAG so the ten durable source-intake records become retrievable, retry the gate, resolve P1-P3 and W1-W2 from reviewed claims, then preregister unmodified Khaliq/Raman, Labro, and Desai source-transfer comparators.",
+      "heartbeat_at": "2026-08-05T09:47:05+00:00",
+      "next_action": "Commit the reviewed-packet intake retry fix, rerun retry-retrieval from a clean tree so all ten indexed source records become promotable, resolve P1-P3 and W1-W2, then preregister unmodified Khaliq/Raman, Labro, and Desai comparators.",
       "owner": "codex",
       "priority": 1,
-      "recovery_action": "If any intake remains unretrievable, repair that exact catalog/index record; do not repeat the online search or bypass the retrieval gate. Preserve the rejected unsupported hybrid and Stage 2 stop.",
+      "recovery_action": "Do not manually flip intake flags. The retry must independently retrieve each stable source ID. Preserve the unsupported-hybrid rejection and Stage 2 stop.",
       "resource": "local_cpu_then_gpu",
       "status": "running",
       "write_set": [
+        "tools/research_escalation.py",
+        "tests/test_research_escalation.py",
         "research/findings/2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md",
-        "research/packets",
         "research/coordination/workboard.json"
       ]
     },
@@ -2445,5 +2446,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T09:37:48+00:00"
+  "updated_at": "2026-08-05T09:47:05+00:00"
 }

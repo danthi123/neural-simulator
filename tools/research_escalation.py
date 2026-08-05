@@ -621,10 +621,28 @@ def retry_retrieval(args: argparse.Namespace, root: Path) -> Path:
         for source in pending:
             verification = _refresh_and_verify_intake(root, source["intake"])
             source["intake"].update(verification)
+        for record in state.get("packets", []):
+            packet = record.get("packet", {})
+            if record.get("status") != "accepted":
+                continue
+            for source in packet.get("sources", []):
+                intake = source.get("intake")
+                if isinstance(intake, dict) and not intake.get("retrievable"):
+                    intake.update(_refresh_and_verify_intake(root, intake))
+            record["promotable"] = _packet_is_promotable(packet)
         attempt = _run_retrieval(state["query"], root)
-        if any(not source.get("intake", {}).get("retrievable") for source in state.get("sources", [])):
+        unresolved_sources = any(
+            not source.get("intake", {}).get("retrievable") for source in state.get("sources", [])
+        )
+        unresolved_packets = any(
+            record.get("status") == "accepted" and not record.get("promotable")
+            for record in state.get("packets", [])
+        )
+        if unresolved_sources or unresolved_packets:
             attempt["status"] = "retrieval-unavailable"
-            attempt["reason"] = "one or more source-intake records are still absent from RAG retrieval"
+            attempt["reason"] = (
+                "one or more source or reviewed-packet intake records are still absent from RAG retrieval"
+            )
         _append_retrieval_attempt(state, attempt)
         _write(path, state)
     return path
