@@ -53,3 +53,20 @@ def test_scope_excludes_unmatched_passive_values_and_tracks_dynamic_calcium_work
     calcium = scope["calcium_reversal"]
     assert calcium["primary_campaign"].startswith("constant packet E_Ca")
     assert "not yet implemented" in calcium["engineering_status"]
+
+
+def test_analysis_protocols_preserve_event_count_and_under_specified_boundaries():
+    protocols = _spec()["analysis_protocol_boundaries"]
+    firing = protocols["atherton_bevan_2005_firing_characteristics"]
+    assert "101 spontaneous action potentials" in firing["source_reported"]
+    assert "event-count trace" in firing["required_runner_semantics"]
+    assert "arbitrary fixed-duration" in firing["required_runner_semantics"]
+
+    assert protocols["medium_ahp"]["status"] == "protocol_under_specified"
+    hcn = protocols["hcn_hyperpolarized_input_resistance"]
+    assert hcn["status"] == "protocol_under_specified"
+    assert "does not by itself define" in hcn["boundary"]
+
+    sk = protocols["sk_depolarization_block"]
+    assert "4 of 12" in sk["source_reported"]
+    assert "not an exact block-onset target" in sk["boundary"]
