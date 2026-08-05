@@ -8,6 +8,7 @@ import pytest
 from tools.v14_stageB_scorer import (
     INTRINSIC_LESION_RESULT_SCHEMA,
     StageBScorerError,
+    _score_intrinsic_hard_gate,
     _main,
     score_intrinsic_lesion_observations,
     score_raw_observation_file,
@@ -359,6 +360,25 @@ def test_intrinsic_scorer_fails_closed_without_sealed_analysis_protocol(tmp_path
         hard_gate["passed"] is None
         for gate in result["results"] for hard_gate in gate["hard_gates"]
     )
+
+
+def test_event_count_timeout_is_unavailable_never_a_physiology_failure():
+    trace = {
+        "status": "recomputed",
+        "analysis_protocol": {"termination": {"reason": "maximum_duration_reached"}},
+    }
+    result = _score_intrinsic_hard_gate(
+        "hcn-complete-lesion",
+        {
+            "metric": "lesion_spike_count", "operator": "greater_than",
+            "evidence_class": "source_reported_direction", "value": 0,
+        },
+        trace,
+        trace,
+    )
+    assert result["status"] == "unavailable"
+    assert result["passed"] is None
+    assert "operational timeout" in result["reason"]
 
 
 def test_intrinsic_scorer_accepts_production_runner_artifacts_as_unavailable(tmp_path):

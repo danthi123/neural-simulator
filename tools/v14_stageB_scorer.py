@@ -491,6 +491,15 @@ def _score_intrinsic_hard_gate(
         "evidence_class": evidence_class,
         "source_equivalence_claimed": False,
     }
+    if gate_id != "nap-complete-lesion" and any(
+        trace.get("analysis_protocol", {}).get("termination", {}).get("reason")
+        == "maximum_duration_reached"
+        for trace in (intact, lesion)
+    ):
+        return _unavailable_hard_gate(
+            contract,
+            "the source-bound 101-spike event count was not completed before the operational timeout",
+        )
     if metric == "depolarization_block_count":
         return _unavailable_hard_gate(
             contract, "sealed 12-cell SK cohort depolarization-block traces are not available"
