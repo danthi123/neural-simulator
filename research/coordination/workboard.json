@@ -1059,57 +1059,55 @@
       "write_set": [
         ""
       ]
+    },
+    "019fd0d5": {
+      "completed_at": "2026-08-05T07:55:32+00:00",
+      "heartbeat_at": "2026-08-05T07:55:32+00:00",
+      "next_action": "Validate revised successor protocol",
+      "result": "Adversarial successor protocol review completed; all seven blocking findings were incorporated.",
+      "started_at": "2026-08-05T07:55:32+00:00",
+      "status": "completed",
+      "task": "successor protocol review"
+    },
+    "019fd0d5-8a64-7e03-b560-e1ecd2104e8b": {
+      "completed_at": "2026-08-05T07:58:38+00:00",
+      "heartbeat_at": "2026-08-05T07:58:38+00:00",
+      "model": "gpt-5.6-sol",
+      "next_action": "Validate revised successor protocol",
+      "result": "Adversarial successor protocol review completed; seven blocking findings incorporated into revised protocol.",
+      "started_at": "2026-08-05T07:35:51+00:00",
+      "status": "completed",
+      "task": "Adversarial review of source-bound Stage B structural successor preregistration",
+      "write_set": []
+    },
+    "019fd0d8-4709-7300-a2b6-a331b536ad01": {
+      "completed_at": "2026-08-05T07:55:32+00:00",
+      "heartbeat_at": "2026-08-05T07:55:32+00:00",
+      "model": "gpt-5.6-luna",
+      "next_action": "Rebase compiler onto existing executor manifest and receipt schemas",
+      "result": "Implemented initial fail-closed observation compiler and six focused tests; parent identified executor-format integration gap for correction.",
+      "started_at": "2026-08-05T07:35:51+00:00",
+      "status": "completed",
+      "task": "observation compiler foundation",
+      "write_set": [
+        "tools/experiment_observation.py",
+        "tests/test_experiment_observation.py"
+      ]
+    },
+    "019fd0eb-d0df-7c62-acd5-f979c2ff7113": {
+      "completed_at": "2026-08-05T08:02:31+00:00",
+      "heartbeat_at": "2026-08-05T08:02:31+00:00",
+      "next_action": "Run full workflow validation and bank compiler",
+      "result": "Nine production-format observation tests passed: multi-arm/seed grouping, tamper rejection, eligibility, constraints, deterministic create-only output.",
+      "started_at": "2026-08-05T08:02:31+00:00",
+      "status": "completed",
+      "task": "Production executor-receipt observation integration tests",
+      "write_set": [
+        "tests/test_experiment_observation.py"
+      ]
     }
   },
   "events": [
-    {
-      "at": "2026-08-04T21:20:21+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcea5-ee57-77f3-83bf-466e6724b746"
-    },
-    {
-      "at": "2026-08-04T21:20:21+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcea5-e8b1-7871-afa1-ccae79c23815"
-    },
-    {
-      "at": "2026-08-04T21:22:49+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-04T21:22:49+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcea8-4356-7200-95d5-781220ae19e8"
-    },
-    {
-      "at": "2026-08-04T21:25:19+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcea8-4356-7200-95d5-781220ae19e8"
-    },
-    {
-      "at": "2026-08-04T21:25:19+00:00",
-      "detail": "blocked",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-04T21:26:33+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcea5-e8b1-7871-afa1-ccae79c23815"
-    },
-    {
-      "at": "2026-08-04T21:26:33+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-channel-kinetics"
-    },
     {
       "at": "2026-08-04T21:26:33+00:00",
       "detail": "running",
@@ -1661,6 +1659,54 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "gateb-v14-missing-protocol-authority"
+    },
+    {
+      "at": "2026-08-05T07:35:51+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd0d5-8a64-7e03-b560-e1ecd2104e8b"
+    },
+    {
+      "at": "2026-08-05T07:35:51+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd0d8-4709-7300-a2b6-a331b536ad01"
+    },
+    {
+      "at": "2026-08-05T07:55:32+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0d8-4709-7300-a2b6-a331b536ad01"
+    },
+    {
+      "at": "2026-08-05T07:55:32+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0d5"
+    },
+    {
+      "at": "2026-08-05T07:58:38+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0d5-8a64-7e03-b560-e1ecd2104e8b"
+    },
+    {
+      "at": "2026-08-05T08:02:31+00:00",
+      "detail": "running",
+      "kind": "agent-register",
+      "subject": "019fd0eb-d0df-7c62-acd5-f979c2ff7113"
+    },
+    {
+      "at": "2026-08-05T08:02:31+00:00",
+      "detail": "completed",
+      "kind": "agent-finish",
+      "subject": "019fd0eb-d0df-7c62-acd5-f979c2ff7113"
+    },
+    {
+      "at": "2026-08-05T08:03:03+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-v14-missing-protocol-authority"
     }
   ],
   "lanes": {
@@ -1921,31 +1967,17 @@
     },
     "gateb-v14-missing-protocol-authority": {
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T07:16:58+00:00",
-      "next_action": "Bank the authenticated V3 structural diagnostic, then preregister and implement the source-bound fast-Na/Kv3 soma-proximal-dendrite packet with separate local Cav2.2-SK and bulk calcium; no V3 range widening or candidate reopening.",
+      "heartbeat_at": "2026-08-05T08:03:04+00:00",
+      "next_action": "Implement successor Stages 0-1: executable unit/equation assertions and source-exact isolated fast-Na/Kv3 voltage-clamp kernels; calibration remains forbidden until architecture transfer gates pass.",
       "owner": "codex",
       "priority": 1,
       "recovery_action": "Do not relax the 0.5 mV stability rule, reinterpret spike silence as hyperpolarized quiescence, or retune observed survivors. If the batched NaP companion metric cannot preserve same-cell phase semantics, keep it CPU-only and use a cheap GPU proxy only as non-authoritative triage.",
-      "resource": "local_gpu_screen_plus_pool40_pool41_confirmation",
+      "resource": "local_cpu",
       "status": "running",
       "write_set": [
         "sim/kernels.py",
-        "tools/diagnostic_trace.py",
-        "tools/v14_stageB_failure_diagnostic_analysis.py",
-        "research/runners/v14_stageB_failure_diagnostic.py",
-        "research/runners/v14_stageB_failure_diagnostic_analysis.py",
-        "research/specs/v14_snr_stageB_failure_diagnostic_v1.json",
-        "research/findings/2026-08-05-v14-stageB-v3-failure-diagnostic-STRUCTURAL-NO-GO.md",
-        "research/findings/raw/v14_stageB_v3_failure_diagnostic_receipt.json",
-        "research/findings/raw/v14_stageB_v3_failure_diagnostic_analysis.json",
-        "tests/test_diagnostic_trace.py",
-        "tests/test_snr_diagnostic_telemetry.py",
-        "tests/test_v14_stageB_failure_diagnostic.py",
-        "tests/test_v14_stageB_failure_diagnostic_analysis.py",
-        "ROADMAP.md",
-        "docs/CURRENT-STATE.md",
-        "docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md",
-        "research/FAILURE_LOG.md"
+        "research/runners/v14_stageB_structural_successor.py",
+        "tests/test_v14_stageB_structural_successor.py"
       ]
     },
     "gateb-v14-packet-authority": {
@@ -2334,5 +2366,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T07:16:58+00:00"
+  "updated_at": "2026-08-05T08:03:04+00:00"
 }

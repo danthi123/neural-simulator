@@ -60,10 +60,39 @@ canonical effective-parameter document to the runner. Commit that spec, create t
 `expand_experiment_jobs`; the executor does not add or mutate candidates after sealing. A successful adaptive
 output must echo the exact candidate digest and effective parameters before its receipt can be accepted.
 
+## Ingesting completed results
+
+`tools/experiment_observation.py` closes the mechanical gap between the durable executor and the next adaptive
+proposal. Its preregistered contract binds one adaptive design and one exact executor manifest, maps each objective
+to a named experiment arm and direct scalar JSON path, declares the exact non-held-out seeds, and maps executor
+backend/partition pairs to fidelity tiers. The compiler then:
+
+- reauthenticates every successful executor receipt, output digest, and provenance sidecar;
+- requires the complete treatment/control/lesion by seed evidence set for each candidate and fidelity;
+- rejects held-out seeds, engineering-only output, changed artifacts, hard-constraint violations, and incomplete or
+  widened evidence;
+- applies only the preregistered arithmetic mean reducer; and
+- writes a create-only, self-digested observation document with `scientific_verdict: null`.
+
+```bash
+python tools/experiment_observation.py \
+  --contract research/specs/my-observation-contract.json \
+  --executor-manifest research/queue/my-executor-manifest.json \
+  --receipt research/queue/my-state/receipts/job-1.json \
+  --receipt research/queue/my-state/receipts/job-2.json \
+  --output research/findings/raw/my-observations.json \
+  --repository-root "$PWD"
+```
+
+The resulting rows exactly match the adaptive design's observation shape; a separate top-level `evidence` ledger
+binds each row to its receipts. A controlled update must append accepted rows to a new design version before another
+proposal is generated. The compiler does not edit the design or launch the next batch.
+
 ## Current limits
 
 This first layer uses a scalarized multi-objective utility for acquisition; the Pareto report is diagnostic rather
 than a full multi-objective optimizer. Its RBF uncertainty is useful for ranking bounded searches but is not a
-calibrated probability. It assumes completed observations report every objective, does not model censored or failed
-runs, and proposes values only. Candidate materialization remains an explicit pre-seal step, so the proposal layer
-cannot weaken `tools/experiment.py` seals or job contracts.
+calibrated probability. Failed and incomplete runs remain blocked evidence rather than being statistically modelled.
+Objective ingestion supports direct scalar paths and an arithmetic mean over exact seeds; complex trace analysis
+must first produce a sealed scalar artifact. Candidate materialization and design-version updates remain explicit,
+so neither proposal nor observation ingestion can weaken `tools/experiment.py` seals or job contracts.

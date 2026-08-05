@@ -110,17 +110,23 @@ sources, locators, structured values, and review state. `research_escalation.py 
 record to the relevant wall without silently accepting it. Even an explicitly reviewed packet cannot resolve the
 wall until its cited source has a durable, retrievable catalog/RAG intake record.
 
-`tools/experiment_controller.py` currently plans and validates only. Its sealed-handoff check requires an existing
-experiment seal, verifies the real expansion contract, rejects extra backend/partition pairs, and never selects
-seeds, writes claims, dispatches jobs, executes code, or touches held-out data. Execution integration is a later
-lane with its own preregistration and receipt gates.
+`tools/experiment_controller.py` plans and materializes an exact candidate-by-arm set without selecting seeds or
+touching held-out data. `tools/experiment_executor.py` validates the already-expanded sealed jobs, creates durable
+pending receipts, atomically claims work across local CPU, leased local GPU, and mini-PC lanes, and accepts success
+only after checking the exact output and provenance. It does not choose candidates or interpret results.
 
-Stage B has a bounded execution path beyond that generic controller. It can generate the exact deterministic
+`tools/experiment_observation.py` consumes those successful receipts under a separate preregistered contract. It
+requires complete arm and seed coverage, rechecks artifact and provenance hashes, applies only explicitly mapped
+scalar reductions, and emits verdict-free rows for the adaptive design. It cannot dispatch a successor or update
+the design in place. That design-version-and-proposal transition remains explicit, so the generic engine is not yet
+an unattended perpetual research loop.
+
+Stage B has a specialized bounded execution path beyond the generic controller. It can generate the exact deterministic
 512-point Sobol manifest, compile candidates with separate authority policies, write compact authenticated traces,
 batch candidates on the GPU for engineering screening, persist campaign receipts, and strictly triage the five
-resolved subgates. The first complete screen ran all 2,560 candidate-arm traces and selected two engineering passes
-for confirmation. GPU results accelerate screening but are not scientific authority; candidates require NumPy/CPU
-confirmation.
+resolved subgates. The fresh complete screen ran all 2,560 candidate-arm traces: 421 candidates failed, 91 were
+inconclusive, and none passed. GPU results accelerate screening but are not scientific authority; an eligible
+candidate would still require NumPy/CPU confirmation.
 
 `tools/v14_stageB_campaign_supervisor.py` now provides one durable, fail-closed
 campaign step. It authenticates the campaign and existing trace archives,

@@ -139,8 +139,11 @@ its controls and lesions, and is tested at the required seed coverage.
    single-compartment packet is therefore retired as a structural engineering
    NO-GO. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell
    SK cohort remains unavailable. The next build is a source-bound fast-Na/Kv3,
-   soma/proximal-dendrite, local-Cav2.2-SK packet. Delayed action-reward learning
-   and its unrelated-reward control come afterward.
+   soma/proximal-dendrite, local-Cav2.2-SK packet. Its seven-stage architecture-
+   first contract is filed in
+   `research/specs/v14_snr_stageB_structural_successor_v1.json`; implementation
+   and execution have not begun. Delayed action-reward learning and its
+   unrelated-reward control come afterward.
 3. **Source monitoring has a real tradeoff.** Improving weak source margins
    must not damage already-correct source judgments. The next version needs a
    biological consistency signal rather than an exact composer metadata read.
