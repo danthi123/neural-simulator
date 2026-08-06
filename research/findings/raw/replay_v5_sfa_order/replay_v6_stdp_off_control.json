@@ -1,0 +1,30 @@
+{
+  "description": "STDP-off causal power control: same v6 anatomy/SFA(d=180)/reset, stdp_sleep=False. If the ordered-vs-shuffled recovery margin collapses, the margin is causally attributable to order-sensitive STDP consolidation, not the SFA or the contiguous-replay reset.",
+  "config_diff": "stdp_sleep=False",
+  "rows": [
+    {
+      "intact": {
+        "recovery": 0.07708333333333334,
+        "false_recall": 0.023809523809523808
+      },
+      "shuffled_replay_order": {
+        "recovery": 0.08472222222222223,
+        "false_recall": 0.0
+      },
+      "order_margin": -0.0076388888888888895,
+      "seed": 412
+    },
+    {
+      "intact": {
+        "recovery": 0.02222222222222222,
+        "false_recall": 0.09523809523809523
+      },
+      "shuffled_replay_order": {
+        "recovery": 0.01875,
+        "false_recall": 0.10633484162895929
+      },
+      "order_margin": 0.0034722222222222203,
+      "seed": 413
+    }
+  ]
+}
