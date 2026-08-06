@@ -1,0 +1,41 @@
+{
+  "control": "stepping_history_confound",
+  "question": "Is the v9 development strict-improvement GO caused by the Vogels-Sprekeler iSTDP weight change, or by the 5100-step pre-recall window shifting the Izhikevich sub-threshold state?",
+  "method": "Replace the iSTDP settle window with an identical 5100-step window that changes ZERO weights (Hebbian OFF, iSTDP OFF, competition ON), then run the runner exact recall order and the frozen strict-improvement criterion.",
+  "result": "A zero-weight-change window reproduces STRICT_IMPROVED=True + floor_met=True on all three dev seeds, identical to the iSTDP run. The iSTDP weight change is causally inert; the GO is a stepping-history artifact.",
+  "rows": [
+    {
+      "seed": 652,
+      "no_window_min_M": 0.184167,
+      "no_window_min_L": 0.184167,
+      "no_window_strict": false,
+      "zero_weight_window_dl1": 0.0,
+      "zero_weight_window_min_M": 0.184167,
+      "zero_weight_window_min_L": 0.1775,
+      "zero_weight_window_strict": true,
+      "zero_weight_window_floor_met": true
+    },
+    {
+      "seed": 653,
+      "no_window_min_M": 0.160833,
+      "no_window_min_L": 0.164167,
+      "no_window_strict": false,
+      "zero_weight_window_dl1": 0.0,
+      "zero_weight_window_min_M": 0.164167,
+      "zero_weight_window_min_L": 0.144167,
+      "zero_weight_window_strict": true,
+      "zero_weight_window_floor_met": true
+    },
+    {
+      "seed": 654,
+      "no_window_min_M": 0.1825,
+      "no_window_min_L": 0.186667,
+      "no_window_strict": false,
+      "zero_weight_window_dl1": 0.0,
+      "zero_weight_window_min_M": 0.186667,
+      "zero_weight_window_min_L": 0.1825,
+      "zero_weight_window_strict": true,
+      "zero_weight_window_floor_met": true
+    }
+  ]
+}
