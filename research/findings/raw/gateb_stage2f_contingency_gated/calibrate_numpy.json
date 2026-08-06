@@ -1,0 +1,225 @@
+{
+  "probe": "gateB_stage2f_calibration",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "reward_lr": 0.02,
+  "seed": 730501,
+  "target": 0,
+  "conf_dp_lo": 0.1,
+  "conf_dp_hi": 0.45,
+  "equivalence": {
+    "weights_match": true,
+    "raster_match": true
+  },
+  "contingent": {
+    "condition": "contingent",
+    "seed": 730501,
+    "target": 0,
+    "n_reward_delivered": 21,
+    "reward_trials": [
+      0,
+      1,
+      4,
+      7,
+      10,
+      12,
+      15,
+      16,
+      18,
+      21,
+      22,
+      24,
+      27,
+      28,
+      30,
+      31,
+      33,
+      34,
+      36,
+      37,
+      39
+    ],
+    "baseline_target_rate": 1.0,
+    "baseline_n_clean": 20,
+    "test_target_rate": 1.0,
+    "test_n_clean": 20,
+    "train_target_rate": 0.825,
+    "train_clean_rate": 1.0,
+    "train_p0_all": 0.825,
+    "train_p0_firsthalf": 0.7,
+    "count0": 33,
+    "count1": 7,
+    "d1_weight_before": {
+      "0": 39.992559810921,
+      "1": 40.000952574058815
+    },
+    "d1_weight_after": {
+      "0": 19.513814851693397,
+      "1": 35.74226801207772
+    },
+    "final_conf": 0.21471263513773797,
+    "final_dp": 0.1751494222982083,
+    "Vd1": [
+      1.4998980407878935,
+      0.40596740722656255
+    ],
+    "Vd2": [
+      1.4999186335351664,
+      1.2153826904296876
+    ],
+    "final_sigma": 99.38758702677715,
+    "sigma_first": 120.0,
+    "sigma_last": 99.38758702677715,
+    "dp_last": 0.1751494222982083,
+    "mean_disc_test": 0.9510950718079874,
+    "test": {
+      "n_test": 20,
+      "n_clean": 20,
+      "target_rate": 1.0,
+      "winners": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "final_sigma": 99.38758702677715,
+      "mean_disc": 0.9510950718079874
+    }
+  },
+  "yoked": {
+    "condition": "yoked",
+    "seed": 730501,
+    "target": 0,
+    "n_reward_delivered": 21,
+    "reward_trials": [
+      0,
+      1,
+      4,
+      5,
+      6,
+      9,
+      11,
+      13,
+      14,
+      17,
+      18,
+      21,
+      22,
+      23,
+      24,
+      31,
+      32,
+      33,
+      37,
+      38,
+      39
+    ],
+    "baseline_target_rate": 1.0,
+    "baseline_n_clean": 20,
+    "test_target_rate": 0.7,
+    "test_n_clean": 20,
+    "train_target_rate": 0.525,
+    "train_clean_rate": 1.0,
+    "train_p0_all": 0.525,
+    "train_p0_firsthalf": 0.5,
+    "count0": 21,
+    "count1": 19,
+    "d1_weight_before": {
+      "0": 39.992559810921,
+      "1": 40.000952574058815
+    },
+    "d1_weight_after": {
+      "0": 44.5616995409545,
+      "1": 60.538943714565704
+    },
+    "final_conf": 0.6796763067426497,
+    "final_dp": 0.3378867073599274,
+    "Vd1": [
+      1.0918667580798727,
+      1.1229447524750507
+    ],
+    "Vd2": [
+      1.4014943452345232,
+      0.15746524728263467
+    ],
+    "final_sigma": 54.75107455270563,
+    "sigma_first": 120.0,
+    "sigma_last": 54.75107455270563,
+    "dp_last": 0.3378867073599274,
+    "mean_disc_test": 0.05326325252770416,
+    "test": {
+      "n_test": 20,
+      "n_clean": 20,
+      "target_rate": 0.7,
+      "winners": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "final_sigma": 54.75107455270563,
+      "mean_disc": 0.05326325252770416
+    }
+  },
+  "cont_dp": 0.1751494222982083,
+  "yoked_dp": 0.3378867073599274,
+  "cont_conf": 0.21471263513773797,
+  "yoked_conf": 0.6796763067426497,
+  "cont_Vd1": [
+    1.4998980407878935,
+    0.40596740722656255
+  ],
+  "cont_Vd2": [
+    1.4999186335351664,
+    1.2153826904296876
+  ],
+  "yoked_Vd1": [
+    1.0918667580798727,
+    1.1229447524750507
+  ],
+  "yoked_Vd2": [
+    1.4014943452345232,
+    0.15746524728263467
+  ],
+  "cont_train_p0": 0.825,
+  "yoked_train_p0": 0.525,
+  "delta": 0.30000000000000004,
+  "elapsed_seconds": 34.35916555999938
+}
