@@ -1366,36 +1366,6 @@
   },
   "events": [
     {
-      "at": "2026-08-05T01:44:31+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T01:45:46+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T02:12:24+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T02:32:13+00:00",
-      "detail": "running",
-      "kind": "lane-update",
-      "subject": "gateb-v14-scorer-integration"
-    },
-    {
-      "at": "2026-08-05T02:38:22+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf9f-1bf0-7743-8d48-b04608e62b76"
-    },
-    {
       "at": "2026-08-05T02:38:22+00:00",
       "detail": "running",
       "kind": "agent-register",
@@ -1964,6 +1934,36 @@
       "detail": "ready",
       "kind": "lane-update",
       "subject": "gateb-v14-sensitivity-runner-adapter"
+    },
+    {
+      "at": "2026-08-06T15:23:08+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-source-constrained-identification"
+    },
+    {
+      "at": "2026-08-06T15:23:08+00:00",
+      "detail": "blocked",
+      "kind": "lane-update",
+      "subject": "gateb-v14-sensitivity-runner-adapter"
+    },
+    {
+      "at": "2026-08-06T15:28:44+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "source-monitoring"
+    },
+    {
+      "at": "2026-08-06T15:30:10+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "gateb-grounded-comm"
+    },
+    {
+      "at": "2026-08-06T15:32:13+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "memory-replay"
     }
   ],
   "lanes": {
@@ -2056,6 +2056,11 @@
       "priority": 1,
       "resource": "agent_cpu_network",
       "status": "completed"
+    },
+    "gateb-grounded-comm": {
+      "heartbeat_at": "2026-08-06T15:30:10+00:00",
+      "next_action": "Stage-0 tonic-output substrate confirmed GO both backends (held only by ~4pct perf ceiling = drift trigger); next mechanism = Stage 1 continuous center-surround BG selector on intrinsic_current_pA scaffold",
+      "status": "running"
     },
     "gateb-primary-source-fulltext-intake": {
       "blocker": "Current RAG has project summaries and Simmons metadata intake but not the decisive primary full texts; paper queries fall back to a 2007 review.",
@@ -2317,12 +2322,12 @@
     },
     "gateb-v14-sensitivity-runner-adapter": {
       "delegation": "local-model",
-      "heartbeat_at": "2026-08-05T13:58:45+00:00",
-      "next_action": "Run sim-local-continue --target . --continuous. Implement only the bounded calibration sensitivity adapter already specified; commit in isolated fallback clone for frontier review.",
+      "heartbeat_at": "2026-08-06T15:23:08+00:00",
+      "next_action": "PARKED 2026-08-06 (owner re-anchor): v14 ion-channel arc is off-mission (P3 drift). Do NOT resume; superseded by the grounded-communication / whole-brain lanes.",
       "owner": "local-fallback",
       "priority": 2,
       "resource": "local_model_gpu",
-      "status": "ready",
+      "status": "blocked",
       "write_set": [
         "tools/v14_stageB_sensitivity_runner.py",
         "tests/test_v14_stageB_sensitivity_runner.py"
@@ -2331,13 +2336,13 @@
     "gateb-v14-source-constrained-identification": {
       "blocker": "Four blind native-pixel extractions remain unresolved under the preregistered consensus for all seven panels; partial packets and threshold changes are forbidden.",
       "delegation": "controller",
-      "heartbeat_at": "2026-08-05T13:53:36+00:00",
-      "next_action": "Complete bounded primary-source data-availability search for Ding sodium/Kv3 numeric tables, vector PDFs, supplements, author repositories, or data archives; record exact negative/positive result before designing another acquisition method.",
+      "heartbeat_at": "2026-08-06T15:23:08+00:00",
+      "next_action": "PARKED 2026-08-06 (owner re-anchor): v14 ion-channel arc is off-mission (P3 drift). Do NOT resume; superseded by the grounded-communication / whole-brain lanes.",
       "owner": "controller",
       "priority": 1,
       "recovery_action": "Search primary repositories, APS/PMC author artifacts, supplements, and direct numeric archives for original point data or vector figures. If stronger authority exists, preregister its acquisition and error model before inspection. Otherwise document the data-acquisition dependency; do not add a fifth extractor under a post-hoc rule.",
       "resource": "online_research_local_cpu",
-      "status": "running",
+      "status": "blocked",
       "write_set": [
         "research/findings",
         "research/specs",
@@ -2408,6 +2413,11 @@
         "docs/LOCAL-MODEL-OFFLOAD.md"
       ]
     },
+    "memory-replay": {
+      "heartbeat_at": "2026-08-06T15:32:13+00:00",
+      "next_action": "research-gated next mechanism = learned encoding-potentiated CA1->cortical_target reinstatement (replaces fixed intracortical teacher); v5 build + fresh preregistration pending",
+      "status": "running"
+    },
     "parameter-research-discovery": {
       "delegation": "controller",
       "heartbeat_at": "2026-08-04T18:41:57+00:00",
@@ -2448,6 +2458,11 @@
         "tools/rag/update_indexes.py",
         "tests/test_rag_soma_manifest.py"
       ]
+    },
+    "source-monitoring": {
+      "heartbeat_at": "2026-08-06T15:28:44+00:00",
+      "next_action": "P3 tradeoff spec + v5 (v2 biased-competition under v3 bounded-loss criterion) fresh-seed calibration on pool",
+      "status": "running"
     },
     "v13-performance-diagnostic": {
       "blocker": "",
@@ -2672,5 +2687,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-05T13:58:45+00:00"
+  "updated_at": "2026-08-06T15:32:13+00:00"
 }
