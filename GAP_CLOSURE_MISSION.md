@@ -13,6 +13,31 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐ STATE OF THE PROJECT — 2026-08-06 (evening; READ FIRST — live resume point)
+
+North-star: one grounded, integrated, fully-spiking conversational mind (charter). This session ran **~14 mission
+lane-builds** across the 3 top capability lanes, all honest, all integrated to `main` + pushed both remotes. Every
+wall is a METHOD verdict with its biological surpass named; the diagnoses got progressively DEEPER (the pattern is
+working). Current frontier per lane:
+
+- **#1 Gate B (grounded communication)** — the crux. Stage-0→1 (GO) → 2/2b/2c/2d/2e/2f. The reward-credit MECHANISM
+  now works (action-local credit, opponent negative-RPE, reversal PASSES, mean contingency divergence 0.725, all
+  neural). Stuck at **steer 4/6** (per-seed contingency). NEXT = **Stage 2g: true Hammond ΔP** (no-action/withhold
+  baseline + homeostatic critic normalization) — targets the 2 named failing seeds (730605, 730602). CLOSE.
+- **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
+  FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
+  equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
+- **#4 Replay consolidation** — v5 capability + v5+SFA interference wall closed + v6 order-STDP; but v6 multiseed
+  NO-GO (2-seed GO was operating-point OVERFIT). NEXT = **emergent homeostatic self-calibration** of the operating
+  point (host-tuned on 2 seeds → must emerge per-brain).
+
+USAGE MODEL (owner 2026-08-06): subagent tokens COUNT toward the plan; reduce usage via non-Claude machinery
+(self-sweeping runners + pool + aggregators), Claude only at endpoints — see `feedback_minimize_plan_usage_via_nonclaude_machinery`.
+Pacing: serial/2-wide (3 parallel agents hit the session cap once). ⚠️ Orphaned-sweep recovery pattern: agents keep
+backgrounding 6-seed sweeps + ending their turn — arm your OWN watcher + resume via SendMessage (do NOT trust the
+subagent's own waiter). ⚠️ pool checkouts BROKEN (re-provision before any pool sweep). ⚠️ `lane-starvation` pre-commit
+gate blocks doc commits when the pool queue is empty → documented `--no-verify` for pure doc/board commits.
+
 ## STATE OF THE PROJECT - 2026-08-06 (later²) — ROUND 2 COMPLETE (3 lanes built + verdicted + integrated to main)
 
 All three round-2 "deliberate builds" landed, each in its own worktree (no index contention), gate-clean, pushed, and
@@ -79,6 +104,17 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   **ΔP = P(reward|action) − P(reward|no-action)** (Hammond), not raw value magnitude → yoked ΔP≈0 keeps exploring
   (D_yoked~0), contingent ΔP high fades to exploit. Substrate exists: the opponent D2/indirect "reward-omitted" arm
   already carries the evidence — route it in as a **D1−D2 contrast**. Targets exactly the 5/6-vs-6/6 residual.
+  **Stage 2f (ΔP / D1−D2 contingency gate) = NO-GO steer 4/6 — a LATERAL move** (`82f78eb55`, merged `5f9d42ab0`):
+  the ΔP gate is FULLY NEURAL (net[c]=str_d1_c−str_d2_c onset spikes; D2 learns reward-omission via the substrate's
+  DA-dip × `cp_d1_d2_sign=−1` three-factor rule; additive default-off `plastic_d2` flag, stages 2c-2e byte-identical)
+  and load-bearing (contingency_lesion confirms: on 730605 it drops spurious conf 0.977→0, D_yoked 1.0→0.55). It
+  RESCUED 730604 (2e's sole double-fail) but RE-BROKE 730605; mean divergence 0.725, reversal PASS. WHY still 4/6:
+  the D1−D2 contrast estimates **P(reward|action)**, NOT the Hammond **ΔP = P(reward|action) − P(reward|NO-action)** —
+  without a withhold baseline a base reward rate survives below the gate (730605), and a single global VALUE_GAIN
+  mis-signs the RPE on heterogeneous seeds (730602 never exploits). NEXT = **(a) add NO-ACTION/withhold trials + a
+  neural tonic value tracking reward in the action's ABSENCE** → true V(action)−V(withhold) (fixes 730605); **(b)
+  homeostatic per-population critic normalization** replacing scalar VALUE_GAIN so the RPE stays signed across seeds
+  (fixes 730602). Across 2e+2f every seed passes in SOME variant, but no single variant reaches 5/6.
 - **Source v6 (#3) — ⛔ calibration "GO" LATER VOIDED** (stepping-history instrument artifact — see the instrument-fix
   note at the end of this source entry; the leak-closure sub-result survives). Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
@@ -192,10 +228,12 @@ replay SFA died at startup with ZERO progress** (no commits) — their worktrees
 are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
 
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
-(1) Gate B **Stage 2f: contingency-based (ΔP) confidence gate** — gate the directed-novelty drive + OU σ on
-ΔP = P(reward|action) − P(reward|no-action) (Hammond) via the opponent D1−D2 "reward-omitted" contrast — the #1 lane
-and VERY CLOSE: Stage-2e reached steer 4/6 (union 5/6 across two gating variants), directed novelty removed the 2d
-killer (all D_yoked≤0, D_contingent 1.0, reversal PASS); only the maximally-biased seed fails, which ΔP-gating targets
+(1) Gate B **Stage 2g: TRUE Hammond ΔP** — add NO-ACTION/withhold trials + a neural tonic value tracking reward in
+the action's ABSENCE → V(action)−V(withhold) (fixes 730605's below-gate base rate), PLUS **homeostatic per-population
+critic normalization** replacing the scalar VALUE_GAIN so the RPE stays signed across heterogeneous seeds (fixes
+730602). Stage-2f's D1−D2 ΔP gate reached steer 4/6 (lateral to 2e — rescued 730604, broke 730605); across 2e+2f
+every seed passes in SOME variant, mean divergence 0.725, reversal PASS — the residual is now two precisely-named
+per-seed fixes, not a mechanism-class gap. The #1 lane, still CLOSE
 · (2) source — the wall is now at **ENCODING, not recall**
 (fair-inhibition + own-gain both NO-GO; recall-time mechanisms can't separate shared cells potentiated equally to all
 sources). NEXT = **competitive/heterosynaptic ENCODING** (each shared cell commits its fan-out to ONE source) OR
