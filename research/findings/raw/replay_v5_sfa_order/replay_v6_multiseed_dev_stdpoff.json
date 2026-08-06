@@ -1,0 +1,41 @@
+{
+  "note": "v6 frozen config with stdp_sleep=False on development seeds; isolates order-STDP contribution to the multiseed non-generalization",
+  "rows": [
+    {
+      "intact": {
+        "rec": 0.06388888888888888,
+        "false": 0.5
+      },
+      "shuffled_replay_order": {
+        "rec": 0.06388888888888888,
+        "false": 0.5
+      },
+      "seed": 414,
+      "order_margin": 0.0
+    },
+    {
+      "intact": {
+        "rec": 0.05138888888888889,
+        "false": 0.4883720930232558
+      },
+      "shuffled_replay_order": {
+        "rec": 0.04791666666666667,
+        "false": 0.4696969696969697
+      },
+      "seed": 415,
+      "order_margin": 0.003472222222222217
+    },
+    {
+      "intact": {
+        "rec": 0.01875,
+        "false": 0.43714285714285717
+      },
+      "shuffled_replay_order": {
+        "rec": 0.01597222222222222,
+        "false": 0.4523809523809524
+      },
+      "seed": 410,
+      "order_margin": 0.0027777777777777783
+    }
+  ]
+}

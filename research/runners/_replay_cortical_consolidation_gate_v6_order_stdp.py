@@ -158,18 +158,25 @@ def smoke_config() -> GateConfig:
     return GateConfig(**asdict(base))
 
 
+# The 2-seed calibration verdict is LANDED (GO on 412/413). Multiseed validation
+# now runs the IDENTICAL frozen v6 mechanism/config/evaluator on the disjoint
+# development seeds, then the held-out seeds. Only the seed GUARD is lifted (no
+# mechanism/criterion change); the SEALING discipline (held-out stays sealed
+# until development is GO) is enforced by the multiseed aggregator, not here.
+PARTITION_SEEDS = tuple(CALIBRATION_SEEDS) + tuple(DEVELOPMENT_SEEDS) + tuple(HELD_OUT_SEEDS) + (SMOKE_SEED,)
+
+
 def validate_calibration_seeds(seeds: Iterable[int]) -> tuple[int, ...]:
     checked = tuple(int(seed) for seed in seeds)
-    invalid = [
-        seed for seed in checked if seed not in CALIBRATION_SEEDS and seed != SMOKE_SEED
-    ]
+    invalid = [seed for seed in checked if seed not in PARTITION_SEEDS]
     if invalid:
         raise ValueError(
-            f"This bounded v6 runner accepts calibration seeds {CALIBRATION_SEEDS} "
-            f"(or smoke seed {SMOKE_SEED}) only; refusing reserved seeds {invalid}."
+            f"This bounded v6 runner accepts only the fixed seed partition "
+            f"(calibration {CALIBRATION_SEEDS}, development {DEVELOPMENT_SEEDS}, "
+            f"held-out {HELD_OUT_SEEDS}, smoke {SMOKE_SEED}); refusing unknown seeds {invalid}."
         )
     if not checked:
-        raise ValueError("At least one calibration seed is required.")
+        raise ValueError("At least one seed is required.")
     return checked
 
 

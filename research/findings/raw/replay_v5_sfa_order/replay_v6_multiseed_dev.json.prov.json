@@ -1,0 +1,30 @@
+{
+ "run_id": "1786050469-259582",
+ "runner": "research/runners/_replay_v6_multiseed.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-replay-order/research/runners/_replay_v6_multiseed.py",
+  "--group",
+  "dev",
+  "--out",
+  "research/findings/raw/replay_v5_sfa_order/replay_v6_multiseed_dev.json"
+ ],
+ "git_sha": "c35e2373b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T17:07:49",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1459.1,
+ "corpus_check_query": "replay order-sensitive STDP sequence replay directional consolidation",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/replay_v5_sfa_order/replay_v6_multiseed_dev.json"
+}
