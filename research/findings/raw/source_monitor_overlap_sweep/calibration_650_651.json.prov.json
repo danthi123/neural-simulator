@@ -1,0 +1,35 @@
+{
+ "run_id": "1786053984-299001",
+ "runner": "research/runners/_laneC_source_monitor_overlap_sweep.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-source-overlap/research/runners/_laneC_source_monitor_overlap_sweep.py",
+  "--seeds",
+  "650",
+  "651",
+  "--overlaps",
+  "0.0",
+  "0.2",
+  "0.4",
+  "--json",
+  "research/findings/raw/source_monitor_overlap_sweep/calibration_650_651.json"
+ ],
+ "git_sha": "cba946438",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T18:06:24",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 382.1,
+ "corpus_check_query": "source monitor episode pattern overlap rival burden competition margin",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/source_monitor_overlap_sweep/calibration_650_651.json"
+}

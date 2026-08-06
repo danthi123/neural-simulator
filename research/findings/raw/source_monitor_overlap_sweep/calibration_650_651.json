@@ -1,0 +1,279 @@
+{
+  "runner": "research/runners/_laneC_source_monitor_overlap_sweep.py",
+  "seeds": [
+    650,
+    651
+  ],
+  "overlaps": [
+    0.0,
+    0.2,
+    0.4
+  ],
+  "instrument": "v6 fixed (per-recall reset_dynamical_state)",
+  "rows": [
+    {
+      "seed": 650,
+      "overlap_fraction": 0.0,
+      "core_size": 0,
+      "episode_pattern_size": 12,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 51631.316902160645,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "rival_burden_on": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "min_rival_burden_off": 0.0,
+      "margins_M": {
+        "seen": 0.17833333333333334,
+        "heard": 0.2725,
+        "self_generated": 0.25
+      },
+      "margins_L": {
+        "seen": 0.17833333333333334,
+        "heard": 0.2725,
+        "self_generated": 0.25
+      },
+      "min_margin_M": 0.17833333333333334,
+      "min_margin_L": 0.17833333333333334,
+      "weakest_source_strictly_improved": false,
+      "weakest_source_by_L": "seen",
+      "weak_margin_attributable_to_competition": 0.0,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "elapsed_seconds": 0.538
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.0,
+      "core_size": 0,
+      "episode_pattern_size": 12,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 54499.92597198486,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "rival_burden_on": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "min_rival_burden_off": 0.0,
+      "margins_M": {
+        "seen": 0.19166666666666668,
+        "heard": 0.2891666666666667,
+        "self_generated": 0.16666666666666666
+      },
+      "margins_L": {
+        "seen": 0.19166666666666668,
+        "heard": 0.2891666666666667,
+        "self_generated": 0.16666666666666666
+      },
+      "min_margin_M": 0.16666666666666666,
+      "min_margin_L": 0.16666666666666666,
+      "weakest_source_strictly_improved": false,
+      "weakest_source_by_L": "self_generated",
+      "weak_margin_attributable_to_competition": 0.0,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "elapsed_seconds": 0.581
+    },
+    {
+      "seed": 650,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 64251.111419677734,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.27666666666666667,
+        "heard": 0.2416666666666667,
+        "self_generated": 0.3258333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.22,
+        "heard": 0.24083333333333334,
+        "self_generated": 0.41583333333333333
+      },
+      "min_rival_burden_off": 0.2416666666666667,
+      "margins_M": {
+        "seen": 0.06250000000000001,
+        "heard": 0.12166666666666667,
+        "self_generated": -0.009166666666666656
+      },
+      "margins_L": {
+        "seen": 0.03666666666666668,
+        "heard": 0.13666666666666666,
+        "self_generated": 0.045833333333333365
+      },
+      "min_margin_M": -0.009166666666666656,
+      "min_margin_L": 0.03666666666666668,
+      "weakest_source_strictly_improved": false,
+      "weakest_source_by_L": "seen",
+      "weak_margin_attributable_to_competition": 0.4133333333333332,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.578
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 69157.66883087158,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.19083333333333335,
+        "heard": 0.19,
+        "self_generated": 0.36333333333333334
+      },
+      "rival_burden_on": {
+        "seen": 0.13583333333333333,
+        "heard": 0.21250000000000002,
+        "self_generated": 0.4391666666666667
+      },
+      "min_rival_burden_off": 0.19,
+      "margins_M": {
+        "seen": 0.09583333333333333,
+        "heard": 0.13249999999999998,
+        "self_generated": -0.12333333333333335
+      },
+      "margins_L": {
+        "seen": 0.050833333333333314,
+        "heard": 0.14583333333333334,
+        "self_generated": -0.05666666666666667
+      },
+      "min_margin_M": -0.12333333333333335,
+      "min_margin_L": -0.05666666666666667,
+      "weakest_source_strictly_improved": false,
+      "weakest_source_by_L": "self_generated",
+      "weak_margin_attributable_to_competition": 0.5405405405405406,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.587
+    },
+    {
+      "seed": 650,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "episode_pattern_size": 12,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 70048.74882507324,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.48583333333333334,
+        "heard": 0.38916666666666666,
+        "self_generated": 0.4425
+      },
+      "rival_burden_on": {
+        "seen": 0.48333333333333334,
+        "heard": 0.37916666666666665,
+        "self_generated": 0.43333333333333335
+      },
+      "min_rival_burden_off": 0.38916666666666666,
+      "margins_M": {
+        "seen": -0.12916666666666665,
+        "heard": 0.05249999999999999,
+        "self_generated": 0.0016666666666667052
+      },
+      "margins_L": {
+        "seen": -0.08750000000000002,
+        "heard": 0.053333333333333344,
+        "self_generated": -0.009166666666666656
+      },
+      "min_margin_M": -0.12916666666666665,
+      "min_margin_L": -0.08750000000000002,
+      "weakest_source_strictly_improved": false,
+      "weakest_source_by_L": "seen",
+      "weak_margin_attributable_to_competition": 0.3225806451612901,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.598
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "episode_pattern_size": 12,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 67038.85725402832,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.31,
+        "heard": 0.245,
+        "self_generated": 0.4541666666666666
+      },
+      "rival_burden_on": {
+        "seen": 0.2758333333333333,
+        "heard": 0.21166666666666667,
+        "self_generated": 0.5108333333333333
+      },
+      "min_rival_burden_off": 0.245,
+      "margins_M": {
+        "seen": -0.04416666666666669,
+        "heard": 0.10583333333333333,
+        "self_generated": -0.12916666666666665
+      },
+      "margins_L": {
+        "seen": -0.04416666666666669,
+        "heard": 0.1175,
+        "self_generated": -0.1008333333333333
+      },
+      "min_margin_M": -0.12916666666666665,
+      "min_margin_L": -0.1008333333333333,
+      "weakest_source_strictly_improved": false,
+      "weakest_source_by_L": "self_generated",
+      "weak_margin_attributable_to_competition": 0.21935483870967756,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.58
+    }
+  ]
+}
