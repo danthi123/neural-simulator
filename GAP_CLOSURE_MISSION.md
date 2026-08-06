@@ -73,6 +73,14 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   Also **RE-DIAGNOSES the v3 NO-GO** (its near-zero margins were this same collapse, not "inert homeostasis"). NEXT =
   **v8 = Turrigiano SYNAPTIC SCALING** (multiplicatively up-regulate the weak source's episode→source recall
   synapses toward an activity set-point, leaving pools at PEAK detection so v6 competition keeps working).
+  **v8 (synaptic scaling) = dev NO-GO** (`1473b7b80`, merged `7703d2521`): correctly scoped (no `sim/` edit, pools
+  verified at PEAK detection — avoided v7's trap), but a CATEGORY error — multiplicative scaling equalizes per-source
+  FIRING RATE while the criterion measures per-source MARGIN (the CONTRAST vs rivals); equalizing firing COMPRESSES
+  the contrast (seed 651 minM 0.167→0.134 below floor at every operating point). ⭐ **KEY META-INSIGHT: all three
+  homeostatic siblings (v6 competition, v7 threshold homeostasis, v8 synaptic scaling) defend an activity LEVEL; none
+  defends a CONTRAST — wrong mechanism CLASS.** NEXT = **v9 = Vogels–Sprekeler inhibitory synaptic plasticity (ISP)**
+  on `interneuron→rival` GABA-A synapses: scale the under-margin source's RIVAL INHIBITION toward a target E/I
+  balance → raises the margin without compressing the excitatory code. Secondary: BCM sliding-threshold selectivity.
 - **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
   `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
@@ -102,11 +110,12 @@ are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width h
 (1) Gate B **uncertainty-gated exploration** (Bogacz-Brown familiarity / moat D.04 / tonic-DA MSN) — the #1 lane;
 Stage-2c opponent-RPE DONE (reversal now PASSES, negative arm + neural critic validated), so the remaining wall is
 the PROTOCOL/operating-point (dense reward + locking selector), which uncertainty-gated exploration is named to break
-· (2) source **v8** (Turrigiano synaptic scaling; v7 threshold
-homeostasis was dev-NO-GO — masking broke competition) · (3) replay **order-sensitive STDP / sequence-replay
-consolidation** (v5+SFA CLOSED the interference wall both seeds; sole residual = the order control, root cause = the
-order-blind rate-window Hebbian rule). All three "owed" lanes from the last greenlight are DONE + integrated; these
-three are the fresh Round-4 builds. Pacing is SERIAL post-session-cap. The source lane proved the hands-off pattern: build a
+· (2) source **v9 = Vogels–Sprekeler ISP** on `interneuron→rival`
+GABA-A synapses (v6/v7/v8 all defended an activity LEVEL, not the CONTRAST the criterion measures — v9 targets the
+margin via rival inhibition / E-I balance) · (3) replay **order-sensitive STDP / sequence-replay consolidation**
+(v5+SFA CLOSED the interference wall both seeds; sole residual = the order control, root cause = the order-blind
+rate-window Hebbian rule). Now running **2-wide rolling** (owner OK'd some parallel): Gate B Stage-2d
+(uncertainty-gated exploration) + replay order-STDP in flight; source v9 next into the free slot. The source lane proved the hands-off pattern: build a
 self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
 endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
 pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
