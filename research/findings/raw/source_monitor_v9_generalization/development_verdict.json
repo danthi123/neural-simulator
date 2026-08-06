@@ -1,0 +1,189 @@
+{
+  "phase": "development",
+  "mechanism": "source-monitor-coresidency-v9",
+  "runner": "research/runners/_laneC_source_monitor_coresidency_gate_v9.py",
+  "aggregator": "research/runners/aggregate_source_monitor_v9_seeds.py",
+  "frozen_mechanism": true,
+  "seeds": [
+    652,
+    653,
+    654
+  ],
+  "verdict": "NO-GO",
+  "all_seeds_pass": false,
+  "failed_seeds": [],
+  "undefined_seeds": [],
+  "acceptance_rule": "GO iff every seed satisfies the frozen v9 criteria",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every phase seed produced a defined status (no instrument failure)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the frozen v9 acceptance criteria were applied unchanged on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "every seed ran the full preregistered control set (20 components)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "fixed_criteria": {
+    "minimum_source_margin": 0.15,
+    "minimum_attribution_fraction": 0.9,
+    "unseen_source_spikes": 0,
+    "learning_off_source_spikes": 0,
+    "acceptance_rule": "bounded_loss_guard_floor_max_min",
+    "loss_may_only_spend_surplus_above_floor": true,
+    "weakest_source_margin_must_strictly_improve": true,
+    "recall_settles_to_quiescence_before_read": true,
+    "all_structural_and_lesion_components_required": true
+  },
+  "per_seed": [
+    {
+      "seed": 652,
+      "status": "DEVELOPMENT_PASS",
+      "pass": true,
+      "minimum_source_margin": 0.18416666666666667,
+      "minimum_lesion_margin": 0.1775,
+      "weakest_lift_attributable_to_competition": 0.036199095022624514,
+      "recall_rival_burden": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0025000000000000022
+      },
+      "spendable_surplus": {
+        "seen": 0.07250000000000001,
+        "heard": 0.027499999999999997,
+        "self_generated": 0.04583333333333334
+      },
+      "istdp_weight_delta_l1": 57.327943325042725,
+      "istdp_per_source_l1_gain": {
+        "seen": -32.69896745681763,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "istdp_before_per_source_l1": {
+        "seen": 432.0,
+        "heard": 432.0,
+        "self_generated": 432.0
+      },
+      "istdp_after_per_source_l1": {
+        "seen": 399.3010325431824,
+        "heard": 432.0,
+        "self_generated": 432.0
+      },
+      "failing_components": [],
+      "elapsed_seconds": 2.989
+    },
+    {
+      "seed": 653,
+      "status": "DEVELOPMENT_PASS",
+      "pass": true,
+      "minimum_source_margin": 0.16416666666666666,
+      "minimum_lesion_margin": 0.14416666666666667,
+      "weakest_lift_attributable_to_competition": 0.12182741116751264,
+      "recall_rival_burden": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.04
+      },
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.005833333333333329
+      },
+      "spendable_surplus": {
+        "seen": 0.0925,
+        "heard": 0.0,
+        "self_generated": 0.029166666666666674
+      },
+      "istdp_weight_delta_l1": 234.34514236450195,
+      "istdp_per_source_l1_gain": {
+        "seen": -48.26977729797363,
+        "heard": -15.828839778900146,
+        "self_generated": -4.698851108551025
+      },
+      "istdp_before_per_source_l1": {
+        "seen": 432.0,
+        "heard": 432.0,
+        "self_generated": 432.0
+      },
+      "istdp_after_per_source_l1": {
+        "seen": 383.73022270202637,
+        "heard": 416.17116022109985,
+        "self_generated": 427.301148891449
+      },
+      "failing_components": [],
+      "elapsed_seconds": 3.023
+    },
+    {
+      "seed": 654,
+      "status": "DEVELOPMENT_PASS",
+      "pass": true,
+      "minimum_source_margin": 0.18666666666666668,
+      "minimum_lesion_margin": 0.1825,
+      "weakest_lift_attributable_to_competition": 0.02232142857142864,
+      "recall_rival_burden": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "spendable_surplus": {
+        "seen": 0.07750000000000001,
+        "heard": 0.0325,
+        "self_generated": 0.1575
+      },
+      "istdp_weight_delta_l1": 326.6546137332916,
+      "istdp_per_source_l1_gain": {
+        "seen": -35.73005819320679,
+        "heard": 0.0,
+        "self_generated": -93.67895579338074
+      },
+      "istdp_before_per_source_l1": {
+        "seen": 432.0,
+        "heard": 432.0,
+        "self_generated": 432.0
+      },
+      "istdp_after_per_source_l1": {
+        "seen": 396.2699418067932,
+        "heard": 432.0,
+        "self_generated": 338.32104420661926
+      },
+      "failing_components": [],
+      "elapsed_seconds": 2.986
+    }
+  ],
+  "git_sha": "7bc3c63978bee7a64336035c0bdbe6cace13f2e9",
+  "elapsed_seconds": 9.002,
+  "frozen_aggregator_verdict": "GO",
+  "adversarial_refutation": {
+    "refuted_by": "research/findings/raw/source_monitor_v9_generalization/stepping_history_confound.json",
+    "finding": "The mechanical aggregator returned GO, but adversarial verification proves it spurious. A control window that changes ZERO weights (Hebbian OFF, inhibitory-STDP OFF, competition ON, same 5100 steps) reproduces STRICT_IMPROVED=True and floor_met=True on all three dev seeds (652/653/654), identical to the iSTDP run. The Vogels-Sprekeler inhibitory-STDP weight change is causally inert on the margin.",
+    "mechanism": "Recall rival burden is 0 on every source (disjoint patterns + silent-by-construction settle), so the margin equals the expected source own firing rate and there is no rival activity for interneuron->rival plasticity to act on; iSTDP only DEPRESSES the rival inhibition and not at all for the weakest source (heard L1 gain 0.0). The apparent strict improvement is a stepping-history artifact: settle-to-quiescence does not fully reset the Izhikevich sub-threshold state, so any pre-recall stepping shifts margins, and the intact vs competition-lesion arms are sampled at different history depths.",
+    "held_out_decision": "SEALED. This NO-GO does not open held_out."
+  }
+}
