@@ -94,15 +94,21 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   underlying **rate-window Hebbian rule is order-blind** (shuffling preserves the coactivity multiset; seed 413 was
   already failing this in v5). NEXT = **order-sensitive (STDP / sequence-replay) consolidation plasticity** so ordered
   replay potentiates a directional cue→target trace that shuffled replay does not.
-  ⭐ **v6 (order-sensitive STDP) = 2-seed GO** (`c35e2373b`, merged `6955fe9da`) — the FIRST replay GO at the 2-seed
-  bar; the order-blindness wall is CLOSED. Both seeds pass EVERY frozen v5+SFA control incl. the two that were
+  **v6 (order-sensitive STDP) = 2-seed GO ONLY** (`c35e2373b`, merged `6955fe9da`) — passed both CALIBRATION seeds
+  (order-blindness closed at 412/413), but see the multiseed reversal below. On 412/413 both pass EVERY frozen v5+SFA control incl. the two that were
   failing: 412 false-recall 0.117 / order margin +0.049; **413 (hard) false-recall 0.092 / order margin +0.014 (was
   NEGATIVE −0.003)**. Causally attributed: the `stdp_sleep=False` control collapses the margin (412→−0.008,
   413→+0.004). Brain-based: the substrate's own `fused_stdp_weight_update` live only in sleep + preserving
   `cp_last_spike_time` across the down-state so replay ORDER is visible to the timing rule; SFA d=180 holds false
-  recall. No criterion weakened. NEXT = **multiseed validation** (dev 414/415/410 → held-out 417/418/419), HANDS-OFF —
-  413's +0.014 margin is slim so multiseed is the load-bearing confirmation; requires lifting the calibration-only
-  seed guard. If it holds, capability #4 (CLS replay consolidation) CLEARS its reliability bar.
+  recall. No criterion weakened. ⚠️ **BUT MULTISEED REVERSED IT — v6 = MULTISEED NO-GO** (`1b4b163da`, merged
+  `25ecb9616`): dev seeds 414/415/410 ALL fail (false-recall ~0.5 ≫0.15, order-margin ~0). The 2-seed calibration
+  MASKED the fragility — exactly why the 6-seed rule exists; capability #4 does **NOT** clear, the v6 GO was an
+  operating-point OVERFIT to 412/413. Isolation (`stdp_sleep=False` on dev seeds): the false-recall blowup is NOT the
+  order-STDP (fails identically with it off) — it's the **interference-control operating point** (SFA d=180 +
+  reinstatement/opponent gains, host-set at build on 2 seeds) that does not transfer. Held-out stayed SEALED. NEXT =
+  make the operating point **EMERGE per-brain** (a homeostatic set-point on retest false-firing + activity-normalised
+  SFA/STDP scale) so one rule self-calibrates across seeds instead of host-tuning on two. Order-STDP itself is a
+  banked ingredient (works when the operating point is right); the wall moved to self-calibration.
 
 **⭐ USAGE MODEL CORRECTED (owner, 2026-08-06) — see memory `feedback_minimize_plan_usage_via_nonclaude_machinery`.**
 Subagent tokens COUNT toward the Claude plan; moving build/debug loops into agents does NOT reduce usage. Reducing
@@ -121,11 +127,11 @@ Stage-2c opponent-RPE DONE (reversal now PASSES, negative arm + neural critic va
 the PROTOCOL/operating-point (dense reward + locking selector), which uncertainty-gated exploration is named to break
 · (2) source **v9 = Vogels–Sprekeler ISP** on `interneuron→rival`
 GABA-A synapses (v6/v7/v8 all defended an activity LEVEL, not the CONTRAST the criterion measures — v9 targets the
-margin via rival inhibition / E-I balance) · (3) replay **multiseed validation** of v6 order-STDP —
-v6 was a 2-seed GO (order-blindness wall CLOSED), now confirming on dev seeds 414/415/410 → held-out 417/418/419
-(HANDS-OFF; 413's margin is slim so multiseed is load-bearing). Now running **2-wide rolling** (owner OK'd some
-parallel): Gate B Stage-2d (uncertainty-gated exploration) + replay v6 multiseed in flight; source v9 (Vogels–
-Sprekeler ISP) next into the free slot. The source lane proved the hands-off pattern: build a
+margin via rival inhibition / E-I balance) · (3) replay **emergent homeostatic self-calibration** of the
+interference-control operating point (v6 order-STDP was a 2-seed GO but MULTISEED NO-GO — the SFA/opponent operating
+point host-tuned on 412/413 does not transfer; order-STDP itself is a banked ingredient). Now running **2-wide
+rolling** (owner OK'd some parallel): Gate B Stage-2d (uncertainty-gated exploration) in flight + source v9 (Vogels–
+Sprekeler ISP) launching into the slot the replay lane just freed. The source lane proved the hands-off pattern: build a
 self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
 endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
 pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
