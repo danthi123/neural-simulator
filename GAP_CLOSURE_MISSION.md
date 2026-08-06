@@ -25,9 +25,15 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   (Gate A v1 pop reused as the *surround* — NOT a new boundary topology; respects the v11/v12 retirement). 14 checks
   pass numpy+cupy; mechanism confirmed by single-step tracing (proposal→D1→GPi pause→thalamic release→motor). Honest
   residual: inter-channel winner-take-all is seed-fragile *without* learning (numpy 3/4, cupy 2/4) — exactly what
-  Stage-2 reward learning supplies. `0ed1d7e39`. NEXT = **Stage 2: reopen the v10 local reward-credit** on this
-  selector (contingent vs yoked, acquisition/expression lesions, multiseed dev+held-out); optional lesion-hardening
-  first. Learning also expected to make WTA seed-robust.
+  Stage-2 reward learning supplies. `0ed1d7e39`. **Stage 2 (local reward-credit) = NO-GO** (`079deb59d`): built a
+  biological three-factor rule on `proposal→str_d1` (neural eligibility; reward delivered as an env scalar from the
+  body's motor read-out; NO host RPE/argmax; reward-OFF byte-identical to Stage-1 both backends). Plasticity is real
+  + lesion-dependent (contingent P(target) 0.25→0.90; acq-lesion 0.30; expr-lesion 0.20) but NOT reward-CONTINGENT:
+  D_contingent == D_yoked on all 6 dev seeds; steer 0/6; reversal failed. Root cause = a single **global DA scalar**
+  cannot do action-specific credit (potentiates both channels' eligibility) — a verdict on the METHOD. NEXT =
+  **per-action compartmentalised dopamine** (the substrate already ships it: `cp_synapse_action_tag` →
+  `compute_per_synapse_da_signal`, Cluster C v2; see `sim/neuromodulators.py` + 2026-04-24-session-c §4) + a
+  **neural exploration/variability** process (4/6 dev seeds are pre-learning seed-locked).
 - **Source v6 (#3) — GO.** Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
   drive), drifting over threshold during the immediately-following read. Fix = settle-to-quiescence recall gate; the
@@ -53,9 +59,11 @@ usage = non-Claude machinery (self-sweeping runners `--seeds` + pool dispatch `q
 `aggregate_*_seeds.py`), Claude only at the ENDPOINTS (launch + read the aggregate). **Round 2 was the last
 Claude-agent swarm.** The next steps are ALL multi-seed validation ⇒ they route to the POOL, hands-off, not to agents.
 
-**EXACT NEXT (Round 3 in flight):** Gate B **Stage-2 reward-credit learning** (agent building now — the #1 lane;
-neural DA/eligibility, contingent-vs-yoked, no host RPE) · source **v7** (v6 recall + Turrigiano threshold
-homeostasis) · replay **v5→SFA one-of-N eviction**. The source lane proved the hands-off pattern: build a
+**EXACT NEXT (Round 3 done — three method-level NO-GOs, each with the biological surpass already named + often
+already in the codebase; all three next steps are Claude-side mechanism BUILDS, then local/pool validation):**
+(1) Gate B **per-action compartmentalised DA** + neural exploration (the #1 lane; the fix already ships in
+`sim/neuromodulators.py`) · (2) source **v7** (v6 recall + Turrigiano threshold homeostasis) · (3) replay
+**v5→SFA one-of-N eviction**. The source lane proved the hands-off pattern: build a
 self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
 endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
 pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
