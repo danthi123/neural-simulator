@@ -1,0 +1,170 @@
+{
+  "phase": "development",
+  "mechanism": "source-monitor-coresidency-v8",
+  "runner": "research/runners/_laneC_source_monitor_coresidency_gate_v8.py",
+  "aggregator": "research/runners/aggregate_source_monitor_v8_seeds.py",
+  "frozen_mechanism": true,
+  "seeds": [
+    652,
+    653,
+    654
+  ],
+  "verdict": "NO-GO",
+  "all_seeds_pass": false,
+  "failed_seeds": [
+    652,
+    653,
+    654
+  ],
+  "undefined_seeds": [],
+  "acceptance_rule": "GO iff every seed satisfies the frozen v8 criteria",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every phase seed produced a defined status (no instrument failure)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the frozen v8 acceptance criteria were applied unchanged on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "every seed ran the full preregistered control set (20 components)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "fixed_criteria": {
+    "minimum_source_margin": 0.15,
+    "minimum_attribution_fraction": 0.9,
+    "unseen_source_spikes": 0,
+    "learning_off_source_spikes": 0,
+    "acceptance_rule": "bounded_loss_guard_floor_max_min",
+    "loss_may_only_spend_surplus_above_floor": true,
+    "weakest_source_margin_must_strictly_improve": true,
+    "recall_settles_to_quiescence_before_read": true,
+    "all_structural_and_lesion_components_required": true
+  },
+  "per_seed": [
+    {
+      "seed": 652,
+      "status": "DEVELOPMENT_FAIL",
+      "pass": false,
+      "minimum_source_margin": 0.1325,
+      "minimum_lesion_margin": 0.1325,
+      "weakest_lift_attributable_to_competition": 0.0,
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "spendable_surplus": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "scaling_weight_delta_l1": 41482.535400390625,
+      "weakest_source_before": "self_generated",
+      "weakest_source_share_gain": -0.003264578401991458,
+      "before_share": {
+        "seen": 0.3125024862141125,
+        "heard": 0.3798470674266016,
+        "self_generated": 0.3076504463592859
+      },
+      "after_share": {
+        "seen": 0.32913017986247045,
+        "heard": 0.36648395218023505,
+        "self_generated": 0.30438586795729444
+      },
+      "failing_components": [
+        "all_source_margins_meet_fixed_floor",
+        "weakest_source_margin_strictly_improved"
+      ],
+      "elapsed_seconds": 3.028
+    },
+    {
+      "seed": 653,
+      "status": "DEVELOPMENT_FAIL",
+      "pass": false,
+      "minimum_source_margin": 0.13583333333333333,
+      "minimum_lesion_margin": 0.11916666666666667,
+      "weakest_lift_attributable_to_competition": 0.12269938650306746,
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "spendable_surplus": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "scaling_weight_delta_l1": 39253.25211584568,
+      "weakest_source_before": "heard",
+      "weakest_source_share_gain": -0.01173005306235772,
+      "before_share": {
+        "seen": 0.26939236963635604,
+        "heard": 0.21872377246510902,
+        "self_generated": 0.5118838578985349
+      },
+      "after_share": {
+        "seen": 0.2710403576615852,
+        "heard": 0.2069937194027513,
+        "self_generated": 0.5219659229356635
+      },
+      "failing_components": [
+        "all_source_margins_meet_fixed_floor"
+      ],
+      "elapsed_seconds": 3.032
+    },
+    {
+      "seed": 654,
+      "status": "DEVELOPMENT_FAIL",
+      "pass": false,
+      "minimum_source_margin": 0.12916666666666668,
+      "minimum_lesion_margin": 0.12916666666666668,
+      "weakest_lift_attributable_to_competition": 0.0,
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "spendable_surplus": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.015000000000000013
+      },
+      "scaling_weight_delta_l1": 41298.54307985306,
+      "weakest_source_before": "self_generated",
+      "weakest_source_share_gain": -0.0002842720798766907,
+      "before_share": {
+        "seen": 0.31961625706129526,
+        "heard": 0.40499391648140703,
+        "self_generated": 0.27538982645729776
+      },
+      "after_share": {
+        "seen": 0.28882236113065146,
+        "heard": 0.43607208449192747,
+        "self_generated": 0.27510555437742107
+      },
+      "failing_components": [
+        "all_source_margins_meet_fixed_floor",
+        "weakest_source_margin_strictly_improved"
+      ],
+      "elapsed_seconds": 2.986
+    }
+  ],
+  "git_sha": "76b998356646b75007e8964a990d0c7d5ff56d1e",
+  "elapsed_seconds": 9.05
+}
