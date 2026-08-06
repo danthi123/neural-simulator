@@ -13,6 +13,37 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## STATE OF THE PROJECT - 2026-08-06 (read first; CLAUDE RESUMING — owner re-anchor to the mission)
+
+**Context:** Claude is back on the project (Codex/GPT trial ended). Work happens on `main` (currently the clean
+worktree `sim-worktrees/gate-b-v2-clean`; the main dir + 11 other `codex/*` worktrees are a tangle to consolidate
+later, non-urgent). The ChatGPT/Codex app is fully uninstalled locally.
+
+**⛔ PARK the v14 Stage-A/B ion-channel arc.** The Aug 4–5 kinetic-parameter-identification campaign (Khaliq
+sodium / Kv3 / four-way population target / Sobol GPU screens) was a **prioritization drift** — ~2 days + 360
+commits, mostly `NO-GO / UNRESOLVED / BLOCKED / NO-CANDIDATE`, off the mission. It is a textbook **P3 violation**
+(tunnel-vision on a narrow substrate detail, losing the whole-brain picture). Do NOT continue it. Channel
+faithfulness is legitimate in principle but is far down the priority list.
+
+**✅ KEEP (verified sound):** Codex's infrastructure — the experiment engine, deep-research flows, the club-3090
+local-model system, and the autonomous coordinator (`research/coordination/workboard.json`,
+`docs/AUTONOMOUS-EXECUTION.md`) — and its **gate improvements** (`biology_check` one-hop constant resolution,
+`instrument_required`, `operating_point` — all reviewed, selftests pass + fail-when-mutated, net-strengthened). Its
+mission-relevant capability work also stands (vocal action-selector **Gate A complete 4/4**; source/replay/affect
+faculties banked honestly, mostly no-go). Two Aug-2 lane GOs independently REPRODUCE (curiosity LP-slope byte-exact;
+metacog learned-ACC verdict-level, with a stale frozen-artifact caveat to regenerate).
+
+**EXACT NEXT (mission-critical, per `ROADMAP.md` Capability #1 "Communicate for a grounded reason" — highest
+priority):** resume **Gate B — a local spiking reward-credit circuit for the vocal action selector** (the
+grounded-communication crux, and exactly where the drift began: Gate B v1 was `no-go`, v2 with competing spiking
+action-value populations was "still in calibration"). This is the charter's short-timescale crux (language as
+grounded action in the closed loop), NOT the ion-channel arc.
+
+**USAGE DISCIPLINE (Claude Pro now — scarce):** OFFLOAD every run/sweep/parameter-search to the systems built for
+it (the experiment engine, the club-3090 local models, the mini-PC pool, the GPU); reserve Claude tokens for
+judgment, verification-against-the-gates, and steering. The 3090 is up. **Keep all gates enforcing** — the
+anti-drift discipline is exactly what would have caught the ion-channel rabbit hole.
+
 ## STATE OF THE PROJECT - 2026-08-04 11:29 EDT (read first; below is history)
 
 **The handoff guard repair is verified.** A structured `scope=no-ready-work` waiver now expires after
