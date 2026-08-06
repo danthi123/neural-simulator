@@ -32,7 +32,13 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
   drive), drifting over threshold during the immediately-following read. Fix = settle-to-quiescence recall gate; the
   v2 bounded-loss win is intact (rescues a sub-floor source at zero cost). Both seeds CALIBRATION_PASS. `321c6a125`.
-  NEXT = **generalization** across dev seeds 652/653/654 → held-out 655/656/657 (frozen mechanism + criteria).
+  GENERALIZATION (dev 652/653/654, frozen mechanism + criteria) = **NO-GO** (`cb9f5d699`): 652/653 PASS, 654 FAILs
+  exactly ONE of 20 components (`weakest_source_margin_strictly_improved`) — the fixed symmetric GABA-A competition
+  lifts the 2nd-strongest source, not the weakest (margin gap exactly 0.0). Everything else generalized (v5 silent
+  recall holds, margin floor, settle). Criteria NOT loosened. NEXT = **v7 = v6 recall + v3 intrinsic threshold
+  homeostasis (Turrigiano)** on source-memory pops to up-regulate the least-active source; then re-run `--phase
+  development`, held_out opens only on a dev GO. Reusable hands-off harness now on main:
+  `research/runners/aggregate_source_monitor_seeds.py` + a `--phase {calibration,development,held_out}` mode.
 - **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
   `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
@@ -47,9 +53,14 @@ usage = non-Claude machinery (self-sweeping runners `--seeds` + pool dispatch `q
 `aggregate_*_seeds.py`), Claude only at the ENDPOINTS (launch + read the aggregate). **Round 2 was the last
 Claude-agent swarm.** The next steps are ALL multi-seed validation ⇒ they route to the POOL, hands-off, not to agents.
 
-**EXACT NEXT:** (1) one-time build a thin `{runner, seed-partition} → enqueue-to-pool → aggregate → one verdict`
-driver; (2) enqueue source-v6 generalization, replay-v5 SFA+multiseed, Gate-B-Stage-1 multiseed to the 36-core pool;
-(3) Claude returns only to read the three aggregate verdicts. Pool is free + idle; GPU free.
+**EXACT NEXT (Round 3 in flight):** Gate B **Stage-2 reward-credit learning** (agent building now — the #1 lane;
+neural DA/eligibility, contingent-vs-yoked, no host RPE) · source **v7** (v6 recall + Turrigiano threshold
+homeostasis) · replay **v5→SFA one-of-N eviction**. The source lane proved the hands-off pattern: build a
+self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
+endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
+pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
+when a sweep is big enough to need 36 cores; small validations (≤~10 fast seeds) run local hands-off, which is
+correct + reliable. GPU free.
 
 ## STATE OF THE PROJECT - 2026-08-06 (later) — ROUND 1 autonomous parallel push COMPLETE (3 mission lanes)
 
