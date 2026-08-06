@@ -1,0 +1,28 @@
+{
+ "run_id": "1786032487-75653",
+ "runner": "research/runners/_laneC_source_monitor_coresidency_gate_v6.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-source-v6/research/runners/_laneC_source_monitor_coresidency_gate_v6.py",
+  "--seed",
+  "651",
+  "--json",
+  "research/findings/raw/source_monitor_coresidency_v6/calibration_651.json"
+ ],
+ "git_sha": "071b68bca",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T12:08:07",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 355.8,
+ "corpus_check_query": "source monitoring recall gate learning-off silence",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/source_monitor_coresidency_v6/calibration_651.json"
+}
