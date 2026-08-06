@@ -132,6 +132,15 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   competition variant: (1) introduce genuine episode-pattern OVERLAP so a real recall-time rival burden exists, then
   re-run the arc under the fixed instrument; or (2) BCM metaplastic selectivity on the weak source's OWN
   `episode→source` recall synapses (raise its excitatory gain, not the inhibition).
+  **Pattern-overlap experiment = NO-GO but CLARIFYING** (`24dbd131b`, merged `630f53410`): introducing episode-pattern
+  OVERLAP (world-side, legit) raised recall rival-burden 0 → 0.11–0.49, so the criterion is now genuinely SATISFIABLE
+  (v9 unsatisfiability wall removed; fixed instrument stays honest — zero-weight control `strict=False` at every
+  overlap). But v6 symmetric GABA-A still fails (1/5, floor not cleared). ⭐ **Root cause (explains v6→v9): symmetric
+  lateral inhibition is RICH-GET-RICHER — each pool's inhibition scales with the WINNER's output, so it helps the
+  strongest source but the sign FLIPS for the weakest (rivals win + inhibit the target). The binding constraint is
+  DIRECTION, not magnitude — winner-proportional inhibition can NEVER lift the loser.** The overlap sweep is now a
+  reusable instrument. NEXT = **self-normalised / "fair" inhibition** (each pool inhibited ∝ the RIVAL drive it
+  receives, not the winner's output — directly fixes the direction) OR **BCM own-gain** on the weak source's recall.
 - **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
   `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
@@ -177,11 +186,11 @@ are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width h
 ΔP = P(reward|action) − P(reward|no-action) (Hammond) via the opponent D1−D2 "reward-omitted" contrast — the #1 lane
 and VERY CLOSE: Stage-2e reached steer 4/6 (union 5/6 across two gating variants), directed novelty removed the 2d
 killer (all D_yoked≤0, D_contingent 1.0, reversal PASS); only the maximally-biased seed fails, which ΔP-gating targets
-· (2) source — **instrument now FIXED** (v6/v9 calib GOs were
-stepping-history artifacts → NO-GO; no real GO ever); the margin criterion is UNSATISFIABLE under disjoint patterns
-(rival burden=0), so NEXT is a protocol/class change: add episode-pattern **OVERLAP** (real recall-time rival
-burden) then re-run under the fixed instrument, OR **BCM** metaplastic selectivity on the weak source's OWN
-`episode→source` recall · (3) replay **emergent homeostatic self-calibration** of the
+· (2) source — instrument FIXED + overlap makes the criterion
+SATISFIABLE (rival burden>0), but v6 symmetric competition is RICH-GET-RICHER (direction wall — winner-proportional
+inhibition can't lift the loser). NEXT = **self-normalised / "fair" inhibition** (inhibit each pool ∝ the RIVAL drive
+it receives, not the winner's output) OR **BCM own-gain** on the weak source's recall; re-run on the overlap sweep
+(now the instrument) · (3) replay **emergent homeostatic self-calibration** of the
 interference-control operating point (v6 order-STDP was a 2-seed GO but MULTISEED NO-GO — the SFA/opponent operating
 point host-tuned on 412/413 does not transfer; order-STDP itself is a banked ingredient). Now running **2-wide
 rolling** (owner OK'd some parallel): Gate B Stage-2d (uncertainty-gated exploration) in flight + source v9 (Vogels–
