@@ -53,6 +53,14 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   homeostasis (Turrigiano)** on source-memory pops to up-regulate the least-active source; then re-run `--phase
   development`, held_out opens only on a dev GO. Reusable hands-off harness now on main:
   `research/runners/aggregate_source_monitor_seeds.py` + a `--phase {calibration,development,held_out}` mode.
+  **v7 (intrinsic threshold homeostasis) = dev NO-GO** (`97df2d8e`, merged `2cc0fc931`): homeostasis BACKFIRED —
+  on seed 654 the weakest source went from tie (M=L=.1825) to M=.015/L=.422 (competition DESTROYS the up-regulated
+  source). Structural root cause: the shipped intrinsic homeostasis makes source neurons fire at an adapted
+  **sub-threshold voltage** (not the Izh peak), which is incompatible with v6's fixed GABA-A competition (it
+  equalizes via post-inhibitory rebound, not sharpens). Collapse at ALL 6 operating points → masking, not strength.
+  Also **RE-DIAGNOSES the v3 NO-GO** (its near-zero margins were this same collapse, not "inert homeostasis"). NEXT =
+  **v8 = Turrigiano SYNAPTIC SCALING** (multiplicatively up-regulate the weak source's episode→source recall
+  synapses toward an activity set-point, leaving pools at PEAK detection so v6 competition keeps working).
 - **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
   `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
@@ -75,8 +83,9 @@ are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width h
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
 (1) Gate B **opponent/negative-RPE** (reward-expectation baseline → DA dip → D1-LTD; `reward_aversive_scale` +
 `enable_d1_d2_asymmetry`, both OFF; NEURAL critic baseline) + tonic-DA exploration — the #1 lane, breaks the
-appetitive-only rich-get-richer wall · (2) source **v7** (v6 recall + Turrigiano threshold homeostasis — NOT YET RUN)
-· (3) replay **v5→SFA one-of-N eviction** (NOT YET RUN). The source lane proved the hands-off pattern: build a
+appetitive-only rich-get-richer wall (NOT YET RUN) · (2) source **v8** (Turrigiano synaptic scaling; v7 threshold
+homeostasis was dev-NO-GO — masking broke competition) · (3) replay **v5→SFA one-of-N eviction** (IN FLIGHT, serial).
+Pacing is SERIAL post-session-cap. The source lane proved the hands-off pattern: build a
 self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
 endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
 pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
