@@ -179,7 +179,8 @@ def build_stage2_bridge(seed: int, *, enable_reward: bool, plastic_d1: bool,
                         reward_learning_rate: float = REWARD_LEARNING_RATE,
                         ou_seed: int | None = None,
                         ou_sigma: float = EXPLORE_OU_SIGMA_PA,
-                        explore_striatum: bool = True) -> SimulationBridge:
+                        explore_striatum: bool = True,
+                        plastic_d2: bool = False) -> SimulationBridge:
     """Reproduce the Stage-1 selector; optionally enable per-action DA reward-credit.
 
     With ``enable_reward=False, plastic_d1=False, ou_seed=None,
@@ -232,6 +233,14 @@ def build_stage2_bridge(seed: int, *, enable_reward: bool, plastic_d1: bool,
         by_name = {r.name: r for r in regions}
         for c in CHANNELS:
             by_name[f"str_d1_{c}"].action_index = int(c)
+            # Stage 2f: also tag the D2 (indirect / NoGo) region so per-action DA_c
+            # routes to its afferents too. Combined with cp_d1_d2_sign=-1 on D2
+            # synapses, a DA DIP (reward omitted, negative RPE) POTENTIATES the D2_c
+            # route (canonical A2A/D2 NoGo learning; Shen 2008, Collins-Frank OpAL),
+            # so the str_d2_c rate becomes a per-action "reward-OMITTED" read-out.
+            # Default OFF (plastic_d2=False) -> stages 2c/2d/2e byte-identical.
+            if plastic_d2:
+                by_name[f"str_d2_{c}"].action_index = int(c)
 
     pathways = []
     for c in CHANNELS:
@@ -254,7 +263,7 @@ def build_stage2_bridge(seed: int, *, enable_reward: bool, plastic_d1: bool,
                           weight_jitter=0.05, plastic=bool(plastic_d1)),
             RegionPathway(from_region=f"proposal_{c}", to_region=f"str_d2_{c}",
                           density=W["proposal_to_msn_density"], weight_mean=W["proposal_to_msn"],
-                          weight_jitter=0.05, plastic=False),
+                          weight_jitter=0.05, plastic=bool(plastic_d2 and enable_reward)),
             RegionPathway(from_region=f"proposal_{c}", to_region="selector_stn",
                           density=W["proposal_to_stn_density"], weight_mean=W["proposal_to_stn"],
                           weight_jitter=0.05, plastic=False),
@@ -370,11 +379,17 @@ def build_stage2_bridge(seed: int, *, enable_reward: bool, plastic_d1: bool,
     bridge.cp_membrane_potential_v[:] = xp.asarray(v_host, dtype=xp.float32)
 
     if enable_reward:
-        # Scope neural eligibility to EXACTLY the proposal->D1 policy routes.
+        # Scope neural eligibility to EXACTLY the proposal->D1 policy routes (and,
+        # for Stage 2f, the proposal->D2 NoGo routes so DA dips can potentiate them).
         d1_routes = {c: _route_indices(bridge, f"proposal_{c}", f"str_d1_{c}") for c in CHANNELS}
-        all_d1 = np.sort(np.concatenate([d1_routes[c] for c in CHANNELS]))
-        bridge.cp_reward_eligibility_synapse_indices = xp.asarray(all_d1, dtype=xp.int64)
+        elig = [d1_routes[c] for c in CHANNELS]
         bridge._stage2_d1_routes = d1_routes  # attached for readout/lesion
+        if plastic_d2:
+            d2_routes = {c: _route_indices(bridge, f"proposal_{c}", f"str_d2_{c}") for c in CHANNELS}
+            elig.extend(d2_routes[c] for c in CHANNELS)
+            bridge._stage2_d2_routes = d2_routes
+        all_elig = np.sort(np.concatenate(elig))
+        bridge.cp_reward_eligibility_synapse_indices = xp.asarray(all_elig, dtype=xp.int64)
     return bridge
 
 

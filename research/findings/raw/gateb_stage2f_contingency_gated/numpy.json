@@ -1,0 +1,815 @@
+{
+  "probe": "gateB_stage2f_contingency_gated",
+  "stage": "stage2f_learning",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "target": 0,
+  "n_train": 40,
+  "n_test": 20,
+  "reward_lr": 0.02,
+  "gate_config": {
+    "sigma_confident": 24.0,
+    "sigma_uncertain": 120.0,
+    "conf_dp_lo": 0.1,
+    "conf_dp_hi": 0.45,
+    "value_ema_beta": 0.25,
+    "partial_reward": "2/3 (i%3!=2)",
+    "novelty_drive_max_pA": 350.0,
+    "equalize_deficit": 2.0,
+    "novelty_conf_gate": true,
+    "d1_d2_contrast": true
+  },
+  "dev_seeds": [
+    730601,
+    730602,
+    730603,
+    730604,
+    730605,
+    730606
+  ],
+  "construction_seed": 730501,
+  "full": {
+    "equivalence": {
+      "weights_match": true,
+      "raster_match": true
+    },
+    "per_seed": [
+      {
+        "seed": 730601,
+        "baseline_p0": 0.5714285714285714,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 1.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 16,
+        "reward_count_reward1": 22,
+        "yoked_reward_count0": 16,
+        "yoked_reward_count1": 22,
+        "yoked_train_p0_y0": 0.1794871794871795,
+        "yoked_train_p0_y1": 0.1794871794871795,
+        "cont_train_p0_c0": 0.5897435897435898,
+        "cont_train_p0_c1": 0.1282051282051282,
+        "conf_c0": 0.2674132473551492,
+        "conf_c1": 1.0,
+        "conf_y0": 1.0,
+        "conf_y1": 1.0,
+        "dp_c0": 0.19359463657430223,
+        "dp_c1": 0.7018610592182548,
+        "dp_y0": 0.5625027409819017,
+        "dp_y1": 0.6465464281773916,
+        "Vd1_c0": [
+          1.2807180327784504,
+          0.35155729398131375
+        ],
+        "Vd2_c0": [
+          1.4956220758513863,
+          1.4533701673010364
+        ],
+        "Vd1_y0": [
+          0.5084783935546875,
+          0.8246504199733672
+        ],
+        "Vd2_y0": [
+          1.0046960449218751,
+          0.0037345089859977406
+        ],
+        "sigma_last_c0": 94.32832825390568,
+        "sigma_last_y0": 24.0,
+        "d1_after_reward0": {
+          "0": 30.245671074809852,
+          "1": 32.48524396596132
+        },
+        "d1_after_reward1": {
+          "0": 36.78000700164724,
+          "1": 69.71310291820102
+        },
+        "train_clean_rate": 0.975
+      },
+      {
+        "seed": 730602,
+        "baseline_p0": 0.2222222222222222,
+        "contingent_p0_reward0": 0.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.95,
+        "yoked_p0_reward1": 0.95,
+        "D_contingent": 0.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 14,
+        "reward_count_reward1": 19,
+        "yoked_reward_count0": 14,
+        "yoked_reward_count1": 19,
+        "yoked_train_p0_y0": 0.525,
+        "yoked_train_p0_y1": 0.5,
+        "cont_train_p0_c0": 0.55,
+        "cont_train_p0_c1": 0.3,
+        "conf_c0": 0.263241526841367,
+        "conf_c1": 0.180987950485179,
+        "conf_y0": 0.6600551583946613,
+        "conf_y1": 0.7904985665265062,
+        "dp_c0": 0.19213453439447845,
+        "dp_c1": 0.16334578266981264,
+        "dp_y0": 0.33101930543813146,
+        "dp_y1": 0.3766744982842772,
+        "Vd1_c0": [
+          1.0995441776007868,
+          0.2855263018721598
+        ],
+        "Vd2_c0": [
+          1.4699334077921526,
+          1.4909170225946582
+        ],
+        "Vd1_y0": [
+          0.6047435360648091,
+          0.6022727707098966
+        ],
+        "Vd2_y0": [
+          0.21106284406526354,
+          1.0134876234683179
+        ],
+        "sigma_last_c0": 94.72881342322876,
+        "sigma_last_y0": 56.63470479411251,
+        "d1_after_reward0": {
+          "0": 30.942826206168093,
+          "1": 26.035123081726056
+        },
+        "d1_after_reward1": {
+          "0": 31.82282821300129,
+          "1": 27.886331642012077
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730603,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 0.35,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 0.35,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 17,
+        "reward_count_reward1": 18,
+        "yoked_reward_count0": 17,
+        "yoked_reward_count1": 18,
+        "yoked_train_p0_y0": 0.35,
+        "yoked_train_p0_y1": 0.575,
+        "cont_train_p0_c0": 0.575,
+        "cont_train_p0_c1": 0.275,
+        "conf_c0": 0.2533584135661902,
+        "conf_c1": 0.37751116838560156,
+        "conf_y0": 0.013645155339715404,
+        "conf_y1": 0.0,
+        "dp_c0": 0.18867544474816658,
+        "dp_c1": 0.23212890893496055,
+        "dp_y0": 0.1047758043689004,
+        "dp_y1": 0.024909740869422485,
+        "Vd1_c0": [
+          1.2565276394456792,
+          0.4410630315745948
+        ],
+        "Vd2_c0": [
+          1.4341490004349982,
+          1.4908543813711732
+        ],
+        "Vd1_y0": [
+          0.7930108125507832,
+          1.4992229988794445
+        ],
+        "Vd2_y0": [
+          0.358297780752182,
+          1.4993133040944246
+        ],
+        "sigma_last_c0": 95.67759229764575,
+        "sigma_last_y0": 118.69006508738732,
+        "d1_after_reward0": {
+          "0": 40.93555871212372,
+          "1": 20.799637109600006
+        },
+        "d1_after_reward1": {
+          "0": 34.10305334793197,
+          "1": 20.713341901582424
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730604,
+        "baseline_p0": 1.0,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 1.0,
+        "D_contingent": 1.0,
+        "D_yoked": -1.0,
+        "reward_count_reward0": 16,
+        "reward_count_reward1": 14,
+        "yoked_reward_count0": 16,
+        "yoked_reward_count1": 14,
+        "yoked_train_p0_y0": 0.525,
+        "yoked_train_p0_y1": 0.35,
+        "cont_train_p0_c0": 0.55,
+        "cont_train_p0_c1": 0.45,
+        "conf_c0": 0.38938914511268075,
+        "conf_c1": 0.04847573705128319,
+        "conf_y0": 0.17095870284497083,
+        "conf_y1": 0.0,
+        "dp_c0": 0.23628620078943827,
+        "dp_c1": 0.11696650796794912,
+        "dp_y0": 0.1598355459957398,
+        "dp_y1": 0.05444321490854478,
+        "Vd1_c0": [
+          1.4978832160307616,
+          0.34591005335299996
+        ],
+        "Vd2_c0": [
+          1.4973916781802268,
+          1.486020566958905
+        ],
+        "Vd1_y0": [
+          1.3734276213743488,
+          0.7143833938989701
+        ],
+        "Vd2_y0": [
+          1.4966068032253406,
+          0.228174759401918
+        ],
+        "sigma_last_c0": 82.61864206918264,
+        "sigma_last_y0": 103.5879645268828,
+        "d1_after_reward0": {
+          "0": 22.773083977753952,
+          "1": 27.822287756380522
+        },
+        "d1_after_reward1": {
+          "0": 24.13772768535893,
+          "1": 35.51546784603873
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730605,
+        "baseline_p0": 0.3,
+        "contingent_p0_reward0": 0.4,
+        "contingent_p0_reward1": 0.55,
+        "yoked_p0_reward0": 0.95,
+        "yoked_p0_reward1": 0.4,
+        "D_contingent": -0.15000000000000002,
+        "D_yoked": 0.5499999999999999,
+        "reward_count_reward0": 14,
+        "reward_count_reward1": 17,
+        "yoked_reward_count0": 14,
+        "yoked_reward_count1": 17,
+        "yoked_train_p0_y0": 0.45,
+        "yoked_train_p0_y1": 0.325,
+        "cont_train_p0_c0": 0.55,
+        "cont_train_p0_c1": 0.375,
+        "conf_c0": 0.30789317889403844,
+        "conf_c1": 0.29387157805255537,
+        "conf_y0": 0.0,
+        "conf_y1": 0.15917536949202188,
+        "dp_c0": 0.20776261261291346,
+        "dp_c1": 0.20285505231839437,
+        "dp_y0": 0.0312501906093174,
+        "dp_y1": 0.15571137932220766,
+        "Vd1_c0": [
+          1.3933100848793498,
+          0.4325601727618778
+        ],
+        "Vd2_c0": [
+          1.4554116376756925,
+          1.4848951129769556
+        ],
+        "Vd1_y0": [
+          0.7164678802622075,
+          1.4059109677107284
+        ],
+        "Vd2_y0": [
+          0.6694475700856128,
+          1.492785599778514
+        ],
+        "sigma_last_c0": 90.4422548261723,
+        "sigma_last_y0": 120.0,
+        "d1_after_reward0": {
+          "0": 24.526620059929513,
+          "1": 26.044972352514527
+        },
+        "d1_after_reward1": {
+          "0": 26.10981657529612,
+          "1": 26.313616863569177
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730606,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 0.85,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.85,
+        "D_contingent": 0.85,
+        "D_yoked": -0.85,
+        "reward_count_reward0": 17,
+        "reward_count_reward1": 17,
+        "yoked_reward_count0": 17,
+        "yoked_reward_count1": 17,
+        "yoked_train_p0_y0": 0.475,
+        "yoked_train_p0_y1": 0.575,
+        "cont_train_p0_c0": 0.65,
+        "cont_train_p0_c1": 0.4,
+        "conf_c0": 1.0,
+        "conf_c1": 0.37854990346592887,
+        "conf_y0": 0.2099335120140059,
+        "conf_y1": 1.0,
+        "dp_c0": 0.5198743582629792,
+        "dp_c1": 0.2324924662130751,
+        "dp_y0": 0.17347672920490206,
+        "dp_y1": 0.4981635175258697,
+        "Vd1_c0": [
+          1.184784637181969,
+          0.8207980536296964
+        ],
+        "Vd2_c0": [
+          0.01979706010138235,
+          1.476183342821896
+        ],
+        "Vd1_y0": [
+          0.5882371984417842,
+          1.1826314497264026
+        ],
+        "Vd2_y0": [
+          0.13755154803428016,
+          1.286125062010758
+        ],
+        "sigma_last_c0": 24.0,
+        "sigma_last_y0": 99.84638284665543,
+        "d1_after_reward0": {
+          "0": 60.87067145241632,
+          "1": 25.960577140728667
+        },
+        "d1_after_reward1": {
+          "0": 31.34264680367929,
+          "1": 24.855458299881192
+        },
+        "train_clean_rate": 1.0
+      }
+    ],
+    "D_contingent_mean": 0.5083333333333334,
+    "D_yoked_mean": -0.21666666666666667,
+    "D_yoked_abs_mean": 0.39999999999999997,
+    "D_contingent_minus_yoked_mean": 0.7250000000000001,
+    "exploring_seed_indices": [
+      0,
+      1,
+      4
+    ],
+    "n_exploring_seeds": 3,
+    "D_contingent_mean_exploring": 0.2833333333333333,
+    "D_yoked_mean_exploring": 0.18333333333333332,
+    "D_yoked_abs_mean_exploring": 0.18333333333333332,
+    "steer_seed_passes": 4,
+    "steer_per_seed": [
+      true,
+      false,
+      true,
+      true,
+      false,
+      true
+    ],
+    "baseline_p0_per_seed": [
+      0.5714285714285714,
+      0.2222222222222222,
+      0.0,
+      1.0,
+      0.3,
+      0.0
+    ],
+    "yoked_action_balance_err_mean": 0.11591880341880341,
+    "yoked_train_p0_per_seed": [
+      [
+        0.1794871794871795,
+        0.1794871794871795
+      ],
+      [
+        0.525,
+        0.5
+      ],
+      [
+        0.35,
+        0.575
+      ],
+      [
+        0.525,
+        0.35
+      ],
+      [
+        0.45,
+        0.325
+      ],
+      [
+        0.475,
+        0.575
+      ]
+    ],
+    "dp_contingent_per_seed": [
+      [
+        0.19359463657430223,
+        0.7018610592182548
+      ],
+      [
+        0.19213453439447845,
+        0.16334578266981264
+      ],
+      [
+        0.18867544474816658,
+        0.23212890893496055
+      ],
+      [
+        0.23628620078943827,
+        0.11696650796794912
+      ],
+      [
+        0.20776261261291346,
+        0.20285505231839437
+      ],
+      [
+        0.5198743582629792,
+        0.2324924662130751
+      ]
+    ],
+    "dp_yoked_per_seed": [
+      [
+        0.5625027409819017,
+        0.6465464281773916
+      ],
+      [
+        0.33101930543813146,
+        0.3766744982842772
+      ],
+      [
+        0.1047758043689004,
+        0.024909740869422485
+      ],
+      [
+        0.1598355459957398,
+        0.05444321490854478
+      ],
+      [
+        0.0312501906093174,
+        0.15571137932220766
+      ],
+      [
+        0.17347672920490206,
+        0.4981635175258697
+      ]
+    ]
+  },
+  "lesions": {
+    "contingent": {
+      "condition": "contingent",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 14,
+      "reward_trials": [
+        7,
+        10,
+        12,
+        15,
+        18,
+        19,
+        21,
+        22,
+        25,
+        28,
+        30,
+        33,
+        36,
+        37
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.4,
+      "test_n_clean": 20,
+      "train_target_rate": 0.55,
+      "train_clean_rate": 1.0,
+      "train_p0_all": 0.55,
+      "train_p0_firsthalf": 0.5,
+      "count0": 22,
+      "count1": 18,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 24.526620059929513,
+        "1": 26.044972352514527
+      },
+      "final_conf": 0.30789317889403844,
+      "final_dp": 0.20776261261291346,
+      "Vd1": [
+        1.3933100848793498,
+        0.4325601727618778
+      ],
+      "Vd2": [
+        1.4554116376756925,
+        1.4848951129769556
+      ],
+      "final_sigma": 90.4422548261723,
+      "sigma_first": 120.0,
+      "sigma_last": 90.4422548261723,
+      "dp_last": 0.20776261261291346,
+      "mean_disc_test": 0.27048297474170446,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.4,
+        "winners": [
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "final_sigma": 90.4422548261723,
+        "mean_disc": 0.27048297474170446
+      }
+    },
+    "acq_lesion": {
+      "condition": "acq_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 10,
+      "reward_trials": [
+        7,
+        10,
+        12,
+        15,
+        18,
+        22,
+        27,
+        28,
+        30,
+        37
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.45,
+      "test_n_clean": 20,
+      "train_target_rate": 0.45,
+      "train_clean_rate": 1.0,
+      "train_p0_all": 0.45,
+      "train_p0_firsthalf": 0.45,
+      "count0": 18,
+      "count1": 22,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "final_conf": 0.0,
+      "final_dp": 0.0367155496877347,
+      "Vd1": [
+        0.9270578404158004,
+        1.4278927275790267
+      ],
+      "Vd2": [
+        1.0032028186338722,
+        1.3318419490159918
+      ],
+      "final_sigma": 120.0,
+      "sigma_first": 120.0,
+      "sigma_last": 120.0,
+      "dp_last": 0.0367155496877347,
+      "mean_disc_test": 0.15824098164580075,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.45,
+        "winners": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "final_sigma": 120.0,
+        "mean_disc": 0.15824098164580075
+      }
+    },
+    "expr_lesion": {
+      "condition": "expr_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 14,
+      "reward_trials": [
+        7,
+        10,
+        12,
+        15,
+        18,
+        19,
+        21,
+        22,
+        25,
+        28,
+        30,
+        33,
+        36,
+        37
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.45,
+      "test_n_clean": 20,
+      "train_target_rate": 0.55,
+      "train_clean_rate": 1.0,
+      "train_p0_all": 0.55,
+      "train_p0_firsthalf": 0.5,
+      "count0": 22,
+      "count1": 18,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 24.526620059929513,
+        "1": 26.044972352514527
+      },
+      "final_conf": 0.30789317889403844,
+      "final_dp": 0.20776261261291346,
+      "Vd1": [
+        1.3933100848793498,
+        0.4325601727618778
+      ],
+      "Vd2": [
+        1.4554116376756925,
+        1.4848951129769556
+      ],
+      "final_sigma": 90.4422548261723,
+      "sigma_first": 120.0,
+      "sigma_last": 90.4422548261723,
+      "dp_last": 0.20776261261291346,
+      "mean_disc_test": 0.11358109327611046,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.45,
+        "winners": [
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0
+        ],
+        "final_sigma": 90.4422548261723,
+        "mean_disc": 0.11358109327611046
+      }
+    }
+  },
+  "reversal": {
+    "seed": 730605,
+    "p_a_after_phaseA": 1.0,
+    "p_b_after_phaseA": 0.0,
+    "p_b_after_phaseB": 1.0,
+    "phaseA_n_clean": 20,
+    "phaseB_n_clean": 20
+  },
+  "novelty_lesion": {
+    "seed": 730605,
+    "D_contingent": 1.0,
+    "D_yoked": 1.0,
+    "yoked_train_p0_y0": 0.975,
+    "yoked_train_p0_y1": 0.0,
+    "note": "directed novelty OFF: undirected (2d) exploration regime"
+  },
+  "contingency_lesion": {
+    "seed": 730605,
+    "D_contingent": 1.0,
+    "D_yoked": 1.0,
+    "conf_c0": 1.0,
+    "conf_y0": 0.9769733086634564,
+    "note": "D2 subtraction OFF: confidence = Vd1 magnitude (Stage-2e signal)"
+  },
+  "verdict_status": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (weights)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (raster)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reward is brain-delivered credit (no host RPE/argmax credit)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "contingency gate is a neural D1-D2 spiking contrast (not a host P counter)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "directed novelty drives a spiking proposal pop (neural, not host action-pick)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "at least one scoreable (exploring) dev seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "go": false,
+  "acquired": false,
+  "lesion_target": 0,
+  "go_evidence": {
+    "steer_seed_passes": 4,
+    "D_contingent_mean_exploring": 0.2833333333333333,
+    "D_yoked_mean_exploring": 0.18333333333333332,
+    "D_yoked_abs_mean_exploring": 0.18333333333333332,
+    "D_contingent_minus_yoked_exploring": 0.1,
+    "n_exploring_seeds": 3,
+    "yoked_action_balance_err_mean": 0.11591880341880341,
+    "lesion_contingent_minus_acq": -0.04999999999999999,
+    "lesion_contingent_minus_expr": -0.04999999999999999,
+    "acq_attributable_fraction": -0.4999999999999997,
+    "expr_attributable_fraction": -0.4999999999999997,
+    "reversal_pB_after_B": 1.0,
+    "reversal_pB_after_A": 0.0,
+    "novelty_lesion_D_contingent": 1.0,
+    "novelty_lesion_D_yoked": 1.0,
+    "contingency_lesion_D_contingent": 1.0,
+    "contingency_lesion_D_yoked": 1.0
+  },
+  "outcome": "STAGE2F_NO_GO",
+  "elapsed_seconds": 615.3495102630004
+}

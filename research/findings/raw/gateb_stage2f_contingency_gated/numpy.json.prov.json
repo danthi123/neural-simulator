@@ -1,0 +1,28 @@
+{
+ "run_id": "1786054421-304175",
+ "runner": "research/runners/_vocal_gateb_stage2f_contingency_gated.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage2f/research/runners/_vocal_gateb_stage2f_contingency_gated.py",
+  "--mode",
+  "full"
+ ],
+ "git_sha": "cba946438",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T18:13:41",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1552.9,
+ "corpus_check_query": "gate B contingency DeltaP confidence gate D1 D2 contrast Hammond",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage2f_contingency_gated/numpy.json"
+}
