@@ -66,8 +66,14 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
   "consolidation" condition). NO-GO is narrow + quantified: seed 413 fails only retest false-recall (0.180 vs 0.15)
   from shared-cue-cell interference — the point-neuron competition limit the gate PREDICTED, i.e. a verdict on the
-  METHOD not the capability. `df1b4563d`. NEXT = **SFA-driven one-of-N eviction** on the target attractor, then
-  multiseed.
+  METHOD not the capability. `df1b4563d`. **v5+SFA = NO-GO at the 2-seed bar but the INTERFERENCE WALL is CLOSED
+  both seeds** (`445b5aaf9`, merged `8f8ed81df`): intrinsic spike-frequency-adaptation one-of-N eviction on the
+  cortical-target attractor (substrate's own Izh adaptation, lesion-verified load-bearing) drives retest false-recall
+  412: 0.113→0.066, 413: 0.180→0.080 (both <0.15), CLS signatures intact. SOLE residual (both seeds) = the
+  `intact_beats_shuffled_order` control, and a joint sweep proves it's UNSATISFIABLE with SFA — because the
+  underlying **rate-window Hebbian rule is order-blind** (shuffling preserves the coactivity multiset; seed 413 was
+  already failing this in v5). NEXT = **order-sensitive (STDP / sequence-replay) consolidation plasticity** so ordered
+  replay potentiates a directional cue→target trace that shuffled replay does not.
 
 **⭐ USAGE MODEL CORRECTED (owner, 2026-08-06) — see memory `feedback_minimize_plan_usage_via_nonclaude_machinery`.**
 Subagent tokens COUNT toward the Claude plan; moving build/debug loops into agents does NOT reduce usage. Reducing
@@ -84,8 +90,10 @@ are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width h
 (1) Gate B **opponent/negative-RPE** (reward-expectation baseline → DA dip → D1-LTD; `reward_aversive_scale` +
 `enable_d1_d2_asymmetry`, both OFF; NEURAL critic baseline) + tonic-DA exploration — the #1 lane, breaks the
 appetitive-only rich-get-richer wall (NOT YET RUN) · (2) source **v8** (Turrigiano synaptic scaling; v7 threshold
-homeostasis was dev-NO-GO — masking broke competition) · (3) replay **v5→SFA one-of-N eviction** (IN FLIGHT, serial).
-Pacing is SERIAL post-session-cap. The source lane proved the hands-off pattern: build a
+homeostasis was dev-NO-GO — masking broke competition) · (3) replay **order-sensitive STDP / sequence-replay
+consolidation** (v5+SFA CLOSED the interference wall both seeds; sole residual = the order control, root cause = the
+order-blind rate-window Hebbian rule). All three "owed" lanes from the last greenlight are DONE + integrated; these
+three are the fresh Round-4 builds. Pacing is SERIAL post-session-cap. The source lane proved the hands-off pattern: build a
 self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
 endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
 pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
