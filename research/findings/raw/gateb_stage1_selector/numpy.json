@@ -1,0 +1,304 @@
+{
+  "probe": "gateB_stage1_continuous_bg_selector",
+  "stage": "stage1_construction",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "gpi_intrinsic_pA": 140.0,
+  "construction_weights": {
+    "arousal_to_proposal": 10.0,
+    "proposal_to_msn": 40.0,
+    "proposal_to_msn_density": 1.0,
+    "proposal_to_fsi": 100.0,
+    "fsi_to_msn": 32.0,
+    "proposal_to_stn": 2.0,
+    "proposal_to_stn_density": 1.0,
+    "d1_to_gpi": 15.0,
+    "d2_to_gpe": 2.5,
+    "d2_to_gpe_density": 0.6,
+    "gpe_to_stn": 1.5,
+    "gpe_to_stn_density": 0.3,
+    "gpe_to_gpi": 2.0,
+    "gpe_to_gpi_density": 0.5,
+    "stn_to_gpi": 1.0,
+    "stn_to_gpi_density": 0.4,
+    "gpi_to_thal": 25.0,
+    "thal_to_commit": 40.0,
+    "commit_to_fsi": 30.0,
+    "commit_fsi_cross": 60.0,
+    "commit_to_motor": 80.0
+  },
+  "protocol": {
+    "baseline_steps": 150,
+    "onset_steps": 200,
+    "gap_steps": 200,
+    "n_actions": 4,
+    "practice_pA": 1000.0,
+    "thalamus_tonic_pA": 300.0,
+    "motor_threshold": 12,
+    "loser_ratio": 0.25
+  },
+  "seed": 730501,
+  "settle_steps": 150,
+  "coldstart_motor_spikes": 163,
+  "coldstart_thal_spikes": 48,
+  "settle_tail_motor_spikes": 0,
+  "baseline_gpi_hz": 47.833333333333336,
+  "baseline_thal_spikes": 0,
+  "baseline_motor_spikes": 0,
+  "n_clean_actions": 3,
+  "actions": [
+    {
+      "action_index": 0,
+      "winner": 0,
+      "motor_winner": 0,
+      "motor_spikes": [
+        419,
+        0
+      ],
+      "thal_spikes": [
+        126,
+        0
+      ],
+      "winner_spikes": 419,
+      "loser_spikes": 0,
+      "loser_ratio": 0.0,
+      "thal_loser_ratio": 0.0,
+      "stn_baseline_hz": 0.0,
+      "stn_early_hz": 28.749999999999996,
+      "gpi_early_hz": 49.375,
+      "gpi_action_hz": [
+        22.999999999999996,
+        46.5
+      ],
+      "gpi_pause_winner_hz": 22.999999999999996,
+      "gpi_return_hz": 48.75,
+      "motor_return_spikes": 0,
+      "thal_return_spikes": 0,
+      "early_stn_rise": true,
+      "early_gpi_hold": true,
+      "clean": true
+    },
+    {
+      "action_index": 1,
+      "winner": 0,
+      "motor_winner": 0,
+      "motor_spikes": [
+        412,
+        0
+      ],
+      "thal_spikes": [
+        121,
+        0
+      ],
+      "winner_spikes": 412,
+      "loser_spikes": 0,
+      "loser_ratio": 0.0,
+      "thal_loser_ratio": 0.0,
+      "stn_baseline_hz": 0.0,
+      "stn_early_hz": 37.5,
+      "gpi_early_hz": 44.375,
+      "gpi_action_hz": [
+        20.75,
+        47.5
+      ],
+      "gpi_pause_winner_hz": 20.75,
+      "gpi_return_hz": 48.75,
+      "motor_return_spikes": 0,
+      "thal_return_spikes": 0,
+      "early_stn_rise": true,
+      "early_gpi_hold": true,
+      "clean": true
+    },
+    {
+      "action_index": 2,
+      "winner": 0,
+      "motor_winner": 0,
+      "motor_spikes": [
+        420,
+        0
+      ],
+      "thal_spikes": [
+        126,
+        0
+      ],
+      "winner_spikes": 420,
+      "loser_spikes": 0,
+      "loser_ratio": 0.0,
+      "thal_loser_ratio": 0.0,
+      "stn_baseline_hz": 0.0,
+      "stn_early_hz": 37.5,
+      "gpi_early_hz": 44.375,
+      "gpi_action_hz": [
+        23.75,
+        46.25
+      ],
+      "gpi_pause_winner_hz": 23.75,
+      "gpi_return_hz": 49.0,
+      "motor_return_spikes": 0,
+      "thal_return_spikes": 0,
+      "early_stn_rise": true,
+      "early_gpi_hold": true,
+      "clean": true
+    },
+    {
+      "action_index": 3,
+      "winner": 0,
+      "motor_winner": 0,
+      "motor_spikes": [
+        439,
+        0
+      ],
+      "thal_spikes": [
+        134,
+        0
+      ],
+      "winner_spikes": 439,
+      "loser_spikes": 0,
+      "loser_ratio": 0.0,
+      "thal_loser_ratio": 0.0,
+      "stn_baseline_hz": 0.0,
+      "stn_early_hz": 37.5,
+      "gpi_early_hz": 49.375,
+      "gpi_action_hz": [
+        20.249999999999996,
+        46.74999999999999
+      ],
+      "gpi_pause_winner_hz": 20.249999999999996,
+      "gpi_return_hz": 48.75,
+      "motor_return_spikes": 1,
+      "thal_return_spikes": 0,
+      "early_stn_rise": true,
+      "early_gpi_hold": true,
+      "clean": false
+    }
+  ],
+  "checks": {
+    "tonic_gpi_baseline": true,
+    "thalamus_inhibited_baseline": true,
+    "motor_silent_baseline": true,
+    "early_stn_rise": true,
+    "focused_gpi_pause": true,
+    "winner_thalamus_released": true,
+    "competitor_thalamus_suppressed": true,
+    "one_clean_motor_action": true,
+    "competitor_motor_suppressed": true,
+    "autonomous_return": true,
+    "at_least_two_clean_actions": true,
+    "weights_immutable": true,
+    "intrinsic_immutable": true,
+    "zero_gpi_external_current": true
+  },
+  "pass": true,
+  "weight_hash": "9271584d4705c75acd1c6d6ffc7ac4b37087f1dbd432946f3fe213ec9958b1ab",
+  "raster_hash": "0271ff1384cd763e60f0a267a0a2d876fe3cd17910232b51560dd5c743fb4389",
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "tonic_gpi_baseline",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "thalamus_inhibited_baseline",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "motor_silent_baseline",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "early_stn_rise",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "focused_gpi_pause",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "winner_thalamus_released",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "competitor_thalamus_suppressed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "one_clean_motor_action",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "competitor_motor_suppressed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "autonomous_return",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "at_least_two_clean_actions",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "weights_immutable",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "intrinsic_immutable",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "zero_gpi_external_current",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "go": true,
+  "outcome": "STAGE1_GO",
+  "elapsed_seconds": 0.27221952299987606
+}
