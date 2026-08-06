@@ -10048,6 +10048,25 @@ class SimulationBridge:
                             self.cp_synapse_action_tag[:actual_nnz_for_da],
                             action_modulator_names=per_action_names,
                         )
+                        # R2.4 Schultz/Fiorillo aversive-vs-appetitive magnitude
+                        # asymmetry on the per-action DA path. A DA DIP below
+                        # baseline (negative RPE, reward < neural expectation)
+                        # drives LTD of SMALLER magnitude than the matching
+                        # appetitive burst. Scale ONLY the negative (dip) entries
+                        # by reward_aversive_scale; positive (burst) entries are
+                        # untouched. Gated by enable_d1_d2_asymmetry (the opponent
+                        # asymmetry substrate) so it is byte-identical when off,
+                        # and a no-op when no synapse dips (all entries >= 0).
+                        if (per_synapse_da is not None
+                                and getattr(cfg, "enable_d1_d2_asymmetry", False)):
+                            aversive_scale = cp.float32(
+                                getattr(cfg, "reward_aversive_scale", 0.5))
+                            if aversive_scale != cp.float32(1.0):
+                                per_synapse_da = cp.where(
+                                    per_synapse_da < cp.float32(0.0),
+                                    per_synapse_da * aversive_scale,
+                                    per_synapse_da,
+                                )
                     else:
                         # v1 path: single-channel "dopamine" scalar
                         try:
