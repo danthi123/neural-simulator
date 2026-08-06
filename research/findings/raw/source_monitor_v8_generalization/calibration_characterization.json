@@ -1,0 +1,373 @@
+{
+  "mechanism": "source-monitor-coresidency-v8",
+  "purpose": "calibration operating-point characterization (frozen on calibration seeds only)",
+  "v6_baseline": {
+    "650": {
+      "status": "CALIBRATION_PASS",
+      "minM": 0.17666666666666667,
+      "minL": 0.16666666666666666,
+      "strict": true,
+      "floor": true
+    },
+    "651": {
+      "status": "CALIBRATION_PASS",
+      "minM": 0.16666666666666666,
+      "minL": 0.1375,
+      "strict": true,
+      "floor": true
+    }
+  },
+  "v8_operating_points": [
+    {
+      "target_rate": 0.02,
+      "scaling_rate": 0.02,
+      "seeds": {
+        "650": {
+          "status": "UNDEFINED",
+          "minM": 0.13166666666666665,
+          "minL": 0.12916666666666668,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.13166666666666665,
+            "heard": 0.15583333333333332,
+            "self_generated": 0.16166666666666665
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.12916666666666668,
+          "minL": 0.10583333333333333,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": false,
+          "per_source_margin": {
+            "seen": 0.14083333333333334,
+            "heard": 0.16166666666666665,
+            "self_generated": 0.12916666666666668
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.02,
+      "scaling_rate": 0.05,
+      "seeds": {
+        "650": {
+          "status": "UNDEFINED",
+          "minM": 0.11583333333333333,
+          "minL": 0.11416666666666667,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": false,
+          "per_source_margin": {
+            "seen": 0.11583333333333333,
+            "heard": 0.1425,
+            "self_generated": 0.13416666666666666
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.09916666666666667,
+          "minL": 0.10083333333333333,
+          "strict": false,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": false,
+          "per_source_margin": {
+            "seen": 0.13083333333333333,
+            "heard": 0.12583333333333332,
+            "self_generated": 0.09916666666666667
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.05,
+      "scaling_rate": 0.02,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.1625,
+          "minL": 0.15833333333333333,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1625,
+            "heard": 0.275,
+            "self_generated": 0.1875
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.12916666666666668,
+          "minL": 0.12916666666666668,
+          "strict": false,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.16,
+            "heard": 0.26,
+            "self_generated": 0.12916666666666668
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.05,
+      "scaling_rate": 0.05,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.16333333333333333,
+          "minL": 0.15666666666666668,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.16333333333333333,
+            "heard": 0.27166666666666667,
+            "self_generated": 0.18416666666666667
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.12916666666666668,
+          "minL": 0.12916666666666668,
+          "strict": false,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.16,
+            "heard": 0.23333333333333334,
+            "self_generated": 0.12916666666666668
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.1,
+      "scaling_rate": 0.02,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.1675,
+          "minL": 0.165,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1675,
+            "heard": 0.2783333333333333,
+            "self_generated": 0.1925
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.13416666666666666,
+          "minL": 0.13166666666666665,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1625,
+            "heard": 0.2683333333333333,
+            "self_generated": 0.13416666666666666
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.1,
+      "scaling_rate": 0.05,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.1675,
+          "minL": 0.165,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1675,
+            "heard": 0.2783333333333333,
+            "self_generated": 0.1925
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.13416666666666666,
+          "minL": 0.13166666666666665,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1625,
+            "heard": 0.2683333333333333,
+            "self_generated": 0.13416666666666666
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.2,
+      "scaling_rate": 0.02,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.1675,
+          "minL": 0.165,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1675,
+            "heard": 0.28,
+            "self_generated": 0.1925
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.13416666666666666,
+          "minL": 0.13166666666666665,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1625,
+            "heard": 0.2683333333333333,
+            "self_generated": 0.13416666666666666
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.2,
+      "scaling_rate": 0.05,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.16833333333333333,
+          "minL": 0.165,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.16833333333333333,
+            "heard": 0.28,
+            "self_generated": 0.1925
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.13416666666666666,
+          "minL": 0.13166666666666665,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1625,
+            "heard": 0.2683333333333333,
+            "self_generated": 0.13416666666666666
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.5,
+      "scaling_rate": 0.02,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.16833333333333333,
+          "minL": 0.165,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.16833333333333333,
+            "heard": 0.28,
+            "self_generated": 0.1925
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.13416666666666666,
+          "minL": 0.13166666666666665,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1625,
+            "heard": 0.2683333333333333,
+            "self_generated": 0.13416666666666666
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    },
+    {
+      "target_rate": 0.5,
+      "scaling_rate": 0.05,
+      "seeds": {
+        "650": {
+          "status": "CALIBRATION_PASS",
+          "minM": 0.16833333333333333,
+          "minL": 0.165,
+          "strict": true,
+          "floor": true,
+          "competition_active": true,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.16833333333333333,
+            "heard": 0.28,
+            "self_generated": 0.1925
+          }
+        },
+        "651": {
+          "status": "UNDEFINED",
+          "minM": 0.13416666666666666,
+          "minL": 0.13166666666666665,
+          "strict": true,
+          "floor": false,
+          "competition_active": false,
+          "bounded_loss": true,
+          "per_source_margin": {
+            "seen": 0.1625,
+            "heard": 0.2683333333333333,
+            "self_generated": 0.13416666666666666
+          }
+        }
+      },
+      "both_seeds_meet_floor_and_strict": false
+    }
+  ],
+  "conclusion": "NO operating point makes both calibration seeds meet the 0.15 floor + strict-improvement + competition-active; seed 651 fails the floor at every set-point (minM compressed to ~0.134 from v6 0.167)."
+}
