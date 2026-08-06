@@ -1,0 +1,680 @@
+{
+  "probe": "gateB_stage2e_directed_novelty",
+  "stage": "stage2e_learning",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "target": 0,
+  "n_train": 40,
+  "n_test": 20,
+  "reward_lr": 0.02,
+  "gate_config": {
+    "sigma_confident": 24.0,
+    "sigma_uncertain": 120.0,
+    "conf_vdiff_lo": 0.08,
+    "conf_vdiff_hi": 0.45,
+    "value_ema_beta": 0.25,
+    "partial_reward": "2/3 (i%3!=2)",
+    "novelty_drive_max_pA": 350.0,
+    "equalize_deficit": 2.0
+  },
+  "dev_seeds": [
+    730601,
+    730602,
+    730603,
+    730604,
+    730605,
+    730606
+  ],
+  "construction_seed": 730501,
+  "full": {
+    "equivalence": {
+      "weights_match": true,
+      "raster_match": true
+    },
+    "per_seed": [
+      {
+        "seed": 730601,
+        "baseline_p0": 0.5714285714285714,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 1.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 23,
+        "reward_count_reward1": 19,
+        "yoked_reward_count0": 23,
+        "yoked_reward_count1": 19,
+        "yoked_train_p0_y0": 0.48717948717948717,
+        "yoked_train_p0_y1": 0.48717948717948717,
+        "yoked_train_p0_firsthalf_y0": 0.42105263157894735,
+        "cont_train_p0_c0": 0.8717948717948718,
+        "cont_train_p0_c1": 0.20512820512820512,
+        "yoked_count_y0": [
+          19,
+          20
+        ],
+        "yoked_count_y1": [
+          19,
+          20
+        ],
+        "conf_c0": 1.0,
+        "conf_c1": 1.0,
+        "conf_y0": 0.01853952478810096,
+        "conf_y1": 0.0,
+        "sigma_last_c0": 24.0,
+        "sigma_last_y0": 118.22020562034231,
+        "d1_after_reward0": {
+          "0": 61.280285925335356,
+          "1": 37.407095448234706
+        },
+        "d1_after_reward1": {
+          "0": 35.52700718685433,
+          "1": 59.793995502259996
+        },
+        "train_clean_rate": 0.975
+      },
+      {
+        "seed": 730602,
+        "baseline_p0": 0.2222222222222222,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 1.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 20,
+        "reward_count_reward1": 22,
+        "yoked_reward_count0": 20,
+        "yoked_reward_count1": 22,
+        "yoked_train_p0_y0": 0.375,
+        "yoked_train_p0_y1": 0.475,
+        "yoked_train_p0_firsthalf_y0": 0.6,
+        "cont_train_p0_c0": 0.725,
+        "cont_train_p0_c1": 0.175,
+        "yoked_count_y0": [
+          15,
+          25
+        ],
+        "yoked_count_y1": [
+          19,
+          21
+        ],
+        "conf_c0": 1.0,
+        "conf_c1": 0.94947892271831,
+        "conf_y0": 0.6049391216596581,
+        "conf_y1": 0.19468654608497465,
+        "sigma_last_c0": 24.0,
+        "sigma_last_y0": 61.92584432067282,
+        "d1_after_reward0": {
+          "0": 71.31183231318438,
+          "1": 31.42926120526261
+        },
+        "d1_after_reward1": {
+          "0": 34.43999511065582,
+          "1": 58.98851546181573
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730603,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 1.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 19,
+        "reward_count_reward1": 25,
+        "yoked_reward_count0": 19,
+        "yoked_reward_count1": 25,
+        "yoked_train_p0_y0": 0.275,
+        "yoked_train_p0_y1": 0.15,
+        "yoked_train_p0_firsthalf_y0": 0.45,
+        "cont_train_p0_c0": 0.675,
+        "cont_train_p0_c1": 0.075,
+        "yoked_count_y0": [
+          11,
+          29
+        ],
+        "yoked_count_y1": [
+          6,
+          34
+        ],
+        "conf_c0": 0.8748042123192105,
+        "conf_c1": 0.9734371018724831,
+        "conf_y0": 0.9272797525238979,
+        "conf_y1": 1.0,
+        "sigma_last_c0": 36.01879561735579,
+        "sigma_last_y0": 30.981143757705798,
+        "d1_after_reward0": {
+          "0": 62.76803183732209,
+          "1": 24.095577635236637
+        },
+        "d1_after_reward1": {
+          "0": 38.205731568513094,
+          "1": 53.872890772201394
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730604,
+        "baseline_p0": 1.0,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 1.0,
+        "yoked_p0_reward0": 0.4,
+        "yoked_p0_reward1": 1.0,
+        "D_contingent": 0.0,
+        "D_yoked": -0.6,
+        "reward_count_reward0": 24,
+        "reward_count_reward1": 13,
+        "yoked_reward_count0": 24,
+        "yoked_reward_count1": 13,
+        "yoked_train_p0_y0": 0.475,
+        "yoked_train_p0_y1": 0.55,
+        "yoked_train_p0_firsthalf_y0": 0.6,
+        "cont_train_p0_c0": 0.825,
+        "cont_train_p0_c1": 0.5,
+        "yoked_count_y0": [
+          19,
+          21
+        ],
+        "yoked_count_y1": [
+          22,
+          18
+        ],
+        "conf_c0": 0.9691995282836996,
+        "conf_c1": 0.4840165681544354,
+        "conf_y0": 0.0,
+        "conf_y1": 0.20140266425038514,
+        "sigma_last_c0": 26.95684528476484,
+        "sigma_last_y0": 120.0,
+        "d1_after_reward0": {
+          "0": 46.583723956236135,
+          "1": 34.01064792968315
+        },
+        "d1_after_reward1": {
+          "0": 25.82169195137642,
+          "1": 18.706339744271503
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730605,
+        "baseline_p0": 0.3,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 1.0,
+        "yoked_p0_reward1": 0.19999999999999996,
+        "D_contingent": 1.0,
+        "D_yoked": 0.8,
+        "reward_count_reward0": 18,
+        "reward_count_reward1": 22,
+        "yoked_reward_count0": 18,
+        "yoked_reward_count1": 22,
+        "yoked_train_p0_y0": 0.675,
+        "yoked_train_p0_y1": 0.475,
+        "yoked_train_p0_firsthalf_y0": 0.55,
+        "cont_train_p0_c0": 0.7,
+        "cont_train_p0_c1": 0.25,
+        "yoked_count_y0": [
+          27,
+          13
+        ],
+        "yoked_count_y1": [
+          19,
+          21
+        ],
+        "conf_c0": 0.951160717063456,
+        "conf_c1": 1.0,
+        "conf_y0": 1.0,
+        "conf_y1": 0.42843363307297394,
+        "sigma_last_c0": 28.68857116190823,
+        "sigma_last_y0": 24.0,
+        "d1_after_reward0": {
+          "0": 49.93925421039263,
+          "1": 30.46962739797654
+        },
+        "d1_after_reward1": {
+          "0": 28.57322057596649,
+          "1": 54.713651092847186
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730606,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 1.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 13,
+        "reward_count_reward1": 25,
+        "yoked_reward_count0": 13,
+        "yoked_reward_count1": 25,
+        "yoked_train_p0_y0": 0.2,
+        "yoked_train_p0_y1": 0.475,
+        "yoked_train_p0_firsthalf_y0": 0.4,
+        "cont_train_p0_c0": 0.5,
+        "cont_train_p0_c1": 0.075,
+        "yoked_count_y0": [
+          8,
+          32
+        ],
+        "yoked_count_y1": [
+          19,
+          21
+        ],
+        "conf_c0": 0.4939369509868755,
+        "conf_c1": 1.0,
+        "conf_y0": 1.0,
+        "conf_y1": 0.2297409311601424,
+        "sigma_last_c0": 72.58205270525995,
+        "sigma_last_y0": 24.0,
+        "d1_after_reward0": {
+          "0": 55.26066467320477,
+          "1": 31.610128229194217
+        },
+        "d1_after_reward1": {
+          "0": 38.56750131094897,
+          "1": 53.81512523315571
+        },
+        "train_clean_rate": 1.0
+      }
+    ],
+    "D_contingent_mean": 0.8333333333333334,
+    "D_yoked_mean": 0.03333333333333335,
+    "D_yoked_abs_mean": 0.2333333333333333,
+    "D_contingent_minus_yoked_mean": 0.7999999999999999,
+    "exploring_seed_indices": [
+      0,
+      1,
+      4
+    ],
+    "n_exploring_seeds": 3,
+    "D_contingent_mean_exploring": 1.0,
+    "D_yoked_mean_exploring": 0.26666666666666666,
+    "D_yoked_abs_mean_exploring": 0.26666666666666666,
+    "steer_seed_passes": 4,
+    "steer_per_seed": [
+      true,
+      true,
+      true,
+      false,
+      false,
+      true
+    ],
+    "baseline_p0_per_seed": [
+      0.5714285714285714,
+      0.2222222222222222,
+      0.0,
+      1.0,
+      0.3,
+      0.0
+    ],
+    "yoked_action_balance_err_mean": 0.1125534188034188,
+    "yoked_train_p0_per_seed": [
+      [
+        0.48717948717948717,
+        0.48717948717948717
+      ],
+      [
+        0.375,
+        0.475
+      ],
+      [
+        0.275,
+        0.15
+      ],
+      [
+        0.475,
+        0.55
+      ],
+      [
+        0.675,
+        0.475
+      ],
+      [
+        0.2,
+        0.475
+      ]
+    ]
+  },
+  "lesions": {
+    "contingent": {
+      "condition": "contingent",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 18,
+      "reward_trials": [
+        7,
+        9,
+        10,
+        12,
+        13,
+        15,
+        16,
+        22,
+        24,
+        25,
+        28,
+        30,
+        31,
+        33,
+        34,
+        36,
+        37,
+        39
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 1.0,
+      "test_n_clean": 20,
+      "train_target_rate": 0.7,
+      "train_clean_rate": 1.0,
+      "train_p0_all": 0.7,
+      "train_p0_firsthalf": 0.6,
+      "count0": 28,
+      "count1": 12,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 49.93925421039263,
+        "1": 30.46962739797654
+      },
+      "final_conf": 0.951160717063456,
+      "final_sigma": 28.68857116190823,
+      "sigma_first": 120.0,
+      "sigma_last": 28.68857116190823,
+      "novelty_first": [
+        -1,
+        0.0
+      ],
+      "mean_disc_test": 0.8718874428591695,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 1.0,
+        "winners": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "final_sigma": 28.68857116190823,
+        "mean_disc": 0.8718874428591695
+      }
+    },
+    "acq_lesion": {
+      "condition": "acq_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 11,
+      "reward_trials": [
+        7,
+        10,
+        12,
+        15,
+        19,
+        22,
+        27,
+        28,
+        30,
+        33,
+        37
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.35,
+      "test_n_clean": 20,
+      "train_target_rate": 0.475,
+      "train_clean_rate": 1.0,
+      "train_p0_all": 0.475,
+      "train_p0_firsthalf": 0.45,
+      "count0": 19,
+      "count1": 21,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "final_conf": 0.03637879990350876,
+      "final_sigma": 116.50763520926316,
+      "sigma_first": 120.0,
+      "sigma_last": 116.50763520926316,
+      "novelty_first": [
+        -1,
+        0.0
+      ],
+      "mean_disc_test": 0.1405290991375192,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.35,
+        "winners": [
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "final_sigma": 116.50763520926316,
+        "mean_disc": 0.1405290991375192
+      }
+    },
+    "expr_lesion": {
+      "condition": "expr_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 18,
+      "reward_trials": [
+        7,
+        9,
+        10,
+        12,
+        13,
+        15,
+        16,
+        22,
+        24,
+        25,
+        28,
+        30,
+        31,
+        33,
+        34,
+        36,
+        37,
+        39
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.2,
+      "test_n_clean": 20,
+      "train_target_rate": 0.7,
+      "train_clean_rate": 1.0,
+      "train_p0_all": 0.7,
+      "train_p0_firsthalf": 0.6,
+      "count0": 28,
+      "count1": 12,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 49.93925421039263,
+        "1": 30.46962739797654
+      },
+      "final_conf": 0.951160717063456,
+      "final_sigma": 28.68857116190823,
+      "sigma_first": 120.0,
+      "sigma_last": 28.68857116190823,
+      "novelty_first": [
+        -1,
+        0.0
+      ],
+      "mean_disc_test": 0.12164722465430688,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.2,
+        "winners": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        "final_sigma": 28.68857116190823,
+        "mean_disc": 0.12164722465430688
+      }
+    }
+  },
+  "reversal": {
+    "seed": 730605,
+    "p_a_after_phaseA": 1.0,
+    "p_b_after_phaseA": 0.0,
+    "p_b_after_phaseB": 1.0,
+    "phaseA_n_clean": 20,
+    "phaseB_n_clean": 20
+  },
+  "novelty_lesion": {
+    "seed": 730605,
+    "D_contingent": 1.0,
+    "D_yoked": 1.0,
+    "yoked_train_p0_y0": 0.975,
+    "yoked_train_p0_y1": 0.0,
+    "note": "directed novelty OFF: undirected (2d) exploration regime"
+  },
+  "verdict_status": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (weights)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (raster)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reward is brain-delivered credit (no host RPE/argmax credit)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "uncertainty gate is a neural spiking read-out (str_d1 disc)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "directed novelty drives a spiking proposal pop (neural, not host action-pick)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "at least one scoreable (exploring) dev seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "go": false,
+  "acquired": false,
+  "lesion_target": 0,
+  "go_evidence": {
+    "steer_seed_passes": 4,
+    "D_contingent_mean_exploring": 1.0,
+    "D_yoked_mean_exploring": 0.26666666666666666,
+    "D_yoked_abs_mean_exploring": 0.26666666666666666,
+    "D_contingent_minus_yoked_exploring": 0.7333333333333334,
+    "n_exploring_seeds": 3,
+    "yoked_action_balance_err_mean": 0.1125534188034188,
+    "lesion_contingent_minus_acq": 0.65,
+    "lesion_contingent_minus_expr": 0.8,
+    "acq_attributable_fraction": 0.9285714285714285,
+    "expr_attributable_fraction": 1.1428571428571428,
+    "reversal_pB_after_B": 1.0,
+    "reversal_pB_after_A": 0.0,
+    "novelty_lesion_D_contingent": 1.0,
+    "novelty_lesion_D_yoked": 1.0,
+    "novelty_lesion_yoked_train_p0": [
+      0.975,
+      0.0
+    ]
+  },
+  "outcome": "STAGE2E_NO_GO",
+  "elapsed_seconds": 500.0152166879998
+}
