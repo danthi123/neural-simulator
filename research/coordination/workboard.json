@@ -1366,18 +1366,6 @@
   },
   "events": [
     {
-      "at": "2026-08-05T02:38:22+00:00",
-      "detail": "running",
-      "kind": "agent-register",
-      "subject": "019fcf9f-15e7-7761-8949-d86b752c587d"
-    },
-    {
-      "at": "2026-08-05T02:45:25+00:00",
-      "detail": "completed",
-      "kind": "agent-finish",
-      "subject": "019fcf9f-15e7-7761-8949-d86b752c587d"
-    },
-    {
       "at": "2026-08-05T02:45:40+00:00",
       "detail": "running",
       "kind": "agent-register",
@@ -1964,6 +1952,18 @@
       "detail": "running",
       "kind": "lane-update",
       "subject": "memory-replay"
+    },
+    {
+      "at": "2026-08-06T15:38:46+00:00",
+      "detail": "ready",
+      "kind": "lane-update",
+      "subject": "memory-replay"
+    },
+    {
+      "at": "2026-08-06T15:47:58+00:00",
+      "detail": "running",
+      "kind": "lane-update",
+      "subject": "source-monitoring"
     }
   ],
   "lanes": {
@@ -2414,9 +2414,9 @@
       ]
     },
     "memory-replay": {
-      "heartbeat_at": "2026-08-06T15:32:13+00:00",
-      "next_action": "research-gated next mechanism = learned encoding-potentiated CA1->cortical_target reinstatement (replaces fixed intracortical teacher); v5 build + fresh preregistration pending",
-      "status": "running"
+      "heartbeat_at": "2026-08-06T15:38:46+00:00",
+      "next_action": "BUILD v5 runner: add plastic encoding-potentiated ca1->cortical_target reinstatement pathway (memory-specific pairs; plasticity gate ON at wake-encode, transmission ON at sleep, OFF at hippo-disabled retest); keep v2 opponent-FS WTA; fresh calibration preregistration on NEW seeds; run 2-seed calibration on mini-PC pool. Design doc: research/findings/2026-08-06-replay-consolidation-selective-CA1-to-cortex-reinstatement-research-gate.md",
+      "status": "ready"
     },
     "parameter-research-discovery": {
       "delegation": "controller",
@@ -2460,8 +2460,8 @@
       ]
     },
     "source-monitoring": {
-      "heartbeat_at": "2026-08-06T15:28:44+00:00",
-      "next_action": "P3 tradeoff spec + v5 (v2 biased-competition under v3 bounded-loss criterion) fresh-seed calibration on pool",
+      "heartbeat_at": "2026-08-06T15:47:58+00:00",
+      "next_action": "v5 calibration NO-GO: bounded-loss tradeoff VALIDATED (both seeds), residual = 4-spike learning-off leak on seed 650. Next: v6 tighten source-recall gating so episode-only recall fires source ONLY via learned pathway; fresh prereg+seeds; keep v2 competition + bounded-loss rule",
       "status": "running"
     },
     "v13-performance-diagnostic": {
@@ -2687,5 +2687,5 @@
     "no_new_generic_infrastructure_before_current_scientific_path_closes": true,
     "source_of_truth": "research/coordination/workboard.json"
   },
-  "updated_at": "2026-08-06T15:32:13+00:00"
+  "updated_at": "2026-08-06T15:47:58+00:00"
 }

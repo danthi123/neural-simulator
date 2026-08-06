@@ -1,0 +1,29 @@
+{
+ "run_id": "1786031135-965494",
+ "runner": "research/runners/_laneC_source_monitor_coresidency_gate_v5.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_laneC_source_monitor_coresidency_gate_v5.py",
+  "--seed",
+  "650",
+  "--json",
+  "research/findings/raw/source_monitor_coresidency_v5/calibration_650.json"
+ ],
+ "git_sha": "4d4268c31b9ba0e4f83f9afb3ab9b01dc0e136b2",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "81b8bd008d9d797107d9ac71ec5db16f2d6b4acaf5bab72f2ab000b7cec14a81",
+ "source_manifest_verified_at_start": false,
+ "source_manifest_start_error": "source file set differs from manifest; missing=[], extra=['v5_cal_650.log']",
+ "source_manifest_verified_at_exit": false,
+ "source_manifest_exit_error": "source file set differs from manifest; missing=[], extra=['v5_cal_650.log']",
+ "started": "2026-08-06T11:45:35",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/source_monitor_coresidency_v5/calibration_650.json"
+}
