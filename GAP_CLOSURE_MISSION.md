@@ -33,7 +33,15 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   cannot do action-specific credit (potentiates both channels' eligibility) — a verdict on the METHOD. NEXT =
   **per-action compartmentalised dopamine** (the substrate already ships it: `cp_synapse_action_tag` →
   `compute_per_synapse_da_signal`, Cluster C v2; see `sim/neuromodulators.py` + 2026-04-24-session-c §4) + a
-  **neural exploration/variability** process (4/6 dev seeds are pre-learning seed-locked).
+  **neural exploration/variability** process (4/6 dev seeds are pre-learning seed-locked). **Stage 2b (per-action DA)
+  = NO-GO** (`fccd8940`, merged `b0df952cb`): per-action DA SURPASSED the weight-level wall — credit is now
+  action-local (reward A grows ONLY A's D1 route; both lesion criteria pass Δ0.45/0.50; reward-OFF byte-identical) —
+  but a DEEPER wall is isolated: **appetitive-only DA under the WTA selector is rich-get-richer** (self-reinforces
+  whatever action is already emitted), so D_contingent == D_yoked (0.00, need ≥0.20) and reversal fails P(B)=0.00.
+  The missing companion process = the NEGATIVE arm. NEXT = **opponent/bidirectional credit via a reward-EXPECTATION
+  baseline (negative RPE → DA dip → D1-LTD on the over-selected route)** — substrate ships `reward_aversive_scale` +
+  `enable_d1_d2_asymmetry` (both OFF); the baseline must be a NEURAL critic estimate (not a host EMA) — plus sustained
+  tonic-DA-modulated exploration. This is the arm that lets contingent DIVERGE from yoked + makes reversal possible.
 - **Source v6 (#3) — GO.** Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
   drive), drifting over threshold during the immediately-following read. Fix = settle-to-quiescence recall gate; the
@@ -59,11 +67,16 @@ usage = non-Claude machinery (self-sweeping runners `--seeds` + pool dispatch `q
 `aggregate_*_seeds.py`), Claude only at the ENDPOINTS (launch + read the aggregate). **Round 2 was the last
 Claude-agent swarm.** The next steps are ALL multi-seed validation ⇒ they route to the POOL, hands-off, not to agents.
 
-**EXACT NEXT (Round 3 done — three method-level NO-GOs, each with the biological surpass already named + often
-already in the codebase; all three next steps are Claude-side mechanism BUILDS, then local/pool validation):**
-(1) Gate B **per-action compartmentalised DA** + neural exploration (the #1 lane; the fix already ships in
-`sim/neuromodulators.py`) · (2) source **v7** (v6 recall + Turrigiano threshold homeostasis) · (3) replay
-**v5→SFA one-of-N eviction**. The source lane proved the hands-off pattern: build a
+**⚠️ SESSION CAP HIT (2026-08-06 ~2:30pm ET, reset 2:50pm):** launching 3 parallel Claude agents at once exhausted
+the plan's session limit. Gate B Stage-2b had already committed+pushed (`fccd8940`) before the cap; **source v7 and
+replay SFA died at startup with ZERO progress** (no commits) — their worktrees `mission-source-v7` / `mission-replay-sfa`
+are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
+
+**EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
+(1) Gate B **opponent/negative-RPE** (reward-expectation baseline → DA dip → D1-LTD; `reward_aversive_scale` +
+`enable_d1_d2_asymmetry`, both OFF; NEURAL critic baseline) + tonic-DA exploration — the #1 lane, breaks the
+appetitive-only rich-get-richer wall · (2) source **v7** (v6 recall + Turrigiano threshold homeostasis — NOT YET RUN)
+· (3) replay **v5→SFA one-of-N eviction** (NOT YET RUN). The source lane proved the hands-off pattern: build a
 self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
 endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
 pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
