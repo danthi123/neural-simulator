@@ -68,7 +68,8 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   steer passes. (Must stay a NEURAL novelty-gated drive, not host action-picking.) Follow-ups: the committed
   numpy.json predates the `attributable_to` addition (missing attribution fields, science unchanged); the gate-off
   control ran on only 1 seed (gate not cleanly isolated — honestly flagged, not overclaimed).
-- **Source v6 (#3) — GO.** Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
+- **Source v6 (#3) — ⛔ calibration "GO" LATER VOIDED** (stepping-history instrument artifact — see the instrument-fix
+  note at the end of this source entry; the leak-closure sub-result survives). Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
   drive), drifting over threshold during the immediately-following read. Fix = settle-to-quiescence recall gate; the
   v2 bounded-loss win is intact (rescues a sub-floor source at zero cost). Both seeds CALIBRATION_PASS. `321c6a125`.
@@ -107,6 +108,19 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   OWN excitatory recall (**BCM metaplastic selectivity** on `episode→source`) OR introduce genuine episode pattern
   overlap so a real recall-time rival burden exists. Do the instrument fix FIRST — else every source verdict tunes
   against an artifact (the mission's "the instrument is part of the emulation").
+  ✅ **INSTRUMENT FIXED + WHOLE LANE RE-VALIDATED** (`e82465e23`, merged `ce79f00cd`): added `reset_dynamical_state()`
+  to the base gate — a snapshot/restore of the fast Izhikevich state (v, u, g_e/g_i/g_nmda, timers, flags, EMA) at the
+  start of every recall so both competition arms sample an IDENTICAL clean state (excludes learned weights + adapted
+  thresholds so v7/v8/v9 mechanism state survives; harness-only, no `sim/` edit). Proof: the zero-weight control now
+  yields `strict=False` (was strict=True). ⛔ **RE-VALIDATION: v6 & v9 CALIBRATION GOs were the artifact → NO-GO**
+  (min(M)==min(L) exactly under the fixed instrument). No development NO-GO flips — every dev NO-GO was REAL. So the
+  source lane NEVER had a real GO; the earlier "v6 calibration GO" milestone was an instrument artifact (retracted in
+  `docs/RETRACTED.md`). ⭐ **DEEPEST FINDING: the `weakest_source_margin_strictly_improved` criterion is UNSATISFIABLE
+  under the current protocol** — disjoint patterns + silent recall ⇒ rival burden = 0 ⇒ no competition mechanism
+  (fixed or plastic) can move the weak source's own margin. NEXT is a PROTOCOL/mechanism-CLASS change, not another
+  competition variant: (1) introduce genuine episode-pattern OVERLAP so a real recall-time rival burden exists, then
+  re-run the arc under the fixed instrument; or (2) BCM metaplastic selectivity on the weak source's OWN
+  `episode→source` recall synapses (raise its excitatory gain, not the inhibition).
 - **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
   `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
@@ -152,10 +166,11 @@ are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width h
 reward lands ~50/50 → per-seed D_yoked variance collapses → steer passes) — the #1 lane, and CLOSE: Stage-2d fixed
 the confounded yoked control (action-decoupled reward), so contingency divergence is now REAL at the mean (≈1.00)
 with 3/4 criteria passing; only per-seed variance from unequal sampling remains
-· (2) source **FIX THE INSTRUMENT FIRST** (v9's aggregator GO was a
-spurious stepping-history artifact; add a full state reset between arms, then re-check v6/v7/v8), THEN BCM
-metaplastic selectivity on the weak source's OWN `episode→source` recall / add real pattern overlap — v9 ISP was
-inert (no rival burden during recall) · (3) replay **emergent homeostatic self-calibration** of the
+· (2) source — **instrument now FIXED** (v6/v9 calib GOs were
+stepping-history artifacts → NO-GO; no real GO ever); the margin criterion is UNSATISFIABLE under disjoint patterns
+(rival burden=0), so NEXT is a protocol/class change: add episode-pattern **OVERLAP** (real recall-time rival
+burden) then re-run under the fixed instrument, OR **BCM** metaplastic selectivity on the weak source's OWN
+`episode→source` recall · (3) replay **emergent homeostatic self-calibration** of the
 interference-control operating point (v6 order-STDP was a 2-seed GO but MULTISEED NO-GO — the SFA/opponent operating
 point host-tuned on 412/413 does not transfer; order-STDP itself is a banked ingredient). Now running **2-wide
 rolling** (owner OK'd some parallel): Gate B Stage-2d (uncertainty-gated exploration) in flight + source v9 (Vogels–
