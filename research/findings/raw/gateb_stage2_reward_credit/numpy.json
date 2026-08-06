@@ -1,0 +1,505 @@
+{
+  "probe": "gateB_stage2_reward_credit",
+  "stage": "stage2_learning",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "target": 0,
+  "n_train": 40,
+  "n_test": 20,
+  "reward_lr": 0.02,
+  "dev_seeds": [
+    730601,
+    730602,
+    730603,
+    730604,
+    730605,
+    730606
+  ],
+  "construction_seed": 730501,
+  "reward_config": {
+    "reward_learning_rate": 0.02,
+    "reward_eligibility_tau_ms": 400.0,
+    "coactivity_trace_tau_ms": 40.0,
+    "coactivity_scale": 20.0,
+    "reward_mag": 1.0,
+    "reward_steps": 60
+  },
+  "full": {
+    "equivalence": {
+      "weights_match": true,
+      "raster_match": true
+    },
+    "per_seed": [
+      {
+        "seed": 730601,
+        "baseline_p0": 0.8333333333333334,
+        "contingent_p0_reward0": 0.05,
+        "contingent_p0_reward1": 0.9,
+        "yoked_p0_reward0": 0.05,
+        "yoked_p0_reward1": 0.9,
+        "D_contingent": -0.85,
+        "D_yoked": -0.85,
+        "reward_count_reward0": 10,
+        "reward_count_reward1": 3,
+        "yoked_reward_count0": 10,
+        "yoked_reward_count1": 3,
+        "d1_after_reward0": {
+          "0": 42.54740508750633,
+          "1": 42.9864267066673
+        },
+        "d1_after_reward1": {
+          "0": 40.42265612637555,
+          "1": 40.436101311224476
+        },
+        "train_clean_rate": 0.95
+      },
+      {
+        "seed": 730602,
+        "baseline_p0": 0.15,
+        "contingent_p0_reward0": 0.8,
+        "contingent_p0_reward1": 0.95,
+        "yoked_p0_reward0": 0.8,
+        "yoked_p0_reward1": 0.95,
+        "D_contingent": -0.1499999999999999,
+        "D_yoked": -0.1499999999999999,
+        "reward_count_reward0": 15,
+        "reward_count_reward1": 12,
+        "yoked_reward_count0": 15,
+        "yoked_reward_count1": 12,
+        "d1_after_reward0": {
+          "0": 52.46255668357566,
+          "1": 45.72192770110236
+        },
+        "d1_after_reward1": {
+          "0": 44.77463977955006,
+          "1": 43.713909479423805
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730603,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 0.0,
+        "contingent_p0_reward1": 0.09999999999999998,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.09999999999999998,
+        "D_contingent": -0.09999999999999998,
+        "D_yoked": -0.09999999999999998,
+        "reward_count_reward0": 0,
+        "reward_count_reward1": 40,
+        "yoked_reward_count0": 0,
+        "yoked_reward_count1": 40,
+        "d1_after_reward0": {
+          "0": 39.97771605209068,
+          "1": 40.001309361281216
+        },
+        "d1_after_reward1": {
+          "0": 86.66891320369862,
+          "1": 118.87796459904423
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730604,
+        "baseline_p0": 1.0,
+        "contingent_p0_reward0": 0.05,
+        "contingent_p0_reward1": 1.0,
+        "yoked_p0_reward0": 0.05,
+        "yoked_p0_reward1": 1.0,
+        "D_contingent": -0.95,
+        "D_yoked": -0.95,
+        "reward_count_reward0": 21,
+        "reward_count_reward1": 0,
+        "yoked_reward_count0": 21,
+        "yoked_reward_count1": 0,
+        "d1_after_reward0": {
+          "0": 108.754472511786,
+          "1": 85.49596221358688
+        },
+        "d1_after_reward1": {
+          "0": 40.04567469137686,
+          "1": 39.93937979097719
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730605,
+        "baseline_p0": 0.25,
+        "contingent_p0_reward0": 0.9,
+        "contingent_p0_reward1": 1.0,
+        "yoked_p0_reward0": 0.9,
+        "yoked_p0_reward1": 1.0,
+        "D_contingent": -0.09999999999999998,
+        "D_yoked": -0.09999999999999998,
+        "reward_count_reward0": 12,
+        "reward_count_reward1": 14,
+        "yoked_reward_count0": 12,
+        "yoked_reward_count1": 14,
+        "d1_after_reward0": {
+          "0": 76.25148312603986,
+          "1": 56.54920540385776
+        },
+        "d1_after_reward1": {
+          "0": 93.06409109963312,
+          "1": 57.170675901130394
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730606,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 0.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 0.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 0,
+        "reward_count_reward1": 40,
+        "yoked_reward_count0": 0,
+        "yoked_reward_count1": 40,
+        "d1_after_reward0": {
+          "0": 40.00880670017666,
+          "1": 40.078129865505076
+        },
+        "d1_after_reward1": {
+          "0": 44.40017920246831,
+          "1": 71.6635553183379
+        },
+        "train_clean_rate": 1.0
+      }
+    ],
+    "D_contingent_mean": -0.35833333333333334,
+    "D_yoked_mean": -0.35833333333333334,
+    "D_contingent_minus_yoked_mean": 0.0,
+    "exploring_seed_indices": [
+      4
+    ],
+    "n_exploring_seeds": 1,
+    "D_contingent_mean_exploring": -0.09999999999999998,
+    "D_yoked_mean_exploring": -0.09999999999999998,
+    "steer_seed_passes": 0,
+    "steer_per_seed": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "baseline_p0_per_seed": [
+      0.8333333333333334,
+      0.15,
+      0.0,
+      1.0,
+      0.25,
+      0.0
+    ]
+  },
+  "lesions": {
+    "contingent": {
+      "condition": "contingent",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 12,
+      "reward_trials": [
+        2,
+        6,
+        13,
+        20,
+        22,
+        23,
+        32,
+        34,
+        35,
+        37,
+        38,
+        39
+      ],
+      "baseline_target_rate": 0.25,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.9,
+      "test_n_clean": 20,
+      "train_target_rate": 0.3,
+      "train_clean_rate": 1.0,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 76.25148312603986,
+        "1": 56.54920540385776
+      },
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.9,
+        "winners": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "acted_flags": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    "acq_lesion": {
+      "condition": "acq_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 7,
+      "reward_trials": [
+        2,
+        13,
+        22,
+        26,
+        27,
+        30,
+        33
+      ],
+      "baseline_target_rate": 0.25,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.3,
+      "test_n_clean": 20,
+      "train_target_rate": 0.175,
+      "train_clean_rate": 1.0,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.3,
+        "winners": [
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1
+        ],
+        "acted_flags": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    "expr_lesion": {
+      "condition": "expr_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 12,
+      "reward_trials": [
+        2,
+        6,
+        13,
+        20,
+        22,
+        23,
+        32,
+        34,
+        35,
+        37,
+        38,
+        39
+      ],
+      "baseline_target_rate": 0.25,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.2,
+      "test_n_clean": 20,
+      "train_target_rate": 0.3,
+      "train_clean_rate": 1.0,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 76.25148312603986,
+        "1": 56.54920540385776
+      },
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.2,
+        "winners": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          1
+        ],
+        "acted_flags": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    }
+  },
+  "reversal": {
+    "seed": 730605,
+    "p_a_after_phaseA": 0.85,
+    "p_b_after_phaseA": 0.15000000000000002,
+    "p_b_after_phaseB": 0.0,
+    "phaseA_n_clean": 20,
+    "phaseB_n_clean": 20
+  },
+  "verdict_status": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (weights)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (raster)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reward is brain-delivered credit (no host RPE/argmax credit)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "at least one scoreable (exploring) dev seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "go": false,
+  "acquired": false,
+  "lesion_target": 0,
+  "go_evidence": {
+    "steer_seed_passes": 0,
+    "D_contingent_mean_exploring": -0.09999999999999998,
+    "D_yoked_mean_exploring": -0.09999999999999998,
+    "n_exploring_seeds": 1,
+    "lesion_contingent_minus_acq": 0.6000000000000001,
+    "lesion_contingent_minus_expr": 0.7,
+    "reversal_pB_after_B": 0.0,
+    "reversal_pB_after_A": 0.15000000000000002
+  },
+  "outcome": "STAGE2_NO_GO",
+  "elapsed_seconds": 232.5216435729999
+}
