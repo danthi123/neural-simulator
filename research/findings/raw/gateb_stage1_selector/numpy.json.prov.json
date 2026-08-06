@@ -1,0 +1,26 @@
+{
+ "run_id": "1786033525-87435",
+ "runner": "research/runners/_vocal_gateb_stage1_selector.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage1/research/runners/_vocal_gateb_stage1_selector.py"
+ ],
+ "git_sha": "071b68bca",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T12:25:25",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1439.1,
+ "corpus_check_query": "gate B stage 1 continuous BG selector",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage1_selector/numpy.json"
+}
