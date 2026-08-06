@@ -180,18 +180,23 @@ its controls and lesions, and is tested at the required seed coverage.
    result. Existing thresholds must not be loosened. Stage 2 remains forbidden.
    Delayed action-reward learning and its unrelated-reward control come
    afterward.
-3. **Source monitoring's tradeoff is specified and met; the residual is a
-   learning-off leak.** The acceptable no-harm rule is bounded-loss,
-   guard-the-floor, max-min, because whole-brain reliability is set by the
-   weakest source, not per-source zero degradation. The unchanged v2
-   biased-competition circuit meets that rule on both fresh v5 calibration
-   seeds (one seed shows competition rescuing a source from 0.069 to 0.182,
-   below to above floor, with zero loss to any source). v5 is a calibration
-   NO-GO only because one seed leaks four source spikes during episode-only
-   recall with learning off and provably-zero learned weights. The next
-   version tightens source-recall gating so source populations fire solely
-   through the learned pathway, on a fresh preregistration and fresh seeds,
-   keeping the competition circuit and the bounded-loss rule.
+3. **Source monitoring: the bounded-loss tradeoff is met and the leak is
+   closed, but no fixed competition circuit protects the weakest source
+   across seeds.** The no-harm rule is bounded-loss, guard-the-floor, max-min,
+   because whole-brain reliability is set by the weakest source. v6 closed the
+   v5 learning-off leak (silent-by-construction settle-to-quiescence recall)
+   and was a calibration GO, but development was a NO-GO on one component:
+   fixed symmetric GABA-A competition lifts the second-strongest source, not
+   the weakest (seed 654 tie, gap 0.0). v7 tried the named surpass — the
+   shipped region-scoped intrinsic threshold homeostasis (Turrigiano) on the
+   source pools — and was a WORSE dev NO-GO (all three seeds): masking the
+   pools for homeostasis switches them to sub-threshold spike detection, which
+   is incompatible with the fixed GABA-A competition; competition-ON then
+   collapses every margin (~0.03) below competition-OFF (~0.41). Structural
+   (present at every operating point, incl. v3's canonical), so it also
+   re-diagnoses the v3 NO-GO. Next method (v8): Turrigiano SYNAPTIC SCALING —
+   up-regulate the weakest source's recall synapses while keeping peak
+   detection so the competition still works. No criterion loosened.
 4. **Replay consolidation is not repeatable enough.** The next mechanism must
    reinstate the correct cortical target and beat learned-target, replay-order,
    and other control explanations across locked seeds.
@@ -248,9 +253,12 @@ required integrated form.
   run through the resumable adaptive supervisor.
 - Run the next replay build around selective CA1-to-cortex target
   reinstatement, with the learned-target and replay-order controls intact.
-- Specify and resolve the source-monitoring no-harm tradeoff before another
-  source version is promoted. Replace metadata confidence with a neural source
-  consistency signal where the role requires it.
+- Source monitoring: build v8 as Turrigiano synaptic scaling on the weakest
+  source's recall synapses (keep peak detection so the v6 GABA-A competition
+  still functions), on fresh seeds; do NOT retry intrinsic-threshold
+  homeostasis on the competing pools (v7 NO-GO: masking breaks competition).
+  Replace metadata confidence with a neural source consistency signal where
+  the role requires it.
 - Build learned visual invariance upstream of spike-latency selection.
 - Wire only cleared mechanisms into the persistent development loop. Do not
   scale the conventional language scaffold ahead of grounded message
