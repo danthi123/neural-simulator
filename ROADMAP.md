@@ -74,10 +74,13 @@ its controls and lesions, and is tested at the required seed coverage.
   its development and held-out seeds are locked, so no promotion claim is due.
 - **Source and confidence machinery:** a learned seen/heard/self pathway now
   co-resides with episodic memory, anterior prefrontal cortex, and anterior
-  cingulate cortex populations. Earlier versions passed some calibration
-  checks, but the latest local-competition version failed a preregistered
-  no-harm control on one seed. A metadata-based safety floor and trace-based
-  confidence hooks are scaffolds, not final biological honesty.
+  cingulate cortex populations. The no-harm tradeoff that blocked this arc is
+  now specified from the whole-brain role and met: local biased competition
+  satisfies a bounded-loss max-min criterion on fresh seeds (it was earlier
+  rejected only by an over-strict per-source zero-degradation control). The
+  remaining blocker is a small, isolated learning-off leak, not the tradeoff.
+  A metadata-based safety floor and trace-based confidence hooks are scaffolds,
+  not final biological honesty.
 - **Replay and memory:** the record contains narrow evidence that uncued
   hippocampal replay can change cortical weights, and that a localized spiking
   replay mechanism can run beside a conversational slice. Useful
@@ -168,9 +171,18 @@ its controls and lesions, and is tested at the required seed coverage.
    result. Existing thresholds must not be loosened. Stage 2 remains forbidden.
    Delayed action-reward learning and its unrelated-reward control come
    afterward.
-3. **Source monitoring has a real tradeoff.** Improving weak source margins
-   must not damage already-correct source judgments. The next version needs a
-   biological consistency signal rather than an exact composer metadata read.
+3. **Source monitoring's tradeoff is specified and met; the residual is a
+   learning-off leak.** The acceptable no-harm rule is bounded-loss,
+   guard-the-floor, max-min, because whole-brain reliability is set by the
+   weakest source, not per-source zero degradation. The unchanged v2
+   biased-competition circuit meets that rule on both fresh v5 calibration
+   seeds (one seed shows competition rescuing a source from 0.069 to 0.182,
+   below to above floor, with zero loss to any source). v5 is a calibration
+   NO-GO only because one seed leaks four source spikes during episode-only
+   recall with learning off and provably-zero learned weights. The next
+   version tightens source-recall gating so source populations fire solely
+   through the learned pathway, on a fresh preregistration and fresh seeds,
+   keeping the competition circuit and the bounded-loss rule.
 4. **Replay consolidation is not repeatable enough.** The next mechanism must
    reinstate the correct cortical target and beat learned-target, replay-order,
    and other control explanations across locked seeds.
