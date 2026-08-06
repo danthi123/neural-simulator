@@ -1,0 +1,26 @@
+{
+ "run_id": "1786049893-253141",
+ "runner": "unknown",
+ "argv": [
+  "-c"
+ ],
+ "git_sha": "ed6bed93e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T16:58:13",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 875.4,
+ "corpus_check_query": "replay order-sensitive STDP sequence replay directional consolidation",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/replay_v5_sfa_order/replay_v6_stdp_off_control.json"
+}
