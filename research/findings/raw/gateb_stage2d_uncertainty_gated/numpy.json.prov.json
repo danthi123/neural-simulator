@@ -1,0 +1,28 @@
+{
+ "run_id": "1786049927-253598",
+ "runner": "research/runners/_vocal_gateb_stage2d_uncertainty_gated.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage2d/research/runners/_vocal_gateb_stage2d_uncertainty_gated.py",
+  "--mode",
+  "full"
+ ],
+ "git_sha": "76b998356",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T16:58:47",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2088.9,
+ "corpus_check_query": "gate B uncertainty gated exploration familiarity confidence contingency",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage2d_uncertainty_gated/numpy.json"
+}

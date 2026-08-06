@@ -1,0 +1,547 @@
+{
+  "probe": "gateB_stage2d_uncertainty_gated",
+  "stage": "stage2d_learning",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "target": 0,
+  "n_train": 40,
+  "n_test": 20,
+  "reward_lr": 0.02,
+  "gate_config": {
+    "sigma_confident": 24.0,
+    "sigma_uncertain": 120.0,
+    "conf_vdiff_lo": 0.08,
+    "conf_vdiff_hi": 0.45,
+    "value_ema_beta": 0.25,
+    "partial_reward": "2/3 (i%3!=2)"
+  },
+  "dev_seeds": [
+    730601,
+    730602,
+    730603,
+    730604,
+    730605,
+    730606
+  ],
+  "construction_seed": 730501,
+  "full": {
+    "equivalence": {
+      "weights_match": true,
+      "raster_match": true
+    },
+    "per_seed": [
+      {
+        "seed": 730601,
+        "baseline_p0": 0.5714285714285714,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 1.0,
+        "yoked_p0_reward1": 1.0,
+        "D_contingent": 1.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 23,
+        "reward_count_reward1": 23,
+        "yoked_reward_count0": 23,
+        "yoked_reward_count1": 23,
+        "conf_c0": 0.3093732727195027,
+        "conf_c1": 0.8532192336304887,
+        "conf_y0": 0.3333333333333333,
+        "conf_y1": 0.3166937502867039,
+        "sigma_last_c0": 90.30016581892775,
+        "sigma_last_y0": 88.0,
+        "d1_after_reward0": {
+          "0": 64.68821239294829,
+          "1": 39.847385075357224
+        },
+        "d1_after_reward1": {
+          "0": 39.58065376370041,
+          "1": 55.55273061681677
+        },
+        "train_clean_rate": 0.925
+      },
+      {
+        "seed": 730602,
+        "baseline_p0": 0.2222222222222222,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 1.0,
+        "D_contingent": 1.0,
+        "D_yoked": -1.0,
+        "reward_count_reward0": 23,
+        "reward_count_reward1": 27,
+        "yoked_reward_count0": 23,
+        "yoked_reward_count1": 27,
+        "conf_c0": 1.0,
+        "conf_c1": 0.0,
+        "conf_y0": 0.0,
+        "conf_y1": 1.0,
+        "sigma_last_c0": 24.0,
+        "sigma_last_y0": 120.0,
+        "d1_after_reward0": {
+          "0": 62.31950461069743,
+          "1": 39.35859956034908
+        },
+        "d1_after_reward1": {
+          "0": 39.93837573086774,
+          "1": 64.127168335738
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730603,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 0.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 0.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 0,
+        "reward_count_reward1": 27,
+        "yoked_reward_count0": 0,
+        "yoked_reward_count1": 27,
+        "conf_c0": 0.0,
+        "conf_c1": 0.0,
+        "conf_y0": 0.0,
+        "conf_y1": 0.0,
+        "sigma_last_c0": 120.0,
+        "sigma_last_y0": 120.0,
+        "d1_after_reward0": {
+          "0": 39.97771605209068,
+          "1": 34.968634818273564
+        },
+        "d1_after_reward1": {
+          "0": 39.97771605209068,
+          "1": 53.08040680973618
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730604,
+        "baseline_p0": 1.0,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.15000000000000002,
+        "yoked_p0_reward0": 1.0,
+        "yoked_p0_reward1": 1.0,
+        "D_contingent": 0.85,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 27,
+        "reward_count_reward1": 2,
+        "yoked_reward_count0": 27,
+        "yoked_reward_count1": 2,
+        "conf_c0": 0.0,
+        "conf_c1": 0.10636913358966638,
+        "conf_y0": 0.0,
+        "conf_y1": 0.264149297142218,
+        "sigma_last_c0": 120.0,
+        "sigma_last_y0": 120.0,
+        "d1_after_reward0": {
+          "0": 42.041032389223716,
+          "1": 39.93937979097719
+        },
+        "d1_after_reward1": {
+          "0": 34.52038001660947,
+          "1": 45.829342455334135
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730605,
+        "baseline_p0": 0.3,
+        "contingent_p0_reward0": 1.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 1.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 1.0,
+        "D_yoked": 1.0,
+        "reward_count_reward0": 26,
+        "reward_count_reward1": 27,
+        "yoked_reward_count0": 26,
+        "yoked_reward_count1": 27,
+        "conf_c0": 0.3148571009871449,
+        "conf_c1": 0.0,
+        "conf_y0": 0.325279044282,
+        "conf_y1": 0.0,
+        "sigma_last_c0": 89.77371830523408,
+        "sigma_last_y0": 88.773211748928,
+        "d1_after_reward0": {
+          "0": 53.40949638684591,
+          "1": 38.8508983971896
+        },
+        "d1_after_reward1": {
+          "0": 39.95219770537482,
+          "1": 55.88936145570543
+        },
+        "train_clean_rate": 1.0
+      },
+      {
+        "seed": 730606,
+        "baseline_p0": 0.0,
+        "contingent_p0_reward0": 0.0,
+        "contingent_p0_reward1": 0.0,
+        "yoked_p0_reward0": 0.0,
+        "yoked_p0_reward1": 0.0,
+        "D_contingent": 0.0,
+        "D_yoked": 0.0,
+        "reward_count_reward0": 0,
+        "reward_count_reward1": 27,
+        "yoked_reward_count0": 0,
+        "yoked_reward_count1": 27,
+        "conf_c0": 0.0,
+        "conf_c1": 0.0,
+        "conf_y0": 0.0,
+        "conf_y1": 0.0,
+        "sigma_last_c0": 120.0,
+        "sigma_last_y0": 120.0,
+        "d1_after_reward0": {
+          "0": 40.00880670017666,
+          "1": 37.80321592931394
+        },
+        "d1_after_reward1": {
+          "0": 40.00880670017666,
+          "1": 52.69504189469196
+        },
+        "train_clean_rate": 1.0
+      }
+    ],
+    "D_contingent_mean": 0.6416666666666667,
+    "D_yoked_mean": 0.0,
+    "D_contingent_minus_yoked_mean": 0.6416666666666667,
+    "exploring_seed_indices": [
+      0,
+      1,
+      4
+    ],
+    "n_exploring_seeds": 3,
+    "D_contingent_mean_exploring": 1.0,
+    "D_yoked_mean_exploring": 0.0,
+    "steer_seed_passes": 3,
+    "steer_per_seed": [
+      true,
+      true,
+      false,
+      true,
+      false,
+      false
+    ],
+    "baseline_p0_per_seed": [
+      0.5714285714285714,
+      0.2222222222222222,
+      0.0,
+      1.0,
+      0.3,
+      0.0
+    ]
+  },
+  "lesions": {
+    "contingent": {
+      "condition": "contingent",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 26,
+      "reward_trials": [
+        1,
+        3,
+        4,
+        6,
+        7,
+        9,
+        10,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        21,
+        22,
+        24,
+        25,
+        27,
+        28,
+        30,
+        31,
+        33,
+        34,
+        36,
+        37,
+        39
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 1.0,
+      "test_n_clean": 20,
+      "train_target_rate": 0.975,
+      "train_clean_rate": 1.0,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 53.40949638684591,
+        "1": 38.8508983971896
+      },
+      "final_conf": 0.3148571009871449,
+      "final_sigma": 89.77371830523408,
+      "sigma_first": 120.0,
+      "sigma_last": 89.77371830523408,
+      "mean_disc_test": 0.8056688276762948,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 1.0,
+        "winners": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "final_sigma": 89.77371830523408,
+        "mean_disc": 0.8056688276762948
+      }
+    },
+    "acq_lesion": {
+      "condition": "acq_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 11,
+      "reward_trials": [
+        3,
+        4,
+        6,
+        10,
+        13,
+        21,
+        25,
+        27,
+        31,
+        34,
+        39
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.65,
+      "test_n_clean": 20,
+      "train_target_rate": 0.35,
+      "train_clean_rate": 1.0,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "final_conf": 0.02749740219567854,
+      "final_sigma": 117.36024938921486,
+      "sigma_first": 120.0,
+      "sigma_last": 117.36024938921486,
+      "mean_disc_test": 0.16958283407005936,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.65,
+        "winners": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1
+        ],
+        "final_sigma": 117.36024938921486,
+        "mean_disc": 0.16958283407005936
+      }
+    },
+    "expr_lesion": {
+      "condition": "expr_lesion",
+      "seed": 730605,
+      "target": 0,
+      "n_reward_delivered": 26,
+      "reward_trials": [
+        1,
+        3,
+        4,
+        6,
+        7,
+        9,
+        10,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        21,
+        22,
+        24,
+        25,
+        27,
+        28,
+        30,
+        31,
+        33,
+        34,
+        36,
+        37,
+        39
+      ],
+      "baseline_target_rate": 0.3,
+      "baseline_n_clean": 20,
+      "test_target_rate": 0.35,
+      "test_n_clean": 20,
+      "train_target_rate": 0.975,
+      "train_clean_rate": 1.0,
+      "d1_weight_before": {
+        "0": 39.95274717719467,
+        "1": 39.94076942161278
+      },
+      "d1_weight_after": {
+        "0": 53.40949638684591,
+        "1": 38.8508983971896
+      },
+      "final_conf": 0.3148571009871449,
+      "final_sigma": 89.77371830523408,
+      "sigma_first": 120.0,
+      "sigma_last": 89.77371830523408,
+      "mean_disc_test": 0.10937460878485632,
+      "test": {
+        "n_test": 20,
+        "n_clean": 20,
+        "target_rate": 0.35,
+        "winners": [
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "final_sigma": 89.77371830523408,
+        "mean_disc": 0.10937460878485632
+      }
+    }
+  },
+  "reversal": {
+    "seed": 730605,
+    "p_a_after_phaseA": 1.0,
+    "p_b_after_phaseA": 0.0,
+    "p_b_after_phaseB": 1.0,
+    "phaseA_n_clean": 20,
+    "phaseB_n_clean": 20
+  },
+  "conf_lesion": {
+    "seed": 730605,
+    "D_contingent": 1.0,
+    "D_yoked": 1.0,
+    "note": "gate off: sigma held constant at SIGMA_UNCERTAIN (ungated 2c)"
+  },
+  "verdict_status": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (weights)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "stage1 wiring reproduced (raster)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reward is brain-delivered credit (no host RPE/argmax credit)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "uncertainty gate is a neural spiking read-out (str_d1 disc)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "at least one scoreable (exploring) dev seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "go": false,
+  "acquired": false,
+  "lesion_target": 0,
+  "go_evidence": {
+    "steer_seed_passes": 3,
+    "D_contingent_mean_exploring": 1.0,
+    "D_yoked_mean_exploring": 0.0,
+    "D_contingent_minus_yoked_exploring": 1.0,
+    "n_exploring_seeds": 3,
+    "lesion_contingent_minus_acq": 0.35,
+    "lesion_contingent_minus_expr": 0.65,
+    "reversal_pB_after_B": 1.0,
+    "reversal_pB_after_A": 0.0,
+    "conf_lesion_D_contingent": 1.0,
+    "conf_lesion_D_yoked": 1.0,
+    "conf_lesion_D_contingent_minus_yoked": 0.0
+  },
+  "outcome": "STAGE2D_NO_GO",
+  "elapsed_seconds": 509.0362731000023
+}
