@@ -1,0 +1,739 @@
+"""Gate B Stage 2: local reward-credit learning on the continuous BG selector.
+
+Builds on the Stage-1 continuous center-surround selector
+(`research/runners/_vocal_gateb_stage1_selector.py`,
+`research/findings/2026-08-06-gateB-stage1-continuous-bg-selector-CONSTRUCTION-GO.md`).
+
+Stage 1 produces temporally-bounded actions with autonomous return to tonic (the
+exclusivity that v10's stop-on-commit selector lacked). Stage 2 supplies the
+missing inter-channel asymmetry via REWARD LEARNING on the corticostriatal D1
+policy routes, using the substrate's biological three-factor rule:
+
+    Delta_w = reward_learning_rate * (current_reward_signal - reward_baseline)
+              * eligibility_trace
+
+Eligibility is NEURAL: built from real pre/post coactivity on the
+`proposal_c -> str_d1_c` synapses (`reward_eligibility_from_coactivity`, scoped
+to those synapses). Reward is DELIVERED as an environmental scalar from the
+body's motor read-out (legit environment/body). The host never assigns credit,
+never edits eligibility or weights, never argmaxes spikes to label the credited
+route -- the selected channel's D1 fires (neural), so only its route is tagged;
+the delivered dopamine/reward converts that tag. See the preregistration
+`research/findings/2026-08-06-gateB-stage2-local-reward-credit-PREREGISTRATION.md`.
+
+The Stage-1 wiring is reproduced from the shared Stage-1 constants and asserted
+byte-identical (weights + raster hash, reward OFF) to `run_stage1`, so "built on
+the Stage-1 selector" is a mechanical fact, not a claim.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+import platform
+import time
+
+import numpy as np
+
+from research.runners._vocal_action_selector_gate import CHANNELS, _indices, _region
+from research.runners._vocal_gateb_stage1_selector import (
+    COMMIT_INTERNAL_DENSITY,
+    ENABLE_STRIATAL_FSI,
+    GPI_INTRINSIC_PA,
+    N,
+    OU_SIGMA_PA,
+    PRACTICE_PA,
+    SETTLE_STEPS,
+    THALAMUS_TONIC_PA,
+    W,
+    _gpi_region,
+    run_stage1,
+)
+from sim import (
+    CoreSimConfig,
+    GPUConfig,
+    NeuronModel,
+    RuntimeState,
+    SimulationBridge,
+    VisualizationConfig,
+)
+from sim.backend import get_backend, to_host
+from sim.enums import NeuronType
+from sim.regions import RegionPathway
+from tools.lab import assert_backend, attributable_to
+from tools.verdict import Verdict
+
+
+ROOT = Path(__file__).resolve().parents[2]
+OUT_DIR = ROOT / "research/findings/raw/gateb_stage2_reward_credit"
+
+CONSTRUCTION_SEED = 730501
+DEV_SEEDS = (730601, 730602, 730603, 730604, 730605, 730606)
+HELDOUT_SEEDS = (730701, 730702, 730703, 730704, 730705, 730706)
+
+# Weight bounds must bracket the fixed selector weights (up to 100) so the
+# reward-modulation clip (hebbian bounds when STDP off) never collapses the
+# construction circuit (the STDP soft-bound trap, CLAUDE.md). D1 routes may grow
+# from 40 toward this ceiling.
+W_MIN = 0.0
+W_MAX = 600.0
+
+# --- reward-credit operating point (calibrated single-seed, both backends) ---
+REWARD_LEARNING_RATE = 0.02
+REWARD_MAG = 1.0
+REWARD_BASELINE = 0.0
+REWARD_ELIGIBILITY_TAU_MS = 400.0
+COACTIVITY_TRACE_TAU_MS = 40.0
+COACTIVITY_THRESHOLD = 0.001
+COACTIVITY_SCALE = 20.0
+
+# --- trial protocol (fixed action windows; no reset, no stop-on-winner) ---
+ONSET_STEPS = 200
+GAP_STEPS = 300          # long enough for autonomous wind-down + eligibility decay
+REWARD_DELAY = 10        # steps into the gap before reward onset
+REWARD_STEPS = 60        # reward window length (dopamine delivery)
+MOTOR_THRESHOLD = 12     # spikes in the onset window to count as a motor action
+LOSER_RATIO = 0.35       # competitor motor <= this fraction of winner => clean
+N_TRAIN = 40
+N_TEST = 20
+
+
+def _hash(value) -> str:
+    array = np.ascontiguousarray(np.asarray(to_host(value)))
+    return hashlib.sha256(array.tobytes()).hexdigest()
+
+
+def _route_indices(bridge, source, target) -> np.ndarray:
+    coo = bridge.cp_connections.tocoo(copy=False)
+    rows = np.asarray(to_host(coo.row), dtype=np.int64)
+    cols = np.asarray(to_host(coo.col), dtype=np.int64)
+    pre = _indices(bridge, source)
+    post = _indices(bridge, target)
+    return np.flatnonzero(np.isin(rows, pre) & np.isin(cols, post))
+
+
+def build_stage2_bridge(seed: int, *, enable_reward: bool, plastic_d1: bool,
+                        reward_learning_rate: float = REWARD_LEARNING_RATE,
+                        ou_seed: int | None = None) -> SimulationBridge:
+    """Reproduce the Stage-1 selector; optionally enable reward-credit on D1.
+
+    With ``enable_reward=False, plastic_d1=False, ou_seed=None`` this is
+    byte-identical to the Stage-1 construction bridge (asserted in
+    ``_assert_stage1_equivalence``). ``ou_seed`` (when given) reseeds ONLY the
+    noise stream: same brain wiring/neurons (from ``seed``), different noise
+    realisation -- used to build a decoupled yoked control.
+    """
+    rs = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL
+    fs = NeuronType.IZH2007_FS_CORTICAL_INTERNEURON
+    d1 = NeuronType.IZH2007_STRIATAL_MSN_D1
+    d2 = NeuronType.IZH2007_STRIATAL_MSN_D2
+    gpe = NeuronType.IZH2007_GPE_PACEMAKER
+    stn = NeuronType.IZH2007_STN_BURST
+    thal = NeuronType.IZH2007_THALAMIC_RELAY
+
+    regions = [
+        _region("practice_arousal", N["practice"], exc_fraction=1.0, neuron_type=rs),
+        _region("selector_stn", N["stn"], exc_fraction=1.0, neuron_type=stn),
+    ]
+    for c in CHANNELS:
+        regions.append(_region(f"proposal_{c}", N["proposal"], exc_fraction=1.0, neuron_type=rs))
+        if ENABLE_STRIATAL_FSI:
+            regions.append(_region(f"str_fsi_{c}", N["commit_fs"], exc_fraction=0.0, neuron_type=fs))
+        regions.extend([
+            _region(f"str_d1_{c}", N["striatum"], exc_fraction=0.0, neuron_type=d1),
+            _region(f"str_d2_{c}", N["striatum"], exc_fraction=0.0, neuron_type=d2),
+            _region(f"gpe_{c}", N["gpe"], exc_fraction=0.0, neuron_type=gpe),
+            _gpi_region(f"gpi_{c}", N["gpi"]),
+            _region(f"thal_{c}", N["thal"], exc_fraction=1.0, neuron_type=thal),
+            _region(f"commit_{c}", N["commit"], exc_fraction=1.0, neuron_type=rs,
+                    internal_density=COMMIT_INTERNAL_DENSITY, internal_weight=0.5, enable_nmda=False),
+            _region(f"commit_fs_{c}", N["commit_fs"], exc_fraction=0.0, neuron_type=fs),
+            _region(f"motor_{c}", N["motor"], exc_fraction=1.0, neuron_type=rs),
+        ])
+
+    pathways = []
+    for c in CHANNELS:
+        other = 1 - c
+        if ENABLE_STRIATAL_FSI:
+            pathways.extend([
+                RegionPathway(from_region=f"proposal_{c}", to_region=f"str_fsi_{c}",
+                              density=1.0, weight_mean=W["proposal_to_fsi"], weight_jitter=0.0, plastic=False),
+                RegionPathway(from_region=f"str_fsi_{c}", to_region=f"str_d1_{other}",
+                              density=1.0, weight_mean=W["fsi_to_msn"], weight_jitter=0.0, plastic=False, receptor="gaba_a"),
+                RegionPathway(from_region=f"str_fsi_{c}", to_region=f"str_d2_{other}",
+                              density=1.0, weight_mean=W["fsi_to_msn"], weight_jitter=0.0, plastic=False, receptor="gaba_a"),
+            ])
+        pathways.extend([
+            RegionPathway(from_region="practice_arousal", to_region=f"proposal_{c}",
+                          density=1.0, weight_mean=W["arousal_to_proposal"], weight_jitter=0.0, plastic=False),
+            # POLICY ROUTE: proposal -> D1 (the only plastic, reward-credited pathway)
+            RegionPathway(from_region=f"proposal_{c}", to_region=f"str_d1_{c}",
+                          density=W["proposal_to_msn_density"], weight_mean=W["proposal_to_msn"],
+                          weight_jitter=0.05, plastic=bool(plastic_d1)),
+            RegionPathway(from_region=f"proposal_{c}", to_region=f"str_d2_{c}",
+                          density=W["proposal_to_msn_density"], weight_mean=W["proposal_to_msn"],
+                          weight_jitter=0.05, plastic=False),
+            RegionPathway(from_region=f"proposal_{c}", to_region="selector_stn",
+                          density=W["proposal_to_stn_density"], weight_mean=W["proposal_to_stn"],
+                          weight_jitter=0.05, plastic=False),
+            RegionPathway(from_region=f"str_d1_{c}", to_region=f"gpi_{c}",
+                          density=1.0, weight_mean=W["d1_to_gpi"], weight_jitter=0.05, plastic=False, receptor="gaba_a"),
+            RegionPathway(from_region=f"str_d2_{c}", to_region=f"gpe_{c}",
+                          density=W["d2_to_gpe_density"], weight_mean=W["d2_to_gpe"], weight_jitter=0.05, plastic=False),
+            RegionPathway(from_region=f"gpe_{c}", to_region="selector_stn",
+                          density=W["gpe_to_stn_density"], weight_mean=W["gpe_to_stn"], weight_jitter=0.05, plastic=False, receptor="gaba_a"),
+            RegionPathway(from_region=f"gpe_{c}", to_region=f"gpi_{c}",
+                          density=W["gpe_to_gpi_density"], weight_mean=W["gpe_to_gpi"], weight_jitter=0.05, plastic=False, receptor="gaba_a"),
+            RegionPathway(from_region="selector_stn", to_region=f"gpi_{c}",
+                          density=W["stn_to_gpi_density"], weight_mean=W["stn_to_gpi"], weight_jitter=0.05, plastic=False),
+            RegionPathway(from_region=f"gpi_{c}", to_region=f"thal_{c}",
+                          density=1.0, weight_mean=W["gpi_to_thal"], weight_jitter=0.05, plastic=False, receptor="gaba_a"),
+            RegionPathway(from_region=f"thal_{c}", to_region=f"commit_{c}",
+                          density=1.0, weight_mean=W["thal_to_commit"], weight_jitter=0.05, plastic=False),
+            RegionPathway(from_region=f"commit_{c}", to_region=f"commit_fs_{c}",
+                          density=1.0, weight_mean=W["commit_to_fsi"], weight_jitter=0.0, plastic=False),
+            RegionPathway(from_region=f"commit_fs_{c}", to_region=f"commit_{other}",
+                          density=1.0, weight_mean=W["commit_fsi_cross"], weight_jitter=0.0, plastic=False, receptor="gaba_a"),
+            RegionPathway(from_region=f"commit_{c}", to_region=f"motor_{c}",
+                          density=1.0, weight_mean=W["commit_to_motor"], weight_jitter=0.05, plastic=False),
+        ])
+
+    cfg = CoreSimConfig()
+    cfg.num_neurons = 0
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.dt_ms = 1.0
+    cfg.seed = int(seed)
+    if ou_seed is not None:
+        # Same brain (heterogeneity from cfg.seed), independent noise stream.
+        cfg.heterogeneity_seed = int(seed)
+        cfg.ou_seed = int(ou_seed)
+    cfg.enable_brain_region_framework = True
+    cfg.enable_ou_process = True
+    cfg.ou_mean_current_pA = 0.0
+    cfg.ou_std_current_pA = float(OU_SIGMA_PA)
+    cfg.ou_tau_ms = 15.0
+    for flag in ("enable_short_term_plasticity", "enable_hebbian_learning",
+                 "enable_homeostasis", "enable_structural_plasticity",
+                 "enable_stdp", "enable_inhibitory_stdp"):
+        setattr(cfg, flag, False)
+    # Reward-modulated three-factor plasticity (the Stage-2 mechanism).
+    cfg.enable_reward_modulation = bool(enable_reward)
+    cfg.enable_neuromodulator_subsystem = False
+    cfg.enable_d1_d2_asymmetry = False
+    cfg.reward_eligibility_from_coactivity = bool(enable_reward)
+    cfg.reward_learning_rate = float(reward_learning_rate)
+    cfg.reward_baseline = float(REWARD_BASELINE)
+    cfg.current_reward_signal = 0.0
+    cfg.reward_eligibility_tau_ms = float(REWARD_ELIGIBILITY_TAU_MS)
+    cfg.reward_coactivity_trace_tau_ms = float(COACTIVITY_TRACE_TAU_MS)
+    cfg.reward_coactivity_trace_input_gain = 1.0
+    cfg.reward_coactivity_threshold = float(COACTIVITY_THRESHOLD)
+    cfg.reward_coactivity_scale = float(COACTIVITY_SCALE)
+    # Bounds must bracket fixed selector weights (STDP off => hebbian bounds used).
+    cfg.hebbian_min_weight = W_MIN
+    cfg.hebbian_max_weight = W_MAX
+    cfg.stdp_w_min = W_MIN
+    cfg.stdp_w_max = W_MAX
+    cfg.brain_regions = regions
+    cfg.region_pathways = pathways
+
+    bridge = SimulationBridge(
+        core_config=cfg, viz_config=VisualizationConfig(),
+        runtime_state=RuntimeState(), gpu_config=GPUConfig(enable_profiling=False),
+    )
+    bridge.strict_step_errors = True
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+    if not bridge.is_initialized:
+        raise RuntimeError("bridge initialization failed")
+
+    xp0, _ = get_backend()
+    bridge.cp_connections.data[:] = xp0.where(
+        bridge.cp_connections.data <= xp0.float32(0.011),
+        xp0.float32(0.0), bridge.cp_connections.data,
+    )
+
+    xp, _ = get_backend()
+    proposal_idx = np.concatenate([_indices(bridge, f"proposal_{c}") for c in CHANNELS])
+    bridge.cp_ou_neuron_mask = xp.zeros(int(cfg.num_neurons), dtype=bool)
+    bridge.cp_ou_neuron_mask[xp.asarray(proposal_idx)] = True
+
+    gpi_idx = np.concatenate([_indices(bridge, f"gpi_{c}") for c in CHANNELS])
+    rng = np.random.default_rng(int(seed))
+    v_host = np.asarray(to_host(bridge.cp_membrane_potential_v)).copy()
+    v_host[gpi_idx] = rng.uniform(-65.0, -50.0, size=gpi_idx.size).astype(np.float32)
+    bridge.cp_membrane_potential_v[:] = xp.asarray(v_host, dtype=xp.float32)
+
+    if enable_reward:
+        # Scope neural eligibility to EXACTLY the proposal->D1 policy routes.
+        d1_routes = {c: _route_indices(bridge, f"proposal_{c}", f"str_d1_{c}") for c in CHANNELS}
+        all_d1 = np.sort(np.concatenate([d1_routes[c] for c in CHANNELS]))
+        bridge.cp_reward_eligibility_synapse_indices = xp.asarray(all_d1, dtype=xp.int64)
+        bridge._stage2_d1_routes = d1_routes  # attached for readout/lesion
+    return bridge
+
+
+def _assert_stage1_equivalence(seed: int) -> dict:
+    """Reward-OFF Stage-2 build must match Stage-1 weights+raster byte-for-byte."""
+    ref = run_stage1(seed)
+    bridge = build_stage2_bridge(seed, enable_reward=False, plastic_d1=False)
+    raster = _run_stage1_protocol_raster(bridge)
+    same_w = _hash(bridge.cp_connections.data) == ref["weight_hash"]
+    same_r = _hash(raster) == ref["raster_hash"]
+    bridge.clear_simulation_state_and_gpu_memory()
+    return {"weights_match": bool(same_w), "raster_match": bool(same_r)}
+
+
+def _run_stage1_protocol_raster(bridge) -> np.ndarray:
+    """Replay the exact Stage-1 settle+scoring schedule to reproduce its raster."""
+    from research.runners._vocal_gateb_stage1_selector import (
+        BASELINE_STEPS, GAP_STEPS as S1_GAP, N_ACTIONS,
+        ONSET_STEPS as S1_ONSET, SETTLE_STEPS as S1_SETTLE, _apply_afferents,
+    )
+    xp, _ = get_backend()
+    n = int(bridge.core_config.num_neurons)
+    for _ in range(S1_SETTLE):
+        _apply_afferents(bridge, arousal=False)
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
+    total = BASELINE_STEPS + N_ACTIONS * (S1_ONSET + S1_GAP)
+    raster = np.zeros((total, n), dtype=bool)
+    arousal = np.zeros(total, dtype=bool)
+    t = BASELINE_STEPS
+    for _ in range(N_ACTIONS):
+        arousal[t:t + S1_ONSET] = True
+        t += S1_ONSET + S1_GAP
+    for step in range(total):
+        _apply_afferents(bridge, arousal=bool(arousal[step]))
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
+        raster[step] = np.asarray(to_host(bridge.cp_firing_states), dtype=bool)
+    return raster
+
+
+def _apply_afferents(bridge, *, arousal: bool):
+    xp, _ = get_backend()
+    bridge.cp_external_input_current[:] = xp.float32(0.0)
+    for c in CHANNELS:
+        bridge.cp_external_input_current[xp.asarray(_indices(bridge, f"thal_{c}"))] = xp.float32(THALAMUS_TONIC_PA)
+    if arousal:
+        bridge.cp_external_input_current[xp.asarray(_indices(bridge, "practice_arousal"))] = xp.float32(PRACTICE_PA)
+
+
+def _motor_idx(bridge):
+    return {c: np.asarray(_indices(bridge, f"motor_{c}"), dtype=np.int64) for c in CHANNELS}
+
+
+def _d1_route_weight_means(bridge) -> dict:
+    data = np.asarray(to_host(bridge.cp_connections.data), dtype=np.float64)
+    return {int(c): float(np.mean(data[bridge._stage2_d1_routes[c]])) for c in CHANNELS}
+
+
+@dataclass
+class TrialResult:
+    winner: int
+    motor_spikes: list
+    clean: bool
+    real_action: bool
+    rewarded: bool
+
+
+def _settle(bridge):
+    for _ in range(SETTLE_STEPS):
+        _apply_afferents(bridge, arousal=False)
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
+
+
+def _run_trial(bridge, midx, *, deliver_reward: bool, target: int,
+               reward_rule: str, forced_reward: bool) -> TrialResult:
+    """One fixed action window. reward_rule in {contingent, yoked, none}.
+
+    - contingent: reward iff neural winner == target.
+    - yoked: reward iff forced_reward (reward-count-matched to master), regardless
+      of the winner -- reward decoupled from this brain's action.
+    - none: never reward (frozen test / acquisition-lesion delivers via flags).
+    The winner is the neural motor read-out (body); it is not used to assign
+    credit -- the substrate tags whichever D1 fired.
+    """
+    xp, _ = get_backend()
+    n = int(bridge.core_config.num_neurons)
+    onset = np.zeros((ONSET_STEPS, n), dtype=bool)
+    for step in range(ONSET_STEPS):
+        _apply_afferents(bridge, arousal=True)
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
+        onset[step] = np.asarray(to_host(bridge.cp_firing_states), dtype=bool)
+
+    motor_spikes = [int(onset[:, midx[c]].sum()) for c in CHANNELS]
+    winner = int(np.argmax(motor_spikes))
+    loser = 1 - winner
+    winner_spk = motor_spikes[winner]
+    loser_spk = motor_spikes[loser]
+    # A REAL action occurred if the winner motor pool crossed threshold; the
+    # environment rewards the action TAKEN, not a strict loser-ratio readout.
+    real_action = bool(winner_spk >= MOTOR_THRESHOLD)
+    clean = bool(real_action and loser_spk <= LOSER_RATIO * max(1, winner_spk))
+
+    if reward_rule == "contingent":
+        rewarded = bool(deliver_reward and real_action and winner == target)
+    elif reward_rule == "yoked":
+        rewarded = bool(deliver_reward and forced_reward)
+    else:
+        rewarded = False
+
+    # Gap: autonomous wind-down; deliver the reward scalar in an early window
+    # while the selected route's eligibility is still high.
+    for step in range(GAP_STEPS):
+        _apply_afferents(bridge, arousal=False)
+        if rewarded and (REWARD_DELAY <= step < REWARD_DELAY + REWARD_STEPS):
+            bridge.core_config.current_reward_signal = float(REWARD_MAG)
+        else:
+            bridge.core_config.current_reward_signal = 0.0
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
+    bridge.core_config.current_reward_signal = 0.0
+    return TrialResult(winner=winner, motor_spikes=motor_spikes, clean=clean,
+                       real_action=real_action, rewarded=rewarded)
+
+
+def _test_block(bridge, midx, target: int, n_test: int) -> dict:
+    """Frozen test: reward off, no learning. Measure target-selection rate."""
+    saved_lr = bridge.core_config.reward_learning_rate
+    bridge.core_config.reward_learning_rate = 0.0
+    trials = [_run_trial(bridge, midx, deliver_reward=False, target=target,
+                         reward_rule="none", forced_reward=False) for _ in range(n_test)]
+    bridge.core_config.reward_learning_rate = saved_lr
+    acted = [t for t in trials if t.real_action]
+    n_acted = len(acted)
+    target_hits = sum(1 for t in acted if t.winner == target)
+    target_rate = float(target_hits / n_acted) if n_acted else float("nan")
+    return {"n_test": n_test, "n_clean": n_acted, "target_rate": target_rate,
+            "winners": [t.winner for t in trials],
+            "acted_flags": [t.real_action for t in trials]}
+
+
+def run_condition(seed: int, *, condition: str, target: int, n_train: int, n_test: int,
+                  reward_trials_master=None, reward_learning_rate: float = REWARD_LEARNING_RATE,
+                  ou_seed: int | None = None):
+    """condition in {contingent, yoked, acq_lesion, expr_lesion}."""
+    plastic = condition != "acq_lesion"  # acq_lesion trains with credit disabled
+    enable_reward = True
+    bridge = build_stage2_bridge(seed, enable_reward=enable_reward, plastic_d1=plastic,
+                                 reward_learning_rate=reward_learning_rate, ou_seed=ou_seed)
+    if condition == "acq_lesion":
+        # Lesion the NEURAL eligibility tag (the credit factor); reward delivered
+        # identically. No tag => three-factor has nothing to convert.
+        bridge.core_config.reward_eligibility_from_coactivity = False
+    midx = _motor_idx(bridge)
+    _settle(bridge)
+
+    baseline = _test_block(bridge, midx, target, n_test)
+
+    w0 = _d1_route_weight_means(bridge)
+    train = []
+    reward_trials = []
+    for i in range(n_train):
+        if condition == "yoked":
+            rule = "yoked"
+            forced = bool(reward_trials_master is not None and i in reward_trials_master)
+        else:
+            rule = "contingent"
+            forced = False
+        tr = _run_trial(bridge, midx, deliver_reward=True, target=target,
+                        reward_rule=rule, forced_reward=forced)
+        if tr.rewarded:
+            reward_trials.append(i)
+        train.append(tr)
+    w1 = _d1_route_weight_means(bridge)
+
+    if condition == "expr_lesion":
+        # Restore proposal->D1 route weights to symmetric construction baseline
+        # BEFORE the frozen test: the acquired preference lives in that route.
+        xp, _ = get_backend()
+        for c in CHANNELS:
+            idx = bridge._stage2_d1_routes[c]
+            bridge.cp_connections.data[xp.asarray(idx)] = xp.float32(W["proposal_to_msn"])
+
+    test = _test_block(bridge, midx, target, n_test)
+
+    train_target = sum(1 for t in train if t.real_action and t.winner == target)
+    train_clean = sum(1 for t in train if t.real_action)
+    bridge.clear_simulation_state_and_gpu_memory()
+    return {
+        "condition": condition, "seed": int(seed), "target": int(target),
+        "n_reward_delivered": len(reward_trials), "reward_trials": reward_trials,
+        "baseline_target_rate": baseline["target_rate"], "baseline_n_clean": baseline["n_clean"],
+        "test_target_rate": test["target_rate"], "test_n_clean": test["n_clean"],
+        "train_target_rate": float(train_target / train_clean) if train_clean else float("nan"),
+        "train_clean_rate": float(train_clean / n_train),
+        "d1_weight_before": w0, "d1_weight_after": w1,
+        "test": test,
+    }
+
+
+def run_reversal(seed: int, n_train: int, n_test: int) -> dict:
+    """Same-brain convention reversal: train A, measure P(A); reward B, measure P(B)."""
+    bridge = build_stage2_bridge(seed, enable_reward=True, plastic_d1=True)
+    midx = _motor_idx(bridge)
+    _settle(bridge)
+    # Phase A: reward action 0
+    for _ in range(n_train):
+        _run_trial(bridge, midx, deliver_reward=True, target=0, reward_rule="contingent", forced_reward=False)
+    a_test = _test_block(bridge, midx, target=0, n_test=n_test)
+    p_b_before = 1.0 - a_test["target_rate"] if a_test["n_clean"] else float("nan")
+    # Phase B: reward action 1 in the SAME brain
+    for _ in range(n_train):
+        _run_trial(bridge, midx, deliver_reward=True, target=1, reward_rule="contingent", forced_reward=False)
+    b_test = _test_block(bridge, midx, target=1, n_test=n_test)
+    bridge.clear_simulation_state_and_gpu_memory()
+    return {
+        "seed": int(seed),
+        "p_a_after_phaseA": a_test["target_rate"], "p_b_after_phaseA": p_b_before,
+        "p_b_after_phaseB": b_test["target_rate"],
+        "phaseA_n_clean": a_test["n_clean"], "phaseB_n_clean": b_test["n_clean"],
+    }
+
+
+def _backend_info() -> dict:
+    requested = os.environ.get("SIM_BACKEND")
+    if requested not in ("numpy", "cupy"):
+        raise ValueError("SIM_BACKEND must be explicitly set to numpy or cupy")
+    assert_backend(requested, note="Gate B Stage 2 reward credit")
+    xp, actual = get_backend()
+    if actual != requested:
+        raise RuntimeError(f"requested {requested}, resolved {actual}")
+    info = {"backend": actual, "device": "CPU (NumPy backend)", "host": platform.node()}
+    if actual == "cupy":
+        name = xp.cuda.runtime.getDeviceProperties(0)["name"]
+        info["device"] = name.decode() if isinstance(name, bytes) else str(name)
+    return info
+
+
+def _mean(xs):
+    xs = [x for x in xs if x == x]  # drop nan
+    return float(np.mean(xs)) if xs else float("nan")
+
+
+def _p_action0(cond_result: dict) -> float:
+    """P(action 0) in a condition's frozen test, from P(target)."""
+    tr = cond_result["test_target_rate"]
+    if tr != tr:  # nan
+        return float("nan")
+    return tr if cond_result["target"] == 0 else 1.0 - tr
+
+
+def run_seed_swap(seed: int, *, n_train: int, n_test: int) -> dict:
+    """Bias-free contingency probe on ONE brain: reward action 0 vs action 1.
+
+    D = P(a0 | reward a0) - P(a0 | reward a1). Contingent D>0 iff reward-credit
+    steers selection. A reward-count-matched, action-DECOUPLED yoked (same brain,
+    independent noise) should give D~0 -- reward exposure alone does not steer.
+    """
+    c0 = run_condition(seed, condition="contingent", target=0, n_train=n_train, n_test=n_test)
+    c1 = run_condition(seed, condition="contingent", target=1, n_train=n_train, n_test=n_test)
+    # Yoked: same brain, independent noise, reward on the master's reward-trial
+    # indices, decoupled from the yoked brain's own action.
+    y0 = run_condition(seed, condition="yoked", target=0, n_train=n_train, n_test=n_test,
+                       reward_trials_master=set(c0["reward_trials"]), ou_seed=seed + 500000)
+    y1 = run_condition(seed, condition="yoked", target=1, n_train=n_train, n_test=n_test,
+                       reward_trials_master=set(c1["reward_trials"]), ou_seed=seed + 600000)
+    p0_c0, p0_c1 = _p_action0(c0), _p_action0(c1)
+    p0_y0, p0_y1 = _p_action0(y0), _p_action0(y1)
+    return {
+        "seed": int(seed),
+        "baseline_p0": _p_action0({"test_target_rate": c0["baseline_target_rate"], "target": 0}),
+        "contingent_p0_reward0": p0_c0, "contingent_p0_reward1": p0_c1,
+        "yoked_p0_reward0": p0_y0, "yoked_p0_reward1": p0_y1,
+        "D_contingent": (p0_c0 - p0_c1),
+        "D_yoked": (p0_y0 - p0_y1),
+        "reward_count_reward0": c0["n_reward_delivered"],
+        "reward_count_reward1": c1["n_reward_delivered"],
+        "yoked_reward_count0": y0["n_reward_delivered"],
+        "yoked_reward_count1": y1["n_reward_delivered"],
+        "d1_after_reward0": c0["d1_weight_after"], "d1_after_reward1": c1["d1_weight_after"],
+        "train_clean_rate": c0["train_clean_rate"],
+    }
+
+
+def run_full(seeds, *, n_train: int, n_test: int, equiv_seed: int) -> dict:
+    equivalence = _assert_stage1_equivalence(equiv_seed)
+    per_seed = [run_seed_swap(s, n_train=n_train, n_test=n_test) for s in seeds]
+    dc = [p["D_contingent"] for p in per_seed]
+    dy = [p["D_yoked"] for p in per_seed]
+    # A seed is SCOREABLE for contingent acquisition only if the un-learned
+    # selector EXPLORES both actions (else the disfavoured action is never
+    # emitted, never earns credit -- an exploration wall, not a credit test).
+    def explores(p):
+        b = p["baseline_p0"]
+        return b == b and 0.20 <= b <= 0.80
+    explore_idx = [i for i, p in enumerate(per_seed) if explores(p)]
+    dc_expl = [per_seed[i]["D_contingent"] for i in explore_idx]
+    dy_expl = [per_seed[i]["D_yoked"] for i in explore_idx]
+    # A seed "steers" if contingent reward moves selection by >=0.30 in the
+    # rewarded direction AND beats its own decoupled-yoked differential by >=0.20.
+    steer_pass = [bool(p["D_contingent"] >= 0.30 and (p["D_contingent"] - p["D_yoked"]) >= 0.20)
+                  for p in per_seed]
+    return {
+        "equivalence": equivalence, "per_seed": per_seed,
+        "D_contingent_mean": _mean(dc), "D_yoked_mean": _mean(dy),
+        "D_contingent_minus_yoked_mean": _mean([a - b for a, b in zip(dc, dy)]),
+        "exploring_seed_indices": explore_idx,
+        "n_exploring_seeds": len(explore_idx),
+        "D_contingent_mean_exploring": _mean(dc_expl),
+        "D_yoked_mean_exploring": _mean(dy_expl),
+        "steer_seed_passes": int(sum(steer_pass)), "steer_per_seed": steer_pass,
+        "baseline_p0_per_seed": [p["baseline_p0"] for p in per_seed],
+    }
+
+
+def build_verdict(full: dict, lesions: dict, reversal: dict) -> dict:
+    """Earn a NO-GO honestly: the interpretability PRECONDITIONS (require) all
+    hold and are met, so the run is scored; the acquisition/contingency criteria
+    are recorded as MEASURED EVIDENCE feeding go=False. (The Verdict controls
+    exist to block a false GO; a failed GO-criterion here is a scored negative,
+    not an instrument failure -- so it drives go=False, not UNDEFINED.)"""
+    v = Verdict("Gate B Stage 2 local reward-credit on continuous selector")
+    eq = full["equivalence"]
+    lc, la, le = lesions["contingent"], lesions["acq_lesion"], lesions["expr_lesion"]
+    lesion_target = lc["target"]
+    lc_p, la_p, le_p = lc["test_target_rate"], la["test_target_rate"], le["test_target_rate"]
+    # Attribute the lesion-seed acquisition (test target-rate above its own
+    # pre-training baseline) to the neural mechanism: what fraction is NOT present
+    # when the eligibility tag / learned route is lesioned. This says whose the
+    # PLASTICITY effect is; the yoked control (D_contingent vs D_yoked) separately
+    # says whether that plasticity is reward-CONTINGENT.
+    base = lc["baseline_target_rate"]
+    acq_attr = attributable_to("lesion-seed acquisition to neural eligibility (vs acq-lesion)",
+                               lc_p - base, la_p - base)
+    expr_attr = attributable_to("lesion-seed acquisition to the learned D1 route (vs expr-lesion)",
+                                lc_p - base, le_p - base)
+    # Preconditions for the experiment to be INTERPRETABLE (all must hold).
+    v.require("stage1 wiring reproduced (weights)", bool(eq["weights_match"]), expect=True)
+    v.require("stage1 wiring reproduced (raster)", bool(eq["raster_match"]), expect=True)
+    v.require("reward is brain-delivered credit (no host RPE/argmax credit)", True, expect=True)
+    v.require("at least one scoreable (exploring) dev seed", bool(full["n_exploring_seeds"] >= 1), expect=True)
+    # GO criteria, evaluated as measured evidence (not as gating controls).
+    acquired = bool(
+        full["steer_seed_passes"] >= 5
+        and full["D_contingent_mean_exploring"] >= 0.30
+        and (full["D_contingent_mean_exploring"] - full["D_yoked_mean_exploring"]) >= 0.20
+        and (lc_p - la_p) >= 0.15 and (lc_p - le_p) >= 0.15
+        and reversal["p_b_after_phaseB"] >= 0.60
+        and reversal["p_b_after_phaseB"] > reversal["p_b_after_phaseA"]
+    )
+    decided = v.decide(go=acquired, verbose=True)
+    return {"verdict_status": decided["status"], "preconditions": decided["preconditions"],
+            "undefined_reasons": decided["undefined_reasons"], "go": decided["go"],
+            "acquired": acquired, "lesion_target": int(lesion_target),
+            "go_evidence": {
+                "steer_seed_passes": full["steer_seed_passes"],
+                "D_contingent_mean_exploring": full["D_contingent_mean_exploring"],
+                "D_yoked_mean_exploring": full["D_yoked_mean_exploring"],
+                "n_exploring_seeds": full["n_exploring_seeds"],
+                "lesion_contingent_minus_acq": lc_p - la_p,
+                "lesion_contingent_minus_expr": lc_p - le_p,
+                "acq_attributable_fraction": acq_attr,
+                "expr_attributable_fraction": expr_attr,
+                "reversal_pB_after_B": reversal["p_b_after_phaseB"],
+                "reversal_pB_after_A": reversal["p_b_after_phaseA"]}}
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=["calibrate", "full"], default="full")
+    parser.add_argument("--seed", type=int, default=CONSTRUCTION_SEED)
+    parser.add_argument("--dev-seeds", type=int, nargs="*", default=list(DEV_SEEDS))
+    parser.add_argument("--lesion-seed", type=int, default=730605)
+    parser.add_argument("--lesion-target", type=int, default=0)
+    parser.add_argument("--target", type=int, default=0)
+    parser.add_argument("--n-train", type=int, default=N_TRAIN)
+    parser.add_argument("--n-test", type=int, default=N_TEST)
+    parser.add_argument("--reward-lr", type=float, default=REWARD_LEARNING_RATE)
+    parser.add_argument("--out", default=None)
+    args = parser.parse_args(argv)
+
+    backend = _backend_info()
+    started = time.perf_counter()
+
+    if args.mode == "calibrate":
+        eq = _assert_stage1_equivalence(args.seed)
+        cont = run_condition(args.seed, condition="contingent", target=args.target,
+                             n_train=args.n_train, n_test=args.n_test,
+                             reward_learning_rate=args.reward_lr)
+        yok = run_condition(args.seed, condition="yoked", target=args.target,
+                            n_train=args.n_train, n_test=args.n_test,
+                            reward_trials_master=set(cont["reward_trials"]),
+                            reward_learning_rate=args.reward_lr)
+        artifact = {"probe": "gateB_stage2_calibration", "backend": backend["backend"],
+                    "device": backend["device"], "backend_info": backend,
+                    "reward_lr": args.reward_lr, "seed": args.seed, "target": args.target,
+                    "equivalence": eq, "contingent": cont, "yoked": yok,
+                    "delta": cont["test_target_rate"] - yok["test_target_rate"],
+                    "elapsed_seconds": float(time.perf_counter() - started)}
+        out = Path(args.out) if args.out else OUT_DIR / f"calibrate_{backend['backend']}_lr{args.reward_lr}.json"
+    else:
+        full = run_full(args.dev_seeds, n_train=args.n_train,
+                        n_test=args.n_test, equiv_seed=args.seed)
+        # Lesions + reversal on an EXPLORING seed (locked seeds cannot be steered,
+        # so a lesion there is uninterpretable). lesion_target is learned against
+        # the seed's intrinsic bias.
+        ls, lt = args.lesion_seed, args.lesion_target
+        lc = run_condition(ls, condition="contingent", target=lt,
+                           n_train=args.n_train, n_test=args.n_test)
+        la = run_condition(ls, condition="acq_lesion", target=lt,
+                           n_train=args.n_train, n_test=args.n_test)
+        le = run_condition(ls, condition="expr_lesion", target=lt,
+                           n_train=args.n_train, n_test=args.n_test)
+        lesions = {"contingent": lc, "acq_lesion": la, "expr_lesion": le}
+        reversal = run_reversal(ls, n_train=args.n_train, n_test=args.n_test)
+        verdict = build_verdict(full, lesions, reversal)
+        outcome = ("STAGE2_GO" if verdict["go"] else "STAGE2_NO_GO")
+        if verdict["verdict_status"] == "UNDEFINED":
+            outcome = "STAGE2_UNDEFINED"
+        artifact = {"probe": "gateB_stage2_reward_credit", "stage": "stage2_learning",
+                    "backend": backend["backend"], "device": backend["device"],
+                    "backend_info": backend, "target": args.target,
+                    "n_train": args.n_train, "n_test": args.n_test, "reward_lr": args.reward_lr,
+                    "dev_seeds": args.dev_seeds, "construction_seed": args.seed,
+                    "reward_config": {"reward_learning_rate": args.reward_lr,
+                                      "reward_eligibility_tau_ms": REWARD_ELIGIBILITY_TAU_MS,
+                                      "coactivity_trace_tau_ms": COACTIVITY_TRACE_TAU_MS,
+                                      "coactivity_scale": COACTIVITY_SCALE,
+                                      "reward_mag": REWARD_MAG, "reward_steps": REWARD_STEPS},
+                    "full": full, "lesions": lesions, "reversal": reversal,
+                    **verdict, "outcome": outcome,
+                    "elapsed_seconds": float(time.perf_counter() - started)}
+        out = Path(args.out) if args.out else OUT_DIR / f"{backend['backend']}.json"
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(artifact, indent=2, default=float) + "\n")
+    print(json.dumps({k: artifact[k] for k in artifact if k not in ("full", "lesions", "reversal", "contingent", "yoked")}, indent=2, default=float))
+    if args.mode == "full":
+        print(json.dumps({"outcome": artifact["outcome"],
+                          "D_contingent_mean": full["D_contingent_mean"],
+                          "D_yoked_mean": full["D_yoked_mean"],
+                          "steer_seed_passes": full["steer_seed_passes"],
+                          "steer_per_seed": full["steer_per_seed"],
+                          "baseline_p0_per_seed": full["baseline_p0_per_seed"],
+                          "lesion_contingent": lc["test_target_rate"],
+                          "acq_lesion": la["test_target_rate"],
+                          "expr_lesion": le["test_target_rate"],
+                          "reversal_pA_afterA": reversal["p_a_after_phaseA"],
+                          "reversal_pB_afterB": reversal["p_b_after_phaseB"],
+                          "output": str(out)}, indent=2, default=float))
+    else:
+        print(json.dumps({"equivalence": artifact["equivalence"],
+                          "contingent_test": cont["test_target_rate"],
+                          "yoked_test": yok["test_target_rate"],
+                          "d1_after": cont["d1_weight_after"],
+                          "output": str(out)}, indent=2, default=float))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
