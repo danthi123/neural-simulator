@@ -25,10 +25,14 @@ the episode drive reinstates source activity through the learned synapses from a
 clean baseline.  The biased-competition circuit and acceptance rule are retained
 unchanged; only the source-recall gating is tightened.
 
-Only calibration seeds 650 and 651 are open.  Development seeds 652, 653, 654 and
-held-out seeds 655, 656, 657 are named but mechanically rejected.  Seed 649 is
-implementation smoke only.  The runner does not choose words, calculate
-confidence, or decide whether to respond.
+Calibration seeds 650 and 651 (plus smoke seed 649) established the frozen
+mechanism.  Generalization runs the IDENTICAL evaluator and criteria on unseen
+seeds via ``--phase``: development opens 652, 653, 654; held-out opens 655, 656,
+657 ONLY after development records an earned GO (``validate_phase_seed`` seals it
+otherwise), so an unproven phase can never open the next one.  Only the seed
+partition advances; the circuit, thresholds, and acceptance rule are frozen.
+The runner does not choose words, calculate confidence, or decide whether to
+respond.
 """
 from __future__ import annotations
 
@@ -85,6 +89,63 @@ MIN_ATTRIBUTION_FRACTION = DEVELOPMENT_MIN_ATTRIBUTION_FRACTION
 # Cap on the pre-read settle so a pathological seed cannot loop forever. In
 # practice the substrate reaches quiescence within two rest windows.
 MAX_SETTLE_BLOCKS = 12
+
+# Phase -> seed partition. Calibration is closed (already spent on the frozen
+# mechanism). Development opens 652/653/654; held_out opens 655/656/657 ONLY
+# after development records an earned GO (the seal below), so an unproven phase
+# can never open the next one. The mechanism, thresholds, and acceptance rule
+# are identical across phases; only the seed partition advances.
+PHASE_SEEDS = {
+    "calibration": CALIBRATION_SEEDS,
+    "development": DEVELOPMENT_SEEDS,
+    "held_out": HELD_OUT_SEEDS,
+}
+
+# Aggregate generalization verdicts (written by aggregate_source_monitor_seeds).
+GENERALIZATION_DIR = Path("research/findings/raw/source_monitor_v6_generalization")
+DEV_VERDICT_PATH = GENERALIZATION_DIR / "development_verdict.json"
+
+
+def _development_is_go() -> bool:
+    """True only if the development aggregate verdict exists and reads GO."""
+
+    try:
+        data = json.loads(DEV_VERDICT_PATH.read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+    return data.get("phase") == "development" and data.get("verdict") == "GO"
+
+
+def validate_phase_seed(seed: int, phase: str = "calibration") -> int:
+    """Open calibration + development seeds; keep held_out sealed until dev GO.
+
+    Mirrors the calibration seed-validation discipline: a seed outside the
+    named phase is mechanically rejected, and the held_out partition stays
+    sealed until the development phase records an earned GO verdict, so the
+    held-out seeds cannot be touched before the mechanism has generalized on the
+    development partition.
+    """
+
+    seed = int(seed)
+    allowed = PHASE_SEEDS.get(phase)
+    if allowed is None:
+        raise ValueError(
+            f"phase {phase!r} is not a v6 phase; choose from {tuple(PHASE_SEEDS)}"
+        )
+    if phase == "held_out" and not _development_is_go():
+        raise ValueError(
+            "held_out seeds are sealed until the development phase records an "
+            f"earned GO in {DEV_VERDICT_PATH}; run --phase development first"
+        )
+    if phase == "calibration" and seed == SMOKE_SEED:
+        return seed
+    if seed not in allowed:
+        raise ValueError(
+            f"seed {seed} is not a v6 {phase} seed; allowed={allowed}, "
+            f"smoke={SMOKE_SEED}, calibration={CALIBRATION_SEEDS}, "
+            f"development={DEVELOPMENT_SEEDS}, held_out={HELD_OUT_SEEDS}"
+        )
+    return seed
 
 
 class SourceMonitorCoresidencyGateV6(SourceMonitorCoresidencyGateV2):
@@ -158,23 +219,23 @@ class SourceMonitorCoresidencyGateV6(SourceMonitorCoresidencyGateV2):
 def validate_calibration_seed(seed: int) -> int:
     """Open the two v6 calibration seeds, plus the implementation-smoke seed."""
 
-    seed = int(seed)
-    if seed not in CALIBRATION_SEEDS and seed != SMOKE_SEED:
-        raise ValueError(
-            f"seed {seed} is not a v6 calibration seed; allowed={CALIBRATION_SEEDS}, "
-            f"smoke={SMOKE_SEED}, development_reserved={DEVELOPMENT_SEEDS}, "
-            f"held_out={HELD_OUT_SEEDS}"
-        )
-    return seed
+    return validate_phase_seed(seed, "calibration")
 
 
 def evaluate_calibration_seed(
     seed: int,
     config: SourceMonitorConfigV2 | None = None,
+    *,
+    phase: str = "calibration",
 ) -> dict:
-    """Run one v6 calibration seed and all preregistered controls."""
+    """Run one seed of ``phase`` and all preregistered controls.
 
-    seed = validate_calibration_seed(seed)
+    The mechanism, thresholds, and acceptance rule are IDENTICAL across phases;
+    only the seed partition (validated by ``validate_phase_seed``) advances. The
+    development and held-out phases reuse this frozen evaluator unchanged.
+    """
+
+    seed = validate_phase_seed(seed, phase)
     c = config or SourceMonitorConfigV2()
     patterns = make_episode_patterns(seed, 5, c)
     t0 = time.time()
@@ -310,7 +371,7 @@ def evaluate_calibration_seed(
     expected_regions.update(APFC_SOURCE.values())
     expected_regions.update(SOURCE_INTERNEURON.values())
     recall_parameters = list(inspect.signature(SourceMonitorCoresidencyGateV6.recall).parameters)
-    earned = Verdict("source-monitor co-residency v6 calibration")
+    earned = Verdict(f"source-monitor co-residency v6 {phase}")
     earned.require(
         "episode, source, competition, aPFC, and ACC populations share one bridge",
         expected_regions.issubset(region_names),
@@ -363,14 +424,15 @@ def evaluate_calibration_seed(
         why="v6 isolates Hebbian source association plus fixed local GABA-A competition",
     )
     decided = earned.decide(go=all(components.values()), verbose=False)
+    phase_label = phase.upper()
     status = (
         "UNDEFINED"
         if decided["status"] == UNDEFINED
-        else "CALIBRATION_PASS" if decided["go"] else "CALIBRATION_FAIL"
+        else f"{phase_label}_PASS" if decided["go"] else f"{phase_label}_FAIL"
     )
     return {
         "seed": seed,
-        "phase": "calibration",
+        "phase": phase,
         "status": status,
         "preconditions": decided["preconditions"],
         "disabled_processes": decided["disabled_processes"],
@@ -479,14 +541,17 @@ def main() -> int:
         description="Run one calibration seed for source-monitor co-residency v6."
     )
     parser.add_argument("--seed", type=int, default=CALIBRATION_SEEDS[0])
+    parser.add_argument(
+        "--phase", choices=tuple(PHASE_SEEDS), default="calibration"
+    )
     parser.add_argument("--json", default=None)
     args = parser.parse_args()
 
-    row = evaluate_calibration_seed(args.seed)
+    row = evaluate_calibration_seed(args.seed, phase=args.phase)
     print(
         "[source-monitor-coresidency-v6] "
-        f"seed={row['seed']} status={row['status']} metrics={row['metrics']} "
-        f"components={row['components']}",
+        f"seed={row['seed']} phase={row['phase']} status={row['status']} "
+        f"metrics={row['metrics']} components={row['components']}",
         flush=True,
     )
     if args.json:
@@ -494,7 +559,7 @@ def main() -> int:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json.dumps(row, indent=2))
         print(f"[source-monitor-coresidency-v6] wrote {out_path}", flush=True)
-    return 0 if row["status"] == "CALIBRATION_PASS" else 1
+    return 0 if row["status"].endswith("_PASS") else 1
 
 
 if __name__ == "__main__":

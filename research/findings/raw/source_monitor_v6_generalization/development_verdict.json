@@ -1,0 +1,123 @@
+{
+  "phase": "development",
+  "mechanism": "source-monitor-coresidency-v6",
+  "runner": "research/runners/_laneC_source_monitor_coresidency_gate_v6.py",
+  "aggregator": "research/runners/aggregate_source_monitor_seeds.py",
+  "frozen_mechanism": true,
+  "seeds": [
+    652,
+    653,
+    654
+  ],
+  "verdict": "NO-GO",
+  "all_seeds_pass": false,
+  "failed_seeds": [
+    654
+  ],
+  "undefined_seeds": [],
+  "acceptance_rule": "GO iff every seed satisfies the frozen v6 criteria",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every phase seed produced a defined status (no instrument failure)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the frozen v6 acceptance criteria were applied unchanged on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "every seed ran the full preregistered control set (20 components)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "fixed_criteria": {
+    "minimum_source_margin": 0.15,
+    "minimum_attribution_fraction": 0.9,
+    "unseen_source_spikes": 0,
+    "learning_off_source_spikes": 0,
+    "acceptance_rule": "bounded_loss_guard_floor_max_min",
+    "loss_may_only_spend_surplus_above_floor": true,
+    "weakest_source_margin_must_strictly_improve": true,
+    "recall_settles_to_quiescence_before_read": true,
+    "all_structural_and_lesion_components_required": true
+  },
+  "per_seed": [
+    {
+      "seed": 652,
+      "status": "DEVELOPMENT_PASS",
+      "pass": true,
+      "minimum_source_margin": 0.18416666666666667,
+      "minimum_lesion_margin": 0.1775,
+      "weakest_lift_attributable_to_competition": 0.036199095022624514,
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "spendable_surplus": {
+        "seen": 0.07250000000000001,
+        "heard": 0.027499999999999997,
+        "self_generated": 0.04583333333333334
+      },
+      "failing_components": [],
+      "elapsed_seconds": 0.832
+    },
+    {
+      "seed": 653,
+      "status": "DEVELOPMENT_PASS",
+      "pass": true,
+      "minimum_source_margin": 0.16083333333333333,
+      "minimum_lesion_margin": 0.14416666666666667,
+      "weakest_lift_attributable_to_competition": 0.10362694300518133,
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0016666666666666774
+      },
+      "spendable_surplus": {
+        "seen": 0.0925,
+        "heard": 0.0,
+        "self_generated": 0.029166666666666674
+      },
+      "failing_components": [],
+      "elapsed_seconds": 0.847
+    },
+    {
+      "seed": 654,
+      "status": "DEVELOPMENT_FAIL",
+      "pass": false,
+      "minimum_source_margin": 0.1825,
+      "minimum_lesion_margin": 0.1825,
+      "weakest_lift_attributable_to_competition": 0.0,
+      "learning_off_source_spikes": 0.0,
+      "bounded_loss": {
+        "seen": 0.0,
+        "heard": 0.0,
+        "self_generated": 0.0
+      },
+      "spendable_surplus": {
+        "seen": 0.08000000000000002,
+        "heard": 0.0325,
+        "self_generated": 0.1575
+      },
+      "failing_components": [
+        "weakest_source_margin_strictly_improved"
+      ],
+      "elapsed_seconds": 0.812
+    }
+  ],
+  "git_sha": "94e7e72c399f7020bc9549978e577f25caca946b",
+  "elapsed_seconds": 2.496
+}
