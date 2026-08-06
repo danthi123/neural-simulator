@@ -1,0 +1,160 @@
+{
+  "probe": "gateB_stage0_seed_robustness",
+  "stage": "engineering_robustness_smoke",
+  "note": "not a formal capability partition; confirms Stage-0 tonic-output phenotype across fresh seeds",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "source_sha": "45a24c4f9186b61055f9becb31b93da5086160e3",
+  "current_pA": 100.0,
+  "steps": 1000,
+  "criteria": {
+    "minimum_bin_rate_hz": 40.0,
+    "maximum_bin_rate_hz": 80.0,
+    "all_cells_fire": true,
+    "maximum_same_step_fraction": 0.25,
+    "minimum_distinct_first_spike_steps": 8,
+    "minimum_first_spike_span_ms": 8.0,
+    "external_current_exact_zero": true,
+    "intrinsic_vector_immutable": true
+  },
+  "n_seeds": 12,
+  "n_pass": 11,
+  "all_pass": false,
+  "rows": [
+    {
+      "seed": 810001,
+      "population_rate_hz": 63.35,
+      "cells_firing": 40,
+      "min_bin_hz": 59.74999999999999,
+      "max_bin_hz": 64.74999999999999,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810002,
+      "population_rate_hz": 65.225,
+      "cells_firing": 40,
+      "min_bin_hz": 60.75,
+      "max_bin_hz": 66.75,
+      "audit_pass": true,
+      "physiology_pass": false,
+      "failed_checks": [
+        "same_step_fraction"
+      ],
+      "pass": false
+    },
+    {
+      "seed": 810003,
+      "population_rate_hz": 62.9,
+      "cells_firing": 40,
+      "min_bin_hz": 57.75,
+      "max_bin_hz": 64.25,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810004,
+      "population_rate_hz": 64.85,
+      "cells_firing": 40,
+      "min_bin_hz": 59.24999999999999,
+      "max_bin_hz": 66.25,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810005,
+      "population_rate_hz": 61.8,
+      "cells_firing": 40,
+      "min_bin_hz": 57.99999999999999,
+      "max_bin_hz": 62.5,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810006,
+      "population_rate_hz": 65.725,
+      "cells_firing": 40,
+      "min_bin_hz": 60.99999999999999,
+      "max_bin_hz": 67.0,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810007,
+      "population_rate_hz": 62.15,
+      "cells_firing": 40,
+      "min_bin_hz": 57.5,
+      "max_bin_hz": 63.25,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810008,
+      "population_rate_hz": 65.6,
+      "cells_firing": 40,
+      "min_bin_hz": 61.5,
+      "max_bin_hz": 67.0,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810009,
+      "population_rate_hz": 62.6,
+      "cells_firing": 40,
+      "min_bin_hz": 59.0,
+      "max_bin_hz": 63.75,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810010,
+      "population_rate_hz": 62.025,
+      "cells_firing": 40,
+      "min_bin_hz": 59.0,
+      "max_bin_hz": 63.49999999999999,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810011,
+      "population_rate_hz": 60.325,
+      "cells_firing": 40,
+      "min_bin_hz": 57.24999999999999,
+      "max_bin_hz": 62.24999999999999,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810012,
+      "population_rate_hz": 63.0,
+      "cells_firing": 40,
+      "min_bin_hz": 59.24999999999999,
+      "max_bin_hz": 64.5,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    }
+  ],
+  "elapsed_seconds": 0.7289894000005006
+}

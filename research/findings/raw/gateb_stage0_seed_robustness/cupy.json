@@ -1,0 +1,160 @@
+{
+  "probe": "gateB_stage0_seed_robustness",
+  "stage": "engineering_robustness_smoke",
+  "note": "not a formal capability partition; confirms Stage-0 tonic-output phenotype across fresh seeds",
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "source_sha": "45a24c4f9186b61055f9becb31b93da5086160e3",
+  "current_pA": 100.0,
+  "steps": 1000,
+  "criteria": {
+    "minimum_bin_rate_hz": 40.0,
+    "maximum_bin_rate_hz": 80.0,
+    "all_cells_fire": true,
+    "maximum_same_step_fraction": 0.25,
+    "minimum_distinct_first_spike_steps": 8,
+    "minimum_first_spike_span_ms": 8.0,
+    "external_current_exact_zero": true,
+    "intrinsic_vector_immutable": true
+  },
+  "n_seeds": 12,
+  "n_pass": 11,
+  "all_pass": false,
+  "rows": [
+    {
+      "seed": 810001,
+      "population_rate_hz": 65.15,
+      "cells_firing": 40,
+      "min_bin_hz": 59.24999999999999,
+      "max_bin_hz": 67.0,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810002,
+      "population_rate_hz": 65.1,
+      "cells_firing": 40,
+      "min_bin_hz": 59.74999999999999,
+      "max_bin_hz": 67.24999999999999,
+      "audit_pass": true,
+      "physiology_pass": false,
+      "failed_checks": [
+        "same_step_fraction"
+      ],
+      "pass": false
+    },
+    {
+      "seed": 810003,
+      "population_rate_hz": 65.425,
+      "cells_firing": 40,
+      "min_bin_hz": 61.74999999999999,
+      "max_bin_hz": 66.75,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810004,
+      "population_rate_hz": 63.4,
+      "cells_firing": 40,
+      "min_bin_hz": 58.75,
+      "max_bin_hz": 65.25,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810005,
+      "population_rate_hz": 65.15,
+      "cells_firing": 40,
+      "min_bin_hz": 60.0,
+      "max_bin_hz": 67.5,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810006,
+      "population_rate_hz": 65.5,
+      "cells_firing": 40,
+      "min_bin_hz": 61.25,
+      "max_bin_hz": 67.0,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810007,
+      "population_rate_hz": 63.075,
+      "cells_firing": 40,
+      "min_bin_hz": 60.25,
+      "max_bin_hz": 64.25,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810008,
+      "population_rate_hz": 63.325,
+      "cells_firing": 40,
+      "min_bin_hz": 59.24999999999999,
+      "max_bin_hz": 65.0,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810009,
+      "population_rate_hz": 65.025,
+      "cells_firing": 40,
+      "min_bin_hz": 60.49999999999999,
+      "max_bin_hz": 66.5,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810010,
+      "population_rate_hz": 61.925,
+      "cells_firing": 40,
+      "min_bin_hz": 58.49999999999999,
+      "max_bin_hz": 64.25,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810011,
+      "population_rate_hz": 63.825,
+      "cells_firing": 40,
+      "min_bin_hz": 59.74999999999999,
+      "max_bin_hz": 66.25,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    },
+    {
+      "seed": 810012,
+      "population_rate_hz": 65.775,
+      "cells_firing": 40,
+      "min_bin_hz": 60.49999999999999,
+      "max_bin_hz": 67.0,
+      "audit_pass": true,
+      "physiology_pass": true,
+      "failed_checks": [],
+      "pass": true
+    }
+  ],
+  "elapsed_seconds": 5.258151857000485
+}
