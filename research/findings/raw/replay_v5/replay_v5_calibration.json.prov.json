@@ -1,0 +1,31 @@
+{
+ "run_id": "1786032710-78895",
+ "runner": "research/runners/_replay_cortical_consolidation_gate_v5.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-replay-v5/research/runners/_replay_cortical_consolidation_gate_v5.py",
+  "--seeds",
+  "412",
+  "413",
+  "--out",
+  "research/findings/raw/replay_v5/replay_v5_calibration.json"
+ ],
+ "git_sha": "071b68bca",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T12:11:50",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 542.6,
+ "corpus_check_query": "replay consolidation CA1 to cortex reinstatement",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/replay_v5/replay_v5_calibration.json"
+}
