@@ -1,0 +1,28 @@
+{
+ "run_id": "1786044475-194421",
+ "runner": "research/runners/aggregate_source_monitor_v7_seeds.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-source-v7/research/runners/aggregate_source_monitor_v7_seeds.py",
+  "--phase",
+  "development"
+ ],
+ "git_sha": "b89c3edc0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T15:27:55",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 873.6,
+ "corpus_check_query": "source monitor v7 intrinsic threshold homeostasis weakest source",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/source_monitor_v7_generalization/development_653.json"
+}
