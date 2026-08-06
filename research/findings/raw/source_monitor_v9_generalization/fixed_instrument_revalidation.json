@@ -1,0 +1,289 @@
+{
+  "v6": {
+    "calibration": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 650,
+          "status": "CALIBRATION_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1783,
+          "min_L": 0.1783,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 651,
+          "status": "CALIBRATION_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1667,
+          "min_L": 0.1667,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    },
+    "development": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 652,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1858,
+          "min_L": 0.1858,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 653,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1608,
+          "min_L": 0.1608,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 654,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1825,
+          "min_L": 0.1825,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    }
+  },
+  "v7": {
+    "calibration": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 650,
+          "status": "CALIBRATION_FAIL",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.03,
+          "min_L": 0.41,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "bounded_loss_only_spends_surplus",
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 651,
+          "status": "CALIBRATION_FAIL",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.0067,
+          "min_L": 0.4142,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "bounded_loss_only_spends_surplus",
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    },
+    "development": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 652,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": -0.0358,
+          "min_L": 0.4325,
+          "n_failed": [
+            "heard_source_recalled",
+            "all_source_margins_meet_fixed_floor",
+            "source_swap_follows_afferent_activity",
+            "bounded_loss_only_spends_surplus",
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 653,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.0333,
+          "min_L": 0.4133,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "bounded_loss_only_spends_surplus",
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 654,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.0117,
+          "min_L": 0.4217,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "source_swap_follows_afferent_activity",
+            "bounded_loss_only_spends_surplus",
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    }
+  },
+  "v8": {
+    "calibration": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 650,
+          "status": "UNDEFINED",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.1342,
+          "min_L": 0.1342,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "competition_circuit_is_active_and_lesionable",
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 651,
+          "status": "UNDEFINED",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.1308,
+          "min_L": 0.1308,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "competition_circuit_is_active_and_lesionable",
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    },
+    "development": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 652,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.1325,
+          "min_L": 0.1325,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 653,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": true,
+          "floor_met": false,
+          "min_M": 0.1367,
+          "min_L": 0.135,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor"
+          ]
+        },
+        {
+          "seed": 654,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": false,
+          "min_M": 0.1292,
+          "min_L": 0.1292,
+          "n_failed": [
+            "all_source_margins_meet_fixed_floor",
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    }
+  },
+  "v9": {
+    "calibration": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 650,
+          "status": "CALIBRATION_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1783,
+          "min_L": 0.1783,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 651,
+          "status": "CALIBRATION_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1667,
+          "min_L": 0.1667,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    },
+    "development": {
+      "verdict": "NO-GO",
+      "rows": [
+        {
+          "seed": 652,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1858,
+          "min_L": 0.1858,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 653,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1608,
+          "min_L": 0.1608,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        },
+        {
+          "seed": 654,
+          "status": "DEVELOPMENT_FAIL",
+          "strict_improved": false,
+          "floor_met": true,
+          "min_M": 0.1825,
+          "min_L": 0.1825,
+          "n_failed": [
+            "weakest_source_margin_strictly_improved"
+          ]
+        }
+      ]
+    }
+  }
+}

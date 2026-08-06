@@ -143,6 +143,82 @@ class SourceMonitorCoresidencyGate:
         for gate in (SOURCE_RECALL_GATE, SOURCE_AFFERENT_GATE, APFC_GATE, ACC_GATE):
             self.bridge.set_transmission_gate(gate, 1.0)
         self._zero_learned_weights()
+        self._capture_clean_dynamical_state()
+
+    # -- Fast-dynamical (stepping-history) state ---------------------------------
+    # The Izhikevich sub-threshold state (membrane v, recovery/adaptation u, the
+    # synaptic conductances, refractory + synaptic-pulse timers, firing flags, and
+    # the activity EMA) is mutated by EVERY simulation step and is NOT restored by
+    # settle-to-quiescence (quiescence means "no spikes for a rest block", not
+    # "state reset").  Any recall therefore begins from whatever sub-threshold
+    # state the previous recalls left behind, so two arms measured at different
+    # stepping-history depths (e.g. the intact margins read first, the
+    # competition-lesion margins read after four intervening recalls) are NOT
+    # like-for-like -- a window that changes ZERO weights can shift the margins.
+    # ``reset_dynamical_state`` restores this fast state to the clean
+    # post-construction baseline so both arms are sampled from an IDENTICAL clean
+    # state and differ ONLY in the competition (with noise off the read is then
+    # fully deterministic).  It never touches the LEARNED memory (cp_connections
+    # weights) or adapted set-points (cp_neuron_firing_thresholds), so v7/v8/v9
+    # mechanism state survives the reset.
+    _DYNAMICAL_STATE_ARRAYS = (
+        "cp_membrane_potential_v",
+        "cp_recovery_variable_u",
+        "cp_conductance_g_e",
+        "cp_conductance_g_i",
+        "cp_conductance_g_nmda",
+        "cp_conductance_g_nmda_rise",
+        "cp_conductance_g_gabab",
+        "cp_conductance_g_gabab_slow",
+        "cp_conductance_g_nmda_recurrent",
+        "cp_conductance_g_nmda_recurrent_rise",
+        "cp_conductance_g_coincidence",
+        "cp_conductance_g_coincidence_rise",
+        "cp_conductance_g_graded_plateau",
+        "cp_conductance_g_graded_plateau_rise",
+        "cp_firing_states",
+        "cp_prev_firing_states",
+        "cp_refractory_timers",
+        "cp_synapse_pulse_progress",
+        "cp_synapse_pulse_timers",
+        "cp_external_input_current",
+        "cp_neuron_activity_ema",
+        "cp_viz_activity_timers",
+        "cp_ou_current",
+        "cp_eligibility_trace",
+        "cp_hebb_coactivity_trace",
+        "cp_stp_u",
+        "cp_stp_x",
+    )
+
+    def _capture_clean_dynamical_state(self) -> None:
+        """Snapshot the clean post-construction fast-dynamical state."""
+
+        self._clean_dynamical_snapshot: dict[str, np.ndarray] = {}
+        for name in self._DYNAMICAL_STATE_ARRAYS:
+            arr = getattr(self.bridge, name, None)
+            if arr is None or not hasattr(arr, "shape") or not hasattr(arr, "dtype"):
+                continue
+            self._clean_dynamical_snapshot[name] = arr.copy()
+
+    def reset_dynamical_state(self) -> dict[str, int]:
+        """Restore fast-dynamical state to the clean post-construction baseline.
+
+        Learned weights (``cp_connections``) and adapted thresholds
+        (``cp_neuron_firing_thresholds``) are deliberately NOT in the snapshot, so
+        the memory and any v7/v8/v9 mechanism set-point survive; only the
+        stepping-history-carrying sub-threshold state is reset.
+        """
+
+        restored = 0
+        for name, snap in getattr(self, "_clean_dynamical_snapshot", {}).items():
+            cur = getattr(self.bridge, name, None)
+            if cur is not None and getattr(cur, "shape", None) == snap.shape:
+                cur[...] = snap
+            else:
+                setattr(self.bridge, name, snap.copy())
+            restored += 1
+        return {"arrays_reset": restored}
 
     def _validate_config(self) -> None:
         c = self.config

@@ -1,0 +1,70 @@
+{
+  "control": "stepping_history_confound_fixed_instrument",
+  "question": "Under the per-recall dynamical-state reset, does a zero-weight window still manufacture weakest_source_margin_strictly_improved=True?",
+  "result": "No. The OLD instrument (no reset) reproduces strict=True on every dev seed; the FIXED instrument yields strict=False with min(M)==min(L), so the reset removes the confound.",
+  "rows": [
+    {
+      "seed": 652,
+      "old_instrument": {
+        "seed": 652,
+        "fixed_instrument": false,
+        "weight_delta_l1": 0.0,
+        "min_M": 0.184167,
+        "min_L": 0.1775,
+        "strict": true,
+        "floor_met": true
+      },
+      "fixed_instrument": {
+        "seed": 652,
+        "fixed_instrument": true,
+        "weight_delta_l1": 0.0,
+        "min_M": 0.185833,
+        "min_L": 0.185833,
+        "strict": false,
+        "floor_met": true
+      }
+    },
+    {
+      "seed": 653,
+      "old_instrument": {
+        "seed": 653,
+        "fixed_instrument": false,
+        "weight_delta_l1": 0.0,
+        "min_M": 0.164167,
+        "min_L": 0.144167,
+        "strict": true,
+        "floor_met": true
+      },
+      "fixed_instrument": {
+        "seed": 653,
+        "fixed_instrument": true,
+        "weight_delta_l1": 0.0,
+        "min_M": 0.160833,
+        "min_L": 0.160833,
+        "strict": false,
+        "floor_met": true
+      }
+    },
+    {
+      "seed": 654,
+      "old_instrument": {
+        "seed": 654,
+        "fixed_instrument": false,
+        "weight_delta_l1": 0.0,
+        "min_M": 0.186667,
+        "min_L": 0.1825,
+        "strict": true,
+        "floor_met": true
+      },
+      "fixed_instrument": {
+        "seed": 654,
+        "fixed_instrument": true,
+        "weight_delta_l1": 0.0,
+        "min_M": 0.1825,
+        "min_L": 0.1825,
+        "strict": false,
+        "floor_met": true
+      }
+    }
+  ]
+}
