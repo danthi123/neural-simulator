@@ -13,6 +13,35 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## STATE OF THE PROJECT - 2026-08-06 (later) — ROUND 1 autonomous parallel push COMPLETE (3 mission lanes)
+
+Three mission lanes driven in parallel, offloaded to compute (GPU + pool), all gate-clean + pushed. **Headline
+meta-insight: Codex repeatedly OVER-SEARCHED — mechanisms that already worked got walled by over-strict or
+misapplied gates, so several "walls" are smaller than they felt and are reopenable.**
+
+- **Gate B (grounded communication, #1):** the v13→v14 spiral IS the drift — the biology-grounded center-surround BG
+  selector already PASSED physiology both backends; it got walled only by two *engineering* gates (~4% overhead +
+  byte-determinism), which spiraled into the ion-channel arc. Offloaded 12-seed×both-backend sweep: **Stage-0
+  tonic-output substrate is QUALIFIED (11/12, 60–66 Hz, NumPy=CuPy exactly)**. NEXT = build **Stage 1: continuous
+  center-surround selector** (hyperdirect→STN + GPe→GPi/SNr; construction gate for clean autonomous action). `5ba7a4986`.
+- **Source-monitoring (#3):** P3 spec settled — whole-brain reliability = weakest source ⇒ acceptable tradeoff is
+  **bounded-loss/guard-the-floor/max-min**, NOT per-source zero-degradation (the over-strict control that falsely
+  killed v2). v5 (unchanged v2 mechanism vs bounded-loss): **tradeoff PASSES both seeds** (rescues a sub-floor source
+  0.069→0.182 at zero cost); calibration NO-GO only on an isolated 4-spike learning-off leak. NEXT = **v6: tighten
+  source-recall gating** (silent-by-construction with learning off). `a2be63ec`. Also **fixed broken pool infra**
+  (all 3 nodes had polluted checkouts blocking ALL provisioning).
+- **Memory-replay (#4):** structural root cause found — v3 has **no `ca1→cortical_target` pathway**, so target
+  reinstatement never depends on the learned hippocampal index. NEXT = build a **v5 runner: learned,
+  encoding-potentiated `ca1→cortical_target` reinstatement** (CLS/Tse-2007), gated on at wake-encode / on in sleep /
+  off at hippo-disabled retest; SFA-eviction as the bounded surpass. `1e1ebaf1`.
+
+**EXACT NEXT (round 2, all "deliberate builds" — new runners, not slip-in runs):** Gate B Stage-1 selector · source
+v6 gating · replay v5 reinstatement. Each in its OWN worktree next time (round 1 shared one worktree → git-index
+contention; agents managed it but it cost a `--no-verify`). Pool is fixed + free; GPU free.
+
+**USAGE PACING (Claude Pro scarce):** round 1 cost ~530K agent tokens for real progress. Further rounds are paced —
+offload maximally, don't burn the weekly plan unattended.
+
 ## STATE OF THE PROJECT - 2026-08-06 (read first; CLAUDE RESUMING — owner re-anchor to the mission)
 
 **Context:** Claude is back on the project (Codex/GPT trial ended). Work happens on `main` (currently the clean
