@@ -1,0 +1,649 @@
+{
+  "runner": "research/runners/_laneC_source_monitor_fair_inhibition_sweep.py",
+  "mode": "own-gain-ceiling",
+  "seeds": [
+    650,
+    651,
+    652,
+    653,
+    654
+  ],
+  "overlaps": [
+    0.2,
+    0.4
+  ],
+  "instrument": "v6 fixed (per-recall reset_dynamical_state + settle), competition OFF",
+  "probe": "intrinsic own-gain (firing-threshold) ceiling, host oracle",
+  "rows": [
+    {
+      "seed": 650,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.17833333333333334,
+        "heard": 0.27166666666666667,
+        "self_generated": 0.25083333333333335
+      },
+      "best_own_rate": {
+        "seen": 0.19416666666666665,
+        "heard": 0.2783333333333333,
+        "self_generated": 0.275
+      },
+      "base_margins": {
+        "seen": 0.03666666666666668,
+        "heard": 0.13666666666666666,
+        "self_generated": 0.045833333333333365
+      },
+      "best_own_gain_margin": {
+        "seen": 0.05249999999999999,
+        "heard": 0.1433333333333333,
+        "self_generated": 0.07000000000000003
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": 0.0067,
+          "1.0": 0.0367,
+          "1.5": 0.04,
+          "2.0": 0.0408,
+          "3.0": 0.0525,
+          "5.0": 0.0,
+          "8.0": 0.0333
+        },
+        "heard": {
+          "0.5": 0.0433,
+          "1.0": 0.1367,
+          "1.5": 0.1375,
+          "2.0": 0.1425,
+          "3.0": 0.1433,
+          "5.0": 0.1375,
+          "8.0": 0.1125
+        },
+        "self_generated": {
+          "0.5": -0.0025,
+          "1.0": 0.0458,
+          "1.5": 0.0392,
+          "2.0": 0.0075,
+          "3.0": 0.0233,
+          "5.0": 0.07,
+          "8.0": 0.0667
+        }
+      },
+      "min_base_margin": 0.03666666666666668,
+      "min_best_own_gain_margin": 0.05249999999999999,
+      "own_gain_min_margin_improvement": 0.01583333333333331,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 1.014
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.19666666666666666,
+        "heard": 0.29083333333333333,
+        "self_generated": 0.16833333333333333
+      },
+      "best_own_rate": {
+        "seen": 0.23583333333333334,
+        "heard": 0.3025,
+        "self_generated": 0.175
+      },
+      "base_margins": {
+        "seen": 0.050833333333333314,
+        "heard": 0.14583333333333334,
+        "self_generated": -0.05666666666666667
+      },
+      "best_own_gain_margin": {
+        "seen": 0.09,
+        "heard": 0.1575,
+        "self_generated": -0.05000000000000002
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": -0.01,
+          "1.0": 0.0508,
+          "1.5": 0.0375,
+          "2.0": 0.0267,
+          "3.0": 0.09,
+          "5.0": 0.0675,
+          "8.0": 0.055
+        },
+        "heard": {
+          "0.5": 0.105,
+          "1.0": 0.1458,
+          "1.5": 0.1533,
+          "2.0": 0.1483,
+          "3.0": 0.1325,
+          "5.0": 0.1575,
+          "8.0": 0.1333
+        },
+        "self_generated": {
+          "0.5": -0.1075,
+          "1.0": -0.0567,
+          "1.5": -0.05,
+          "2.0": -0.0617,
+          "3.0": -0.0967,
+          "5.0": -0.0575,
+          "8.0": -0.0775
+        }
+      },
+      "min_base_margin": -0.05666666666666667,
+      "min_best_own_gain_margin": -0.05000000000000002,
+      "own_gain_min_margin_improvement": 0.006666666666666654,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 0.984
+    },
+    {
+      "seed": 652,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.2225,
+        "heard": 0.19166666666666668,
+        "self_generated": 0.19833333333333333
+      },
+      "best_own_rate": {
+        "seen": 0.23416666666666666,
+        "heard": 0.22583333333333333,
+        "self_generated": 0.2
+      },
+      "base_margins": {
+        "seen": 0.1125,
+        "heard": -0.009999999999999981,
+        "self_generated": -0.003333333333333327
+      },
+      "best_own_gain_margin": {
+        "seen": 0.12416666666666666,
+        "heard": 0.02416666666666667,
+        "self_generated": -0.0016666666666666496
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": 0.0683,
+          "1.0": 0.1125,
+          "1.5": 0.1183,
+          "2.0": 0.1233,
+          "3.0": 0.1242,
+          "5.0": 0.0917,
+          "8.0": 0.0808
+        },
+        "heard": {
+          "0.5": -0.0383,
+          "1.0": -0.01,
+          "1.5": -0.005,
+          "2.0": -0.0167,
+          "3.0": 0.0242,
+          "5.0": -0.0392,
+          "8.0": -0.0408
+        },
+        "self_generated": {
+          "0.5": -0.0667,
+          "1.0": -0.0033,
+          "1.5": -0.0192,
+          "2.0": -0.0383,
+          "3.0": -0.0025,
+          "5.0": -0.0033,
+          "8.0": -0.0017
+        }
+      },
+      "min_base_margin": -0.009999999999999981,
+      "min_best_own_gain_margin": -0.0016666666666666496,
+      "own_gain_min_margin_improvement": 0.008333333333333331,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 1.019
+    },
+    {
+      "seed": 653,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.2708333333333333,
+        "heard": 0.1525,
+        "self_generated": 0.22
+      },
+      "best_own_rate": {
+        "seen": 0.29083333333333333,
+        "heard": 0.2658333333333333,
+        "self_generated": 0.245
+      },
+      "base_margins": {
+        "seen": 0.21333333333333332,
+        "heard": -0.03416666666666668,
+        "self_generated": -0.0016666666666666774
+      },
+      "best_own_gain_margin": {
+        "seen": 0.23333333333333334,
+        "heard": 0.07916666666666664,
+        "self_generated": 0.023333333333333317
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": 0.1708,
+          "1.0": 0.2133,
+          "1.5": 0.2092,
+          "2.0": 0.1992,
+          "3.0": 0.2333,
+          "5.0": 0.2142,
+          "8.0": 0.2125
+        },
+        "heard": {
+          "0.5": -0.06,
+          "1.0": -0.0342,
+          "1.5": 0.035,
+          "2.0": 0.0308,
+          "3.0": -0.0083,
+          "5.0": 0.0417,
+          "8.0": 0.0792
+        },
+        "self_generated": {
+          "0.5": -0.0483,
+          "1.0": -0.0017,
+          "1.5": -0.0233,
+          "2.0": -0.0433,
+          "3.0": 0.0233,
+          "5.0": 0.0133,
+          "8.0": 0.0183
+        }
+      },
+      "min_base_margin": -0.03416666666666668,
+      "min_best_own_gain_margin": 0.023333333333333317,
+      "own_gain_min_margin_improvement": 0.057499999999999996,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 1.012
+    },
+    {
+      "seed": 654,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.2475,
+        "heard": 0.1825,
+        "self_generated": 0.31083333333333335
+      },
+      "best_own_rate": {
+        "seen": 0.26416666666666666,
+        "heard": 0.19583333333333333,
+        "self_generated": 0.32083333333333336
+      },
+      "base_margins": {
+        "seen": 0.061666666666666675,
+        "heard": -0.003333333333333327,
+        "self_generated": 0.12250000000000003
+      },
+      "best_own_gain_margin": {
+        "seen": 0.07833333333333334,
+        "heard": 0.010000000000000009,
+        "self_generated": 0.13250000000000003
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": 0.015,
+          "1.0": 0.0617,
+          "1.5": 0.0525,
+          "2.0": 0.035,
+          "3.0": 0.0783,
+          "5.0": 0.0642,
+          "8.0": 0.0667
+        },
+        "heard": {
+          "0.5": -0.0842,
+          "1.0": -0.0033,
+          "1.5": 0.005,
+          "2.0": 0.01,
+          "3.0": -0.01,
+          "5.0": -0.0408,
+          "8.0": -0.0483
+        },
+        "self_generated": {
+          "0.5": 0.0717,
+          "1.0": 0.1225,
+          "1.5": 0.125,
+          "2.0": 0.1325,
+          "3.0": 0.1208,
+          "5.0": 0.1017,
+          "8.0": 0.0942
+        }
+      },
+      "min_base_margin": -0.003333333333333327,
+      "min_best_own_gain_margin": 0.010000000000000009,
+      "own_gain_min_margin_improvement": 0.013333333333333336,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 0.991
+    },
+    {
+      "seed": 650,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.1825,
+        "heard": 0.26916666666666667,
+        "self_generated": 0.25416666666666665
+      },
+      "best_own_rate": {
+        "seen": 0.20166666666666666,
+        "heard": 0.2816666666666667,
+        "self_generated": 0.3283333333333333
+      },
+      "base_margins": {
+        "seen": -0.08750000000000002,
+        "heard": 0.053333333333333344,
+        "self_generated": -0.009166666666666656
+      },
+      "best_own_gain_margin": {
+        "seen": -0.06833333333333336,
+        "heard": 0.06583333333333335,
+        "self_generated": 0.065
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": -0.1025,
+          "1.0": -0.0875,
+          "1.5": -0.085,
+          "2.0": -0.0683,
+          "3.0": -0.1225,
+          "5.0": -0.1358,
+          "8.0": -0.095
+        },
+        "heard": {
+          "0.5": -0.0108,
+          "1.0": 0.0533,
+          "1.5": 0.0567,
+          "2.0": 0.0592,
+          "3.0": 0.0658,
+          "5.0": 0.0542,
+          "8.0": 0.0533
+        },
+        "self_generated": {
+          "0.5": -0.0225,
+          "1.0": -0.0092,
+          "1.5": -0.0508,
+          "2.0": -0.0617,
+          "3.0": -0.0017,
+          "5.0": 0.0142,
+          "8.0": 0.065
+        }
+      },
+      "min_base_margin": -0.08750000000000002,
+      "min_best_own_gain_margin": -0.06833333333333336,
+      "own_gain_min_margin_improvement": 0.019166666666666665,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 1.031
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.19416666666666665,
+        "heard": 0.29083333333333333,
+        "self_generated": 0.17
+      },
+      "best_own_rate": {
+        "seen": 0.24083333333333334,
+        "heard": 0.2975,
+        "self_generated": 0.17666666666666667
+      },
+      "base_margins": {
+        "seen": -0.04416666666666669,
+        "heard": 0.1175,
+        "self_generated": -0.1008333333333333
+      },
+      "best_own_gain_margin": {
+        "seen": 0.0025000000000000022,
+        "heard": 0.12416666666666665,
+        "self_generated": -0.09416666666666665
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": -0.1,
+          "1.0": -0.0442,
+          "1.5": -0.065,
+          "2.0": -0.0658,
+          "3.0": 0.0025,
+          "5.0": -0.025,
+          "8.0": -0.0383
+        },
+        "heard": {
+          "0.5": 0.0733,
+          "1.0": 0.1175,
+          "1.5": 0.1242,
+          "2.0": 0.1242,
+          "3.0": 0.12,
+          "5.0": 0.1208,
+          "8.0": 0.1
+        },
+        "self_generated": {
+          "0.5": -0.1517,
+          "1.0": -0.1008,
+          "1.5": -0.0942,
+          "2.0": -0.1075,
+          "3.0": -0.1117,
+          "5.0": -0.1258,
+          "8.0": -0.1258
+        }
+      },
+      "min_base_margin": -0.1008333333333333,
+      "min_best_own_gain_margin": -0.09416666666666665,
+      "own_gain_min_margin_improvement": 0.006666666666666654,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 1.017
+    },
+    {
+      "seed": 652,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.2225,
+        "heard": 0.18,
+        "self_generated": 0.18666666666666668
+      },
+      "best_own_rate": {
+        "seen": 0.23416666666666666,
+        "heard": 0.21416666666666667,
+        "self_generated": 0.1975
+      },
+      "base_margins": {
+        "seen": 0.10083333333333333,
+        "heard": -0.025833333333333347,
+        "self_generated": -0.017499999999999988
+      },
+      "best_own_gain_margin": {
+        "seen": 0.11249999999999999,
+        "heard": 0.008333333333333331,
+        "self_generated": -0.006666666666666654
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": 0.0633,
+          "1.0": 0.1008,
+          "1.5": 0.1067,
+          "2.0": 0.1117,
+          "3.0": 0.1125,
+          "5.0": 0.08,
+          "8.0": 0.0692
+        },
+        "heard": {
+          "0.5": -0.0583,
+          "1.0": -0.0258,
+          "1.5": -0.015,
+          "2.0": -0.0183,
+          "3.0": -0.0192,
+          "5.0": 0.0083,
+          "8.0": -0.0433
+        },
+        "self_generated": {
+          "0.5": -0.0817,
+          "1.0": -0.0175,
+          "1.5": -0.0083,
+          "2.0": -0.0117,
+          "3.0": -0.0417,
+          "5.0": -0.0217,
+          "8.0": -0.0067
+        }
+      },
+      "min_base_margin": -0.025833333333333347,
+      "min_best_own_gain_margin": -0.006666666666666654,
+      "own_gain_min_margin_improvement": 0.019166666666666693,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 0.994
+    },
+    {
+      "seed": 653,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.2708333333333333,
+        "heard": 0.15,
+        "self_generated": 0.21
+      },
+      "best_own_rate": {
+        "seen": 0.29083333333333333,
+        "heard": 0.265,
+        "self_generated": 0.25
+      },
+      "base_margins": {
+        "seen": 0.14749999999999996,
+        "heard": -0.07583333333333334,
+        "self_generated": -0.02250000000000002
+      },
+      "best_own_gain_margin": {
+        "seen": 0.16749999999999998,
+        "heard": 0.03916666666666668,
+        "self_generated": 0.017499999999999988
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": 0.11,
+          "1.0": 0.1475,
+          "1.5": 0.1433,
+          "2.0": 0.1333,
+          "3.0": 0.1675,
+          "5.0": 0.1483,
+          "8.0": 0.1467
+        },
+        "heard": {
+          "0.5": -0.1025,
+          "1.0": -0.0758,
+          "1.5": -0.0092,
+          "2.0": -0.01,
+          "3.0": -0.045,
+          "5.0": 0.0083,
+          "8.0": 0.0392
+        },
+        "self_generated": {
+          "0.5": -0.0825,
+          "1.0": -0.0225,
+          "1.5": -0.0125,
+          "2.0": -0.0258,
+          "3.0": -0.0558,
+          "5.0": 0.0175,
+          "8.0": 0.0025
+        }
+      },
+      "min_base_margin": -0.07583333333333334,
+      "min_best_own_gain_margin": 0.017499999999999988,
+      "own_gain_min_margin_improvement": 0.09333333333333332,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 1.026
+    },
+    {
+      "seed": 654,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "probe": "own-gain-episode-to-source-weight-scaling ceiling (host oracle)",
+      "competition": "OFF (own-gain only)",
+      "lever_engaged": true,
+      "base_own_rate": {
+        "seen": 0.24,
+        "heard": 0.18583333333333332,
+        "self_generated": 0.3125
+      },
+      "best_own_rate": {
+        "seen": 0.2808333333333333,
+        "heard": 0.2025,
+        "self_generated": 0.33166666666666667
+      },
+      "base_margins": {
+        "seen": -0.02583333333333332,
+        "heard": -0.07999999999999999,
+        "self_generated": 0.08499999999999999
+      },
+      "best_own_gain_margin": {
+        "seen": 0.015000000000000013,
+        "heard": -0.0633333333333333,
+        "self_generated": 0.10416666666666666
+      },
+      "best_own_gain_margin_curve": {
+        "seen": {
+          "0.5": -0.0442,
+          "1.0": -0.0258,
+          "1.5": -0.05,
+          "2.0": -0.0375,
+          "3.0": 0.015,
+          "5.0": -0.0133,
+          "8.0": -0.0133
+        },
+        "heard": {
+          "0.5": -0.1017,
+          "1.0": -0.08,
+          "1.5": -0.0733,
+          "2.0": -0.0633,
+          "3.0": -0.0658,
+          "5.0": -0.1225,
+          "8.0": -0.1283
+        },
+        "self_generated": {
+          "0.5": 0.0342,
+          "1.0": 0.085,
+          "1.5": 0.0908,
+          "2.0": 0.08,
+          "3.0": 0.0825,
+          "5.0": 0.0625,
+          "8.0": 0.1042
+        }
+      },
+      "min_base_margin": -0.07999999999999999,
+      "min_best_own_gain_margin": -0.0633333333333333,
+      "own_gain_min_margin_improvement": 0.01666666666666669,
+      "own_gain_cannot_clear_floor": true,
+      "best_clears_0p15_floor": false,
+      "elapsed_seconds": 1.035
+    }
+  ]
+}
