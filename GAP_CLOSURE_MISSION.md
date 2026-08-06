@@ -54,6 +54,20 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   keeps sampling → its dominant action is repeatedly unrewarded → the validated negative arm punishes it → DIVERGE.
   Amplitude-only OU cannot (measured 40–600 pA). ⚠️ 10 PRE-EXISTING test failures in
   `tests/test_d1_d2_asymmetry.py`+`test_neuromodulators.py` (NOT introduced — fail identically with the edit stashed).
+  **Stage 2d (uncertainty-gated exploration) = NO-GO on the per-seed steer gate, but the LANE'S BIGGEST ADVANCE**
+  (`ae6a23f10`, merged `7f51dc300`): it found the CONTINGENCY MEASUREMENT ITSELF was CONFOUNDED. Stage-2c's yoked
+  control shared wiring with the master brain, so the yoked brain did the target whenever the master did → it
+  experienced a REAL contingency (that is why 2c D_yoked was 1.00). Fixed with **action-decoupled reward**
+  (Hammond-1980 contingency degradation): dropped mean **D_yoked 1.00 → 0.00**, so measured correctly the mechanism
+  WORKS at the mean — **D_contingent − D_yoked ≈ 1.00**. 3/4 frozen criteria PASS (reward-OFF byte-identical, both
+  lesions, reversal). The SOLE residual is per-seed VARIANCE: the un-learned selector samples its bias action ~70%
+  (OU 40–600 can't equalize), so decoupled rewards land unevenly + the near-deterministic WTA amplifies it into a
+  per-seed coin-flip that fails the strict ≥5/6 steer gate — NOT systematic yoked steering. NEXT = **directed
+  novelty-biased exploration** (shipped `from_novelty` rule; Oudeyer/Schmidhuber) — add excitatory drive to the
+  LESS-sampled action until frequencies equalize → decoupled reward lands ~50/50 → per-seed D_yoked ~0 low-variance →
+  steer passes. (Must stay a NEURAL novelty-gated drive, not host action-picking.) Follow-ups: the committed
+  numpy.json predates the `attributable_to` addition (missing attribution fields, science unchanged); the gate-off
+  control ran on only 1 seed (gate not cleanly isolated — honestly flagged, not overclaimed).
 - **Source v6 (#3) — GO.** Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
   drive), drifting over threshold during the immediately-following read. Fix = settle-to-quiescence recall gate; the
@@ -122,9 +136,10 @@ replay SFA died at startup with ZERO progress** (no commits) — their worktrees
 are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
 
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
-(1) Gate B **uncertainty-gated exploration** (Bogacz-Brown familiarity / moat D.04 / tonic-DA MSN) — the #1 lane;
-Stage-2c opponent-RPE DONE (reversal now PASSES, negative arm + neural critic validated), so the remaining wall is
-the PROTOCOL/operating-point (dense reward + locking selector), which uncertainty-gated exploration is named to break
+(1) Gate B **directed novelty-biased exploration** (shipped `from_novelty`; equalize action sampling so decoupled
+reward lands ~50/50 → per-seed D_yoked variance collapses → steer passes) — the #1 lane, and CLOSE: Stage-2d fixed
+the confounded yoked control (action-decoupled reward), so contingency divergence is now REAL at the mean (≈1.00)
+with 3/4 criteria passing; only per-seed variance from unequal sampling remains
 · (2) source **v9 = Vogels–Sprekeler ISP** on `interneuron→rival`
 GABA-A synapses (v6/v7/v8 all defended an activity LEVEL, not the CONTRAST the criterion measures — v9 targets the
 margin via rival inhibition / E-I balance) · (3) replay **emergent homeostatic self-calibration** of the
