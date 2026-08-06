@@ -68,6 +68,17 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   steer passes. (Must stay a NEURAL novelty-gated drive, not host action-picking.) Follow-ups: the committed
   numpy.json predates the `attributable_to` addition (missing attribution fields, science unchanged); the gate-off
   control ran on only 1 seed (gate not cleanly isolated — honestly flagged, not overclaimed).
+  **Stage 2e (directed novelty-biased exploration) = NO-GO steer 4/6 — but ONE seed from the GO** (`6d5831c23`,
+  merged `a320f3b64`): directed novelty (neural, extra excitatory drive to the under-sampled action's proposal pop,
+  no host action-pick) measurably EQUALIZED sampling (balance-err 0.018, yoked train-p ≈0.50 vs ~30/70 bias) and
+  REMOVED the 2d killer — all 6 per-seed D_yoked now ≤0 (730605 +1.0→−0.75), D_contingent_exploring = 1.0, reversal
+  still PASS. steer 4/6 (need ≥5); the two confidence-gating variants pass DIFFERENT seeds → **union 5/6**, only the
+  maximally-biased seed 730604 (baseline p0=1.0) fails both. Residual EXACTLY located: the confidence read-out
+  (str_d1 value-difference under decoupled reward) cannot separate genuine action→reward contingency from a
+  coincidental yoked reward STREAK. NEXT = **Stage 2f: contingency-based confidence gate** — gate the drive + OU σ on
+  **ΔP = P(reward|action) − P(reward|no-action)** (Hammond), not raw value magnitude → yoked ΔP≈0 keeps exploring
+  (D_yoked~0), contingent ΔP high fades to exploit. Substrate exists: the opponent D2/indirect "reward-omitted" arm
+  already carries the evidence — route it in as a **D1−D2 contrast**. Targets exactly the 5/6-vs-6/6 residual.
 - **Source v6 (#3) — ⛔ calibration "GO" LATER VOIDED** (stepping-history instrument artifact — see the instrument-fix
   note at the end of this source entry; the leak-closure sub-result survives). Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
@@ -162,10 +173,10 @@ replay SFA died at startup with ZERO progress** (no commits) — their worktrees
 are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
 
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
-(1) Gate B **directed novelty-biased exploration** (shipped `from_novelty`; equalize action sampling so decoupled
-reward lands ~50/50 → per-seed D_yoked variance collapses → steer passes) — the #1 lane, and CLOSE: Stage-2d fixed
-the confounded yoked control (action-decoupled reward), so contingency divergence is now REAL at the mean (≈1.00)
-with 3/4 criteria passing; only per-seed variance from unequal sampling remains
+(1) Gate B **Stage 2f: contingency-based (ΔP) confidence gate** — gate the directed-novelty drive + OU σ on
+ΔP = P(reward|action) − P(reward|no-action) (Hammond) via the opponent D1−D2 "reward-omitted" contrast — the #1 lane
+and VERY CLOSE: Stage-2e reached steer 4/6 (union 5/6 across two gating variants), directed novelty removed the 2d
+killer (all D_yoked≤0, D_contingent 1.0, reversal PASS); only the maximally-biased seed fails, which ΔP-gating targets
 · (2) source — **instrument now FIXED** (v6/v9 calib GOs were
 stepping-history artifacts → NO-GO; no real GO ever); the margin criterion is UNSATISFIABLE under disjoint patterns
 (rival burden=0), so NEXT is a protocol/class change: add episode-pattern **OVERLAP** (real recall-time rival
