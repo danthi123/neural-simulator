@@ -1,0 +1,40 @@
+{
+ "run_id": "1786039965-154155",
+ "runner": "research/runners/_vocal_gateb_stage2b_per_action_da.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage2b/research/runners/_vocal_gateb_stage2b_per_action_da.py",
+  "--mode",
+  "calibrate",
+  "--seed",
+  "730605",
+  "--target",
+  "0",
+  "--n-train",
+  "25",
+  "--n-test",
+  "16",
+  "--ou-sigma",
+  "120",
+  "--out",
+  "research/findings/raw/gateb_stage2b_per_action_da/cupy_confirm.json"
+ ],
+ "git_sha": "b89c3edc0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T14:12:45",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1502.6,
+ "corpus_check_query": "gate B per-action compartmentalised dopamine action credit",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage2b_per_action_da/cupy_confirm.json"
+}

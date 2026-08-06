@@ -1,0 +1,38 @@
+{
+ "run_id": "1786039111-144596",
+ "runner": "research/runners/_vocal_gateb_stage2b_per_action_da.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage2b/research/runners/_vocal_gateb_stage2b_per_action_da.py",
+  "--mode",
+  "calibrate",
+  "--seed",
+  "730501",
+  "--target",
+  "0",
+  "--n-train",
+  "15",
+  "--n-test",
+  "12",
+  "--reward-lr",
+  "0.02"
+ ],
+ "git_sha": "b89c3edc0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T13:58:31",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 607.9,
+ "corpus_check_query": "gate B per-action compartmentalised dopamine action credit",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage2b_per_action_da/calibrate_numpy_lr0.02.json"
+}
