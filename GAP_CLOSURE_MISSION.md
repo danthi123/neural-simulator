@@ -42,6 +42,18 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   baseline (negative RPE → DA dip → D1-LTD on the over-selected route)** — substrate ships `reward_aversive_scale` +
   `enable_d1_d2_asymmetry` (both OFF); the baseline must be a NEURAL critic estimate (not a host EMA) — plus sustained
   tonic-DA-modulated exploration. This is the arm that lets contingent DIVERGE from yoked + makes reversal possible.
+  **Stage 2c (opponent negative-RPE) = NO-GO on contingency, but a real banked advance** (`a395fc918`, merged
+  `ceccedb18`): the negative arm WORKS — **reversal FLIPPED FAIL→PASS (P(B) 0.00→1.00)**, the DA dip measurably
+  depresses the now-unrewarded dominant action (appetitive-only 2b couldn't). Baseline is genuinely NEURAL (the
+  executed action's `str_d1` spiking-pop rate, advantage-style; not a host EMA). Lesions pass, reward-OFF
+  byte-identical, additive gated `sim/bridge.py` hook. Contingency STILL fails (D_contingent−yoked=0.00) but the root
+  cause is now isolated as a **PROTOCOL/OPERATING-POINT wall, NOT the credit mechanism**: dense reward + a locking
+  selector mean the yoked control also does the dominant action ~90%, so both saturate and the negative arm has
+  almost no unrewarded dominant executions to punish ("a perfect critic can't fix this"). NEXT = **uncertainty-gated
+  exploration** (Bogacz-Brown familiarity / moat D.04 / tonic-DA MSN) so the decoupled yoked brain stays uncertain +
+  keeps sampling → its dominant action is repeatedly unrewarded → the validated negative arm punishes it → DIVERGE.
+  Amplitude-only OU cannot (measured 40–600 pA). ⚠️ 10 PRE-EXISTING test failures in
+  `tests/test_d1_d2_asymmetry.py`+`test_neuromodulators.py` (NOT introduced — fail identically with the edit stashed).
 - **Source v6 (#3) — GO.** Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
   drive), drifting over threshold during the immediately-following read. Fix = settle-to-quiescence recall gate; the
@@ -87,9 +99,10 @@ replay SFA died at startup with ZERO progress** (no commits) — their worktrees
 are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
 
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
-(1) Gate B **opponent/negative-RPE** (reward-expectation baseline → DA dip → D1-LTD; `reward_aversive_scale` +
-`enable_d1_d2_asymmetry`, both OFF; NEURAL critic baseline) + tonic-DA exploration — the #1 lane, breaks the
-appetitive-only rich-get-richer wall (NOT YET RUN) · (2) source **v8** (Turrigiano synaptic scaling; v7 threshold
+(1) Gate B **uncertainty-gated exploration** (Bogacz-Brown familiarity / moat D.04 / tonic-DA MSN) — the #1 lane;
+Stage-2c opponent-RPE DONE (reversal now PASSES, negative arm + neural critic validated), so the remaining wall is
+the PROTOCOL/operating-point (dense reward + locking selector), which uncertainty-gated exploration is named to break
+· (2) source **v8** (Turrigiano synaptic scaling; v7 threshold
 homeostasis was dev-NO-GO — masking broke competition) · (3) replay **order-sensitive STDP / sequence-replay
 consolidation** (v5+SFA CLOSED the interference wall both seeds; sole residual = the order control, root cause = the
 order-blind rate-window Hebbian rule). All three "owed" lanes from the last greenlight are DONE + integrated; these
