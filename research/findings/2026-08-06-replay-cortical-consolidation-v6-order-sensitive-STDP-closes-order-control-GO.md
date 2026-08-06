@@ -14,6 +14,8 @@ artifacts:
 
 # Order-sensitive STDP consolidation CLOSES the replay-order control on BOTH calibration seeds — v6 is 2-seed GO with every v5 CLS signature and false-recall<0.15 intact
 
+> **UPDATE 2026-08-06 — the 2-seed GO did NOT survive multiseed validation.** Running this FROZEN v6 mechanism on the disjoint development seeds (414/415/410) is NO-GO on all three: retest false recall 0.46–0.50 (vs the 0.15 ceiling) and order margins ~0 (vs +0.01). Isolation shows the false-recall blowup is present even with the order-STDP OFF, i.e. the interference-control operating point is overfit to seeds 412/413, not that the order-STDP is wrong. The 2-seed calibration numbers below stand as reported; the generalization claim does NOT. See [`2026-08-06-replay-cortical-consolidation-v6-multiseed-NO-GO-operating-point-overfit.md`](2026-08-06-replay-cortical-consolidation-v6-multiseed-NO-GO-operating-point-overfit.md).
+
 <!--derived-->
 **Verdict: 2-seed GO (aggregate CALIBRATION_PROMISING; per-seed GO on 412 AND 413).** v5+SFA closed the interference wall but was NO-GO on the sole residual control `intact_beats_shuffled_order` — root cause: the sleep consolidation rule (rate-window Hebbian on a per-event down-state reset) is ORDER-BLIND, so permuting event order preserves the coactivity multiset and intact/shuffled learn the same trace (seed 413's order margin was NEGATIVE, −0.003). v6 adds the named surpass — order-sensitive spike-timing plasticity — and now BOTH seeds pass ALL frozen v5+SFA checks including `intact_beats_shuffled_order` and `false_recall_bounded<=0.15`, with no check failing on either seed.
 
