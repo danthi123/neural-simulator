@@ -95,6 +95,18 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   defends a CONTRAST — wrong mechanism CLASS.** NEXT = **v9 = Vogels–Sprekeler inhibitory synaptic plasticity (ISP)**
   on `interneuron→rival` GABA-A synapses: scale the under-margin source's RIVAL INHIBITION toward a target E/I
   balance → raises the margin without compressing the excitatory code. Secondary: BCM sliding-threshold selectivity.
+  **v9 (Vogels–Sprekeler ISP) = dev NO-GO** (`6cdad674c`, merged `ceecaad50`) — ISP correctly left the excitatory code
+  byte-identical but went INERT: `recall_rival_burden = {seen:0, heard:0, self:0}` every seed — disjoint patterns +
+  silent recall mean rivals NEVER fire during a source's recall, so there is nothing for inhibitory plasticity to act
+  on (the margin is just the source's OWN rate). ⚠️ **INSTRUMENT CONFOUND CAUGHT: the frozen aggregator returned a
+  spurious GO** — adversarial verification showed a control window changing ZERO weights reproduces `strict=True`
+  (settle-to-quiescence does NOT reset the Izh sub-threshold state; intact vs lesion arms sampled at different
+  history depths). Agent corrected the verdict to NO-GO, held-out sealed. ⛔ **This confound affects the whole source
+  lane's margin measurement.** NEXT (2 steps): (1) **FIX THE INSTRUMENT** — full state reset between arms in the
+  criterion (not just quiescence), then re-check whether v6/v7/v8 verdicts still hold; (2) target the weak source's
+  OWN excitatory recall (**BCM metaplastic selectivity** on `episode→source`) OR introduce genuine episode pattern
+  overlap so a real recall-time rival burden exists. Do the instrument fix FIRST — else every source verdict tunes
+  against an artifact (the mission's "the instrument is part of the emulation").
 - **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
   `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
@@ -140,9 +152,10 @@ are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width h
 reward lands ~50/50 → per-seed D_yoked variance collapses → steer passes) — the #1 lane, and CLOSE: Stage-2d fixed
 the confounded yoked control (action-decoupled reward), so contingency divergence is now REAL at the mean (≈1.00)
 with 3/4 criteria passing; only per-seed variance from unequal sampling remains
-· (2) source **v9 = Vogels–Sprekeler ISP** on `interneuron→rival`
-GABA-A synapses (v6/v7/v8 all defended an activity LEVEL, not the CONTRAST the criterion measures — v9 targets the
-margin via rival inhibition / E-I balance) · (3) replay **emergent homeostatic self-calibration** of the
+· (2) source **FIX THE INSTRUMENT FIRST** (v9's aggregator GO was a
+spurious stepping-history artifact; add a full state reset between arms, then re-check v6/v7/v8), THEN BCM
+metaplastic selectivity on the weak source's OWN `episode→source` recall / add real pattern overlap — v9 ISP was
+inert (no rival burden during recall) · (3) replay **emergent homeostatic self-calibration** of the
 interference-control operating point (v6 order-STDP was a 2-seed GO but MULTISEED NO-GO — the SFA/opponent operating
 point host-tuned on 412/413 does not transfer; order-STDP itself is a banked ingredient). Now running **2-wide
 rolling** (owner OK'd some parallel): Gate B Stage-2d (uncertainty-gated exploration) in flight + source v9 (Vogels–
