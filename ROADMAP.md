@@ -197,9 +197,21 @@ its controls and lesions, and is tested at the required seed coverage.
    is incompatible with the fixed GABA-A competition; competition-ON then
    collapses every margin (~0.03) below competition-OFF (~0.41). Structural
    (present at every operating point, incl. v3's canonical), so it also
-   re-diagnoses the v3 NO-GO. Next method (v8): Turrigiano SYNAPTIC SCALING —
-   up-regulate the weakest source's recall synapses while keeping peak
-   detection so the competition still works. No criterion loosened.
+   re-diagnoses the v3 NO-GO. v8 (Turrigiano SYNAPTIC SCALING) and v9
+   (Vogels-Sprekeler inhibitory STDP) were both dev NO-GO. INSTRUMENT
+   CORRECTION (2026-08-06): the `weakest_source_margin_strictly_improved`
+   criterion was stepping-history-dependent — settle-to-quiescence leaves no
+   spikes but does NOT reset the Izhikevich sub-threshold state, and the intact
+   vs competition-lesion arms were read at different history depths, so a
+   zero-weight window manufactured `strict=True`. Under a full per-recall
+   dynamical-state reset the confound is gone (`strict=False`, min(M)==min(L)),
+   and BOTH the v6 AND v9 calibration GO/PASS FLIP to NO-GO — they were
+   artifacts. With disjoint patterns + silent recall the rival burden is 0, so
+   NO competition mechanism can move the weakest source's own margin: the
+   criterion is unsatisfiable under this protocol. Next method must add genuine
+   episode-pattern OVERLAP (a real rival burden) or a BCM metaplastic rule that
+   raises the weak source's OWN excitatory gain — not the inhibition. No
+   criterion loosened; the v6-calibration-GO finding is flagged for retraction.
 4. **Replay consolidation now clears every control except replay-order.** v5+SFA
    reinstates the correct cortical target and beats learned-target, no-sleep,
    reinstatement-lesion, and interference (false-recall) controls on both

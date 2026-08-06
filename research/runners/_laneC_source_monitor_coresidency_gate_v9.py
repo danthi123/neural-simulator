@@ -770,6 +770,125 @@ def evaluate_calibration_seed(
     }
 
 
+def _zero_weight_window(gate: SourceMonitorCoresidencyGateV9, patterns, steps: int) -> float:
+    """Step a recall-like window that changes ZERO weights (Hebbian OFF, iSTDP OFF,
+    competition ON) -- the exact control from the v9 stepping-history finding."""
+
+    b = gate.bridge
+    cfg = b.core_config
+    before = np.asarray(to_host(b.cp_connections.data)).copy()
+    saved_h, saved_i = cfg.enable_hebbian_learning, cfg.enable_inhibitory_stdp
+    cfg.enable_hebbian_learning = False
+    cfg.enable_inhibitory_stdp = False
+    b.set_transmission_gate(SOURCE_COMPETITION_GATE, 1.0)
+    block = int(gate.config.training_steps) + int(gate.config.rest_steps)
+    cycles = int(math.ceil(steps / float(len(patterns) * block)))
+    try:
+        for _ in range(cycles):
+            for pat in patterns:
+                gate._drive(gate._episode_global_indices(pat))
+                for _ in range(int(gate.config.training_steps)):
+                    b._run_one_simulation_step()
+                b.cp_external_input_current[:] = 0.0
+                for _ in range(int(gate.config.rest_steps)):
+                    b._run_one_simulation_step()
+    finally:
+        cfg.enable_hebbian_learning = saved_h
+        cfg.enable_inhibitory_stdp = saved_i
+        b.cp_external_input_current[:] = 0.0
+    after = np.asarray(to_host(b.cp_connections.data))
+    return float(np.abs(after - before).sum())
+
+
+def stepping_history_control(seed: int, *, fixed_instrument: bool = True) -> dict:
+    """Reproduce the v9 zero-weight-window control on one seed.
+
+    A window that changes ZERO weights is inserted before the read, then the
+    runner's exact recall order + the frozen ``weakest_source_margin_strictly_improved``
+    criterion are evaluated.  With ``fixed_instrument=False`` the per-recall
+    dynamical-state reset is disabled (the OLD instrument), which manufactures the
+    spurious ``strict=True``.  With ``fixed_instrument=True`` (the shipped
+    behaviour) both arms are sampled from an identical clean state and the artifact
+    is gone (``strict=False``).
+    """
+
+    c = SourceMonitorConfigV9()
+    patterns = make_episode_patterns(seed, 5, c)
+    g = SourceMonitorCoresidencyGateV9(seed=seed, config=c)
+    if not fixed_instrument:
+        # Disable the reset -> the sub-threshold state carries stepping history.
+        g._clean_dynamical_snapshot = {}
+    g.experience(patterns[0], visual_activity=True)
+    g.experience(patterns[1], auditory_activity=True)
+    g.experience(patterns[2], corollary_discharge=True)
+    g.experience(patterns[3], visual_activity=True, auditory_activity=True)
+    weight_delta_l1 = _zero_weight_window(g, patterns[:3], int(c.istdp_settling_steps))
+    # Runner-exact recall order: intact margins first, then four intervening
+    # recalls, then the competition-lesion margins.
+    m = {
+        "seen": _source_margin(g.recall(patterns[0]), "seen"),
+        "heard": _source_margin(g.recall(patterns[1]), "heard"),
+        "self_generated": _source_margin(g.recall(patterns[2]), "self_generated"),
+    }
+    g.recall(patterns[3])
+    g.recall(patterns[4])
+    g.recall(patterns[0], source_path_lesion=True)
+    g.recall(patterns[0], acc_lesion=True)
+    g.bridge.set_transmission_gate(SOURCE_COMPETITION_GATE, 0.0)
+    try:
+        lesion = {
+            s: _source_margin(g.recall(pat), s)
+            for s, pat in (
+                ("seen", patterns[0]),
+                ("heard", patterns[1]),
+                ("self_generated", patterns[2]),
+            )
+        }
+    finally:
+        g.bridge.set_transmission_gate(SOURCE_COMPETITION_GATE, 1.0)
+    min_m = min(m.values())
+    min_l = min(lesion.values())
+    return {
+        "seed": int(seed),
+        "fixed_instrument": bool(fixed_instrument),
+        "weight_delta_l1": float(weight_delta_l1),
+        "min_M": round(min_m, 6),
+        "min_L": round(min_l, 6),
+        "strict": bool(min_m > min_l),
+        "floor_met": bool(min_m >= MIN_SOURCE_MARGIN),
+    }
+
+
+def run_stepping_history_control() -> dict:
+    """Old-vs-new zero-weight control across the dev seeds; assert the fix holds."""
+
+    rows = []
+    for seed in DEVELOPMENT_SEEDS:
+        old = stepping_history_control(seed, fixed_instrument=False)
+        new = stepping_history_control(seed, fixed_instrument=True)
+        assert old["weight_delta_l1"] == 0.0, f"control window changed weights: {old}"
+        assert new["weight_delta_l1"] == 0.0, f"control window changed weights: {new}"
+        # The whole point: the fixed instrument must NOT manufacture strict=True.
+        assert new["strict"] is False, (
+            f"seed {seed}: fixed instrument still yields strict=True -> the reset "
+            f"did not remove the stepping-history artifact ({new})"
+        )
+        rows.append({"seed": int(seed), "old_instrument": old, "fixed_instrument": new})
+    return {
+        "control": "stepping_history_confound_fixed_instrument",
+        "question": (
+            "Under the per-recall dynamical-state reset, does a zero-weight window "
+            "still manufacture weakest_source_margin_strictly_improved=True?"
+        ),
+        "result": (
+            "No. The OLD instrument (no reset) reproduces strict=True on every dev "
+            "seed; the FIXED instrument yields strict=False with min(M)==min(L), so "
+            "the reset removes the confound."
+        ),
+        "rows": rows,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Run one seed for source-monitor co-residency v9."
@@ -777,7 +896,22 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=CALIBRATION_SEEDS[0])
     parser.add_argument("--phase", choices=tuple(PHASE_SEEDS), default="calibration")
     parser.add_argument("--json", default=None)
+    parser.add_argument(
+        "--control",
+        action="store_true",
+        help="Run the zero-weight stepping-history control (old vs fixed instrument).",
+    )
     args = parser.parse_args()
+
+    if args.control:
+        result = run_stepping_history_control()
+        print(json.dumps(result, indent=2), flush=True)
+        if args.json:
+            out_path = Path(args.json)
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            out_path.write_text(json.dumps(result, indent=2))
+            print(f"[source-monitor-coresidency-v9] wrote {out_path}", flush=True)
+        return 0
 
     row = evaluate_calibration_seed(args.seed, phase=args.phase)
     print(

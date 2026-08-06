@@ -204,8 +204,22 @@ class SourceMonitorCoresidencyGateV6(SourceMonitorCoresidencyGateV2):
         source_path_lesion: bool = False,
         acc_lesion: bool = False,
     ) -> dict:
-        """Settle the substrate to quiescence, then read the learned pathway."""
+        """Settle the substrate to quiescence, then read the learned pathway.
 
+        The read is made history-independent by first restoring the fast Izhikevich
+        sub-threshold state (membrane v, adaptation u, conductances, refractory +
+        pulse timers, firing flags, activity EMA) to the clean post-construction
+        baseline: settle-to-quiescence guarantees no residual SPIKES but does NOT
+        reset sub-threshold state, so without this reset two arms measured at
+        different stepping-history depths (intact margins first, competition-lesion
+        margins after four intervening recalls) are sampled from different states
+        and a zero-weight window can spuriously shift ``min(M) > min(L)``.  The
+        reset restores ONLY fast dynamical state -- learned weights and adapted
+        thresholds are preserved -- so with noise off both arms differ ONLY in the
+        competition (the 2026-08-06 v9 stepping-history confound).
+        """
+
+        self.reset_dynamical_state()
         settle = self._settle_to_quiescence()
         record = super().recall(
             episode_pattern,

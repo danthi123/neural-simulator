@@ -1,0 +1,27 @@
+{
+ "run_id": "1786052635-283018",
+ "runner": "../../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/revalidate.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/revalidate.py",
+  "research/findings/raw/source_monitor_v9_generalization/fixed_instrument_revalidation.json"
+ ],
+ "git_sha": "c70a07a9a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T17:43:55",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 768.0,
+ "corpus_check_query": "source monitor stepping history instrument confound state reset revalidate",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/source_monitor_v9_generalization/fixed_instrument_revalidation.json"
+}
