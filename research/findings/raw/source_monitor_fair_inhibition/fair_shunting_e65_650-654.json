@@ -1,0 +1,470 @@
+{
+  "runner": "research/runners/_laneC_source_monitor_fair_inhibition_sweep.py",
+  "seeds": [
+    650,
+    651,
+    652,
+    653,
+    654
+  ],
+  "overlaps": [
+    0.2,
+    0.4
+  ],
+  "n_shared_interneuron": 12,
+  "interneuron_to_rival_weight": 3.0,
+  "instrument": "v6 fixed (per-recall reset_dynamical_state + settle)",
+  "mechanism": "fair shared self-inclusive divisive normalization",
+  "rows": [
+    {
+      "seed": 650,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 66119.91722106934,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.22333333333333333,
+        "heard": 0.22916666666666669,
+        "self_generated": 0.23083333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.6233333333333333,
+        "heard": 0.6341666666666668,
+        "self_generated": 0.6525000000000001
+      },
+      "min_rival_burden_off": 0.22333333333333333,
+      "margins_M": {
+        "seen": -0.14833333333333334,
+        "heard": 0.019166666666666665,
+        "self_generated": -0.02083333333333337
+      },
+      "margins_L": {
+        "seen": 0.055833333333333346,
+        "heard": 0.11166666666666666,
+        "self_generated": 0.14083333333333337
+      },
+      "min_margin_M": -0.14833333333333334,
+      "min_margin_L": 0.055833333333333346,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "seen",
+      "weak_margin_attributable_to_competition": 1.3764044943820226,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.573
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 82239.64710235596,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.3175,
+        "heard": 0.21666666666666667,
+        "self_generated": 0.3783333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.6275,
+        "heard": 0.6,
+        "self_generated": 0.5725
+      },
+      "min_rival_burden_off": 0.21666666666666667,
+      "margins_M": {
+        "seen": -0.06833333333333336,
+        "heard": -0.015000000000000013,
+        "self_generated": 0.033333333333333326
+      },
+      "margins_L": {
+        "seen": -0.049166666666666664,
+        "heard": 0.17916666666666667,
+        "self_generated": -0.04999999999999999
+      },
+      "min_margin_M": -0.06833333333333336,
+      "min_margin_L": -0.04999999999999999,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "self_generated",
+      "weak_margin_attributable_to_competition": 2.5,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.608
+    },
+    {
+      "seed": 652,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 75597.98490905762,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.25083333333333335,
+        "heard": 0.3425,
+        "self_generated": 0.32
+      },
+      "rival_burden_on": {
+        "seen": 0.49583333333333335,
+        "heard": 0.5449999999999999,
+        "self_generated": 0.6799999999999999
+      },
+      "min_rival_burden_off": 0.25083333333333335,
+      "margins_M": {
+        "seen": -0.06583333333333333,
+        "heard": -0.09083333333333332,
+        "self_generated": 0.00666666666666671
+      },
+      "margins_L": {
+        "seen": 0.08166666666666667,
+        "heard": -0.014999999999999986,
+        "self_generated": 0.05500000000000002
+      },
+      "min_margin_M": -0.09083333333333332,
+      "min_margin_L": -0.014999999999999986,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "heard",
+      "weak_margin_attributable_to_competition": 0.834862385321101,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.597
+    },
+    {
+      "seed": 653,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 85405.01541137695,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.17583333333333334,
+        "heard": 0.26,
+        "self_generated": 0.3875
+      },
+      "rival_burden_on": {
+        "seen": 0.7191666666666667,
+        "heard": 0.6266666666666667,
+        "self_generated": 0.8141666666666667
+      },
+      "min_rival_burden_off": 0.17583333333333334,
+      "margins_M": {
+        "seen": -0.09000000000000002,
+        "heard": 0.09249999999999997,
+        "self_generated": -0.1325
+      },
+      "margins_L": {
+        "seen": 0.16499999999999998,
+        "heard": 0.04000000000000001,
+        "self_generated": -0.00416666666666668
+      },
+      "min_margin_M": -0.1325,
+      "min_margin_L": -0.00416666666666668,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "self_generated",
+      "weak_margin_attributable_to_competition": 0.9685534591194968,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.616
+    },
+    {
+      "seed": 654,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 72435.84056091309,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.19333333333333333,
+        "heard": 0.2925,
+        "self_generated": 0.3783333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.42666666666666664,
+        "heard": 0.49250000000000005,
+        "self_generated": 0.5825
+      },
+      "min_rival_burden_off": 0.19333333333333333,
+      "margins_M": {
+        "seen": 0.0616666666666667,
+        "heard": -0.05833333333333335,
+        "self_generated": -0.07666666666666663
+      },
+      "margins_L": {
+        "seen": 0.13833333333333334,
+        "heard": 0.026666666666666672,
+        "self_generated": 0.035
+      },
+      "min_margin_M": -0.07666666666666663,
+      "min_margin_L": 0.026666666666666672,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "heard",
+      "weak_margin_attributable_to_competition": 1.457142857142857,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.564
+    },
+    {
+      "seed": 650,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 75031.67497253418,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.4291666666666667,
+        "heard": 0.3683333333333333,
+        "self_generated": 0.4116666666666667
+      },
+      "rival_burden_on": {
+        "seen": 0.6716666666666666,
+        "heard": 0.5816666666666667,
+        "self_generated": 0.5608333333333333
+      },
+      "min_rival_burden_off": 0.3683333333333333,
+      "margins_M": {
+        "seen": -0.18333333333333335,
+        "heard": -0.10416666666666669,
+        "self_generated": 0.09749999999999998
+      },
+      "margins_L": {
+        "seen": -0.04666666666666669,
+        "heard": 0.0325,
+        "self_generated": 0.009999999999999981
+      },
+      "min_margin_M": -0.18333333333333335,
+      "min_margin_L": -0.04666666666666669,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "seen",
+      "weak_margin_attributable_to_competition": 0.7454545454545454,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.584
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 75560.27248382568,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.41333333333333333,
+        "heard": 0.29,
+        "self_generated": 0.4633333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.6425,
+        "heard": 0.5974999999999999,
+        "self_generated": 0.5825
+      },
+      "min_rival_burden_off": 0.29,
+      "margins_M": {
+        "seen": -0.060833333333333295,
+        "heard": -0.019166666666666665,
+        "self_generated": 0.029166666666666674
+      },
+      "margins_L": {
+        "seen": -0.09250000000000003,
+        "heard": 0.15250000000000002,
+        "self_generated": -0.05499999999999999
+      },
+      "min_margin_M": -0.060833333333333295,
+      "min_margin_L": -0.09250000000000003,
+      "weakest_source_strictly_improved": true,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "seen",
+      "weak_margin_attributable_to_competition": -0.5205479452054809,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.578
+    },
+    {
+      "seed": 652,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 71318.32389831543,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.3225,
+        "heard": 0.39666666666666667,
+        "self_generated": 0.35833333333333334
+      },
+      "rival_burden_on": {
+        "seen": 0.49583333333333335,
+        "heard": 0.5491666666666666,
+        "self_generated": 0.5966666666666667
+      },
+      "min_rival_burden_off": 0.3225,
+      "margins_M": {
+        "seen": -0.061666666666666675,
+        "heard": -0.10999999999999999,
+        "self_generated": -0.010833333333333361
+      },
+      "margins_L": {
+        "seen": 0.031666666666666676,
+        "heard": -0.012500000000000011,
+        "self_generated": 0.05916666666666667
+      },
+      "min_margin_M": -0.10999999999999999,
+      "min_margin_L": -0.012500000000000011,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "heard",
+      "weak_margin_attributable_to_competition": 0.8863636363636362,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.6
+    },
+    {
+      "seed": 653,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 90848.4252166748,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.31333333333333335,
+        "heard": 0.33166666666666667,
+        "self_generated": 0.5058333333333334
+      },
+      "rival_burden_on": {
+        "seen": 0.7058333333333333,
+        "heard": 0.5975,
+        "self_generated": 0.7516666666666667
+      },
+      "min_rival_burden_off": 0.31333333333333335,
+      "margins_M": {
+        "seen": -0.10000000000000003,
+        "heard": 0.10583333333333333,
+        "self_generated": -0.11083333333333334
+      },
+      "margins_L": {
+        "seen": 0.08666666666666664,
+        "heard": 0.03249999999999997,
+        "self_generated": -0.06833333333333333
+      },
+      "min_margin_M": -0.11083333333333334,
+      "min_margin_L": -0.06833333333333333,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "self_generated",
+      "weak_margin_attributable_to_competition": 0.38345864661654144,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.591
+    },
+    {
+      "seed": 654,
+      "overlap_fraction": 0.4,
+      "core_size": 5,
+      "mechanism": "fair-shared-divisive-normalization",
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 73151.9250869751,
+      "control_zero_weight_strict": false,
+      "control_min_M": 0.0,
+      "control_min_L": 0.0,
+      "rival_burden_off": {
+        "seen": 0.2475,
+        "heard": 0.38666666666666666,
+        "self_generated": 0.4191666666666667
+      },
+      "rival_burden_on": {
+        "seen": 0.5141666666666667,
+        "heard": 0.5758333333333333,
+        "self_generated": 0.5408333333333333
+      },
+      "min_rival_burden_off": 0.2475,
+      "margins_M": {
+        "seen": 0.03416666666666668,
+        "heard": -0.06416666666666665,
+        "self_generated": -0.03166666666666662
+      },
+      "margins_L": {
+        "seen": 0.0975,
+        "heard": -0.039166666666666655,
+        "self_generated": -0.030833333333333324
+      },
+      "min_margin_M": -0.06416666666666665,
+      "min_margin_L": -0.039166666666666655,
+      "weakest_source_strictly_improved": false,
+      "min_margin_M_meets_0p15_floor": false,
+      "weakest_source_by_L": "heard",
+      "weak_margin_attributable_to_competition": 0.38961038961038963,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "elapsed_seconds": 0.586
+    }
+  ]
+}
