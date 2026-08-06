@@ -13,6 +13,44 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## STATE OF THE PROJECT - 2026-08-06 (later²) — ROUND 2 COMPLETE (3 lanes built + verdicted + integrated to main)
+
+All three round-2 "deliberate builds" landed, each in its own worktree (no index contention), gate-clean, pushed, and
+merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/findings/raw/_provenance/*.jsonl`
+(append-only ledgers; resolves multi-lane merges automatically).
+
+- **Gate B Stage-1 (#1) — STAGE1_GO (construction, cross-backend).** Continuous center-surround BG selector on the
+  Stage-0 tonic substrate: no host `selector_reset`, no host GPi tonic, no stop-on-winner, immutable weights, zero
+  external drive to GPi/SNr. Pathways: hyperdirect proposal→STN, GPe→GPi/SNr, + striatal FSI lateral inhibition
+  (Gate A v1 pop reused as the *surround* — NOT a new boundary topology; respects the v11/v12 retirement). 14 checks
+  pass numpy+cupy; mechanism confirmed by single-step tracing (proposal→D1→GPi pause→thalamic release→motor). Honest
+  residual: inter-channel winner-take-all is seed-fragile *without* learning (numpy 3/4, cupy 2/4) — exactly what
+  Stage-2 reward learning supplies. `0ed1d7e39`. NEXT = **Stage 2: reopen the v10 local reward-credit** on this
+  selector (contingent vs yoked, acquisition/expression lesions, multiseed dev+held-out); optional lesion-hardening
+  first. Learning also expected to make WTA seed-robust.
+- **Source v6 (#3) — GO.** Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
+  instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
+  drive), drifting over threshold during the immediately-following read. Fix = settle-to-quiescence recall gate; the
+  v2 bounded-loss win is intact (rescues a sub-floor source at zero cost). Both seeds CALIBRATION_PASS. `321c6a125`.
+  NEXT = **generalization** across dev seeds 652/653/654 → held-out 655/656/657 (frozen mechanism + criteria).
+- **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
+  `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
+  0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
+  "consolidation" condition). NO-GO is narrow + quantified: seed 413 fails only retest false-recall (0.180 vs 0.15)
+  from shared-cue-cell interference — the point-neuron competition limit the gate PREDICTED, i.e. a verdict on the
+  METHOD not the capability. `df1b4563d`. NEXT = **SFA-driven one-of-N eviction** on the target attractor, then
+  multiseed.
+
+**⭐ USAGE MODEL CORRECTED (owner, 2026-08-06) — see memory `feedback_minimize_plan_usage_via_nonclaude_machinery`.**
+Subagent tokens COUNT toward the Claude plan; moving build/debug loops into agents does NOT reduce usage. Reducing
+usage = non-Claude machinery (self-sweeping runners `--seeds` + pool dispatch `queue_add.sh`/`pool_autodispatch.sh` +
+`aggregate_*_seeds.py`), Claude only at the ENDPOINTS (launch + read the aggregate). **Round 2 was the last
+Claude-agent swarm.** The next steps are ALL multi-seed validation ⇒ they route to the POOL, hands-off, not to agents.
+
+**EXACT NEXT:** (1) one-time build a thin `{runner, seed-partition} → enqueue-to-pool → aggregate → one verdict`
+driver; (2) enqueue source-v6 generalization, replay-v5 SFA+multiseed, Gate-B-Stage-1 multiseed to the 36-core pool;
+(3) Claude returns only to read the three aggregate verdicts. Pool is free + idle; GPU free.
+
 ## STATE OF THE PROJECT - 2026-08-06 (later) — ROUND 1 autonomous parallel push COMPLETE (3 mission lanes)
 
 Three mission lanes driven in parallel, offloaded to compute (GPU + pool), all gate-clean + pushed. **Headline
