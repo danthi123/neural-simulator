@@ -141,6 +141,16 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   DIRECTION, not magnitude — winner-proportional inhibition can NEVER lift the loser.** The overlap sweep is now a
   reusable instrument. NEXT = **self-normalised / "fair" inhibition** (each pool inhibited ∝ the RIVAL drive it
   receives, not the winner's output — directly fixes the direction) OR **BCM own-gain** on the weak source's recall.
+  **Fair inhibition + own-gain BOTH = NO-GO** (`c4142dd03`, merged `41b5e3f60`): self-normalised inhibition REGRESSED
+  the metric (divisive normalization needs a graded rate code; under spiking thresholds + fast GABA it rebound-fires
+  silent rivals) and own-gain saturates at the refractory ceiling (best +0.05, never clears 0.15). ⭐⭐ **THE WALL IS
+  AT ENCODING, NOT RECALL: symmetric Hebbian learning potentiates each shared overlap cell EQUALLY to all sources, so
+  at recall shared cells drive rivals at the same ceiling as the target — no recall-time mechanism (suppression OR
+  boost) can separate them.** This reframes the WHOLE lane (v6→v9, fair-inh, own-gain all attacked recall; the
+  problem is learning). NEXT = **competitive/heterosynaptic ENCODING** (each shared cell commits its fan-out to ONE
+  source via outgoing-weight conservation / heterosynaptic LTD) OR dentate-style **pattern separation** before
+  learning; re-run the overlap sweep as the instrument. (Agent also caught its own false-zero lever — a spike-detect
+  set-point mistaken for the gain mechanism — via the lever-efficacy gate; good instrument discipline.)
 - **Replay v5 (#4) — honest NO-GO at the 2-seed bar, capability ESTABLISHED.** Fixed the v3 root cause (v3 had no
   `ca1→cortical_target` pathway). Reinstatement now works + is memory-selective (target fired 445/424 spikes; v3 =
   0). Consolidation is causal + hippocampus-independent at retest on BOTH seeds (the CLS signature; meets the TERMS
@@ -186,11 +196,11 @@ are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width h
 ΔP = P(reward|action) − P(reward|no-action) (Hammond) via the opponent D1−D2 "reward-omitted" contrast — the #1 lane
 and VERY CLOSE: Stage-2e reached steer 4/6 (union 5/6 across two gating variants), directed novelty removed the 2d
 killer (all D_yoked≤0, D_contingent 1.0, reversal PASS); only the maximally-biased seed fails, which ΔP-gating targets
-· (2) source — instrument FIXED + overlap makes the criterion
-SATISFIABLE (rival burden>0), but v6 symmetric competition is RICH-GET-RICHER (direction wall — winner-proportional
-inhibition can't lift the loser). NEXT = **self-normalised / "fair" inhibition** (inhibit each pool ∝ the RIVAL drive
-it receives, not the winner's output) OR **BCM own-gain** on the weak source's recall; re-run on the overlap sweep
-(now the instrument) · (3) replay **emergent homeostatic self-calibration** of the
+· (2) source — the wall is now at **ENCODING, not recall**
+(fair-inhibition + own-gain both NO-GO; recall-time mechanisms can't separate shared cells potentiated equally to all
+sources). NEXT = **competitive/heterosynaptic ENCODING** (each shared cell commits its fan-out to ONE source) OR
+dentate-style **pattern separation** before learning; re-run the overlap sweep as the instrument · (3) replay
+**emergent homeostatic self-calibration** of the
 interference-control operating point (v6 order-STDP was a 2-seed GO but MULTISEED NO-GO — the SFA/opponent operating
 point host-tuned on 412/413 does not transfer; order-STDP itself is a banked ingredient). Now running **2-wide
 rolling** (owner OK'd some parallel): Gate B Stage-2d (uncertainty-gated exploration) in flight + source v9 (Vogels–
