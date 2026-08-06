@@ -90,12 +90,15 @@ its controls and lesions, and is tested at the required seed coverage.
   remaining blocker is a small, isolated learning-off leak, not the tradeoff.
   A metadata-based safety floor and trace-based confidence hooks are scaffolds,
   not final biological honesty.
-- **Replay and memory:** the record contains narrow evidence that uncued
-  hippocampal replay can change cortical weights, and that a localized spiking
-  replay mechanism can run beside a conversational slice. Useful
-  hippocampus-independent recall and replay-driven consolidation have not
-  repeated strongly enough in the current state. The next live memory build is
-  selective hippocampal CA1-to-cortex target reinstatement.
+- **Replay and memory:** learned CA1-to-cortex target reinstatement (v5) makes
+  replay consolidation causal and hippocampus-independent at retest on both
+  calibration seeds, and intrinsic spike-frequency-adaptation one-of-N eviction
+  on the cortical target (v5+SFA, 2026-08-06) then closes the shared-cue-cell
+  interference that leaked false recall on the harder seed (retest false recall
+  under the 0.15 ceiling on both seeds, load-bearing against its own lesion).
+  The remaining blocker is now the replay-ORDER control, not interference: the
+  next mechanism is order-sensitive (spike-timing-dependent) consolidation
+  plasticity so ordered replay potentiates a directional trace shuffled does not.
 - **Perception:** host top-k feature selection has been replaced by competition
   based on spike timing, and its selector and lesion controls work. Fresh
   calibration seeds still fail invariant visual-identity decoding. The next
@@ -197,9 +200,12 @@ its controls and lesions, and is tested at the required seed coverage.
    re-diagnoses the v3 NO-GO. Next method (v8): Turrigiano SYNAPTIC SCALING —
    up-regulate the weakest source's recall synapses while keeping peak
    detection so the competition still works. No criterion loosened.
-4. **Replay consolidation is not repeatable enough.** The next mechanism must
-   reinstate the correct cortical target and beat learned-target, replay-order,
-   and other control explanations across locked seeds.
+4. **Replay consolidation now clears every control except replay-order.** v5+SFA
+   reinstates the correct cortical target and beats learned-target, no-sleep,
+   reinstatement-lesion, and interference (false-recall) controls on both
+   calibration seeds; the sole residual is the replay-ORDER control, whose root
+   cause is the order-blind rate-window Hebbian rule. The next mechanism is
+   order-sensitive (spike-timing-dependent) consolidation plasticity.
 5. **Visual invariance is not learned yet.** The spike-latency selector is not
    enough; locally learned, stable representations must handle changes in
    position and appearance.
