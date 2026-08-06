@@ -67,11 +67,20 @@ its controls and lesions, and is tested at the required seed coverage.
   action selector in Gate A also has a four-seed positive result. These results
   establish small pieces of action and communication, not a self-directed
   conversational mind.
-- **Delayed reward is still open:** Gate B v1, which tests whether local neural
+- **Delayed reward is still open:** Gate B, which tests whether local neural
   activity can assign delayed credit to the action that caused an outcome, is
-  a no-go. Unrelated or yoked reward still creates arbitrary preferences. Gate
-  B v2 adds competing spiking action-value populations and is in calibration;
-  its development and held-out seeds are locked, so no promotion claim is due.
+  a no-go. Unrelated or yoked reward still creates arbitrary preferences. The
+  latest line builds a continuous basal-ganglia selector (Stage 1, a
+  construction go) and adds reward learning on its D1 routes: Stage 2 (a single
+  global dopamine signal) is a no-go because the credit is not action-specific;
+  Stage 2b (a separate dopamine channel per action) fixes that at the synapse
+  level — reward for one action now strengthens only that action's route — but
+  is still a no-go on behaviour, because a reward-only (never-punishing) signal
+  under a winner-take-all selector just reinforces whatever the brain already
+  does, so decoupled reward learns the same thing and the choice cannot be
+  reversed. Next (Stage 2c) adds the missing negative arm: a dip below the
+  expected reward that weakens an action when it goes unrewarded, plus sustained
+  exploration. Development and held-out seeds are locked, so no promotion is due.
 - **Source and confidence machinery:** a learned seen/heard/self pathway now
   co-resides with episodic memory, anterior prefrontal cortex, and anterior
   cingulate cortex populations. The no-harm tradeoff that blocked this arc is

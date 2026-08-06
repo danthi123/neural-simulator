@@ -1,0 +1,52 @@
+{
+  "probe": "gateB_stage2b_explore_calibration",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "ou_sigma": 600.0,
+  "n_test": 24,
+  "per_seed": [
+    {
+      "seed": 730601,
+      "p_action0": 0.0,
+      "n_clean": 3,
+      "explores": false
+    },
+    {
+      "seed": 730602,
+      "p_action0": 0.25,
+      "n_clean": 4,
+      "explores": true
+    },
+    {
+      "seed": 730603,
+      "p_action0": 0.0,
+      "n_clean": 22,
+      "explores": false
+    },
+    {
+      "seed": 730604,
+      "p_action0": 1.0,
+      "n_clean": 24,
+      "explores": false
+    },
+    {
+      "seed": 730605,
+      "p_action0": 0.2608695652173913,
+      "n_clean": 23,
+      "explores": true
+    },
+    {
+      "seed": 730606,
+      "p_action0": 0.0,
+      "n_clean": 24,
+      "explores": false
+    }
+  ],
+  "n_exploring_seeds": 2,
+  "elapsed_seconds": 25.774596261000625
+}

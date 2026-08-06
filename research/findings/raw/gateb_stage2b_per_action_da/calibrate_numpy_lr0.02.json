@@ -1,0 +1,160 @@
+{
+  "probe": "gateB_stage2b_calibration",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "reward_lr": 0.02,
+  "ou_sigma": 120.0,
+  "seed": 730501,
+  "target": 0,
+  "equivalence": {
+    "weights_match": true,
+    "raster_match": true
+  },
+  "contingent": {
+    "condition": "contingent",
+    "seed": 730501,
+    "target": 0,
+    "n_reward_delivered": 15,
+    "reward_trials": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "baseline_target_rate": 1.0,
+    "baseline_n_clean": 12,
+    "test_target_rate": 1.0,
+    "test_n_clean": 12,
+    "train_target_rate": 1.0,
+    "train_clean_rate": 1.0,
+    "d1_weight_before": {
+      "0": 39.992559810921,
+      "1": 40.000952574058815
+    },
+    "d1_weight_after": {
+      "0": 102.19779838985868,
+      "1": 40.000952574058815
+    },
+    "test": {
+      "n_test": 12,
+      "n_clean": 12,
+      "target_rate": 1.0,
+      "winners": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "acted_flags": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "yoked": {
+    "condition": "yoked",
+    "seed": 730501,
+    "target": 0,
+    "n_reward_delivered": 15,
+    "reward_trials": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "baseline_target_rate": 1.0,
+    "baseline_n_clean": 12,
+    "test_target_rate": 1.0,
+    "test_n_clean": 12,
+    "train_target_rate": 1.0,
+    "train_clean_rate": 1.0,
+    "d1_weight_before": {
+      "0": 39.992559810921,
+      "1": 40.000952574058815
+    },
+    "d1_weight_after": {
+      "0": 102.19779838985868,
+      "1": 40.000952574058815
+    },
+    "test": {
+      "n_test": 12,
+      "n_clean": 12,
+      "target_rate": 1.0,
+      "winners": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "acted_flags": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "delta": 0.0,
+  "elapsed_seconds": 14.012645946000703
+}
