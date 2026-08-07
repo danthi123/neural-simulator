@@ -151,6 +151,12 @@ a tool it never told you to install.
    precisely the silent one that cost the crux 47 minutes. Companions: exempt STARTUP transients (a 17-second-old
    job has not written its device line yet), and expose the exemption threshold as an env var so the exemption
    ITSELF is testable against a known-bad run.
+   **AND CAPTURE THE WATCHED PID VIA `$!`, NEVER `ps|grep|awk` (2026-08-07, recurred ~4× in one session).** After
+   `nohup bash launcher.sh &`, the reliable pid is `$!` (grab it on the NEXT line). A `ps -eo pid,args | grep
+   '[l]auncher' | awk '{print $1}'` instead catches a **short-lived intermediate subshell** that `nohup ... &` forks,
+   so the Monitor's `while kill -0 $PID` sees it already dead and fires INSTANTLY (a false "run ENDED" on a run that
+   is actually still going under a different pid). Each miss cost an arm + re-check cycle. `$!` is the launcher's real
+   pid; write it to a file immediately if a later Monitor needs it.
 9. **A GATE THAT CAN PASS WITHOUT ITS KEY CONTROL IS THE BUG.** Make the control DEFAULT-ON and CI-guard it. The
    cost of a 4th arm (~25% runtime) is nothing against a months-scale plan built on a random projection.
 10. **AN ABSENT FLAG MEANS *DEFAULT*, NOT *OFF* — check the default before claiming a cheat is closed.** A recorded
