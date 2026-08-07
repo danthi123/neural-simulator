@@ -24,11 +24,15 @@ working). Current frontier per lane:
   now works (action-local credit, opponent negative-RPE, reversal PASSES, mean contingency divergence 0.725, all
   neural). Stage-2g (true Hammond ΔP) fixed BOTH named residuals → **dev-GO 5/6**, but **held-out NO-GO 4/6**
   (OVERFIT) — the mechanism is essentially solved (divergence 0.79–1.11, reversal + lesions PASS) and the ONLY
-  blocker is EXPLORATION on MAXIMALLY-biased seeds (⛔ corrected — NOT "normalization saturation"; that draft was
-  wrong, the denominator is already floored). Held-out 730704 FROZE (n_acted=0 → target_rate NaN by construction) +
-  730705 never sampled the target — same extreme-bias limit as 2e's 730604. NEXT = **forced-sampling / ε-floor
-  exploration** guaranteeing both actions are tried on `baseline_p0∈{0,1}` seeds. This lane is the closest to the
-  #1-capability GO: the credit MECHANISM is complete, only exploration COVERAGE on the most-biased seeds remains.
+  (OVERFIT). Stage-2h forced-sampling = NO-GO (smoke refuted the method — saved the sweep), and REFINED the held-out
+  cause to TWO DISTINCT residuals (my "exploration" read was half-wrong): **730705 = a downstream WTA lock** (proposal
+  drive to 10000 pA fires `str_d1_1` 2031 spikes but `motor_1` stays 0 — locked at the reward-POTENTIATED
+  `str_d1_0→motor_0` route; >1250 pA → depolarization block); **730704 = a critic/RPE over-subtraction** (2g already
+  samples both actions — the NaN is training-induced motor SILENCE: the Hammond-ΔP baseline net-depresses the route
+  to zero). NEXT (a GO needs BOTH): (730705) bias where the decision is MADE — inhibit the incumbent's `str_d1`/GPi,
+  or FRONT-LOAD/ANNEAL the D1 route before reward potentiates it; (730704) a **floor on the net RPE / motor-rate
+  homeostat** so the baseline can't depress a route to silence. The credit MECHANISM is complete + reversal+lesions
+  pass; these are two targeted circuit fixes.
 - **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
   FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
   equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
@@ -248,12 +252,12 @@ replay SFA died at startup with ZERO progress** (no commits) — their worktrees
 are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
 
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
-(1) Gate B **Stage 2h: forced-sampling / ε-floor exploration on extreme-bias seeds** — Stage-2g solved the
-contingency MECHANISM (dev-GO 5/6, both residuals fixed, all neural) but held-out NO-GO 4/6 because on MAXIMALLY-biased
-seeds (`baseline_p0∈{0,1}`) the brain doesn't sample both actions (730704 froze → n_acted=0 → NaN; 730705 never tried
-the target). ⛔ (NOT normalization saturation — that draft was wrong; the denominator is floored.) Make the count-based
-novelty floor un-satiable until each action has ≥K samples, then re-validate dev+held-out on the POOL via
-`run_and_aggregate`. The lane is one exploration-coverage fix from a possible #1-capability GO. [superseded next lines were the 2g spec:]
+(1) Gate B **Stage 2i: two targeted held-out fixes** (2g mechanism complete + dev-GO 5/6; 2h forced-sampling NO-GO —
+the two held-out failures are DISTINCT): **(730705) downstream WTA lock** → bias where the decision is decided
+(inhibit the incumbent's `str_d1`/GPi, NOT its proposal — proposal drive can't flip a reward-potentiated route +
+depol-blocks >1250 pA) OR front-load/anneal the D1 route before reward potentiates it; **(730704) critic/RPE
+over-subtraction** (training-induced motor silence, not exploration) → a floor on the net RPE / motor-rate homeostat.
+A held-out GO needs BOTH. Build (agent) → smoke both extreme seeds → PARENT runs dev+held-out via `run_and_aggregate`. [superseded next lines were the 2g spec:]
 (1-old) Gate B **Stage 2g: TRUE Hammond ΔP** — add NO-ACTION/withhold trials + a neural tonic value tracking reward in
 the action's ABSENCE → V(action)−V(withhold) (fixes 730605's below-gate base rate), PLUS **homeostatic per-population
 critic normalization** replacing the scalar VALUE_GAIN so the RPE stays signed across heterogeneous seeds (fixes
