@@ -1,0 +1,50 @@
+{
+  "probe": "gateB_stage2h_forced_sampling_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "smoke_seed": 730705,
+  "force_sample_k": 3,
+  "force_sample_base_pA": 350.0,
+  "force_sample_ramp_pA": 250.0,
+  "force_sample_max_pA": 1200.0,
+  "per_target": {
+    "target0": {
+      "FLOOR_ON": {
+        "count0": 39,
+        "count1": 1,
+        "test_n_clean": 20,
+        "test_target_rate": 1.0,
+        "n_forced_trials": 32,
+        "max_forced_pA": 1200.0
+      },
+      "FLOOR_OFF_2g": {
+        "count0": 39,
+        "count1": 1,
+        "test_n_clean": 20,
+        "test_target_rate": 1.0
+      }
+    },
+    "target1": {
+      "FLOOR_ON": {
+        "count0": 40,
+        "count1": 0,
+        "test_n_clean": 20,
+        "test_target_rate": 0.0,
+        "n_forced_trials": 32,
+        "max_forced_pA": 1200.0
+      },
+      "FLOOR_OFF_2g": {
+        "count0": 40,
+        "count1": 0,
+        "test_n_clean": 20,
+        "test_target_rate": 0.0
+      }
+    }
+  },
+  "coverage_floor_off_2g": 0,
+  "coverage_floor_on": 0,
+  "floor_attribution_of_coverage": 0.0,
+  "SMOKE_PASS_both_actions_sampled": false,
+  "SMOKE_PASS_no_nan_no_freeze": true,
+  "elapsed_seconds": 66.6845755300019
+}

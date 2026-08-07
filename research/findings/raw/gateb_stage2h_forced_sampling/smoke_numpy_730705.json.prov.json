@@ -1,0 +1,32 @@
+{
+ "run_id": "1786075102-493883",
+ "runner": "research/runners/_vocal_gateb_stage2h_forced_sampling.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage2h/research/runners/_vocal_gateb_stage2h_forced_sampling.py",
+  "--mode",
+  "smoke",
+  "--smoke-seed",
+  "730705",
+  "--out",
+  "research/findings/raw/gateb_stage2h_forced_sampling/smoke_numpy_730705.json"
+ ],
+ "git_sha": "a8d9a672f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T23:58:22",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1938.3,
+ "corpus_check_query": "gate B forced sampling epsilon floor exploration extreme bias seeds",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage2h_forced_sampling/smoke_numpy_730705.json"
+}

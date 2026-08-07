@@ -78,9 +78,26 @@ its controls and lesions, and is tested at the required seed coverage.
   is still a no-go on behaviour, because a reward-only (never-punishing) signal
   under a winner-take-all selector just reinforces whatever the brain already
   does, so decoupled reward learns the same thing and the choice cannot be
-  reversed. Next (Stage 2c) adds the missing negative arm: a dip below the
+  reversed. Stage 2c adds the missing negative arm: a dip below the
   expected reward that weakens an action when it goes unrewarded, plus sustained
-  exploration. Development and held-out seeds are locked, so no promotion is due.
+  exploration. Stages 2d-2g then build the full contingency mechanism (uncertainty-
+  gated exploration, directed novelty, a true Hammond delta-P baseline via
+  interleaved no-action/withhold trials, and a homeostatic critic): Stage 2g is a
+  development go on 5/6 seeds but a held-out no-go on 4/6. The two held-out
+  failures were BOTH attributed to one exploration limit — on maximally-biased
+  seeds the brain never samples both actions. Stage 2h tests the prescribed fix, a
+  neural forced-sampling / epsilon-floor that escalates the exploration drive
+  (push-pull: excite the under-sampled action's proposal population, inhibit the
+  incumbent) until the rare action fires. It is a no-go, and the smoke corrects the
+  diagnosis: only ONE failing seed is a sampling gap, and even there the winner-
+  take-all lock is DOWNSTREAM of the proposal layer (the reward-potentiated
+  striatal-to-motor route cannot be flipped from the proposal input, and over-strong
+  drive silences the driven population); the other failing seed is not a sampling
+  gap at all but a training-induced motor silence, a critic/reward-baseline defect.
+  The next methods bias the competition where it is decided (striatal/pallidal, or
+  before the route potentiates) and floor the net reward-prediction error; the Stage
+  2g contingency mechanism itself remains correct. Development and held-out seeds
+  are locked, so no promotion is due.
 - **Source and confidence machinery:** a learned seen/heard/self pathway now
   co-resides with episodic memory, anterior prefrontal cortex, and anterior
   cingulate cortex populations. The no-harm tradeoff that blocked this arc is
