@@ -11,6 +11,18 @@ dispatched returned a GO in 40 seconds.
 **A full queue and a busy GPU look exactly like good prioritization from the inside.** Queue DEPTH was
 already monitored; lane COVERAGE was not. This closes that gap the same way: a check that fails loudly.
 
+UPDATE (2026-08-07) — the F·gap#4 "must-solve crux" alarm is RETIRED (record-grounded, not a judgment call).
+The 2026-08-02 findings mapped deep-credit-on-spikes to its mechanistic root cause (FA-alignment fails on the
+Izhikevich forward, agnostic to feedback type — 6/6 LIF converge, 0/6 Izh) and the record's own owner-prompted
+conclusion is that it is a THOROUGHLY-MAPPED, DEPRIORITIZED side-frontier: "the mission-critical emergence
+engine (stream cortex + reservoir/shallow-readout + learned input) needs NO deep-credit rule ... the honest
+'next' is NOT to keep drilling gap#4" (GAP_CLOSURE_MISSION.md CURRENT STATE §408/§413; a dedicated gate
+`gates/refuted_mechanism_reproposal` already blocks re-proposing its refuted mechanisms). So firing
+"CRUX-UNSERVED" whenever gap#4 has zero jobs is a DEMONSTRATED false alarm that baits the #1 re-derivation
+trap (FAILURE_LOG: "nine hours re-deriving a result banked three weeks earlier"). `CRUX` is set to None until
+the owner re-designates one (the board's stated current frontier is "SCALE the WKV cortex", an emergence-engine
+lane) — the MONOCULTURE and CPU-lane-starvation checks below (the tool's real value) are UNCHANGED.
+
     .venv/bin/python tools/lane_check.py            # report + exit 1 on monoculture
     .venv/bin/python tools/lane_check.py --quiet    # one line, for the heartbeat
 
@@ -36,13 +48,15 @@ LANES = {
     "D · Perception":    ("CPU/GPU", ["v1_selforg", "_b1_", "visual", "retina", "gabor", "v2_", "_it_", "nav_"]),
     "E · Language":      ("CPU",  ["emerge6", "emerge7", "construction", "morpholog", "lexicon", "grammar",
                                     "comprehension", "producer", "confidence_gate"]),
-    "F · gap#4 CRUX":    ("GPU",  ["gap4", "deep_credit", "selfpredict", "microcircuit", "bdsp", "eprop",
+    "F · gap#4 (mapped)": ("GPU",  ["gap4", "deep_credit", "selfpredict", "microcircuit", "bdsp", "eprop",
                                     "burst", "credit"]),
     "G · Teacher-loop":  ("GPU",  ["develop_loop", "develop_run", "teacher", "curriculum", "_p2_1", "_p3_1"]),
     "H · Memory":        ("GPU/CPU", ["consol", "sparse_distributed", "concept_pool", "replay", "ca3", "ca1",
                                        "hippo", "btsp", "schaffer", "engram"]),
 }
-CRUX = "F · gap#4 CRUX"
+# CRUX retired 2026-08-07 (see docstring): gap#4 deep-credit is a mapped/deprioritized boundary per the record;
+# an unserved gap#4 is NOT a violation. Set to a lane name only when the owner re-designates an enforced crux.
+CRUX = None
 # How many of the 5 disjoint CPU lanes may sit unserved before it is under-parallelisation rather than
 # prioritisation. 3 of 5 idle means the majority of free, GPU-independent capacity is unused.
 MAX_IDLE_CPU_LANES = 3
@@ -106,8 +120,8 @@ def main():
     alarms = []
     if n_lanes <= 1 and (jobs or run):
         alarms.append("LANE-MONOCULTURE(all work serves %s)" % (list(active) or ["nothing"])[0])
-    if crux_total == 0:
-        alarms.append("CRUX-UNSERVED(F/gap#4 has 0 jobs; roadmap calls it 'the must-solve core')")
+    if CRUX is not None and crux_total == 0:
+        alarms.append("CRUX-UNSERVED(%s has 0 jobs)" % CRUX)
     # A FALSE ALARM IS AS CORROSIVE AS A MISSED ONE (this tool's own first lesson). Pool jobs finish in
     # SECONDS-to-minutes, so "no CPU lane running right now" is usually SUCCESS, not neglect — alarming on
     # instantaneous idleness would fire every cycle and train the reader to ignore it. Alarm instead on
@@ -160,7 +174,7 @@ def main():
         print("       The 5 CPU-tagged lanes (A/B/C/D/E) are explicitly disjoint — they cost nothing")
         print("       alongside GPU work, and leaving them unqueued is why 36 cores idled for a day.")
         return 1
-    print("  OK — work spans %d lanes and the crux is served." % n_lanes)
+    print("  OK — work spans %d lanes (no enforced crux; gap#4 is a mapped boundary)." % n_lanes)
     return 0
 
 
