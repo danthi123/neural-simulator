@@ -115,6 +115,10 @@ W_PRED_WTA = float(os.environ.get("BORN_W_PW", 18.0))   # predicted_k -> pwta (d
 W_WTA_PRED = float(os.environ.get("BORN_W_WP", 6.0))    # pwta -> predicted_k (gaba; lateral suppression)
 W_FM_MAX = 45.0          # Hebbian cap; Oja sets w* below it from the input correlation
 W_FM_RANDOM = 12.0       # per-synapse magnitude of the RANDOM (unlearned) forward model control
+W_FM_PERMUTED = 30.0     # per-synapse magnitude of the PERMUTED-SELECTIVE control on its mis-mapped diagonal
+                         # (~the learned Oja diagonal ~30, so it is SELECTIVE like the learned model but routes
+                         # action_i -> predicted_{perm[i]} for a derangement perm -> the decisive "is it the
+                         # LEARNED MAPPING, not just any selective structure?" anti-cheat the parent added)
 
 DRIVE_ACT_PA = 2600.0    # external drive to an action pool during an utterance (no-recurrence pool -> strong)
 DRIVE_SENS_PA = 2600.0   # external drive to the actual sensory-feedback pool (the world's reafference)
@@ -139,9 +143,21 @@ class BodilySelfModel:
         from sim.config import CoreSimConfig
         from sim.regions import BrainRegion, RegionPathway
 
-        assert forward in ("learned", "random")
+        assert forward in ("learned", "random", "permuted")
         self.seed = int(seed)
         self.forward = forward
+        # PERMUTED-SELECTIVE control: a derangement (no fixed points) so the forward model is selective but
+        # MIS-MAPPED (action_i -> predicted_{perm[i]}, perm[i] != i). Tests that the CORRECT learned mapping,
+        # not merely selective forward structure, carries the agency signal.
+        self.perm = None
+        if forward == "permuted":
+            prng = np.random.default_rng(int(seed) + 4242)
+            perm = np.arange(K)
+            while True:
+                prng.shuffle(perm)
+                if not np.any(perm == np.arange(K)):
+                    break
+            self.perm = perm.copy()
 
         cfg = CoreSimConfig()
         cfg.enable_brain_region_framework = True
@@ -193,7 +209,12 @@ class BodilySelfModel:
         # the diagonal from co-fire; a random/unlearned model keeps the off-diagonal (the learning anti-cheat).
         for i in range(K):
             for j in range(K):
-                w0 = float(W_FM_RANDOM) if forward == "random" else 0.0
+                if forward == "random":
+                    w0 = float(W_FM_RANDOM)
+                elif forward == "permuted":
+                    w0 = float(W_FM_PERMUTED) if j == int(self.perm[i]) else 0.0
+                else:
+                    w0 = 0.0
                 pathways.append(RegionPathway(
                     from_region=f"action_{i}", to_region=f"predicted_{j}", density=1.0,
                     weight_mean=w0, weight_jitter=0.0,
@@ -358,6 +379,12 @@ def run_seed(seed):
     auc_random = _auc(agency_r["self"], agency_r["external"] + agency_r["decoupled"])
     auc_random_self_vs_dec = _auc(agency_r["self"], agency_r["decoupled"])
 
+    # --- PERMUTED-SELECTIVE forward model (mapping-specific anti-cheat: selective but MIS-mapped) ---
+    brain_p = BodilySelfModel(seed, forward="permuted")  # fixed derangement action_i -> predicted_{perm[i]}
+    agency_p, resp_p, _ = _run_conditions(brain_p, rng)
+    auc_permuted = _auc(agency_p["self"], agency_p["external"] + agency_p["decoupled"])
+    auc_permuted_self_vs_dec = _auc(agency_p["self"], agency_p["decoupled"])
+
     return {
         "seed": int(seed),
         "fm_diag": round(diag, 3), "fm_offdiag": round(offdiag, 3),
@@ -375,6 +402,10 @@ def run_seed(seed):
         "resp_random_decoupled": round(float(np.mean(resp_r["decoupled"])), 4),
         "auc_random": round(auc_random, 4),
         "auc_random_self_vs_dec": round(auc_random_self_vs_dec, 4),
+        "resp_permuted_self": round(float(np.mean(resp_p["self"])), 4),
+        "resp_permuted_decoupled": round(float(np.mean(resp_p["decoupled"])), 4),
+        "auc_permuted": round(auc_permuted, 4),
+        "auc_permuted_self_vs_dec": round(auc_permuted_self_vs_dec, 4),
     }
 
 
@@ -388,6 +419,7 @@ def _aggregate_verdict(rows):
     auc_sve = m("auc_self_vs_ext")
     auc_random = m("auc_random")
     auc_random_svd = m("auc_random_self_vs_dec")
+    auc_permuted_svd = m("auc_permuted_self_vs_dec")
 
     checks = {
         # forward model actually LEARNED the diagonal action_k->predicted_k mapping (Oja selective)
@@ -407,12 +439,16 @@ def _aggregate_verdict(rows):
         # which is why its POOLED auc is not chance, but it CANNOT do decoupled). So gate on self-vs-decoupled, where
         # only a LEARNED identity-specific prediction can separate them.
         "learning_required(random_fails_decoupled, <=0.65)": auc_random_svd <= 0.65 and auc_svd >= auc_random_svd + 0.25,
+        # MAPPING-SPECIFIC (parent-added): a SELECTIVE-but-MIS-mapped forward model (derangement action_i->pred_{perm[i]})
+        # must ALSO fail self-vs-decoupled -> proves it is the CORRECT learned mapping, not merely selective forward
+        # structure + the cancellation/lateral-inhibition machinery, that carries the agency signal.
+        "mapping_specific(permuted_fails_decoupled, <=0.65)": auc_permuted_svd <= 0.65 and auc_svd >= auc_permuted_svd + 0.25,
     }
     go = all(checks.values())
     means = {"fm_diag": diag, "fm_offdiag": off, "resp_self": r_self, "resp_external": r_ext,
              "resp_decoupled": r_dec, "auc_learned": auc_learned, "auc_self_vs_dec": auc_svd,
              "auc_presence_self_vs_dec": auc_pres_svd, "auc_self_vs_ext": auc_sve, "auc_random": auc_random,
-             "auc_random_self_vs_dec": auc_random_svd}
+             "auc_random_self_vs_dec": auc_random_svd, "auc_permuted_self_vs_dec": auc_permuted_svd}
 
     v = Verdict("learned bodily self-model: forward-model agency discrimination", chance=0.5)
     v.floor("agency AUC (self vs not-self) beats chance", measured=auc_learned, floor=0.5)
@@ -420,6 +456,8 @@ def _aggregate_verdict(rows):
               control=auc_random_svd, min_separation=0.25)
     v.control("forward-model comparator vs presence detector (self-vs-decoupled)", treatment=auc_svd,
               control=auc_pres_svd, min_separation=0.25)
+    v.control("CORRECT learned mapping vs a PERMUTED-selective (mis-mapped) forward model on self-vs-decoupled",
+              treatment=auc_svd, control=auc_permuted_svd, min_separation=0.25)
     v.reaches("forward model learned the diagonal (mean |w| action_k->predicted_k >> off-diagonal)",
               before=off, after=diag)
     v.reaches("prediction CANCELS the self reafference (resp_ext -> resp_self)", before=r_ext, after=r_self)
@@ -438,6 +476,7 @@ def _aggregate_verdict(rows):
 
     attributable_to("the LEARNED forward model (vs a random one) on decoupled", auc_svd, auc_random_svd)
     attributable_to("prediction-match (vs efference-presence) on decoupled", auc_svd, auc_pres_svd)
+    attributable_to("the CORRECT learned mapping (vs a permuted-selective one) on decoupled", auc_svd, auc_permuted_svd)
     return go, checks, means, decided
 
 

@@ -4,10 +4,9 @@ status: live
 date: 2026-08-07
 mechanism: learned-bodily-self-model-forward-model-agency
 lane: A-affect
-seed-waiver: 1-seed SMOKE de-risk (spot-checked on 3 seeds 42/43/100); the parent runs the 6-seed validation
 ---
 
-# Lane A · SELF-SCHEMA (BORN adoption): a LEARNED bodily self-model — a Hebbian/Oja forward model + a neural reafference-cancellation comparator produce a self/other AGENCY signal, smoke-GO 1-seed (2026-08-07)
+# Lane A · SELF-SCHEMA (BORN adoption): a LEARNED bodily self-model — a Hebbian/Oja forward model + a neural reafference-cancellation comparator produce a self/other AGENCY signal, PARENT-VERIFIED 6-seed GO (2026-08-07)
 
 BORN (landscape-survey CLOSEST-1) adopted onto the self-schema lane: a LEARNED forward model (efference -> predicted
 sensory feedback) plus a NEURAL comparator that emits a self/other agency signal from PREDICTED-vs-ACTUAL feedback —
@@ -70,7 +69,12 @@ feedback the world returns are external drive. Everything between is neurons/syn
   (decoupled) agency is carried by the LEARNED synaptic mapping, not the fixed comparator structure.
 - (c) NEURAL COMPARATOR: HOLDS. Agency = residual `resp` population spike rate from a spiking cancellation circuit,
   NOT a host abs(predicted-actual) formula.
-- (d) 6-SEED: PENDING (this is a 1-seed smoke; parent runs the 6-seed).
+- (d) 6-SEED: ✅ VERIFIED (parent, seeds 42/43/44/100/101/102) — see the PARENT-VERIFIED section below.
+- (e) MAPPING-SPECIFIC (parent-added anti-cheat): HOLDS. A PERMUTED-SELECTIVE forward model (a derangement
+  `action_i -> predicted_{perm[i]}`, perm[i]!=i, at the learned diagonal magnitude — SELECTIVE but MIS-mapped)
+  ALSO fails self-vs-decoupled (mean AUC 0.339, below chance) while the correctly-learned model is 1.000. So it is
+  the CORRECT learned mapping, not merely any selective forward structure + the cancellation/lateral-inhibition
+  machinery, that carries the agency signal.
 
 ## Head-to-head vs the existing foundation
 The learned forward-model comparator does self-vs-DECOUPLED at AUC 1.000; a PRESENCE/marker detector (agency := was
@@ -101,6 +105,38 @@ the foundation lacked.
 - numpy is the CPU backend (real spiking Izhikevich), not a host shortcut. STDP is off because its eligibility never
   applies without reward on this bridge (weight stays 0, per the `_D_sparse_heteroassoc` note) — the co-fire learning
   is Hebbian/Oja.
+
+## ✅ PARENT-VERIFIED (6-seed) + the added mapping-specific control
+<!--derived from research/findings/raw/_born_learned_self_model_6seed.json (`per_seed` + `means`)-->
+The parent ran the full 6-seed validation (42/43/44/100/101/102, numpy-CPU, 48.6s) AND added a decisive third
+anti-cheat (the permuted-selective control, arm (e) above). **VERDICT: GO (6-seed).** Every seed is identical to
+the smoke:
+
+| metric (mean over 6 seeds) | value | reads as |
+|---|---|---|
+| FM diagonal / off-diagonal | 27.5 / 0.01 (~2900x) | forward model learned the SELECTIVE mapping, all 6 seeds |
+| resp SELF / EXTERNAL / DECOUPLED | 0.018 / 0.047 / 0.047 | prediction cancels the self reafference; decoupled un-cancelled |
+| agency AUC (self vs not-self) | 1.000 (6/6) | discriminates self-caused from not-self-caused |
+| self-vs-DECOUPLED AUC | 1.000 (6/6) | efference present but wrong feedback -> LOW agency |
+| PRESENCE detector self-vs-decoupled | ~0.52 (0.500-0.562) | the existing foundation is at CHANCE on this axis |
+| contingency self-vs-EXTERNAL AUC | 1.000 (6/6) | identical content, self vs external -> different agency |
+| RANDOM forward model, self-vs-decoupled | 0.518 | learning REQUIRED (collapses to chance on the decisive axis) |
+| **PERMUTED-selective, self-vs-decoupled** | **0.339** | **mapping-specific: a mis-mapped selective FM ALSO fails** |
+
+**Honest caveat on the `attributable_to` ⛔ flags.** The random-FM and presence-detector controls sit AT CHANCE
+on self-vs-decoupled (0.518 / 0.528); because `attributable_to` compares raw AUCs against 0 (not against the 0.5
+chance level), it reports ~52% as "present in the control" and prints a ⛔. That is an artifact of feeding an
+AUC (chance=0.5) to a helper that assumes chance=0 — the controls are genuinely at chance (they FAIL), which is
+the intended result. The PERMUTED control (0.339, BELOW chance) has no such ambiguity: it attributes 66% cleanly.
+All three controls fail the decisive axis while the learned model is 1.000, so the agency discrimination is
+attributable to the CORRECT LEARNED MAPPING. (A tighter future read would pass AUC-0.5 to `attributable_to`.)
+
+**⇒ the SECOND concrete adoption win from the 2026-08-07 landscape survey (BORN, CLOSEST-1):** a LEARNED bodily
+self-model with a mirror-test agency correlate, on the self-schema lane — the learned forward model adds the
+agency-discrimination (self vs perturbed-reafference) that our fixed presence/marker foundation lacked, 6-seed,
+brain-based, with three anti-cheats (contingency, learning-required, mapping-specific) all holding. Named
+follow-ons (unchanged): a self-organized comparator; a reward-gated (three-factor) forward model; the reafferent
+teacher replaced by a real body/sensor loop.
 
 ## Run
 ```
