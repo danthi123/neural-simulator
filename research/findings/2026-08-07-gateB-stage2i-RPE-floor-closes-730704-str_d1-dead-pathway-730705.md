@@ -16,6 +16,17 @@ artifacts:
 
 ## Verdict
 
+⛔ **FULL-VALIDATION CORRECTION (parent run, 2026-08-07): STAGE2I_NO_GO.** The single-seed smokes below OVERCLAIMED.
+The full dev+held-out battery (`dev_fixB.json`, `heldout_fixB.json`) shows FIX B is a NET REGRESSION, not a fix:
+**dev 5/6 → 4/6** (730601, 730602 now fail — the RPE floor weakened contingency on two previously-passing dev seeds;
+FIX B is NOT inert as the smoke claimed) and **held-out stays 4/6** — 730704's NaN is gone but it STILL fails steer
+on the full battery (the smoke's `D_contingent=1.0` did not hold), 730705's dead pathway persists. So FIX B trades a
+held-out NaN-fix for dev regressions. NEXT: the RPE floor must be made NON-REGRESSIVE (per-seed/adaptive, engaging
+only on the saturated tail) before it can help; then the 730705 dead pathway (Stage-2j) remains. The smoke-based
+"CLOSES 730704" claim below is superseded by this full-battery verdict.
+
+## Verdict (original smoke read — SUPERSEDED, see correction above)
+
 **STAGE2I_PARTIAL (smoke, two 1-seed extreme-bias smokes).** Stage 2g held-out failed on
 two seeds for two different reasons. **FIX B (a floor on the net RPE) CLOSES 730704**: it
 recovers from a frozen NaN to clean actions on both targets with a steer-passing
