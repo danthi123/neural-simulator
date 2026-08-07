@@ -1,0 +1,38 @@
+{
+ "run_id": "1786103175-778286",
+ "runner": "research/runners/_laneC_source_monitor_attractor_joint.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af97aabc8f8ac1fc2/research/runners/_laneC_source_monitor_attractor_joint.py",
+  "--seeds",
+  "650",
+  "651",
+  "--uniq-emphasis",
+  "0.0",
+  "0.5",
+  "1.0",
+  "2.0",
+  "--g-comp",
+  "0.0",
+  "1.0",
+  "--out",
+  "research/findings/raw/laneC_source_monitor_attractor_joint/smoke_650_651_overlap0.2.json"
+ ],
+ "git_sha": "137dc169f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T07:46:15",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/laneC_source_monitor_attractor_joint/smoke_650_651_overlap0.2.json"
+}
