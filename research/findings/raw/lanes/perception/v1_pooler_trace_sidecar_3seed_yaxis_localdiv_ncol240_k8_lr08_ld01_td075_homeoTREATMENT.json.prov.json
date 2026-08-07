@@ -1,0 +1,43 @@
+{
+ "run_id": "1786107325-819481",
+ "runner": "research/runners/_laneD_v1_pooler_trace_invariance_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_laneD_v1_pooler_trace_invariance_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "--position-axis",
+  "y",
+  "--complex-norm",
+  "local_orient_div",
+  "--n-col",
+  "240",
+  "--k-win",
+  "8",
+  "--pool-lr-pot",
+  "0.08",
+  "--pool-lr-depress",
+  "0.01",
+  "--trace-decay",
+  "0.75",
+  "--homeo-scale",
+  "--out",
+  "research/findings/raw/lanes/perception/v1_pooler_trace_sidecar_3seed_yaxis_localdiv_ncol240_k8_lr08_ld01_td075_homeoTREATMENT.json"
+ ],
+ "git_sha": "d9b8888ed",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-07T08:55:25",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 326.9,
+ "corpus_check_query": "V1 perception invariance divisive normalization Carandini-Heeger homeostatic scaling Turrigiano V1 OnSubstratePooler trace rule",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/perception/v1_pooler_trace_sidecar_3seed_yaxis_localdiv_ncol240_k8_lr08_ld01_td075_homeoTREATMENT.json"
+}
