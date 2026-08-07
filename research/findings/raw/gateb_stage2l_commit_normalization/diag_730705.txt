@@ -1,0 +1,19 @@
+Gate B Stage 2l -- 730705 test-phase commit competition diagnosis (numpy).
+Q: does making the commit reflect thalamic drive flip the seed? A: NO -- thal favors action 0.
+
+[trained target=1] count=[1, 39] w1_route=110.6 r0_d1=[102.8, 1.1]
+  none                : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,29] thal=[273,215] commit=[452,0] motor=[860,0]
+  cut cross-inhib x0.5 : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,29] thal=[273,215] commit=[452,0] motor=[860,0]
+  cut cross-inhib x0.25: winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,29] thal=[273,215] commit=[452,0] motor=[860,0]
+  cut cross-inhib x0.0 : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,29] thal=[273,215] commit=[452,335] motor=[860,646]
+  gpiReg proxy        : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,6] thal=[273,242] commit=[452,0] motor=[860,0]
+  gpiReg + cut x0.0   : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,6] thal=[273,242] commit=[452,384] motor=[860,741]
+  thal CEILING (gpi->thal removed): thal=[272,258] (residual = thal-level head-start)
+
+CONTINGENCY CONTROL (acq_lesion built untrained via run_condition, in smoke).
+
+VERDICT: thal_1 < thal_0 at every operating point (even full commit de-latch, even
+gpi_1 regulation, even the pure-tonic thal ceiling). The commit competition faithfully
+selects the higher thalamic drive = action 0. The commit mechanism is NECESSARY-NOT-
+SUFFICIENT; the residual is a BG-output readout inversion (gpi_1 hyperexcitability +
+thal initial-condition head-start). Banked next method: FIX E GPi excitability homeostat.

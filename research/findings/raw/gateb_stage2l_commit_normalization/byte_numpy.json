@@ -1,0 +1,17 @@
+{
+  "probe": "gateB_stage2l_byte_identity_softwta_off",
+  "backend": "numpy",
+  "all_byte_identical": true,
+  "per_seed": [
+    {
+      "seed": 730703,
+      "byte_identical_softwta_off": true,
+      "mismatch": {}
+    },
+    {
+      "seed": 730705,
+      "byte_identical_softwta_off": true,
+      "mismatch": {}
+    }
+  ]
+}

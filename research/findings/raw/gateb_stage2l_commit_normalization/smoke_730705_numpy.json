@@ -1,0 +1,53 @@
+{
+  "probe": "gateB_stage2l_commit_normalization_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "smoke_seeds": [
+    730705
+  ],
+  "softwta_scale": 0.0,
+  "byte_identity_softwta_off": [
+    {
+      "seed": 730703,
+      "byte_identical_softwta_off": true,
+      "mismatch": {}
+    },
+    {
+      "seed": 730705,
+      "byte_identical_softwta_off": true,
+      "mismatch": {}
+    }
+  ],
+  "verdict": "HONEST NEGATIVE: commit soft-WTA does not flip 730705 (thal_1 < thal_0; residual relocated to BG-output readout).",
+  "per_seed": [
+    {
+      "seed": 730705,
+      "softwta_scale": 0.0,
+      "SOFTWTA_ON": {
+        "count_c1": [
+          40,
+          0
+        ],
+        "test_rate_c1": 0.0,
+        "test_rate_c0": 1.0,
+        "D_contingent": 0.0,
+        "D_yoked": 0.0,
+        "steer": false
+      },
+      "STAGE2K_BASE": {
+        "count_c1": [
+          37,
+          3
+        ],
+        "test_rate_c1": 0.0,
+        "D_contingent": 0.0,
+        "steer": false
+      },
+      "SMOKE_no_nan": true,
+      "SMOKE_730705_test_rate_c1_flips": false,
+      "SMOKE_steer": false,
+      "SMOKE_steer_improved_vs_2k": false
+    }
+  ],
+  "elapsed_seconds": 457.0924656989955
+}
