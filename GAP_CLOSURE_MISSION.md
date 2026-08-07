@@ -24,9 +24,11 @@ working). Current frontier per lane:
   now works (action-local credit, opponent negative-RPE, reversal PASSES, mean contingency divergence 0.725, all
   neural). Stage-2g (true Hammond ΔP) fixed BOTH named residuals → **dev-GO 5/6**, but **held-out NO-GO 4/6**
   (OVERFIT) — the mechanism is essentially solved (divergence 0.79–1.11, reversal + lesions PASS) and the ONLY
-  blocker is now a NUMERICAL defect: the Carandini-Heeger critic normalization SATURATES/NaNs on low-baseline seeds.
-  NEXT = **bounded (Naka-Rushton σ) normalization** — a floor on the denominator — then re-validate dev+held-out on
-  the pool. A numerical fix, not a mechanism gap. This lane is the closest it has been to the #1-capability GO.
+  blocker is EXPLORATION on MAXIMALLY-biased seeds (⛔ corrected — NOT "normalization saturation"; that draft was
+  wrong, the denominator is already floored). Held-out 730704 FROZE (n_acted=0 → target_rate NaN by construction) +
+  730705 never sampled the target — same extreme-bias limit as 2e's 730604. NEXT = **forced-sampling / ε-floor
+  exploration** guaranteeing both actions are tried on `baseline_p0∈{0,1}` seeds. This lane is the closest to the
+  #1-capability GO: the credit MECHANISM is complete, only exploration COVERAGE on the most-biased seeds remains.
 - **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
   FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
   equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
@@ -126,9 +128,12 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   gain·[DA_S] → true Hammond ΔP (fixes 730605, withhold_lesion confirms load-bearing); (b) homeostatic critic =
   Carandini-Heeger divisive normalization of value by the pooled striatal baseline (fixes 730602). Dev steer 5/6,
   div 1.11, reversal 0→1.0, lesions PASS. Held-out (730701-706, run as a PARENT job — first orphan-proof use):
-  steer 4/6, div 0.79, reversal PASS, but **NaN present** — the divisive normalization SATURATES on low-pooled-
-  baseline seeds (730704/730705; 730601 on dev), denominator → ~0. The contingency MECHANISM is correct; the
-  normalization lacks a floor. NEXT = **bounded Naka-Rushton normalization** (denominator `baseline+σ`, σ>0 — Heeger's
+  steer 4/6, div 0.79, reversal PASS. ⛔ **CORRECTED cause (verified vs code+artifact): NOT normalization saturation**
+  (line 190 already floors the denominator). The NaN is `target_rate=nan when n_acted==0` (runner 302/317): held-out
+  730704 (`baseline_p0=0.0`) FROZE — emitted zero actions; 730705 never sampled the target (`reward_count_reward1=0`).
+  Both = the SAME extreme-bias EXPLORATION residual (2e's 730604), behavioural not numerical. NEXT = **forced-sampling
+  / ε-floor** guaranteeing both actions get ≥K samples on `baseline_p0∈{0,1}` seeds (make the count-based novelty floor
+  un-satiable until sampled). [prior "Naka-Rushton σ" draft below was the wrong diagnosis, superseded:] (denom `baseline+σ` — Heeger's
   original form, dropped here) OR a tonic-inhibition floor on the pooled-baseline pop; then re-validate on the pool.
 - **Source v6 (#3) — ⛔ calibration "GO" LATER VOIDED** (stepping-history instrument artifact — see the instrument-fix
   note at the end of this source entry; the leak-closure sub-result survives). Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
@@ -243,11 +248,12 @@ replay SFA died at startup with ZERO progress** (no commits) — their worktrees
 are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
 
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
-(1) Gate B **Stage 2h: bounded (Naka-Rushton σ) critic normalization** — Stage-2g solved the contingency mechanism
-(dev-GO 5/6, both residuals fixed, all neural) but held-out NO-GO 4/6 because the Carandini-Heeger critic norm
-SATURATES/NaNs on low-pooled-baseline seeds. Add a σ floor to the denominator (`baseline+σ`) or a tonic-inhibition
-floor, then re-validate dev+held-out on the POOL via `run_and_aggregate`. A numerical fix — the lane is one bounded
-normalization from a possible #1-capability GO. [superseded next lines were the 2g spec:]
+(1) Gate B **Stage 2h: forced-sampling / ε-floor exploration on extreme-bias seeds** — Stage-2g solved the
+contingency MECHANISM (dev-GO 5/6, both residuals fixed, all neural) but held-out NO-GO 4/6 because on MAXIMALLY-biased
+seeds (`baseline_p0∈{0,1}`) the brain doesn't sample both actions (730704 froze → n_acted=0 → NaN; 730705 never tried
+the target). ⛔ (NOT normalization saturation — that draft was wrong; the denominator is floored.) Make the count-based
+novelty floor un-satiable until each action has ≥K samples, then re-validate dev+held-out on the POOL via
+`run_and_aggregate`. The lane is one exploration-coverage fix from a possible #1-capability GO. [superseded next lines were the 2g spec:]
 (1-old) Gate B **Stage 2g: TRUE Hammond ΔP** — add NO-ACTION/withhold trials + a neural tonic value tracking reward in
 the action's ABSENCE → V(action)−V(withhold) (fixes 730605's below-gate base rate), PLUS **homeostatic per-population
 critic normalization** replacing the scalar VALUE_GAIN so the RPE stays signed across heterogeneous seeds (fixes

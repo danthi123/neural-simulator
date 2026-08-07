@@ -47,24 +47,37 @@ Stage-2g fixes BOTH, and on dev both target seeds flip to pass:
 Reversal P(B) 0→1.0, acquisition/expression lesions (Δ0.45 / 0.60), and the
 reward-OFF byte-identical guard all still PASS on both partitions.
 
-## Why it fails held-out (the isolated residual — a numerical defect, not a mechanism gap)
+## Why it fails held-out (VERIFIED against code + artifact — NOT normalisation saturation)
 
-The **Carandini-Heeger divisive normalisation saturates** on low-pooled-baseline
-seeds: the denominator (pooled striatal baseline) approaches zero, the normalised
-value blows up / goes NaN, and the seed's contingency read collapses. On dev this
-bit 730601; on held-out it bites 730704 and 730705 (the two steer failures), and
-`NaN present: True` in the artifact. The mechanism that supplies contingency is
-correct — the divergence mean stays 0.79 on held-out — but the normalisation lacks
-a floor, so a couple of seeds per partition fall into the saturation regime.
+⛔ CORRECTION: an earlier draft of this finding blamed "Carandini-Heeger divisive
+normalisation saturation". That was WRONG — traced from a preliminary agent
+summary without checking the code. `_value_action` line 190 already floors the
+denominator (`max(r0_total, 1.0)`), so it cannot divide by zero. The real cause,
+localised in `heldout_numpy.json`:
 
-## Next mechanism (no-defer — a bounded normalisation, then re-validate on the pool)
+- The runner defines `target_rate = target_hits / n_acted if n_acted else nan`
+  (lines 302, 317). A metric is NaN precisely when the brain emitted **ZERO clean
+  actions** in a test block. On **730704** (`baseline_p0=0.0` — a MAXIMALLY-biased
+  seed) `contingent_p0_reward1` is NaN → the brain FROZE (n_acted=0) in that block.
+- **730705** (`reward_count_reward1=0`) never sampled/was-rewarded on the target
+  action → D_contingent=0.
 
-Give the divisive normalisation a **biological floor**: a semi-saturating
-(Naka-Rushton) denominator `baseline + σ` with a non-zero semi-saturation constant
-σ (Heeger's original form already carries it — the current code dropped it), or a
-tonic-inhibition floor on the pooled-baseline population so it cannot reach ~0.
-This removes the NaN without changing the contingency mechanism, and should carry
-the dev 5/6 to held-out. Then re-run dev+held-out as ONE hands-off sweep on the
-mini-PC pool (healthy, 36 cores) via `tools/run_and_aggregate` — the parent runs
-it, no orphan. The Gate B credit-assignment mechanism is otherwise complete; this
-is the last isolated defect between it and a capability GO.
+Both held-out failures are the SAME residual: on MAXIMALLY-biased seeds
+(`baseline_p0 ∈ {0,1}`) the directed-novelty + uncertainty exploration does not
+GUARANTEE the brain samples BOTH actions — it either freezes (NaN) or never tries
+the target. This is the identical extreme-bias exploration limit that was Stage-2e's
+sole double-failure (730604), now surfacing on 2 held-out seeds. It is a
+**BEHAVIOURAL exploration residual, not a numerical/normalisation defect.**
+
+## Next mechanism (no-defer)
+
+Guarantee sampling of BOTH actions on extreme-bias seeds. Options: a neural
+**forced-sampling / ε-floor** — a minimum per-action exploration drive from the
+novelty/uncertainty signal that does NOT decay while an action remains un-sampled
+(count-based `sqrt` novelty already exists; make its floor un-satiable until each
+action has ≥K samples) — or a stronger habituation drive that overcomes
+`baseline_p0 ∈ {0,1}`. The n_acted=0 case (a frozen brain) should read as UNDEFINED
+— itself the signal that exploration failed on that seed. The contingency mechanism
+(withhold-ΔP + critic norm) is correct and complete; the last gap is exploration
+coverage on the most-biased seeds. Re-validate dev+held-out as one hands-off pool
+sweep via `tools/run_and_aggregate`.
