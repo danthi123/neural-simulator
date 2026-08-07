@@ -24,10 +24,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
 > when off — GO protected) gets action 1 SELECTED + REWARDED in training (count_c1 [40,0]→[37,3], proposal_1→str_d1_1
-> potentiates 40→315) but it **cannot EXPRESS at test** (test_rate_c1=0). EXACT NEXT = **Stage-2l**: make the commit
-> competition reflect thalamic drive — **divisive normalization** (Carandini-Heeger, as in the critic) / thal-gated
-> de-latching — so a learned str_d1_1 expresses through an intact, learning-legitimate circuit (a persistent release
-> would be a shortcut the acquisition-lesion control catches).
+> potentiates 40→315) but it **cannot EXPRESS at test** (test_rate_c1=0).
+> **Stage-2l (`a6322648`, parent-verified) = REFUTED + residual relocated AGAIN** — the commit-WTA is
+> NECESSARY-NOT-SUFFICIENT, not the block. Test-phase diag on 730705 (byte-identical when off, GO protected): the D1
+> policy IS correctly learned (str_d1=[104,**286**], toward action 1) but **thal=[273,215] favors action 0** — and at
+> EVERY operating point (full commit de-latch → motor [860,646]; gpi regulation; even the pure thal ceiling
+> [272,258]) action 0 wins. The residual is a **BG-output readout inversion**: gpi_1 is heterogeneously hyperexcitable
+> (rests −40mV vs gpi_0 −61mV) so it under-pauses → thal_1 < thal_0, AND thal_0 enters the onset primed (−45mV vs
+> thal_1 −61mV) — a second, thal-initial-condition factor. EXACT NEXT = **Stage-2m / FIX E**: a **GPi
+> intrinsic-excitability homeostat** (Desai/Turrigiano — the BG-output analogue of FIX C at the MSN) to equalize
+> gpi_1's baseline, LIKELY PLUS a thal initial-condition fix (the diag shows two factors). The acquisition-lesion
+> must still own the contingency (full de-latch on an untrained bridge stays action 0 — the fix must not manufacture
+> the policy). NOTE: 730705 is a within-bar miss — the Stage-2j GO (≥5/6) stands regardless; this is no-defer polish
+> that is also uncovering a GENERAL output-stage homeostasis mechanism, not a one-seed hack.
 
 
 North-star: one grounded, integrated, fully-spiking conversational mind (charter). This session ran **~14 mission
