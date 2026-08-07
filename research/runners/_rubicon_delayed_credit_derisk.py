@@ -58,11 +58,28 @@ def build_core(seed, *, recur=25.0, n_cue=40, n_pfc=60, n_fs=24, n_strio=60, n_r
                pfc_to_strio_weight=3.0, cue_to_strio_weight=3.0, reward_us_to_strio_weight=0.0,
                reward_us_to_snc_weight=10.0, strio_to_snc_weight=10.0,
                gabab_prop=0.22, gabab_tau_decay=150.0, reward_learning_rate=0.10,
-               snc_da_sensitivity=8.0):
+               snc_da_sensitivity=8.0,
+               vspatch_gate=False, vspatch_gate_threshold=None, vspatch_gate_sensitivity=400.0,
+               vspatch_gate_tau_ms=40.0, vspatch_gate_target_sensitivity=12.0,
+               vspatch_gate_source="reward_us",
+               reward_coactivity=False, coactivity_scale=0.05, coactivity_trace_tau_ms=25.0,
+               stdp_off=False, da_from_reward_us=False, da_reward_threshold=0.06,
+               da_reward_sensitivity=60.0):
     """Limbic core (cue->striosome_value->snc <- reward_us) EXTENDED with a PFC maintained-goal pool:
     a recurrent slow-NMDA self-excitation (Wang 2002 persistent activity, from _d3_persistent_slot) + a shared FS.
     `recur` is the persistence knob: recur>0 = the goal is HELD across the gap (treatment); recur=0 = the PFC
-    cannot hold (the decayed-trace control). pfc->striosome_value is the PLASTIC held-goal->value synapse."""
+    cannot hold (the decayed-trace control). pfc->striosome_value is the PLASTIC held-goal->value synapse.
+
+    HALF-2 (VSPatch reward-window-gated potentiation) is an ADDITIVE, DEFAULT-OFF extension: when
+    ``vspatch_gate=True`` the plastic held-goal->value synapse (pfc->striosome_value) is tagged with a per-pathway
+    ``plasticity_gate="reward_window"`` and a second neuromodulator ("vspatch_gate", from_region_firing on the SNc
+    above tonic) DRIVES that gate. Effect: weight UPDATES on pfc->striosome_value are FROZEN outside the reward
+    window (SNc at tonic -> gate=0) and PERMITTED only when the phasic DA burst opens the gate (SNc above tonic ->
+    gate->1). This is the Rubicon/PVLV VSPatch mechanism: reward-TIME-gated corticostriatal LTP, so a rewarded held
+    goal potentiates its value read-out instead of the whole-trial scope-all DA-STDP netting to LTD on the
+    saturated synapse. It is NEURAL (the gate value = a spiking-driven NM concentration, no host if-reward flag) and
+    CONTINGENT (no DA burst -> gate stays shut -> no potentiation). ``vspatch_gate=False`` reproduces the original
+    scope-all DA-STDP HALF-2 control byte-for-byte (this branch is never entered)."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -79,9 +96,18 @@ def build_core(seed, *, recur=25.0, n_cue=40, n_pfc=60, n_fs=24, n_strio=60, n_r
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
     cfg.connections_per_neuron = 0
     cfg.enable_brain_region_framework = True
-    cfg.enable_stdp = True
+    cfg.enable_stdp = (not stdp_off)
     cfg.enable_hebbian_learning = False
     cfg.enable_reward_modulation = True
+    # VSPatch striatal value rule: DA-gated COACTIVITY eligibility (order-independent, always >=0), NOT pair-STDP.
+    # On the saturated held-goal->value synapse pair-STDP nets to LTD; the DA-gated coactivity trace x phasic DA
+    # gives LTP at reward time. Corticostriatal plasticity is dopamine-gated/eligibility-based, so disabling pair-
+    # STDP on this value synapse (stdp_off) is the faithful choice. Both are default-OFF (scope-all baseline keeps
+    # pair-STDP); set together for the VSPatch arm.
+    cfg.reward_eligibility_from_coactivity = bool(reward_coactivity)
+    if reward_coactivity:
+        cfg.reward_coactivity_trace_tau_ms = float(coactivity_trace_tau_ms)
+        cfg.reward_coactivity_scale = float(coactivity_scale)
     cfg.enable_short_term_plasticity = False
     cfg.enable_structural_plasticity = False
     cfg.enable_parameter_heterogeneity = True
@@ -103,6 +129,9 @@ def build_core(seed, *, recur=25.0, n_cue=40, n_pfc=60, n_fs=24, n_strio=60, n_r
     cfg.gabab_tau_decay = float(gabab_tau_decay)
     cfg.gabab_propagation_strength = float(gabab_prop)
     cfg.gabab_conductance_max = 0.0
+
+    # HALF-2: tag the held-goal->value synapse with a reward-window plasticity gate (None = original scope-all).
+    _reward_gate = "reward_window" if vspatch_gate else None
 
     RS = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name
     cfg.brain_regions = [
@@ -144,7 +173,8 @@ def build_core(seed, *, recur=25.0, n_cue=40, n_pfc=60, n_fs=24, n_strio=60, n_r
         # The learned held-goal->value synapse (PLASTIC): only the PFC survives the gap, so credit that BRIDGES
         # the delay must flow through here.
         RegionPathway(from_region="pfc", to_region="striosome_value", density=0.6,
-                      weight_mean=float(pfc_to_strio_weight), weight_jitter=0.5, plastic=True),
+                      weight_mean=float(pfc_to_strio_weight), weight_jitter=0.5, plastic=True,
+                      plasticity_gate=_reward_gate),
         # The direct CS->value trace (PLASTIC): present in both arms, but the cue is OFF during the gap so it
         # cannot bridge a long delay on its own.
         RegionPathway(from_region="cue", to_region="striosome_value", density=0.6,
@@ -164,14 +194,55 @@ def build_core(seed, *, recur=25.0, n_cue=40, n_pfc=60, n_fs=24, n_strio=60, n_r
     ]
     snc_tonic_firing_fraction = 0.30
     cfg.enable_neuromodulator_subsystem = True
-    cfg.neuromodulators = [NeuromodulatorConfig(
-        name="dopamine", baseline=0.5, decay_tau_ms=200.0,
-        concentration_min=0.0, concentration_max=2.0,
-        targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
-        production_rules=[ProductionRule(rule_type="from_region_firing_signed",
-                                         sensitivity=float(snc_da_sensitivity),
-                                         threshold=float(snc_tonic_firing_fraction),
-                                         window_ms=200.0, source_regions=["snc"])])]
+    if da_from_reward_us:
+        # HALF-2 reward-time DA: a CLEAN phasic burst from the reward (US) population. baseline=0 with a one-sided
+        # from_region_firing production means da_signal (= conc - baseline) is POSITIVE at the US and ~0 otherwise
+        # -> the three-factor update (eligibility x da_signal) is LTP-signed at reward. On this substrate the
+        # SNc-signed DA sits BELOW its 0.5 baseline at reward (the SNc does not clear its tonic firing threshold),
+        # so the SNc-driven da_signal is NEGATIVE and every DA-gated update nets to LTD -- the operating-point trap
+        # that produced the original HALF-2 depression. This is dopamine's reward burst (Schultz); the value
+        # subtraction -V remains synaptic at the SNc (strio->snc GABA_B), so the critic (HALF-1) is unaffected.
+        cfg.neuromodulators = [NeuromodulatorConfig(
+            name="dopamine", baseline=0.0, decay_tau_ms=200.0,
+            concentration_min=0.0, concentration_max=2.0,
+            targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
+            production_rules=[ProductionRule(rule_type="from_region_firing",
+                                             sensitivity=float(da_reward_sensitivity),
+                                             threshold=float(da_reward_threshold),
+                                             window_ms=60.0, source_regions=["reward_us"])])]
+    else:
+        cfg.neuromodulators = [NeuromodulatorConfig(
+            name="dopamine", baseline=0.5, decay_tau_ms=200.0,
+            concentration_min=0.0, concentration_max=2.0,
+            targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
+            production_rules=[ProductionRule(rule_type="from_region_firing_signed",
+                                             sensitivity=float(snc_da_sensitivity),
+                                             threshold=float(snc_tonic_firing_fraction),
+                                             window_ms=200.0, source_regions=["snc"])])]
+
+    # HALF-2 VSPatch reward-window GATE (additive; only wired when vspatch_gate=True). A phasic modulator whose
+    # production reads the firing fraction of the REWARD-window population (default reward_us, the US-encoding
+    # population that fires ONLY when the reward is present -- ~0 during the CS/gap/floor, high at the US). Below
+    # threshold it stays at baseline 0 (gate SHUT -> pfc->striosome_value updates FROZEN); at the reward burst it
+    # accumulates concentration (fast tau) and DRIVES the "reward_window" plasticity gate open (->1). This gates
+    # corticostriatal LTP to the reward window ONLY -- the Rubicon/PVLV VSPatch mechanism. The SNc itself is NOT
+    # a clean reward-window signal on this substrate (it fires ~0.49 during the gap from the held-goal drive), so
+    # the reward-time signal is taken from the US-encoding population. Neural (the gate = a spiking-driven NM
+    # concentration) and contingent (no reward -> reward_us silent -> gate stays shut).
+    if vspatch_gate:
+        _default_thr = 0.10 if vspatch_gate_source == "reward_us" else float(snc_tonic_firing_fraction)
+        _gate_thr = float(_default_thr if vspatch_gate_threshold is None else vspatch_gate_threshold)
+        cfg.neuromodulators.append(NeuromodulatorConfig(
+            name="vspatch_gate", baseline=0.0, decay_tau_ms=float(vspatch_gate_tau_ms),
+            concentration_min=0.0, concentration_max=2.0,
+            targets=[ModulatorTarget(target_type="plasticity_gate", scope="gate:reward_window",
+                                     sensitivity=float(vspatch_gate_target_sensitivity))],
+            production_rules=[ProductionRule(rule_type="from_region_firing",
+                                             sensitivity=float(vspatch_gate_sensitivity),
+                                             threshold=_gate_thr,
+                                             window_ms=float(vspatch_gate_tau_ms),
+                                             source_regions=[str(vspatch_gate_source)])]))
+
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -239,7 +310,8 @@ def _assert_zero_drive_during_gap(bridge, idx_map, xp):
 
 def run_condition(seed, *, recur, gap_steps, n_train=45, cs_steps=35, us_steps=35, floor_steps=25,
                   probe_steps=35, snc_tonic_pa=220.0, cue_drive_pa=600.0, us_drive_pa=600.0,
-                  no_learning=False, unpaired=False, verbose=False, **build_kw):
+                  no_learning=False, unpaired=False, yoke_reward=False, omit_reward=False,
+                  verbose=False, **build_kw):
     """One arm: train the trace-conditioning task, then read the acquired value FROZEN.
 
     Returns the credit-assignment metrics. `no_learning=True` freezes STDP from t0 (the value cannot be learned
@@ -260,8 +332,29 @@ def run_condition(seed, *, recur, gap_steps, n_train=45, cs_steps=35, us_steps=3
     lr0 = 0.0 if no_learning else cfg.reward_learning_rate
     gap_ext_max = 0.0
 
+    def _gate_val():
+        # anti-cheat: the reward-window gate value, sampled from the bridge (NEURAL, NM-driven). NaN when the arm
+        # has no gate (the scope-all control / floor) -- not used for those.
+        try:
+            return float(bridge.get_plasticity_gate_value("reward_window"))
+        except Exception:
+            return float("nan")
+
     pfc_hold_curve, us_burst_curve, v_probe_curve = [], [], []
+    gate_gap_curve, gate_us_curve = [], []
     for t in range(n_train):
+        if yoke_reward:
+            # CONTINGENCY (yoked): deliver the reward with NO preceding CS/held-goal (floor -> US only). The gate
+            # still OPENS at the US burst (SNc above tonic), but the PFC is at rest (never loaded), so the held-
+            # goal->value synapse sees no pre/post coincidence -> it must NOT potentiate. The build is IDENTICAL
+            # to the treatment, so the frozen readout stays comparable. This separates CREDIT (needs the held
+            # goal co-active with reward) from a CLOCK (gate opens on reward regardless).
+            _run_window(bridge, idx_map, W_floor, floor_steps, xp, freeze_lr=lr0, cfg=cfg)
+            us_rec = _run_window(bridge, idx_map, W_us, us_steps, xp, freeze_lr=lr0, cfg=cfg, record=("snc",))
+            gate_us_curve.append(_gate_val())
+            us_burst_curve.append(us_rec["snc"]); pfc_hold_curve.append(0.0); v_probe_curve.append(0.0)
+            _clear_conductances(bridge)
+            continue
         _run_window(bridge, idx_map, W_floor, floor_steps, xp, freeze_lr=lr0, cfg=cfg)
         _run_window(bridge, idx_map, W_cs, cs_steps, xp, freeze_lr=lr0, cfg=cfg)
         # GAP: assert zero external drive to cue+pfc, then step. pfc sustains ONLY via recurrence.
@@ -272,12 +365,23 @@ def run_condition(seed, *, recur, gap_steps, n_train=45, cs_steps=35, us_steps=3
         gap_rec = _run_window(bridge, idx_map, W_gap, gap_steps, xp, freeze_lr=lr0, cfg=cfg,
                               record=("pfc", "striosome_value"))
         pfc_hold_curve.append(gap_rec["pfc"])
+        gate_gap_curve.append(_gate_val())   # gate at the end of the GAP (no reward): should be SHUT (~0)
+        if omit_reward:
+            # CONTINGENCY (goal held, reward ABSENT): the held goal is loaded + sustained across the gap exactly
+            # as in the paired arm, but NO US is delivered (floor replaces the US window). With the reward-window
+            # gate this NEVER opens the gate -> the held-goal->value synapse must NOT potentiate. A Hebbian/clock
+            # rule (co-firing alone) WOULD grow value here; a reward-CONTINGENT credit rule must not.
+            _run_window(bridge, idx_map, W_floor, us_steps, xp, freeze_lr=lr0, cfg=cfg)
+            gate_us_curve.append(_gate_val())
+            us_burst_curve.append(0.0); v_probe_curve.append(gap_rec["striosome_value"])
+            _clear_conductances(bridge); continue
         if unpaired:
             # break the CS->US contingency: skip the reward on ~half the trials at random (no reliable pairing)
             if rng.random() < 0.5:
                 _run_window(bridge, idx_map, W_floor, us_steps, xp, freeze_lr=lr0, cfg=cfg)
                 us_burst_curve.append(0.0); v_probe_curve.append(gap_rec["striosome_value"]); continue
         us_rec = _run_window(bridge, idx_map, W_us, us_steps, xp, freeze_lr=lr0, cfg=cfg, record=("snc",))
+        gate_us_curve.append(_gate_val())    # gate at the end of the US (reward burst): should be OPEN (>0)
         us_burst_curve.append(us_rec["snc"])
         v_probe_curve.append(gap_rec["striosome_value"])
         _clear_conductances(bridge)
@@ -311,6 +415,7 @@ def run_condition(seed, *, recur, gap_steps, n_train=45, cs_steps=35, us_steps=3
     e = slice(0, max(1, n_train // 5)); l = slice(-max(1, n_train // 5), None)
     return {
         "seed": seed, "recur": recur, "gap_steps": gap_steps, "no_learning": no_learning, "unpaired": unpaired,
+        "yoke_reward": yoke_reward, "omit_reward": omit_reward,
         "pfc_hold_hz": _st.mean(pfc_hold_curve[l]), "pfc_hold_early_hz": _st.mean(pfc_hold_curve[e]),
         "pfc_expect_hz": pfc_expect_hz,
         "v_anticip_hz": v_anticip_hz, "v_base_hz": base,
@@ -320,6 +425,10 @@ def run_condition(seed, *, recur, gap_steps, n_train=45, cs_steps=35, us_steps=3
         "predicted_hz": pred, "unpredicted_hz": unpred,
         "gap_ext_drive_max": gap_ext_max,               # anti-cheat (a): must be 0.0 (no host drive in the gap)
         "host_reward_signal": float(cfg.current_reward_signal),   # anti-cheat (b): must be 0.0
+        # HALF-2 VSPatch gate telemetry (NaN when the arm has no gate). The gate must be SHUT in the gap and OPEN
+        # at reward -> proof the reward-window gating is neural/temporal, not a host clock.
+        "gate_open_gap": (_st.mean(gate_gap_curve[l]) if gate_gap_curve else float("nan")),
+        "gate_open_us": (_st.mean(gate_us_curve[l]) if gate_us_curve else float("nan")),
     }
 
 
