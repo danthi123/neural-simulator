@@ -1,0 +1,30 @@
+{
+ "run_id": "1786070744-452355",
+ "runner": "research/runners/_vocal_gateb_stage2g_hammond_deltap.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage2g/research/runners/_vocal_gateb_stage2g_hammond_deltap.py",
+  "--mode",
+  "full",
+  "--out",
+  "research/findings/raw/gateb_stage2g_hammond_deltap/numpy.json"
+ ],
+ "git_sha": "a100f3180",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-06T22:45:44",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 10219.9,
+ "corpus_check_query": "gate B Hammond DeltaP withhold baseline homeostatic critic normalization",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage2g_hammond_deltap/numpy.json"
+}

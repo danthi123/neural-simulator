@@ -1,0 +1,40 @@
+{
+  "probe": "gateB_stage2g_calibration",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "backend_info": {
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "host": "dant123-wk"
+  },
+  "seed": 730501,
+  "target": 0,
+  "value_gain_n": 0.01,
+  "wh_value_gain": 2.0,
+  "equivalence": {
+    "weights_match": true,
+    "raster_match": true
+  },
+  "cont_test": 1.0,
+  "yoked_test": 1.0,
+  "cont_r0_d1": [
+    51.5,
+    2.35
+  ],
+  "cont_v_wh": 0.0,
+  "yoked_v_wh": 0.37480017460424364,
+  "yoked_base_rate": 0.525,
+  "yoked_n_wh_rewarded": 9,
+  "cont_d1_after": {
+    "0": 17.634686559214284,
+    "1": 36.8000070532163
+  },
+  "yoked_d1_after": {
+    "0": 17.579911690508016,
+    "1": 44.122649913363986
+  },
+  "cont_train_p0": 0.85,
+  "yoked_train_p0": 0.7,
+  "delta": 0.0,
+  "elapsed_seconds": 42.731438312002865
+}
