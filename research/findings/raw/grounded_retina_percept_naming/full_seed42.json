@@ -1,0 +1,227 @@
+{
+  "verdict": {
+    "label": "grounded RETINA->V1 percept driving the naming map (fixed codes replaced by real vision)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: naming accuracy (held-out jittered percept) >= 0.80 (measured=0.5 expect=<function main.<locals>.<lambda> at 0x7f231a360ea0>)",
+      "unmet: naming vs untrained random map (learned, not substrate bias) (treatment=0.5 control=0.291667 |sep|=0.208333 > 0.3)",
+      "unmet: each object names a DISTINCT word (all seeds) (measured=False expect=True)",
+      "unmet: permutation followed >= 0.80 (measured=0.4583333333333333 expect=<function main.<locals>.<lambda> at 0x7f231db30860>)",
+      "unmet: permuted map rejects the original word (treatment=0.458333 control=0.291667 |sep|=0.166667 > 0.3)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "backend is numpy (real spiking Izhikevich)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "naming input is V1 firing driven by the retina (not a host code)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "naming accuracy (held-out jittered percept) >= 0.80",
+        "ok": false,
+        "detail": "measured=0.5 expect=<function main.<locals>.<lambda> at 0x7f231a360ea0>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "naming accuracy above chance",
+        "ok": true,
+        "detail": "0.5 vs floor 0.25",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "naming vs untrained random map (learned, not substrate bias)",
+        "ok": false,
+        "detail": "treatment=0.5 control=0.291667 |sep|=0.208333 > 0.3",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "V1 codes are object-DISCRIMINABLE (low cross-object cosine)",
+        "ok": true,
+        "detail": "measured=0.2553489215281423 expect=<function main.<locals>.<lambda> at 0x7f231a360ea0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "each object names a DISTINCT word (all seeds)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "FIXED Gabor retina->V1 weights unchanged by teaching (only V1->word learns)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "lesion collapses the decode toward chance",
+        "ok": true,
+        "detail": "before=0.5 after=0.416667 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "lesion never emits a confident decode (fails safe)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "render articulates the spike-decoded word == 1",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f231a360ea0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "spiking gate: hungry routes to request all seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "spiking gate: sated routes to silence -> zero word output all seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "permutation followed >= 0.80",
+        "ok": false,
+        "detail": "measured=0.4583333333333333 expect=<function main.<locals>.<lambda> at 0x7f231db30860>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "permuted map rejects the original word",
+        "ok": false,
+        "detail": "treatment=0.458333 control=0.291667 |sep|=0.166667 > 0.3",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "novel untaught object abstains (below confidence) all seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "carrier-frame phrasing + simple-bar object render",
+        "why": "host 'the <agent> <verb> ___' skeleton and oriented-bar object images are NAMED residuals; only the REFERENT word is brain-selected, from the real V1 response"
+      },
+      {
+        "process": "structural plasticity / threshold homeostasis / synaptic scaling",
+        "why": "frozen around the naming map so the learned pathway is stable across the long inference battery"
+      },
+      {
+        "process": "full spiking request/silence gate operating point",
+        "why": "the request/silence race is on-bridge/spiking; here it ROUTES whether the naming circuit is engaged"
+      }
+    ],
+    "chance": 0.25
+  },
+  "mean_name_acc": 0.5,
+  "mean_name_acc_chance": 0.2916666666666667,
+  "mean_lesion_acc": 0.4166666666666667,
+  "mean_render_faithful": 1.0,
+  "mean_cross_object_v1_cosine": 0.2553489215281423,
+  "naming_accuracy_attributable_fraction": 0.41666666666666663,
+  "all_v1_fires_every_trial": true,
+  "all_v1_nonzero_per_object": true,
+  "all_objects_name_distinct_words": false,
+  "all_gabor_frozen_after_teach": true,
+  "all_hungry_request": true,
+  "all_sated_silence_zero_output": true,
+  "all_lesion_zero_confident": true,
+  "mean_perm_followed": 0.4583333333333333,
+  "mean_orig_accepted_after_perm": 0.2916666666666667,
+  "all_novel_abstains": true,
+  "chance": 0.25,
+  "name_go_threshold": 0.8,
+  "smoke": false,
+  "backend": "numpy",
+  "conf_margin_spk": 0.2,
+  "min_word_spikes": 6.0,
+  "n_v1": 8192,
+  "n_retina": 2048,
+  "word_nper": 48,
+  "n_ex": 12,
+  "hold": 6,
+  "n_referents": 4,
+  "ckpt": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "gabor_scale": 300.0,
+    "hebb_rate": 0.1,
+    "hebb_max": 50.0,
+    "teach_epochs": 8,
+    "teach_steps": 35,
+    "retina_drive": 2000.0,
+    "teach_drive": 600.0,
+    "decode_steps": 90,
+    "washout_steps": 10
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "k": 4,
+      "n_ex": 12,
+      "hold": 6,
+      "name_acc": 0.5,
+      "name_acc_chance": 0.2916666666666667,
+      "v1_fires_every_trial": true,
+      "v1_nonzero_per_object": true,
+      "cross_object_v1_cosine": 0.2553489215281423,
+      "distinct_words": 3,
+      "gabor_frozen_after_teach": true,
+      "render_faithful": 1.0,
+      "silent_zero_output": true,
+      "hungry_decision": "request",
+      "sated_decision": "silence",
+      "gate_hungry_req_sil": [
+        48.0,
+        0.0
+      ],
+      "gate_sated_req_sil": [
+        17.0,
+        22.0
+      ],
+      "word_output_events": 24,
+      "lesion_acc": 0.4166666666666667,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.4583333333333333,
+      "orig_accepted_after_perm": 0.2916666666666667,
+      "novel_abstains": true,
+      "novel_margin": 0.05053598774877407,
+      "novel_top1": 343.0,
+      "spoken": [
+        "the fox eats seed",
+        "the fox eats seed",
+        "the fox eats seed",
+        "the fox eats seed"
+      ]
+    }
+  ]
+}
