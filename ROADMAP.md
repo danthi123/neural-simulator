@@ -12,7 +12,17 @@ Status below reflects the records available at the 2026-08-05 audit, with
 inline **2026-08-07 UPDATE** notes on items 2 (Gate B delayed-credit Stage-2j
 GO), 3 (source monitoring = characterized conservation boundary), and 4 (replay
 self-calibration Step-0 NO-GO + the cross-gap identity-competition synthesis).
-The live, per-cycle resume point is `GAP_CLOSURE_MISSION.md`.
+A **2026-08-07 landscape-survey adoption thread** also landed (owner-directed
+"make use of the findings"), all 6-seed and brain-based: the Rubicon
+delayed-credit machinery adopted as a maintained-goal delay bridge + a
+reward-timed value **maintenance** rule (both GO; honest scope = maintenance of
+structurally-available value, not build-from-zero); a BORN-style **learned
+bodily self-model** (a Hebb/Oja forward model + neural reafference-cancellation
+agency comparator, a mirror-test correlate) GO on the self-schema lane; and
+Axon's CaP−CaD rule NO-GO (which validated our own SST-microcircuit). The gap#4
+deep-credit-on-spikes frontier is a mapped, deprioritized boundary (the tool
+alarm that implied otherwise was retired). The live, per-cycle resume point is
+`GAP_CLOSURE_MISSION.md`.
 
 ## Purpose
 
