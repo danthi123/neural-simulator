@@ -8,7 +8,11 @@ board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
 Short, medium, and long describe dependency horizons, not promised dates.
-Status below reflects the records available at the 2026-08-05 audit.
+Status below reflects the records available at the 2026-08-05 audit, with
+inline **2026-08-07 UPDATE** notes on items 2 (Gate B delayed-credit Stage-2j
+GO), 3 (source monitoring = characterized conservation boundary), and 4 (replay
+self-calibration Step-0 NO-GO + the cross-gap identity-competition synthesis).
+The live, per-cycle resume point is `GAP_CLOSURE_MISSION.md`.
 
 ## Purpose
 
@@ -199,7 +203,15 @@ its controls and lesions, and is tested at the required seed coverage.
    then preregister any replacement acquisition method before inspecting its
    result. Existing thresholds must not be loosened. Stage 2 remains forbidden.
    Delayed action-reward learning and its unrelated-reward control come
-   afterward.
+   afterward. **2026-08-07 UPDATE: on the vocal-BG credit substrate (a separate
+   thread from the single-compartment physiology above), the delayed-credit
+   MECHANISM reached a Stage-2j GO at the frozen ≥5/6 bar — an adaptive rewarded-
+   gated RPE floor: held-out steer 5/6 (first config to clear it), reversal
+   0→1.0, acquisition-lesion attributes the contingency to training-time D1
+   plasticity, stage-1 byte-identity. The lone held-out miss (730705) was
+   characterized across 3 further stages to a BG-output/commit temporal-head-
+   start residual (TRN-gated selection-epoch reset is the banked next lead). See
+   `GAP_CLOSURE_MISSION.md` #1.**
 3. **Source monitoring: the bounded-loss tradeoff is met and the leak is
    closed, but no fixed competition circuit protects the weakest source
    across seeds.** The no-harm rule is bounded-loss, guard-the-floor, max-min,
@@ -225,16 +237,32 @@ its controls and lesions, and is tested at the required seed coverage.
    and BOTH the v6 AND v9 calibration GO/PASS FLIP to NO-GO — they were
    artifacts. With disjoint patterns + silent recall the rival burden is 0, so
    NO competition mechanism can move the weakest source's own margin: the
-   criterion is unsatisfiable under this protocol. Next method must add genuine
-   episode-pattern OVERLAP (a real rival burden) or a BCM metaplastic rule that
-   raises the weak source's OWN excitatory gain — not the inhibition. No
-   criterion loosened; the v6-calibration-GO finding is flagged for retraction.
-4. **Replay consolidation now clears every control except replay-order.** v5+SFA
-   reinstates the correct cortical target and beats learned-target, no-sleep,
-   reinstatement-lesion, and interference (false-recall) controls on both
-   calibration seeds; the sole residual is the replay-ORDER control, whose root
-   cause is the order-blind rate-window Hebbian rule. The next mechanism is
-   order-sensitive (spike-timing-dependent) consolidation plasticity.
+   criterion is unsatisfiable under this protocol. **2026-08-07 UPDATE: genuine
+   episode-pattern overlap was added (a real rival burden), and FIVE honest
+   de-risks under it — two encoding-side (heterosynaptic depression; conjunctive
+   source-tag), a recall-side CA3 attractor competition, a joint uniq-emphasis ×
+   competition knob, and a capacity/scale test — were ALL NO-GO, converging on a
+   CONSERVATION/CAPACITY boundary: at overlap 0.2 the honest achievable margin
+   tops out ~0.14, structurally below the 0.15 floor, and neither mechanism nor
+   added capacity clears it (a fixed firing budget shared across co-resident
+   sources; lifting the weakest see-saws off the others). The two remaining
+   levers are OWNER-DOMAIN task-design/criterion forks (the mixed-episode
+   asymmetry that uniquely penalises self_generated; whether 0.15 is calibrated
+   for overlap 0.2). See `GAP_CLOSURE_MISSION.md` #3. No criterion loosened.**
+4. **Replay consolidation clears every control on calibration but OVERFITS the
+   operating point.** v5+SFA + v6 order-STDP is a per-seed GO on the 2
+   calibration seeds, but **v6 MULTISEED is a NO-GO**: the interference-control
+   operating point is a vector of ABSOLUTE-unit gains frozen on 2 seeds, so on
+   disjoint dev seeds false-recall returns to ~0.5. **2026-08-07 UPDATE: the
+   named surpass (emergent homeostatic self-calibration to a label-free WTA-
+   sparsity set-point) was ruled out by a cheap STEP-0 closability gate — the
+   regime is already one-winner on every seed yet false-recall is ~0.5, and the
+   catastrophic vs perfect probes have IDENTICAL label-free statistics. The
+   failure is winner-IDENTITY (the wrong assembly's basin captures the cue), not
+   a scalar level a homeostat could regulate.** ⭐ CROSS-GAP SYNTHESIS: this is
+   the SAME boundary as #3 — discriminating overlapping attractors by their
+   IDENTITY, which no aggregate/rate/sparsity statistic resolves (the 2026-05-31
+   DG separation-reliability boundary). See `GAP_CLOSURE_MISSION.md` #4.
 5. **Visual invariance is not learned yet.** The spike-latency selector is not
    enough; locally learned, stable representations must handle changes in
    position and appearance.
