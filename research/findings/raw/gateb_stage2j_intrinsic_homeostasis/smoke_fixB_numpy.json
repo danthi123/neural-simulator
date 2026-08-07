@@ -1,0 +1,243 @@
+{
+  "probe": "gateB_stage2j_intrinsic_homeostasis_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "smoke_seeds": [
+    730601,
+    730602,
+    730704
+  ],
+  "fix_a": false,
+  "fix_b_adaptive_rpe_floor": true,
+  "fix_c_k_homeostat": false,
+  "config": {
+    "rpe_floor": 0.1,
+    "value_est_baseline_cap": 0.9,
+    "homeo_dead_floor": 2.0,
+    "homeo_asym_ratio": 30.0,
+    "homeo_setpoint": 60.0,
+    "homeo_k_max": 4.0
+  },
+  "per_seed": [
+    {
+      "seed": 730601,
+      "baseline_p0": 0.5714285714285714,
+      "FIXES_ON": {
+        "count_c0": [
+          36,
+          3
+        ],
+        "count_c1": [
+          3,
+          36
+        ],
+        "n_clean_c0": 20,
+        "n_clean_c1": 20,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 1.0,
+        "D_contingent": 1.0,
+        "D_yoked": -0.75,
+        "steer": true,
+        "n_clamp_c0": 21,
+        "n_clamp_c1": 22,
+        "homeo_c0": {
+          "engaged": false,
+          "dead_channel": null,
+          "dead_r0": null,
+          "ratio": null,
+          "k_scale": 1.0,
+          "fired_at_k1": null,
+          "fired_after": null
+        },
+        "homeo_c1": {
+          "engaged": false,
+          "dead_channel": null,
+          "dead_r0": null,
+          "ratio": null,
+          "k_scale": 1.0,
+          "fired_at_k1": null,
+          "fired_after": null
+        },
+        "r0_d1_c0": [
+          6.5,
+          4.55
+        ],
+        "r0_d1_c1": [
+          6.5,
+          4.55
+        ]
+      },
+      "STAGE2G_OFF": {
+        "count_c0": [
+          20,
+          19
+        ],
+        "count_c1": [
+          5,
+          34
+        ],
+        "n_clean_c0": 1,
+        "n_clean_c1": 20,
+        "test_rate_c0": 0.0,
+        "test_rate_c1": 1.0,
+        "D_contingent": 0.0,
+        "D_yoked": -1.0,
+        "steer": false,
+        "n_orig_clamp_nonrew_c0": 0,
+        "n_orig_clamp_nonrew_c1": 0
+      },
+      "SMOKE_no_nan": true,
+      "SMOKE_both_targets_act": true,
+      "SMOKE_D_defined": true,
+      "SMOKE_D_improved_vs_2g": true,
+      "SMOKE_steer": true
+    },
+    {
+      "seed": 730602,
+      "baseline_p0": 0.2222222222222222,
+      "FIXES_ON": {
+        "count_c0": [
+          32,
+          8
+        ],
+        "count_c1": [
+          0,
+          40
+        ],
+        "n_clean_c0": 20,
+        "n_clean_c1": 20,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 1.0,
+        "D_contingent": 1.0,
+        "D_yoked": 0.44999999999999996,
+        "steer": true,
+        "n_clamp_c0": 18,
+        "n_clamp_c1": 26,
+        "homeo_c0": {
+          "engaged": false,
+          "dead_channel": null,
+          "dead_r0": null,
+          "ratio": null,
+          "k_scale": 1.0,
+          "fired_at_k1": null,
+          "fired_after": null
+        },
+        "homeo_c1": {
+          "engaged": false,
+          "dead_channel": null,
+          "dead_r0": null,
+          "ratio": null,
+          "k_scale": 1.0,
+          "fired_at_k1": null,
+          "fired_after": null
+        },
+        "r0_d1_c0": [
+          6.85,
+          7.35
+        ],
+        "r0_d1_c1": [
+          6.85,
+          7.35
+        ]
+      },
+      "STAGE2G_OFF": {
+        "count_c0": [
+          31,
+          9
+        ],
+        "count_c1": [
+          9,
+          31
+        ],
+        "n_clean_c0": 20,
+        "n_clean_c1": 20,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 1.0,
+        "D_contingent": 1.0,
+        "D_yoked": -0.33333333333333337,
+        "steer": true,
+        "n_orig_clamp_nonrew_c0": 0,
+        "n_orig_clamp_nonrew_c1": 0
+      },
+      "SMOKE_no_nan": true,
+      "SMOKE_both_targets_act": true,
+      "SMOKE_D_defined": true,
+      "SMOKE_D_improved_vs_2g": false,
+      "SMOKE_steer": true
+    },
+    {
+      "seed": 730704,
+      "baseline_p0": 0.0,
+      "FIXES_ON": {
+        "count_c0": [
+          25,
+          14
+        ],
+        "count_c1": [
+          1,
+          38
+        ],
+        "n_clean_c0": 20,
+        "n_clean_c1": 20,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 1.0,
+        "D_contingent": 1.0,
+        "D_yoked": -0.19999999999999996,
+        "steer": true,
+        "n_clamp_c0": 15,
+        "n_clamp_c1": 25,
+        "homeo_c0": {
+          "engaged": false,
+          "dead_channel": null,
+          "dead_r0": null,
+          "ratio": null,
+          "k_scale": 1.0,
+          "fired_at_k1": null,
+          "fired_after": null
+        },
+        "homeo_c1": {
+          "engaged": false,
+          "dead_channel": null,
+          "dead_r0": null,
+          "ratio": null,
+          "k_scale": 1.0,
+          "fired_at_k1": null,
+          "fired_after": null
+        },
+        "r0_d1_c0": [
+          1.9,
+          6.55
+        ],
+        "r0_d1_c1": [
+          1.9,
+          6.55
+        ]
+      },
+      "STAGE2G_OFF": {
+        "count_c0": [
+          15,
+          24
+        ],
+        "count_c1": [
+          13,
+          26
+        ],
+        "n_clean_c0": 2,
+        "n_clean_c1": 0,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": NaN,
+        "D_contingent": NaN,
+        "D_yoked": 0.0,
+        "steer": false,
+        "n_orig_clamp_nonrew_c0": 0,
+        "n_orig_clamp_nonrew_c1": 0
+      },
+      "SMOKE_no_nan": true,
+      "SMOKE_both_targets_act": true,
+      "SMOKE_D_defined": true,
+      "SMOKE_D_improved_vs_2g": true,
+      "SMOKE_steer": true
+    }
+  ],
+  "elapsed_seconds": 443.15939217199775
+}
