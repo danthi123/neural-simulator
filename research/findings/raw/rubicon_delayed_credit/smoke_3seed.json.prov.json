@@ -1,0 +1,34 @@
+{
+ "run_id": "1786120318-940293",
+ "runner": "research/runners/_rubicon_delayed_credit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aea45c64c867a5c17/research/runners/_rubicon_delayed_credit_derisk.py",
+  "--seeds",
+  "42,43,44",
+  "--gap-short",
+  "20",
+  "--gap-long",
+  "200",
+  "--out",
+  "research/findings/raw/rubicon_delayed_credit/smoke_3seed.json"
+ ],
+ "git_sha": "b71ff9d81",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T12:31:58",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1129.7,
+ "corpus_check_query": "delayed reward value task maintained goal working memory PFC bridge VSPatch reward timing TD cue shift dopamine credit",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/rubicon_delayed_credit/smoke_3seed.json"
+}
