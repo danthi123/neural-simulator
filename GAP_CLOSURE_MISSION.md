@@ -20,10 +20,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > held-out (5/6); full battery (reversal 0->1.0, acquisition-lesion share 1.0, stage-1 byte-identity) all pass. The
 > Gate B credit MECHANISM is closed to its bar. ⛔ Authoritative backend is **numpy** (cupy tests a different brain
 > per seed — a doc trap that cost a 40-min wrong-backend run).
-> **⏸️ EXACT NEXT (2026-08-07): the 730705 within-bar arc is CHECKPOINTED after Stage-2m (4 relocations, `b59b6b3d4`);
-> the 2j-GO stands. PIVOT to a not-yet-GO gap** — **#3 source monitoring** (encoding wall → competitive/heterosynaptic
-> pattern separation) or **#4 replay** (v6 multiseed NO-GO → emergent homeostatic self-calibration of the operating
-> point). Resume 730705 later via the banked closing-stack + TRN-gated selection-epoch reset (Stage-2m line below).
+> **⏸️ 730705 within-bar arc CHECKPOINTED after Stage-2m (4 relocations, `b59b6b3d4`); the 2j-GO stands.** Resume it
+> later via the banked closing-stack + TRN-gated selection-epoch reset (Stage-2m line below).
+> **⭐ ACTIVE FRONTIER (2026-08-07) = #3 source monitoring.** Research round done + hetero-encoding de-risk = NO-GO
+> (`8aca3c62`), with the reframe that **separation must live in WHICH CELLS FIRE, not which synapses survive** (the
+> shared core fires in every recall → post-hoc synapse depression redistributes rather than removes rival burden).
+> **EXACT NEXT = build the pre-scoped conjunctive source-tag** (weak source-afferent modulation of the overlap layer
+> at ENCODING → different shared-cell subsets per source; recall stays episode-only/honest). See the #3 lane bullet.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
@@ -102,9 +105,19 @@ working). Current frontier per lane:
   MSN never wins WTA (count_c1=[40,0]) — **waking != selecting**. NEXT = **Stage-2k**: a neural exploration/sampling
   floor that GUARANTEES the un-sampled action is SELECTED + rewarded during training (distinct from the refuted
   current-injection FIX A), so reward can potentiate proposal_1->str_d1_1.
-- **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
-  FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
-  equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
+- **#3 Source monitoring** (ACTIVE pivot 2026-08-07) — NO real GO ever (v6/v9 calib GOs were instrument artifacts,
+  RETRACTED). Instrument FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall**
+  (shared cells potentiated equally to all sources). Research round (`ce2504fb`, scoping doc
+  `research/findings/raw/_source_monitor_heterosynaptic_encoding_scoping.md`) found the 4 prior levers all failed for
+  ONE root cause — they act at RECALL or on ACTIVITY, never the encoding fan-out. **Heterosynaptic-competition-at-
+  encoding de-risk (`8aca3c62`, `lam_hetero`, reuses the CA3-GO kernel, null-control byte-identical) = NO-GO** (min M
+  +0.005, ~30× below the 0.15 floor, worse than baseline on 651), with a STRUCTURAL reframe that is the real finding:
+  **the shared core fires in EVERY recall, so post-hoc synapse depression REDISTRIBUTES rival burden rather than
+  removing it — separation must live in WHICH CELLS FIRE, not which synapses survive.** ⭐ NEXT = the pre-scoped
+  **conjunctive source-tag** (Komorowski–Manns–Eichenbaum item-in-context cells): weak source-afferent modulation of
+  the overlap layer AT ENCODING so different shared-cell SUBSETS fire per source (recall stays episode-only + honest;
+  separates only the overlap, so the DG separation-reliability tradeoff knob doesn't bind). The byte-identical null
+  makes it a clean A/B vs the hetero arm.
 - **#4 Replay consolidation** — v5 capability + v5+SFA interference wall closed + v6 order-STDP; but v6 multiseed
   NO-GO (2-seed GO was operating-point OVERFIT). NEXT = **emergent homeostatic self-calibration** of the operating
   point (host-tuned on 2 seeds → must emerge per-brain).
