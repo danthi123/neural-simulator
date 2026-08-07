@@ -11,9 +11,19 @@ WHY THIS EXISTS (2026-08-06, two problems, one tool):
 
   (2) ORPHANED SWEEPS. Sub-agents repeatedly wrote their own seed-loop runner, launched it in the BACKGROUND,
       and ended their turn "awaiting" a notification a terminated sub-agent never receives — orphaning the sweep
-      (Stage-2c, Stage-2f, both needing manual rescue). An instruction to "finish in-turn" is unenforceable. This
-      tool is the fix: it runs every seed SYNCHRONOUSLY in the foreground and only returns when the verdict
-      exists. There is no background mode to reach for. The sanctioned sweep path cannot be detached.
+      (Stage-2c, Stage-2f, Stage-2g, each needing manual rescue). The ROOT CAUSE is structural and no tool an
+      agent runs INSIDE ITS TURN can fix it: a sub-agent can background anything (including this tool), and a
+      sub-agent — unlike the MAIN LOOP — is NOT reliably re-invoked by its own background job. So the sweep must
+      not live in an agent's turn at all:
+
+        - a lane AGENT builds the runner and runs `--smoke 1` (ONE seed, bounded, in-turn) to prove it runs,
+          then RETURNS. It never runs the multiseed sweep.
+        - the PARENT (main loop) runs the full multiseed sweep with THIS tool, launched as a harness-tracked
+          background job. The main loop IS reliably re-invoked on completion, so nothing is orphaned, and the
+          verdict artifact lands under parent control.
+
+      That division — build in the agent, sweep in the parent — is what actually removes the failure mode.
+      `--smoke N` exists for the agent half; the full run (no --smoke) is the parent half.
 
 CONTRACT ON THE RUNNER. Each seed is a separate `python -m <runner> [extra] --<seed-flag> <S> --<out-flag> <tmp>`
 invocation (defaults `--seed` / `--json`). The runner must write a JSON object to <tmp>. A seed PASSES when that
@@ -127,9 +137,14 @@ def main(argv=None) -> int:
     ap.add_argument("--pass-field", default=None, help="override the pass field (default: verdict_status==GO)")
     ap.add_argument("--backend", default=None, help="sets SIM_BACKEND for every seed (numpy/cupy)")
     ap.add_argument("--per-seed-timeout", type=int, default=1800)
+    ap.add_argument("--smoke", type=int, default=0, metavar="N",
+                    help="AGENT half: run only the first N seeds as a bounded in-turn CHECK. The result is "
+                         "marked SMOKE and can NEVER be read as a verdict — the full sweep is the parent's job.")
     args = ap.parse_args(argv)
 
     seeds = parse_seeds(args.seeds)
+    if args.smoke:
+        seeds = seeds[:args.smoke]
     extra = args.extra.split() if args.extra else []
     env = dict(os.environ)
     if args.backend:
@@ -145,14 +160,22 @@ def main(argv=None) -> int:
         rows.append(row)
 
     verdict = aggregate(rows)
+    if args.smoke:
+        # A SMOKE is a build-check, never a verdict. Relabel so no finding can quote it as GO/NO-GO.
+        verdict["smoke_outcome"] = verdict.get("outcome")
+        verdict["outcome"] = "SMOKE"
+        verdict["smoke_n"] = args.smoke
     verdict.update({"runner": args.runner, "seeds": seeds, "extra": extra,
                     "backend": args.backend, "elapsed_seconds": round(time.perf_counter() - started, 1)})
     out = os.path.join(ROOT, args.out) if not os.path.isabs(args.out) else args.out
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as fh:
         json.dump(verdict, fh, indent=2)
-    print(json.dumps({k: verdict[k] for k in ("outcome", "n_pass", "n_seeds") if k in verdict}, indent=2))
+    print(json.dumps({k: verdict[k] for k in ("outcome", "smoke_outcome", "n_pass", "n_seeds") if k in verdict},
+                     indent=2))
     print("  verdict -> %s" % out)
+    if args.smoke:                       # smoke exit: 0 if it ran+passed (build works), 2 if a seed failed
+        return 0 if verdict.get("smoke_outcome") == "GO" else 2
     return {"GO": 0, "NO-GO": 2}.get(verdict["outcome"], 1)
 
 
