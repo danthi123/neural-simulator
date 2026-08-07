@@ -1,0 +1,6 @@
+*.out
+*.err
+*.stderr.log
+validate_*.json
+*.out.prov.json
+*.err.prov.json

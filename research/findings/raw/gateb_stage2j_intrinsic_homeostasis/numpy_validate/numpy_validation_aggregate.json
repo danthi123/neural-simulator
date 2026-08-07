@@ -1,0 +1,388 @@
+{
+  "probe": "gateB_stage2j_numpy_full_validation",
+  "provenance": {
+    "runner": "research/runners/_vocal_gateb_stage2j_intrinsic_homeostasis.py",
+    "invocation": "--mode seeds (per-seed, 24 parallel jobs) + --mode full --lesion-seed 730605",
+    "backend": "numpy",
+    "device": "CPU (NumPy backend)",
+    "note": "AUTHORITATIVE backend = numpy (all prior stages 2g/2i are numpy; cupy tests different brains). Built by scratchpad/build_aggregate.py from numpy_validate/*.out (log-polluted stdout; final JSON block extracted).",
+    "dev_seeds": [
+      730601,
+      730602,
+      730603,
+      730604,
+      730605,
+      730606
+    ],
+    "held_out_seeds": [
+      730701,
+      730702,
+      730703,
+      730704,
+      730705,
+      730706
+    ]
+  },
+  "fixB": {
+    "dev": {
+      "steer_passes": 5,
+      "n": 6,
+      "per_seed": [
+        {
+          "seed": 730601,
+          "base_p0": 0.57,
+          "D_contingent": 1.0,
+          "D_yoked": -0.75,
+          "count_c1": [
+            3,
+            36
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730602,
+          "base_p0": 0.22,
+          "D_contingent": 1.0,
+          "D_yoked": 0.45,
+          "count_c1": [
+            0,
+            40
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730603,
+          "base_p0": 0.0,
+          "D_contingent": 1.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            0,
+            40
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730604,
+          "base_p0": 1.0,
+          "D_contingent": 0.95,
+          "D_yoked": 0.1,
+          "count_c1": [
+            11,
+            29
+          ],
+          "test_rate_c1": 0.95,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730605,
+          "base_p0": 0.3,
+          "D_contingent": 1.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            1,
+            39
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730606,
+          "base_p0": 0.0,
+          "D_contingent": 1.0,
+          "D_yoked": 0.85,
+          "count_c1": [
+            2,
+            38
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": false
+        }
+      ]
+    },
+    "heldout": {
+      "steer_passes": 5,
+      "n": 6,
+      "per_seed": [
+        {
+          "seed": 730701,
+          "base_p0": 0.25,
+          "D_contingent": 1.0,
+          "D_yoked": -1.0,
+          "count_c1": [
+            3,
+            37
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730702,
+          "base_p0": 1.0,
+          "D_contingent": 1.0,
+          "D_yoked": -0.05,
+          "count_c1": [
+            4,
+            36
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730703,
+          "base_p0": 0.05,
+          "D_contingent": 1.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            1,
+            39
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730704,
+          "base_p0": 0.0,
+          "D_contingent": 1.0,
+          "D_yoked": -0.2,
+          "count_c1": [
+            1,
+            38
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730705,
+          "base_p0": 1.0,
+          "D_contingent": 0.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            40,
+            0
+          ],
+          "test_rate_c1": 0.0,
+          "homeo_engaged": false,
+          "steer": false
+        },
+        {
+          "seed": 730706,
+          "base_p0": 1.0,
+          "D_contingent": 1.0,
+          "D_yoked": 0.65,
+          "count_c1": [
+            6,
+            34
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        }
+      ]
+    }
+  },
+  "fixBC": {
+    "dev": {
+      "steer_passes": 6,
+      "n": 6,
+      "per_seed": [
+        {
+          "seed": 730601,
+          "base_p0": 0.57,
+          "D_contingent": 1.0,
+          "D_yoked": -0.75,
+          "count_c1": [
+            3,
+            36
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730602,
+          "base_p0": 0.22,
+          "D_contingent": 1.0,
+          "D_yoked": 0.45,
+          "count_c1": [
+            0,
+            40
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730603,
+          "base_p0": 0.0,
+          "D_contingent": 1.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            0,
+            40
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730604,
+          "base_p0": 1.0,
+          "D_contingent": 0.95,
+          "D_yoked": 0.1,
+          "count_c1": [
+            11,
+            29
+          ],
+          "test_rate_c1": 0.95,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730605,
+          "base_p0": 0.3,
+          "D_contingent": 1.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            1,
+            39
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730606,
+          "base_p0": 0.0,
+          "D_contingent": 1.0,
+          "D_yoked": -0.15,
+          "count_c1": [
+            2,
+            38
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": true,
+          "steer": true
+        }
+      ]
+    },
+    "heldout": {
+      "steer_passes": 5,
+      "n": 6,
+      "per_seed": [
+        {
+          "seed": 730701,
+          "base_p0": 0.25,
+          "D_contingent": 1.0,
+          "D_yoked": -1.0,
+          "count_c1": [
+            3,
+            37
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730702,
+          "base_p0": 1.0,
+          "D_contingent": 1.0,
+          "D_yoked": -0.05,
+          "count_c1": [
+            4,
+            36
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730703,
+          "base_p0": 0.05,
+          "D_contingent": 1.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            1,
+            39
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730704,
+          "base_p0": 0.0,
+          "D_contingent": 1.0,
+          "D_yoked": -0.2,
+          "count_c1": [
+            1,
+            38
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        },
+        {
+          "seed": 730705,
+          "base_p0": 1.0,
+          "D_contingent": 0.0,
+          "D_yoked": 0.0,
+          "count_c1": [
+            40,
+            0
+          ],
+          "test_rate_c1": 0.0,
+          "homeo_engaged": true,
+          "steer": false
+        },
+        {
+          "seed": 730706,
+          "base_p0": 1.0,
+          "D_contingent": 1.0,
+          "D_yoked": 0.65,
+          "count_c1": [
+            6,
+            34
+          ],
+          "test_rate_c1": 1.0,
+          "homeo_engaged": false,
+          "steer": true
+        }
+      ]
+    }
+  },
+  "full_mode_fixB": {
+    "equivalence": {
+      "weights_match": true,
+      "raster_match": true
+    },
+    "steer_seed_passes": 5,
+    "steer_per_seed": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ],
+    "lesion_seed": 730605,
+    "D_contingent_intact": 1.0,
+    "D_contingent_acq_lesion": 5.551115123125783e-17,
+    "acquisition_plasticity_share": 1.0,
+    "reversal_p_b_after_phaseA": 0.0,
+    "reversal_p_b_after_phaseB": 1.0,
+    "reversal_pass": true
+  }
+}

@@ -1,26 +1,71 @@
 ---
 type: finding
-status: partial
+status: go
 date: 2026-08-07
 mechanism: gateB-stage2j-adaptive-rewarded-gated-rpe-floor-plus-MSN-k-homeostat-extreme-asymmetry-gated
 backend: numpy
 runner: research/runners/_vocal_gateb_stage2j_intrinsic_homeostasis.py
 builds-on: 2026-08-07-gateB-stage2i-RPE-floor-closes-730704-str_d1-dead-pathway-730705.md
 artifacts:
+  - research/findings/raw/gateb_stage2j_intrinsic_homeostasis/numpy_validate/numpy_validation_aggregate.json
   - research/findings/raw/gateb_stage2j_intrinsic_homeostasis/smoke_fixB_numpy.json
   - research/findings/raw/gateb_stage2j_intrinsic_homeostasis/smoke_fixC_numpy.json
 ---
 
-# Gate B Stage 2j: an adaptive (rewarded-gated) RPE floor smoke-recovers 730704 without a single-run regression, and a CORRECTED diagnosis of the 730705 residual (str_d1_1 is NOT intrinsically dead)
+# Gate B Stage 2j: an adaptive (rewarded-gated) RPE floor is the first config to clear steer >=5/6 on BOTH dev and held-out — closes the 2i regression + recovers 730704; the 730705 dead-pathway residual survives (FIX C wakes it but cannot select it)
 
 ## Verdict
 
-**STAGE2J_SMOKE_PARTIAL — necessary-not-sufficient; a smoke is not the full-battery verdict.**
-Two additive fixes over Stage 2i, each diagnosed against the substrate first (this lane has had
-FOUR wrong diagnoses; a fifth is CORRECTED below). All numbers are single-`run_seed_swap` numpy
-smokes, NOT the dev/held-out battery — the last two rounds' smokes OVERCLAIMED vs the full sweep,
-so this is a de-risk, not a GO. The parent must run the full dev+held-out validation (commands
-at the bottom).
+**STAGE2J_STEER_GO on both partitions (necessary; full-battery reversal/lesions pending). Authoritative
+backend = numpy** (all prior stages are numpy; a cupy run tests DIFFERENT brains — see the backend note).
+The full per-seed dev+held-out validation (24 parallel numpy seed-jobs, `numpy_validate/`) supersedes the
+single-run smokes below:
+
+| config | dev steer | held-out steer | vs prior |
+|---|---|---|---|
+| Stage 2g | 5/6 | 4/6 | NO-GO (held-out) |
+| Stage 2i FIX B | **4/6 (regressed)** | 4/6 | NO-GO (dev regression) |
+| **2j FIX B'** | **5/6** | **5/6** | 2i regression CLOSED (730601/730602 pass); 730704 RECOVERED (held-out 4/6->5/6) |
+| **2j FIX B'+C** | **6/6** | **5/6** | FIX C additionally fixes 730606 (dev 6/6) |
+
+FIX B' is the **first configuration to meet the steer >=5/6 bar on both dev and held-out.** The adaptive,
+rewarded-gated RPE floor removed 2i's dev regression (730601/730602 both pass, D_contingent-yoked back
+above 0.20) AND recovered 730704 (was a frozen NaN in 2g; now steer PASS, count_c1=[1,38]). The only
+held-out failure is **730705** (D_contingent=0, count_c1=[40,0]) — the dead-pathway seed; the only dev
+failure (FIX B' alone) is 730606, which **FIX C closes** (dev 6/6).
+
+**FULL FROZEN BATTERY (--mode full, numpy, `numpy_validate/full_fixB.out` +
+`numpy_validate/numpy_validation_aggregate.json`) — ALL PASS for FIX B':**
+
+| frozen criterion | result | bar | pass |
+|---|---|---|---|
+| held-out steer | 5/6 | >=5/6 | ✓ |
+| dev steer | 5/6 (6/6 with FIX C) | >=5/6 | ✓ |
+| reversal P(B) after phase B | 0 -> 1.0 | >=0.60 | ✓ |
+| acquisition lesion | D_contingent 1.0 -> 5.6e-17; `acquisition_plasticity_share`=1.0 | lesion load-bearing | ✓ |
+| stage-1 equivalence | `weights_match`=true, `raster_match`=true | byte-identical | ✓ |
+
+**⇒ STAGE2J = a verified Gate B GO at the frozen >=5/6 bar.** The adaptive rewarded-gated RPE floor (FIX B',
+default-on) closes the credit-assignment mechanism: held-out generalisation reaches 5/6 for the first time
+(2g/2i were both 4/6), the acquisition lesion confirms the contingency is 100% owned by training-time D1
+plasticity (not a readout artifact — freezing it collapses D_contingent to ~0), reversal is intact, and the
+additive fix leaves the stage-1 substrate byte-identical (weights + rasters match). This is the frozen bar,
+met with the full battery — not a steer-only partial.
+
+**The one held-out miss (730705) is WITHIN the >=5/6 bar but is NOT abandoned (no-defer).** It is the
+dead-pathway seed: FIX C wakes its str_d1_1 (0->121 spikes) but the woken MSN still never wins WTA
+(count_c1=[40,0]) — waking != selecting. Stage-2k targets that residual: guarantee the un-sampled action is
+SELECTED and rewarded during training (a neural exploration/sampling floor on the un-sampled action, a method
+distinct from the refuted current-injection FIX A), so reward can potentiate proposal_1->str_d1_1. The single-run
+smokes below are superseded by this multi-seed validation + full battery.
+
+**FIX C is a general extreme-asymmetry homeostat, NOT a 730705-only fix (claim CORRECTED).** The full
+validation shows FIX C's k-homeostat engages on BOTH 730606 and 730705 (every seed whose sibling/dead
+str_d1 rate asymmetry exceeds the gate), not only 730705 as the smoke section claimed. On 730606 it
+helps (yoked D_yoked 0.85->-0.15, steer False->True); on 730705 it wakes str_d1_1 but the seed still
+fails (waking != selecting). On the non-engaging seeds (730601-730605, all held-out except 730705)
+fixBC is byte-identical to FIX B' (verified: identical D_yoked and counts) — so the byte-identity-when-
+not-engaged property holds; only the "only 730705 engages" scope was wrong.
 
 ## FIX B' — adaptive, rewarded-gated RPE floor (replaces 2i's unconditional clamp)
 
@@ -98,15 +143,22 @@ three-factor eligibility window, not the MSN's own excitability. FIX C stays def
 only on the 93×-asymmetry signature, so every other seed is byte-identical) and is banked as the
 intrinsic-excitability half of the 730705 solution.
 
-## Reproduce (parent's full validation — do NOT rely on the smoke)
+## ⛔ BACKEND: numpy (NOT cupy). All prior authoritative stages (2g `numpy.json`, 2i `dev_fixB.json` /
+## `heldout_fixB.json`, every smoke) ran on **numpy/CPU**, and the per-seed heterogeneity draw — hence
+## each seed's `baseline_p0` and whole substrate — DIFFERS by backend (verified 2026-08-07: 730601 has
+## `baseline_p0=0.571` on numpy but `0.0` on cupy — a DIFFERENT brain). A cupy run of these seeds is
+## therefore NOT comparable to the numpy smoke or the numpy frozen criteria; it silently tests other
+## brains. The `SIM_BACKEND=cupy` reproduce lines below were a doc trap and are CORRECTED to numpy.
+
+## Reproduce (parent's full validation — numpy, parallel per-seed; do NOT rely on the smoke)
 
     # FIX B' only (adaptive RPE floor), dev + held-out steer (fix_c OFF):
-    SIM_BACKEND=cupy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
+    SIM_BACKEND=numpy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
         --mode seeds --dev-seeds 730601 730602 730603 730604 730605 730606
-    SIM_BACKEND=cupy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
+    SIM_BACKEND=numpy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
         --mode seeds --dev-seeds 730701 730702 730703 730704 730705 730706
     # FIX B' + FIX C (add --fix-c), dev must stay >=5/6 AND held-out should gain 730705:
-    SIM_BACKEND=cupy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
+    SIM_BACKEND=numpy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
         --mode seeds --fix-c --dev-seeds 730601 730602 730603 730604 730605 730606
-    SIM_BACKEND=cupy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
+    SIM_BACKEND=numpy .venv/bin/python -m research.runners._vocal_gateb_stage2j_intrinsic_homeostasis \
         --mode seeds --fix-c --dev-seeds 730701 730702 730703 730704 730705 730706
