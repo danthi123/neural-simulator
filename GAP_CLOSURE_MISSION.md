@@ -31,8 +31,12 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > self_generated, never mixed-boosted, is the binding constraint). Pure feedforward already picks the right source;
 > the WTA competition inverts it on intrinsic assembly strength. **EXACT NEXT (two named mechanisms, NOT more
 > re-weighting): (1) SCALE — n_source_memory > 12** (cheap capacity de-risk: do margins scale out of the conservation
-> limit? measure before declaring a boundary); **(2) the mixed-episode ASYMMETRY** (self_generated uniquely penalized;
-> a symmetric/homeostatic encoding protocol). Honest boundary-characterization banked = a first-class deliverable.
+> limit? measure before declaring a boundary). **SCALE TEST DONE: capacity does NOT relieve it** (n {12,24,36} @
+> overlap 0.2, no scale clears 0.15, no trend) → the boundary is CAPACITY-INDEPENDENT/structural. **#3 CONCLUSION: at
+> overlap 0.2 the honest margin tops out ~0.14 < the 0.15 floor; no mechanism (encoding×2/attractor/joint/scale)
+> clears it.** The 2 remaining levers are OWNER-DOMAIN task-design/criterion forks (mixed-episode asymmetry; is 0.15
+> calibrated for overlap 0.2?), not mechanisms. ⭐ Clean fresh pivot = **#4 replay** (emergent homeostatic
+> self-calibration), better in fresh context. Honest #3 boundary-characterization banked = a first-class deliverable.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
@@ -165,6 +169,18 @@ working). Current frontier per lane:
   is uniquely penalized (pattern[3] mixed-boosts core→seen/heard, never core→self); a symmetric/homeostatically-
   compensated encoding protocol may lift the binding constraint. Both are legitimate NEXT de-risks; the wall is now
   thoroughly characterized (an honest boundary-characterization = a first-class deliverable).
+  **SCALE TEST DONE (5th de-risk, `scale_probe`): capacity does NOT relieve it.** n_source_memory+episode {12,24,36}
+  at fixed overlap 0.2, seeds 650/651: NO scale clears 0.15 on EITHER the competition-on (`min_M`) or feedforward
+  (`min_L`) margin, no improving trend (best feedforward min_L=+0.037, ~4× below floor, at the SMALLEST scale; x3 is
+  worse). ⇒ the boundary is **CAPACITY-INDEPENDENT** — a structural/weight-ratio constraint set by the overlap
+  co-residency, not an absolute-budget limit. **#3 CONCLUSION: at overlap 0.2 the honest achievable margin tops out
+  ~0.14 (feedforward), STRUCTURALLY BELOW the frozen 0.15 floor; no mechanism (encoding×2 / recall-attractor / joint /
+  scale) clears it.** The 2 remaining levers are OWNER-DOMAIN TASK-DESIGN/CRITERION questions, not pure mechanisms:
+  (1) the **mixed-episode asymmetry** (self_generated uniquely penalized — pattern[3] mixed-encodes seen+heard, no
+  self-mixed episode; realistic model or artifact? changing it touches the TASK); (2) **is the 0.15 floor calibrated
+  for overlap 0.2?** (achievable ceiling here ~0.14). ⭐ Genuine value forks for the owner — a mechanism lever just
+  re-hits the conservation ceiling. Clean fresh pivot = **#4 replay** (emergent homeostatic self-calibration), better
+  started in fresh context.
 - **#4 Replay consolidation** — v5 capability + v5+SFA interference wall closed + v6 order-STDP; but v6 multiseed
   NO-GO (2-seed GO was operating-point OVERFIT). NEXT = **emergent homeostatic self-calibration** of the operating
   point (host-tuned on 2 seeds → must emerge per-brain).
