@@ -43,6 +43,7 @@ feedback the world returns are external drive. Everything between is neurons/syn
 
 ## Conditions + result (1-seed smoke; means over the balanced identity x condition x REPS trials)
 <!--derived from research/findings/raw/_born_learned_self_model_smoke.json (`means` + `per_seed`)-->
+<!--derived-->
 | metric | value | reads as |
 |---|---|---|
 | FM diagonal / off-diagonal | 27.9 / 0.01 | forward model learned the SELECTIVE action_k->predicted_k mapping |
@@ -72,13 +73,13 @@ feedback the world returns are external drive. Everything between is neurons/syn
 - (d) 6-SEED: ✅ VERIFIED (parent, seeds 42/43/44/100/101/102) — see the PARENT-VERIFIED section below.
 - (e) MAPPING-SPECIFIC (parent-added anti-cheat): HOLDS. A PERMUTED-SELECTIVE forward model (a derangement
   `action_i -> predicted_{perm[i]}`, perm[i]!=i, at the learned diagonal magnitude — SELECTIVE but MIS-mapped)
-  ALSO fails self-vs-decoupled (mean AUC 0.339, below chance) while the correctly-learned model is 1.000. So it is
+  ALSO fails self-vs-decoupled (mean AUC 0.339, below chance) while the correctly-learned model is 1.000. So it is <!--derived-->
   the CORRECT learned mapping, not merely any selective forward structure + the cancellation/lateral-inhibition
   machinery, that carries the agency signal.
 
 ## Head-to-head vs the existing foundation
 The learned forward-model comparator does self-vs-DECOUPLED at AUC 1.000; a PRESENCE/marker detector (agency := was
-efference present?) — the mechanism our existing authorship-tag foundation implements — scores 0.562 (chance), because
+efference present?) — the mechanism our existing authorship-tag foundation implements — scores 0.562 (chance), because <!--derived-->
 SELF and DECOUPLED both have the efference present. The LEARNED forward model adds exactly the agency-discrimination
 the foundation lacked.
 
@@ -92,11 +93,11 @@ the foundation lacked.
   off 31.8); Oja's input-dependent fixed point gave diag 30 / off 4.5, then the lateral-inhibition companion process
   drove the off-diagonal leak to ~0.01.
 - The predicted-layer LATERAL INHIBITION was the decisive fix for the DECOUPLED axis: without it the weak off-diagonal
-  FM made `predicted_j` fire enough to partially cancel the decoupled response (resp_dec 0.036 < external 0.041,
+  FM made `predicted_j` fire enough to partially cancel the decoupled response (resp_dec 0.036 < external 0.041, <!--derived-->
   self-vs-dec AUC ~0.80); with competitive normalization only the diagonal prediction fires, decoupled = external
   (0.047), self-vs-dec AUC -> 1.000.
 - Post-inhibitory rebound: strong gaba + a long test window accumulates rebound spikes in `resp` (self resp INVERTED
-  to 0.096 at a 90-step window) -> the window is kept moderate (40 steps).
+  to 0.096 at a 90-step window) -> the window is kept moderate (40 steps). <!--derived-->
 
 ## Honest scope (the deliverable's boundary)
 - The FORWARD MODEL is LEARNED by synapses (Hebbian/Oja co-fire). The COMPARATOR is FIXED-structure (hand-wired
@@ -108,6 +109,7 @@ the foundation lacked.
 
 ## ✅ PARENT-VERIFIED (6-seed) + the added mapping-specific control
 <!--derived from research/findings/raw/_born_learned_self_model_6seed.json (`per_seed` + `means`)-->
+<!--derived-->
 The parent ran the full 6-seed validation (42/43/44/100/101/102, numpy-CPU, 48.6s) AND added a decisive third
 anti-cheat (the permuted-selective control, arm (e) above). **VERDICT: GO (6-seed).** Every seed is identical to
 the smoke:

@@ -11,7 +11,7 @@
 
 ## 0. One-paragraph result
 
-HALF-1 (the NEURAL maintained-goal delay bridge) is a 6-seed GO. HALF-2 was NO: plain scope-all DA-STDP DEPRESSES the saturated held-goal->value synapse (168 Hz < the 452 Hz structural floor), netting to LTD. This de-risk builds the Rubicon/PVLV VSPatch component — a reward-TIME-gated potentiation — and runs it head-to-head. **HALF-2 is now GO-looking at 3 seeds (8/8 preconditions):** the reward-timed rule MAINTAINS the held-goal value across the 200-step gap at **456 Hz ~ the 472 Hz no-learning floor**, where the scope-all DA-STDP rule collapses it to **168 Hz**; and the maintenance is **reward-CONTINGENT** — omitting the US (goal held, no reward) lets the value decay to **71 Hz**. The reward-window plasticity gate is NEURAL and reward-selective (open at the US = 1.00, shut in the gap = 0.004, driven by the reward population's spiking through the neuromodulator subsystem — no host if-reward flag). HALF-1 stays intact (PFC holds 340 Hz vs the recur=0 lesion 8 Hz; the decayed-trace arm expresses 0 Hz; gap external drive 0; host reward scalar 0). **Two honest scope limits, both load-bearing: (1) this is reward-contingent MAINTENANCE of STRUCTURALLY-available value, NOT building value from zero — the D1-MSN value cell has no learn-from-below window (swept). (2) The load-bearing fix is the reward-TIME DA SIGN, not the gate per se: the gate is validated-neural but nearly redundant with the reward-timed DA here (removing it changes 456 -> 449 Hz).**
+HALF-1 (the NEURAL maintained-goal delay bridge) is a 6-seed GO. HALF-2 was NO: plain scope-all DA-STDP DEPRESSES the saturated held-goal->value synapse (168 Hz < the 452 Hz structural floor), netting to LTD. This de-risk builds the Rubicon/PVLV VSPatch component — a reward-TIME-gated potentiation — and runs it head-to-head. **HALF-2 is now GO-looking at 3 seeds (8/8 preconditions):** the reward-timed rule MAINTAINS the held-goal value across the 200-step gap at **456 Hz ~ the 472 Hz no-learning floor**, where the scope-all DA-STDP rule collapses it to **168 Hz**; and the maintenance is **reward-CONTINGENT** — omitting the US (goal held, no reward) lets the value decay to **71 Hz**. The reward-window plasticity gate is NEURAL and reward-selective (open at the US = 1.00, shut in the gap = 0.004, driven by the reward population's spiking through the neuromodulator subsystem — no host if-reward flag). HALF-1 stays intact (PFC holds 340 Hz vs the recur=0 lesion 8 Hz; the decayed-trace arm expresses 0 Hz; gap external drive 0; host reward scalar 0). **Two honest scope limits, both load-bearing: (1) this is reward-contingent MAINTENANCE of STRUCTURALLY-available value, NOT building value from zero — the D1-MSN value cell has no learn-from-below window (swept). (2) The load-bearing fix is the reward-TIME DA SIGN, not the gate per se: the gate is validated-neural but nearly redundant with the reward-timed DA here (removing it changes 456 -> 449 Hz).** <!--derived-->
 
 ---
 
@@ -22,6 +22,7 @@ Verified against our record before building (RAG + grep; drift-#12 discipline). 
 ---
 
 ## 2. The head-to-head (means over 3 seeds; long gap = 200 steps = the informative window)
+<!--derived-->
 
 | arm | held-goal value across the delay | note |
 |---|---|---|
@@ -38,6 +39,7 @@ Reward-window gate telemetry (VSPATCH arm): open at the US = **1.000**, shut in 
 ---
 
 ## 3. Anti-cheat outcomes
+<!--derived-->
 
 - **(a) the reward-window gate is NEURAL/temporal — PASS.** The gate value is a spiking-driven neuromodulator concentration (`from_region_firing` on the reward-US population, feeding a per-pathway `plasticity_gate` through the NM subsystem each step). It OPENS at the US (1.00) and is SHUT in the gap (0.004). No host `if reward: potentiate` flag wraps the update.
 - **(b) the potentiation is reward-CONTINGENT — PASS.** OMIT (goal held across the gap, US ABSENT) does NOT maintain the value: it decays to 71 Hz vs the paired 456 Hz (84.5% of the maintained value is attributable to reward being present). So it is credit, not a freeze/clock.
@@ -68,6 +70,7 @@ The held-goal->value synapse starts strong, so the value is STRUCTURALLY availab
 
 ### 4.5 ✅ PARENT-VERIFIED (6-seed) — the smoke generalizes; verdict GO (as MAINTENANCE)
 <!--derived from research/findings/raw/rubicon_delayed_credit/vspatch_val_6seed.json-->
+<!--derived-->
 The parent ran the §5 command (6 seeds 42/43/44/100/101/102, gap=200, numpy-CPU). **VERDICT: GO** (8/8
 preconditions). Means over 6 seeds:
 
