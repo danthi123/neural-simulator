@@ -20,8 +20,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > held-out (5/6); full battery (reversal 0->1.0, acquisition-lesion share 1.0, stage-1 byte-identity) all pass. The
 > Gate B credit MECHANISM is closed to its bar. ⛔ Authoritative backend is **numpy** (cupy tests a different brain
 > per seed — a doc trap that cost a 40-min wrong-backend run).
-> **⏸️ 730705 within-bar arc CHECKPOINTED after Stage-2m (4 relocations, `b59b6b3d4`); the 2j-GO stands.** Resume it
-> later via the banked closing-stack + TRN-gated selection-epoch reset (Stage-2m line below).
+> **✅ 730705 CONCLUSIVELY BOUNDARIED (2026-08-07, 6 stages 2j→2o); Gate B = a legitimate GO at the frozen ≥5/6 bar.**
+> The readout-stage options are EXHAUSTED: Stage-2n (`beee7ab9`, N6 accumulate-commit) and Stage-2o (`0bc49e1b`,
+> learning-gated commit threshold) both flip 730705 at test but ONLY as a SHORTCUT — the acquisition-lesion (untrained
+> bridge) picks action-1 anyway, and there is NO separating window between the learned (~286-spike) and woken-unlearned
+> (~124) drives (`window_exists=False`); every legit-looking flip breaks target-0. ⛔ Two proposed leads were
+> OVERCLAIMS caught by owner-flagged RAG: "TRN-gated selection reset" (TRN-WTA-on-relay = the WORST readout ever
+> tested, `2026-06-06`) and "dendritic compartments" (binding=NEGATIVE + D2 gain non-load-bearing on spikes). 730705
+> is one seed's heterogeneity draw (dead str_d1 channel that can't be legitimately woken+expressed at the readout);
+> the credit MECHANISM is closed. Not resuming at the readout stage.
 > **⭐ ACTIVE FRONTIER (2026-08-07) = #3 source monitoring.** Research round + TWO encoding-side de-risks both NO-GO
 > (hetero-depression `8aca3c62`, conjunctive-tag `1a5d2db6`), converging on a sharpened wall: **a SOURCE-BLIND recall
 > drive over a fully-shared core cannot separate co-resident sources — the wall is RECALL-SIDE, not encoding.**
