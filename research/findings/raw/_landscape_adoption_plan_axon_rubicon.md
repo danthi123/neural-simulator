@@ -47,3 +47,22 @@ reduce the heterogeneity-sensitivity (the 730705 class) vs our cascade? Study `s
 D1 of #1 (Axon CaP−CaD rate de-risk) FIRST — cheap, decisive, attacks the hardest stuck wall. Then D2 (spiking port)
 if D1 GOs. #2/#3 are parallel lower-priority lanes. Every mechanism RAG-grounded before build (the 2026-08-07
 dendritic/TRN overclaim lesson).
+
+## PROGRESS (2026-08-07, RAG-grounded execution)
+- **#1 Axon CaP−CaD rule → gap#4: TESTED, NO-GO** (`b71ff9d8`, rate 6-seed). Axon 0.476 vs our microcircuit 0.942 —
+  Axon's 2-phase bidirectional target's credit DECAYS THROUGH DEPTH (the feedback-alignment depth wall our
+  SST-microcircuit ALREADY surpasses via interneuron error-cancellation); CaP−CaD read is a secondary degrader. ⇒
+  do NOT wholesale-adopt Axon; this VALIDATES our microcircuit as the better rule.
+- **RESIDUAL-A (spiking BDSP port) is NOT un-started — RAG-caught before re-building it.** The BDSP substrate
+  (`fused_bdsp_update`+burst detector+apical→P) is BUILT in `sim/` (additive/default-off, `2026-07-07`); raw
+  Burstprop PORTS to spikes (representation forms, probe 0.92, no transport) but is NOISE-LIMITED at 0.664; the
+  microcircuit variant is CPU-rate 6/6 GO. **The REAL gap#4 wall** (`2026-08-01`/`2026-08-02`): at depth ≥3 the
+  transport-free local rules (Burstprop/FA/KP/microcircuit) do NOT get a deep SPIKING net into the learning regime
+  (collapse to majority-class / degrade below reservoir 5/6). The rate versions GO; the depth-3 spiking port doesn't
+  learn. Axon doesn't help (worse at depth) ⇒ this is a genuine deep frontier needing a NEW mechanism, a research
+  round not a rule-swap. NOT a build target right now.
+- **#2 Rubicon delayed-credit → RUNNING (de-risk).** RAG: PFC-WM (maintained-goal substrate) + N9-TD-cue-shift
+  (reward-timing) are BUILT+GO; the delayed-reward value task (B4/R4) is SCOPED-not-built. Genuine un-built test =
+  maintained-goal(PFC-WM) bridge + VSPatch/TD timing on B4/R4, vs a decayed-trace control.
+- Discipline note: RAG-first caught 3 would-be re-derivations this session (dendritic, TRN, RESIDUAL-A) — the mature
+  project's obvious levers are mostly tried; genuine next steps need scoping, not rushed builds.
