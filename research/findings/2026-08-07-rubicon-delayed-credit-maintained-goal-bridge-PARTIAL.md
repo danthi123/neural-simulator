@@ -131,3 +131,12 @@ Amit-Brunel 1997; Schultz-Dayan-Montague 1997 (RPE); the Rubicon/Axon PVLV/VSPat
 
 _BUILD + numpy 3-seed smoke. NO `sim/` edit. A smoke is not a verdict — the HALF-1 bridge GO-looking claim needs
 the §5 6-seed run; HALF 2 (learned credit) is a NO-GO here and a separate VSPatch thread._
+
+## ✅ PARENT-VERIFIED (6-seed, `research/findings/raw/rubicon_delayed_credit/val_6seed.json`)
+The HALF-1 maintained-goal bridge holds at 6 seeds: `bridge_go=True`, `pfc_hold_maintained` 340 Hz vs
+`pfc_hold_decayed` 8 Hz, decayed-trace value 0.0 at BOTH the 20-step and 200-step gaps,
+`attributable_maintained_vs_decayed=1.0`. `learned_credit_go=False` (unchanged — the reward-timed VSPatch
+potentiation is the named next component). Net: the neural maintained-goal DELAY BRIDGE is a 6-seed GO-looking
+result — the load-bearing prerequisite our earlier R4 decayed-trace attempt lacked — and the first concrete
+adoption win from the 2026-08-07 landscape survey (Rubicon). NEXT = a reward-window-gated (VSPatch) potentiation
+rule to replace the scope-all DA-STDP that over-depresses the saturated held-goal→value synapse.

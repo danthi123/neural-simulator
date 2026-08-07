@@ -1,0 +1,34 @@
+{
+ "run_id": "1786120580-943110",
+ "runner": "research/runners/_rubicon_delayed_credit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_rubicon_delayed_credit_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--gap-short",
+  "20",
+  "--gap-long",
+  "200",
+  "--out",
+  "research/findings/raw/rubicon_delayed_credit/val_6seed.json"
+ ],
+ "git_sha": "4a244c533",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T12:36:20",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 22305.1,
+ "corpus_check_query": "source monitoring encoding wall: shared cells potentiated equally to all sources; competitive/heterosynaptic pattern separation (DG sparse coding) so source-specific assemblies form at encoding",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/rubicon_delayed_credit/val_6seed.json"
+}
