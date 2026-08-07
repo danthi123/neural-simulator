@@ -12,7 +12,15 @@ wc_out=$(bash tools/workflow_check.sh 2>&1); wc_rc=$?
 # policy; the owner caught two commits sitting unpushed for ~35 min. Reported every cycle so the drift
 # cannot be silent. Uses ls-remote, not the remote-tracking ref: a cached ref will happily agree with a
 # push that never happened.
-ahead=$(git rev-list --count "$(git ls-remote origin refs/heads/main 2>/dev/null | cut -f1)"..HEAD 2>/dev/null || echo "?")
+# BRANCH-AWARE (2026-08-06). Measuring "unpushed" against origin/main is WRONG when this worktree is checked
+# out on any other branch: a branch whose commits are fully pushed to its OWN remote ref then reads as N
+# unpushed forever (the archived codex/replay-consolidation-v3 read "3 unpushed" every cycle for a whole
+# session while being safely on origin — a textbook corrosive false alarm). Compare HEAD to the CURRENT
+# branch's own upstream ref; only fall back to main when the branch has no remote (genuinely local-only work).
+cur_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+up_sha=$(git ls-remote origin "refs/heads/${cur_branch}" 2>/dev/null | cut -f1)
+[ -z "$up_sha" ] && up_sha=$(git ls-remote origin refs/heads/main 2>/dev/null | cut -f1)
+ahead=$(git rev-list --count "${up_sha}"..HEAD 2>/dev/null || echo "?")
 # AWS state, QUERIED not remembered. The previous heartbeat carried a hardcoded "AWS BILLS while running"
 # reminder that stayed on the screen after the instance was stopped — a false alarm, which the project's own
 # rule says is as corrosive as a missed one because it trains the reader to skip the line.

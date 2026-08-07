@@ -345,6 +345,38 @@ def void_if(condition, reason):
     return bool(condition)
 
 
+def zero_lever_control(label, criterion_on, criterion_off, *, tol=0.0):
+    """VOID a criterion that still 'passes' when its mechanism is set to a NO-OP — the instrument is confounded.
+
+    `lever()` catches an A/B whose two arms are identical (the lever never moved). This catches the OTHER
+    shape: the lever DID move, but the criterion reports a PASS even in a control arm where the mechanism is
+    a genuine no-op (weights zeroed, a settle window that changes nothing, an inert control). If a
+    'strict improvement' / 'margin met' / 'lesion delta' can be reproduced with the mechanism disabled, the
+    pass is manufactured by something ELSE — carried-over state, a static clamp, a sampling asymmetry — and
+    the whole comparison is VOID. A criterion that cannot FAIL when its mechanism is off measures nothing.
+
+    Run the criterion twice and pass BOTH outcomes:
+      - `criterion_on`  : the criterion with the mechanism engaged (a bool pass, or a scalar effect size)
+      - `criterion_off` : the SAME criterion with the mechanism set to a no-op control
+    Raises LeverError if the OFF (no-op) arm still fires. Bools fire when True; scalars fire when |x| > tol.
+
+    Earned 2026-08-06: the source-monitor `weakest_source_margin_strictly_improved` criterion reported
+    strict=True even in a zero-weight control window (dl1=0.0), because settle-to-quiescence did not reset
+    the Izhikevich sub-threshold state — a pure stepping-history artifact that survived v6→v9 and produced a
+    false 'calibration GO' (retracted). See
+    research/findings/2026-08-06-source-monitor-stepping-history-instrument-FIXED-v6-and-v9-calibration-GO-were-artifacts.md.
+    """
+    fired = bool(criterion_off) if isinstance(criterion_off, bool) else (abs(float(criterion_off)) > tol)
+    print("  ZERO-LEVER %-22s mechanism_on=%s  no-op_control=%s  [%s]"
+          % (label, criterion_on, criterion_off, "ARTIFACT" if fired else "clean"))
+    if fired:
+        raise LeverError(
+            "criterion %r still PASSES with its mechanism set to a no-op (%r) — this is an INSTRUMENT "
+            "ARTIFACT, not the mechanism. Reset every carried-over state between arms and re-measure; a "
+            "criterion that cannot FAIL when the mechanism is disabled measures nothing." % (label, criterion_off))
+    return True
+
+
 def _delta(a, b):
     try:
         return "%+.6g" % (b - a)
@@ -467,6 +499,22 @@ def _selfcheck():
     _check(attributable_to("control opposes", 10.0, -10.0) == 2.0, "an opposing control reads >100%, flagged")
     _check(attributable_to("control exceeds treatment", 10.0, 12.0) == -0.2, "a negative fraction is flagged")
     _check(attributable_to("array", [1.0, 2.0], 1.0) is None, "an array arm is REFUSED, returns None")
+
+    print("\n" + "=" * 108)
+    print("(6b) zero_lever_control — a criterion that passes with the mechanism OFF is an instrument artifact")
+    print("=" * 108)
+    _check(zero_lever_control("clean bool", criterion_on=True, criterion_off=False) is True,
+           "mechanism-on passes, no-op control does NOT fire => clean")
+    _check(zero_lever_control("clean scalar", criterion_on=0.18, criterion_off=0.0, tol=1e-6) is True,
+           "no-op control effect ~0 => clean")
+    for on, off, kw, why in [(True, True, {}, "the v6 stepping-history artifact (strict=True with zeroed weights)"),
+                             (0.18, 0.05, {"tol": 1e-6}, "a scalar effect that survives into the no-op arm")]:
+        try:
+            zero_lever_control("artifact", criterion_on=on, criterion_off=off, **kw)
+        except LeverError:
+            print("     ✔ RAISED, as it must: %s" % why)
+        else:
+            raise SystemExit("⛔ zero_lever_control did NOT fire on %s" % why)
 
     print("\n" + "=" * 108)
     print("(7) PROVE THE SELF-CHECK CAN FAIL — a self-check that only confirms good input is vacuous")

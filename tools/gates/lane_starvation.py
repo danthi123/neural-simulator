@@ -136,6 +136,14 @@ def _waiver_active():
 
 
 def check(paths=None):
+    # DOC-ONLY EXEMPTION (2026-08-06). A commit that stages ONLY Markdown (board, roadmap, findings, docs,
+    # RETRACTED) has no compute to parallelise, so idle CPU lanes cannot be its fault. Blocking such commits
+    # only trained a reflex `--no-verify` -- ~6 documented bypasses on pure board/retraction commits in ONE
+    # session (2026-08-06), which is the corrosive "gate forces its own bypass" pattern this system exists to
+    # avoid (a bypass on a doc commit disables EVERY other gate for that commit too). A runner/sim/experiment
+    # commit still triggers the gate; the standalone corpus scan (paths=None) is unaffected.
+    if paths is not None and paths and all(p.endswith(".md") for p in paths):
+        return []
     idle = sorted(set(CPU_LANES) - _served(_work_lines()))
     if len(idle) < MAX_IDLE_LANES:
         return []
@@ -180,4 +188,10 @@ def selftest():
         bad.append("did NOT detect the priority/focus rationalisation waiver -> the 2026-08-01 abuse would pass")
     if _RATIONALISATION.search("no ready de-risk for these lanes: the stream-code cache is absent; blocked on its build"):
         bad.append("FALSE POSITIVE: a genuine per-lane BLOCKER waiver was mis-flagged as a rationalisation")
+    # DOC-ONLY EXEMPTION (2026-08-06): a commit staging ONLY .md must never be gated, regardless of lane state.
+    if check(["GAP_CLOSURE_MISSION.md", "docs/RETRACTED.md"]):
+        bad.append("FALSE POSITIVE: a doc-only (.md) commit was gated for lane starvation")
+    # ...but the exemption must NOT swallow a code commit: a staged .py defeats the .md-all guard.
+    if all(p.endswith(".md") for p in ["GAP_CLOSURE_MISSION.md", "research/runners/x.py"]):
+        bad.append("BROKEN GUARD: a mixed doc+code commit was treated as doc-only")
     return bad
