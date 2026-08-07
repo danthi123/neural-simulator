@@ -22,8 +22,11 @@ working). Current frontier per lane:
 
 - **#1 Gate B (grounded communication)** — the crux. Stage-0→1 (GO) → 2/2b/2c/2d/2e/2f. The reward-credit MECHANISM
   now works (action-local credit, opponent negative-RPE, reversal PASSES, mean contingency divergence 0.725, all
-  neural). Stuck at **steer 4/6** (per-seed contingency). NEXT = **Stage 2g: true Hammond ΔP** (no-action/withhold
-  baseline + homeostatic critic normalization) — targets the 2 named failing seeds (730605, 730602). CLOSE.
+  neural). Stage-2g (true Hammond ΔP) fixed BOTH named residuals → **dev-GO 5/6**, but **held-out NO-GO 4/6**
+  (OVERFIT) — the mechanism is essentially solved (divergence 0.79–1.11, reversal + lesions PASS) and the ONLY
+  blocker is now a NUMERICAL defect: the Carandini-Heeger critic normalization SATURATES/NaNs on low-baseline seeds.
+  NEXT = **bounded (Naka-Rushton σ) normalization** — a floor on the denominator — then re-validate dev+held-out on
+  the pool. A numerical fix, not a mechanism gap. This lane is the closest it has been to the #1-capability GO.
 - **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
   FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
   equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
@@ -117,6 +120,16 @@ merged to `main` (`2c7bba018`). A `union` merge driver was added for `research/f
   neural tonic value tracking reward in the action's ABSENCE** → true V(action)−V(withhold) (fixes 730605); **(b)
   homeostatic per-population critic normalization** replacing scalar VALUE_GAIN so the RPE stays signed across seeds
   (fixes 730602). Across 2e+2f every seed passes in SOME variant, but no single variant reaches 5/6.
+  **Stage 2g (true Hammond ΔP) = dev-GO 5/6 but held-out NO-GO 4/6 — OVERFIT** (`d24d6b5d`/finding `257e761b`, merged
+  `d8af67479`): both named residuals FIXED and both mechanisms are NEURAL — (a) withhold baseline = interleaved
+  no-action trials charge the inert `dopamine_S` channel into a Niv-style average-reward integrator; V(withhold)=
+  gain·[DA_S] → true Hammond ΔP (fixes 730605, withhold_lesion confirms load-bearing); (b) homeostatic critic =
+  Carandini-Heeger divisive normalization of value by the pooled striatal baseline (fixes 730602). Dev steer 5/6,
+  div 1.11, reversal 0→1.0, lesions PASS. Held-out (730701-706, run as a PARENT job — first orphan-proof use):
+  steer 4/6, div 0.79, reversal PASS, but **NaN present** — the divisive normalization SATURATES on low-pooled-
+  baseline seeds (730704/730705; 730601 on dev), denominator → ~0. The contingency MECHANISM is correct; the
+  normalization lacks a floor. NEXT = **bounded Naka-Rushton normalization** (denominator `baseline+σ`, σ>0 — Heeger's
+  original form, dropped here) OR a tonic-inhibition floor on the pooled-baseline pop; then re-validate on the pool.
 - **Source v6 (#3) — ⛔ calibration "GO" LATER VOIDED** (stepping-history instrument artifact — see the instrument-fix
   note at the end of this source entry; the leak-closure sub-result survives). Learning-off leak closed. The finding's guessed cause was WRONG (no synaptic bypass);
   instrumentation showed it was **residual encoding-phase Izhikevich state** (V≈−40 mV, u≈288 after strong encode
@@ -230,7 +243,12 @@ replay SFA died at startup with ZERO progress** (no commits) — their worktrees
 are staged at base `b89c3edc`, ready to relaunch. Lesson: parallel-agent width has a hard plan ceiling; pace it.
 
 **EXACT NEXT (Round 4 — all Claude-side mechanism BUILDS, then local hands-off validation):**
-(1) Gate B **Stage 2g: TRUE Hammond ΔP** — add NO-ACTION/withhold trials + a neural tonic value tracking reward in
+(1) Gate B **Stage 2h: bounded (Naka-Rushton σ) critic normalization** — Stage-2g solved the contingency mechanism
+(dev-GO 5/6, both residuals fixed, all neural) but held-out NO-GO 4/6 because the Carandini-Heeger critic norm
+SATURATES/NaNs on low-pooled-baseline seeds. Add a σ floor to the denominator (`baseline+σ`) or a tonic-inhibition
+floor, then re-validate dev+held-out on the POOL via `run_and_aggregate`. A numerical fix — the lane is one bounded
+normalization from a possible #1-capability GO. [superseded next lines were the 2g spec:]
+(1-old) Gate B **Stage 2g: TRUE Hammond ΔP** — add NO-ACTION/withhold trials + a neural tonic value tracking reward in
 the action's ABSENCE → V(action)−V(withhold) (fixes 730605's below-gate base rate), PLUS **homeostatic per-population
 critic normalization** replacing the scalar VALUE_GAIN so the RPE stays signed across heterogeneous seeds (fixes
 730602). Stage-2f's D1−D2 ΔP gate reached steer 4/6 (lateral to 2e — rescued 730604, broke 730605); across 2e+2f
