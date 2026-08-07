@@ -1,4 +1,4 @@
-# Rubicon HALF-2 — a reward-TIMED (VSPatch) DA-gated rule MAINTAINS the held-goal value across the delay where scope-all DA-STDP collapses it; reward-CONTINGENT — GO-looking (3-seed smoke)
+# Rubicon HALF-2 — a reward-TIMED (VSPatch) DA-gated rule MAINTAINS the held-goal value across the delay where scope-all DA-STDP collapses it; reward-CONTINGENT — PARENT-VERIFIED 6-seed GO (reward-contingent MAINTENANCE, not build-from-zero)
 
 **Date:** 2026-08-07
 **Type:** BUILD + numpy 3-seed smoke (de-risk). NO `sim/` edit (only research-runner code; the plasticity_gate + neuromodulator machinery already exist in `sim/`). Foreground, one process.
@@ -42,7 +42,7 @@ Reward-window gate telemetry (VSPATCH arm): open at the US = **1.000**, shut in 
 - **(a) the reward-window gate is NEURAL/temporal — PASS.** The gate value is a spiking-driven neuromodulator concentration (`from_region_firing` on the reward-US population, feeding a per-pathway `plasticity_gate` through the NM subsystem each step). It OPENS at the US (1.00) and is SHUT in the gap (0.004). No host `if reward: potentiate` flag wraps the update.
 - **(b) the potentiation is reward-CONTINGENT — PASS.** OMIT (goal held across the gap, US ABSENT) does NOT maintain the value: it decays to 71 Hz vs the paired 456 Hz (84.5% of the maintained value is attributable to reward being present). So it is credit, not a freeze/clock.
 - **(c) HALF-1 bridge intact — PASS.** recur>0 holds the goal (340 Hz) vs the recur=0 lesion (8 Hz); the decayed-trace arm expresses 0 Hz; `gap_ext==0`; `host_reward==0`. The maintained goal, not the task, does the bridging.
-- **(d) 6-seed** — this is a 3-seed smoke; the 6-seed command is in §5 (NOT run here).
+- **(d) 6-SEED** — ✅ PARENT-VERIFIED (42/43/44/100/101/102), see §4.5 below.
 
 ---
 
@@ -65,6 +65,33 @@ The held-goal->value synapse starts strong, so the value is STRUCTURALLY availab
 `stdp_off` (enable_stdp=False) collapses the PFC hold 341 -> 5 Hz (verified). Pair-STDP cannot be removed on this substrate, so the reward-timed rule must OFFSET the whole-trial STDP LTD, not replace it. (The residual companion process for 4.3 is a value-cell excitability homeostasis / dynamic range — the named next mechanism, a research frontier, not a tuning knob.)
 
 ---
+
+### 4.5 ✅ PARENT-VERIFIED (6-seed) — the smoke generalizes; verdict GO (as MAINTENANCE)
+<!--derived from research/findings/raw/rubicon_delayed_credit/vspatch_val_6seed.json-->
+The parent ran the §5 command (6 seeds 42/43/44/100/101/102, gap=200, numpy-CPU). **VERDICT: GO** (8/8
+preconditions). Means over 6 seeds:
+
+| arm | held-goal value across the 200-step gap |
+|---|---|
+| FLOOR (no-learning) | 474.2 Hz |
+| **VSPATCH (reward-timed, gated)** | **461.3 Hz** — maintained at ~floor |
+| COACT-nogate (no gate) | 456.2 Hz — the gate adds ~5 Hz (redundant, per §4.2) |
+| SCOPE-ALL DA-STDP (the failing rule) | 172.1 Hz — the LTD collapse |
+| OMIT (goal held, reward absent) | 69.1 Hz — CONTINGENCY holds |
+| DECAYED (recur=0 bridge lesion) | 0.0 Hz — HALF-1 intact |
+
+Rescue attributable 62.7% (vspatch vs scope-all), reward-contingency 85.0% (paired vs omit); reward-window gate
+open 0.977 at US vs 0.004 in the gap; PFC hold 340 vs decayed 8.1 Hz. **The 6-seed confirms the 3-seed smoke
+exactly, and the two honest scope limits (§4.1–4.3) STAND unchanged: this is reward-contingent MAINTENANCE of
+structurally-available delayed value (the scope-all LTD is prevented), the load-bearing fix is the reward-TIME DA
+sign (the gate is redundant-but-faithful), and build-from-zero remains a named residual (value-cell excitability
+homeostasis).**
+
+**⇒ Rubicon delayed-credit adoption, honest full status:** HALF-1 (maintained-goal delay bridge) 6-seed GO +
+HALF-2 (reward-timed value MAINTENANCE) 6-seed GO — the maintained goal holds delayed value across the gap and a
+reward-timed rule maintains it contingently rather than destroying it (the scope-all failure). This is a genuine
+advance over the failing scope-all rule and over our earlier R4 decayed-trace NEGATIVE; it is NOT a from-scratch
+delayed-value learner (that is the named next frontier).
 
 ## 5. 6-seed validation command (FOR THE PARENT — not run here)
 

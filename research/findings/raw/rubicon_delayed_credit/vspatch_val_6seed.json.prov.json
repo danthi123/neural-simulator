@@ -1,0 +1,32 @@
+{
+ "run_id": "1786124239-980705",
+ "runner": "research/runners/_rubicon_vspatch_reward_timed_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ab7c677da0710955e/research/runners/_rubicon_vspatch_reward_timed_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--gap-long",
+  "200",
+  "--out",
+  "research/findings/raw/rubicon_delayed_credit/vspatch_val_6seed.json"
+ ],
+ "git_sha": "9f78d4568",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T13:37:19",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3644.9,
+ "corpus_check_query": "VSPatch reward window gated potentiation dopamine timing prediction shunt cancel RPE reward-time credit",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/rubicon_delayed_credit/vspatch_val_6seed.json"
+}
