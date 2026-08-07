@@ -35,8 +35,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > overlap 0.2, no scale clears 0.15, no trend) → the boundary is CAPACITY-INDEPENDENT/structural. **#3 CONCLUSION: at
 > overlap 0.2 the honest margin tops out ~0.14 < the 0.15 floor; no mechanism (encoding×2/attractor/joint/scale)
 > clears it.** The 2 remaining levers are OWNER-DOMAIN task-design/criterion forks (mixed-episode asymmetry; is 0.15
-> calibrated for overlap 0.2?), not mechanisms. ⭐ Clean fresh pivot = **#4 replay** (emergent homeostatic
-> self-calibration), better in fresh context. Honest #3 boundary-characterization banked = a first-class deliverable.
+> calibrated for overlap 0.2?), not mechanisms. Honest #3 boundary-characterization banked = a first-class deliverable.
+> **#4 replay** research → STEP-0 closability gate = NO-GO (`2ba72661`): aggregate-sparsity self-calibration RULED
+> OUT — the failure is winner-IDENTITY (wrong assembly's basin captures the cue), not a scalar level.
+> **⭐⭐ CROSS-GAP SYNTHESIS (2026-08-07): #3 AND #4 have CONVERGED on ONE shared boundary — discriminating OVERLAPPING
+> ATTRACTORS by their IDENTITY, which no aggregate / rate / sparsity / E-I statistic can resolve** (source-monitoring's
+> shared episode core; replay's basin-capture; and the v8 rate-equalization NO-GO is the same trap). Every fix that
+> regulates an AGGREGATE quantity re-hits it. **STRATEGIC FORK (owner-domain): the shared next mechanism is an
+> IDENTITY-AWARE / self-supervised competition signal (which assembly, not how much) — likely upstream pattern
+> separation with the reliability co-constraint the 2026-05-31 DG boundary named — OR accept these as characterized
+> boundaries and reprioritise to other faculties.** A per-gap mechanism lever just re-hits the aggregate ceiling.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
@@ -181,9 +189,17 @@ working). Current frontier per lane:
   for overlap 0.2?** (achievable ceiling here ~0.14). ⭐ Genuine value forks for the owner — a mechanism lever just
   re-hits the conservation ceiling. Clean fresh pivot = **#4 replay** (emergent homeostatic self-calibration), better
   started in fresh context.
-- **#4 Replay consolidation** — v5 capability + v5+SFA interference wall closed + v6 order-STDP; but v6 multiseed
-  NO-GO (2-seed GO was operating-point OVERFIT). NEXT = **emergent homeostatic self-calibration** of the operating
-  point (host-tuned on 2 seeds → must emerge per-brain).
+- **#4 Replay consolidation** (2026-08-07) — v5 capability + v5+SFA interference wall closed + v6 order-STDP; v6
+  multiseed NO-GO (2-seed operating-point OVERFIT — an absolute-unit interference-control gain vector frozen on
+  412/413 can't track the per-brain E/I regime; dev 414/415/410 false-recall 0.46–0.50 vs 0.15). Research round
+  (`63a3642c`, scoping `_replay_selfcalibration_scoping.md`) → emergent homeostatic integral-controller-to-a-label-
+  free-WTA-sparsity-set-point. ⛔ **STEP-0 closability gate (`2ba72661`) = NO-GO** (the disciplined cheap test that
+  SAVED the controller build): a label-free regime statistic does NOT predict false-recall — the regime is ALREADY
+  maximally one-winner on every dev seed (gini ~0.68, top-share ~1.0) yet false-recall ~0.5, and WITHIN a seed the
+  catastrophic probe (false=1.0) and the perfect probe (false=0.0) have IDENTICAL label-free S. **The failure is
+  winner-IDENTITY (the WRONG assembly's basin captures the cue), not a scalar sparsity/E-I level a homeostat could
+  regulate** — same class as the v8/gap#3 rate-equalization trap. Aggregate-sparsity self-calibration is RULED OUT.
+  NEXT = an **identity-aware / self-supervised competition signal** (which assembly, not how sparse).
 
 USAGE MODEL (owner 2026-08-06): subagent tokens COUNT toward the plan; reduce usage via non-Claude machinery
 (self-sweeping runners + pool + aggregators), Claude only at endpoints — see `feedback_minimize_plan_usage_via_nonclaude_machinery`.
