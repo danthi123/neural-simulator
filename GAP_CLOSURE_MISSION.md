@@ -38,13 +38,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > calibrated for overlap 0.2?), not mechanisms. Honest #3 boundary-characterization banked = a first-class deliverable.
 > **#4 replay** research → STEP-0 closability gate = NO-GO (`2ba72661`): aggregate-sparsity self-calibration RULED
 > OUT — the failure is winner-IDENTITY (wrong assembly's basin captures the cue), not a scalar level.
-> **⭐⭐ CROSS-GAP SYNTHESIS (2026-08-07): #3 AND #4 have CONVERGED on ONE shared boundary — discriminating OVERLAPPING
-> ATTRACTORS by their IDENTITY, which no aggregate / rate / sparsity / E-I statistic can resolve** (source-monitoring's
-> shared episode core; replay's basin-capture; and the v8 rate-equalization NO-GO is the same trap). Every fix that
-> regulates an AGGREGATE quantity re-hits it. **STRATEGIC FORK (owner-domain): the shared next mechanism is an
-> IDENTITY-AWARE / self-supervised competition signal (which assembly, not how much) — likely upstream pattern
-> separation with the reliability co-constraint the 2026-05-31 DG boundary named — OR accept these as characterized
-> boundaries and reprioritise to other faculties.** A per-gap mechanism lever just re-hits the aggregate ceiling.
+> **⭐⭐ CROSS-GAP SYNTHESIS (2026-08-07, `2c774c91` = `_crossgap_identity_discrimination_synthesis.md`): #3/#4/gap5
+> converge on ONE boundary — the unsupplied quantity is attractor IDENTITY (a nominal LABEL, not a level); the
+> catastrophic (false=1.0) and perfect (false=0.0) probes have byte-adjacent aggregate stats, so no
+> rate/sparsity/E-I statistic can carry the label.** RESOLVED into a bounded plan (NOT a stall): (1) ⛔ the DG
+> "fundamental boundary" was SELF-RETRACTED — its escape (separation+completion at DIFFERENT loci, at CA3 SCALE) is
+> UNTESTED; the 2026-08-07 feedforward scale probe scaled the wrong thing (readout, no attractor) → **the decisive
+> test is attractor-competition × storage-separation × n≥48, un-run.** (2) ⭐ EXACT NEXT = that ONE cheap decisive #3
+> de-risk (extend `_laneC_source_monitor_attractor_competition.py`, joint g_comp × separation × n 12→≥48,
+> `all_dominant_correct` anti-cheat). (3) FALLBACK substrate if it fails = DENDRITIC COMPARTMENTS (unique-source
+> afferents on one branch, core on another → only coincident input crosses the NMDA plateau = an identity-specific
+> nonlinear AND no soma homeostat can equalize; branch assignment MUST self-organize via BCM, never host-wired). (4)
+> The boundary blocks a SUB-CAPABILITY, not the roadmap — **parallelize the unblocked CPU faculty lanes (affect,
+> curiosity, perception, language) while the single GPU-free de-risk runs; do NOT serialize another monoculture.**
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
