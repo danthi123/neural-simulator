@@ -1,0 +1,2850 @@
+{
+  "runner": "research/runners/_laneC_source_monitor_joint_scale.py",
+  "seeds": [
+    650,
+    651
+  ],
+  "n_source": [
+    12,
+    48,
+    96
+  ],
+  "uniq_emphasis": [
+    0.0,
+    1.0,
+    2.0
+  ],
+  "g_comp": [
+    0.0,
+    1.0
+  ],
+  "requested_overlap": 0.2,
+  "min_source_margin_floor": 0.15,
+  "overlap_fraction_constant_across_n": true,
+  "realized_overlap_by_n": {
+    "12": [
+      0.166666666667
+    ],
+    "48": [
+      0.166666666667
+    ],
+    "96": [
+      0.166666666667
+    ]
+  },
+  "both_seed_go_cells": [],
+  "any_scale_helped": false,
+  "go_gate": "min_margin_M >= 0.15 AND min_margin_M > min_margin_L AND all_dominant_correct, on BOTH seeds",
+  "scale_policy": "populations x F=n_source/12 (episode + both assemblies + interneuron); fan-in weights / F (operating-point-preserving); overlap fraction held EXACTLY constant via effective_overlap = base_k / base_psize",
+  "mechanism": "per-presynaptic-cell selectivity gain b(p)**(-uniq_emphasis) on learned episode->source synapses (storage) x within-population slow-NMDA recurrent excitation + GABA-A lateral inhibition (recall, one knob g_comp) x n_source scale (CA3 redundancy)",
+  "rows": [
+    {
+      "seed": 650,
+      "uniq_emphasis": 0.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "f521737301bceec2",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 64251.111419677734,
+      "weights_reweighted_l1": 64251.111419677734,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "2": 22,
+          "3": 12,
+          "1": 10
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.03666666666666668,
+        "heard": 0.13666666666666666,
+        "self_generated": 0.045833333333333365
+      },
+      "margins_L": {
+        "seen": 0.03666666666666668,
+        "heard": 0.13666666666666666,
+        "self_generated": 0.045833333333333365
+      },
+      "min_margin_M": 0.03666666666666668,
+      "min_margin_L": 0.03666666666666668,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.17833333333333334,
+        "heard": 0.27166666666666667,
+        "self_generated": 0.25083333333333335
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.613,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 0.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "277e15c80f90545c",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 69157.66883087158,
+      "weights_reweighted_l1": 69157.66883087158,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "2": 22,
+          "1": 10,
+          "3": 12
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.050833333333333314,
+        "heard": 0.14583333333333334,
+        "self_generated": -0.05666666666666667
+      },
+      "margins_L": {
+        "seen": 0.050833333333333314,
+        "heard": 0.14583333333333334,
+        "self_generated": -0.05666666666666667
+      },
+      "min_margin_M": -0.05666666666666667,
+      "min_margin_L": -0.05666666666666667,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.19666666666666666,
+        "heard": 0.29083333333333333,
+        "self_generated": 0.16833333333333333
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.6,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 0.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "f521737301bceec2",
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_learned_l1": 73801.11264801025,
+      "weights_reweighted_l1": 73801.11264801025,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "3": 24,
+          "2": 10,
+          "1": 10
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": -0.105,
+        "heard": -0.08833333333333332,
+        "self_generated": 0.0658333333333333
+      },
+      "margins_L": {
+        "seen": 0.005833333333333357,
+        "heard": 0.1175,
+        "self_generated": -0.0025000000000000022
+      },
+      "min_margin_M": -0.105,
+      "min_margin_L": -0.0025000000000000022,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.1025,
+        "heard": 0.23583333333333334,
+        "self_generated": 0.30416666666666664
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.885,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 0.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "277e15c80f90545c",
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_learned_l1": 71015.99101257324,
+      "weights_reweighted_l1": 71015.99101257324,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "2": 10,
+          "1": 10,
+          "3": 24
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": -0.07833333333333334,
+        "heard": -0.007500000000000007,
+        "self_generated": -0.1675
+      },
+      "margins_L": {
+        "seen": -0.04083333333333333,
+        "heard": 0.10750000000000001,
+        "self_generated": -0.13833333333333334
+      },
+      "min_margin_M": -0.1675,
+      "min_margin_L": -0.13833333333333334,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.13333333333333333,
+        "heard": 0.21833333333333332,
+        "self_generated": 0.11416666666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.889,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 1.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "f521737301bceec2",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 64251.111419677734,
+      "weights_reweighted_l1": 30851.440621376038,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 670,
+        "cells_by_breadth": {
+          "2": 22,
+          "3": 12,
+          "1": 10
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.11166666666666668,
+        "heard": 0.08083333333333334,
+        "self_generated": 0.02833333333333332
+      },
+      "margins_L": {
+        "seen": 0.11166666666666668,
+        "heard": 0.08083333333333334,
+        "self_generated": 0.02833333333333332
+      },
+      "min_margin_M": 0.02833333333333332,
+      "min_margin_L": 0.02833333333333332,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.17833333333333334,
+        "heard": 0.17833333333333334,
+        "self_generated": 0.1825
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.591,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 1.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "277e15c80f90545c",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 69157.66883087158,
+      "weights_reweighted_l1": 35455.34383869171,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 659,
+        "cells_by_breadth": {
+          "2": 22,
+          "1": 10,
+          "3": 12
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.10250000000000001,
+        "heard": 0.16083333333333333,
+        "self_generated": -0.10333333333333332
+      },
+      "margins_L": {
+        "seen": 0.10250000000000001,
+        "heard": 0.16083333333333333,
+        "self_generated": -0.10333333333333332
+      },
+      "min_margin_M": -0.10333333333333332,
+      "min_margin_L": -0.10333333333333332,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.1925,
+        "heard": 0.25,
+        "self_generated": 0.10416666666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.593,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 1.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "f521737301bceec2",
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_learned_l1": 73801.11264801025,
+      "weights_reweighted_l1": 30556.934101104736,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 621,
+        "cells_by_breadth": {
+          "3": 24,
+          "2": 10,
+          "1": 10
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": -0.085,
+        "heard": -0.07333333333333336,
+        "self_generated": 0.03249999999999997
+      },
+      "margins_L": {
+        "seen": 0.07750000000000001,
+        "heard": 0.05833333333333332,
+        "self_generated": 0.019166666666666665
+      },
+      "min_margin_M": -0.085,
+      "min_margin_L": 0.019166666666666665,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.09666666666666666,
+        "heard": 0.21833333333333332,
+        "self_generated": 0.32416666666666666
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.886,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 1.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "277e15c80f90545c",
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_learned_l1": 71015.99101257324,
+      "weights_reweighted_l1": 29854.909492492676,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 670,
+        "cells_by_breadth": {
+          "2": 10,
+          "1": 10,
+          "3": 24
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": -0.04083333333333333,
+        "heard": 0.015000000000000013,
+        "self_generated": -0.10833333333333331
+      },
+      "margins_L": {
+        "seen": 0.007499999999999993,
+        "heard": 0.14166666666666666,
+        "self_generated": -0.14916666666666667
+      },
+      "min_margin_M": -0.10833333333333331,
+      "min_margin_L": -0.14916666666666667,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": true,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.15583333333333332,
+        "heard": 0.22166666666666668,
+        "self_generated": 0.18416666666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.891,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 2.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "f521737301bceec2",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 64251.111419677734,
+      "weights_reweighted_l1": 16953.56327700615,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 670,
+        "cells_by_breadth": {
+          "2": 22,
+          "3": 12,
+          "1": 10
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.14250000000000002,
+        "heard": 0.08,
+        "self_generated": 0.011666666666666672
+      },
+      "margins_L": {
+        "seen": 0.14250000000000002,
+        "heard": 0.08,
+        "self_generated": 0.011666666666666672
+      },
+      "min_margin_M": 0.011666666666666672,
+      "min_margin_L": 0.011666666666666672,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.17833333333333334,
+        "heard": 0.165,
+        "self_generated": 0.1
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.588,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 2.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "277e15c80f90545c",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 69157.66883087158,
+      "weights_reweighted_l1": 20941.227239847183,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 659,
+        "cells_by_breadth": {
+          "2": 22,
+          "1": 10,
+          "3": 12
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.12499999999999999,
+        "heard": 0.12583333333333335,
+        "self_generated": -0.07666666666666666
+      },
+      "margins_L": {
+        "seen": 0.12499999999999999,
+        "heard": 0.12583333333333335,
+        "self_generated": -0.07666666666666666
+      },
+      "min_margin_M": -0.07666666666666666,
+      "min_margin_L": -0.07666666666666666,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.1725,
+        "heard": 0.20333333333333334,
+        "self_generated": 0.051666666666666666
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.595,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 2.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "f521737301bceec2",
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_learned_l1": 73801.11264801025,
+      "weights_reweighted_l1": 14798.10091495514,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 621,
+        "cells_by_breadth": {
+          "3": 24,
+          "2": 10,
+          "1": 10
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": -0.05583333333333333,
+        "heard": -0.05000000000000002,
+        "self_generated": 0.021666666666666667
+      },
+      "margins_L": {
+        "seen": 0.11250000000000002,
+        "heard": 0.06416666666666666,
+        "self_generated": -0.007500000000000007
+      },
+      "min_margin_M": -0.05583333333333333,
+      "min_margin_L": -0.007500000000000007,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.10166666666666667,
+        "heard": 0.2125,
+        "self_generated": 0.31
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.902,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 2.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 2,
+      "pattern_hash": "277e15c80f90545c",
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_learned_l1": 71015.99101257324,
+      "weights_reweighted_l1": 14780.364151000977,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 670,
+        "cells_by_breadth": {
+          "2": 10,
+          "1": 10,
+          "3": 24
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": -0.022499999999999992,
+        "heard": -0.02833333333333332,
+        "self_generated": -0.16833333333333333
+      },
+      "margins_L": {
+        "seen": 0.05166666666666666,
+        "heard": 0.14333333333333334,
+        "self_generated": -0.09916666666666667
+      },
+      "min_margin_M": -0.16833333333333333,
+      "min_margin_L": -0.09916666666666667,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.15083333333333335,
+        "heard": 0.21166666666666667,
+        "self_generated": 0.10666666666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 2,
+          "heard": 2,
+          "self_generated": 2
+        }
+      },
+      "elapsed_seconds": 0.886,
+      "n_source": 12,
+      "scale_factor": 1,
+      "episode_pattern_size": 12,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 200.0,
+        "lateral_i_weight_base": 3.0,
+        "source_afferent_weight": 80.0,
+        "hebbian_max_weight": 160.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 0.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "65fea32373daf057",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 273487.9792175293,
+      "weights_reweighted_l1": 273487.9792175293,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "2": 88,
+          "1": 40,
+          "3": 48
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.11666666666666668,
+        "heard": 0.028124999999999983,
+        "self_generated": 0.013541666666666646
+      },
+      "margins_L": {
+        "seen": 0.11666666666666668,
+        "heard": 0.028124999999999983,
+        "self_generated": 0.013541666666666646
+      },
+      "min_margin_M": 0.013541666666666646,
+      "min_margin_L": 0.013541666666666646,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.23604166666666668,
+        "heard": 0.21479166666666666,
+        "self_generated": 0.20020833333333332
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 3.575,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 0.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "26cbcf37a6c8341f",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 288394.24219322205,
+      "weights_reweighted_l1": 288394.24219322205,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "2": 88,
+          "3": 48,
+          "1": 40
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.09375,
+        "heard": 0.06270833333333334,
+        "self_generated": 0.013958333333333323
+      },
+      "margins_L": {
+        "seen": 0.09375,
+        "heard": 0.06270833333333334,
+        "self_generated": 0.013958333333333323
+      },
+      "min_margin_M": 0.013958333333333323,
+      "min_margin_L": 0.013958333333333323,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.22270833333333334,
+        "heard": 0.23458333333333334,
+        "self_generated": 0.19895833333333332
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 3.561,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 0.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "65fea32373daf057",
+      "recurrent_e_weight": 50.0,
+      "lateral_i_weight": 0.75,
+      "weights_learned_l1": 300846.7915992737,
+      "weights_reweighted_l1": 300846.7915992737,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "2": 40,
+          "1": 40,
+          "3": 96
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.020000000000000018,
+        "heard": -0.01291666666666666,
+        "self_generated": 0.020833333333333315
+      },
+      "margins_L": {
+        "seen": 0.096875,
+        "heard": 0.0027083333333333404,
+        "self_generated": -0.013333333333333336
+      },
+      "min_margin_M": -0.01291666666666666,
+      "min_margin_L": -0.013333333333333336,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": true,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.17708333333333334,
+        "heard": 0.22395833333333334,
+        "self_generated": 0.33166666666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 5.253,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 0.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "26cbcf37a6c8341f",
+      "recurrent_e_weight": 50.0,
+      "lateral_i_weight": 0.75,
+      "weights_learned_l1": 292465.2276916504,
+      "weights_reweighted_l1": 292465.2276916504,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "3": 96,
+          "2": 40,
+          "1": 40
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": -0.01999999999999999,
+        "heard": -0.01999999999999999,
+        "self_generated": -0.048958333333333326
+      },
+      "margins_L": {
+        "seen": 0.05916666666666667,
+        "heard": 0.02583333333333332,
+        "self_generated": -0.010000000000000009
+      },
+      "min_margin_M": -0.048958333333333326,
+      "min_margin_L": -0.010000000000000009,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.15541666666666668,
+        "heard": 0.215,
+        "self_generated": 0.3045833333333333
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 5.348,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 1.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "65fea32373daf057",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 273487.9792175293,
+      "weights_reweighted_l1": 139248.32826304436,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 9899,
+        "cells_by_breadth": {
+          "2": 88,
+          "1": 40,
+          "3": 48
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.1741666666666667,
+        "heard": 0.03145833333333331,
+        "self_generated": -0.007916666666666655
+      },
+      "margins_L": {
+        "seen": 0.1741666666666667,
+        "heard": 0.03145833333333331,
+        "self_generated": -0.007916666666666655
+      },
+      "min_margin_M": -0.007916666666666655,
+      "min_margin_L": -0.007916666666666655,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.23604166666666668,
+        "heard": 0.18333333333333332,
+        "self_generated": 0.13708333333333333
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 3.577,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 1.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "26cbcf37a6c8341f",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 288394.24219322205,
+      "weights_reweighted_l1": 143069.63605093956,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 10557,
+        "cells_by_breadth": {
+          "2": 88,
+          "3": 48,
+          "1": 40
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.15583333333333332,
+        "heard": 0.03187499999999999,
+        "self_generated": 0.011249999999999982
+      },
+      "margins_L": {
+        "seen": 0.15583333333333332,
+        "heard": 0.03187499999999999,
+        "self_generated": 0.011249999999999982
+      },
+      "min_margin_M": 0.011249999999999982,
+      "min_margin_L": 0.011249999999999982,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.219375,
+        "heard": 0.16291666666666665,
+        "self_generated": 0.14020833333333332
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 3.607,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 1.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "65fea32373daf057",
+      "recurrent_e_weight": 50.0,
+      "lateral_i_weight": 0.75,
+      "weights_learned_l1": 300846.7915992737,
+      "weights_reweighted_l1": 131983.54958558083,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 10033,
+        "cells_by_breadth": {
+          "2": 40,
+          "1": 40,
+          "3": 96
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.025000000000000022,
+        "heard": -0.06291666666666665,
+        "self_generated": -0.024583333333333346
+      },
+      "margins_L": {
+        "seen": 0.16291666666666665,
+        "heard": 0.00041666666666664853,
+        "self_generated": -0.05437500000000001
+      },
+      "min_margin_M": -0.06291666666666665,
+      "min_margin_L": -0.05437500000000001,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.17479166666666668,
+        "heard": 0.14833333333333334,
+        "self_generated": 0.223125
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 5.291,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 1.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "26cbcf37a6c8341f",
+      "recurrent_e_weight": 50.0,
+      "lateral_i_weight": 0.75,
+      "weights_learned_l1": 292465.2276916504,
+      "weights_reweighted_l1": 126309.53784942627,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 10305,
+        "cells_by_breadth": {
+          "3": 96,
+          "2": 40,
+          "1": 40
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": -0.012916666666666687,
+        "heard": -0.022291666666666654,
+        "self_generated": -0.01749999999999996
+      },
+      "margins_L": {
+        "seen": 0.13041666666666668,
+        "heard": 0.00979166666666667,
+        "self_generated": -0.018125000000000002
+      },
+      "min_margin_M": -0.022291666666666654,
+      "min_margin_L": -0.018125000000000002,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.15354166666666666,
+        "heard": 0.18166666666666667,
+        "self_generated": 0.256875
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 5.184,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 2.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "65fea32373daf057",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 273487.9792175293,
+      "weights_reweighted_l1": 82767.46980267763,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 9899,
+        "cells_by_breadth": {
+          "2": 88,
+          "1": 40,
+          "3": 48
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.20270833333333332,
+        "heard": 0.0016666666666666496,
+        "self_generated": -0.025833333333333333
+      },
+      "margins_L": {
+        "seen": 0.20270833333333332,
+        "heard": 0.0016666666666666496,
+        "self_generated": -0.025833333333333333
+      },
+      "min_margin_M": -0.025833333333333333,
+      "min_margin_L": -0.025833333333333333,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.23145833333333332,
+        "heard": 0.1425,
+        "self_generated": 0.09270833333333334
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 3.544,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 2.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "26cbcf37a6c8341f",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 288394.24219322205,
+      "weights_reweighted_l1": 82757.03707295656,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 10557,
+        "cells_by_breadth": {
+          "2": 88,
+          "3": 48,
+          "1": 40
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.19270833333333331,
+        "heard": 0.021041666666666667,
+        "self_generated": -0.006875000000000006
+      },
+      "margins_L": {
+        "seen": 0.19270833333333331,
+        "heard": 0.021041666666666667,
+        "self_generated": -0.006875000000000006
+      },
+      "min_margin_M": -0.006875000000000006,
+      "min_margin_L": -0.006875000000000006,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.219375,
+        "heard": 0.14395833333333333,
+        "self_generated": 0.090625
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 3.556,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 2.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "65fea32373daf057",
+      "recurrent_e_weight": 50.0,
+      "lateral_i_weight": 0.75,
+      "weights_learned_l1": 300846.7915992737,
+      "weights_reweighted_l1": 70535.48730319738,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 10033,
+        "cells_by_breadth": {
+          "2": 40,
+          "1": 40,
+          "3": 96
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.0475,
+        "heard": 0.051666666666666666,
+        "self_generated": -0.11
+      },
+      "margins_L": {
+        "seen": 0.188125,
+        "heard": -0.022499999999999992,
+        "self_generated": -0.06604166666666665
+      },
+      "min_margin_M": -0.11,
+      "min_margin_L": -0.06604166666666665,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.168125,
+        "heard": 0.22270833333333334,
+        "self_generated": 0.11708333333333333
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 5.301,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 2.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 8,
+      "pattern_hash": "26cbcf37a6c8341f",
+      "recurrent_e_weight": 50.0,
+      "lateral_i_weight": 0.75,
+      "weights_learned_l1": 292465.2276916504,
+      "weights_reweighted_l1": 65993.78082489967,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 10305,
+        "cells_by_breadth": {
+          "3": 96,
+          "2": 40,
+          "1": 40
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.01125000000000001,
+        "heard": 0.017916666666666664,
+        "self_generated": -0.0675
+      },
+      "margins_L": {
+        "seen": 0.15708333333333335,
+        "heard": 0.011458333333333334,
+        "self_generated": -0.033541666666666664
+      },
+      "min_margin_M": -0.0675,
+      "min_margin_L": -0.033541666666666664,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.15541666666666668,
+        "heard": 0.181875,
+        "self_generated": 0.1275
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 8,
+          "heard": 8,
+          "self_generated": 8
+        }
+      },
+      "elapsed_seconds": 5.28,
+      "n_source": 48,
+      "scale_factor": 4,
+      "episode_pattern_size": 48,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 50.0,
+        "lateral_i_weight_base": 0.75,
+        "source_afferent_weight": 20.0,
+        "hebbian_max_weight": 40.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 0.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "fd729ceb990a29ad",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 541833.79621315,
+      "weights_reweighted_l1": 541833.79621315,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "2": 176,
+          "3": 96,
+          "1": 80
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.06052083333333333,
+        "heard": 0.08739583333333334,
+        "self_generated": 0.0675
+      },
+      "margins_L": {
+        "seen": 0.06052083333333333,
+        "heard": 0.08739583333333334,
+        "self_generated": 0.0675
+      },
+      "min_margin_M": 0.06052083333333333,
+      "min_margin_L": 0.06052083333333333,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.200625,
+        "heard": 0.23666666666666666,
+        "self_generated": 0.24458333333333335
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 13.814,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 0.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "17ffa0dbf11bfb29",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 547793.3524637222,
+      "weights_reweighted_l1": 547793.3524637222,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "3": 96,
+          "2": 176,
+          "1": 80
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.0778125,
+        "heard": 0.05572916666666666,
+        "self_generated": 0.036979166666666674
+      },
+      "margins_L": {
+        "seen": 0.0778125,
+        "heard": 0.05572916666666666,
+        "self_generated": 0.036979166666666674
+      },
+      "min_margin_M": 0.036979166666666674,
+      "min_margin_L": 0.036979166666666674,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.22802083333333334,
+        "heard": 0.23333333333333334,
+        "self_generated": 0.22322916666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 14.007,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 0.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "fd729ceb990a29ad",
+      "recurrent_e_weight": 25.0,
+      "lateral_i_weight": 0.375,
+      "weights_learned_l1": 703750.6913566589,
+      "weights_reweighted_l1": 703750.6913566589,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "3": 192,
+          "1": 80,
+          "2": 80
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": -0.048229166666666684,
+        "heard": -0.03916666666666668,
+        "self_generated": 0.02322916666666669
+      },
+      "margins_L": {
+        "seen": 0.035312500000000024,
+        "heard": 0.039479166666666676,
+        "self_generated": -0.003645833333333348
+      },
+      "min_margin_M": -0.048229166666666684,
+      "min_margin_L": -0.003645833333333348,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.14041666666666666,
+        "heard": 0.23541666666666666,
+        "self_generated": 0.345625
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 22.299,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 0.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "17ffa0dbf11bfb29",
+      "recurrent_e_weight": 25.0,
+      "lateral_i_weight": 0.375,
+      "weights_learned_l1": 670800.9465904236,
+      "weights_reweighted_l1": 670800.9465904236,
+      "emphasis_info": {
+        "uniq_emphasis": 0.0,
+        "synapses_touched": 0,
+        "cells_by_breadth": {
+          "3": 192,
+          "2": 80,
+          "1": 80
+        },
+        "no_op": true
+      },
+      "margins_M": {
+        "seen": 0.01364583333333333,
+        "heard": 0.025833333333333347,
+        "self_generated": -0.0892708333333333
+      },
+      "margins_L": {
+        "seen": 0.042083333333333334,
+        "heard": 0.023020833333333324,
+        "self_generated": 0.0039583333333333415
+      },
+      "min_margin_M": -0.0892708333333333,
+      "min_margin_L": 0.0039583333333333415,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.18677083333333333,
+        "heard": 0.2660416666666667,
+        "self_generated": 0.25364583333333335
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 22.31,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 1.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "fd729ceb990a29ad",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 541833.79621315,
+      "weights_reweighted_l1": 266521.7864881754,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 40988,
+        "cells_by_breadth": {
+          "2": 176,
+          "3": 96,
+          "1": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.13687500000000002,
+        "heard": 0.08375,
+        "self_generated": 0.04489583333333333
+      },
+      "margins_L": {
+        "seen": 0.13687500000000002,
+        "heard": 0.08375,
+        "self_generated": 0.04489583333333333
+      },
+      "min_margin_M": 0.04489583333333333,
+      "min_margin_L": 0.04489583333333333,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.19947916666666668,
+        "heard": 0.1909375,
+        "self_generated": 0.174375
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 13.761,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 1.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "17ffa0dbf11bfb29",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 547793.3524637222,
+      "weights_reweighted_l1": 279281.96680760384,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 42385,
+        "cells_by_breadth": {
+          "3": 96,
+          "2": 176,
+          "1": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.1365625,
+        "heard": 0.05614583333333334,
+        "self_generated": 0.024375000000000008
+      },
+      "margins_L": {
+        "seen": 0.1365625,
+        "heard": 0.05614583333333334,
+        "self_generated": 0.024375000000000008
+      },
+      "min_margin_M": 0.024375000000000008,
+      "min_margin_L": 0.024375000000000008,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.22197916666666667,
+        "heard": 0.18041666666666667,
+        "self_generated": 0.16229166666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 13.906,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 1.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "fd729ceb990a29ad",
+      "recurrent_e_weight": 25.0,
+      "lateral_i_weight": 0.375,
+      "weights_learned_l1": 703750.6913566589,
+      "weights_reweighted_l1": 296376.9452905655,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 46548,
+        "cells_by_breadth": {
+          "3": 192,
+          "1": 80,
+          "2": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": -0.05124999999999999,
+        "heard": 0.0764583333333333,
+        "self_generated": -0.028541666666666687
+      },
+      "margins_L": {
+        "seen": 0.12281250000000002,
+        "heard": 0.0753125,
+        "self_generated": 0.01125000000000001
+      },
+      "min_margin_M": -0.05124999999999999,
+      "min_margin_L": 0.01125000000000001,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.13510416666666666,
+        "heard": 0.2842708333333333,
+        "self_generated": 0.29604166666666665
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 22.094,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 1.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "17ffa0dbf11bfb29",
+      "recurrent_e_weight": 25.0,
+      "lateral_i_weight": 0.375,
+      "weights_learned_l1": 670800.9465904236,
+      "weights_reweighted_l1": 291028.7790170908,
+      "emphasis_info": {
+        "uniq_emphasis": 1.0,
+        "synapses_touched": 43297,
+        "cells_by_breadth": {
+          "3": 192,
+          "2": 80,
+          "1": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.01197916666666668,
+        "heard": 0.019166666666666637,
+        "self_generated": -0.08552083333333335
+      },
+      "margins_L": {
+        "seen": 0.11750000000000001,
+        "heard": 0.0246875,
+        "self_generated": -0.004687499999999983
+      },
+      "min_margin_M": -0.08552083333333335,
+      "min_margin_L": -0.004687499999999983,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.1846875,
+        "heard": 0.26729166666666665,
+        "self_generated": 0.24052083333333332
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 22.262,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 2.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "fd729ceb990a29ad",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 541833.79621315,
+      "weights_reweighted_l1": 151283.4859443009,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 40988,
+        "cells_by_breadth": {
+          "2": 176,
+          "3": 96,
+          "1": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.16395833333333334,
+        "heard": 0.05864583333333334,
+        "self_generated": 0.02416666666666667
+      },
+      "margins_L": {
+        "seen": 0.16395833333333334,
+        "heard": 0.05864583333333334,
+        "self_generated": 0.02416666666666667
+      },
+      "min_margin_M": 0.02416666666666667,
+      "min_margin_L": 0.02416666666666667,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.19770833333333335,
+        "heard": 0.1571875,
+        "self_generated": 0.12541666666666668
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 13.374,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 2.0,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "17ffa0dbf11bfb29",
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_learned_l1": 547793.3524637222,
+      "weights_reweighted_l1": 168175.19546061754,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 42385,
+        "cells_by_breadth": {
+          "3": 96,
+          "2": 176,
+          "1": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.185,
+        "heard": 0.04135416666666665,
+        "self_generated": 0.0051041666666666735
+      },
+      "margins_L": {
+        "seen": 0.185,
+        "heard": 0.04135416666666665,
+        "self_generated": 0.0051041666666666735
+      },
+      "min_margin_M": 0.0051041666666666735,
+      "min_margin_L": 0.0051041666666666735,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.22395833333333334,
+        "heard": 0.15583333333333332,
+        "self_generated": 0.11739583333333334
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 13.749,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 650,
+      "uniq_emphasis": 2.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "fd729ceb990a29ad",
+      "recurrent_e_weight": 25.0,
+      "lateral_i_weight": 0.375,
+      "weights_learned_l1": 703750.6913566589,
+      "weights_reweighted_l1": 149688.7714445591,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 46548,
+        "cells_by_breadth": {
+          "3": 192,
+          "1": 80,
+          "2": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": -0.01958333333333334,
+        "heard": 0.03218750000000001,
+        "self_generated": -0.10552083333333334
+      },
+      "margins_L": {
+        "seen": 0.15010416666666668,
+        "heard": 0.06218750000000001,
+        "self_generated": -0.004895833333333335
+      },
+      "min_margin_M": -0.10552083333333334,
+      "min_margin_L": -0.004895833333333335,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.13333333333333333,
+        "heard": 0.15489583333333334,
+        "self_generated": 0.134375
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 22.016,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    },
+    {
+      "seed": 651,
+      "uniq_emphasis": 2.0,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.16666666666666666,
+      "core_size": 16,
+      "pattern_hash": "17ffa0dbf11bfb29",
+      "recurrent_e_weight": 25.0,
+      "lateral_i_weight": 0.375,
+      "weights_learned_l1": 670800.9465904236,
+      "weights_reweighted_l1": 153930.23515453935,
+      "emphasis_info": {
+        "uniq_emphasis": 2.0,
+        "synapses_touched": 43297,
+        "cells_by_breadth": {
+          "3": 192,
+          "2": 80,
+          "1": 80
+        },
+        "no_op": false
+      },
+      "margins_M": {
+        "seen": 0.034791666666666665,
+        "heard": -0.022812500000000013,
+        "self_generated": -0.003541666666666665
+      },
+      "margins_L": {
+        "seen": 0.15822916666666667,
+        "heard": 0.019062499999999982,
+        "self_generated": -0.023750000000000007
+      },
+      "min_margin_M": -0.022812500000000013,
+      "min_margin_L": -0.023750000000000007,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": true,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.17833333333333334,
+        "heard": 0.19208333333333333,
+        "self_generated": 0.24208333333333334
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_0_0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true,
+        "overlap_intact_core_fires_every_cue": true,
+        "core_active_in_cue": {
+          "seen": 16,
+          "heard": 16,
+          "self_generated": 16
+        }
+      },
+      "elapsed_seconds": 21.922,
+      "n_source": 96,
+      "scale_factor": 8,
+      "episode_pattern_size": 96,
+      "requested_overlap": 0.2,
+      "effective_overlap": 0.16666666666666666,
+      "realized_overlap_fraction": 0.16666666666666666,
+      "weight_scaling": {
+        "policy": "fan-in weights / F (operating-point-preserving)",
+        "recurrent_e_weight_base": 25.0,
+        "lateral_i_weight_base": 0.375,
+        "source_afferent_weight": 10.0,
+        "hebbian_max_weight": 20.0
+      },
+      "smoke_go_strict": false,
+      "feedforward_clears": false
+    }
+  ]
+}

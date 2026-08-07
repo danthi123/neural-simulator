@@ -1,0 +1,41 @@
+{
+ "run_id": "1786106258-809004",
+ "runner": "research/runners/_laneC_source_monitor_joint_scale.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a2f24a6904628469d/research/runners/_laneC_source_monitor_joint_scale.py",
+  "--seeds",
+  "650",
+  "651",
+  "--n-source",
+  "12",
+  "48",
+  "96",
+  "--uniq-emphasis",
+  "0.0",
+  "1.0",
+  "2.0",
+  "--g-comp",
+  "0.0",
+  "1.0",
+  "--out",
+  "research/findings/raw/laneC_source_monitor_joint_scale/smoke_650_651.json"
+ ],
+ "git_sha": "4c408fd58",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T08:37:38",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/laneC_source_monitor_joint_scale/smoke_650_651.json"
+}
