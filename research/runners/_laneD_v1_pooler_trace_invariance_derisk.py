@@ -306,7 +306,40 @@ class TraceV1Pooler(OnSubstratePooler):
         ).astype(np.float32)
         self.b.cp_connections.data[:] = self.b.xp.asarray(updated) if hasattr(self.b, "xp") else updated
 
-    def train_trace(self, stream: list[set[int]], epochs: int, trace_decay: float) -> None:
+    def _column_ff_sums(self, data: np.ndarray) -> np.ndarray:
+        """Total incoming feedforward permanence per column (Turrigiano's homeostatic quantity)."""
+        col_sum = np.zeros(self.n_col)
+        np.add.at(col_sum, self.ff_col, data[self.ff_pos])
+        return col_sum
+
+    def _homeostatic_synaptic_scaling(self, target: float, eps: float = 1e-6) -> None:
+        """Turrigiano (1998) multiplicative synaptic scaling: renormalize each column's incoming
+        feedforward permanence sum toward the developmental set-point `target`. Multiplicative so it
+        equalizes total drive across columns WITHOUT inverting the trace-learned relative weighting
+        (selectivity is preserved; only the per-column scale is homeostatically clamped)."""
+        data = _host(self.b.cp_connections.data).astype(np.float64)
+        col_sum = self._column_ff_sums(data)
+        scale_per_col = target / (col_sum + eps)
+        scale_syn = np.ones(self.nsyn)
+        scale_syn[self.ff_pos] = scale_per_col[self.ff_col]
+        data = np.clip(data * scale_syn, 0.0, 1.0)
+        updated = data.astype(np.float32)
+        self.b.cp_connections.data[:] = self.b.xp.asarray(updated) if hasattr(self.b, "xp") else updated
+
+    def train_trace(
+        self,
+        stream: list[set[int]],
+        epochs: int,
+        trace_decay: float,
+        homeo_scale: bool = False,
+        homeo_target: float = -1.0,
+    ) -> None:
+        # Turrigiano set-point = the developmental baseline (mean initial per-column ff sum),
+        # measured once BEFORE any plasticity so it is not fit to the learned code.
+        target = homeo_target
+        if homeo_scale and target < 0.0:
+            data0 = _host(self.b.cp_connections.data).astype(np.float64)
+            target = float(np.mean(self._column_ff_sums(data0)))
         duty = np.zeros(self.n_col)
         boost = np.ones(self.n_col)
         for e in range(epochs):
@@ -320,6 +353,8 @@ class TraceV1Pooler(OnSubstratePooler):
                 self._winner_inactive_traced(win, trace, self.ld_wi)
                 for c in win:
                     duty[c] += 1.0
+            if homeo_scale:
+                self._homeostatic_synaptic_scaling(target)
             boost = np.exp(2.0 * (self.k_win / self.n_col - duty / ((e + 1) * max(len(stream), 1))))
 
 
@@ -362,7 +397,13 @@ def _train_trace_pooler(
         lp=a.pool_lr_pot,
         ld_wi=a.pool_lr_depress,
     )
-    pooler.train_trace(stream_feats, a.epochs, a.trace_decay)
+    pooler.train_trace(
+        stream_feats,
+        a.epochs,
+        a.trace_decay,
+        homeo_scale=a.homeo_scale,
+        homeo_target=a.homeo_target,
+    )
     return pooler
 
 
@@ -516,6 +557,19 @@ def main() -> int:
     parser.add_argument("--trace-decay", type=float, default=E50_TRACE_DECAY)
     parser.add_argument("--pool-lr-pot", type=float, default=0.05)
     parser.add_argument("--pool-lr-depress", type=float, default=0.02)
+    parser.add_argument(
+        "--homeo-scale",
+        action="store_true",
+        help="Opt-in Turrigiano multiplicative synaptic scaling: renormalize each pooler column's "
+        "incoming ff permanence sum toward the developmental baseline after each epoch (default off).",
+    )
+    parser.add_argument(
+        "--homeo-target",
+        type=float,
+        default=-1.0,
+        help="Homeostatic set-point for per-column ff permanence sum; <0 measures the mean initial "
+        "column sum (developmental baseline) once before plasticity.",
+    )
     parser.add_argument("--decode-margin", type=float, default=0.10)
     parser.add_argument("--trace-delta", type=float, default=0.05)
     parser.add_argument("--v1-delta", type=float, default=0.02)
