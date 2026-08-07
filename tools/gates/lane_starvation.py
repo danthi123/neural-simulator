@@ -135,14 +135,31 @@ def _waiver_active():
         return None
 
 
+def _staged_files():
+    """The ACTUAL staged set, ANY status. The pre-commit hook passes only ADDED files (--diff-filter=A), so a
+    MODIFY-only commit -- the board/roadmap are ALWAYS modifies -- arrives at check() as an empty list. Read it
+    ourselves so the doc-only exemption sees a board edit."""
+    try:
+        return subprocess.run(["git", "diff", "--cached", "--name-only"], cwd=_ROOT,
+                              capture_output=True, text=True, timeout=10).stdout.split()
+    except Exception:
+        return []
+
+
+def _is_doc_only(staged):
+    """A non-empty staged set that is ALL Markdown -> no compute to parallelise -> exempt."""
+    return bool(staged) and all(p.endswith(".md") for p in staged)
+
+
 def check(paths=None):
-    # DOC-ONLY EXEMPTION (2026-08-06). A commit that stages ONLY Markdown (board, roadmap, findings, docs,
-    # RETRACTED) has no compute to parallelise, so idle CPU lanes cannot be its fault. Blocking such commits
-    # only trained a reflex `--no-verify` -- ~6 documented bypasses on pure board/retraction commits in ONE
-    # session (2026-08-06), which is the corrosive "gate forces its own bypass" pattern this system exists to
-    # avoid (a bypass on a doc commit disables EVERY other gate for that commit too). A runner/sim/experiment
-    # commit still triggers the gate; the standalone corpus scan (paths=None) is unaffected.
-    if paths is not None and paths and all(p.endswith(".md") for p in paths):
+    # DOC-ONLY EXEMPTION (2026-08-06; HARDENED 2026-08-07). A commit staging ONLY Markdown (board, roadmap,
+    # findings, docs, RETRACTED) has no compute to parallelise, so idle CPU lanes cannot be its fault, and
+    # blocking it only trains a reflex `--no-verify` (~6 such bypasses in one session; a bypass disables EVERY
+    # other gate for that commit). The first version keyed on the passed `paths`, but the hook filters to ADDED
+    # files -- and the board is always a MODIFY -- so board commits arrived empty and STILL blocked, the exact
+    # case this targeted. Read the real staged set ourselves. Standalone (`python tools/gates/...`, no staged
+    # commit) reads empty -> falls through to the corpus scan, unaffected.
+    if _is_doc_only(_staged_files()):
         return []
     idle = sorted(set(CPU_LANES) - _served(_work_lines()))
     if len(idle) < MAX_IDLE_LANES:
@@ -188,10 +205,11 @@ def selftest():
         bad.append("did NOT detect the priority/focus rationalisation waiver -> the 2026-08-01 abuse would pass")
     if _RATIONALISATION.search("no ready de-risk for these lanes: the stream-code cache is absent; blocked on its build"):
         bad.append("FALSE POSITIVE: a genuine per-lane BLOCKER waiver was mis-flagged as a rationalisation")
-    # DOC-ONLY EXEMPTION (2026-08-06): a commit staging ONLY .md must never be gated, regardless of lane state.
-    if check(["GAP_CLOSURE_MISSION.md", "docs/RETRACTED.md"]):
-        bad.append("FALSE POSITIVE: a doc-only (.md) commit was gated for lane starvation")
-    # ...but the exemption must NOT swallow a code commit: a staged .py defeats the .md-all guard.
-    if all(p.endswith(".md") for p in ["GAP_CLOSURE_MISSION.md", "research/runners/x.py"]):
-        bad.append("BROKEN GUARD: a mixed doc+code commit was treated as doc-only")
+    # DOC-ONLY EXEMPTION (2026-08-07): keys on the ACTUAL staged set (any status) via _is_doc_only.
+    if not _is_doc_only(["GAP_CLOSURE_MISSION.md", "docs/RETRACTED.md"]):
+        bad.append("a doc-only (.md) staged set was NOT recognised as exempt")
+    if _is_doc_only(["GAP_CLOSURE_MISSION.md", "research/runners/x.py"]):
+        bad.append("BROKEN GUARD: a mixed doc+code set was treated as doc-only")
+    if _is_doc_only([]):
+        bad.append("BROKEN GUARD: an EMPTY staged set was treated as doc-only (would exempt every commit)")
     return bad
