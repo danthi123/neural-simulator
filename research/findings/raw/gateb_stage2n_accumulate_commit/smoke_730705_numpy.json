@@ -1,0 +1,66 @@
+{
+  "probe": "gateB_stage2n_accumulate_commit_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "smoke_seeds": [
+    730705
+  ],
+  "fix_e": false,
+  "byte_identity_fixf_off": [
+    {
+      "seed": 730703,
+      "byte_identical_fixf_off": true,
+      "mismatch": {}
+    },
+    {
+      "seed": 730705,
+      "byte_identical_fixf_off": true,
+      "mismatch": {}
+    }
+  ],
+  "legitimacy_acq_lesion": {
+    "seed": 730705,
+    "D_contingent_acq_lesion_fixf_on": 0.0,
+    "p_action0_target1_acq_lesion": 0.0,
+    "acq_lesion_action1_does_not_win": false,
+    "n_clean_target1": 20,
+    "test_rate_target1": 1.0
+  },
+  "config": {
+    "nmda_ratio": 0.5,
+    "xinhib_scale": 0.1,
+    "ff_scale": 1.0,
+    "fix_e": false
+  },
+  "per_seed": [
+    {
+      "seed": 730705,
+      "fix_e": false,
+      "FIXF_ON": {
+        "count_c1": [
+          0,
+          40
+        ],
+        "test_rate_c1": 1.0,
+        "test_rate_c0": 0.1,
+        "D_contingent": 0.1,
+        "D_yoked": 0.0,
+        "steer": false
+      },
+      "STAGE2K_BASE": {
+        "count_c1": [
+          37,
+          3
+        ],
+        "test_rate_c1": 0.0,
+        "D_contingent": 0.0,
+        "steer": false
+      },
+      "SMOKE_no_nan": true,
+      "SMOKE_730705_test_rate_c1_flips": true,
+      "SMOKE_steer": false,
+      "SMOKE_steer_improved_vs_2k": false
+    }
+  ],
+  "elapsed_seconds": 510.95291051200184
+}

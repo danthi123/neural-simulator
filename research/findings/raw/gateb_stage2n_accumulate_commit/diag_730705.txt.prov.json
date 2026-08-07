@@ -1,0 +1,31 @@
+{
+ "run_id": "1786111414-857976",
+ "runner": "research/runners/_vocal_gateb_stage2n_accumulate_commit.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-stage2n/research/runners/_vocal_gateb_stage2n_accumulate_commit.py",
+  "--mode",
+  "diag",
+  "--diag-seed",
+  "730705",
+  "--out",
+  "research/findings/raw/gateb_stage2n_accumulate_commit/diag_730705.txt"
+ ],
+ "git_sha": "eeac77374",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T10:03:34",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/gateb_stage2n_accumulate_commit/diag_730705.txt"
+}

@@ -1,0 +1,13 @@
+Gate B Stage 2n -- FIX F accumulate-then-commit on 730705 (numpy).
+config: nmda_ratio=0.5 xinhib_scale=0.1 ff_scale=1.0 fix_e=False
+Q: does NMDA-slow commit integration overtake thal_0's temporal head-start? 
+
+[trained target=1] count=[1, 39] r0_d1=[102.8, 1.1]
+  base (no FIX F)     : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,29] thal=[273,215] commit=[452,0] motor=[860,0]
+  FIX F only          : winners=[1, 1, 1, 1, 1, 1, 1, 1] n_act1=8/8 str_d1=[104,286] gpi=[0,29] thal=[273,215] commit=[184,504] motor=[378,759]
+  FIX E + FIX F       : winners=[0, 1, 1, 1, 1, 1, 1, 1] n_act1=7/8 str_d1=[104,288] gpi=[0,16] thal=[215,228] commit=[286,499] motor=[484,775]
+  [commit cumulative-spike ramp, FIX E+FIX F] t4:c0=20/c1=0 t9:c0=36/c1=0 t14:c0=58/c1=0 t19:c0=78/c1=0 t199:c0=262/c1=523
+
+READ: if commit_1 cumulative overtakes commit_0 across the window (c1>c0 at the
+late marks) while base latches commit_0, the win is INTEGRATION of the sustained
+correct drive over the transient head-start (the N6 accumulate-then-commit).
