@@ -19,8 +19,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > rewarded-gated RPE floor (FIX B') is the first config to clear steer >=5/6 on BOTH dev (5/6, 6/6 w/ FIX C) and
 > held-out (5/6); full battery (reversal 0->1.0, acquisition-lesion share 1.0, stage-1 byte-identity) all pass. The
 > Gate B credit MECHANISM is closed to its bar. ⛔ Authoritative backend is **numpy** (cupy tests a different brain
-> per seed — a doc trap that cost a 40-min wrong-backend run). EXACT NEXT = **Stage-2k**: a neural exploration/sampling
-> floor to close the one held-out miss (730705 — FIX C wakes its str_d1_1 but a woken MSN still never wins WTA).
+> per seed — a doc trap that cost a 40-min wrong-backend run).
+> **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
+> the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
+> (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
+> when off — GO protected) gets action 1 SELECTED + REWARDED in training (count_c1 [40,0]→[37,3], proposal_1→str_d1_1
+> potentiates 40→315) but it **cannot EXPRESS at test** (test_rate_c1=0). EXACT NEXT = **Stage-2l**: make the commit
+> competition reflect thalamic drive — **divisive normalization** (Carandini-Heeger, as in the critic) / thal-gated
+> de-latching — so a learned str_d1_1 expresses through an intact, learning-legitimate circuit (a persistent release
+> would be a shortcut the acquisition-lesion control catches).
 
 
 North-star: one grounded, integrated, fully-spiking conversational mind (charter). This session ran **~14 mission

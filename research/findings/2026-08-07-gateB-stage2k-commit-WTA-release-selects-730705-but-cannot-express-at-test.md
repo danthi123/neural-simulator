@@ -21,6 +21,14 @@ artifacts:
 730705 steer does NOT flip.** Authoritative backend = **numpy** (a cupy run tests a
 different brain per seed — see the 2j backend note). Honest smoke, not the frozen battery.
 
+> ✅ **PARENT-VERIFIED (2026-08-07, per-seed parallel numpy).** Independent re-run confirms every
+> claim here: (1) **byte-identity FIX D off ≡ Stage 2j** — `--mode byte` on 730703/730705/730606
+> returns `all_byte_identical=true` (mismatch `{}`), so the Stage-2j GO is unaffected; (2) **FIX C+D
+> dev 6/6, held-out 5/6** (730705 the only miss: count_c1=[37,3] — action 1 IS selected 3× during
+> training — but D_contingent=0, `test_rate_c1`=0 → does not express at test); (3) **no dev
+> regression** (730606 engaged, 730601 non-engaged, both steer=True). Held-out 5/6 = same as 2j's
+> FIX B' GO, so FIX D is a diagnostic advance (residual relocated), NOT a new steer gain.
+
 | seed (numpy) | FIX C+D | count_c1 | n_released | test_rate_c1 | D_contingent | steer |
 |---|---|---|---|---|---|---|
 | 730705 (held-out, the miss) | on | [37,3] (K=3) → [0,40] (K=40) | 3 → 40 | **0.000 at every K** | 0.0 / −0.15 | **False** |
