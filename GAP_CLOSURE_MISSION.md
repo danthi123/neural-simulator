@@ -58,6 +58,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > fresh session: parallelize the UNBLOCKED CPU faculty lanes (affect, curiosity, perception, language — the same
 > window produced the corollary-discharge source GO + 3 Phase-0 self-model GOs), NOT another monoculture against this
 > wall.** The identity-discrimination cluster (#3/#4/gap5) is now CONCLUSIVELY bounded on the rate substrate.
+> **Diversification STARTED — Lane D perception (`c0b45080`):** homeostatic scaling (Turrigiano) on the V1→pooler
+> trace route = NO-GO/regression (structural — a multiplicative rescale pushes trace-learned permanences across the
+> `perm>0.5` connection boundary; anti-cheat caught the non-trace-specific margin). Homeostatic-scaling RETIRED from
+> Lane D. NEXT Lane D levers (un-tried): (a) stronger INHIBITORY COMPETITION at winner-selection (doesn't fight the
+> connection threshold — the more promising); (b) a less-degenerate held-position readout/task (decode gate sits at
+> exactly 0.500 on 3 categories = near-degenerate). ⚠️ git-note: agent worktrees branch from the codex HEAD →
+> CHERRY-PICK their commits onto main, ff-merge fails.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
