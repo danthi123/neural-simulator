@@ -13,7 +13,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-06 (evening; READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-07 (READ FIRST — live resume point)
+
+> **CRUX ADVANCE (2026-08-07, `60ed25e35`): Gate B Stage-2j = GO at the frozen >=5/6 bar** — the adaptive
+> rewarded-gated RPE floor (FIX B') is the first config to clear steer >=5/6 on BOTH dev (5/6, 6/6 w/ FIX C) and
+> held-out (5/6); full battery (reversal 0->1.0, acquisition-lesion share 1.0, stage-1 byte-identity) all pass. The
+> Gate B credit MECHANISM is closed to its bar. ⛔ Authoritative backend is **numpy** (cupy tests a different brain
+> per seed — a doc trap that cost a 40-min wrong-backend run). EXACT NEXT = **Stage-2k**: a neural exploration/sampling
+> floor to close the one held-out miss (730705 — FIX C wakes its str_d1_1 but a woken MSN still never wins WTA).
+
 
 North-star: one grounded, integrated, fully-spiking conversational mind (charter). This session ran **~14 mission
 lane-builds** across the 3 top capability lanes, all honest, all integrated to `main` + pushed both remotes. Every
@@ -46,6 +54,20 @@ working). Current frontier per lane:
   only on the saturated tail, don't touch well-behaved seeds), THEN Stage-2j for the 730705 dead pathway. The Gate B
   mechanism is complete but the multi-objective tuning (fix a seed WITHOUT regressing others) is the real remaining
   work — several seeds each need a targeted, non-interfering fix.
+  ✅ **Stage-2j (`60ed25e35`, 2026-08-07) = GO at the frozen >=5/6 bar.** FIX B' = the **adaptive rewarded-gated** RPE
+  floor (clamps ONLY a rewarded action whose net RPE would fall below the floor — not every real action, which is why
+  2i regressed). Authoritative **numpy** full validation (24 parallel per-seed jobs + `--mode full`; ⛔ cupy tests a
+  DIFFERENT brain per seed — 730601 base_p0 0.571 numpy vs 0.0 cupy — so it is NOT comparable; the `SIM_BACKEND=cupy`
+  reproduce lines were a doc trap, corrected). **FIRST config to clear steer >=5/6 on BOTH partitions: dev 5/6 (6/6
+  with FIX C) · held-out 5/6** (2g & 2i were both held-out 4/6). Full frozen battery ALL PASS: reversal P(B) 0->1.0;
+  acquisition-lesion collapses D_contingent 1.0->5.6e-17 (`acquisition_plasticity_share`=1.0 — contingency 100% owned
+  by training-time D1 plasticity); stage-1 equivalence weights+raster match. Closes the 2i dev regression
+  (730601/730602 pass) AND recovers 730704 (frozen NaN in 2g). FIX C (MSN k-homeostat) CORRECTED to a **general
+  extreme-asymmetry homeostat** (engages on 730606 AND 730705, byte-identical elsewhere), not 730705-only. **Remaining
+  held-out miss = 730705** (within the >=5/6 bar, NOT abandoned): FIX C wakes str_d1_1 (0->121 spikes) but the woken
+  MSN never wins WTA (count_c1=[40,0]) — **waking != selecting**. NEXT = **Stage-2k**: a neural exploration/sampling
+  floor that GUARANTEES the un-sampled action is SELECTED + rewarded during training (distinct from the refuted
+  current-injection FIX A), so reward can potentiate proposal_1->str_d1_1.
 - **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
   FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
   equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
