@@ -15,6 +15,31 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-07 (READ FIRST — live resume point)
 
+> **⭐ LANDSCAPE-SURVEY ADOPTION THREAD COMPLETE (2026-08-07, owner-directed "make use of the findings") — 3
+> findings, all 6-seed PARENT-VERIFIED, all brain-based, no `sim/` edit:**
+> - **Rubicon (O'Reilly, PVLV/VSPatch) — FULL delayed-credit ADOPTED as MAINTENANCE.** HALF-1 maintained-goal
+>   delay bridge (PFC-WM PT-recurrent) 6-seed GO (`1e78cef4`); HALF-2 reward-timed (VSPatch) value MAINTENANCE
+>   6-seed GO (`b9b5ece4`): vspatch 461Hz ≈ floor 474 vs scope-all-STDP 172, reward-contingent (omit 69), gate
+>   neural. **HONEST SCOPE (not headlined away): reward-contingent MAINTENANCE of structurally-available delayed
+>   value, NOT build-from-zero** (D1-MSN has no learn-from-below window); the load-bearing fix was the reward-TIME
+>   DA SIGN (an operating-point trap — SNc below its DA baseline → LTD), the reward-window gate is validated-neural
+>   but redundant with it. NEXT = value-cell excitability homeostasis (build-from-zero frontier).
+> - **BORN (Zeng) — learned bodily SELF-MODEL 6-seed GO (`6bfbdd51`), self-schema lane.** A Hebb/Oja forward model
+>   (efference→predicted feedback) + a neural reafference-cancellation agency comparator: agency AUC 1.000,
+>   self-vs-perturbed-reafference 1.000 vs the existing presence-detector foundation at chance (~0.52). THREE
+>   anti-cheats hold incl. a parent-added MAPPING-SPECIFIC control (a permuted-selective/mis-mapped FM also fails,
+>   0.339). A mirror-test correlate. NEXT = self-organized comparator; reward-gated (three-factor) forward model.
+> - **Axon (O'Reilly) CaP−CaD rule → gap#4: NO-GO** (`b71ff9d8`) but VALIDATED our SST-microcircuit as the better
+>   rule (Axon's bidirectional target decays through depth; our interneuron error-cancellation surpasses it).
+>
+> **CRUX RECONCILIATION (2026-08-07, `e3c5535b`) — a deep-read stopped a 4th re-derivation.** `lane_check` was
+> firing "F/gap#4 CRUX unserved" every heartbeat; the deep-read of the gap#4 record confirmed deep-credit-on-spikes
+> is MAPPED + DEPRIORITIZED (the record's own owner-prompted verdict: FA-alignment fails on the Izhikevich forward,
+> agnostic to feedback type — 6/6 LIF converge, 0/6 Izh; "the emergence engine needs NO deep-credit rule"). Retired
+> the false `lane_check` CRUX-UNSERVED alarm (kept the genuine monoculture + CPU-lane checks); left the crux
+> RE-designation an owner call (board's stated frontier is "SCALE the WKV cortex"). `refuted_mechanism_reproposal`
+> + 4 FAILURE_LOG entries already existed because this exact re-derivation cost "nine hours re-deriving."
+>
 > **CRUX ADVANCE (2026-08-07, `60ed25e35`): Gate B Stage-2j = GO at the frozen >=5/6 bar** — the adaptive
 > rewarded-gated RPE floor (FIX B') is the first config to clear steer >=5/6 on BOTH dev (5/6, 6/6 w/ FIX C) and
 > held-out (5/6); full battery (reversal 0->1.0, acquisition-lesion share 1.0, stage-1 byte-identity) all pass. The
