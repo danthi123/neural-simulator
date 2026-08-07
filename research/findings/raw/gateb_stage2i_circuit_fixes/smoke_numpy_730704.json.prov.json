@@ -1,0 +1,32 @@
+{
+ "run_id": "1786076101-503992",
+ "runner": "research/runners/_vocal_gateb_stage2i_circuit_fixes.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/mission-gateb-stage2i/research/runners/_vocal_gateb_stage2i_circuit_fixes.py",
+  "--mode",
+  "smoke",
+  "--smoke-seeds",
+  "730704",
+  "--out",
+  "research/findings/raw/gateb_stage2i_circuit_fixes/smoke_numpy_730704.json"
+ ],
+ "git_sha": "e294271f9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T00:15:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 352.5,
+ "corpus_check_query": "gate B str_d1 GPi bias anneal D1 route RPE floor motor homeostat downstream WTA",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gateb_stage2i_circuit_fixes/smoke_numpy_730704.json"
+}
