@@ -1,0 +1,179 @@
+{
+  "analysis": {
+    "active_fraction": {
+      "aligned_probe_points": false,
+      "expected_sign": 1.0,
+      "rho_probe_points": 0.1414,
+      "rho_seed_means": -1.0,
+      "seed_mean_monotone": false
+    },
+    "gini": {
+      "aligned_probe_points": false,
+      "expected_sign": -1.0,
+      "rho_probe_points": -0.3086,
+      "rho_seed_means": 0.0,
+      "seed_mean_monotone": false
+    },
+    "pr_eff": {
+      "aligned_probe_points": false,
+      "expected_sign": 1.0,
+      "rho_probe_points": 0.3086,
+      "rho_seed_means": -0.866,
+      "seed_mean_monotone": false
+    },
+    "pr_frac": {
+      "aligned_probe_points": false,
+      "expected_sign": 1.0,
+      "rho_probe_points": 0.3086,
+      "rho_seed_means": -0.866,
+      "seed_mean_monotone": false
+    },
+    "top_assembly_conc": {
+      "aligned_probe_points": false,
+      "expected_sign": -1.0,
+      "rho_probe_points": -0.1414,
+      "rho_seed_means": 1.0,
+      "seed_mean_monotone": false
+    }
+  },
+  "backend": "numpy",
+  "candidate_sign": {
+    "active_fraction": 1.0,
+    "gini": -1.0,
+    "pr_eff": 1.0,
+    "pr_frac": 1.0,
+    "top_assembly_conc": -1.0
+  },
+  "concentrated_but_high_false_contradictions": [
+    {
+      "false_recall_mean": 0.5,
+      "gini_mean": 0.6949484767025089,
+      "note": "concentrated/one-winner regime yet false-recall > 0.15 ceiling",
+      "seed": 414,
+      "top_assembly_conc_mean": 1.0
+    }
+  ],
+  "elapsed_seconds": 1.491405725479126,
+  "false_recall_ceiling": 0.15,
+  "frozen_mechanism": "v6 order-STDP consolidation (byte-identical; INTACT condition)",
+  "gate": "replay_v7_step0_sparsity_setpoint",
+  "message": "A single label-free regime statistic is insufficient to set the retest competition point across development seeds. No monotone candidate survives (passing=[], contradictions=1). STOP: do not build the controller; the boundary is named.",
+  "passing_candidates": [],
+  "per_probe_points": [
+    {
+      "S_active_fraction": 0.3333333333333333,
+      "S_gini": 0.6979166666666666,
+      "S_pr_eff": 15.363636363636363,
+      "S_pr_frac": 0.32007575757575757,
+      "S_top_assembly_conc": 1.0,
+      "correct_rate": 0.0,
+      "false_recall": 1.0,
+      "memory": "A",
+      "seed": 414,
+      "total_target_spikes": 52,
+      "wrong_rate": 0.07222222222222222
+    },
+    {
+      "S_active_fraction": 0.3333333333333333,
+      "S_gini": 0.6919802867383512,
+      "S_pr_eff": 15.640144665461122,
+      "S_pr_frac": 0.3258363471971067,
+      "S_top_assembly_conc": 1.0,
+      "correct_rate": 0.12916666666666668,
+      "false_recall": 0.0,
+      "memory": "B",
+      "seed": 414,
+      "total_target_spikes": 93,
+      "wrong_rate": 0.0
+    },
+    {
+      "S_active_fraction": 0.3333333333333333,
+      "S_gini": 0.6760752688172043,
+      "S_pr_eff": 15.884297520661157,
+      "S_pr_frac": 0.3309228650137741,
+      "S_top_assembly_conc": 1.0,
+      "correct_rate": 0.0,
+      "false_recall": 1.0,
+      "memory": "A",
+      "seed": 415,
+      "total_target_spikes": 62,
+      "wrong_rate": 0.08611111111111111
+    },
+    {
+      "S_active_fraction": 0.3333333333333333,
+      "S_gini": 0.6839859437751004,
+      "S_pr_eff": 15.764302059496568,
+      "S_pr_frac": 0.3284229595728452,
+      "S_top_assembly_conc": 1.0,
+      "correct_rate": 0.11527777777777778,
+      "false_recall": 0.0,
+      "memory": "B",
+      "seed": 415,
+      "total_target_spikes": 83,
+      "wrong_rate": 0.0
+    },
+    {
+      "S_active_fraction": 0.3958333333333333,
+      "S_gini": 0.6618589743589743,
+      "S_pr_eff": 17.482758620689655,
+      "S_pr_frac": 0.3642241379310345,
+      "S_top_assembly_conc": 0.9230769230769231,
+      "correct_rate": 0.004166666666666667,
+      "false_recall": 0.9230769230769231,
+      "memory": "A",
+      "seed": 410,
+      "total_target_spikes": 39,
+      "wrong_rate": 0.05
+    },
+    {
+      "S_active_fraction": 0.3333333333333333,
+      "S_gini": 0.7045765027322405,
+      "S_pr_eff": 15.312757201646091,
+      "S_pr_frac": 0.31901577503429357,
+      "S_top_assembly_conc": 1.0,
+      "correct_rate": 0.08472222222222223,
+      "false_recall": 0.0,
+      "memory": "B",
+      "seed": 410,
+      "total_target_spikes": 61,
+      "wrong_rate": 0.0
+    }
+  ],
+  "per_seed": [
+    {
+      "S_active_fraction_mean": 0.3333333333333333,
+      "S_gini_mean": 0.6949484767025089,
+      "S_pr_eff_mean": 15.501890514548743,
+      "S_pr_frac_mean": 0.3229560523864321,
+      "S_top_assembly_conc_mean": 1.0,
+      "false_recall_mean": 0.5,
+      "seed": 414
+    },
+    {
+      "S_active_fraction_mean": 0.3333333333333333,
+      "S_gini_mean": 0.6800306062961523,
+      "S_pr_eff_mean": 15.824299790078863,
+      "S_pr_frac_mean": 0.32967291229330964,
+      "S_top_assembly_conc_mean": 1.0,
+      "false_recall_mean": 0.5,
+      "seed": 415
+    },
+    {
+      "S_active_fraction_mean": 0.3645833333333333,
+      "S_gini_mean": 0.6832177385456074,
+      "S_pr_eff_mean": 16.397757911167872,
+      "S_pr_frac_mean": 0.341619956482664,
+      "S_top_assembly_conc_mean": 0.9615384615384616,
+      "false_recall_mean": 0.46153846153846156,
+      "seed": 410
+    }
+  ],
+  "seeds": [
+    414,
+    415,
+    410
+  ],
+  "spec": "research/findings/raw/_replay_selfcalibration_scoping.md",
+  "step0_pass": false,
+  "verdict": "STEP0_NOGO_SINGLE_STATISTIC_INSUFFICIENT"
+}

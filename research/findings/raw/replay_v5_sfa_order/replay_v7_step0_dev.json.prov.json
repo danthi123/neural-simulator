@@ -1,0 +1,27 @@
+{
+ "run_id": "1786104620-792717",
+ "runner": "research/runners/_replay_v7_step0_sparsity_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aa46a878b44b073a7/research/runners/_replay_v7_step0_sparsity_probe.py",
+  "--out",
+  "research/findings/raw/replay_v5_sfa_order/replay_v7_step0_dev.json"
+ ],
+ "git_sha": "63a3642cd",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T08:10:20",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/replay_v5_sfa_order/replay_v7_step0_dev.json"
+}

@@ -426,6 +426,58 @@ def _path_weights(bridge, gate: str) -> np.ndarray:
     return np.asarray(to_host(bridge.cp_connections.data[indices]), dtype=np.float64)
 
 
+def _label_free_sparsity(counts: np.ndarray, assembly_size: int) -> dict:
+    """Label-free WTA-sparsity / competition-regime statistics of the target pop.
+
+    ADDITIVE INSTRUMENTATION (does not touch any scored value). Computed ONLY from
+    the raw per-neuron spike-count vector over ``cortical_target`` and the STRUCTURAL
+    assembly SIZE (``config.target_assembly``) -- never the assembly IDENTITY, the
+    seed, the correct/wrong labels, or the false-recall metric. This is the STEP-0
+    candidate set-point statistic ``S`` for the replay-consolidation self-calibration
+    scoping (``_replay_selfcalibration_scoping.md``): does a label-free regime
+    statistic predict false-recall across seeds?
+
+    Returns several candidate ``S`` so Step 0 can pick the most monotone:
+      * ``pr_eff``  -- participation ratio (Sum c)^2 / Sum(c^2); effective # of active
+                       target neurons. LOW  => one-winner (concentrated) regime.
+      * ``pr_frac`` -- pr_eff / N in (0,1].
+      * ``gini``    -- Gini concentration of counts in [0,1). HIGH => concentrated.
+      * ``top_assembly_conc`` -- fraction of all spikes captured by the top
+                       ``assembly_size`` neurons (by count). HIGH => one-winner.
+      * ``active_fraction`` -- fraction of target neurons that fired at all.
+    """
+    c = np.asarray(counts, dtype=np.float64).ravel()
+    n = int(c.size)
+    total = float(c.sum())
+    if total <= 0.0 or n == 0:
+        return {
+            "pr_eff": float("nan"),
+            "pr_frac": float("nan"),
+            "gini": float("nan"),
+            "top_assembly_conc": float("nan"),
+            "active_fraction": 0.0,
+            "total_spikes": 0.0,
+        }
+    sum_sq = float((c * c).sum())
+    pr_eff = (total * total) / sum_sq if sum_sq > 0.0 else float("nan")
+    # Gini concentration (0 = uniform, ->1 = all mass on one unit).
+    srt = np.sort(c)
+    idx = np.arange(1, n + 1, dtype=np.float64)
+    gini = float((np.sum((2.0 * idx - n - 1.0) * srt)) / (n * total))
+    k = int(min(max(assembly_size, 1), n))
+    top_sorted = np.sort(c)[::-1]
+    top_assembly_conc = float(top_sorted[:k].sum() / total)
+    active_fraction = float((c > 0).mean())
+    return {
+        "pr_eff": float(pr_eff),
+        "pr_frac": float(pr_eff / n),
+        "gini": gini,
+        "top_assembly_conc": top_assembly_conc,
+        "active_fraction": active_fraction,
+        "total_spikes": total,
+    }
+
+
 def _encode_memory(bridge, handles: dict, memory: str, events: int, config: GateConfig) -> dict:
     _set_phase_gates(bridge, encode=True)
     pat = handles["device_patterns"][memory]
@@ -564,6 +616,10 @@ def _probe_memory(bridge, handles: dict, memory: str, config: GateConfig) -> dic
     false_spikes = float(counts[wrong_positions].sum())
     if background_positions.size:
         false_spikes += float(counts[background_positions].sum())
+    # ADDITIVE label-free competition-regime statistic S (STEP-0 instrumentation).
+    # Computed from the raw counts vector + structural assembly SIZE only -- NO
+    # assembly identity / seed / correct-wrong labels / false-recall metric.
+    sparsity_S = _label_free_sparsity(counts, int(config.target_assembly))
     return {
         "partial_cue_cells": int(n_partial),
         "correct_rate": correct,
@@ -573,6 +629,7 @@ def _probe_memory(bridge, handles: dict, memory: str, config: GateConfig) -> dic
         "selectivity": (correct - wrong) / (correct + wrong + 1e-9),
         "false_recall_fraction": false_spikes / total if total > 0.0 else 0.0,
         "total_target_spikes": int(total),
+        "sparsity_S": sparsity_S,
     }
 
 
