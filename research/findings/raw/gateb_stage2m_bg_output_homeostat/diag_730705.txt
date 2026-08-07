@@ -1,0 +1,18 @@
+Gate B Stage 2m -- FIX E (BG-output intrinsic homeostat) on 730705 (numpy).
+Q: does an intrinsic-excitability homeostat at gpi/thal flip the seed? A: NO.
+
+[baseline, target-blind] gpi=[37,215] thal=[203,0]
+[FIX E calibration] scales={'gpi_1': 0.15, 'thal_0': 0.15}
+  gpi: engaged=True f0=37 f1=215 setpoint=126.0
+  thal: engaged=True f0=203 f1=0 setpoint=101.5
+[baseline AFTER FIX E] gpi=[37,143] thal=[151,0]
+
+[trained target=1] count=[1, 39] r0_d1=[102.8, 1.1]
+  no FIX E            : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,29] thal=[273,215] commit=[452,0] motor=[860,0]
+  FIX E (k-homeostat) : winners=[0, 0, 0, 0, 0, 0, 0, 0] n_act1=0/8 str_d1=[104,286] gpi=[0,16] thal=[215,228] commit=[388,0] motor=[795,0]
+
+VERDICT: FIX E partially equalises the BG-output baseline but does NOT invert
+thal_1>thal_0: the thalamic channel-0 lead is set at BASELINE by the str_d1
+firing asymmetry (str_d1_0 ~86 vs str_d1_1 ~0 -> gpi_0 paused, thal_0 primed)
+and a small intrinsic thal ceiling head-start, neither invertible by a
+target-blind intrinsic knob at the gpi/thal output. HONEST NEGATIVE / RELOCATION.

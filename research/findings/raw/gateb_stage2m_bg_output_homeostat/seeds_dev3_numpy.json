@@ -1,0 +1,40 @@
+{
+  "probe": "gateB_stage2m_seeds",
+  "backend": "numpy",
+  "rows(seed,Dc,Dy,count_c1,test_rate_c1,steer)": [
+    [
+      730601,
+      1.0,
+      -0.45,
+      [
+        4,
+        33
+      ],
+      1.0,
+      true
+    ],
+    [
+      730602,
+      1.0,
+      -0.55,
+      [
+        0,
+        40
+      ],
+      1.0,
+      true
+    ],
+    [
+      730603,
+      1.0,
+      -0.15,
+      [
+        5,
+        35
+      ],
+      1.0,
+      true
+    ]
+  ],
+  "steer_passes": 3
+}

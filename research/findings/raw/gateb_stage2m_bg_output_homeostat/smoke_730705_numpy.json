@@ -1,0 +1,92 @@
+{
+  "probe": "gateB_stage2m_bg_output_homeostat_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "smoke_seeds": [
+    730705
+  ],
+  "byte_identity_fixe_off": [
+    {
+      "seed": 730703,
+      "byte_identical_fixe_off": true,
+      "mismatch": {}
+    },
+    {
+      "seed": 730705,
+      "byte_identical_fixe_off": true,
+      "mismatch": {}
+    }
+  ],
+  "legitimacy_acq_lesion": {
+    "seed": 730705,
+    "D_contingent_acq_lesion_fixe_on": 0.0,
+    "p_action0_target1_acq_lesion": 1.0,
+    "acq_lesion_action1_does_not_win": true,
+    "n_clean_target1": 20,
+    "test_rate_target1": 0.0
+  },
+  "config": {
+    "fixe_asym_ratio": 5.0,
+    "fixe_k_grid_down": [
+      0.6,
+      0.4,
+      0.25,
+      0.15
+    ],
+    "fixe_k_grid_up": [
+      1.5,
+      2.0,
+      2.5,
+      3.0
+    ]
+  },
+  "verdict": "HONEST NEGATIVE: BG-output intrinsic homeostat does not flip 730705 (thal_0 baseline head-start not invertible by a target-blind gpi/thal k-homeostat; residual relocated upstream to the str_d1 baseline asymmetry).",
+  "per_seed": [
+    {
+      "seed": 730705,
+      "fixe_scales": {
+        "gpi_1": 0.15,
+        "thal_0": 0.15
+      },
+      "fixe_diag": {
+        "gpi": {
+          "engaged": true,
+          "f0": 37,
+          "f1": 215,
+          "setpoint": 126.0
+        },
+        "thal": {
+          "engaged": true,
+          "f0": 203,
+          "f1": 0,
+          "setpoint": 101.5
+        }
+      },
+      "FIXE_ON": {
+        "count_c1": [
+          40,
+          0
+        ],
+        "test_rate_c1": 0.0,
+        "test_rate_c0": 0.85,
+        "D_contingent": -0.15000000000000002,
+        "D_yoked": -0.09999999999999998,
+        "steer": false
+      },
+      "STAGE2K_BASE": {
+        "count_c1": [
+          40,
+          0
+        ],
+        "test_rate_c1": 0.0,
+        "D_contingent": 0.0,
+        "steer": false
+      },
+      "SMOKE_no_nan": true,
+      "SMOKE_730705_test_rate_c1_flips": false,
+      "SMOKE_steer": false,
+      "SMOKE_steer_improved_vs_2k": false
+    }
+  ],
+  "elapsed_seconds": 477.60644918899925
+}
