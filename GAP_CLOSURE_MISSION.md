@@ -20,6 +20,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > held-out (5/6); full battery (reversal 0->1.0, acquisition-lesion share 1.0, stage-1 byte-identity) all pass. The
 > Gate B credit MECHANISM is closed to its bar. ⛔ Authoritative backend is **numpy** (cupy tests a different brain
 > per seed — a doc trap that cost a 40-min wrong-backend run).
+> **⏸️ EXACT NEXT (2026-08-07): the 730705 within-bar arc is CHECKPOINTED after Stage-2m (4 relocations, `b59b6b3d4`);
+> the 2j-GO stands. PIVOT to a not-yet-GO gap** — **#3 source monitoring** (encoding wall → competitive/heterosynaptic
+> pattern separation) or **#4 replay** (v6 multiseed NO-GO → emergent homeostatic self-calibration of the operating
+> point). Resume 730705 later via the banked closing-stack + TRN-gated selection-epoch reset (Stage-2m line below).
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
@@ -37,6 +41,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > must still own the contingency (full de-latch on an untrained bridge stays action 0 — the fix must not manufacture
 > the policy). NOTE: 730705 is a within-bar miss — the Stage-2j GO (≥5/6) stands regardless; this is no-defer polish
 > that is also uncovering a GENERAL output-stage homeostasis mechanism, not a one-seed hack.
+> **Stage-2m (`b59b6b3d4`, parent-verify byte-identical) = HONEST NEGATIVE + arc CHECKPOINT.** FIX E (target-blind
+> intrinsic-excitability homeostat on gpi+thal, FIX C analogue, default-off/byte-identical — GO protected, dev 3/3 no
+> regression, legitimacy PASSED: acq-lesion+FIX E → action 1 still loses). It **REFUTES Stage-2l's headline**: FIX E
+> DOES invert the thalamic aggregate (thal [273,215]→[215,228]), so "thal favors action 0, unfixable" was wrong. But
+> 730705 still does not flip — the residual relocated AGAIN to (a) the commit WTA integrating thal_0's **temporal
+> head-start** (thal_0 fires first → commit_0 latches; the head-start is set by the str_d1 baseline firing asymmetry
+> str_d1_0~86 vs str_d1_1~0, which is NOT k-reducible) and (b) with FIX D off, a **training-time exploration** wall
+> (count_c1=[40,0], action 1 never sampled). A probe-level **closing stack** (FIX E + commit de-latch + an onset
+> entry-state equalization) flips it **11/12 while preserving contingency** (untrained stays action 0) — but the
+> onset-reset is scaffold-flavoured. **⏸️ ARC CHECKPOINTED after 4 relocations on ONE within-bar seed** (2j-GO stands):
+> the residual is thoroughly characterized and its biological next mechanism is NAMED — a **TRN-gated selection-epoch
+> reset** (thalamic reticular nucleus / Crick searchlight / GNW ignition: a real mechanism that equalizes the thalamic
+> onset entry-state at selection) is the legitimate form of the onset-equalization in the closing stack. Resume 730705
+> there in a FUTURE focused session; pivot now to higher-leverage not-yet-GO gaps (#3 source monitoring, #4 replay).
 
 
 North-star: one grounded, integrated, fully-spiking conversational mind (charter). This session ran **~14 mission
