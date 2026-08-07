@@ -25,13 +25,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **⭐ ACTIVE FRONTIER (2026-08-07) = #3 source monitoring.** Research round + TWO encoding-side de-risks both NO-GO
 > (hetero-depression `8aca3c62`, conjunctive-tag `1a5d2db6`), converging on a sharpened wall: **a SOURCE-BLIND recall
 > drive over a fully-shared core cannot separate co-resident sources — the wall is RECALL-SIDE, not encoding.**
-> Research + recall-side attractor de-risk done → **THREE de-risks NO-GO this session** (2 encoding + 1 recall CA3-
-> attractor `7670df9b`), all converging: a source-blind lever over a fully-shared core can't separate co-resident
-> sources without MORE SEPARATION, and naive separation = reducing overlap = a soft cheat. **EXACT NEXT (needs careful
-> DESIGN, not a blind build): (a) diagnose why the weakest source's attractor dominates all cues; (b) an HONEST joint
-> knob = attractor g_comp × uniq-cell encoding EMPHASIS at FIXED overlap** (weight the source's own diagnostic unique
-> cells more — not a label, doesn't reduce co-residency). Do NOT re-try encoding sharpening or overlap reduction.
-> Open: whether n=12 @ these overlaps is a genuine substrate boundary (3 converging NO-GOs). See the #3 lane bullet.
+> **FOUR de-risks NO-GO this session** (2 encoding + attractor `7670df9b` + joint uniq_emphasis `72b0cc96`), CONVERGED
+> on a characterized **CONSERVATION/CAPACITY boundary**: at n=12 source-pops @ overlap 0.2 the shared firing budget
+> can't give every co-resident source a ≥0.15 margin at once (lifting the weakest see-saws off the others;
+> self_generated, never mixed-boosted, is the binding constraint). Pure feedforward already picks the right source;
+> the WTA competition inverts it on intrinsic assembly strength. **EXACT NEXT (two named mechanisms, NOT more
+> re-weighting): (1) SCALE — n_source_memory > 12** (cheap capacity de-risk: do margins scale out of the conservation
+> limit? measure before declaring a boundary); **(2) the mixed-episode ASYMMETRY** (self_generated uniquely penalized;
+> a symmetric/homeostatic encoding protocol). Honest boundary-characterization banked = a first-class deliverable.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
@@ -148,6 +149,22 @@ working). Current frontier per lane:
   DIAGNOSTIC unique cells more — legitimate, not a source label, does NOT reduce co-residency), NOT uniq-FRACTION /
   overlap reduction. Open question flagged: whether n=12 source pops @ these overlaps is a genuine substrate boundary
   (per no-defer = an undiscovered mechanism, but honestly characterized after 3 converging NO-GOs).
+  **JOINT knob (uniq_emphasis × g_comp, `72b0cc96`) = NO-GO — and it CHARACTERIZES the boundary.** Step-1 diag
+  CORRECTED the read: uniq→source weight DOMINATES in sum, and **pure feedforward already works** (cued source wins
+  every cue); the COMPETITION inverts it (the lateral-I WTA latches whichever rival has the strongest INTRINSIC
+  assembly strength — shared core + mixed-episode boost — and quenches the cued source). The uniq_emphasis knob lifts
+  the cued margin monotonically (0.037→0.143, confirms direction) but is a **SEE-SAW: with a FIXED firing budget
+  shared across co-resident pops, lifting the weakest draws from the others**, so min M never clears 0.15 (best
+  all-dominant-correct = 0.0508, 3× below), and `self_generated` (never mixed-boosted) is the binding constraint.
+  Overlap PROVEN unchanged; null byte-identical; honesty guards hold. ⚠️⚠️ **FOUR de-risks NO-GO this session (2
+  encoding + 2 recall/joint), CONVERGED on a CONSERVATION/CAPACITY boundary: at n=12 source-pops @ overlap 0.2 the
+  shared firing budget cannot give every co-resident source a ≥0.15 margin simultaneously — a conservation constraint,
+  not a tuning gap.** ⭐ NEXT (two named undiscovered mechanisms, per no-defer — NOT more re-weighting): (1) **SCALE**
+  — n_source_memory > 12 (more firing budget → measure whether margins scale out of the conservation limit; cheap
+  capacity de-risk, "measure scale before declaring a boundary"); (2) the **mixed-episode ASYMMETRY** — self_generated
+  is uniquely penalized (pattern[3] mixed-boosts core→seen/heard, never core→self); a symmetric/homeostatically-
+  compensated encoding protocol may lift the binding constraint. Both are legitimate NEXT de-risks; the wall is now
+  thoroughly characterized (an honest boundary-characterization = a first-class deliverable).
 - **#4 Replay consolidation** — v5 capability + v5+SFA interference wall closed + v6 order-STDP; but v6 multiseed
   NO-GO (2-seed GO was operating-point OVERFIT). NEXT = **emergent homeostatic self-calibration** of the operating
   point (host-tuned on 2 seeds → must emerge per-brain).
