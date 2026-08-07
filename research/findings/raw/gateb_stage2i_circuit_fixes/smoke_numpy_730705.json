@@ -1,0 +1,68 @@
+{
+  "probe": "gateB_stage2i_circuit_fixes_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "smoke_seeds": [
+    730705
+  ],
+  "fix_a_str_d1_forced_sampling": true,
+  "fix_b_rpe_floor": true,
+  "motor_homeostat": false,
+  "config": {
+    "value_est_baseline_cap": 0.9,
+    "rpe_floor": 0.1,
+    "force_str_d1_inh_base_pA": 1500.0,
+    "force_str_d1_inh_max_pA": 5000.0,
+    "force_exc_max_pA": 1200.0,
+    "force_sample_k": 3
+  },
+  "per_seed": [
+    {
+      "seed": 730705,
+      "baseline_p0": 1.0,
+      "FIXES_ON": {
+        "count_c0": [
+          39,
+          1
+        ],
+        "count_c1": [
+          40,
+          0
+        ],
+        "n_clean_c0": 20,
+        "n_clean_c1": 20,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 0.0,
+        "n_forced_c0": 32,
+        "n_forced_c1": 32,
+        "D_contingent": 0.0,
+        "D_yoked": -0.25
+      },
+      "STAGE2G_OFF": {
+        "count_c0": [
+          39,
+          1
+        ],
+        "count_c1": [
+          40,
+          0
+        ],
+        "n_clean_c0": 20,
+        "n_clean_c1": 20,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 0.0,
+        "D_contingent": 0.0,
+        "D_yoked": 0.0
+      },
+      "SMOKE_PASS_no_nan_no_freeze": true,
+      "SMOKE_PASS_both_targets_act": true,
+      "SMOKE_PASS_both_actions_sampled": true,
+      "SMOKE_PASS_D_contingent_defined": false,
+      "SMOKE_PASS_steer": false
+    }
+  ],
+  "SMOKE_PASS_all_no_nan": true,
+  "SMOKE_PASS_all_both_targets_act": true,
+  "SMOKE_PASS_all_D_defined": false,
+  "elapsed_seconds": 142.19125747199723
+}
