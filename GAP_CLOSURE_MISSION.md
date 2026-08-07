@@ -50,14 +50,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > (CA3-scale escape EMPIRICALLY FALSIFIED). All 36 honesty guards held (overlap fraction exactly 0.1667 at every n —
 > co-residency not reduced). ⇒ **same-core co-resident source IDENTITY is NOT recoverable on a point-neuron RATE
 > substrate** (the unique-cell signal sums LINEARLY into one soma rate; every downstream op is an aggregate that
-> discarded the label — empirically confirms the mechanistic prediction). (3) ⭐ **THE NAMED NEXT SUBSTRATE (per
-> no-defer, boundary = an undiscovered mechanism) = DENDRITIC COMPARTMENTS** (unique-source afferents on one branch,
-> core on another → only coincident input crosses the NMDA plateau = an identity-specific nonlinear AND no soma
-> homeostat can equalize; branch assignment MUST self-organize via BCM, never host-wired). **Gate it behind its OWN
-> de-risk — do NOT rush the build.** (4) The boundary blocks a SUB-CAPABILITY, not the roadmap — ⭐ **EXACT NEXT for a
-> fresh session: parallelize the UNBLOCKED CPU faculty lanes (affect, curiosity, perception, language — the same
-> window produced the corollary-discharge source GO + 3 Phase-0 self-model GOs), NOT another monoculture against this
-> wall.** The identity-discrimination cluster (#3/#4/gap5) is now CONCLUSIVELY bounded on the rate substrate.
+> discarded the label — empirically confirms the mechanistic prediction). (3) ⛔ **CORRECTION (2026-08-07, owner-
+> flagged + RAG-verified): "dendritic compartments = the un-tried next substrate" was an OVERCLAIM — a drift-#12
+> lapse (the synthesis agent's proposal was banked WITHOUT RAG-checking the extensive dendritic record).** The record
+> shows the dendritic substrate is heavily tested and the CLOSEST job to this one came back NEGATIVE: multi-attribute
+> BINDING on a dendrite = NEGATIVE (`2026-06-19-dendritic-binding-toy-derisk`, "memorizes-but-doesn't-generalize");
+> apical-basal credit = NEGATIVE (needs hidden layers); ⛔ the D2 dendritic GAIN was BUILT on the bridge and found NOT
+> LOAD-BEARING (`2026-06-17-dendritic-substrate-frontier-scoping`) — a clean-readout control INVERTED it because the
+> SPIKING THRESHOLD + readout temporal integration ALREADY provide the coincidence nonlinearity, so the very
+> "dendrite adds an identity-AND a point neuron lacks" argument was already empirically refuted on spikes. Only
+> COMPLETION (`2026-07-08-riii`, GO) is positive, and that's the reliability half, not identity-separation. ⇒ **the
+> identity-cluster escape is GENUINELY OPEN, NOT "build a dendrite" — the obvious substrate escape has prior NEGATIVES
+> that must be confronted first.** This is an owner-strategic call, not a rushed build. (4) The boundary blocks a
+> SUB-CAPABILITY; unblocked faculties CAN advance in parallel — Lane B curiosity just added a distinct GO
+> (LP-maximizing selection). The identity-discrimination cluster (#3/#4/gap5) is bounded on the rate substrate.
 > **Diversification STARTED — Lane D perception (`c0b45080`):** homeostatic scaling (Turrigiano) on the V1→pooler
 > trace route = NO-GO/regression (structural — a multiplicative rescale pushes trace-learned permanences across the
 > `perm>0.5` connection boundary; anti-cheat caught the non-trace-specific margin). Homeostatic-scaling RETIRED from
