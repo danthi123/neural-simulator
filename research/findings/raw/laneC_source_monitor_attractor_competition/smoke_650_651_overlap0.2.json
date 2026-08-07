@@ -1,0 +1,514 @@
+{
+  "runner": "research/runners/_laneC_source_monitor_attractor_competition.py",
+  "seeds": [
+    650,
+    651
+  ],
+  "g_comp": [
+    0.0,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "overlap": 0.2,
+  "min_source_margin_floor": 0.15,
+  "mechanism": "within-population slow-NMDA recurrent excitation + between-population GABA-A lateral inhibition, symmetric across sources, one knob g_comp",
+  "rows": [
+    {
+      "seed": 650,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 64251.111419677734,
+      "margins_M": {
+        "seen": 0.03666666666666668,
+        "heard": 0.13666666666666666,
+        "self_generated": 0.045833333333333365
+      },
+      "margins_L": {
+        "seen": 0.03666666666666668,
+        "heard": 0.13666666666666666,
+        "self_generated": 0.045833333333333365
+      },
+      "min_margin_M": 0.03666666666666668,
+      "min_margin_L": 0.03666666666666668,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": true
+      },
+      "all_dominant_correct": true,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.17833333333333334,
+        "heard": 0.27166666666666667,
+        "self_generated": 0.25083333333333335
+      },
+      "own_rate_L": {
+        "seen": 0.17833333333333334,
+        "heard": 0.27166666666666667,
+        "self_generated": 0.25083333333333335
+      },
+      "rival_burden_on": {
+        "seen": 0.27666666666666667,
+        "heard": 0.2416666666666667,
+        "self_generated": 0.3258333333333333
+      },
+      "rival_burden_off": {
+        "seen": 0.27666666666666667,
+        "heard": 0.2416666666666667,
+        "self_generated": 0.3258333333333333
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.591
+    },
+    {
+      "seed": 651,
+      "g_comp": 0.0,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 0.0,
+      "lateral_i_weight": 0.0,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 69157.66883087158,
+      "margins_M": {
+        "seen": 0.050833333333333314,
+        "heard": 0.14583333333333334,
+        "self_generated": -0.05666666666666667
+      },
+      "margins_L": {
+        "seen": 0.050833333333333314,
+        "heard": 0.14583333333333334,
+        "self_generated": -0.05666666666666667
+      },
+      "min_margin_M": -0.05666666666666667,
+      "min_margin_L": -0.05666666666666667,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": true,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.19666666666666666,
+        "heard": 0.29083333333333333,
+        "self_generated": 0.16833333333333333
+      },
+      "own_rate_L": {
+        "seen": 0.19666666666666666,
+        "heard": 0.29083333333333333,
+        "self_generated": 0.16833333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.19083333333333335,
+        "heard": 0.19,
+        "self_generated": 0.36333333333333334
+      },
+      "rival_burden_off": {
+        "seen": 0.19083333333333335,
+        "heard": 0.19,
+        "self_generated": 0.36333333333333334
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": true,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.626
+    },
+    {
+      "seed": 650,
+      "g_comp": 0.5,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 100.0,
+      "lateral_i_weight": 1.5,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 70370.85194396973,
+      "margins_M": {
+        "seen": -0.1025,
+        "heard": -0.06499999999999997,
+        "self_generated": 0.08166666666666664
+      },
+      "margins_L": {
+        "seen": 0.04083333333333333,
+        "heard": 0.1258333333333333,
+        "self_generated": -0.04416666666666666
+      },
+      "min_margin_M": -0.1025,
+      "min_margin_L": -0.04416666666666666,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.1025,
+        "heard": 0.2175,
+        "self_generated": 0.30916666666666665
+      },
+      "own_rate_L": {
+        "seen": 0.18083333333333335,
+        "heard": 0.2658333333333333,
+        "self_generated": 0.20083333333333334
+      },
+      "rival_burden_on": {
+        "seen": 0.3441666666666666,
+        "heard": 0.4308333333333333,
+        "self_generated": 0.38
+      },
+      "rival_burden_off": {
+        "seen": 0.26333333333333336,
+        "heard": 0.26333333333333336,
+        "self_generated": 0.3833333333333333
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.891
+    },
+    {
+      "seed": 651,
+      "g_comp": 0.5,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 100.0,
+      "lateral_i_weight": 1.5,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 70461.60911560059,
+      "margins_M": {
+        "seen": -0.07916666666666668,
+        "heard": 0.03833333333333333,
+        "self_generated": -0.16166666666666668
+      },
+      "margins_L": {
+        "seen": -0.023333333333333345,
+        "heard": 0.11416666666666667,
+        "self_generated": -0.1416666666666667
+      },
+      "min_margin_M": -0.16166666666666668,
+      "min_margin_L": -0.1416666666666667,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": true,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.12333333333333334,
+        "heard": 0.21416666666666667,
+        "self_generated": 0.115
+      },
+      "own_rate_L": {
+        "seen": 0.16916666666666666,
+        "heard": 0.27416666666666667,
+        "self_generated": 0.12833333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.2725,
+        "heard": 0.2816666666666667,
+        "self_generated": 0.5266666666666666
+      },
+      "rival_burden_off": {
+        "seen": 0.23500000000000001,
+        "heard": 0.2025,
+        "self_generated": 0.4125
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.864
+    },
+    {
+      "seed": 650,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 73801.11264801025,
+      "margins_M": {
+        "seen": -0.105,
+        "heard": -0.08833333333333332,
+        "self_generated": 0.0658333333333333
+      },
+      "margins_L": {
+        "seen": 0.005833333333333357,
+        "heard": 0.1175,
+        "self_generated": -0.0025000000000000022
+      },
+      "min_margin_M": -0.105,
+      "min_margin_L": -0.0025000000000000022,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.1025,
+        "heard": 0.23583333333333334,
+        "self_generated": 0.30416666666666664
+      },
+      "own_rate_L": {
+        "seen": 0.15083333333333335,
+        "heard": 0.2575,
+        "self_generated": 0.2375
+      },
+      "rival_burden_on": {
+        "seen": 0.39749999999999996,
+        "heard": 0.4741666666666666,
+        "self_generated": 0.38916666666666666
+      },
+      "rival_burden_off": {
+        "seen": 0.24583333333333332,
+        "heard": 0.24083333333333334,
+        "self_generated": 0.3725
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.873
+    },
+    {
+      "seed": 651,
+      "g_comp": 1.0,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 200.0,
+      "lateral_i_weight": 3.0,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 71015.99101257324,
+      "margins_M": {
+        "seen": -0.07833333333333334,
+        "heard": -0.007500000000000007,
+        "self_generated": -0.1675
+      },
+      "margins_L": {
+        "seen": -0.04083333333333333,
+        "heard": 0.10750000000000001,
+        "self_generated": -0.13833333333333334
+      },
+      "min_margin_M": -0.1675,
+      "min_margin_L": -0.13833333333333334,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.13333333333333333,
+        "heard": 0.21833333333333332,
+        "self_generated": 0.11416666666666667
+      },
+      "own_rate_L": {
+        "seen": 0.1275,
+        "heard": 0.2725,
+        "self_generated": 0.13083333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.2808333333333333,
+        "heard": 0.3325,
+        "self_generated": 0.5233333333333333
+      },
+      "rival_burden_off": {
+        "seen": 0.21,
+        "heard": 0.20666666666666667,
+        "self_generated": 0.4141666666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.903
+    },
+    {
+      "seed": 650,
+      "g_comp": 2.0,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 400.0,
+      "lateral_i_weight": 6.0,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 73801.11264801025,
+      "margins_M": {
+        "seen": -0.10333333333333333,
+        "heard": -0.08333333333333331,
+        "self_generated": 0.08499999999999996
+      },
+      "margins_L": {
+        "seen": 0.005833333333333357,
+        "heard": 0.1175,
+        "self_generated": -0.0025000000000000022
+      },
+      "min_margin_M": -0.10333333333333333,
+      "min_margin_L": -0.0025000000000000022,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": false,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": true
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.10333333333333333,
+        "heard": 0.23833333333333334,
+        "self_generated": 0.3233333333333333
+      },
+      "own_rate_L": {
+        "seen": 0.15083333333333335,
+        "heard": 0.2575,
+        "self_generated": 0.2375
+      },
+      "rival_burden_on": {
+        "seen": 0.3933333333333333,
+        "heard": 0.4683333333333333,
+        "self_generated": 0.38583333333333336
+      },
+      "rival_burden_off": {
+        "seen": 0.24583333333333332,
+        "heard": 0.24083333333333334,
+        "self_generated": 0.3725
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": true,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.886
+    },
+    {
+      "seed": 651,
+      "g_comp": 2.0,
+      "overlap_fraction": 0.2,
+      "core_size": 2,
+      "episode_pattern_size": 12,
+      "recurrent_e_weight": 400.0,
+      "lateral_i_weight": 6.0,
+      "weights_initial_l1": 0.0,
+      "weights_learned_l1": 71015.99101257324,
+      "margins_M": {
+        "seen": -0.07833333333333334,
+        "heard": -0.012500000000000011,
+        "self_generated": -0.10583333333333333
+      },
+      "margins_L": {
+        "seen": -0.04083333333333333,
+        "heard": 0.10750000000000001,
+        "self_generated": -0.13833333333333334
+      },
+      "min_margin_M": -0.10583333333333333,
+      "min_margin_L": -0.13833333333333334,
+      "clears_floor": false,
+      "weakest_source_strictly_improved": true,
+      "dominant_source_correct": {
+        "seen": false,
+        "heard": false,
+        "self_generated": false
+      },
+      "all_dominant_correct": false,
+      "smoke_go": false,
+      "own_rate_M": {
+        "seen": 0.13333333333333333,
+        "heard": 0.21833333333333332,
+        "self_generated": 0.17333333333333334
+      },
+      "own_rate_L": {
+        "seen": 0.1275,
+        "heard": 0.2725,
+        "self_generated": 0.13083333333333333
+      },
+      "rival_burden_on": {
+        "seen": 0.2808333333333333,
+        "heard": 0.3275,
+        "self_generated": 0.5233333333333333
+      },
+      "rival_burden_off": {
+        "seen": 0.21,
+        "heard": 0.20666666666666667,
+        "self_generated": 0.4141666666666667
+      },
+      "anti_cheats": {
+        "control_zero_weight_strict": false,
+        "byte_identical_null_at_g0": null,
+        "afferent_current_zero_at_recall": true,
+        "afferent_firing_zero_at_recall": true,
+        "competition_param_symmetric": true,
+        "forced_afferent_moves_winner": false,
+        "no_own_rate_collapse": true
+      },
+      "elapsed_seconds": 0.885
+    }
+  ]
+}
