@@ -61,8 +61,31 @@ dendritic/TRN overclaim lesson).
   (collapse to majority-class / degrade below reservoir 5/6). The rate versions GO; the depth-3 spiking port doesn't
   learn. Axon doesn't help (worse at depth) ⇒ this is a genuine deep frontier needing a NEW mechanism, a research
   round not a rule-swap. NOT a build target right now.
-- **#2 Rubicon delayed-credit → RUNNING (de-risk).** RAG: PFC-WM (maintained-goal substrate) + N9-TD-cue-shift
-  (reward-timing) are BUILT+GO; the delayed-reward value task (B4/R4) is SCOPED-not-built. Genuine un-built test =
-  maintained-goal(PFC-WM) bridge + VSPatch/TD timing on B4/R4, vs a decayed-trace control.
+- **#2 Rubicon delayed-credit → HALF-1 GO (6-seed), HALF-2 RUNNING.** HALF-1 = the maintained-goal DELAY BRIDGE
+  (PFC-WM PT-recurrent hold): 6-seed PARENT-VERIFIED (`1e78cef4`) — `bridge_go=True`, pfc_hold 340 vs decayed 8 Hz,
+  decayed-trace value 0.0 at both gaps, 100% attributable. The load-bearing prerequisite our earlier R4 decayed-trace
+  attempt lacked; FIRST concrete adoption win. HALF-2 = a reward-window-gated (VSPatch) potentiation rule to replace
+  the scope-all DA-STDP that over-depresses the saturated held-goal->value synapse — DE-RISK RUNNING (agent).
+- **#3 BORN learned self-model → GO (6-seed).** A LEARNED (Hebb/Oja) forward model (efference->predicted feedback) +
+  a NEURAL reafference-cancellation agency comparator, onto the self-schema lane. 6-seed PARENT-VERIFIED (`6bfbdd51`):
+  agency AUC 1.000, self-vs-decoupled 1.000 vs the existing presence-detector foundation at chance (~0.52). THREE
+  anti-cheats hold: contingency, learning-required (random FM -> 0.518), and a parent-added MAPPING-SPECIFIC control
+  (a permuted-selective/mis-mapped FM ALSO fails, 0.339) — it is the CORRECT learned mapping, not just selective
+  structure, that carries agency. The perturbed-reafference discrimination our fixed presence/marker foundation
+  lacked — a mirror-test correlate. SECOND concrete adoption win. Finding
+  `2026-08-07-BORN-learned-bodily-self-model-forward-model-agency-smoke-GO.md`.
 - Discipline note: RAG-first caught 3 would-be re-derivations this session (dendritic, TRN, RESIDUAL-A) — the mature
   project's obvious levers are mostly tried; genuine next steps need scoping, not rushed builds.
+
+## CRUX RECONCILIATION (2026-08-07) — the deep-read that stopped a 4th re-derivation
+The heartbeat's `lane_check` was firing "F/gap#4 CRUX unserved" every cycle with idle GPU. A deep-read research
+round (not a subagent summary) of the gap#4 record showed the "TERMINUS / build a new trainable substrate" verdict
+was STALE — superseded same-day by later findings. The LATEST (2026-08-02 12:32, owner-prompted): gap#4
+deep-credit-on-spikes is mechanistically MAPPED (FA-alignment fails on the Izhikevich forward, agnostic to feedback
+type; 6/6 LIF converge, 0/6 Izh) and explicitly DEPRIORITIZED — "the emergence engine needs NO deep-credit rule; the
+honest next is NOT to keep drilling gap#4." A dedicated gate (`refuted_mechanism_reproposal`) + 4 FAILURE_LOG
+entries already exist because this exact re-derivation cost "nine hours re-deriving a banked result." So "serving the
+crux" would have re-walked a mapped, deprioritized frontier. FIX: retired the false `lane_check` CRUX-UNSERVED alarm
+(`e3c5535b`), kept the genuine monoculture + CPU-lane checks; left the crux RE-designation (the board's stated
+frontier is "SCALE the WKV cortex") as an owner call. The two adoption wins above are on the breadth lanes the record
+says effort belongs on.
