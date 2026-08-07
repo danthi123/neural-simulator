@@ -38,10 +38,14 @@ working). Current frontier per lane:
   motor silence); smoke 730704 NaN/frozen → n_clean 20/20, D_contingent 1.0, steer PASS. FIX A refuted by substrate
   (⛔ 3rd diagnosis correction): 730705 is a **structural `str_d1_1` DEAD PATHWAY** (intrinsically near-unexcitable, 0
   spikes at 200–3000 pA; current into an MSN is counterproductive) → needs **Stage-2j: MSN intrinsic-excitability
-  homeostasis** (raise its Izhikevich excitability toward a firing set-point, NOT current). ⏳ **DECISIVE full
-  dev+held-out validation RUNNING (parent job `bxdwnhq1i`, numpy):** if held-out 4/6→**5/6** (730704 recovered, only
-  730705 dead-pathway fails) it MEETS the frozen ≥5/6 bar with dev also 5/6 = a **VERIFIED #1-capability GO** (honest
-  caveat: 1/12 seeds has a structural dead pathway, the Stage-2j target). NOT claimed until the parent run confirms.
+  homeostasis** (raise its Izhikevich excitability toward a firing set-point, NOT current). ⛔ **FULL VALIDATION =
+  NO-GO** (`8ad57b967`; the smoke overclaimed — 3rd verification-caught overclaim this session): **dev REGRESSED
+  5/6→4/6** (730601/730602 — the RPE floor is NOT inert, it weakened contingency on 2 passing dev seeds) and
+  **held-out stayed 4/6** (730704's NaN gone but STILL fails steer on the full battery; 730705 dead-pathway persists).
+  FIX B trades a held-out NaN-fix for dev regressions. NEXT = make the RPE floor **non-regressive/adaptive** (engage
+  only on the saturated tail, don't touch well-behaved seeds), THEN Stage-2j for the 730705 dead pathway. The Gate B
+  mechanism is complete but the multi-objective tuning (fix a seed WITHOUT regressing others) is the real remaining
+  work — several seeds each need a targeted, non-interfering fix.
 - **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
   FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
   equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
