@@ -116,3 +116,14 @@ is a wiring/mechanism smoke, not a claim of emerged multimodal naming.
 4. Run the naming map on the shared spiking bridge with the spiking request/silence gate, then on-bridge WKV.
 5. Bring the learned source-monitoring signal (`2026-08-03-laneC` findings) onto this path so uncertainty
    can hedge the spoken message before articulation.
+
+## ✅ PARENT-VERIFIED (independent 6-seed re-run)
+<!--derived-->
+The parent independently re-ran the 6-seed command (artifact
+`research/findings/raw/grounded_message_to_word/message_to_word_val6seed.json`) and reproduced the GO:
+naming accuracy 0.935-0.965 (mean 0.952) vs chance 0.24 / lesion 0.25, render-faithful 1.0, silence -> 0
+renderer invocations, permutation-followed 0.95 / original-rejected 0.02, novel abstains; 76.1% of the naming
+accuracy attributable to the learned map. All 11 preconditions/anti-cheats pass. VERDICT: GO — the
+brain-native referent-naming path is confirmed; it burns down the referent half of the host semantic decoder
+(the brain now SELECTS and PRODUCES the word for the object it communicates about, via a learned local-Hebbian
+map with no weight transport and the true label never on the inference read path).

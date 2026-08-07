@@ -1,0 +1,240 @@
+{
+  "verdict": {
+    "label": "grounded message-to-word (brain-native referent naming replaces host decoder)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "brain-native naming accuracy (noisy) >= 0.85",
+        "ok": true,
+        "detail": "measured=0.9520833333333334 expect=<function main.<locals>.<lambda> at 0x7f7957f8d440>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "naming accuracy above chance",
+        "ok": true,
+        "detail": "0.952083 vs floor 0.25",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "naming vs untrained random map (learned, not host bias)",
+        "ok": true,
+        "detail": "treatment=0.952083 control=0.227083 |sep|=0.725 > 0.4",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "lesion collapses the decode toward chance",
+        "ok": true,
+        "detail": "before=0.952083 after=0.25 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "lesion never emits a confident decode (fails safe)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "render articulates the brain-decoded word == 1",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7957f8d440>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "silence routes to zero renderer invocations",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "permutation followed >= 0.85",
+        "ok": true,
+        "detail": "measured=0.951736111111111 expect=<function main.<locals>.<lambda> at 0x7f7957f8d440>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "permuted map rejects the original word",
+        "ok": true,
+        "detail": "treatment=0.951736 control=0.0201389 |sep|=0.931597 > 0.4",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "novel percept abstains (below confidence) all seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "full spiking request/silence gate",
+        "why": "modeled as a minimal rate competition; the spiking form is GO in 2026-08-03 grounded-speech-action loop"
+      },
+      {
+        "process": "carrier-frame phrasing",
+        "why": "host 'the <agent> <verb> ___' skeleton is a NAMED residual scaffold; only the REFERENT word is brain-selected here"
+      }
+    ],
+    "chance": 0.25
+  },
+  "mean_name_acc": 0.9520833333333334,
+  "mean_name_acc_chance": 0.22708333333333333,
+  "mean_lesion_acc": 0.25,
+  "mean_render_faithful": 1.0,
+  "naming_accuracy_attributable_fraction": 0.7614879649890591,
+  "all_silent_zero_invocations": true,
+  "all_lesion_zero_confident": true,
+  "mean_perm_followed": 0.951736111111111,
+  "mean_orig_accepted_after_perm": 0.020138888888888887,
+  "all_novel_abstains": true,
+  "chance": 0.25,
+  "name_go_threshold": 0.85,
+  "n_referents": 4,
+  "conf_margin": 0.15,
+  "noise_sigma": 1.6,
+  "n_trials": 120,
+  "np_percept": 240,
+  "kp_active": 24,
+  "ckpt": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "k": 4,
+      "name_acc": 0.9375,
+      "name_acc_chance": 0.21875,
+      "render_faithful": 1.0,
+      "invocations_when_silent": 0,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.9583333333333334,
+      "orig_accepted_after_perm": 0.01875,
+      "novel_abstains": true,
+      "novel_margin": 0.0,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    },
+    {
+      "seed": 43,
+      "k": 4,
+      "name_acc": 0.9395833333333333,
+      "name_acc_chance": 0.22708333333333333,
+      "render_faithful": 1.0,
+      "invocations_when_silent": 0,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.95,
+      "orig_accepted_after_perm": 0.01875,
+      "novel_abstains": true,
+      "novel_margin": 0.08333333333333333,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    },
+    {
+      "seed": 44,
+      "k": 4,
+      "name_acc": 0.9458333333333333,
+      "name_acc_chance": 0.23958333333333334,
+      "render_faithful": 1.0,
+      "invocations_when_silent": 0,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.9729166666666667,
+      "orig_accepted_after_perm": 0.014583333333333334,
+      "novel_abstains": true,
+      "novel_margin": 0.041666666666666664,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    },
+    {
+      "seed": 100,
+      "k": 4,
+      "name_acc": 0.9645833333333333,
+      "name_acc_chance": 0.23541666666666666,
+      "render_faithful": 1.0,
+      "invocations_when_silent": 0,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.9458333333333333,
+      "orig_accepted_after_perm": 0.035416666666666666,
+      "novel_abstains": true,
+      "novel_margin": 0.08333333333333333,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    },
+    {
+      "seed": 101,
+      "k": 4,
+      "name_acc": 0.9625,
+      "name_acc_chance": 0.19791666666666666,
+      "render_faithful": 1.0,
+      "invocations_when_silent": 0,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.9479166666666666,
+      "orig_accepted_after_perm": 0.020833333333333332,
+      "novel_abstains": true,
+      "novel_margin": 0.0,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    },
+    {
+      "seed": 102,
+      "k": 4,
+      "name_acc": 0.9625,
+      "name_acc_chance": 0.24375,
+      "render_faithful": 1.0,
+      "invocations_when_silent": 0,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.9354166666666667,
+      "orig_accepted_after_perm": 0.0125,
+      "novel_abstains": true,
+      "novel_margin": 0.08333333333333333,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    }
+  ]
+}
