@@ -22,11 +22,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > per seed — a doc trap that cost a 40-min wrong-backend run).
 > **⏸️ 730705 within-bar arc CHECKPOINTED after Stage-2m (4 relocations, `b59b6b3d4`); the 2j-GO stands.** Resume it
 > later via the banked closing-stack + TRN-gated selection-epoch reset (Stage-2m line below).
-> **⭐ ACTIVE FRONTIER (2026-08-07) = #3 source monitoring.** Research round done + hetero-encoding de-risk = NO-GO
-> (`8aca3c62`), with the reframe that **separation must live in WHICH CELLS FIRE, not which synapses survive** (the
-> shared core fires in every recall → post-hoc synapse depression redistributes rather than removes rival burden).
-> **EXACT NEXT = build the pre-scoped conjunctive source-tag** (weak source-afferent modulation of the overlap layer
-> at ENCODING → different shared-cell subsets per source; recall stays episode-only/honest). See the #3 lane bullet.
+> **⭐ ACTIVE FRONTIER (2026-08-07) = #3 source monitoring.** Research round + TWO encoding-side de-risks both NO-GO
+> (hetero-depression `8aca3c62`, conjunctive-tag `1a5d2db6`), converging on a sharpened wall: **a SOURCE-BLIND recall
+> drive over a fully-shared core cannot separate co-resident sources — the wall is RECALL-SIDE, not encoding.**
+> **EXACT NEXT = a RESEARCH ROUND on recall-side pattern-completion / attractor SELECTIVITY** (CA3 recurrent
+> completion / competitive attractor recall: the episode cue recruits the correct source's assembly + suppresses
+> rivals, HONEST source-blind cue — the record's `2026-05-31-DG-composition-NULL` already points here). Then build.
+> Two encoding levers are banked NO-GO; do NOT re-try encoding-side sharpening. See the #3 lane bullet.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
@@ -118,6 +120,16 @@ working). Current frontier per lane:
   the overlap layer AT ENCODING so different shared-cell SUBSETS fire per source (recall stays episode-only + honest;
   separates only the overlap, so the DG separation-reliability tradeoff knob doesn't bind). The byte-identical null
   makes it a clean A/B vs the hetero arm.
+  **Conjunctive-tag de-risk (`1a5d2db6`) = NO-GO** (min M −0.0042, ~36× below floor; cheat guard PROVEN non-vacuous —
+  source afferent verified 0 at recall, and a forced tag-at-recall DOES move the winner, so the honest margin is not
+  a label read). ⭐⭐ **CONVERGENT REFRAME (both encoding-side levers now agree from opposite directions): a
+  SOURCE-BLIND recall drive over a fully-shared core CANNOT separate co-resident sources** — recall reactivates every
+  committed subset (rivals included), so rival burden persists even when encoding commitment spans all 3 sources
+  (H=0.96). ⇒ **The wall is RECALL-SIDE, not encoding.** EXACT NEXT = recall-side **pattern-completion / attractor
+  SELECTIVITY** (the episode cue competitively recruits the CORRECT source's assembly and suppresses rivals, with an
+  HONEST source-blind cue) — the record already flags this (`2026-05-31-DG-composition-NULL`: "separation necessary
+  but not sufficient — within-concept reliability needs CA3 completion"). Needs its own research round (CA3
+  recurrent completion / competitive attractor recall) before the next build — two encoding levers are banked NO-GO.
 - **#4 Replay consolidation** — v5 capability + v5+SFA interference wall closed + v6 order-STDP; but v6 multiseed
   NO-GO (2-seed GO was operating-point OVERFIT). NEXT = **emergent homeostatic self-calibration** of the operating
   point (host-tuned on 2 seeds → must emerge per-brain).
