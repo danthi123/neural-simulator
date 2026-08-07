@@ -1,0 +1,467 @@
+{
+  "probe": "gap4_axon_capd_rule",
+  "GO": false,
+  "GO_smoke_only": false,
+  "verdict": "NO-GO -- axon 0.476 did not match microcircuit 0.942; axon held-out 0.476 < 0.75; axon 0.476 did not clear the reservoir floor 0.504 (window IS informative: oracle 0.966 >> reservoir 0.504). WHICH FACTOR: the 2-phase bidirectional target's credit DECAYS THROUGH DEPTH: CHL cos-to-true-grad per layer [deep-hidden..output] = [0.272, 0.501, 0.458] (output aligned, deepest hidden ~0), and even LEARNED bidirectional weights don't rescue it (held-out 0.717) -> the fixed/settling return-projection credit is the PRIMARY limiter (the feedback-alignment depth wall our SST-microcircuit surpasses via interneuron error-cancellation). the CaP-CaD cascade is a SECONDARY limiter: it degrades even the output credit CHL gets right (CaP-CaD cos per layer = [-0.122, 0.015, 0.644]) -> the end-of-plus temporal-derivative read does not faithfully recover the two-phase difference at rate. trace factor: no_tr 0.513 vs full 0.476; rlrate factor: no_rl 0.497. Do NOT port to spikes; the rate rule must match the microcircuit first.",
+  "mechanism": "Astera Axon CaP-CaD kinase cascade (CaM->CaP[CaMKII/LTP]->CaD[DAPK1/LTD], error=CaP-CaD temporal derivative) x eligibility trace x RLRate, on a bidirectional net with a 2-phase minus/plus (GeneRec/Contrastive-Hebbian) target that reaches hidden layers via fixed-random return projections (no host teacher, no weight transport, no backward pass)",
+  "task": "depth-2 threshold-of-5-pair-XORs over 10 bits (== EMERGE-1/3 deep-credit task)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 100,
+    "lr": 0.5,
+    "batch": 128,
+    "hidden": 64,
+    "mc_epochs": 400,
+    "mc_lr": 0.5,
+    "fb_scale": 1.0,
+    "gain": 1.5,
+    "mtau": 3.0,
+    "ptau": 16.0,
+    "dtau": 16.0,
+    "gamma": 0.3,
+    "wdecay": 0.001,
+    "n_minus": 60,
+    "n_plus": 20,
+    "dt": 0.35
+  },
+  "elapsed_seconds": 683.7,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_train": 665,
+      "n_heldout": 359,
+      "axon_capd": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043,
+        "no_weight_transport": true,
+        "align": [
+          0.06,
+          -0.007,
+          -0.446
+        ]
+      },
+      "chl_reference": {
+        "train": 0.5293233082706766,
+        "heldout": 0.4568245125348189,
+        "no_weight_transport": true,
+        "align": [
+          0.16,
+          0.655,
+          0.994
+        ]
+      },
+      "axon_learned_bidir": {
+        "train": 0.7909774436090226,
+        "heldout": 0.6991643454038997,
+        "no_weight_transport": true
+      },
+      "axon_no_tr": {
+        "train": 0.47368421052631576,
+        "heldout": 0.5487465181058496,
+        "no_weight_transport": true
+      },
+      "axon_no_rlrate": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "train": 0.47368421052631576,
+        "heldout": 0.5487465181058496,
+        "no_weight_transport": true
+      },
+      "no_teaching": {
+        "train": 0.47368421052631576,
+        "heldout": 0.5487465181058496,
+        "no_weight_transport": true
+      },
+      "permuted_target": {
+        "train": 0.5293233082706766,
+        "heldout": 0.44846796657381616,
+        "no_weight_transport": true
+      },
+      "microcircuit": {
+        "train": 1.0,
+        "heldout": 0.947075208913649
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9526462395543176
+      },
+      "reservoir": {
+        "heldout": 0.4818941504178273
+      },
+      "same_init": true,
+      "chance": 0.5487465181058496
+    },
+    {
+      "seed": 43,
+      "n_train": 665,
+      "n_heldout": 359,
+      "axon_capd": {
+        "train": 0.5203007518796993,
+        "heldout": 0.4623955431754875,
+        "no_weight_transport": true,
+        "align": [
+          -0.024,
+          -0.003,
+          0.982
+        ]
+      },
+      "chl_reference": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125,
+        "no_weight_transport": true,
+        "align": [
+          0.447,
+          0.687,
+          0.991
+        ]
+      },
+      "axon_learned_bidir": {
+        "train": 0.6796992481203008,
+        "heldout": 0.7103064066852368,
+        "no_weight_transport": true
+      },
+      "axon_no_tr": {
+        "train": 0.4781954887218045,
+        "heldout": 0.5376044568245125,
+        "no_weight_transport": true
+      },
+      "axon_no_rlrate": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125,
+        "no_weight_transport": true
+      },
+      "no_teaching": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125,
+        "no_weight_transport": true
+      },
+      "permuted_target": {
+        "train": 0.5203007518796993,
+        "heldout": 0.4623955431754875,
+        "no_weight_transport": true
+      },
+      "microcircuit": {
+        "train": 1.0,
+        "heldout": 0.9693593314763231
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9275766016713092
+      },
+      "reservoir": {
+        "heldout": 0.5097493036211699
+      },
+      "same_init": true,
+      "chance": 0.5376044568245125
+    },
+    {
+      "seed": 44,
+      "n_train": 665,
+      "n_heldout": 359,
+      "axon_capd": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true,
+        "align": [
+          -0.161,
+          -0.005,
+          0.991
+        ]
+      },
+      "chl_reference": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true,
+        "align": [
+          0.422,
+          0.732,
+          0.999
+        ]
+      },
+      "axon_learned_bidir": {
+        "train": 0.5819548872180451,
+        "heldout": 0.6044568245125348,
+        "no_weight_transport": true
+      },
+      "axon_no_tr": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true
+      },
+      "axon_no_rlrate": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "no_weight_transport": true
+      },
+      "no_teaching": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true
+      },
+      "permuted_target": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true
+      },
+      "microcircuit": {
+        "train": 1.0,
+        "heldout": 0.9749303621169917
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9777158774373259
+      },
+      "reservoir": {
+        "heldout": 0.49303621169916434
+      },
+      "same_init": true,
+      "chance": 0.5236768802228412
+    },
+    {
+      "seed": 100,
+      "n_train": 665,
+      "n_heldout": 359,
+      "axon_capd": {
+        "train": 0.5052631578947369,
+        "heldout": 0.49025069637883006,
+        "no_weight_transport": true,
+        "align": [
+          -0.162,
+          0.017,
+          0.43
+        ]
+      },
+      "chl_reference": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699,
+        "no_weight_transport": true,
+        "align": [
+          0.234,
+          0.49,
+          0.996
+        ]
+      },
+      "axon_learned_bidir": {
+        "train": 0.6947368421052632,
+        "heldout": 0.6935933147632312,
+        "no_weight_transport": true
+      },
+      "axon_no_tr": {
+        "train": 0.5052631578947369,
+        "heldout": 0.49025069637883006,
+        "no_weight_transport": true
+      },
+      "axon_no_rlrate": {
+        "train": 0.5052631578947369,
+        "heldout": 0.49025069637883006,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699,
+        "no_weight_transport": true
+      },
+      "no_teaching": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699,
+        "no_weight_transport": true
+      },
+      "permuted_target": {
+        "train": 0.5052631578947369,
+        "heldout": 0.49025069637883006,
+        "no_weight_transport": true
+      },
+      "microcircuit": {
+        "train": 1.0,
+        "heldout": 0.958217270194986
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 1.0
+      },
+      "reservoir": {
+        "heldout": 0.5236768802228412
+      },
+      "same_init": true,
+      "chance": 0.5097493036211699
+    },
+    {
+      "seed": 101,
+      "n_train": 665,
+      "n_heldout": 359,
+      "axon_capd": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true,
+        "align": [
+          -0.227,
+          0.03,
+          0.909
+        ]
+      },
+      "chl_reference": {
+        "train": 0.524812030075188,
+        "heldout": 0.49025069637883006,
+        "no_weight_transport": true,
+        "align": [
+          0.222,
+          0.747,
+          -0.246
+        ]
+      },
+      "axon_learned_bidir": {
+        "train": 0.7969924812030075,
+        "heldout": 0.7910863509749304,
+        "no_weight_transport": true
+      },
+      "axon_no_tr": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "no_weight_transport": true
+      },
+      "axon_no_rlrate": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "no_weight_transport": true
+      },
+      "no_teaching": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true
+      },
+      "permuted_target": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "no_weight_transport": true
+      },
+      "microcircuit": {
+        "train": 0.9984962406015038,
+        "heldout": 0.9220055710306406
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9777158774373259
+      },
+      "reservoir": {
+        "heldout": 0.49025069637883006
+      },
+      "same_init": true,
+      "chance": 0.5236768802228412
+    },
+    {
+      "seed": 102,
+      "n_train": 665,
+      "n_heldout": 359,
+      "axon_capd": {
+        "train": 0.4992481203007519,
+        "heldout": 0.5013927576601671,
+        "no_weight_transport": true,
+        "align": [
+          -0.218,
+          0.058,
+          0.998
+        ]
+      },
+      "chl_reference": {
+        "train": 0.5654135338345865,
+        "heldout": 0.5348189415041783,
+        "no_weight_transport": true,
+        "align": [
+          0.147,
+          -0.308,
+          -0.984
+        ]
+      },
+      "axon_learned_bidir": {
+        "train": 0.8330827067669173,
+        "heldout": 0.8050139275766016,
+        "no_weight_transport": true
+      },
+      "axon_no_tr": {
+        "train": 0.4992481203007519,
+        "heldout": 0.5013927576601671,
+        "no_weight_transport": true
+      },
+      "axon_no_rlrate": {
+        "train": 0.4992481203007519,
+        "heldout": 0.5013927576601671,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "train": 0.5007518796992482,
+        "heldout": 0.4986072423398329,
+        "no_weight_transport": true
+      },
+      "no_teaching": {
+        "train": 0.4992481203007519,
+        "heldout": 0.5013927576601671,
+        "no_weight_transport": true
+      },
+      "permuted_target": {
+        "train": 0.4992481203007519,
+        "heldout": 0.5013927576601671,
+        "no_weight_transport": true
+      },
+      "microcircuit": {
+        "train": 1.0,
+        "heldout": 0.8774373259052924
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.958217270194986
+      },
+      "reservoir": {
+        "heldout": 0.5264623955431755
+      },
+      "same_init": true,
+      "chance": 0.5013927576601671
+    }
+  ],
+  "HONEST_NOTE": "Rate-limit numpy D1 de-risk (like our EMERGE rate de-risks), head-to-head vs the microcircuit incumbent on the SAME task. Anti-cheats: (a) Wb is a separate fixed-random return projection asserted never == a forward W/W^T and never mutated (no weight transport); (b) the error is the CaP-CaD cascade derivative / the 2-phase plus-minus difference (the axon arms NEVER call _true_grads); (c) the reservoir must fail where the rule wins (the gap#4 informative window); (d) 6-seed. chl_reference + no_tr/no_rlrate ablations localize which factor underperforms on a NO-GO.",
+  "preconditions": [
+    {
+      "name": "window_informative",
+      "ok": true,
+      "detail": "oracle 0.966 >> reservoir 0.504 \u2014 task learnable AND frozen reservoir fails, so a NO-GO is meaningful not a broken-task artifact"
+    },
+    {
+      "name": "no_weight_transport",
+      "ok": true,
+      "detail": "update uses local pre/post + reciprocal return-projection activity only"
+    },
+    {
+      "name": "no_settling_phase_as_backprop",
+      "ok": true
+    },
+    {
+      "name": "six_seed",
+      "ok": true,
+      "detail": "42/43/44/100/101/102"
+    }
+  ]
+}

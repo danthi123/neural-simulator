@@ -1,0 +1,33 @@
+{
+ "run_id": "1786115576-897668",
+ "runner": "research/runners/_gap4_axon_capd_rule_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_axon_capd_rule_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--epochs",
+  "100",
+  "--mc-epochs",
+  "400"
+ ],
+ "git_sha": "2df20b39b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-07T11:12:56",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8471.9,
+ "corpus_check_query": "curiosity intrinsic motivation learning progress slope differentiator SNc LHb phasic tonic Oudeyer-Kaplan novelty omission veto",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gap4_axon_capd_rule.json"
+}
