@@ -1,0 +1,37 @@
+{
+  "probe": "gateB_stage2k_seeds",
+  "backend": "numpy",
+  "fix_c": true,
+  "fix_d": true,
+  "seeds_rows(seed,base_p0,Dc,Dy,count_c1,test_rate_c1,homeo_engaged,n_released_c1,steer)": [
+    [
+      730601,
+      0.57,
+      1.0,
+      -0.75,
+      [
+        3,
+        36
+      ],
+      1.0,
+      false,
+      0,
+      true
+    ],
+    [
+      730606,
+      0.0,
+      1.0,
+      -0.0,
+      [
+        4,
+        36
+      ],
+      1.0,
+      true,
+      3,
+      true
+    ]
+  ],
+  "steer_passes": 2
+}

@@ -1,0 +1,80 @@
+{
+  "probe": "gateB_stage2k_exploration_release_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "smoke_seeds": [
+    730705
+  ],
+  "fix_c": true,
+  "fix_d": true,
+  "byte_identity_fixd_off": [
+    {
+      "seed": 730703,
+      "byte_identical_fixd_off": true,
+      "mismatch": {}
+    }
+  ],
+  "config": {
+    "explore_floor_k": 3,
+    "explore_release_factor": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 730705,
+      "baseline_p0": 1.0,
+      "FIXD_ON": {
+        "count_c0": [
+          37,
+          3
+        ],
+        "count_c1": [
+          37,
+          3
+        ],
+        "n_clean_c0": 20,
+        "n_clean_c1": 20,
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 0.0,
+        "D_contingent": 0.0,
+        "D_yoked": -0.10000000000000003,
+        "steer": false,
+        "n_released_c1": 3,
+        "release_channel_c1": 1,
+        "homeo_c1": {
+          "engaged": true,
+          "dead_channel": 1,
+          "dead_r0": 1.1,
+          "ratio": 93.45454545454544,
+          "k_scale": 3.0,
+          "fired_at_k1": 0,
+          "fired_after": 121
+        },
+        "r0_d1_c1": [
+          102.8,
+          1.1
+        ]
+      },
+      "STAGE2J_BASE": {
+        "count_c0": [
+          40,
+          0
+        ],
+        "count_c1": [
+          40,
+          0
+        ],
+        "test_rate_c0": 1.0,
+        "test_rate_c1": 0.0,
+        "D_contingent": 0.0,
+        "D_yoked": 0.0,
+        "steer": false
+      },
+      "SMOKE_no_nan": true,
+      "SMOKE_count_c1_nonzero": true,
+      "SMOKE_D_defined": false,
+      "SMOKE_steer": false,
+      "SMOKE_steer_improved_vs_2j": false
+    }
+  ],
+  "elapsed_seconds": 304.2453916759987
+}

@@ -1,0 +1,40 @@
+Gate B Stage 2k — 730705 expression-at-test wall (numpy, SIM_BACKEND=numpy).
+Decisive diagnostics behind the finding. All fresh single-onset probes unless noted.
+
+(1) CASCADE (see diag_cascade_730705.txt): with FIX C (str_d1_1 k*3), str_d1_1 fires
+    138 onset spikes, gpi_1 pauses 212->51, thal_1 RELEASES 0->186 -- but commit_1 = 0
+    (vetoed by commit_fs_0=282 cross-inhibition) so motor_1 = 0. Signal dies at the
+    COMMIT-level WTA, not the striatum/gpi. Proposal-novelty CURRENT into proposal_1
+    is COUNTERPRODUCTIVE (str_d1_1 138 -> 31).
+
+(2) COMMIT-WTA release sweep (FIX C on, novelty=0), scale commit_fs_0->commit_1:
+    relax x1.0/0.75/0.5/0.25 -> motor=[856,0] winner0 (partial relax does NOTHING);
+    relax x0.10 -> motor=[530,242]; relax x0.0 -> motor=[490? / 431,544] winner1 (DIRTY).
+    Only FULL release flips the WTA, and it is a dirty win. (diag2/diag3)
+
+(3) TRAINING sweep of EXPLORE_FLOOR_K (FIX C+FIX D, run_seed_swap, target=1):
+    K= 3  count_c1=(37,3)  n_released=3   test_rate_c1=0.000  D_cont=0.000  w1_after=71.6
+    K= 8  count_c1=(32,8)  n_released=8   test_rate_c1=0.000  D_cont=0.000  w1_after=194.6
+    K=20  count_c1=(19,21) n_released=20  test_rate_c1=0.000  D_cont=0.000  w1_after=240.8
+    K=40  count_c1=(0,40)  n_released=40  test_rate_c1=0.000  D_cont=-0.150 w1_after=315.2
+    => action 1 is SELECTED + REWARDED + POTENTIATED (proposal_1->str_d1_1 40->315),
+       but test_rate_c1 stays 0.000 at every K. The learned route CANNOT EXPRESS at test.
+
+(4) EXPRESSION probe (fresh + FIX C + manual proposal_1->str_d1_1 = 300, test trial,
+    intact circuit, release OFF):
+    down proposal_0 k*0.1 .. 1.0 -> motor=[856,0] winner0 (no effect).
+    down commit_0   k*1.0..0.3 -> [856..691,0] winner0; k*0.1 -> [130,211] winner1 DIRTY.
+    (diag4)
+
+(5) TWO-SIDED striatal homeostat (FIX C up str_d1_1 + DOWN str_d1_0 k), test trial:
+    potentiated w1=300: str_d1_0 k*1.0->[856,0]; k*0.3->[567,83]; k*0.05->[550,84] winner0.
+    un-potentiated:      str_d1_0 k*1.0->[856,0]; k*0.1->[379,187] winner0.
+    Even silencing the incumbent striatum leaves action 0 winning -> the commit WTA is a
+    strong BISTABLE LATCH set by proposal_0's intrinsic saturation; normalising the
+    incumbent (proposal/commit/striatum gain) does NOT cleanly flip it at test. (diag5)
+
+VERDICT: FIX D achieves the training goal (un-sampled action selected+rewarded+potentiated)
+but 730705 steer does NOT flip -- the residual is EXPRESSION-at-test through a bistable
+cortical commit WTA that overrides the BG (thal) selection signal, not a selection or
+learning deficit. A persistent hand-release would be a shortcut (the acquisition-lesion
+control would then attribute the contingency to the rewire, not to D1 plasticity).
