@@ -1,0 +1,151 @@
+{
+  "probe": "born_learned_self_model (Lane A self-schema; BORN CLOSEST-1 adoption)",
+  "verdict": "GO (1-seed) \u2014 LEARNED BODILY SELF-MODEL: a Hebb/Oja-learned forward model (action->predicted feedback, diagonal 27.9 >> off 0.0) + a NEURAL reafference-cancellation comparator emit an AGENCY signal that discriminates self-caused from not-self-caused feedback at AUC=1.000 (chance 0.5). The prediction CANCELS the self reafference (resp_self 0.018 << resp_ext 0.047). DECISIVE: on DECOUPLED trials (efference PRESENT but the world's feedback is WRONG) agency reads LOW (resp_dec 0.047; self-vs-dec AUC 1.000) while a PRESENCE/marker detector \u2014 our existing foundation \u2014 CANNOT tell them apart (0.562): the LEARNED forward model adds agency-discrimination the foundation lacked. Contingency holds (same content self-vs-external AUC 1.000); learning is REQUIRED (a random all-to-all forward model predicts EVERY identity -> cancels indiscriminately -> behaves like the presence detector: on the decisive self-vs-decoupled axis it collapses to 0.495). Brain-based (synaptic forward model + neural cancellation comparator; NO host abs()); numpy-CPU; NO sim/ edit. SMOKE-level \u2014 needs the parent's 6-seed for a generalization claim.",
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "agency AUC (self vs not-self) beats chance",
+      "ok": true,
+      "detail": "1 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "learned vs RANDOM forward model on the decisive self-vs-decoupled axis",
+      "ok": true,
+      "detail": "treatment=1 control=0.4954 |sep|=0.5046 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "forward-model comparator vs presence detector (self-vs-decoupled)",
+      "ok": true,
+      "detail": "treatment=1 control=0.5625 |sep|=0.4375 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "forward model learned the diagonal (mean |w| action_k->predicted_k >> off-diagonal)",
+      "ok": true,
+      "detail": "before=0.01 after=27.936 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "prediction CANCELS the self reafference (resp_ext -> resp_self)",
+      "ok": true,
+      "detail": "before=0.0473 after=0.0181 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "comparator cancels the self response (resp_ext - resp_self >= 0.01)",
+      "ok": true,
+      "detail": "measured=0.0292 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7fd5467931a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "decoupled reads LOW despite efference present (resp_dec >= resp_self + 0.01)",
+      "ok": true,
+      "detail": "measured=0.029299999999999996 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7fd5467931a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "contingency: same content self-vs-external AUC >= 0.85",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7fd5467931a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "presence detector CANNOT do self-vs-decoupled (AUC <= 0.65)",
+      "ok": true,
+      "detail": "measured=0.5625 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7fd5467931a0>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / reward-mod / homeostasis / short-term & structural plasticity",
+      "why": "the forward model is grown by Hebbian(Oja) co-fire; the comparator is a fixed-structure neural reafference-cancellation circuit (the banked scope, as the affect/authorship GOs banked a hand-wired attractor)"
+    }
+  ],
+  "undefined_reasons": [],
+  "checks": {
+    "forward_model_learned(diag>>offdiag)": true,
+    "comparator_cancels_on_self(ext-self>=0.01)": true,
+    "agency_discriminates(auc>=0.90)": true,
+    "contingency_self_vs_external(auc>=0.85)": true,
+    "decoupled_is_low(self<<dec, auc>=0.85)": true,
+    "beats_presence_on_decoupled(FM>>presence)": true,
+    "learning_required(random_fails_decoupled, <=0.65)": true
+  },
+  "means": {
+    "fm_diag": 27.936,
+    "fm_offdiag": 0.01,
+    "resp_self": 0.0181,
+    "resp_external": 0.0473,
+    "resp_decoupled": 0.0474,
+    "auc_learned": 1.0,
+    "auc_self_vs_dec": 1.0,
+    "auc_presence_self_vs_dec": 0.5625,
+    "auc_self_vs_ext": 1.0,
+    "auc_random": 0.7477,
+    "auc_random_self_vs_dec": 0.4954
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "fm_diag": 27.936,
+      "fm_offdiag": 0.01,
+      "fm_diag_ratio": 2940.282,
+      "resp_self": 0.0181,
+      "resp_external": 0.0473,
+      "resp_decoupled": 0.0474,
+      "agency_self": -0.0181,
+      "agency_external": -0.0473,
+      "agency_decoupled": -0.0474,
+      "auc_learned": 1.0,
+      "auc_self_vs_dec": 1.0,
+      "auc_presence_self_vs_dec": 0.5625,
+      "auc_self_vs_ext": 1.0,
+      "resp_random_self": 0.0189,
+      "resp_random_decoupled": 0.0189,
+      "auc_random": 0.7477,
+      "auc_random_self_vs_dec": 0.4954
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "K": 4,
+    "N_ACT": 40,
+    "N_PRED": 40,
+    "N_SENS": 40,
+    "N_RESP": 30,
+    "N_RINH": 15,
+    "N_PWTA": 20,
+    "W_SENS_RESP": 40.0,
+    "W_PRED_INH": 30.0,
+    "W_INH_RESP": 110.0,
+    "W_PRED_WTA": 18.0,
+    "W_WTA_PRED": 6.0,
+    "W_FM_MAX": 45.0,
+    "W_FM_RANDOM": 12.0,
+    "TRAIN_CYCLES": 40,
+    "TRIAL_STEPS": 40,
+    "REPS": 12,
+    "OU_PA": 3.0,
+    "hebbian_oja": 1.0,
+    "hebbian_learning_rate": 0.05
+  },
+  "mechanism": "action_i->predicted_j all-to-all Hebbian(Oja)-plastic (zero init) grows the SELECTIVE diagonal from co-fire (efference + reafferent teacher); fixed reafference-cancellation comparator (sensory_k->resp_k excite; predicted_k->rinh_k->resp_k gaba cancel); agency = -resp (residual response). self=action_k+sensory_k (predicted_k cancels resp_k -> LOW resp -> HIGH agency); external=sensory_k only (no prediction -> HIGH resp -> LOW agency); decoupled=action_k+sensory_j (predicted_k cancels empty resp_k; resp_j un-cancelled -> HIGH resp -> LOW agency).",
+  "HONEST_NOTE": "numpy-CPU read on the real spiking Izhikevich bridge ('numpy' is the backend, not a host shortcut). The forward model is LEARNED by synapses (Hebbian/Oja co-fire; Oja gives the input-DEPENDENT fixed point that yields diagonal selectivity; STDP eligibility never applies without reward on this bridge -> weight stays 0, per the _D heteroassoc note). The comparator is a FIXED-structure neural reafference-cancellation circuit (banked scope, as the affect/authorship GOs banked a hand-wired attractor); a self-organized comparator + a reward-gated (three-factor) forward model are the named follow-ons. The cancellation form (vs a coincidence AND-gate) is dictated by the substrate: the synaptically-driven `predicted` pool fires SYNCHRONOUS volleys (which a fast FS interneuron reads) while the tonically-driven `sensory` pool fires ASYNCHRONOUSLY -> a symmetric summation AND-gate saturates on the predicted volley alone (measured). Biology: Wolpert-Miall-Kawato internal model; von Holst-Mittelstaedt reafference; Sperry efference copy; Frith/Blakemore IPL-cerebellar comparator; Hebb/Oja.",
+  "elapsed_seconds": 5.9
+}
