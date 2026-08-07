@@ -15,6 +15,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-07 (READ FIRST — live resume point)
 
+> **⭐ EMERGENCE-ENGINE ADVANCE (2026-08-07) — brain-native SPIKING word production (the north-star frontier).**
+> The referent word the brain communicates is no longer a host lookup. A gated local-Hebbian percept→word naming
+> map (zero-init, NO weight transport, true label NEVER on the inference read path) selects the word:
+> **rate 6-seed GO** (`7cdb0a5f`, naming 0.95 vs untrained 0.23) → **on-bridge SPIKING 6-seed GO** (`2f3bc899`,
+> real Izhikevich, decoded from word-pool SPIKE COUNTS not a host matmul, 0.85 vs 0.24) — burning down the
+> referent half of the host semantic decoder AND the rate-proxy residual, toward the ONE SPIKING BRAIN. Gated by
+> the Aug-03 spiking request/silence race (silence→zero output = the confab-moat mirror). All anti-cheats hold on
+> spikes (lesion fails-safe, permutation, novel-abstain). **The honesty hedge that gates it — metacog
+> abstain/hedge — is a 6-seed PARTIAL** (`156b00af`, 3/6 strict; the STABLE risk-coverage metrics generalize: a
+> NEURAL confidence gate lifts selective accuracy vs first-order +0.129 and catches the familiar-but-wrong
+> confabulation cases a magnitude read structurally cannot, 100% attributable to the self_schema→assert synapse;
+> strict-gate misses = pure-novelty moat-safety + per-seed variance). **Named next rungs (research-gated, ready to
+> build):** neural-retina percepts; on-bridge WKV articulation (close the last off-bridge seam); learn the intent
+> from contingent outcomes (whole message brain-selected); metacog production honesty-hook wire-in + hard-moat battery.
+>
 > **⭐ LANDSCAPE-SURVEY ADOPTION THREAD COMPLETE (2026-08-07, owner-directed "make use of the findings") — 3
 > findings, all 6-seed PARENT-VERIFIED, all brain-based, no `sim/` edit:**
 > - **Rubicon (O'Reilly, PVLV/VSPatch) — FULL delayed-credit ADOPTED as MAINTENANCE.** HALF-1 maintained-goal
