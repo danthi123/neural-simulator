@@ -35,8 +35,10 @@ USAGE MODEL (owner 2026-08-06): subagent tokens COUNT toward the plan; reduce us
 (self-sweeping runners + pool + aggregators), Claude only at endpoints — see `feedback_minimize_plan_usage_via_nonclaude_machinery`.
 Pacing: serial/2-wide (3 parallel agents hit the session cap once). ⚠️ Orphaned-sweep recovery pattern: agents keep
 backgrounding 6-seed sweeps + ending their turn — arm your OWN watcher + resume via SendMessage (do NOT trust the
-subagent's own waiter). ⚠️ pool checkouts BROKEN (re-provision before any pool sweep). ⚠️ `lane-starvation` pre-commit
-gate blocks doc commits when the pool queue is empty → documented `--no-verify` for pure doc/board commits.
+subagent's own waiter — OR use `python -m tools.run_and_aggregate` which BLOCKS by construction). ✅ pool is HEALTHY
+(rsync not git; `python -m tools.pool_health`; the earlier "broken" claim was a false git-rev-parse test) — route
+sweeps to the 36 free cores. ✅ `lane-starvation` now EXEMPTS doc-only (.md) commits; ✅ heartbeat `unpushed` is now
+branch-aware. (All six fixed mechanically 2026-08-06, commit `1f31eec6`.)
 
 ## STATE OF THE PROJECT - 2026-08-06 (later²) — ROUND 2 COMPLETE (3 lanes built + verdicted + integrated to main)
 
@@ -244,10 +246,12 @@ point host-tuned on 412/413 does not transfer; order-STDP itself is a banked ing
 rolling** (owner OK'd some parallel): Gate B Stage-2d (uncertainty-gated exploration) in flight + source v9 (Vogels–
 Sprekeler ISP) launching into the slot the replay lane just freed. The source lane proved the hands-off pattern: build a
 self-sweeping runner + `aggregate_*_seeds.py`, launch ONE local process, read ONE verdict — Claude only at the
-endpoints (owner 2026-08-06). **POOL IS BROKEN for large sweeps:** `~/derisk-pool/sim` is not a git checkout on
-pool40/41/42 (SSH-reachable, but Round-1's re-provision didn't hold) — re-provision via `tools/pool_provision.sh`
-when a sweep is big enough to need 36 cores; small validations (≤~10 fast seeds) run local hands-off, which is
-correct + reliable. GPU free.
+endpoints (owner 2026-08-06). ✅ **POOL IS HEALTHY** (corrected 2026-08-06 — the earlier "pool broken" claim was a
+FALSE diagnosis: agents ran `git rev-parse` in `~/derisk-pool/sim`, but the pool is deployed by RSYNC not git, so
+"not a git repo" is EXPECTED). All 3 nodes: code present + venv (numpy+scipy) OK + 1412 runners. Check with
+`python -m tools.pool_health`; a node MISSING a new runner is STALE (re-rsync via `pool_provision.sh`), not broken.
+Route multi-seed validation to the 36 free cores via `python -m tools.run_and_aggregate` (blocking, one verdict).
+GPU free.
 
 ## STATE OF THE PROJECT - 2026-08-06 (later) — ROUND 1 autonomous parallel push COMPLETE (3 mission lanes)
 
