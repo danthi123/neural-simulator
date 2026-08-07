@@ -25,10 +25,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **⭐ ACTIVE FRONTIER (2026-08-07) = #3 source monitoring.** Research round + TWO encoding-side de-risks both NO-GO
 > (hetero-depression `8aca3c62`, conjunctive-tag `1a5d2db6`), converging on a sharpened wall: **a SOURCE-BLIND recall
 > drive over a fully-shared core cannot separate co-resident sources — the wall is RECALL-SIDE, not encoding.**
-> **EXACT NEXT = a RESEARCH ROUND on recall-side pattern-completion / attractor SELECTIVITY** (CA3 recurrent
-> completion / competitive attractor recall: the episode cue recruits the correct source's assembly + suppresses
-> rivals, HONEST source-blind cue — the record's `2026-05-31-DG-composition-NULL` already points here). Then build.
-> Two encoding levers are banked NO-GO; do NOT re-try encoding-side sharpening. See the #3 lane bullet.
+> Research + recall-side attractor de-risk done → **THREE de-risks NO-GO this session** (2 encoding + 1 recall CA3-
+> attractor `7670df9b`), all converging: a source-blind lever over a fully-shared core can't separate co-resident
+> sources without MORE SEPARATION, and naive separation = reducing overlap = a soft cheat. **EXACT NEXT (needs careful
+> DESIGN, not a blind build): (a) diagnose why the weakest source's attractor dominates all cues; (b) an HONEST joint
+> knob = attractor g_comp × uniq-cell encoding EMPHASIS at FIXED overlap** (weight the source's own diagnostic unique
+> cells more — not a label, doesn't reduce co-residency). Do NOT re-try encoding sharpening or overlap reduction.
+> Open: whether n=12 @ these overlaps is a genuine substrate boundary (3 converging NO-GOs). See the #3 lane bullet.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
@@ -130,6 +133,21 @@ working). Current frontier per lane:
   HONEST source-blind cue) — the record already flags this (`2026-05-31-DG-composition-NULL`: "separation necessary
   but not sufficient — within-concept reliability needs CA3 completion"). Needs its own research round (CA3
   recurrent completion / competitive attractor recall) before the next build — two encoding levers are banked NO-GO.
+  **CA3-attractor-competition recall de-risk (`7670df9b`, single `g_comp` knob = within-pop recurrent-E + between-pop
+  lateral-I, symmetric, no source term, no `sim/` edit) = NO-GO** — fails the DECISIVE anti-cheat `all_dominant_correct`
+  (False at every g_comp>0 on both seeds, robust across a 3×3 recurrent:lateral grid): the competition amplifies ONE
+  source's attractor regardless of the cue (a WTA that doesn't track the cue), min M never clears the floor. Null
+  byte-identical, honesty guards (recall source-afferent=0, param-symmetric, non-vacuity) all hold → real NO-GO.
+  Outcome = the pre-scoped **JOINT storage+separation knob** (the recall-only knob can't thread; the weakest source
+  `self_generated` has too little separation for the attractor to track the cue). ⚠️ **THREE de-risks NO-GO this
+  session (2 encoding + 1 recall), all converging: co-resident sources sharing a fully-shared core cannot be
+  separated by any source-blind lever without MORE SEPARATION — and naively adding separation = REDUCING overlap =
+  moving the goalpost (a soft cheat).** ⭐ NEXT (needs a careful DESIGN, not a blind build): (a) DIAGNOSE why the
+  weakest source's attractor dominates all cues (heterogeneity? recurrent-basin geometry?); (b) an HONEST joint knob
+  = attractor `g_comp` × **uniq-cell encoding EMPHASIS at FIXED overlap** (weight the source's response to its own
+  DIAGNOSTIC unique cells more — legitimate, not a source label, does NOT reduce co-residency), NOT uniq-FRACTION /
+  overlap reduction. Open question flagged: whether n=12 source pops @ these overlaps is a genuine substrate boundary
+  (per no-defer = an undiscovered mechanism, but honestly characterized after 3 converging NO-GOs).
 - **#4 Replay consolidation** — v5 capability + v5+SFA interference wall closed + v6 order-STDP; but v6 multiseed
   NO-GO (2-seed GO was operating-point OVERFIT). NEXT = **emergent homeostatic self-calibration** of the operating
   point (host-tuned on 2 seeds → must emerge per-brain).
