@@ -1,0 +1,30 @@
+{
+ "run_id": "1786131726-1058104",
+ "runner": "research/runners/_laneC_self_schema_neural_abstain_gate_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-afef077c13c9c83af/research/runners/_laneC_self_schema_neural_abstain_gate_derisk.py",
+  "--seeds",
+  "42",
+  "--json",
+  "research/findings/raw/lanes/metacog/laneC_neural_abstain_gate_s42_full.json"
+ ],
+ "git_sha": "9631a3f83",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T15:42:06",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2437.7,
+ "corpus_check_query": "route metacognitive confidence into abstain hedge behavior neural gate uncertainty self-report honesty boundary familiar but wrong",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/metacog/laneC_neural_abstain_gate_s42_full.json"
+}
