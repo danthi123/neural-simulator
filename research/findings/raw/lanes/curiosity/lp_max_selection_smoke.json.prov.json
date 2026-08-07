@@ -1,0 +1,26 @@
+{
+ "run_id": "1786108160-827623",
+ "runner": "research/runners/_laneB_curiosity_lp_max_selection_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_laneB_curiosity_lp_max_selection_derisk.py",
+  "--smoke",
+  "--verbose",
+  "--out",
+  "research/findings/raw/lanes/curiosity/lp_max_selection_smoke.json"
+ ],
+ "git_sha": "4cbda4298",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-07T09:09:20",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 371.5,
+ "corpus_check_query": "curiosity intrinsic motivation learning progress slope differentiator SNc LHb phasic tonic Oudeyer-Kaplan novelty omission veto",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/curiosity/lp_max_selection_smoke.json"
+}
