@@ -1,0 +1,255 @@
+{
+  "verdict": {
+    "label": "grounded message-to-word ON-BRIDGE (spiking naming map replaces the rate proxy)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "backend is numpy (real spiking Izhikevich)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "naming map is a plastic on-bridge pathway (percept exc pool -> word exc pool)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "spiking naming accuracy (noisy) >= 0.85",
+        "ok": true,
+        "detail": "measured=0.9291666666666667 expect=<function main.<locals>.<lambda> at 0x7f092bb97560>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "naming accuracy above chance",
+        "ok": true,
+        "detail": "0.929167 vs floor 0.25",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "naming vs untrained random map (learned, not substrate bias)",
+        "ok": true,
+        "detail": "treatment=0.929167 control=0.220833 |sep|=0.708333 > 0.4",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "lesion collapses the decode toward chance",
+        "ok": true,
+        "detail": "before=0.929167 after=0.25 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "lesion never emits a confident decode (fails safe)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "render articulates the spike-decoded word == 1",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f092bb97560>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "spiking gate: hungry routes to request all seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "spiking gate: sated routes to silence -> zero word output all seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "permutation followed >= 0.85",
+        "ok": true,
+        "detail": "measured=0.9208333333333334 expect=<function main.<locals>.<lambda> at 0x7f092bb97560>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "permuted map rejects the original word",
+        "ok": true,
+        "detail": "treatment=0.920833 control=0.025 |sep|=0.895833 > 0.4",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "novel percept abstains (below confidence) all seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "carrier-frame phrasing",
+        "why": "host 'the <agent> <verb> ___' skeleton is a NAMED residual; only the REFERENT word is brain-selected"
+      },
+      {
+        "process": "structural plasticity / threshold homeostasis / synaptic scaling",
+        "why": "frozen around the naming map so the learned pathway is stable across the long inference battery and repeated presentation cannot fatigue a word pool (mirrors the Aug-03 loop inference isolation)"
+      },
+      {
+        "process": "full spiking request/silence gate operating point",
+        "why": "the request/silence race is on-bridge and spiking; its full grounded form is GO in the Aug-03 loop -- here it ROUTES whether the naming circuit is engaged"
+      }
+    ],
+    "chance": 0.25
+  },
+  "mean_name_acc": 0.9291666666666667,
+  "mean_name_acc_chance": 0.22083333333333335,
+  "mean_lesion_acc": 0.25,
+  "mean_render_faithful": 1.0,
+  "naming_accuracy_attributable_fraction": 0.7623318385650224,
+  "all_hungry_request": true,
+  "all_sated_silence_zero_output": true,
+  "all_lesion_zero_confident": true,
+  "mean_perm_followed": 0.9208333333333334,
+  "mean_orig_accepted_after_perm": 0.024999999999999998,
+  "all_novel_abstains": true,
+  "chance": 0.25,
+  "name_go_threshold": 0.85,
+  "smoke": false,
+  "backend": "numpy",
+  "conf_margin_spk": 0.2,
+  "min_word_spikes": 6.0,
+  "np_percept": 240,
+  "kp_active": 24,
+  "word_nper": 48,
+  "n_trials": 20,
+  "n_referents": 4,
+  "ckpt": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "hebb_rate": 0.1,
+    "hebb_max": 50.0,
+    "teach_epochs": 22,
+    "teach_steps": 40,
+    "perc_drive": 5000.0,
+    "teach_drive": 600.0,
+    "decode_steps": 250,
+    "p_drop": 0.25,
+    "p_add": 4.0,
+    "gate_drive": 180.0,
+    "gate_steps": 40
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "k": 4,
+      "name_acc": 0.9375,
+      "name_acc_chance": 0.175,
+      "render_faithful": 1.0,
+      "silent_zero_output": true,
+      "hungry_decision": "request",
+      "sated_decision": "silence",
+      "gate_hungry_req_sil": [
+        31.0,
+        0.0
+      ],
+      "gate_sated_req_sil": [
+        11.0,
+        26.0
+      ],
+      "word_output_events": 4,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.9625,
+      "orig_accepted_after_perm": 0.075,
+      "novel_abstains": true,
+      "novel_margin": 0.0,
+      "novel_top1": 0.0,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    },
+    {
+      "seed": 43,
+      "k": 4,
+      "name_acc": 0.8875,
+      "name_acc_chance": 0.225,
+      "render_faithful": 1.0,
+      "silent_zero_output": true,
+      "hungry_decision": "request",
+      "sated_decision": "silence",
+      "gate_hungry_req_sil": [
+        38.0,
+        0.0
+      ],
+      "gate_sated_req_sil": [
+        17.0,
+        28.0
+      ],
+      "word_output_events": 4,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.8375,
+      "orig_accepted_after_perm": 0.0,
+      "novel_abstains": true,
+      "novel_margin": 0.3333333332222222,
+      "novel_top1": 2.0,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    },
+    {
+      "seed": 44,
+      "k": 4,
+      "name_acc": 0.9625,
+      "name_acc_chance": 0.2625,
+      "render_faithful": 1.0,
+      "silent_zero_output": true,
+      "hungry_decision": "request",
+      "sated_decision": "silence",
+      "gate_hungry_req_sil": [
+        46.0,
+        0.0
+      ],
+      "gate_sated_req_sil": [
+        15.0,
+        29.0
+      ],
+      "word_output_events": 4,
+      "lesion_acc": 0.25,
+      "lesion_confident_frac": 0.0,
+      "perm_followed": 0.9625,
+      "orig_accepted_after_perm": 0.0,
+      "novel_abstains": true,
+      "novel_margin": 0.9999999989999999,
+      "novel_top1": 1.0,
+      "spoken": [
+        "the fox eats apple",
+        "the bird eats seed",
+        "the bee makes honey",
+        "the fish sees water"
+      ]
+    }
+  ]
+}
