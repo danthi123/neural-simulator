@@ -43,14 +43,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > catastrophic (false=1.0) and perfect (false=0.0) probes have byte-adjacent aggregate stats, so no
 > rate/sparsity/E-I statistic can carry the label.** RESOLVED into a bounded plan (NOT a stall): (1) ⛔ the DG
 > "fundamental boundary" was SELF-RETRACTED — its escape (separation+completion at DIFFERENT loci, at CA3 SCALE) is
-> UNTESTED; the 2026-08-07 feedforward scale probe scaled the wrong thing (readout, no attractor) → **the decisive
-> test is attractor-competition × storage-separation × n≥48, un-run.** (2) ⭐ EXACT NEXT = that ONE cheap decisive #3
-> de-risk (extend `_laneC_source_monitor_attractor_competition.py`, joint g_comp × separation × n 12→≥48,
-> `all_dominant_correct` anti-cheat). (3) FALLBACK substrate if it fails = DENDRITIC COMPARTMENTS (unique-source
-> afferents on one branch, core on another → only coincident input crosses the NMDA plateau = an identity-specific
-> nonlinear AND no soma homeostat can equalize; branch assignment MUST self-organize via BCM, never host-wired). (4)
-> The boundary blocks a SUB-CAPABILITY, not the roadmap — **parallelize the unblocked CPU faculty lanes (affect,
-> curiosity, perception, language) while the single GPU-free de-risk runs; do NOT serialize another monoculture.**
+> UNTESTED; the 2026-08-07 feedforward scale probe scaled the wrong thing (readout, no attractor) → the decisive test
+> is attractor-competition × storage-separation × n≥48. (2) ✅ **THAT DECISIVE DE-RISK RAN (`41a7efbe`) = NO-GO / earned
+> BOUNDARY VERDICT.** 108 configs (g_comp×separation × n∈{12,48,96} × 2 seeds): NO config clears the GO at ANY scale;
+> the competition arm fails `all_dominant_correct` with negative margins everywhere; **n≥48 changed NOTHING decisive**
+> (CA3-scale escape EMPIRICALLY FALSIFIED). All 36 honesty guards held (overlap fraction exactly 0.1667 at every n —
+> co-residency not reduced). ⇒ **same-core co-resident source IDENTITY is NOT recoverable on a point-neuron RATE
+> substrate** (the unique-cell signal sums LINEARLY into one soma rate; every downstream op is an aggregate that
+> discarded the label — empirically confirms the mechanistic prediction). (3) ⭐ **THE NAMED NEXT SUBSTRATE (per
+> no-defer, boundary = an undiscovered mechanism) = DENDRITIC COMPARTMENTS** (unique-source afferents on one branch,
+> core on another → only coincident input crosses the NMDA plateau = an identity-specific nonlinear AND no soma
+> homeostat can equalize; branch assignment MUST self-organize via BCM, never host-wired). **Gate it behind its OWN
+> de-risk — do NOT rush the build.** (4) The boundary blocks a SUB-CAPABILITY, not the roadmap — ⭐ **EXACT NEXT for a
+> fresh session: parallelize the UNBLOCKED CPU faculty lanes (affect, curiosity, perception, language — the same
+> window produced the corollary-discharge source GO + 3 Phase-0 self-model GOs), NOT another monoculture against this
+> wall.** The identity-discrimination cluster (#3/#4/gap5) is now CONCLUSIVELY bounded on the rate substrate.
 > **Stage-2k (`0603e7712`, parent-verified) = QUALIFIED, not a new GO** — it RELOCATED the 730705 residual: with FIX C
 > the BG selection signal is present (thal_1 releases 0→186), but a **bistable cortical commit-WTA latch**
 > (commit_fs_0→commit_1 veto, w=60) overrides it, so motor_1=0. FIX D (novelty-gated, training-only, byte-identical
