@@ -33,6 +33,15 @@ working). Current frontier per lane:
   or FRONT-LOAD/ANNEAL the D1 route before reward potentiates it; (730704) a **floor on the net RPE / motor-rate
   homeostat** so the baseline can't depress a route to silence. The credit MECHANISM is complete + reversal+lesions
   pass; these are two targeted circuit fixes.
+  **Stage-2i (`f56bb1f51`): FIX B CLOSES 730704, FIX A refuted.** FIX B = RPE floor (clamp critic self-value below
+  reward — root cause `VALUE_MAX 1.5 > REWARD_MAG 1.0` let a REWARDED action's net RPE go negative → self-depress to
+  motor silence); smoke 730704 NaN/frozen → n_clean 20/20, D_contingent 1.0, steer PASS. FIX A refuted by substrate
+  (⛔ 3rd diagnosis correction): 730705 is a **structural `str_d1_1` DEAD PATHWAY** (intrinsically near-unexcitable, 0
+  spikes at 200–3000 pA; current into an MSN is counterproductive) → needs **Stage-2j: MSN intrinsic-excitability
+  homeostasis** (raise its Izhikevich excitability toward a firing set-point, NOT current). ⏳ **DECISIVE full
+  dev+held-out validation RUNNING (parent job `bxdwnhq1i`, numpy):** if held-out 4/6→**5/6** (730704 recovered, only
+  730705 dead-pathway fails) it MEETS the frozen ≥5/6 bar with dev also 5/6 = a **VERIFIED #1-capability GO** (honest
+  caveat: 1/12 seeds has a structural dead pathway, the Stage-2j target). NOT claimed until the parent run confirms.
 - **#3 Source monitoring** — NO real GO ever (v6/v9 calib GOs were instrument artifacts, RETRACTED). Instrument now
   FIXED; criterion satisfiable via pattern-overlap. ⭐ **Wall is at ENCODING not recall** (shared cells potentiated
   equally to all sources). NEXT = **competitive/heterosynaptic encoding / pattern separation**.
