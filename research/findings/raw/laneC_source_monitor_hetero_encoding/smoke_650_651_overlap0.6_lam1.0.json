@@ -1,0 +1,278 @@
+{
+  "runner": "research/runners/_laneC_source_monitor_hetero_encoding.py",
+  "mode": "calibration",
+  "seeds": [
+    650,
+    651
+  ],
+  "overlaps": [
+    0.6
+  ],
+  "lam_hetero": 1.0,
+  "theta_frac": 0.9,
+  "floor": 0.15,
+  "instrument": "v6 fixed (per-recall reset_dynamical_state) + hetero encoding",
+  "kernel": "sim.kernels.fused_htm_winner_inactive_depression (CA3 GO, by reference)",
+  "rows": [
+    {
+      "seed": 650,
+      "overlap_fraction": 0.6,
+      "lam_hetero": 1.0,
+      "theta_frac": 0.9,
+      "baseline_arm": {
+        "seed": 650,
+        "overlap_fraction": 0.6,
+        "lam_hetero": 0.0,
+        "theta_frac": 0.9,
+        "core_size": 7,
+        "weights_learned_l1": 68857.91641998291,
+        "weights_after_hetero_l1": 68857.91641998291,
+        "control_zero_weight_strict": false,
+        "hetero": {
+          "applied": false,
+          "depressed_synapses": 0
+        },
+        "commitment": {
+          "core_cells": 7,
+          "committed_counts": {
+            "seen": 2,
+            "heard": 4,
+            "self_generated": 1
+          },
+          "commitment_entropy_norm": 0.8699155297736259,
+          "n_sources_committed": 3
+        },
+        "margins_M": {
+          "seen": -0.1225,
+          "heard": 0.021666666666666667,
+          "self_generated": 0.016666666666666663
+        },
+        "margins_L": {
+          "seen": -0.0891666666666667,
+          "heard": 0.03,
+          "self_generated": -0.01749999999999996
+        },
+        "own_rate": {
+          "seen": 0.14416666666666667,
+          "heard": 0.2775,
+          "self_generated": 0.3
+        },
+        "min_margin_M": -0.1225,
+        "min_margin_L": -0.0891666666666667,
+        "min_own_rate": 0.14416666666666667,
+        "weakest_source_strictly_improved": false,
+        "weakest_source_by_L": "seen",
+        "weak_margin_attributable_to_competition": 0.27210884353741466,
+        "dominant_source_correct": {
+          "seen": false,
+          "heard": true,
+          "self_generated": true
+        },
+        "all_dominant_correct": false,
+        "clears_floor": false,
+        "elapsed_seconds": 0.584
+      },
+      "treatment_arm": {
+        "seed": 650,
+        "overlap_fraction": 0.6,
+        "lam_hetero": 1.0,
+        "theta_frac": 0.9,
+        "core_size": 7,
+        "weights_learned_l1": 68857.91641998291,
+        "weights_after_hetero_l1": 44366.24708557129,
+        "control_zero_weight_strict": false,
+        "hetero": {
+          "applied": true,
+          "learned_synapses": 6912,
+          "depressed_synapses": 768,
+          "protected_synapses": 456,
+          "theta_frac": 0.9
+        },
+        "commitment": {
+          "core_cells": 7,
+          "committed_counts": {
+            "seen": 2,
+            "heard": 4,
+            "self_generated": 1
+          },
+          "commitment_entropy_norm": 0.8699155297736259,
+          "n_sources_committed": 3
+        },
+        "margins_M": {
+          "seen": -0.09083333333333332,
+          "heard": 0.05916666666666667,
+          "self_generated": -0.0008333333333333526
+        },
+        "margins_L": {
+          "seen": -0.07583333333333334,
+          "heard": 0.06500000000000003,
+          "self_generated": -0.01416666666666666
+        },
+        "own_rate": {
+          "seen": 0.14833333333333334,
+          "heard": 0.29333333333333333,
+          "self_generated": 0.2975
+        },
+        "min_margin_M": -0.09083333333333332,
+        "min_margin_L": -0.07583333333333334,
+        "min_own_rate": 0.14833333333333334,
+        "weakest_source_strictly_improved": false,
+        "weakest_source_by_L": "seen",
+        "weak_margin_attributable_to_competition": 0.16513761467889895,
+        "dominant_source_correct": {
+          "seen": false,
+          "heard": true,
+          "self_generated": false
+        },
+        "all_dominant_correct": false,
+        "clears_floor": false,
+        "elapsed_seconds": 0.612
+      },
+      "anti_cheats": {
+        "a_lam0_byte_identical_to_nogo": true,
+        "b_zero_weight_control_strict_false": true,
+        "c_commitment_spans_three_sources": true,
+        "c_commitment_entropy_norm": 0.8699155297736259,
+        "d_reliability_preserved": false,
+        "d_no_own_rate_drop": false
+      },
+      "headline": {
+        "min_margin_M_treatment": -0.09083333333333332,
+        "min_margin_L_treatment": -0.07583333333333334,
+        "clears_floor_0.15": false,
+        "beats_lesion_arm": false,
+        "min_margin_M_baseline": -0.1225
+      }
+    },
+    {
+      "seed": 651,
+      "overlap_fraction": 0.6,
+      "lam_hetero": 1.0,
+      "theta_frac": 0.9,
+      "baseline_arm": {
+        "seed": 651,
+        "overlap_fraction": 0.6,
+        "lam_hetero": 0.0,
+        "theta_frac": 0.9,
+        "core_size": 7,
+        "weights_learned_l1": 64870.286293029785,
+        "weights_after_hetero_l1": 64870.286293029785,
+        "control_zero_weight_strict": false,
+        "hetero": {
+          "applied": false,
+          "depressed_synapses": 0
+        },
+        "commitment": {
+          "core_cells": 7,
+          "committed_counts": {
+            "seen": 2,
+            "heard": 5,
+            "self_generated": 0
+          },
+          "commitment_entropy_norm": 0.5445684476282007,
+          "n_sources_committed": 2
+        },
+        "margins_M": {
+          "seen": -0.08916666666666664,
+          "heard": 0.03666666666666668,
+          "self_generated": -0.11166666666666669
+        },
+        "margins_L": {
+          "seen": -0.06499999999999997,
+          "heard": 0.10499999999999998,
+          "self_generated": -0.13083333333333336
+        },
+        "own_rate": {
+          "seen": 0.1625,
+          "heard": 0.27666666666666667,
+          "self_generated": 0.15833333333333333
+        },
+        "min_margin_M": -0.11166666666666669,
+        "min_margin_L": -0.13083333333333336,
+        "min_own_rate": 0.15833333333333333,
+        "weakest_source_strictly_improved": true,
+        "weakest_source_by_L": "self_generated",
+        "weak_margin_attributable_to_competition": -0.17164179104477606,
+        "dominant_source_correct": {
+          "seen": false,
+          "heard": true,
+          "self_generated": false
+        },
+        "all_dominant_correct": false,
+        "clears_floor": false,
+        "elapsed_seconds": 0.571
+      },
+      "treatment_arm": {
+        "seed": 651,
+        "overlap_fraction": 0.6,
+        "lam_hetero": 1.0,
+        "theta_frac": 0.9,
+        "core_size": 7,
+        "weights_learned_l1": 64870.286293029785,
+        "weights_after_hetero_l1": 42531.7294883728,
+        "control_zero_weight_strict": false,
+        "hetero": {
+          "applied": true,
+          "learned_synapses": 6912,
+          "depressed_synapses": 816,
+          "protected_synapses": 408,
+          "theta_frac": 0.9
+        },
+        "commitment": {
+          "core_cells": 7,
+          "committed_counts": {
+            "seen": 2,
+            "heard": 5,
+            "self_generated": 0
+          },
+          "commitment_entropy_norm": 0.5445684476282007,
+          "n_sources_committed": 2
+        },
+        "margins_M": {
+          "seen": -0.05416666666666667,
+          "heard": 0.033333333333333354,
+          "self_generated": -0.12583333333333335
+        },
+        "margins_L": {
+          "seen": -0.09499999999999997,
+          "heard": 0.185,
+          "self_generated": -0.15749999999999997
+        },
+        "own_rate": {
+          "seen": 0.17666666666666667,
+          "heard": 0.265,
+          "self_generated": 0.14666666666666667
+        },
+        "min_margin_M": -0.12583333333333335,
+        "min_margin_L": -0.15749999999999997,
+        "min_own_rate": 0.14666666666666667,
+        "weakest_source_strictly_improved": true,
+        "weakest_source_by_L": "self_generated",
+        "weak_margin_attributable_to_competition": -0.25165562913907247,
+        "dominant_source_correct": {
+          "seen": false,
+          "heard": true,
+          "self_generated": false
+        },
+        "all_dominant_correct": false,
+        "clears_floor": false,
+        "elapsed_seconds": 0.57
+      },
+      "anti_cheats": {
+        "a_lam0_byte_identical_to_nogo": true,
+        "b_zero_weight_control_strict_false": true,
+        "c_commitment_spans_three_sources": false,
+        "c_commitment_entropy_norm": 0.5445684476282007,
+        "d_reliability_preserved": false,
+        "d_no_own_rate_drop": false
+      },
+      "headline": {
+        "min_margin_M_treatment": -0.12583333333333335,
+        "min_margin_L_treatment": -0.15749999999999997,
+        "clears_floor_0.15": false,
+        "beats_lesion_arm": true,
+        "min_margin_M_baseline": -0.11166666666666669
+      }
+    }
+  ]
+}

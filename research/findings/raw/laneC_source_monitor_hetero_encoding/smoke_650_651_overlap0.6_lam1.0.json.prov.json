@@ -1,0 +1,36 @@
+{
+ "run_id": "1786099677-744662",
+ "runner": "research/runners/_laneC_source_monitor_hetero_encoding.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a63d1ffece95f73e4/research/runners/_laneC_source_monitor_hetero_encoding.py",
+  "--seeds",
+  "650",
+  "651",
+  "--overlaps",
+  "0.6",
+  "--lam-hetero",
+  "1.0",
+  "--theta-frac",
+  "0.9",
+  "--out",
+  "research/findings/raw/laneC_source_monitor_hetero_encoding/smoke_650_651_overlap0.6_lam1.0.json"
+ ],
+ "git_sha": "ce2504fb7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T06:47:57",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/laneC_source_monitor_hetero_encoding/smoke_650_651_overlap0.6_lam1.0.json"
+}
