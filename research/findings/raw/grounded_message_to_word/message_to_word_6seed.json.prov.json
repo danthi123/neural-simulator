@@ -1,0 +1,25 @@
+{
+ "run_id": "1786130107-1041418",
+ "runner": "research/runners/_grounded_message_to_word_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8389afc508277387/research/runners/_grounded_message_to_word_derisk.py"
+ ],
+ "git_sha": "9631a3f83",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T15:15:07",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/grounded_message_to_word/message_to_word_6seed.json"
+}
