@@ -14,9 +14,16 @@
 # Bypass (deliberate, visible in the reflog):  git commit --no-verify
 set -uo pipefail
 ROOT=$(git rev-parse --show-toplevel); export ROOT
-[ -x "$ROOT/.venv/bin/python" ] || exit 0          # no venv (fresh clone / CI bootstrap) -> do not block
+COMMON=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 1
+CANONICAL=$(dirname "$COMMON")
+PY=${SIM_ENGINE_PYTHON:-$CANONICAL/.venv/bin/python}
+if [ ! -x "$PY" ]; then
+  echo "COMMIT BLOCKED: canonical engine interpreter missing: $PY"
+  echo "Run the repository environment setup before installing/enabling tools/githooks."
+  exit 1
+fi
 # GATE 1 -- document STRUCTURE (W1 retraction marking, W2 line length).
-"$ROOT/.venv/bin/python" "$ROOT/tools/check_docs.py" > /tmp/_precommit_docs.out 2>&1 || {
+"$PY" "$ROOT/tools/check_docs.py" > /tmp/_precommit_docs.out 2>&1 || {
   echo "⛔ COMMIT BLOCKED — document-structure rules failed:"
   sed 's/^/   /' /tmp/_precommit_docs.out | tail -20
   echo
@@ -37,7 +44,7 @@ ROOT=$(git rev-parse --show-toplevel); export ROOT
 # author can actually satisfy them; editing an old finding's status must not demand its rewrite.
 STAGED=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/findings/[^/]+\.md$' || true)
 if [ -n "$STAGED" ]; then
-  if ! echo "$STAGED" | xargs -r "$ROOT/.venv/bin/python" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
+  if ! echo "$STAGED" | xargs -r "$PY" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
     echo "⛔ COMMIT BLOCKED — a findings doc states measurements that are in no artifact it cites:"
     sed 's/^/   /' /tmp/_precommit_claims.out | tail -28
     echo
@@ -54,7 +61,7 @@ fi
 # field) after the gap#5 arc had run for weeks with laps=5, sweeping every OTHER axis. Nothing connected the
 # runner to the paper. The biology is STABLE -- it should be recorded once and checked, not re-researched.
 if [ -f "$ROOT/tools/biology_check.py" ]; then
-  if ! "$ROOT/.venv/bin/python" "$ROOT/tools/biology_check.py" > /tmp/_precommit_bio.out 2>&1; then
+  if ! "$PY" "$ROOT/tools/biology_check.py" > /tmp/_precommit_bio.out 2>&1; then
     echo "⛔ COMMIT BLOCKED — biology binding failed:"
     sed 's/^/   /' /tmp/_precommit_bio.out | tail -20
     echo
@@ -103,7 +110,7 @@ fi
 # relying on the staged list, so they keep checking the whole corpus -- which is where their 30 REAL hits
 # came from (the board citing a RETRACTED gap#3 GO with no marker).
 STAGED_ALL=$(git diff --cached --name-only --diff-filter=A || true)
-"$ROOT/.venv/bin/python" - "$STAGED_ALL" > /tmp/_precommit_gates.out 2>&1 <<'PY'
+"$PY" - "$STAGED_ALL" > /tmp/_precommit_gates.out 2>&1 <<'PY'
 import sys, os
 sys.path.insert(0, os.environ.get("ROOT") or os.getcwd())
 from tools.gates import run_all
