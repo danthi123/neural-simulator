@@ -15,7 +15,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-08 (READ FIRST — live resume point)
 
-> **⭐⭐⭐ STAGE-A CULMINATION (2026-08-08, `2ecebf67`, single-seed GO, adversarially verified; 6-seed running):
+> **⭐⭐⭐ STAGE-A CULMINATION (2026-08-08, `2ecebf67`, 6-seed 6/6 GO, adversarially verified):
 > the TRUE ONE BRAIN conversation loop RUNS.** All four Stage-A faculties + the no-confab moat are CO-RESIDENT on
 > ONE spiking bridge (20 region slices, one step loop — genuinely one bridge, confirmed clean by a skeptic) and
 > COMPOSE in a live 4-turn loop, one process: known-fact → honest grounded answer + affect-colored tone ("gladly
