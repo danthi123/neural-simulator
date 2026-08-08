@@ -1,0 +1,348 @@
+{
+  "runner": "research/runners/_stageA_full_integration_derisk.py",
+  "faculty": "Stage-A FULL single-bridge live integration -- TRUE ONE BRAIN conversation composer",
+  "design": "research/findings/2026-08-07-stageA-conversation-integration-DESIGN.md",
+  "backend": "numpy",
+  "seed": 43,
+  "verdict": "GO",
+  "verdict_earned_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "SINGLE-BRIDGE: composer + all faculties are slices of ONE bridge object",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT LIVE 475/475 under affect+curiosity (0 false-accepts, 0 manufactured)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FM4 LIVE: yoked affect cannot flip a below-assert honesty read -> assert (g_eff hard floor)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "NO-PIECE-BREAKS-ANOTHER: every pairwise interaction holds under co-residence",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "default-off byte-identity (faculty slices appended after the composer rf slice)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "shared 3-way arbiter winner-margin, contested regimes (intact vs inhibition-lesion), co-resident",
+      "ok": true,
+      "detail": "treatment=0.606218 control=0.0529101 |sep|=0.553308 > 0.1",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "FM4 g_eff-law vs naive-path abstain->assert flips (law must not flip; naive does)",
+      "ok": true,
+      "detail": "treatment=10 control=0 |sep|=10 > 1",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural on the co-resident bridge; OU toggled per affect window",
+      "why": "isolation of the fixed relays + organs; a property under this isolation"
+    }
+  ],
+  "anti_cheats": {
+    "a_single_bridge": true,
+    "b_composes_live": true,
+    "c_fm4_live": true,
+    "d_moat_live_475": true,
+    "e_no_piece_breaks_another": true,
+    "f_default_off_byte_identity": true
+  },
+  "single_bridge": {
+    "one_bridge_object": true,
+    "composer_merged_is_the_bridge": true,
+    "all_faculties_coresident": true,
+    "n_neurons": 24961,
+    "n_regions": 20,
+    "region_names": [
+      "rf",
+      "workspace",
+      "workspace_fs",
+      "meta_schema",
+      "self_schema",
+      "arb_volunteer",
+      "arb_ask",
+      "arb_silent",
+      "arb_fs",
+      "affect_vplus",
+      "affect_vminus",
+      "affect_arousal",
+      "inh_plus",
+      "inh_minus",
+      "recall_pos",
+      "recall_neg",
+      "speak_acc",
+      "silence_acc",
+      "wta_fs",
+      "cur_ask"
+    ],
+    "composer_class": "CoResidentOneBrainComposer"
+  },
+  "multi_turn_loop": {
+    "turns": [
+      {
+        "turn": 1,
+        "type": "known_fact",
+        "cue": [
+          "apple",
+          "big"
+        ],
+        "gold_patient": "cat",
+        "moat_answer": "cat",
+        "honesty_band": "assert",
+        "affect_v_color": 0.04775,
+        "affect_m_color": 0.10125,
+        "affect_v_state": 0.0762,
+        "tone": "gladly",
+        "curiosity_want_hz": 0.0,
+        "arbiter_winner": "arb_volunteer",
+        "arbiter_margin": 0.899159656007344,
+        "arbiter_rates": {
+          "arb_volunteer": 0.10865384615384616,
+          "arb_ask": 0.0,
+          "arb_silent": 0.0057692307692307696
+        },
+        "utterance": "gladly apple big cat ; also big, cat",
+        "moat_correct": true,
+        "composed_ok": true
+      },
+      {
+        "turn": 2,
+        "type": "novel_query",
+        "cue": [
+          "cat",
+          "east"
+        ],
+        "moat_answer": null,
+        "honesty_band": "MOAT",
+        "affect_v_color": 0.00175,
+        "affect_m_color": -0.023,
+        "affect_v_state": 0.0,
+        "curiosity_want_hz": 70.83333333333331,
+        "arbiter_winner": "arb_ask",
+        "arbiter_margin": 0.606217613313646,
+        "arbiter_rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.14903846153846154,
+          "arb_silent": 0.03653846153846154
+        },
+        "utterance": "what does cat east ?",
+        "asked_not_refused": true,
+        "moat_held": true,
+        "composed_ok": true
+      },
+      {
+        "turn": 3,
+        "type": "known_fact_mood_persists",
+        "cue": [
+          "cold",
+          "come"
+        ],
+        "gold_patient": "dog",
+        "moat_answer": "dog",
+        "honesty_band": "assert",
+        "affect_v_color": 0.04975,
+        "affect_m_color": 0.1,
+        "affect_v_state": 0.0762,
+        "tone": "gladly",
+        "curiosity_want_hz": 0.0,
+        "arbiter_winner": "arb_volunteer",
+        "arbiter_margin": 0.8387096703850158,
+        "arbiter_rates": {
+          "arb_volunteer": 0.10961538461538461,
+          "arb_ask": 0.0,
+          "arb_silent": 0.009615384615384616
+        },
+        "utterance": "gladly cold come dog ; also come, dog",
+        "moat_correct": true,
+        "composed_ok": true
+      },
+      {
+        "turn": 4,
+        "type": "novel_query",
+        "cue": [
+          "hot",
+          "north"
+        ],
+        "moat_answer": null,
+        "honesty_band": "MOAT",
+        "curiosity_want_hz": 70.83333333333331,
+        "arbiter_winner": "arb_ask",
+        "arbiter_margin": 0.606217613313646,
+        "arbiter_rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.14903846153846154,
+          "arb_silent": 0.03653846153846154
+        },
+        "utterance": "what does hot north ?",
+        "asked_not_refused": true,
+        "moat_held": true,
+        "composed_ok": true
+      }
+    ],
+    "affect_persists_across_turns": true,
+    "known_turns_honest_and_colored": true,
+    "novel_turns_curiosity_asks": true,
+    "moat_held_all_novel_turns": true,
+    "composes_live": true
+  },
+  "fm4_live": {
+    "yoked_affect_v_color": 0.0485,
+    "yoked_affect_m_color": 0.10075,
+    "assert_rate_threshold": 0.057475000000000005,
+    "hedge_rate_threshold": 0.054400000000000004,
+    "n_candidates_checked": 10,
+    "g_eff_law_abstain_to_assert_flips": 0,
+    "naive_path_abstain_to_assert_flips": 10,
+    "tone_miscolored_count": 10,
+    "fm4_holds": true
+  },
+  "arbiter_three_way": {
+    "intact": {
+      "novel_ask": {
+        "winner": "arb_ask",
+        "expected": "arb_ask",
+        "correct": true,
+        "margin": 0.606217613313646,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.14903846153846154,
+          "arb_silent": 0.03653846153846154
+        },
+        "contested": true
+      },
+      "forthcoming_volunteer": {
+        "winner": "arb_volunteer",
+        "expected": "arb_volunteer",
+        "correct": true,
+        "margin": 0.899159656007344,
+        "rates": {
+          "arb_volunteer": 0.10865384615384616,
+          "arb_ask": 0.0,
+          "arb_silent": 0.0057692307692307696
+        },
+        "contested": true
+      },
+      "reticent_silent": {
+        "winner": "arb_silent",
+        "expected": "arb_silent",
+        "correct": true,
+        "margin": 0.999999966451614,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.0,
+          "arb_silent": 0.02980769230769231
+        },
+        "contested": false
+      }
+    },
+    "lesioned": {
+      "novel_ask": {
+        "winner": "arb_ask",
+        "margin": 0.05291005276448024,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.19134615384615383,
+          "arb_silent": 0.17211538461538461
+        }
+      },
+      "forthcoming_volunteer": {
+        "winner": "arb_volunteer",
+        "margin": 0.021857923435157814,
+        "rates": {
+          "arb_volunteer": 0.1798076923076923,
+          "arb_ask": 0.0,
+          "arb_silent": 0.17211538461538461
+        }
+      },
+      "reticent_silent": {
+        "winner": "arb_silent",
+        "margin": 0.9999999941899441,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.0,
+          "arb_silent": 0.17211538461538461
+        }
+      }
+    },
+    "all_regimes_correct": true,
+    "distinct_winners_three": true,
+    "ask_pool_can_win": true,
+    "contested_regimes": [
+      "novel_ask",
+      "forthcoming_volunteer"
+    ],
+    "per_regime_margin_collapses_on_lesion": {
+      "novel_ask": true,
+      "forthcoming_volunteer": true,
+      "reticent_silent": false
+    },
+    "contention_collapses_on_lesion": true,
+    "intact_min_margin_contested": 0.606217613313646,
+    "lesion_max_margin_contested": 0.05291005276448024,
+    "arbitrates_three_way": true,
+    "margin_attributable_to_inhibition": 0.9127210236019561
+  },
+  "moat_live": {
+    "moat_stress_v_color": 0.048,
+    "moat_stress_m_color": 0.1015,
+    "hard_moat_checked": 475,
+    "hard_moat_abstains": 475,
+    "added_false_accepts": 0,
+    "colored_manufactured_answers": 0,
+    "moat_battery_target": 475,
+    "moat_preserved": true
+  },
+  "byte_identity": {
+    "n_composer_only": 24051,
+    "n_with_faculties": 24961,
+    "faculty_slices_appended_after_composer": true,
+    "composer_threshold_sha256": "186d46ae7891a44c68a2a434f18c7669508b6755a86cef1e6c5b1172daffb1a8",
+    "with_faculties_composer_indices_sha256": "186d46ae7891a44c68a2a434f18c7669508b6755a86cef1e6c5b1172daffb1a8",
+    "byte_identical": true
+  },
+  "no_piece_breaks_another": {
+    "pairwise": {
+      "affect_vs_honesty_fm4_holds": true,
+      "curiosity_vs_turntaking_one_winner": true,
+      "shared_arbiter_one_winner_per_turn": true,
+      "arbiter_contention_from_shared_inhibition": true,
+      "moat_intact_under_affect_and_curiosity": true,
+      "affect_coloring_alive_under_coresidence": true,
+      "curiosity_want_alive_under_coresidence": true,
+      "honesty_relay_graded_confidence_alive": true
+    },
+    "all_hold": true
+  },
+  "vram_feasibility": {
+    "backend": "numpy (CPU RAM)",
+    "n_neurons": 24961,
+    "note": "One co-resident bridge at ~24961 neurons on the numpy/CPU backend (RAM, not VRAM). The design flagged a VRAM ceiling for 4-5 co-resident slices on GPU; on numpy the ceiling is host RAM and this build is comfortably within it (the modular composer alone was ~28K neurons; the faculty slices add ~910)."
+  },
+  "honesty_source": "The LIVE honesty floor in the loop is the co-resident composer's on-bridge cue-match (moat abstain -> MOAT band; a cleared cue -> assert), composed under the g_eff LAW. The calibrated ACC/aPFC monitor (STEP 1) is co-resident as the workspace/meta/self relay and is exercised LIVE for FM4 + a graded self_schema confidence read on the shared substrate; porting its full calibrated-monitor routing (fit + _run_report) onto the shared slices is the remaining honesty consolidation step (STEP 1 runs it on its own modular bridges).",
+  "honest_scope": "Single-seed SMOKE of the FULL single-bridge live integration. ALL FOUR Stage-A faculties (honesty relay, 3-way arbiter, affect organ, curiosity ask) AND the CoResidentOneBrainComposer no-confab moat are region SLICES of ONE SimulationBridge object in ONE process (asserted: composer._merged IS the bridge; region count + names in single_bridge). The multi-turn loop reads affect/curiosity/arbiter off the shared cp_firing_states and composes honest+colored answers on known turns and curiosity wh-asks on novel turns; the moat holds LIVE 475/475 under a positive high-arousal mood. HONEST-NEGATIVES: (1) the loop honesty band uses the composer margin, not the full calibrated ACC/aPFC monitor routing (co-resident but run modularly in STEP 1); (2) host-fed appraisal + bistable-latch binary tone + host wh-frame/tone render (STEP-2/3 boundaries); (3) shared global cfg (het on, OU toggled per affect window) -- the no-piece-breaks-another check measures whether co-residence degraded any faculty. Parent runs the 6-seed sweep.",
+  "elapsed_seconds": 164.7
+}
