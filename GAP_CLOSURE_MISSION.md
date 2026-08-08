@@ -15,6 +15,28 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-07 (READ FIRST — live resume point)
 
+> **⭐⭐ OPEN-ENDED CONVERSATION ARC (2026-08-07, owner-directed; ULTRACODE orchestration) — the CURRENT FRONTIER.**
+> Owner steer: a sim-brain to talk to "reasonably fluently + open-ended, not just Q→A", grounded in
+> world-view/perception/emotion + the effects of speaking; and the 267M autoregressive WKV is a spiking-LLM
+> SCAFFOLD to retire, NOT the end state (the target is the brain's OWN emergent production).
+> **DEEP-RESEARCH MAP (banked):** `2026-08-07-open-ended-conversation-faculty-state-and-blockers-SCOPING.md`
+> (6-agent + pragmatics-dig) — the dominant blocker is INTEGRATION, not missing capability: most faculties are
+> 6-seed-GO as ISOLATED regions on toy bridges, unwired. Genuine unbuilt organs: grounded free generation, a
+> consequence-of-speaking/pragmatics layer + communicative-success reward, and a predictive forward model.
+> **STAGE-A BUILD (ultracode build→adversarial-verify workflows):**
+> `2026-08-07-stageA-conversation-integration-DESIGN.md` (7-seam integration contract on the
+> CoResidentOneBrainComposer merged bridge + 8 failure-modes; premortem caught the honesty-floor overclaim →
+> lead-with-the-crux). **FOUNDATION built + 6-seed:** substrate/moat-safety/RNG-isolation/3-way-arbiter = 6/6
+> SOLID (`781df020`); the honesty floor started 3/6, and after a strengthening pass the owner chose "close to
+> 6/6-SAFE first" → **DONE + adversarially verified (`76916f9f`): a conservative NON-PEEKING edge-margin guard
+> makes the floor 6/6-SAFE (never makes honesty worse; seed-43 regression eliminated).** HONEST: the monitor's
+> active confabulation-catch is only 1/6-robust (the guard exposed the "4/6" as test-draw luck) — the hard
+> no-confab MOAT (6/6) is the real prevention; the monitor is a thin-but-safe bonus, improvable via an
+> ensemble/richer-feature monitor. **NEXT (in flight): Stage-A Step 2 = affect-coloring** (the brain's own
+> emotion colors real speech, composed UNDER the 6/6-safe floor; FM4 = affect can never flip abstain→assert).
+> Then curiosity wh-emission, grounded free-gen (scaffold-labeled), interactive teacher-loop. Also open: whether
+> to strengthen the monitor's active-catch (ensemble) vs proceed — owner-steerable.
+>
 > **⭐ EMERGENCE-ENGINE ADVANCE (2026-08-07) — brain-native SPIKING word production (the north-star frontier).**
 > The referent word the brain communicates is no longer a host lookup. A gated local-Hebbian percept→word naming
 > map (zero-init, NO weight transport, true label NEVER on the inference read path) selects the word:
