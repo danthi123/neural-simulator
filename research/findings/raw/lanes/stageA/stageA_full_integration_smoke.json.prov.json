@@ -1,5 +1,5 @@
 {
- "run_id": "1786215545-1803550",
+ "run_id": "1786216725-1813464",
  "runner": "research/runners/_stageA_full_integration_derisk.py",
  "argv": [
   "/home/dant123/Projects/sim/.claude/worktrees/wf_82b1767f-e69-1/research/runners/_stageA_full_integration_derisk.py",
@@ -8,7 +8,7 @@
   "--out",
   "research/findings/raw/lanes/stageA/stageA_full_integration_smoke.json"
  ],
- "git_sha": "11bee820b",
+ "git_sha": "935ad0054",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -16,7 +16,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-08T14:59:05",
+ "started": "2026-08-08T15:18:45",
  "env": {
   "SIM_BACKEND": "numpy"
  },
