@@ -71,6 +71,18 @@ naming-map spike decode (WKV used only as a fixed articulatory alphabet); free-g
 free-generation runs — default-off, distinct "post-hoc-verify" label, a ledgered burn-down item; the teacher-loop
 corrects the brain's OWN producer and free-gen transcripts are distillation FUEL that GROWS it, then the scaffold retires.
 
+**⭐ REFINED (owner steer 2026-08-08):** the scaffold may exist EARLY as the fluency/ARTICULATION layer (the
+Broca-like "mouth", surface word-stringing — the part our record calls the genuine field wall) — NOT only as an
+offline teacher — PROVIDED it is gated, grounded, and CONDITIONED by the brain's own faculties upstream (the mind
+decides WHAT to say = world-model + reasoning, HOW it feels = affect, what it is FOR = pragmatics, what it REMEMBERS
+= episodic, WHETHER it knows = honesty/curiosity). The enemy is a HOLLOW experience (transformer = the mind,
+faculties = decoration), not the scaffold's existence. **Acceptance test is NOT "is there a transformer" but
+"are the faculties LOAD-BEARING on the user-facing experience?"** — lesion the world-model → content wrong; affect →
+tone flat; memory → forgets the conversation; honesty monitor → confabulates. Build so each faculty is provably
+load-bearing on what a real person experiences. End state still burns the articulation down to the brain's OWN
+emergent production (competitive-queuing grammar) grown via the teacher-loop. See memory
+`feedback_scaffold_ok_as_conditioned_articulation_if_faculties_load_bearing`.
+
 ## Open risks (declared)
 The five faculties have never co-run on one substrate (the whole design is an untested integration hypothesis);
 VRAM ceiling for 5 co-resident slices + the multi-turn buffer + e-prop; whether the aff_* append survives with no
