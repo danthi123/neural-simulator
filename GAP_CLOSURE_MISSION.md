@@ -100,9 +100,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > re-parse/tone render. **PHASE 3 NOW RUNNING (2 parallel workflows, owner said "best judgement, parallelize"):**
 > (A) advance+burn-down `wo9lqu3uj` — biologize A's world-model read-out (host ridge → spiking synaptic), B
 > neural-WTA + CA3 recurrent completion (+ fix the B 6-seed pool crash: --out produced no artifacts), D-Leg-2
-> value-amplification to convergence; (B) developmental TEACHER-LOOP `wqi7fqc6z` — the north-star breadth lever:
-> design + first de-risk of CLOSED-LOOP teaching (teacher corrects → brain acquires a new concept SYNAPTICALLY,
-> not host-injected → brain USES it in a later turn), vs today's one-way fact injection. Both disjoint
+> value-amplification to convergence; (B) developmental TEACHER-LOOP `wqi7fqc6z` DONE + banked (`7f48cbad`), adversarially CONFIRMED (PARTIAL) — THE
+> BREADTH SEED WORKS: the brain LEARNS a new fact ("dax eats grass") by its OWN plasticity (contingent teacher →
+> transport-free e-prop moves cp_connections.data), NOT a host store() — kb unchanged 2→2. before query→None,
+> after→"grass" on FRESH draws (held-out 1.00 vs 0.17), 6/6; learning-pathway lesion → not acquired (LEARNED not
+> WIRED); non-contingent → chance. HONEST PARTIAL (go_core=false): the learned-confidence moat LEAKS (untaught cues
+> also read "grass") → needs CONTRASTIVE teaching + a learned source-monitor; acquisition is shallow (readout-only);
+> in-loop "use" is a re-call, not yet a full mouth-turn. Today's Phase-5 "growth" was shown to be injection-dressed-
+> as-growth; this is the real synaptic acquisition. Next: contrastive teaching + learned moat, deeper acquisition,
+> full-loop use, brand-new lexeme allocation. Both disjoint
 > (faculties/renders vs develop-loop), worktree-isolated. Deferred (scaffold gold-plating): the generator-mouth
 > 6-seed is a GPU job on a scaffold slated for burn-down — skipped for now.
 > **B/D-Leg-2 next-mechanism searches DONE + banked (`0e27fea7`, task `wo62u9cjq`):** B episodic MOVED

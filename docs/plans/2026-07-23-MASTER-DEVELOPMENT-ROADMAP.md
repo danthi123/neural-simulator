@@ -435,6 +435,17 @@ faculty-load-bearing battery, biologize the two host renders (ridge decode → s
 token) + grow breadth (vocab/world) via the developmental teacher-loop (Stages 2→4). Off critical path: B's
 neural-WTA + CA3-completion sub-walls, D-Leg-2 value-amplification.**
 
+**2026-08-08 — DEVELOPMENTAL TEACHER-LOOP first de-risk (the breadth seed, adversarially CONFIRMED PARTIAL).** The
+crux for breadth: today's develop-loop "converse" (and Phase-5 "growth") is one-way host `store()` INJECTION. This
+closes the loop — a contingent teacher (host social-environment) corrects the brain's OWN spiking output and
+transport-free e-prop moves the brain's OWN synapses (`cp_connections.data`) toward it, NO `store()` (kb unchanged
+2→2): the brain LEARNS "dax eats grass" by plasticity (before query→None, after→"grass" on fresh draws, held-out
+1.00 vs 0.17, 6/6; learning-pathway lesion → not acquired = LEARNED-not-WIRED; non-contingent → chance). HONEST
+PARTIAL: the learned-confidence moat LEAKS (untaught cues also read "grass") → next = CONTRASTIVE teaching + a
+learned source-monitor; acquisition shallow (readout-only); in-loop use is a re-call not a full mouth-turn; lexeme
+allocation deferred (`2026-08-08-teacher-loop-corrective-acquisition-*-learned-moat-leaks-6seed.md`). This is the
+real synaptic acquisition engine that grows the toy world toward breadth.
+
 **2026-08-06 UPDATE — Gate B executed-action credit (continuous BG selector lineage).** Stage 1 (continuous
 center-surround selector) is a CONSTRUCTION GO. Stage 2 (global-DA three-factor reward credit on the D1 routes)
 is `STAGE2_NO_GO`: a single global dopamine scalar cannot do action-specific credit (D_contingent == D_yoked on
