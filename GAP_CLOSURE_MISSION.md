@@ -33,10 +33,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   articulation MOUTH, gated by the faculty-LOAD-BEARING lesion battery (the owner's steer), path-M's spiking
 >   moat kept as the post-hoc honesty gate. Adversarial verify stripped overclaims from A/B/D — the pattern
 >   earned its keep. Artifacts: task `wphw8m1y7` output + agent branches `worktree-wf_d3435fc2-5a3-*`.
-> **WAVE 2a RUNNING (task `w76nz2qqu`):** strengthen+re-verify A (implement the 3 controls) · build the path-T
-> conditioned-articulation generator (biggest fluency lever) · research-gated NEW-mechanism searches for B/C/D ·
-> synth = Wave-2b readiness. All research-only / worktree-isolated — NO bridge edits (integration is a later
-> SERIAL wave 2b/2c that re-runs the banked 6/6 regression after EACH bridge edit).
+> **WAVE 2a DONE (task `w76nz2qqu`, 8 agents, adversarially verified) — both critical-path pieces CONFIRMED:**
+> - **A forward-model = CONFIRMED + BANKED to main (`d8a731823`).** The REVISE is fixed (3 mechanism controls
+>   implemented as real code paths with teeth: additive 0.04 / conjunctive-ceiling 1.00 / separate 0.12); added a
+>   constituent-coverage guard to the held-out split (6-seed robustness); seed 42 reproduces 0.720 exactly. **A's
+>   6-seed sweep is RUNNING on the pool** (the crux that gates Wave-2b). Verifier re-ran byte-identical.
+> - **path-T generator = CONFIRMED sound, NO host-smuggling** (answer decoded from the RF phasor substrate, moat
+>   a real neural abstain, conditioning has teeth, multi-sentence genuinely generated, faculties LOAD-BEARING
+>   under lesion for world-model + honesty). HELD OFF-MAIN pending finding-hygiene fixes (vacuous A-sham,
+>   attribution + preconditions blocks, 6-seed) — safe on branch `worktree-wf_985f6d50-6bc-2`. Its integration is
+>   Wave-2c (gated after A + Wave-2b), so off-main is fine for now.
+> - **B/C/D = buildable-NOW new mechanisms found** (each genuinely different-in-kind from the failed method):
+>   B ride the CLOSED CA3 bistable attractor + neural WTA readout; C a staggered bistable LADDER (graded = count
+>   of latched sub-pools); D a real two-input neural coincidence detector read BACK to train the speaking policy.
+>   **NOW BUILDING (task `wznmfs9c2`, build→adversarial-verify, worktree-isolated, no bridge edits).**
 > **POOL HARDENING DONE — the culmination is 12/12 GO (robustness confirmed).** The 6 fresh seeds
 > (7/8/9/200/201/202) each returned verdict GO with EVERY safety gate true: hard moat 475/475 abstains, FM4
 > g_eff-law 0 abstain→assert flips (naive path 10 — teeth), affect persists across turns, curiosity asks on novel
@@ -45,11 +55,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > `research/findings/raw/lanes/stageA/stageA_full_integration_s{7,8,9,200,201,202}.json` (prov sidecars attached).
 > Pool now IDLE (honest gap); next pool job = A's 6-seed sweep, dispatched once Wave-2a delivers the fixed A
 > runner. dispatcher pid 1576 alive.
-> **NEXT (ordered):** (1) read Wave-2a result `w76nz2qqu` — strengthened-A verdict, path-T host-smuggling check,
-> which B/C/D mechanism is buildable-now; (2) dispatch A's 6-seed to the pool; (3) collect the integration
-> hardening sweep; (4) Wave 2b = integrate A (world-model→content seam) onto the bridge + re-run 6/6 regression;
-> (5) Wave 2c = path-T generator/render seam + #2 grounded free-gen; (6) capstone = faculty-load-bearing lesion
-> battery + teacher-loop. path-T proceeds per the owner's load-bearing-gate framework (conditionally authorized).
+> **NEXT (ordered):** (1) collect A's 6-seed from the pool — if GO, A is the validated world-model faculty; if a
+> seed misses, diagnose (the coverage guard makes it real, not a confound); (2) read the B/C/D build result
+> `wznmfs9c2` — which landed a genuine neural faculty vs an honest-negative (→ next-mechanism lead); (3) harden
+> path-T's finding (fix the vacuous A-sham → real A-scramble; add attribution + preconditions; 6-seed) then bank
+> it; (4) **Wave 2b** = re-run the 6/6 baseline, then integrate A (world-model→content seam) onto
+> `nav_conv_merged_bridge.py` under the 7-seam contract, re-run 6/6 regression (roll back if it drops); (5)
+> **Wave 2c** = integrate the path-T generator/render seam (moat post-hoc-gated) + #2 grounded free-gen; (6)
+> **capstone** = faculty-load-bearing lesion battery (real+sham, exclude the decorative dlPFC-ordering) +
+> teacher-loop. Rule: one seam per bridge edit, 6/6 regression after each, roll back any drop. path-T proceeds
+> per the owner's load-bearing-gate framework (conditionally authorized).
 
 > **⭐⭐⭐ STAGE-A CULMINATION (2026-08-08, `2ecebf67`, 6-seed 6/6 GO, adversarially verified):
 > the TRUE ONE BRAIN conversation loop RUNS.** All four Stage-A faculties + the no-confab moat are CO-RESIDENT on
