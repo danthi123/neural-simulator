@@ -406,12 +406,17 @@ GO, adversarially verified, brain-based, no `sim/` edit):
   scaffold flag: host-assigned labeled-line, convert to learned before integration). `2026-08-08-pragmatics-
   communicative-success-neural-coincidence-detector-leg1-6seed-GO.md`.
 
-Honest-negatives (each launches a next-mechanism search per the law, added to §7): **episodic cortical recall** —
-silent CA3->cortex readout (host argmax over an all-zero rate vector); surpass = an igniting spiking WTA readout
-(NMDA-plateau) + BTSP one-shot CA3 storage + ACh/theta recall-mode gating + DG pattern-separation
-(`2026-08-08-B-episodic-cortical-CA3-WTA-readout-NEGATIVE-*`). **reading the success signal back to TRAIN speaking**
-(pragmatics Leg-2) — WTA-readback no-go; surpass = success-as-neuromodulator three-factor DA-gated plasticity on the
-utterance pathway (`2026-08-08-pragmatics-readback-leg2-WTA-speaker-NEGATIVE-*`). A conditioned **path-T
+The two honest-negatives then had their next-mechanism searches RUN (task wo62u9cjq, banked): **episodic cortical
+recall MOVED PARTIAL-FORWARD** — a fan-in fix makes the cortical readout IGNITE (surpassing the Wave-1 total
+silence) with neural cued recall + real teeth (permute-cue->0, real-vs-sham lesion on CORTICAL firing not the
+CA3-overlap tautology, untrained->chance); a valid integration candidate PENDING a 6-seed confirm (now on the
+pool) — but two sub-walls stay OPEN: CA3 recurrent COMPLETION inert (feedforward heteroassoc, not completion) +
+neural-WTA selection inert (winner still host argmax); next = the gap#5 PVBC feedback-inhibition WTA + load-bearing
+CA3 recurrents (`2026-08-08-episodic-cortical-readout-IGNITION-*`). **reading the success signal back to TRAIN
+speaking (pragmatics Leg-2) RE-FAILED as an OPEN WALL** — a genuine new actor-critic attempt (learned intent->utter
+assembly + spiking value critic + yoked control, not a v1 WTA-readout re-run) still does not converge (trained
+0.444 vs 0.85; the learned value under-separates ~2-6% rate); provenance closed; next = value-amplification, a NEW
+method not a re-sweep (`2026-08-08-pragmatics-readback-leg2-v2-oracle-RESOLVED-convergence-NEGATIVE-*`). A conditioned **path-T
 articulation generator** (spiking-LLM as the Broca-like mouth) is CONFIRMED sound with faculties LOAD-BEARING under
 lesion (owner acceptance test); held off-main pending finding hygiene. **NEXT = Wave 2b: serial bridge-integration
 of the world-model + graded-affect seams onto the one loop (12/12 regression after each edit, roll back on drop),

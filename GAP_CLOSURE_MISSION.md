@@ -79,7 +79,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **NEXT = Wave 2b-part-2 (LIVE WIRING, RUNNING):** route a novel (s,a) turn through fm_reservoir (tighten g_eff +
 > certainty-tagged "predicted-not-observed" content) + drive the ladder from turn valence → graded tone; re-run
 > the regression with seams ON (moat/FM4 must hold); conversation-lesion battery (lesion A → novel turn changes;
-> lesion C → tone changes); fix the vacuous rf_w byte-identity check. (4) **B/D-Leg-2 searches RUNNING (`wo62u9cjq`)** —
+> lesion C → tone changes); fix the vacuous rf_w byte-identity check. (4) **B/D-Leg-2 next-mechanism searches DONE + banked (`0e27fea7`, task `wo62u9cjq`):** B episodic MOVED
+> PARTIAL-FORWARD — the cortical readout now IGNITES (fan-in fix), surpassing the Wave-1 total silence, with neural
+> cued recall + real teeth (permute-cue→0.0; real-vs-sham lesion on CORTICAL firing, not the CA3-overlap
+> tautology; untrained→chance). BUT single numpy SMOKE (backend label corrected), and 2 sub-walls stay OPEN:
+> CA3 recurrent COMPLETION inert (feedforward heteroassoc, not completion) + neural-WTA selection inert (winner
+> still host argmax). B's 6-seed sweep now on the POOL; next-mechanism = gap#5 PVBC feedback-inhibition WTA +
+> load-bearing CA3 recurrents. D-Leg-2 RE-FAILED (honest open wall) — a GENUINE new actor-critic attempt (learned
+> assembly + spiking value critic + yoked control, not a v1 re-run) but convergence NEGATIVE (trained 0.444 vs
+> 0.85; learned value under-separates ~2-6% rate); provenance CLOSED; next = value-amplification (a new method,
+> not a re-sweep). (4-legacy) B/D-Leg-2 searches were RUNNING (`wo62u9cjq`) —
 > B igniting spiking WTA readout + BTSP/ACh; D-Leg-2 success-as-neuromodulator three-factor plasticity (yoked
 > control); each folds in its debt-fix (B argmax mislabel, D-Leg-2 oracle provenance) + banks D-Leg-1/B findings;
 > (5) after Wave 2b: harden path-T's finding then Wave 2c (generator/render seam + #2 free-gen); (6) capstone =
