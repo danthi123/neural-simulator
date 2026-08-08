@@ -1,0 +1,34 @@
+{
+ "run_id": "1786147472-1209439",
+ "runner": "research/runners/_stageA_foundation_honesty_arbiter_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_fb471b70-a8f-1/research/runners/_stageA_foundation_honesty_arbiter_derisk.py",
+  "--seed",
+  "42",
+  "--n-trials",
+  "120",
+  "--moat-battery",
+  "475",
+  "--out",
+  "research/findings/raw/lanes/stageA/stageA_foundation_honesty_arbiter_s42.json"
+ ],
+ "git_sha": "fa5c5595e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T20:04:32",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1853.2,
+ "corpus_check_query": "route calibrated ACC aPFC metacog monitor into composer honesty floor certainty band and 3-way speak silence arbiter",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/stageA/stageA_foundation_honesty_arbiter_s42.json"
+}
