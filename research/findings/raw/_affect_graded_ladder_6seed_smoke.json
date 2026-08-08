@@ -1,0 +1,229 @@
+{
+  "seed": 42,
+  "checks": {
+    "staircase_spearman>=0.8": true,
+    "staircase_range>=0.05": true,
+    "staircase_distinct_levels>2": true,
+    "neutral_m0_count==0": true,
+    "single_pool_collapses(<=2 levels)": true,
+    "unstaggered_collapses(<=2 levels)": true,
+    "persistence_nmda_on>=0.5": true,
+    "persistence_nmda_off<0.1": true,
+    "read_lesion_real_collapses(range<0.2*intact)": true,
+    "sham_read_lesion_intact(range>=0.5*intact)": true,
+    "sham_recurrence_survives(ret>=0.5)": true,
+    "fm4_abstain_protected": true,
+    "arousal_gates_vigor": true
+  },
+  "staircase": {
+    "levels": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "held": [
+      0.006388888888888889,
+      0.03166666666666667,
+      0.050555555555555555,
+      0.06388888888888888,
+      0.07444444444444444
+    ],
+    "counts": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "spearman": 0.9999999999999999,
+    "range": 0.06805555555555555,
+    "n_distinct_counts": 5
+  },
+  "staircase_full": {
+    "levels": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "held": [
+      0.0,
+      0.006388888888888889,
+      0.03166666666666667,
+      0.050555555555555555,
+      0.06388888888888888,
+      0.07444444444444444
+    ],
+    "counts": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "spearman": 1.0,
+    "range": 0.07444444444444444,
+    "n_distinct_counts": 6
+  },
+  "baseline_single_pool": {
+    "levels": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "held": [
+      0.0,
+      0.0,
+      0.01611111111111111,
+      0.015833333333333335,
+      0.015833333333333335
+    ],
+    "counts": [
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    "spearman": 0.7,
+    "range": 0.01611111111111111,
+    "n_distinct_counts": 2
+  },
+  "baseline_unstaggered": {
+    "levels": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "held": [
+      0.0,
+      0.0,
+      0.0,
+      0.08527777777777777,
+      0.08388888888888889
+    ],
+    "counts": [
+      0,
+      0,
+      0,
+      6,
+      6
+    ],
+    "spearman": 0.8999999999999998,
+    "range": 0.08527777777777777,
+    "n_distinct_counts": 2
+  },
+  "persistence_on": {
+    "peak": 0.07027777777777777,
+    "ret": 0.07333333333333333,
+    "retention": 1.0434782608695654,
+    "k_peak": 5,
+    "k_ret": 5
+  },
+  "persistence_off": {
+    "peak": 0.0,
+    "ret": 0.0,
+    "retention": 0.0,
+    "k_peak": 0,
+    "k_ret": 0
+  },
+  "drift": {
+    "r_start": 0.049166666666666664,
+    "r_end": 0.050833333333333335,
+    "rel_drift": 0.03389830508474584
+  },
+  "read_lesion_real": {
+    "levels": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "held": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "counts": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "spearman": 0.9999999999999999,
+    "range": 0.0,
+    "n_distinct_counts": 5
+  },
+  "read_lesion_sham": {
+    "levels": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "held": [
+      0.006388888888888889,
+      0.03166666666666667,
+      0.050555555555555555,
+      0.06388888888888888,
+      0.07444444444444444
+    ],
+    "counts": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "spearman": 0.9999999999999999,
+    "range": 0.06805555555555555,
+    "n_distinct_counts": 5
+  },
+  "sham_recurrence": {
+    "peak": 0.07027777777777777,
+    "ret": 0.07333333333333333,
+    "retention": 1.0434782608695654
+  },
+  "honesty_fm4": {
+    "arousal_levels": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "abstain_speak_wins": [
+      false,
+      false,
+      false
+    ],
+    "assert_speak_wins": [
+      true,
+      true,
+      true
+    ],
+    "speak_rates_assert": [
+      0.036222222222222225,
+      0.042666666666666665,
+      0.049555555555555554
+    ],
+    "fm4_abstain_protected": true,
+    "arousal_gates_vigor": true
+  },
+  "read_path_attribution": 1.0,
+  "elapsed_seconds": 7.9,
+  "substrate_seeded": true,
+  "smoke_pass_single_seed": true
+}

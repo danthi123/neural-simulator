@@ -21,7 +21,33 @@ bodily self-model** (a Hebb/Oja forward model + neural reafference-cancellation
 agency comparator, a mirror-test correlate) GO on the self-schema lane; and
 Axon's CaP−CaD rule NO-GO (which validated our own SST-microcircuit). The gap#4
 deep-credit-on-spikes frontier is a mapped, deprioritized boundary (the tool
-alarm that implied otherwise was retired). The live, per-cycle resume point is
+alarm that implied otherwise was retired).
+
+**2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
+TRUE-ONE-BRAIN conversation loop (honesty + affect + curiosity + no-confab moat,
+co-resident on one spiking bridge) is now **12/12 GO** (hardened past the 6-seed
+bar). A faculty-de-risk sweep toward human-like fluency landed three new
+brain-based results, each adversarially verified: (1) a compositional
+**world-model / forward model** that SIMULATES novel (s,a)->s' rather than
+retrieving — held-out 0.873, 6/6 GO, and it scales (GO at n_pool 800) — the
+"missing cognitive organ"; (2) **graded affect** via a staggered bistable ladder
+(6/6 GO, monotonic quantized value — surpasses the bistable-latch boundary that
+capped Wave-1 affect-coloring); (3) a **neural communicative-success signal**
+(pragmatics Leg-1, 6/6 GO, a real coincidence AND). Two honest-negatives, each
+with a next-mechanism search queued (the law: a negative launches the next
+search): episodic cortical recall (silent readout — needs an igniting spiking
+WTA + BTSP one-shot storage + ACh recall-mode gating) and reading the success
+signal back to TRAIN speaking (pragmatics Leg-2 — needs success-as-
+neuromodulator three-factor plasticity). A conditioned **path-T articulation
+generator** (the spiking-LLM as the Broca-like mouth) is CONFIRMED sound with
+the faculties LOAD-BEARING under lesion (the owner's acceptance test). NEXT =
+serial bridge-integration of the world-model + graded-affect seams onto the one
+loop, re-running the 12/12 regression after each edit; then path-T; then the
+faculty-load-bearing lesion battery. Findings: `2026-08-08-forward-model-
+reservoir-*`, `2026-08-08-graded-affect-staggered-bistable-ladder-*`,
+`2026-08-08-pragmatics-*`, `2026-08-08-B-episodic-*-NEGATIVE-*`.
+
+The live, per-cycle resume point is
 `GAP_CLOSURE_MISSION.md`.
 
 ## Purpose

@@ -391,6 +391,33 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-08 UPDATE — OPEN-ENDED CONVERSATION arc (ultracode, owner-directed): the faculty-de-risk waves toward
+human-like fluency.** The TRUE-ONE-BRAIN loop (honesty + affect + curiosity + no-confab moat on one bridge) is
+**12/12 GO** (hardened). Wave-1 de-risked 5 fluency faculties (only the forward-model survived); Wave-2a's
+research-gated mechanism searches then recovered two of the three Wave-1 negatives. Faculties GAINED (each 6-seed
+GO, adversarially verified, brain-based, no `sim/` edit):
+- **world-model / forward model (§2.4/§2.6)** — a spiking-reservoir LOCAL-rule read-out SIMULATES novel (s,a)->s'
+  (held-out 0.873 vs retrieval 0.000, compositional every seed, GO at n_pool 400/600/800). The "missing cognitive
+  organ." `2026-08-08-forward-model-reservoir-simulates-not-retrieves-smoke-GO.md`.
+- **graded affect (§2.5)** — a staggered bistable LADDER holds a graded quantized value (6/6, monotonic rho=1.00,
+  unstaggered control collapses) — SURPASSES the P0.3 bistable-latch boundary. `2026-08-08-graded-affect-staggered-
+  bistable-ladder-6seed-GO.md`.
+- **pragmatic communicative-success signal (§2.7)** — a real two-input neural coincidence AND (Leg-1, 6/6 GO;
+  scaffold flag: host-assigned labeled-line, convert to learned before integration). `2026-08-08-pragmatics-
+  communicative-success-neural-coincidence-detector-leg1-6seed-GO.md`.
+
+Honest-negatives (each launches a next-mechanism search per the law, added to §7): **episodic cortical recall** —
+silent CA3->cortex readout (host argmax over an all-zero rate vector); surpass = an igniting spiking WTA readout
+(NMDA-plateau) + BTSP one-shot CA3 storage + ACh/theta recall-mode gating + DG pattern-separation
+(`2026-08-08-B-episodic-cortical-CA3-WTA-readout-NEGATIVE-*`). **reading the success signal back to TRAIN speaking**
+(pragmatics Leg-2) — WTA-readback no-go; surpass = success-as-neuromodulator three-factor DA-gated plasticity on the
+utterance pathway (`2026-08-08-pragmatics-readback-leg2-WTA-speaker-NEGATIVE-*`). A conditioned **path-T
+articulation generator** (spiking-LLM as the Broca-like mouth) is CONFIRMED sound with faculties LOAD-BEARING under
+lesion (owner acceptance test); held off-main pending finding hygiene. **NEXT = Wave 2b: serial bridge-integration
+of the world-model + graded-affect seams onto the one loop (12/12 regression after each edit, roll back on drop),
+then path-T (Wave 2c), then the faculty-load-bearing lesion battery; in parallel, the B + Leg-2 next-mechanism
+searches (off critical path).**
+
 **2026-08-06 UPDATE — Gate B executed-action credit (continuous BG selector lineage).** Stage 1 (continuous
 center-surround selector) is a CONSTRUCTION GO. Stage 2 (global-DA three-factor reward credit on the D1 routes)
 is `STAGE2_NO_GO`: a single global dopamine scalar cannot do action-specific credit (D_contingent == D_yoked on

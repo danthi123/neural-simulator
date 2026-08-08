@@ -1,0 +1,1573 @@
+{
+  "probe": "affect_graded_ladder (Wave-2a staggered bistable ladder)",
+  "verdict": "GO (6-seed) \u2014 GRADED AFFECT via a STAGGERED BISTABLE LADDER: appraisal magnitude is held as a drift-robust QUANTIZED staircase (the integer count of latched sub-pools), read NEURALLY as pos_readout population rate. Monotone Spearman rho=1.00 (range 0.065) across 5 appraisal levels, >2 distinct held levels; the single lumped pool (P0.3 latch) and the UNSTAGGERED ladder both collapse to <=2 plateaus. Persists after drive-off (retention 1.04 NMDA-on vs 0.00 NMDA-off; drift 0.04). Teeth: the affect_out read-path lesion collapses the staircase (range 0.000) while the matched decoy sham stays intact (0.065), and an unrelated recurrence lesion leaves the held value (1.04). Honesty floor holds: graded arousal never flips abstain->assert (FM4). HONEST: a QUANTIZED N+1-level code, NOT a smooth Russell continuum (Koulakov: robustness bought with resolution). numpy-CPU; NO sim/ edit.",
+  "GO": true,
+  "n_seeds_go": 6,
+  "aggregate_checks": {
+    "all_seeds_staircase_rho>=0.8": true,
+    "all_seeds_range>=0.05": true,
+    "all_seeds_distinct>2": true,
+    "all_seeds_single_pool<=2": true,
+    "all_seeds_unstaggered<=2": true,
+    "all_seeds_persist_on>=0.5": true,
+    "all_seeds_persist_off<0.1": true,
+    "all_seeds_read_lesion_collapses": true,
+    "all_seeds_sham_read_intact": true,
+    "all_seeds_sham_recur_survives": true,
+    "all_seeds_fm4_protected": true,
+    "all_seeds_arousal_vigor": true
+  },
+  "means": {
+    "staircase_spearman": 0.9999999999999999,
+    "staircase_range": 0.0649537037037037,
+    "persistence_on": 1.0354001173147322,
+    "persistence_off": 0.0,
+    "read_lesion_range": 0.0,
+    "sham_read_range": 0.0649537037037037,
+    "sham_recurrence_ret": 1.0354001173147322,
+    "drift_rel": 0.04415927567880273
+  },
+  "substrate_seeded": true,
+  "matched_sham_noop_frozen_controls": true,
+  "discriminating_pairs": {
+    "staircase_range_vs_read_lesion": [
+      0.0649537037037037,
+      0.0
+    ],
+    "persistence_on_vs_off": [
+      1.0354001173147322,
+      0.0
+    ]
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all_seeds_GO",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+      "note": "every seed passes the full battery"
+    },
+    {
+      "kind": "require",
+      "name": "staircase_monotone_rho>=0.8",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "staircase_range>=0.05",
+      "ok": true,
+      "detail": "measured=0.065 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "staircase_vs_single_pool_levels",
+      "ok": true,
+      "detail": "treatment=5.66667 control=2 |sep|=3.66667 > 1",
+      "note": "ladder grades to >2 levels; single lumped pool collapses to <=2"
+    },
+    {
+      "kind": "control",
+      "name": "staircase_vs_unstaggered_levels",
+      "ok": true,
+      "detail": "treatment=5.66667 control=2 |sep|=3.66667 > 1",
+      "note": "staggering is load-bearing; unstaggered collapses (intra-ladder collapse)"
+    },
+    {
+      "kind": "control",
+      "name": "persistence_nmda_on_vs_off",
+      "ok": true,
+      "detail": "treatment=1.0354 control=0 |sep|=1.0354 > 0.3",
+      "note": "the slow-NMDA latch, not the tonic bias"
+    },
+    {
+      "kind": "control",
+      "name": "read_lesion_real_vs_sham_range",
+      "ok": true,
+      "detail": "treatment=0.0649537 control=0 |sep|=0.0649537 > 0.0324769",
+      "note": "sham (decoy_out) intact, real collapses"
+    },
+    {
+      "kind": "require",
+      "name": "sham_recurrence_survives>=0.5",
+      "ok": true,
+      "detail": "measured=1.035 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+      "note": "unrelated recurrence lesion does NOT remove the held value (specificity)"
+    },
+    {
+      "kind": "require",
+      "name": "fm4_abstain_protected_all_seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "graded arousal never flips abstain->assert (honesty floor)"
+    }
+  ],
+  "verdict_decision": {
+    "label": "graded_affect_staggered_bistable_ladder",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "all_seeds_GO",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+        "note": "every seed passes the full battery"
+      },
+      {
+        "kind": "require",
+        "name": "staircase_monotone_rho>=0.8",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "staircase_range>=0.05",
+        "ok": true,
+        "detail": "measured=0.065 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "staircase_vs_single_pool_levels",
+        "ok": true,
+        "detail": "treatment=5.66667 control=2 |sep|=3.66667 > 1",
+        "note": "ladder grades to >2 levels; single lumped pool collapses to <=2"
+      },
+      {
+        "kind": "control",
+        "name": "staircase_vs_unstaggered_levels",
+        "ok": true,
+        "detail": "treatment=5.66667 control=2 |sep|=3.66667 > 1",
+        "note": "staggering is load-bearing; unstaggered collapses (intra-ladder collapse)"
+      },
+      {
+        "kind": "control",
+        "name": "persistence_nmda_on_vs_off",
+        "ok": true,
+        "detail": "treatment=1.0354 control=0 |sep|=1.0354 > 0.3",
+        "note": "the slow-NMDA latch, not the tonic bias"
+      },
+      {
+        "kind": "control",
+        "name": "read_lesion_real_vs_sham_range",
+        "ok": true,
+        "detail": "treatment=0.0649537 control=0 |sep|=0.0649537 > 0.0324769",
+        "note": "sham (decoy_out) intact, real collapses"
+      },
+      {
+        "kind": "require",
+        "name": "sham_recurrence_survives>=0.5",
+        "ok": true,
+        "detail": "measured=1.035 expect=<function main.<locals>.<lambda> at 0x7f0a70383e20>",
+        "note": "unrelated recurrence lesion does NOT remove the held value (specificity)"
+      },
+      {
+        "kind": "require",
+        "name": "fm4_abstain_protected_all_seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "graded arousal never flips abstain->assert (honesty floor)"
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "GO": true,
+      "checks": {
+        "staircase_spearman>=0.8": true,
+        "staircase_range>=0.05": true,
+        "staircase_distinct_levels>2": true,
+        "neutral_m0_count==0": true,
+        "single_pool_collapses(<=2 levels)": true,
+        "unstaggered_collapses(<=2 levels)": true,
+        "persistence_nmda_on>=0.5": true,
+        "persistence_nmda_off<0.1": true,
+        "read_lesion_real_collapses(range<0.2*intact)": true,
+        "sham_read_lesion_intact(range>=0.5*intact)": true,
+        "sham_recurrence_survives(ret>=0.5)": true,
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "staircase": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006388888888888889,
+          0.03166666666666667,
+          0.050555555555555555,
+          0.06388888888888888,
+          0.07444444444444444
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06805555555555555,
+        "n_distinct_counts": 5
+      },
+      "staircase_full": {
+        "levels": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.006388888888888889,
+          0.03166666666666667,
+          0.050555555555555555,
+          0.06388888888888888,
+          0.07444444444444444
+        ],
+        "counts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 1.0,
+        "range": 0.07444444444444444,
+        "n_distinct_counts": 6
+      },
+      "baseline_single_pool": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.01611111111111111,
+          0.015833333333333335,
+          0.015833333333333335
+        ],
+        "counts": [
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "spearman": 0.7,
+        "range": 0.01611111111111111,
+        "n_distinct_counts": 2
+      },
+      "baseline_unstaggered": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.08527777777777777,
+          0.08388888888888889
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "spearman": 0.8999999999999998,
+        "range": 0.08527777777777777,
+        "n_distinct_counts": 2
+      },
+      "persistence_on": {
+        "peak": 0.07027777777777777,
+        "ret": 0.07333333333333333,
+        "retention": 1.0434782608695654,
+        "k_peak": 5,
+        "k_ret": 5
+      },
+      "persistence_off": {
+        "peak": 0.0,
+        "ret": 0.0,
+        "retention": 0.0,
+        "k_peak": 0,
+        "k_ret": 0
+      },
+      "drift": {
+        "r_start": 0.049166666666666664,
+        "r_end": 0.050833333333333335,
+        "rel_drift": 0.03389830508474584
+      },
+      "read_lesion_real": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.0,
+        "n_distinct_counts": 5
+      },
+      "read_lesion_sham": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006388888888888889,
+          0.03166666666666667,
+          0.050555555555555555,
+          0.06388888888888888,
+          0.07444444444444444
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06805555555555555,
+        "n_distinct_counts": 5
+      },
+      "sham_recurrence": {
+        "peak": 0.07027777777777777,
+        "ret": 0.07333333333333333,
+        "retention": 1.0434782608695654
+      },
+      "honesty_fm4": {
+        "arousal_levels": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "abstain_speak_wins": [
+          false,
+          false,
+          false
+        ],
+        "assert_speak_wins": [
+          true,
+          true,
+          true
+        ],
+        "speak_rates_assert": [
+          0.036222222222222225,
+          0.042666666666666665,
+          0.049555555555555554
+        ],
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "read_path_attribution": 1.0,
+      "elapsed_seconds": 7.7
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "checks": {
+        "staircase_spearman>=0.8": true,
+        "staircase_range>=0.05": true,
+        "staircase_distinct_levels>2": true,
+        "neutral_m0_count==0": true,
+        "single_pool_collapses(<=2 levels)": true,
+        "unstaggered_collapses(<=2 levels)": true,
+        "persistence_nmda_on>=0.5": true,
+        "persistence_nmda_off<0.1": true,
+        "read_lesion_real_collapses(range<0.2*intact)": true,
+        "sham_read_lesion_intact(range>=0.5*intact)": true,
+        "sham_recurrence_survives(ret>=0.5)": true,
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "staircase": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006666666666666667,
+          0.030555555555555555,
+          0.04861111111111111,
+          0.06111111111111111,
+          0.06194444444444445
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.05527777777777778,
+        "n_distinct_counts": 4
+      },
+      "staircase_full": {
+        "levels": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.006666666666666667,
+          0.030555555555555555,
+          0.04861111111111111,
+          0.06111111111111111,
+          0.06194444444444445
+        ],
+        "counts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 1.0,
+        "range": 0.06194444444444445,
+        "n_distinct_counts": 5
+      },
+      "baseline_single_pool": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.014444444444444444,
+          0.014722222222222222,
+          0.013333333333333334
+        ],
+        "counts": [
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "spearman": 0.7,
+        "range": 0.014722222222222222,
+        "n_distinct_counts": 2
+      },
+      "baseline_unstaggered": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.08416666666666667,
+          0.08333333333333333
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "spearman": 0.8999999999999998,
+        "range": 0.08416666666666667,
+        "n_distinct_counts": 2
+      },
+      "persistence_on": {
+        "peak": 0.06416666666666666,
+        "ret": 0.06222222222222222,
+        "retention": 0.9696969696969697,
+        "k_peak": 4,
+        "k_ret": 4
+      },
+      "persistence_off": {
+        "peak": 0.0,
+        "ret": 0.0,
+        "retention": 0.0,
+        "k_peak": 0,
+        "k_ret": 0
+      },
+      "drift": {
+        "r_start": 0.04777777777777778,
+        "r_end": 0.04861111111111111,
+        "rel_drift": 0.017441860465116244
+      },
+      "read_lesion_real": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.0,
+        "n_distinct_counts": 4
+      },
+      "read_lesion_sham": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006666666666666667,
+          0.030555555555555555,
+          0.04861111111111111,
+          0.06111111111111111,
+          0.06194444444444445
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.05527777777777778,
+        "n_distinct_counts": 4
+      },
+      "sham_recurrence": {
+        "peak": 0.06416666666666666,
+        "ret": 0.06222222222222222,
+        "retention": 0.9696969696969697
+      },
+      "honesty_fm4": {
+        "arousal_levels": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "abstain_speak_wins": [
+          false,
+          false,
+          false
+        ],
+        "assert_speak_wins": [
+          true,
+          true,
+          true
+        ],
+        "speak_rates_assert": [
+          0.036,
+          0.041777777777777775,
+          0.04733333333333333
+        ],
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "read_path_attribution": 1.0,
+      "elapsed_seconds": 7.7
+    },
+    {
+      "seed": 44,
+      "GO": true,
+      "checks": {
+        "staircase_spearman>=0.8": true,
+        "staircase_range>=0.05": true,
+        "staircase_distinct_levels>2": true,
+        "neutral_m0_count==0": true,
+        "single_pool_collapses(<=2 levels)": true,
+        "unstaggered_collapses(<=2 levels)": true,
+        "persistence_nmda_on>=0.5": true,
+        "persistence_nmda_off<0.1": true,
+        "read_lesion_real_collapses(range<0.2*intact)": true,
+        "sham_read_lesion_intact(range>=0.5*intact)": true,
+        "sham_recurrence_survives(ret>=0.5)": true,
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "staircase": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.005555555555555556,
+          0.03305555555555555,
+          0.049444444444444444,
+          0.06416666666666666,
+          0.075
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06944444444444445,
+        "n_distinct_counts": 5
+      },
+      "staircase_full": {
+        "levels": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.005555555555555556,
+          0.03305555555555555,
+          0.049444444444444444,
+          0.06416666666666666,
+          0.075
+        ],
+        "counts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 1.0,
+        "range": 0.075,
+        "n_distinct_counts": 6
+      },
+      "baseline_single_pool": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.014444444444444444,
+          0.014722222222222222,
+          0.014166666666666666
+        ],
+        "counts": [
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "spearman": 0.7,
+        "range": 0.014722222222222222,
+        "n_distinct_counts": 2
+      },
+      "baseline_unstaggered": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.08444444444444445,
+          0.08527777777777777
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.08527777777777777,
+        "n_distinct_counts": 2
+      },
+      "persistence_on": {
+        "peak": 0.06916666666666667,
+        "ret": 0.07388888888888889,
+        "retention": 1.0682730923694779,
+        "k_peak": 5,
+        "k_ret": 5
+      },
+      "persistence_off": {
+        "peak": 0.0,
+        "ret": 0.0,
+        "retention": 0.0,
+        "k_peak": 0,
+        "k_ret": 0
+      },
+      "drift": {
+        "r_start": 0.04888888888888889,
+        "r_end": 0.04972222222222222,
+        "rel_drift": 0.017045454545454513
+      },
+      "read_lesion_real": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.0,
+        "n_distinct_counts": 5
+      },
+      "read_lesion_sham": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.005555555555555556,
+          0.03305555555555555,
+          0.049444444444444444,
+          0.06416666666666666,
+          0.075
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06944444444444445,
+        "n_distinct_counts": 5
+      },
+      "sham_recurrence": {
+        "peak": 0.06916666666666667,
+        "ret": 0.07388888888888889,
+        "retention": 1.0682730923694779
+      },
+      "honesty_fm4": {
+        "arousal_levels": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "abstain_speak_wins": [
+          false,
+          false,
+          false
+        ],
+        "assert_speak_wins": [
+          true,
+          true,
+          true
+        ],
+        "speak_rates_assert": [
+          0.034888888888888886,
+          0.042888888888888886,
+          0.04911111111111111
+        ],
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "read_path_attribution": 1.0,
+      "elapsed_seconds": 8.0
+    },
+    {
+      "seed": 100,
+      "GO": true,
+      "checks": {
+        "staircase_spearman>=0.8": true,
+        "staircase_range>=0.05": true,
+        "staircase_distinct_levels>2": true,
+        "neutral_m0_count==0": true,
+        "single_pool_collapses(<=2 levels)": true,
+        "unstaggered_collapses(<=2 levels)": true,
+        "persistence_nmda_on>=0.5": true,
+        "persistence_nmda_off<0.1": true,
+        "read_lesion_real_collapses(range<0.2*intact)": true,
+        "sham_read_lesion_intact(range>=0.5*intact)": true,
+        "sham_recurrence_survives(ret>=0.5)": true,
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "staircase": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006388888888888889,
+          0.03194444444444444,
+          0.04972222222222222,
+          0.06527777777777778,
+          0.07472222222222222
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06833333333333333,
+        "n_distinct_counts": 5
+      },
+      "staircase_full": {
+        "levels": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.006388888888888889,
+          0.03194444444444444,
+          0.04972222222222222,
+          0.06527777777777778,
+          0.07472222222222222
+        ],
+        "counts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 1.0,
+        "range": 0.07472222222222222,
+        "n_distinct_counts": 6
+      },
+      "baseline_single_pool": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.013333333333333334,
+          0.015277777777777777,
+          0.014166666666666666
+        ],
+        "counts": [
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "spearman": 0.8999999999999998,
+        "range": 0.015277777777777777,
+        "n_distinct_counts": 2
+      },
+      "baseline_unstaggered": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.08527777777777777,
+          0.08583333333333333
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.08583333333333333,
+        "n_distinct_counts": 2
+      },
+      "persistence_on": {
+        "peak": 0.07,
+        "ret": 0.07583333333333334,
+        "retention": 1.0833333333333333,
+        "k_peak": 5,
+        "k_ret": 5
+      },
+      "persistence_off": {
+        "peak": 0.0,
+        "ret": 0.0,
+        "retention": 0.0,
+        "k_peak": 0,
+        "k_ret": 0
+      },
+      "drift": {
+        "r_start": 0.04805555555555555,
+        "r_end": 0.050555555555555555,
+        "rel_drift": 0.05202312138728329
+      },
+      "read_lesion_real": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.0,
+        "n_distinct_counts": 5
+      },
+      "read_lesion_sham": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006388888888888889,
+          0.03194444444444444,
+          0.04972222222222222,
+          0.06527777777777778,
+          0.07472222222222222
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06833333333333333,
+        "n_distinct_counts": 5
+      },
+      "sham_recurrence": {
+        "peak": 0.07,
+        "ret": 0.07583333333333334,
+        "retention": 1.0833333333333333
+      },
+      "honesty_fm4": {
+        "arousal_levels": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "abstain_speak_wins": [
+          false,
+          false,
+          false
+        ],
+        "assert_speak_wins": [
+          true,
+          true,
+          true
+        ],
+        "speak_rates_assert": [
+          0.035555555555555556,
+          0.04133333333333333,
+          0.04911111111111111
+        ],
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "read_path_attribution": 1.0,
+      "elapsed_seconds": 7.7
+    },
+    {
+      "seed": 101,
+      "GO": true,
+      "checks": {
+        "staircase_spearman>=0.8": true,
+        "staircase_range>=0.05": true,
+        "staircase_distinct_levels>2": true,
+        "neutral_m0_count==0": true,
+        "single_pool_collapses(<=2 levels)": true,
+        "unstaggered_collapses(<=2 levels)": true,
+        "persistence_nmda_on>=0.5": true,
+        "persistence_nmda_off<0.1": true,
+        "read_lesion_real_collapses(range<0.2*intact)": true,
+        "sham_read_lesion_intact(range>=0.5*intact)": true,
+        "sham_recurrence_survives(ret>=0.5)": true,
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "staircase": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.003611111111111111,
+          0.03166666666666667,
+          0.05,
+          0.06388888888888888,
+          0.06388888888888888
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06027777777777777,
+        "n_distinct_counts": 4
+      },
+      "staircase_full": {
+        "levels": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.003611111111111111,
+          0.03166666666666667,
+          0.05,
+          0.06388888888888888,
+          0.06388888888888888
+        ],
+        "counts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 1.0,
+        "range": 0.06388888888888888,
+        "n_distinct_counts": 5
+      },
+      "baseline_single_pool": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.01361111111111111,
+          0.013333333333333334,
+          0.014166666666666666
+        ],
+        "counts": [
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "spearman": 0.8999999999999998,
+        "range": 0.014166666666666666,
+        "n_distinct_counts": 2
+      },
+      "baseline_unstaggered": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.085,
+          0.08472222222222223
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "spearman": 0.8999999999999998,
+        "range": 0.085,
+        "n_distinct_counts": 2
+      },
+      "persistence_on": {
+        "peak": 0.0636111111111111,
+        "ret": 0.0636111111111111,
+        "retention": 1.0,
+        "k_peak": 4,
+        "k_ret": 4
+      },
+      "persistence_off": {
+        "peak": 0.0,
+        "ret": 0.0,
+        "retention": 0.0,
+        "k_peak": 0,
+        "k_ret": 0
+      },
+      "drift": {
+        "r_start": 0.04777777777777778,
+        "r_end": 0.05138888888888889,
+        "rel_drift": 0.07558139534883711
+      },
+      "read_lesion_real": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.0,
+        "n_distinct_counts": 4
+      },
+      "read_lesion_sham": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.003611111111111111,
+          0.03166666666666667,
+          0.05,
+          0.06388888888888888,
+          0.06388888888888888
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06027777777777777,
+        "n_distinct_counts": 4
+      },
+      "sham_recurrence": {
+        "peak": 0.0636111111111111,
+        "ret": 0.0636111111111111,
+        "retention": 1.0
+      },
+      "honesty_fm4": {
+        "arousal_levels": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "abstain_speak_wins": [
+          false,
+          false,
+          false
+        ],
+        "assert_speak_wins": [
+          true,
+          true,
+          true
+        ],
+        "speak_rates_assert": [
+          0.03711111111111111,
+          0.042222222222222223,
+          0.050666666666666665
+        ],
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "read_path_attribution": 1.0,
+      "elapsed_seconds": 7.7
+    },
+    {
+      "seed": 102,
+      "GO": true,
+      "checks": {
+        "staircase_spearman>=0.8": true,
+        "staircase_range>=0.05": true,
+        "staircase_distinct_levels>2": true,
+        "neutral_m0_count==0": true,
+        "single_pool_collapses(<=2 levels)": true,
+        "unstaggered_collapses(<=2 levels)": true,
+        "persistence_nmda_on>=0.5": true,
+        "persistence_nmda_off<0.1": true,
+        "read_lesion_real_collapses(range<0.2*intact)": true,
+        "sham_read_lesion_intact(range>=0.5*intact)": true,
+        "sham_recurrence_survives(ret>=0.5)": true,
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "staircase": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006388888888888889,
+          0.0325,
+          0.04972222222222222,
+          0.06305555555555556,
+          0.07472222222222222
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06833333333333333,
+        "n_distinct_counts": 5
+      },
+      "staircase_full": {
+        "levels": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.006388888888888889,
+          0.0325,
+          0.04972222222222222,
+          0.06305555555555556,
+          0.07472222222222222
+        ],
+        "counts": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 1.0,
+        "range": 0.07472222222222222,
+        "n_distinct_counts": 6
+      },
+      "baseline_single_pool": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.015,
+          0.014722222222222222,
+          0.014444444444444444
+        ],
+        "counts": [
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "spearman": 0.6,
+        "range": 0.015,
+        "n_distinct_counts": 2
+      },
+      "baseline_unstaggered": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.08416666666666667,
+          0.08416666666666667
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          6,
+          6
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.08416666666666667,
+        "n_distinct_counts": 2
+      },
+      "persistence_on": {
+        "peak": 0.07,
+        "ret": 0.07333333333333333,
+        "retention": 1.0476190476190474,
+        "k_peak": 5,
+        "k_ret": 5
+      },
+      "persistence_off": {
+        "peak": 0.0,
+        "ret": 0.0,
+        "retention": 0.0,
+        "k_peak": 0,
+        "k_ret": 0
+      },
+      "drift": {
+        "r_start": 0.04833333333333333,
+        "r_end": 0.051666666666666666,
+        "rel_drift": 0.06896551724137932
+      },
+      "read_lesion_real": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.0,
+        "n_distinct_counts": 5
+      },
+      "read_lesion_sham": {
+        "levels": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.0
+        ],
+        "held": [
+          0.006388888888888889,
+          0.0325,
+          0.04972222222222222,
+          0.06305555555555556,
+          0.07472222222222222
+        ],
+        "counts": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spearman": 0.9999999999999999,
+        "range": 0.06833333333333333,
+        "n_distinct_counts": 5
+      },
+      "sham_recurrence": {
+        "peak": 0.07,
+        "ret": 0.07333333333333333,
+        "retention": 1.0476190476190474
+      },
+      "honesty_fm4": {
+        "arousal_levels": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "abstain_speak_wins": [
+          false,
+          false,
+          false
+        ],
+        "assert_speak_wins": [
+          true,
+          true,
+          true
+        ],
+        "speak_rates_assert": [
+          0.03688888888888889,
+          0.04377777777777778,
+          0.051111111111111114
+        ],
+        "fm4_abstain_protected": true,
+        "arousal_gates_vigor": true
+      },
+      "read_path_attribution": 1.0,
+      "elapsed_seconds": 8.1
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "N_LADDER": 6,
+    "N_SUB": 20,
+    "recur": 24.0,
+    "off_hi": 40.0,
+    "off_step": 42.0,
+    "gain_pA": 240.0,
+    "ramp_ms": 300,
+    "ou_pA": 8.0,
+    "drive_off_ms": 500,
+    "range_bar": 0.05
+  },
+  "mechanism": "N=6 self-recurrent slow-NMDA sub-pools per valence sign (affect_vplus/vminus_L1..L6), each latched by its OWN within-pool NMDA recurrence; staggered cell-autonomous intrinsic excitability offsets (BrainRegion.intrinsic_current_pA, descending; deepest kept above the holding floor) set per-rung recruitment thresholds; a UNIFORM diffuse appraisal broadcast (excitability_drive volume transmission, ramped) turns ON rungs 1..k(m); NO intra-sign lateral inhibition; Namburi-Tye opponent cross-inhibition only at the AGGREGATE (agg_plus/agg_minus); held value = number latched = pos_readout population rate through the affect_out gate. Koulakov 2002 robust discrete integrator. numpy CPU spiking Izhikevich bridge. NO sim/ edit (all additive attributes).",
+  "HONEST_NOTE": "QUANTIZED N+1-level staircase, NOT a smooth continuum (Koulakov robustness<->resolution trade-off). 'numpy' is the backend, a real spiking bridge, not a host shortcut. The held value is read as a downstream population FIRING RATE (neural), never a host count/argmax; the host-side latched-count is a diagnostic only. Appraisal is delivered as a graded RAMP (a synchronous step-onset over-ignites all ready rungs at once = the intra-ladder-collapse failure mode; the ramp recruits them sequentially per Koulakov).",
+  "elapsed_seconds": 47.2
+}
