@@ -1,0 +1,30 @@
+{
+ "run_id": "1786156398-1287863",
+ "runner": "research/runners/_stageA_step2_affect_coloring_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_c8e9574a-d81-1/research/runners/_stageA_step2_affect_coloring_derisk.py",
+  "--seed",
+  "42",
+  "--out",
+  "research/findings/raw/lanes/stageA/stageA_step2_affect_coloring_s42.json"
+ ],
+ "git_sha": "76916f9f2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-07T22:33:18",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1298.3,
+ "corpus_check_query": "affect-coloring of composer speech under honesty floor (forthcomingness + tone from spike-rate differentials)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/stageA/stageA_step2_affect_coloring_s42.json"
+}
