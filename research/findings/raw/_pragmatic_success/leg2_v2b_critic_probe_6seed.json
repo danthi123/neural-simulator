@@ -1,0 +1,327 @@
+{
+  "probe": "critic_value_separability",
+  "description": "v2b-trained (LOCALIZE_CREDIT + executed epsilon-greedy). Per intent: actor utterance-WTA winner vs learned critic value V(intent,u). critic_argmax_acc is a HOST-ARGMAX DIAGNOSTIC of value separability (NOT a neural readout, NOT a shippable choice) -- the ceiling a neural WTA over the critic value populations could reach.",
+  "chance": 0.3333333333333333,
+  "mean_actor_wta_acc": 0.5,
+  "mean_critic_argmax_acc": 0.5556,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "per_intent": {
+        "0": {
+          "aligned": 0,
+          "utter_rate": [
+            0.04278,
+            0.02889,
+            0.02944
+          ],
+          "critic_V": [
+            0.03333,
+            0.025,
+            0.02583
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 0
+        },
+        "1": {
+          "aligned": 1,
+          "utter_rate": [
+            0.03278,
+            0.03278,
+            0.03222
+          ],
+          "critic_V": [
+            0.04333,
+            0.05167,
+            0.04083
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 1
+        },
+        "2": {
+          "aligned": 2,
+          "utter_rate": [
+            0.02667,
+            0.02722,
+            0.03222
+          ],
+          "critic_V": [
+            0.02417,
+            0.02417,
+            0.0375
+          ],
+          "actor_wta": 2,
+          "critic_argmax": 2
+        }
+      },
+      "actor_wta_acc": 0.6666666666666666,
+      "critic_argmax_acc": 1.0,
+      "chance": 0.3333333333333333
+    },
+    "43": {
+      "seed": 43,
+      "per_intent": {
+        "0": {
+          "aligned": 0,
+          "utter_rate": [
+            0.03444,
+            0.035,
+            0.03667
+          ],
+          "critic_V": [
+            0.065,
+            0.06667,
+            0.06417
+          ],
+          "actor_wta": 2,
+          "critic_argmax": 1
+        },
+        "1": {
+          "aligned": 1,
+          "utter_rate": [
+            0.03444,
+            0.035,
+            0.03778
+          ],
+          "critic_V": [
+            0.05833,
+            0.06333,
+            0.05667
+          ],
+          "actor_wta": 2,
+          "critic_argmax": 1
+        },
+        "2": {
+          "aligned": 2,
+          "utter_rate": [
+            0.03333,
+            0.03333,
+            0.03222
+          ],
+          "critic_V": [
+            0.04583,
+            0.0475,
+            0.05083
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 2
+        }
+      },
+      "actor_wta_acc": 0.0,
+      "critic_argmax_acc": 0.6666666666666666,
+      "chance": 0.3333333333333333
+    },
+    "44": {
+      "seed": 44,
+      "per_intent": {
+        "0": {
+          "aligned": 0,
+          "utter_rate": [
+            0.03444,
+            0.03722,
+            0.03444
+          ],
+          "critic_V": [
+            0.05667,
+            0.05417,
+            0.0575
+          ],
+          "actor_wta": 1,
+          "critic_argmax": 2
+        },
+        "1": {
+          "aligned": 1,
+          "utter_rate": [
+            0.03722,
+            0.03278,
+            0.03222
+          ],
+          "critic_V": [
+            0.04833,
+            0.05833,
+            0.06
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 2
+        },
+        "2": {
+          "aligned": 2,
+          "utter_rate": [
+            0.03222,
+            0.03222,
+            0.03278
+          ],
+          "critic_V": [
+            0.035,
+            0.035,
+            0.04083
+          ],
+          "actor_wta": 2,
+          "critic_argmax": 2
+        }
+      },
+      "actor_wta_acc": 0.3333333333333333,
+      "critic_argmax_acc": 0.3333333333333333,
+      "chance": 0.3333333333333333
+    },
+    "100": {
+      "seed": 100,
+      "per_intent": {
+        "0": {
+          "aligned": 0,
+          "utter_rate": [
+            0.03333,
+            0.03333,
+            0.03278
+          ],
+          "critic_V": [
+            0.04333,
+            0.04083,
+            0.0475
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 2
+        },
+        "1": {
+          "aligned": 1,
+          "utter_rate": [
+            0.03056,
+            0.03667,
+            0.03167
+          ],
+          "critic_V": [
+            0.05,
+            0.04167,
+            0.04333
+          ],
+          "actor_wta": 1,
+          "critic_argmax": 0
+        },
+        "2": {
+          "aligned": 2,
+          "utter_rate": [
+            0.03333,
+            0.03333,
+            0.03389
+          ],
+          "critic_V": [
+            0.05167,
+            0.04667,
+            0.05
+          ],
+          "actor_wta": 2,
+          "critic_argmax": 0
+        }
+      },
+      "actor_wta_acc": 1.0,
+      "critic_argmax_acc": 0.0,
+      "chance": 0.3333333333333333
+    },
+    "101": {
+      "seed": 101,
+      "per_intent": {
+        "0": {
+          "aligned": 0,
+          "utter_rate": [
+            0.04111,
+            0.03111,
+            0.03167
+          ],
+          "critic_V": [
+            0.0425,
+            0.05167,
+            0.05583
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 2
+        },
+        "1": {
+          "aligned": 1,
+          "utter_rate": [
+            0.02611,
+            0.03722,
+            0.02889
+          ],
+          "critic_V": [
+            0.02667,
+            0.0325,
+            0.0175
+          ],
+          "actor_wta": 1,
+          "critic_argmax": 1
+        },
+        "2": {
+          "aligned": 2,
+          "utter_rate": [
+            0.03444,
+            0.03333,
+            0.03333
+          ],
+          "critic_V": [
+            0.0425,
+            0.05,
+            0.05083
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 2
+        }
+      },
+      "actor_wta_acc": 0.6666666666666666,
+      "critic_argmax_acc": 0.6666666666666666,
+      "chance": 0.3333333333333333
+    },
+    "102": {
+      "seed": 102,
+      "per_intent": {
+        "0": {
+          "aligned": 0,
+          "utter_rate": [
+            0.03333,
+            0.03333,
+            0.03278
+          ],
+          "critic_V": [
+            0.045,
+            0.045,
+            0.04333
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 0
+        },
+        "1": {
+          "aligned": 1,
+          "utter_rate": [
+            0.04056,
+            0.03444,
+            0.03556
+          ],
+          "critic_V": [
+            0.06333,
+            0.065,
+            0.06583
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 2
+        },
+        "2": {
+          "aligned": 2,
+          "utter_rate": [
+            0.045,
+            0.03556,
+            0.03611
+          ],
+          "critic_V": [
+            0.06083,
+            0.065,
+            0.06833
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 2
+        }
+      },
+      "actor_wta_acc": 0.3333333333333333,
+      "critic_argmax_acc": 0.6666666666666666,
+      "chance": 0.3333333333333333
+    }
+  }
+}

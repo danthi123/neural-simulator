@@ -1,0 +1,128 @@
+{
+  "runner": "_pragmatic_success_readback_leg2_derisk",
+  "leg": "LEG 2 -- coincidence-success DA trains a neural WTA speaker",
+  "faculty": "D pragmatics: the neural communicative-success coincidence rate read BACK as group-scoped DA to learn the intent->utterance mapping (WTA over a LEARNED assembly).",
+  "builds_on": "2026-08-08-pragmatics-communicative-success-neural-coincidence-detector-leg1-6seed-GO",
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "chance": 0.3333333333333333,
+  "verdict": "UNDEFINED",
+  "n_go": 0,
+  "n_seeds": 1,
+  "thresholds": {
+    "trained": 0.85,
+    "untrained_max": 0.55,
+    "yoked_max": 0.55,
+    "trained_minus_yoked": 0.3
+  },
+  "plasticity_off": false,
+  "fallback_if_negative": "spiking value-critic baseline (declared; still no sim/ edit)",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "trained choice acc vs chance 1/K",
+      "ok": false,
+      "detail": "0.333333 vs floor 0.333333",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "trained choice acc >= 0.85",
+      "ok": false,
+      "detail": "measured=0.3333333333333333 expect=<function build_summary.<locals>.<lambda> at 0x7f12fd7376a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "UNTRAINED choice ~chance (the mapping is LEARNED, not wired)",
+      "ok": true,
+      "detail": "measured=0.3333333333333333 expect=<function build_summary.<locals>.<lambda> at 0x7f12fd7376a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "YOKED (DA decoupled from choice) does NOT learn the mapping",
+      "ok": true,
+      "detail": "measured=0.3333333333333333 expect=<function build_summary.<locals>.<lambda> at 0x7f12fd7376a0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "trained vs YOKED (the gain is contingent DA, not DA magnitude)",
+      "ok": false,
+      "detail": "treatment=0.333333 control=0.333333 |sep|=0 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "trained vs UNTRAINED (the gain is learning)",
+      "ok": false,
+      "detail": "treatment=0.333333 control=0.333333 |sep|=0 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all seeds GO",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA",
+      "why": "only the reward-modulated three-factor rule learns (on intent->utterance); the coincidence evaluator + WTA inhibition are frozen."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)",
+    "unmet: trained choice acc vs chance 1/K (0.333333 vs floor 0.333333)",
+    "unmet: trained choice acc >= 0.85 (measured=0.3333333333333333 expect=<function build_summary.<locals>.<lambda> at 0x7f12fd7376a0>)",
+    "unmet: trained vs YOKED (the gain is contingent DA, not DA magnitude) (treatment=0.333333 control=0.333333 |sep|=0 > 0)",
+    "unmet: trained vs UNTRAINED (the gain is learning) (treatment=0.333333 control=0.333333 |sep|=0 > 0)",
+    "unmet: all seeds GO (measured=False expect=True)"
+  ],
+  "aggregate": {
+    "mean_trained_acc": 0.3333333333333333,
+    "mean_untrained_acc": 0.3333333333333333,
+    "mean_yoked_acc": 0.3333333333333333
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "yoked": false,
+      "aligned_utt": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "untrained_choice": {
+        "0": 2,
+        "1": 2,
+        "2": 2
+      },
+      "trained_choice": {
+        "0": 2,
+        "1": 2,
+        "2": 2
+      },
+      "untrained_choice_acc": 0.3333333333333333,
+      "trained_choice_acc": 0.3333333333333333,
+      "n_train": 120,
+      "chance": 0.3333333333333333,
+      "elapsed_seconds": 11.3,
+      "yoked_choice_acc": 0.3333333333333333,
+      "go": false
+    }
+  ],
+  "honest_scope": "Leg 2 trains the speaker with the Leg-1 neural coincidence success as reinforcement. The CHOICE is a neural WTA over the utterance population (read as the spoken utterance = the body acting on motor output); the RSA listener posterior is the environment's response. The DA is coincidence-CONTINGENT (RPE = success - baseline, with a negative arm). GO requires the trained WTA to beat BOTH the untrained control and the yoked control. If the yoked/convergence teeth fail, the declared fallback is a spiking value-critic. NOT a claim of understanding another mind; numpy-CPU; NO sim/ edit."
+}

@@ -1,0 +1,313 @@
+{
+  "runner": "_pragmatic_success_readback_leg2_v2_derisk",
+  "leg": "LEG 2 v2 -- weight-controllable graded WTA + spiking value-critic; coincidence-success DA trains a neural speaker",
+  "faculty": "D pragmatics: the neural communicative-success coincidence rate read BACK as group-scoped DA to learn the intent->utterance mapping (WTA over a LEARNED assembly), with an action-conditioned spiking value-critic baseline.",
+  "builds_on": "2026-08-08-pragmatics-readback-leg2-WTA-speaker-NEGATIVE-value-critic-fallback (v1 NEGATIVE; this is its declared fallback)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "chance": 0.3333333333333333,
+  "verdict": "UNDEFINED",
+  "n_go": 0,
+  "n_seeds": 6,
+  "thresholds": {
+    "oracle": 0.85,
+    "trained": 0.85,
+    "untrained_max": 0.55,
+    "yoked_max": 0.55,
+    "trained_minus_yoked": 0.3
+  },
+  "plasticity_off": false,
+  "readout_operating_point": {
+    "UTT_FS_W": 4.0,
+    "FS_UTT_W": 4.0,
+    "UTT_DRIVE_PA": 0.0,
+    "W_ORACLE": 8.0,
+    "SETTLE_MS": 60,
+    "READ_UTT": 30
+  },
+  "fallback_if_negative": "per-(intent,utterance) value population read as a graded softmax-over-V choice (no FS soft-WTA); still no sim/ edit",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ORACLE-WEIGHT readout is weight-controllable on ALL seeds (precondition; v1 scored 0.167)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "trained choice acc vs chance 1/K",
+      "ok": true,
+      "detail": "0.444444 vs floor 0.333333",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "trained choice acc >= 0.85",
+      "ok": false,
+      "detail": "measured=0.4444444444444444 expect=<function build_summary.<locals>.<lambda> at 0x7f11eff3fd80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "UNTRAINED choice ~chance (the mapping is LEARNED, not wired)",
+      "ok": true,
+      "detail": "measured=0.2222222222222222 expect=<function build_summary.<locals>.<lambda> at 0x7f11eff3fd80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "YOKED (DA decoupled from choice) does NOT learn the mapping",
+      "ok": true,
+      "detail": "measured=0.16666666666666666 expect=<function build_summary.<locals>.<lambda> at 0x7f11eff3fd80>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "trained vs YOKED (the gain is contingent DA, not DA magnitude)",
+      "ok": true,
+      "detail": "treatment=0.444444 control=0.166667 |sep|=0.277778 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "trained vs UNTRAINED (the gain is learning)",
+      "ok": true,
+      "detail": "treatment=0.444444 control=0.222222 |sep|=0.222222 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all seeds GO",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA",
+      "why": "only the reward-modulated three-factor rule learns (actor intent->utter + critic intent->crit); the coincidence evaluator + FS competition are frozen."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: trained choice acc >= 0.85 (measured=0.4444444444444444 expect=<function build_summary.<locals>.<lambda> at 0x7f11eff3fd80>)",
+    "unmet: all seeds GO (measured=False expect=True)"
+  ],
+  "aggregate": {
+    "n_oracle_precondition_met": 6,
+    "all_oracle_precondition_met": true,
+    "mean_trained_acc": 0.4444444444444444,
+    "mean_untrained_acc": 0.2222222222222222,
+    "mean_yoked_acc": 0.16666666666666666
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "yoked": false,
+      "aligned_utt": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "untrained_choice": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "trained_choice": {
+        "0": 0,
+        "1": 0,
+        "2": 2
+      },
+      "untrained_choice_acc": 0.3333333333333333,
+      "trained_choice_acc": 0.6666666666666666,
+      "n_train": 360,
+      "chance": 0.3333333333333333,
+      "elapsed_seconds": 57.6,
+      "yoked_choice_acc": 0.0,
+      "oracle_choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "go": false,
+      "oracle_precondition_met": true
+    },
+    {
+      "seed": 43,
+      "yoked": false,
+      "aligned_utt": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "untrained_choice": {
+        "0": 0,
+        "1": 2,
+        "2": 1
+      },
+      "trained_choice": {
+        "0": 2,
+        "1": 2,
+        "2": 2
+      },
+      "untrained_choice_acc": 0.3333333333333333,
+      "trained_choice_acc": 0.3333333333333333,
+      "n_train": 360,
+      "chance": 0.3333333333333333,
+      "elapsed_seconds": 57.0,
+      "yoked_choice_acc": 0.3333333333333333,
+      "oracle_choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "go": false,
+      "oracle_precondition_met": true
+    },
+    {
+      "seed": 44,
+      "yoked": false,
+      "aligned_utt": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "untrained_choice": {
+        "0": 1,
+        "1": 1,
+        "2": 1
+      },
+      "trained_choice": {
+        "0": 2,
+        "1": 2,
+        "2": 2
+      },
+      "untrained_choice_acc": 0.3333333333333333,
+      "trained_choice_acc": 0.3333333333333333,
+      "n_train": 360,
+      "chance": 0.3333333333333333,
+      "elapsed_seconds": 72.0,
+      "yoked_choice_acc": 0.0,
+      "oracle_choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "go": false,
+      "oracle_precondition_met": true
+    },
+    {
+      "seed": 100,
+      "yoked": false,
+      "aligned_utt": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "untrained_choice": {
+        "0": 1,
+        "1": 0,
+        "2": 0
+      },
+      "trained_choice": {
+        "0": 1,
+        "1": 1,
+        "2": 1
+      },
+      "untrained_choice_acc": 0.0,
+      "trained_choice_acc": 0.3333333333333333,
+      "n_train": 360,
+      "chance": 0.3333333333333333,
+      "elapsed_seconds": 60.0,
+      "yoked_choice_acc": 0.3333333333333333,
+      "oracle_choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "go": false,
+      "oracle_precondition_met": true
+    },
+    {
+      "seed": 101,
+      "yoked": false,
+      "aligned_utt": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "untrained_choice": {
+        "0": 2,
+        "1": 2,
+        "2": 2
+      },
+      "trained_choice": {
+        "0": 0,
+        "1": 1,
+        "2": 0
+      },
+      "untrained_choice_acc": 0.3333333333333333,
+      "trained_choice_acc": 0.6666666666666666,
+      "n_train": 360,
+      "chance": 0.3333333333333333,
+      "elapsed_seconds": 68.1,
+      "yoked_choice_acc": 0.0,
+      "oracle_choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "go": false,
+      "oracle_precondition_met": true
+    },
+    {
+      "seed": 102,
+      "yoked": false,
+      "aligned_utt": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "untrained_choice": {
+        "0": 2,
+        "1": 0,
+        "2": 0
+      },
+      "trained_choice": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "untrained_choice_acc": 0.0,
+      "trained_choice_acc": 0.3333333333333333,
+      "n_train": 360,
+      "chance": 0.3333333333333333,
+      "elapsed_seconds": 68.7,
+      "yoked_choice_acc": 0.3333333333333333,
+      "oracle_choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "go": false,
+      "oracle_precondition_met": true
+    }
+  ],
+  "honest_scope": "Leg 2 v2 trains the speaker with the Leg-1 neural coincidence success as reinforcement, fixing the v1 negative's two named blockers: (1) a GRADED FS competition whose winner tracks the afferent weight (oracle-weight acceptance gate, committed code), (2) a spiking action-conditioned value-critic so RPE = success - V(intent,utterance) stays contingent. The CHOICE is a neural WTA over the utterance population (the spoken utterance = the body acting on motor output); the RSA listener posterior is the environment's response. GO requires the trained WTA to beat BOTH the untrained and the yoked control AND the oracle gate to pass. numpy-CPU; NO sim/ edit."
+}

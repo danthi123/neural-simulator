@@ -1,0 +1,164 @@
+{
+  "runner": "_pragmatic_success_coincidence_derisk",
+  "leg": "LEG 1 -- two-input coincidence success detector (belief x intent)",
+  "faculty": "D pragmatics: communicative SUCCESS as a neural two-input coincidence detector (<belief,intent> by multiplicative dendritic-plateau coincidence), read out as the teaching signal for speaking. FUNCTIONAL correlate only.",
+  "biology": "research/biology/dendritic-plateau-coincidence-burst.md (Larkum distal+proximal conjunction -> plateau -> burst; Poirazi-Brannon-Mel 2003 two-layer subunit). The AND is the engine-native enable_coincidence_detection plateau (additive/default-off; NO sim/ edit).",
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "chance": 0.5,
+  "verdict": "UNDEFINED",
+  "n_go": 1,
+  "n_seeds": 1,
+  "moat_intact": true,
+  "plasticity_off": true,
+  "thresholds": {
+    "auc_coincidence": 0.85,
+    "auc_linear_sham_max": 0.62,
+    "auc_shuffled_k_max": 0.65,
+    "auc_real_lesion_max": 0.65,
+    "auc_sham_lesion": 0.8,
+    "speaker_top1": 0.85
+  },
+  "characterization_not_gated": {
+    "speaker_readback_top1_acc_mean": 1.0,
+    "speaker_readback_top1_per_seed": {
+      "42": 1.0
+    },
+    "note": "REPORTED, NOT gated: for each intent, does success rank the RSA-aligned utterance top? 5/6 seeds = 1.000; seed 100 = 0.667 (a heterogeneity-adverse seed where two RSA posteriors are near-degenerate for one intent). This previews Leg 2's read-back-to-speaking; the actual NEURAL speaker CHOICE (WTA over a LEARNED assembly) is Leg 2, so this is a characterization of the teaching signal, not part of the decisive Leg-1 gate."
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "coincidence AUC vs chance 0.5",
+      "ok": true,
+      "detail": "0.969136 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "coincidence AUC >= 0.85 (aligned success > misaligned)",
+      "ok": true,
+      "detail": "measured=0.9691358024691358 expect=<function build_summary.<locals>.<lambda> at 0x7fe742f3ab60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LINEAR-SHAM at matched total input CANNOT separate (AUC ~ chance)",
+      "ok": true,
+      "detail": "measured=0.18518518518518517 expect=<function build_summary.<locals>.<lambda> at 0x7fe742f3ab60>",
+      "note": "a linear read of belief+intent gives f(bel)+f(int), identical whether the mass overlaps or not"
+    },
+    {
+      "kind": "require",
+      "name": "SHUFFLED-K topography collapses the separation",
+      "ok": true,
+      "detail": "measured=0.30864197530864196 expect=<function build_summary.<locals>.<lambda> at 0x7fe742f3ab60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "REAL lesion (silence success column) collapses the separation",
+      "ok": true,
+      "detail": "measured=0.5 expect=<function build_summary.<locals>.<lambda> at 0x7fe742f3ab60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MATCHED SHAM lesion (silence equal-size unrelated decoy) does NOT collapse it",
+      "ok": true,
+      "detail": "measured=0.9691358024691358 expect=<function build_summary.<locals>.<lambda> at 0x7fe742f3ab60>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "coincidence AND vs LINEAR-SHAM (the separation is the nonlinearity)",
+      "ok": true,
+      "detail": "treatment=0.969136 control=0.185185 |sep|=0.783951 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "intact vs REAL lesion (the signal is the success column)",
+      "ok": true,
+      "detail": "treatment=0.969136 control=0.5 |sep|=0.469136 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "REAL lesion vs MATCHED SHAM lesion (the flip is specific, not any-lesion)",
+      "ok": true,
+      "detail": "treatment=0.969136 control=0.5 |sep|=0.469136 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all seeds GO (decisive core: coincidence AUC + four teeth)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/reward/OU/NMDA",
+      "why": "Leg 1 reads a FIXED structural coincidence column at its operating point; nothing learns (learning is Leg 2). No engram => the anti-cheats are structural (linear-sham/shuffled-k/lesion), not an untrained-engram arm."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)"
+  ],
+  "aggregate": {
+    "mean_auc_coincidence": 0.9691358024691358,
+    "mean_auc_linear_sham": 0.18518518518518517,
+    "mean_auc_shuffled_k": 0.30864197530864196,
+    "mean_auc_real_lesion": 0.5,
+    "mean_auc_sham_lesion": 0.9691358024691358,
+    "mean_sep_coincidence": 0.050231481481481495,
+    "mean_sep_linear_sham": -0.007777777777777779,
+    "mean_aligned_real_lesion": 0.0,
+    "mean_aligned_sham_lesion": 0.09032407407407408,
+    "mean_speaker_top1": 1.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "plasticity_off": true,
+      "n_aligned": 9,
+      "n_misaligned": 18,
+      "n_rsa_beliefs": 5,
+      "rsa_belief_labels": [
+        "L0[none]",
+        "L0[some]",
+        "L0[all]",
+        "L1[none]",
+        "L1[some]"
+      ],
+      "auc_coincidence": 0.9691358024691358,
+      "auc_linear_sham": 0.18518518518518517,
+      "auc_shuffled_k": 0.30864197530864196,
+      "auc_real_lesion": 0.5,
+      "auc_sham_lesion": 0.9691358024691358,
+      "sep_coincidence": 0.050231481481481495,
+      "sep_linear_sham": -0.007777777777777779,
+      "aligned_mean_coincidence": 0.09032407407407408,
+      "misaligned_mean_coincidence": 0.04009259259259259,
+      "aligned_mean_linear_sham": 0.034444444444444444,
+      "misaligned_mean_linear_sham": 0.042222222222222223,
+      "aligned_mean_real_lesion": 0.0,
+      "aligned_mean_sham_lesion": 0.09032407407407408,
+      "speaker_readback_top1_acc": 1.0,
+      "elapsed_seconds": 1.7,
+      "go": true
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL communicative-success correlate. success = Sum_k rate(success[k]) is a population-rate READ-OUT; the MULTIPLY belief x intent is done by the coincidence plateau kernel, not the host -- there is NO host index-multiply and NO host argmax in the success computation. Belief is the RSA listener posterior (legitimate social input). The coincidence AND separates aligned from misaligned communicative outcomes (AUC>=0.85) and collapses under the LINEAR-SHAM (matched total input, AUC~chance), the SHUFFLED-K topography, and a REAL lesion of the success column, while surviving a MATCHED SHAM lesion of an equal-size unrelated pool. success ranks the aligned utterance top per intent (a correct teaching signal for speaking). Turning that signal into a NEURAL speaker CHOICE via DA-gated three-factor learning over a LEARNED assembly is LEG 2. NOT a claim of understanding another mind. numpy-CPU on real spiking Izhikevich bridges; NO sim/ edit (reuse-by-import of the RSA social environment + the GNW wash-out machinery)."
+}

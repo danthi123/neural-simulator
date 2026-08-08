@@ -1,0 +1,322 @@
+{
+  "runner": "_pragmatic_success_coincidence_derisk",
+  "leg": "LEG 1 -- two-input coincidence success detector (belief x intent)",
+  "faculty": "D pragmatics: communicative SUCCESS as a neural two-input coincidence detector (<belief,intent> by multiplicative dendritic-plateau coincidence), read out as the teaching signal for speaking. FUNCTIONAL correlate only.",
+  "biology": "research/biology/dendritic-plateau-coincidence-burst.md (Larkum distal+proximal conjunction -> plateau -> burst; Poirazi-Brannon-Mel 2003 two-layer subunit). The AND is the engine-native enable_coincidence_detection plateau (additive/default-off; NO sim/ edit).",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "chance": 0.5,
+  "verdict": "GO",
+  "n_go": 6,
+  "n_seeds": 6,
+  "moat_intact": true,
+  "plasticity_off": true,
+  "thresholds": {
+    "auc_coincidence": 0.85,
+    "auc_linear_sham_max": 0.62,
+    "auc_shuffled_k_max": 0.65,
+    "auc_real_lesion_max": 0.65,
+    "auc_sham_lesion": 0.8,
+    "speaker_top1": 0.85
+  },
+  "characterization_not_gated": {
+    "speaker_readback_top1_acc_mean": 0.9444444444444443,
+    "speaker_readback_top1_per_seed": {
+      "42": 1.0,
+      "43": 1.0,
+      "44": 1.0,
+      "100": 0.6666666666666666,
+      "101": 1.0,
+      "102": 1.0
+    },
+    "note": "REPORTED, NOT gated: for each intent, does success rank the RSA-aligned utterance top? 5/6 seeds = 1.000; seed 100 = 0.667 (a heterogeneity-adverse seed where two RSA posteriors are near-degenerate for one intent). This previews Leg 2's read-back-to-speaking; the actual NEURAL speaker CHOICE (WTA over a LEARNED assembly) is Leg 2, so this is a characterization of the teaching signal, not part of the decisive Leg-1 gate."
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "coincidence AUC vs chance 0.5",
+      "ok": true,
+      "detail": "0.968963 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "coincidence AUC >= 0.85 (aligned success > misaligned)",
+      "ok": true,
+      "detail": "measured=0.9689625850340136 expect=<function build_summary.<locals>.<lambda> at 0x7f95c2f2eb60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LINEAR-SHAM at matched total input CANNOT separate (AUC ~ chance)",
+      "ok": true,
+      "detail": "measured=0.25616496598639454 expect=<function build_summary.<locals>.<lambda> at 0x7f95c2f2eb60>",
+      "note": "a linear read of belief+intent gives f(bel)+f(int), identical whether the mass overlaps or not"
+    },
+    {
+      "kind": "require",
+      "name": "SHUFFLED-K topography collapses the separation",
+      "ok": true,
+      "detail": "measured=0.2997448979591837 expect=<function build_summary.<locals>.<lambda> at 0x7f95c2f2eb60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "REAL lesion (silence success column) collapses the separation",
+      "ok": true,
+      "detail": "measured=0.5 expect=<function build_summary.<locals>.<lambda> at 0x7f95c2f2eb60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MATCHED SHAM lesion (silence equal-size unrelated decoy) does NOT collapse it",
+      "ok": true,
+      "detail": "measured=0.9689625850340136 expect=<function build_summary.<locals>.<lambda> at 0x7f95c2f2eb60>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "coincidence AND vs LINEAR-SHAM (the separation is the nonlinearity)",
+      "ok": true,
+      "detail": "treatment=0.968963 control=0.256165 |sep|=0.712798 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "intact vs REAL lesion (the signal is the success column)",
+      "ok": true,
+      "detail": "treatment=0.968963 control=0.5 |sep|=0.468963 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "REAL lesion vs MATCHED SHAM lesion (the flip is specific, not any-lesion)",
+      "ok": true,
+      "detail": "treatment=0.968963 control=0.5 |sep|=0.468963 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all seeds GO (decisive core: coincidence AUC + four teeth)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/reward/OU/NMDA",
+      "why": "Leg 1 reads a FIXED structural coincidence column at its operating point; nothing learns (learning is Leg 2). No engram => the anti-cheats are structural (linear-sham/shuffled-k/lesion), not an untrained-engram arm."
+    }
+  ],
+  "undefined_reasons": [],
+  "aggregate": {
+    "mean_auc_coincidence": 0.9689625850340136,
+    "mean_auc_linear_sham": 0.25616496598639454,
+    "mean_auc_shuffled_k": 0.2997448979591837,
+    "mean_auc_real_lesion": 0.5,
+    "mean_auc_sham_lesion": 0.9689625850340136,
+    "mean_sep_coincidence": 0.04982886904761905,
+    "mean_sep_linear_sham": -0.00734871031746032,
+    "mean_aligned_real_lesion": 0.0,
+    "mean_aligned_sham_lesion": 0.09094246031746032,
+    "mean_speaker_top1": 0.9444444444444443
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "plasticity_off": true,
+      "n_aligned": 14,
+      "n_misaligned": 28,
+      "n_rsa_beliefs": 5,
+      "rsa_belief_labels": [
+        "L0[none]",
+        "L0[some]",
+        "L0[all]",
+        "L1[none]",
+        "L1[some]"
+      ],
+      "auc_coincidence": 0.9872448979591837,
+      "auc_linear_sham": 0.26785714285714285,
+      "auc_shuffled_k": 0.3112244897959184,
+      "auc_real_lesion": 0.5,
+      "auc_sham_lesion": 0.9872448979591837,
+      "sep_coincidence": 0.05020833333333334,
+      "sep_linear_sham": -0.0065773809523809595,
+      "aligned_mean_coincidence": 0.08750000000000001,
+      "misaligned_mean_coincidence": 0.03729166666666667,
+      "aligned_mean_linear_sham": 0.03800595238095238,
+      "misaligned_mean_linear_sham": 0.04458333333333334,
+      "aligned_mean_real_lesion": 0.0,
+      "aligned_mean_sham_lesion": 0.08750000000000001,
+      "speaker_readback_top1_acc": 1.0,
+      "elapsed_seconds": 2.4,
+      "go": true
+    },
+    {
+      "seed": 43,
+      "plasticity_off": true,
+      "n_aligned": 14,
+      "n_misaligned": 28,
+      "n_rsa_beliefs": 5,
+      "rsa_belief_labels": [
+        "L0[none]",
+        "L0[some]",
+        "L0[all]",
+        "L1[none]",
+        "L1[some]"
+      ],
+      "auc_coincidence": 0.9387755102040817,
+      "auc_linear_sham": 0.25510204081632654,
+      "auc_shuffled_k": 0.288265306122449,
+      "auc_real_lesion": 0.5,
+      "auc_sham_lesion": 0.9387755102040817,
+      "sep_coincidence": 0.046011904761904775,
+      "sep_linear_sham": -0.006860119047619059,
+      "aligned_mean_coincidence": 0.09122023809523812,
+      "misaligned_mean_coincidence": 0.04520833333333334,
+      "aligned_mean_linear_sham": 0.03970238095238095,
+      "misaligned_mean_linear_sham": 0.04656250000000001,
+      "aligned_mean_real_lesion": 0.0,
+      "aligned_mean_sham_lesion": 0.09122023809523812,
+      "speaker_readback_top1_acc": 1.0,
+      "elapsed_seconds": 2.3,
+      "go": true
+    },
+    {
+      "seed": 44,
+      "plasticity_off": true,
+      "n_aligned": 14,
+      "n_misaligned": 28,
+      "n_rsa_beliefs": 5,
+      "rsa_belief_labels": [
+        "L0[none]",
+        "L0[some]",
+        "L0[all]",
+        "L1[none]",
+        "L1[some]"
+      ],
+      "auc_coincidence": 1.0,
+      "auc_linear_sham": 0.23214285714285715,
+      "auc_shuffled_k": 0.30739795918367346,
+      "auc_real_lesion": 0.5,
+      "auc_sham_lesion": 1.0,
+      "sep_coincidence": 0.049345238095238116,
+      "sep_linear_sham": -0.007470238095238092,
+      "aligned_mean_coincidence": 0.09535714285714288,
+      "misaligned_mean_coincidence": 0.04601190476190476,
+      "aligned_mean_linear_sham": 0.039642857142857146,
+      "misaligned_mean_linear_sham": 0.04711309523809524,
+      "aligned_mean_real_lesion": 0.0,
+      "aligned_mean_sham_lesion": 0.09535714285714288,
+      "speaker_readback_top1_acc": 1.0,
+      "elapsed_seconds": 2.3,
+      "go": true
+    },
+    {
+      "seed": 100,
+      "plasticity_off": true,
+      "n_aligned": 14,
+      "n_misaligned": 28,
+      "n_rsa_beliefs": 5,
+      "rsa_belief_labels": [
+        "L0[none]",
+        "L0[some]",
+        "L0[all]",
+        "L1[none]",
+        "L1[some]"
+      ],
+      "auc_coincidence": 0.9311224489795918,
+      "auc_linear_sham": 0.26658163265306123,
+      "auc_shuffled_k": 0.3125,
+      "auc_real_lesion": 0.5,
+      "auc_sham_lesion": 0.9311224489795918,
+      "sep_coincidence": 0.05071428571428572,
+      "sep_linear_sham": -0.007395833333333338,
+      "aligned_mean_coincidence": 0.09014880952380952,
+      "misaligned_mean_coincidence": 0.0394345238095238,
+      "aligned_mean_linear_sham": 0.04074404761904762,
+      "misaligned_mean_linear_sham": 0.048139880952380955,
+      "aligned_mean_real_lesion": 0.0,
+      "aligned_mean_sham_lesion": 0.09014880952380952,
+      "speaker_readback_top1_acc": 0.6666666666666666,
+      "elapsed_seconds": 2.4,
+      "go": true
+    },
+    {
+      "seed": 101,
+      "plasticity_off": true,
+      "n_aligned": 14,
+      "n_misaligned": 28,
+      "n_rsa_beliefs": 5,
+      "rsa_belief_labels": [
+        "L0[none]",
+        "L0[some]",
+        "L0[all]",
+        "L1[none]",
+        "L1[some]"
+      ],
+      "auc_coincidence": 0.9566326530612245,
+      "auc_linear_sham": 0.26785714285714285,
+      "auc_shuffled_k": 0.30357142857142855,
+      "auc_real_lesion": 0.5,
+      "auc_sham_lesion": 0.9566326530612245,
+      "sep_coincidence": 0.04430059523809525,
+      "sep_linear_sham": -0.007336309523809509,
+      "aligned_mean_coincidence": 0.0899702380952381,
+      "misaligned_mean_coincidence": 0.04566964285714285,
+      "aligned_mean_linear_sham": 0.038125000000000006,
+      "misaligned_mean_linear_sham": 0.045461309523809515,
+      "aligned_mean_real_lesion": 0.0,
+      "aligned_mean_sham_lesion": 0.0899702380952381,
+      "speaker_readback_top1_acc": 1.0,
+      "elapsed_seconds": 2.4,
+      "go": true
+    },
+    {
+      "seed": 102,
+      "plasticity_off": true,
+      "n_aligned": 14,
+      "n_misaligned": 28,
+      "n_rsa_beliefs": 5,
+      "rsa_belief_labels": [
+        "L0[none]",
+        "L0[some]",
+        "L0[all]",
+        "L1[none]",
+        "L1[some]"
+      ],
+      "auc_coincidence": 1.0,
+      "auc_linear_sham": 0.24744897959183673,
+      "auc_shuffled_k": 0.2755102040816326,
+      "auc_real_lesion": 0.5,
+      "auc_sham_lesion": 1.0,
+      "sep_coincidence": 0.05839285714285714,
+      "sep_linear_sham": -0.008452380952380961,
+      "aligned_mean_coincidence": 0.09145833333333334,
+      "misaligned_mean_coincidence": 0.033065476190476194,
+      "aligned_mean_linear_sham": 0.04220238095238095,
+      "misaligned_mean_linear_sham": 0.05065476190476191,
+      "aligned_mean_real_lesion": 0.0,
+      "aligned_mean_sham_lesion": 0.09145833333333334,
+      "speaker_readback_top1_acc": 1.0,
+      "elapsed_seconds": 2.4,
+      "go": true
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL communicative-success correlate. success = Sum_k rate(success[k]) is a population-rate READ-OUT; the MULTIPLY belief x intent is done by the coincidence plateau kernel, not the host -- there is NO host index-multiply and NO host argmax in the success computation. Belief is the RSA listener posterior (legitimate social input). The coincidence AND separates aligned from misaligned communicative outcomes (AUC>=0.85) and collapses under the LINEAR-SHAM (matched total input, AUC~chance), the SHUFFLED-K topography, and a REAL lesion of the success column, while surviving a MATCHED SHAM lesion of an equal-size unrelated pool. success ranks the aligned utterance top per intent (a correct teaching signal for speaking). Turning that signal into a NEURAL speaker CHOICE via DA-gated three-factor learning over a LEARNED assembly is LEG 2. NOT a claim of understanding another mind. numpy-CPU on real spiking Izhikevich bridges; NO sim/ edit (reuse-by-import of the RSA social environment + the GNW wash-out machinery)."
+}

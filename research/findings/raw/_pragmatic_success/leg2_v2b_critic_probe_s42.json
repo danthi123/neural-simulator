@@ -1,0 +1,62 @@
+{
+  "probe": "critic_value_separability",
+  "description": "v2b-trained (LOCALIZE_CREDIT + executed epsilon-greedy). Per intent: actor utterance-WTA winner vs learned critic value V(intent,u). critic_argmax_acc is a HOST-ARGMAX DIAGNOSTIC of value separability (NOT a neural readout, NOT a shippable choice) -- the ceiling a neural WTA over the critic value populations could reach.",
+  "chance": 0.3333333333333333,
+  "mean_actor_wta_acc": 0.6667,
+  "mean_critic_argmax_acc": 1.0,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "per_intent": {
+        "0": {
+          "aligned": 0,
+          "utter_rate": [
+            0.04278,
+            0.02889,
+            0.02944
+          ],
+          "critic_V": [
+            0.03333,
+            0.025,
+            0.02583
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 0
+        },
+        "1": {
+          "aligned": 1,
+          "utter_rate": [
+            0.03278,
+            0.03278,
+            0.03222
+          ],
+          "critic_V": [
+            0.04333,
+            0.05167,
+            0.04083
+          ],
+          "actor_wta": 0,
+          "critic_argmax": 1
+        },
+        "2": {
+          "aligned": 2,
+          "utter_rate": [
+            0.02667,
+            0.02722,
+            0.03222
+          ],
+          "critic_V": [
+            0.02417,
+            0.02417,
+            0.0375
+          ],
+          "actor_wta": 2,
+          "critic_argmax": 2
+        }
+      },
+      "actor_wta_acc": 0.6666666666666666,
+      "critic_argmax_acc": 1.0,
+      "chance": 0.3333333333333333
+    }
+  }
+}
