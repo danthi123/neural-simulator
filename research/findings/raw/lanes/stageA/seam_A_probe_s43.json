@@ -1,0 +1,42 @@
+{
+  "seam": "A",
+  "seed": 43,
+  "byte_identity": {
+    "n_off": 24961,
+    "n_on": 25261,
+    "fm_slice_size": 300,
+    "appended_last": true,
+    "threshold_prefix_identical": true,
+    "conn_weight_prefix_identical": true,
+    "rf_w_identical": null,
+    "byte_identical": true
+  },
+  "at_rest": {
+    "silent_max_spikecount": 0.0,
+    "reservoir_silent": true,
+    "g_eff_at_rest": 0.06,
+    "g_eff_equals_floor": true,
+    "at_rest_neutral": true
+  },
+  "engagement": {
+    "reservoir_mean_spikecount": 0.04289351851851852,
+    "reservoir_active": true,
+    "ridge_train_acc": 1.0,
+    "ridge_test_acc": 1.0,
+    "chance": 0.25,
+    "decodes_above_chance": true,
+    "mean_test_margin": 0.7026879957405484,
+    "g_eff_low_margin": 0.36,
+    "g_eff_high_margin": 0.06,
+    "g0_floor": 0.06,
+    "tightening_only": true,
+    "engages": true
+  },
+  "masked_reset_isolation": {
+    "n_non_fm": 24961,
+    "v_byte_untouched": true,
+    "u_byte_untouched": true,
+    "navconv_isolated": true
+  },
+  "seam_ok": true
+}

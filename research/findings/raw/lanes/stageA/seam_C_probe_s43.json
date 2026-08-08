@@ -1,0 +1,41 @@
+{
+  "seam": "C",
+  "seed": 43,
+  "byte_identity": {
+    "n_off": 24961,
+    "n_on": 25531,
+    "ladder_slice_size": 570,
+    "threshold_prefix_identical": true,
+    "conn_weight_prefix_identical": true,
+    "rf_w_identical": null,
+    "byte_identical": true
+  },
+  "at_rest": {
+    "neutral_differential": 0.0,
+    "neutral_tone_zero": true,
+    "at_rest_neutral": true
+  },
+  "engagement": {
+    "levels": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "held": [
+      0.0008333333333333334,
+      0.03722222222222222,
+      0.050555555555555555,
+      0.059722222222222225,
+      0.06833333333333333
+    ],
+    "spearman": 0.9999999999999999,
+    "range": 0.06749999999999999,
+    "lesion_differential": 0.0,
+    "lesion_collapses": true,
+    "monotone_staircase": true,
+    "engages": true
+  },
+  "seam_ok": true
+}

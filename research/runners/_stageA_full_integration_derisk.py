@@ -116,6 +116,241 @@ AFF_READ_MS = 100
 AFF_SETTLE_MS = 40
 AFF_OU_PA = 8.0
 
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# SEAM-A -- FORWARD-MODEL RESERVOIR (OnBridgeLSM) -> WORLD-MODEL -> CONTENT + CERTAINTY-BAND seam (default-off).
+# The fm_reservoir slice is a recurrent Izhikevich BrainRegion (internal_density = the fixed-random LSM recurrence),
+# appended LAST with NO out-edges (nav/conv-inert). The agent holds the fixed-random W_in projection; per (s,a)
+# token it writes `W_in @ U[t] + BIAS` into cp_external_input_current[fm_idx], runs the bridge's real step loop
+# T_STEP times, and accumulates cp_firing_states[fm_idx] -> per-neuron spike-COUNT (population rate) = the read-out
+# feature (OnBridgeLSM.final_state, ported to the shared bridge). Constants lifted verbatim from
+# _emerge82_onbridge_lsm_derisk (_build_reservoir_bridge L83-119, final_state L128-154).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+FM_N_POOL = 300            # fm_reservoir region size (emerge82 _N_POOL)
+FM_INTERNAL_DENSITY = 0.1  # the fixed-random LSM recurrence (emerge82 _INTERNAL_DENSITY)
+FM_EXC_W = 6.0             # recurrent excitatory synaptic weight (emerge82 _EXC_W)
+FM_INH_W = 8.0             # recurrent inhibitory synaptic weight (emerge82 _INH_W)
+FM_EXC_FRACTION = 0.8      # emerge82 exc_fraction
+FM_WEIGHT_JITTER = 0.3     # emerge82 weight_jitter
+FM_T_STEP = 12             # bridge steps per input token (emerge82 _T_STEP)
+FM_BIAS = 45.0             # tonic background current (fluctuation-driven LSM regime; emerge82 _BIAS)
+FM_IN_SCALE = 320.0        # input drive scale (emerge82 _IN_SCALE)
+FM_G0 = 0.06               # the certainty-band gate floor (== the cue_match_moat HARD floor; g_eff can only rise)
+FM_GATE_K = 0.30           # how strongly a LOW fm margin tightens g_eff (the da_to_gate clamp discipline)
+# Per-region homeostasis on the fm slice: the design names it the het-off operating-point fix, but this merged bridge
+# runs het-ON (enable_parameter_heterogeneity=True), and enabling per-region homeostasis draws from the shared
+# init-time RNG stream BEFORE the threshold draw -> it offsets EVERY pre-existing neuron's threshold (a measured ~5e-4
+# global shift; NOT a reorder), which breaks the appended-LAST byte-identity guarantee. Since the reservoir is
+# genuinely active WITHOUT homeostasis at this operating point (het-on gives the graded threshold spread the
+# standalone het-off run lacked), the fm slice keeps homeostasis OFF -> byte-identical AND active. (measured 2026-08-08)
+FM_ENABLE_HOMEOSTASIS = False
+
+
+def make_fm_projection(seed, fm_n, in_dim):
+    """The agent's fixed-random input projection W_in (emerge82 _build_reservoir_bridge L116-117)."""
+    rng = np.random.default_rng(int(seed) * 7919 + 3)
+    return (rng.random((int(fm_n), int(in_dim))) * 2.0 - 1.0) * FM_IN_SCALE
+
+
+def read_forward_model(bridge, xp, idx, baseline_snap, W_in, U, silence=False, t_step=FM_T_STEP):
+    """SEAM-A neural drive + read (OnBridgeLSM.final_state on the SHARED bridge). Per (s,a) token write
+    `W_in @ U[t] + BIAS` into the fm slice, run the bridge's real step loop t_step times, accumulate the fm slice's
+    spike-COUNT (population read-out feature). The FULL baseline snapshot is restored after the read, so co-resident
+    nav/conv v/u return byte-identical (the wash). Returns per-neuron mean spike-count over the sequence."""
+    fm = idx["fm"]
+    fm_dev = xp.asarray(fm)
+    _restore_state(bridge, baseline_snap)
+    bridge.cp_external_input_current[:] = 0.0
+    counts = np.zeros(len(fm), np.float64)
+    steps = 0
+    for t in range(len(U)):
+        drive = np.zeros(len(fm)) if silence else (W_in @ np.asarray(U[t]) + FM_BIAS)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[fm_dev] = xp.asarray(drive.astype(np.float32))
+        for _ in range(int(t_step)):
+            bridge._run_one_simulation_step()
+            counts += np.asarray(to_host(bridge.cp_firing_states[fm_dev]), dtype=np.float64)
+            steps += 1
+    _restore_state(bridge, baseline_snap)
+    bridge.cp_external_input_current[:] = 0.0
+    return counts / max(1, steps)
+
+
+def fm_decode(spikecounts, Ws):
+    """CONTENT DECODE (declared HOST SHORTCUT, identical in status to the composer's numpy render + OnBridgeLSM's
+    _fit_slots): the predicted state/role is the ridge read-out argmax(spikecounts @ Ws); the certainty is the
+    top1-top2 read-out MARGIN. The brain-based content is the reservoir SPIKES; the linear decode is the read-out to
+    biologize (the spiking synaptic read-out prototyped in _rungB1c_spiking_reservoir_synaptic_readout_derisk.py)."""
+    feat = np.concatenate([np.asarray(spikecounts, np.float64), [1.0]])   # + bias column (emerge82 _fit_slots)
+    logits = feat @ Ws
+    order = np.argsort(logits)[::-1]
+    top1, top2 = float(logits[order[0]]), float(logits[order[1]]) if len(order) > 1 else (float(logits[order[0]]), 0.0)
+    denom = abs(top1) + abs(top2) + 1e-9
+    margin_norm = float(max(0.0, min(1.0, (top1 - top2) / denom)))
+    return int(order[0]), margin_norm, [float(x) for x in logits]
+
+
+def fm_tighten_g_eff(g_eff, fm_margin_norm, g0=FM_G0, k_fm=FM_GATE_K):
+    """SEAM-A ROUTE (i) CERTAINTY BAND (moat-safe, TIGHTENING-ONLY): a LOW forward-model margin can only RAISE
+    g_eff (tighten abstention), NEVER lower it -- the SAME clamp discipline `da_to_gate` uses in the composer's
+    _da_confidence_gate. `g_eff = max(g_eff, g0 + k_fm*(1 - fm_margin_norm))`. A silent reservoir (margin None) ->
+    g_eff untouched (= the g0 floor). So faculty A can only make the brain MORE cautious, never less."""
+    if fm_margin_norm is None:
+        return float(g_eff)
+    return max(float(g_eff), float(g0) + float(k_fm) * (1.0 - float(fm_margin_norm)))
+
+
+def fm_content_channel(decoded_state, fm_margin_norm):
+    """SEAM-A ROUTE (ii) CONTENT PATH: the decoded s' enters render ONLY as a certainty-TAGGED SIMULATION channel
+    ("predicted, not observed"). It is NOT written into cp_rf_w_* and NOT added to the cue-match candidate set, so
+    the no-confab moat's HARD structural floor is untouched (an unstored FACTUAL cue still abstains)."""
+    return {"predicted": decoded_state, "certainty_margin": fm_margin_norm,
+            "tag": "predicted, not observed", "written_to_moat": False, "in_cue_match_candidates": False}
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# SEAM-C -- STAGGERED BISTABLE LADDER GRADED AFFECT -> AFFECT-COLORING seam (default-off, FM4-safe).
+# The single-pool P0.3 affect latch (affect_vplus/vminus, one pool per sign -> a saturating good/bad latch) is
+# AUGMENTED by a Koulakov-2002 robust-discrete integrator: N self-recurrent slow-NMDA sub-pools per valence sign
+# (aff_vplus_L1..LN / aff_vminus_L1..LN), each latched by its OWN within-pool NMDA recurrence, recruited at
+# STAGGERED intrinsic-excitability thresholds by a UNIFORM diffuse appraisal broadcast. Held value = number of
+# latched rungs = a GRADED population rate (an N+1-level staircase, NOT the binary latch). Opponent cross-inhibition
+# ONLY at the AGGREGATE (aff_agg_plus/minus); NO intra-sign lateral inhibition (the load-bearing rule -- else the
+# ladder collapses back to the 2-level latch). Read NEURALLY as rate(aff_pos_readout) - rate(aff_neg_readout)
+# through the SAME `affect_out` transmission gate the P0.3 organ uses. Constants lifted verbatim from
+# _affect_graded_ladder_derisk (GradedLadderBrain L84-116, 6-seed GO 2026-08-08).
+#
+# BYTE-IDENTITY (same mechanism as SEAM-A): the ladder sub-pools carry internal_density=0 in cfg.brain_regions so
+# the shared build_wiring_plan draws NO ladder-internal rng (the density>0 recurrence is injected as a SEPARATE
+# union entry with an INDEPENDENT rng, below); the ladder REGIONS + ladder PATHWAYS are appended LAST to cfg so
+# every pre-existing region/pathway keeps the SAME rng draw (append-LAST index+draw invariance -> pre-existing
+# thresholds + conn weights bit-identical). Homeostasis stays OFF (enabling per-region homeostasis draws init-time
+# RNG before the threshold draw -> shifts every pre-existing threshold; the SEAM-A measurement, identical here).
+#
+# FM4 SAFETY (structural): `affect_out` drives ONLY the tone/readout targets; it is ARRAY-DISJOINT from g_eff
+# (_da_confidence_gate) and from the cue-match moat gate -> graded affect colors tone WITHIN the already-decided
+# band and can NEVER flip abstain->assert. Lesion = set_transmission_gate("affect_out", 0.0).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+LAD_N_SUB = 20             # exc neurons per ladder sub-pool (rung) (graded-ladder N_SUB)
+LAD_N_RO = 30             # readout pool size (graded-ladder N_RO)
+LAD_N_AGG = 15            # aggregate opponent interneuron pool (graded-ladder N_AGG)
+LAD_RECUR_DENSITY = 0.8  # within-sub-pool NMDA recurrence density (graded-ladder RECUR_DENSITY)
+LAD_RECUR_W = 24.0       # within-sub-pool NMDA recurrent weight (bistable-latch regime; graded-ladder DEFAULT_RECUR)
+LAD_OFF_HI = 40.0        # intrinsic offset of L1 (ignites first) pA; neutral m=0 leaves all rungs OFF (graded-ladder)
+LAD_OFF_DEEPEST = -150.0  # deepest rung intrinsic offset kept ABOVE the holding floor (~-180pA) so it can persist
+LAD_GAIN_PA = 240.0      # uniform appraisal sensitivity pA per unit concentration (graded-ladder DRIVE_GAIN_PA)
+LAD_READOUT_INTRINSIC = -80.0  # readout threshold offset (keeps readout below saturation; graded-ladder)
+LAD_BIAS_WEIGHT = 9.0    # sub-pool -> readout feedforward weight (graded-ladder BIAS_WEIGHT)
+LAD_AGG_EXC_W = 6.0      # sub-pool -> aggregate interneuron (graded-ladder AGG_EXC_W)
+LAD_AGG_INH_W = 10.0     # aggregate interneuron -> the OTHER sign's sub-pools (cross-inhibition; graded-ladder)
+LAD_AROUSAL_SPEAK_W = 0.8  # arousal ladder -> speak_acc (WEAK: gates vigor, cannot flip abstain -> FM4 floor)
+LAD_RAMP_MS = 300        # appraisal rises as a graded ramp (recruits rungs sequentially; graded-ladder RAMP_MS)
+LAD_DRIVE_OFF_MS = 400   # DRIVE-OFF hold: persistence via the latches (graded-ladder drive_off_ms window)
+LAD_READ_MS = 120        # readout probe window (graded-ladder probe_ms)
+LAD_PATH_DENSITY = 0.6   # ladder pathway density (graded-ladder pathway density)
+LADDER_NEUTRAL_TOL = 0.03  # |differential| below this at neutral appraisal == neutral tone (at-rest byte-neutral)
+LADDER_RANGE_BAR = 0.05  # held-differential range bar for the staircase (graded-ladder RANGE_BAR)
+LAD_ENABLE_HOMEOSTASIS = False  # OFF for byte-identity (per-region homeostasis shifts pre-existing thresholds; SEAM-A)
+
+
+def _ladder_offsets(n):
+    """Descending Koulakov stagger: L1 ignites at the lowest appraisal m; the deepest rung is kept ABOVE the
+    holding floor so it can persist. off_step is chosen so the span L1..LN lands exactly on [LAD_OFF_DEEPEST,
+    LAD_OFF_HI] for ANY rung count n (so n=8 does not push the deepest rungs monostable-OFF)."""
+    if n <= 1:
+        return [LAD_OFF_HI]
+    step = (LAD_OFF_HI - LAD_OFF_DEEPEST) / (n - 1)
+    return [float(LAD_OFF_HI - i * step) for i in range(n)]
+
+
+def _ladder_region_specs(aff_n_rungs):
+    """The staggered-bistable-ladder region slice (all `aff_`-prefixed; appended LAST). Sub-pools carry
+    internal_density=0 (the density>0 recurrence is injected as an independent union entry -> byte-identity);
+    the stagger lives in per-rung intrinsic_current_pA. Returns (regions, names) where names groups the rung/agg/
+    readout region names for wiring + neuromodulator scoping."""
+    RS = "IZH2007_RS_CORTICAL_PYRAMIDAL"
+    FS = "IZH2007_FS_CORTICAL_INTERNEURON"
+    offs = _ladder_offsets(int(aff_n_rungs))
+    vplus = [f"aff_vplus_L{i+1}" for i in range(int(aff_n_rungs))]
+    vminus = [f"aff_vminus_L{i+1}" for i in range(int(aff_n_rungs))]
+    arousal = [f"aff_arousal_L{i+1}" for i in range(int(aff_n_rungs))]
+
+    def _rung(name, i):
+        # internal_density=0 in the region (the recurrence is a SEPARATE union entry, independent rng); the latch
+        # is enable_nmda=True + LAD_RECUR_W; the stagger is the cell-autonomous intrinsic offset.
+        return BrainRegion(name=name, n_neurons=LAD_N_SUB, exc_fraction=1.0, internal_density=0.0,
+                           exc_weight_mean=LAD_RECUR_W, inh_weight_mean=0.0, weight_jitter=0.05,
+                           plastic_internal=False, izh_neuron_type=RS, enable_nmda=True,
+                           intrinsic_current_pA=float(offs[i]), enable_homeostasis=LAD_ENABLE_HOMEOSTASIS)
+
+    def _ro(name):
+        return BrainRegion(name=name, n_neurons=LAD_N_RO, exc_fraction=1.0, internal_density=0.0,
+                           exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.05, plastic_internal=False,
+                           izh_neuron_type=RS, enable_nmda=False, intrinsic_current_pA=LAD_READOUT_INTRINSIC,
+                           enable_homeostasis=LAD_ENABLE_HOMEOSTASIS)
+
+    def _agg(name):
+        return BrainRegion(name=name, n_neurons=LAD_N_AGG, exc_fraction=0.0, internal_density=0.0,
+                           exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                           izh_neuron_type=FS, enable_homeostasis=LAD_ENABLE_HOMEOSTASIS)
+
+    regions = ([_rung(n, i) for i, n in enumerate(vplus)]
+               + [_rung(n, i) for i, n in enumerate(vminus)]
+               + [_rung(n, i) for i, n in enumerate(arousal)]
+               + [_ro("aff_pos_readout"), _ro("aff_neg_readout"),
+                  _agg("aff_agg_plus"), _agg("aff_agg_minus")])
+    names = {"vplus": vplus, "vminus": vminus, "arousal": arousal,
+             "pos_readout": "aff_pos_readout", "neg_readout": "aff_neg_readout",
+             "agg_plus": "aff_agg_plus", "agg_minus": "aff_agg_minus"}
+    return regions, names
+
+
+def _ladder_pathways(names):
+    """The ladder pathways (feedforward readout gated by affect_out + AGGREGATE-ONLY opponent cross-inhibition +
+    arousal->speak_acc vigor gated by affect_out). Appended LAST to cfg.region_pathways so pre-existing pathway
+    rng draws are byte-unchanged; the transmission_gate is the framework-native gate the P0.3 organ already uses."""
+    G = "affect_out"
+    P = []
+    # ladder -> readout (the NEURAL graded read, gated so the affect_out lesion collapses the staircase)
+    for n in names["vplus"]:
+        P.append(RegionPathway(from_region=n, to_region=names["pos_readout"], density=LAD_PATH_DENSITY,
+                               weight_mean=LAD_BIAS_WEIGHT, weight_jitter=0.1, plastic=False, transmission_gate=G))
+    for n in names["vminus"]:
+        P.append(RegionPathway(from_region=n, to_region=names["neg_readout"], density=LAD_PATH_DENSITY,
+                               weight_mean=LAD_BIAS_WEIGHT, weight_jitter=0.1, plastic=False, transmission_gate=G))
+    # Namburi-Tye opponent cross-inhibition ONLY at the AGGREGATE (never same-sign lateral inhibition)
+    for n in names["vplus"]:
+        P.append(RegionPathway(from_region=n, to_region=names["agg_plus"], density=LAD_PATH_DENSITY,
+                               weight_mean=LAD_AGG_EXC_W, weight_jitter=0.1, plastic=False))
+    for n in names["vminus"]:
+        P.append(RegionPathway(from_region=names["agg_plus"], to_region=n, density=LAD_PATH_DENSITY,
+                               weight_mean=LAD_AGG_INH_W, weight_jitter=0.1, plastic=False, receptor="gaba_a"))
+        P.append(RegionPathway(from_region=n, to_region=names["agg_minus"], density=LAD_PATH_DENSITY,
+                               weight_mean=LAD_AGG_EXC_W, weight_jitter=0.1, plastic=False))
+    for n in names["vplus"]:
+        P.append(RegionPathway(from_region=names["agg_minus"], to_region=n, density=LAD_PATH_DENSITY,
+                               weight_mean=LAD_AGG_INH_W, weight_jitter=0.1, plastic=False, receptor="gaba_a"))
+    # arousal ladder -> speak_acc (WEAK, gated by affect_out): vigor only, cannot overcome reticence (FM4 floor)
+    for n in names["arousal"]:
+        P.append(RegionPathway(from_region=n, to_region="speak_acc", density=LAD_PATH_DENSITY,
+                               weight_mean=LAD_AROUSAL_SPEAK_W, weight_jitter=0.1, plastic=False,
+                               transmission_gate=G))
+    return P
+
+
+def _ladder_appraisal_mods(names):
+    """One diffuse appraisal neuromodulator per sign, broadcasting concentration UNIFORMLY (volume transmission)
+    to every rung group of that sign via excitability_drive. The stagger lives in the per-rung intrinsic offset;
+    the uniform drive crosses each rung's staggered threshold in turn (graded recruitment)."""
+    def _mod(name, groups):
+        return NeuromodulatorConfig(
+            name=name, baseline=0.0, decay_tau_ms=aff.APPRAISAL_TAU_MS, concentration_min=0.0, concentration_max=1.5,
+            targets=[ModulatorTarget(target_type="excitability_drive", scope=f"group:{g}", sensitivity=LAD_GAIN_PA)
+                     for g in groups],
+            production_rules=[ProductionRule(rule_type="manual")])
+    return [_mod("appraisal_lad_vplus", names["vplus"]),
+            _mod("appraisal_lad_vminus", names["vminus"]),
+            _mod("appraisal_lad_arousal", names["arousal"])]
+
 
 def _affect_regions_pathways():
     """The P0.3 affect organ regions + pathways, LIFTED verbatim from AffectStateBrain (cross-inhibition opponent +
@@ -211,10 +446,17 @@ def _arbiter_regions():
 
 
 def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhibition: bool = False,
-                    onebrain_k_max: int = 32):
+                    onebrain_k_max: int = 32, co_resident_forward_model: bool = False, fm_n_pool: int = FM_N_POOL,
+                    co_resident_affect_ladder: bool = False, aff_n_rungs: int = 8):
     """Build ONE SimulationBridge: the composer rf slice FIRST, then (default-on) every faculty slice appended AFTER
     it. Returns (bridge, comp, idx, baseline_snap). When with_faculties=False, ONLY the rf slice is built (the
-    default-off byte-identity baseline)."""
+    default-off byte-identity baseline).
+
+    SEAM-A (co_resident_forward_model, DEFAULT-OFF): append ONE recurrent `fm_reservoir` slice LAST with NO out-edges
+    (nav-inert). Flag off -> no fm_reservoir region -> byte-identical (append-LAST index invariance).
+    SEAM-C (co_resident_affect_ladder, DEFAULT-OFF): append the staggered bistable ladder (aff_n_rungs per sign +
+    aggregate opponent pools + readouts) LAST, wired to the affect-coloring tone targets through affect_out. Flag off
+    -> no aff_ regions -> byte-identical."""
     xp, _ = get_backend()
     rf_size = CoResidentOneBrainComposer.n_total_for(D=128, vocab=DEFAULT_VOCAB, k_max=onebrain_k_max)
 
@@ -230,6 +472,31 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
         regions.append(BrainRegion(name="cur_ask", n_neurons=40, exc_fraction=1.0, internal_density=0.0,
                                    enable_nmda=False))
         pathways += hon_p + aff_p
+
+    # ---- SEAM-A: the forward-model reservoir slice, appended LAST with NO out-edges (nav/conv-inert). The slice's
+    # BrainRegion carries internal_density=0 so the SHARED build_wiring_plan (which draws all region-internals THEN
+    # all pathways from ONE rng) does NOT draw an fm entry -> the pre-existing pathways keep the SAME rng state ->
+    # byte-identical (measured: an internal_density>0 fm draw shifts the shared rng and perturbs 13 pre-existing
+    # pathways). The fm's fixed-random LSM recurrence (density FM_INTERNAL_DENSITY) is injected instead as a SEPARATE
+    # union entry built with an INDEPENDENT rng (below), so it is decoupled from the shared stream. Homeostasis stays
+    # OFF (enabling it draws init-time RNG before the threshold draw -> shifts every pre-existing threshold).
+    if co_resident_forward_model:
+        regions.append(BrainRegion(
+            name="fm_reservoir", n_neurons=int(fm_n_pool), exc_fraction=FM_EXC_FRACTION,
+            internal_density=0.0, exc_weight_mean=FM_EXC_W, inh_weight_mean=FM_INH_W,
+            weight_jitter=FM_WEIGHT_JITTER, plastic_internal=False, enable_homeostasis=FM_ENABLE_HOMEOSTASIS))
+
+    # ---- SEAM-C: the staggered-bistable-ladder graded-affect slice, appended LAST. Sub-pools carry
+    # internal_density=0 (recurrence injected as an independent union entry below) so the shared build_wiring_plan
+    # draws NO ladder-internal rng; the ladder PATHWAYS are appended LAST to `pathways` so every pre-existing
+    # pathway keeps the SAME rng draw -> pre-existing thresholds + conn weights bit-identical (append-LAST
+    # invariance, the SEAM-A / Probe-1 mechanism). The transmission_gate="affect_out" on the readout/vigor paths is
+    # the framework-native gate the P0.3 organ already uses (FM4: array-disjoint from g_eff + the moat gate).
+    ladder_names = None
+    if co_resident_affect_ladder:
+        lad_r, ladder_names = _ladder_region_specs(int(aff_n_rungs))
+        regions += lad_r
+        pathways += _ladder_pathways(ladder_names)
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -268,6 +535,9 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
                 production_rules=[ProductionRule(rule_type="from_novelty", sensitivity=1.0, threshold=0.0,
                                                  window_ms=50.0)]),
         ]
+        # SEAM-C: the ladder appraisal broadcast (diffuse volume transmission, group-scoped to the aff_ rungs).
+        if co_resident_affect_ladder and ladder_names is not None:
+            cfg.neuromodulators += _ladder_appraisal_mods(ladder_names)
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
@@ -303,6 +573,34 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
             w_fs = 0.0 if lesion_arbiter_inhibition else ARB_FS_TO_POOL_W
             union[f"fs_to_{p}"] = _dense_projection(arb_fs, pool_idx[p], w_fs, ARB_GATE)
 
+        # SEAM-A: inject the fm reservoir's fixed-random recurrence as its OWN union entry (the region carries
+        # internal_density=0 to stay OUT of the shared plan's rng stream). Uses rm._build_region_internal (the
+        # engine's exact Erdős-Rényi builder) on a density-restored shadow with an INDEPENDENT rng, so the fm
+        # recurrence is identical-in-kind to a normal region-internal but decoupled from the pre-existing wiring.
+        if co_resident_forward_model:
+            import dataclasses as _dc
+            import random as _random
+            fm_region = next(r for r in rm.regions() if r.name == "fm_reservoir")
+            fm_shadow = _dc.replace(fm_region, internal_density=FM_INTERNAL_DENSITY)
+            fm_internal = rm._build_region_internal(fm_shadow, _random.Random(int(seed) * 100003 + 7))
+            if fm_internal is not None:
+                union["fm_reservoir_internal"] = fm_internal
+
+        # SEAM-C: inject each ladder sub-pool's within-pool NMDA recurrence as its OWN union entry (the regions
+        # carry internal_density=0 to stay OUT of the shared plan's rng). Each rung gets an INDEPENDENT rng so the
+        # latch recurrence is identical-in-kind to a framework region-internal but decoupled from pre-existing wiring.
+        if co_resident_affect_ladder and ladder_names is not None:
+            import dataclasses as _dc_c
+            import random as _random_c
+            all_rungs = ladder_names["vplus"] + ladder_names["vminus"] + ladder_names["arousal"]
+            for ri, rname in enumerate(all_rungs):
+                rung_region = next(r for r in rm.regions() if r.name == rname)
+                rung_shadow = _dc_c.replace(rung_region, internal_density=LAD_RECUR_DENSITY)
+                rung_internal = rm._build_region_internal(
+                    rung_shadow, _random_c.Random(int(seed) * 100019 + 13 + ri))
+                if rung_internal is not None:
+                    union[f"{rname}_internal"] = rung_internal
+
         inh = []
         for region in rm.regions():
             inh.extend(rm.inhibitory_indices(region.name))
@@ -322,6 +620,19 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
                        ("affect_vplus", "affect_vminus", "affect_arousal", "recall_pos", "recall_neg",
                         "speak_acc", "silence_acc")},
             "cur_ask": np.asarray(rm.indices("cur_ask"), dtype=np.int64),
+        }
+
+    if co_resident_forward_model:
+        idx["fm"] = np.asarray(rm.indices("fm_reservoir"), dtype=np.int64)
+
+    if co_resident_affect_ladder and ladder_names is not None:
+        idx["ladder"] = {
+            "vplus": [np.asarray(rm.indices(n), dtype=np.int64) for n in ladder_names["vplus"]],
+            "vminus": [np.asarray(rm.indices(n), dtype=np.int64) for n in ladder_names["vminus"]],
+            "arousal": [np.asarray(rm.indices(n), dtype=np.int64) for n in ladder_names["arousal"]],
+            "pos_readout": np.asarray(rm.indices(ladder_names["pos_readout"]), dtype=np.int64),
+            "neg_readout": np.asarray(rm.indices(ladder_names["neg_readout"]), dtype=np.int64),
+            "names": ladder_names,
         }
 
     comp = CoResidentOneBrainComposer(bridge, rf_base, build_parser=False, seed=seed, D=128, vocab=DEFAULT_VOCAB,
@@ -412,6 +723,60 @@ def read_affect(bridge, xp, idx, baseline_snap, mood_sign: int, arousal: float, 
     v_state = (c["affect_vplus"] - c["affect_vminus"]) / (aff.N_AFF * n)
     return {"v_color": float(v_color), "m_color": float(m_color), "v_state": float(v_state),
             "arousal_rate": float(c["affect_arousal"] / (aff.N_AFF * n))}
+
+
+def read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal: float, lesion: bool = False,
+                       ramp_ms: int = LAD_RAMP_MS, drive_off_ms: int = LAD_DRIVE_OFF_MS,
+                       read_ms: int = LAD_READ_MS) -> dict:
+    """SEAM-C neural read (staggered-bistable-ladder graded affect). RAMP a POSITIVE appraisal 0->m over ramp_ms
+    (Koulakov graded recruitment: rungs latch sequentially as the ramp crosses each staggered threshold), DRIVE
+    OFF for drive_off_ms (persistence via the within-pool NMDA latches), then read the held value NEURALLY as the
+    population-rate DIFFERENTIAL rate(aff_pos_readout) - rate(aff_neg_readout) through the `affect_out` gate. A
+    balanced/neutral appraisal -> differential ~0 (neutral tone). `lesion` clamps affect_out=0 -> the readout
+    collapses (proves the read is the gated ladder projection, not a host count). Snapshot/restore-isolated."""
+    lad = idx["ladder"]
+    _restore_state(bridge, baseline_snap)
+    bridge.cp_external_input_current[:] = 0.0
+    _reset_modulators(bridge)
+    bridge.set_transmission_gate("affect_out", 0.0 if lesion else 1.0)
+    bridge.core_config.enable_ou_process = True
+    nm = bridge.neuromodulator_manager
+    pos_dev = xp.asarray(lad["pos_readout"])
+    neg_dev = xp.asarray(lad["neg_readout"])
+
+    def _set(m):
+        nm.set_concentration("appraisal_lad_vplus", float(m))     # POSITIVE appraisal drives the V+ ladder only
+        nm.set_concentration("appraisal_lad_vminus", 0.0)
+        nm.set_concentration("appraisal_lad_arousal", float(m))
+
+    for _ in range(40):                                            # settle
+        _set(0.0)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge._run_one_simulation_step()
+    for s in range(int(ramp_ms)):                                 # graded ramp 0 -> appraisal
+        _set(float(appraisal) * (s + 1) / ramp_ms)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge._run_one_simulation_step()
+    for _ in range(int(drive_off_ms)):                            # DRIVE-OFF: persistence via the latches
+        _set(0.0)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge._run_one_simulation_step()
+    pos = neg = 0.0
+    for _ in range(int(read_ms)):                                 # read the held differential
+        _set(0.0)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge._run_one_simulation_step()
+        fs = to_host(bridge.cp_firing_states)
+        pos += float(np.asarray(fs)[lad["pos_readout"]].sum())
+        neg += float(np.asarray(fs)[lad["neg_readout"]].sum())
+    bridge.core_config.enable_ou_process = False
+    bridge.set_transmission_gate("affect_out", 1.0)
+    _restore_state(bridge, baseline_snap)
+    bridge.cp_external_input_current[:] = 0.0
+    denom = float(LAD_N_RO * max(1, read_ms))
+    pos_rate, neg_rate = pos / denom, neg / denom
+    return {"differential": float(pos_rate - neg_rate), "pos_rate": float(pos_rate), "neg_rate": float(neg_rate),
+            "appraisal": float(appraisal), "lesioned": bool(lesion)}
 
 
 def read_curiosity_want(bridge, xp, idx, baseline_snap, novelty: float, steps: int = 18) -> float:

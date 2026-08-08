@@ -1,0 +1,29 @@
+{
+ "run_id": "1786207199-1725027",
+ "runner": "research/runners/_stageA_seam_integration_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_e8352eea-64f-2/research/runners/_stageA_seam_integration_probe.py",
+  "--seam",
+  "A",
+  "--seed",
+  "43"
+ ],
+ "git_sha": "732abad96",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-08T12:39:59",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/stageA/seam_A_probe_s43.json"
+}
