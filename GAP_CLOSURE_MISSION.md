@@ -46,10 +46,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   under lesion for world-model + honesty). HELD OFF-MAIN pending finding-hygiene fixes (vacuous A-sham,
 >   attribution + preconditions blocks, 6-seed) — safe on branch `worktree-wf_985f6d50-6bc-2`. Its integration is
 >   Wave-2c (gated after A + Wave-2b), so off-main is fine for now.
-> - **B/C/D = buildable-NOW new mechanisms found** (each genuinely different-in-kind from the failed method):
->   B ride the CLOSED CA3 bistable attractor + neural WTA readout; C a staggered bistable LADDER (graded = count
->   of latched sub-pools); D a real two-input neural coincidence detector read BACK to train the speaking policy.
->   **NOW BUILDING (task `wznmfs9c2`, build→adversarial-verify, worktree-isolated, no bridge edits).**
+> - **B/C/D builds DONE (task `wznmfs9c2`, adversarially verified) — 2 of 3 Wave-1 negatives moved forward:**
+>   - **C graded-affect = GO (6/6), BANKED (`719fea12`)** — staggered bistable LADDER holds a graded quantized
+>     value (monotonic rho=1.00; unstaggered control collapses; no intra-sign inhibition; FM4 holds; NEURAL
+>     readout). SURPASSES the bistable-latch boundary. Integration candidate (value-retention; designed-not-learned).
+>   - **D-Leg-1 pragmatic success SIGNAL = GO (6/6)** — a real two-input neural coincidence AND (linear-sham +
+>     shuffled-k teeth). Integration candidate, SCAFFOLD-flagged (host-assigned labeled-line → convert to learned).
+>     On branch `worktree-wf_4661aab6-071-1` (bank after debt-fix). **D-Leg-2 (read success back to TRAIN speaking)
+>     = honest-negative** → next-mechanism: success-as-neuromodulator three-factor DA-gated plasticity.
+>   - **B episodic = NEGATIVE (honest)** — CA3→cortex readout SILENT (host argmax over an all-zero rate vector);
+>     on branch `worktree-wf_4661aab6-071-3`. Next-mechanism: an IGNITING spiking WTA readout (NMDA-plateau) +
+>     BTSP one-shot storage + ACh/theta recall-mode gating + DG pattern-separation. (Both negatives added to
+>     roadmap §7 + §8; the law holds — a negative launches the next search.)
+> **INTEGRATION SET for Wave 2b: A (world-model) + C (graded-affect)** — both clean 6/6 GO on main; D-Leg-1 (later,
+> after learned-column conversion), path-T (Wave 2c, after hygiene).
 > **POOL HARDENING DONE — the culmination is 12/12 GO (robustness confirmed).** The 6 fresh seeds
 > (7/8/9/200/201/202) each returned verdict GO with EVERY safety gate true: hard moat 475/475 abstains, FM4
 > g_eff-law 0 abstain→assert flips (naive path 10 — teeth), affect persists across turns, curiosity asks on novel
@@ -59,9 +69,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > Pool now IDLE (honest gap); next pool job = A's 6-seed sweep, dispatched once Wave-2a delivers the fixed A
 > runner. dispatcher pid 1576 alive.
 > **NEXT (ordered):** (1) ✅ DONE — A's 6-seed is 6/6 GO (banked `2eb9c7e4`), the world-model faculty is validated;
-> (2) read the B/C/D build result `wznmfs9c2` — which landed a genuine neural faculty vs an honest-negative (→
-> next-mechanism lead); (3) harden path-T's finding (fix the vacuous A-sham → real A-scramble; add attribution +
-> preconditions; 6-seed) then bank it; (4) **Wave 2b (UNBLOCKED)** = re-run the 6/6 baseline, then integrate A (world-model→content seam) onto
+> (2) ✅ DONE — B/C/D builds read (`wznmfs9c2`): C graded-affect GO (banked), D-Leg-1 GO, B + D-Leg-2 negatives;
+> (3) **Wave 2b LAUNCHING** = the serial bridge integration of A + C; (4) bank B + D findings (after debt-fix:
+> B's argmax mislabel, D-Leg-2 oracle provenance) + queue the B / D-Leg-2 next-mechanism searches; (5) harden
+> path-T's finding then Wave 2c; (6) **Wave 2b** = re-run the 12/12 baseline, then integrate A (world-model→content seam) onto
 > `nav_conv_merged_bridge.py` under the 7-seam contract, re-run 6/6 regression (roll back if it drops); (5)
 > **Wave 2c** = integrate the path-T generator/render seam (moat post-hoc-gated) + #2 grounded free-gen; (6)
 > **capstone** = faculty-load-bearing lesion battery (real+sham, exclude the decorative dlPFC-ordering) +
