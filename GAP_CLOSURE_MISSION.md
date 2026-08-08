@@ -15,6 +15,37 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-08 (READ FIRST — live resume point)
 
+> **⭐⭐⭐⭐ FLUENCY WAVES (2026-08-08, ULTRACODE) — the LIVE frontier, PAST the Stage-A culmination.** Owner
+> authorized building the full "human-like fluency" faculty set concurrently (best-judgement autonomous), with
+> the file-conflict rule (serialize shared-bridge edits; parallelize disjoint de-risks in isolated worktrees).
+> **WAVE 1 (task `wphw8m1y7`, 11 agents, build→adversarial-verify) — HONEST OUTCOME: only faculty A survived.**
+> - **A · forward model (world-model SIMULATION) = REVISE, GO-core SURVIVES** — the ONE genuine additive win
+>   ("the missing cognitive organ"): held-out compositional 0.72 vs retrieval 0.00 + lesions, byte-identical,
+>   genuinely neural, cfg.seed correct, no sim/ edit. REVISE = 3 mechanism-control numbers stated "measured" but
+>   not in committed code (being fixed in Wave 2a). Single-seed SMOKE; 6-seed pending.
+> - **B · episodic memory = REFUTED (honest-negative)** — neural cortical recall 0/6; only a host-argmax proxy
+>   passed; "pattern completion" not isolated from the feedforward encoder. → new-mechanism search.
+> - **C · graded affect = CONFIRMED-negative** — the line/bump attractor COLLAPSES to a point attractor (held
+>   range 0.003 vs 0.07 input); the banked bistable latch stays. → new-mechanism search.
+> - **D · pragmatics = REFUTED** — the "neural success reward" is a host index-multiply + a pure host-argmax
+>   decision; neurons add nothing decision-relevant (the host-smuggling failure mode). → new-mechanism search.
+> - **E · generator = CONFIRMED (scaffold-scoped) → DECISION: path-T** — the spiking-LLM as the Broca-like
+>   articulation MOUTH, gated by the faculty-LOAD-BEARING lesion battery (the owner's steer), path-M's spiking
+>   moat kept as the post-hoc honesty gate. Adversarial verify stripped overclaims from A/B/D — the pattern
+>   earned its keep. Artifacts: task `wphw8m1y7` output + agent branches `worktree-wf_d3435fc2-5a3-*`.
+> **WAVE 2a RUNNING (task `w76nz2qqu`):** strengthen+re-verify A (implement the 3 controls) · build the path-T
+> conditioned-articulation generator (biggest fluency lever) · research-gated NEW-mechanism searches for B/C/D ·
+> synth = Wave-2b readiness. All research-only / worktree-isolated — NO bridge edits (integration is a later
+> SERIAL wave 2b/2c that re-runs the banked 6/6 regression after EACH bridge edit).
+> **LIVE BACKGROUND — pool integration-hardening sweep:** mini-PC nodes pool40/41/42 (provisioned to main
+> `bc5da4354`) running `_stageA_full_integration_derisk` seeds 7/8/9/200/201/202 (12-seed robustness of the 6/6
+> culmination); dispatcher pid 1576 alive; collect via `tools/pull_pool_results.sh`.
+> **NEXT (ordered):** (1) read Wave-2a result `w76nz2qqu` — strengthened-A verdict, path-T host-smuggling check,
+> which B/C/D mechanism is buildable-now; (2) dispatch A's 6-seed to the pool; (3) collect the integration
+> hardening sweep; (4) Wave 2b = integrate A (world-model→content seam) onto the bridge + re-run 6/6 regression;
+> (5) Wave 2c = path-T generator/render seam + #2 grounded free-gen; (6) capstone = faculty-load-bearing lesion
+> battery + teacher-loop. path-T proceeds per the owner's load-bearing-gate framework (conditionally authorized).
+
 > **⭐⭐⭐ STAGE-A CULMINATION (2026-08-08, `2ecebf67`, 6-seed 6/6 GO, adversarially verified):
 > the TRUE ONE BRAIN conversation loop RUNS.** All four Stage-A faculties + the no-confab moat are CO-RESIDENT on
 > ONE spiking bridge (20 region slices, one step loop — genuinely one bridge, confirmed clean by a skeptic) and
