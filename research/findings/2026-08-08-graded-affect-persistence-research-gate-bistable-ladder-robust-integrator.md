@@ -12,7 +12,7 @@ artifacts: []
 **One-line decision:** two methods have now failed to hold a *graded* affect value over time in the same way —
 a single point-neuron slow-NMDA opponent pool (P0.3, 2026-07-24) that **ignites and saturates** into a bistable
 good/bad LATCH, and a continuous **line/bump attractor** (Wave 1) that **collapsed to a point attractor**
-(held range 0.003 vs 0.07 input). <!--derived: quoted from Wave-1 task brief--> Both failures share one root: a *marginally-stable continuum* has no robust
+(held range 0.003 vs 0.07 input). (quoted from Wave-1 task brief) <!--derived--> Both failures share one root: a *marginally-stable continuum* has no robust
 graded middle — it either saturates to a latch or drifts/relaxes to a point. The genuinely-new, different-in-kind
 mechanism is to **stop trying to hold a continuum** and instead hold graded value as the **integer count of
 independently-latched bistable sub-pools recruited at staggered thresholds** — the robust discrete integrator of
@@ -34,7 +34,7 @@ below as a design note, not the first build.
    (magnitude r=0.33 unreliable, sign-crossing 1/6 seeds). **A bistable good/bad LATCH, not a graded circumplex.**
    That doc itself names the surpass: *"a graded Russell circumplex needs graded persistent activity — a
    line/bump attractor … / the dendritic substrate."*
-2. **Line/bump attractor** (Wave 1): collapsed to a point attractor, held range **0.003 vs 0.07 input** <!--derived: quoted from Wave-1 task brief--> — the
+2. **Line/bump attractor** (Wave 1): collapsed to a point attractor, held range **0.003 vs 0.07 input** (quoted from Wave-1 task brief) <!--derived--> — the
    graded value is destroyed in persistence. This is the classic **line-attractor drift** failure (Seung 1996):
    a continuous attractor is a knife-edge (recurrent gain must be tuned to α≈1 to a fraction of a percent), and
    any detuning relaxes the bump to the nearest stable point.
@@ -105,11 +105,11 @@ each latch is self-sustaining NMDA (P0.3 already proved this holds 0.62 of peak 
 1. **GRADED-HOLD (falsifies the P0.3 saturation):** drive to magnitude *m* ∈ {0.2, 0.4, 0.6, 0.8, 1.0}, then
    drive-OFF ≥1 s; held level must **monotonically track *m*** — Spearman ρ(m, held) ≥ 0.8 **and** held-range
    ≥ 0.05 across the *m* sweep. **Flips:** saturation → ρ≈0 / range≈0 (the P0.3 read); a 2-level latch → range
-   collapses. A held range of 0.003 (Wave 1) fails outright. <!--derived: quoted from Wave-1 task brief-->
+   collapses. A held range of 0.003 (Wave 1) fails outright. (quoted from Wave-1 task brief) <!--derived-->
 2. **DRIFT-ROBUSTNESS (falsifies the Wave-1 collapse; the like-for-like that proves different-in-kind):** hold a
    mid level, no drive, T=2 s; measure |slope| and variance of the held level. Run a **matched same-N single-pool
    continuous line-attractor CONTROL** in the same harness. Teeth: the **control must drift** (|slope| large /
-   relaxes toward a point, reproducing Wave 1's 0.003 <!--derived: quoted from Wave-1 task brief-->) while the **ladder stays flat**. If the ladder drifts too,
+   relaxes toward a point, reproducing Wave 1's 0.003 (quoted from Wave-1 task brief) <!--derived-->) while the **ladder stays flat**. If the ladder drifts too,
    the mechanism is refuted — it flips.
 3. **LADDER-LESION + matched SHAM (falsifies "it's just tonic bias, not the latch"):** real lesion = zero the
    ladder's within-pool NMDA recurrence (or `enable_nmda=False` on the ladder) → held must **collapse to ≈0**.
