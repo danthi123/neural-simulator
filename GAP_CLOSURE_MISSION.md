@@ -34,10 +34,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   moat kept as the post-hoc honesty gate. Adversarial verify stripped overclaims from A/B/D — the pattern
 >   earned its keep. Artifacts: task `wphw8m1y7` output + agent branches `worktree-wf_d3435fc2-5a3-*`.
 > **WAVE 2a DONE (task `w76nz2qqu`, 8 agents, adversarially verified) — both critical-path pieces CONFIRMED:**
-> - **A forward-model = CONFIRMED + BANKED to main (`d8a731823`).** The REVISE is fixed (3 mechanism controls
->   implemented as real code paths with teeth: additive 0.04 / conjunctive-ceiling 1.00 / separate 0.12); added a
->   constituent-coverage guard to the held-out split (6-seed robustness); seed 42 reproduces 0.720 exactly. **A's
->   6-seed sweep is RUNNING on the pool** (the crux that gates Wave-2b). Verifier re-ran byte-identical.
+> - **A forward-model = 6/6 GO — CRUX VALIDATED + BANKED (`2eb9c7e4`).** The 6-seed sweep (42/43/44/100/101/102)
+>   is GO on ALL 6: held-out compositional 0.72/0.92/0.88/0.92/0.88/0.92 (mean 0.873) vs retrieval 0.000,
+>   compositional every seed, lesions collapse to prior every seed. REVISE fixed (3 controls with teeth) +
+>   constituent-coverage split guard. FOUND+FIXED a crash: `_build_reservoir_bridge` left
+>   `enable_structural_plasticity=True` so the reservoir remodelled its synapses mid-run → snapshot-desync broadcast
+>   ValueError on 3 seeds (an ERROR, NOT a low score — silent-failure trap avoided); disabled it (a reservoir must
+>   be structurally fixed). **The world-model SIMULATION faculty generalizes across all seeds → Wave-2b UNBLOCKED.**
 > - **path-T generator = CONFIRMED sound, NO host-smuggling** (answer decoded from the RF phasor substrate, moat
 >   a real neural abstain, conditioning has teeth, multi-sentence genuinely generated, faculties LOAD-BEARING
 >   under lesion for world-model + honesty). HELD OFF-MAIN pending finding-hygiene fixes (vacuous A-sham,
@@ -55,11 +58,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > `research/findings/raw/lanes/stageA/stageA_full_integration_s{7,8,9,200,201,202}.json` (prov sidecars attached).
 > Pool now IDLE (honest gap); next pool job = A's 6-seed sweep, dispatched once Wave-2a delivers the fixed A
 > runner. dispatcher pid 1576 alive.
-> **NEXT (ordered):** (1) collect A's 6-seed from the pool — if GO, A is the validated world-model faculty; if a
-> seed misses, diagnose (the coverage guard makes it real, not a confound); (2) read the B/C/D build result
-> `wznmfs9c2` — which landed a genuine neural faculty vs an honest-negative (→ next-mechanism lead); (3) harden
-> path-T's finding (fix the vacuous A-sham → real A-scramble; add attribution + preconditions; 6-seed) then bank
-> it; (4) **Wave 2b** = re-run the 6/6 baseline, then integrate A (world-model→content seam) onto
+> **NEXT (ordered):** (1) ✅ DONE — A's 6-seed is 6/6 GO (banked `2eb9c7e4`), the world-model faculty is validated;
+> (2) read the B/C/D build result `wznmfs9c2` — which landed a genuine neural faculty vs an honest-negative (→
+> next-mechanism lead); (3) harden path-T's finding (fix the vacuous A-sham → real A-scramble; add attribution +
+> preconditions; 6-seed) then bank it; (4) **Wave 2b (UNBLOCKED)** = re-run the 6/6 baseline, then integrate A (world-model→content seam) onto
 > `nav_conv_merged_bridge.py` under the 7-seam contract, re-run 6/6 regression (roll back if it drops); (5)
 > **Wave 2c** = integrate the path-T generator/render seam (moat post-hoc-gated) + #2 grounded free-gen; (6)
 > **capstone** = faculty-load-bearing lesion battery (real+sham, exclude the decorative dlPFC-ordering) +
