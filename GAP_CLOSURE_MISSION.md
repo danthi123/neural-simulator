@@ -98,9 +98,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > sham for the world-model is single-seed + seed-44 intact prose drifts (0.5) — generator-fluency-WALL scaffold
 > limits, NOT a faculty/moat failure. Burn-down list: transformer forward, host text-interface conditioning, host
 > re-parse/tone render. **PHASE 3 NOW RUNNING (2 parallel workflows, owner said "best judgement, parallelize"):**
-> (A) advance+burn-down `wo9lqu3uj` — biologize A's world-model read-out (host ridge → spiking synaptic), B
-> neural-WTA + CA3 recurrent completion (+ fix the B 6-seed pool crash: --out produced no artifacts), D-Leg-2
-> value-amplification to convergence; (B) developmental TEACHER-LOOP `wqi7fqc6z` DONE + banked (`7f48cbad`), adversarially CONFIRMED (PARTIAL) — THE
+> (A) advance+burn-down `wo9lqu3uj` DONE + banked (`4a94eb48`, adversarially verified — the honest hard-biology
+> round): **B episodic ADVANCED** — recurrent CA3 completion now LOAD-BEARING for retrieval (zero_recurrent
+> silences the cortical readout, cupy-reproduced), PARTIAL (residuals: host-wired attractor STORAGE should be
+> learned; neural WTA still host-argmax) — 6-seed on the pool. **A biologize-readout = honest NO-GO** — the spiking
+> synaptic read-out under-resolves (0.04 vs ridge 0.80 on the SAME feature); provably neural, no smuggling — a
+> substrate-RESOLUTION wall (host ridge stays); next = a LEARNED synaptic read-out + normalization/competition.
+> **D-Leg-2 = REFUTED** — doesn't converge (1/6 GO, trained 0.50<0.85), amplification math is host-computed, AND
+> the verifier caught a TITLE OVERCLAIM (uncommitted UTT_ITEM=200 result in the headline) → held OFF-MAIN on branch
+> `worktree-wf_1e4760bb-b56-3` pending a corrected title + a brain-based amplification; next = neural value signal. (B) developmental TEACHER-LOOP `wqi7fqc6z` DONE + banked (`7f48cbad`), adversarially CONFIRMED (PARTIAL) — THE
 > BREADTH SEED WORKS: the brain LEARNS a new fact ("dax eats grass") by its OWN plasticity (contingent teacher →
 > transport-free e-prop moves cp_connections.data), NOT a host store() — kb unchanged 2→2. before query→None,
 > after→"grass" on FRESH draws (held-out 1.00 vs 0.17), 6/6; learning-pathway lesion → not acquired (LEARNED not

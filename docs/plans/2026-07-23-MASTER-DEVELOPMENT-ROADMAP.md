@@ -446,6 +446,15 @@ learned source-monitor; acquisition shallow (readout-only); in-loop use is a re-
 allocation deferred (`2026-08-08-teacher-loop-corrective-acquisition-*-learned-moat-leaks-6seed.md`). This is the
 real synaptic acquisition engine that grows the toy world toward breadth.
 
+**2026-08-08 — PHASE-3 advance+burn-down (the honest hard-biology round, adversarially verified).** B episodic
+ADVANCED: recurrent CA3 completion is now LOAD-BEARING for retrieval (zero_recurrent silences the cortical readout,
+cupy-reproduced) — PARTIAL, residuals = host-wired attractor STORAGE (should be learned) + neural-WTA still
+host-argmax (`2026-08-08-episodic-CA3-completion-CLOSED-*`). A biologize-read-out = honest NO-GO: the spiking
+synaptic read-out under-resolves (0.04 vs ridge 0.80 on the SAME feature) — a substrate-RESOLUTION wall (provably
+neural, host ridge stays); next = a LEARNED synaptic read-out + divisive normalization/lateral competition
+(`2026-08-08-fm-spiking-synaptic-readout-*-NO-GO`). D-Leg-2 value-amplification = REFUTED (1/6 GO, host-computed
+amplification, a title overclaim caught by the verifier — held off-main); next = a neural value signal.
+
 **2026-08-06 UPDATE — Gate B executed-action credit (continuous BG selector lineage).** Stage 1 (continuous
 center-surround selector) is a CONSTRUCTION GO. Stage 2 (global-DA three-factor reward credit on the D1 routes)
 is `STAGE2_NO_GO`: a single global dopamine scalar cannot do action-specific credit (D_contingent == D_yoked on
