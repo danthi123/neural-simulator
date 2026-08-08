@@ -1,0 +1,652 @@
+{
+  "runner": "_pathT_conditioned_generator_derisk",
+  "seed": 42,
+  "T": 16,
+  "max_new_tokens": 64,
+  "verdict": "GO",
+  "scaffold_label": "SCAFFOLD (converted spiking-Qwen articulation mouth) + POST-HOC-VERIFY moat -- NOT 'moat GO'; generator fluency itself is the UNCHANGED field wall.",
+  "seed_seeds_substrate": {
+    "hash_run1": "fe3475ff29771f0c",
+    "hash_run2": "fe3475ff29771f0c",
+    "identical": true
+  },
+  "generator_spiking_state": {
+    "T": 16,
+    "spiking_ops_enabled": true,
+    "install_info": {
+      "n_rmsnorm": 49,
+      "n_silu_mlp": 24
+    },
+    "measured_ranges": {
+      "silu_min": -7.42578125,
+      "silu_max": 4.4140625,
+      "logit_shift_min": -101.75
+    }
+  },
+  "n_turns": 5,
+  "n_parseable_turns": 3,
+  "n_freeform_turns": 2,
+  "multi_sentence": true,
+  "A_world_model_loadbearing": {
+    "pass": true,
+    "scored_on_parseable_turns": 3,
+    "intact_fidelity": 1.0,
+    "real_lesion_fidelity": 0.0,
+    "sham_lesion_fidelity": 1.0,
+    "real_lesion_still_has_candidates": true,
+    "sham_prompt_differs_from_intact": true,
+    "note": "REAL (corrupt the CONTENT the brain supplies: scramble the topic's own conditioning patients->foreign) flips fidelity 1.0->0.0; MATCHED SHAM (perturb only the SURFACE the mouth produces: NUMBER each sentence, SAME TRUE facts + same content-lock) HOLDS. The sham prompt/generation genuinely DIFFER from intact (teeth: not the vacuous txt_sham==txt_intact of Wave-1) yet fidelity holds -> the collapse is SPECIFIC to corrupting world-model CONTENT, not to any prompt perturbation. This is the thesis dissociation: brain supplies content, mouth supplies surface. Real lesion keeps candidates>0 (non-tautological). Scored ONLY on turns whose intact reply re-parses to >=1 SVO (the instrument-visible turns). Two looser shams were REJECTED as confounded on the 0.5B mouth: a paraphrase drops the patient (content drift); scrambled-distractor injection bleeds into topic props (diluted real lesion). Numbering keeps the content-lock verbatim."
+  },
+  "B_honesty_loadbearing": {
+    "pass": true,
+    "confab_available": 8,
+    "confab_emitted_moat_on": 0,
+    "confab_emitted_moat_off": 8,
+    "sham_confab_emitted": 0,
+    "note": "On the confab-laden real-lesion text: moat ON drops all confabs (0 emitted); moat OFF emits them; sham (skip verify on already-true sentences) manufactures 0 confab."
+  },
+  "intact_verified_propositions": 8,
+  "attribution": {
+    "brain_based": [
+      "CONTENT retrieval = agent.what_does (spiking VSA unbind of the RF-phasor store) + agent.elaborate (dlPFC spiking spread) -- the world-model/memory faculty produces the neighbourhood.",
+      "MOAT accept/reject decision = agent.is_it_true (ask_yes_no unbind) -- the NEURAL half of the post-hoc verify."
+    ],
+    "declared_host_shortcuts": [
+      "GENERATOR = converted spiking-Qwen 0.5B forward (spiking-ops installed, ppl~1.0) -- a SCAFFOLD mouth to biologize later; generative fluency itself is the UNCHANGED field wall.",
+      "BRAIN->GENERATOR conditioning = a HOST TEXT INTERFACE (retrieved facts rendered to a prompt string), not synaptic drive.",
+      "SENTENCE-SPLIT + SVO RE-PARSE = host parsing (_extract_svo_from_prose); only the is_it_true decision is neural."
+    ]
+  },
+  "content_attribution_fraction": 1.0,
+  "preconditions": [
+    {
+      "name": "seed_seeds_substrate (hash cp_neuron_firing_thresholds x2)",
+      "ok": true
+    },
+    {
+      "name": "generator_is_the_converted_spiking_forward (not vanilla fp16)",
+      "ok": true
+    },
+    {
+      "name": "matched_sham_has_teeth (txt_sham != txt_intact on all parseable turns)",
+      "ok": true
+    },
+    {
+      "name": "instrument_visible_turns >= 2 (re-parseable turns to score fidelity)",
+      "ok": true
+    }
+  ],
+  "preconditions_note": "The load-bearing verdict is CONDITIONAL on: cfg.seed seeding the substrate (hash-verified), the mouth being the converted spiking forward, the matched sham genuinely perturbing the prompt (teeth), and >=2 instrument-visible turns.",
+  "single_seed": true,
+  "six_seed_command": "for s in 42 43 44 100 101 102; do PYTHONPATH=$PWD SIM_BACKEND=numpy /home/dant123/Projects/sim/.venv/bin/python -m research.runners._pathT_conditioned_generator_derisk --seed $s --T 16 --max-new-tokens 64 --out research/findings/raw/lanes/pathT/pathT_conditioned_generator_s$s.json; done",
+  "honest_negatives": [
+    "GENERATOR FLUENCY = the UNCHANGED field wall (converted 0.5B transformer, spiking-ops forward, ppl~1.0); not emergent-from-a-learning-substrate.",
+    "BRAIN->GENERATOR conditioning is a HOST TEXT INTERFACE (retrieved facts rendered to a prompt string), not direct synaptic drive -- a characterized shortcut, same boundary as all grounded-language work.",
+    "SENTENCE-SPLIT + RE-PARSE is HOST parsing; the accept/reject DECISION is the brain's spiking is_it_true (ask_yes_no unbind) -- that half is neural.",
+    "RE-PARSE INSTRUMENT BLIND on 2/5 turns: the mouth free-paraphrases ('A bird enjoys munching on worms') so no clean SVO is recovered -> the content-fidelity metric cannot see those turns. This is the generator-fluency/instrument wall, not a mechanism failure; the post-hoc moat DROPS such unverifiable propositions (conservative -- it never emits them).",
+    "MOUTH SURFACE/CONTENT COUPLING (matched-sham design): the 0.5B mouth couples surface + content, so a paraphrase sham DROPS the patient (content drift) and a scrambled-distractor sham BLEEDS into topic props (~0.72 diluted-real-lesion) -> both REJECTED. The clean matched sham is a SURFACE-axis NUMBERING perturbation (same true facts + same content-lock), which holds fidelity by construction while giving teeth. A characterized property of the scaffold mouth.",
+    "Single-seed SMOKE (parent runs any multi-seed sweep)."
+  ],
+  "turns": [
+    {
+      "topic": "fox",
+      "neighbourhood": [
+        [
+          "fox",
+          "chase",
+          "rabbit"
+        ],
+        [
+          "fox",
+          "eat",
+          "rabbit"
+        ]
+      ],
+      "dlpfc_lead": "chase",
+      "neighbourhood_scrambled": [
+        [
+          "fox",
+          "chase",
+          "cat"
+        ],
+        [
+          "fox",
+          "eat",
+          "shade"
+        ]
+      ],
+      "sham_kind": "surface-axis numbering perturbation (content held true)",
+      "sham_prompt_differs_from_intact": true,
+      "sham_text_differs_from_intact": true,
+      "intact": {
+        "prompt": "Facts: A fox chases a rabbit. A fox eats a rabbit. Using ONLY these facts, write 2 short sentences about the fox. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A fox chased a rabbit.\nThe fox ate a rabbit.",
+        "props": [
+          {
+            "sentence": "A fox chased a rabbit",
+            "svo": [
+              "fox",
+              "chase",
+              "rabbit"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "The fox ate a rabbit",
+            "svo": [
+              "fox",
+              "eat",
+              "rabbit"
+            ],
+            "verdict": "yes",
+            "verified": true
+          }
+        ],
+        "candidates": 2,
+        "verified": 2,
+        "fidelity": 1.0
+      },
+      "real_lesion": {
+        "prompt": "Facts: A fox chases a cat. A fox eats a shade. Using ONLY these facts, write 2 short sentences about the fox. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A fox chased a cat.\nThe fox ate a shade.",
+        "props": [
+          {
+            "sentence": "A fox chased a cat",
+            "svo": [
+              "fox",
+              "chase",
+              "cat"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          },
+          {
+            "sentence": "The fox ate a shade",
+            "svo": [
+              "fox",
+              "eat",
+              "shade"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          }
+        ],
+        "candidates": 2,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "sham_lesion": {
+        "prompt": "Facts: A fox chases a rabbit. A fox eats a rabbit. Using ONLY these facts, write 2 short sentences about the fox. Each sentence must state one of the facts. Number each sentence (1., 2., 3.). Reply with only the numbered sentences.",
+        "text": "1. The fox chased after the rabbit.\n2. The fox ate the rabbit.",
+        "props": [
+          {
+            "sentence": "The fox chased after the rabbit",
+            "svo": [
+              "fox",
+              "chase",
+              "rabbit"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "The fox ate the rabbit",
+            "svo": [
+              "fox",
+              "eat",
+              "rabbit"
+            ],
+            "verdict": "yes",
+            "verified": true
+          }
+        ],
+        "candidates": 2,
+        "verified": 2,
+        "fidelity": 1.0
+      },
+      "gen_seconds": 1.54
+    },
+    {
+      "topic": "dog",
+      "neighbourhood": [
+        [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        [
+          "dog",
+          "eat",
+          "meat"
+        ],
+        [
+          "dog",
+          "like",
+          "bone"
+        ]
+      ],
+      "dlpfc_lead": "big",
+      "neighbourhood_scrambled": [
+        [
+          "dog",
+          "chase",
+          "rabbit"
+        ],
+        [
+          "dog",
+          "eat",
+          "honey"
+        ],
+        [
+          "dog",
+          "like",
+          "light"
+        ]
+      ],
+      "sham_kind": "surface-axis numbering perturbation (content held true)",
+      "sham_prompt_differs_from_intact": true,
+      "sham_text_differs_from_intact": true,
+      "intact": {
+        "prompt": "Facts: A dog chases a cat. A dog eats a meat. A dog likes a bone. Using ONLY these facts, write 3 short sentences about the dog. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A dog chases a cat because it enjoys chasing its prey.\nA dog eats a meat because it needs protein to survive.\nA dog likes a bone because it finds bones edible and tasty.",
+        "props": [
+          {
+            "sentence": "A dog chases a cat because it enjoys chasing its prey",
+            "svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "A dog eats a meat because it needs protein to survive",
+            "svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "A dog likes a bone because it finds bones edible and tasty",
+            "svo": [
+              "dog",
+              "like",
+              "bone"
+            ],
+            "verdict": "yes",
+            "verified": true
+          }
+        ],
+        "candidates": 3,
+        "verified": 3,
+        "fidelity": 1.0
+      },
+      "real_lesion": {
+        "prompt": "Facts: A dog chases a rabbit. A dog eats a honey. A dog likes a light. Using ONLY these facts, write 3 short sentences about the dog. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A dog chases a rabbit because it enjoys chasing.\nA dog eats a honey because it prefers sweet food.\nA dog likes a light because it finds comfort in being bright and cheerful.",
+        "props": [
+          {
+            "sentence": "A dog chases a rabbit because it enjoys chasing",
+            "svo": [
+              "dog",
+              "chase",
+              "rabbit"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          },
+          {
+            "sentence": "A dog eats a honey because it prefers sweet food",
+            "svo": [
+              "dog",
+              "eat",
+              "honey"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          },
+          {
+            "sentence": "A dog likes a light because it finds comfort in being bright and cheerful",
+            "svo": [
+              "dog",
+              "like",
+              "light"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          }
+        ],
+        "candidates": 3,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "sham_lesion": {
+        "prompt": "Facts: A dog chases a cat. A dog eats a meat. A dog likes a bone. Using ONLY these facts, write 3 short sentences about the dog. Each sentence must state one of the facts. Number each sentence (1., 2., 3.). Reply with only the numbered sentences.",
+        "text": "1. The dog is chasing a cat.\n2. The dog enjoys eating meat.\n3. The dog likes to chew on a bone.",
+        "props": [
+          {
+            "sentence": "The dog is chasing a cat",
+            "svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "The dog enjoys eating meat",
+            "svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "The dog likes to chew on a bone",
+            "svo": [
+              "dog",
+              "like",
+              "bone"
+            ],
+            "verdict": "yes",
+            "verified": true
+          }
+        ],
+        "candidates": 3,
+        "verified": 3,
+        "fidelity": 1.0
+      },
+      "gen_seconds": 2.73
+    },
+    {
+      "topic": "cat",
+      "neighbourhood": [
+        [
+          "cat",
+          "chase",
+          "mouse"
+        ],
+        [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        [
+          "cat",
+          "like",
+          "milk"
+        ]
+      ],
+      "dlpfc_lead": "dog",
+      "neighbourhood_scrambled": [
+        [
+          "cat",
+          "chase",
+          "water"
+        ],
+        [
+          "cat",
+          "eat",
+          "cat"
+        ],
+        [
+          "cat",
+          "like",
+          "seed"
+        ]
+      ],
+      "sham_kind": "surface-axis numbering perturbation (content held true)",
+      "sham_prompt_differs_from_intact": true,
+      "sham_text_differs_from_intact": true,
+      "intact": {
+        "prompt": "Facts: A cat chases a mouse. A cat eats a fish. A cat likes a milk. Using ONLY these facts, write 3 short sentences about the cat. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A cat chases a mouse.\nA cat eats a fish.\nA cat likes milk.",
+        "props": [
+          {
+            "sentence": "A cat chases a mouse",
+            "svo": [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "A cat eats a fish",
+            "svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "A cat likes milk",
+            "svo": [
+              "cat",
+              "like",
+              "milk"
+            ],
+            "verdict": "yes",
+            "verified": true
+          }
+        ],
+        "candidates": 3,
+        "verified": 3,
+        "fidelity": 1.0
+      },
+      "real_lesion": {
+        "prompt": "Facts: A cat chases a water. A cat eats a cat. A cat likes a seed. Using ONLY these facts, write 3 short sentences about the cat. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A cat chases a water.\nA cat eats a cat.\nA cat likes a seed.",
+        "props": [
+          {
+            "sentence": "A cat chases a water",
+            "svo": [
+              "cat",
+              "chase",
+              "water"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          },
+          {
+            "sentence": "A cat eats a cat",
+            "svo": [
+              "cat",
+              "eat",
+              "cat"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          },
+          {
+            "sentence": "A cat likes a seed",
+            "svo": [
+              "cat",
+              "like",
+              "seed"
+            ],
+            "verdict": "unknown",
+            "verified": false
+          }
+        ],
+        "candidates": 3,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "sham_lesion": {
+        "prompt": "Facts: A cat chases a mouse. A cat eats a fish. A cat likes a milk. Using ONLY these facts, write 3 short sentences about the cat. Each sentence must state one of the facts. Number each sentence (1., 2., 3.). Reply with only the numbered sentences.",
+        "text": "1. The cat is chasing the mouse.\n2. The cat enjoys eating fish.\n3. The cat likes milk.",
+        "props": [
+          {
+            "sentence": "The cat is chasing the mouse",
+            "svo": [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "The cat enjoys eating fish",
+            "svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "verdict": "yes",
+            "verified": true
+          },
+          {
+            "sentence": "The cat likes milk",
+            "svo": [
+              "cat",
+              "like",
+              "milk"
+            ],
+            "verdict": "yes",
+            "verified": true
+          }
+        ],
+        "candidates": 3,
+        "verified": 3,
+        "fidelity": 1.0
+      },
+      "gen_seconds": 1.72
+    },
+    {
+      "topic": "bird",
+      "neighbourhood": [
+        [
+          "bird",
+          "like",
+          "worm"
+        ],
+        [
+          "bird",
+          "eat",
+          "seed"
+        ],
+        [
+          "bird",
+          "live",
+          "tree"
+        ]
+      ],
+      "dlpfc_lead": "worm",
+      "neighbourhood_scrambled": [
+        [
+          "bird",
+          "like",
+          "egg"
+        ],
+        [
+          "bird",
+          "eat",
+          "cat"
+        ],
+        [
+          "bird",
+          "live",
+          "meat"
+        ]
+      ],
+      "sham_kind": "surface-axis numbering perturbation (content held true)",
+      "sham_prompt_differs_from_intact": true,
+      "sham_text_differs_from_intact": true,
+      "intact": {
+        "prompt": "Facts: A bird likes a worm. A bird eats a seed. A bird lives in the tree. Using ONLY these facts, write 3 short sentences about the bird. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A bird enjoys munching on worms. It feeds on seeds while perched high up. Birds live in trees, enjoying their natural habitat.",
+        "props": [],
+        "candidates": 0,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "real_lesion": {
+        "prompt": "Facts: A bird likes an egg. A bird eats a cat. A bird lives in the meat. Using ONLY these facts, write 3 short sentences about the bird. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A bird enjoys eating eggs.\nA bird is attracted to cats.\nBirds live in the meat they consume.",
+        "props": [],
+        "candidates": 0,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "sham_lesion": {
+        "prompt": "Facts: A bird likes a worm. A bird eats a seed. A bird lives in the tree. Using ONLY these facts, write 3 short sentences about the bird. Each sentence must state one of the facts. Number each sentence (1., 2., 3.). Reply with only the numbered sentences.",
+        "text": "1. The bird enjoys eating seeds.\n2. The bird prefers to live in trees.\n3. The bird feeds on worms.",
+        "props": [],
+        "candidates": 0,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "gen_seconds": 2.05
+    },
+    {
+      "topic": "cow",
+      "neighbourhood": [
+        [
+          "cow",
+          "eat",
+          "grass"
+        ],
+        [
+          "cow",
+          "like",
+          "hay"
+        ]
+      ],
+      "dlpfc_lead": "eat",
+      "neighbourhood_scrambled": [
+        [
+          "cow",
+          "eat",
+          "worm"
+        ],
+        [
+          "cow",
+          "like",
+          "seed"
+        ]
+      ],
+      "sham_kind": "surface-axis numbering perturbation (content held true)",
+      "sham_prompt_differs_from_intact": true,
+      "sham_text_differs_from_intact": true,
+      "intact": {
+        "prompt": "Facts: A cow eats a grass. A cow likes a hay. Using ONLY these facts, write 2 short sentences about the cow. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A cow is herbivorous and feeds on grass. It enjoys the taste of hay.",
+        "props": [],
+        "candidates": 0,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "real_lesion": {
+        "prompt": "Facts: A cow eats a worm. A cow likes a seed. Using ONLY these facts, write 2 short sentences about the cow. Each sentence must state one of the facts. Reply with only the sentences.",
+        "text": "A cow is an herbivore that consumes seeds for nutrition.",
+        "props": [],
+        "candidates": 0,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "sham_lesion": {
+        "prompt": "Facts: A cow eats a grass. A cow likes a hay. Using ONLY these facts, write 2 short sentences about the cow. Each sentence must state one of the facts. Number each sentence (1., 2., 3.). Reply with only the numbered sentences.",
+        "text": "1. The cow consumes hay.\n2. Hay is consumed by the cow.",
+        "props": [],
+        "candidates": 0,
+        "verified": 0,
+        "fidelity": 0.0
+      },
+      "gen_seconds": 1.32
+    }
+  ],
+  "seconds": 144.5
+}
