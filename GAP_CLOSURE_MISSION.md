@@ -70,8 +70,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > runner. dispatcher pid 1576 alive.
 > **NEXT (ordered):** (1) ✅ DONE — A's 6-seed is 6/6 GO (banked `2eb9c7e4`), the world-model faculty is validated;
 > (2) ✅ DONE — B/C/D builds read (`wznmfs9c2`): C graded-affect GO (banked), D-Leg-1 GO, B + D-Leg-2 negatives;
-> (3) **Wave 2b RUNNING (`wdab9kb0k`)** = serial bridge integration of A + C (design → seam-A → 12/12 regression →
-> seam-C → regression → verify + lesion battery); (4) **B/D-Leg-2 next-mechanism searches RUNNING (`w4s8v4k35`)** —
+> (3) **Wave 2b STRUCTURAL integration DONE + banked (`d37e3f48`):** the A (forward-model reservoir) + C
+> (graded-affect ladder) seams are appended onto the ONE integration bridge, DEFAULT-OFF byte-identical (n
+> 24961→25261/25531, thr+conn bit-identical off-vs-on), regression stays 6/6 GO (moat 475/475, FM4 0 flips),
+> each faculty genuinely NEURAL + load-bearing ON ITS OWN READ (lesion A → decode 1.00→0.12; lesion C → graded
+> read 0.068→0.000; shams unchanged). ⚠️ HONEST GAP (verifier REVISE): the seams are present + default-off but
+> NOT YET exercised in the LIVE turn loop — A/C are load-bearing on their own reads, NOT YET on the conversation.
+> **NEXT = Wave 2b-part-2 (LIVE WIRING, RUNNING):** route a novel (s,a) turn through fm_reservoir (tighten g_eff +
+> certainty-tagged "predicted-not-observed" content) + drive the ladder from turn valence → graded tone; re-run
+> the regression with seams ON (moat/FM4 must hold); conversation-lesion battery (lesion A → novel turn changes;
+> lesion C → tone changes); fix the vacuous rf_w byte-identity check. (4) **B/D-Leg-2 searches RUNNING (`wo62u9cjq`)** —
 > B igniting spiking WTA readout + BTSP/ACh; D-Leg-2 success-as-neuromodulator three-factor plasticity (yoked
 > control); each folds in its debt-fix (B argmax mislabel, D-Leg-2 oracle provenance) + banks D-Leg-1/B findings;
 > (5) after Wave 2b: harden path-T's finding then Wave 2c (generator/render seam + #2 free-gen); (6) capstone =
