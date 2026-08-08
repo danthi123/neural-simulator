@@ -100,6 +100,14 @@ def _build_reservoir_bridge(seed, n_pool, in_dim, dt=0.5):
     cfg.enable_ou_process = False
     cfg.enable_stdp = False
     cfg.enable_hebbian_learning = False
+    # A reservoir must be STRUCTURALLY FIXED: only the read-out learns. enable_structural_plasticity defaults True,
+    # so without this the bridge remodels its own synapse set mid-run — which (a) makes the post-init snapshot's
+    # per-synapse arrays a different size than the live arrays, so final_state()'s wash-out restore raises
+    # "could not broadcast (N,) into (M,)" on any seed whose dynamics trip a net add/prune (crashed seeds 44/100/102
+    # in the fluency-A 6-seed sweep), and (b) is a reservoir-semantics confound (features stop being comparable
+    # across sequences). Freeze it so the reservoir is a genuine fixed liquid. (matches plastic_internal=False above.)
+    cfg.enable_structural_plasticity = False
+    cfg.enable_structural_pruning = False
     rt = RuntimeState()
     rt.actual_seed_used = seed
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
