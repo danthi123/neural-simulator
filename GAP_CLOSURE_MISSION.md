@@ -97,9 +97,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > content wrong; affect→"warmly,gladly" vanishes; honesty→confabulates). HONEST go=PARTIAL: the matched-SURFACE
 > sham for the world-model is single-seed + seed-44 intact prose drifts (0.5) — generator-fluency-WALL scaffold
 > limits, NOT a faculty/moat failure. Burn-down list: transformer forward, host text-interface conditioning, host
-> re-parse/tone render. **NEXT = capstone battery consolidation + biologize the host renders (A ridge→spiking
-> synaptic read-out; C tone token) + grow breadth via the teacher-loop; off critical path: B WTA/completion,
-> D-Leg-2 value-amplification.**
+> re-parse/tone render. **PHASE 3 NOW RUNNING (2 parallel workflows, owner said "best judgement, parallelize"):**
+> (A) advance+burn-down `wo9lqu3uj` — biologize A's world-model read-out (host ridge → spiking synaptic), B
+> neural-WTA + CA3 recurrent completion (+ fix the B 6-seed pool crash: --out produced no artifacts), D-Leg-2
+> value-amplification to convergence; (B) developmental TEACHER-LOOP `wqi7fqc6z` — the north-star breadth lever:
+> design + first de-risk of CLOSED-LOOP teaching (teacher corrects → brain acquires a new concept SYNAPTICALLY,
+> not host-injected → brain USES it in a later turn), vs today's one-way fact injection. Both disjoint
+> (faculties/renders vs develop-loop), worktree-isolated. Deferred (scaffold gold-plating): the generator-mouth
+> 6-seed is a GPU job on a scaffold slated for burn-down — skipped for now.
 > **B/D-Leg-2 next-mechanism searches DONE + banked (`0e27fea7`, task `wo62u9cjq`):** B episodic MOVED
 > PARTIAL-FORWARD — the cortical readout now IGNITES (fan-in fix), surpassing the Wave-1 total silence, with neural
 > cued recall + real teeth (permute-cue→0.0; real-vs-sham lesion on CORTICAL firing, not the CA3-overlap
