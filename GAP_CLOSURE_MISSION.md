@@ -30,6 +30,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > build):** neural-retina percepts; on-bridge WKV articulation (close the last off-bridge seam); learn the intent
 > from contingent outcomes (whole message brain-selected); metacog production honesty-hook wire-in + hard-moat battery.
 >
+> **⤷ STRENGTHEN UPDATE (2026-08-07):** the Stage-A honesty floor was STRENGTHENED + axis-separated
+> (`_stageA_honesty_floor_strengthen_derisk`, 6-seed;
+> `2026-08-07-stageA-honesty-floor-strengthen-axis-separated-familiar-wrong-catch-4of6-fit-guard.md`). MISSION
+> familiar-but-wrong axis = **active CATCH 4/6, moat-safe (no regression) 5/6**. A fixed-COVERAGE rate metric over a
+> LARGE battery FIXED the foundation's 44/100 band-count PARTIALs (now active catches). A fit-quality GUARD validating
+> the DEPLOYED spiking self-read turns seed-102's NEGATIVE into a SAFE recall fallback. Two honest residuals kept, not
+> swept: seed 102 is a genuine per-seed FIT boundary (refit with 2× data did NOT rescue it, guard contains it); seed
+> 43 is a marginal-seed regression NO held-out guard can predict (val/test draws disagree). PURE-NOVELTY = a
+> characterized boundary delegated to the hard cue-match moat (475/475). Battery anti-cheat: variance-reduction, not a
+> faked mean lift. NOT a lift to 6/6 — a reliability+diagnosis improvement over the 3/6 floor. Next: a monitor with a
+> larger/stabler edge (richer ACC/aPFC features or an ensemble) so a held-out guard predicts the test draw on the
+> marginal seeds; keep the guard's safe fallback as the floor.
+>
 > **⭐ LANDSCAPE-SURVEY ADOPTION THREAD COMPLETE (2026-08-07, owner-directed "make use of the findings") — 3
 > findings, all 6-seed PARENT-VERIFIED, all brain-based, no `sim/` edit:**
 > - **Rubicon (O'Reilly, PVLV/VSPatch) — FULL delayed-credit ADOPTED as MAINTENANCE.** HALF-1 maintained-goal
