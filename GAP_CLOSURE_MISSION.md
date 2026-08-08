@@ -13,8 +13,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-07 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-08 (READ FIRST — live resume point)
 
+> **⭐⭐⭐ STAGE-A CULMINATION (2026-08-08, `2ecebf67`, single-seed GO, adversarially verified; 6-seed running):
+> the TRUE ONE BRAIN conversation loop RUNS.** All four Stage-A faculties + the no-confab moat are CO-RESIDENT on
+> ONE spiking bridge (20 region slices, one step loop — genuinely one bridge, confirmed clean by a skeptic) and
+> COMPOSE in a live 4-turn loop, one process: known-fact → honest grounded answer + affect-colored tone ("gladly
+> apple big cat"); novel → the brain ASKS its OWN wh-question ("what does big run?") instead of refusing, moat
+> abstains 0-confab; mood PERSISTS across turns + colors; asks again. FM4 live (0 abstain→assert), moat live
+> 475/475, no piece breaks another. The self-driven, honest, affect-coloured, curiosity CORE of open-ended
+> conversation now runs as ONE BRAIN. NEXT (owner-steerable): 6-seed sweep (running) · Step 4 grounded free-gen
+> (⚠️SCAFFOLD) · Step 5 interactive teacher-loop · full calibrated-monitor routing onto the shared slices · graded
+> affect (line-attractor) · monitor active-catch ensemble. Honest-negatives in the finding (single-seed; live floor
+> = cue-match moat under g_eff; bistable latch; host-fed appraisal + host render; no sim/ edit).
+>
 > **⭐⭐ OPEN-ENDED CONVERSATION ARC (2026-08-07, owner-directed; ULTRACODE orchestration) — the CURRENT FRONTIER.**
 > Owner steer: a sim-brain to talk to "reasonably fluently + open-ended, not just Q→A", grounded in
 > world-view/perception/emotion + the effects of speaking; and the 267M autoregressive WKV is a spiking-LLM
