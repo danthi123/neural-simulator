@@ -138,7 +138,12 @@ its controls and lesions, and is tested at the required seed coverage.
 - **Curiosity and metacognition:** isolated learning-progress and confidence
   monitors have useful proxy results in the record. They do not yet show that
   curiosity develops from the brain's own history or that confidence causally
-  controls speech and action across the integrated system.
+  controls speech and action across the integrated system. The Stage-A honesty
+  floor (the calibrated confidence monitor gating what the brain will assert)
+  is, as of 2026-08-07, an active catch of familiar-but-wrong confabulation on
+  4 of 6 seeds and moat-safe (no regression, via a fit-quality guard that falls
+  back to the recall baseline) on 5 of 6 — a characterized improvement over the
+  earlier 3-of-6 floor, not yet a clean 6-of-6.
 - **Spiking language and local learning:** several sequence, memory, and
   spiking-forward conversion mechanisms have been de-risked at limited scale.
   A current large promotion must not be called positive until its required
