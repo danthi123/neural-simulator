@@ -1,0 +1,254 @@
+{
+  "runner": "research/runners/_stageA_foundation_honesty_arbiter_derisk.py",
+  "faculty": "Stage-A conversation-integration FOUNDATION (STEP 0 substrate/harness + STEP 1 honesty floor + 3-way arbiter)",
+  "design": "research/findings/2026-08-07-stageA-conversation-integration-DESIGN.md",
+  "backend": "numpy",
+  "seed": 44,
+  "n_trials": 120,
+  "verdict": "PARTIAL",
+  "verdict_earned_status": "UNDEFINED",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "default-off byte-identity (null co-resident slice)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "RNG-isolation guard proven (guarded==clean, unguarded shifts)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "hard-moat preserved (0 added false-accepts, floor never flips moat)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "honesty floor routes the CALIBRATED monitor (not the recall score)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "g_eff law ordering + FM4 (affect cannot flip abstain->assert)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "3-way arbiter winner-margin (intact vs inhibition-lesion)",
+      "ok": true,
+      "detail": "treatment=0.590643 control=0.0696379 |sep|=0.521005 > 0.1",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "confident-wrong asserts (recall-score vs calibrated routing, matched assert count)",
+      "ok": false,
+      "detail": "treatment=0 control=0 |sep|=0 > 0.5",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "calibrated monitor correct/error discrimination vs chance",
+      "ok": true,
+      "detail": "0.951261 vs floor 0.5",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU on the honesty+arbiter region bridges",
+      "why": "isolation of the fixed relay + WTA; a property of the mechanism UNDER THIS ISOLATION"
+    }
+  ],
+  "anti_cheats": {
+    "a_default_off_byte_identity": true,
+    "b_hard_moat_preserved": true,
+    "c_honesty_floor_routes_calibrated_monitor": true,
+    "c_honesty_behavior_reduced_confident_wrong": false,
+    "d_rng_isolation_proven": true,
+    "e_arbiter_arbitrates_three_way": true,
+    "fm4_affect_cannot_flip_abstain_to_assert": true,
+    "g_eff_law_ordering_ok": true
+  },
+  "substrate_harness_ok": true,
+  "honesty_behavior_lifted_this_seed": false,
+  "step0_substrate_unification": {
+    "merged_agent_build_seconds": 167.7,
+    "composer_class": "CoResidentOneBrainComposer",
+    "merged_bridge_neurons": 27973,
+    "substrate_unified": true,
+    "n_facts_stored": 5,
+    "hard_moat_checked": 475,
+    "hard_moat_abstains": 475,
+    "added_false_accepts": 0,
+    "honesty_floor_flipped_moat": 0,
+    "moat_preserved": true,
+    "moat_battery_target": 475
+  },
+  "step0_byte_identity": {
+    "n_baseline": 350,
+    "n_with_null": 414,
+    "null_slice_appended_last": true,
+    "baseline_threshold_sha256": "bbb87c88d80e0289aae086e8d998fb84f0a6c79e742252965753a2afcefb8742",
+    "with_null_baseline_indices_sha256": "bbb87c88d80e0289aae086e8d998fb84f0a6c79e742252965753a2afcefb8742",
+    "byte_identical": true
+  },
+  "step0_rng_isolation": {
+    "faculty_pool": "workspace",
+    "measurement_pool": "meta_schema->self_schema (disjoint)",
+    "rng_advanced_by_raw_measurement": false,
+    "clean_trajectory_sha256": "a022ab32e1f897750a25bd70d89efad0a0f94f102cf4f4033070198f62b9d352",
+    "guarded_trajectory_sha256": "a022ab32e1f897750a25bd70d89efad0a0f94f102cf4f4033070198f62b9d352",
+    "unguarded_trajectory_sha256": "4af2b2cbdc9df0c2fab7e41d05e4a6ac37facac89844a978be22d62606d909a6",
+    "guarded_matches_clean": true,
+    "unguarded_shifts_trajectory": true,
+    "isolation_proven": true
+  },
+  "step1_honesty_floor": {
+    "wired_is_learned_monitor": true,
+    "signal_is_calibrated_not_recall": true,
+    "monitor_class": "LearnedAccApfcMonitor",
+    "monitor_feature_mode": "dynamic",
+    "n_trials": 120,
+    "n_correct": 85,
+    "n_error": 35,
+    "type1_accuracy": 0.7083333333333334,
+    "monitor_discrimination_auc": 0.9512605042016806,
+    "recall_score_discrimination_auc": 0.6957983193277311,
+    "self_schema_type2_auc": 0.8826890756302521,
+    "learned_vs_recall_corr": 0.236344301585927,
+    "assert_rate_threshold": 0.12051282051282051,
+    "hedge_rate_threshold": 0.0858974358974359,
+    "deployed_fixedcut_calibrated_confident_wrong_asserts": 0,
+    "deployed_fixedcut_recall_confident_wrong_asserts": 0,
+    "deployed_fixedcut_calibrated_correct_asserts": 2,
+    "deployed_fixedcut_recall_correct_asserts": 0,
+    "matched_assert_count_A": 2,
+    "calibrated_confident_wrong_asserts": 0,
+    "recall_confident_wrong_asserts": 0,
+    "calibrated_correct_asserts": 2,
+    "recall_correct_asserts": 2,
+    "calibrated_confident_wrong_rate": 0.0,
+    "recall_confident_wrong_rate": 0.0,
+    "honesty_behavior_reduced_confident_wrong": false,
+    "confident_wrong_attributable_to_calibrated_routing": null,
+    "g_eff_law_demo": {
+      "cue_match_moat_floor": 0.06,
+      "honesty_floor": 0.3,
+      "affect_mod": 0.5,
+      "g_eff": 0.8,
+      "ordering_ok": true,
+      "affect_cannot_loosen": true
+    },
+    "fm4_affect_cannot_flip_abstain_to_assert": {
+      "checked": 118,
+      "abstain_to_assert_flips": 0,
+      "ok": true
+    },
+    "band_counts_calibrated": {
+      "MOAT": 0,
+      "soft_abstain": 49,
+      "hedge": 69,
+      "assert": 2
+    },
+    "band_counts_recall": {
+      "MOAT": 0,
+      "soft_abstain": 118,
+      "hedge": 2,
+      "assert": 0
+    }
+  },
+  "step1_arbiter": {
+    "intact": {
+      "assert_readiness": {
+        "winner": "arb_volunteer",
+        "expected": "arb_volunteer",
+        "correct": true,
+        "margin": 0.6132596649845854,
+        "rates": {
+          "arb_volunteer": 0.14038461538461539,
+          "arb_ask": 0.03365384615384615,
+          "arb_silent": 0.0
+        }
+      },
+      "low_conf_ask": {
+        "winner": "arb_ask",
+        "expected": "arb_ask",
+        "correct": true,
+        "margin": 0.5906432712615849,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.13076923076923078,
+          "arb_silent": 0.03365384615384615
+        }
+      },
+      "moat_silence": {
+        "winner": "arb_silent",
+        "expected": "arb_silent",
+        "correct": true,
+        "margin": 0.6547619007086167,
+        "rates": {
+          "arb_volunteer": 0.027884615384615386,
+          "arb_ask": 0.0,
+          "arb_silent": 0.13365384615384615
+        }
+      }
+    },
+    "lesioned": {
+      "assert_readiness": {
+        "winner": "arb_volunteer",
+        "margin": 0.04155124641769171,
+        "rates": {
+          "arb_volunteer": 0.18076923076923077,
+          "arb_ask": 0.16634615384615384,
+          "arb_silent": 0.0
+        }
+      },
+      "low_conf_ask": {
+        "winner": "arb_ask",
+        "margin": 0.054054053902118294,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.1875,
+          "arb_silent": 0.16826923076923078
+        }
+      },
+      "moat_silence": {
+        "winner": "arb_silent",
+        "margin": 0.06963788280662005,
+        "rates": {
+          "arb_volunteer": 0.1605769230769231,
+          "arb_ask": 0.0,
+          "arb_silent": 0.18461538461538463
+        }
+      }
+    },
+    "margin_attributable_to_inhibition": 0.8820982373034115,
+    "all_regimes_correct": true,
+    "distinct_winners_three": true,
+    "intact_min_margin": 0.5906432712615849,
+    "lesion_max_margin": 0.06963788280662005,
+    "per_regime_runner_up_suppression_collapses_on_lesion": {
+      "assert_readiness": true,
+      "low_conf_ask": true,
+      "moat_silence": true
+    },
+    "contention_collapses_on_lesion": true,
+    "arbitrates_three_way": true,
+    "build": "3 self-exciting pools + 1 shared inhibitory pool (competitive queuing); NOT a repurposed 2-pool"
+  },
+  "honesty_source": "CALIBRATED LearnedAccApfcMonitor.confidence_from_features (dynamic feature mode; feedback-trained delta-rule correctness monitor) -> current_from_confidence -> spiking meta_schema->self_schema relay (_laneC_self_schema_metacog_integration._run_report) -> certainty band. NOT the recall/trace/margin score (that was the PARTIAL wire-in's flaw). The recall-score (raw balance-of-evidence) is routed through the IDENTICAL relay only as the comparison baseline.",
+  "honest_scope": "STEP 0 + STEP 1 foundation on ONE spiking substrate. The honesty BEHAVIOR here is a single-seed SMOKE reduction of confident-wrong asserts by routing the calibrated monitor vs the recall score; it is NOT the 6/6 discrimination label of the monitor (the premortem's exact overclaim to avoid) and NOT a solved honesty mechanism. The familiar-but-wrong battery is operationalized as genuine first-order errors in a 2AFC competition (a familiar item decoded wrongly), NOT composer recall confusions. The hard-moat battery runs on the REAL CoResidentOneBrainComposer no-confab moat; the affect term in the g_eff law is a STUB (Step 2 builds the real spiking affect coloring). The 3-way arbiter is a genuine competitive-queuing build validated by regime-correctness + a mutual-inhibition lesion, but it is not yet FED by the live faculties (Steps 2/3 wire affect-arousal, curiosity ask-drive, answer-readiness into it).",
+  "elapsed_seconds": 339.9
+}

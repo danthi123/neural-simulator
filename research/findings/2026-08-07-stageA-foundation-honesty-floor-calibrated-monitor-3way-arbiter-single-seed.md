@@ -66,3 +66,21 @@ isolated honesty behavior was 3/6 PARTIAL and the co-resident 6-seed sweep is pe
 Parent 6-seed:
 `PYTHONPATH=$PWD SIM_BACKEND=numpy .venv/bin/python -m research.runners._stageA_foundation_honesty_arbiter_derisk --seed <S> --n-trials 120 --moat-battery 475 --out research/findings/raw/lanes/stageA/stageA_foundation_honesty_arbiter_s<S>.json`
 for S in 42 43 44 100 101 102.
+
+## ✅/⚠️ PARENT-VERIFIED (6-seed) — STRUCTURE 6/6, HONESTY-BEHAVIOR 3/6 (the crux is NOT lifted)
+<!--derived-->
+Parent ran all 6 seeds (aggregate `research/findings/raw/lanes/stageA/stageA_foundation_6seed_aggregate.json`).
+**What is 6-seed-SOLID (6/6 every seed):** the integration SUBSTRATE + safety — default-off byte-identity,
+hard-moat preserved (475/475), per-faculty RNG isolation, the 3-way {volunteer|ask|silent} competitive-queuing
+arbiter, FM4 (affect cannot flip abstain->assert), and the g_eff composition-law ordering. The Stage-A foundation
+MECHANISM (co-resident substrate + arbiter + moat-safety + RNG isolation) is validated.
+**What is 3/6 (NOT lifted — the crux remains open):** the honesty-floor BEHAVIOR (the calibrated monitor's routing
+REDUCING confident-wrong assertions). Per-seed: 42 GO, 43 GO, 44 PARTIAL, 100 PARTIAL, 101 GO, 102 NEGATIVE
+(on seed 102 the calibrated-monitor routing itself failed). This MATCHES the isolated 3/6 PARTIAL — co-residence did
+NOT lift it. So the premortem's crux ("lift the honesty floor to 6/6 co-resident") is UNMET; the honesty floor
+remains the weakest link the whole conversation stack composes under, and STRENGTHENING it (not adding affect on a
+3/6 floor) is the mandated next step. Honest verdict: **the Stage-A integration foundation (structure) is a GO;
+the honesty-floor behavior it must carry is a characterized 3/6 PARTIAL — the next Stage-A build.**
+Named strengthening leads (from the record): a larger confident-error battery (the small ~7/seed confident-error
+sample makes the per-seed behavior noisy); per-seed monitor-fit robustness (seed 102's routing failure); the
+FM8 frozen-monitor operating-point recalibration; and the store<->spiking-readout reconciliation (FM6).

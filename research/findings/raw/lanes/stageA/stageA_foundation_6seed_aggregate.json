@@ -1,0 +1,51 @@
+{
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "per_seed": {
+  "42": {
+   "verdict": "GO",
+   "honesty_reduced_cw": true,
+   "routes_calibrated": true,
+   "structural_all": true
+  },
+  "43": {
+   "verdict": "GO",
+   "honesty_reduced_cw": true,
+   "routes_calibrated": true,
+   "structural_all": true
+  },
+  "44": {
+   "verdict": "PARTIAL",
+   "honesty_reduced_cw": false,
+   "routes_calibrated": true,
+   "structural_all": true
+  },
+  "100": {
+   "verdict": "PARTIAL",
+   "honesty_reduced_cw": false,
+   "routes_calibrated": true,
+   "structural_all": true
+  },
+  "101": {
+   "verdict": "GO",
+   "honesty_reduced_cw": true,
+   "routes_calibrated": true,
+   "structural_all": true
+  },
+  "102": {
+   "verdict": "NEGATIVE",
+   "honesty_reduced_cw": false,
+   "routes_calibrated": false,
+   "structural_all": true
+  }
+ },
+ "n_go": 3,
+ "n_structural_all": 6,
+ "verdict": "STRUCTURE 6/6, HONESTY-BEHAVIOR 3/6 (PARTIAL, not lifted)"
+}
