@@ -209,7 +209,8 @@ def run(seed, n_ca3=1500, k_items=4, n_item_cells=14, assembly_frac=0.06, train_
         cortex_ca3_w=4.0, ca3_cortex_w=4.0, wta_ei_w=6.0, wta_ie_w=18.0, coact_thresh=0.02, hebb_lr=None,
         structural_sep=True, selective_inhib=True, sel_inhib_spare=0.0,
         untrained=False, zero_recurrent=False, wta_off=False, permute_cue=False,
-        lesion=None, verbose=False, ca3_cortex_density=1.0, ca3_cue_frac=0.5):
+        lesion=None, verbose=False, ca3_cortex_density=1.0, ca3_cue_frac=0.5,
+        attractor_w=None, ca3_density=0.05):
     """Encode E=k_items episodes (each a distinct WHO x WHAT x WHEN triple bound to a CA3 assembly), then RECALL
     each from its WHO cue and read the NEURAL WTA winner in WHAT and WHEN. Returns a metrics dict.
 
@@ -220,7 +221,7 @@ def run(seed, n_ca3=1500, k_items=4, n_item_cells=14, assembly_frac=0.06, train_
     cp, _ = get_backend()
 
     bridge, pool_names, n_pool = _build_cortical(
-        seed, n_ca3=n_ca3, ca3_density=0.05, k_items=k_items, n_item_cells=n_item_cells,
+        seed, n_ca3=n_ca3, ca3_density=float(ca3_density), k_items=k_items, n_item_cells=n_item_cells,
         cortex_ca3_w=cortex_ca3_w, ca3_cortex_w=ca3_cortex_w, wta_ei_w=wta_ei_w, wta_ie_w=wta_ie_w,
         ca3_fb_inhib=ca3_fb_inhib, k_thresh=k_thresh, plateau_self_regen=plateau_self_regen,
         apical_kir_g=apical_kir_g, apical_gc_read=apical_gc_read, hebb_max=hebb_max, hebb_lr=hebb_lr,
@@ -291,6 +292,26 @@ def run(seed, n_ca3=1500, k_items=4, n_item_cells=14, assembly_frac=0.06, train_
         if zk:
             idxs = cp.asarray([int(flat_h[k]) for k in zk], dtype=cp.int64)
             conn.data[idxs] = cp.zeros(len(zk), dtype=conn.data.dtype)
+
+    # WITHIN-ASSEMBLY ATTRACTOR POTENTIATION (default OFF; additive lever, 2026-08-08). The missing companion
+    # process behind the inert-completion negative: the encode-time plasticity here only DEPRESSES cross-assembly
+    # ca3->ca3 (competition + structural_sep = pattern SEPARATION) -- it never POTENTIATES the within-assembly
+    # recurrents, so an assembly never becomes the strong recurrent attractor CA3 completion requires (Marr/
+    # Rolls/Hopfield autoassociation: a partial cue completes iff the co-active cells' MUTUAL recurrents are
+    # potentiated). This block sets within-assembly ca3->ca3 synapses (both endpoints in the SAME assembly) to a
+    # strong absolute weight `attractor_w`, building that attractor. It writes ONLY within-assembly ca3->ca3
+    # (leaves cross-assembly zeroing + feedback inhibition intact), so it is the completion companion to the
+    # sparsity operating point, not a bypass of it. When attractor_w is None the block is a no-op (byte-identical).
+    if attractor_w is not None and not untrained and len(flat_h) > 0:
+        assy_of_pos = {}
+        for aid, a in enumerate(assemblies):
+            for g in a:
+                assy_of_pos[ca3_pos[int(g)]] = aid
+        pk = [k for k in range(len(flat_h))
+              if assy_of_pos.get(int(pre_l_h[k]), -1) == assy_of_pos.get(int(post_l_h[k]), -2)]
+        if pk:
+            idxs = cp.asarray([int(flat_h[k]) for k in pk], dtype=cp.int64)
+            conn.data[idxs] = cp.full(len(pk), float(attractor_w), dtype=conn.data.dtype)
 
     # ASSEMBLY-SELECTIVE INHIBITION (Kim-Kim spare-your-own): depress ca3_pv_basket->member (I->E) so a correct
     # cue's assembly cells are spared while non-members are still suppressed (permuted-cue avalanche control).
@@ -545,41 +566,61 @@ def _verify_seed(seed, n_ca3=800):
     return ok
 
 
+def _parse_seeds(s):
+    """Robust seed parse: accept comma- OR whitespace-separated seeds. The pool 6-seed
+    staging passed `--seeds "42 43"` (one whitespace-joined token) and `--seeds 42 43`
+    (two shell words); the old `s.split(",")` then did int("42 43") -> ValueError and
+    argparse rejected the stray "43" -> the nodes CRASHED before writing any artifact
+    (this is why episodic_ignition_s*.json never appeared). Splitting on [,\\s]+ makes
+    all three forms (42,43 / 42 43 / 42, 43) parse identically."""
+    import re
+    return [int(x) for x in re.split(r"[,\s]+", str(s).strip()) if x]
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--seeds", default="42")
+    # nargs="*" so BOTH `--seeds 42 43` (multi-word) and `--seeds "42,43"` / `--seeds "42 43"`
+    # (single token) are accepted; _parse_seeds re-splits each token on comma/whitespace.
+    ap.add_argument("--seeds", nargs="*", default=["42"])
     ap.add_argument("--n-ca3", type=int, default=1500)
     ap.add_argument("--k-items", type=int, default=4)
     ap.add_argument("--train-events", type=int, default=40)
     ap.add_argument("--assembly-frac", type=float, default=0.10)
     ap.add_argument("--ca3-cortex-density", type=float, default=1.0)
     ap.add_argument("--ca3-cue-frac", type=float, default=0.5)
+    ap.add_argument("--recall-k-thresh", type=float, default=40.0,
+                    help="recall-time dAP coincidence threshold (gates CA3 completion)")
+    ap.add_argument("--attractor-w", type=float, default=None,
+                    help="within-assembly ca3->ca3 potentiation weight (completion lever; None=off/byte-identical)")
+    ap.add_argument("--ca3-density", type=float, default=0.05,
+                    help="ca3->ca3 recurrent density (fan-in for completion; 0.05=byte-identical baseline)")
     ap.add_argument("--verify-seed", action="store_true")
     ap.add_argument("--ceiling", action="store_true", help="instrument/ceiling probe (strong manual weights)")
     ap.add_argument("--smoke", action="store_true", help="single-seed, all conditions")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
+    seeds = _parse_seeds(" ".join(a.seeds))   # robust to comma- AND space-separated forms
 
     if a.verify_seed:
-        _verify_seed(int(a.seeds.split(",")[0]))
+        _verify_seed(seeds[0])
         return
     if a.ceiling:
         for W in (16.0, 120.0, 300.0):
-            ceiling_probe(int(a.seeds.split(",")[0]), n_ca3=a.n_ca3, W=W)
+            ceiling_probe(seeds[0], n_ca3=a.n_ca3, W=W)
         return
 
     from tools.verdict import Verdict
     from tools.lab import attributable_to
 
     t0 = time.time()
-    seeds = [int(x) for x in a.seeds.split(",")]
     all_rows = []
     for s in seeds:
         print(f"[cortical-episodic-WTA] seed={s} n_ca3={a.n_ca3} k_items={a.k_items} "
               f"train_events={a.train_events}", flush=True)
         kw = dict(n_ca3=a.n_ca3, k_items=a.k_items, train_events=a.train_events, verbose=True,
                   assembly_frac=a.assembly_frac, ca3_cortex_density=a.ca3_cortex_density,
-                  ca3_cue_frac=a.ca3_cue_frac)
+                  ca3_cue_frac=a.ca3_cue_frac, recall_k_thresh=a.recall_k_thresh,
+                  attractor_w=a.attractor_w, ca3_density=a.ca3_density)
         full = run(s, **kw)
         zero_rec = run(s, zero_recurrent=True, **kw)
         wta_off = run(s, wta_off=True, **kw)

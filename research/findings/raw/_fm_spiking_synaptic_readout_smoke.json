@@ -1,0 +1,128 @@
+{
+  "runner": "_fm_spiking_synaptic_readout_derisk",
+  "results": [
+    {
+      "seed": 42,
+      "G": 5,
+      "n_pool": 300,
+      "ens_p": 16,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.024265625000000002,
+      "res_mean_spk_read": 0.02437673611111111,
+      "syn_scale_selected": 3.6,
+      "cm_gain_selected": 1.0,
+      "train_agree_neural_vs_host": 0.08333333333333333,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.8,
+      "syn_train_acc": 0.05333333333333334,
+      "syn_heldout_acc": 0.04,
+      "syn_train_x": 0.24,
+      "syn_train_y": 0.28,
+      "syn_heldout_x": 0.2,
+      "syn_heldout_y": 0.2,
+      "lesion_readout_heldout": 0.0,
+      "lesion_silence_heldout": 0.0,
+      "matched_sham_heldout": 0.04,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 22.8,
+      "verdict": {
+        "label": "fm spiking synaptic read-out matches ridge (neural WTA winner)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.024265625000000002 expect=<function _verdict.<locals>.<lambda> at 0x7f461a33ff60>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.02437673611111111 expect=<function _verdict.<locals>.<lambda> at 0x7f461a33ff60>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host ridge/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|delta|<=0.08) \u2014 specificity control valid",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f461a33ff60>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + fixed read-out synapses; the delta rule set the weights at train time (off-substrate); the on-substrate homeostasis is the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_ridge(>=ridge-0.10)": false,
+          "beats_chance/retrieval(>=+0.30)": false,
+          "readout_lesion_collapses(>=0.30)": false,
+          "silence_lesion_collapses(>=0.30)": false
+        }
+      }
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "reservoir active (feature)",
+      "ok": true,
+      "detail": "measured=0.024265625000000002 expect=<function _verdict.<locals>.<lambda> at 0x7f461a33ff60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reservoir active (read)",
+      "ok": true,
+      "detail": "measured=0.02437673611111111 expect=<function _verdict.<locals>.<lambda> at 0x7f461a33ff60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seeded (byte-identical substrate)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "content path clean (no host ridge/argmax)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "matched sham UNCHANGED (|delta|<=0.08) \u2014 specificity control valid",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f461a33ff60>",
+      "note": ""
+    }
+  ]
+}
