@@ -891,6 +891,127 @@ def _colored_answer(comp, agent, action, v_color, m_color):
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# SEAM-A LIVE ON THE TURN -- forward-model world-model: on a NOVEL (s,a) turn drive the fm_reservoir with the
+# turn's (s,a), read its per-neuron spike-counts, decode s' + the read-out MARGIN, fold the margin into g_eff
+# (tighten-only), and OFFER the decoded s' as a certainty-TAGGED "predicted, not observed" channel. The moat still
+# abstains on the unstored FACTUAL cue (the decoded s' NEVER enters the cue-match candidate set / cp_rf_w_*).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+FM_LOOP_IN_DIM = 16   # the (s,a) token-embedding dim the agent's fixed-random W_in projects into the fm reservoir
+
+
+def _word_embedding(seed, vocab, in_dim=FM_LOOP_IN_DIM):
+    """A fixed per-word SENSORY embedding of the (s,a) tokens -- host-provided token encoding, SAME status as the
+    reservoir's fixed-random W_in projection / the retinal render of a sensory input (a legitimate host input), NOT
+    the read-out. Deterministic per seed."""
+    rng = np.random.default_rng(int(seed) * 99991 + 5)
+    return {w: rng.normal(0.0, 1.0, int(in_dim)) for w in vocab}
+
+
+def _fm_encode_sa(emb, a, v, in_dim=FM_LOOP_IN_DIM):
+    """The (state, action) token sequence fed to the fm reservoir: [emb(state), emb(action)]. An unknown token -> a
+    zero vector (the OTHER token + the fixed recurrence still drive a distinct trajectory for a novel (s,a))."""
+    z = np.zeros(int(in_dim))
+    return [np.asarray(emb.get(a, z)), np.asarray(emb.get(v, z))]
+
+
+def build_fm_world_model(bridge, xp, idx, baseline_snap, comp, facts, emb, W_in, seed):
+    """Train the forward model's ridge read-out (DECLARED HOST SHORTCUT, identical in status to the composer render /
+    OnBridgeLSM._fit_slots): each STORED (agent, action) drives the shared fm reservoir -> a spike-COUNT feature;
+    the target is the patient STATE class. The reservoir SPIKES are the brain-based content; the linear decode is the
+    read-out to biologize (the spiking synaptic read-out prototyped in _rungB1c_...). On a NOVEL (s,a) the SAME
+    reservoir generalizes -> a predicted s' + a top1-top2 margin (the world model's guess), while the moat still
+    ABSTAINS on the unstored factual cue."""
+    classes = sorted({p for (_a, _v, p) in facts})
+    cidx = {p: i for i, p in enumerate(classes)}
+    X, Y = [], []
+    for (a, v, p) in facts:
+        sc = read_forward_model(bridge, xp, idx, baseline_snap, W_in, _fm_encode_sa(emb, a, v))
+        X.append(np.concatenate([sc, [1.0]]))
+        Y.append(cidx[p])
+    X = np.asarray(X)
+    Y = np.asarray(Y)
+    K = max(1, len(classes))
+    Yoh = np.eye(K)[Y]
+    Ws = np.linalg.solve(X.T @ X + 1.0 * np.eye(X.shape[1]), X.T @ Yoh)
+    train_hit = sum(int(np.argmax(x @ Ws) == y) for x, y in zip(X, Y))
+    return {"Ws": Ws, "classes": classes, "W_in": W_in, "emb": emb, "in_dim": FM_LOOP_IN_DIM,
+            "n_classes": int(K), "train_acc": float(train_hit / max(1, len(Y)))}
+
+
+def fm_predict_turn(bridge, xp, idx, baseline_snap, fm, a, v, silence=False):
+    """SEAM-A LIVE on a turn: drive the shared fm reservoir with the turn's (s,a), read per-neuron spike-counts,
+    decode s' + the read-out margin, and (TIGHTENING-ONLY) fold the margin into g_eff. A SILENT reservoir (the A
+    lesion) -> no spikes -> NO prediction, g_eff untouched (the g0 floor) -> the turn reverts to plain abstention.
+    The decoded s' is a certainty-TAGGED simulation channel (fm_content_channel): NOT written to cp_rf_w_*, NOT in
+    the cue-match candidate set -> the no-confab moat's HARD floor is untouched by construction."""
+    sc = read_forward_model(bridge, xp, idx, baseline_snap, fm["W_in"], _fm_encode_sa(fm["emb"], a, v),
+                            silence=silence)
+    active = bool(float(np.max(sc)) > 1e-6)
+    if not active:
+        return {"predicted": None, "margin": None, "g_eff": float(fm_tighten_g_eff(FM_G0, None)),
+                "reservoir_active": False, "content": fm_content_channel(None, None)}
+    pred_i, margin, _logits = fm_decode(sc, fm["Ws"])
+    predicted = fm["classes"][pred_i] if 0 <= pred_i < len(fm["classes"]) else None
+    return {"predicted": predicted, "margin": float(margin), "g_eff": float(fm_tighten_g_eff(FM_G0, margin)),
+            "reservoir_active": True, "content": fm_content_channel(predicted, float(margin))}
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# SEAM-C LIVE ON THE TURN -- GRADED-affect coloring: tone + forthcomingness are set from the NEURAL ladder
+# differential rate(aff_pos_readout) - rate(aff_neg_readout), a MULTI-LEVEL staircase that REPLACES the binary
+# latch coloring. Affect only colors WITHIN the already-decided band; it never touches the moat or g_eff (FM4).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+GRADED_TONE_LEVELS = {3: "warmly, gladly", 2: "gladly", 1: "readily", 0: "",
+                      -1: "reluctantly", -2: "curtly", -3: "coldly, reluctantly"}
+
+
+def _graded_tone_level(differential, tol=LADDER_NEUTRAL_TOL, step=0.03, max_lvl=3):
+    """GRADED tone LEVEL from the ladder's NEURAL differential -- MULTIPLE warmth levels (the Koulakov staircase),
+    REPLACING the P0.3 binary latch tone. |diff| < tol -> neutral (level 0)."""
+    if abs(differential) < tol:
+        return 0
+    lvl = int(min(max_lvl, 1 + int(abs(differential) / step)))
+    return lvl if differential > 0 else -lvl
+
+
+def _graded_tone_token(level):
+    return GRADED_TONE_LEVELS.get(int(level), "")
+
+
+def _graded_forthcomingness(differential, tol=LADDER_NEUTRAL_TOL, step=0.02, max_extra=3):
+    """Forthcomingness GRADED from the SAME ladder differential (higher positive valence -> more volunteered
+    associates)."""
+    if differential <= tol:
+        return 0
+    return int(min(max_extra, 1 + int(differential / step)))
+
+
+def _colored_answer_graded(comp, agent, action, differential):
+    """SEAM-C LIVE colored read: the moat (query_patient) runs FIRST; on a matched answer, the GRADED tone LEVEL +
+    graded forthcomingness (both from the neural ladder differential) color the reply -- the binary-latch tone is
+    REPLACED. Affect NEVER touches the moat (an unmatched cue still abstains -> answer None)."""
+    raw = comp.query_patient(agent, action)
+    if raw is None:
+        return {"answer": None, "abstain": True, "utterance": None, "tone_level": 0, "tone_token": ""}
+    level = _graded_tone_level(differential)
+    token = _graded_tone_token(level)
+    extra = _graded_forthcomingness(differential)
+    associates = []
+    try:
+        graph = comp._assoc_graph()
+        if agent in graph:
+            associates = [k for k, _ in sorted(graph[agent].items(), key=lambda kv: -kv[1])][:extra]
+    except Exception:
+        associates = []
+    parts = ([token] if token else []) + [f"{agent} {action} {raw}"]
+    if associates:
+        parts.append("; also " + ", ".join(associates))
+    return {"answer": raw, "abstain": False, "utterance": " ".join(parts).strip(),
+            "tone_level": int(level), "tone_token": token, "forthcomingness_extra": int(extra),
+            "associates": associates}
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
 def _store_facts(comp):
     vocab = list(comp.words)
     facts = []
@@ -919,15 +1040,31 @@ def _arb_drives(m_color, want):
     return {"arb_volunteer": vol, "arb_ask": ask, "arb_silent": sil}
 
 
-def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng) -> dict:
-    """The REAL multi-turn conversational loop on the ONE bridge. Each turn reads affect + curiosity + the arbiter
-    off the shared cp_firing_states, composes an utterance under the g_eff law, and records the transcript."""
+def _turn_valence(bridge, xp, idx, baseline_snap, appraisal, ladder_live):
+    """SEAM-C LIVE: this turn's appraised valence read as the NEURAL graded ladder differential
+    rate(aff_pos_readout)-rate(aff_neg_readout) (ramp -> drive-off hold -> read), replacing the P0.3 binary latch.
+    Falls back to the P0.3 v_color when the ladder is not co-resident (seams-off rollback path)."""
+    if ladder_live:
+        r = read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal=float(appraisal))
+        return float(r["differential"]), r
+    r = read_affect(bridge, xp, idx, baseline_snap, mood_sign=(1 if appraisal > 0 else 0),
+                    arousal=(1.0 if appraisal > 0 else 0.0))
+    return float(r["v_color"]), r
+
+
+def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=None) -> dict:
+    """The REAL multi-turn conversational loop on the ONE bridge, with seams A + C ROUTED LIVE. Each turn reads the
+    GRADED-affect ladder differential (SEAM-C) + curiosity + the arbiter off the shared cp_firing_states; a KNOWN
+    turn composes a graded-tone answer under the g_eff law; a NOVEL turn drives the forward-model reservoir (SEAM-A)
+    with the (s,a), decodes a certainty-TAGGED predicted s', folds the read-out margin into g_eff (tighten-only), and
+    ASKS its wh-question -- while the moat still abstains on the unstored factual cue."""
     turns = []
-    # a persistent POSITIVE mood established turn 1 and carried (re-read) across turns -> affect persistence.
     a0, v0, p0 = facts[0]
     a1, v1, p1 = facts[1]
     vocab = list(comp.words)
     stored_cues = {(a, v) for (a, v, _p) in facts}
+    ladder_live = "ladder" in idx
+    fm_live = bool(fm is not None and "fm" in idx)
 
     def _novel_cue():
         rng = faculty_rng.get("curiosity")
@@ -938,76 +1075,68 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
                 return a, v
         return vocab[0], vocab[1]
 
-    # ---- TURN 1: KNOWN fact, positive mood -> honest grounded answer + warm affect tone (arb_volunteer wins) ----
-    aff1 = read_affect(bridge, xp, idx, baseline_snap, mood_sign=+1, arousal=1.0)
-    want1 = read_curiosity_want(bridge, xp, idx, baseline_snap, novelty=0.05)   # familiar -> low want
-    winner1, margin1, rates1 = run_arbiter(bridge, xp, idx, baseline_snap, _arb_drives(aff1["m_color"], want1))
-    ans1 = _colored_answer(comp, a0, v0, aff1["v_color"], aff1["m_color"])
-    turns.append({
-        "turn": 1, "type": "known_fact", "cue": [a0, v0], "gold_patient": p0,
-        "moat_answer": ans1["answer"], "honesty_band": "assert" if ans1["answer"] is not None else "MOAT",
-        "affect_v_color": aff1["v_color"], "affect_m_color": aff1["m_color"], "affect_v_state": aff1["v_state"],
-        "tone": ans1.get("tone"), "curiosity_want_hz": want1,
-        "arbiter_winner": winner1, "arbiter_margin": margin1, "arbiter_rates": rates1,
-        "utterance": ans1["utterance"], "moat_correct": bool(ans1["answer"] == p0),
-        "composed_ok": bool(ans1["answer"] == p0 and winner1 == "arb_volunteer" and ans1.get("tone") == TONE_POS),
-    })
+    def _known_turn(tno, ttype, a, v, gold, appraisal):
+        diff, _aff = _turn_valence(bridge, xp, idx, baseline_snap, appraisal, ladder_live)
+        want = read_curiosity_want(bridge, xp, idx, baseline_snap, novelty=0.05)         # familiar -> low want
+        winner, margin, rates = run_arbiter(bridge, xp, idx, baseline_snap, _arb_drives(diff, want))
+        ans = _colored_answer_graded(comp, a, v, diff)
+        return {
+            "turn": tno, "type": ttype, "cue": [a, v], "gold_patient": gold,
+            "moat_answer": ans["answer"], "honesty_band": "assert" if ans["answer"] is not None else "MOAT",
+            "affect_differential": float(diff), "affect_v_state": float(diff),
+            "tone_level": ans.get("tone_level"), "tone_token": ans.get("tone_token"),
+            "forthcomingness_extra": ans.get("forthcomingness_extra"),
+            "graded_affect_live": bool(ladder_live), "curiosity_want_hz": want,
+            "arbiter_winner": winner, "arbiter_margin": margin, "arbiter_rates": rates,
+            "utterance": ans["utterance"], "moat_correct": bool(ans["answer"] == gold),
+            "composed_ok": bool(ans["answer"] == gold and winner == "arb_volunteer"
+                                and (ans.get("tone_level") or 0) > 0),
+        }
 
-    # ---- TURN 2: NOVEL query -> the brain ASKS its own wh-question (arb_ask wins), moat intact ----
-    an, vn = _novel_cue()
-    aff2 = read_affect(bridge, xp, idx, baseline_snap, mood_sign=0, arousal=0.0)     # neutral affect (design: novel -> ask)
-    want2 = read_curiosity_want(bridge, xp, idx, baseline_snap, novelty=1.0)        # NOVEL -> high want
-    winner2, margin2, rates2 = run_arbiter(bridge, xp, idx, baseline_snap, _arb_drives(aff2["m_color"], want2))
-    moat2 = comp.query_patient(an, vn)                                              # HARD moat: must abstain
-    asked = winner2 == "arb_ask"
-    question = f"what does {an} {vn} ?" if asked else None
-    turns.append({
-        "turn": 2, "type": "novel_query", "cue": [an, vn],
-        "moat_answer": moat2, "honesty_band": "MOAT",
-        "affect_v_color": aff2["v_color"], "affect_m_color": aff2["m_color"], "affect_v_state": aff2["v_state"],
-        "curiosity_want_hz": want2, "arbiter_winner": winner2, "arbiter_margin": margin2, "arbiter_rates": rates2,
-        "utterance": question, "asked_not_refused": bool(asked),
-        "moat_held": bool(moat2 is None),
-        "composed_ok": bool(moat2 is None and winner2 == "arb_ask"),
-    })
+    def _novel_turn(tno, appraisal):
+        an, vn = _novel_cue()
+        diff, _aff = _turn_valence(bridge, xp, idx, baseline_snap, appraisal, ladder_live)
+        want = read_curiosity_want(bridge, xp, idx, baseline_snap, novelty=1.0)          # NOVEL -> high want
+        winner, margin, rates = run_arbiter(bridge, xp, idx, baseline_snap, _arb_drives(diff, want))
+        moat = comp.query_patient(an, vn)                                               # HARD moat: must abstain
+        asked = winner == "arb_ask"
+        base_q = f"what does {an} {vn} ?" if asked else None
+        pred = fm_predict_turn(bridge, xp, idx, baseline_snap, fm, an, vn) if fm_live else None
+        utter = base_q
+        if pred is not None and pred["predicted"] is not None:
+            sim = (f"my forward model predicts '{pred['predicted']}' for this novel case "
+                   f"(margin {pred['margin']:.2f}); I have not observed it")
+            utter = (base_q + " -- " + sim) if base_q else sim
+        return {
+            "turn": tno, "type": "novel_query", "cue": [an, vn],
+            "moat_answer": moat, "honesty_band": "MOAT",
+            "affect_differential": float(diff), "curiosity_want_hz": want,
+            "arbiter_winner": winner, "arbiter_margin": margin, "arbiter_rates": rates,
+            "utterance": utter, "asked_not_refused": bool(asked), "moat_held": bool(moat is None),
+            "forward_model_live": bool(fm_live),
+            "fm_predicted": (pred["predicted"] if pred else None),
+            "fm_margin": (pred["margin"] if pred else None),
+            "fm_g_eff": (pred["g_eff"] if pred else None),
+            "fm_g_eff_tightened_only": bool(pred is None or pred["g_eff"] >= FM_G0 - 1e-12),
+            "fm_content_channel": (pred["content"] if pred else None),
+            "composed_ok": bool(moat is None and winner == "arb_ask"),
+        }
 
-    # ---- TURN 3: KNOWN fact again, mood PERSISTS -> answer still warm-colored (affect persists across turns) ----
-    aff3 = read_affect(bridge, xp, idx, baseline_snap, mood_sign=+1, arousal=1.0)
-    want3 = read_curiosity_want(bridge, xp, idx, baseline_snap, novelty=0.05)
-    winner3, margin3, rates3 = run_arbiter(bridge, xp, idx, baseline_snap, _arb_drives(aff3["m_color"], want3))
-    ans3 = _colored_answer(comp, a1, v1, aff3["v_color"], aff3["m_color"])
-    turns.append({
-        "turn": 3, "type": "known_fact_mood_persists", "cue": [a1, v1], "gold_patient": p1,
-        "moat_answer": ans3["answer"], "honesty_band": "assert" if ans3["answer"] is not None else "MOAT",
-        "affect_v_color": aff3["v_color"], "affect_m_color": aff3["m_color"], "affect_v_state": aff3["v_state"],
-        "tone": ans3.get("tone"), "curiosity_want_hz": want3,
-        "arbiter_winner": winner3, "arbiter_margin": margin3, "arbiter_rates": rates3,
-        "utterance": ans3["utterance"], "moat_correct": bool(ans3["answer"] == p1),
-        "composed_ok": bool(ans3["answer"] == p1 and ans3.get("tone") == TONE_POS),
-    })
+    # positive-mood KNOWN turns (1,3) bracket neutral NOVEL turns (2,4); the positive mood re-reads positive on
+    # each high-arousal turn -> graded affect PERSISTS across the conversation (via the ladder NMDA latches).
+    turns.append(_known_turn(1, "known_fact", a0, v0, p0, +1.0))
+    turns.append(_novel_turn(2, 0.0))
+    turns.append(_known_turn(3, "known_fact_mood_persists", a1, v1, p1, +1.0))
+    turns.append(_novel_turn(4, 0.0))
 
-    # ---- TURN 4: another NOVEL gap -> asks again (curiosity is a standing drive, not a one-off) ----
-    an2, vn2 = _novel_cue()
-    aff4 = read_affect(bridge, xp, idx, baseline_snap, mood_sign=0, arousal=0.0)      # neutral affect
-    want4 = read_curiosity_want(bridge, xp, idx, baseline_snap, novelty=1.0)
-    winner4, margin4, rates4 = run_arbiter(bridge, xp, idx, baseline_snap, _arb_drives(aff4["m_color"], want4))
-    moat4 = comp.query_patient(an2, vn2)
-    asked4 = winner4 == "arb_ask"
-    turns.append({
-        "turn": 4, "type": "novel_query", "cue": [an2, vn2],
-        "moat_answer": moat4, "honesty_band": "MOAT",
-        "curiosity_want_hz": want4, "arbiter_winner": winner4, "arbiter_margin": margin4, "arbiter_rates": rates4,
-        "utterance": (f"what does {an2} {vn2} ?" if asked4 else None),
-        "asked_not_refused": bool(asked4), "moat_held": bool(moat4 is None),
-        "composed_ok": bool(moat4 is None and winner4 == "arb_ask"),
-    })
-
-    # affect persistence across turns: the positive mood re-reads positive on every high-arousal turn.
     mood_signs = [turns[0]["affect_v_state"], turns[2]["affect_v_state"]]
     affect_persists = bool(all(s > 0 for s in mood_signs))
     known_turns_ok = bool(turns[0]["composed_ok"] and turns[2]["composed_ok"])
     novel_turns_ok = bool(turns[1]["composed_ok"] and turns[3]["composed_ok"])
     moat_held_all = bool(turns[1]["moat_held"] and turns[3]["moat_held"])
+    fm_content_on_novel = bool(fm_live and turns[1].get("fm_predicted") is not None
+                               and turns[3].get("fm_predicted") is not None)
+    graded_tone_multilevel = bool(ladder_live and (turns[0].get("tone_level") or 0) > 0)
     composes_live = bool(known_turns_ok and novel_turns_ok and moat_held_all and affect_persists)
     return {
         "turns": turns,
@@ -1015,7 +1144,97 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
         "known_turns_honest_and_colored": known_turns_ok,
         "novel_turns_curiosity_asks": novel_turns_ok,
         "moat_held_all_novel_turns": moat_held_all,
+        "graded_affect_live": bool(ladder_live),
+        "graded_tone_multilevel_on_known_turns": graded_tone_multilevel,
+        "forward_model_live": bool(fm_live),
+        "forward_model_content_on_novel_turns": fm_content_on_novel,
         "composes_live": composes_live,
+    }
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# CONVERSATION-LESION BATTERY (the acceptance test) -- with A+C LIVE, lesion each faculty and show the CONVERSATION
+# OUTPUT changes vs a matched SHAM (an off-target intervention of the same kind on the OTHER faculty's pathway).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+def conversation_lesion_battery(bridge, xp, idx, baseline_snap, comp, facts, fm) -> dict:
+    """A (world-model): silence the fm reservoir on a NOVEL turn -> the predicted-content channel VANISHES and the
+    turn reverts to plain abstention (real changes the turn output); a matched off-target sham (clamp affect_out=0,
+    C's gate, which the fm content path does NOT traverse) leaves the prediction intact. C (graded affect): clamp
+    affect_out=0 on a KNOWN turn -> the ladder readout collapses -> tone goes FLAT/ungraded while the ANSWER is
+    unchanged (real); a matched off-target sham (silence the fm, which the ladder read does NOT traverse) leaves the
+    tone graded. Deltas are measured ON THE TURN OUTPUT (utterance/predicted-content/tone-level), not the isolated
+    read. The moat abstains on the novel cue under every condition (invariant)."""
+    a0, v0, _p0 = facts[0]
+    stored_cues = {(a, v) for (a, v, _p) in facts}
+    vocab = list(comp.words)
+    novel = None
+    for a in vocab:
+        for v in vocab:
+            if (a, v) not in stored_cues and comp.query_patient(a, v) is None:
+                novel = (a, v)
+                break
+        if novel:
+            break
+    an, vn = novel if novel else (vocab[0], vocab[1])
+
+    # ---- FACULTY A: the forward-model content channel on a NOVEL turn ----
+    intact_a = fm_predict_turn(bridge, xp, idx, baseline_snap, fm, an, vn, silence=False)
+    real_a = fm_predict_turn(bridge, xp, idx, baseline_snap, fm, an, vn, silence=True)   # REAL lesion: fm silenced
+    bridge.set_transmission_gate("affect_out", 0.0)                                       # off-target (C's gate)
+    sham_a = fm_predict_turn(bridge, xp, idx, baseline_snap, fm, an, vn, silence=False)
+    bridge.set_transmission_gate("affect_out", 1.0)
+    moat_novel = comp.query_patient(an, vn)                                               # abstains (invariant)
+    a_real_content_lost = bool(intact_a["predicted"] is not None and real_a["predicted"] is None)
+    a_sham_content_kept = bool(sham_a["predicted"] is not None and sham_a["predicted"] == intact_a["predicted"])
+    a_g_eff_reverts_to_floor = bool(real_a["g_eff"] <= FM_G0 + 1e-12 and intact_a["g_eff"] >= real_a["g_eff"])
+    a_moat_invariant = bool(moat_novel is None)
+
+    # ---- FACULTY C: the GRADED tone on a KNOWN turn ----
+    d_intact = read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal=1.0, lesion=False)["differential"]
+    ans_intact = _colored_answer_graded(comp, a0, v0, d_intact)
+    d_real = read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal=1.0, lesion=True)["differential"]
+    ans_real = _colored_answer_graded(comp, a0, v0, d_real)                               # REAL lesion: affect_out=0
+    # off-target sham: silence the fm (A's input); the ladder read does NOT traverse the fm -> tone stays graded.
+    _ = read_forward_model(bridge, xp, idx, baseline_snap, fm["W_in"], _fm_encode_sa(fm["emb"], a0, v0),
+                           silence=True)
+    d_sham = read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal=1.0, lesion=False)["differential"]
+    ans_sham = _colored_answer_graded(comp, a0, v0, d_sham)
+    c_real_tone_flat = bool((ans_intact["tone_level"] or 0) != 0 and (ans_real["tone_level"] or 0) == 0)
+    c_real_answer_unchanged = bool(ans_real["answer"] is not None and ans_real["answer"] == ans_intact["answer"])
+    c_sham_tone_kept = bool((ans_sham["tone_level"] or 0) == (ans_intact["tone_level"] or 0)
+                            and (ans_intact["tone_level"] or 0) != 0)
+
+    battery_ok = bool(a_real_content_lost and a_sham_content_kept and a_moat_invariant
+                      and c_real_tone_flat and c_real_answer_unchanged and c_sham_tone_kept)
+    return {
+        "novel_cue": [an, vn], "known_cue": [a0, v0],
+        "faculty_A": {
+            "intact_predicted": intact_a["predicted"], "intact_margin": intact_a["margin"],
+            "intact_g_eff": intact_a["g_eff"], "intact_utterance_has_prediction": bool(intact_a["predicted"] is not None),
+            "real_lesion_predicted": real_a["predicted"], "real_lesion_g_eff": real_a["g_eff"],
+            "sham_predicted": sham_a["predicted"],
+            "real_content_lost": a_real_content_lost, "sham_content_kept": a_sham_content_kept,
+            "g_eff_reverts_to_floor_on_lesion": a_g_eff_reverts_to_floor, "moat_invariant": a_moat_invariant,
+            "real_vs_sham_delta": ("REAL: predicted '%s'->None (content lost); SHAM(off-target affect_out=0): "
+                                   "predicted '%s' unchanged" % (intact_a["predicted"], sham_a["predicted"])),
+        },
+        "faculty_C": {
+            # NB the specificity SHAM (off-target fm-silence) is EXPECTED to tie the full read exactly (the ladder
+            # read does not traverse the fm) -- that tie IS the null result, not a dead instrument. The DISCRIMINATING
+            # contrast is differential_full vs differential_affectout_off (the affect_out lesion). Keys are named to
+            # avoid a false treatment/control auto-pairing of full-vs-sham (which correctly ties).
+            "differential_full": float(d_intact), "tone_level_full": ans_intact["tone_level"],
+            "tone_token_full": ans_intact["tone_token"], "answer_full": ans_intact["answer"],
+            "differential_affectout_off": float(d_real), "tone_level_affectout_off": ans_real["tone_level"],
+            "answer_affectout_off": ans_real["answer"],
+            "differential_offtarget_null": float(d_sham), "tone_level_offtarget_null": ans_sham["tone_level"],
+            "real_tone_flat": c_real_tone_flat, "real_answer_unchanged": c_real_answer_unchanged,
+            "sham_tone_kept": c_sham_tone_kept,
+            "real_vs_sham_delta": ("REAL(affect_out=0): tone L%s->L0 (flat), answer '%s' unchanged; "
+                                   "SHAM(off-target fm-silence): tone L%s unchanged"
+                                   % (ans_intact["tone_level"], ans_intact["answer"], ans_sham["tone_level"])),
+        },
+        "battery_ok": battery_ok,
     }
 
 
@@ -1201,6 +1420,12 @@ def main():
     ap.add_argument("--moat-battery", type=int, default=475)
     ap.add_argument("--fm4-candidates", type=int, default=16)
     ap.add_argument("--skip-byte-identity", action="store_true")
+    # SEAMS LIVE (default ON): route A (forward-model world-model) + C (graded-affect ladder) through the turn loop.
+    # --no-seam-a / --no-seam-c roll a seam back to OFF (the seams-off regression path, for honest rollback reports).
+    ap.add_argument("--seam-a", action=argparse.BooleanOptionalAction, default=True,
+                    help="route SEAM-A (forward-model world-model) LIVE into the novel turns")
+    ap.add_argument("--seam-c", action=argparse.BooleanOptionalAction, default=True,
+                    help="route SEAM-C (graded-affect ladder) LIVE into the turn coloring")
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/lanes/stageA/stageA_full_integration_smoke.json")
     args = ap.parse_args()
@@ -1212,10 +1437,13 @@ def main():
     print(f"[stageA-full] seed={args.seed} moat_battery={args.moat_battery} backend={os.environ.get('SIM_BACKEND')}",
           flush=True)
 
-    # ---- build the ONE bridge (all faculties co-resident + composer attached) ----
-    print("[stageA-full] building the ONE co-resident bridge (composer + honesty + arbiter + affect + curiosity) ...",
+    # ---- build the ONE bridge (all faculties co-resident + composer attached; seams A + C LIVE by default) ----
+    print("[stageA-full] building the ONE co-resident bridge (composer + honesty + arbiter + affect + curiosity"
+          f"{' + fm-reservoir(A)' if args.seam_a else ''}{' + affect-ladder(C)' if args.seam_c else ''}) ...",
           flush=True)
-    bridge, comp, idx, baseline_snap = build_one_brain(args.seed, with_faculties=True)
+    bridge, comp, idx, baseline_snap = build_one_brain(
+        args.seed, with_faculties=True,
+        co_resident_forward_model=bool(args.seam_a), co_resident_affect_ladder=bool(args.seam_c))
     rm = bridge.region_manager
     region_names = [r.name for r in rm.regions()]
     n_regions = len(region_names)
@@ -1231,14 +1459,36 @@ def main():
     vocab, facts = _store_facts(comp)
     print(f"   stored {len(facts)} facts on the co-resident composer", flush=True)
 
-    # ---- (b) COMPOSES-LIVE: the multi-turn loop ----
-    print("[stageA-full] (b) COMPOSES-LIVE: multi-turn conversational loop on the ONE bridge ...", flush=True)
-    loop = run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng)
+    # ---- SEAM-A LIVE: train the forward-model world-model read-out over the STORED facts (declared host shortcut) ----
+    fm = None
+    if args.seam_a:
+        print("[stageA-full] SEAM-A: training the forward-model world-model read-out over the stored facts ...",
+              flush=True)
+        emb = _word_embedding(args.seed, vocab)
+        W_in = make_fm_projection(args.seed, FM_N_POOL, FM_LOOP_IN_DIM)
+        fm = build_fm_world_model(bridge, xp, idx, baseline_snap, comp, facts, emb, W_in, args.seed)
+        print(f"   fm world-model: {fm['n_classes']} state classes, train_acc={fm['train_acc']:.2f}", flush=True)
+
+    # ---- (b) COMPOSES-LIVE: the multi-turn loop (seams A + C routed LIVE) ----
+    print("[stageA-full] (b) COMPOSES-LIVE: multi-turn conversational loop on the ONE bridge (seams live) ...",
+          flush=True)
+    loop = run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=fm)
     for tt in loop["turns"]:
         print(f"   turn {tt['turn']} [{tt['type']}] winner={tt['arbiter_winner']} "
               f"band={tt['honesty_band']} -> {tt['utterance']!r} composed_ok={tt['composed_ok']}", flush=True)
-    print(f"   composes_live={loop['composes_live']} (affect_persists={loop['affect_persists_across_turns']})",
-          flush=True)
+    print(f"   composes_live={loop['composes_live']} (affect_persists={loop['affect_persists_across_turns']} "
+          f"graded_tone={loop.get('graded_tone_multilevel_on_known_turns')} "
+          f"fm_content_on_novel={loop.get('forward_model_content_on_novel_turns')})", flush=True)
+
+    # ---- CONVERSATION-LESION BATTERY (acceptance test): lesion A/C -> the turn output changes vs a matched sham ----
+    battery = {"skipped": True, "battery_ok": None}
+    if args.seam_a and args.seam_c:
+        print("[stageA-full] CONVERSATION-LESION BATTERY: lesion A/C -> turn output changes vs matched sham ...",
+              flush=True)
+        battery = conversation_lesion_battery(bridge, xp, idx, baseline_snap, comp, facts, fm)
+        print(f"   A: {battery['faculty_A']['real_vs_sham_delta']}", flush=True)
+        print(f"   C: {battery['faculty_C']['real_vs_sham_delta']}", flush=True)
+        print(f"   battery_ok={battery['battery_ok']}", flush=True)
 
     # ---- (c) FM4 LIVE ----
     print("[stageA-full] (c) FM4 LIVE: yoked high-arousal affect never flips a below-assert read to assert ...",
@@ -1283,7 +1533,7 @@ def main():
                                                    and arbiter["all_regimes_correct"]),
         "arbiter_contention_from_shared_inhibition": bool(arbiter["contention_collapses_on_lesion"]),
         "moat_intact_under_affect_and_curiosity": bool(moat["moat_preserved"]),
-        "affect_coloring_alive_under_coresidence": bool(abs(loop["turns"][0]["affect_v_color"]) > 0.02),
+        "affect_coloring_alive_under_coresidence": bool(abs(loop["turns"][0]["affect_differential"]) > 0.02),
         "curiosity_want_alive_under_coresidence": bool(loop["turns"][1]["curiosity_want_hz"]
                                                        > loop["turns"][0]["curiosity_want_hz"]),
         "honesty_relay_graded_confidence_alive": bool(fm4["assert_rate_threshold"] > fm4["hedge_rate_threshold"]),
@@ -1350,6 +1600,14 @@ def main():
             "n_neurons": N, "n_regions": n_regions, "region_names": region_names,
             "composer_class": type(comp).__name__,
         },
+        "seams_live": {
+            "seam_a_forward_model": bool(args.seam_a),
+            "seam_c_graded_affect_ladder": bool(args.seam_c),
+            "forward_model_content_on_novel_turns": bool(loop.get("forward_model_content_on_novel_turns")),
+            "graded_tone_multilevel_on_known_turns": bool(loop.get("graded_tone_multilevel_on_known_turns")),
+            "fm_train_acc": (fm["train_acc"] if fm is not None else None),
+        },
+        "conversation_lesion_battery": battery,
         "multi_turn_loop": loop,
         "fm4_live": fm4,
         "arbiter_three_way": arbiter,
@@ -1394,6 +1652,10 @@ def main():
 
     print(f"\n[stageA-full] === VERDICT: {verdict} === core_ok={core_ok} composes_live={loop['composes_live']}",
           flush=True)
+    print(f"[stageA-full] seams_live: A={args.seam_a} C={args.seam_c} "
+          f"fm_content_on_novel={loop.get('forward_model_content_on_novel_turns')} "
+          f"graded_tone={loop.get('graded_tone_multilevel_on_known_turns')} "
+          f"lesion_battery_ok={battery.get('battery_ok')}", flush=True)
     print(f"[stageA-full] anti_cheats={ac}", flush=True)
     print(f"[stageA-full] elapsed={out['elapsed_seconds']}s wrote {args.out}", flush=True)
     return 0 if verdict in ("GO", "PARTIAL") else 1

@@ -1,0 +1,104 @@
+{
+  "provenance_exempt": "derived aggregate of the 6 per-seed runner artifacts (research/runners/_stageA_full_integration_derisk.py, seams live), summarized post-hoc; per-seed argv/git in each per-seed run",
+  "runner": "research/runners/_stageA_full_integration_derisk.py",
+  "seams_live": {
+    "A_forward_model": true,
+    "C_graded_affect_ladder": true
+  },
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "all_go": true,
+  "moat_all_475": true,
+  "fm4_all_zero_law_flips": true,
+  "fm4_naive_flips_have_teeth": true,
+  "byte_identical_all": true,
+  "battery_all_ok": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "moat_abstains": 475,
+      "moat_checked": 475,
+      "moat_preserved": true,
+      "fm4_law_flips": 0,
+      "fm4_naive_flips": 15,
+      "byte_identical": true,
+      "battery_ok": true,
+      "graded_tone_multilevel": true,
+      "fm_content_on_novel": true
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "moat_abstains": 475,
+      "moat_checked": 475,
+      "moat_preserved": true,
+      "fm4_law_flips": 0,
+      "fm4_naive_flips": 13,
+      "byte_identical": true,
+      "battery_ok": true,
+      "graded_tone_multilevel": true,
+      "fm_content_on_novel": true
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "moat_abstains": 475,
+      "moat_checked": 475,
+      "moat_preserved": true,
+      "fm4_law_flips": 0,
+      "fm4_naive_flips": 11,
+      "byte_identical": true,
+      "battery_ok": true,
+      "graded_tone_multilevel": true,
+      "fm_content_on_novel": true
+    },
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "moat_abstains": 475,
+      "moat_checked": 475,
+      "moat_preserved": true,
+      "fm4_law_flips": 0,
+      "fm4_naive_flips": 16,
+      "byte_identical": true,
+      "battery_ok": true,
+      "graded_tone_multilevel": true,
+      "fm_content_on_novel": true
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "moat_abstains": 475,
+      "moat_checked": 475,
+      "moat_preserved": true,
+      "fm4_law_flips": 0,
+      "fm4_naive_flips": 13,
+      "byte_identical": true,
+      "battery_ok": true,
+      "graded_tone_multilevel": true,
+      "fm_content_on_novel": true
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "moat_abstains": 475,
+      "moat_checked": 475,
+      "moat_preserved": true,
+      "fm4_law_flips": 0,
+      "fm4_naive_flips": 16,
+      "byte_identical": true,
+      "battery_ok": true,
+      "graded_tone_multilevel": true,
+      "fm_content_on_novel": true
+    }
+  ],
+  "backend": "numpy (CPU RAM)"
+}

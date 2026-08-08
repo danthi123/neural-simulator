@@ -62,43 +62,77 @@ def _conn_block_sha(bridge, n):
     return hashlib.sha256(wh[:n, :n].tobytes() if wh.ndim == 2 else wh[:n].tobytes()).hexdigest()
 
 
-def _rf_w_sha(bridge):
-    """sha of the composer's complex RF phasor weights (the no-confab MOAT store; array-disjoint from cp_connections;
-    must be byte-identical). Returns the sha over whatever rf-weight/store arrays are present."""
+def _rf_w_sha(bridge, n=None):
+    """sha of the composer's complex RF phasor weights -- the no-confab MOAT store -- restricted to the pre-existing
+    `[:n, :n]` block. `store()` writes the bound composite phasors into the SPARSE `cp_rf_w_re` / `cp_rf_w_im` CSR
+    matrices on the merged bridge via `rf_set_complex_weights` (bridge.py:7227-7228); they are array-disjoint from
+    `cp_connections` and MUST be byte-identical off-vs-on.
+
+    (FIX 2026-08-08: the prior version listed NON-EXISTENT attribute names [`cp_rf_store_*`] AND passed the SPARSE
+    CSR to `_sha`, whose `np.asarray(to_host(csr))` raised -> the try swallowed it -> parts empty -> None ->
+    `rf_w_identical` None -> a VACUOUS PASS. The store is a CSR, allocated only AFTER a fact is stored; callers now
+    store the SAME facts on both builds FIRST. The CSR shape is (N, N), so the appended-LAST fm/ladder slice GROWS N
+    -> the full-matrix indptr length differs even though every stored synapse sits at an rf index < n. So we hash the
+    `[:n, :n]` block only -- exactly the `_conn_block_sha` mechanism -- which captures every moat synapse identically.)
+    Returns None ONLY if the store was never written (both attrs absent) -- a real miss, not a silent pass."""
+    import scipy.sparse as sp
     parts = []
-    for name in ("cp_rf_w_re", "cp_rf_w_im", "cp_rf_w_dense", "cp_rf_store_re", "cp_rf_store_im",
-                 "cp_rf_store_dense"):
+    for name in ("cp_rf_w_re", "cp_rf_w_im"):
         a = getattr(bridge, name, None)
-        if a is not None:
-            try:
-                parts.append(name + ":" + _sha(a))
-            except Exception:
-                pass
+        if a is None:
+            continue
+        if sp.issparse(a):
+            sub = a.tocsr()
+            if n is not None:
+                sub = sub[:int(n), :int(n)].tocsr()
+            sub.sort_indices()
+            blob = (np.asarray(to_host(sub.indptr), dtype=np.int64).tobytes()
+                    + np.asarray(to_host(sub.indices), dtype=np.int64).tobytes()
+                    + np.asarray(to_host(sub.data), dtype=np.complex128).tobytes())
+            parts.append(name + ":" + hashlib.sha256(blob).hexdigest())
+        else:
+            ah = np.asarray(to_host(a))
+            if n is not None and ah.ndim == 2:
+                ah = ah[:int(n), :int(n)]
+            elif n is not None:
+                ah = ah[:int(n)]
+            parts.append(name + ":" + hashlib.sha256(np.ascontiguousarray(ah).tobytes()).hexdigest())
     return "|".join(parts) if parts else None
+
+
+def _store_probe_facts(comp):
+    """Populate the MOAT store so `_rf_w_sha` has non-empty CSR weights to compare. Deterministic per seed
+    (identical facts on the off + on builds), so a byte difference means the seam perturbed the store, not the input.
+    Reuses the runner's own `_store_facts` (agent/action/patient triples over the composer vocab)."""
+    return S._store_facts(comp)
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
 # SEAM A -- forward-model reservoir
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
 def _byte_identity_a(seed):
-    bo, _c, _i, _s = S.build_one_brain(seed, with_faculties=True, co_resident_forward_model=False)
+    bo, comp_o, _i, _s = S.build_one_brain(seed, with_faculties=True, co_resident_forward_model=False)
     n_off = int(bo.core_config.num_neurons)
-    off_thr = _sha(bo.cp_neuron_firing_thresholds[:n_off])
+    off_thr = _sha(bo.cp_neuron_firing_thresholds[:n_off])       # thresholds/conns hashed PRISTINE (pre-store)
     off_w = _conn_block_sha(bo, n_off)
-    off_rf = _rf_w_sha(bo)
-    bn, _c2, _i2, _s2 = S.build_one_brain(seed, with_faculties=True, co_resident_forward_model=True)
+    _store_probe_facts(comp_o)                                    # write the moat store, THEN hash it
+    off_rf = _rf_w_sha(bo, n_off)
+    bn, comp_n, _i2, _s2 = S.build_one_brain(seed, with_faculties=True, co_resident_forward_model=True)
     n_on = int(bn.core_config.num_neurons)
     on_thr = _sha(bn.cp_neuron_firing_thresholds[:n_off])
     on_w = _conn_block_sha(bn, n_off)
-    on_rf = _rf_w_sha(bn)
+    _store_probe_facts(comp_n)
+    on_rf = _rf_w_sha(bn, n_off)
     return {
         "n_off": n_off, "n_on": n_on, "fm_slice_size": n_on - n_off,
         "appended_last": bool(n_on == n_off + S.FM_N_POOL),
         "threshold_prefix_identical": bool(off_thr == on_thr),
         "conn_weight_prefix_identical": bool(off_w == on_w) if off_w is not None else None,
+        "moat_store_written": bool(off_rf is not None and on_rf is not None),
         "rf_w_identical": bool(off_rf == on_rf) if off_rf is not None else None,
         "byte_identical": bool(n_on == n_off + S.FM_N_POOL and off_thr == on_thr
-                               and (off_w is None or off_w == on_w) and (off_rf is None or off_rf == on_rf)),
+                               and (off_w is None or off_w == on_w)
+                               and off_rf is not None and on_rf is not None and off_rf == on_rf),
     }
 
 
@@ -197,7 +231,8 @@ def verify_seam_a(seed):
     bid = _byte_identity_a(seed)
     print(f"   byte_identical={bid['byte_identical']} (n_off={bid['n_off']} -> n_on={bid['n_on']}, "
           f"fm_slice={bid['fm_slice_size']}; thr={bid['threshold_prefix_identical']} "
-          f"conn={bid['conn_weight_prefix_identical']} rf_w={bid['rf_w_identical']})", flush=True)
+          f"conn={bid['conn_weight_prefix_identical']} rf_w={bid['rf_w_identical']} "
+          f"moat_store_written={bid['moat_store_written']})", flush=True)
     print(f"[seam-A] at-rest neutrality ...", flush=True)
     rest = _at_rest_a(seed)
     print(f"   reservoir_silent={rest['reservoir_silent']} g_eff@rest={rest['g_eff_at_rest']:.4f} "
@@ -222,23 +257,27 @@ def verify_seam_a(seed):
 # SEAM C -- graded-affect ladder (filled in when seam C is wired)
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
 def _byte_identity_c(seed):
-    bo, _c, _i, _s = S.build_one_brain(seed, with_faculties=True, co_resident_affect_ladder=False)
+    bo, comp_o, _i, _s = S.build_one_brain(seed, with_faculties=True, co_resident_affect_ladder=False)
     n_off = int(bo.core_config.num_neurons)
     off_thr = _sha(bo.cp_neuron_firing_thresholds[:n_off])
     off_w = _conn_block_sha(bo, n_off)
-    off_rf = _rf_w_sha(bo)
-    bn, _c2, _i2, _s2 = S.build_one_brain(seed, with_faculties=True, co_resident_affect_ladder=True)
+    _store_probe_facts(comp_o)
+    off_rf = _rf_w_sha(bo, n_off)
+    bn, comp_n, _i2, _s2 = S.build_one_brain(seed, with_faculties=True, co_resident_affect_ladder=True)
     n_on = int(bn.core_config.num_neurons)
     on_thr = _sha(bn.cp_neuron_firing_thresholds[:n_off])
     on_w = _conn_block_sha(bn, n_off)
-    on_rf = _rf_w_sha(bn)
+    _store_probe_facts(comp_n)
+    on_rf = _rf_w_sha(bn, n_off)
     return {
         "n_off": n_off, "n_on": n_on, "ladder_slice_size": n_on - n_off,
         "threshold_prefix_identical": bool(off_thr == on_thr),
         "conn_weight_prefix_identical": bool(off_w == on_w) if off_w is not None else None,
+        "moat_store_written": bool(off_rf is not None and on_rf is not None),
         "rf_w_identical": bool(off_rf == on_rf) if off_rf is not None else None,
         "byte_identical": bool(n_on > n_off and off_thr == on_thr
-                               and (off_w is None or off_w == on_w) and (off_rf is None or off_rf == on_rf)),
+                               and (off_w is None or off_w == on_w)
+                               and off_rf is not None and on_rf is not None and off_rf == on_rf),
     }
 
 
@@ -283,7 +322,8 @@ def verify_seam_c(seed):
     bid = _byte_identity_c(seed)
     print(f"   byte_identical={bid['byte_identical']} (n_off={bid['n_off']} -> n_on={bid['n_on']}, "
           f"ladder_slice={bid['ladder_slice_size']}; thr={bid['threshold_prefix_identical']} "
-          f"conn={bid['conn_weight_prefix_identical']} rf_w={bid['rf_w_identical']})", flush=True)
+          f"conn={bid['conn_weight_prefix_identical']} rf_w={bid['rf_w_identical']} "
+          f"moat_store_written={bid['moat_store_written']})", flush=True)
     print(f"[seam-C] at-rest neutrality ...", flush=True)
     rest = _at_rest_c(seed)
     print(f"   neutral_diff={rest['neutral_differential']:.4f} at_rest_neutral={rest['at_rest_neutral']}", flush=True)
