@@ -1,0 +1,167 @@
+{
+  "probe": "forward_model_reservoir",
+  "verdict": "GO -- a FORWARD MODEL on the SPIKING RESERVOIR: driving OnBridgeLSM's recurrent Izhikevich region with a (state,action) sequence and a LOCAL delta-rule read-out over its REAL spike-counts predicts the next state and GENERALIZES to HELD-OUT (s,a) never trained -- it SIMULATES the transition, it does not look it up (held-out 0.720 vs marginal-prior lookup 0.000 / nearest-neighbour retrieval 0.000 (chance 0.040); train 1.000; 4.07 spikes/neuron from cp_firing_states; read-out lesion 0.040 / silence lesion 0.040; MECHANISM CONTROLS additive-raw 0.040 / conjunctive-ceiling 1.000 / separate-presentation 0.120 (compositional_not_additive=True); seeded True; 1 seed(s)). Both lesions collapse held-out to the prior -> the neural read is load-bearing. NO sim/ edit.",
+  "go": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "reservoir genuinely active (spikes/neuron > 0.5)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "4.07 spikes/neuron, read from cp_firing_states"
+    },
+    {
+      "kind": "require",
+      "name": "cfg.seed byte-identical substrate across two builds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "read-out fits the trained transitions",
+      "ok": true,
+      "detail": "1 vs floor 0.9",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "read-out lesion collapses held-out",
+      "ok": true,
+      "detail": "treatment=0.72 control=0.04 |sep|=0.68 > 0.3",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "reservoir-silence lesion collapses held-out",
+      "ok": true,
+      "detail": "treatment=0.72 control=0.04 |sep|=0.68 > 0.3",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "held-out above 15x-chance floor",
+      "ok": true,
+      "detail": "0.72 vs floor 0.6",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "held-out generalizes above retrieval",
+      "ok": true,
+      "detail": "treatment=0.72 control=0 |sep|=0.72 > 0.3",
+      "note": ""
+    }
+  ],
+  "mechanism": "a FORWARD MODEL (s,a)->s' on the SPIKING RESERVOIR: OnBridgeLSM (recurrent Izhikevich BrainRegion on a real SimulationBridge) is driven by a (state,action) input sequence; the read-out feature is the region's REAL cp_firing_states spike-counts; a LOCAL delta/LMS read-out over the frozen reservoir predicts the next-state code. Generalization to held-out (s,a) combinations proves SIMULATION, not lookup. Reuse-by-import (OnBridgeLSM); NO sim/ edit.",
+  "task": "predict s' from (s,a) on a GxG toroidal-grid SHIFT world; the decisive probe is HELD-OUT (s,a) accuracy vs a marginal-prior lookup AND a nearest-neighbour retrieval over the same reservoir features; read-out + reservoir-silence lesions -> prior; neural source (spikes>0); cfg.seed byte-identical",
+  "seeds": [
+    42
+  ],
+  "elapsed_seconds": 3.5,
+  "aggregate": {
+    "n_seeds": 1,
+    "mean_spikes_per_neuron": 4.067,
+    "seeded": true,
+    "train_acc": 1.0,
+    "heldout_acc": 0.72,
+    "prior_lookup_acc": 0.0,
+    "nn_retrieval_acc": 0.0,
+    "retrieval_ceiling": 0.0,
+    "lesion_readout_acc": 0.04,
+    "lesion_silence_acc": 0.04,
+    "ctrl_additive_heldout_acc": 0.04,
+    "ctrl_additive_train_acc": 0.2267,
+    "ctrl_conjunctive_heldout_acc": 1.0,
+    "ctrl_conjunctive_train_acc": 1.0,
+    "ctrl_separate_heldout_acc": 0.12,
+    "ctrl_separate_train_acc": 1.0,
+    "compositional_not_additive": true,
+    "chance": 0.04,
+    "status": "GO",
+    "go": true,
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "reservoir genuinely active (spikes/neuron > 0.5)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "4.07 spikes/neuron, read from cp_firing_states"
+      },
+      {
+        "kind": "require",
+        "name": "cfg.seed byte-identical substrate across two builds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "read-out fits the trained transitions",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "read-out lesion collapses held-out",
+        "ok": true,
+        "detail": "treatment=0.72 control=0.04 |sep|=0.68 > 0.3",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "reservoir-silence lesion collapses held-out",
+        "ok": true,
+        "detail": "treatment=0.72 control=0.04 |sep|=0.68 > 0.3",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "held-out above 15x-chance floor",
+        "ok": true,
+        "detail": "0.72 vs floor 0.6",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "held-out generalizes above retrieval",
+        "ok": true,
+        "detail": "treatment=0.72 control=0 |sep|=0.72 > 0.3",
+        "note": ""
+      }
+    ],
+    "undefined_reasons": []
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "G": 5,
+      "n_states": 25,
+      "n_actions": 4,
+      "n_pairs": 100,
+      "n_pool": 400,
+      "feat_dim": 400,
+      "n_train": 75,
+      "n_held": 25,
+      "mean_spikes_per_neuron": 4.067,
+      "seeded": true,
+      "thresh_hash": "37b0c835e9afd88e321a859293a39758e783739b",
+      "train_acc": 1.0,
+      "heldout_acc": 0.72,
+      "lesion_readout_acc": 0.04,
+      "lesion_silence_acc": 0.04,
+      "prior_lookup_acc": 0.0,
+      "nn_retrieval_acc": 0.0,
+      "ctrl_additive_train_acc": 0.2267,
+      "ctrl_additive_heldout_acc": 0.04,
+      "ctrl_conjunctive_train_acc": 1.0,
+      "ctrl_conjunctive_heldout_acc": 1.0,
+      "ctrl_separate_train_acc": 1.0,
+      "ctrl_separate_heldout_acc": 0.12,
+      "chance": 0.04
+    }
+  ],
+  "HONEST_NOTE": "Single-seed SMOKE unless --seeds is passed; the parent runs 42 43 44 100 101 102 before any generalization claim. Distinct from the two adjacent priors: BORN (2026-08-07) is a Hebbian/Oja efference->sensory forward model for AGENCY (selective diagonal, K=4, no held-out (s,a) probe); D3 (2026-07-09) learns a DFA transition by SURROGATE GRADIENT (not a local rule) and probes sequence DEPTH, not novel (s,a). Here the read-out is a LOCAL delta rule over a FIXED reservoir (no BPTT / no surrogate gradient) and the anti-cheat is compositional held-out (s,a) generalization vs retrieval. The 'retrieval' baselines instantiate the defect (a world-model that RETRIEVES stored facts): the marginal-prior store answers only stored cells; NN retrieval is the strongest soft lookup. NO sim/ edit; reuse-by-import of OnBridgeLSM."
+}

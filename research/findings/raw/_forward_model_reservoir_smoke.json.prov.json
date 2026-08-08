@@ -1,0 +1,29 @@
+{
+ "run_id": "1786169618-1419063",
+ "runner": "research/runners/_forward_model_reservoir_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_985f6d50-6bc-1/research/runners/_forward_model_reservoir_derisk.py",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/_forward_model_reservoir_smoke.json"
+ ],
+ "git_sha": "bc5da4354",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-08T02:13:38",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_forward_model_reservoir_smoke.json"
+}
