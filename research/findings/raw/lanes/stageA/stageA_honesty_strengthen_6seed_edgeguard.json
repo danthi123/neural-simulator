@@ -1,0 +1,860 @@
+{
+  "runner": "research/runners/_stageA_honesty_floor_strengthen_derisk.py",
+  "faculty": "Stage-A honesty floor STRENGTHEN + axis separation (build on the 3/6 PARTIAL foundation)",
+  "builds_on": "research/findings/2026-08-07-stageA-foundation-honesty-floor-calibrated-monitor-3way-arbiter-single-seed.md",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "verdict": "PARTIAL",
+  "verdict_earned_status": "UNDEFINED",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "familiar-but-wrong battery has genuine first-order errors on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "familiar-wrong active-catch seeds (n)",
+      "ok": false,
+      "detail": "1 vs floor 1",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "moat-safety: seeds with no regression vs seeds that regress",
+      "ok": true,
+      "detail": "treatment=6 control=0 |sep|=6 > 1",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU on the honesty region bridges",
+      "why": "isolation of the fixed monitor->self_schema relay; a property of the mechanism UNDER THIS ISOLATION"
+    }
+  ],
+  "axis_summary": {
+    "MISSION_familiar_wrong_active_catch_n": 1,
+    "MISSION_familiar_wrong_active_catch_frac": "1/6",
+    "MISSION_safe_fallback_n": 5,
+    "MISSION_regression_n": 0,
+    "MISSION_moat_safe_no_regression_n": 6,
+    "MISSION_moat_safe_all_seeds": true,
+    "fit_quality_ok_n": 1,
+    "seed102_fit_fixed_by_refit": false,
+    "seed102_refit_attempted": true,
+    "pure_novelty_boundary_n": 1,
+    "pure_novelty_is_characterized_boundary": true
+  },
+  "mission_safe_all_seeds": true,
+  "safe_all_seeds_frac": "6/6",
+  "mission_active_catch_n": 1,
+  "edge_guard": {
+    "mode": "bootstrap",
+    "z": 2.0,
+    "fixed_tau": 0.08,
+    "bootstrap": 500,
+    "margin_fallback_n": 4,
+    "per_seed_routing": [
+      {
+        "seed": 42,
+        "routed": "margin_fallback",
+        "val_margin": 0.0532631578947369,
+        "tau_eff": 0.10266527320205918,
+        "boot_se": 0.05133263660102959,
+        "outcome": "SAFE_FALLBACK"
+      },
+      {
+        "seed": 43,
+        "routed": "margin_fallback",
+        "val_margin": 0.01688453159041392,
+        "tau_eff": 0.14537851865544507,
+        "boot_se": 0.07268925932772254,
+        "outcome": "SAFE_FALLBACK"
+      },
+      {
+        "seed": 44,
+        "routed": "margin_fallback",
+        "val_margin": 0.0002855511136493627,
+        "tau_eff": 0.1335599871962423,
+        "boot_se": 0.06677999359812115,
+        "outcome": "SAFE_FALLBACK"
+      },
+      {
+        "seed": 100,
+        "routed": "margin_fallback",
+        "val_margin": 0.04030501089324612,
+        "tau_eff": 0.10016099900353823,
+        "boot_se": 0.05008049950176911,
+        "outcome": "SAFE_FALLBACK"
+      },
+      {
+        "seed": 101,
+        "routed": "calibrated",
+        "val_margin": 0.2005042016806723,
+        "tau_eff": 0.08315124357991566,
+        "boot_se": 0.04157562178995783,
+        "outcome": "CATCH"
+      },
+      {
+        "seed": 102,
+        "routed": "recall_fallback",
+        "val_margin": -0.09548611111111116,
+        "tau_eff": null,
+        "boot_se": null,
+        "outcome": "SAFE_FALLBACK"
+      }
+    ],
+    "seed43_routed": "margin_fallback",
+    "seed43_outcome": "SAFE_FALLBACK",
+    "seed43_falls_back_safe": true,
+    "tau_no_peeking": "z*SE_boot(val self-read AUC margin); z=2.0 fixed a priori, SE_boot=0.07268925932772254, B=500, val_seed=900044 (disjoint from test seed 43)"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_verdict": "SAFE",
+      "familiar_wrong_outcome": "SAFE_FALLBACK",
+      "fit_quality_ok": false,
+      "familiar_wrong_pass": false,
+      "moat_safe_no_regression": true,
+      "fit": {
+        "routed": "margin_fallback",
+        "fit_quality_ok": false,
+        "refit_used": false,
+        "base_calib_trials": 96,
+        "robust_calib_trials": 192,
+        "val_type1_accuracy": 0.7916666666666666,
+        "val_self_read_auc_calibrated": 0.8227368421052632,
+        "val_self_read_auc_recall": 0.7694736842105263,
+        "val_self_read_margin": 0.0532631578947369,
+        "val_monitor_auc_featurespace": 0.816,
+        "val_recall_auc_featurespace": 0.7698947368421053,
+        "val_calibrated_beats_recall_on_deployed_signal": true,
+        "edge_guard_mode": "bootstrap",
+        "edge_guard_boot_se": 0.05133263660102959,
+        "edge_guard_tau_eff": 0.10266527320205918,
+        "edge_guard_z": 2.0,
+        "edge_guard_fixed_tau": 0.08,
+        "edge_guard_fixed_tau_would_route": false,
+        "edge_guard_routed_by_conservative_margin": false,
+        "tau_no_peeking_provenance": "z*SE_boot(val self-read AUC margin); z=2.0 fixed a priori, SE_boot=0.05133263660102959, B=500, val_seed=900043 (disjoint from test seed 42)"
+      },
+      "familiar_wrong_axis": {
+        "n_trials": 300,
+        "routed_signal": "margin_fallback",
+        "outcome": "SAFE_FALLBACK",
+        "type1_accuracy": 0.6833333333333333,
+        "n_correct": 205,
+        "n_error": 95,
+        "self_schema_type2_auc_calibrated": 0.8705776636713736,
+        "self_schema_type2_auc_recall": 0.7273940949935815,
+        "cov_fracs": [
+          0.25,
+          0.333,
+          0.5
+        ],
+        "per_coverage": [
+          {
+            "A": 75,
+            "cov_frac": 0.25,
+            "cal_confident_wrong": 4,
+            "rec_confident_wrong": 4,
+            "cal_cw_rate": 0.05333333333333334,
+            "rec_cw_rate": 0.05333333333333334,
+            "cal_correct_asserts": 71,
+            "rec_correct_asserts": 71,
+            "reduction": 0.0
+          },
+          {
+            "A": 100,
+            "cov_frac": 0.333,
+            "cal_confident_wrong": 13,
+            "rec_confident_wrong": 13,
+            "cal_cw_rate": 0.13,
+            "rec_cw_rate": 0.13,
+            "cal_correct_asserts": 87,
+            "rec_correct_asserts": 87,
+            "reduction": 0.0
+          },
+          {
+            "A": 150,
+            "cov_frac": 0.5,
+            "cal_confident_wrong": 25,
+            "rec_confident_wrong": 25,
+            "cal_cw_rate": 0.16666666666666666,
+            "rec_cw_rate": 0.16666666666666666,
+            "cal_correct_asserts": 125,
+            "rec_correct_asserts": 125,
+            "reduction": 0.0
+          }
+        ],
+        "headline_coverage": 0.333,
+        "headline_deployed_confident_wrong": 13,
+        "headline_recall_baseline_confident_wrong": 13,
+        "mean_deployed_cw_rate": 0.11666666666666665,
+        "mean_recall_baseline_cw_rate": 0.11666666666666665,
+        "confident_wrong_attributable_to_calibrated_routing": 0.0,
+        "familiar_wrong_pass": false,
+        "moat_safe_no_regression": true,
+        "fallback_frozen_to_recall_baseline": true
+      },
+      "battery_mean_vs_variance": {
+        "60": {
+          "mean_reduction": 0.06766666666666667,
+          "std_reduction": 0.08329399071294934,
+          "frac_reduction_positive": 0.68
+        },
+        "120": {
+          "mean_reduction": 0.07241666666666667,
+          "std_reduction": 0.06013520645641417,
+          "frac_reduction_positive": 0.8233333333333334
+        },
+        "300": {
+          "mean_reduction": 0.0762,
+          "std_reduction": 0.03846504907055235,
+          "frac_reduction_positive": 0.9666666666666667
+        },
+        "interpretation": {
+          "mean_shift_small_to_large": 0.008533333333333337,
+          "std_shrink_small_to_large": 0.04482894164239699,
+          "dominant_effect": "variance_reduction",
+          "note": "larger battery mainly SHRINKS the estimator variance (std) while the mean reduction is a population property that stays ~constant -> it stabilizes, does not fake, the lift"
+        }
+      },
+      "pure_novelty_axis": {
+        "n_novel": 120,
+        "threshold_cov": 0.333,
+        "novel_assert_rate_calibrated": 0.2916666666666667,
+        "novel_assert_rate_recall_firstorder": 0.3416666666666667,
+        "calibrated_minus_firstorder": -0.04999999999999999,
+        "is_genuine_boundary": false,
+        "interpretation": "NOT a boundary here: the calibrated route also abstains more on pure novelty."
+      },
+      "elapsed_seconds": 16.8
+    },
+    {
+      "seed": 43,
+      "seed_verdict": "SAFE",
+      "familiar_wrong_outcome": "SAFE_FALLBACK",
+      "fit_quality_ok": false,
+      "familiar_wrong_pass": false,
+      "moat_safe_no_regression": true,
+      "fit": {
+        "routed": "margin_fallback",
+        "fit_quality_ok": false,
+        "refit_used": false,
+        "base_calib_trials": 96,
+        "robust_calib_trials": 192,
+        "val_type1_accuracy": 0.85,
+        "val_self_read_auc_calibrated": 0.8382352941176471,
+        "val_self_read_auc_recall": 0.8213507625272332,
+        "val_self_read_margin": 0.01688453159041392,
+        "val_monitor_auc_featurespace": 0.8627450980392157,
+        "val_recall_auc_featurespace": 0.8205337690631809,
+        "val_calibrated_beats_recall_on_deployed_signal": true,
+        "edge_guard_mode": "bootstrap",
+        "edge_guard_boot_se": 0.07268925932772254,
+        "edge_guard_tau_eff": 0.14537851865544507,
+        "edge_guard_z": 2.0,
+        "edge_guard_fixed_tau": 0.08,
+        "edge_guard_fixed_tau_would_route": false,
+        "edge_guard_routed_by_conservative_margin": false,
+        "tau_no_peeking_provenance": "z*SE_boot(val self-read AUC margin); z=2.0 fixed a priori, SE_boot=0.07268925932772254, B=500, val_seed=900044 (disjoint from test seed 43)"
+      },
+      "familiar_wrong_axis": {
+        "n_trials": 300,
+        "routed_signal": "margin_fallback",
+        "outcome": "SAFE_FALLBACK",
+        "type1_accuracy": 0.7866666666666666,
+        "n_correct": 236,
+        "n_error": 64,
+        "self_schema_type2_auc_calibrated": 0.7346067266949152,
+        "self_schema_type2_auc_recall": 0.7692333156779662,
+        "cov_fracs": [
+          0.25,
+          0.333,
+          0.5
+        ],
+        "per_coverage": [
+          {
+            "A": 75,
+            "cov_frac": 0.25,
+            "cal_confident_wrong": 2,
+            "rec_confident_wrong": 2,
+            "cal_cw_rate": 0.02666666666666667,
+            "rec_cw_rate": 0.02666666666666667,
+            "cal_correct_asserts": 73,
+            "rec_correct_asserts": 73,
+            "reduction": 0.0
+          },
+          {
+            "A": 100,
+            "cov_frac": 0.333,
+            "cal_confident_wrong": 2,
+            "rec_confident_wrong": 2,
+            "cal_cw_rate": 0.02,
+            "rec_cw_rate": 0.02,
+            "cal_correct_asserts": 98,
+            "rec_correct_asserts": 98,
+            "reduction": 0.0
+          },
+          {
+            "A": 150,
+            "cov_frac": 0.5,
+            "cal_confident_wrong": 7,
+            "rec_confident_wrong": 7,
+            "cal_cw_rate": 0.04666666666666667,
+            "rec_cw_rate": 0.04666666666666667,
+            "cal_correct_asserts": 143,
+            "rec_correct_asserts": 143,
+            "reduction": 0.0
+          }
+        ],
+        "headline_coverage": 0.333,
+        "headline_deployed_confident_wrong": 2,
+        "headline_recall_baseline_confident_wrong": 2,
+        "mean_deployed_cw_rate": 0.031111111111111114,
+        "mean_recall_baseline_cw_rate": 0.031111111111111114,
+        "confident_wrong_attributable_to_calibrated_routing": 0.0,
+        "familiar_wrong_pass": false,
+        "moat_safe_no_regression": true,
+        "fallback_frozen_to_recall_baseline": true
+      },
+      "battery_mean_vs_variance": {
+        "60": {
+          "mean_reduction": -0.09383333333333332,
+          "std_reduction": 0.07541201643121752,
+          "frac_reduction_positive": 0.03666666666666667
+        },
+        "120": {
+          "mean_reduction": -0.09708333333333333,
+          "std_reduction": 0.05735337585724333,
+          "frac_reduction_positive": 0.013333333333333334
+        },
+        "300": {
+          "mean_reduction": -0.10123333333333333,
+          "std_reduction": 0.03427553387216926,
+          "frac_reduction_positive": 0.0
+        },
+        "interpretation": {
+          "mean_shift_small_to_large": 0.007400000000000004,
+          "std_shrink_small_to_large": 0.04113648255904826,
+          "dominant_effect": "variance_reduction",
+          "note": "larger battery mainly SHRINKS the estimator variance (std) while the mean reduction is a population property that stays ~constant -> it stabilizes, does not fake, the lift"
+        }
+      },
+      "pure_novelty_axis": {
+        "n_novel": 120,
+        "threshold_cov": 0.333,
+        "novel_assert_rate_calibrated": 0.08333333333333333,
+        "novel_assert_rate_recall_firstorder": 0.26666666666666666,
+        "calibrated_minus_firstorder": -0.18333333333333335,
+        "is_genuine_boundary": false,
+        "interpretation": "NOT a boundary here: the calibrated route also abstains more on pure novelty."
+      },
+      "elapsed_seconds": 16.2
+    },
+    {
+      "seed": 44,
+      "seed_verdict": "SAFE",
+      "familiar_wrong_outcome": "SAFE_FALLBACK",
+      "fit_quality_ok": false,
+      "familiar_wrong_pass": false,
+      "moat_safe_no_regression": true,
+      "fit": {
+        "routed": "margin_fallback",
+        "fit_quality_ok": false,
+        "refit_used": false,
+        "base_calib_trials": 96,
+        "robust_calib_trials": 192,
+        "val_type1_accuracy": 0.8583333333333333,
+        "val_self_read_auc_calibrated": 0.7415762421473444,
+        "val_self_read_auc_recall": 0.741290691033695,
+        "val_self_read_margin": 0.0002855511136493627,
+        "val_monitor_auc_featurespace": 0.7738435179897202,
+        "val_recall_auc_featurespace": 0.7527127355796688,
+        "val_calibrated_beats_recall_on_deployed_signal": true,
+        "edge_guard_mode": "bootstrap",
+        "edge_guard_boot_se": 0.06677999359812115,
+        "edge_guard_tau_eff": 0.1335599871962423,
+        "edge_guard_z": 2.0,
+        "edge_guard_fixed_tau": 0.08,
+        "edge_guard_fixed_tau_would_route": false,
+        "edge_guard_routed_by_conservative_margin": false,
+        "tau_no_peeking_provenance": "z*SE_boot(val self-read AUC margin); z=2.0 fixed a priori, SE_boot=0.06677999359812115, B=500, val_seed=900045 (disjoint from test seed 44)"
+      },
+      "familiar_wrong_axis": {
+        "n_trials": 300,
+        "routed_signal": "margin_fallback",
+        "outcome": "SAFE_FALLBACK",
+        "type1_accuracy": 0.6533333333333333,
+        "n_correct": 196,
+        "n_error": 104,
+        "self_schema_type2_auc_calibrated": 0.8816473704866562,
+        "self_schema_type2_auc_recall": 0.6777129120879121,
+        "cov_fracs": [
+          0.25,
+          0.333,
+          0.5
+        ],
+        "per_coverage": [
+          {
+            "A": 75,
+            "cov_frac": 0.25,
+            "cal_confident_wrong": 8,
+            "rec_confident_wrong": 8,
+            "cal_cw_rate": 0.10666666666666667,
+            "rec_cw_rate": 0.10666666666666667,
+            "cal_correct_asserts": 67,
+            "rec_correct_asserts": 67,
+            "reduction": 0.0
+          },
+          {
+            "A": 100,
+            "cov_frac": 0.333,
+            "cal_confident_wrong": 15,
+            "rec_confident_wrong": 15,
+            "cal_cw_rate": 0.15,
+            "rec_cw_rate": 0.15,
+            "cal_correct_asserts": 85,
+            "rec_correct_asserts": 85,
+            "reduction": 0.0
+          },
+          {
+            "A": 150,
+            "cov_frac": 0.5,
+            "cal_confident_wrong": 35,
+            "rec_confident_wrong": 35,
+            "cal_cw_rate": 0.23333333333333334,
+            "rec_cw_rate": 0.23333333333333334,
+            "cal_correct_asserts": 115,
+            "rec_correct_asserts": 115,
+            "reduction": 0.0
+          }
+        ],
+        "headline_coverage": 0.333,
+        "headline_deployed_confident_wrong": 15,
+        "headline_recall_baseline_confident_wrong": 15,
+        "mean_deployed_cw_rate": 0.16333333333333333,
+        "mean_recall_baseline_cw_rate": 0.16333333333333333,
+        "confident_wrong_attributable_to_calibrated_routing": 0.0,
+        "familiar_wrong_pass": false,
+        "moat_safe_no_regression": true,
+        "fallback_frozen_to_recall_baseline": true
+      },
+      "battery_mean_vs_variance": {
+        "60": {
+          "mean_reduction": 0.115,
+          "std_reduction": 0.09403013701291021,
+          "frac_reduction_positive": 0.83
+        },
+        "120": {
+          "mean_reduction": 0.115,
+          "std_reduction": 0.06294839156007086,
+          "frac_reduction_positive": 0.96
+        },
+        "300": {
+          "mean_reduction": 0.11466666666666668,
+          "std_reduction": 0.04223216257256495,
+          "frac_reduction_positive": 0.9966666666666667
+        },
+        "interpretation": {
+          "mean_shift_small_to_large": 0.0003333333333333244,
+          "std_shrink_small_to_large": 0.051797974440345264,
+          "dominant_effect": "variance_reduction",
+          "note": "larger battery mainly SHRINKS the estimator variance (std) while the mean reduction is a population property that stays ~constant -> it stabilizes, does not fake, the lift"
+        }
+      },
+      "pure_novelty_axis": {
+        "n_novel": 120,
+        "threshold_cov": 0.333,
+        "novel_assert_rate_calibrated": 0.36666666666666664,
+        "novel_assert_rate_recall_firstorder": 0.43333333333333335,
+        "calibrated_minus_firstorder": -0.06666666666666671,
+        "is_genuine_boundary": false,
+        "interpretation": "NOT a boundary here: the calibrated route also abstains more on pure novelty."
+      },
+      "elapsed_seconds": 16.5
+    },
+    {
+      "seed": 100,
+      "seed_verdict": "SAFE",
+      "familiar_wrong_outcome": "SAFE_FALLBACK",
+      "fit_quality_ok": false,
+      "familiar_wrong_pass": false,
+      "moat_safe_no_regression": true,
+      "fit": {
+        "routed": "margin_fallback",
+        "fit_quality_ok": false,
+        "refit_used": false,
+        "base_calib_trials": 96,
+        "robust_calib_trials": 192,
+        "val_type1_accuracy": 0.85,
+        "val_self_read_auc_calibrated": 0.7788671023965141,
+        "val_self_read_auc_recall": 0.738562091503268,
+        "val_self_read_margin": 0.04030501089324612,
+        "val_monitor_auc_featurespace": 0.795751633986928,
+        "val_recall_auc_featurespace": 0.744281045751634,
+        "val_calibrated_beats_recall_on_deployed_signal": true,
+        "edge_guard_mode": "bootstrap",
+        "edge_guard_boot_se": 0.05008049950176911,
+        "edge_guard_tau_eff": 0.10016099900353823,
+        "edge_guard_z": 2.0,
+        "edge_guard_fixed_tau": 0.08,
+        "edge_guard_fixed_tau_would_route": false,
+        "edge_guard_routed_by_conservative_margin": false,
+        "tau_no_peeking_provenance": "z*SE_boot(val self-read AUC margin); z=2.0 fixed a priori, SE_boot=0.05008049950176911, B=500, val_seed=900101 (disjoint from test seed 100)"
+      },
+      "familiar_wrong_axis": {
+        "n_trials": 300,
+        "routed_signal": "margin_fallback",
+        "outcome": "SAFE_FALLBACK",
+        "type1_accuracy": 0.7,
+        "n_correct": 210,
+        "n_error": 90,
+        "self_schema_type2_auc_calibrated": 0.8166402116402116,
+        "self_schema_type2_auc_recall": 0.6815873015873016,
+        "cov_fracs": [
+          0.25,
+          0.333,
+          0.5
+        ],
+        "per_coverage": [
+          {
+            "A": 75,
+            "cov_frac": 0.25,
+            "cal_confident_wrong": 8,
+            "rec_confident_wrong": 8,
+            "cal_cw_rate": 0.10666666666666667,
+            "rec_cw_rate": 0.10666666666666667,
+            "cal_correct_asserts": 67,
+            "rec_correct_asserts": 67,
+            "reduction": 0.0
+          },
+          {
+            "A": 100,
+            "cov_frac": 0.333,
+            "cal_confident_wrong": 16,
+            "rec_confident_wrong": 16,
+            "cal_cw_rate": 0.16,
+            "rec_cw_rate": 0.16,
+            "cal_correct_asserts": 84,
+            "rec_correct_asserts": 84,
+            "reduction": 0.0
+          },
+          {
+            "A": 150,
+            "cov_frac": 0.5,
+            "cal_confident_wrong": 29,
+            "rec_confident_wrong": 29,
+            "cal_cw_rate": 0.19333333333333333,
+            "rec_cw_rate": 0.19333333333333333,
+            "cal_correct_asserts": 121,
+            "rec_correct_asserts": 121,
+            "reduction": 0.0
+          }
+        ],
+        "headline_coverage": 0.333,
+        "headline_deployed_confident_wrong": 16,
+        "headline_recall_baseline_confident_wrong": 16,
+        "mean_deployed_cw_rate": 0.15333333333333332,
+        "mean_recall_baseline_cw_rate": 0.15333333333333332,
+        "confident_wrong_attributable_to_calibrated_routing": 0.0,
+        "familiar_wrong_pass": false,
+        "moat_safe_no_regression": true,
+        "fallback_frozen_to_recall_baseline": true
+      },
+      "battery_mean_vs_variance": {
+        "60": {
+          "mean_reduction": 0.03316666666666667,
+          "std_reduction": 0.08855302868275533,
+          "frac_reduction_positive": 0.56
+        },
+        "120": {
+          "mean_reduction": 0.03983333333333334,
+          "std_reduction": 0.06462047319198116,
+          "frac_reduction_positive": 0.7033333333333334
+        },
+        "300": {
+          "mean_reduction": 0.03556666666666666,
+          "std_reduction": 0.04466182809613696,
+          "frac_reduction_positive": 0.7433333333333333
+        },
+        "interpretation": {
+          "mean_shift_small_to_large": 0.0023999999999999924,
+          "std_shrink_small_to_large": 0.04389120058661837,
+          "dominant_effect": "variance_reduction",
+          "note": "larger battery mainly SHRINKS the estimator variance (std) while the mean reduction is a population property that stays ~constant -> it stabilizes, does not fake, the lift"
+        }
+      },
+      "pure_novelty_axis": {
+        "n_novel": 120,
+        "threshold_cov": 0.333,
+        "novel_assert_rate_calibrated": 0.3416666666666667,
+        "novel_assert_rate_recall_firstorder": 0.7916666666666666,
+        "calibrated_minus_firstorder": -0.44999999999999996,
+        "is_genuine_boundary": false,
+        "interpretation": "NOT a boundary here: the calibrated route also abstains more on pure novelty."
+      },
+      "elapsed_seconds": 16.4
+    },
+    {
+      "seed": 101,
+      "seed_verdict": "GO",
+      "familiar_wrong_outcome": "CATCH",
+      "fit_quality_ok": true,
+      "familiar_wrong_pass": true,
+      "moat_safe_no_regression": true,
+      "fit": {
+        "routed": "calibrated",
+        "fit_quality_ok": true,
+        "refit_used": false,
+        "base_calib_trials": 96,
+        "robust_calib_trials": 192,
+        "val_type1_accuracy": 0.7083333333333334,
+        "val_self_read_auc_calibrated": 0.9536134453781513,
+        "val_self_read_auc_recall": 0.753109243697479,
+        "val_self_read_margin": 0.2005042016806723,
+        "val_monitor_auc_featurespace": 0.9842016806722689,
+        "val_recall_auc_featurespace": 0.7684033613445378,
+        "val_calibrated_beats_recall_on_deployed_signal": true,
+        "edge_guard_mode": "bootstrap",
+        "edge_guard_boot_se": 0.04157562178995783,
+        "edge_guard_tau_eff": 0.08315124357991566,
+        "edge_guard_z": 2.0,
+        "edge_guard_fixed_tau": 0.08,
+        "edge_guard_fixed_tau_would_route": true,
+        "edge_guard_routed_by_conservative_margin": true,
+        "tau_no_peeking_provenance": "z*SE_boot(val self-read AUC margin); z=2.0 fixed a priori, SE_boot=0.04157562178995783, B=500, val_seed=900102 (disjoint from test seed 101)"
+      },
+      "familiar_wrong_axis": {
+        "n_trials": 300,
+        "routed_signal": "calibrated",
+        "outcome": "CATCH",
+        "type1_accuracy": 0.5466666666666666,
+        "n_correct": 164,
+        "n_error": 136,
+        "self_schema_type2_auc_calibrated": 0.8586800573888091,
+        "self_schema_type2_auc_recall": 0.6915351506456241,
+        "cov_fracs": [
+          0.25,
+          0.333,
+          0.5
+        ],
+        "per_coverage": [
+          {
+            "A": 75,
+            "cov_frac": 0.25,
+            "cal_confident_wrong": 9,
+            "rec_confident_wrong": 12,
+            "cal_cw_rate": 0.12,
+            "rec_cw_rate": 0.16,
+            "cal_correct_asserts": 66,
+            "rec_correct_asserts": 63,
+            "reduction": 0.04
+          },
+          {
+            "A": 100,
+            "cov_frac": 0.333,
+            "cal_confident_wrong": 11,
+            "rec_confident_wrong": 24,
+            "cal_cw_rate": 0.11,
+            "rec_cw_rate": 0.24,
+            "cal_correct_asserts": 89,
+            "rec_correct_asserts": 76,
+            "reduction": 0.13
+          },
+          {
+            "A": 150,
+            "cov_frac": 0.5,
+            "cal_confident_wrong": 26,
+            "rec_confident_wrong": 48,
+            "cal_cw_rate": 0.17333333333333334,
+            "rec_cw_rate": 0.32,
+            "cal_correct_asserts": 124,
+            "rec_correct_asserts": 102,
+            "reduction": 0.14666666666666667
+          }
+        ],
+        "headline_coverage": 0.333,
+        "headline_deployed_confident_wrong": 11,
+        "headline_recall_baseline_confident_wrong": 24,
+        "mean_deployed_cw_rate": 0.13444444444444445,
+        "mean_recall_baseline_cw_rate": 0.24,
+        "confident_wrong_attributable_to_calibrated_routing": 0.5416666666666666,
+        "familiar_wrong_pass": true,
+        "moat_safe_no_regression": true,
+        "fallback_frozen_to_recall_baseline": false
+      },
+      "battery_mean_vs_variance": {
+        "60": {
+          "mean_reduction": 0.09633333333333333,
+          "std_reduction": 0.09636677620194398,
+          "frac_reduction_positive": 0.7633333333333333
+        },
+        "120": {
+          "mean_reduction": 0.10450000000000001,
+          "std_reduction": 0.06621115213214966,
+          "frac_reduction_positive": 0.9333333333333333
+        },
+        "300": {
+          "mean_reduction": 0.11066666666666668,
+          "std_reduction": 0.0429133493863571,
+          "frac_reduction_positive": 0.9933333333333333
+        },
+        "interpretation": {
+          "mean_shift_small_to_large": 0.01433333333333335,
+          "std_shrink_small_to_large": 0.053453426815586874,
+          "dominant_effect": "variance_reduction",
+          "note": "larger battery mainly SHRINKS the estimator variance (std) while the mean reduction is a population property that stays ~constant -> it stabilizes, does not fake, the lift"
+        }
+      },
+      "pure_novelty_axis": {
+        "n_novel": 120,
+        "threshold_cov": 0.333,
+        "novel_assert_rate_calibrated": 0.0,
+        "novel_assert_rate_recall_firstorder": 0.26666666666666666,
+        "calibrated_minus_firstorder": -0.26666666666666666,
+        "is_genuine_boundary": false,
+        "interpretation": "NOT a boundary here: the calibrated route also abstains more on pure novelty."
+      },
+      "elapsed_seconds": 16.3
+    },
+    {
+      "seed": 102,
+      "seed_verdict": "SAFE",
+      "familiar_wrong_outcome": "SAFE_FALLBACK",
+      "fit_quality_ok": false,
+      "familiar_wrong_pass": false,
+      "moat_safe_no_regression": true,
+      "fit": {
+        "routed": "recall_fallback",
+        "fit_quality_ok": false,
+        "refit_used": true,
+        "base_calib_trials": 96,
+        "robust_calib_trials": 192,
+        "val_type1_accuracy": 0.8,
+        "val_self_read_auc_calibrated": 0.7463107638888888,
+        "val_self_read_auc_recall": 0.841796875,
+        "val_self_read_margin": -0.09548611111111116,
+        "val_monitor_auc_featurespace": 0.8098958333333334,
+        "val_recall_auc_featurespace": 0.8509114583333334,
+        "val_calibrated_beats_recall_on_deployed_signal": false,
+        "edge_guard_mode": "bootstrap",
+        "edge_guard_boot_se": null,
+        "edge_guard_tau_eff": null,
+        "edge_guard_z": 2.0,
+        "edge_guard_fixed_tau": 0.08,
+        "edge_guard_fixed_tau_would_route": null,
+        "edge_guard_routed_by_conservative_margin": true,
+        "tau_no_peeking_provenance": "edge-guard OFF (parent behaviour: route on sign of val margin)"
+      },
+      "familiar_wrong_axis": {
+        "n_trials": 300,
+        "routed_signal": "recall_fallback",
+        "outcome": "SAFE_FALLBACK",
+        "type1_accuracy": 0.7666666666666667,
+        "n_correct": 230,
+        "n_error": 70,
+        "self_schema_type2_auc_calibrated": 0.6867080745341615,
+        "self_schema_type2_auc_recall": 0.7787267080745341,
+        "cov_fracs": [
+          0.25,
+          0.333,
+          0.5
+        ],
+        "per_coverage": [
+          {
+            "A": 75,
+            "cov_frac": 0.25,
+            "cal_confident_wrong": 2,
+            "rec_confident_wrong": 2,
+            "cal_cw_rate": 0.02666666666666667,
+            "rec_cw_rate": 0.02666666666666667,
+            "cal_correct_asserts": 73,
+            "rec_correct_asserts": 73,
+            "reduction": 0.0
+          },
+          {
+            "A": 100,
+            "cov_frac": 0.333,
+            "cal_confident_wrong": 3,
+            "rec_confident_wrong": 3,
+            "cal_cw_rate": 0.03,
+            "rec_cw_rate": 0.03,
+            "cal_correct_asserts": 97,
+            "rec_correct_asserts": 97,
+            "reduction": 0.0
+          },
+          {
+            "A": 150,
+            "cov_frac": 0.5,
+            "cal_confident_wrong": 12,
+            "rec_confident_wrong": 12,
+            "cal_cw_rate": 0.08,
+            "rec_cw_rate": 0.08,
+            "cal_correct_asserts": 138,
+            "rec_correct_asserts": 138,
+            "reduction": 0.0
+          }
+        ],
+        "headline_coverage": 0.333,
+        "headline_deployed_confident_wrong": 3,
+        "headline_recall_baseline_confident_wrong": 3,
+        "mean_deployed_cw_rate": 0.04555555555555555,
+        "mean_recall_baseline_cw_rate": 0.04555555555555555,
+        "confident_wrong_attributable_to_calibrated_routing": 0.0,
+        "familiar_wrong_pass": false,
+        "moat_safe_no_regression": true,
+        "fallback_frozen_to_recall_baseline": true
+      },
+      "battery_mean_vs_variance": {
+        "60": {
+          "mean_reduction": -0.10200000000000001,
+          "std_reduction": 0.07413501197140256,
+          "frac_reduction_positive": 0.03
+        },
+        "120": {
+          "mean_reduction": -0.10816666666666667,
+          "std_reduction": 0.0554148495942699,
+          "frac_reduction_positive": 0.01
+        },
+        "300": {
+          "mean_reduction": -0.10353333333333332,
+          "std_reduction": 0.03332939976790594,
+          "frac_reduction_positive": 0.0
+        },
+        "interpretation": {
+          "mean_shift_small_to_large": 0.0015333333333333171,
+          "std_shrink_small_to_large": 0.04080561220349661,
+          "dominant_effect": "variance_reduction",
+          "note": "larger battery mainly SHRINKS the estimator variance (std) while the mean reduction is a population property that stays ~constant -> it stabilizes, does not fake, the lift"
+        }
+      },
+      "pure_novelty_axis": {
+        "n_novel": 120,
+        "threshold_cov": 0.333,
+        "novel_assert_rate_calibrated": 0.475,
+        "novel_assert_rate_recall_firstorder": 0.25833333333333336,
+        "calibrated_minus_firstorder": 0.21666666666666662,
+        "is_genuine_boundary": true,
+        "interpretation": "BOUNDARY: on pure zero-signal novelty the raw winner-magnitude is itself informative (low signal -> low magnitude -> abstain), so the learned monitor's edge is smaller / it may assert more. This is a characterized boundary of the FAMILIARITY monitor, not a bug; pure-novelty moat-safety is the hard-cue-match moat's job (475/475, foundation 6/6)."
+      },
+      "elapsed_seconds": 22.0
+    }
+  ],
+  "honest_scope": "Full-size 6-seed run in ONE foreground process. MISSION axis = familiar-but-wrong (confabulation). The strengthened floor is MOAT-SAFE on every seed (regression_n==0: each seed either actively CATCHES or degrades gracefully to the recall baseline via the fit-quality guard) and an ACTIVE CATCH on catch_n/6 -- NOT a lift to 6/6 active catches. Genuine wins over the foundation: (i) the 44/100 foundation-PARTIALs were a small-sample BAND-COUNT artifact (deployed band gave A=2 / no-error-in-top-A, so the strict integer cal_cw<rec_cw could not fire) -- a fixed-COVERAGE rate metric over a LARGE battery resolves it, and both are active catches here; (ii) the seed-102 NEGATIVE is now a SAFE fallback: the fit-quality guard, validating on the DEPLOYED spiking self-read (not the feature-space logit), refuses to route a monitor that loses to recall out-of-sample and degrades to the recall baseline -- no regression. ANTI-CHEAT (battery): the larger battery SHRINKS the estimator variance (std) while the mean confident-wrong reduction is a population property that stays ~constant (dominant_effect=variance_reduction on every seed) -- it stabilizes, does NOT fake, the estimate; the monitor is byte-identical at every N. PURE-NOVELTY axis: reported DISTINCTLY and NON-gating -- on zero-signal novelty the learned familiarity monitor has no reliable edge over raw winner-magnitude (magnitude is itself informative; the isolated finding's boundary); under coverage-matched operating points it is not systematically worse, but pure-novelty moat-safety is fundamentally the HARD cue-match moat's job (475/475, foundation 6/6), NOT the familiarity monitor's. per_seed_fit_robust: more calibration data did NOT rescue seed 102 (a genuine per-seed fit boundary); the guard's value is robust DETECTION + safe degradation, not a fix. 'The floor lifts to 6/6 active catches' is FALSE here; the honest state is moat-safe-on-all + active-catch-on-a-subset. Affect term stays a stub; moat path untouched (additive/default-off, no sim/ edit, cfg.seed set).",
+  "parent_6seed_cmd": "PYTHONPATH=$PWD SIM_BACKEND=numpy .venv/bin/python -m research.runners._stageA_honesty_floor_strengthen_derisk --seeds 42 43 44 100 101 102 --n-trials 300 --n-novel 120 --calib-robust 192 --edge-guard-mode bootstrap --edge-guard-z 2.0 --edge-guard-bootstrap 500 --out research/findings/raw/lanes/stageA/stageA_honesty_strengthen_6seed_edgeguard.json",
+  "elapsed_seconds": 104.1
+}
