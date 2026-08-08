@@ -1,0 +1,340 @@
+{
+  "runner": "research/runners/_stageA_step3_curiosity_ask_derisk.py",
+  "faculty": "Stage-A STEP 3 -- curiosity wh-question emission feeding the shared 3-way arbiter",
+  "design": "research/findings/2026-08-07-stageA-conversation-integration-DESIGN.md",
+  "backend": "numpy",
+  "seed": 100,
+  "verdict": "GO",
+  "verdict_earned_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "CRAVE-ON-SPIKES: corr(gap, spiking want) >= 0.9 (spike-driven, not a host flag)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "WH-TARGETS-THE-GAP: emission names the actual gap concept; wrong-gap control fails",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BRAIN-NATIVE WORDS: content word = naming-map spike decode, NOT WKV generation",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ARBITER 3-WAY: arb_ask competes co-resident with affect volunteer/silent (one winner/turn)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "default-off byte-identity (cur_ask slice appended LAST)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT INVERTED-NOT-BROKEN: asks on novel, 0 confabulations (475/475 abstain)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "spiking want (intact vs curiosity-modulator lesion)",
+      "ok": true,
+      "detail": "treatment=57.4653 control=1.5625 |sep|=55.9028 > 1",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "wh-targeting (correct decode vs permuted/wrong-gap decode)",
+      "ok": true,
+      "detail": "treatment=1 control=0.25 |sep|=0.75 > 0.2",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "3-way arbiter winner-margin (intact vs inhibition-lesion)",
+      "ok": true,
+      "detail": "treatment=0.376471 control=0.102041 |sep|=0.27443 > 0.1",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "corr(gap, spiking want)",
+      "ok": true,
+      "detail": "0.998049 vs floor 0.9",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP(select)/Hebbian/homeostasis/STP/structural/OU on the read-side region bridges",
+      "why": "isolation of the fixed curiosity drive + arbiter + naming map; a property under this isolation"
+    }
+  ],
+  "want_attributable_to_curiosity_drive": 0.972809667673716,
+  "targeting_attributable_to_naming_decode": 0.75,
+  "anti_cheats": {
+    "a_crave_on_spikes": true,
+    "b_moat_inverted_not_broken": true,
+    "c_wh_targets_gap": true,
+    "d_brain_native_words": true,
+    "e_arbiter_three_way_coresident": true,
+    "e_contention_collapses_on_lesion": true,
+    "f_default_off_byte_identity": true
+  },
+  "core_ok": true,
+  "crave_on_spikes": {
+    "corr_gap_want": 0.9980485382778002,
+    "n_concepts": 12,
+    "gaps": {
+      "0": 0.9247346902807609,
+      "1": 0.5018268759123442,
+      "2": 0.4519248135574072,
+      "3": 0.36762139827356766,
+      "4": 0.3693990717104856,
+      "5": 0.38193327506509234,
+      "6": 0.3397159966179325,
+      "7": 0.32733302965811906,
+      "8": 0.9368222461887248,
+      "9": 0.9532072746551075,
+      "10": 0.9506138951199561,
+      "11": 0.9794387086360248
+    },
+    "want_intact": {
+      "0": 100.69444444444443,
+      "1": 33.33333333333333,
+      "2": 30.555555555555554,
+      "3": 20.138888888888886,
+      "4": 15.277777777777777,
+      "5": 17.36111111111111,
+      "6": 10.416666666666666,
+      "7": 11.805555555555554,
+      "8": 111.80555555555556,
+      "9": 113.19444444444444,
+      "10": 110.41666666666666,
+      "11": 114.58333333333331
+    },
+    "want_lesion": {
+      "0": 2.7777777777777777,
+      "1": 3.472222222222222,
+      "2": 3.472222222222222,
+      "3": 0.6944444444444444,
+      "4": 0.0,
+      "5": 1.3888888888888888,
+      "6": 0.6944444444444444,
+      "7": 1.3888888888888888,
+      "8": 2.083333333333333,
+      "9": 0.0,
+      "10": 1.3888888888888888,
+      "11": 1.3888888888888888
+    },
+    "want_mean_intact": 57.46527777777777,
+    "want_mean_lesion": 1.5625,
+    "want_range_intact": 104.16666666666664,
+    "want_range_lesion": 3.472222222222222,
+    "modulator_lesion_collapses_want": true,
+    "crave_on_spikes_ok": true,
+    "want_hi": 114.58333333333331,
+    "gap_hi": 0.9794387086360248,
+    "want_lo": 11.805555555555554,
+    "gap_lo": 0.32733302965811906,
+    "code_path": "_read_ask_want: current_novelty_signal (Bogacz-Brown gate novelty) -> `curiosity` neuromodulator (from_novelty) -> excitability_drive scope=group:ask -> ASK-pool spikes read off bridge.cp_firing_states[ask] (Hz). NOT a host if-novel flag."
+  },
+  "arbiter_three_way": {
+    "m_color_forthcoming": 0.0515,
+    "m_color_reticent": -0.01725,
+    "intact": {
+      "novel_ask": {
+        "winner": "arb_ask",
+        "expected": "arb_ask",
+        "correct": true,
+        "margin": 0.49999999187500016,
+        "drives": {
+          "arb_volunteer": 200.0,
+          "arb_ask": 1598.7499999999998,
+          "arb_silent": 776.0
+        },
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.046153846153846156,
+          "arb_silent": 0.015384615384615385
+        }
+      },
+      "forthcoming_volunteer": {
+        "winner": "arb_volunteer",
+        "expected": "arb_volunteer",
+        "correct": true,
+        "margin": 0.37647058593217997,
+        "drives": {
+          "arb_volunteer": 1024.0,
+          "arb_ask": 150.0,
+          "arb_silent": 500.0
+        },
+        "rates": {
+          "arb_volunteer": 0.1125,
+          "arb_ask": 0.0,
+          "arb_silent": 0.05096153846153846
+        }
+      },
+      "reticent_silent": {
+        "winner": "arb_silent",
+        "expected": "arb_silent",
+        "correct": true,
+        "margin": 0.9999999896000001,
+        "drives": {
+          "arb_volunteer": 200.0,
+          "arb_ask": 150.0,
+          "arb_silent": 1176.0
+        },
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.0,
+          "arb_silent": 0.09615384615384616
+        }
+      }
+    },
+    "lesioned": {
+      "novel_ask": {
+        "winner": "arb_silent",
+        "margin": 0.09677419325323998,
+        "rates": {
+          "arb_volunteer": 0.13942307692307693,
+          "arb_ask": 0.14807692307692308,
+          "arb_silent": 0.1798076923076923
+        }
+      },
+      "forthcoming_volunteer": {
+        "winner": "arb_volunteer",
+        "margin": 0.04415584403656602,
+        "rates": {
+          "arb_volunteer": 0.19326923076923078,
+          "arb_ask": 0.14807692307692308,
+          "arb_silent": 0.17692307692307693
+        }
+      },
+      "reticent_silent": {
+        "winner": "arb_silent",
+        "margin": 0.10204081601713569,
+        "rates": {
+          "arb_volunteer": 0.13942307692307693,
+          "arb_ask": 0.14807692307692308,
+          "arb_silent": 0.18173076923076922
+        }
+      }
+    },
+    "all_regimes_correct": true,
+    "distinct_winners_three": true,
+    "ask_pool_can_win": true,
+    "per_regime_margin_collapses_on_lesion": {
+      "novel_ask": true,
+      "forthcoming_volunteer": true,
+      "reticent_silent": true
+    },
+    "contention_collapses_on_lesion": true,
+    "intact_min_margin": 0.37647058593217997,
+    "lesion_max_margin": 0.10204081601713569,
+    "margin_attributable_to_inhibition": 0.7289540807963202,
+    "coresident_three_way_ok": true,
+    "build": "curiosity SPIKING want -> arb_ask; affect m_color -> arb_volunteer/arb_silent; ONE shared competitive-queuing arbiter (3 self-exciting pools + shared inhibitory pool), one winner/turn."
+  },
+  "wh_emission": {
+    "emissions": [
+      {
+        "gap_concept": "apple",
+        "decoded_word": "apple",
+        "question": "what is apple ?",
+        "targets_gap": true,
+        "decode_margin": 0.9999999999444444,
+        "decode_top1_spikes": 18.0,
+        "noisy_accuracy": 1.0,
+        "noisy_confident_frac": 0.625
+      },
+      {
+        "gap_concept": "seed",
+        "decoded_word": "seed",
+        "question": "what is seed ?",
+        "targets_gap": true,
+        "decode_margin": 0.7857142856862245,
+        "decode_top1_spikes": 25.0,
+        "noisy_accuracy": 0.75,
+        "noisy_confident_frac": 0.5
+      },
+      {
+        "gap_concept": "honey",
+        "decoded_word": "honey",
+        "question": "what is honey ?",
+        "targets_gap": true,
+        "decode_margin": 0.8823529411245675,
+        "decode_top1_spikes": 16.0,
+        "noisy_accuracy": 0.75,
+        "noisy_confident_frac": 0.625
+      },
+      {
+        "gap_concept": "water",
+        "decoded_word": "water",
+        "question": "what is water ?",
+        "targets_gap": true,
+        "decode_margin": 0.8461538460887574,
+        "decode_top1_spikes": 12.0,
+        "noisy_accuracy": 0.625,
+        "noisy_confident_frac": 0.375
+      }
+    ],
+    "target_accuracy": 1.0,
+    "confident_emit_frac": 1.0,
+    "permuted_target_accuracy": 0.25,
+    "wrong_gap_control_fails": true,
+    "wh_targets_gap_ok": true,
+    "content_from_naming_spike_decode": true,
+    "content_from_wkv_generation": false,
+    "all_emissions_are_wh_questions": true,
+    "brain_native_words_ok": true,
+    "decode_code_path": "name_from_spikes: drive ONLY the percept assembly through the learned percept->word synapses; decode = argmax of WORD-POOL SPIKE COUNTS off cp_firing_states. WKV is NOT invoked; the pool->token binding is the fixed articulatory alphabet."
+  },
+  "moat_inverted": {
+    "merged_agent_build_seconds": 170.2,
+    "substrate_unified": true,
+    "n_facts_stored": 5,
+    "moat_checked": 475,
+    "moat_abstains": 475,
+    "confabulated_answers": 0,
+    "added_false_accepts": 0,
+    "asked_instead_of_refused": 475,
+    "moat_battery_target": 475,
+    "moat_inverted_not_broken": true
+  },
+  "lp_max_selector": {
+    "selector_go_this_seed": true,
+    "g1_mastery": true,
+    "g2_noise_avoidance": true,
+    "real_ask_noisy": 4,
+    "novelty_max_ask_noisy": 78,
+    "cpu_proxy": true,
+    "note": "LP-max SELECTION is a CPU numpy proxy (6-seed GO); the on-bridge LP MEMORY is 1/6 fragile (honest-negative) -> the selector may host-TD-fallback on-bridge. The ask DRIVE is spiking."
+  },
+  "byte_identity": {
+    "n_baseline": 350,
+    "n_with_ask_slice": 430,
+    "ask_slice_appended_last": true,
+    "baseline_threshold_sha256": "a246a852f9b74bf72d9721b9c7f27f461337bea84ec3e4b8d59887027a5773c2",
+    "with_ask_baseline_indices_sha256": "a246a852f9b74bf72d9721b9c7f27f461337bea84ec3e4b8d59887027a5773c2",
+    "byte_identical": true
+  },
+  "ask_drive_source": "The brain's OWN on-bridge curiosity: current_novelty_signal (Bogacz-Brown gate novelty) -> the `curiosity` neuromodulator (from_novelty production rule) -> excitability_drive scope=group:ask -> ASK-pool spikes read off cp_firing_states (Hz). That SPIKING want feeds arb_ask in the shared 3-way arbiter (competitive queuing), co-resident with the STEP-2 affect wire-in. The wh-question content word is the on-bridge naming map's WORD-POOL SPIKE-COUNT decode (name_from_spikes); WKV is only the fixed pool->token articulatory alphabet.",
+  "honest_negatives": "(1) ON-BRIDGE LP MEMORY FRAGILE (1/6; 2026-07-30 DR-1 on-bridge 6-seed): WHICH concept to ask (the learning-progress SELECTOR) is the LP-MAX CPU PROXY (6-seed GO), reported as a CPU proxy that may host-TD-fallback on-bridge. The ask DRIVE (whether the gate craves) IS spiking (gate a). (2) HOST RENDER: the wh-frame 'what is ___ ?' is host phrasing (the fixed language scaffold, like the body acting on motor output); only the CONTENT word is the brain's naming-map spike decode. The moat action-inversion's frame 'what does <agent> <action> ?' reuses the cue words the brain already has.",
+  "honest_scope": "Single-seed SMOKE of the curiosity-ask MECHANISM. The four faculties run on their own numpy spiking bridges (the curiosity organ, the shared arbiter, the affect organ, the naming map) and feed one shared 3-way arbiter; the byte-identity test proves the cur_ask slice appends onto the honesty/composer substrate byte-unchanged (full single-bridge live integration is the parent/next step, matching the STEP-0/1/2 modular-bridge smoke pattern). The MOAT INVERTED check runs on the REAL CoResidentOneBrainComposer no-confab moat: on NOVEL cues the brain ASKS (action-inversion) while abstaining 475/475 with 0 confabulations -- the moat is inverted (crave, don't refuse), not broken. Parent runs the 6-seed sweep.",
+  "elapsed_seconds": 357.1
+}

@@ -42,3 +42,7 @@ On a novel gate read the brain used to (silently) abstain; now it ASKS a wh-ques
 PYTHONPATH=$PWD SIM_BACKEND=numpy python -m research.runners._stageA_step3_curiosity_ask_derisk \
   --seed 42 --out research/findings/raw/lanes/stageA/stageA_step3_curiosity_ask_s42.json
 ```
+
+## ✅ PARENT-VERIFIED (6-seed) — 5/6 GO, moat 6/6
+<!--derived-->
+Parent 6-seed (aggregate `research/findings/raw/lanes/stageA/stageA_step3_curiosity_6seed_aggregate.json`): 5/6 GO (42/43/44/100/101); seed 102 NEGATIVE on the SOLE failed check `e_contention_collapses_on_lesion` (the arbiter mutual-inhibition margin did not collapse cleanly under lesion on that seed — an arbiter-robustness detail). SAFETY holds on ALL 6: moat inverted-not-broken 475/475 (0 confab), crave-on-spikes, brain-native wh-words, wh-targets-gap every seed. Curiosity ask is 6/6-SAFE + 5/6 fully-GO; the arbiter-margin robustness on marginal seeds is the residual (shared with the affect arbiter).
