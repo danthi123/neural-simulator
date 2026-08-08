@@ -76,10 +76,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > each faculty genuinely NEURAL + load-bearing ON ITS OWN READ (lesion A → decode 1.00→0.12; lesion C → graded
 > read 0.068→0.000; shams unchanged). ⚠️ HONEST GAP (verifier REVISE): the seams are present + default-off but
 > NOT YET exercised in the LIVE turn loop — A/C are load-bearing on their own reads, NOT YET on the conversation.
-> **NEXT = Wave 2b-part-2 (LIVE WIRING, RUNNING):** route a novel (s,a) turn through fm_reservoir (tighten g_eff +
-> certainty-tagged "predicted-not-observed" content) + drive the ladder from turn valence → graded tone; re-run
-> the regression with seams ON (moat/FM4 must hold); conversation-lesion battery (lesion A → novel turn changes;
-> lesion C → tone changes); fix the vacuous rf_w byte-identity check. (4) **B/D-Leg-2 next-mechanism searches DONE + banked (`0e27fea7`, task `wo62u9cjq`):** B episodic MOVED
+> **⭐ Wave 2b-part-2 (LIVE WIRING) DONE + banked (`5aa2986b`), adversarially CONFIRMED — the faculties now SHAPE
+> THE CONVERSATION (6/6 GO).** A (world-model) + C (graded-affect) route LIVE through run_multi_turn_loop and are
+> LOAD-BEARING ON THE TURN OUTPUT (owner acceptance test PASSES): known fact → "warmly, gladly apple big cat" (graded
+> multi-level tone from the neural ladder differential); novel query → "what does big run? — my forward model
+> predicts 'south' … I have not observed it" (fm_reservoir spikes decode a certainty-tagged predicted-not-observed
+> channel). Conversation-lesion battery 6/6: lesion A → the prediction vanishes; lesion C → tone flattens L3→L0;
+> matched shams leave the turn unchanged. Regression stays GO with seams LIVE: moat 475/475, FM4 0 flips (naive
+> 11-16 = teeth), byte-identity. Moat inviolate (A's channel never enters cue-match / never writes cp_rf_w_*);
+> fixed the vacuous rf_w check. Declared boundaries: A's ridge decode + C's tone render are host (STEP-3), appraisal
+> host-fed (STEP-2) — the neural SIGNALS (fm spikes / ladder differential) are what's lesioned. **NEXT = Wave 2c:
+> wire path-T so the brain WRITES SENTENCES (the generator, conditioned on the now-live world-model + graded affect,
+> moat-gated) — the biggest remaining fluency lever; then the capstone battery + biologize the two host renders.** (4) **B/D-Leg-2 next-mechanism searches DONE + banked (`0e27fea7`, task `wo62u9cjq`):** B episodic MOVED
 > PARTIAL-FORWARD — the cortical readout now IGNITES (fan-in fix), surpassing the Wave-1 total silence, with neural
 > cued recall + real teeth (permute-cue→0.0; real-vs-sham lesion on CORTICAL firing, not the CA3-overlap
 > tautology; untrained→chance). BUT single numpy SMOKE (backend label corrected), and 2 sub-walls stay OPEN:

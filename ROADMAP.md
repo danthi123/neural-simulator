@@ -40,10 +40,19 @@ WTA + BTSP one-shot storage + ACh recall-mode gating) and reading the success
 signal back to TRAIN speaking (pragmatics Leg-2 — needs success-as-
 neuromodulator three-factor plasticity). A conditioned **path-T articulation
 generator** (the spiking-LLM as the Broca-like mouth) is CONFIRMED sound with
-the faculties LOAD-BEARING under lesion (the owner's acceptance test). NEXT =
-serial bridge-integration of the world-model + graded-affect seams onto the one
-loop, re-running the 12/12 regression after each edit; then path-T; then the
-faculty-load-bearing lesion battery. Findings: `2026-08-08-forward-model-
+the faculties LOAD-BEARING under lesion (the owner's acceptance test). **UPDATE
+(later 2026-08-08): the world-model + graded-affect seams are now INTEGRATED and
+LIVE in the turn loop, LOAD-BEARING ON THE CONVERSATION (6/6 GO).** The brain now
+reasons with its world-model and speaks with graded emotion: a known fact →
+"warmly, gladly apple big cat" (graded tone from the neural affect differential);
+a novel query → "what does big run? — my forward model predicts 'south' … I have
+not observed it" (reservoir spikes decode a certainty-tagged predicted-not-observed
+channel). Lesion the world-model → the prediction vanishes; lesion affect → the
+tone flattens; matched shams leave the turn unchanged; the no-confab moat holds
+475/475 throughout. NEXT = Wave 2c: wire path-T so the brain WRITES SENTENCES (the
+generator, conditioned on the now-live faculties, moat-gated) — the biggest
+remaining fluency lever; then the capstone lesion battery and biologizing the two
+host renders (the ridge decode and the tone token). Findings: `2026-08-08-forward-model-
 reservoir-*`, `2026-08-08-graded-affect-staggered-bistable-ladder-*`,
 `2026-08-08-pragmatics-*`, `2026-08-08-B-episodic-*-NEGATIVE-*`.
 

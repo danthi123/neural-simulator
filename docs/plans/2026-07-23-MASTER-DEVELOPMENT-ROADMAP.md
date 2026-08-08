@@ -418,10 +418,15 @@ assembly + spiking value critic + yoked control, not a v1 WTA-readout re-run) st
 0.444 vs 0.85; the learned value under-separates ~2-6% rate); provenance closed; next = value-amplification, a NEW
 method not a re-sweep (`2026-08-08-pragmatics-readback-leg2-v2-oracle-RESOLVED-convergence-NEGATIVE-*`). A conditioned **path-T
 articulation generator** (spiking-LLM as the Broca-like mouth) is CONFIRMED sound with faculties LOAD-BEARING under
-lesion (owner acceptance test); held off-main pending finding hygiene. **NEXT = Wave 2b: serial bridge-integration
-of the world-model + graded-affect seams onto the one loop (12/12 regression after each edit, roll back on drop),
-then path-T (Wave 2c), then the faculty-load-bearing lesion battery; in parallel, the B + Leg-2 next-mechanism
-searches (off critical path).**
+lesion (owner acceptance test); held off-main pending finding hygiene. **Wave 2b DONE (integration + LIVE wiring,
+adversarially CONFIRMED, 6/6 GO):** the world-model + graded-affect seams are INTEGRATED and LIVE in the turn loop
+and LOAD-BEARING ON THE CONVERSATION — known fact → "warmly, gladly apple big cat" (graded neural tone); novel →
+"what does big run? — my forward model predicts 'south' … I have not observed it" (certainty-tagged reservoir
+decode); lesion a faculty → the turn changes, matched sham does not; moat 475/475 + FM4 0-flips hold with the
+seams live (`2026-08-08-stageA-seams-A-C-live-in-the-turn-loop-loadbearing-on-conversation-GO.md`). **NEXT = Wave
+2c: wire path-T so the brain WRITES SENTENCES (the generator, conditioned on the now-live faculties, moat-gated) —
+the biggest remaining fluency lever; then the capstone battery + biologize the two host renders (ridge decode,
+tone token). Off critical path: B's neural-WTA + CA3-completion sub-walls, D-Leg-2 value-amplification.**
 
 **2026-08-06 UPDATE — Gate B executed-action credit (continuous BG selector lineage).** Stage 1 (continuous
 center-surround selector) is a CONSTRUCTION GO. Stage 2 (global-DA three-factor reward credit on the D1 routes)
