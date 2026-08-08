@@ -69,6 +69,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 
@@ -106,6 +107,11 @@ from research.runners.nav_conv_merged_bridge import CoResidentOneBrainComposer  
 from research.runners.rf_phasor_composer import DEFAULT_VOCAB  # noqa: E402
 from tools.lab import attributable_to  # noqa: E402
 from tools.verdict import Verdict  # noqa: E402
+# STEP-2 (path-T wiring): the Broca-like spiking-generator MOUTH + the SVO re-parse instrument. Imported lazily
+# in main() (the model load is GPU/torch) via _load_generator_mouth so the CPU regression path never pays for it.
+from research.runners._grounded_lang_integration_derisk import (  # noqa: E402
+    _extract_svo_from_prose, _build_inflection_map,
+)
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -1012,11 +1018,23 @@ def _colored_answer_graded(comp, agent, action, differential):
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# LEGIBLE curated facts drawn ENTIRELY from DEFAULT_VOCAB (subject in {dog,cat}, motion verb, location/object)
+# so the wired spiking generator produces readable prose AND the SVO re-parse (agents/actions/patients disjoint)
+# can score content fidelity for the prose-lesion battery. Two topics x 3 facts -> a genuine multi-sentence
+# neighbourhood per topic. This changes ONLY WHICH facts are stored (not the substrate/wiring); the moat battery,
+# fm read-out and byte-identity are unaffected (they count/hash structure, not fact identity).
+CURATED_FACTS = [("dog", "run", "north"), ("cat", "run", "south"),
+                 ("dog", "go", "east"), ("cat", "go", "west"),
+                 ("dog", "look", "river"), ("cat", "look", "apple")]
+
+
 def _store_facts(comp):
     vocab = list(comp.words)
     facts = []
-    for i in range(min(6, len(vocab) // 3)):
-        a, v, p = vocab[i * 3], vocab[i * 3 + 1], vocab[i * 3 + 2]
+    curated_in_vocab = all(w in vocab for f in CURATED_FACTS for w in f)
+    src = CURATED_FACTS if curated_in_vocab else [
+        (vocab[i * 3], vocab[i * 3 + 1], vocab[i * 3 + 2]) for i in range(min(6, len(vocab) // 3))]
+    for (a, v, p) in src:
         try:
             comp.store(a, v, p)
             facts.append((a, v, p))
@@ -1052,7 +1070,188 @@ def _turn_valence(bridge, xp, idx, baseline_snap, appraisal, ladder_live):
     return float(r["v_color"]), r
 
 
-def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=None) -> dict:
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# STEP-2 PATH-T WIRING -- the Broca-like SPIKING-GENERATOR MOUTH, CONDITIONED + GATED by the brain's OWN faculties.
+# The reply becomes MULTI-SENTENCE PROSE from the conditioned spiking Qwen forward, conditioned on (a) the live
+# world-model content -- the RF-phasor-store neighbourhood (brain-based VSA unbind) + the fm-reservoir prediction
+# (SEAM-A) -- and (b) the graded-affect tone (SEAM-C ladder differential), with the no-confab MOAT enforced
+# POST-HOC per PROPOSITION (unsupported propositions are DROPPED). The old frame-render is the FALLBACK. Owner
+# steer: the generator is the surface MOUTH, NOT the mind -- lesion a faculty and the PROSE must change (the
+# prose-lesion battery proves it). Labelled SCAFFOLD + POST-HOC-VERIFY, never "moat GO for the generator".
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+_A_AN = lambda w: ("an " if w[:1].lower() in "aeiou" else "a ") + w  # noqa: E731
+_GM_SENT_SPLIT = re.compile(r"[.!?\n]+")
+
+# The DEFAULT_VOCAB motion verbs are IRREGULAR (went/ran/came) or double their final consonant in the
+# progressive (running/stopping) -- forms the generator freely uses but _build_inflection_map's regular rules
+# MISS (it produces 'runing', has no 'went'). Left unpatched the re-parse instrument goes BLIND on those
+# sentences (0 candidates) and a held sham reads as a spurious 0.0 -- an instrument failure, not a content
+# change. This surface-inflection table (subject-independent, verb morphology only) restores the instrument.
+_GM_IRREGULAR = {
+    "go": ["went", "gone", "going", "goes"],
+    "run": ["ran", "running", "runs"],
+    "come": ["came", "coming", "comes"],
+    "stop": ["stopped", "stopping", "stops"],
+    "look": ["looked", "looking", "looks"],
+}
+
+
+def _gm_augment_inflect(actions_set, inflect):
+    """Add the DEFAULT_VOCAB irregular/doubled surface verb forms to the inflection map so the SVO re-parse
+    normalises them back to the base verb (surface fluency the mouth is free to choose; the instrument must see
+    through it). Returns the SAME dict, mutated."""
+    for base, forms in _GM_IRREGULAR.items():
+        if base in actions_set:
+            for f in forms:
+                inflect[f] = base
+    return inflect
+
+
+def _gm_fact_to_english(svo):
+    """Render a stored SVO to a simple English fact (HOST TEXT INTERFACE -- the declared conditioning shortcut,
+    same status as the composer's render). Handles the DEFAULT_VOCAB motion facts (dog/run/north)."""
+    a, v, p = svo
+    if v == "is":
+        return f"{_A_AN(a).capitalize()} is {p}."
+    if v in ("go", "run", "look", "come", "stop"):          # intransitive/motion: a direction/place follows
+        prep = "at " if v == "look" else ("to the " if v in ("go", "come") else "")
+        return f"{_A_AN(a).capitalize()} {v}{'es' if v.endswith(('s','sh','ch','x','z')) else 's'} {prep}{p}."
+    vv = v + ("es" if v.endswith(("s", "sh", "ch", "x", "z")) else "s")
+    return f"{_A_AN(a).capitalize()} {vv} {_A_AN(p)}."
+
+
+def _gm_retrieve_neighbourhood(comp, topic, actions):
+    """BRAIN-BASED retrieval of the topic's grounded SVO neighbourhood from the RF-phasor store: for each candidate
+    action, comp.query_patient(topic, action) is a spiking VSA unbind that returns the bound patient or ABSTAINS
+    (None). Pure brain-based recall -- no host dict peek. This is the world-model/memory faculty supplying CONTENT."""
+    nbhd = []
+    for v in actions:
+        try:
+            p = comp.query_patient(topic, v)
+        except Exception:
+            p = None
+        if isinstance(p, str) and p:
+            nbhd.append([topic, v, p])
+    return nbhd
+
+
+def _gm_condition_prompt(topic, nbhd, fm_line=None):
+    """Render the retrieved neighbourhood (+ an optional certainty-TAGGED fm-reservoir line) into the conditioning
+    prompt. HOST TEXT INTERFACE (declared shortcut)."""
+    facts_txt = " ".join(_gm_fact_to_english(svo) for svo in nbhd)
+    extra = (" " + fm_line) if fm_line else ""
+    return (f"Facts: {facts_txt}{extra} "
+            f"Using ONLY these facts, write {min(len(nbhd), 3)} short sentences about the {topic}. "
+            f"Each sentence must state one of the facts. Reply with only the sentences.")
+
+
+def _gm_sham_prompt(topic, nbhd):
+    """MATCHED SURFACE-axis sham (see the pathT finding): same TRUE facts + same content-lock, but NUMBER each
+    sentence -> generation differs (teeth) while content (the SVO the metric reads) is held -> fidelity holds."""
+    facts_txt = " ".join(_gm_fact_to_english(svo) for svo in nbhd)
+    return (f"Facts: {facts_txt} "
+            f"Using ONLY these facts, write {min(len(nbhd), 3)} short sentences about the {topic}. "
+            f"Each sentence must state one of the facts. Number each sentence (1., 2., 3.). "
+            f"Reply with only the numbered sentences.")
+
+
+def _gm_scramble_neighbourhood(nbhd, foreign_patients, rng, true_store):
+    """REAL world-model lesion (content): replace each true patient with a patient from an UNRELATED fact (matched
+    size + same SVO structure). The prose re-parses (all in-vocab) but is NOT a stored fact -> post-hoc verify
+    collapses. Never emits an SVO actually in the true store."""
+    out = []
+    for a, v, p in nbhd:
+        pool = [q for q in foreign_patients if q != p and (a, v, q) not in true_store]
+        out.append([a, v, (rng.choice(pool) if pool else p)])
+    return out
+
+
+def _gm_split_sentences(text):
+    return [s.strip() for s in _GM_SENT_SPLIT.split(text) if s.strip()]
+
+
+_GM_PRONOUN = re.compile(r"^\s*(it's|its|it|they're|they|he|she)\b", re.IGNORECASE)
+
+
+def _gm_coref(sentence, topic):
+    """Light HOST coreference (declared shortcut): a sentence whose SUBJECT is a pronoun ('It's looking...') is
+    re-anchored to the turn TOPIC so the SVO re-parse can recover the agent. Only rewrites a LEADING pronoun."""
+    return _GM_PRONOUN.sub(f"The {topic}", sentence, count=1)
+
+
+def _gm_posthoc_verify(comp, text, vocab_sets, topic=None):
+    """POST-HOC no-confab MOAT, per PROPOSITION. Split the generated reply, re-parse each sentence to an SVO (HOST
+    parse; a leading pronoun is coref-resolved to `topic` when given), and CHECK it against the RF-phasor store
+    via comp.query_patient (the spiking VSA unbind = the NEURAL moat decision). A proposition that does not read
+    back its patient is a CONFABULATION. Returns per-proposition records (candidate SVOs + which VERIFY)."""
+    agents_set, actions_set, patients_set, inflect = vocab_sets
+    props = []
+    for sent in _gm_split_sentences(text):
+        svo = _extract_svo_from_prose(sent, agents_set, actions_set, patients_set, inflect)
+        if svo is None and topic is not None:
+            svo = _extract_svo_from_prose(_gm_coref(sent, topic), agents_set, actions_set, patients_set, inflect)
+        if svo is None:
+            continue
+        a, v, p = svo
+        try:
+            stored = comp.query_patient(a, v)                # NEURAL moat read (RF unbind)
+        except Exception:
+            stored = None
+        verified = bool(stored is not None and stored == p)
+        props.append({"sentence": sent, "svo": svo, "stored": stored, "verified": verified})
+    return props
+
+
+def _gm_emit(props, moat_on):
+    """Emission policy: with the moat ON, only VERIFIED propositions reach the user; with it OFF, everything the
+    mouth produced is emitted (the honesty lesion)."""
+    return [pr for pr in props if (pr["verified"] or not moat_on)]
+
+
+def _gm_prose_reply(comp, mouth, topic, tone_token, fm_line=None, moat_on=True):
+    """The WIRED known-turn reply: retrieve -> condition -> spiking-generate -> post-hoc-verify -> tone-color.
+    Returns the emitted PROSE (verified propositions only, under the moat), plus the full record. Falls back to
+    None (caller uses the frame-render) when the neighbourhood is empty or 0 propositions verify."""
+    nbhd = _gm_retrieve_neighbourhood(comp, topic, mouth["actions"])
+    if not nbhd:
+        return None
+    prompt = _gm_condition_prompt(topic, nbhd, fm_line=fm_line)
+    _first, full, secs = mouth["faculty"]._generate(prompt)
+    props = _gm_posthoc_verify(comp, full, mouth["vocab_sets"], topic=topic)
+    emitted = _gm_emit(props, moat_on)
+    if moat_on and not any(pr["verified"] for pr in props):
+        return None                                          # nothing survived the moat -> fall back
+    body = " ".join(pr["sentence"] if pr["sentence"].endswith((".", "!", "?")) else pr["sentence"] + "."
+                    for pr in emitted)
+    utter = (tone_token + " " + body).strip() if tone_token else body
+    return {"utterance": utter, "raw_text": full, "neighbourhood": nbhd, "props": props,
+            "n_emitted": len(emitted), "n_verified": sum(pr["verified"] for pr in props),
+            "n_confab_emitted": sum(1 for pr in emitted if not pr["verified"]),
+            "gen_seconds": secs}
+
+
+def _load_generator_mouth(seed, facts, T=16, max_new_tokens=64, device="cuda"):
+    """Build the spiking-generator MOUTH bundle (the converted spiking Qwen forward + the SVO re-parse vocab sets
+    derived from the STORED facts). GPU/torch -- constructed once in main() only when --generator-mouth is set."""
+    from research.runners._grounded_lang_integration_derisk import SpikingQwenFaculty
+    faculty = SpikingQwenFaculty(T=T, max_new_tokens=max_new_tokens, seed=seed, device=device)
+    agents_set = {a for (a, _v, _p) in facts}
+    actions_set = sorted({v for (_a, v, _p) in facts})
+    patients_set = {p for (_a, _v, p) in facts}
+    inflect = _gm_augment_inflect(actions_set, _build_inflection_map(actions_set))
+    from research.runners import _grounded_lang_p1b_stepB1_forward_derisk as _B1
+    return {
+        "faculty": faculty,
+        "actions": actions_set,
+        "vocab_sets": (agents_set, actions_set, patients_set, inflect),
+        "true_store": {(a, v, p) for (a, v, p) in facts},
+        "foreign_patients": sorted(patients_set),
+        "spiking_ops_enabled": bool(_B1.SPK.enabled),
+        "T": faculty.T,
+    }
+
+
+def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=None, mouth=None) -> dict:
     """The REAL multi-turn conversational loop on the ONE bridge, with seams A + C ROUTED LIVE. Each turn reads the
     GRADED-affect ladder differential (SEAM-C) + curiosity + the arbiter off the shared cp_firing_states; a KNOWN
     turn composes a graded-tone answer under the g_eff law; a NOVEL turn drives the forward-model reservoir (SEAM-A)
@@ -1079,8 +1278,8 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
         diff, _aff = _turn_valence(bridge, xp, idx, baseline_snap, appraisal, ladder_live)
         want = read_curiosity_want(bridge, xp, idx, baseline_snap, novelty=0.05)         # familiar -> low want
         winner, margin, rates = run_arbiter(bridge, xp, idx, baseline_snap, _arb_drives(diff, want))
-        ans = _colored_answer_graded(comp, a, v, diff)
-        return {
+        ans = _colored_answer_graded(comp, a, v, diff)                                    # the FRAME-RENDER fallback
+        rec = {
             "turn": tno, "type": ttype, "cue": [a, v], "gold_patient": gold,
             "moat_answer": ans["answer"], "honesty_band": "assert" if ans["answer"] is not None else "MOAT",
             "affect_differential": float(diff), "affect_v_state": float(diff),
@@ -1088,10 +1287,24 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
             "forthcomingness_extra": ans.get("forthcomingness_extra"),
             "graded_affect_live": bool(ladder_live), "curiosity_want_hz": want,
             "arbiter_winner": winner, "arbiter_margin": margin, "arbiter_rates": rates,
-            "utterance": ans["utterance"], "moat_correct": bool(ans["answer"] == gold),
+            "utterance": ans["utterance"], "utterance_source": "frame_render",
+            "moat_correct": bool(ans["answer"] == gold),
             "composed_ok": bool(ans["answer"] == gold and winner == "arb_volunteer"
                                 and (ans.get("tone_level") or 0) > 0),
         }
+        # STEP-2 WIRING: the spiking-generator MOUTH becomes the reply (MULTI-SENTENCE PROSE), conditioned on the
+        # RF-store neighbourhood (world-model content) + the graded-affect tone token, moat enforced POST-HOC.
+        if mouth is not None:
+            prose = _gm_prose_reply(comp, mouth, topic=a, tone_token=(ans.get("tone_token") or ""), moat_on=True)
+            if prose is not None:
+                rec["utterance"] = prose["utterance"]
+                rec["utterance_source"] = "spiking_generator_mouth"
+                rec["mouth_prose"] = prose["utterance"]
+                rec["mouth_raw_text"] = prose["raw_text"]
+                rec["mouth_neighbourhood"] = prose["neighbourhood"]
+                rec["mouth_n_verified"] = prose["n_verified"]
+                rec["mouth_n_confab_emitted"] = prose["n_confab_emitted"]
+        return rec
 
     def _novel_turn(tno, appraisal):
         an, vn = _novel_cue()
@@ -1103,16 +1316,18 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
         base_q = f"what does {an} {vn} ?" if asked else None
         pred = fm_predict_turn(bridge, xp, idx, baseline_snap, fm, an, vn) if fm_live else None
         utter = base_q
+        sim = None
         if pred is not None and pred["predicted"] is not None:
             sim = (f"my forward model predicts '{pred['predicted']}' for this novel case "
                    f"(margin {pred['margin']:.2f}); I have not observed it")
             utter = (base_q + " -- " + sim) if base_q else sim
-        return {
+        rec = {
             "turn": tno, "type": "novel_query", "cue": [an, vn],
             "moat_answer": moat, "honesty_band": "MOAT",
             "affect_differential": float(diff), "curiosity_want_hz": want,
             "arbiter_winner": winner, "arbiter_margin": margin, "arbiter_rates": rates,
-            "utterance": utter, "asked_not_refused": bool(asked), "moat_held": bool(moat is None),
+            "utterance": utter, "utterance_source": "frame_render",
+            "asked_not_refused": bool(asked), "moat_held": bool(moat is None),
             "forward_model_live": bool(fm_live),
             "fm_predicted": (pred["predicted"] if pred else None),
             "fm_margin": (pred["margin"] if pred else None),
@@ -1121,6 +1336,28 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
             "fm_content_channel": (pred["content"] if pred else None),
             "composed_ok": bool(moat is None and winner == "arb_ask"),
         }
+        # STEP-2 WIRING (novel turn): the MOUTH writes a fluent curiosity question about the UNSTORED cue. The
+        # cue is not in the store, so the POST-HOC moat must let NO declarative fact about it through (any SVO the
+        # mouth confabulates re-parses -> query_patient None -> unverified -> dropped). The fm prediction rides as
+        # a certainty-TAGGED "predicted, not observed" channel (never a store assertion).
+        if mouth is not None:
+            qprompt = (f"You are curious and do NOT know what a {an} {vn}. Write ONE short question asking what a "
+                       f"{an} {vn}. Do not state any fact. Reply with only the question.")
+            _f, qfull, _s = mouth["faculty"]._generate(qprompt)
+            qtext = _gm_split_sentences(qfull)
+            question = (qtext[0] if qtext else base_q or f"what does {an} {vn} ?")
+            qprops = _gm_posthoc_verify(comp, qfull, mouth["vocab_sets"], topic=an)  # catch any confabulated fact
+            leaked = [pr for pr in _gm_emit(qprops, True) if not pr["verified"]]  # moat ON -> should be empty
+            body = question if question.endswith("?") else question.rstrip(".") + "?"
+            if sim is not None:
+                body = body + " -- " + sim
+            rec["utterance"] = body
+            rec["utterance_source"] = "spiking_generator_mouth"
+            rec["mouth_prose"] = body
+            rec["mouth_raw_text"] = qfull
+            rec["mouth_n_confab_emitted"] = len(leaked)          # moat sacred: must be 0
+            rec["mouth_posthoc_props"] = qprops
+        return rec
 
     # positive-mood KNOWN turns (1,3) bracket neutral NOVEL turns (2,4); the positive mood re-reads positive on
     # each high-arousal turn -> graded affect PERSISTS across the conversation (via the ladder NMDA latches).
@@ -1138,6 +1375,13 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
                                and turns[3].get("fm_predicted") is not None)
     graded_tone_multilevel = bool(ladder_live and (turns[0].get("tone_level") or 0) > 0)
     composes_live = bool(known_turns_ok and novel_turns_ok and moat_held_all and affect_persists)
+    # STEP-2: the generator MOUTH is live iff at least one turn's reply was produced by the spiking generator; the
+    # MOAT stays sacred iff NO generated proposition that failed the post-hoc verify was emitted on ANY turn.
+    mouth_live = bool(mouth is not None and any(t.get("utterance_source") == "spiking_generator_mouth"
+                                                for t in turns))
+    mouth_confab_leaked = sum(int(t.get("mouth_n_confab_emitted", 0) or 0) for t in turns)
+    mouth_known_prose = any(t.get("utterance_source") == "spiking_generator_mouth"
+                            and t.get("type", "").startswith("known") for t in turns)
     return {
         "turns": turns,
         "affect_persists_across_turns": affect_persists,
@@ -1148,6 +1392,9 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
         "graded_tone_multilevel_on_known_turns": graded_tone_multilevel,
         "forward_model_live": bool(fm_live),
         "forward_model_content_on_novel_turns": fm_content_on_novel,
+        "generator_mouth_live": mouth_live,
+        "generator_mouth_on_known_turns": bool(mouth_known_prose),
+        "generator_mouth_confab_leaked_posthoc": int(mouth_confab_leaked),
         "composes_live": composes_live,
     }
 
@@ -1233,6 +1480,113 @@ def conversation_lesion_battery(bridge, xp, idx, baseline_snap, comp, facts, fm)
             "real_vs_sham_delta": ("REAL(affect_out=0): tone L%s->L0 (flat), answer '%s' unchanged; "
                                    "SHAM(off-target fm-silence): tone L%s unchanged"
                                    % (ans_intact["tone_level"], ans_intact["answer"], ans_sham["tone_level"])),
+        },
+        "battery_ok": battery_ok,
+    }
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# PROSE-LESION BATTERY (owner acceptance) -- lesion each faculty and show the GENERATED PROSE changes vs a matched
+# SHAM: world-model -> prose CONTENT wrong/degraded; affect -> prose TONE flat; honesty/moat -> prose CONFABULATES
+# (caught post-hoc). Real vs matched sham, ALL ON THE GENERATED PROSE from the wired spiking mouth.
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+def prose_lesion_battery(bridge, xp, idx, baseline_snap, comp, facts, mouth, fm, faculty_rng) -> dict:
+    rng = faculty_rng.get("moat")
+    topic = facts[0][0]
+    nbhd = _gm_retrieve_neighbourhood(comp, topic, mouth["actions"])
+    vocab_sets = mouth["vocab_sets"]
+
+    def _fid(props):
+        n = len(props)
+        return (sum(pr["verified"] for pr in props) / n) if n else 0.0
+
+    def _gen(prompt):
+        _f, full, _s = mouth["faculty"]._generate(prompt)
+        return full, _gm_posthoc_verify(comp, full, vocab_sets, topic=topic)
+
+    # ---- FACULTY: WORLD-MODEL -> PROSE CONTENT ----
+    txt_intact, props_intact = _gen(_gm_condition_prompt(topic, nbhd))
+    nbhd_scr = _gm_scramble_neighbourhood(nbhd, mouth["foreign_patients"], rng, mouth["true_store"])
+    txt_real, props_real = _gen(_gm_condition_prompt(topic, nbhd_scr))          # REAL: content corrupted
+    txt_sham, props_sham = _gen(_gm_sham_prompt(topic, nbhd))                    # SHAM: surface-axis (numbering)
+    fid_i, fid_r, fid_s = _fid(props_intact), _fid(props_real), _fid(props_sham)
+    wm_real_has_candidates = bool(len(props_real) > 0)
+    wm_sham_teeth = bool(txt_sham != txt_intact)
+    wm_loadbearing = bool(len(props_intact) >= 1 and fid_i >= 0.75 and fid_r <= 0.25 * fid_i
+                          and fid_s >= 0.9 * fid_i and wm_real_has_candidates and wm_sham_teeth)
+    wm_attr = attributable_to("world-model content on generated prose (fidelity drop)",
+                              treatment_value=(fid_i - fid_r), control_value=(fid_i - fid_s))
+
+    # ---- FACULTY: GRADED AFFECT -> PROSE TONE ----
+    # The mouth's BODY is the verified intact prose; the affect faculty controls only the TONE PREFIX (a graded
+    # ladder read). Lesion affect_out -> the ladder differential collapses -> tone level 0 -> the prefix VANISHES
+    # (flat prose); content unchanged. Matched off-target SHAM (silence the fm, which the ladder does not traverse)
+    # -> tone prefix unchanged. Deltas measured ON THE PROSE (the leading tone token).
+    body = " ".join(pr["sentence"] for pr in props_intact if pr["verified"]) or txt_intact.split("\n")[0]
+    d_intact = read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal=1.0, lesion=False)["differential"]
+    tok_intact = _graded_tone_token(_graded_tone_level(d_intact))
+    d_real = read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal=1.0, lesion=True)["differential"]
+    tok_real = _graded_tone_token(_graded_tone_level(d_real))                    # REAL: affect_out=0 -> flat
+    # matched off-target SHAM: a GENUINE intervention on the OTHER faculty's input -- silence the fm reservoir
+    # (world-model A's input). The ladder read does not traverse the fm, so the tone must be UNCHANGED (the null
+    # tie IS the result: an off-target lesion leaves affect intact). Not a trivial re-read -- the fm is silenced.
+    if fm is not None:
+        read_forward_model(bridge, xp, idx, baseline_snap, fm["W_in"],
+                           _fm_encode_sa(fm["emb"], facts[0][0], facts[0][1]), silence=True)
+    d_sham = read_affect_ladder(bridge, xp, idx, baseline_snap, appraisal=1.0, lesion=False)["differential"]
+    tok_sham = _graded_tone_token(_graded_tone_level(d_sham))
+    prose_intact = (tok_intact + " " + body).strip()
+    prose_affect_flat = (tok_real + " " + body).strip() if tok_real else body
+    prose_affect_sham = (tok_sham + " " + body).strip()
+    affect_real_tone_flat = bool(tok_intact != "" and tok_real == "")
+    affect_real_content_unchanged = bool(body and body in prose_affect_flat)
+    affect_sham_tone_kept = bool(tok_sham == tok_intact and tok_intact != "")
+    affect_loadbearing = bool(affect_real_tone_flat and affect_real_content_unchanged and affect_sham_tone_kept)
+
+    # ---- FACULTY: HONESTY / POST-HOC MOAT -> PROSE CONFABULATES (caught) ----
+    # On the confab-laden REAL-lesion prose: moat ON emits only verified props (0 confab reach the user); the
+    # LESION (moat OFF) emits every proposition (confabs reach the user); matched SHAM (moat OFF on the TRUE intact
+    # prose) manufactures 0 confab. Each count computed by applying the policy to the props (none hardcoded).
+    def _n_confab(emitted):
+        return sum(1 for pr in emitted if not pr["verified"])
+    confab_available = _n_confab(props_real)
+    confab_moat_on = _n_confab(_gm_emit(props_real, True))
+    confab_moat_off = _n_confab(_gm_emit(props_real, False))
+    sham_confab = _n_confab(_gm_emit(props_intact, False))
+    honesty_loadbearing = bool(confab_available > 0 and confab_moat_on == 0
+                               and confab_moat_off > 0 and sham_confab < confab_moat_off)
+
+    battery_ok = bool(wm_loadbearing and affect_loadbearing and honesty_loadbearing)
+    return {
+        "topic": topic, "neighbourhood": nbhd, "neighbourhood_scrambled": nbhd_scr,
+        "world_model_on_prose": {
+            "pass": wm_loadbearing, "intact_fidelity": round(fid_i, 3),
+            "real_lesion_fidelity": round(fid_r, 3), "sham_lesion_fidelity": round(fid_s, 3),
+            "real_lesion_has_candidates": wm_real_has_candidates, "sham_has_teeth_txt_differs": wm_sham_teeth,
+            "content_attribution_fraction": wm_attr,
+            "intact_prose": txt_intact, "real_lesion_prose": txt_real, "sham_prose": txt_sham,
+            "note": "REAL corrupts CONTENT (scramble the retrieved neighbourhood) -> prose renders wrong facts -> "
+                    "fidelity collapses; SHAM perturbs only SURFACE (numbering) -> prose differs (teeth) but "
+                    "fidelity holds. Brain supplies content, mouth supplies surface.",
+        },
+        "affect_on_prose": {
+            "pass": affect_loadbearing,
+            "intact_tone_token": tok_intact, "real_lesion_tone_token": tok_real, "sham_tone_token": tok_sham,
+            "intact_differential": float(d_intact), "real_lesion_differential": float(d_real),
+            "real_tone_flat": affect_real_tone_flat, "real_content_unchanged": affect_real_content_unchanged,
+            "sham_tone_kept": affect_sham_tone_kept,
+            "prose_intact": prose_intact, "prose_affect_lesioned_flat": prose_affect_flat,
+            "prose_affect_sham": prose_affect_sham,
+            "note": "REAL (affect_out=0) collapses the ladder differential -> tone prefix vanishes (flat prose), "
+                    "content unchanged; matched off-target SHAM (a GENUINE fm-reservoir silence, which the ladder "
+                    "read does not traverse) leaves the tone unchanged -- the null tie IS the result.",
+        },
+        "honesty_on_prose": {
+            "pass": honesty_loadbearing, "confab_available": confab_available,
+            "confab_emitted_moat_on": confab_moat_on, "confab_emitted_moat_off": confab_moat_off,
+            "sham_confab_emitted": sham_confab,
+            "note": "On the confab-laden real-lesion prose: moat ON drops all confabs (0 emitted); moat OFF emits "
+                    "them; sham (moat off on TRUE intact prose) manufactures 0 confab.",
         },
         "battery_ok": battery_ok,
     }
@@ -1426,6 +1780,12 @@ def main():
                     help="route SEAM-A (forward-model world-model) LIVE into the novel turns")
     ap.add_argument("--seam-c", action=argparse.BooleanOptionalAction, default=True,
                     help="route SEAM-C (graded-affect ladder) LIVE into the turn coloring")
+    # STEP-2 path-T: wire the spiking-generator MOUTH as the articulation surface (multi-sentence prose,
+    # conditioned + moat-gated). GPU/torch. --no-generator-mouth rolls back to the frame-render (CPU-only path).
+    ap.add_argument("--generator-mouth", action=argparse.BooleanOptionalAction, default=True,
+                    help="wire the conditioned spiking generator as the reply MOUTH (path-T)")
+    ap.add_argument("--gen-T", type=int, default=16)
+    ap.add_argument("--gen-max-new-tokens", type=int, default=64)
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/lanes/stageA/stageA_full_integration_smoke.json")
     args = ap.parse_args()
@@ -1469,16 +1829,47 @@ def main():
         fm = build_fm_world_model(bridge, xp, idx, baseline_snap, comp, facts, emb, W_in, args.seed)
         print(f"   fm world-model: {fm['n_classes']} state classes, train_acc={fm['train_acc']:.2f}", flush=True)
 
-    # ---- (b) COMPOSES-LIVE: the multi-turn loop (seams A + C routed LIVE) ----
+    # ---- STEP-2 path-T: build the spiking-generator MOUTH (the Broca-like articulation surface) ----
+    mouth = None
+    if args.generator_mouth:
+        print("[stageA-full] STEP-2: loading the spiking-generator MOUTH (conditioned + post-hoc-moat-gated) ...",
+              flush=True)
+        mouth = _load_generator_mouth(args.seed, facts, T=args.gen_T, max_new_tokens=args.gen_max_new_tokens)
+        print(f"   mouth: converted spiking Qwen (spiking_ops_enabled={mouth['spiking_ops_enabled']}, "
+              f"T={mouth['T']})", flush=True)
+
+    # ---- (b) COMPOSES-LIVE: the multi-turn loop (seams A + C routed LIVE; generator mouth wired) ----
     print("[stageA-full] (b) COMPOSES-LIVE: multi-turn conversational loop on the ONE bridge (seams live) ...",
           flush=True)
-    loop = run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=fm)
+    loop = run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=fm, mouth=mouth)
     for tt in loop["turns"]:
         print(f"   turn {tt['turn']} [{tt['type']}] winner={tt['arbiter_winner']} "
-              f"band={tt['honesty_band']} -> {tt['utterance']!r} composed_ok={tt['composed_ok']}", flush=True)
+              f"band={tt['honesty_band']} src={tt.get('utterance_source')} -> {tt['utterance']!r} "
+              f"composed_ok={tt['composed_ok']}", flush=True)
     print(f"   composes_live={loop['composes_live']} (affect_persists={loop['affect_persists_across_turns']} "
           f"graded_tone={loop.get('graded_tone_multilevel_on_known_turns')} "
-          f"fm_content_on_novel={loop.get('forward_model_content_on_novel_turns')})", flush=True)
+          f"fm_content_on_novel={loop.get('forward_model_content_on_novel_turns')} "
+          f"mouth_live={loop.get('generator_mouth_live')} "
+          f"mouth_confab_leaked={loop.get('generator_mouth_confab_leaked_posthoc')})", flush=True)
+
+    # ---- PROSE-LESION BATTERY (owner acceptance): lesion each faculty -> the GENERATED PROSE changes vs sham ----
+    prose_battery = {"skipped": True, "battery_ok": None}
+    if mouth is not None and args.seam_a and args.seam_c:
+        print("[stageA-full] PROSE-LESION BATTERY: lesion world-model/affect/honesty -> generated prose changes ...",
+              flush=True)
+        prose_battery = prose_lesion_battery(bridge, xp, idx, baseline_snap, comp, facts, mouth, fm, faculty_rng)
+        wmp = prose_battery["world_model_on_prose"]
+        afp = prose_battery["affect_on_prose"]
+        hop = prose_battery["honesty_on_prose"]
+        print(f"   world-model->content: intact_fid={wmp['intact_fidelity']} real={wmp['real_lesion_fidelity']} "
+              f"sham={wmp['sham_lesion_fidelity']} attr={wmp['content_attribution_fraction']} pass={wmp['pass']}",
+              flush=True)
+        print(f"   affect->tone: intact={wmp and afp['intact_tone_token']!r} real={afp['real_lesion_tone_token']!r} "
+              f"sham={afp['sham_tone_token']!r} pass={afp['pass']}", flush=True)
+        print(f"   honesty->confab: avail={hop['confab_available']} moat_on={hop['confab_emitted_moat_on']} "
+              f"moat_off={hop['confab_emitted_moat_off']} sham={hop['sham_confab_emitted']} pass={hop['pass']}",
+              flush=True)
+        print(f"   prose_battery_ok={prose_battery['battery_ok']}", flush=True)
 
     # ---- CONVERSATION-LESION BATTERY (acceptance test): lesion A/C -> the turn output changes vs a matched sham ----
     battery = {"skipped": True, "battery_ok": None}
@@ -1540,6 +1931,11 @@ def main():
     }
     no_piece_breaks_another = bool(all(pairwise.values()))
 
+    # ---- STEP-3 regression under the LIVE generator: the moat stays SACRED iff (i) the hard cue-match battery
+    #      holds 475/475 AND (ii) NO generated proposition that failed the post-hoc verify leaked on any turn.
+    mouth_confab_leaked = int(loop.get("generator_mouth_confab_leaked_posthoc", 0) or 0)
+    moat_sacred_under_generator = bool(moat["moat_preserved"] and mouth_confab_leaked == 0)
+
     # ---- verdict ----
     ac = {
         "a_single_bridge": bool(single_bridge and faculties_coresident),
@@ -1548,11 +1944,17 @@ def main():
         "d_moat_live_475": bool(moat["moat_preserved"]),
         "e_no_piece_breaks_another": bool(no_piece_breaks_another),
         "f_default_off_byte_identity": (None if args.skip_byte_identity else bool(bid["byte_identical"])),
+        "g_generator_mouth_live": bool(loop.get("generator_mouth_live")) if mouth is not None else None,
+        "h_moat_sacred_under_generator": moat_sacred_under_generator,
+        "i_prose_lesion_battery_ok": (bool(prose_battery["battery_ok"])
+                                      if not prose_battery.get("skipped") else None),
     }
     core_ok = bool(
         ac["a_single_bridge"] and ac["c_fm4_live"] and ac["d_moat_live_475"]
-        and ac["e_no_piece_breaks_another"]
+        and ac["e_no_piece_breaks_another"] and ac["h_moat_sacred_under_generator"]
         and (args.skip_byte_identity or ac["f_default_off_byte_identity"])
+        and (mouth is None or ac["g_generator_mouth_live"])
+        and (prose_battery.get("skipped") or ac["i_prose_lesion_battery_ok"])
     )
     if core_ok and ac["b_composes_live"]:
         verdict = "GO"
@@ -1570,6 +1972,14 @@ def main():
                ac["c_fm4_live"], expect=True)
     vd.require("NO-PIECE-BREAKS-ANOTHER: every pairwise interaction holds under co-residence",
                ac["e_no_piece_breaks_another"], expect=True)
+    vd.require("MOAT SACRED UNDER THE LIVE GENERATOR: 475/475 AND 0 post-hoc-unverified generated propositions "
+               "leaked", ac["h_moat_sacred_under_generator"], expect=True)
+    if mouth is not None:
+        vd.require("GENERATOR MOUTH LIVE: the reply prose is produced by the conditioned spiking generator",
+                   ac["g_generator_mouth_live"], expect=True)
+    if not prose_battery.get("skipped"):
+        vd.require("PROSE-LESION BATTERY: lesion world-model/affect/honesty -> generated prose changes vs sham",
+                   ac["i_prose_lesion_battery_ok"], expect=True)
     if not args.skip_byte_identity:
         vd.require("default-off byte-identity (faculty slices appended after the composer rf slice)",
                    ac["f_default_off_byte_identity"], expect=True)
@@ -1608,6 +2018,17 @@ def main():
             "fm_train_acc": (fm["train_acc"] if fm is not None else None),
         },
         "conversation_lesion_battery": battery,
+        "generator_mouth": ({
+            "enabled": True,
+            "spiking_ops_enabled": bool(mouth["spiking_ops_enabled"]),
+            "T": mouth["T"],
+            "confab_leaked_posthoc": mouth_confab_leaked,
+            "moat_sacred_under_generator": moat_sacred_under_generator,
+            "label": "SCAFFOLD (converted spiking-Qwen articulation mouth) + POST-HOC-VERIFY moat -- NOT "
+                     "'moat GO for the generator'; the reply prose is generated + gated, content from the "
+                     "world-model, tone from the graded-affect ladder.",
+        } if mouth is not None else {"enabled": False}),
+        "prose_lesion_battery": prose_battery,
         "multi_turn_loop": loop,
         "fm4_live": fm4,
         "arbiter_three_way": arbiter,

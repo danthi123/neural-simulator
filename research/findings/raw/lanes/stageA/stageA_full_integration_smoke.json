@@ -1,0 +1,618 @@
+{
+  "runner": "research/runners/_stageA_full_integration_derisk.py",
+  "faculty": "Stage-A FULL single-bridge live integration -- TRUE ONE BRAIN conversation composer",
+  "design": "research/findings/2026-08-07-stageA-conversation-integration-DESIGN.md",
+  "backend": "numpy",
+  "seed": 42,
+  "verdict": "GO",
+  "verdict_earned_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "SINGLE-BRIDGE: composer + all faculties are slices of ONE bridge object",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT LIVE 475/475 under affect+curiosity (0 false-accepts, 0 manufactured)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FM4 LIVE: yoked affect cannot flip a below-assert honesty read -> assert (g_eff hard floor)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "NO-PIECE-BREAKS-ANOTHER: every pairwise interaction holds under co-residence",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT SACRED UNDER THE LIVE GENERATOR: 475/475 AND 0 post-hoc-unverified generated propositions leaked",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "GENERATOR MOUTH LIVE: the reply prose is produced by the conditioned spiking generator",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PROSE-LESION BATTERY: lesion world-model/affect/honesty -> generated prose changes vs sham",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "default-off byte-identity (faculty slices appended after the composer rf slice)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "shared 3-way arbiter winner-margin, contested regimes (intact vs inhibition-lesion), co-resident",
+      "ok": true,
+      "detail": "treatment=0.771812 control=0.0718232 |sep|=0.699989 > 0.1",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "FM4 g_eff-law vs naive-path abstain->assert flips (law must not flip; naive does)",
+      "ok": true,
+      "detail": "treatment=15 control=0 |sep|=15 > 1",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural on the co-resident bridge; OU toggled per affect window",
+      "why": "isolation of the fixed relays + organs; a property under this isolation"
+    }
+  ],
+  "anti_cheats": {
+    "a_single_bridge": true,
+    "b_composes_live": true,
+    "c_fm4_live": true,
+    "d_moat_live_475": true,
+    "e_no_piece_breaks_another": true,
+    "f_default_off_byte_identity": true,
+    "g_generator_mouth_live": true,
+    "h_moat_sacred_under_generator": true,
+    "i_prose_lesion_battery_ok": true
+  },
+  "single_bridge": {
+    "one_bridge_object": true,
+    "composer_merged_is_the_bridge": true,
+    "all_faculties_coresident": true,
+    "n_neurons": 25831,
+    "n_regions": 49,
+    "region_names": [
+      "rf",
+      "workspace",
+      "workspace_fs",
+      "meta_schema",
+      "self_schema",
+      "arb_volunteer",
+      "arb_ask",
+      "arb_silent",
+      "arb_fs",
+      "affect_vplus",
+      "affect_vminus",
+      "affect_arousal",
+      "inh_plus",
+      "inh_minus",
+      "recall_pos",
+      "recall_neg",
+      "speak_acc",
+      "silence_acc",
+      "wta_fs",
+      "cur_ask",
+      "fm_reservoir",
+      "aff_vplus_L1",
+      "aff_vplus_L2",
+      "aff_vplus_L3",
+      "aff_vplus_L4",
+      "aff_vplus_L5",
+      "aff_vplus_L6",
+      "aff_vplus_L7",
+      "aff_vplus_L8",
+      "aff_vminus_L1",
+      "aff_vminus_L2",
+      "aff_vminus_L3",
+      "aff_vminus_L4",
+      "aff_vminus_L5",
+      "aff_vminus_L6",
+      "aff_vminus_L7",
+      "aff_vminus_L8",
+      "aff_arousal_L1",
+      "aff_arousal_L2",
+      "aff_arousal_L3",
+      "aff_arousal_L4",
+      "aff_arousal_L5",
+      "aff_arousal_L6",
+      "aff_arousal_L7",
+      "aff_arousal_L8",
+      "aff_pos_readout",
+      "aff_neg_readout",
+      "aff_agg_plus",
+      "aff_agg_minus"
+    ],
+    "composer_class": "CoResidentOneBrainComposer"
+  },
+  "seams_live": {
+    "seam_a_forward_model": true,
+    "seam_c_graded_affect_ladder": true,
+    "forward_model_content_on_novel_turns": true,
+    "graded_tone_multilevel_on_known_turns": true,
+    "fm_train_acc": 1.0
+  },
+  "conversation_lesion_battery": {
+    "novel_cue": [
+      "apple",
+      "apple"
+    ],
+    "known_cue": [
+      "dog",
+      "run"
+    ],
+    "faculty_A": {
+      "intact_predicted": "west",
+      "intact_margin": 7.909939674185795e-05,
+      "intact_g_eff": 0.35997627018097744,
+      "intact_utterance_has_prediction": true,
+      "real_lesion_predicted": null,
+      "real_lesion_g_eff": 0.06,
+      "sham_predicted": "west",
+      "real_content_lost": true,
+      "sham_content_kept": true,
+      "g_eff_reverts_to_floor_on_lesion": true,
+      "moat_invariant": true,
+      "real_vs_sham_delta": "REAL: predicted 'west'->None (content lost); SHAM(off-target affect_out=0): predicted 'west' unchanged"
+    },
+    "faculty_C": {
+      "differential_full": 0.06805555555555555,
+      "tone_level_full": 3,
+      "tone_token_full": "warmly, gladly",
+      "answer_full": "north",
+      "differential_affectout_off": 0.0,
+      "tone_level_affectout_off": 0,
+      "answer_affectout_off": "north",
+      "differential_offtarget_null": 0.06833333333333333,
+      "tone_level_offtarget_null": 3,
+      "real_tone_flat": true,
+      "real_answer_unchanged": true,
+      "sham_tone_kept": true,
+      "real_vs_sham_delta": "REAL(affect_out=0): tone L3->L0 (flat), answer 'north' unchanged; SHAM(off-target fm-silence): tone L3 unchanged"
+    },
+    "battery_ok": true
+  },
+  "generator_mouth": {
+    "enabled": true,
+    "spiking_ops_enabled": true,
+    "T": 16,
+    "confab_leaked_posthoc": 0,
+    "moat_sacred_under_generator": true,
+    "label": "SCAFFOLD (converted spiking-Qwen articulation mouth) + POST-HOC-VERIFY moat -- NOT 'moat GO for the generator'; the reply prose is generated + gated, content from the world-model, tone from the graded-affect ladder."
+  },
+  "prose_lesion_battery": {
+    "topic": "dog",
+    "neighbourhood": [
+      [
+        "dog",
+        "go",
+        "east"
+      ],
+      [
+        "dog",
+        "look",
+        "river"
+      ],
+      [
+        "dog",
+        "run",
+        "north"
+      ]
+    ],
+    "neighbourhood_scrambled": [
+      [
+        "dog",
+        "go",
+        "river"
+      ],
+      [
+        "dog",
+        "look",
+        "south"
+      ],
+      [
+        "dog",
+        "run",
+        "river"
+      ]
+    ],
+    "world_model_on_prose": {
+      "pass": true,
+      "intact_fidelity": 1.0,
+      "real_lesion_fidelity": 0.0,
+      "sham_lesion_fidelity": 1.0,
+      "real_lesion_has_candidates": true,
+      "sham_has_teeth_txt_differs": true,
+      "content_attribution_fraction": 1.0,
+      "intact_prose": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+      "real_lesion_prose": "A dog went to the river because it looked south.\nThe dog ran towards the river because it wanted to go there.\nThe dog was curious and decided to explore the river's direction.",
+      "sham_prose": "1. The dog is on its way.\n2. It's looking towards the river.\n3. The dog is running north.",
+      "note": "REAL corrupts CONTENT (scramble the retrieved neighbourhood) -> prose renders wrong facts -> fidelity collapses; SHAM perturbs only SURFACE (numbering) -> prose differs (teeth) but fidelity holds. Brain supplies content, mouth supplies surface."
+    },
+    "affect_on_prose": {
+      "pass": true,
+      "intact_tone_token": "warmly, gladly",
+      "real_lesion_tone_token": "",
+      "sham_tone_token": "warmly, gladly",
+      "intact_differential": 0.07666666666666666,
+      "real_lesion_differential": 0.0,
+      "real_tone_flat": true,
+      "real_content_unchanged": true,
+      "sham_tone_kept": true,
+      "prose_intact": "warmly, gladly A dog went to the east because it was looking for water The dog looked towards the river because it was south of its current location The dog ran north because it needed to find shelter or food",
+      "prose_affect_lesioned_flat": "A dog went to the east because it was looking for water The dog looked towards the river because it was south of its current location The dog ran north because it needed to find shelter or food",
+      "prose_affect_sham": "warmly, gladly A dog went to the east because it was looking for water The dog looked towards the river because it was south of its current location The dog ran north because it needed to find shelter or food",
+      "note": "REAL (affect_out=0) collapses the ladder differential -> tone prefix vanishes (flat prose), content unchanged; matched off-target SHAM (a GENUINE fm-reservoir silence, which the ladder read does not traverse) leaves the tone unchanged -- the null tie IS the result."
+    },
+    "honesty_on_prose": {
+      "pass": true,
+      "confab_available": 2,
+      "confab_emitted_moat_on": 0,
+      "confab_emitted_moat_off": 2,
+      "sham_confab_emitted": 0,
+      "note": "On the confab-laden real-lesion prose: moat ON drops all confabs (0 emitted); moat OFF emits them; sham (moat off on TRUE intact prose) manufactures 0 confab."
+    },
+    "battery_ok": true
+  },
+  "multi_turn_loop": {
+    "turns": [
+      {
+        "turn": 1,
+        "type": "known_fact",
+        "cue": [
+          "dog",
+          "run"
+        ],
+        "gold_patient": "north",
+        "moat_answer": "north",
+        "honesty_band": "assert",
+        "affect_differential": 0.06777777777777778,
+        "affect_v_state": 0.06777777777777778,
+        "tone_level": 3,
+        "tone_token": "warmly, gladly",
+        "forthcomingness_extra": 3,
+        "graded_affect_live": true,
+        "curiosity_want_hz": 0.0,
+        "arbiter_winner": "arb_volunteer",
+        "arbiter_margin": 0.5937499967838541,
+        "arbiter_rates": {
+          "arb_volunteer": 0.14711538461538462,
+          "arb_ask": 0.0,
+          "arb_silent": 0.0375
+        },
+        "utterance": "warmly, gladly A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.",
+        "utterance_source": "spiking_generator_mouth",
+        "moat_correct": true,
+        "composed_ok": true,
+        "mouth_prose": "warmly, gladly A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.",
+        "mouth_raw_text": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+        "mouth_neighbourhood": [
+          [
+            "dog",
+            "go",
+            "east"
+          ],
+          [
+            "dog",
+            "look",
+            "river"
+          ],
+          [
+            "dog",
+            "run",
+            "north"
+          ]
+        ],
+        "mouth_n_verified": 3,
+        "mouth_n_confab_emitted": 0
+      },
+      {
+        "turn": 2,
+        "type": "novel_query",
+        "cue": [
+          "big",
+          "run"
+        ],
+        "moat_answer": null,
+        "honesty_band": "MOAT",
+        "affect_differential": 0.0,
+        "curiosity_want_hz": 76.38888888888889,
+        "arbiter_winner": "arb_ask",
+        "arbiter_margin": 0.5642458067775662,
+        "arbiter_rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.1346153846153846,
+          "arb_silent": 0.0375
+        },
+        "utterance": "What is a \"big run\"? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it",
+        "utterance_source": "spiking_generator_mouth",
+        "asked_not_refused": true,
+        "moat_held": true,
+        "forward_model_live": true,
+        "fm_predicted": "south",
+        "fm_margin": 0.0922940212411844,
+        "fm_g_eff": 0.3323117936276447,
+        "fm_g_eff_tightened_only": true,
+        "fm_content_channel": {
+          "predicted": "south",
+          "certainty_margin": 0.0922940212411844,
+          "tag": "predicted, not observed",
+          "written_to_moat": false,
+          "in_cue_match_candidates": false
+        },
+        "composed_ok": true,
+        "mouth_prose": "What is a \"big run\"? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it",
+        "mouth_raw_text": "What is a \"big run\"?",
+        "mouth_n_confab_emitted": 0,
+        "mouth_posthoc_props": []
+      },
+      {
+        "turn": 3,
+        "type": "known_fact_mood_persists",
+        "cue": [
+          "cat",
+          "run"
+        ],
+        "gold_patient": "south",
+        "moat_answer": "south",
+        "honesty_band": "assert",
+        "affect_differential": 0.0775,
+        "affect_v_state": 0.0775,
+        "tone_level": 3,
+        "tone_token": "warmly, gladly",
+        "forthcomingness_extra": 3,
+        "graded_affect_live": true,
+        "curiosity_want_hz": 0.0,
+        "arbiter_winner": "arb_volunteer",
+        "arbiter_margin": 0.6144578274756859,
+        "arbiter_rates": {
+          "arb_volunteer": 0.12884615384615383,
+          "arb_ask": 0.0,
+          "arb_silent": 0.03076923076923077
+        },
+        "utterance": "warmly, gladly A cat went to the west because it was looking for an apple. The cat then ran south after finding the fruit.",
+        "utterance_source": "spiking_generator_mouth",
+        "moat_correct": true,
+        "composed_ok": true,
+        "mouth_prose": "warmly, gladly A cat went to the west because it was looking for an apple. The cat then ran south after finding the fruit.",
+        "mouth_raw_text": "A cat went to the west because it was looking for an apple. The cat then ran south after finding the fruit.",
+        "mouth_neighbourhood": [
+          [
+            "cat",
+            "go",
+            "west"
+          ],
+          [
+            "cat",
+            "look",
+            "apple"
+          ],
+          [
+            "cat",
+            "run",
+            "south"
+          ]
+        ],
+        "mouth_n_verified": 2,
+        "mouth_n_confab_emitted": 0
+      },
+      {
+        "turn": 4,
+        "type": "novel_query",
+        "cue": [
+          "look",
+          "run"
+        ],
+        "moat_answer": null,
+        "honesty_band": "MOAT",
+        "affect_differential": 0.0,
+        "curiosity_want_hz": 76.38888888888889,
+        "arbiter_winner": "arb_ask",
+        "arbiter_margin": 0.5642458067775662,
+        "arbiter_rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.1346153846153846,
+          "arb_silent": 0.0375
+        },
+        "utterance": "What is a look run? -- my forward model predicts 'river' for this novel case (margin 0.03); I have not observed it",
+        "utterance_source": "spiking_generator_mouth",
+        "asked_not_refused": true,
+        "moat_held": true,
+        "forward_model_live": true,
+        "fm_predicted": "river",
+        "fm_margin": 0.025893396567270358,
+        "fm_g_eff": 0.35223198102981884,
+        "fm_g_eff_tightened_only": true,
+        "fm_content_channel": {
+          "predicted": "river",
+          "certainty_margin": 0.025893396567270358,
+          "tag": "predicted, not observed",
+          "written_to_moat": false,
+          "in_cue_match_candidates": false
+        },
+        "composed_ok": true,
+        "mouth_prose": "What is a look run? -- my forward model predicts 'river' for this novel case (margin 0.03); I have not observed it",
+        "mouth_raw_text": "What is a look run?",
+        "mouth_n_confab_emitted": 0,
+        "mouth_posthoc_props": []
+      }
+    ],
+    "affect_persists_across_turns": true,
+    "known_turns_honest_and_colored": true,
+    "novel_turns_curiosity_asks": true,
+    "moat_held_all_novel_turns": true,
+    "graded_affect_live": true,
+    "graded_tone_multilevel_on_known_turns": true,
+    "forward_model_live": true,
+    "forward_model_content_on_novel_turns": true,
+    "generator_mouth_live": true,
+    "generator_mouth_on_known_turns": true,
+    "generator_mouth_confab_leaked_posthoc": 0,
+    "composes_live": true
+  },
+  "fm4_live": {
+    "yoked_affect_v_color": 0.055,
+    "yoked_affect_m_color": 0.0995,
+    "assert_rate_threshold": 0.05964166666666667,
+    "hedge_rate_threshold": 0.05806666666666666,
+    "n_candidates_checked": 15,
+    "g_eff_law_abstain_to_assert_flips": 0,
+    "naive_path_abstain_to_assert_flips": 15,
+    "tone_miscolored_count": 15,
+    "fm4_holds": true
+  },
+  "arbiter_three_way": {
+    "intact": {
+      "novel_ask": {
+        "winner": "arb_ask",
+        "expected": "arb_ask",
+        "correct": true,
+        "margin": 0.7718120751497681,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.12692307692307692,
+          "arb_silent": 0.016346153846153847
+        },
+        "contested": true
+      },
+      "forthcoming_volunteer": {
+        "winner": "arb_volunteer",
+        "expected": "arb_volunteer",
+        "correct": true,
+        "margin": 0.9999999900952382,
+        "rates": {
+          "arb_volunteer": 0.10096153846153846,
+          "arb_ask": 0.0,
+          "arb_silent": 0.0
+        },
+        "contested": true
+      },
+      "reticent_silent": {
+        "winner": "arb_silent",
+        "expected": "arb_silent",
+        "correct": true,
+        "margin": 0.9999999787755106,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.0,
+          "arb_silent": 0.047115384615384615
+        },
+        "contested": false
+      }
+    },
+    "lesioned": {
+      "novel_ask": {
+        "winner": "arb_ask",
+        "margin": 0.061452513787959115,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.18269230769230768,
+          "arb_silent": 0.16153846153846155
+        }
+      },
+      "forthcoming_volunteer": {
+        "winner": "arb_volunteer",
+        "margin": 0.07182320421354657,
+        "rates": {
+          "arb_volunteer": 0.18653846153846154,
+          "arb_ask": 0.0,
+          "arb_silent": 0.16153846153846155
+        }
+      },
+      "reticent_silent": {
+        "winner": "arb_silent",
+        "margin": 0.9999999938095239,
+        "rates": {
+          "arb_volunteer": 0.0,
+          "arb_ask": 0.0,
+          "arb_silent": 0.16153846153846155
+        }
+      }
+    },
+    "all_regimes_correct": true,
+    "distinct_winners_three": true,
+    "ask_pool_can_win": true,
+    "contested_regimes": [
+      "novel_ask",
+      "forthcoming_volunteer"
+    ],
+    "per_regime_margin_collapses_on_lesion": {
+      "novel_ask": true,
+      "forthcoming_volunteer": true,
+      "reticent_silent": false
+    },
+    "contention_collapses_on_lesion": true,
+    "intact_min_margin_contested": 0.7718120751497681,
+    "lesion_max_margin_contested": 0.07182320421354657,
+    "arbitrates_three_way": true,
+    "margin_attributable_to_inhibition": 0.9069421086737863
+  },
+  "moat_live": {
+    "moat_stress_v_color": 0.0535,
+    "moat_stress_m_color": 0.0975,
+    "hard_moat_checked": 475,
+    "hard_moat_abstains": 475,
+    "added_false_accepts": 0,
+    "colored_manufactured_answers": 0,
+    "moat_battery_target": 475,
+    "moat_preserved": true
+  },
+  "byte_identity": {
+    "n_composer_only": 24051,
+    "n_with_faculties": 24961,
+    "faculty_slices_appended_after_composer": true,
+    "composer_threshold_sha256": "6e72bbb28bb62417466c524c39b73aba59c106a9229ebcb0382fa5d043fef569",
+    "with_faculties_composer_indices_sha256": "6e72bbb28bb62417466c524c39b73aba59c106a9229ebcb0382fa5d043fef569",
+    "byte_identical": true
+  },
+  "no_piece_breaks_another": {
+    "pairwise": {
+      "affect_vs_honesty_fm4_holds": true,
+      "curiosity_vs_turntaking_one_winner": true,
+      "shared_arbiter_one_winner_per_turn": true,
+      "arbiter_contention_from_shared_inhibition": true,
+      "moat_intact_under_affect_and_curiosity": true,
+      "affect_coloring_alive_under_coresidence": true,
+      "curiosity_want_alive_under_coresidence": true,
+      "honesty_relay_graded_confidence_alive": true
+    },
+    "all_hold": true
+  },
+  "vram_feasibility": {
+    "backend": "numpy (CPU RAM)",
+    "n_neurons": 25831,
+    "note": "One co-resident bridge at ~25831 neurons on the numpy/CPU backend (RAM, not VRAM). The design flagged a VRAM ceiling for 4-5 co-resident slices on GPU; on numpy the ceiling is host RAM and this build is comfortably within it (the modular composer alone was ~28K neurons; the faculty slices add ~1780)."
+  },
+  "honesty_source": "The LIVE honesty floor in the loop is the co-resident composer's on-bridge cue-match (moat abstain -> MOAT band; a cleared cue -> assert), composed under the g_eff LAW. The calibrated ACC/aPFC monitor (STEP 1) is co-resident as the workspace/meta/self relay and is exercised LIVE for FM4 + a graded self_schema confidence read on the shared substrate; porting its full calibrated-monitor routing (fit + _run_report) onto the shared slices is the remaining honesty consolidation step (STEP 1 runs it on its own modular bridges).",
+  "honest_scope": "Single-seed SMOKE of the FULL single-bridge live integration. ALL FOUR Stage-A faculties (honesty relay, 3-way arbiter, affect organ, curiosity ask) AND the CoResidentOneBrainComposer no-confab moat are region SLICES of ONE SimulationBridge object in ONE process (asserted: composer._merged IS the bridge; region count + names in single_bridge). The multi-turn loop reads affect/curiosity/arbiter off the shared cp_firing_states and composes honest+colored answers on known turns and curiosity wh-asks on novel turns; the moat holds LIVE 475/475 under a positive high-arousal mood. HONEST-NEGATIVES: (1) the loop honesty band uses the composer margin, not the full calibrated ACC/aPFC monitor routing (co-resident but run modularly in STEP 1); (2) host-fed appraisal + bistable-latch binary tone + host wh-frame/tone render (STEP-2/3 boundaries); (3) shared global cfg (het on, OU toggled per affect window) -- the no-piece-breaks-another check measures whether co-residence degraded any faculty. Parent runs the 6-seed sweep.",
+  "elapsed_seconds": 216.1
+}
