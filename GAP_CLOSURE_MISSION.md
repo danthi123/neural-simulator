@@ -70,9 +70,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > runner. dispatcher pid 1576 alive.
 > **NEXT (ordered):** (1) ✅ DONE — A's 6-seed is 6/6 GO (banked `2eb9c7e4`), the world-model faculty is validated;
 > (2) ✅ DONE — B/C/D builds read (`wznmfs9c2`): C graded-affect GO (banked), D-Leg-1 GO, B + D-Leg-2 negatives;
-> (3) **Wave 2b LAUNCHING** = the serial bridge integration of A + C; (4) bank B + D findings (after debt-fix:
-> B's argmax mislabel, D-Leg-2 oracle provenance) + queue the B / D-Leg-2 next-mechanism searches; (5) harden
-> path-T's finding then Wave 2c; (6) **Wave 2b** = re-run the 12/12 baseline, then integrate A (world-model→content seam) onto
+> (3) **Wave 2b RUNNING (`wdab9kb0k`)** = serial bridge integration of A + C (design → seam-A → 12/12 regression →
+> seam-C → regression → verify + lesion battery); (4) **B/D-Leg-2 next-mechanism searches RUNNING (`w4s8v4k35`)** —
+> B igniting spiking WTA readout + BTSP/ACh; D-Leg-2 success-as-neuromodulator three-factor plasticity (yoked
+> control); each folds in its debt-fix (B argmax mislabel, D-Leg-2 oracle provenance) + banks D-Leg-1/B findings;
+> (5) after Wave 2b: harden path-T's finding then Wave 2c (generator/render seam + #2 free-gen); (6) capstone =
+> faculty-load-bearing lesion battery on the integrated loop. TWO workflows live + disjoint (bridge vs own
+> runners); pool idle until B/D-Leg-2 survivors produce sweepable runners.
+> —— older next-actions (superseded above) ——
+> (6-legacy) **Wave 2b** = re-run the 12/12 baseline, then integrate A (world-model→content seam) onto
 > `nav_conv_merged_bridge.py` under the 7-seam contract, re-run 6/6 regression (roll back if it drops); (5)
 > **Wave 2c** = integrate the path-T generator/render seam (moat post-hoc-gated) + #2 grounded free-gen; (6)
 > **capstone** = faculty-load-bearing lesion battery (real+sham, exclude the decorative dlPFC-ordering) +
