@@ -32,10 +32,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > makes the floor 6/6-SAFE (never makes honesty worse; seed-43 regression eliminated).** HONEST: the monitor's
 > active confabulation-catch is only 1/6-robust (the guard exposed the "4/6" as test-draw luck) — the hard
 > no-confab MOAT (6/6) is the real prevention; the monitor is a thin-but-safe bonus, improvable via an
-> ensemble/richer-feature monitor. **NEXT (in flight): Stage-A Step 2 = affect-coloring** (the brain's own
-> emotion colors real speech, composed UNDER the 6/6-safe floor; FM4 = affect can never flip abstain→assert).
-> Then curiosity wh-emission, grounded free-gen (scaffold-labeled), interactive teacher-loop. Also open: whether
-> to strengthen the monitor's active-catch (ensemble) vs proceed — owner-steerable.
+> ensemble/richer-feature monitor. **STEP 2 affect-coloring DONE** (`1d5d058f`, 6-seed): the brain's own
+> spiking emotion colors real speech (tone/forthcomingness), SAFE 6/6 (FM4: 0/120 abstain→assert flips; moat
+> 475/475) + coloring-effective 5/6 (seed-101 miss = the bistable-latch honest-negative); affect FEEDS the arbiter.
+> **STEP 3 curiosity DONE** (`6a4178e7`, single-seed GO, 6-seed running): the brain emits its OWN wh-questions
+> (crave-not-refuse; spiking drive corr 0.997; content word from the naming-map SPIKE DECODE not WKV; targets the
+> gap 1.00 vs 0.25) — moat INVERTED-not-broken (475/475 abstain, 0 confab); arb_ask competes with affect in the
+> shared 3-way arbiter. **⇒ the self-driven, honest, affect-coloured, curiosity CORE of open-ended conversation is
+> built + adversarially verified (modular-bridge smokes; full single-bridge live integration + the 6-seed sweeps
+> are the consolidation step).** REMAINING Stage-A (owner-steerable): Step 4 grounded free-gen (⚠️ SCAFFOLD-labeled
+> — the ONE step touching the WKV LM, post-hoc-verify moat), Step 5 interactive teacher-loop (developmental engine),
+> the full single-bridge live integration, and (optional) strengthen the monitor's active-catch (ensemble).
 >
 > **⭐ EMERGENCE-ENGINE ADVANCE (2026-08-07) — brain-native SPIKING word production (the north-star frontier).**
 > The referent word the brain communicates is no longer a host lookup. A gated local-Hebbian percept→word naming
