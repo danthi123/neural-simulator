@@ -49,10 +49,21 @@ a novel query → "what does big run? — my forward model predicts 'south' … 
 not observed it" (reservoir spikes decode a certainty-tagged predicted-not-observed
 channel). Lesion the world-model → the prediction vanishes; lesion affect → the
 tone flattens; matched shams leave the turn unchanged; the no-confab moat holds
-475/475 throughout. NEXT = Wave 2c: wire path-T so the brain WRITES SENTENCES (the
-generator, conditioned on the now-live faculties, moat-gated) — the biggest
-remaining fluency lever; then the capstone lesion battery and biologizing the two
-host renders (the ridge decode and the tone token). Findings: `2026-08-08-forward-model-
+475/475 throughout. **UPDATE (later 2026-08-08): Wave 2c DONE
+— THE BRAIN WRITES SENTENCES (adversarially CONFIRMED, 3-seed).** The conditioned
+spiking generator is wired in as the articulation mouth: a known fact now reads
+"warmly, gladly A dog went to the east because it was looking for water. The dog
+looked towards the river because it was south of its current location…" — real
+multi-sentence prose. And the scaffold is provably the MOUTH, not the mind:
+scramble the brain's conditioning and the prose renders the scrambled FALSE facts,
+so the transformer cannot override the brain's content; all three faculties stay
+load-bearing on the prose (lesion → content wrong / tone flat / confabulates), and
+the no-confab moat leaks 0 fabrications (per-proposition neural verify). Honestly
+scoped PARTIAL — the 0.5B mouth sometimes drifts content (a generator-fluency wall,
+the declared scaffold to biologize), not a faculty or moat failure. NEXT = the
+capstone battery, biologizing the host renders (ridge decode → spiking synaptic
+read-out; tone token), and growing breadth (vocabulary/world) through the
+developmental teacher-loop — Stages 2→4. Findings: `2026-08-08-forward-model-
 reservoir-*`, `2026-08-08-graded-affect-staggered-bistable-ladder-*`,
 `2026-08-08-pragmatics-*`, `2026-08-08-B-episodic-*-NEGATIVE-*`.
 

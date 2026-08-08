@@ -423,10 +423,17 @@ adversarially CONFIRMED, 6/6 GO):** the world-model + graded-affect seams are IN
 and LOAD-BEARING ON THE CONVERSATION — known fact → "warmly, gladly apple big cat" (graded neural tone); novel →
 "what does big run? — my forward model predicts 'south' … I have not observed it" (certainty-tagged reservoir
 decode); lesion a faculty → the turn changes, matched sham does not; moat 475/475 + FM4 0-flips hold with the
-seams live (`2026-08-08-stageA-seams-A-C-live-in-the-turn-loop-loadbearing-on-conversation-GO.md`). **NEXT = Wave
-2c: wire path-T so the brain WRITES SENTENCES (the generator, conditioned on the now-live faculties, moat-gated) —
-the biggest remaining fluency lever; then the capstone battery + biologize the two host renders (ridge decode,
-tone token). Off critical path: B's neural-WTA + CA3-completion sub-walls, D-Leg-2 value-amplification.**
+seams live (`2026-08-08-stageA-seams-A-C-live-in-the-turn-loop-loadbearing-on-conversation-GO.md`). **Wave 2c DONE (adversarially
+CONFIRMED, 3-seed): THE BRAIN WRITES SENTENCES.** The conditioned spiking generator is wired as the articulation
+mouth in run_multi_turn_loop; the reply is multi-sentence PROSE ("warmly, gladly A dog went to the east because it
+was looking for water. The dog looked towards the river because it was south of its current location…"), and the
+scaffold is provably the MOUTH not the mind (scramble the conditioning → prose renders the scrambled FALSE facts;
+faculties load-bearing on the prose 3/3; moat leaks 0 confab post-hoc). PARTIAL only for generator-fluency-wall
+scaffold limits (the 0.5B mouth drifts content on some seeds), not a faculty/moat failure
+(`2026-08-08-stageA-generator-mouth-wired-live-prose-lesion-battery-3seed.md`). **NEXT = the capstone
+faculty-load-bearing battery, biologize the two host renders (ridge decode → spiking synaptic read-out; tone
+token) + grow breadth (vocab/world) via the developmental teacher-loop (Stages 2→4). Off critical path: B's
+neural-WTA + CA3-completion sub-walls, D-Leg-2 value-amplification.**
 
 **2026-08-06 UPDATE — Gate B executed-action credit (continuous BG selector lineage).** Stage 1 (continuous
 center-surround selector) is a CONSTRUCTION GO. Stage 2 (global-DA three-factor reward credit on the D1 routes)

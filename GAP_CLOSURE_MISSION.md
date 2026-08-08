@@ -85,9 +85,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > matched shams leave the turn unchanged. Regression stays GO with seams LIVE: moat 475/475, FM4 0 flips (naive
 > 11-16 = teeth), byte-identity. Moat inviolate (A's channel never enters cue-match / never writes cp_rf_w_*);
 > fixed the vacuous rf_w check. Declared boundaries: A's ridge decode + C's tone render are host (STEP-3), appraisal
-> host-fed (STEP-2) — the neural SIGNALS (fm spikes / ladder differential) are what's lesioned. **NEXT = Wave 2c:
-> wire path-T so the brain WRITES SENTENCES (the generator, conditioned on the now-live world-model + graded affect,
-> moat-gated) — the biggest remaining fluency lever; then the capstone battery + biologize the two host renders.** (4) **B/D-Leg-2 next-mechanism searches DONE + banked (`0e27fea7`, task `wo62u9cjq`):** B episodic MOVED
+> host-fed (STEP-2) — the neural SIGNALS (fm spikes / ladder differential) are what's lesioned.
+> **⭐⭐ Wave 2c (GENERATOR MOUTH) DONE + banked (`3fbe1f0e`), adversarially CONFIRMED — THE BRAIN WRITES SENTENCES.**
+> The conditioned spiking generator (path-T) is the articulation MOUTH in run_multi_turn_loop; the reply is now
+> MULTI-SENTENCE PROSE: known → "warmly, gladly A dog went to the east because it was looking for water. The dog
+> looked towards the river because it was south of its current location. The dog ran north…"; novel → "What is a
+> 'big run'? — my forward model predicts 'south' … I have not observed it". SCAFFOLD IS THE MOUTH NOT THE MIND
+> (proven): scramble the conditioning → the prose renders the SCRAMBLED FALSE facts (real_lesion_fidelity 0.0 every
+> seed) so the transformer cannot override the brain's content. Moat SACRED: 0 confab leaked post-hoc (per-
+> proposition neural verify), 475/475, FM4 0 flips, 3 seeds. Faculties LOAD-BEARING ON THE PROSE 3/3 (world-model→
+> content wrong; affect→"warmly,gladly" vanishes; honesty→confabulates). HONEST go=PARTIAL: the matched-SURFACE
+> sham for the world-model is single-seed + seed-44 intact prose drifts (0.5) — generator-fluency-WALL scaffold
+> limits, NOT a faculty/moat failure. Burn-down list: transformer forward, host text-interface conditioning, host
+> re-parse/tone render. **NEXT = capstone battery consolidation + biologize the host renders (A ridge→spiking
+> synaptic read-out; C tone token) + grow breadth via the teacher-loop; off critical path: B WTA/completion,
+> D-Leg-2 value-amplification.**
+> **B/D-Leg-2 next-mechanism searches DONE + banked (`0e27fea7`, task `wo62u9cjq`):** B episodic MOVED
 > PARTIAL-FORWARD — the cortical readout now IGNITES (fan-in fix), surpassing the Wave-1 total silence, with neural
 > cued recall + real teeth (permute-cue→0.0; real-vs-sham lesion on CORTICAL firing, not the CA3-overlap
 > tautology; untrained→chance). BUT single numpy SMOKE (backend label corrected), and 2 sub-walls stay OPEN:
