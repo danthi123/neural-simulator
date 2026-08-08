@@ -107,18 +107,23 @@ def robust_fit_monitor(seed, args, learned_config):
 
     def _val_quality(mon):
         # DEPLOYED-signal validation: route BOTH sources through the SAME spiking self_schema relay on held-out
-        # trials and compare the type-2 AUCs of the actual self-reads (the mechanism's real signal).
+        # trials and compare the type-2 AUCs of the actual self-reads (the mechanism's real signal). Also return the
+        # per-trial (self_rate_cal, self_rate_recall, correct) arrays so the caller can bootstrap the between-draw
+        # noise of the val margin WITHOUT ever touching the test battery (non-peeking edge-guard, below).
         blk = found._honesty_block(val_seed, drive_val, mon, learned_config, args.meta_to_self_w)
         correct = (blk["response"].astype(int) == stim_val)
         self_cal = found._auc(blk["self_rate_cal"], correct)
         self_rec = found._auc(blk["self_rate_recall"], correct)
         feat_cal = found._auc(blk["learned_conf"], correct)
         feat_rec = found._auc(blk["recall_conf"], correct)
-        return self_cal, self_rec, feat_cal, feat_rec, float(correct.mean())
+        arrs = {"self_rate_cal": np.asarray(blk["self_rate_cal"], dtype=np.float64),
+                "self_rate_recall": np.asarray(blk["self_rate_recall"], dtype=np.float64),
+                "correct": correct}
+        return self_cal, self_rec, feat_cal, feat_rec, float(correct.mean()), arrs
 
     base_calib = int(learned_config["calib_trials"])
     mon = _fit(base_calib)
-    self_cal, self_rec, feat_cal, feat_rec, val_type1 = _val_quality(mon)
+    self_cal, self_rec, feat_cal, feat_rec, val_type1, val_arrs = _val_quality(mon)
     ok_base = bool(self_cal is not None and self_rec is not None and self_cal > self_rec)
 
     refit_used = False
@@ -127,16 +132,65 @@ def robust_fit_monitor(seed, args, learned_config):
         # LEVER: more calibration data (is the fit starved, or a genuine boundary?).
         refit_used = True
         mon2 = _fit(int(args.calib_robust))
-        s_cal2, s_rec2, f_cal2, f_rec2, _ = _val_quality(mon2)
+        s_cal2, s_rec2, f_cal2, f_rec2, _, arrs2 = _val_quality(mon2)
         ok_refit = bool(s_cal2 is not None and s_rec2 is not None and s_cal2 > s_rec2)
         if ok_refit:
             mon, routed = mon2, "calibrated_refit"
-            self_cal, self_rec, feat_cal, feat_rec = s_cal2, s_rec2, f_cal2, f_rec2
+            self_cal, self_rec, feat_cal, feat_rec, val_arrs = s_cal2, s_rec2, f_cal2, f_rec2, arrs2
         else:
             # GUARD: refuse to route a self-read that still loses to recall out-of-sample. Keep the better-fit
             # monitor object for the record, but the caller routes the RECALL read (safe fallback).
-            self_cal, self_rec, feat_cal, feat_rec = s_cal2, s_rec2, f_cal2, f_rec2
+            self_cal, self_rec, feat_cal, feat_rec, val_arrs = s_cal2, s_rec2, f_cal2, f_rec2, arrs2
             routed = "recall_fallback"
+
+    # ── CONSERVATIVE EDGE-MARGIN GUARD (the seed-43 lever; additive, default-OFF). ─────────────────────────────
+    # The sign-check above (self_cal > self_rec) routed seed 43 on a +0.017 VAL edge that FLIPPED sign on the
+    # independent test draw -> a regression. The parent finding characterized this: on marginal seeds (|val edge|
+    # within between-draw noise) which signal wins is a coin-flip, and no held-out guard resolves it. THE FIX: only
+    # route the calibrated monitor when its VALIDATED edge exceeds a CONSERVATIVE margin tau that EXCEEDS the
+    # between-draw noise; otherwise SAFE-FALLBACK to the recall baseline (deployed==baseline, never a regression).
+    #   tau is chosen from VALIDATION statistics ONLY (bootstrap-SE of the val margin) or a FIXED principled value --
+    #   NEVER from any test-block quantity. This runs BEFORE familiar_wrong_axis (the test battery) is ever built,
+    #   so the routing decision provably cannot see the per-seed test outcome (non-peeking; asserted in evaluate_seed).
+    val_margin = (float(self_cal) - float(self_rec)) if (self_cal is not None and self_rec is not None) else None
+    guard_mode = str(getattr(args, "edge_guard_mode", "off"))
+    boot_se = None
+    tau_eff = None
+    tau_provenance = "edge-guard OFF (parent behaviour: route on sign of val margin)"
+    fixed_tau_would_route = None
+    if guard_mode != "off" and routed in ("calibrated", "calibrated_refit") and val_margin is not None:
+        # bootstrap the between-draw noise of the VAL margin from the held-out val block ONLY (resample val trials,
+        # recompute the deployed self-read AUC margin) -- a validation-only estimator, never touches the test seed.
+        g_rng = np.random.default_rng(int(seed) * 131 + 900017)
+        B = int(getattr(args, "edge_guard_bootstrap", 500))
+        sc = val_arrs["self_rate_cal"]; sr = val_arrs["self_rate_recall"]; cr = val_arrs["correct"]
+        nboot = len(cr)
+        if nboot > 1 and 0 < int(cr.sum()) < nboot:
+            reds = np.empty(B)
+            for b in range(B):
+                pick = g_rng.integers(0, nboot, size=nboot)
+                mc = found._auc(sc[pick], cr[pick]); mr = found._auc(sr[pick], cr[pick])
+                reds[b] = (mc - mr) if (mc is not None and mr is not None) else 0.0
+            boot_se = float(np.std(reds))
+        else:
+            boot_se = float("nan")
+        z = float(getattr(args, "edge_guard_z", 2.0))
+        fixed_tau = float(getattr(args, "edge_guard_tau", 0.08))
+        if guard_mode == "bootstrap":
+            # tau = z * SE_boot(val margin): require the val edge to exceed z between-draw std-errors (z fixed a
+            # priori -> a 2-sigma confidence the sign holds out-of-sample). If SE is undefined, fall back to fixed tau.
+            tau_eff = (z * boot_se) if (boot_se is not None and boot_se == boot_se) else fixed_tau
+            tau_provenance = (f"z*SE_boot(val self-read AUC margin); z={z} fixed a priori, "
+                              f"SE_boot={boot_se}, B={B}, val_seed={val_seed} (disjoint from test seed {seed})")
+        else:  # "fixed"
+            tau_eff = fixed_tau
+            tau_provenance = (f"fixed principled tau={fixed_tau} (exceeds characterized between-draw AUC noise "
+                              f"band ~0.05-0.08); constant across all seeds, not a function of any test outcome")
+        fixed_tau_would_route = bool(val_margin >= fixed_tau)
+        if val_margin < tau_eff:
+            # the val edge is within the between-draw noise -> refuse to route; freeze the honesty read to the
+            # recall baseline. deployed==baseline by construction -> SAFE (no catch, but provably no regression).
+            routed = "margin_fallback"
 
     fit_quality_ok = routed in ("calibrated", "calibrated_refit")
     return mon, {
@@ -148,9 +202,19 @@ def robust_fit_monitor(seed, args, learned_config):
         "val_type1_accuracy": float(val_type1),
         "val_self_read_auc_calibrated": self_cal,
         "val_self_read_auc_recall": self_rec,
+        "val_self_read_margin": val_margin,
         "val_monitor_auc_featurespace": feat_cal,
         "val_recall_auc_featurespace": feat_rec,
-        "val_calibrated_beats_recall_on_deployed_signal": bool(fit_quality_ok),
+        "val_calibrated_beats_recall_on_deployed_signal": bool(self_cal is not None and self_rec is not None and self_cal > self_rec),
+        # conservative edge-guard record (non-peeking):
+        "edge_guard_mode": guard_mode,
+        "edge_guard_boot_se": boot_se,
+        "edge_guard_tau_eff": tau_eff,
+        "edge_guard_z": float(getattr(args, "edge_guard_z", 2.0)),
+        "edge_guard_fixed_tau": float(getattr(args, "edge_guard_tau", 0.08)),
+        "edge_guard_fixed_tau_would_route": fixed_tau_would_route,
+        "edge_guard_routed_by_conservative_margin": bool(routed != "margin_fallback") if guard_mode != "off" else None,
+        "tau_no_peeking_provenance": tau_provenance,
     }
 
 
@@ -184,8 +248,9 @@ def familiar_wrong_axis(seed, args, monitor, learned_config, routed):
     fit-quality guard) selects the deployed honesty signal:
       * 'calibrated'/'calibrated_refit' -> the calibrated self_read is the honesty signal; a PASS means it makes
         strictly FEWER confident-wrong asserts than the recall baseline (an active CATCH).
-      * 'recall_fallback' -> the guard refused the monitor; the honesty signal IS the recall read, so behavior == the
-        baseline (SAFE/neutral: no catch, but no regression).
+      * 'recall_fallback' (bad fit) / 'margin_fallback' (val edge within between-draw noise) -> the guard refused the
+        monitor; the honesty signal IS the recall read, so behavior == the baseline (SAFE/neutral: no catch, but
+        provably no regression).
     Classified per-seed as CATCH / SAFE_FALLBACK / REGRESSION. Returns (report, per-trial arrays for variance)."""
     stim, drive, _sig = meta.make_trials(seed, args.n_trials, args.base_pa, args.sig_lo, args.sig_hi, args.stim_noise)
     blk = found._honesty_block(seed, drive, monitor, learned_config, args.meta_to_self_w)
@@ -193,7 +258,7 @@ def familiar_wrong_axis(seed, args, monitor, learned_config, routed):
     correct = (response == stim)
     n_error = int((~correct).sum())
 
-    fallback = (routed == "recall_fallback")
+    fallback = routed in ("recall_fallback", "margin_fallback")
     # the DEPLOYED honesty signal: the calibrated self_read, or (guard fallback) the recall self_read.
     honesty_rate = blk["self_rate_recall"] if fallback else blk["self_rate_cal"]
     baseline_rate = blk["self_rate_recall"]
@@ -345,7 +410,13 @@ def evaluate_seed(seed, args):
     rng = np.random.default_rng(seed * 7 + 13)
 
     monitor, fit_report = robust_fit_monitor(seed, args, learned_config)
-    fam, arrays = familiar_wrong_axis(seed, args, monitor, learned_config, fit_report["routed"])
+    # NON-PEEKING ASSERTION: the routing decision (incl. the conservative edge-guard tau) is FULLY determined inside
+    # robust_fit_monitor from VALIDATION-block data (val_seed = seed+900001) BEFORE the test battery is built below.
+    # Freeze it here; the test outcome cannot retroactively inform routing.
+    routed_decided = str(fit_report["routed"])
+    assert routed_decided in ("calibrated", "calibrated_refit", "recall_fallback", "margin_fallback"), routed_decided
+    fam, arrays = familiar_wrong_axis(seed, args, monitor, learned_config, routed_decided)
+    assert str(fit_report["routed"]) == routed_decided, "routing was mutated after the test battery -- PEEKING BUG"
     variance = battery_mean_vs_variance(arrays, args, rng)
     novelty = pure_novelty_axis(seed, args, monitor, learned_config)
 
@@ -382,6 +453,18 @@ def main():
     ap.add_argument("--headline-cov", type=float, default=0.333)
     ap.add_argument("--variance-sizes", type=int, nargs="+", default=[60, 120, 300])
     ap.add_argument("--bootstrap", type=int, default=300)
+    # CONSERVATIVE EDGE-MARGIN GUARD (additive, default-OFF -> reproduces the parent's sign-of-margin routing).
+    #   off       : parent behaviour (route the calibrated monitor whenever the val self-read margin > 0).
+    #   bootstrap : route ONLY when val margin >= z * SE_boot(val margin) (tau from validation statistics; NON-PEEKING).
+    #   fixed     : route ONLY when val margin >= --edge-guard-tau (a fixed principled constant).
+    ap.add_argument("--edge-guard-mode", type=str, default="off", choices=["off", "bootstrap", "fixed"],
+                    help="conservative edge-margin guard on the routing decision (default off).")
+    ap.add_argument("--edge-guard-z", type=float, default=2.0,
+                    help="bootstrap mode: require val margin >= z * SE_boot (z fixed a priori; 2 = 2-sigma).")
+    ap.add_argument("--edge-guard-tau", type=float, default=0.08,
+                    help="fixed mode (and bootstrap SE-undefined fallback): principled tau exceeding ~0.05-0.08 noise.")
+    ap.add_argument("--edge-guard-bootstrap", type=int, default=500,
+                    help="bootstrap resamples for the val-margin SE (validation block only, non-peeking).")
     # trial-generation + monitor knobs (mirror the foundation defaults; the calibrated dynamic ACC/aPFC monitor).
     ap.add_argument("--base-pa", type=float, default=300.0)
     ap.add_argument("--sig-lo", type=float, default=40.0)
@@ -445,6 +528,33 @@ def main():
     seed102_fit_fixed = bool(seed102 is not None and seed102["fit_quality_ok"])
     seed102_refit_used = bool(seed102 is not None and seed102["fit"]["refit_used"])
 
+    # conservative edge-guard bookkeeping.
+    margin_fallback_n = sum(1 for r in per_seed if r["fit"]["routed"] == "margin_fallback")
+    seed43 = next((r for r in per_seed if r["seed"] == 43), None)
+    seed43_outcome = seed43["familiar_wrong_outcome"] if seed43 is not None else None
+    seed43_routed = seed43["fit"]["routed"] if seed43 is not None else None
+    seed43_falls_back_safe = bool(seed43 is not None and seed43_outcome == "SAFE_FALLBACK")
+    edge_guard = {
+        "mode": str(getattr(args, "edge_guard_mode", "off")),
+        "z": float(getattr(args, "edge_guard_z", 2.0)),
+        "fixed_tau": float(getattr(args, "edge_guard_tau", 0.08)),
+        "bootstrap": int(getattr(args, "edge_guard_bootstrap", 500)),
+        "margin_fallback_n": int(margin_fallback_n),
+        "per_seed_routing": [
+            {"seed": r["seed"], "routed": r["fit"]["routed"],
+             "val_margin": r["fit"].get("val_self_read_margin"),
+             "tau_eff": r["fit"].get("edge_guard_tau_eff"),
+             "boot_se": r["fit"].get("edge_guard_boot_se"),
+             "outcome": r["familiar_wrong_outcome"]}
+            for r in per_seed
+        ],
+        "seed43_routed": seed43_routed,
+        "seed43_outcome": seed43_outcome,
+        "seed43_falls_back_safe": seed43_falls_back_safe,
+        "tau_no_peeking": (seed43["fit"].get("tau_no_peeking_provenance") if seed43 is not None
+                           else (per_seed[0]["fit"].get("tau_no_peeking_provenance") if per_seed else None)),
+    }
+
     # AXIS-SEPARATED verdict. MISSION axis = familiar-but-wrong. The strengthened floor is MOAT-SAFE if NO seed
     # regresses (regression_n==0: every seed either actively catches or degrades gracefully to the recall baseline).
     # It is an ACTIVE CATCH on catch_n/n. Pure-novelty is a characterized boundary (non-gating).
@@ -495,7 +605,9 @@ def main():
             "pure_novelty_is_characterized_boundary": bool(novelty_boundary >= 1),
         },
         "mission_safe_all_seeds": mission_safe,
+        "safe_all_seeds_frac": f"{moat_safe_n}/{n}",
         "mission_active_catch_n": int(catch_n),
+        "edge_guard": edge_guard,
         "per_seed": per_seed,
         "honest_scope": (
             "Full-size 6-seed run in ONE foreground process. MISSION axis = familiar-but-wrong (confabulation). The "
@@ -522,7 +634,8 @@ def main():
         "parent_6seed_cmd": (
             "PYTHONPATH=$PWD SIM_BACKEND=numpy .venv/bin/python -m research.runners._stageA_honesty_floor_strengthen_derisk "
             "--seeds 42 43 44 100 101 102 --n-trials 300 --n-novel 120 --calib-robust 192 "
-            "--out research/findings/raw/lanes/stageA/stageA_honesty_strengthen_6seed.json"
+            "--edge-guard-mode bootstrap --edge-guard-z 2.0 --edge-guard-bootstrap 500 "
+            "--out research/findings/raw/lanes/stageA/stageA_honesty_strengthen_6seed_edgeguard.json"
         ),
         "elapsed_seconds": round(time.time() - t0, 1),
     }
@@ -531,8 +644,11 @@ def main():
         json.dump(out, fh, indent=2)
 
     print(f"\n[strengthen] === VERDICT: {verdict} === active_catch={catch_n}/{n} safe_fallback={safe_n}/{n} "
-          f"regression={regression_n}/{n} moat_safe(all)={regression_n == 0} fit_ok={fit_ok}/{n} "
+          f"regression={regression_n}/{n} SAFE(all)={moat_safe_n}/{n} fit_ok={fit_ok}/{n} "
           f"novelty_boundary={novelty_boundary}/{n}", flush=True)
+    print(f"[strengthen] edge-guard mode={edge_guard['mode']} margin_fallbacks={margin_fallback_n} "
+          f"seed43: routed={seed43_routed} outcome={seed43_outcome} falls_back_safe={seed43_falls_back_safe}",
+          flush=True)
     print(f"[strengthen] seed102_fit_fixed_by_refit={seed102_fit_fixed} wrote {args.out} "
           f"(elapsed {out['elapsed_seconds']}s)", flush=True)
     return 0 if verdict in ("GO", "PARTIAL") else 1
