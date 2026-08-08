@@ -1,0 +1,69 @@
+{
+  "probe": "teacher_loop_corrective_acquire",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "hidden": 24,
+    "settle_steps": 25,
+    "epochs": 30,
+    "batch": 20,
+    "eprop_lr": 0.5,
+    "w_clip": 4000.0,
+    "n_draws": 48,
+    "d_p": 12,
+    "noise": 0.12,
+    "tau": 0.5,
+    "out": "research/findings/raw/teacher_loop_corrective_acquire_s42.json"
+  },
+  "elapsed_seconds": 25.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "before": null,
+      "after": "grass",
+      "use_answer": "grass",
+      "use_sentence": "dax eats grass",
+      "ff_weight_moved": 54270.578125,
+      "readout_moved": 18.3987979888916,
+      "lesion_readout_moved": 0.0,
+      "kb_len_before": 2,
+      "kb_len_after": 2,
+      "main_heldout_acc": 1.0,
+      "noncontingent_heldout_acc": 0.025,
+      "shuffle_dfa_heldout_acc": 1.0,
+      "untaught_answers": {
+        "dax_chases": "grass",
+        "wug_eats": "grass"
+      },
+      "untaught_conf": {
+        "dax_chases": 0.9997235283583621,
+        "wug_eats": 0.9999779929375143
+      },
+      "false_accepts": 2,
+      "frozen_after": null,
+      "off_flag_byte_identical": true,
+      "delta_initial": 1.6666666666666672,
+      "delta_final": 0.01578531666656705,
+      "signal_vanishes": true,
+      "T1_before_after": true,
+      "T2_weights_moved_no_store": true,
+      "T3_specificity_0_false_accept": false,
+      "T4_lesion_learning_pathway": true,
+      "T5_lesion_contingency": true,
+      "T6_lesion_credit_route": false,
+      "T6_depth_valid_at_1_hidden": false,
+      "GO_core": false,
+      "GO_design": false,
+      "GO": false
+    }
+  ],
+  "n_go": 0,
+  "n_seeds": 1,
+  "ALL_GO": false
+}
