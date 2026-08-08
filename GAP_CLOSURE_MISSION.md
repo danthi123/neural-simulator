@@ -37,9 +37,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > conditioned-articulation generator (biggest fluency lever) · research-gated NEW-mechanism searches for B/C/D ·
 > synth = Wave-2b readiness. All research-only / worktree-isolated — NO bridge edits (integration is a later
 > SERIAL wave 2b/2c that re-runs the banked 6/6 regression after EACH bridge edit).
-> **LIVE BACKGROUND — pool integration-hardening sweep:** mini-PC nodes pool40/41/42 (provisioned to main
-> `bc5da4354`) running `_stageA_full_integration_derisk` seeds 7/8/9/200/201/202 (12-seed robustness of the 6/6
-> culmination); dispatcher pid 1576 alive; collect via `tools/pull_pool_results.sh`.
+> **POOL HARDENING DONE — the culmination is 12/12 GO (robustness confirmed).** The 6 fresh seeds
+> (7/8/9/200/201/202) each returned verdict GO with EVERY safety gate true: hard moat 475/475 abstains, FM4
+> g_eff-law 0 abstain→assert flips (naive path 10 — teeth), affect persists across turns, curiosity asks on novel
+> turns, byte-identity, no-piece-breaks-another. Combined with the original 6/6 band, the TRUE-ONE-BRAIN loop is
+> robust well past the 6-seed bar — Wave 2b can safely stack on it. Raws pulled to
+> `research/findings/raw/lanes/stageA/stageA_full_integration_s{7,8,9,200,201,202}.json` (prov sidecars attached).
+> Pool now IDLE (honest gap); next pool job = A's 6-seed sweep, dispatched once Wave-2a delivers the fixed A
+> runner. dispatcher pid 1576 alive.
 > **NEXT (ordered):** (1) read Wave-2a result `w76nz2qqu` — strengthened-A verdict, path-T host-smuggling check,
 > which B/C/D mechanism is buildable-now; (2) dispatch A's 6-seed to the pool; (3) collect the integration
 > hardening sweep; (4) Wave 2b = integrate A (world-model→content seam) onto the bridge + re-run 6/6 regression;
