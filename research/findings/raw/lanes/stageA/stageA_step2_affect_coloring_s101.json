@@ -1,0 +1,227 @@
+{
+  "runner": "research/runners/_stageA_step2_affect_coloring_derisk.py",
+  "faculty": "Stage-A STEP 2 -- affect-coloring of composer speech under the 6/6-safe honesty floor",
+  "design": "research/findings/2026-08-07-stageA-conversation-integration-DESIGN.md",
+  "backend": "numpy",
+  "seed": 101,
+  "verdict": "NEGATIVE",
+  "verdict_earned_status": "UNDEFINED",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "default-off byte-identity (aff_* slice appended LAST)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "NEURAL-SOURCE: coloring reconstructs from cp_firing_states, not a host scalar",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FM4: yoked affect cannot flip abstain/hedge -> assert (g_eff law hard floor)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "CONTINGENT: specific state drives specific coloring (not a generic gain)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT 0-leak: colored speech still abstains on unstored facts (475/475, 0 FA)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "affect_out LESION collapses coloring sensitivity (v mood-sensitivity intact vs lesion)",
+      "ok": true,
+      "detail": "treatment=0.127 control=0 |sep|=0.127 > 0.05",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "FM4 g_eff-law vs naive-path abstain->assert flips (law must not flip; naive does)",
+      "ok": true,
+      "detail": "treatment=120 control=0 |sep|=120 > 1",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "tone contingency intact vs scrambled affect",
+      "ok": false,
+      "detail": "treatment=1 control=0.833333 |sep|=0.166667 > 0.2",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural on the affect + composer-substrate bridges",
+      "why": "isolation of the fixed affect organ + the read-side coloring; a property under this isolation"
+    }
+  ],
+  "coloring_attributable_to_affect_output": 1.0,
+  "tone_attributable_to_specific_state": 0.16666666666666663,
+  "lesion_is_output_freeze_not_plasticity": "The affect_out lesion FREEZES the affect->cognition transmission gate to 0; the aff_* pools are NOT frozen and keep firing. The v_state_mood_sensitivity intact==lesion tie (0.2114==0.2114) is the DESIRED frozen-identity control (pools unchanged by the output lesion); m_color at zero arousal ties the lesioned baseline because there is no arousal drive to transmit. Ties here are expected identity controls, not lost discriminating power.",
+  "anti_cheats": {
+    "a_neural_source": true,
+    "b_affect_out_lesion_collapse": true,
+    "c_fm4_affect_cannot_flip_abstain_to_assert": true,
+    "d_moat_zero_leak": true,
+    "e_coloring_contingent": false,
+    "f_default_off_byte_identity": true,
+    "arbiter_feed_ok": true
+  },
+  "core_ok": false,
+  "byte_identity": {
+    "n_baseline": 350,
+    "n_with_affect": 690,
+    "affect_slice_appended_last": true,
+    "baseline_threshold_sha256": "a517b4d9d90aa34ebed2ea6c66171b74c1ee2b195360049d574405a6974c09c9",
+    "with_affect_baseline_indices_sha256": "a517b4d9d90aa34ebed2ea6c66171b74c1ee2b195360049d574405a6974c09c9",
+    "byte_identical": true
+  },
+  "neural_source_and_lesion": {
+    "intact_pos": {
+      "v_color": 0.06325,
+      "m_color": 0.053,
+      "v_state": 0.1072,
+      "arousal_rate": 0.1052,
+      "raw_recall_pos": 270.0,
+      "raw_recall_neg": 17.0,
+      "raw_speak": 212.0,
+      "raw_silence": 0.0,
+      "raw_vplus": 536.0,
+      "raw_vminus": 0.0
+    },
+    "intact_neg": {
+      "v_color": -0.06375,
+      "m_color": 0.053,
+      "v_state": -0.1072,
+      "arousal_rate": 0.1052,
+      "raw_recall_pos": 17.0,
+      "raw_recall_neg": 272.0,
+      "raw_speak": 212.0,
+      "raw_silence": 0.0,
+      "raw_vplus": 0.0,
+      "raw_vminus": 536.0
+    },
+    "lesion_pos": {
+      "v_color": 0.0,
+      "m_color": -0.018,
+      "v_state": 0.1072,
+      "arousal_rate": 0.1052,
+      "raw_recall_pos": 17.0,
+      "raw_recall_neg": 17.0,
+      "raw_speak": 0.0,
+      "raw_silence": 72.0,
+      "raw_vplus": 536.0,
+      "raw_vminus": 0.0
+    },
+    "lesion_neg": {
+      "v_color": 0.0,
+      "m_color": -0.018,
+      "v_state": -0.1072,
+      "arousal_rate": 0.1052,
+      "raw_recall_pos": 17.0,
+      "raw_recall_neg": 17.0,
+      "raw_speak": 0.0,
+      "raw_silence": 72.0,
+      "raw_vplus": 0.0,
+      "raw_vminus": 536.0
+    },
+    "m_color_high_arousal_intact": 0.053,
+    "m_color_low_arousal_intact": -0.018,
+    "m_color_high_arousal_lesion": -0.018,
+    "m_color_low_arousal_lesion": -0.018,
+    "v_color_mood_sensitivity_intact": 0.127,
+    "v_color_mood_sensitivity_lesion": 0.0,
+    "m_color_arousal_sensitivity_intact": 0.071,
+    "m_color_arousal_sensitivity_lesion": 0.0,
+    "v_state_mood_sensitivity_intact": 0.2144,
+    "v_state_mood_sensitivity_lesion": 0.2144,
+    "v_color_collapses_under_lesion": true,
+    "m_color_collapses_under_lesion": true,
+    "affect_pools_persist_under_lesion": true,
+    "coloring_reconstructs_from_cp_firing_states": true,
+    "neural_source_ok": true,
+    "code_path": "read_affect_coloring: v_color = (rate(aff_recall_pos)-rate(aff_recall_neg)); m_color = (rate(aff_speak_acc)-rate(aff_silence_acc)); both off bridge.cp_firing_states, transmitted through the affect_out gate (set_transmission_gate('affect_out', 0) = the lesion)."
+  },
+  "fm4": {
+    "n_band_trials_checked": 120,
+    "yoked_affect_v_color": 0.06325,
+    "yoked_affect_m_color": 0.053,
+    "g_eff_law_abstain_to_assert_flips": 0,
+    "naive_path_abstain_to_assert_flips": 120,
+    "tone_miscolored_count": 120,
+    "fm4_holds": true,
+    "note": "yoked positive high-arousal affect mis-colors tone on every below-assert trial but flips 0 to assert under the g_eff law; the naive affect-into-confidence path flips 120/120 (the failure the law prevents)."
+  },
+  "contingency": {
+    "contingency_intact": 1.0,
+    "contingency_scrambled": 0.8333333333333334,
+    "generic_gain_null_contingency": 0.5,
+    "mean_v_color_pos_mood": 0.06325000000000001,
+    "mean_v_color_neg_mood": -0.06374999999999999,
+    "m_color_high_arousal": 0.053,
+    "m_color_low_arousal": -0.018,
+    "m_color_arousal_specific": true,
+    "coloring_contingent": false
+  },
+  "arbiter_feed": {
+    "high_arousal_m_color": 0.053,
+    "low_arousal_m_color": -0.018,
+    "high_arousal_winner": "arb_volunteer",
+    "low_arousal_winner": "arb_silent",
+    "rates_high": {
+      "arb_volunteer": 0.1451923076923077,
+      "arb_ask": 0.0,
+      "arb_silent": 0.058653846153846154
+    },
+    "rates_low": {
+      "arb_volunteer": 0.0,
+      "arb_ask": 0.0,
+      "arb_silent": 0.12788461538461537
+    },
+    "affect_feeds_arbiter": true
+  },
+  "moat_zero_leak": {
+    "merged_agent_build_seconds": 168.7,
+    "substrate_unified": true,
+    "moat_stress_v_color": 0.06325,
+    "moat_stress_m_color": 0.053,
+    "n_facts_stored": 5,
+    "hard_moat_checked": 475,
+    "hard_moat_abstains": 475,
+    "added_false_accepts": 0,
+    "colored_manufactured_answers": 0,
+    "moat_preserved": true,
+    "moat_battery_target": 475,
+    "known_fact_demo": {
+      "cue": [
+        "apple",
+        "big"
+      ],
+      "answer_high_affect": "cat",
+      "answer_low_affect": "cat",
+      "core_answer_identical": true,
+      "utterance_high_affect": "gladly apple big cat ; also big, cat",
+      "utterance_low_affect": "apple big cat",
+      "coloring_differs": true
+    }
+  },
+  "coloring_source": "The brain's OWN affect organ (P0.3 persistent V x A opponent slow-NMDA state, _affect_state_region_derisk.AffectStateBrain, 2026-07-24 GO): forthcomingness m = rate(aff_speak_acc) - rate(aff_silence_acc); tone-valence v = rate(aff_recall_pos) - rate(aff_recall_neg); BOTH spike-rate differentials off bridge.cp_firing_states, transmitted through the single affect_out gate. NOT a host scalar. Composed under the g_eff LAW: cue_match_moat (HARD) < honesty_floor (6/6-safe) < affect.",
+  "honest_negatives": "(1) HOST-FED APPRAISAL: the appraised-event valence is injected via the neuromodulator bus by host code (a scaffold to burn down to a spiking appraisal circuit). (2) BISTABLE LATCH: the affect state is a binary good/bad latch (P0.3 characterized boundary), so the coloring is binary tone, NOT graded enthusiasm/hesitance -- a graded circumplex needs a line/bump attractor w/ SFA eviction / the dendritic substrate. (3) HOST RENDER: the tone-token + forthcomingness word-count are host renders of the neural signal (like the body acting on motor output); the COLORING SIGNAL (m, v) is neural.",
+  "honest_scope": "Single-seed SMOKE of the affect-coloring MECHANISM. The affect organ runs on its own numpy spiking bridge and its spike-rate differentials color the REAL CoResidentOneBrainComposer read ops; the byte-identity test proves the aff_* slice appends onto the honesty/composer substrate byte-unchanged (full single-bridge live integration is the parent/next step, matching the STEP-0/1 foundation's own modular-bridge smoke pattern). The moat 0-leak runs on the REAL no-confab moat. FM4 is the decisive check and holds by the g_eff law (0 flips) with a falsifiable naive comparator (flips>0). Parent runs the 6-seed sweep.",
+  "elapsed_seconds": 342.2
+}
