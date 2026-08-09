@@ -59,14 +59,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > forgets evicted facts (no replay source → trace drifts). **(2) fixed-size GENERATIVE replay (re-dream all facts)
 > = PARTIAL (`443351967`, 6-seed):** BEATS the buffer (0.692 vs 0.517) — right direction — but not flat (0.950),
 > because **the GENERATOR ITSELF forgets** (regen fidelity 1.0→0.8-0.9 as N grows); AND it bounds STORAGE (fixed
-> 1344 floats vs O(N)) but NOT per-step COMPUTE (still replays O(N)/sleep). **(3) NON-FORGETTING GENERATOR = RUNNING
-> (`w8noh4aqj`):** strengthen van de Ven self-replay of the generator's OWN regenerations so its fidelity holds →
-> does generative retention rise toward flat at bounded storage? (the recursion test; guarded against the "train on
-> the true engrams" cheat). **If GO ⇒ bounded-STORAGE lifetime retention; the remaining half = sparse/prioritized
-> replay (recency/salience/schema-gated, Mattar-Daw/Tse) to bound COMPUTE.** Net so far: a year of data does NOT yet
-> scale with bounded cost, but the two residuals (generator-recursion + O(N)-replay) are named, both biological.
-> **N=100 breadth confirmation `bdgp2f09i`: self_replay arm done (0.62 — flat store keeps degrading 0.74→0.71→0.62
-> @N20/50/100); grown (capacity) arm finishing** (GPU measured 8× SLOWER: tiny net, launch-bound → CPU is right).
+> 1344 floats vs O(N)) but NOT per-step COMPUTE (still replays O(N)/sleep). **(3) NON-FORGETTING GENERATOR = GO
+> (`0933fdb7a`, 6-seed 5/6 crux-6/6, verify CONFIRMED):** generative_v2 MATCHES flat (0.958 vs 0.950) with a bounded
+> non-forgetting generator. **Re-diagnosis (overturns my recursion guess): the "generator forgets" was a
+> representational RANK deficiency in the fixed query code** (gen_k=n_max collisions cap fidelity ~0.9) — widening
+> the FIXED query address (0 plastic params) restores full rank → fidelity holds 0.999. Self-replay uses OWN
+> regenerations (not the ruler; verified). **SCOPE: non-forgetting at N=20, NOT an asymptotic storage win** (works
+> because 1344 params ≫ N=20; lifetime needs a COMPRESSING generator, params sub-linear in N). **(4) PRIORITIZED
+> REPLAY = RUNNING (`wim56rmt1`):** does a bounded k≪N replay budget (neural forgetting-risk signal) match full O(N)
+> replay → bound per-sleep COMPUTE (the owner's speed concern)?
+> **⭐ SCALABILITY DECOMPOSED (the year-of-data answer is a MAP, not a wall):** retention=CLOSED@N=20 · storage=OPEN
+> (compressing generator) · compute=RUNNING (prioritized replay) · acquisition-at-scale=OPEN (N=100 readout can't
+> cleanly ACQUIRE 100 facts, immediate-acq 0.95→0.82; upstream of all). Each is a named biological mechanism.
+> **N=100 breadth (`7ee36d66b`): capacity SLIPS at N=100 (grown 0.97→0.91→0.73; still +0.11 over fixed but ceiling
+> gone) ⇒ capacity = bound-trap fix + small-N patch, NOT lifetime scaling.** (GPU measured 8× SLOWER: launch-bound.)
 > **PROCESS: DR gate BUILT (`e02bbb26`) + over-clearing hole CLOSED (`09ddacd14`)** — repeated levers at a wall
 > now BLOCK without external research; lane-tagged sources clear ONLY their lane (selftest cases D/E). 4 external
 > rounds this cycle, every source read + lane-recorded.
