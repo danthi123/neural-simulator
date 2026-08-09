@@ -79,7 +79,9 @@ PASSING).
 **What blocks a commit:** document structure (W1/W2) · claims not traced to a cited artifact · biology bindings
 (source anchors must resolve; config must not contradict the biology) · one-mechanism-one-current-status ·
 undeclared finding status · doc type/placement · single-seed headlines · wrong-quantity comparisons ·
-artifact provenance · CPU-lane starvation · agent-level serialisation · a NOTICED failure left unclosed.
+artifact provenance · CPU-lane starvation · agent-level serialisation · a NOTICED failure left unclosed ·
+**repeated mechanism-levers at a wall without EXTERNAL-literature research** (`gates/deep_research_at_wall` DR —
+≥3 findings in a lane within 3 days need a real external source; run `bash tools/deep_research.sh "<wall>"`).
 
 **A noticed failure cannot stay unclosed.** Add one line to [`research/FAILURE_LOG.md`](research/FAILURE_LOG.md)
 and `gates/coverage` BLOCKS until it names a gate or declares `NOT-GATEABLE: <reason>`. Noticing is judgement;

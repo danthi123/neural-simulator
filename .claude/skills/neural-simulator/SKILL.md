@@ -87,13 +87,23 @@ If I'm doing ANY of these, I've drifted — stop and re-anchor:
    Canonical copies: `~/Projects/sim-catalog/references/textbooks/<name>/*.txt` — single-column, greps clean.
    The two-column ISO-8859 WIP extractions in `.catalog-work/` need `grep -a` and are NOT the copy to read. Grepping the catalog index + citing abstracts instead of READING the original chapter/PDF in depth, and searching only biology (not the external engineering literature). See workflow step 1.
    **→ MECHANICAL SINCE 2026-08-01 (the EXTERNAL half, the part the corpus gate never covered): a BOUNDARY verdict — "fundamental limit / wall / structural primitive / characterized limit / different-paradigm / honest-negative-as-the-verdict" — is now BLOCKED by `gates/boundary_verdict_external_check` (class BV) unless the finding CITES external literature (arxiv/doi/Sources/(Author, YEAR)) or declares `NO-EXTERNAL-NEEDED: <reason>`; record the read with `bash tools/record_external_search.sh "<q>" "<src>"`. Earned 2026-08-01: `b7549514`'s "fundamental transport-free ceiling" was banked from a MEMORY model of KP/burstprop (both already BUILT + verified in our own findings, on the toy a prior finding called "the wrong instrument") and OVERTURNED within the hour by WF-Act-PC (arxiv 2607.13380), the external SOTA that named the exact missing factor (σ′). The corpus check (a-1) is necessary but NOT sufficient — a capability-walled verdict also needs the FIELD read, and now cannot land without showing it.
+   **→ MECHANICAL SINCE 2026-08-09 (the REPEATED-LEVERS-AT-A-WALL case, the owner-flagged recurrence BV+CC both miss):
+   when >=2 mechanism levers have failed against one defect, STOP and do the FULL deep-research round — local record
+   (`before_you_build.sh`: has the record already SOLVED or CHARACTERISED this?) AND external literature (the
+   bio-research `consensus`/`pubmed` MCP or WebSearch: what is the PROVEN mechanism for this class?) — READ the top
+   hits, then record a REAL source. `gates/deep_research_at_wall` (class DR) now BLOCKS a 3rd+ finding in a lane
+   within 3 days unless a fresh `.external_searches.jsonl` entry carries a non-empty source; run
+   `bash tools/deep_research.sh "<the wall>"` (does both halves) or `tools/record_external_search.sh "<q>" "<src>"`.
+   Earned 2026-08-09: the teacher-loop forgetting wall took FIVE cheap PARTIAL-framed levers before any research —
+   which then took ONE query each to surface the project's OWN CLS design + Phase-1.4 (103% retention) + the
+   already-characterised "replay caps ~55%", AND the external SOTA (PS-SNN pattern separation, EWC/SI, van de Ven
+   replay). Cheap + un-loud levers are exactly the seam CC (>1h) and BV (loud-boundary) leave open; DR closes it.
 11. **Trusting an unverified instrument, or a claim nothing checks** (NEW 2026-07-16). Reporting a number without
     reading the runner's own verdict; writing "this is inert/byte-identical" as a comment instead of an assertion;
     running an A/B whose lever moves >1 variable; saying "pushed"/"on GPU"/"tests pass" without verifying. See
     "⛔ THE SILENT-FAILURE CLASS". **Six in one session; three of the retractions were my own claims.**
 10. **Whack-a-mole — hand-building conversational capabilities one at a time** (2026-07-10 owner steer). Reaching for a fresh dedicated mechanism / router / register / template for a conversational capability instead of asking *"what learning substrate + training stream makes this EMERGE?"*. See "⭐ THE EMERGENCE BAR." A new hand-built capability is allowed ONLY as an explicit temporary scaffold on the ladder to its learned replacement, or as a probe of a substrate limit — never as the capability's permanent home.
 12. **Trusting a SUMMARY doc as ground truth — the stale-pointer drift** (NEW 2026-07-17, owner-flagged). Adopting a direction / verdict / "next bet" from `ROADMAP.md`, a plan doc, `CLAUDE.md`, or an `AUTONOMOUS_STATE` headline **without RAG-checking it against the findings first**. Summaries GO STALE: on 2026-07-17 I was about to chase Node Perturbation because the roadmap called it "the mission-critical lever / the candidate to succeed on spikes" — our own findings had **RETIRED it four days earlier** (12-seed REFUTED + explicit "retire it"). I only caught it because I finally ran the a-1 check. **The rule: a summary doc is a POINTER, not ground truth. Before you ACT on a load-bearing claim it makes — especially a "next" / a "GO" / a "candidate" — run the a-1 RAG check ("have we already concluded/tried/retired X?") and read the load-bearing finding. If the summary conflicts with a finding, the FINDING WINS and you fix the summary the same cycle** (see the ROADMAP-sync directive). "Continuing per the roadmap" IS a new-direction trigger when the roadmap is the only thing vouching for the direction. **This is the #1 cause of re-deriving concluded work** — the exact thing the RAG check exists to prevent, skipped because a summary *looked* authoritative.
-    **THE FORWARD-FACING TWIN (2026-08-07, owner-flagged, RECURRED 2× in one review): a NEWLY-PROPOSED "named next mechanism / substrate" — from a synthesis, a research subagent, or your own reasoning — is a HYPOTHESIS, not a verdict. RAG-check it ("have we already tested / refuted / bounded X on this substrate?") BEFORE banking it as "the un-tried next" or letting a subagent's proposal into the board.** This session banked **"dendritic compartments"** and **"TRN-gated selection reset"** as the named next mechanisms with NO RAG check; the record then showed dendritic multi-attribute BINDING = NEGATIVE (`2026-06-19-dendritic-binding-toy-derisk`) and the D2 dendritic GAIN NON-load-bearing on spikes (`2026-06-17-dendritic-substrate-frontier-scoping`: the spiking threshold + integration already supply the coincidence-AND), and TRN-WTA-on-the-relay = the WORST readout ever tested (`2026-06-06-action-selection-readout-deep-research`: 20.0 vs 2.3). **"It sounds biologically plausible / a subagent proposed it confidently" is the trigger to RAG it, NOT to bank it.** The owner caught both because the RAG check was skipped; a proposed mechanism and a stale summary are the SAME drift — a `.md`/agent pointer is downstream of the findings.
 
 ---
 
@@ -152,12 +162,6 @@ a tool it never told you to install.
    precisely the silent one that cost the crux 47 minutes. Companions: exempt STARTUP transients (a 17-second-old
    job has not written its device line yet), and expose the exemption threshold as an env var so the exemption
    ITSELF is testable against a known-bad run.
-   **AND CAPTURE THE WATCHED PID VIA `$!`, NEVER `ps|grep|awk` (2026-08-07, recurred ~4× in one session).** After
-   `nohup bash launcher.sh &`, the reliable pid is `$!` (grab it on the NEXT line). A `ps -eo pid,args | grep
-   '[l]auncher' | awk '{print $1}'` instead catches a **short-lived intermediate subshell** that `nohup ... &` forks,
-   so the Monitor's `while kill -0 $PID` sees it already dead and fires INSTANTLY (a false "run ENDED" on a run that
-   is actually still going under a different pid). Each miss cost an arm + re-check cycle. `$!` is the launcher's real
-   pid; write it to a file immediately if a later Monitor needs it.
 9. **A GATE THAT CAN PASS WITHOUT ITS KEY CONTROL IS THE BUG.** Make the control DEFAULT-ON and CI-guard it. The
    cost of a 4th arm (~25% runtime) is nothing against a months-scale plan built on a random projection.
 10. **AN ABSENT FLAG MEANS *DEFAULT*, NOT *OFF* — check the default before claiming a cheat is closed.** A recorded

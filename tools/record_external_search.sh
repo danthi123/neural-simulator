@@ -12,7 +12,12 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 Q="${1:-}"; SRC="${2:-}"
-[ -z "$Q" ] && { echo "usage: bash tools/record_external_search.sh \"<query>\" \"<key source/url/finding>\""; exit 2; }
+[ -z "$Q" ] && { echo "usage: bash tools/record_external_search.sh \"<query>\" \"<key source/url/author-year>\""; exit 2; }
+# A SOURCE IS REQUIRED (2026-08-09, owner-flagged recurrence). Every prior entry had an EMPTY source — i.e. the
+# "external search" was logged but no external literature was actually read. gates/deep-research-at-wall only
+# accepts a NON-EMPTY source. An honest "none found after searching" is a valid source string ("none-found: <why>").
+[ -z "$SRC" ] && { echo "⛔ REFUSED: a real external source is required (paper / arxiv / doi / (Author, YEAR) / 'none-found: <why>')." >&2
+                   echo "   Do the external search FIRST (bio-research consensus/pubmed MCP, WebSearch, or a paper), then record what it found." >&2; exit 2; }
 
 MARK="$ROOT/research/.last_external_search"
 LOG="$ROOT/research/queue/.external_searches.jsonl"
