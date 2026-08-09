@@ -28,8 +28,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **NEXT LEVER (cheapest-first): (1) noise-driven unsupervised-STDP sleep phase; (2) two-store
 > fast(separated)+slow(consolidated).** Both need the teacher-loop runner family (currently on the `wpbhuowmw`
 > workflow branch) consolidated to main first.
-> **Pattern-sep workflow `wpbhuowmw`: weight-protection arm = REFUTED (+0.017); PS-SNN (fixed-orthogonal) arm
-> STILL RUNNING** — its result decides (1)-vs-(2): closes gap ⇒ real breadth run; doesn't ⇒ the CLS combination.
+> **⭐ WORKFLOW `wpbhuowmw` DONE (adversarially verified, banked): PS-SNN pattern-separation = PARTIAL
+> (`3a43e82af`), weight-protection = REFUTED (`e50f5d45a`).** The DECISIVE reframe: **in-run self-replay is
+> already 0.85 @ N=10 (6/6) — the "0.55 wall" was a CROSS-EXPERIMENT CONFLATION** (imported from the 100M-C2
+> extreme-interference scaleup). PS-SNN (0.58) and weight-protect (0.70) are BOTH DOMINATED by self-replay;
+> protect==scramble exactly (Fisher structure carries nothing); PS-SNN has a real acquisition cost + is
+> reservoir-gated (collapses where the FIXED DG can't separate). **CORRECTION to the verify agents' "lossy
+> engram ceiling" claim: our OWN record (`8d2510d3a`) already FALSIFIED engram fidelity as the bottleneck** — a
+> perfect-fidelity (cosine=1.000) pattern-completing engram MATCHES but does NOT beat the host mean, because this
+> UNIMODAL world makes the mean a sufficient statistic. Fidelity/budget/protection/separation-alone are all OUT.
+> **THE REAL CRUX (correctly diagnosed): N-SCALING CAPACITY SATURATION** — retention 0.85@N=10 → 0.45@N=20; the
+> reservoir-gated collapse + N-degradation are both CAPACITY limits, and capacity is the ONE thing no lever varied
+> (fixed reservoir/readout throughout). Biology EXPANDS it: **adult DG neurogenesis** = cumulative lifelong
+> representation + temporal separation; direct spiking impl = **DSD-SNN** (grow neurons per fact, prune redundant).
+> **NEXT LEVER (researched, DR-recorded): (1) CAPACITY EXPANSION / neurogenesis (DSD-SNN) with a matched-fixed
+> control [is it capacity or grow-as-you-go?]; (2) noise-driven UNSUPERVISED-STDP consolidation (Bazhenov) — both
+> tested at N=10 AND N=20 vs the self-replay 0.85/0.45 baseline. ULTRACODE workflow launching.**
 > **Read-out burn-down `wqawa2flt` = NEGATIVE (`1cfbb3b0f`):** the neural WTA winner is load-bearing but
 > UNDERPERFORMS host argmax (0.333 < 0.447) — the WINNER was never the bottleneck; the rate→spike-count evidence
 > margin (~8%) is. Next read-out lever = a CURRENT-SUBTRACTIVE inhibitory read, AFTER external research on SNN
