@@ -1,0 +1,9 @@
+RESULT K=10 H= 96 q_active=2 settle=15 | elig-rank  5/10 maxpair-cos 1.000 | JOINT-LSTSQ ceiling mean-cos 0.8995 min 0.8558
+RESULT K=10 H=192 q_active=2 settle=15 | elig-rank  5/10 maxpair-cos 1.000 | JOINT-LSTSQ ceiling mean-cos 0.8995 min 0.8558
+RESULT K=10 H=384 q_active=2 settle=15 | elig-rank  5/10 maxpair-cos 1.000 | JOINT-LSTSQ ceiling mean-cos 0.8995 min 0.8558
+RESULT K=20 H= 96 q_active=3 settle=15 | elig-rank 18/20 maxpair-cos 1.000 | JOINT-LSTSQ ceiling mean-cos 0.9285 min 0.7937
+RESULT K=20 H=192 q_active=3 settle=15 | elig-rank 18/20 maxpair-cos 1.000 | JOINT-LSTSQ ceiling mean-cos 0.9285 min 0.7937
+RESULT K=20 H=384 q_active=3 settle=15 | elig-rank 18/20 maxpair-cos 1.000 | JOINT-LSTSQ ceiling mean-cos 0.9285 min 0.7937
+RESULT-QK K=20 gen_k= 20 q_active=3 H=192 | elig-rank 18/20 | ceiling mean-cos 0.9285 min 0.7937
+RESULT-QK K=20 gen_k= 64 q_active=10 H=192 | elig-rank 20/20 | ceiling mean-cos 1.0000 min 1.0000
+RESULT-QK K=20 gen_k=128 q_active=19 H=192 | elig-rank 20/20 | ceiling mean-cos 1.0000 min 1.0000

@@ -1,0 +1,480 @@
+{
+  "probe": "teacher_loop_generative_replay_v2",
+  "seed": 42,
+  "backend": "numpy",
+  "single_seed_smoke": true,
+  "arms_run": [
+    "generative_v2"
+  ],
+  "elapsed_seconds": 287.1,
+  "result": {
+    "seed": 42,
+    "K_classes": 20,
+    "chance": 0.05,
+    "n_max": 20,
+    "milestones": [
+      10,
+      20
+    ],
+    "capacity_F": 5,
+    "slow_hidden": 100,
+    "gen_hidden": 96,
+    "gen_k_query_width_v2": 64,
+    "substrate_byte_identical": true,
+    "substrate_seed_maxdiff": 0.0,
+    "sim_diff_empty": true,
+    "sim_diff_head": "",
+    "generator_trained_params": 1344,
+    "generator_total_params": 7488,
+    "generator_fixed_size_two_builds_ok": true,
+    "generator_store_indep_of_gen_k": true,
+    "generator_store_params": 1344,
+    "config": {
+      "capacity_F": 5,
+      "slow_hidden": 100,
+      "gen_hidden": 96,
+      "gen_k": 64,
+      "settle_steps": 20,
+      "epochs": 20,
+      "batch": 16,
+      "eprop_lr": 0.5,
+      "w_clip": 4000.0,
+      "n_draws": 16,
+      "d_p": 12,
+      "noise": 0.12,
+      "test_n": 40,
+      "replay_epochs": 12,
+      "replay_per_fact": 8,
+      "replay_noise": 0.1,
+      "gen_settle": 15,
+      "gen_epochs": 16,
+      "gen_lr": 0.8,
+      "gen_tol": 0.0,
+      "gen_max_epochs": 120,
+      "gen_check_every": 4,
+      "gen_new_mult": 3,
+      "bdsp_wmax": 1000000000.0,
+      "frozen_hidden": true
+    },
+    "arms": {
+      "generative_v2": {
+        "arm": "generative_v2",
+        "gen_k_query_width": 64,
+        "slow_reservoir_active_start": 100,
+        "slow_reservoir_active_constant": true,
+        "generator_trained_params": 1344,
+        "generator_total_params": 7488,
+        "generator_hidden": 96,
+        "generator_param_constant_across_N": true,
+        "generator_param_trace": [
+          [
+            10,
+            1344
+          ],
+          [
+            20,
+            1344
+          ]
+        ],
+        "generator_stored_raw_patterns": 0,
+        "generative_not_stored_buffer": true,
+        "consolidation_used_ruler": false,
+        "max_replay_set_size": 20,
+        "acquire_acc_immediate": [
+          1.0,
+          0.975,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.925,
+          0.95,
+          0.95,
+          1.0,
+          0.8,
+          0.75,
+          0.9,
+          0.975,
+          0.95,
+          1.0,
+          0.925,
+          0.8,
+          0.85,
+          0.925
+        ],
+        "mean_acquire_acc_immediate": 0.9337500000000002,
+        "retention_curve": {
+          "10": {
+            "frac_recalled": 1.0,
+            "n_recalled": 10,
+            "N": 10,
+            "generator_trained_params": 1344,
+            "generator_total_params": 7488,
+            "generator_stored_raw_patterns": 0,
+            "flat_buffer_floats_equiv": 140,
+            "slow_reservoir_active": 100,
+            "mean_retained_acc": 0.8950000000000001,
+            "oldest_fact_acc": 0.85,
+            "most_recent_fact_acc": 0.875,
+            "per_fact_acc": [
+              0.85,
+              0.95,
+              0.925,
+              0.9,
+              0.925,
+              0.825,
+              0.8,
+              0.975,
+              0.925,
+              0.875
+            ]
+          },
+          "20": {
+            "frac_recalled": 0.95,
+            "n_recalled": 19,
+            "N": 20,
+            "generator_trained_params": 1344,
+            "generator_total_params": 7488,
+            "generator_stored_raw_patterns": 0,
+            "flat_buffer_floats_equiv": 280,
+            "slow_reservoir_active": 100,
+            "mean_retained_acc": 0.7925,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0,
+              0.85,
+              0.85,
+              0.9,
+              0.9,
+              0.775,
+              0.9,
+              0.875,
+              0.85,
+              0.7,
+              0.65,
+              0.025,
+              1.0,
+              0.975,
+              0.8,
+              0.525,
+              0.775,
+              0.8,
+              0.7,
+              1.0
+            ]
+          }
+        },
+        "generator_fidelity": {
+          "10": {
+            "mean_cos": 0.9999999542945297,
+            "min_cos": 0.9999998733276287,
+            "nearest_proto_acc": 1.0
+          },
+          "20": {
+            "mean_cos": 0.9999785829045947,
+            "min_cos": 0.9999041926292567,
+            "nearest_proto_acc": 1.0
+          }
+        },
+        "learn_epoch_trace": [
+          [
+            0,
+            120
+          ],
+          [
+            1,
+            120
+          ],
+          [
+            2,
+            120
+          ],
+          [
+            3,
+            120
+          ],
+          [
+            4,
+            120
+          ],
+          [
+            5,
+            120
+          ],
+          [
+            6,
+            120
+          ],
+          [
+            7,
+            120
+          ],
+          [
+            8,
+            120
+          ],
+          [
+            9,
+            120
+          ],
+          [
+            10,
+            120
+          ],
+          [
+            11,
+            120
+          ],
+          [
+            12,
+            120
+          ],
+          [
+            13,
+            120
+          ],
+          [
+            14,
+            120
+          ],
+          [
+            15,
+            120
+          ],
+          [
+            16,
+            120
+          ],
+          [
+            17,
+            120
+          ],
+          [
+            18,
+            120
+          ],
+          [
+            19,
+            120
+          ]
+        ],
+        "wall_seconds": 287.0
+      }
+    }
+  },
+  "verdict": {
+    "largest_N": 20,
+    "smallest_milestone_N": 10,
+    "capacity_F": 5,
+    "generative_v2_frac_recalled": 0.95,
+    "generative_v1_frac_recalled": NaN,
+    "flat_frac_recalled": NaN,
+    "generative_v2_immediate_acq": 0.9337500000000002,
+    "generative_v2_minus_v1": null,
+    "generative_v2_minus_flat": null,
+    "retention_vs_N": {
+      "10": {
+        "generative_v2": 1.0,
+        "generative_v1": NaN,
+        "flat": NaN
+      },
+      "20": {
+        "generative_v2": 0.95,
+        "generative_v1": NaN,
+        "flat": NaN
+      }
+    },
+    "v2_fidelity_vs_N": {
+      "10": {
+        "mean_cos": 0.9999999542945297,
+        "min_cos": 0.9999998733276287,
+        "nearest_proto_acc": 1.0
+      },
+      "20": {
+        "mean_cos": 0.9999785829045947,
+        "min_cos": 0.9999041926292567,
+        "nearest_proto_acc": 1.0
+      }
+    },
+    "v1_fidelity_vs_N": {},
+    "v2_mean_cos_at_smallN": 0.9999999542945297,
+    "v2_mean_cos_at_bigN": 0.9999785829045947,
+    "v2_fidelity_drop": 2.1371389934965457e-05,
+    "v2_nearest_proto_acc_at_bigN": 1.0,
+    "v1_mean_cos_at_bigN": NaN,
+    "v2_fidelity_holds": true,
+    "generator_trained_params": 1344,
+    "generator_total_params": 7488,
+    "generator_param_constant_across_N": true,
+    "generator_stored_raw_patterns": 0,
+    "generative_not_stored_buffer": true,
+    "consolidation_used_ruler": false,
+    "generator_fixed_size_two_builds_ok": true,
+    "generator_store_indep_of_gen_k": true,
+    "gen_k_query_width_v2": 64,
+    "learn_epoch_trace": [
+      [
+        0,
+        120
+      ],
+      [
+        1,
+        120
+      ],
+      [
+        2,
+        120
+      ],
+      [
+        3,
+        120
+      ],
+      [
+        4,
+        120
+      ],
+      [
+        5,
+        120
+      ],
+      [
+        6,
+        120
+      ],
+      [
+        7,
+        120
+      ],
+      [
+        8,
+        120
+      ],
+      [
+        9,
+        120
+      ],
+      [
+        10,
+        120
+      ],
+      [
+        11,
+        120
+      ],
+      [
+        12,
+        120
+      ],
+      [
+        13,
+        120
+      ],
+      [
+        14,
+        120
+      ],
+      [
+        15,
+        120
+      ],
+      [
+        16,
+        120
+      ],
+      [
+        17,
+        120
+      ],
+      [
+        18,
+        120
+      ],
+      [
+        19,
+        120
+      ]
+    ],
+    "slow_reservoir_constant": true,
+    "substrate_byte_identical": true,
+    "sim_diff_empty": true,
+    "label": "teacher-loop generative replay v2 (non-forgetting fixed-size generator)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "(NO-FORGET) generator fidelity HOLDS (mean cos >= 0.95 @ largest N AND drop from N=10 <= 0.03)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "cos 1.000(N=10) -> 1.000(N=20), drop 0.000; v1 cos nan"
+      },
+      {
+        "kind": "require",
+        "name": "(FIXED) generator trained-param count CONSTANT across N",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "trace [[10, 1344], [20, 1344]]"
+      },
+      {
+        "kind": "require",
+        "name": "(FIXED') generator stores 0 raw patterns (genuinely generative)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(FIXED'') generator fixed-size across two builds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "trained_params 1344"
+      },
+      {
+        "kind": "require",
+        "name": "(FIXED''') plastic store INDEPENDENT of the query width gen_k (the rank fix adds no capacity)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "store_params 1344"
+      },
+      {
+        "kind": "require",
+        "name": "(ANTI-CHEAT#1) consolidation NEVER read the true-engram ruler",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "(acq) generative_v2 immediate acquisition stays high",
+        "ok": true,
+        "detail": "0.93375 vs floor 0.85",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(decoupled) slow reservoir CONSTANT across the curriculum",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(seed) substrate byte-identical across two builds at one seed",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max threshold diff 0.00e+00"
+      },
+      {
+        "kind": "require",
+        "name": "(sim) git diff main -- sim/ empty",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.05
+  }
+}
