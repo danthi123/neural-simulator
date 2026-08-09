@@ -1,0 +1,199 @@
+{
+  "probe": "teacher_loop_sparse_readout",
+  "seeds": [
+    42
+  ],
+  "single_seed_smoke": true,
+  "backend": "numpy",
+  "elapsed_seconds": 110.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "K_classes": 10,
+      "chance": 0.1,
+      "n_max": 10,
+      "milestones": [
+        1,
+        5,
+        10
+      ],
+      "config": {
+        "hidden": 64,
+        "settle_steps": 25,
+        "epochs": 30,
+        "batch": 20,
+        "eprop_lr": 0.5,
+        "w_clip": 4000.0,
+        "n_draws": 20,
+        "d_p": 12,
+        "noise": 0.12,
+        "test_n": 40,
+        "kwta_k": 6
+      },
+      "off_flag_byte_identical": true,
+      "dense_baseline": {
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          0.975,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.975,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc": 0.9949999999999999,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "newest_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.8,
+            "n_recalled": 4,
+            "N": 5,
+            "mean_retained_acc": 0.7300000000000001,
+            "oldest_fact_acc": 0.15,
+            "newest_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.15,
+              0.7,
+              1.0,
+              0.8,
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.4,
+            "n_recalled": 4,
+            "N": 10,
+            "mean_retained_acc": 0.45,
+            "oldest_fact_acc": 0.0,
+            "newest_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.45,
+              0.85,
+              0.1,
+              0.05,
+              0.05,
+              0.225,
+              0.85,
+              0.925,
+              1.0
+            ]
+          }
+        }
+      },
+      "sparse_mitigation": {
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.975,
+          0.975,
+          0.825,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc": 0.9775,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "newest_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.6,
+            "n_recalled": 3,
+            "N": 5,
+            "mean_retained_acc": 0.635,
+            "oldest_fact_acc": 0.75,
+            "newest_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.75,
+              0.425,
+              1.0,
+              0.0,
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.4,
+            "n_recalled": 4,
+            "N": 10,
+            "mean_retained_acc": 0.3775,
+            "oldest_fact_acc": 0.0,
+            "newest_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.35,
+              0.6,
+              0.0,
+              0.0,
+              0.15,
+              0.0,
+              0.7,
+              0.975,
+              1.0
+            ]
+          }
+        }
+      },
+      "winner_overlap": {
+        "mean_jaccard": 0.202020202020202,
+        "mean_winners": 6.0,
+        "k": 6
+      },
+      "k_sweep": [
+        {
+          "k": 64,
+          "effective_dense": true,
+          "frac_recalled_Nmax": 0.4,
+          "mean_acquire_acc": 0.9949999999999999
+        },
+        {
+          "k": 12,
+          "effective_dense": false,
+          "frac_recalled_Nmax": 0.4,
+          "mean_acquire_acc": 0.9199999999999999
+        },
+        {
+          "k": 3,
+          "effective_dense": false,
+          "frac_recalled_Nmax": 0.5,
+          "mean_acquire_acc": 0.9700000000000001
+        }
+      ],
+      "dense_frac_recalled_Nmax": 0.4,
+      "sparse_frac_recalled_Nmax": 0.4,
+      "retention_gain_Nmax": 0.0,
+      "T_ab_sparse_beats_dense": false,
+      "T_capacity_held_acquire": true,
+      "T_off_byte_identical": true,
+      "T_separation_low_overlap": true,
+      "GO": false
+    }
+  ],
+  "n_go": 0,
+  "n_ab_holds": 0,
+  "n_seeds": 1,
+  "ALL_GO": false
+}
