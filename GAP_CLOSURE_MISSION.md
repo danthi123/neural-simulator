@@ -20,7 +20,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **(1) A BOUND-TRAP artifact.** Most of the historical "catastrophic forgetting" at N=20 (0.85→0.45) was the
 > inherited `bdsp_wmax=6` CLAMP crushing the afferents — DE-CLAMPING (→1e9) alone lifts the self-replay N=20
 > baseline from ~0.45 to **0.742**. The exact "what did we replace with a constant?" trap; it had been biting the
-> whole breadth arc. (Clean same-config clamp-vs-declamp A/B still pending to nail the exact share.)
+> whole breadth arc. **CLEAN 6-seed A/B DONE (`8ca014ff2`): clamp=6 → self-replay 0.05 = CHANCE on ALL 6 seeds
+> (reservoir silenced, ~1 spike/percept); de-clamp → 0.742. The clamp = 75% of the full 0.05→0.967 range,
+> capacity the other 25%.** 6th plasticity bound-trap instance. (Scope: measured in THIS runner's large-afferent
+> regime; whether the OLD sleep-replay runner's 0.45 was equally clamp-dominated needs its own A/B.)
 > **(2) RESERVOIR CAPACITY.** Adding e-prop-INTEGRATED spiking capacity to the frozen DG reservoir closes the
 > residual: N=20 self-replay **0.742 → grown 0.967** (+0.225, grown≥baseline all 6 seeds; verify RE-RAN, CONFIRMED;
 > brain-based real afferent synapses; load-bearing — freeze the new units' integration → 0.425). HONESTLY
