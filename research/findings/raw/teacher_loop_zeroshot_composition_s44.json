@@ -1,0 +1,403 @@
+{
+  "probe": "teacher_loop_zeroshot_composition",
+  "seed": 44,
+  "backend": "numpy",
+  "single_seed_smoke": false,
+  "grids": [
+    "5x5",
+    "6x6"
+  ],
+  "held_out": [
+    "5x5:5",
+    "6x6:8"
+  ],
+  "elapsed_seconds": 595.7,
+  "result": {
+    "seed": 44,
+    "grids": [
+      "5x5",
+      "6x6"
+    ],
+    "d_a": 8,
+    "d_b": 8,
+    "n_in": 18,
+    "substrate_byte_identical": true,
+    "substrate_seed_maxdiff": 0.0,
+    "sim_diff_empty": true,
+    "sim_diff_head": "",
+    "config": {
+      "d_a": 8,
+      "d_b": 8,
+      "noise": 0.12,
+      "gen_hidden": 96,
+      "gen_k": 64,
+      "gen_settle": 15,
+      "gen_lr": 0.8,
+      "w_clip": 4000.0,
+      "bdsp_wmax": 1000000000.0,
+      "conv_tol": 0.02,
+      "conv_max_epochs": 200,
+      "batch": 16,
+      "gen_epochs": 16,
+      "n_draws": 16,
+      "held_out": {
+        "5x5": 5,
+        "6x6": 8
+      },
+      "frozen_hidden": true
+    },
+    "per_grid": {
+      "5x5": {
+        "K1": 5,
+        "K2": 5,
+        "N": 25,
+        "P": 10,
+        "chance": 0.04,
+        "n_in": 18,
+        "d_p": 16,
+        "held_out_n": 5,
+        "taught_n": 20,
+        "held_out_idx": [
+          2,
+          3,
+          9,
+          18,
+          19
+        ],
+        "held_out_attrs": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "taught_heldout_disjoint": true,
+        "every_heldout_primitive_seen_in_taught": true,
+        "no_leakage_heldout_never_trained": true,
+        "compositional_heldout_recall": 1.0,
+        "noncompositional_v2_heldout_recall": 0.0,
+        "flat_heldout_recall": 0.0,
+        "compositional_seen_recall": 1.0,
+        "noncompositional_v2_seen_recall": 1.0,
+        "flat_seen_recall": 1.0,
+        "compositional_heldout_cos": 0.9991272829857596,
+        "compositional_seen_cos": 0.9992079474959581,
+        "noncompositional_v2_heldout_cos": 0.6981189346610743,
+        "lesion_localises_heldout": {
+          "lesionA_Ablock_delta": 1.7342457882525957,
+          "lesionA_Bblock_delta": 0.0,
+          "lesionB_Bblock_delta": 1.3908328322556212,
+          "lesionB_Ablock_delta": 0.0,
+          "localises": true
+        },
+        "compositional_stored_raw_patterns": 0,
+        "compositional_used_ruler": false,
+        "heldout_miss_lowcos_interference": 0,
+        "heldout_miss_highcos_collision": 0
+      },
+      "6x6": {
+        "K1": 6,
+        "K2": 6,
+        "N": 36,
+        "P": 12,
+        "chance": 0.027777777777777776,
+        "n_in": 18,
+        "d_p": 16,
+        "held_out_n": 8,
+        "taught_n": 28,
+        "held_out_idx": [
+          3,
+          8,
+          21,
+          25,
+          26,
+          28,
+          34,
+          35
+        ],
+        "held_out_attrs": [
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            5,
+            5
+          ]
+        ],
+        "taught_heldout_disjoint": true,
+        "every_heldout_primitive_seen_in_taught": true,
+        "no_leakage_heldout_never_trained": true,
+        "compositional_heldout_recall": 1.0,
+        "noncompositional_v2_heldout_recall": 0.125,
+        "flat_heldout_recall": 0.0,
+        "compositional_seen_recall": 1.0,
+        "noncompositional_v2_seen_recall": 1.0,
+        "flat_seen_recall": 1.0,
+        "compositional_heldout_cos": 0.9992885133378944,
+        "compositional_seen_cos": 0.9992631355784231,
+        "noncompositional_v2_heldout_cos": 0.7755996977803288,
+        "lesion_localises_heldout": {
+          "lesionA_Ablock_delta": 1.6863421899876712,
+          "lesionA_Bblock_delta": 0.0,
+          "lesionB_Bblock_delta": 1.5296959281895997,
+          "lesionB_Ablock_delta": 0.0,
+          "localises": true
+        },
+        "compositional_stored_raw_patterns": 0,
+        "compositional_used_ruler": false,
+        "heldout_miss_lowcos_interference": 0,
+        "heldout_miss_highcos_collision": 0
+      }
+    }
+  },
+  "verdict": {
+    "grids": [
+      "5x5",
+      "6x6"
+    ],
+    "per_grid": {
+      "5x5": {
+        "N": 25,
+        "P": 10,
+        "chance": 0.04,
+        "held_out_n": 5,
+        "taught_n": 20,
+        "compositional_heldout_recall": 1.0,
+        "noncompositional_v2_heldout_recall": 0.0,
+        "flat_heldout_recall": 0.0,
+        "compositional_seen_recall": 1.0,
+        "compositional_minus_v2": 1.0,
+        "compositional_minus_flat": 1.0,
+        "compositional_heldout_cos": 0.9991272829857596,
+        "noncompositional_v2_heldout_cos": 0.6981189346610743,
+        "lesion_localises": true,
+        "heldout_miss_lowcos_interference": 0,
+        "heldout_miss_highcos_collision": 0,
+        "grid_go": true
+      },
+      "6x6": {
+        "N": 36,
+        "P": 12,
+        "chance": 0.027777777777777776,
+        "held_out_n": 8,
+        "taught_n": 28,
+        "compositional_heldout_recall": 1.0,
+        "noncompositional_v2_heldout_recall": 0.125,
+        "flat_heldout_recall": 0.0,
+        "compositional_seen_recall": 1.0,
+        "compositional_minus_v2": 0.875,
+        "compositional_minus_flat": 1.0,
+        "compositional_heldout_cos": 0.9992885133378944,
+        "noncompositional_v2_heldout_cos": 0.7755996977803288,
+        "lesion_localises": true,
+        "heldout_miss_lowcos_interference": 0,
+        "heldout_miss_highcos_collision": 0,
+        "grid_go": true
+      }
+    },
+    "substrate_byte_identical": true,
+    "sim_diff_empty": true,
+    "label": "teacher-loop ZERO-SHOT composition (never-taught combinations from seen primitives)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "[5x5] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 (chance 0.040) N=25"
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 vs v2 0.00"
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 vs flat 0.00"
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] compositional SEEN (taught) recall >= 0.85 (sanity)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "seen 1.00"
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] composition NEURAL on held-out (lesion localises)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "A:1.73/0.00 B:1.39/0.00"
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] taught/held-out DISJOINT",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] every held-out primitive seen in >= 1 taught combo",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] NO leakage (held-out never trained)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] 0 stored raw patterns (composes, not a buffer)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[5x5] consolidation never read the ruler",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 (chance 0.028) N=36"
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 vs v2 0.12"
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 vs flat 0.00"
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] compositional SEEN (taught) recall >= 0.85 (sanity)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "seen 1.00"
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] composition NEURAL on held-out (lesion localises)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "A:1.69/0.00 B:1.53/0.00"
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] taught/held-out DISJOINT",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] every held-out primitive seen in >= 1 taught combo",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] NO leakage (held-out never trained)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] 0 stored raw patterns (composes, not a buffer)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[6x6] consolidation never read the ruler",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(seed) substrate byte-identical",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max threshold diff 0.00e+00"
+      },
+      {
+        "kind": "require",
+        "name": "(sim) git diff main -- sim/ empty",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

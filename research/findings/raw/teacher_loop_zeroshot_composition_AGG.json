@@ -1,0 +1,1344 @@
+{
+  "probe": "teacher_loop_zeroshot_composition_AGG",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "backend": "numpy",
+  "grids": [
+    "5x5",
+    "6x6"
+  ],
+  "held_out": [
+    "5x5:5",
+    "6x6:8"
+  ],
+  "go_count": 6,
+  "n_seeds": 6,
+  "per_grid_means": {
+    "5x5": {
+      "N": 25,
+      "chance": 0.04,
+      "held_out_n": 5,
+      "compositional_heldout_recall_mean": 1.0,
+      "compositional_heldout_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "noncompositional_v2_heldout_recall_mean": 0.03333333333333333,
+      "flat_heldout_recall_mean": 0.03333333333333333,
+      "compositional_seen_recall_mean": 1.0
+    },
+    "6x6": {
+      "N": 36,
+      "chance": 0.027777777777777776,
+      "held_out_n": 8,
+      "compositional_heldout_recall_mean": 1.0,
+      "compositional_heldout_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "noncompositional_v2_heldout_recall_mean": 0.0625,
+      "flat_heldout_recall_mean": 0.0,
+      "compositional_seen_recall_mean": 1.0
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": {
+        "grids": [
+          "5x5",
+          "6x6"
+        ],
+        "per_grid": {
+          "5x5": {
+            "N": 25,
+            "P": 10,
+            "chance": 0.04,
+            "held_out_n": 5,
+            "taught_n": 20,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.2,
+            "flat_heldout_recall": 0.2,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 0.8,
+            "compositional_minus_flat": 0.8,
+            "compositional_heldout_cos": 0.999439600634118,
+            "noncompositional_v2_heldout_cos": 0.8111688398363377,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          },
+          "6x6": {
+            "N": 36,
+            "P": 12,
+            "chance": 0.027777777777777776,
+            "held_out_n": 8,
+            "taught_n": 28,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.125,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 0.875,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9992923548572303,
+            "noncompositional_v2_heldout_cos": 0.7421663411371774,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ZERO-SHOT composition (never-taught combinations from seen primitives)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[5x5] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.040) N=25"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.20"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.20"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.70/0.00 B:1.77/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.028) N=36"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.12"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.63/0.00 B:1.75/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_zeroshot_composition_s42.json"
+    },
+    {
+      "seed": 43,
+      "verdict": {
+        "grids": [
+          "5x5",
+          "6x6"
+        ],
+        "per_grid": {
+          "5x5": {
+            "N": 25,
+            "P": 10,
+            "chance": 0.04,
+            "held_out_n": 5,
+            "taught_n": 20,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9990501059944272,
+            "noncompositional_v2_heldout_cos": 0.7845738477586972,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          },
+          "6x6": {
+            "N": 36,
+            "P": 12,
+            "chance": 0.027777777777777776,
+            "held_out_n": 8,
+            "taught_n": 28,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9993554148487249,
+            "noncompositional_v2_heldout_cos": 0.7443882936857642,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ZERO-SHOT composition (never-taught combinations from seen primitives)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[5x5] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.040) N=25"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.67/0.00 B:1.24/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.028) N=36"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.55/0.00 B:1.61/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_zeroshot_composition_s43.json"
+    },
+    {
+      "seed": 44,
+      "verdict": {
+        "grids": [
+          "5x5",
+          "6x6"
+        ],
+        "per_grid": {
+          "5x5": {
+            "N": 25,
+            "P": 10,
+            "chance": 0.04,
+            "held_out_n": 5,
+            "taught_n": 20,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9991272829857596,
+            "noncompositional_v2_heldout_cos": 0.6981189346610743,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          },
+          "6x6": {
+            "N": 36,
+            "P": 12,
+            "chance": 0.027777777777777776,
+            "held_out_n": 8,
+            "taught_n": 28,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.125,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 0.875,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9992885133378944,
+            "noncompositional_v2_heldout_cos": 0.7755996977803288,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ZERO-SHOT composition (never-taught combinations from seen primitives)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[5x5] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.040) N=25"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.73/0.00 B:1.39/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.028) N=36"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.12"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.69/0.00 B:1.53/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_zeroshot_composition_s44.json"
+    },
+    {
+      "seed": 45,
+      "verdict": {
+        "grids": [
+          "5x5",
+          "6x6"
+        ],
+        "per_grid": {
+          "5x5": {
+            "N": 25,
+            "P": 10,
+            "chance": 0.04,
+            "held_out_n": 5,
+            "taught_n": 20,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9994269082678663,
+            "noncompositional_v2_heldout_cos": 0.7359844457498783,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          },
+          "6x6": {
+            "N": 36,
+            "P": 12,
+            "chance": 0.027777777777777776,
+            "held_out_n": 8,
+            "taught_n": 28,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9993675876123644,
+            "noncompositional_v2_heldout_cos": 0.7009637829385384,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ZERO-SHOT composition (never-taught combinations from seen primitives)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[5x5] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.040) N=25"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.41/0.00 B:1.66/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.028) N=36"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.49/0.00 B:1.63/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_zeroshot_composition_s45.json"
+    },
+    {
+      "seed": 46,
+      "verdict": {
+        "grids": [
+          "5x5",
+          "6x6"
+        ],
+        "per_grid": {
+          "5x5": {
+            "N": 25,
+            "P": 10,
+            "chance": 0.04,
+            "held_out_n": 5,
+            "taught_n": 20,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9993728528192525,
+            "noncompositional_v2_heldout_cos": 0.7990174521510504,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          },
+          "6x6": {
+            "N": 36,
+            "P": 12,
+            "chance": 0.027777777777777776,
+            "held_out_n": 8,
+            "taught_n": 28,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.125,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 0.875,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9994147273746147,
+            "noncompositional_v2_heldout_cos": 0.7762862189130201,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ZERO-SHOT composition (never-taught combinations from seen primitives)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[5x5] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.040) N=25"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.66/0.00 B:1.41/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.028) N=36"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.12"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.45/0.00 B:1.62/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_zeroshot_composition_s46.json"
+    },
+    {
+      "seed": 47,
+      "verdict": {
+        "grids": [
+          "5x5",
+          "6x6"
+        ],
+        "per_grid": {
+          "5x5": {
+            "N": 25,
+            "P": 10,
+            "chance": 0.04,
+            "held_out_n": 5,
+            "taught_n": 20,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.9996096734382469,
+            "noncompositional_v2_heldout_cos": 0.7864405859632279,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          },
+          "6x6": {
+            "N": 36,
+            "P": 12,
+            "chance": 0.027777777777777776,
+            "held_out_n": 8,
+            "taught_n": 28,
+            "compositional_heldout_recall": 1.0,
+            "noncompositional_v2_heldout_recall": 0.0,
+            "flat_heldout_recall": 0.0,
+            "compositional_seen_recall": 1.0,
+            "compositional_minus_v2": 1.0,
+            "compositional_minus_flat": 1.0,
+            "compositional_heldout_cos": 0.999324248737729,
+            "noncompositional_v2_heldout_cos": 0.7583784603080753,
+            "lesion_localises": true,
+            "heldout_miss_lowcos_interference": 0,
+            "heldout_miss_highcos_collision": 0,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ZERO-SHOT composition (never-taught combinations from seen primitives)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[5x5] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.040) N=25"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.54/0.00 B:1.69/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[5x5] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional HELD-OUT recall >= 0.5 (zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.028) N=36"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] composition NEURAL on held-out (lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.49/0.00 B:1.66/0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] every held-out primitive seen in >= 1 taught combo",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[6x6] consolidation never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_zeroshot_composition_s47.json"
+    }
+  ]
+}
