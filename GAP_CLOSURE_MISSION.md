@@ -15,41 +15,36 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-09 (READ FIRST — live resume point)
 
-> **⭐ LATEST (2026-08-09, this cycle) — EXTERNAL-RESEARCH ROUND done (DR discipline APPLIED) + DR gate hardened
-> + read-out burn-down NEGATIVE.** A proper external round — Bazhenov 2022 (SNN sleep, PLOS e1010628) · CH-HNN
-> (two-store CLS, Nat Commun 2025 s41467-025-56405-9) · Compressed Latent Replays (2024) — sources READ +
-> recorded lane-tagged — reframes the breadth crux: **MECHANISM GAP, not a wall** (SNN latent replay reaches
-> ~92% class-incremental ⇒ 0.55–0.70 is far below an achievable ceiling), and **THREE of our negatives were the
-> WRONG VARIANT of a mechanism that provably works**: (i) our "sleep-replay" was SUPERVISED stored-pattern replay
-> — the working variant is NOISE-DRIVEN spontaneous reactivation + UNSUPERVISED STDP (untested here); (ii) our
-> "weight-protection" was metaplasticity ALONE (+0.017, this cycle) — CH-HNN: works only COMBINED with
-> episode-gated neuron masking; (iii) our "pattern-separation" (running) is fixed-orthogonal — the fuller
-> mechanism is a LEARNED episode gate + a fast/slow TWO-STORE split. Plan banked: `a513f118a`.
-> **NEXT LEVER (cheapest-first): (1) noise-driven unsupervised-STDP sleep phase; (2) two-store
-> fast(separated)+slow(consolidated).** Both need the teacher-loop runner family (currently on the `wpbhuowmw`
-> workflow branch) consolidated to main first.
-> **⭐ WORKFLOW `wpbhuowmw` DONE (adversarially verified, banked): PS-SNN pattern-separation = PARTIAL
-> (`3a43e82af`), weight-protection = REFUTED (`e50f5d45a`).** The DECISIVE reframe: **in-run self-replay is
-> already 0.85 @ N=10 (6/6) — the "0.55 wall" was a CROSS-EXPERIMENT CONFLATION** (imported from the 100M-C2
-> extreme-interference scaleup). PS-SNN (0.58) and weight-protect (0.70) are BOTH DOMINATED by self-replay;
-> protect==scramble exactly (Fisher structure carries nothing); PS-SNN has a real acquisition cost + is
-> reservoir-gated (collapses where the FIXED DG can't separate). **CORRECTION to the verify agents' "lossy
-> engram ceiling" claim: our OWN record (`8d2510d3a`) already FALSIFIED engram fidelity as the bottleneck** — a
-> perfect-fidelity (cosine=1.000) pattern-completing engram MATCHES but does NOT beat the host mean, because this
-> UNIMODAL world makes the mean a sufficient statistic. Fidelity/budget/protection/separation-alone are all OUT.
-> **THE REAL CRUX (correctly diagnosed): N-SCALING CAPACITY SATURATION** — retention 0.85@N=10 → 0.45@N=20; the
-> reservoir-gated collapse + N-degradation are both CAPACITY limits, and capacity is the ONE thing no lever varied
-> (fixed reservoir/readout throughout). Biology EXPANDS it: **adult DG neurogenesis** = cumulative lifelong
-> representation + temporal separation; direct spiking impl = **DSD-SNN** (grow neurons per fact, prune redundant).
-> **NEXT LEVER (researched, DR-recorded): (1) CAPACITY EXPANSION / neurogenesis (DSD-SNN) with a matched-fixed
-> control [is it capacity or grow-as-you-go?]; (2) noise-driven UNSUPERVISED-STDP consolidation (Bazhenov) — both
-> tested at N=10 AND N=20 vs the self-replay 0.85/0.45 baseline. ULTRACODE workflow launching.**
+> **⭐⭐⭐⭐⭐ N=20 BREADTH CRUX RESOLVED (2026-08-09, adversarially verified, banked) — and it was TWO things,
+> both honest.** An ultracode workflow (`wh7v93kqn`) + 4 external-research rounds (DR discipline) cracked it:
+> **(1) A BOUND-TRAP artifact.** Most of the historical "catastrophic forgetting" at N=20 (0.85→0.45) was the
+> inherited `bdsp_wmax=6` CLAMP crushing the afferents — DE-CLAMPING (→1e9) alone lifts the self-replay N=20
+> baseline from ~0.45 to **0.742**. The exact "what did we replace with a constant?" trap; it had been biting the
+> whole breadth arc. (Clean same-config clamp-vs-declamp A/B still pending to nail the exact share.)
+> **(2) RESERVOIR CAPACITY.** Adding e-prop-INTEGRATED spiking capacity to the frozen DG reservoir closes the
+> residual: N=20 self-replay **0.742 → grown 0.967** (+0.225, grown≥baseline all 6 seeds; verify RE-RAN, CONFIRMED;
+> brain-based real afferent synapses; load-bearing — freeze the new units' integration → 0.425). HONESTLY
+> re-labeled: it is **CAPACITY, not neurogenesis grow-as-you-go TIMING** — the decisive control matched_fixed
+> (0.917) ≈ grown (0.967). "Neurogenesis" reduces to "size the DG to the fact count (~2-3 granule units/fact)".
+> Banked: capacity `efdbea210`, noise-STDP `e2b61e686`.
+> **RUNNING NOW — the decisive scaling test `bezgkqf0h`:** does 0.97 HOLD at N=100 (5×)? self_replay vs grown vs
+> matched_fixed, 6-seed, capacity scaled to fact count. **If it holds ⇒ breadth is largely a bound-trap + capacity
+> problem (size the DG). If it degrades ⇒ next lever = CLS systems-consolidation** (fast fixed store → slow store
+> via interleaved generative replay; McClelland 1995 / Kumaran-Hassabis-McClelland 2016 / van de Ven 2020 — the
+> synth's recommendation, since capacity-per-fact does not scale to N=1000 gracefully).
+> **REFUTED/OUT this arc (do NOT re-derive):** noise-driven unsupervised-STDP sleep (Bazhenov) = NEGATIVE (0/6, on
+> the no-sleep wall); PS-SNN pattern-separation = PARTIAL but dominated by self-replay + reservoir-gated
+> (`3a43e82af`); weight-protection = REFUTED (protect==scramble; `e50f5d45a`); engram FIDELITY = FALSIFIED (perfect
+> cosine=1.000 still doesn't beat the host mean in this UNIMODAL world; `8d2510d3a`); budget/sparse/SHY = refuted.
+> In-run self-replay is the base mechanism (0.85@N=10). The DR gate CAUGHT a near-re-derivation of the fidelity
+> negative before it cost anything.
 > **Read-out burn-down `wqawa2flt` = NEGATIVE (`1cfbb3b0f`):** the neural WTA winner is load-bearing but
 > UNDERPERFORMS host argmax (0.333 < 0.447) — the WINNER was never the bottleneck; the rate→spike-count evidence
-> margin (~8%) is. Next read-out lever = a CURRENT-SUBTRACTIVE inhibitory read, AFTER external research on SNN
-> rate-decoding (not yet done — do it before that lever).
-> **PROCESS: DR gate over-clearing hole CLOSED (`09ddacd14`)** — a source tagged with its lane clears ONLY that
-> lane (a forgetting-lane source no longer silently clears the read-out lane); selftest proves it (cases D/E).
+> margin (~8%) is. Next read-out lever = a CURRENT-SUBTRACTIVE inhibitory read + slow-NMDA-reverberatory margin
+> amplification (Wang 2002) — researched + DR-recorded (world-model-readout lane), ready to build.
+> **PROCESS: DR gate BUILT (`e02bbb26`) + over-clearing hole CLOSED (`09ddacd14`)** — repeated levers at a wall
+> now BLOCK without external research; lane-tagged sources clear ONLY their lane (selftest cases D/E). 4 external
+> rounds this cycle, every source read + lane-recorded.
 
 > **⭐⭐⭐⭐⭐ BREADTH CRUX CRACKED (2026-08-09) — catastrophic forgetting is MITIGATABLE by the brain's OWN replay.**
 > The scaling measurement (`fcdc2fd2`, adversarially verified) proved forgetting — NOT compute — is the gate on
