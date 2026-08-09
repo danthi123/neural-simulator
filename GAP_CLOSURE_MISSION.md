@@ -47,8 +47,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > negative before it cost anything.
 > **Read-out burn-down `wqawa2flt` = NEGATIVE (`1cfbb3b0f`):** the neural WTA winner is load-bearing but
 > UNDERPERFORMS host argmax (0.333 < 0.447) — the WINNER was never the bottleneck; the rate→spike-count evidence
-> margin (~8%) is. Next read-out lever = a CURRENT-SUBTRACTIVE inhibitory read + slow-NMDA-reverberatory margin
-> amplification (Wang 2002) — researched + DR-recorded (world-model-readout lane), ready to build.
+> margin (~8%) is. **⭐ CROSS-THREAD INSIGHT (2026-08-09):** the runner's own conclusion is "the residual is the
+> STRUCTURAL rate→spike-count margin, which neither competition nor integration lifts" — i.e. it may be a
+> RESERVOIR-CODE limit, NOT a read-out-mechanism limit. Tonight's breadth finding showed **capacity (a bigger
+> reservoir) improves code separation** — so the informative test is NOT another read-out mechanism (subtractive-
+> inhibition/NMDA, which the header predicts plateaus) but a **reservoir-SIZE sweep**: does bigger `n_pool` widen
+> the margin + lift the read-out toward the ridge ceiling? **RUNNING (`b1udu8fhj`, n_pool 250/500/1000 × 3-seed).**
+> If yes ⇒ read-out bottleneck = capacity (same lever as breadth); if flat ⇒ a deeper code/task limit → then the
+> subtractive-inhibition + slow-NMDA read (Wang 2002, DR-recorded) is the read-out-side lever.
 > **PROCESS: DR gate BUILT (`e02bbb26`) + over-clearing hole CLOSED (`09ddacd14`)** — repeated levers at a wall
 > now BLOCK without external research; lane-tagged sources clear ONLY their lane (selftest cases D/E). 4 external
 > rounds this cycle, every source read + lane-recorded.
