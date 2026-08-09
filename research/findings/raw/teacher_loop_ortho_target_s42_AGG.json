@@ -1,0 +1,608 @@
+{
+  "probe": "teacher_loop_ortho_target_pattern_separation_AGG",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "backend": "numpy",
+  "go_count": 0,
+  "n_seeds": 6,
+  "ortho_frac_mean": 0.5833333333333334,
+  "replay_frac_mean": 0.85,
+  "drift_frac_mean": 0.3833333333333333,
+  "ortho_minus_replay_mean": -0.26666666666666666,
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": {
+        "largest_N": 10,
+        "drift_frac_recalled": 0.5,
+        "replay_frac_recalled": 1.0,
+        "ortho_frac_recalled": 0.9,
+        "collapse_frac_recalled": 0.2,
+        "ortho_full_frac_recalled": 0.2,
+        "replay_only_bar_used": 0.55,
+        "ortho_immediate_acq": 0.8525,
+        "retention_rise_ortho_minus_replaybar": 0.35,
+        "retention_rise_ortho_minus_drift": 0.4,
+        "orthogonality_margin_ortho_minus_collapse": 0.7,
+        "protection_margin_ortho_minus_orthofull": 0.7,
+        "ortho_code_max_offdiag_cosine": 0.0,
+        "collapse_code_max_offdiag_cosine": 0.923076923076668,
+        "ortho_si_frac_recalled": 0.9,
+        "ortho_si_acquire": 0.8525,
+        "si_new_learning_tradeoff_acq_delta": 0.0,
+        "si_retention_delta_vs_ortho": 0.0,
+        "label": "teacher-loop fixed orthogonal-target pattern separation",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: (c) ortho immediate acquisition stays high (0.8525 vs floor 0.9)"
+        ],
+        "preconditions": [
+          {
+            "kind": "reaches",
+            "name": "(a) retention RISES vs the replay-only 0.55 bar",
+            "ok": true,
+            "detail": "before=0.55 after=0.9 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(a') ortho beats the drifting readout",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho 0.90 vs drift 0.50"
+          },
+          {
+            "kind": "control",
+            "name": "(b) orthogonality is load-bearing (ortho vs collapse)",
+            "ok": true,
+            "detail": "treatment=0.9 control=0.2 |sep|=0.7 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b') collapse falls back toward drift",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse 0.20 vs drift 0.50"
+          },
+          {
+            "kind": "control",
+            "name": "(b2) own-subspace weight protection is load-bearing (ortho vs ortho_full)",
+            "ok": true,
+            "detail": "treatment=0.9 control=0.2 |sep|=0.7 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b2') removing protection -> forgetting returns",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho_full 0.20 vs drift 0.50"
+          },
+          {
+            "kind": "floor",
+            "name": "(c) ortho immediate acquisition stays high",
+            "ok": false,
+            "detail": "0.8525 vs floor 0.9",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(d) ORTHO codes genuinely orthogonal (Gram off-diag ~0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max off-diag cosine 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(d') COLLAPSE codes are NON-orthogonal (Gram off-diag >> 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse max off-diag cosine 0.92"
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.1
+      },
+      "out": "research/findings/raw/teacher_loop_ortho_target_s42_s42.json"
+    },
+    {
+      "seed": 43,
+      "verdict": {
+        "largest_N": 10,
+        "drift_frac_recalled": 0.5,
+        "replay_frac_recalled": 1.0,
+        "ortho_frac_recalled": 0.9,
+        "collapse_frac_recalled": 0.3,
+        "ortho_full_frac_recalled": 0.3,
+        "replay_only_bar_used": 0.55,
+        "ortho_immediate_acq": 0.865,
+        "retention_rise_ortho_minus_replaybar": 0.35,
+        "retention_rise_ortho_minus_drift": 0.4,
+        "orthogonality_margin_ortho_minus_collapse": 0.6000000000000001,
+        "protection_margin_ortho_minus_orthofull": 0.6000000000000001,
+        "ortho_code_max_offdiag_cosine": 0.0,
+        "collapse_code_max_offdiag_cosine": 0.923076923076668,
+        "ortho_si_frac_recalled": 0.9,
+        "ortho_si_acquire": 0.865,
+        "si_new_learning_tradeoff_acq_delta": 0.0,
+        "si_retention_delta_vs_ortho": 0.0,
+        "label": "teacher-loop fixed orthogonal-target pattern separation",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: (c) ortho immediate acquisition stays high (0.865 vs floor 0.9)"
+        ],
+        "preconditions": [
+          {
+            "kind": "reaches",
+            "name": "(a) retention RISES vs the replay-only 0.55 bar",
+            "ok": true,
+            "detail": "before=0.55 after=0.9 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(a') ortho beats the drifting readout",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho 0.90 vs drift 0.50"
+          },
+          {
+            "kind": "control",
+            "name": "(b) orthogonality is load-bearing (ortho vs collapse)",
+            "ok": true,
+            "detail": "treatment=0.9 control=0.3 |sep|=0.6 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b') collapse falls back toward drift",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse 0.30 vs drift 0.50"
+          },
+          {
+            "kind": "control",
+            "name": "(b2) own-subspace weight protection is load-bearing (ortho vs ortho_full)",
+            "ok": true,
+            "detail": "treatment=0.9 control=0.3 |sep|=0.6 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b2') removing protection -> forgetting returns",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho_full 0.30 vs drift 0.50"
+          },
+          {
+            "kind": "floor",
+            "name": "(c) ortho immediate acquisition stays high",
+            "ok": false,
+            "detail": "0.865 vs floor 0.9",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(d) ORTHO codes genuinely orthogonal (Gram off-diag ~0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max off-diag cosine 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(d') COLLAPSE codes are NON-orthogonal (Gram off-diag >> 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse max off-diag cosine 0.92"
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.1
+      },
+      "out": "research/findings/raw/teacher_loop_ortho_target_s42_s43.json"
+    },
+    {
+      "seed": 44,
+      "verdict": {
+        "largest_N": 10,
+        "drift_frac_recalled": 0.4,
+        "replay_frac_recalled": 0.9,
+        "ortho_frac_recalled": 0.7,
+        "collapse_frac_recalled": 0.1,
+        "ortho_full_frac_recalled": 0.0,
+        "replay_only_bar_used": 0.55,
+        "ortho_immediate_acq": 0.7075,
+        "retention_rise_ortho_minus_replaybar": 0.1499999999999999,
+        "retention_rise_ortho_minus_drift": 0.29999999999999993,
+        "orthogonality_margin_ortho_minus_collapse": 0.6,
+        "protection_margin_ortho_minus_orthofull": 0.7,
+        "ortho_code_max_offdiag_cosine": 0.0,
+        "collapse_code_max_offdiag_cosine": 0.923076923076668,
+        "ortho_si_frac_recalled": 0.7,
+        "ortho_si_acquire": 0.7075,
+        "si_new_learning_tradeoff_acq_delta": 0.0,
+        "si_retention_delta_vs_ortho": 0.0,
+        "label": "teacher-loop fixed orthogonal-target pattern separation",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: (c) ortho immediate acquisition stays high (0.7075 vs floor 0.9)"
+        ],
+        "preconditions": [
+          {
+            "kind": "reaches",
+            "name": "(a) retention RISES vs the replay-only 0.55 bar",
+            "ok": true,
+            "detail": "before=0.55 after=0.7 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(a') ortho beats the drifting readout",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho 0.70 vs drift 0.40"
+          },
+          {
+            "kind": "control",
+            "name": "(b) orthogonality is load-bearing (ortho vs collapse)",
+            "ok": true,
+            "detail": "treatment=0.7 control=0.1 |sep|=0.6 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b') collapse falls back toward drift",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse 0.10 vs drift 0.40"
+          },
+          {
+            "kind": "control",
+            "name": "(b2) own-subspace weight protection is load-bearing (ortho vs ortho_full)",
+            "ok": true,
+            "detail": "treatment=0.7 control=0 |sep|=0.7 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b2') removing protection -> forgetting returns",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho_full 0.00 vs drift 0.40"
+          },
+          {
+            "kind": "floor",
+            "name": "(c) ortho immediate acquisition stays high",
+            "ok": false,
+            "detail": "0.7075 vs floor 0.9",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(d) ORTHO codes genuinely orthogonal (Gram off-diag ~0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max off-diag cosine 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(d') COLLAPSE codes are NON-orthogonal (Gram off-diag >> 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse max off-diag cosine 0.92"
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.1
+      },
+      "out": "research/findings/raw/teacher_loop_ortho_target_s42_s44.json"
+    },
+    {
+      "seed": 45,
+      "verdict": {
+        "largest_N": 10,
+        "drift_frac_recalled": 0.1,
+        "replay_frac_recalled": 0.2,
+        "ortho_frac_recalled": 0.1,
+        "collapse_frac_recalled": 0.1,
+        "ortho_full_frac_recalled": 0.1,
+        "replay_only_bar_used": 0.55,
+        "ortho_immediate_acq": 0.2,
+        "retention_rise_ortho_minus_replaybar": -0.45000000000000007,
+        "retention_rise_ortho_minus_drift": 0.0,
+        "orthogonality_margin_ortho_minus_collapse": 0.0,
+        "protection_margin_ortho_minus_orthofull": 0.0,
+        "ortho_code_max_offdiag_cosine": 0.0,
+        "collapse_code_max_offdiag_cosine": 0.923076923076668,
+        "ortho_si_frac_recalled": 0.1,
+        "ortho_si_acquire": 0.2,
+        "si_new_learning_tradeoff_acq_delta": 0.0,
+        "si_retention_delta_vs_ortho": 0.0,
+        "label": "teacher-loop fixed orthogonal-target pattern separation",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: (a') ortho beats the drifting readout (measured=False expect=True)",
+          "unmet: (b) orthogonality is load-bearing (ortho vs collapse) (treatment=0.1 control=0.1 |sep|=0 > 0.15)",
+          "unmet: (b2) own-subspace weight protection is load-bearing (ortho vs ortho_full) (treatment=0.1 control=0.1 |sep|=0 > 0.15)",
+          "unmet: (c) ortho immediate acquisition stays high (0.2 vs floor 0.9)"
+        ],
+        "preconditions": [
+          {
+            "kind": "reaches",
+            "name": "(a) retention RISES vs the replay-only 0.55 bar",
+            "ok": true,
+            "detail": "before=0.55 after=0.1 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(a') ortho beats the drifting readout",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": "ortho 0.10 vs drift 0.10"
+          },
+          {
+            "kind": "control",
+            "name": "(b) orthogonality is load-bearing (ortho vs collapse)",
+            "ok": false,
+            "detail": "treatment=0.1 control=0.1 |sep|=0 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b') collapse falls back toward drift",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse 0.10 vs drift 0.10"
+          },
+          {
+            "kind": "control",
+            "name": "(b2) own-subspace weight protection is load-bearing (ortho vs ortho_full)",
+            "ok": false,
+            "detail": "treatment=0.1 control=0.1 |sep|=0 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b2') removing protection -> forgetting returns",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho_full 0.10 vs drift 0.10"
+          },
+          {
+            "kind": "floor",
+            "name": "(c) ortho immediate acquisition stays high",
+            "ok": false,
+            "detail": "0.2 vs floor 0.9",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(d) ORTHO codes genuinely orthogonal (Gram off-diag ~0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max off-diag cosine 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(d') COLLAPSE codes are NON-orthogonal (Gram off-diag >> 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse max off-diag cosine 0.92"
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.1
+      },
+      "out": "research/findings/raw/teacher_loop_ortho_target_s42_s45.json"
+    },
+    {
+      "seed": 46,
+      "verdict": {
+        "largest_N": 10,
+        "drift_frac_recalled": 0.3,
+        "replay_frac_recalled": 1.0,
+        "ortho_frac_recalled": 0.2,
+        "collapse_frac_recalled": 0.1,
+        "ortho_full_frac_recalled": 0.2,
+        "replay_only_bar_used": 0.55,
+        "ortho_immediate_acq": 0.2,
+        "retention_rise_ortho_minus_replaybar": -0.35000000000000003,
+        "retention_rise_ortho_minus_drift": -0.09999999999999998,
+        "orthogonality_margin_ortho_minus_collapse": 0.1,
+        "protection_margin_ortho_minus_orthofull": 0.0,
+        "ortho_code_max_offdiag_cosine": 0.0,
+        "collapse_code_max_offdiag_cosine": 0.923076923076668,
+        "ortho_si_frac_recalled": 0.2,
+        "ortho_si_acquire": 0.2,
+        "si_new_learning_tradeoff_acq_delta": 0.0,
+        "si_retention_delta_vs_ortho": 0.0,
+        "label": "teacher-loop fixed orthogonal-target pattern separation",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: (a') ortho beats the drifting readout (measured=False expect=True)",
+          "unmet: (b) orthogonality is load-bearing (ortho vs collapse) (treatment=0.2 control=0.1 |sep|=0.1 > 0.15)",
+          "unmet: (b2) own-subspace weight protection is load-bearing (ortho vs ortho_full) (treatment=0.2 control=0.2 |sep|=0 > 0.15)",
+          "unmet: (c) ortho immediate acquisition stays high (0.2 vs floor 0.9)"
+        ],
+        "preconditions": [
+          {
+            "kind": "reaches",
+            "name": "(a) retention RISES vs the replay-only 0.55 bar",
+            "ok": true,
+            "detail": "before=0.55 after=0.2 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(a') ortho beats the drifting readout",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": "ortho 0.20 vs drift 0.30"
+          },
+          {
+            "kind": "control",
+            "name": "(b) orthogonality is load-bearing (ortho vs collapse)",
+            "ok": false,
+            "detail": "treatment=0.2 control=0.1 |sep|=0.1 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b') collapse falls back toward drift",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse 0.10 vs drift 0.30"
+          },
+          {
+            "kind": "control",
+            "name": "(b2) own-subspace weight protection is load-bearing (ortho vs ortho_full)",
+            "ok": false,
+            "detail": "treatment=0.2 control=0.2 |sep|=0 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b2') removing protection -> forgetting returns",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho_full 0.20 vs drift 0.30"
+          },
+          {
+            "kind": "floor",
+            "name": "(c) ortho immediate acquisition stays high",
+            "ok": false,
+            "detail": "0.2 vs floor 0.9",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(d) ORTHO codes genuinely orthogonal (Gram off-diag ~0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max off-diag cosine 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(d') COLLAPSE codes are NON-orthogonal (Gram off-diag >> 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse max off-diag cosine 0.92"
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.1
+      },
+      "out": "research/findings/raw/teacher_loop_ortho_target_s42_s46.json"
+    },
+    {
+      "seed": 47,
+      "verdict": {
+        "largest_N": 10,
+        "drift_frac_recalled": 0.5,
+        "replay_frac_recalled": 1.0,
+        "ortho_frac_recalled": 0.7,
+        "collapse_frac_recalled": 0.3,
+        "ortho_full_frac_recalled": 0.1,
+        "replay_only_bar_used": 0.55,
+        "ortho_immediate_acq": 0.7525000000000001,
+        "retention_rise_ortho_minus_replaybar": 0.1499999999999999,
+        "retention_rise_ortho_minus_drift": 0.19999999999999996,
+        "orthogonality_margin_ortho_minus_collapse": 0.39999999999999997,
+        "protection_margin_ortho_minus_orthofull": 0.6,
+        "ortho_code_max_offdiag_cosine": 0.0,
+        "collapse_code_max_offdiag_cosine": 0.923076923076668,
+        "ortho_si_frac_recalled": 0.7,
+        "ortho_si_acquire": 0.7525000000000001,
+        "si_new_learning_tradeoff_acq_delta": 0.0,
+        "si_retention_delta_vs_ortho": 0.0,
+        "label": "teacher-loop fixed orthogonal-target pattern separation",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: (c) ortho immediate acquisition stays high (0.7525 vs floor 0.9)"
+        ],
+        "preconditions": [
+          {
+            "kind": "reaches",
+            "name": "(a) retention RISES vs the replay-only 0.55 bar",
+            "ok": true,
+            "detail": "before=0.55 after=0.7 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(a') ortho beats the drifting readout",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho 0.70 vs drift 0.50"
+          },
+          {
+            "kind": "control",
+            "name": "(b) orthogonality is load-bearing (ortho vs collapse)",
+            "ok": true,
+            "detail": "treatment=0.7 control=0.3 |sep|=0.4 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b') collapse falls back toward drift",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse 0.30 vs drift 0.50"
+          },
+          {
+            "kind": "control",
+            "name": "(b2) own-subspace weight protection is load-bearing (ortho vs ortho_full)",
+            "ok": true,
+            "detail": "treatment=0.7 control=0.1 |sep|=0.6 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(b2') removing protection -> forgetting returns",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "ortho_full 0.10 vs drift 0.50"
+          },
+          {
+            "kind": "floor",
+            "name": "(c) ortho immediate acquisition stays high",
+            "ok": false,
+            "detail": "0.7525 vs floor 0.9",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(d) ORTHO codes genuinely orthogonal (Gram off-diag ~0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max off-diag cosine 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(d') COLLAPSE codes are NON-orthogonal (Gram off-diag >> 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "collapse max off-diag cosine 0.92"
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.1
+      },
+      "out": "research/findings/raw/teacher_loop_ortho_target_s42_s47.json"
+    }
+  ]
+}

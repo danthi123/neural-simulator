@@ -1,0 +1,554 @@
+{
+  "probe": "teacher_loop_ortho_target_pattern_separation",
+  "seed": 44,
+  "backend": "numpy",
+  "single_seed_smoke": false,
+  "arms_run": [
+    "drift",
+    "replay",
+    "ortho",
+    "collapse",
+    "ortho_full",
+    "ortho_si"
+  ],
+  "elapsed_seconds": 566.7,
+  "result": {
+    "seed": 44,
+    "K_classes": 10,
+    "chance": 0.1,
+    "n_max": 10,
+    "milestones": [
+      1,
+      5,
+      10
+    ],
+    "config": {
+      "hidden": 64,
+      "settle_steps": 25,
+      "epochs": 30,
+      "batch": 20,
+      "eprop_lr": 0.5,
+      "w_clip": 4000.0,
+      "n_draws": 20,
+      "d_p": 12,
+      "noise": 0.12,
+      "test_n": 40,
+      "code_width": 4,
+      "ortho_lr": 0.1,
+      "si_lambda": 200.0,
+      "replay_epochs": 20,
+      "replay_per_fact": 16,
+      "replay_noise": 0.1,
+      "frozen_hidden": true
+    },
+    "arms": {
+      "drift": {
+        "arm": "drift",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.4,
+            "n_recalled": 2,
+            "N": 5,
+            "mean_retained_acc": 0.43499999999999994,
+            "oldest_fact_acc": 0.075,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.075,
+              0.0,
+              0.825,
+              0.275,
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.4,
+            "n_recalled": 4,
+            "N": 10,
+            "mean_retained_acc": 0.3825,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              0.825,
+              1.0
+            ]
+          }
+        },
+        "wall_seconds": 19.9
+      },
+      "replay": {
+        "arm": "replay",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.9,
+          0.975
+        ],
+        "mean_acquire_acc_immediate": 0.9875,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.8,
+            "n_recalled": 4,
+            "N": 5,
+            "mean_retained_acc": 0.825,
+            "oldest_fact_acc": 0.825,
+            "most_recent_fact_acc": 0.875,
+            "per_fact_acc": [
+              0.825,
+              0.95,
+              1.0,
+              0.475,
+              0.875
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.9,
+            "n_recalled": 9,
+            "N": 10,
+            "mean_retained_acc": 0.85,
+            "oldest_fact_acc": 0.9,
+            "most_recent_fact_acc": 0.975,
+            "per_fact_acc": [
+              0.9,
+              0.95,
+              1.0,
+              0.475,
+              0.75,
+              0.95,
+              0.625,
+              0.9,
+              0.975,
+              0.975
+            ]
+          }
+        },
+        "wall_seconds": 70.3
+      },
+      "ortho": {
+        "arm": "ortho",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          0.95,
+          1.0,
+          0.375,
+          0.975,
+          0.825,
+          0.95,
+          0.0,
+          0.0
+        ],
+        "mean_acquire_acc_immediate": 0.7075,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.845,
+            "oldest_fact_acc": 0.9,
+            "most_recent_fact_acc": 0.6,
+            "per_fact_acc": [
+              0.9,
+              0.975,
+              0.875,
+              0.875,
+              0.6
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.7,
+            "n_recalled": 7,
+            "N": 10,
+            "mean_retained_acc": 0.6224999999999999,
+            "oldest_fact_acc": 0.975,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              0.975,
+              0.425,
+              0.875,
+              0.8,
+              0.55,
+              0.95,
+              0.675,
+              0.975,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "code_stats": {
+          "M": 40,
+          "max_offdiag_cosine": 0.0,
+          "mean_offdiag_cosine": 0.0,
+          "min_diag": 0.9999999999989999
+        },
+        "wall_seconds": 22.7
+      },
+      "collapse": {
+        "arm": "collapse",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.975,
+          0.975,
+          1.0,
+          0.1
+        ],
+        "mean_acquire_acc_immediate": 0.9049999999999999,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.6,
+            "n_recalled": 3,
+            "N": 5,
+            "mean_retained_acc": 0.48,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.575,
+              0.75,
+              0.075,
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.1,
+            "n_recalled": 1,
+            "N": 10,
+            "mean_retained_acc": 0.12500000000000003,
+            "oldest_fact_acc": 0.55,
+            "most_recent_fact_acc": 0.225,
+            "per_fact_acc": [
+              0.55,
+              0.0,
+              0.025,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.45,
+              0.225
+            ]
+          }
+        },
+        "code_stats": {
+          "M": 40,
+          "max_offdiag_cosine": 0.923076923076668,
+          "mean_offdiag_cosine": 0.8307692307690008,
+          "min_diag": 0.9999999999997229
+        },
+        "wall_seconds": 23.2
+      },
+      "ortho_full": {
+        "arm": "ortho_full",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.975,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "mean_acquire_acc_immediate": 0.7975,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.6,
+            "n_recalled": 3,
+            "N": 5,
+            "mean_retained_acc": 0.54,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.925,
+              0.75,
+              0.025,
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.0,
+            "n_recalled": 0,
+            "N": 10,
+            "mean_retained_acc": 0.0025,
+            "oldest_fact_acc": 0.025,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              0.025,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "code_stats": {
+          "M": 40,
+          "max_offdiag_cosine": 0.0,
+          "mean_offdiag_cosine": 0.0,
+          "min_diag": 0.9999999999989999
+        },
+        "wall_seconds": 22.0
+      },
+      "ortho_si": {
+        "arm": "ortho_si",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          0.95,
+          1.0,
+          0.375,
+          0.975,
+          0.825,
+          0.95,
+          0.0,
+          0.0
+        ],
+        "mean_acquire_acc_immediate": 0.7075,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.845,
+            "oldest_fact_acc": 0.9,
+            "most_recent_fact_acc": 0.6,
+            "per_fact_acc": [
+              0.9,
+              0.975,
+              0.875,
+              0.875,
+              0.6
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.7,
+            "n_recalled": 7,
+            "N": 10,
+            "mean_retained_acc": 0.6224999999999999,
+            "oldest_fact_acc": 0.975,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              0.975,
+              0.425,
+              0.875,
+              0.8,
+              0.55,
+              0.95,
+              0.675,
+              0.975,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "code_stats": {
+          "M": 40,
+          "max_offdiag_cosine": 0.0,
+          "mean_offdiag_cosine": 0.0,
+          "min_diag": 0.9999999999989999
+        },
+        "wall_seconds": 24.5
+      }
+    }
+  },
+  "verdict": {
+    "largest_N": 10,
+    "drift_frac_recalled": 0.4,
+    "replay_frac_recalled": 0.9,
+    "ortho_frac_recalled": 0.7,
+    "collapse_frac_recalled": 0.1,
+    "ortho_full_frac_recalled": 0.0,
+    "replay_only_bar_used": 0.55,
+    "ortho_immediate_acq": 0.7075,
+    "retention_rise_ortho_minus_replaybar": 0.1499999999999999,
+    "retention_rise_ortho_minus_drift": 0.29999999999999993,
+    "orthogonality_margin_ortho_minus_collapse": 0.6,
+    "protection_margin_ortho_minus_orthofull": 0.7,
+    "ortho_code_max_offdiag_cosine": 0.0,
+    "collapse_code_max_offdiag_cosine": 0.923076923076668,
+    "ortho_si_frac_recalled": 0.7,
+    "ortho_si_acquire": 0.7075,
+    "si_new_learning_tradeoff_acq_delta": 0.0,
+    "si_retention_delta_vs_ortho": 0.0,
+    "label": "teacher-loop fixed orthogonal-target pattern separation",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: (c) ortho immediate acquisition stays high (0.7075 vs floor 0.9)"
+    ],
+    "preconditions": [
+      {
+        "kind": "reaches",
+        "name": "(a) retention RISES vs the replay-only 0.55 bar",
+        "ok": true,
+        "detail": "before=0.55 after=0.7 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(a') ortho beats the drifting readout",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "ortho 0.70 vs drift 0.40"
+      },
+      {
+        "kind": "control",
+        "name": "(b) orthogonality is load-bearing (ortho vs collapse)",
+        "ok": true,
+        "detail": "treatment=0.7 control=0.1 |sep|=0.6 > 0.15",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(b') collapse falls back toward drift",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "collapse 0.10 vs drift 0.40"
+      },
+      {
+        "kind": "control",
+        "name": "(b2) own-subspace weight protection is load-bearing (ortho vs ortho_full)",
+        "ok": true,
+        "detail": "treatment=0.7 control=0 |sep|=0.7 > 0.15",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(b2') removing protection -> forgetting returns",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "ortho_full 0.00 vs drift 0.40"
+      },
+      {
+        "kind": "floor",
+        "name": "(c) ortho immediate acquisition stays high",
+        "ok": false,
+        "detail": "0.7075 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(d) ORTHO codes genuinely orthogonal (Gram off-diag ~0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max off-diag cosine 0.00e+00"
+      },
+      {
+        "kind": "require",
+        "name": "(d') COLLAPSE codes are NON-orthogonal (Gram off-diag >> 0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "collapse max off-diag cosine 0.92"
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.1
+  }
+}
