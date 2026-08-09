@@ -30,8 +30,12 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > re-labeled: it is **CAPACITY, not neurogenesis grow-as-you-go TIMING** — the decisive control matched_fixed
 > (0.917) ≈ grown (0.967). "Neurogenesis" reduces to "size the DG to the fact count (~2-3 granule units/fact)".
 > Banked: capacity `efdbea210`, noise-STDP `e2b61e686`.
-> **RUNNING NOW — the decisive scaling test `bezgkqf0h`:** does 0.97 HOLD at N=100 (5×)? self_replay vs grown vs
-> matched_fixed, 6-seed, capacity scaled to fact count. **If it holds ⇒ breadth is largely a bound-trap + capacity
+> **⭐ SCALING HOLDS at N=50 (3-seed, `bfv1hcqw7`):** self_replay 0.713 / grown 0.913 / matched_fixed 0.953 —
+> capacity rise +0.200 (stable vs N=20's +0.225), matched≈grown (still CAPACITY not timing). grown/matched stay
+> near ceiling while self_replay degrades → the resolution is holding at 2.5×. **N=100 (6-seed, `bezgkqf0h`, ~3-4h)
+> is the fuller confirmation** (still on its first arm — the ~420-neuron sim is slow on CPU). N=50+N=100 raws not
+> yet banked (combined scaling finding pending N=100).
+> **If N=100 holds ⇒ breadth is largely a bound-trap + capacity
 > problem (size the DG). If it degrades ⇒ next lever = CLS systems-consolidation** (fast fixed store → slow store
 > via interleaved generative replay; McClelland 1995 / Kumaran-Hassabis-McClelland 2016 / van de Ven 2020 — the
 > synth's recommendation, since capacity-per-fact does not scale to N=1000 gracefully).
