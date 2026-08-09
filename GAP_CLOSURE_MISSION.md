@@ -13,9 +13,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-08 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-09 (READ FIRST — live resume point)
 
-> **⭐⭐⭐⭐ FLUENCY WAVES (2026-08-08, ULTRACODE) — the LIVE frontier, PAST the Stage-A culmination.** Owner
+> **⭐⭐⭐⭐⭐ BREADTH CRUX CRACKED (2026-08-09) — catastrophic forgetting is MITIGATABLE by the brain's OWN replay.**
+> The scaling measurement (`fcdc2fd2`, adversarially verified) proved forgetting — NOT compute — is the gate on
+> breadth: sequential teaching retains ~1/N facts (throughput is ~1 day/1000 facts; AWS is the WRONG lever —
+> latency-bound tiny net + sequential curriculum → parallelism helps experiments, not teaching). Then **SLEEP-REPLAY
+> CONSOLIDATION closes it (`bfb7ec92`, single-seed, adversarially CONFIRMED):** after teaching a fact the brain
+> SELF-REPLAYS its own stored engram offline (teacher/world ABSENT, verified) and re-consolidates via e-prop →
+> sequential retention **0.10 → 0.90 (9/10)**, MEETING/EXCEEDING the interleaved 8/10 ceiling WITHOUT the teacher
+> re-presenting. Teeth: NOREPLAY→0.10, SCRAMBLE→0.10, REPLAY→0.90. **6-seed sweep RUNNING on the pool.** Honest
+> residuals: the hippocampal engram STORE is host-side (Python mean-vectors → biologize to a spiking attractor
+> next); single-seed. Sparse-gated readout allocation = REFUTED (honest-negative: a real separator, doesn't reduce
+> interference). **⇒ breadth is now ~a day of teaching away once 6-seed-confirmed + the store biologized.** NEXT:
+> (1) collect the sleep-replay 6-seed; (2) biologize the engram store (spiking attractor, not a host list); (3)
+> then scale the teacher-loop toward breadth. Also queued: the discourse-confab moat (per-proposition), path-T
+> generator biologization, the held-off-main read-out + D-Leg-2 findings.
+
+> **⭐⭐⭐⭐ FLUENCY WAVES (2026-08-08, ULTRACODE) — PAST the Stage-A culmination.** Owner
 > authorized building the full "human-like fluency" faculty set concurrently (best-judgement autonomous), with
 > the file-conflict rule (serialize shared-bridge edits; parallelize disjoint de-risks in isolated worktrees).
 > **WAVE 1 (task `wphw8m1y7`, 11 agents, build→adversarial-verify) — HONEST OUTCOME: only faculty A survived.**

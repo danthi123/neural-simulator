@@ -416,7 +416,21 @@ CA3 recurrents (`2026-08-08-episodic-cortical-readout-IGNITION-*`). **reading th
 speaking (pragmatics Leg-2) RE-FAILED as an OPEN WALL** — a genuine new actor-critic attempt (learned intent->utter
 assembly + spiking value critic + yoked control, not a v1 WTA-readout re-run) still does not converge (trained
 0.444 vs 0.85; the learned value under-separates ~2-6% rate); provenance closed; next = value-amplification, a NEW
-method not a re-sweep (`2026-08-08-pragmatics-readback-leg2-v2-oracle-RESOLVED-convergence-NEGATIVE-*`). A conditioned **path-T
+method not a re-sweep (`2026-08-08-pragmatics-readback-leg2-v2-oracle-RESOLVED-convergence-NEGATIVE-*`).
+
+**2026-08-09 — BREADTH CRUX: catastrophic forgetting is the gate, and sleep-replay CLOSES it (the roadmap reframe).**
+MEASURED (`fcdc2fd2`, verified): teaching-time is NOT the breadth bottleneck (~1 day/1000 facts on the 3090; AWS is
+the wrong lever — latency-bound tiny net + a SEQUENTIAL curriculum, so cloud parallelism helps parallel EXPERIMENTS
+not teaching). The gate is CATASTROPHIC FORGETTING: sequential teaching retains ~1/N (interleaved 8/10 on the same
+net → interference, not capacity/compute). **SLEEP-REPLAY CONSOLIDATION closes it** (`bfb7ec92`, single-seed,
+adversarially CONFIRMED): the brain SELF-REPLAYS its own stored engram offline (teacher/world absent) and
+re-consolidates via e-prop → sequential retention 0.10 → 0.90 (past the 8/10 ceiling), WITHOUT the teacher
+re-presenting (`2026-08-08-teacher-loop-sleep-replay-consolidation-*`). Sparse-gated readout allocation = honest
+negative. So systems-consolidation (a §2.4 faculty, already a project theme) is the load-bearing breadth mechanism —
+NOT compute. **NEXT (the breadth path, ahead of raw scaling): (1) 6-seed the sleep-replay (running on the pool); (2)
+biologize the engram STORE (a spiking attractor, not a host mean-vector list); (3) THEN scale the teacher-loop
+toward breadth (~a day of compute once forgetting holds). Cloud is for parallel experiments, never the sequential
+teaching schedule.** A conditioned **path-T
 articulation generator** (spiking-LLM as the Broca-like mouth) is CONFIRMED sound with faculties LOAD-BEARING under
 lesion (owner acceptance test); held off-main pending finding hygiene. **Wave 2b DONE (integration + LIVE wiring,
 adversarially CONFIRMED, 6/6 GO):** the world-model + graded-affect seams are INTEGRATED and LIVE in the turn loop
