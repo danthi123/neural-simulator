@@ -1,0 +1,424 @@
+{
+  "runner": "_fm_scaled_norm_readout_derisk",
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/wf_e285cc0a-e34-1/research/runners/_fm_scaled_norm_readout_derisk.py",
+    "--seeds",
+    "42",
+    "43",
+    "44",
+    "--G",
+    "5",
+    "--n-pool",
+    "250",
+    "--out",
+    "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/scnorm/scnorm_np250.json"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_pool": 250,
+  "results": [
+    {
+      "seed": 42,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 40,
+      "ffi_p": 8,
+      "norm_n": 12,
+      "backend": "numpy",
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.02355520833333334,
+      "syn_scale": 6.0,
+      "ffi_in": 0.8,
+      "ffi_out": 4.0,
+      "wta_ie_selected": 40.0,
+      "norm_gain_selected": 0.0,
+      "norm_ff_w": 6.0,
+      "norm_fb_w": 6.0,
+      "norm_out_base": 4.0,
+      "norm_pool_mean_spk": 0.0572265625,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.72,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.72,
+      "fixed_wta_train": 0.96,
+      "fixed_wta_heldout": 0.52,
+      "fixed_wta_ens_mean": 0.010291145833333334,
+      "scaled_norm_train": 0.96,
+      "scaled_norm_heldout": 0.52,
+      "scaled_norm_ens_mean": 0.010291145833333334,
+      "scaled_norm_noff_heldout": 0.52,
+      "lesion_wp_heldout": 0.04,
+      "lesion_silence_heldout": 0.08,
+      "matched_sham_heldout": 0.4,
+      "untrained_control_heldout": 0.04,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 183.5,
+      "verdict": {
+        "label": "fm population-scaled divisive-normalization world-model read-out (Carandini-Heeger)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: matched sham UNCHANGED (|d|<=0.08) (measured=0.12 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "backend == numpy",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.02355520833333334 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "normalization pool active (spikes>0)",
+            "ok": true,
+            "detail": "measured=0.0572265625 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (imported neural read; no host matmul/logit-argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": false,
+            "detail": "measured=0.12 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained two-pathway synapses + a NEURAL population-scaled divisive-normalization inhibitory pool (reservoir->pool synaptic drive); on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "scaled_beats_fixed(>=+0.20)": false,
+          "population_scaling_load_bearing(scaled-noff>=0.20)": false,
+          "beats_chance/prior(>=+0.20)": true,
+          "tracks_ceiling(>=twopath-0.20)": true,
+          "wp_lesion_collapses(>=0.20)": true,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 40,
+      "ffi_p": 8,
+      "norm_n": 12,
+      "backend": "numpy",
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.026815624999999996,
+      "syn_scale": 6.0,
+      "ffi_in": 0.8,
+      "ffi_out": 4.0,
+      "wta_ie_selected": 70.0,
+      "norm_gain_selected": 0.0,
+      "norm_ff_w": 6.0,
+      "norm_fb_w": 6.0,
+      "norm_out_base": 4.0,
+      "norm_pool_mean_spk": 0.06176649305555556,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.64,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.64,
+      "fixed_wta_train": 0.9333333333333333,
+      "fixed_wta_heldout": 0.36,
+      "fixed_wta_ens_mean": 0.010083333333333333,
+      "scaled_norm_train": 0.9333333333333333,
+      "scaled_norm_heldout": 0.28,
+      "scaled_norm_ens_mean": 0.010126822916666667,
+      "scaled_norm_noff_heldout": 0.32,
+      "lesion_wp_heldout": 0.12,
+      "lesion_silence_heldout": 0.08,
+      "matched_sham_heldout": 0.28,
+      "untrained_control_heldout": 0.04,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 180.9,
+      "verdict": {
+        "label": "fm population-scaled divisive-normalization world-model read-out (Carandini-Heeger)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "backend == numpy",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f219b14fec0>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.026815624999999996 expect=<function _verdict.<locals>.<lambda> at 0x7f219b14fec0>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "normalization pool active (spikes>0)",
+            "ok": true,
+            "detail": "measured=0.06176649305555556 expect=<function _verdict.<locals>.<lambda> at 0x7f219b14fec0>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (imported neural read; no host matmul/logit-argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained two-pathway synapses + a NEURAL population-scaled divisive-normalization inhibitory pool (reservoir->pool synaptic drive); on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "scaled_beats_fixed(>=+0.20)": false,
+          "population_scaling_load_bearing(scaled-noff>=0.20)": false,
+          "beats_chance/prior(>=+0.20)": true,
+          "tracks_ceiling(>=twopath-0.20)": false,
+          "wp_lesion_collapses(>=0.20)": false,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 40,
+      "ffi_p": 8,
+      "norm_n": 12,
+      "backend": "numpy",
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.021703125,
+      "syn_scale": 6.0,
+      "ffi_in": 0.8,
+      "ffi_out": 4.0,
+      "wta_ie_selected": 40.0,
+      "norm_gain_selected": 0.0,
+      "norm_ff_w": 6.0,
+      "norm_fb_w": 6.0,
+      "norm_out_base": 4.0,
+      "norm_pool_mean_spk": 0.04997829861111111,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.88,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.88,
+      "fixed_wta_train": 0.28,
+      "fixed_wta_heldout": 0.24,
+      "fixed_wta_ens_mean": 0.007858593749999998,
+      "scaled_norm_train": 0.28,
+      "scaled_norm_heldout": 0.24,
+      "scaled_norm_ens_mean": 0.007858072916666667,
+      "scaled_norm_noff_heldout": 0.28,
+      "lesion_wp_heldout": 0.04,
+      "lesion_silence_heldout": 0.04,
+      "matched_sham_heldout": 0.24,
+      "untrained_control_heldout": 0.0,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 185.3,
+      "verdict": {
+        "label": "fm population-scaled divisive-normalization world-model read-out (Carandini-Heeger)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "backend == numpy",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.021703125 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "normalization pool active (spikes>0)",
+            "ok": true,
+            "detail": "measured=0.04997829861111111 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (imported neural read; no host matmul/logit-argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained two-pathway synapses + a NEURAL population-scaled divisive-normalization inhibitory pool (reservoir->pool synaptic drive); on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "scaled_beats_fixed(>=+0.20)": false,
+          "population_scaling_load_bearing(scaled-noff>=0.20)": false,
+          "beats_chance/prior(>=+0.20)": false,
+          "tracks_ceiling(>=twopath-0.20)": false,
+          "wp_lesion_collapses(>=0.20)": false,
+          "silence_collapses(>=0.20)": false,
+          "untrained<=chance+0.08": true
+        }
+      }
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "backend == numpy",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "two-pathway rate == ridge (decomposition exact)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reservoir active (feature)",
+      "ok": true,
+      "detail": "measured=0.02355520833333334 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "normalization pool active (spikes>0)",
+      "ok": true,
+      "detail": "measured=0.0572265625 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seeded (byte-identical substrate)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "content path clean (imported neural read; no host matmul/logit-argmax)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "matched sham UNCHANGED (|d|<=0.08)",
+      "ok": false,
+      "detail": "measured=0.12 expect=<function _verdict.<locals>.<lambda> at 0x7f21d8f72c00>",
+      "note": ""
+    }
+  ],
+  "backend": "numpy",
+  "device": "cpu"
+}
