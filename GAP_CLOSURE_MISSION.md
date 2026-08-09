@@ -54,12 +54,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > (precisely scoped): scale the ensemble DRIVE/EXCITABILITY UP with capacity** (per-ensemble gain homeostat to a
 > target rate, or shunting/conductance divisive normalization), THEN the population-scaled WTA reads a resolvable
 > margin. NOT urgent (secondary thread); queued.
-> **⭐ CLS BOUNDED TWO-STORE — RUNNING (`wco0qck60`), the scalability answer to the owner's "year of data" question.**
-> Tests whether a FIXED-size fast store + neural consolidation to a slow store retains N facts WITHOUT the fast
-> store growing with N (decoupling per-step cost from lifetime) — vs the flat O(N)-capacity store that resolved
-> N=20. Grounded McClelland 1995 / van de Ven 2020 (bounded generative replay) / CH-HNN; adversarially verified
-> against the "bounded store secretly grows" cheat. **This is the queue-jump the owner flagged.** Lean N=100 breadth
-> confirmation still running (`bdgp2f09i`, ~4h, CPU — GPU measured 8× SLOWER: tiny net, launch-bound).
+> **⭐ SCALABILITY ARC (owner's "year of data" question) — the layered answer, each wall naming the next lever:**
+> **(1) bounded raw BUFFER + eviction = NEGATIVE (`0c7531785`, 6-seed):** retention TRACKS window F (0.52@N20),
+> forgets evicted facts (no replay source → trace drifts). **(2) fixed-size GENERATIVE replay (re-dream all facts)
+> = PARTIAL (`443351967`, 6-seed):** BEATS the buffer (0.692 vs 0.517) — right direction — but not flat (0.950),
+> because **the GENERATOR ITSELF forgets** (regen fidelity 1.0→0.8-0.9 as N grows); AND it bounds STORAGE (fixed
+> 1344 floats vs O(N)) but NOT per-step COMPUTE (still replays O(N)/sleep). **(3) NON-FORGETTING GENERATOR = RUNNING
+> (`w8noh4aqj`):** strengthen van de Ven self-replay of the generator's OWN regenerations so its fidelity holds →
+> does generative retention rise toward flat at bounded storage? (the recursion test; guarded against the "train on
+> the true engrams" cheat). **If GO ⇒ bounded-STORAGE lifetime retention; the remaining half = sparse/prioritized
+> replay (recency/salience/schema-gated, Mattar-Daw/Tse) to bound COMPUTE.** Net so far: a year of data does NOT yet
+> scale with bounded cost, but the two residuals (generator-recursion + O(N)-replay) are named, both biological.
+> **N=100 breadth confirmation `bdgp2f09i`: self_replay arm done (0.62 — flat store keeps degrading 0.74→0.71→0.62
+> @N20/50/100); grown (capacity) arm finishing** (GPU measured 8× SLOWER: tiny net, launch-bound → CPU is right).
 > **PROCESS: DR gate BUILT (`e02bbb26`) + over-clearing hole CLOSED (`09ddacd14`)** — repeated levers at a wall
 > now BLOCK without external research; lane-tagged sources clear ONLY their lane (selftest cases D/E). 4 external
 > rounds this cycle, every source read + lane-recorded.
