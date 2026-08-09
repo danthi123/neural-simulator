@@ -1,0 +1,34 @@
+{
+ "run_id": "1786272338-2383553",
+ "runner": "research/runners/_teacher_loop_noise_stdp_sleep_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_2aa88c67-431-2/research/runners/_teacher_loop_noise_stdp_sleep_derisk.py",
+  "--seed",
+  "42",
+  "--n-max",
+  "20",
+  "--milestones",
+  "10",
+  "20",
+  "--out",
+  "research/findings/raw/teacher_loop_noise_stdp_sleep_s42.json"
+ ],
+ "git_sha": "a43323521",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-09T06:45:38",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/teacher_loop_noise_stdp_sleep_s42.json"
+}

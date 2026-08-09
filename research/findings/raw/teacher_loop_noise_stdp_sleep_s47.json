@@ -1,0 +1,353 @@
+{
+  "probe": "teacher_loop_noise_stdp_sleep",
+  "seed": 47,
+  "backend": "numpy",
+  "elapsed_seconds": 592.3,
+  "result": {
+    "seed": 47,
+    "K_classes": 20,
+    "chance": 0.05,
+    "n_max": 20,
+    "milestones": [
+      10,
+      20
+    ],
+    "config": {
+      "hidden": 24,
+      "settle_steps": 25,
+      "epochs": 40,
+      "batch": 20,
+      "eprop_lr": 0.5,
+      "w_clip": 4000.0,
+      "n_draws": 32,
+      "d_p": 12,
+      "noise": 0.12,
+      "test_n": 40,
+      "replay_cfg": {
+        "replay_epochs": 24,
+        "replay_per_fact": 16,
+        "replay_noise": 0.1
+      },
+      "sleep_cfg": {
+        "cycles": 48,
+        "noise_rate": 0.5,
+        "noise_amp": 1200.0,
+        "site": "input",
+        "sleep_o_tonic": 480.0,
+        "a_plus": 1.0,
+        "a_minus": 1.0,
+        "tau_stdp": 4.0,
+        "lr_stdp": 2.0
+      }
+    },
+    "arms": {
+      "nosleep": {
+        "arm": "nosleep",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "retention_curve": {
+          "10": {
+            "frac_recalled": 0.1,
+            "n_recalled": 1,
+            "N": 10,
+            "mean_retained_acc": 0.1,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "20": {
+            "frac_recalled": 0.05,
+            "n_recalled": 1,
+            "N": 20,
+            "mean_retained_acc": 0.05375,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.075,
+              1.0
+            ]
+          }
+        },
+        "wall_seconds": 91.6
+      },
+      "selfreplay": {
+        "arm": "selfreplay",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "retention_curve": {
+          "10": {
+            "frac_recalled": 0.7,
+            "n_recalled": 7,
+            "N": 10,
+            "mean_retained_acc": 0.49749999999999994,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 0.425,
+            "per_fact_acc": [
+              0.0,
+              0.625,
+              0.5,
+              0.65,
+              0.5,
+              0.725,
+              0.55,
+              0.0,
+              1.0,
+              0.425
+            ]
+          },
+          "20": {
+            "frac_recalled": 0.5,
+            "n_recalled": 10,
+            "N": 20,
+            "mean_retained_acc": 0.48125,
+            "oldest_fact_acc": 0.6,
+            "most_recent_fact_acc": 0.475,
+            "per_fact_acc": [
+              0.6,
+              0.3,
+              0.45,
+              0.0,
+              0.675,
+              0.475,
+              0.625,
+              0.75,
+              0.5,
+              0.2,
+              0.325,
+              0.7,
+              0.775,
+              0.725,
+              0.85,
+              0.15,
+              0.0,
+              0.575,
+              0.475,
+              0.475
+            ]
+          }
+        },
+        "wall_seconds": 371.4
+      },
+      "noisestdp": {
+        "arm": "noisestdp",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "retention_curve": {
+          "10": {
+            "frac_recalled": 0.0,
+            "n_recalled": 0,
+            "N": 10,
+            "mean_retained_acc": 0.0325,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.325,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "20": {
+            "frac_recalled": 0.05,
+            "n_recalled": 1,
+            "N": 20,
+            "mean_retained_acc": 0.05,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "sleep_diagnostics": {
+          "mean_out_spikes_per_cycle": 34.0,
+          "mean_hidden_spikes_per_cycle": 2.538541666666667,
+          "total_abs_weight_moved": 36609.38970756531
+        },
+        "wall_seconds": 92.1
+      }
+    },
+    "sleep_label_independent_maxdiff": 0.0
+  },
+  "verdict": {
+    "largest_N": 20,
+    "nosleep_frac_recalled": 0.05,
+    "selfreplay_frac_recalled": 0.5,
+    "noisestdp_frac_recalled": 0.05,
+    "noisestdp_immediate_acq": 1.0,
+    "beats_selfreplay_at_largest_N": false,
+    "beats_selfreplay_at_N10": false,
+    "noisestdp_minus_selfreplay": -0.45,
+    "noisestdp_minus_nosleep": 0.0,
+    "sleep_mean_output_spikes_per_cycle": 34.0,
+    "sleep_total_abs_weight_moved": 36609.38970756531,
+    "sleep_label_independent_maxdiff": 0.0,
+    "label": "teacher-loop noise-driven unsupervised-STDP sleep",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "reaches",
+        "name": "(a) BEATS supervised self-replay @ largest N",
+        "ok": true,
+        "detail": "before=0.5 after=0.05 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(b) no-sleep forgets (sleep load-bearing)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "nosleep frac_recalled@N=20 = 0.05"
+      },
+      {
+        "kind": "floor",
+        "name": "(c) immediate acquisition stays perfect (NOISESTDP)",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(d1) sleep drives output spikes (neural, not inert)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "mean output spikes/cycle = 34.00"
+      },
+      {
+        "kind": "require",
+        "name": "(d2) sleep moves readout synapses (STDP applied)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "total abs weight moved = 36609.39"
+      },
+      {
+        "kind": "require",
+        "name": "(d3) sleep step is label-independent (byte-identical)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max byte-diff with scrambled labels = 0.00e+00"
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.05
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "probe": "teacher_loop_noise_stdp_sleep_AGGREGATE",
+  "backend": "numpy",
+  "single_seed_smoke": false,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "source_raws": [
+    "research/findings/raw/teacher_loop_noise_stdp_sleep_s42.json",
+    "research/findings/raw/teacher_loop_noise_stdp_sleep_s43.json",
+    "research/findings/raw/teacher_loop_noise_stdp_sleep_s44.json",
+    "research/findings/raw/teacher_loop_noise_stdp_sleep_s45.json",
+    "research/findings/raw/teacher_loop_noise_stdp_sleep_s46.json",
+    "research/findings/raw/teacher_loop_noise_stdp_sleep_s47.json"
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(b) no-sleep forgets (baseline valid, sleep load-bearing)",
+      "detail": "nosleep mean frac@N20 = 0.058 (< 0.5)",
+      "ok": true
+    },
+    {
+      "kind": "floor",
+      "name": "(c) immediate acquisition stays perfect (NOISESTDP)",
+      "detail": "mean immediate acq = 0.989 (>= 0.9)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "(d1) sleep drives output spikes (neural, not inert)",
+      "detail": "mean out-spikes/cycle = 33.77 (> 0)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "(d2) sleep moves readout synapses (STDP applied)",
+      "detail": "mean |weight moved| = 48277 (> 0)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "(d3) sleep step is label-independent (byte-identical)",
+      "detail": "max byte-diff with scrambled labels = 0.0 (== 0)",
+      "ok": true
+    },
+    {
+      "kind": "hypothesis",
+      "name": "(a) beats supervised self-replay @N20 (GO condition)",
+      "detail": "noisestdp 0.058 >= selfreplay 0.417? -> False",
+      "ok": false
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "nosleep_n10": 0.1,
+      "selfreplay_n10": 0.8,
+      "noisestdp_n10": 0.1,
+      "nosleep_n20": 0.05,
+      "selfreplay_n20": 0.45,
+      "noisestdp_n20": 0.05,
+      "noisestdp_immediate_acq": 0.9887499999999999,
+      "sleep_mean_out_spikes_per_cycle": 43.0,
+      "sleep_total_abs_weight_moved": 96122.7734298706,
+      "sleep_label_independent_maxdiff": 0.0,
+      "status": "NO-GO"
+    },
+    {
+      "seed": 43,
+      "nosleep_n10": 0.1,
+      "selfreplay_n10": 0.3,
+      "noisestdp_n10": 0.1,
+      "nosleep_n20": 0.05,
+      "selfreplay_n20": 0.3,
+      "noisestdp_n20": 0.05,
+      "noisestdp_immediate_acq": 0.9974999999999999,
+      "sleep_mean_out_spikes_per_cycle": 29.0,
+      "sleep_total_abs_weight_moved": 25223.028304100037,
+      "sleep_label_independent_maxdiff": 0.0,
+      "status": "NO-GO"
+    },
+    {
+      "seed": 44,
+      "nosleep_n10": 0.1,
+      "selfreplay_n10": 0.5,
+      "noisestdp_n10": 0.1,
+      "nosleep_n20": 0.05,
+      "selfreplay_n20": 0.4,
+      "noisestdp_n20": 0.05,
+      "noisestdp_immediate_acq": 0.9949999999999999,
+      "sleep_mean_out_spikes_per_cycle": 32.0,
+      "sleep_total_abs_weight_moved": 58420.848777770996,
+      "sleep_label_independent_maxdiff": 0.0,
+      "status": "NO-GO"
+    },
+    {
+      "seed": 45,
+      "nosleep_n10": 0.1,
+      "selfreplay_n10": 0.4,
+      "noisestdp_n10": 0.2,
+      "nosleep_n20": 0.1,
+      "selfreplay_n20": 0.4,
+      "noisestdp_n20": 0.1,
+      "noisestdp_immediate_acq": 0.9662500000000002,
+      "sleep_mean_out_spikes_per_cycle": 32.621875,
+      "sleep_total_abs_weight_moved": 35745.007618904114,
+      "sleep_label_independent_maxdiff": 0.0,
+      "status": "NO-GO"
+    },
+    {
+      "seed": 46,
+      "nosleep_n10": 0.1,
+      "selfreplay_n10": 0.6,
+      "noisestdp_n10": 0.0,
+      "nosleep_n20": 0.05,
+      "selfreplay_n20": 0.45,
+      "noisestdp_n20": 0.05,
+      "noisestdp_immediate_acq": 0.98375,
+      "sleep_mean_out_spikes_per_cycle": 32.0,
+      "sleep_total_abs_weight_moved": 37540.03337097168,
+      "sleep_label_independent_maxdiff": 0.0,
+      "status": "NO-GO"
+    },
+    {
+      "seed": 47,
+      "nosleep_n10": 0.1,
+      "selfreplay_n10": 0.7,
+      "noisestdp_n10": 0.0,
+      "nosleep_n20": 0.05,
+      "selfreplay_n20": 0.5,
+      "noisestdp_n20": 0.05,
+      "noisestdp_immediate_acq": 1.0,
+      "sleep_mean_out_spikes_per_cycle": 34.0,
+      "sleep_total_abs_weight_moved": 36609.38970756531,
+      "sleep_label_independent_maxdiff": 0.0,
+      "status": "NO-GO"
+    }
+  ],
+  "means": {
+    "n10": {
+      "nosleep": 0.1,
+      "selfreplay": 0.55,
+      "noisestdp": 0.083
+    },
+    "n20": {
+      "nosleep": 0.058,
+      "selfreplay": 0.417,
+      "noisestdp": 0.058
+    },
+    "noisestdp_minus_selfreplay_n20": -0.359,
+    "noisestdp_minus_nosleep_n20": 0.0,
+    "noisestdp_immediate_acq": 0.989,
+    "sleep_mean_out_spikes_per_cycle": 33.77,
+    "sleep_total_abs_weight_moved": 48277
+  },
+  "seeds_noisestdp_ge_selfreplay": {
+    "n10": 0,
+    "n20": 0,
+    "of": 6
+  },
+  "max_label_independent_maxdiff": 0.0,
+  "all_seeds_status": [
+    "NO-GO"
+  ],
+  "means_also": {
+    "noisestdp_selfreplay_gap_n20_magnitude": 0.359
+  },
+  "verdict": {
+    "status": "NO-GO",
+    "label": "teacher-loop noise-driven unsupervised-STDP sleep (6-seed aggregate)",
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "(b) no-sleep forgets (baseline valid, sleep load-bearing)",
+        "detail": "nosleep mean frac@N20 = 0.058 (< 0.5)",
+        "ok": true
+      },
+      {
+        "kind": "floor",
+        "name": "(c) immediate acquisition stays perfect (NOISESTDP)",
+        "detail": "mean immediate acq = 0.989 (>= 0.9)",
+        "ok": true
+      },
+      {
+        "kind": "require",
+        "name": "(d1) sleep drives output spikes (neural, not inert)",
+        "detail": "mean out-spikes/cycle = 33.77 (> 0)",
+        "ok": true
+      },
+      {
+        "kind": "require",
+        "name": "(d2) sleep moves readout synapses (STDP applied)",
+        "detail": "mean |weight moved| = 48277 (> 0)",
+        "ok": true
+      },
+      {
+        "kind": "require",
+        "name": "(d3) sleep step is label-independent (byte-identical)",
+        "detail": "max byte-diff with scrambled labels = 0.0 (== 0)",
+        "ok": true
+      },
+      {
+        "kind": "hypothesis",
+        "name": "(a) beats supervised self-replay @N20 (GO condition)",
+        "detail": "noisestdp 0.058 >= selfreplay 0.417? -> False",
+        "ok": false
+      }
+    ],
+    "summary": "NEGATIVE (NO-GO) 6/6 seeds: noise-driven unsupervised-STDP sleep matches the no-sleep wall and does not beat supervised self-replay (gap magnitude 0.359 @ N=20); sleep is neural (mean 33.77 out-spikes/cycle, 48277 weight moved) and unsupervised (label byte-diff 0.0). The verdict is carried by the DISCRIMINATING selfreplay arm (0.55/0.417), not by any floored array."
+  }
+}
