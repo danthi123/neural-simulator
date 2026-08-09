@@ -215,7 +215,8 @@ class NeurogenesisNet(OnBridgeEpropNet):
 
 # ============================================ one arm of the curriculum ============================================
 def _run_arm(arm, seed, referents, env, K, n_in, h_max, n0, grow_k, freeze_at, settle, epochs, batch, eprop_lr,
-             w_clip, n_draws, milestones, test_n, replay_epochs, replay_per_fact, replay_noise, chance):
+             w_clip, n_draws, milestones, test_n, replay_epochs, replay_per_fact, replay_noise, chance,
+             bdsp_wmax=1e9):
     """arm in {self_replay, grown, matched_fixed, frozen_growth, random_units}. All arms self-replay-consolidate;
     the manipulation is the capacity schedule (which/when granule units are born)."""
     grow = arm in ("grown", "frozen_growth", "random_units")
@@ -227,7 +228,7 @@ def _run_arm(arm, seed, referents, env, K, n_in, h_max, n0, grow_k, freeze_at, s
     final_size = n0 + K * grow_k
     start_active = final_size if arm == "matched_fixed" else n0
 
-    net = NeurogenesisNet(n_in, K, seed, h_max, n0, settle, eprop_lr, w_clip)
+    net = NeurogenesisNet(n_in, K, seed, h_max, n0, settle, eprop_lr, w_clip, bdsp_wmax=bdsp_wmax)
     net.birth(start_active, env, referents, seed)                # birth the initial cohort (or the full matched reservoir)
     teach_rng = np.random.default_rng(seed + 777)
     brain_rng = np.random.default_rng(seed + 313)
@@ -298,7 +299,7 @@ def _git_sim_diff_empty():
 
 
 def run(seed, n_max, milestones, n0, grow_k, settle, epochs, batch, eprop_lr, w_clip, n_draws, d_p, noise,
-        test_n, replay_epochs, replay_per_fact, replay_noise, arms_to_run, freeze_growth_at):
+        test_n, replay_epochs, replay_per_fact, replay_noise, arms_to_run, freeze_growth_at, bdsp_wmax=1e9):
     K = int(n_max)
     chance = 1.0 / K
     n_in = d_p + N_ACT
@@ -318,7 +319,7 @@ def run(seed, n_max, milestones, n0, grow_k, settle, epochs, batch, eprop_lr, w_
             env.proto(r)
         arms[arm] = _run_arm(arm, seed, referents, env, K, n_in, h_max, n0, grow_k, freeze_at, settle, epochs, batch,
                              eprop_lr, w_clip, n_draws, milestones, test_n, replay_epochs, replay_per_fact,
-                             replay_noise, chance)
+                             replay_noise, chance, bdsp_wmax=bdsp_wmax)
         arms[arm]["wall_seconds"] = round(time.time() - t0, 1)
         rc = arms[arm]["retention_curve"]
         big = max((int(k) for k in rc), default=None)
@@ -333,7 +334,7 @@ def run(seed, n_max, milestones, n0, grow_k, settle, epochs, batch, eprop_lr, w_
             "config": {"n0": n0, "grow_k": grow_k, "settle_steps": settle, "epochs": epochs, "batch": batch,
                        "eprop_lr": eprop_lr, "w_clip": w_clip, "n_draws": n_draws, "d_p": d_p, "noise": noise,
                        "test_n": test_n, "replay_epochs": replay_epochs, "replay_per_fact": replay_per_fact,
-                       "replay_noise": replay_noise, "frozen_hidden": True, "bdsp_wmax": 1e9},
+                       "replay_noise": replay_noise, "frozen_hidden": True, "bdsp_wmax": bdsp_wmax},
             "arms": arms}
 
 
@@ -440,7 +441,7 @@ def _verdict(result):
 def _one_seed(a, seed, arms_to_run):
     result = run(seed, a.n_max, a.milestones, a.n0, a.grow_k, a.settle_steps, a.epochs, a.batch, a.eprop_lr,
                  a.w_clip, a.n_draws, a.d_p, a.noise, a.test_n, a.replay_epochs, a.replay_per_fact, a.replay_noise,
-                 arms_to_run, a.freeze_growth_at)
+                 arms_to_run, a.freeze_growth_at, bdsp_wmax=a.bdsp_wmax)
     return result, _verdict(result)
 
 
@@ -460,6 +461,9 @@ def main():
     ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--eprop-lr", type=float, default=0.5)
     ap.add_argument("--w-clip", type=float, default=4000.0)
+    ap.add_argument("--bdsp-wmax", type=float, default=1e9,
+                    help="widens the inherited bdsp_w_min/max=-6/+6 clamp; 1e9=de-clamped (default), 6=the historical "
+                         "CLAMP (bound-trap A/B: does de-clamping alone recover the N=20 self-replay baseline?)")
     ap.add_argument("--n-draws", type=int, default=16)
     ap.add_argument("--d-p", type=int, default=12)
     ap.add_argument("--noise", type=float, default=0.12)
