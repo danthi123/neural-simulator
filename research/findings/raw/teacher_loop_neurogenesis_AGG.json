@@ -1,0 +1,336 @@
+{
+  "probe": "teacher_loop_neurogenesis_capacity_AGG",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "backend": "numpy",
+  "go_count": 4,
+  "n_seeds": 6,
+  "config": {
+    "n_max": 20,
+    "milestones": [
+      5,
+      10,
+      20
+    ],
+    "n0": 14,
+    "grow_k": 4,
+    "freeze_growth_at": 10,
+    "final_grown_size": 94,
+    "epochs": 20,
+    "replay_epochs": 12,
+    "replay_per_fact": 8,
+    "n_draws": 16,
+    "settle_steps": 20,
+    "test_n": 40,
+    "frozen_hidden": true,
+    "bdsp_wmax": 1000000000.0
+  },
+  "N20_means": {
+    "self_replay": 0.7416666666666667,
+    "grown": 0.9666666666666667,
+    "matched_fixed": 0.9166666666666666,
+    "frozen_growth": 0.9583333333333334,
+    "random_units": 0.42500000000000004
+  },
+  "N10_means": {
+    "self_replay": 0.8833333333333333,
+    "grown": 0.9666666666666668,
+    "matched_fixed": 0.9666666666666667,
+    "frozen_growth": 0.9666666666666668,
+    "random_units": 0.7666666666666666
+  },
+  "acq_means": {
+    "self_replay": 0.9404166666666668,
+    "grown": 0.9622916666666667,
+    "matched_fixed": 0.9308333333333333,
+    "frozen_growth": 0.9641666666666667,
+    "random_units": 0.7889583333333334
+  },
+  "grown_minus_baseline_N20_mean": 0.225,
+  "grown_minus_matched_N20_mean": 0.05000000000000001,
+  "grown_minus_frozen_N20_mean": 0.00833333333333334,
+  "grown_minus_random_N20_mean": 0.5416666666666666,
+  "grown_ge_baseline_all_seeds": true,
+  "verdict_summary": "PARTIAL/GO-leaning: growth lifts N=20 retention 0.742->0.967 (6-seed), integration load-bearing (random_units 0.425), but MATCHED_FIXED (0.917) ~= GROWN -> the lever is CAPACITY, not grow-as-you-go TIMING. GO 4/6 strict; the 2 non-GO seeds are baseline-ceiling (base already 0.85/1.00, no headroom); growth never hurts and rescues the starved seeds (s42 0.35->0.85, s47 0.60->1.00).",
+  "per_seed": [
+    {
+      "seed": 42,
+      "status": "GO",
+      "self_replay": {
+        "5": 1.0,
+        "10": 0.7,
+        "20": 0.35
+      },
+      "grown": {
+        "5": 1.0,
+        "10": 0.9,
+        "20": 0.85
+      },
+      "matched_fixed": {
+        "5": 0.8,
+        "10": 0.9,
+        "20": 0.7
+      },
+      "frozen_growth": {
+        "5": 1.0,
+        "10": 0.9,
+        "20": 0.85
+      },
+      "random_units": {
+        "5": 0.8,
+        "10": 0.6,
+        "20": 0.2
+      },
+      "final_active": {
+        "self_replay": 14,
+        "grown": 94,
+        "matched_fixed": 94,
+        "frozen_growth": 54,
+        "random_units": 94
+      },
+      "byte_identical": true,
+      "sim_diff_empty": true,
+      "capacity_vs_timing": "grow-as-you-go timing matters (grown > matched_fixed)",
+      "grown_silent_dormant_ok": true,
+      "grown_born_spikes_ok": true
+    },
+    {
+      "seed": 43,
+      "status": "UNDEFINED",
+      "self_replay": {
+        "5": 1.0,
+        "10": 0.9,
+        "20": 0.85
+      },
+      "grown": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 0.95
+      },
+      "matched_fixed": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "frozen_growth": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "random_units": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 0.65
+      },
+      "final_active": {
+        "self_replay": 14,
+        "grown": 94,
+        "matched_fixed": 94,
+        "frozen_growth": 54,
+        "random_units": 94
+      },
+      "byte_identical": true,
+      "sim_diff_empty": true,
+      "capacity_vs_timing": "just capacity (matched_fixed ~= grown)",
+      "grown_silent_dormant_ok": true,
+      "grown_born_spikes_ok": true
+    },
+    {
+      "seed": 44,
+      "status": "UNDEFINED",
+      "self_replay": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "grown": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "matched_fixed": {
+        "5": 0.8,
+        "10": 0.9,
+        "20": 0.95
+      },
+      "frozen_growth": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "random_units": {
+        "5": 0.8,
+        "10": 0.9,
+        "20": 0.75
+      },
+      "final_active": {
+        "self_replay": 14,
+        "grown": 94,
+        "matched_fixed": 94,
+        "frozen_growth": 54,
+        "random_units": 94
+      },
+      "byte_identical": true,
+      "sim_diff_empty": true,
+      "capacity_vs_timing": "just capacity (matched_fixed ~= grown)",
+      "grown_silent_dormant_ok": true,
+      "grown_born_spikes_ok": true
+    },
+    {
+      "seed": 45,
+      "status": "GO",
+      "self_replay": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 0.85
+      },
+      "grown": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "matched_fixed": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "frozen_growth": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 0.95
+      },
+      "random_units": {
+        "5": 1.0,
+        "10": 0.5,
+        "20": 0.45
+      },
+      "final_active": {
+        "self_replay": 14,
+        "grown": 94,
+        "matched_fixed": 94,
+        "frozen_growth": 54,
+        "random_units": 94
+      },
+      "byte_identical": true,
+      "sim_diff_empty": true,
+      "capacity_vs_timing": "just capacity (matched_fixed ~= grown)",
+      "grown_silent_dormant_ok": true,
+      "grown_born_spikes_ok": true
+    },
+    {
+      "seed": 46,
+      "status": "GO",
+      "self_replay": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 0.8
+      },
+      "grown": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "matched_fixed": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 0.95
+      },
+      "frozen_growth": {
+        "5": 1.0,
+        "10": 1.0,
+        "20": 1.0
+      },
+      "random_units": {
+        "5": 1.0,
+        "10": 0.8,
+        "20": 0.3
+      },
+      "final_active": {
+        "self_replay": 14,
+        "grown": 94,
+        "matched_fixed": 94,
+        "frozen_growth": 54,
+        "random_units": 94
+      },
+      "byte_identical": true,
+      "sim_diff_empty": true,
+      "capacity_vs_timing": "just capacity (matched_fixed ~= grown)",
+      "grown_silent_dormant_ok": true,
+      "grown_born_spikes_ok": true
+    },
+    {
+      "seed": 47,
+      "status": "GO",
+      "self_replay": {
+        "5": 0.8,
+        "10": 0.7,
+        "20": 0.6
+      },
+      "grown": {
+        "5": 0.8,
+        "10": 0.9,
+        "20": 1.0
+      },
+      "matched_fixed": {
+        "5": 0.8,
+        "10": 1.0,
+        "20": 0.9
+      },
+      "frozen_growth": {
+        "5": 0.8,
+        "10": 0.9,
+        "20": 0.95
+      },
+      "random_units": {
+        "5": 0.8,
+        "10": 0.8,
+        "20": 0.2
+      },
+      "final_active": {
+        "self_replay": 14,
+        "grown": 94,
+        "matched_fixed": 94,
+        "frozen_growth": 54,
+        "random_units": 94
+      },
+      "byte_identical": true,
+      "sim_diff_empty": true,
+      "capacity_vs_timing": "just capacity (matched_fixed ~= grown)",
+      "grown_silent_dormant_ok": true,
+      "grown_born_spikes_ok": true
+    }
+  ],
+  "N20_means_3dp": {
+    "self_replay": 0.742,
+    "grown": 0.967,
+    "matched_fixed": 0.917,
+    "frozen_growth": 0.958,
+    "random_units": 0.425
+  },
+  "N10_means_3dp": {
+    "self_replay": 0.883,
+    "grown": 0.967,
+    "matched_fixed": 0.967,
+    "frozen_growth": 0.967,
+    "random_units": 0.767
+  },
+  "acq_means_3dp": {
+    "self_replay": 0.94,
+    "grown": 0.962,
+    "matched_fixed": 0.931,
+    "frozen_growth": 0.964,
+    "random_units": 0.789
+  },
+  "deltas_3dp": {
+    "grown_minus_baseline": 0.225,
+    "grown_minus_matched": 0.05,
+    "grown_minus_frozen": 0.008,
+    "grown_minus_random": 0.542
+  }
+}
