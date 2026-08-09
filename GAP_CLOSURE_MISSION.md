@@ -15,6 +15,28 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-09 (READ FIRST — live resume point)
 
+> **⭐ LATEST (2026-08-09, this cycle) — EXTERNAL-RESEARCH ROUND done (DR discipline APPLIED) + DR gate hardened
+> + read-out burn-down NEGATIVE.** A proper external round — Bazhenov 2022 (SNN sleep, PLOS e1010628) · CH-HNN
+> (two-store CLS, Nat Commun 2025 s41467-025-56405-9) · Compressed Latent Replays (2024) — sources READ +
+> recorded lane-tagged — reframes the breadth crux: **MECHANISM GAP, not a wall** (SNN latent replay reaches
+> ~92% class-incremental ⇒ 0.55–0.70 is far below an achievable ceiling), and **THREE of our negatives were the
+> WRONG VARIANT of a mechanism that provably works**: (i) our "sleep-replay" was SUPERVISED stored-pattern replay
+> — the working variant is NOISE-DRIVEN spontaneous reactivation + UNSUPERVISED STDP (untested here); (ii) our
+> "weight-protection" was metaplasticity ALONE (+0.017, this cycle) — CH-HNN: works only COMBINED with
+> episode-gated neuron masking; (iii) our "pattern-separation" (running) is fixed-orthogonal — the fuller
+> mechanism is a LEARNED episode gate + a fast/slow TWO-STORE split. Plan banked: `a513f118a`.
+> **NEXT LEVER (cheapest-first): (1) noise-driven unsupervised-STDP sleep phase; (2) two-store
+> fast(separated)+slow(consolidated).** Both need the teacher-loop runner family (currently on the `wpbhuowmw`
+> workflow branch) consolidated to main first.
+> **Pattern-sep workflow `wpbhuowmw`: weight-protection arm = REFUTED (+0.017); PS-SNN (fixed-orthogonal) arm
+> STILL RUNNING** — its result decides (1)-vs-(2): closes gap ⇒ real breadth run; doesn't ⇒ the CLS combination.
+> **Read-out burn-down `wqawa2flt` = NEGATIVE (`1cfbb3b0f`):** the neural WTA winner is load-bearing but
+> UNDERPERFORMS host argmax (0.333 < 0.447) — the WINNER was never the bottleneck; the rate→spike-count evidence
+> margin (~8%) is. Next read-out lever = a CURRENT-SUBTRACTIVE inhibitory read, AFTER external research on SNN
+> rate-decoding (not yet done — do it before that lever).
+> **PROCESS: DR gate over-clearing hole CLOSED (`09ddacd14`)** — a source tagged with its lane clears ONLY that
+> lane (a forgetting-lane source no longer silently clears the read-out lane); selftest proves it (cases D/E).
+
 > **⭐⭐⭐⭐⭐ BREADTH CRUX CRACKED (2026-08-09) — catastrophic forgetting is MITIGATABLE by the brain's OWN replay.**
 > The scaling measurement (`fcdc2fd2`, adversarially verified) proved forgetting — NOT compute — is the gate on
 > breadth: sequential teaching retains ~1/N facts (throughput is ~1 day/1000 facts; AWS is the WRONG lever —
