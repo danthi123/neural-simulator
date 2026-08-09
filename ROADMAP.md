@@ -398,6 +398,17 @@ and change later behavior. A collection of connected demos is not enough.
   forgetting. A temporary teacher may act as a caregiver, but the teacher is a
   recorded scaffold that must be reduced as ordinary interaction becomes
   possible.
+  - **Progress (2026-08-09, 6-seed, adversarially verified):** teaching the
+    brain N referent facts one after another (the "teacher loop") stopped
+    catastrophically forgetting at N=20. The apparent collapse was two things:
+    (1) a hidden clamp on synaptic weights was silencing the memory reservoir
+    (fixing it recovered most of the loss), and (2) the reservoir was simply too
+    small for 20 facts — giving it more neurons closed the rest (retention rose
+    from chance to 0.97). Several fancier mechanisms — sleep-noise learning,
+    weight-protection, pattern-separation, higher-fidelity memory traces — were
+    each tested and did NOT beat the brain's own replay. A 5×-scale test (100
+    facts) is running to see whether "size the memory to the task" keeps working
+    or whether a two-store hippocampus→cortex design is needed next.
 - Grow structure as needed through activity-dependent connections, neuron or
   region growth, pruning, homeostasis, and replay-based consolidation.
 - Turn the affect core into graded internal state that changes attention,
