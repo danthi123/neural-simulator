@@ -97,7 +97,27 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > content wrong; affect→"warmly,gladly" vanishes; honesty→confabulates). HONEST go=PARTIAL: the matched-SURFACE
 > sham for the world-model is single-seed + seed-44 intact prose drifts (0.5) — generator-fluency-WALL scaffold
 > limits, NOT a faculty/moat failure. Burn-down list: transformer forward, host text-interface conditioning, host
-> re-parse/tone render. **PHASE 3 NOW RUNNING (2 parallel workflows, owner said "best judgement, parallelize"):**
+> re-parse/tone render.
+> **⭐ PHASE 4 DONE (owner "best judgement, parallelize"):** (1) **the learned-moat leak CLOSES 6/6 — banked
+> `d37d507de`** (a learned Bogacz-Brown familiarity/novelty gate; gate-ON untaught-cue false-accepts 0 vs conf-only
+> 2, all 6 seeds; taught cues answer). This ANSWERS the owner's mechanism-vs-training question with DATA: the
+> learned GATE (mechanism) is the decisive fix; contrastive teaching helps but the novelty gate is what closes it.
+> Residuals: gate host-computed (biologize), JOINT-not-sequential teaching (continual learning next). (2) **learned
+> two-pathway spiking read-out = PARTIAL** (0.447 = 11x chance, ~61% of the 0.733 ceiling, UP from 0.04 toward ridge
+> 0.80; resolving capacity proven; not GO — host-argmax winner) — HELD OFF-MAIN on branch `wf_122d7930-bc4-2`
+> pending aggregate-provenance cleanup; runner + per-seed artifacts on the branch.
+> **CONVERSATION TURING-TEST DONE (banked-pending):** a real verified 14-turn transcript on the best-state brain
+> (N=25831). Toy world (6 facts): 4 turns prose, 10 honest abstains, 3 CONFABULATIONS — the generator mouth invents
+> ungrounded causal clauses ("because it was looking for water") the SVO moat is BLIND to (discourse-level confab =
+> the FM2 declared leak, now shown with real examples). Honest wins: no bluffing out-of-domain (moat holds), novel
+> query -> curiosity+forward-model-tagged guess. → add "per-proposition (sub-clausal) moat" to the honesty
+> burn-down.
+> **B COMPLETION 6-SEED (numpy pool) does NOT reproduce the single-seed cupy control** — zero_recurrent winner
+> stays 0.5-0.75 (not the claimed ~0.25 drop); B's completion advance is backend-sensitive/seed-fragile, NOT
+> 6-seed-confirmed → needs a cupy 6-seed. **SCALING measurement RUNNING (`wfyvjbgje`)** — grounds the "1 fact ->
+> thousands" time estimate (throughput + catastrophic-forgetting curve). 
+>
+> **PHASE 3 DONE (was: 2 parallel workflows, owner said "best judgement, parallelize"):**
 > (A) advance+burn-down `wo9lqu3uj` DONE + banked (`4a94eb48`, adversarially verified — the honest hard-biology
 > round): **B episodic ADVANCED** — recurrent CA3 completion now LOAD-BEARING for retrieval (zero_recurrent
 > silences the cortical readout, cupy-reproduced), PARTIAL (residuals: host-wired attractor STORAGE should be
