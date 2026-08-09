@@ -1,0 +1,438 @@
+{
+  "probe": "teacher_loop_spiking_engram_consolidation",
+  "seeds": [
+    43
+  ],
+  "backend": "numpy",
+  "single_seed_smoke": true,
+  "elapsed_seconds": 940.3,
+  "config": {
+    "n_max": 10,
+    "epochs": 40,
+    "replay_epochs": 24,
+    "replay_per_fact": 16,
+    "replay_noise": 0.1,
+    "n_draws": 32,
+    "spk_M": 400,
+    "spk_sparsity": 0.08,
+    "spk_cue_keep": 0.5,
+    "spk_cue_spurious": 0.5,
+    "spk_steps": 12
+  },
+  "seed_results": [
+    {
+      "seed": 43,
+      "K_classes": 10,
+      "chance": 0.1,
+      "n_max": 10,
+      "milestones": [
+        1,
+        5,
+        10
+      ],
+      "arms": {
+        "host_noreplay": {
+          "arm": "host_noreplay",
+          "acquire_acc_immediate": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "mean_acquire_acc_immediate": 1.0,
+          "retention_curve": {
+            "1": {
+              "frac_recalled": 1.0,
+              "n_recalled": 1,
+              "N": 1,
+              "mean_retained_acc": 1.0,
+              "oldest_fact_acc": 1.0,
+              "most_recent_fact_acc": 1.0,
+              "per_fact_acc": [
+                1.0
+              ]
+            },
+            "5": {
+              "frac_recalled": 0.2,
+              "n_recalled": 1,
+              "N": 5,
+              "mean_retained_acc": 0.2,
+              "oldest_fact_acc": 0.0,
+              "most_recent_fact_acc": 1.0,
+              "per_fact_acc": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "10": {
+              "frac_recalled": 0.1,
+              "n_recalled": 1,
+              "N": 10,
+              "mean_retained_acc": 0.1,
+              "oldest_fact_acc": 0.0,
+              "most_recent_fact_acc": 1.0,
+              "per_fact_acc": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          "store_kind": "host_mean_vector",
+          "wall_seconds": 81.9
+        },
+        "host_replay": {
+          "arm": "host_replay",
+          "acquire_acc_immediate": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "mean_acquire_acc_immediate": 1.0,
+          "retention_curve": {
+            "1": {
+              "frac_recalled": 1.0,
+              "n_recalled": 1,
+              "N": 1,
+              "mean_retained_acc": 1.0,
+              "oldest_fact_acc": 1.0,
+              "most_recent_fact_acc": 1.0,
+              "per_fact_acc": [
+                1.0
+              ]
+            },
+            "5": {
+              "frac_recalled": 0.6,
+              "n_recalled": 3,
+              "N": 5,
+              "mean_retained_acc": 0.475,
+              "oldest_fact_acc": 0.0,
+              "most_recent_fact_acc": 0.5,
+              "per_fact_acc": [
+                0.0,
+                0.7,
+                0.275,
+                0.9,
+                0.5
+              ]
+            },
+            "10": {
+              "frac_recalled": 0.2,
+              "n_recalled": 2,
+              "N": 10,
+              "mean_retained_acc": 0.2,
+              "oldest_fact_acc": 1.0,
+              "most_recent_fact_acc": 0.0,
+              "per_fact_acc": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.975,
+                0.0,
+                0.025,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "store_kind": "host_mean_vector",
+          "wall_seconds": 230.9
+        },
+        "spk_replay": {
+          "arm": "spk_replay",
+          "acquire_acc_immediate": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.85,
+            1.0,
+            1.0
+          ],
+          "mean_acquire_acc_immediate": 0.985,
+          "retention_curve": {
+            "1": {
+              "frac_recalled": 1.0,
+              "n_recalled": 1,
+              "N": 1,
+              "mean_retained_acc": 1.0,
+              "oldest_fact_acc": 1.0,
+              "most_recent_fact_acc": 1.0,
+              "per_fact_acc": [
+                1.0
+              ]
+            },
+            "5": {
+              "frac_recalled": 0.6,
+              "n_recalled": 3,
+              "N": 5,
+              "mean_retained_acc": 0.64,
+              "oldest_fact_acc": 0.3,
+              "most_recent_fact_acc": 0.8,
+              "per_fact_acc": [
+                0.3,
+                0.775,
+                0.35,
+                0.975,
+                0.8
+              ]
+            },
+            "10": {
+              "frac_recalled": 0.2,
+              "n_recalled": 2,
+              "N": 10,
+              "mean_retained_acc": 0.195,
+              "oldest_fact_acc": 1.0,
+              "most_recent_fact_acc": 0.0,
+              "per_fact_acc": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.925,
+                0.0,
+                0.025,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "mean_reconstruction_fidelity": 1.0,
+          "store_kind": "spiking_attractor",
+          "spk_a_active": 32,
+          "wall_seconds": 225.0
+        },
+        "spk_scramble": {
+          "arm": "spk_scramble",
+          "acquire_acc_immediate": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "mean_acquire_acc_immediate": 1.0,
+          "retention_curve": {
+            "1": {
+              "frac_recalled": 1.0,
+              "n_recalled": 1,
+              "N": 1,
+              "mean_retained_acc": 1.0,
+              "oldest_fact_acc": 1.0,
+              "most_recent_fact_acc": 1.0,
+              "per_fact_acc": [
+                1.0
+              ]
+            },
+            "5": {
+              "frac_recalled": 0.2,
+              "n_recalled": 1,
+              "N": 5,
+              "mean_retained_acc": 0.27,
+              "oldest_fact_acc": 0.05,
+              "most_recent_fact_acc": 0.4,
+              "per_fact_acc": [
+                0.05,
+                0.9,
+                0.0,
+                0.0,
+                0.4
+              ]
+            },
+            "10": {
+              "frac_recalled": 0.2,
+              "n_recalled": 2,
+              "N": 10,
+              "mean_retained_acc": 0.19,
+              "oldest_fact_acc": 0.025,
+              "most_recent_fact_acc": 0.0,
+              "per_fact_acc": [
+                0.025,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.875,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "mean_reconstruction_fidelity": 1.0,
+          "store_kind": "spiking_attractor",
+          "spk_a_active": 32,
+          "wall_seconds": 224.6
+        },
+        "spk_lesion": {
+          "arm": "spk_lesion",
+          "acquire_acc_immediate": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "mean_acquire_acc_immediate": 1.0,
+          "retention_curve": {
+            "1": {
+              "frac_recalled": 1.0,
+              "n_recalled": 1,
+              "N": 1,
+              "mean_retained_acc": 1.0,
+              "oldest_fact_acc": 1.0,
+              "most_recent_fact_acc": 1.0,
+              "per_fact_acc": [
+                1.0
+              ]
+            },
+            "5": {
+              "frac_recalled": 0.4,
+              "n_recalled": 2,
+              "N": 5,
+              "mean_retained_acc": 0.44499999999999995,
+              "oldest_fact_acc": 0.25,
+              "most_recent_fact_acc": 0.95,
+              "per_fact_acc": [
+                0.25,
+                0.0,
+                0.025,
+                1.0,
+                0.95
+              ]
+            },
+            "10": {
+              "frac_recalled": 0.1,
+              "n_recalled": 1,
+              "N": 10,
+              "mean_retained_acc": 0.13499999999999998,
+              "oldest_fact_acc": 0.7,
+              "most_recent_fact_acc": 0.0,
+              "per_fact_acc": [
+                0.7,
+                0.0,
+                0.2,
+                0.15,
+                0.275,
+                0.0,
+                0.025,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "mean_reconstruction_fidelity": 0.9742197414541653,
+          "store_kind": "spiking_attractor",
+          "spk_a_active": 32,
+          "wall_seconds": 177.9
+        }
+      }
+    }
+  ],
+  "verdict": {
+    "host_noreplay_frac": 0.1,
+    "host_replay_frac": 0.2,
+    "spk_replay_frac": 0.2,
+    "spk_scramble_frac": 0.2,
+    "spk_lesion_frac": 0.1,
+    "spk_replay_immediate_acq": 0.985,
+    "fidelity_replay": 1.0,
+    "fidelity_lesion": 0.9742197414541653,
+    "rise_spk_minus_host": 0.0,
+    "completion_margin_replay_minus_lesion": 0.1,
+    "self_gen_margin_replay_minus_scramble": 0.0,
+    "label": "spiking pattern-completing engram store for sleep-replay consolidation",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: (a) retention vs the HOST mean-vector store (raw before/after; the headline) (before=0.2 after=0.2 moved=False)"
+    ],
+    "preconditions": [
+      {
+        "kind": "reaches",
+        "name": "(a) retention vs the HOST mean-vector store (raw before/after; the headline)",
+        "ok": false,
+        "detail": "before=0.2 after=0.2 moved=False",
+        "note": "rise +0.000 vs the >= 0.1 real-effect bar"
+      },
+      {
+        "kind": "floor",
+        "name": "(a') spk_replay beats the no-replay wall (instrument produces retention)",
+        "ok": true,
+        "detail": "0.2 vs floor 0.1",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "(b) attractor completion load-bearing (spk_replay vs spk_lesion)",
+        "ok": true,
+        "detail": "treatment=0.2 control=0.1 |sep|=0.1 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(b') completion raises reconstruction fidelity (replay > lesion => engram is neural)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "fidelity replay 1.000 vs lesion 0.974"
+      },
+      {
+        "kind": "require",
+        "name": "(c) scramble forgets like no-replay (self-generated content)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "scramble 0.20 vs host_noreplay 0.10"
+      },
+      {
+        "kind": "floor",
+        "name": "(d) immediate acquisition stays perfect (spk_replay)",
+        "ok": true,
+        "detail": "0.985 vs floor 0.9",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.1
+  }
+}
