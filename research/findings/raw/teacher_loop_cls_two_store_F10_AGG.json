@@ -1,0 +1,309 @@
+{
+  "probe": "teacher_loop_cls_two_store_AGG",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "backend": "numpy",
+  "capacity_F": 10,
+  "slow_hidden": 100,
+  "n_max": 20,
+  "go_count": 3,
+  "n_seeds": 3,
+  "two_store_frac_mean": 0.7166666666666667,
+  "flat_frac_mean": NaN,
+  "no_consol_frac_mean": 0.45,
+  "two_store_minus_no_consol_mean": 0.26666666666666666,
+  "two_store_minus_flat_mean": NaN,
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": {
+        "largest_N": 20,
+        "capacity_F": 10,
+        "two_store_frac_recalled": 0.65,
+        "flat_frac_recalled": NaN,
+        "no_consol_frac_recalled": 0.35,
+        "two_store_immediate_acq": 0.93125,
+        "two_store_minus_no_consol": 0.30000000000000004,
+        "two_store_minus_flat": null,
+        "retention_vs_N": {
+          "10": {
+            "two_store": 0.9,
+            "flat": NaN,
+            "no_consol": 0.5,
+            "two_store_fast_size": 10,
+            "flat_fast_size": null
+          },
+          "20": {
+            "two_store": 0.65,
+            "flat": NaN,
+            "no_consol": 0.35,
+            "two_store_fast_size": 10,
+            "flat_fast_size": null
+          }
+        },
+        "evicted_frac_recalled_at_bigN": 0.4,
+        "two_store_fast_bounded": true,
+        "two_store_fast_no_grow": true,
+        "flat_fast_grows": null,
+        "max_replay_set_two_store": 11,
+        "max_replay_set_flat": null,
+        "slow_reservoir_constant": true,
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CLS two-store (bounded fast + slow cortex)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "control",
+            "name": "(load-bearing) consolidation carries it (two_store vs no_consol)",
+            "ok": true,
+            "detail": "treatment=0.65 control=0.35 |sep|=0.3 > 0.2",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(bounded) two_store fast store <= F at every milestone",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "sizes {'10': 10, '20': 10} (F=10)"
+          },
+          {
+            "kind": "require",
+            "name": "(bounded') two_store fast store does NOT grow with N",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "sizes {'10': 10, '20': 10}"
+          },
+          {
+            "kind": "require",
+            "name": "(decoupled) slow reservoir is CONSTANT across the curriculum (not a growing reservoir)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "(acq) two_store immediate acquisition stays high",
+            "ok": true,
+            "detail": "0.93125 vs floor 0.85",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical across two builds at one seed",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.05
+      },
+      "out": "research/findings/raw/teacher_loop_cls_two_store_F10_s42.json"
+    },
+    {
+      "seed": 43,
+      "verdict": {
+        "largest_N": 20,
+        "capacity_F": 10,
+        "two_store_frac_recalled": 0.75,
+        "flat_frac_recalled": NaN,
+        "no_consol_frac_recalled": 0.5,
+        "two_store_immediate_acq": 0.9787500000000001,
+        "two_store_minus_no_consol": 0.25,
+        "two_store_minus_flat": null,
+        "retention_vs_N": {
+          "10": {
+            "two_store": 1.0,
+            "flat": NaN,
+            "no_consol": 0.5,
+            "two_store_fast_size": 10,
+            "flat_fast_size": null
+          },
+          "20": {
+            "two_store": 0.75,
+            "flat": NaN,
+            "no_consol": 0.5,
+            "two_store_fast_size": 10,
+            "flat_fast_size": null
+          }
+        },
+        "evicted_frac_recalled_at_bigN": 0.5,
+        "two_store_fast_bounded": true,
+        "two_store_fast_no_grow": true,
+        "flat_fast_grows": null,
+        "max_replay_set_two_store": 11,
+        "max_replay_set_flat": null,
+        "slow_reservoir_constant": true,
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CLS two-store (bounded fast + slow cortex)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "control",
+            "name": "(load-bearing) consolidation carries it (two_store vs no_consol)",
+            "ok": true,
+            "detail": "treatment=0.75 control=0.5 |sep|=0.25 > 0.2",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(bounded) two_store fast store <= F at every milestone",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "sizes {'10': 10, '20': 10} (F=10)"
+          },
+          {
+            "kind": "require",
+            "name": "(bounded') two_store fast store does NOT grow with N",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "sizes {'10': 10, '20': 10}"
+          },
+          {
+            "kind": "require",
+            "name": "(decoupled) slow reservoir is CONSTANT across the curriculum (not a growing reservoir)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "(acq) two_store immediate acquisition stays high",
+            "ok": true,
+            "detail": "0.97875 vs floor 0.85",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical across two builds at one seed",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.05
+      },
+      "out": "research/findings/raw/teacher_loop_cls_two_store_F10_s43.json"
+    },
+    {
+      "seed": 44,
+      "verdict": {
+        "largest_N": 20,
+        "capacity_F": 10,
+        "two_store_frac_recalled": 0.75,
+        "flat_frac_recalled": NaN,
+        "no_consol_frac_recalled": 0.5,
+        "two_store_immediate_acq": 0.9775,
+        "two_store_minus_no_consol": 0.25,
+        "two_store_minus_flat": null,
+        "retention_vs_N": {
+          "10": {
+            "two_store": 1.0,
+            "flat": NaN,
+            "no_consol": 0.6,
+            "two_store_fast_size": 10,
+            "flat_fast_size": null
+          },
+          "20": {
+            "two_store": 0.75,
+            "flat": NaN,
+            "no_consol": 0.5,
+            "two_store_fast_size": 10,
+            "flat_fast_size": null
+          }
+        },
+        "evicted_frac_recalled_at_bigN": 0.5,
+        "two_store_fast_bounded": true,
+        "two_store_fast_no_grow": true,
+        "flat_fast_grows": null,
+        "max_replay_set_two_store": 11,
+        "max_replay_set_flat": null,
+        "slow_reservoir_constant": true,
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CLS two-store (bounded fast + slow cortex)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "control",
+            "name": "(load-bearing) consolidation carries it (two_store vs no_consol)",
+            "ok": true,
+            "detail": "treatment=0.75 control=0.5 |sep|=0.25 > 0.2",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(bounded) two_store fast store <= F at every milestone",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "sizes {'10': 10, '20': 10} (F=10)"
+          },
+          {
+            "kind": "require",
+            "name": "(bounded') two_store fast store does NOT grow with N",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "sizes {'10': 10, '20': 10}"
+          },
+          {
+            "kind": "require",
+            "name": "(decoupled) slow reservoir is CONSTANT across the curriculum (not a growing reservoir)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "(acq) two_store immediate acquisition stays high",
+            "ok": true,
+            "detail": "0.9775 vs floor 0.85",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical across two builds at one seed",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.05
+      },
+      "out": "research/findings/raw/teacher_loop_cls_two_store_F10_s44.json"
+    }
+  ]
+}

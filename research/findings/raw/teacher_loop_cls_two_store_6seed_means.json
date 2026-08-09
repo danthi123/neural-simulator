@@ -1,0 +1,153 @@
+{
+  "probe": "teacher_loop_cls_two_store_SUMMARY",
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "capacity_F": 5,
+  "slow_hidden": 100,
+  "n_max": 20,
+  "backend": "numpy",
+  "go_count": 0,
+  "mean_two_store_N10": 0.8,
+  "mean_flat_N10": 0.933,
+  "mean_no_consol_N10": 0.6,
+  "mean_two_store_N20": 0.517,
+  "mean_flat_N20": 0.95,
+  "mean_no_consol_N20": 0.45,
+  "mean_two_store_immediate_acq": 0.952,
+  "mean_evicted_frac_recalled_N20": 0.378,
+  "two_store_minus_no_consol_N10": 0.2,
+  "two_store_minus_no_consol_N20": 0.067,
+  "two_store_minus_flat_N20": -0.433,
+  "F10_mean_two_store_N20": 0.717,
+  "F10_seeds": [
+    42,
+    43,
+    44
+  ],
+  "F10_mean_no_consol_N20": 0.45,
+  "all_status": [
+    "UNDEFINED",
+    "UNDEFINED",
+    "UNDEFINED",
+    "UNDEFINED",
+    "UNDEFINED",
+    "UNDEFINED"
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "status": "UNDEFINED",
+      "n10": [
+        0.7,
+        0.9,
+        0.5
+      ],
+      "n20": [
+        0.4,
+        0.95,
+        0.35
+      ],
+      "fast_at_n20": 5,
+      "byte": true,
+      "sim": true,
+      "slow_const": true
+    },
+    {
+      "seed": 43,
+      "status": "UNDEFINED",
+      "n10": [
+        0.8,
+        1.0,
+        0.5
+      ],
+      "n20": [
+        0.65,
+        1.0,
+        0.5
+      ],
+      "fast_at_n20": 5,
+      "byte": true,
+      "sim": true,
+      "slow_const": true
+    },
+    {
+      "seed": 44,
+      "status": "UNDEFINED",
+      "n10": [
+        0.9,
+        1.0,
+        0.6
+      ],
+      "n20": [
+        0.45,
+        0.95,
+        0.5
+      ],
+      "fast_at_n20": 5,
+      "byte": true,
+      "sim": true,
+      "slow_const": true
+    },
+    {
+      "seed": 45,
+      "status": "UNDEFINED",
+      "n10": [
+        0.9,
+        1.0,
+        0.9
+      ],
+      "n20": [
+        0.6,
+        1.0,
+        0.55
+      ],
+      "fast_at_n20": 5,
+      "byte": true,
+      "sim": true,
+      "slow_const": true
+    },
+    {
+      "seed": 46,
+      "status": "UNDEFINED",
+      "n10": [
+        1.0,
+        1.0,
+        0.7
+      ],
+      "n20": [
+        0.5,
+        0.95,
+        0.5
+      ],
+      "fast_at_n20": 5,
+      "byte": true,
+      "sim": true,
+      "slow_const": true
+    },
+    {
+      "seed": 47,
+      "status": "UNDEFINED",
+      "n10": [
+        0.5,
+        0.7,
+        0.4
+      ],
+      "n20": [
+        0.5,
+        0.85,
+        0.3
+      ],
+      "fast_at_n20": 5,
+      "byte": true,
+      "sim": true,
+      "slow_const": true
+    }
+  ]
+}
