@@ -19,16 +19,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > The scaling measurement (`fcdc2fd2`, adversarially verified) proved forgetting — NOT compute — is the gate on
 > breadth: sequential teaching retains ~1/N facts (throughput is ~1 day/1000 facts; AWS is the WRONG lever —
 > latency-bound tiny net + sequential curriculum → parallelism helps experiments, not teaching). Then **SLEEP-REPLAY
-> CONSOLIDATION closes it (`bfb7ec92`, single-seed, adversarially CONFIRMED):** after teaching a fact the brain
-> SELF-REPLAYS its own stored engram offline (teacher/world ABSENT, verified) and re-consolidates via e-prop →
-> sequential retention **0.10 → 0.90 (9/10)**, MEETING/EXCEEDING the interleaved 8/10 ceiling WITHOUT the teacher
-> re-presenting. Teeth: NOREPLAY→0.10, SCRAMBLE→0.10, REPLAY→0.90. **6-seed sweep RUNNING on the pool.** Honest
-> residuals: the hippocampal engram STORE is host-side (Python mean-vectors → biologize to a spiking attractor
-> next); single-seed. Sparse-gated readout allocation = REFUTED (honest-negative: a real separator, doesn't reduce
-> interference). **⇒ breadth is now ~a day of teaching away once 6-seed-confirmed + the store biologized.** NEXT:
-> (1) collect the sleep-replay 6-seed; (2) biologize the engram store (spiking attractor, not a host list); (3)
-> then scale the teacher-loop toward breadth. Also queued: the discourse-confab moat (per-proposition), path-T
-> generator biologization, the held-off-main read-out + D-Leg-2 findings.
+> CONSOLIDATION mitigates it — but PARTIALLY (6-seed corrects the single-seed):** after teaching a fact the brain
+> SELF-REPLAYS its own stored engram offline (teacher/world ABSENT, verified) and re-consolidates via e-prop. The
+> single-seed smoke showed 0.90 but the **6-SEED is mean 0.55 (range 0.20–0.90), no-replay 0.13, 5/6 GO** — the
+> MECHANISM is real + robust (replay > no-replay every seed; SCRAMBLE lesion → ~0 every seed = self-generated +
+> load-bearing) and ~4× retention, but the MAGNITUDE does NOT reliably reach the 8/10 ceiling (one seed only +0.1)
+> → it is UNDER-CONSOLIDATING, not a clean crux-crack. Likely cause: the replayed engram is a LOSSY host
+> mean-vector + a small replay budget. **⇒ the next step (biologize the engram store to a spiking pattern-completing
+> attractor) is now LOAD-BEARING on the result, not just purity** — a higher-fidelity engram should raise replay
+> retention toward the ceiling. Sparse-gated readout allocation = REFUTED (honest-negative: a real separator,
+> doesn't reduce interference). NEXT: (1) ✅ 6-seed collected (mean 0.55); (2) **biologize the engram store +
+> strengthen consolidation** (the load-bearing breadth step, RUNNING); (3) then re-measure retention → scale.
+> Parallel: the discourse-confab moat (per-proposition, from the Turing test), path-T biologization, held read-out
+> + D-Leg-2.
 
 > **⭐⭐⭐⭐ FLUENCY WAVES (2026-08-08, ULTRACODE) — PAST the Stage-A culmination.** Owner
 > authorized building the full "human-like fluency" faculty set concurrently (best-judgement autonomous), with
