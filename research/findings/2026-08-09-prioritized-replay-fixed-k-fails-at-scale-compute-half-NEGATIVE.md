@@ -26,14 +26,18 @@ not both. **NEGATIVE on "fixed k≪N matches full at equal retention independent
 
 <!--derived-->
 
-| | N=20 (k=6, 3-seed) | N=50 (k=6, s42) |
+| | N=20 (k=6, 3-seed) | N=50 (k=6, 3-seed) |
 |---|---|---|
-| prioritized_k | 0.85 (0.80/1.00/0.75) | **0.40** |
-| full O(N) | 0.967 | 0.74 |
-| random_k | 0.65 | — (pri lost to random 0.56 @N=25) |
+| prioritized_k | 0.85 (0.80/1.00/0.75) | **0.627** (0.40/0.80/0.68) |
+| full O(N) | 0.967 | 0.893 |
+| random_k | 0.65 | 0.547 |
 
 Raws: `research/findings/raw/teacher_loop_prioritized_replay_N20_s42.json`,
-`research/findings/raw/teacher_loop_prioritized_replay_N20_s43.json`. Runner + N=50 raw: branch commit ed6101362.
+`research/findings/raw/teacher_loop_prioritized_replay_N50_s42.json` (+ s43/s44 both N). Runner: branch commit ed6101362.
+**3-seed N=50 UPDATE (folds in the orphaned run):** prioritized 0.627 vs full 0.893 (gap −0.266) — the core NEGATIVE
+HOLDS (fixed k does not match full at scale). BUT prioritized still BEATS random (0.627 vs 0.547, +0.08) at N=50, so
+the neural priority signal remains load-bearing even at scale — the single-seed "prioritized lost to random @N=25"
+was an OUTLIER, corrected here. The failure is coverage (fixed k too small), not the signal.
 
 ## Read — honest, and it unifies the scalability picture
 
