@@ -1,0 +1,209 @@
+{
+  "probe": "teacher_loop_contrastive_familiarity_moat",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "hidden": 40,
+    "settle_steps": 25,
+    "epochs": 80,
+    "batch": 20,
+    "eprop_lr": 0.5,
+    "w_clip": 4000.0,
+    "n_draws": 48,
+    "d_p": 32,
+    "noise": 0.12,
+    "tau": 0.5,
+    "D_fam": 256,
+    "out": "research/findings/raw/teacher_loop_contrastive_familiarity_moat_s42.json"
+  },
+  "elapsed_seconds": 128.9,
+  "per_seed": [
+    {
+      "seed": 42,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "NOV_GATE": 0.5,
+      "D_fam": 256,
+      "before": null,
+      "after": "grass",
+      "use_answer": "grass",
+      "use_sentence": "dax eats grass",
+      "readout_moved": 60.227020263671875,
+      "lesion_readout_moved": 0.0,
+      "kb_len_before": 0,
+      "kb_len_after": 0,
+      "heldout": {
+        "dax": 1.0,
+        "dog": 1.0,
+        "cat": 0.95
+      },
+      "majority_words": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "distinct_classes": 3,
+      "n_facts_correct": 3,
+      "taught_all_answer": true,
+      "not_constant": true,
+      "single_class_majority": {
+        "dax": "grass",
+        "dog": "grass",
+        "cat": "grass"
+      },
+      "sc_constant_grass": true,
+      "sc_n_correct": 1,
+      "taught_novelty": 0.13711273563013485,
+      "untaught_novelty": 0.9166693950942623,
+      "novelty_margin": 0.7795566594641274,
+      "lesion_taught_novelty": 0.9999999999980597,
+      "lesion_untaught_novelty": 0.9999999999979593,
+      "lesion_margin": -1.0036416142611415e-13,
+      "answers_taught": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "dax_chases": null,
+      "wug_eats": null,
+      "false_accepts_gate_on": 0,
+      "false_accepts_gate_off": 2,
+      "frozen_heldout": 0.0,
+      "mispaired_heldout": 0.0,
+      "main_heldout": 1.0,
+      "mispaired_per": {
+        "dax": 0.0,
+        "dog": 0.0,
+        "cat": 0.05
+      },
+      "mispaired_mean": 0.016666666666666666,
+      "main_mean": 0.9833333333333334,
+      "off_flag_byte_identical": true,
+      "T1_before_after": true,
+      "T2_weights_no_store": true,
+      "CT1_discrimination": true,
+      "CT2_contrast_flip": true,
+      "FG1_margin": true,
+      "FG2_specificity_0_false_accept": true,
+      "FG3_gate_flip_lesion": true,
+      "T4_lesion_learning": true,
+      "T5_lesion_contingency": true,
+      "GO": true,
+      "verdict": {
+        "label": "teacher-loop contrastive+familiarity moat",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "T1 before-abstain after-grass",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "T2 readout grew, no store-write",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "CT1 discrimination (dax>0.6, not-constant)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "CT2 single-class control collapses to grass",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "FG1 novelty margin untaught>>taught",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "FG2 specificity 0 false-accepts (gate ON)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "FG3 gate-flip+lesion load-bearing",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "T4 frozen-plasticity not acquired",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "T5 contingency lever",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "off-flag byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "control",
+            "name": "CT2 contrastive vs single-class (>=2 facts vs 1)",
+            "ok": true,
+            "detail": "treatment=3 control=1 |sep|=2 > 0",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "main mean held-out vs chance",
+            "ok": true,
+            "detail": "0.983333 vs floor 0.166667",
+            "note": ""
+          },
+          {
+            "kind": "control",
+            "name": "T5 pairing (main vs mispaired mean true-target)",
+            "ok": true,
+            "detail": "treatment=0.983333 control=0.0166667 |sep|=0.966667 > 0.15",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "FG3 lesion collapses novelty margin",
+            "ok": true,
+            "detail": "before=0.779557 after=-1.00364e-13 moved=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.16666666666666666
+      }
+    }
+  ],
+  "n_go": 1,
+  "n_seeds": 1,
+  "ALL_GO": true
+}
