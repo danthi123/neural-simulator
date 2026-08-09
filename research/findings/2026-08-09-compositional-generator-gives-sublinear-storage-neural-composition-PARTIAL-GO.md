@@ -31,6 +31,16 @@ validated, verify PLAUSIBLE / not refuted; 3-seed + larger grids completing):**
 - **Retention at PARITY with the flat O(N) store:** N=9 comp 1.00 = flat 1.00; N=16 comp 0.94 = flat 0.94.
   Regeneration fidelity 0.999 (near-exact composed percepts). Acquisition high (0.89–0.91).
 
+## 3-SEED FOLD-IN (confirms the single-seed)
+
+<!--derived-->
+
+The 3-seed storage-confirmation run (`research/findings/raw/comp_storage_3seed_s42.json` + s43/s44) confirms both
+legs: **store sub-linear** — P=8 slots @4×4 (N=16), P=12 @6×6 (N=36), NOT N; and **retention at parity** —
+4×4: comp 0.896 / flat 0.875 / noncomp 0.938; 6×6: comp 0.972 / flat 0.972 / noncomp 0.935. So the honest "not a
+retention win over a fixed generator at small low-rank N" holds at 3 seeds. (Larger grids 8×8/10×10, where fixed
+stores saturate, running on the pool — 8×8 compositional ~0.73–0.86 landing, full comparison pending.)
+
 ## The honest headline negative (and why it's expected)
 
 <!--derived-->
