@@ -45,16 +45,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > cosine=1.000 still doesn't beat the host mean in this UNIMODAL world; `8d2510d3a`); budget/sparse/SHY = refuted.
 > In-run self-replay is the base mechanism (0.85@N=10). The DR gate CAUGHT a near-re-derivation of the fidelity
 > negative before it cost anything.
-> **Read-out burn-down `wqawa2flt` = NEGATIVE (`1cfbb3b0f`):** the neural WTA winner is load-bearing but
-> UNDERPERFORMS host argmax (0.333 < 0.447) — the WINNER was never the bottleneck; the rate→spike-count evidence
-> margin (~8%) is. **⭐ CROSS-THREAD INSIGHT (2026-08-09):** the runner's own conclusion is "the residual is the
-> STRUCTURAL rate→spike-count margin, which neither competition nor integration lifts" — i.e. it may be a
-> RESERVOIR-CODE limit, NOT a read-out-mechanism limit. Tonight's breadth finding showed **capacity (a bigger
-> reservoir) improves code separation** — so the informative test is NOT another read-out mechanism (subtractive-
-> inhibition/NMDA, which the header predicts plateaus) but a **reservoir-SIZE sweep**: does bigger `n_pool` widen
-> the margin + lift the read-out toward the ridge ceiling? **RUNNING (`b1udu8fhj`, n_pool 250/500/1000 × 3-seed).**
-> If yes ⇒ read-out bottleneck = capacity (same lever as breadth); if flat ⇒ a deeper code/task limit → then the
-> subtractive-inhibition + slow-NMDA read (Wang 2002, DR-recorded) is the read-out-side lever.
+> **Read-out burn-down — CLOSED for the night as a mapped PARTIAL (cross-thread win).** Arc: the WINNER was
+> never the bottleneck (`1cfbb3b0f`); a reservoir-SIZE sweep (`e249b13d`) then showed the **evidence CEILING rises
+> with capacity (0.77→0.96), same lever as breadth** — but the FIXED WTA inhibition collapses at large n_pool
+> (0.40→0.17). A neural **population-scaled normalization** (`cb12ed51f`, `0a2741247`) RESCUES that collapse
+> (n_pool=1000: 0.13→0.32, ~2.4×) but does NOT reach the 0.97 ceiling. **The residual = UNDER-DRIVE** (ensembles
+> starved at scale; ens_mean_spk drops with n_pool) — so more inhibition is the wrong sign. **Next read-out lever
+> (precisely scoped): scale the ensemble DRIVE/EXCITABILITY UP with capacity** (per-ensemble gain homeostat to a
+> target rate, or shunting/conductance divisive normalization), THEN the population-scaled WTA reads a resolvable
+> margin. NOT urgent (secondary thread); queued.
+> **⭐ CLS BOUNDED TWO-STORE — RUNNING (`wco0qck60`), the scalability answer to the owner's "year of data" question.**
+> Tests whether a FIXED-size fast store + neural consolidation to a slow store retains N facts WITHOUT the fast
+> store growing with N (decoupling per-step cost from lifetime) — vs the flat O(N)-capacity store that resolved
+> N=20. Grounded McClelland 1995 / van de Ven 2020 (bounded generative replay) / CH-HNN; adversarially verified
+> against the "bounded store secretly grows" cheat. **This is the queue-jump the owner flagged.** Lean N=100 breadth
+> confirmation still running (`bdgp2f09i`, ~4h, CPU — GPU measured 8× SLOWER: tiny net, launch-bound).
 > **PROCESS: DR gate BUILT (`e02bbb26`) + over-clearing hole CLOSED (`09ddacd14`)** — repeated levers at a wall
 > now BLOCK without external research; lane-tagged sources clear ONLY their lane (selftest cases D/E). 4 external
 > rounds this cycle, every source read + lane-recorded.
