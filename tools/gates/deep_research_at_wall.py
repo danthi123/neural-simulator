@@ -32,10 +32,17 @@ HOW TO CLEAR IT: `bash tools/deep_research.sh "<the wall in one line>"` — runs
 prompts + records the external-literature search with a real source. (Or record one directly:
 `bash tools/record_external_search.sh "<query>" "<source: paper/url/author-year>"`.)
 
+OVER-CLEARING HOLE, closed 2026-08-09. Originally a fresh source in ANY lane cleared the gate for EVERY lane
+hammered in the window — so a forgetting-lane source silently satisfied a read-out-lane finding. Now a source
+recorded WITH a `lane` (via `record_external_search.sh "<q>" "<src>" "<lane>"`) clears ONLY that lane; an
+untagged source stays general for back-compat. Proven by selftest cases (D) different-lane-tagged -> still
+blocks, (E) same-lane-tagged -> clears.
+
 WHAT IT CANNOT CATCH (left as judgement, not pretended away): an external source recorded but not READ; a wall
 spread across several LANES so no single lane crosses the threshold (extend the grouping by mechanism-keyword
-as walls teach us to); a genuinely-novel wall with no external literature (record `source: none-found — <why>`
-which is itself a non-empty, honest source string and clears the gate while stating the search was done).
+as walls teach us to); an untagged (legacy/general) source still cross-clears lanes — only a lane-tagged source
+is scoped, so the discipline is to tag the lane; a genuinely-novel wall with no external literature (record
+`source: none-found — <why>` which is a non-empty, honest source string and clears the gate).
 """
 from __future__ import annotations
 
@@ -115,11 +122,19 @@ def _lane_count_in_window(root, lane, center_epoch):
     return n
 
 
-def _fresh_external_source(root, center_epoch, log=None):
-    """True iff `.external_searches.jsonl` has an entry with a NON-EMPTY source within the window."""
+def _fresh_external_source(root, center_epoch, lane=None, log=None):
+    """True iff `.external_searches.jsonl` has an in-window entry with a NON-EMPTY source that is VALID FOR `lane`.
+
+    LANE-SCOPING (closes the over-clearing hole found 2026-08-09): a source recorded WITH a `lane` clears ONLY
+    that lane — so a forgetting-lane source no longer satisfies a read-out-lane finding when both walls are
+    hammered in the same window. A source recorded WITHOUT a lane is treated as GENERAL (legacy/back-compat) and
+    clears any lane, so old records and untagged callers keep working. The disciplined path
+    (`record_external_search.sh "<q>" "<src>" "<lane>"`) tags the lane, which is what actually closes the hole.
+    """
     log = log or os.path.join(root, "research", "queue", ".external_searches.jsonl")
     if not os.path.exists(log):
         return False
+    want = (lane or "").strip().lower()
     try:
         with open(log, encoding="utf-8", errors="replace") as fh:
             for line in fh:
@@ -132,6 +147,10 @@ def _fresh_external_source(root, center_epoch, log=None):
                     continue
                 src = str(rec.get("source") or "").strip()
                 if not src:
+                    continue
+                rec_lane = str(rec.get("lane") or "").strip().lower()
+                # a lane-tagged source clears ONLY its own lane; an untagged source is general (clears any)
+                if rec_lane and want and rec_lane != want:
                     continue
                 ts = rec.get("ts") or rec.get("iso") or ""
                 te = None
@@ -159,7 +178,7 @@ def check(paths, root=_ROOT, log=None):
             lanes[lane] = max(lanes.get(lane, dt), dt)
     for lane, center in lanes.items():
         n = _lane_count_in_window(root, lane, center)
-        if n >= DR_THRESHOLD and not _fresh_external_source(root, center, log=log):
+        if n >= DR_THRESHOLD and not _fresh_external_source(root, center, lane=lane, log=log):
             problems.append(
                 "lane '%s' now has %d findings within %d days (repeated levers at a wall) but NO EXTERNAL-literature "
                 "check with a real source is logged. Deep research (local record + external literature) is required "
@@ -191,12 +210,22 @@ def selftest():
         probs = check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl"))
         if not probs:
             out.append("FAIL: hammered lane with no external source did not block")
-        # (B) PASSING case: add a fresh external source -> MUST clear
+        # (B) PASSING case: add a fresh UNTAGGED (general) external source -> MUST clear
         with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
             fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "PS-SNN Hu 2026 Sci Reports"}) + "\n")
         if check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
-            out.append("FAIL: a fresh real external source did not clear the gate")
+            out.append("FAIL: a fresh real (untagged) external source did not clear the gate")
         # (C) below threshold -> no problem
         if check(staged[:1], root=d, log=os.path.join(qd, ".external_searches.jsonl")):
             out.append("FAIL: a single lever (below threshold) fired the gate")
+        # (D) OVER-CLEARING HOLE CLOSED: a source tagged for a DIFFERENT lane must NOT clear 'the-wall'
+        with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
+            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "unrelated", "source": "Some Paper 2026", "lane": "other-lane"}) + "\n")
+        if not check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
+            out.append("FAIL: a source tagged for a DIFFERENT lane cleared this lane (the over-clearing hole)")
+        # (E) a source tagged for the SAME lane MUST clear
+        with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
+            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "Some Paper 2026", "lane": "the-wall"}) + "\n")
+        if check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
+            out.append("FAIL: a source tagged for the SAME lane did not clear the gate")
     return out

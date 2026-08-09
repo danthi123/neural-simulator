@@ -8,10 +8,13 @@
 # reads the FINDING's own citations, deliberately, so the external touch-point travels WITH the claim rather
 # than living in a side-marker (a marker can go stale against the doc; an inline arxiv/DOI citation cannot).
 #
-# Usage: bash tools/record_external_search.sh "<query>" "<key source / url / one-line finding>"
+# Usage: bash tools/record_external_search.sh "<query>" "<key source / url / one-line finding>" ["<lane>"]
+#   The optional 3rd arg tags the source with a research LANE. A lane-tagged source clears the DR gate for ONLY
+#   that lane (closes the 2026-08-09 over-clearing hole where one lane's source cleared every hammered lane).
+#   Omit it for a general/cross-cutting source (legacy behaviour: clears any lane).
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-Q="${1:-}"; SRC="${2:-}"
+Q="${1:-}"; SRC="${2:-}"; LANE="${3:-}"
 [ -z "$Q" ] && { echo "usage: bash tools/record_external_search.sh \"<query>\" \"<key source/url/author-year>\""; exit 2; }
 # A SOURCE IS REQUIRED (2026-08-09, owner-flagged recurrence). Every prior entry had an EMPTY source — i.e. the
 # "external search" was logged but no external literature was actually read. gates/deep-research-at-wall only
@@ -30,8 +33,8 @@ GITSHA="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
 
 # append a durable JSONL record (mirrors before_you_build.sh's .corpus_checks.jsonl)
 _json_escape() { python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$1" 2>/dev/null || printf '"%s"' "${1//\"/\\\"}"; }
-printf '{"ts": %s, "git": %s, "query": %s, "source": %s}\n' \
-  "$(_json_escape "$TS")" "$(_json_escape "$GITSHA")" "$(_json_escape "$Q")" "$(_json_escape "$SRC")" >> "$LOG"
+printf '{"ts": %s, "git": %s, "query": %s, "source": %s, "lane": %s}\n' \
+  "$(_json_escape "$TS")" "$(_json_escape "$GITSHA")" "$(_json_escape "$Q")" "$(_json_escape "$SRC")" "$(_json_escape "$LANE")" >> "$LOG"
 
 echo "  [recorded] external search logged to research/queue/.external_searches.jsonl + touched research/.last_external_search"
 echo "  NOTE: to satisfy gates/boundary-verdict-external-check, the CITATION must also appear in the finding itself"
