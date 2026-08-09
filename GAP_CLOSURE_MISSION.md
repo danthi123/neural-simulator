@@ -28,10 +28,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > mean-vector + a small replay budget. **⇒ the next step (biologize the engram store to a spiking pattern-completing
 > attractor) is now LOAD-BEARING on the result, not just purity** — a higher-fidelity engram should raise replay
 > retention toward the ceiling. Sparse-gated readout allocation = REFUTED (honest-negative: a real separator,
-> doesn't reduce interference). NEXT: (1) ✅ 6-seed collected (mean 0.55); (2) **biologize the engram store +
-> strengthen consolidation** (the load-bearing breadth step, RUNNING); (3) then re-measure retention → scale.
-> Parallel: the discourse-confab moat (per-proposition, from the Turing test), path-T biologization, held read-out
-> + D-Leg-2.
+> doesn't reduce interference).
+> **⭐ RE-DIAGNOSIS (2026-08-09, after PROPER deep research — DR gate now enforces it):** the breadth arc had FIVE
+> cheap levers (sleep-replay, engram-store, budget, sparse, SHY, interleaving) — ALL REFUTED — before any research.
+> The research (local: our OWN CLS design + Phase-1.4 103% + already-characterised "replay caps ~55%"; external:
+> PS-SNN pattern separation, EWC/SI, van de Ven) reframed it. Two corrections: (a) **the 0.55 is a 6-SEED MEAN of
+> a HIGH-VARIANCE quantity (0.20–0.90), NOT a per-seed cap** — at seed 42 sleep-replay already hits 0.90; (b) SHY
+> was inert via the **w_clip=4000 BOUND TRAP** (magnitude renorm no-op). The residual is **DIRECTION/PATTERN-TYPE
+> interference in the saturated readout** (some seeds collide) — which magnitude/schedule/replay tricks CANNOT
+> touch. **The properly-researched lever = fixed-orthogonal-target PATTERN SEPARATION (PS-SNN) + weight-protection
+> (EWC/Phase-1.4), RUNNING (`wpbhuowmw`)** — aimed exactly at the direction-type interference. NEXT: (1) read
+> `wpbhuowmw` (does pattern-separation close the gap?); (2) if yes, real breadth run; if no, the CLS combination
+> (separation + protection + replay). Parallel: discourse-confab moat DONE (`baa635dd9`); read-out burn-down
+> (`wqawa2flt` running); path-T biologization, held read-out + D-Leg-2 queued. **PROCESS: DR gate (`e02bbb26`) now
+> BLOCKS repeated levers at a wall without external research — the recurring lapse is now mechanical.**
 
 > **⭐⭐⭐⭐ FLUENCY WAVES (2026-08-08, ULTRACODE) — PAST the Stage-A culmination.** Owner
 > authorized building the full "human-like fluency" faculty set concurrently (best-judgement autonomous), with
