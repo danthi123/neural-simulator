@@ -406,9 +406,18 @@ and change later behavior. A collection of connected demos is not enough.
     small for 20 facts — giving it more neurons closed the rest (retention rose
     from chance to 0.97). Several fancier mechanisms — sleep-noise learning,
     weight-protection, pattern-separation, higher-fidelity memory traces — were
-    each tested and did NOT beat the brain's own replay. A 5×-scale test (100
-    facts) is running to see whether "size the memory to the task" keeps working
-    or whether a two-store hippocampus→cortex design is needed next.
+    each tested and did NOT beat the brain's own replay. **The 5×-scale test
+    settled it: "size the memory to the task" holds to 50 facts but SLIPS at 100
+    (retention 0.97→0.91→0.73) — capacity is a small-scale patch, not the
+    lifetime answer.** For lifetime scale the brain uses consolidation, and we
+    tested that path: a bounded *window* of recent memories fails (forgets the
+    old); a bounded *generator* that re-dreams all memories does better but not
+    enough, because the generator itself starts forgetting — and it bounds
+    storage, not the per-night replay cost. So a year of data doesn't yet scale
+    with bounded cost, but the two remaining pieces are named and both are things
+    the brain does: a generator that doesn't forget its own dreams, and
+    prioritized replay (don't replay every memory every night). Both are the
+    next builds.
 - Grow structure as needed through activity-dependent connections, neuron or
   region growth, pruning, homeostasis, and replay-based consolidation.
 - Turn the affect core into graded internal state that changes attention,
