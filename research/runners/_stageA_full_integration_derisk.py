@@ -1170,6 +1170,33 @@ def _gm_split_sentences(text):
     return [s.strip() for s in _GM_SENT_SPLIT.split(text) if s.strip()]
 
 
+# Sub-clausal connectives that INTRODUCE A NEW PROPOSITION (a fresh subject-verb assertion the moat must verify
+# in its OWN right). The SVO re-parse reads only the FIRST complete SVO in a sentence, so a causal/relative tail
+# ("... because it was looking for water") rides UNCHECKED inside a sentence whose main-clause SVO verifies -- the
+# discourse-level confabulation the Turing test exposed. Splitting here is a HOST re-parse of the mouth's surface
+# (declared honest-negative, SAME status as the SVO re-parse / the host text interface); the BRAIN then verifies
+# EACH proposition. Longest-match first so 'so that' wins over 'so'. These do not appear inside the toy motion
+# facts, so a grounded simple sentence ('The dog ran north') is never falsely split.
+_GM_CLAUSE_CONNECTIVES = ("because", "since", "so that", "so", "while", "whenever", "when", "after", "before",
+                          "although", "though", "which", "that", "and then", "and", "but")
+_GM_CLAUSE_SPLIT = re.compile(
+    r"\s+(" + "|".join(sorted(_GM_CLAUSE_CONNECTIVES, key=len, reverse=True)) + r")\s+", re.IGNORECASE)
+
+
+def _gm_split_clauses(sentence):
+    """Decompose ONE sentence into its PROPOSITIONS: the MAIN clause (segment 0) + each subordinate/causal clause,
+    split at a clause-introducing connective. HOST re-parse (declared shortcut). Returns a list of segments
+    [{'text','connective','is_main'}]; the connective is retained so a VERIFIED subordinate can be re-attached."""
+    parts = _GM_CLAUSE_SPLIT.split(sentence.strip())
+    segs = [{"text": parts[0].strip(), "connective": "", "is_main": True}]
+    for i in range(1, len(parts), 2):
+        conn = parts[i]
+        text = parts[i + 1].strip() if i + 1 < len(parts) else ""
+        if text:
+            segs.append({"text": text, "connective": conn, "is_main": False})
+    return segs
+
+
 _GM_PRONOUN = re.compile(r"^\s*(it's|its|it|they're|they|he|she)\b", re.IGNORECASE)
 
 
@@ -1179,26 +1206,68 @@ def _gm_coref(sentence, topic):
     return _GM_PRONOUN.sub(f"The {topic}", sentence, count=1)
 
 
-def _gm_posthoc_verify(comp, text, vocab_sets, topic=None):
-    """POST-HOC no-confab MOAT, per PROPOSITION. Split the generated reply, re-parse each sentence to an SVO (HOST
+def _gm_parse_clause(comp, seg_text, vocab_sets, topic=None, main_agent=None):
+    """Parse ONE clause to an SVO and CHECK it against the RF-phasor store via the NEURAL moat (query_patient).
+    Tries the raw clause, then a leading-pronoun coref to `topic`, then (for an ELIDED-subject subordinate) a
+    prepended `main_agent` -- so a grounded coordinate clause ('... and ran north') is not falsely dropped.
+    Returns (svo, stored, verified)."""
+    agents_set, actions_set, patients_set, inflect = vocab_sets
+    svo = _extract_svo_from_prose(seg_text, agents_set, actions_set, patients_set, inflect)
+    if svo is None and topic is not None:
+        svo = _extract_svo_from_prose(_gm_coref(seg_text, topic), agents_set, actions_set, patients_set, inflect)
+    if svo is None and main_agent is not None:
+        svo = _extract_svo_from_prose(f"The {main_agent} " + seg_text,
+                                      agents_set, actions_set, patients_set, inflect)
+    if svo is None:
+        return None, None, False
+    a, v, p = svo
+    try:
+        stored = comp.query_patient(a, v)                    # NEURAL moat read (RF unbind)
+    except Exception:
+        stored = None
+    return svo, stored, bool(stored is not None and stored == p)
+
+
+def _gm_posthoc_verify(comp, text, vocab_sets, topic=None, subclausal=False):
+    """POST-HOC no-confab MOAT, per PROPOSITION. Split the generated reply, re-parse each SENTENCE to an SVO (HOST
     parse; a leading pronoun is coref-resolved to `topic` when given), and CHECK it against the RF-phasor store
     via comp.query_patient (the spiking VSA unbind = the NEURAL moat decision). A proposition that does not read
-    back its patient is a CONFABULATION. Returns per-proposition records (candidate SVOs + which VERIFY)."""
+    back its patient is a CONFABULATION. Returns per-proposition records (candidate SVOs + which VERIFY).
+
+    subclausal=False (DEFAULT, byte-identical to the shipped behaviour): ONE proposition per sentence -- the SVO
+    moat, which reads only a sentence's FIRST complete SVO and is BLIND to a causal/relative tail.
+    subclausal=True: decompose EACH sentence into its main + subordinate clauses (`_gm_split_clauses`) and verify
+    EACH as an independent proposition, so an ungrounded 'because ...' clause is caught even when the main-clause
+    SVO verifies. Each prop carries `sent_id`/`is_main`/`connective`/`segment_text` for faithful reconstruction."""
     agents_set, actions_set, patients_set, inflect = vocab_sets
     props = []
-    for sent in _gm_split_sentences(text):
-        svo = _extract_svo_from_prose(sent, agents_set, actions_set, patients_set, inflect)
-        if svo is None and topic is not None:
-            svo = _extract_svo_from_prose(_gm_coref(sent, topic), agents_set, actions_set, patients_set, inflect)
-        if svo is None:
+    for sid, sent in enumerate(_gm_split_sentences(text)):
+        if not subclausal:
+            svo = _extract_svo_from_prose(sent, agents_set, actions_set, patients_set, inflect)
+            if svo is None and topic is not None:
+                svo = _extract_svo_from_prose(_gm_coref(sent, topic), agents_set, actions_set, patients_set, inflect)
+            if svo is None:
+                continue
+            a, v, p = svo
+            try:
+                stored = comp.query_patient(a, v)            # NEURAL moat read (RF unbind)
+            except Exception:
+                stored = None
+            props.append({"sentence": sent, "svo": svo, "stored": stored,
+                          "verified": bool(stored is not None and stored == p)})
             continue
-        a, v, p = svo
-        try:
-            stored = comp.query_patient(a, v)                # NEURAL moat read (RF unbind)
-        except Exception:
-            stored = None
-        verified = bool(stored is not None and stored == p)
-        props.append({"sentence": sent, "svo": svo, "stored": stored, "verified": verified})
+        # ---- SUB-CLAUSAL: verify the main clause AND every subordinate/causal clause independently ----
+        main_agent = None
+        for seg in _gm_split_clauses(sent):
+            svo, stored, verified = _gm_parse_clause(
+                comp, seg["text"], vocab_sets, topic=topic,
+                main_agent=(None if seg["is_main"] else main_agent))
+            if seg["is_main"] and svo is not None:
+                main_agent = svo[0]                          # carry the subject for elided-subject subordinates
+            props.append({
+                "sentence": sent, "sent_id": sid, "is_main": seg["is_main"], "connective": seg["connective"],
+                "segment_text": seg["text"], "svo": svo, "stored": stored, "verified": verified,
+            })
     return props
 
 
@@ -1208,25 +1277,63 @@ def _gm_emit(props, moat_on):
     return [pr for pr in props if (pr["verified"] or not moat_on)]
 
 
-def _gm_prose_reply(comp, mouth, topic, tone_token, fm_line=None, moat_on=True):
+def _gm_reconstruct_subclausal(props, moat_on=True):
+    """Rebuild the emitted PROSE from sub-clausal props, keeping ONLY store-verified propositions (moat ON): each
+    sentence is re-formed as its MAIN clause (dropped whole if the main clause fails to verify -- consistent with
+    the per-sentence moat) with each VERIFIED subordinate clause re-attached via its connective. An ungrounded
+    'because ...' clause is thus silently removed while the grounded motion fact survives. moat OFF -> emit every
+    clause (the honesty lesion)."""
+    by_sent = {}
+    for pr in props:
+        by_sent.setdefault(pr["sent_id"], []).append(pr)
+    out = []
+    for sid in sorted(by_sent):
+        segs = by_sent[sid]
+        main = next((s for s in segs if s["is_main"]), None)
+        if not moat_on:
+            out.append(" ".join(s["segment_text"].rstrip(".!?").strip()
+                                for s in segs).strip() + ".")
+            continue
+        if main is None or not main["verified"]:
+            continue
+        text = main["segment_text"].rstrip(".!?").strip()
+        for s in segs:
+            if s["is_main"] or not s["verified"]:
+                continue
+            text += f" {s['connective']} {s['segment_text'].rstrip('.!?').strip()}"
+        out.append(text + ".")
+    return out
+
+
+def _gm_prose_reply(comp, mouth, topic, tone_token, fm_line=None, moat_on=True, subclausal=False):
     """The WIRED known-turn reply: retrieve -> condition -> spiking-generate -> post-hoc-verify -> tone-color.
     Returns the emitted PROSE (verified propositions only, under the moat), plus the full record. Falls back to
-    None (caller uses the frame-render) when the neighbourhood is empty or 0 propositions verify."""
+    None (caller uses the frame-render) when the neighbourhood is empty or 0 propositions verify.
+
+    subclausal=True routes the per-PROPOSITION (main + subordinate clause) verify + reconstruction, so an
+    ungrounded causal clause the SVO moat is blind to is DROPPED before the prose reaches the user."""
     nbhd = _gm_retrieve_neighbourhood(comp, topic, mouth["actions"])
     if not nbhd:
         return None
     prompt = _gm_condition_prompt(topic, nbhd, fm_line=fm_line)
     _first, full, secs = mouth["faculty"]._generate(prompt)
-    props = _gm_posthoc_verify(comp, full, mouth["vocab_sets"], topic=topic)
-    emitted = _gm_emit(props, moat_on)
+    props = _gm_posthoc_verify(comp, full, mouth["vocab_sets"], topic=topic, subclausal=subclausal)
     if moat_on and not any(pr["verified"] for pr in props):
         return None                                          # nothing survived the moat -> fall back
-    body = " ".join(pr["sentence"] if pr["sentence"].endswith((".", "!", "?")) else pr["sentence"] + "."
-                    for pr in emitted)
+    if subclausal:
+        sentences = _gm_reconstruct_subclausal(props, moat_on=moat_on)
+        body = " ".join(sentences)
+        emitted = [pr for pr in props if (pr["verified"] or not moat_on)]
+        n_confab_emitted = 0 if moat_on else sum(1 for pr in emitted if not pr["verified"])
+    else:
+        emitted = _gm_emit(props, moat_on)
+        body = " ".join(pr["sentence"] if pr["sentence"].endswith((".", "!", "?")) else pr["sentence"] + "."
+                        for pr in emitted)
+        n_confab_emitted = sum(1 for pr in emitted if not pr["verified"])
     utter = (tone_token + " " + body).strip() if tone_token else body
     return {"utterance": utter, "raw_text": full, "neighbourhood": nbhd, "props": props,
             "n_emitted": len(emitted), "n_verified": sum(pr["verified"] for pr in props),
-            "n_confab_emitted": sum(1 for pr in emitted if not pr["verified"]),
+            "n_confab_emitted": n_confab_emitted, "subclausal": bool(subclausal),
             "gen_seconds": secs}
 
 
@@ -1251,7 +1358,8 @@ def _load_generator_mouth(seed, facts, T=16, max_new_tokens=64, device="cuda"):
     }
 
 
-def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=None, mouth=None) -> dict:
+def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=None, mouth=None,
+                        subclausal_verify=False) -> dict:
     """The REAL multi-turn conversational loop on the ONE bridge, with seams A + C ROUTED LIVE. Each turn reads the
     GRADED-affect ladder differential (SEAM-C) + curiosity + the arbiter off the shared cp_firing_states; a KNOWN
     turn composes a graded-tone answer under the g_eff law; a NOVEL turn drives the forward-model reservoir (SEAM-A)
@@ -1295,7 +1403,8 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
         # STEP-2 WIRING: the spiking-generator MOUTH becomes the reply (MULTI-SENTENCE PROSE), conditioned on the
         # RF-store neighbourhood (world-model content) + the graded-affect tone token, moat enforced POST-HOC.
         if mouth is not None:
-            prose = _gm_prose_reply(comp, mouth, topic=a, tone_token=(ans.get("tone_token") or ""), moat_on=True)
+            prose = _gm_prose_reply(comp, mouth, topic=a, tone_token=(ans.get("tone_token") or ""), moat_on=True,
+                                    subclausal=subclausal_verify)
             if prose is not None:
                 rec["utterance"] = prose["utterance"]
                 rec["utterance_source"] = "spiking_generator_mouth"
@@ -1304,6 +1413,7 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
                 rec["mouth_neighbourhood"] = prose["neighbourhood"]
                 rec["mouth_n_verified"] = prose["n_verified"]
                 rec["mouth_n_confab_emitted"] = prose["n_confab_emitted"]
+                rec["mouth_subclausal_verify"] = prose.get("subclausal", False)
         return rec
 
     def _novel_turn(tno, appraisal):
@@ -1346,7 +1456,8 @@ def run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng
             _f, qfull, _s = mouth["faculty"]._generate(qprompt)
             qtext = _gm_split_sentences(qfull)
             question = (qtext[0] if qtext else base_q or f"what does {an} {vn} ?")
-            qprops = _gm_posthoc_verify(comp, qfull, mouth["vocab_sets"], topic=an)  # catch any confabulated fact
+            qprops = _gm_posthoc_verify(comp, qfull, mouth["vocab_sets"], topic=an,
+                                        subclausal=subclausal_verify)  # catch any confabulated fact (per-prop)
             leaked = [pr for pr in _gm_emit(qprops, True) if not pr["verified"]]  # moat ON -> should be empty
             body = question if question.endswith("?") else question.rstrip(".") + "?"
             if sim is not None:
@@ -1768,6 +1879,108 @@ def arbiter_three_way_and_lesion(seed: int, faculty_rng) -> dict:
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# SUB-CLAUSAL TEETH -- replay the captured confabulating turns (3/4/5) VERBATIM raw mouth text through the SVO moat
+# (BEFORE) vs the sub-clausal moat (AFTER), on the REAL neural store. The raw mouth output is deterministic given
+# the seed, so replaying the captured text is byte-faithful to what the mouth produced; only the POST-HOC verify
+# changed. Also a MATCHED grounded-vs-invented subordinate pair (over-suppression teeth).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# The VERBATIM raw mouth text + tone tokens from research/findings/raw/lanes/stageA/turing/conversation_turing_
+# test_s42.json (main 300a867b). All three confabulating turns produced the SAME grounded-motion-facts prose with
+# invented causal 'because ...' tails.
+_TEETH_RAW = ("A dog went to the east because it was looking for water.\n"
+              "The dog looked towards the river because it was south of its current location.\n"
+              "The dog ran north because it needed to find shelter or food.")
+_TEETH_TURNS = [
+    {"turn": 3, "human": "Let's talk about the animals you know. Tell me about the dog.",
+     "tone_token": "warmly, gladly", "topic": "dog", "raw": _TEETH_RAW},
+    {"turn": 4, "human": "Interesting -- why did the dog go east?",
+     "tone_token": "", "topic": "dog", "raw": _TEETH_RAW},
+    {"turn": 5, "human": "Do you like the dog? How do you feel about it?",
+     "tone_token": "warmly, gladly", "topic": "dog", "raw": _TEETH_RAW},
+]
+# the ungrounded content words the surface scan flagged (NO basis in the 6 toy facts) -- AFTER must contain none.
+_TEETH_UNGROUNDED = ["current", "find", "food", "location", "needed", "shelter", "water"]
+
+
+def _teeth_vocab_sets(facts):
+    agents_set = {a for (a, _v, _p) in facts}
+    actions_set = sorted({v for (_a, v, _p) in facts})
+    patients_set = {p for (_a, _v, p) in facts}
+    inflect = _gm_augment_inflect(actions_set, _build_inflection_map(actions_set))
+    return (agents_set, actions_set, patients_set, inflect)
+
+
+def _teeth_emit(comp, raw, vocab_sets, topic, tone_token, subclausal):
+    """Emit the prose the user WOULD receive: verify raw text, keep only what survives the moat, prepend tone."""
+    props = _gm_posthoc_verify(comp, raw, vocab_sets, topic=topic, subclausal=subclausal)
+    if subclausal:
+        body = " ".join(_gm_reconstruct_subclausal(props, moat_on=True))
+    else:
+        emitted = _gm_emit(props, True)
+        body = " ".join(pr["sentence"] if pr["sentence"].endswith((".", "!", "?")) else pr["sentence"] + "."
+                        for pr in emitted)
+    utter = (tone_token + " " + body).strip() if tone_token else body
+    return utter, props
+
+
+def run_subclausal_teeth(comp, facts):
+    vocab_sets = _teeth_vocab_sets(facts)
+    turns_out = []
+    all_grounded_survive = True
+    all_confab_caught = True
+    for t in _TEETH_TURNS:
+        before, props_b = _teeth_emit(comp, t["raw"], vocab_sets, t["topic"], t["tone_token"], subclausal=False)
+        after, props_a = _teeth_emit(comp, t["raw"], vocab_sets, t["topic"], t["tone_token"], subclausal=True)
+        after_low = after.lower()
+        ungrounded_in_after = [w for w in _TEETH_UNGROUNDED if re.search(rf"\b{re.escape(w)}\b", after_low)]
+        # grounded motion facts that MUST survive (the stored dog triples rendered in the prose)
+        grounded_survive = all(
+            (w in after_low) for w in ("east", "river", "north")) and ("dog" in after_low)
+        confab_caught = (len(ungrounded_in_after) == 0)
+        all_grounded_survive = all_grounded_survive and grounded_survive
+        all_confab_caught = all_confab_caught and confab_caught
+        n_confab_dropped = sum(1 for pr in props_a
+                               if (not pr.get("is_main", True)) and not pr["verified"])
+        turns_out.append({
+            "turn": t["turn"], "human": t["human"], "tone_token": t["tone_token"],
+            "before_prose_svo_moat": before, "after_prose_subclausal_moat": after,
+            "ungrounded_words_in_after": ungrounded_in_after,
+            "grounded_motion_facts_survive": grounded_survive, "confab_caught": confab_caught,
+            "n_subordinate_clauses_dropped": int(n_confab_dropped),
+            "props_after": [{"is_main": pr.get("is_main"), "connective": pr.get("connective"),
+                             "segment_text": pr.get("segment_text"), "svo": pr["svo"],
+                             "stored": pr["stored"], "verified": pr["verified"]} for pr in props_a],
+        })
+    # ---- MATCHED PAIR (over-suppression teeth): a SUBORDINATE clause that IS grounded must PASS; an invented one
+    #      must FAIL. Same subordinate position, same main clause -> isolates the verify decision. ----
+    grounded_sent = "The dog went east because the dog ran north."   # subordinate (dog,run,north) IS stored
+    invented_sent = "The dog went east because it was looking for water."  # subordinate (dog,look,water) is NOT
+    gp = _gm_posthoc_verify(comp, grounded_sent, vocab_sets, topic="dog", subclausal=True)
+    ip = _gm_posthoc_verify(comp, invented_sent, vocab_sets, topic="dog", subclausal=True)
+    g_sub = next((pr for pr in gp if not pr["is_main"]), None)
+    i_sub = next((pr for pr in ip if not pr["is_main"]), None)
+    matched_pair = {
+        "grounded_subordinate_sentence": grounded_sent,
+        "grounded_subordinate_svo": (g_sub["svo"] if g_sub else None),
+        "grounded_subordinate_verified": bool(g_sub and g_sub["verified"]),
+        "grounded_subordinate_emitted": " ".join(_gm_reconstruct_subclausal(gp, moat_on=True)),
+        "invented_subordinate_sentence": invented_sent,
+        "invented_subordinate_svo": (i_sub["svo"] if i_sub else None),
+        "invented_subordinate_verified": bool(i_sub and i_sub["verified"]),
+        "invented_subordinate_emitted": " ".join(_gm_reconstruct_subclausal(ip, moat_on=True)),
+    }
+    matched_pair_ok = bool(matched_pair["grounded_subordinate_verified"]
+                           and not matched_pair["invented_subordinate_verified"])
+    return {
+        "turns": turns_out,
+        "matched_pair": matched_pair, "matched_pair_ok": matched_pair_ok,
+        "all_grounded_motion_facts_survive": bool(all_grounded_survive),
+        "all_confab_caught": bool(all_confab_caught),
+        "teeth_ok": bool(all_grounded_survive and all_confab_caught and matched_pair_ok),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description="Stage-A FULL single-bridge live integration (single-seed smoke).")
     ap.add_argument("--seed", type=int, default=42)
@@ -1786,6 +1999,14 @@ def main():
                     help="wire the conditioned spiking generator as the reply MOUTH (path-T)")
     ap.add_argument("--gen-T", type=int, default=16)
     ap.add_argument("--gen-max-new-tokens", type=int, default=64)
+    ap.add_argument("--subclausal-verify", action=argparse.BooleanOptionalAction, default=False,
+                    help="ADDITIVE / DEFAULT-OFF: verify EVERY proposition (main + subordinate/causal clauses) of "
+                         "the generator-mouth prose against the store, DROPPING any clause the neural moat cannot "
+                         "verify. Default off is byte-identical to the shipped per-sentence SVO moat.")
+    ap.add_argument("--subclausal-teeth", action="store_true",
+                    help="Run ONLY the sub-clausal TEETH: replay the captured confabulating turns' raw mouth text "
+                         "through the SVO moat (BEFORE) vs the sub-clausal moat (AFTER) + a matched grounded-vs-"
+                         "invented subordinate pair, print verbatim, and exit.")
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/lanes/stageA/stageA_full_integration_smoke.json")
     args = ap.parse_args()
@@ -1819,6 +2040,35 @@ def main():
     vocab, facts = _store_facts(comp)
     print(f"   stored {len(facts)} facts on the co-resident composer", flush=True)
 
+    # ---- SUB-CLAUSAL TEETH (no GPU/mouth needed): replay the captured confabulating turns' raw text through the
+    #      NEURAL store, BEFORE (SVO moat) vs AFTER (sub-clausal moat), print verbatim, write JSON, and exit. ----
+    if args.subclausal_teeth:
+        teeth = run_subclausal_teeth(comp, facts)
+        for tt in teeth["turns"]:
+            print(f"\n=== Turn {tt['turn']} — {tt['human']!r} ===", flush=True)
+            print(f"  BEFORE (SVO moat, confab):  {tt['before_prose_svo_moat']!r}", flush=True)
+            print(f"  AFTER  (sub-clausal moat):  {tt['after_prose_subclausal_moat']!r}", flush=True)
+            print(f"  ungrounded-in-AFTER={tt['ungrounded_words_in_after']} "
+                  f"grounded_survive={tt['grounded_motion_facts_survive']} "
+                  f"confab_caught={tt['confab_caught']} "
+                  f"subordinate_clauses_dropped={tt['n_subordinate_clauses_dropped']}", flush=True)
+        mp = teeth["matched_pair"]
+        print(f"\n=== MATCHED PAIR (over-suppression teeth) ===", flush=True)
+        print(f"  GROUNDED subordinate: {mp['grounded_subordinate_sentence']!r} "
+              f"-> svo={mp['grounded_subordinate_svo']} verified={mp['grounded_subordinate_verified']} "
+              f"emitted={mp['grounded_subordinate_emitted']!r}", flush=True)
+        print(f"  INVENTED subordinate: {mp['invented_subordinate_sentence']!r} "
+              f"-> svo={mp['invented_subordinate_svo']} verified={mp['invented_subordinate_verified']} "
+              f"emitted={mp['invented_subordinate_emitted']!r}", flush=True)
+        print(f"\n  teeth_ok={teeth['teeth_ok']} (grounded_survive={teeth['all_grounded_motion_facts_survive']} "
+              f"confab_caught={teeth['all_confab_caught']} matched_pair_ok={teeth['matched_pair_ok']})", flush=True)
+        os.makedirs(os.path.dirname(args.out), exist_ok=True)
+        out_teeth = args.out.replace(".json", "_subclausal_teeth.json")
+        with open(out_teeth, "w") as f:
+            json.dump({"seed": args.seed, "facts": facts, "teeth": teeth}, f, indent=2)
+        print(f"\n[stageA-full] sub-clausal teeth written -> {out_teeth}", flush=True)
+        return
+
     # ---- SEAM-A LIVE: train the forward-model world-model read-out over the STORED facts (declared host shortcut) ----
     fm = None
     if args.seam_a:
@@ -1841,7 +2091,8 @@ def main():
     # ---- (b) COMPOSES-LIVE: the multi-turn loop (seams A + C routed LIVE; generator mouth wired) ----
     print("[stageA-full] (b) COMPOSES-LIVE: multi-turn conversational loop on the ONE bridge (seams live) ...",
           flush=True)
-    loop = run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=fm, mouth=mouth)
+    loop = run_multi_turn_loop(bridge, xp, idx, baseline_snap, comp, facts, faculty_rng, fm=fm, mouth=mouth,
+                               subclausal_verify=bool(args.subclausal_verify))
     for tt in loop["turns"]:
         print(f"   turn {tt['turn']} [{tt['type']}] winner={tt['arbiter_winner']} "
               f"band={tt['honesty_band']} src={tt.get('utterance_source')} -> {tt['utterance']!r} "

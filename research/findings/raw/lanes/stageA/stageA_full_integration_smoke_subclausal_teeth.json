@@ -1,0 +1,276 @@
+{
+  "seed": 43,
+  "facts": [
+    [
+      "dog",
+      "run",
+      "north"
+    ],
+    [
+      "cat",
+      "run",
+      "south"
+    ],
+    [
+      "dog",
+      "go",
+      "east"
+    ],
+    [
+      "cat",
+      "go",
+      "west"
+    ],
+    [
+      "dog",
+      "look",
+      "river"
+    ],
+    [
+      "cat",
+      "look",
+      "apple"
+    ]
+  ],
+  "teeth": {
+    "turns": [
+      {
+        "turn": 3,
+        "human": "Let's talk about the animals you know. Tell me about the dog.",
+        "tone_token": "warmly, gladly",
+        "before_prose_svo_moat": "warmly, gladly A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.",
+        "after_prose_subclausal_moat": "warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.",
+        "ungrounded_words_in_after": [],
+        "grounded_motion_facts_survive": true,
+        "confab_caught": true,
+        "n_subordinate_clauses_dropped": 3,
+        "props_after": [
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "A dog went to the east",
+            "svo": [
+              "dog",
+              "go",
+              "east"
+            ],
+            "stored": "east",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it was looking for water",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          },
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "The dog looked towards the river",
+            "svo": [
+              "dog",
+              "look",
+              "river"
+            ],
+            "stored": "river",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it was south of its current location",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          },
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "The dog ran north",
+            "svo": [
+              "dog",
+              "run",
+              "north"
+            ],
+            "stored": "north",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it needed to find shelter or food",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          }
+        ]
+      },
+      {
+        "turn": 4,
+        "human": "Interesting -- why did the dog go east?",
+        "tone_token": "",
+        "before_prose_svo_moat": "A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.",
+        "after_prose_subclausal_moat": "A dog went to the east. The dog looked towards the river. The dog ran north.",
+        "ungrounded_words_in_after": [],
+        "grounded_motion_facts_survive": true,
+        "confab_caught": true,
+        "n_subordinate_clauses_dropped": 3,
+        "props_after": [
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "A dog went to the east",
+            "svo": [
+              "dog",
+              "go",
+              "east"
+            ],
+            "stored": "east",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it was looking for water",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          },
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "The dog looked towards the river",
+            "svo": [
+              "dog",
+              "look",
+              "river"
+            ],
+            "stored": "river",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it was south of its current location",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          },
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "The dog ran north",
+            "svo": [
+              "dog",
+              "run",
+              "north"
+            ],
+            "stored": "north",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it needed to find shelter or food",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          }
+        ]
+      },
+      {
+        "turn": 5,
+        "human": "Do you like the dog? How do you feel about it?",
+        "tone_token": "warmly, gladly",
+        "before_prose_svo_moat": "warmly, gladly A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.",
+        "after_prose_subclausal_moat": "warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.",
+        "ungrounded_words_in_after": [],
+        "grounded_motion_facts_survive": true,
+        "confab_caught": true,
+        "n_subordinate_clauses_dropped": 3,
+        "props_after": [
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "A dog went to the east",
+            "svo": [
+              "dog",
+              "go",
+              "east"
+            ],
+            "stored": "east",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it was looking for water",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          },
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "The dog looked towards the river",
+            "svo": [
+              "dog",
+              "look",
+              "river"
+            ],
+            "stored": "river",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it was south of its current location",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          },
+          {
+            "is_main": true,
+            "connective": "",
+            "segment_text": "The dog ran north",
+            "svo": [
+              "dog",
+              "run",
+              "north"
+            ],
+            "stored": "north",
+            "verified": true
+          },
+          {
+            "is_main": false,
+            "connective": "because",
+            "segment_text": "it needed to find shelter or food",
+            "svo": null,
+            "stored": null,
+            "verified": false
+          }
+        ]
+      }
+    ],
+    "matched_pair": {
+      "grounded_subordinate_sentence": "The dog went east because the dog ran north.",
+      "grounded_subordinate_svo": [
+        "dog",
+        "run",
+        "north"
+      ],
+      "grounded_subordinate_verified": true,
+      "grounded_subordinate_emitted": "The dog went east because the dog ran north.",
+      "invented_subordinate_sentence": "The dog went east because it was looking for water.",
+      "invented_subordinate_svo": null,
+      "invented_subordinate_verified": false,
+      "invented_subordinate_emitted": "The dog went east."
+    },
+    "matched_pair_ok": true,
+    "all_grounded_motion_facts_survive": true,
+    "all_confab_caught": true,
+    "teeth_ok": true
+  }
+}
