@@ -1,0 +1,43 @@
+{
+ "run_id": "1786265915-2305712",
+ "runner": "research/runners/_teacher_loop_weight_protect_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_130cefe5-ca5-2/research/runners/_teacher_loop_weight_protect_derisk.py",
+  "--seed",
+  "45",
+  "--milestones",
+  "1",
+  "5",
+  "10",
+  "--n-max",
+  "10",
+  "--epochs",
+  "40",
+  "--replay-epochs",
+  "24",
+  "--n-draws",
+  "32",
+  "--lam",
+  "8.0",
+  "--out",
+  "research/findings/raw/teacher_loop_weight_protect_s45.json"
+ ],
+ "git_sha": "8d2510d3a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-09T04:58:35",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/teacher_loop_weight_protect_s45.json"
+}

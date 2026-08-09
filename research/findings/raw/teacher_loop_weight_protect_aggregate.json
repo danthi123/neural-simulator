@@ -1,0 +1,91 @@
+{
+  "probe": "teacher_loop_weight_protect_AGGREGATE",
+  "backend": "numpy",
+  "device": "cpu",
+  "note_device": "tiny net (41 neurons); numpy chosen to avoid GPU contention. Per-seed artifacts carry provenance sidecars.",
+  "N10_6seed": {
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "n_max": 10,
+    "chance": 0.1,
+    "replay": {
+      "mean": 0.683,
+      "sd": 0.134,
+      "per_seed": [
+        0.8,
+        0.5,
+        0.7,
+        0.6,
+        0.9,
+        0.6
+      ]
+    },
+    "protect": {
+      "mean": 0.7,
+      "sd": 0.153,
+      "per_seed": [
+        0.9,
+        0.5,
+        0.7,
+        0.6,
+        0.9,
+        0.6
+      ]
+    },
+    "scramble": {
+      "mean": 0.7,
+      "sd": 0.153,
+      "per_seed": [
+        0.9,
+        0.5,
+        0.7,
+        0.6,
+        0.9,
+        0.6
+      ]
+    },
+    "orthoprot": {
+      "mean": 0.483,
+      "sd": 0.195,
+      "per_seed": [
+        0.8,
+        0.5,
+        0.5,
+        0.3,
+        0.6,
+        0.2
+      ]
+    },
+    "rise_protect_minus_replay": 0.017,
+    "structure_protect_minus_scramble": 0.0,
+    "ortho_orthoprot_minus_protect": -0.217,
+    "protect_immediate_acq_mean": 0.959,
+    "replay_immediate_acq_mean": 0.991,
+    "ewc_new_learning_tradeoff_protect_minus_replay": -0.032,
+    "protect_mean_retained_acc_mean": 0.557,
+    "n_protect_gt_replay": 1,
+    "n_protect_ge_0.8": 2
+  },
+  "N20_3seed": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "n_max": 20,
+    "hidden": 20,
+    "chance": 0.05,
+    "replay": 0.45,
+    "protect": 0.467,
+    "scramble": 0.483,
+    "orthoprot": 0.35,
+    "rise_protect_minus_replay": 0.017,
+    "structure_protect_minus_scramble": -0.017
+  }
+}

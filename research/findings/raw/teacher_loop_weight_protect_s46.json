@@ -1,0 +1,402 @@
+{
+  "probe": "teacher_loop_weight_protect",
+  "seed": 46,
+  "backend": "numpy",
+  "single_seed_smoke": true,
+  "elapsed_seconds": 37.6,
+  "result": {
+    "seed": 46,
+    "K_classes": 10,
+    "chance": 0.1,
+    "n_max": 10,
+    "milestones": [
+      1,
+      5,
+      10
+    ],
+    "config": {
+      "hidden": 24,
+      "settle_steps": 25,
+      "epochs": 40,
+      "batch": 20,
+      "readout_lr": 0.5,
+      "w_clip": 4000.0,
+      "n_draws": 32,
+      "d_p": 12,
+      "noise": 0.12,
+      "test_n": 40,
+      "replay_epochs": 24,
+      "replay_per_fact": 16,
+      "replay_noise": 0.1,
+      "lam": 8.0
+    },
+    "arms": {
+      "replay": {
+        "arm": "replay",
+        "ortho": false,
+        "lam": 0.0,
+        "scramble": false,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.85,
+          0.925,
+          1.0,
+          0.95,
+          0.975
+        ],
+        "mean_acquire_acc_immediate": 0.97,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ],
+            "importance_gain_min": 1.0,
+            "importance_gain_mean": 1.0
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.8549999999999999,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 0.975,
+            "per_fact_acc": [
+              1.0,
+              0.975,
+              0.825,
+              0.5,
+              0.975
+            ],
+            "importance_gain_min": 1.0,
+            "importance_gain_mean": 1.0
+          },
+          "10": {
+            "frac_recalled": 0.9,
+            "n_recalled": 9,
+            "N": 10,
+            "mean_retained_acc": 0.5800000000000001,
+            "oldest_fact_acc": 0.575,
+            "most_recent_fact_acc": 0.525,
+            "per_fact_acc": [
+              0.575,
+              0.55,
+              0.7,
+              0.55,
+              0.9,
+              0.6,
+              0.125,
+              0.7,
+              0.575,
+              0.525
+            ],
+            "importance_gain_min": 1.0,
+            "importance_gain_mean": 1.0
+          }
+        },
+        "wall_seconds": 8.5
+      },
+      "protect": {
+        "arm": "protect",
+        "ortho": false,
+        "lam": 8.0,
+        "scramble": false,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          0.825,
+          1.0,
+          1.0,
+          0.85,
+          0.9,
+          1.0,
+          0.95,
+          0.925
+        ],
+        "mean_acquire_acc_immediate": 0.9450000000000001,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ],
+            "importance_gain_min": 0.0012313142807706832,
+            "importance_gain_mean": 0.7353790852471332
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.85,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 0.975,
+            "per_fact_acc": [
+              1.0,
+              0.95,
+              0.825,
+              0.5,
+              0.975
+            ],
+            "importance_gain_min": 0.002644948216518028,
+            "importance_gain_mean": 0.73485306105159
+          },
+          "10": {
+            "frac_recalled": 0.9,
+            "n_recalled": 9,
+            "N": 10,
+            "mean_retained_acc": 0.5800000000000001,
+            "oldest_fact_acc": 0.575,
+            "most_recent_fact_acc": 0.525,
+            "per_fact_acc": [
+              0.575,
+              0.55,
+              0.7,
+              0.55,
+              0.9,
+              0.6,
+              0.125,
+              0.7,
+              0.575,
+              0.525
+            ],
+            "importance_gain_min": 0.006750905035698382,
+            "importance_gain_mean": 0.4952949450516584
+          }
+        },
+        "wall_seconds": 8.3
+      },
+      "scramble": {
+        "arm": "scramble",
+        "ortho": false,
+        "lam": 8.0,
+        "scramble": true,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.85,
+          0.9,
+          1.0,
+          0.9,
+          0.975
+        ],
+        "mean_acquire_acc_immediate": 0.9625,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ],
+            "importance_gain_min": 0.0012313142807706832,
+            "importance_gain_mean": 0.7353790852471334
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.8549999999999999,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 0.975,
+            "per_fact_acc": [
+              1.0,
+              0.975,
+              0.825,
+              0.5,
+              0.975
+            ],
+            "importance_gain_min": 0.0026495981564574186,
+            "importance_gain_mean": 0.7334124694678102
+          },
+          "10": {
+            "frac_recalled": 0.9,
+            "n_recalled": 9,
+            "N": 10,
+            "mean_retained_acc": 0.5800000000000001,
+            "oldest_fact_acc": 0.575,
+            "most_recent_fact_acc": 0.525,
+            "per_fact_acc": [
+              0.575,
+              0.55,
+              0.7,
+              0.55,
+              0.9,
+              0.6,
+              0.125,
+              0.7,
+              0.575,
+              0.525
+            ],
+            "importance_gain_min": 0.006730376233139412,
+            "importance_gain_mean": 0.49515446404451074
+          }
+        },
+        "wall_seconds": 12.1
+      },
+      "orthoprot": {
+        "arm": "orthoprot",
+        "ortho": true,
+        "lam": 8.0,
+        "scramble": false,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          0.625,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 0.9625,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ],
+            "importance_gain_min": 0.0028659629352468913,
+            "importance_gain_mean": 0.639687212264101
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.825,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 0.975,
+            "per_fact_acc": [
+              1.0,
+              0.825,
+              0.825,
+              0.5,
+              0.975
+            ],
+            "importance_gain_min": 0.005832526016758518,
+            "importance_gain_mean": 0.5736462554340654
+          },
+          "10": {
+            "frac_recalled": 0.6,
+            "n_recalled": 6,
+            "N": 10,
+            "mean_retained_acc": 0.47000000000000003,
+            "oldest_fact_acc": 0.925,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              0.925,
+              1.0,
+              0.65,
+              0.575,
+              0.925,
+              0.6,
+              0.0,
+              0.025,
+              0.0,
+              0.0
+            ],
+            "importance_gain_min": 0.008018077777653934,
+            "importance_gain_mean": 0.5055871010428147
+          }
+        },
+        "wall_seconds": 8.8
+      }
+    }
+  },
+  "verdict": {
+    "largest_N": 10,
+    "frac_recalled": {
+      "replay": 0.9,
+      "protect": 0.9,
+      "scramble": 0.9,
+      "orthoprot": 0.6
+    },
+    "protect_immediate_acq": 0.9450000000000001,
+    "replay_immediate_acq": 0.97,
+    "ewc_new_learning_tradeoff_protect_minus_replay": -0.02499999999999991,
+    "protect_mean_retained_acc": 0.5800000000000001,
+    "rise_protect_minus_replay": 0.0,
+    "structure_load_bearing_protect_minus_scramble": 0.0,
+    "orthoprot_minus_protect": -0.30000000000000004,
+    "label": "teacher-loop weight-protection continual learning",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: (a) retention RISES vs replay-only baseline (before=0.9 after=0.9 moved=False)",
+      "unmet: (b1) importance gate load-bearing (protect vs replay) (treatment=0.9 control=0.9 |sep|=0 > 0.1)",
+      "unmet: (b2) importance STRUCTURE load-bearing (protect vs scramble) (treatment=0.9 control=0.9 |sep|=0 > 0.1)"
+    ],
+    "preconditions": [
+      {
+        "kind": "reaches",
+        "name": "(a) retention RISES vs replay-only baseline",
+        "ok": false,
+        "detail": "before=0.9 after=0.9 moved=False",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(a') protect reaches toward 0.8+",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "protect frac_recalled@N=10 = 0.90"
+      },
+      {
+        "kind": "control",
+        "name": "(b1) importance gate load-bearing (protect vs replay)",
+        "ok": false,
+        "detail": "treatment=0.9 control=0.9 |sep|=0 > 0.1",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "(b2) importance STRUCTURE load-bearing (protect vs scramble)",
+        "ok": false,
+        "detail": "treatment=0.9 control=0.9 |sep|=0 > 0.1",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "(c) immediate acquisition stays high (protect)",
+        "ok": true,
+        "detail": "0.945 vs floor 0.85",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "(d) capacity holds (protect mean retained acc)",
+        "ok": true,
+        "detail": "0.58 vs floor 0.5",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.1
+  }
+}
