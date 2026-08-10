@@ -1,0 +1,706 @@
+{
+  "probe": "teacher_loop_dendritic_bind",
+  "seed": 43,
+  "backend": "numpy",
+  "single_seed_smoke": false,
+  "grids": [
+    "7x7",
+    "8x8"
+  ],
+  "held_out": [
+    "7x7:7",
+    "8x8:8"
+  ],
+  "s_values": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "mix_scale": 0.4,
+  "elapsed_seconds": 7.2,
+  "result": {
+    "seed": 43,
+    "grids": [
+      "7x7",
+      "8x8"
+    ],
+    "s_values": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "mix_scale": 0.4,
+    "d_a": 10,
+    "d_b": 10,
+    "n_in": 22,
+    "substrate_byte_identical": true,
+    "substrate_seed_maxdiff": 0.0,
+    "config": {
+      "d_a": 10,
+      "d_b": 10,
+      "noise": 0.12,
+      "gen_hidden": 96,
+      "gen_k": 64,
+      "gen_settle": 15,
+      "gen_lr": 0.8,
+      "w_clip": 4000.0,
+      "bdsp_wmax": 1000000000.0,
+      "conv_tol": 0.02,
+      "conv_max_epochs": 200,
+      "n_draws": 16,
+      "held_out": {
+        "7x7": 7,
+        "8x8": 8
+      },
+      "s_values": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "mix_scale": 0.4,
+      "frozen_hidden": true
+    },
+    "per_grid": {
+      "7x7": {
+        "K1": 7,
+        "K2": 7,
+        "N": 49,
+        "held_out_n": 7,
+        "rows": {
+          "0.0": {
+            "K1": 7,
+            "K2": 7,
+            "N": 49,
+            "s": 0.0,
+            "mix_scale": 0.4,
+            "chance": 0.02040816326530612,
+            "held_out_n": 7,
+            "taught_n": 42,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 3.214431104720133e-31,
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "readout_product_bind_seen_recall": 1.0,
+            "reservoir_mean_spikes": 90.11904761904762,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.0,
+            "dend_z0_basal": 1.0,
+            "dend_z0_apical": 1.0,
+            "dend_g_out": 0.0,
+            "dendritic_bind_heldout_cos": 0.9939893342795731,
+            "readout_product_bind_heldout_cos": 0.9939893342795731
+          },
+          "0.25": {
+            "K1": 7,
+            "K2": 7,
+            "N": 49,
+            "s": 0.25,
+            "mix_scale": 0.4,
+            "chance": 0.02040816326530612,
+            "held_out_n": 7,
+            "taught_n": 42,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.01746724879809289,
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "readout_product_bind_seen_recall": 1.0,
+            "reservoir_mean_spikes": 90.11904761904762,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.0,
+            "dend_z0_basal": 1.0,
+            "dend_z0_apical": 1.0,
+            "dend_g_out": 0.0,
+            "dendritic_bind_heldout_cos": 0.9897217877110995,
+            "readout_product_bind_heldout_cos": 0.9897217877110995
+          },
+          "0.5": {
+            "K1": 7,
+            "K2": 7,
+            "N": 49,
+            "s": 0.5,
+            "mix_scale": 0.4,
+            "chance": 0.02040816326530612,
+            "held_out_n": 7,
+            "taught_n": 42,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.1379310337192182,
+            "dendritic_bind_heldout_recall": 0.8571428571428571,
+            "readout_product_bind_heldout_recall": 0.8571428571428571,
+            "additive_heldout_recall": 0.8571428571428571,
+            "dendritic_bind_seen_recall": 0.9523809523809523,
+            "readout_product_bind_seen_recall": 0.9523809523809523,
+            "reservoir_mean_spikes": 90.11904761904762,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.0,
+            "dend_z0_basal": 1.0,
+            "dend_z0_apical": 1.0,
+            "dend_g_out": 0.0,
+            "dendritic_bind_heldout_cos": 0.9591274636726957,
+            "readout_product_bind_heldout_cos": 0.9591274636726957
+          },
+          "0.75": {
+            "K1": 7,
+            "K2": 7,
+            "N": 49,
+            "s": 0.75,
+            "mix_scale": 0.4,
+            "chance": 0.02040816326530612,
+            "held_out_n": 7,
+            "taught_n": 42,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.5901639328730489,
+            "dendritic_bind_heldout_recall": 0.8571428571428571,
+            "readout_product_bind_heldout_recall": 0.2857142857142857,
+            "additive_heldout_recall": 0.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "readout_product_bind_seen_recall": 1.0,
+            "reservoir_mean_spikes": 90.11904761904762,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.456771524515318,
+            "dend_z0_basal": 0.24177051674548425,
+            "dend_z0_apical": 0.19538735104147537,
+            "dend_g_out": 8.624990258804049,
+            "dendritic_bind_heldout_cos": 0.8240548217112176,
+            "readout_product_bind_heldout_cos": 0.3478300329056526
+          },
+          "1.0": {
+            "K1": 7,
+            "K2": 7,
+            "N": 49,
+            "s": 1.0,
+            "mix_scale": 0.4,
+            "chance": 0.02040816326530612,
+            "held_out_n": 7,
+            "taught_n": 42,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.9999999999999146,
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 0.7142857142857143,
+            "additive_heldout_recall": 0.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "readout_product_bind_seen_recall": 1.0,
+            "reservoir_mean_spikes": 90.11904761904762,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.4340728339248639,
+            "dend_z0_basal": 0.20124215281860686,
+            "dend_z0_apical": 0.22630873336907734,
+            "dend_g_out": 9.087020835284601,
+            "dendritic_bind_heldout_cos": 0.8323808406409314,
+            "readout_product_bind_heldout_cos": 0.6828925953751929
+          }
+        }
+      },
+      "8x8": {
+        "K1": 8,
+        "K2": 8,
+        "N": 64,
+        "held_out_n": 8,
+        "rows": {
+          "0.0": {
+            "K1": 8,
+            "K2": 8,
+            "N": 64,
+            "s": 0.0,
+            "mix_scale": 0.4,
+            "chance": 0.015625,
+            "held_out_n": 8,
+            "taught_n": 56,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 1.0791262134624164e-30,
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "readout_product_bind_seen_recall": 1.0,
+            "reservoir_mean_spikes": 90.125,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.0,
+            "dend_z0_basal": 1.0,
+            "dend_z0_apical": 1.0,
+            "dend_g_out": 0.0,
+            "dendritic_bind_heldout_cos": 0.9949690470690908,
+            "readout_product_bind_heldout_cos": 0.9949690470690908
+          },
+          "0.25": {
+            "K1": 8,
+            "K2": 8,
+            "N": 64,
+            "s": 0.25,
+            "mix_scale": 0.4,
+            "chance": 0.015625,
+            "held_out_n": 8,
+            "taught_n": 56,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.017467248798601426,
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "readout_product_bind_seen_recall": 1.0,
+            "reservoir_mean_spikes": 90.125,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.0,
+            "dend_z0_basal": 1.0,
+            "dend_z0_apical": 1.0,
+            "dend_g_out": 0.0,
+            "dendritic_bind_heldout_cos": 0.9910389452121926,
+            "readout_product_bind_heldout_cos": 0.9910389452121926
+          },
+          "0.5": {
+            "K1": 8,
+            "K2": 8,
+            "N": 64,
+            "s": 0.5,
+            "mix_scale": 0.4,
+            "chance": 0.015625,
+            "held_out_n": 8,
+            "taught_n": 56,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.13793103372274232,
+            "dendritic_bind_heldout_recall": 0.75,
+            "readout_product_bind_heldout_recall": 0.75,
+            "additive_heldout_recall": 0.75,
+            "dendritic_bind_seen_recall": 0.9642857142857143,
+            "readout_product_bind_seen_recall": 0.9642857142857143,
+            "reservoir_mean_spikes": 90.125,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.0,
+            "dend_z0_basal": 1.0,
+            "dend_z0_apical": 1.0,
+            "dend_g_out": 0.0,
+            "dendritic_bind_heldout_cos": 0.9578280482078392,
+            "readout_product_bind_heldout_cos": 0.9578280482078392
+          },
+          "0.75": {
+            "K1": 8,
+            "K2": 8,
+            "N": 64,
+            "s": 0.75,
+            "mix_scale": 0.4,
+            "chance": 0.015625,
+            "held_out_n": 8,
+            "taught_n": 56,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.590163932880227,
+            "dendritic_bind_heldout_recall": 0.75,
+            "readout_product_bind_heldout_recall": 0.625,
+            "additive_heldout_recall": 0.125,
+            "dendritic_bind_seen_recall": 0.9821428571428571,
+            "readout_product_bind_seen_recall": 0.9821428571428571,
+            "reservoir_mean_spikes": 90.125,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.40360762672438655,
+            "dend_z0_basal": 0.19847699977008407,
+            "dend_z0_apical": 0.20685835479586642,
+            "dend_g_out": 8.424394903570574,
+            "dendritic_bind_heldout_cos": 0.8916751935933334,
+            "readout_product_bind_heldout_cos": 0.651367888357999
+          },
+          "1.0": {
+            "K1": 8,
+            "K2": 8,
+            "N": 64,
+            "s": 1.0,
+            "mix_scale": 0.4,
+            "chance": 0.015625,
+            "held_out_n": 8,
+            "taught_n": 56,
+            "taught_heldout_disjoint": true,
+            "every_heldout_primitive_seen_in_taught": true,
+            "no_leakage_heldout_never_trained": true,
+            "nonadditivity_witness": 0.9999999999999353,
+            "dendritic_bind_heldout_recall": 0.75,
+            "readout_product_bind_heldout_recall": 0.75,
+            "additive_heldout_recall": 0.0,
+            "dendritic_bind_seen_recall": 0.9821428571428571,
+            "readout_product_bind_seen_recall": 1.0,
+            "reservoir_mean_spikes": 90.125,
+            "dend_and_anchor_ok": true,
+            "dend_nonlinearity_witness": 0.4280566302656392,
+            "dend_z0_basal": 0.20371460944426134,
+            "dend_z0_apical": 0.2222019758218052,
+            "dend_g_out": 9.052366055249847,
+            "dendritic_bind_heldout_cos": 0.7575461610100218,
+            "readout_product_bind_heldout_cos": 0.6445288819654702
+          }
+        }
+      }
+    }
+  },
+  "verdict": {
+    "grids": [
+      "7x7",
+      "8x8"
+    ],
+    "per_grid": {
+      "7x7": {
+        "N": 49,
+        "held_out_n": 7,
+        "by_s": {
+          "0.0": {
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "dendritic_minus_additive": 0.0,
+            "dendritic_minus_product": 0.0,
+            "nonadditivity_witness": 3.214431104720133e-31,
+            "dend_nonlinearity_witness": 0.0,
+            "chance": 0.02040816326530612
+          },
+          "0.25": {
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "dendritic_minus_additive": 0.0,
+            "dendritic_minus_product": 0.0,
+            "nonadditivity_witness": 0.01746724879809289,
+            "dend_nonlinearity_witness": 0.0,
+            "chance": 0.02040816326530612
+          },
+          "0.5": {
+            "dendritic_bind_heldout_recall": 0.8571428571428571,
+            "readout_product_bind_heldout_recall": 0.8571428571428571,
+            "additive_heldout_recall": 0.8571428571428571,
+            "dendritic_bind_seen_recall": 0.9523809523809523,
+            "dendritic_minus_additive": 0.0,
+            "dendritic_minus_product": 0.0,
+            "nonadditivity_witness": 0.1379310337192182,
+            "dend_nonlinearity_witness": 0.0,
+            "chance": 0.02040816326530612
+          },
+          "0.75": {
+            "dendritic_bind_heldout_recall": 0.8571428571428571,
+            "readout_product_bind_heldout_recall": 0.2857142857142857,
+            "additive_heldout_recall": 0.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "dendritic_minus_additive": 0.8571428571428571,
+            "dendritic_minus_product": 0.5714285714285714,
+            "nonadditivity_witness": 0.5901639328730489,
+            "dend_nonlinearity_witness": 0.456771524515318,
+            "chance": 0.02040816326530612
+          },
+          "1.0": {
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 0.7142857142857143,
+            "additive_heldout_recall": 0.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "dendritic_minus_additive": 1.0,
+            "dendritic_minus_product": 0.2857142857142857,
+            "nonadditivity_witness": 0.9999999999999146,
+            "dend_nonlinearity_witness": 0.4340728339248639,
+            "chance": 0.02040816326530612
+          }
+        },
+        "recover_ok": true,
+        "match_product_ok": true,
+        "nocost_ok": true,
+        "grid_go": true
+      },
+      "8x8": {
+        "N": 64,
+        "held_out_n": 8,
+        "by_s": {
+          "0.0": {
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "dendritic_minus_additive": 0.0,
+            "dendritic_minus_product": 0.0,
+            "nonadditivity_witness": 1.0791262134624164e-30,
+            "dend_nonlinearity_witness": 0.0,
+            "chance": 0.015625
+          },
+          "0.25": {
+            "dendritic_bind_heldout_recall": 1.0,
+            "readout_product_bind_heldout_recall": 1.0,
+            "additive_heldout_recall": 1.0,
+            "dendritic_bind_seen_recall": 1.0,
+            "dendritic_minus_additive": 0.0,
+            "dendritic_minus_product": 0.0,
+            "nonadditivity_witness": 0.017467248798601426,
+            "dend_nonlinearity_witness": 0.0,
+            "chance": 0.015625
+          },
+          "0.5": {
+            "dendritic_bind_heldout_recall": 0.75,
+            "readout_product_bind_heldout_recall": 0.75,
+            "additive_heldout_recall": 0.75,
+            "dendritic_bind_seen_recall": 0.9642857142857143,
+            "dendritic_minus_additive": 0.0,
+            "dendritic_minus_product": 0.0,
+            "nonadditivity_witness": 0.13793103372274232,
+            "dend_nonlinearity_witness": 0.0,
+            "chance": 0.015625
+          },
+          "0.75": {
+            "dendritic_bind_heldout_recall": 0.75,
+            "readout_product_bind_heldout_recall": 0.625,
+            "additive_heldout_recall": 0.125,
+            "dendritic_bind_seen_recall": 0.9821428571428571,
+            "dendritic_minus_additive": 0.625,
+            "dendritic_minus_product": 0.125,
+            "nonadditivity_witness": 0.590163932880227,
+            "dend_nonlinearity_witness": 0.40360762672438655,
+            "chance": 0.015625
+          },
+          "1.0": {
+            "dendritic_bind_heldout_recall": 0.75,
+            "readout_product_bind_heldout_recall": 0.75,
+            "additive_heldout_recall": 0.0,
+            "dendritic_bind_seen_recall": 0.9821428571428571,
+            "dendritic_minus_additive": 0.75,
+            "dendritic_minus_product": 0.0,
+            "nonadditivity_witness": 0.9999999999999353,
+            "dend_nonlinearity_witness": 0.4280566302656392,
+            "chance": 0.015625
+          }
+        },
+        "recover_ok": true,
+        "match_product_ok": true,
+        "nocost_ok": true,
+        "grid_go": true
+      }
+    },
+    "substrate_byte_identical": true,
+    "sim_additions_only": true,
+    "sim_diff_head": "diff --git a/sim/dendritic_neuron.py b/sim/dendritic_neuron.py\nindex d6ad2872a..8bc0ca1ab 100644\n--- a/sim/dendritic_neuron.py\n+++ b/sim/dendritic_neuron.py\n@@ -56,3 +56,52 @@ class DendriticLayer:\n         return {\"soma_rate\": soma_rate, \"v_basal\": self.v_basal.copy(),\n                 \"v_apical\": self.v_apical.copy(),\n                 \"theta_eff\": theta_eff}\n+\n+    # ---------------------------------------------------------------\n+    # ADDITIVE / DEFAULT-OFF extension (2026-08-09): a MULTIPLICATIVE\n+    # apical-basal COINCIDENCE (Larkum BAC / sigma-pi), distinct from\n+    # step()'s ADDITI",
+    "sim_files": [
+      "sim/dendritic_neuron.py"
+    ],
+    "label": "teacher-loop DENDRITIC BIND (a REAL apical x basal coincidence recovers the conjunction on spikes)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "[7x7 s=0.75] dendritic RECOVERS held-out (>= additive+0.30)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.86 vs add 0.00 (chance 0.020)"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7 s=0.75] dendritic MATCHES readout-product (>= product-0.10)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.86 vs prod 0.29"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7 s=1.0] dendritic RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 1.00 vs add 0.00 (chance 0.020)"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7 s=1.0] dendritic MATCHES readout-product (>= product-0.10)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 1.00 vs prod 0.71"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7 s=0.0] no low-s cost (dendritic >= additive-0.05)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 1.00 vs add 1.00"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7 s=0.25] no low-s cost (dendritic >= additive-0.05)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 1.00 vs add 1.00"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7 s=0.5] no low-s cost (dendritic >= additive-0.05)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.86 vs add 0.86"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7] dendritic taught (seen) recall >= 0.85 (min over s)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "min-seen 0.95"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7] factors are NEURAL (reservoir spikes > 0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "mean spikes 90.1"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7] bind is a REAL dendritic COINCIDENCE (AND anchor: coinc(x,0)=coinc(0,y)=0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[7x7] coincidence genuinely NONLINEAR (soma != linear multiple of the product)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "nl-witness 0.434"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7] world carries a real CONJUNCTION at high s (witness > 0.02)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "witness 1.000"
+      },
+      {
+        "kind": "require",
+        "name": "[7x7] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[8x8 s=0.75] dendritic RECOVERS held-out (>= additive+0.30)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.75 vs add 0.12 (chance 0.016)"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8 s=0.75] dendritic MATCHES readout-product (>= product-0.10)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.75 vs prod 0.62"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8 s=1.0] dendritic RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.75 vs add 0.00 (chance 0.016)"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8 s=1.0] dendritic MATCHES readout-product (>= product-0.10)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.75 vs prod 0.75"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8 s=0.0] no low-s cost (dendritic >= additive-0.05)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 1.00 vs add 1.00"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8 s=0.25] no low-s cost (dendritic >= additive-0.05)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 1.00 vs add 1.00"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8 s=0.5] no low-s cost (dendritic >= additive-0.05)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "dend 0.75 vs add 0.75"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8] dendritic taught (seen) recall >= 0.85 (min over s)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "min-seen 0.96"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8] factors are NEURAL (reservoir spikes > 0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "mean spikes 90.1"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8] bind is a REAL dendritic COINCIDENCE (AND anchor: coinc(x,0)=coinc(0,y)=0)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[8x8] coincidence genuinely NONLINEAR (soma != linear multiple of the product)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "nl-witness 0.428"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8] world carries a real CONJUNCTION at high s (witness > 0.02)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "witness 1.000"
+      },
+      {
+        "kind": "require",
+        "name": "[8x8] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(seed) substrate byte-identical",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max threshold diff 0.00e+00"
+      },
+      {
+        "kind": "require",
+        "name": "(sim) edit is ADDITIONS-ONLY in dendritic_neuron.py (guarded/default-off)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "files=['sim/dendritic_neuron.py']"
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

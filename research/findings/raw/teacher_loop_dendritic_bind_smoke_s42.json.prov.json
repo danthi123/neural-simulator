@@ -1,0 +1,36 @@
+{
+ "run_id": "1786328897-2906142",
+ "runner": "research/runners/_teacher_loop_dendritic_bind_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_b090b99b-851-1/research/runners/_teacher_loop_dendritic_bind_derisk.py",
+  "--seed",
+  "42",
+  "--grids",
+  "7x7",
+  "--s-values",
+  "0.0",
+  "0.5",
+  "0.75",
+  "1.0",
+  "--out",
+  "research/findings/raw/teacher_loop_dendritic_bind_smoke_s42.json"
+ ],
+ "git_sha": "a09d5b88e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-09T22:28:17",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/teacher_loop_dendritic_bind_smoke_s42.json"
+}

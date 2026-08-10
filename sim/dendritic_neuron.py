@@ -56,3 +56,52 @@ class DendriticLayer:
         return {"soma_rate": soma_rate, "v_basal": self.v_basal.copy(),
                 "v_apical": self.v_apical.copy(),
                 "theta_eff": theta_eff}
+
+    # ---------------------------------------------------------------
+    # ADDITIVE / DEFAULT-OFF extension (2026-08-09): a MULTIPLICATIVE
+    # apical-basal COINCIDENCE (Larkum BAC / sigma-pi), distinct from
+    # step()'s ADDITIVE threshold-shift. step() is UNCHANGED above, so
+    # a caller that never invokes the two methods below observes the
+    # byte-identical layer (guarded: reached only on explicit call).
+    #
+    # WHY step() is not a product: soma_rate = sig(v_basal - theta_high
+    # + gain*|v_apical|) is ADDITIVE inside the sigmoid -- it has no
+    # product term, so v_basal alone (with a lowered threshold) fires;
+    # it cannot form the AND-only conjunction a bind needs (verified in
+    # research/runners/_phaseB_dendritic_bind_derisk.py header, 2026-06-19).
+    #
+    # THE COINCIDENCE (Larkum 2013 BAC firing; Mel/Poirazi sigma-pi;
+    # catalog G.02 active dendrites + J.08 NMDA coincidence): a somatic
+    # burst requires a basal spike AND a coincident apical Ca2+ plateau.
+    # Each compartment drive passes a NON-NEGATIVE saturating plateau
+    # phi (Michaelis-Menten / finite NMDA-Ca conductance: 0 at rest,
+    # ~linear for |z|<<z0, saturating for |z|>>z0). The soma output is
+    # their PRODUCT phi(basal)*phi(apical) -> NON-ZERO ONLY when BOTH
+    # compartments are engaged (a genuine coincidence AND; phi(0)=0).
+    # The multiplication is the DENDRITIC UNIT's intrinsic operation
+    # (a point neuron, summing, cannot form it), NOT a host product of
+    # two precomputed answers.
+    @staticmethod
+    def dendritic_plateau(z, z0=1.0):
+        """Non-negative saturating dendritic plateau (Michaelis-Menten /
+        finite-conductance NMDA-Ca form). A plateau is a depolarization
+        (>=0); signed inputs are carried by separate ON/OFF drive
+        channels at the caller (biological push-pull), so z is expected
+        >=0 and abs() is a safety rectifier only. phi(0)=0 (the AND
+        anchor: no drive -> no plateau)."""
+        a = np.abs(np.asarray(z, float))
+        return a / (1.0 + a / max(float(z0), 1e-9))
+
+    def apical_basal_coincidence(self, x_basal, x_apical,
+                                 z0_basal=1.0, z0_apical=1.0):
+        """MULTIPLICATIVE BAC coincidence (default-off). Basal drive =
+        x_basal @ W_basal; apical drive = x_apical @ B_apical; each
+        through the plateau; soma = phi(basal)*phi(apical). Returns the
+        soma coincidence + the compartment traces (for anti-cheat
+        witnesses). This is the sigma-pi conjunction a bind needs."""
+        vb = np.asarray(x_basal, float) @ self.W_basal
+        va = np.asarray(x_apical, float) @ self.B_apical
+        gb = self.dendritic_plateau(vb, z0_basal)
+        ga = self.dendritic_plateau(va, z0_apical)
+        return {"soma": gb * ga, "g_basal": gb, "g_apical": ga,
+                "v_basal": vb, "v_apical": va}
