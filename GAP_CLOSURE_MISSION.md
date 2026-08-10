@@ -28,22 +28,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **⭐ WORLD-MODEL READ-OUT BURN-DOWN CLOSED (`f7687e59`, 6-seed GO):** drive/excitability scaling (homeostatic
 > intrinsic-excitability set-point, verified neural) fixes the under-drive — neural read-out 0.18→0.82 @n_pool=1000
 > (85% of ceiling); fully-neural, capacity-scaling read-out.
-> **⭐ COMPOSER MAP COMPLETE (all banked): bundle GO · bind GO · arity-3 GO · faithful-spiking-dendrite PARTIAL.**
+> **⭐ COMPOSER MAP — bundle GO · bind GO · arity-3 GO · FAITHFUL-spiking-dendrite bind GO (2026-08-10, residual #1 CLOSED).**
 > Arity-3 (`9229adaf3`, 3-seed GO, verify CONFIRMED): 3-way superposition composes zero-shot 1.00 — but BOUNDED
 > (disjoint channels = concatenation, so arity3==arity2 by construction; the ~1/√N capacity limit is NOT stressed →
-> shared-channel arity is the probe). Faithful-dendritic bind (`97660c6a2`, PARTIAL): a rate sigma-pi (plateau +
-> push-pull) recovers the conjunction, BUT adversarial verify CAUGHT the overclaim — it's still a host `gb*ga`, NOT
-> a spiking-membrane coincidence (`step()`/membrane dynamics bypassed). Guarded sim edit (+49/-0, default-off).
-> **THE TWO NAMED, HONEST RESIDUALS (both deserve a careful build, not a rush):** (1) the FAITHFUL spiking-dendrite
-> bind — route drives through `DendriticLayer.step()` so basal depol must coincide IN TIME with an apical plateau
-> (temporal coincidence in spikes, not a static product); (2) SHARED-CHANNEL arity — locate the bundling-capacity
-> limit where superposition needs binding even for same-type composition.
+> shared-channel arity is the probe). **Faithful-dendritic bind: PARTIAL (`97660c6a2`) → GO (`2d45f0506`).** The
+> rate-PARTIAL was a host `gb*ga` (verify-caught); the GO replaces it with `sim/dendritic_neuron.py:bac_spiking_coincidence`
+> — a REAL temporal Larkum-BAC unit: basal leaky-integrates the soma while a regenerative Ca plateau lowers the
+> threshold over a window; a HARD spike threshold on two individually sub-threshold inputs forms the AND a soft
+> sigmoid can't; read out as SPIKE COUNTS. TEMPORAL witness = 1.00 every high-s cell all 3 seeds (delay basal past
+> the plateau → full collapse — a static `phi*phi` CANNOT show this), matches host-product 3/3, byte-identical,
+> additions-only. One honest bound: seed44/8×8/s=0.75 strict-gate miss is READOUT-bound (product 0.25 there, spiking
+> BEATS it at 0.38; T80 identical → not quantization). Guarded sim edit (default-off).
+> **THE ONE NAMED, HONEST RESIDUAL LEFT (deserves a careful build):** SHARED-CHANNEL arity — locate the bundling-
+> capacity limit (~1/√N, Plate/Kanerva) where superposition needs binding even for same-attribute-type composition.
 > **STILL RUNNING (untracked, pool-detached — check via heartbeat):** large-N compositional retention (`comp_largeN`,
 > 8×8 done ~0.73-0.86, 10×10 at N=100 slow ~3h). Fold in the flat/fixed comparison when it lands.
-> **DEEPEST composer residual = the faithful spiking dendrite** — move the bind MULTIPLY into the substrate's
-> two-compartment DENDRITIC machinery (`sim/dendritic_neuron.py`) so a real spiking dendrite computes it (currently a Hadamard of
-> two readouts = a functional dendritic-AND). The POOL is UP (192.168.**0**.40-42, node@ + id_ed25519 aliases
-> pool40/41/42; my "down" call was the wrong subnet).
+> The POOL is UP (192.168.**0**.40-42, node@ + id_ed25519 aliases pool40/41/42; my "down" call was the wrong subnet).
 > **SCALABILITY, now a MAP not a wall:** retention closed@N=20 (non-forgetting generator `0933fdb7a`, re-diagnosed
 > as a query-code RANK fix not a recursion); storage sub-linear via compositional primitives; compute — fixed-k
 > prioritized replay NEGATIVE at scale (`777fcb0d`, needs sub-linear/compositional replay); capacity SLIPS at N=100
