@@ -44,7 +44,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > CPU-runnable — NOT GPU-blocked):** the pragmatics oracle afferent-swap (0.1667→~1.0) with the no-remover control
 > that MUST fail + attribution lesions. Scope = separable-assembly only (NOT co-resident source-monitor = dendritic,
 > mapped). Operating-point IS the mechanism → a fresh careful pass; serves task #7.
-> Pool large-N `comp_largeN` retention still running (~7h+, alive; fold in on landing). History below.
+> **EPISODIC MILESTONE (2026-08-10, `ead8e0b7`):** neural cortical cue-recall COMPLETION is a **6-seed GO** (recall
+> 0.646 vs 0.25 chance; completion load-bearing +0.40, permuted-specific +0.56, real/sham lesion teeth, untrained
+> collapses) — the completion sub-wall closes at generalization. The neural WTA is confirmed INERT (`wta_off ≈ full`,
+> the afferent selects directly — the reframe), so it is NOT the bottleneck; the recall residual (0.35 to ceiling) is
+> the **CA3 completion MAGNITUDE (0.18, weak upstream drive)** — the next lever if lifting recall. Retune (`wta_ie_w`
+> 18→4) running to confirm the WTA operating point is irrelevant.
+> Pool large-N `comp_largeN` KILLED (10×10/N=100 impractically slow — 8.5h, zero output; the 8×8 sub-linear trend
+> already stands; pool now FREE). History below.
 
 > **⭐⭐⭐⭐⭐ THE BIGGEST RESULT: NEURAL COMPOSITIONAL GENERALIZATION on the spiking substrate = GO (`ea77003c5`,
 > 6/6, adversarially verified) — the biologized composer.** The scalability arc ("will a year of data be too slow")
