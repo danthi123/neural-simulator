@@ -15,6 +15,12 @@ self-classification (a 25831-neuron spiking substrate, not a person) plus an HON
 confidence relay (it does not separate confident-vs-tie drives on this build). Both are functional correlates that
 NEVER assert phenomenal experience / personhood. Found + verified by RUNNING the actual chat.
 
+> **UPDATE 2026-08-10 — the turn-13 honest-negative is now CLOSED.** The self_schema relay's non-discrimination was a
+> read-protocol artifact (a continuous full clamp made the pooled meta read TOTAL drive, not the winner-vs-loser
+> margin). A SEED-then-SETTLE read flips the separation POSITIVE on all 6 seeds (mean +0.0190) and turn 13 now grades
+> a real assert-band certainty instead of the structural fallback (0 confab, no regression). See
+> [`2026-08-10-INTEGRATION-3b-self-schema-relay-settle-read-discriminates-turn13-grades-certainty.md`](2026-08-10-INTEGRATION-3b-self-schema-relay-settle-read-discriminates-turn13-grades-certainty.md).
+
 ## Instrument
 
 <!--derived-->

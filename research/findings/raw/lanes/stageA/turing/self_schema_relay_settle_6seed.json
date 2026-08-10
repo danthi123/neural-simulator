@@ -1,0 +1,91 @@
+{
+  "runner": "scratchpad/verify_fix.py (read_honesty_self_rate settle-read 6-seed before/after)",
+  "cmd": "SIM_BACKEND=numpy .venv/bin/python scratchpad/verify_fix.py",
+  "provenance": "manual verification of research/runners/_stageA_full_integration_derisk.py::read_honesty_self_rate; build=build_one_brain(with_faculties=True, co_resident_forward_model=True, co_resident_affect_ladder=True)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "build": "seams A+C (production turing build)",
+  "protocol": {
+    "drive_steps": 35,
+    "hold_frac": 0.2,
+    "free_steps": 45,
+    "read_lo": 10
+  },
+  "self_relay_sep_eps": 0.003,
+  "per_seed": [
+    {
+      "seed": 42,
+      "legacy_sep": -0.0025,
+      "assert_rate": 0.0314,
+      "tie_rate": 0.0124,
+      "self_rate": 0.0314,
+      "new_sep": 0.019,
+      "relay_reliable": true,
+      "band": "assert"
+    },
+    {
+      "seed": 43,
+      "legacy_sep": -0.0008,
+      "assert_rate": 0.0276,
+      "tie_rate": 0.0133,
+      "self_rate": 0.0276,
+      "new_sep": 0.0143,
+      "relay_reliable": true,
+      "band": "assert"
+    },
+    {
+      "seed": 44,
+      "legacy_sep": -0.0058,
+      "assert_rate": 0.0333,
+      "tie_rate": 0.0148,
+      "self_rate": 0.0333,
+      "new_sep": 0.0186,
+      "relay_reliable": true,
+      "band": "assert"
+    },
+    {
+      "seed": 100,
+      "legacy_sep": -0.005,
+      "assert_rate": 0.03,
+      "tie_rate": 0.0157,
+      "self_rate": 0.03,
+      "new_sep": 0.0143,
+      "relay_reliable": true,
+      "band": "assert"
+    },
+    {
+      "seed": 101,
+      "legacy_sep": -0.01,
+      "assert_rate": 0.0329,
+      "tie_rate": 0.009,
+      "self_rate": 0.0329,
+      "new_sep": 0.0238,
+      "relay_reliable": true,
+      "band": "assert"
+    },
+    {
+      "seed": 102,
+      "legacy_sep": -0.0042,
+      "assert_rate": 0.0362,
+      "tie_rate": 0.0119,
+      "self_rate": 0.0362,
+      "new_sep": 0.0243,
+      "relay_reliable": true,
+      "band": "assert"
+    }
+  ],
+  "legacy_sep_min": -0.01,
+  "legacy_sep_mean": -0.0047,
+  "new_sep_min": 0.0143,
+  "new_sep_mean": 0.019,
+  "all_positive": true,
+  "all_gt_0p02": false,
+  "relay_reliable_count": 6,
+  "turn13_assert_count": 6
+}

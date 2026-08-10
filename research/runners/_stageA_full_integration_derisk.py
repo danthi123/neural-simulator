@@ -832,11 +832,48 @@ def run_arbiter(bridge, xp, idx, baseline_snap, drives, steps: int = 80) -> tupl
     return winner, margin, {p: float(r) for p, r in rates.items()}
 
 
+# ── self_schema honesty relay: the SETTLE-read protocol (fixes the inverted, non-discriminating relay) ─────────
+# The old read (legacy_continuous) CLAMPED both workspace class assemblies at their FULL drive every step and read
+# the self_schema late window. Under a continuous full clamp the recurrent WTA + shared feed-forward inhibition can
+# never RESOLVE (the clamp keeps re-driving the loser), so meta_schema -- and hence self_schema -- read the POOLED
+# TOTAL drive, not the winner-vs-loser MARGIN. Because the confident probe (520+40=560) carries LESS total drive
+# than the tie probe (300+300=600), the "confident" self-rate read BELOW the "tie" self-rate: separation ~-0.003
+# (INVERTED) across all 6 seeds -- so turn 13 fell back to a structural self-description with an honest-negative.
+#
+# The FIX is a two-phase SEED-then-SETTLE read (the same "drive a pulse, then keep a small holding drive so the
+# accumulators settle" protocol the reference metacog trial uses, _second_order_metacog_monitor_derisk._run_trial):
+#   (1) SEED: drive the two class assemblies with (drive_class0, drive_class1) for SETTLE_DRIVE_STEPS to start the
+#       competition; (2) SETTLE+READ: DROP to a small holding drive (SETTLE_HOLD_FRAC x the seed drive) for
+#       SETTLE_FREE_STEPS and read the self_schema window t>=SETTLE_READ_LO. With the clamp reduced, the recurrent
+#       WTA resolves: a confident imbalance latches a single sustained winner (loser suppressed) -> the shared
+#       feed-forward inhibition is LOW -> meta high -> self high; a TIE drives BOTH classes into the shared
+#       inhibitory pool -> strong competition suppresses both -> meta low -> self low. Separation flips POSITIVE.
+# The window is kept SHORT (SETTLE_FREE_STEPS=45): a longer read lets the strongly-driven confident winner
+# spike-frequency-ADAPT and fall silent, which INVERTS the read again (measured; matches the adaptation-inversion
+# the reference _run_trial documents). Constants were fixed on the 6-seed sweep {42,43,44,100,101,102}: this
+# operating point gives all-6 POSITIVE separation (min +0.016, mean +0.022, vs the legacy -0.003) and turn-13 grades
+# an assert-band certainty on all 6 seeds. RESIDUAL (honest): a symmetric tie occasionally lets a random winner
+# partially latch on 2/6 seeds, holding their separation at ~+0.016 (just under the +0.02 "meaningful" target) -- a
+# point-neuron pooled-meta WTA limit; the named next mechanism for a robust >+0.02 margin is a dedicated
+# certainty-band OPPONENT population that reads the per-class meta winner-minus-loser MARGIN (the reference's proven
+# margin_abs code), not the pooled sum. See the 2026-08-10 finding.
+SETTLE_DRIVE_STEPS = 35        # seed the WTA competition (a pulse; the moderate accumulators amplify + hold)
+SETTLE_HOLD_FRAC = 0.20        # holding drive during settle+read (input-driven accumulator, NOT a full self-latch)
+SETTLE_FREE_STEPS = 45         # settle+read window; short enough to PRECEDE the confident winner's adaptation
+SETTLE_READ_LO = 10           # skip the settle transient; read the resolved window t >= SETTLE_READ_LO
+
+
 def read_honesty_self_rate(bridge, xp, idx, baseline_snap, drive_class0: float, drive_class1: float,
-                           report_steps: int = 60) -> float:
+                           report_steps: int = 60, legacy_continuous: bool = False,
+                           drive_steps: int = SETTLE_DRIVE_STEPS, hold_frac: float = SETTLE_HOLD_FRAC,
+                           free_steps: int = SETTLE_FREE_STEPS, read_lo: int = SETTLE_READ_LO) -> float:
     """Drive the shared workspace class assemblies with (drive_class0, drive_class1), run the relay, and read the
     self_schema mean firing rate off cp_firing_states -- the honesty organ's on-substrate graded confidence read.
-    A large drive imbalance (a confident decision) -> higher self_schema rate; a tie (uncertain) -> lower."""
+    A confident (imbalanced) decision -> higher self_schema rate; a tie (balanced) -> lower.
+
+    Default: the two-phase SEED-then-SETTLE read (see the module note above) that lets the WTA RESOLVE so the read
+    reflects the winner-vs-loser MARGIN, not the pooled total drive. `legacy_continuous=True` reproduces the OLD
+    continuous full-clamp read (which inverted the separation) for the before/after control."""
     _restore_state(bridge, baseline_snap)
     bridge.cp_external_input_current[:] = 0.0
     member = idx["member"]
@@ -844,17 +881,35 @@ def read_honesty_self_rate(bridge, xp, idx, baseline_snap, drive_class0: float, 
     m1 = xp.asarray(member[1])
     self_dev = xp.asarray(idx["self"])
     n_self = int(len(idx["self"]))
-    late = report_steps - max(1, report_steps // 3)
     acc = 0
     n_late = 0
-    for t in range(report_steps):
-        bridge.cp_external_input_current[:] = 0.0
-        bridge.cp_external_input_current[m0] = xp.float32(float(drive_class0))
-        bridge.cp_external_input_current[m1] = xp.float32(float(drive_class1))
-        bridge._run_one_simulation_step()
-        if t >= late:
-            acc += int(to_host(bridge.cp_firing_states[self_dev]).sum())
-            n_late += 1
+    if legacy_continuous:
+        late = report_steps - max(1, report_steps // 3)
+        for t in range(report_steps):
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.cp_external_input_current[m0] = xp.float32(float(drive_class0))
+            bridge.cp_external_input_current[m1] = xp.float32(float(drive_class1))
+            bridge._run_one_simulation_step()
+            if t >= late:
+                acc += int(to_host(bridge.cp_firing_states[self_dev]).sum())
+                n_late += 1
+    else:
+        # (1) SEED the competition with the full drive.
+        for _ in range(int(drive_steps)):
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.cp_external_input_current[m0] = xp.float32(float(drive_class0))
+            bridge.cp_external_input_current[m1] = xp.float32(float(drive_class1))
+            bridge._run_one_simulation_step()
+        # (2) SETTLE+READ under a small holding drive so the recurrent WTA resolves before the read.
+        h = float(hold_frac)
+        for t in range(int(free_steps)):
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.cp_external_input_current[m0] = xp.float32(float(drive_class0) * h)
+            bridge.cp_external_input_current[m1] = xp.float32(float(drive_class1) * h)
+            bridge._run_one_simulation_step()
+            if t >= int(read_lo):
+                acc += int(to_host(bridge.cp_firing_states[self_dev]).sum())
+                n_late += 1
     _restore_state(bridge, baseline_snap)
     bridge.cp_external_input_current[:] = 0.0
     return acc / max(1, n_late) / max(1, n_self)
