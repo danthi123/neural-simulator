@@ -20,14 +20,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > converged on COMPOSITIONALITY and delivered the composer's two operations on spikes: **BUNDLE (superposition)
 > WORKS** — a spiking generator recalls NEVER-TAUGHT (a,b) combinations at 1.00 by neural SUPERPOSITION of two
 > primitive spiking-readout outputs (fixed/flat floors at chance; lesion-localized; no leakage; verified). **BIND
-> (conjunction) is the named residual:** the interference stress test (`5ae5f8979`, 6-seed) shows bundle is robust
-> through moderate-to-strong non-linear mixing but breaks at MAXIMUM (median first-break s=1.0) — a linear SUM can't
-> separate conjunctively-mixed prototypes → the residual is a NON-LINEAR binding (dendritic-AND/sigma-pi/tensor).
-> Storage: a compositional generator stores O(√N) primitives (sub-linear), verified (`e4417698d`/`8c0c4b9ff`).
-> **⭐ 5 THREADS RUNNING (game off, local 20c + pool 36c):** conjunctive-binding=the composer BIND (`wf5y8a6ws`);
-> read-out drive/excitability scaling (`wontbhi8p`); deeper-composition arity 2→4 (`w5dtegvc9`); large-N
-> compositional retention on the POOL (`comp_largeN`, 10×10 finishing); [interference 6-seed DONE, banked]. The
-> POOL is UP (192.168.**0**.40-42, node@ + id_ed25519 aliases pool40/41/42; my "down" call was the wrong subnet).
+> (conjunction) NOW GO too (`2bcf9d13`, 6-seed):** a NEURAL dendritic-AND (elementwise PRODUCT / sigma-pi of two
+> primitive spiking readouts — a sum-ablation control stays at chance, so the multiply is load-bearing) RECOVERS
+> zero-shot composition where additive superposition broke (at max mixing s=1.0: additive→chance, bind→0.77-0.83,
+> 6/6). **⇒ THE BIOLOGIZED VSA COMPOSER HAS BOTH OPERATIONS ON SPIKES: bundle + bind.** (Qualified: decisive 6/6 at
+> max mixing, per-seed variance at intermediate s=0.75.) Storage: sub-linear O(√N) primitives (`e4417698d`).
+> **⭐ WORLD-MODEL READ-OUT BURN-DOWN CLOSED (`f7687e59`, 6-seed GO):** drive/excitability scaling (homeostatic
+> intrinsic-excitability set-point, verified neural) fixes the under-drive — neural read-out 0.18→0.82 @n_pool=1000
+> (85% of ceiling); fully-neural, capacity-scaling read-out.
+> **RUNNING:** arity-3 bundle (`w98aebiej`, retry — the first arity attempt failed on agent StructuredOutput cap);
+> large-N compositional retention on the POOL (`comp_largeN`, 10×10 finishing).
+> **NEXT (deepest composer residual, named):** move the bind MULTIPLY into the substrate's two-compartment DENDRITIC
+> machinery (`sim/dendritic_neuron.py`) so a real spiking dendrite computes the coincidence (currently a Hadamard of
+> two readouts = a functional dendritic-AND). The POOL is UP (192.168.**0**.40-42, node@ + id_ed25519 aliases
+> pool40/41/42; my "down" call was the wrong subnet).
 > **SCALABILITY, now a MAP not a wall:** retention closed@N=20 (non-forgetting generator `0933fdb7a`, re-diagnosed
 > as a query-code RANK fix not a recursion); storage sub-linear via compositional primitives; compute — fixed-k
 > prioritized replay NEGATIVE at scale (`777fcb0d`, needs sub-linear/compositional replay); capacity SLIPS at N=100

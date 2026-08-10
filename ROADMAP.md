@@ -428,8 +428,13 @@ and change later behavior. A collection of connected demos is not enough.
     **zero-shot compositional generalization**, the core skill for producing
     novel sentences. That's the project's VSA "composer" running in spikes. It's
     robust until the attributes interfere strongly, where a linear sum can't
-    encode an AND — so the next build is a neural *binding* operation (dendritic
-    AND), already running.
+    encode an AND — so we built a neural *binding* operation (a dendritic-AND,
+    two synaptic drives multiplied on a dendrite), **and it works**: it recovers
+    the composition superposition couldn't (6/6 at maximum interference). So the
+    spiking brain now has *both* pieces of the composition algebra — bundle and
+    bind — the core skill for producing and understanding novel combinations.
+    The deepest remaining step is to compute that multiply inside a real spiking
+    dendrite rather than as a readout product.
 - Grow structure as needed through activity-dependent connections, neuron or
   region growth, pruning, homeostasis, and replay-based consolidation.
 - Turn the affect core into graded internal state that changes attention,
