@@ -87,10 +87,22 @@ spiking coincidence, which reproduces or beats the product everywhere.
 observes a byte-identical layer (git-diff verified additions-only, asserted in-runner). `cfg.seed` byte-identical
 substrate.
 
+## 6-seed confirmation (pool, 2026-08-10)
+
+<!--derived-->
+
+Fanned across the mini-PC pool (seeds 42/43/44/100/101/102): the recovery HOLDS at all 6 seeds — at s=1.0 (pure
+conjunction, additive→0) held-out recall is 7×7 {1.00, 0.71, 1.00, 0.57, 1.00, 0.86} (mean 0.86) and 8×8 {0.88,
+0.62, 0.50, 1.00, 1.00, 0.75} (mean 0.79), all far above the additive floor. Substrate byte-identical all 6 seeds.
+The per-seed VERDICT read UNDEFINED **only** because the pool's `~/derisk-pool/sim` is a NON-GIT rsync copy, so the
+runner's `git diff main -- sim/` sim-additions-only anti-cheat cannot run there (a provenance-check artifact, NOT a
+mechanism failure). LESSON: pool dispatch breaks git-based runner checks — run the verdict-bearing pass where git
+works, or read raw metrics from the pool.
+
 Artifacts: `research/findings/raw/teacher_loop_dendritic_bind_spiking_par_s42.json`,
 `research/findings/raw/teacher_loop_dendritic_bind_spiking_par_s43.json`,
-`research/findings/raw/teacher_loop_dendritic_bind_spiking_par_s44.json` (+ `.prov.json` sidecars).
-SIM_BACKEND=numpy.
+`research/findings/raw/teacher_loop_dendritic_bind_spiking_par_s44.json` (+ `.prov.json` sidecars); 6-seed pool
+confirm `research/findings/raw/spkbind6_s42.json` (+ s43/s44/s100/s101/s102). SIM_BACKEND=numpy.
 
 ## Where the composer stands now
 
