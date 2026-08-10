@@ -1,0 +1,1018 @@
+{
+  "runner": "research.runners._neural_wta_word_decode_derisk",
+  "bridge": "/home/dant123/Projects/sim/bridges/v16/seed42.simstate.h5",
+  "vocab_size": 16,
+  "vocab": [
+    "north",
+    "east",
+    "south",
+    "west",
+    "apple",
+    "river",
+    "dog",
+    "cat",
+    "go",
+    "come",
+    "stop",
+    "look",
+    "big",
+    "small",
+    "hot",
+    "cold"
+  ],
+  "n_seeds": 6,
+  "n_go": 6,
+  "verdict": "GO",
+  "host_cosine_acc_mean": 0.75,
+  "neural_wta_acc_mean": 0.75,
+  "parity_wta_vs_dot_mean": 1.0,
+  "shuffle_parity_mean": 0.041666666666666664,
+  "parity_attributable_to_true_drive": 0.9583,
+  "chance": 0.0625,
+  "settle": 25,
+  "input_gain": 1200.0,
+  "score_mode": "softmax",
+  "wall_clock_s": 1.1,
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "neural-WTA spell accuracy vs chance",
+      "ok": true,
+      "detail": "0.75 vs floor 0.0625",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "parity(WTA==host winner) > 0.9",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7170d172e0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "WTA reads TRUE drive (parity vs shuffled-score parity)",
+      "ok": true,
+      "detail": "treatment=1 control=0.0416667 |sep|=0.958333 > 0.4",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "neural-WTA matches host within 1/16",
+      "ok": true,
+      "detail": "measured=0.0625 expect=<function main.<locals>.<lambda> at 0x7f7170d172e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": ">=5/6 seeds match host",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f7170d172e0>",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "per_seed": [
+    {
+      "fs_seed": 42,
+      "host_cosine_acc": 0.75,
+      "host_dot_acc": 0.75,
+      "neural_wta_acc": 0.75,
+      "parity_wta_vs_dot": 1.0,
+      "shuffle_parity": 0.0625,
+      "mean_margin": 0.8371110910741574,
+      "min_margin": 0.4360156363443487,
+      "per_word": [
+        {
+          "word": "north",
+          "target_idx": 0,
+          "host_cosine_win": "north",
+          "dot_win": "north",
+          "neural_wta_win": "north",
+          "shuffle_win": "south",
+          "margin_top1_top2": 0.9994
+        },
+        {
+          "word": "east",
+          "target_idx": 1,
+          "host_cosine_win": "east",
+          "dot_win": "east",
+          "neural_wta_win": "east",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.9952
+        },
+        {
+          "word": "south",
+          "target_idx": 2,
+          "host_cosine_win": "south",
+          "dot_win": "south",
+          "neural_wta_win": "south",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.9564
+        },
+        {
+          "word": "west",
+          "target_idx": 3,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.922
+        },
+        {
+          "word": "apple",
+          "target_idx": 4,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "hot",
+          "margin_top1_top2": 0.6297
+        },
+        {
+          "word": "river",
+          "target_idx": 5,
+          "host_cosine_win": "river",
+          "dot_win": "river",
+          "neural_wta_win": "river",
+          "shuffle_win": "go",
+          "margin_top1_top2": 0.436
+        },
+        {
+          "word": "dog",
+          "target_idx": 6,
+          "host_cosine_win": "dog",
+          "dot_win": "dog",
+          "neural_wta_win": "dog",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.9816
+        },
+        {
+          "word": "cat",
+          "target_idx": 7,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.9837
+        },
+        {
+          "word": "go",
+          "target_idx": 8,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.7917
+        },
+        {
+          "word": "come",
+          "target_idx": 9,
+          "host_cosine_win": "come",
+          "dot_win": "come",
+          "neural_wta_win": "come",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.9577
+        },
+        {
+          "word": "stop",
+          "target_idx": 10,
+          "host_cosine_win": "stop",
+          "dot_win": "stop",
+          "neural_wta_win": "stop",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.9594
+        },
+        {
+          "word": "look",
+          "target_idx": 11,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "south",
+          "margin_top1_top2": 0.9916
+        },
+        {
+          "word": "big",
+          "target_idx": 12,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "north",
+          "margin_top1_top2": 0.4469
+        },
+        {
+          "word": "small",
+          "target_idx": 13,
+          "host_cosine_win": "big",
+          "dot_win": "big",
+          "neural_wta_win": "big",
+          "shuffle_win": "small",
+          "margin_top1_top2": 0.8731
+        },
+        {
+          "word": "hot",
+          "target_idx": 14,
+          "host_cosine_win": "hot",
+          "dot_win": "hot",
+          "neural_wta_win": "hot",
+          "shuffle_win": "apple",
+          "margin_top1_top2": 0.9631
+        },
+        {
+          "word": "cold",
+          "target_idx": 15,
+          "host_cosine_win": "cold",
+          "dot_win": "cold",
+          "neural_wta_win": "cold",
+          "shuffle_win": "small",
+          "margin_top1_top2": 0.5064
+        }
+      ],
+      "seed_go": true
+    },
+    {
+      "fs_seed": 43,
+      "host_cosine_acc": 0.75,
+      "host_dot_acc": 0.75,
+      "neural_wta_acc": 0.75,
+      "parity_wta_vs_dot": 1.0,
+      "shuffle_parity": 0.0,
+      "mean_margin": 0.8371110910741574,
+      "min_margin": 0.4360156363443487,
+      "per_word": [
+        {
+          "word": "north",
+          "target_idx": 0,
+          "host_cosine_win": "north",
+          "dot_win": "north",
+          "neural_wta_win": "north",
+          "shuffle_win": "cold",
+          "margin_top1_top2": 0.9994
+        },
+        {
+          "word": "east",
+          "target_idx": 1,
+          "host_cosine_win": "east",
+          "dot_win": "east",
+          "neural_wta_win": "east",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.9952
+        },
+        {
+          "word": "south",
+          "target_idx": 2,
+          "host_cosine_win": "south",
+          "dot_win": "south",
+          "neural_wta_win": "south",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.9564
+        },
+        {
+          "word": "west",
+          "target_idx": 3,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "hot",
+          "margin_top1_top2": 0.922
+        },
+        {
+          "word": "apple",
+          "target_idx": 4,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.6297
+        },
+        {
+          "word": "river",
+          "target_idx": 5,
+          "host_cosine_win": "river",
+          "dot_win": "river",
+          "neural_wta_win": "river",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.436
+        },
+        {
+          "word": "dog",
+          "target_idx": 6,
+          "host_cosine_win": "dog",
+          "dot_win": "dog",
+          "neural_wta_win": "dog",
+          "shuffle_win": "look",
+          "margin_top1_top2": 0.9816
+        },
+        {
+          "word": "cat",
+          "target_idx": 7,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "go",
+          "margin_top1_top2": 0.9837
+        },
+        {
+          "word": "go",
+          "target_idx": 8,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.7917
+        },
+        {
+          "word": "come",
+          "target_idx": 9,
+          "host_cosine_win": "come",
+          "dot_win": "come",
+          "neural_wta_win": "come",
+          "shuffle_win": "hot",
+          "margin_top1_top2": 0.9577
+        },
+        {
+          "word": "stop",
+          "target_idx": 10,
+          "host_cosine_win": "stop",
+          "dot_win": "stop",
+          "neural_wta_win": "stop",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.9594
+        },
+        {
+          "word": "look",
+          "target_idx": 11,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "river",
+          "margin_top1_top2": 0.9916
+        },
+        {
+          "word": "big",
+          "target_idx": 12,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "north",
+          "margin_top1_top2": 0.4469
+        },
+        {
+          "word": "small",
+          "target_idx": 13,
+          "host_cosine_win": "big",
+          "dot_win": "big",
+          "neural_wta_win": "big",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.8731
+        },
+        {
+          "word": "hot",
+          "target_idx": 14,
+          "host_cosine_win": "hot",
+          "dot_win": "hot",
+          "neural_wta_win": "hot",
+          "shuffle_win": "small",
+          "margin_top1_top2": 0.9631
+        },
+        {
+          "word": "cold",
+          "target_idx": 15,
+          "host_cosine_win": "cold",
+          "dot_win": "cold",
+          "neural_wta_win": "cold",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.5064
+        }
+      ],
+      "seed_go": true
+    },
+    {
+      "fs_seed": 44,
+      "host_cosine_acc": 0.75,
+      "host_dot_acc": 0.75,
+      "neural_wta_acc": 0.75,
+      "parity_wta_vs_dot": 1.0,
+      "shuffle_parity": 0.0625,
+      "mean_margin": 0.8371110910741574,
+      "min_margin": 0.4360156363443487,
+      "per_word": [
+        {
+          "word": "north",
+          "target_idx": 0,
+          "host_cosine_win": "north",
+          "dot_win": "north",
+          "neural_wta_win": "north",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.9994
+        },
+        {
+          "word": "east",
+          "target_idx": 1,
+          "host_cosine_win": "east",
+          "dot_win": "east",
+          "neural_wta_win": "east",
+          "shuffle_win": "cat",
+          "margin_top1_top2": 0.9952
+        },
+        {
+          "word": "south",
+          "target_idx": 2,
+          "host_cosine_win": "south",
+          "dot_win": "south",
+          "neural_wta_win": "south",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.9564
+        },
+        {
+          "word": "west",
+          "target_idx": 3,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "look",
+          "margin_top1_top2": 0.922
+        },
+        {
+          "word": "apple",
+          "target_idx": 4,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "cold",
+          "margin_top1_top2": 0.6297
+        },
+        {
+          "word": "river",
+          "target_idx": 5,
+          "host_cosine_win": "river",
+          "dot_win": "river",
+          "neural_wta_win": "river",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.436
+        },
+        {
+          "word": "dog",
+          "target_idx": 6,
+          "host_cosine_win": "dog",
+          "dot_win": "dog",
+          "neural_wta_win": "dog",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.9816
+        },
+        {
+          "word": "cat",
+          "target_idx": 7,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.9837
+        },
+        {
+          "word": "go",
+          "target_idx": 8,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.7917
+        },
+        {
+          "word": "come",
+          "target_idx": 9,
+          "host_cosine_win": "come",
+          "dot_win": "come",
+          "neural_wta_win": "come",
+          "shuffle_win": "look",
+          "margin_top1_top2": 0.9577
+        },
+        {
+          "word": "stop",
+          "target_idx": 10,
+          "host_cosine_win": "stop",
+          "dot_win": "stop",
+          "neural_wta_win": "stop",
+          "shuffle_win": "go",
+          "margin_top1_top2": 0.9594
+        },
+        {
+          "word": "look",
+          "target_idx": 11,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "cold",
+          "margin_top1_top2": 0.9916
+        },
+        {
+          "word": "big",
+          "target_idx": 12,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.4469
+        },
+        {
+          "word": "small",
+          "target_idx": 13,
+          "host_cosine_win": "big",
+          "dot_win": "big",
+          "neural_wta_win": "big",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.8731
+        },
+        {
+          "word": "hot",
+          "target_idx": 14,
+          "host_cosine_win": "hot",
+          "dot_win": "hot",
+          "neural_wta_win": "hot",
+          "shuffle_win": "west",
+          "margin_top1_top2": 0.9631
+        },
+        {
+          "word": "cold",
+          "target_idx": 15,
+          "host_cosine_win": "cold",
+          "dot_win": "cold",
+          "neural_wta_win": "cold",
+          "shuffle_win": "west",
+          "margin_top1_top2": 0.5064
+        }
+      ],
+      "seed_go": true
+    },
+    {
+      "fs_seed": 100,
+      "host_cosine_acc": 0.75,
+      "host_dot_acc": 0.75,
+      "neural_wta_acc": 0.75,
+      "parity_wta_vs_dot": 1.0,
+      "shuffle_parity": 0.0,
+      "mean_margin": 0.8371110910741574,
+      "min_margin": 0.4360156363443487,
+      "per_word": [
+        {
+          "word": "north",
+          "target_idx": 0,
+          "host_cosine_win": "north",
+          "dot_win": "north",
+          "neural_wta_win": "north",
+          "shuffle_win": "hot",
+          "margin_top1_top2": 0.9994
+        },
+        {
+          "word": "east",
+          "target_idx": 1,
+          "host_cosine_win": "east",
+          "dot_win": "east",
+          "neural_wta_win": "east",
+          "shuffle_win": "south",
+          "margin_top1_top2": 0.9952
+        },
+        {
+          "word": "south",
+          "target_idx": 2,
+          "host_cosine_win": "south",
+          "dot_win": "south",
+          "neural_wta_win": "south",
+          "shuffle_win": "north",
+          "margin_top1_top2": 0.9564
+        },
+        {
+          "word": "west",
+          "target_idx": 3,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "apple",
+          "margin_top1_top2": 0.922
+        },
+        {
+          "word": "apple",
+          "target_idx": 4,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.6297
+        },
+        {
+          "word": "river",
+          "target_idx": 5,
+          "host_cosine_win": "river",
+          "dot_win": "river",
+          "neural_wta_win": "river",
+          "shuffle_win": "go",
+          "margin_top1_top2": 0.436
+        },
+        {
+          "word": "dog",
+          "target_idx": 6,
+          "host_cosine_win": "dog",
+          "dot_win": "dog",
+          "neural_wta_win": "dog",
+          "shuffle_win": "west",
+          "margin_top1_top2": 0.9816
+        },
+        {
+          "word": "cat",
+          "target_idx": 7,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.9837
+        },
+        {
+          "word": "go",
+          "target_idx": 8,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "small",
+          "margin_top1_top2": 0.7917
+        },
+        {
+          "word": "come",
+          "target_idx": 9,
+          "host_cosine_win": "come",
+          "dot_win": "come",
+          "neural_wta_win": "come",
+          "shuffle_win": "go",
+          "margin_top1_top2": 0.9577
+        },
+        {
+          "word": "stop",
+          "target_idx": 10,
+          "host_cosine_win": "stop",
+          "dot_win": "stop",
+          "neural_wta_win": "stop",
+          "shuffle_win": "cold",
+          "margin_top1_top2": 0.9594
+        },
+        {
+          "word": "look",
+          "target_idx": 11,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "cold",
+          "margin_top1_top2": 0.9916
+        },
+        {
+          "word": "big",
+          "target_idx": 12,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.4469
+        },
+        {
+          "word": "small",
+          "target_idx": 13,
+          "host_cosine_win": "big",
+          "dot_win": "big",
+          "neural_wta_win": "big",
+          "shuffle_win": "look",
+          "margin_top1_top2": 0.8731
+        },
+        {
+          "word": "hot",
+          "target_idx": 14,
+          "host_cosine_win": "hot",
+          "dot_win": "hot",
+          "neural_wta_win": "hot",
+          "shuffle_win": "cat",
+          "margin_top1_top2": 0.9631
+        },
+        {
+          "word": "cold",
+          "target_idx": 15,
+          "host_cosine_win": "cold",
+          "dot_win": "cold",
+          "neural_wta_win": "cold",
+          "shuffle_win": "look",
+          "margin_top1_top2": 0.5064
+        }
+      ],
+      "seed_go": true
+    },
+    {
+      "fs_seed": 101,
+      "host_cosine_acc": 0.75,
+      "host_dot_acc": 0.75,
+      "neural_wta_acc": 0.75,
+      "parity_wta_vs_dot": 1.0,
+      "shuffle_parity": 0.0625,
+      "mean_margin": 0.8371110910741574,
+      "min_margin": 0.4360156363443487,
+      "per_word": [
+        {
+          "word": "north",
+          "target_idx": 0,
+          "host_cosine_win": "north",
+          "dot_win": "north",
+          "neural_wta_win": "north",
+          "shuffle_win": "west",
+          "margin_top1_top2": 0.9994
+        },
+        {
+          "word": "east",
+          "target_idx": 1,
+          "host_cosine_win": "east",
+          "dot_win": "east",
+          "neural_wta_win": "east",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.9952
+        },
+        {
+          "word": "south",
+          "target_idx": 2,
+          "host_cosine_win": "south",
+          "dot_win": "south",
+          "neural_wta_win": "south",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.9564
+        },
+        {
+          "word": "west",
+          "target_idx": 3,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.922
+        },
+        {
+          "word": "apple",
+          "target_idx": 4,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.6297
+        },
+        {
+          "word": "river",
+          "target_idx": 5,
+          "host_cosine_win": "river",
+          "dot_win": "river",
+          "neural_wta_win": "river",
+          "shuffle_win": "small",
+          "margin_top1_top2": 0.436
+        },
+        {
+          "word": "dog",
+          "target_idx": 6,
+          "host_cosine_win": "dog",
+          "dot_win": "dog",
+          "neural_wta_win": "dog",
+          "shuffle_win": "look",
+          "margin_top1_top2": 0.9816
+        },
+        {
+          "word": "cat",
+          "target_idx": 7,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.9837
+        },
+        {
+          "word": "go",
+          "target_idx": 8,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.7917
+        },
+        {
+          "word": "come",
+          "target_idx": 9,
+          "host_cosine_win": "come",
+          "dot_win": "come",
+          "neural_wta_win": "come",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.9577
+        },
+        {
+          "word": "stop",
+          "target_idx": 10,
+          "host_cosine_win": "stop",
+          "dot_win": "stop",
+          "neural_wta_win": "stop",
+          "shuffle_win": "cat",
+          "margin_top1_top2": 0.9594
+        },
+        {
+          "word": "look",
+          "target_idx": 11,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.9916
+        },
+        {
+          "word": "big",
+          "target_idx": 12,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.4469
+        },
+        {
+          "word": "small",
+          "target_idx": 13,
+          "host_cosine_win": "big",
+          "dot_win": "big",
+          "neural_wta_win": "big",
+          "shuffle_win": "small",
+          "margin_top1_top2": 0.8731
+        },
+        {
+          "word": "hot",
+          "target_idx": 14,
+          "host_cosine_win": "hot",
+          "dot_win": "hot",
+          "neural_wta_win": "hot",
+          "shuffle_win": "west",
+          "margin_top1_top2": 0.9631
+        },
+        {
+          "word": "cold",
+          "target_idx": 15,
+          "host_cosine_win": "cold",
+          "dot_win": "cold",
+          "neural_wta_win": "cold",
+          "shuffle_win": "apple",
+          "margin_top1_top2": 0.5064
+        }
+      ],
+      "seed_go": true
+    },
+    {
+      "fs_seed": 102,
+      "host_cosine_acc": 0.75,
+      "host_dot_acc": 0.75,
+      "neural_wta_acc": 0.75,
+      "parity_wta_vs_dot": 1.0,
+      "shuffle_parity": 0.0625,
+      "mean_margin": 0.8371110910741574,
+      "min_margin": 0.4360156363443487,
+      "per_word": [
+        {
+          "word": "north",
+          "target_idx": 0,
+          "host_cosine_win": "north",
+          "dot_win": "north",
+          "neural_wta_win": "north",
+          "shuffle_win": "big",
+          "margin_top1_top2": 0.9994
+        },
+        {
+          "word": "east",
+          "target_idx": 1,
+          "host_cosine_win": "east",
+          "dot_win": "east",
+          "neural_wta_win": "east",
+          "shuffle_win": "north",
+          "margin_top1_top2": 0.9952
+        },
+        {
+          "word": "south",
+          "target_idx": 2,
+          "host_cosine_win": "south",
+          "dot_win": "south",
+          "neural_wta_win": "south",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.9564
+        },
+        {
+          "word": "west",
+          "target_idx": 3,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "south",
+          "margin_top1_top2": 0.922
+        },
+        {
+          "word": "apple",
+          "target_idx": 4,
+          "host_cosine_win": "west",
+          "dot_win": "west",
+          "neural_wta_win": "west",
+          "shuffle_win": "south",
+          "margin_top1_top2": 0.6297
+        },
+        {
+          "word": "river",
+          "target_idx": 5,
+          "host_cosine_win": "river",
+          "dot_win": "river",
+          "neural_wta_win": "river",
+          "shuffle_win": "hot",
+          "margin_top1_top2": 0.436
+        },
+        {
+          "word": "dog",
+          "target_idx": 6,
+          "host_cosine_win": "dog",
+          "dot_win": "dog",
+          "neural_wta_win": "dog",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.9816
+        },
+        {
+          "word": "cat",
+          "target_idx": 7,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "apple",
+          "margin_top1_top2": 0.9837
+        },
+        {
+          "word": "go",
+          "target_idx": 8,
+          "host_cosine_win": "cat",
+          "dot_win": "cat",
+          "neural_wta_win": "cat",
+          "shuffle_win": "apple",
+          "margin_top1_top2": 0.7917
+        },
+        {
+          "word": "come",
+          "target_idx": 9,
+          "host_cosine_win": "come",
+          "dot_win": "come",
+          "neural_wta_win": "come",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.9577
+        },
+        {
+          "word": "stop",
+          "target_idx": 10,
+          "host_cosine_win": "stop",
+          "dot_win": "stop",
+          "neural_wta_win": "stop",
+          "shuffle_win": "go",
+          "margin_top1_top2": 0.9594
+        },
+        {
+          "word": "look",
+          "target_idx": 11,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "dog",
+          "margin_top1_top2": 0.9916
+        },
+        {
+          "word": "big",
+          "target_idx": 12,
+          "host_cosine_win": "look",
+          "dot_win": "look",
+          "neural_wta_win": "look",
+          "shuffle_win": "come",
+          "margin_top1_top2": 0.4469
+        },
+        {
+          "word": "small",
+          "target_idx": 13,
+          "host_cosine_win": "big",
+          "dot_win": "big",
+          "neural_wta_win": "big",
+          "shuffle_win": "stop",
+          "margin_top1_top2": 0.8731
+        },
+        {
+          "word": "hot",
+          "target_idx": 14,
+          "host_cosine_win": "hot",
+          "dot_win": "hot",
+          "neural_wta_win": "hot",
+          "shuffle_win": "east",
+          "margin_top1_top2": 0.9631
+        },
+        {
+          "word": "cold",
+          "target_idx": 15,
+          "host_cosine_win": "cold",
+          "dot_win": "cold",
+          "neural_wta_win": "cold",
+          "shuffle_win": "cat",
+          "margin_top1_top2": 0.5064
+        }
+      ],
+      "seed_go": true
+    }
+  ]
+}
