@@ -160,9 +160,10 @@ def main():
     go = ans_ok and moat_ok and perm_ok
     print(f"\n  AGGREGATE ({len(recs)} seeds): answer_acc={ans:.3f} | MOAT abstain={moat:.3f} | permuted={perm:.3f}", flush=True)
     print(f"  answer>0.75 all={ans_ok} | moat>0.9 all={moat_ok} | beats_permuted all={perm_ok}", flush=True)
-    print(f"  VERDICT: {'GO' if go else 'NEGATIVE'} -- the brain {'STORES + ANSWERS relational SVO facts over its OWN '
-             'real-corpus codes (what-did-X-verb -> the object), and ABSTAINS on an unstored relation (no-confab moat)'
-             if go else 'does NOT cleanly answer relational SVO'}.", flush=True)
+    _verdict_msg = ('STORES + ANSWERS relational SVO facts over its OWN real-corpus codes (what-did-X-verb -> the '
+                    'object), and ABSTAINS on an unstored relation (no-confab moat)'
+                    if go else 'does NOT cleanly answer relational SVO')
+    print(f"  VERDICT: {'GO' if go else 'NEGATIVE'} -- the brain {_verdict_msg}.", flush=True)
     if a.out:
         json.dump({"verdict": "GO" if go else "NEGATIVE", "aggregate": {"answer": ans, "moat": moat, "permuted": perm},
                    "per_seed": recs}, open(a.out, "w"), indent=2)

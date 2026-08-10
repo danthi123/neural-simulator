@@ -47,6 +47,14 @@ not invent a reason") instead of DEFLECTING to other motion facts or letting the
 (the sub-clausal moat drops it) — **6/6 seeds, confab=0, only turn 4 changes** (byte-identical elsewhere, per-turn
 exact compare). The truly-emergent answer (COMPOSE stored facts into a grounded causal chain) is NAMED as the
 follow-on arc, per THE LAW. (`2026-08-10-INTEGRATION-5-honest-causal-query-disclaimer-turn4-6seed.md`)
+**#6 (2026-08-10) corpus-LEARNED grounded facts into the live chat:** the chat could only talk about dog/cat (2
+subjects, 6 hand-taught facts); now it stores relational facts MINED FROM THE CORPUS it "heard" (TinyStories),
+wired in via one additive `vocab` kwarg on `build_one_brain`. Grounded-subject BREADTH rises 2 → 9, grounded
+replies 4 → 9 (+5) vs the 6-fact baseline, **6/6 seeds, confab=0**, the no-confab moat holds (0 false-accepts,
+100% of invented propositions dropped), OOD turns still abstain, and the knowledge is corpus-derived (permuted
+overlap ~0; the empty-kb control confirms competence is in the FACTS, not the vocab). The additive param is
+byte-identical by default. The emergent successor (the stream cortex learning co-occurrence in SYNAPSES, not a
+host mine+store) is NAMED. (`2026-08-10-INTEGRATION-6-corpus-learned-facts-into-live-chat-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The

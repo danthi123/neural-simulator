@@ -428,6 +428,14 @@ dAP recall; the self_schema-relay certainty-band read is now robust — #3b sett
 learn-to-speak word-choice at production vocab; make the honest-silence turns richer only where genuinely grounded;
 a spiking relational/causal-composition faculty — the INTEGRATION #5 follow-on — so a "why" graduates from the honest
 disclaimer to a moat-verified composed causal chain over the stored associations).
+**#6 corpus-LEARNED grounded facts into the live chat** (2026-08-10): the chat stored only 6 hand-taught facts about
+2 subjects (dog/cat); now it stores relational SVO facts MINED FROM THE CORPUS it "heard" (TinyStories), wired in
+via ONE additive `vocab` kwarg on `build_one_brain` (byte-identical by default). Grounded-subject BREADTH rises
+2 → 9, grounded replies 4 → 9 (+5) vs the 6-fact baseline — **6/6 seeds, confab=0**; the RF-VSA no-confab moat holds
+(0 false-accepts, 100% of invented propositions dropped), OOD turns still abstain, and the knowledge is
+corpus-DERIVED (permuted overlap ~0; the empty-kb control shows competence is in the FACTS, not the vocab). The
+emergent successor — the stream cortex learning co-occurrence in SYNAPSES rather than a host mine+store — is NAMED
+per THE LAW (`2026-08-10-INTEGRATION-6-corpus-learned-facts-into-live-chat-6seed.md`).
 
 **2026-08-08 UPDATE — OPEN-ENDED CONVERSATION arc (ultracode, owner-directed): the faculty-de-risk waves toward
 human-like fluency.** The TRUE-ONE-BRAIN loop (honesty + affect + curiosity + no-confab moat on one bridge) is

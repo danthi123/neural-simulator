@@ -206,9 +206,10 @@ def main():
           f"MOAT {int(moat)} | deranged-yes {der:.3f}", flush=True)
     print(f"  inherit>0.5 all={yes_ok} | reject>0.5 all={no_ok} | moat all={moat} | beats_deranged(>.25)={beats_der}",
           flush=True)
-    print(f"  VERDICT: {verdict} -- the brain {'ANSWERS a yes/no question about a HELD-OUT real word by inheriting a '
-             'TAUGHT class property over the REAL-corpus-discovered category, rejects other-category words, and '
-             'ABSTAINS on unknown words (no-confab moat)' if go else 'does NOT cleanly answer'}.", flush=True)
+    _verdict_msg = ('ANSWERS a yes/no question about a HELD-OUT real word by inheriting a TAUGHT class property over '
+                    'the REAL-corpus-discovered category, rejects other-category words, and ABSTAINS on unknown words '
+                    '(no-confab moat)' if go else 'does NOT cleanly answer')
+    print(f"  VERDICT: {verdict} -- the brain {_verdict_msg}.", flush=True)
     if a.out:
         json.dump({"verdict": verdict, "K": a.K,
                    "aggregate": {"inherit_yes": yes, "reject_no": no, "moat": moat, "deranged_yes": der},

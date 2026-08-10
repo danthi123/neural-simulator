@@ -186,11 +186,12 @@ def main():
           f"| chance={ch:.3f}", flush=True)
     print(f"  beats_chance (all seeds, margin {a.margin})={beats_chance} | "
           f"beats_deranged_labels={beats_deranged}", flush=True)
+    _inh_msg = 'INHERITS ITS OWN category property' if go else 'does NOT clearly inherit'
+    _ctrl_msg = ('above chance AND the LABEL-DERANGEMENT control (random grouping collapses it) -> the GENUINE '
+                 'discovered category carries the inheritance; the KNOWLEDGE half rides real-corpus breadth'
+                 if go else 'within control range')
     print(f"  VERDICT: {verdict} -- a HELD-OUT member of a REAL-corpus-DISCOVERED category "
-          f"{'INHERITS ITS OWN category property' if go else 'does NOT clearly inherit'} (argmax over per-category "
-          f"properties), {'above chance AND the LABEL-DERANGEMENT control (random grouping collapses it) -> the '
-             'GENUINE discovered category carries the inheritance; the KNOWLEDGE half rides real-corpus breadth'
-             if go else 'within control range'}.", flush=True)
+          f"{_inh_msg} (argmax over per-category properties), {_ctrl_msg}.", flush=True)
     if a.out:
         json.dump({"verdict": verdict, "K": a.K,
                    "aggregate": {"heldout_acc": ho, "deranged_acc": der, "scrambled_acc": scr, "chance": ch},

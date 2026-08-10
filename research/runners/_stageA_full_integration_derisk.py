@@ -454,7 +454,7 @@ def _arbiter_regions():
 def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhibition: bool = False,
                     onebrain_k_max: int = 32, co_resident_forward_model: bool = False, fm_n_pool: int = FM_N_POOL,
                     co_resident_affect_ladder: bool = False, aff_n_rungs: int = 8,
-                    co_resident_certainty_opponent: bool = False):
+                    co_resident_certainty_opponent: bool = False, vocab=DEFAULT_VOCAB):
     """Build ONE SimulationBridge: the composer rf slice FIRST, then (default-on) every faculty slice appended AFTER
     it. Returns (bridge, comp, idx, baseline_snap). When with_faculties=False, ONLY the rf slice is built (the
     default-off byte-identity baseline).
@@ -463,9 +463,16 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
     (nav-inert). Flag off -> no fm_reservoir region -> byte-identical (append-LAST index invariance).
     SEAM-C (co_resident_affect_ladder, DEFAULT-OFF): append the staggered bistable ladder (aff_n_rungs per sign +
     aggregate opponent pools + readouts) LAST, wired to the affect-coloring tone targets through affect_out. Flag off
-    -> no aff_ regions -> byte-identical."""
+    -> no aff_ regions -> byte-identical.
+
+    INTEGRATION #6 (vocab, DEFAULT=DEFAULT_VOCAB): the composer's word codebook + rf-slice SIZE derive from `vocab`
+    (threaded to BOTH n_total_for and the CoResidentOneBrainComposer). The DEFAULT keeps the composer rf slice, its
+    concept codes, and every downstream region index/RNG draw byte-IDENTICAL to the pre-#6 build; a LARGER vocab (an
+    expanded corpus-learned word set) grows the rf slice and yields a genuinely different -- larger -- brain (expected;
+    only the DEFAULT path is guarded byte-identical). NO new content competence comes from the vocab alone: the facts
+    must be stored (empty-kb control)."""
     xp, _ = get_backend()
-    rf_size = CoResidentOneBrainComposer.n_total_for(D=128, vocab=DEFAULT_VOCAB, k_max=onebrain_k_max)
+    rf_size = CoResidentOneBrainComposer.n_total_for(D=128, vocab=vocab, k_max=onebrain_k_max)
 
     regions = [BrainRegion(name="rf", n_neurons=int(rf_size), exc_fraction=1.0, internal_density=0.0,
                            enable_nmda=False)]
@@ -681,7 +688,7 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
             "names": ladder_names,
         }
 
-    comp = CoResidentOneBrainComposer(bridge, rf_base, build_parser=False, seed=seed, D=128, vocab=DEFAULT_VOCAB,
+    comp = CoResidentOneBrainComposer(bridge, rf_base, build_parser=False, seed=seed, D=128, vocab=vocab,
                                       k_max=onebrain_k_max)
 
     # settle to a clean quiescent baseline and snapshot it (all reads restore to here).
@@ -1205,7 +1212,11 @@ CURATED_FACTS = [("dog", "run", "north"), ("cat", "run", "south"),
                  ("dog", "look", "river"), ("cat", "look", "apple")]
 
 
-def _store_facts(comp):
+def _store_facts(comp, extra_facts=None):
+    """Teach the 6 CURATED_FACTS via the composer's OWN store path, then (INTEGRATION #6, additive) any
+    `extra_facts` (e.g. corpus-mined SVO triples whose words are all in the composer vocab). `extra_facts=None`
+    (DEFAULT) keeps the 6-fact behaviour byte-for-byte -- the additive-default-off guard. A triple whose words are
+    not all in-vocab, or whose store raises, is skipped (no fabrication)."""
     vocab = list(comp.words)
     facts = []
     curated_in_vocab = all(w in vocab for f in CURATED_FACTS for w in f)
@@ -1217,6 +1228,14 @@ def _store_facts(comp):
             facts.append((a, v, p))
         except Exception:
             pass
+    vset = set(vocab)
+    for (a, v, p) in (extra_facts or []):
+        if a in vset and v in vset and p in vset:
+            try:
+                comp.store(a, v, p)
+                facts.append((a, v, p))
+            except Exception:
+                pass
     return vocab, facts
 
 

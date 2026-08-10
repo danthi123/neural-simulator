@@ -193,10 +193,10 @@ def main():
     go = cancel_ok and own_ok and no_collateral and permuted_ok and moat_ok
     print(f"\n  AGGREGATE ({len(recs)} seeds): CANCEL(inherited->no) all={cancel_ok} | OWN=yes all={own_ok} | "
           f"no-collateral all={no_collateral} | permuted-inherits all={permuted_ok} | moat all={moat_ok}", flush=True)
-    print(f"  VERDICT: {'GO' if go else 'NEGATIVE'} -- a member's OWN property "
-          f"{'OVERRIDES its category inheritance (cancellation) while other members still inherit, specific to the '
-             'taught exception (permuted control inherits), moat intact' if go else 'does NOT cleanly cancel'}.",
-          flush=True)
+    _verdict_msg = ('OVERRIDES its category inheritance (cancellation) while other members still inherit, specific to '
+                    'the taught exception (permuted control inherits), moat intact'
+                    if go else 'does NOT cleanly cancel')
+    print(f"  VERDICT: {'GO' if go else 'NEGATIVE'} -- a member's OWN property {_verdict_msg}.", flush=True)
     if a.out:
         json.dump({"verdict": "GO" if go else "NEGATIVE", "w_exc": a.w_exc, "per_seed": recs}, open(a.out, "w"), indent=2)
         print(f"  [saved] {a.out}", flush=True)

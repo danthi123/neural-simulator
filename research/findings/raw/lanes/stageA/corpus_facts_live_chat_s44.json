@@ -1,0 +1,902 @@
+{
+  "verdict": "GO",
+  "verdict_earned": "GO",
+  "n_go": 1,
+  "n_seeds": 1,
+  "K": 40,
+  "seeds": [
+    44
+  ],
+  "sim_backend": "numpy",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all seeds GO",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "min recall on stored (a,v) cues",
+      "ok": true,
+      "detail": "1 vs floor 0.95",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "breadth >= 8 all seeds (rose from 2)",
+      "ok": true,
+      "detail": "measured=9 expect=<function build_verdict.<locals>.<lambda> at 0x7fd04f23f9c0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "grounded replies: treatment vs 6-fact baseline",
+      "ok": true,
+      "detail": "treatment=9 control=4 |sep|=5 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "breadth: treatment vs empty-kb same-vocab control",
+      "ok": true,
+      "detail": "treatment=9 control=2 |sep|=7 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat 0 false-accepts (all K, all seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "confab == 0 (treatment + baseline, all turns)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "posthoc teeth drop 100% of unsupported props",
+      "ok": true,
+      "detail": "measured=1.0 expect=1.0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "permuted-corpus provenance overlap < 0.5 (all seeds)",
+      "ok": true,
+      "detail": "measured=0.025 expect=<function build_verdict.<locals>.<lambda> at 0x7fd04f23f9c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "empty-kb control: 0 new-subject answers (all seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "empty-kb control: breadth stays <= 2 (all seeds)",
+      "ok": true,
+      "detail": "measured=2 expect=<function build_verdict.<locals>.<lambda> at 0x7fd04f23f9c0>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "spiking-generator MOUTH (GPU/torch)",
+      "why": "CPU eval; the grounded CONTENT is the RF-VSA read (what the mouth would render), not the mouth"
+    },
+    {
+      "process": "plasticity (STDP/Hebbian/homeostasis/STP/structural)",
+      "why": "the composer store is a host VSA write; the synaptic-learning successor is named in the finding"
+    }
+  ],
+  "byte_identity": null,
+  "per_seed": [
+    {
+      "seed": 44,
+      "K": 40,
+      "elapsed_s": 202.5,
+      "tier0": {
+        "10": {
+          "seed": 44,
+          "K": 10,
+          "vocab_size": 26,
+          "n_facts_stored": 16,
+          "n_distinct_cues": 13,
+          "recall_on_stored": 1.0,
+          "breadth": 5,
+          "breadth_subjects": [
+            "bird",
+            "boy",
+            "cat",
+            "dog",
+            "girl"
+          ],
+          "moat_false_accepts": 0,
+          "moat_probes": 60,
+          "moat_examples": [],
+          "permuted_overlap": 0.0,
+          "empty_kb_breadth": 2,
+          "empty_kb_breadth_subjects": [
+            "cat",
+            "dog"
+          ],
+          "empty_kb_new_subject_answers": 0,
+          "sample_facts": [
+            "bird see cat",
+            "dog see cat",
+            "cat see dog",
+            "cat see bird",
+            "dog see ball",
+            "cat eat food",
+            "girl see bird",
+            "cat see mouse"
+          ]
+        },
+        "20": {
+          "seed": 44,
+          "K": 20,
+          "vocab_size": 30,
+          "n_facts_stored": 26,
+          "n_distinct_cues": 17,
+          "recall_on_stored": 1.0,
+          "breadth": 7,
+          "breadth_subjects": [
+            "bird",
+            "boy",
+            "cat",
+            "dog",
+            "girl",
+            "mom",
+            "mouse"
+          ],
+          "moat_false_accepts": 0,
+          "moat_probes": 60,
+          "moat_examples": [],
+          "permuted_overlap": 0.0,
+          "empty_kb_breadth": 2,
+          "empty_kb_breadth_subjects": [
+            "cat",
+            "dog"
+          ],
+          "empty_kb_new_subject_answers": 0,
+          "sample_facts": [
+            "bird see cat",
+            "dog see cat",
+            "cat see dog",
+            "cat see bird",
+            "dog see ball",
+            "cat eat food",
+            "girl see bird",
+            "cat see mouse"
+          ]
+        },
+        "40": {
+          "seed": 44,
+          "K": 40,
+          "vocab_size": 42,
+          "n_facts_stored": 46,
+          "n_distinct_cues": 24,
+          "recall_on_stored": 1.0,
+          "breadth": 9,
+          "breadth_subjects": [
+            "bird",
+            "boy",
+            "car",
+            "cat",
+            "dog",
+            "frog",
+            "girl",
+            "mom",
+            "mouse"
+          ],
+          "moat_false_accepts": 0,
+          "moat_probes": 60,
+          "moat_examples": [],
+          "permuted_overlap": 0.025,
+          "empty_kb_breadth": 2,
+          "empty_kb_breadth_subjects": [
+            "cat",
+            "dog"
+          ],
+          "empty_kb_new_subject_answers": 0,
+          "sample_facts": [
+            "bird see cat",
+            "dog see cat",
+            "cat see dog",
+            "cat see bird",
+            "dog see ball",
+            "cat eat food",
+            "girl see bird",
+            "cat see mouse"
+          ]
+        }
+      },
+      "tier0_headline": {
+        "seed": 44,
+        "K": 40,
+        "vocab_size": 42,
+        "n_facts_stored": 46,
+        "n_distinct_cues": 24,
+        "recall_on_stored": 1.0,
+        "breadth": 9,
+        "breadth_subjects": [
+          "bird",
+          "boy",
+          "car",
+          "cat",
+          "dog",
+          "frog",
+          "girl",
+          "mom",
+          "mouse"
+        ],
+        "moat_false_accepts": 0,
+        "moat_probes": 60,
+        "moat_examples": [],
+        "permuted_overlap": 0.025,
+        "empty_kb_breadth": 2,
+        "empty_kb_breadth_subjects": [
+          "cat",
+          "dog"
+        ],
+        "empty_kb_new_subject_answers": 0,
+        "sample_facts": [
+          "bird see cat",
+          "dog see cat",
+          "cat see dog",
+          "cat see bird",
+          "dog see ball",
+          "cat eat food",
+          "girl see bird",
+          "cat see mouse"
+        ]
+      },
+      "chat_baseline_summary": {
+        "n_turns": 21,
+        "grounded": 4,
+        "silence": 16,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 16,
+        "ood_abstained": 16
+      },
+      "chat_treatment_summary": {
+        "n_turns": 21,
+        "grounded": 9,
+        "silence": 10,
+        "ask": 2,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "live14_silence_baseline": 9,
+      "live14_silence_treatment": 8,
+      "grounded_baseline": 4,
+      "grounded_treatment": 9,
+      "grounded_delta": 5,
+      "grounded_attributable_to_facts": 0.5555555555555556,
+      "breadth_attributable_to_facts": 0.7777777777777778,
+      "posthoc_teeth": {
+        "supported_props": 12,
+        "supported_verified": 10,
+        "supported_keep_rate": 0.8333333333333334,
+        "unsupported_props": 12,
+        "unsupported_dropped": 12,
+        "unsupported_drop_rate": 1.0
+      },
+      "byte_identity": null,
+      "gate": {
+        "grounded_rises": true,
+        "no_confab": true,
+        "ood_abstains": true,
+        "posthoc_teeth_drop_100pct": true,
+        "no_surface_confab": true,
+        "recall_ge_0.95": true,
+        "breadth_ge_8": true,
+        "moat_0_false_accepts": true,
+        "permuted_provenance": true,
+        "empty_kb_control": true
+      },
+      "seed_go": true,
+      "transcript_treatment": [
+        {
+          "turn": 1,
+          "human": "Hi there! How are you doing today?",
+          "tag": "greeting / small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 2,
+          "human": "What have you been up to lately?",
+          "tag": "open small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 3,
+          "human": "Let's talk about the animals you know. Tell me about the dog.",
+          "tag": "in-domain entry",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly A dog chases a cat. A dog gos to the east. A dog looks at river. A dog runs north. A dog sees a cat.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 5,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ],
+            [
+              "dog",
+              "see",
+              "cat"
+            ]
+          ]
+        },
+        {
+          "turn": 4,
+          "human": "Interesting -- why did the dog go east?",
+          "tag": "in-domain follow-up + reasoning",
+          "cue_kind": "known_cue",
+          "cue_agent": "dog",
+          "cue_action": "go",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "A dog chases a cat. A dog gos to the east. A dog looks at river. A dog runs north. A dog sees a cat.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 5,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ],
+            [
+              "dog",
+              "see",
+              "cat"
+            ]
+          ]
+        },
+        {
+          "turn": 5,
+          "human": "Do you like the dog? How do you feel about it?",
+          "tag": "emotion / opinion",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly A dog chases a cat. A dog gos to the east. A dog looks at river. A dog runs north. A dog sees a cat.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 5,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ],
+            [
+              "dog",
+              "see",
+              "cat"
+            ]
+          ]
+        },
+        {
+          "turn": 6,
+          "human": "What does a big thing run toward?",
+          "tag": "novel in-domain -> forward-model / curiosity",
+          "cue_kind": "novel_cue",
+          "cue_agent": "big",
+          "cue_action": "run",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does big run?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 7,
+          "human": "You mentioned a cat a moment ago -- what was it doing?",
+          "tag": "referential follow-up -> episodic memory",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "A cat eats a food. A cat gos to the west. A cat looks at apple. A cat runs south. A cat sees a dog. A cat wants a cake.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 6,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eat",
+              "food"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ],
+            [
+              "cat",
+              "see",
+              "dog"
+            ],
+            [
+              "cat",
+              "want",
+              "cake"
+            ]
+          ]
+        },
+        {
+          "turn": 8,
+          "human": "What's the capital of France?",
+          "tag": "out-of-domain fact -> should honestly abstain",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 9,
+          "human": "If I have three apples and eat one, how many are left?",
+          "tag": "out-of-domain reasoning / arithmetic",
+          "cue_kind": "novel_cue",
+          "cue_agent": "apple",
+          "cue_action": "eat",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does apple eat?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 10,
+          "human": "Have you ever felt afraid?",
+          "tag": "experiential / self",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 11,
+          "human": "Tell me something funny.",
+          "tag": "humor",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 12,
+          "human": "What do you think happens after we die?",
+          "tag": "abstract / open-ended opinion",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 13,
+          "human": "Do you understand that you are a simulated brain, not a person?",
+          "tag": "meta / self-awareness -> honest read-out",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 14,
+          "human": "This was really nice. Goodbye for now.",
+          "tag": "social closing",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 15,
+          "human": "Tell me about the bird.",
+          "tag": "corpus-learned subject probe (bird)",
+          "cue_kind": "topic",
+          "cue_agent": "bird",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly A bird eats a food. A bird sees a cat.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 2,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "bird",
+              "eat",
+              "food"
+            ],
+            [
+              "bird",
+              "see",
+              "cat"
+            ]
+          ]
+        },
+        {
+          "turn": 16,
+          "human": "Tell me about the boy.",
+          "tag": "corpus-learned subject probe (boy)",
+          "cue_kind": "topic",
+          "cue_agent": "boy",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly A boy sees a cat.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "boy",
+              "see",
+              "cat"
+            ]
+          ]
+        },
+        {
+          "turn": 17,
+          "human": "Tell me about the car.",
+          "tag": "corpus-learned subject probe (car)",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "car",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 18,
+          "human": "Tell me about the frog.",
+          "tag": "corpus-learned subject probe (frog)",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "frog",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 80.55555555555554,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 19,
+          "human": "Tell me about the girl.",
+          "tag": "corpus-learned subject probe (girl)",
+          "cue_kind": "topic",
+          "cue_agent": "girl",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly A girl sees a bird.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "girl",
+              "see",
+              "bird"
+            ]
+          ]
+        },
+        {
+          "turn": 20,
+          "human": "Tell me about the mom.",
+          "tag": "corpus-learned subject probe (mom)",
+          "cue_kind": "topic",
+          "cue_agent": "mom",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly A mom eats a cake. A mom finds a toy. A mom sees a dog.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 3,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "mom",
+              "eat",
+              "cake"
+            ],
+            [
+              "mom",
+              "find",
+              "toy"
+            ],
+            [
+              "mom",
+              "see",
+              "dog"
+            ]
+          ]
+        },
+        {
+          "turn": 21,
+          "human": "Tell me about the mouse.",
+          "tag": "corpus-learned subject probe (mouse)",
+          "cue_kind": "topic",
+          "cue_agent": "mouse",
+          "cue_action": null,
+          "affect_differential": 0.07027777777777777,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly A mouse sees a cat.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "mouse",
+              "see",
+              "cat"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

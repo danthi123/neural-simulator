@@ -145,9 +145,11 @@ def main():
     go = beats_chance and beats_perm
     print(f"\n  AGGREGATE ({len(recs)} seeds): obj_acc={obj:.3f} subj_acc={subj:.3f} permuted={perm:.3f}", flush=True)
     print(f"  obj>0.5 all={beats_chance} | beats_permuted(>.4) all={beats_perm} | moat-margin-sep all={moat}", flush=True)
-    print(f"  VERDICT: {'GO' if go else 'NEGATIVE'} -- the brain {'STORES + ANSWERS SVO relational facts over its OWN '
-             'real-corpus codes (bind/unbind role-fillers; correlated co-occurrence codes DO compose)' if go else 'does '
-             'NOT cleanly compose SVO over real-corpus codes'}; moat-margin-separation={moat}.", flush=True)
+    _verdict_msg = ('STORES + ANSWERS SVO relational facts over its OWN real-corpus codes (bind/unbind role-fillers; '
+                    'correlated co-occurrence codes DO compose)'
+                    if go else 'does NOT cleanly compose SVO over real-corpus codes')
+    print(f"  VERDICT: {'GO' if go else 'NEGATIVE'} -- the brain {_verdict_msg}; moat-margin-separation={moat}.",
+          flush=True)
     if a.out:
         json.dump({"verdict": "GO" if go else "NEGATIVE", "aggregate": {"obj": obj, "subj": subj, "permuted": perm},
                    "per_seed": recs}, open(a.out, "w"), indent=2)
