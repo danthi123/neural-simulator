@@ -63,10 +63,14 @@ the learned credit is genuinely CONTINGENT on the reward. This is the surpass: t
   NOT eliminate it (the fix arm still separates more than yoked at every beta). So s102 is a GENUINE degenerate-target
   corner (the policy collapses onto one utterance, so the lagging-baseline leak persists), an honest bound, NOT a rule
   failure — 5/6 non-degenerate contexts pass cleanly.
-- **The critic is a host-EMA baseline (FLAGGED SHORTCUT);** the actor (spiking soft-WTA choice, eligibility, DA-gated
-  plasticity) is fully neural. A neural per-intent spiking critic is implemented + scale-checked (crit ~0.076 vs
-  success ~0.04, self-calibrating via TD) but not yet smoke-validated — orthogonal to the contingency result, the
-  next conversion.
+- **The host-EMA critic shortcut is now BURNED DOWN — the FULLY-NEURAL per-intent spiking critic ALSO passes
+  contingency, 6/6 (upgrade).** With `--neural-critic` (K critic neurons, `Vctx[t]=rate(crit[t])`, TD-trained; no
+  host EMA), reproduced this session at beta=0.4: the fix arm separates while YOKED stays at/below the null on ALL 6
+  seeds (fix 0.02-0.14 vs yoked ~0: 0.004/0.008/0.031/-0.006/-0.016/-0.016). The neural critic's separations are
+  SMALLER (it is noisier than the host EMA) but the contingency is CLEANER — and crucially the s102 degenerate-target
+  leak that persisted with the host EMA is GONE with the neural critic (yoked -0.016). ⇒ **the learn-to-speak learning
+  fix is fully brain-based** (spiking actor + spiking per-context critic, DA-gated eligibility), no host shortcut,
+  contingent on all 6 seeds. Artifacts: `research/findings/raw/_pragmatic_success/v3_neural_b04_s42.json` etc.
 - **A SEPARATE wall exposed (distinct frontier):** the coincidence-success signal does NOT rank the belief-ALIGNED
   utterance highest for ~56% of targets (success-optimal == aligned only 8/18) — so the end-to-end "speak the ALIGNED
   utterance" metric is capped by REWARD QUALITY (~0.44 ceiling for a perfect success-maximizer), NOT the learning
