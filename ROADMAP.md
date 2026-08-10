@@ -67,6 +67,24 @@ developmental teacher-loop — Stages 2→4. Findings: `2026-08-08-forward-model
 reservoir-*`, `2026-08-08-graded-affect-staggered-bistable-ladder-*`,
 `2026-08-08-pragmatics-*`, `2026-08-08-B-episodic-*-NEGATIVE-*`.
 
+**UPDATE (2026-08-10):** the episodic-recall honest-negative is RESOLVED —
+neural cortical cue-recall is now a **6-seed GO** (recall 0.646 vs 0.25 chance;
+completion load-bearing, permuted-cue specific, real/sham lesion teeth,
+untrained collapses). A cross-arc **WTA reframe** landed with it: the
+"silent/latched neural WTA" negative was largely an over-strong-inhibition
+OPERATING-POINT artifact (the separable-assembly WTA is weight-controllable,
+verified 1.0/6) — so recall runs on the heteroassociative afferent directly and
+the WTA competition is inert. The recall residual (0.65, not ceiling) is the
+weak CA3->cortex pathway drive (the deep gap#5 "functionally-silent recurrents"
+sim wall), so the arc is at its practical ceiling. Separately, the composer's
+shared-channel "capacity break" was **RETRACTED** as a readout DC-offset
+artifact (corrected: neural superposition composes through arity 6 with no break
+in range). Pragmatics Leg-2 stays open with its root cause now mapped — the
+DA-learned value signal is real but sits BELOW the per-neuron heterogeneity
+noise floor (an SNR wall); a per-neuron rate homeostat (noise-reduction) is
+under test. Findings: `2026-08-10-episodic-cortical-cue-recall-completion-6seed-GO-*`,
+`2026-08-10-neural-WTA-*`; the arity capacity `2026-08-10-shared-channel-arity-capacity-located-M-star-grows-with-dimension.md` ⛔ RETRACTED -> `2026-08-10-shared-channel-arity-capacity-CORRECTED-DC-offset-artifact.md`.
+
 The live, per-cycle resume point is
 `GAP_CLOSURE_MISSION.md`.
 
