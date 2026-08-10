@@ -58,9 +58,11 @@ the learned credit is genuinely CONTINGENT on the reward. This is the surpass: t
   execution-freq × E[delivered DA]; a causal LAGGING baseline under an IMPROVING policy carries E[advantage] > 0
   (success rises, baseline lags) -> net-positive DA non-contingently potentiates the heterogeneity-favored assembly.
   A FASTER-centered baseline (E[DA]->0, beta=0.4) kills it while preserving the contingent component (confirmed).
-- **s102 residual:** the single seed where success-optimal is ONE utterance for ALL intents (a degenerate target) —
-  yoked still leaks 0.092 at beta=0.4 (down from 0.283 at beta=0.1). A higher-beta / advantage-whitening test is
-  running; if it does not fully resolve, s102 is a genuine degenerate-target corner, an honest bound not a rule failure.
+- **s102 residual (characterized):** the single seed where success-optimal is ONE utterance for ALL intents (a
+  degenerate target) — beta-centering reduces the yoked leak monotonically (beta 0.1 -> 0.4 -> 0.6 -> 0.8) but does
+  NOT eliminate it (the fix arm still separates more than yoked at every beta). So s102 is a GENUINE degenerate-target
+  corner (the policy collapses onto one utterance, so the lagging-baseline leak persists), an honest bound, NOT a rule
+  failure — 5/6 non-degenerate contexts pass cleanly.
 - **The critic is a host-EMA baseline (FLAGGED SHORTCUT);** the actor (spiking soft-WTA choice, eligibility, DA-gated
   plasticity) is fully neural. A neural per-intent spiking critic is implemented + scale-checked (crit ~0.076 vs
   success ~0.04, self-calibrating via TD) but not yet smoke-validated — orthogonal to the contingency result, the

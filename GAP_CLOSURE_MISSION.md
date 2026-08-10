@@ -19,16 +19,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > (1) **EPISODIC neural cue-recall = 6-seed GO** (`ead8e0b7`, recall 0.646 vs 0.25; completion-driven, permuted-
 > specific, lesion teeth) — ceiling-bounded (residual = deep gap#5 pathway drive). (2) **WTA REFRAME** (`35f9bb6c`):
 > the cross-arc "neural WTA negative" was an over-strong-inhibition OPERATING-POINT artifact; the separable-assembly
-> WTA is weight-controllable (verified 1.0/6). (3) **VALUE-CRITIC = a LEARNING wall, not a readout wall** (`ced73424`
-> homeostat NEG + `9cb07316` signal-amp NEG): BOTH readout-SNR duals fail → the residual is DA CREDIT ASSIGNMENT
-> (place the value on the aligned utterance; critic-argmax 0.556). (4) **COMPOSER is REPRESENTATION-robust to
-> correlated/naturalistic codes** (`9cb07316`): the "capacity break" is a readout-RULER offset artifact (cos-to-true
-> stays 0.99 at rho=0.99/r=1), not crosstalk — open question = an offset-invariant readout. (5) faithful-spiking-bind
-> **6-seed confirmed** (`3b30ea2f`); CA3→cortex readout drive runner-side EXHAUSTED (deep sim wall); breadth N=100
-> compute-bound (killed). Skill drift #12 extended; ROADMAP + master roadmap synced.
-> **CURRENT FRONTIER (DR running, `wvrrjr45s`): aimed new-mechanism designs for (a) the value-critic LEARNING stage
-> (DA credit, distinct-in-kind from the gateB NO-GO) and (b) the composer offset-invariant READOUT** — for the
-> morning's careful builds. GPU + pool FREE. Below: the composer arc history.
+> WTA is weight-controllable (verified 1.0/6). (3) **⭐ LEARN-TO-SPEAK LEARNING WALL FIXED (`4a8fe51b`, contingency
+> GO 5/6 verified)** — the value-critic wall (homeostat NEG `ced73424` + signal-amp NEG `9cb07316`: BOTH readout-SNR
+> duals failed → it's a LEARNING wall) was CRACKED by a per-context STATE-VALUE baseline V(intent) (songbird
+> Area-X/VTA; Kasdin2025/Gadagkar2016/Chen2018): the per-action Q whose advantage collapses at convergence → a SIGNED
+> advantage that COMPOUNDS over trials. fix wsep 0.07-0.21 vs YOKED ~0 on 5/6 (prior gateB attempts converged but
+> FAILED yoked; this PASSES it). Bounds: s102 degenerate-target residual; host-EMA critic (neural impl scale-checked,
+> next conversion); a SEPARATE reward-misspecification wall (success≠aligned 56% → the "aligned" metric is
+> reward-capped, a distinct frontier). (4) **COMPOSER naturalistic-capacity RESOLVED (`759ad62e`): representation-ROBUST**
+> — an offset-invariant resonator + ML-exhaustive readout recall 1.00 across the whole rho×r sweep (even collinear
+> rho=1/r=1 where Euclidean craters to 0.21); the break was the Euclidean RULER; genuine limit = a margin/SNR collapse
+> in the degenerate corner. (5) faithful-spiking-bind **6-seed confirmed** (`3b30ea2f`); CA3→cortex readout drive
+> runner-side EXHAUSTED (deep sim wall); breadth N=100 compute-bound (killed). Skill drift #12 extended; docs synced.
+> **CURRENT FRONTIER (parallel push `wzf4b9vxx` running): the deferred CA3 functionally-silent-recurrents sim wall
+> (guarded transmission-gain fix — lifts episodic recall + every recurrent-attractor faculty) + breadth scaling +
+> activity-silent WM + NE-gain vigilance. NEXT builds: neural per-intent critic (burn down the host-EMA shortcut) +
+> a distinctiveness/pragmatic-cost term for the reward-misspec wall.** GPU + pool staged. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
