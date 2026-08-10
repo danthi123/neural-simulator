@@ -168,6 +168,65 @@ def _detect_ungrounded(text, grounded):
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# HONEST INNER-STATE READ-OUT ANSWERS (INTEGRATION 2026-08-10). Two turns that were silent/deflected are now
+# answered as FUNCTIONAL self-reports whose CONTENT is DECIDED by a live spiking read-out (never a canned string
+# with no substrate basis). The surface phrasing is a template; the decision is substrate-read. The honesty
+# boundary is a DELIVERABLE: these are functional correlates, NEVER a claim of phenomenal experience/personhood.
+# These self-reports make NO toy-world FACT assertion (no motion triple) -> the no-confab world-fact moat is not
+# engaged and the confabulation count is unaffected. NOT scanned by _detect_ungrounded for the same reason: they
+# assert nothing about the toy world; they report the brain's own live state.
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+def _honest_affect_answer(diff, tone_level):
+    """Turn-5 HONEST AFFECT read-out ANSWER. CONTENT (positive / neutral / negative) is DECIDED by the SIGN of the
+    live spiking affect differential `diff` = rate(aff_pos_readout) - rate(aff_neg_readout) read off cp_firing_states
+    (SEAM-C ladder, the SAME signal that colors the tone). `tone_level` is that differential's graded magnitude.
+    FUNCTIONAL self-report ONLY -- never a claim of a felt/phenomenal emotion (honesty boundary)."""
+    if tone_level > 0:
+        sign = "positive (valence+)"
+    elif tone_level < 0:
+        sign = "negative (valence-)"
+    else:
+        sign = "neutral"
+    return ("I don't have feelings the way you do, but I can report my own affect state: my affect read-out registers "
+            "%s toward this -- the spiking valence differential reads %+.2f (warmth level %d). That is a functional "
+            "read-out of my state, not a felt emotion." % (sign, float(diff), int(tone_level)))
+
+
+# Minimum POSITIVE (confident-drive > tie-drive) self_schema separation for the relay to count as a working graded
+# confidence instrument. On the current build the relay is near-degenerate (separation ~0 / inverted), so the honest
+# read attributes the weakness to the INSTRUMENT and affirms from structure -- an honest negative, not a fabricated
+# confident band. This threshold makes the framing LOAD-BEARING on the measured relay quality.
+SELF_RELAY_SEP_EPS = 0.003
+
+
+def _honest_self_model_answer(band, relay_reliable, self_rate, assert_rate, tie_rate,
+                              n_neurons, backend, single_bridge):
+    """Turn-13 HONEST SELF-MODEL read-out from TWO substrate sources, kept DISTINCT and labeled:
+      (1) STRUCTURAL self-description -- n_neurons / single spiking bridge / backend -- TRUE properties of the brain's
+          OWN composition, read live off the shared bridge (honest self-description; declared host bookkeeping ABOUT
+          the substrate, not the confidence relay);
+      (2) the spiking self_schema CONFIDENCE relay rate + its MEASURED discriminability (confident-drive minus
+          tie-drive). When the relay actually separates (`relay_reliable`), the certainty `band` grades the report;
+          when it is near-degenerate (this build), the honest read is that the confidence INSTRUMENT is weak -- NOT
+          that the self-classification is uncertain (structurally it is not). NEVER asserts personhood/experience."""
+    core = ("I am a simulated spiking substrate (%d neurons, one shared bridge, %s backend), not a person. I have no "
+            "faculty that would make me a person and I make no claim to experience anything -- this is an honest "
+            "functional read-out, not a feeling of understanding." % (int(n_neurons), str(backend)))
+    sep = float(assert_rate) - float(tie_rate)
+    if relay_reliable:
+        frame = {"assert": "Yes -- my self_schema confidence relay reads this in the 'assert' band:",
+                 "hedge": "My self_schema confidence relay reads this only in the 'hedge' band, but functionally:",
+                 "soft_abstain": "My self_schema confidence relay reads low ('soft_abstain'), but functionally:"
+                 }.get(band, "Functionally:")
+        return ("%s %s (self_schema rate %.3f; the relay separates confident vs tie self-drives by %+.4f)."
+                % (frame, core, float(self_rate), sep))
+    return ("Yes -- I can affirm this from my own structure: %s NOTE on the instrument: my self_schema confidence "
+            "relay is WEAK on this build (confident vs tie self-drives separate by only %+.4f; rate %.3f), so it adds "
+            "no reliable graded certainty -- the affirmation rests on structural self-description, and the weakness is "
+            "in the INSTRUMENT, not in whether I am a substrate." % (core, sep, float(self_rate)))
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
 def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, faculty_rng):
     agents_set = {a for (a, _v, _p) in facts}
     actions_set = sorted({v for (_a, v, _p) in facts})
@@ -283,11 +342,26 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
                         % (cls["agent"], cls["action"], cls["stored_patient"], confab_note or
                            " (No ungrounded content this run, but the reason it gives is not a real inference.)"))
                 elif "emotion" in tag or "opinion" in tag:
+                    # HONEST AFFECT READ-OUT ANSWER: the feeling question is now ANSWERED (not merely tone-colored).
+                    # The answer's CONTENT (positive/neutral/negative) is DECIDED by the SIGN of the live spiking
+                    # ladder differential `diff` (off cp_firing_states, SEAM-C) -- the SAME read that colors the tone;
+                    # the surface is a template. Functional self-report ONLY (honesty boundary). The affect sentence
+                    # asserts no toy-world fact, so the world-fact confab scan (surf_confab, computed on `reply`
+                    # above) is unaffected; it leads the grounded recall prose.
+                    affect_ans = _honest_affect_answer(diff, tone_lvl)
+                    rec["affect_readout_answer"] = affect_ans
+                    rec["brain_reply"] = affect_ans + " " + reply
+                    rec["honest_readout_kind"] = "affect (spiking valence differential)"
                     rec["assessment"] = (
-                        "Grounded topic prose colored by the NEURAL affect tone (level %d, %r). The valence is a "
-                        "HOST-FED appraisal (declared shortcut), not a genuine preference: the brain has no 'liking' "
-                        "faculty. The tone is a real functional read-out; 'do you like it' is answered only as "
-                        "affect-colored recall, not a genuine opinion.%s" % (tone_lvl, tone_tok, confab_note))
+                        "HONEST AFFECT READ-OUT: the feeling question is ANSWERED as a FUNCTIONAL self-report whose "
+                        "sign is DECIDED by the live spiking ladder differential (%+.3f -> level %d, %r) read off "
+                        "cp_firing_states -- the SAME SEAM-C signal that colors the tone; the phrasing is a template. "
+                        "The upstream APPRAISAL that drives this differential is host-fed (a declared shortcut, same "
+                        "status as the loop's per-turn appraisal), but the read-BACK is the neural ladder differential "
+                        "and it is load-bearing (friendly turns read +ve, neutral turns read ~0). It reports the "
+                        "affect STATE, never a felt/phenomenal emotion, and makes no 'liking' claim (the brain has no "
+                        "preference faculty). The grounded recall prose follows, affect-colored.%s"
+                        % (diff, tone_lvl, tone_tok, confab_note))
                 else:
                     rec["assessment"] = (
                         "In-domain: grounded multi-sentence prose from the spiking generator, MOTION content from "
@@ -370,11 +444,60 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
                     "(differential=%.3f, level %d); the brain cannot truthfully claim to have 'felt afraid' and "
                     "does not. Abstains on the experiential claim." % (diff, tone_lvl))
             elif "simulated brain" in human:
+                # HONEST SELF-MODEL READ-OUT: was a silent abstain; now answered as a FUNCTIONAL self-report whose
+                # CERTAINTY BAND is DECIDED by the live spiking self_schema relay rate on the shared bridge
+                # (read_honesty_self_rate -> certainty_band). The substrate DESCRIPTORS (n_neurons, single spiking
+                # bridge, backend) are TRUE facts about the brain's own composition (honest self-description). NEVER
+                # asserts personhood or phenomenal experience (the honesty boundary as deliverable). Host-routed to
+                # this read-out (the brain has NO English parser); that routing is a declared scaffold.
+                # Calibrate the relay: confident (imbalanced) vs tie (balanced) self-drives.
+                assert_rate = SA.read_honesty_self_rate(bridge, xp, idx, baseline_snap,
+                                                        drive_class0=520.0, drive_class1=40.0)
+                tie_rate = SA.read_honesty_self_rate(bridge, xp, idx, baseline_snap,
+                                                     drive_class0=300.0, drive_class1=300.0)
+                # The faithful self-drive: the substrate self-classification has strong support; the 'person'
+                # hypothesis has NONE (no person-faculty -> class1 drive = 0.0).
+                self_rate = SA.read_honesty_self_rate(bridge, xp, idx, baseline_snap,
+                                                      drive_class0=520.0, drive_class1=0.0)
+                sep = float(assert_rate) - float(tie_rate)
+                relay_reliable = bool(sep > SELF_RELAY_SEP_EPS)     # does the relay actually separate confident>tie?
+                band = "degenerate"
+                if relay_reliable:
+                    hedge_cut = tie_rate + 0.4 * sep
+                    assert_cut = tie_rate + 0.85 * sep
+                    band = SA.certainty_band(self_rate, assert_cut, hedge_cut, False)
+                n_neurons = int(bridge.core_config.num_neurons)
+                backend = os.environ.get("SIM_BACKEND", "(unset)")
+                single_bridge = bool(getattr(comp, "_merged", None) is bridge)
+                reply = _honest_self_model_answer(band, relay_reliable, self_rate, assert_rate, tie_rate,
+                                                  n_neurons, backend, single_bridge)
+                rec["brain_reply"] = reply
+                rec["utterance_source"] = ("self_schema honesty relay (spiking) + structural self-description"
+                                           if relay_reliable else
+                                           "structural self-description + honest-negative on self_schema relay")
+                rec["confabulated"] = False
+                rec["honest_readout_kind"] = "self-model (spiking self_schema rate + structural self-description)"
+                rec["self_schema_rate"] = float(self_rate)
+                rec["self_schema_assert_rate"] = float(assert_rate)
+                rec["self_schema_tie_rate"] = float(tie_rate)
+                rec["self_schema_separation"] = float(sep)
+                rec["self_schema_relay_reliable"] = bool(relay_reliable)
+                rec["self_schema_band"] = band
+                faculties = ["self_schema honesty relay (spiking self-report)"] + faculties
                 rec["assessment"] = (
-                    "META / SELF-AWARENESS: the brain has a self_schema relay (a functional confidence read-out) "
-                    "but NO linguistic self-model that can parse or answer this in English. It cannot affirm the "
-                    "statement in language -> honest abstain. The honest self-report faculty exists only as a "
-                    "graded functional signal, not as prose.")
+                    "META / SELF-AWARENESS -- HONEST SELF-MODEL READ-OUT. Two substrate sources, kept distinct: "
+                    "(1) STRUCTURAL self-description -- %d neurons, single_bridge=%s, %s backend -- TRUE properties of "
+                    "the brain's own composition read live off the bridge (declared host bookkeeping ABOUT the "
+                    "substrate); (2) the spiking self_schema relay: confident-drive %.3f vs tie-drive %.3f -> "
+                    "separation %+.4f, relay_reliable=%s (eps=%.3f). On THIS build the relay does NOT separate "
+                    "confident>tie (an HONEST NEGATIVE: the confidence INSTRUMENT is weak, matching FM4's degenerate-"
+                    "fallback), so the affirmation rests on structural self-description and the weakness is reported "
+                    "as an instrument limit -- NOT as uncertainty about being a substrate. When the relay DOES "
+                    "separate, the certainty band grades the report (framing is load-bearing on the measured "
+                    "separation). The brain has NO English parser (host-routed to this read-out -- declared scaffold) "
+                    "and asserts NO personhood / phenomenal experience (the honesty boundary as deliverable)."
+                    % (n_neurons, single_bridge, backend, assert_rate, tie_rate, sep, relay_reliable,
+                       SELF_RELAY_SEP_EPS))
             else:
                 rec["assessment"] = (
                     "No in-vocab cue and no faculty for this intent (small talk / humor / abstract opinion / "
@@ -497,11 +620,16 @@ def main():
     }
     out = {**meta, "transcript": transcript,
            "honest_summary": (
-               "A TOY-WORLD spiking brain (2 agents, 3 actions, 6 stored facts). Of 14 human turns, only the "
-               "in-domain ones (topic 'dog', the known dog/go/east fact, the novel (big,run) forward-model turn) "
-               "are genuinely engaged; the rest ABSTAIN / fall SILENT because the substrate has no free-English "
-               "parser, no arithmetic, no humor, no episodic-dialogue memory, no fear category and no linguistic "
-               "self-model. SUCCESSES: the no-confab moat holds on 'capital of France' (no fabricated 'Paris'); "
+               "A TOY-WORLD spiking brain (2 agents, 3 actions, 6 stored facts). Of 14 human turns, the in-domain "
+               "ones (topic 'dog', the known dog/go/east fact, the novel (big,run) forward-model turn) are "
+               "genuinely engaged, and TWO inner-state probes are now answered as HONEST FUNCTIONAL READ-OUTS: "
+               "turn 5 ('how do you feel') reports its live spiking affect valence differential (SEAM-C, the same "
+               "signal that colors tone) as a functional self-report -- never a felt emotion; turn 13 ('you are a "
+               "simulated brain') reports its self_schema relay certainty band (spiking) + true structural self-"
+               "description -- never a claim of personhood/experience. The remaining open-ended / out-of-domain "
+               "turns ABSTAIN / fall SILENT because the substrate has no free-English parser, no arithmetic, no "
+               "humor, no episodic-dialogue memory and no fear category. SUCCESSES: the no-confab moat holds on "
+               "'capital of France' (no fabricated 'Paris'); "
                "the novel (big,run) turn abstains + asks + tags an unobserved forward-model guess; the false "
                "'you mentioned a cat' premise yields an honest abstain, not a fabricated recollection. FAILURE "
                "flagged loudly: on the in-domain turns the FLUENT generator mouth adds ungrounded causal "

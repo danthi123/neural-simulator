@@ -1,12 +1,12 @@
 {
- "run_id": "1786391355-3513533",
+ "run_id": "1786392767-3529285",
  "runner": "research/runners/_conversation_turing_test_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_conversation_turing_test_derisk.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-adf50d1e2cc40bd78/research/runners/_conversation_turing_test_derisk.py",
   "--seed",
   "42"
  ],
- "git_sha": "813c4a892",
+ "git_sha": "f86b489fa",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -14,15 +14,14 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-10T15:49:15",
+ "started": "2026-08-10T16:12:47",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 21397.0,
- "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
- "corpus_check_fresh": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
  "artifact": "research/findings/raw/lanes/stageA/turing/conversation_turing_test_s42.json"
 }

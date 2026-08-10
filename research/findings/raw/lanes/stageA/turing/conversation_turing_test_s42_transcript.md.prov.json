@@ -1,12 +1,12 @@
 {
- "run_id": "1786236312-2006675",
+ "run_id": "1786392767-3529285",
  "runner": "research/runners/_conversation_turing_test_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_2bb3e447-cc4-1/research/runners/_conversation_turing_test_derisk.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-adf50d1e2cc40bd78/research/runners/_conversation_turing_test_derisk.py",
   "--seed",
   "42"
  ],
- "git_sha": "ffd70b301",
+ "git_sha": "f86b489fa",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -14,7 +14,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-08T20:45:12",
+ "started": "2026-08-10T16:12:47",
  "env": {
   "SIM_BACKEND": "numpy"
  },
