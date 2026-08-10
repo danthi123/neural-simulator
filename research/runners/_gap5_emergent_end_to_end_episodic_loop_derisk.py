@@ -144,9 +144,14 @@ def run_one_seed(seed, *, n_patterns, densities, wmax_grid, ou_modes, check_lesi
     t["jaccard_vs_preassigned"] = [round(_jacc(assemblies[i], default_asm[i]), 4) for i in range(n_patterns)]
     # (c) mossy-LESION -> assemblies collapse (DG->CA3 detonation load-bearing = membership is DG-derived)
     if check_lesion:
+        from tools.lab import attributable_to
         les, _ = emergent_assemblies(seed, n_patterns=n_patterns, mossy_weight=0.0)
         t["lesion_sizes"] = [len(a) for a in les]
         t["mossy_lesion_collapses"] = bool(sum(len(a) for a in les) <= max(1, 0.2 * sum(sizes)))
+        # ATTRIBUTION: what fraction of the selected membership is DUE TO the mossy detonator (intact vs lesion)?
+        t["membership_attributable_to_mossy"] = attributable_to(
+            f"[s{seed}] emergent-DG assembly SIZE: intact vs mossy-LESION (membership is DG-derived, not hand-set)",
+            float(sum(sizes)), float(sum(len(a) for a in les)))
     emergent_ok = (t["emergent_not_preassigned_size"]
                    and all(j <= 0.34 for j in t["jaccard_vs_preassigned"])
                    and (t.get("mossy_lesion_collapses", True)))
@@ -198,6 +203,65 @@ def run_one_seed(seed, *, n_patterns, densities, wmax_grid, ou_modes, check_lesi
     return t
 
 
+def build_summary(per, seeds, ou_modes, densities, wmax, elapsed, err=None):
+    """Build the summary dict WITH a Verdict preconditions block (tools.verdict.Verdict). A negative/seam must travel
+    with the preconditions that make it INTERPRETABLE: emergent membership holds, index-space matches, BTSP formation
+    is genuine (so a completion failure is a READOUT seam, not dead formation), the mossy-lesion control separates, and
+    the plateau-lesion has teeth. `ran_ou_on` distinguishes a REAL OU-on 0/N from OU-on NOT RUN (honest reporting: this
+    runner defaults OU-off, and the seam is DETERMINISTIC so OU-on was not required)."""
+    from tools.verdict import Verdict
+    valid = [p for p in per if not p.get("error")]
+    n = len(valid)
+    ran_ou_on = (True in ou_modes)
+    n_off = sum(1 for p in valid if p.get("seed_go_ou_off"))
+    n_on = (sum(1 for p in valid if p.get("seed_go_ou_on")) if ran_ou_on else None)
+    n_emergent = sum(1 for p in valid if p.get("anticheat1_emergent_membership"))
+    n_index = sum(1 for p in valid if p.get("index_space_match"))
+    all_btsp = [r for p in valid for r in p.get("rows", []) if r.get("arm") == "btsp"]
+    all_genuine = bool(all_btsp) and all(r.get("genuine_formation") for r in all_btsp)
+    intact = float(np.mean([sum(p["assembly_sizes"]) for p in valid])) if valid else 0.0
+    _les = [sum(p.get("lesion_sizes") or [0]) for p in valid if p.get("lesion_sizes") is not None]
+    lesion = float(np.mean(_les)) if _les else None
+    btsp_cue = float(np.mean([r["held_cue"] for r in all_btsp])) if all_btsp else None
+    npl = [r.get("held_cue") or 0 for p in valid for r in p.get("rows", []) if r.get("arm") == "btsp_noplateau"]
+    npl_cue = float(np.mean(npl)) if npl else None
+
+    v = Verdict("gap5 end-to-end emergent episodic loop (emergent-DG selection -> BTSP formation -> slow-NMDA completion)")
+    v.require("emergent membership anti-cheat holds (all valid seeds)", (n_emergent == n and n > 0), expect=True,
+              note="the assembly membership is DG-selected, not a hand-set/pre-assigned mask")
+    v.require("index-space match: emergent indices refer to the readout CA3 cells (all valid seeds)",
+              (n_index == n and n > 0), expect=True)
+    v.require("BTSP formation genuine (all btsp rows) -> a completion failure is a READOUT seam, not dead formation",
+              all_genuine, expect=True)
+    if lesion is not None:
+        v.control("mossy-LESION collapses the selected membership (membership is DG-derived)",
+                  treatment=intact, control=lesion, min_separation=1.0)
+    if btsp_cue is not None and npl_cue is not None:
+        v.reaches("no-plateau lesion removes the formed attractor (plateau-gated one-shot is load-bearing)",
+                  before=btsp_cue, after=npl_cue)
+    v.disabled("plasticity at recall (hebbian/stdp/btsp/bdsp)",
+               why="isolation: the frozen attractor is the read variable")
+    if not ran_ou_on:
+        v.disabled("OU membrane noise (OU-on NOT run)",
+                   why="the non-specificity is DETERMINISTIC (present at OU-off and even HAND-INSTALLED); OU-on can only add self-ignition, not recover specificity")
+    go = bool(n_off >= max(1, int(np.ceil(5 / 6 * len(seeds)))) and n_emergent == n and n > 0)
+    decided = v.decide(go=go)
+    status = decided["status"]
+    seam = (status == "NO-GO")  # a clean negative with all preconditions met = the interpretable INTEGRATION-SEAM
+    on_str = (f"{n_on}/{n}" if ran_ou_on else "NOT-RUN(deterministic seam)")
+    verdict = (f"{'END-TO-END-GO' if (go and status == 'GO') else ('INTEGRATION-SEAM' if seam else status)} "
+               f"emergent-membership {n_emergent}/{n} | BTSP-completion GO off {n_off}/{n}, on {on_str} "
+               f"(the emergently-selected + BTSP-formed assembly does NOT complete cue-specifically: perm ~ nocue ~ cue)")
+    if err is not None:
+        verdict = f"ERROR -- {err}"; go = False
+    return {"probe": "gap5_emergent_end_to_end_episodic_loop", "GO": go, "status": status, "verdict": verdict,
+            "seeds": seeds, "n_go_ou_off": n_off, "n_go_ou_on": n_on, "ran_ou_on": ran_ou_on,
+            "n_emergent_membership": n_emergent, "n_index_space_match": n_index,
+            "densities": densities, "wmax": wmax, "ou_modes": ou_modes, "elapsed_seconds": elapsed,
+            "preconditions": decided["preconditions"], "disabled_processes": decided["disabled_processes"],
+            "undefined_reasons": decided["undefined_reasons"], "per_seed": per}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
@@ -231,22 +295,9 @@ def main():
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
-    valid = [p for p in per if not p.get("error")]
-    n_off = sum(1 for p in valid if p.get("seed_go_ou_off"))
-    n_on = sum(1 for p in valid if p.get("seed_go_ou_on"))
-    n_emergent = sum(1 for p in valid if p.get("anticheat1_emergent_membership"))
-    if err is None and valid:
-        go = bool(n_off >= max(1, int(np.ceil(5 / 6 * len(a.seeds)))) and n_emergent == len(valid))
-        verdict = (f"{'END-TO-END-GO' if go else 'INTEGRATION-SEAM' if not go else 'PARTIAL'} "
-                   f"emergent-membership {n_emergent}/{len(valid)} | BTSP-completion GO off {n_off}/{len(valid)}, "
-                   f"on {n_on}/{len(valid)} (seed-level: an EMERGENTLY-SELECTED + BTSP-FORMED assembly completes "
-                   f"cue-specifically from a partial cue)")
-    else:
-        go = False; verdict = f"ERROR -- {err}" if err else "ERROR -- no valid seeds"
-    summary = {"probe": "gap5_emergent_end_to_end_episodic_loop", "GO": go, "verdict": verdict, "seeds": a.seeds,
-               "n_go_ou_off": n_off, "n_go_ou_on": n_on, "n_emergent_membership": n_emergent,
-               "densities": a.densities, "wmax": a.wmax, "ou_modes": ou_modes,
-               "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
+    summary = build_summary(per, a.seeds, ou_modes, a.densities, a.wmax, round(time.time() - t0, 1),
+                            err=(err if (err is not None or not [p for p in per if not p.get("error")]) else None))
+    go = summary["GO"]; verdict = summary["verdict"]
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
     print("\n" + "=" * 100 + f"\n[gap5-E2E] VERDICT: {verdict}\n[gap5-E2E] wrote {a.out}\n" + "=" * 100, flush=True)

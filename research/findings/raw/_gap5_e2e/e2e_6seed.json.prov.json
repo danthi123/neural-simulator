@@ -1,5 +1,5 @@
 {
- "run_id": "1786362704-3243455",
+ "run_id": "1786366868-3282000",
  "runner": "research/runners/_gap5_emergent_end_to_end_episodic_loop_derisk.py",
  "argv": [
   "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gap5_emergent_end_to_end_episodic_loop_derisk.py",
@@ -28,14 +28,14 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-10T07:51:44",
+ "started": "2026-08-10T09:01:08",
  "env": {
   "SIM_BACKEND": "cupy"
  },
  "sim_backend": "cupy",
  "sim_backend_requested": "cupy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 4893.8,
+ "corpus_check_age_s": 9043.3,
  "corpus_check_query": "end-to-end emergent episodic loop DG selection BTSP formation CA3 completion compose one-brain",
  "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_gap5_e2e/e2e_6seed.json"
