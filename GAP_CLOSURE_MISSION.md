@@ -73,12 +73,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > 5/6 exact + 1 HARNESS state-reset residual — verified a fresh subsystem-ON bridge at g=1.0 is bit-identical to OFF
 > incl. seed 44; the guarded-off path does NOT leak.) An honest negative that maps the substrate limit (brain-based
 > standard: the deliverable). Parallel-push finding §2 "queued" pointer updated → this negative.
-> **CURRENT FRONTIER:** (a) **EMERGENT FORMATION** into the gap#5 reverberatory operating point (BTSP one-shot + Kopsick
-> downscaling; agent run `_gap5_btsp_forms_nmda_slow_reverberatory_derisk` IN FLIGHT, matched BTSP-formed-vs-handinstall
-> sweep) — the residual now that the dynamics de-risk is GO. (b) the NE-gain rate-homeostat + gain re-run. (c) the
-> W4-graded-RSA→speaking-pipeline INTEGRATION is DEPRIORITIZED (the K=3 benchmark's graded L1 argmax = identity, so
-> wiring it wouldn't change the speaking target — needs a pragmatic≠literal benchmark). Pool: lane-D harder-k-WTA
-> dispatched to pool40/42. Below: composer arc history.
+> (11) **⭐⭐ gap#5 EMERGENT FORMATION REACHES GO (`cee2ff124`, 6/6 OU-off AND OU-on) — the capstone.** BTSP one-shot
+> plateau-gated plasticity (`fused_btsp_update`) EMERGENTLY FORMS the slow-NMDA reverberatory completion attractor (NOT
+> hand-installed): w_within forms to the ceiling (2324/4936/8991 at btsp_w_max 2500/5000/9000), cue 0.22-0.45, perm=0,
+> nocue=0; at wmax5000 it's **6/6 GO OU-off AND OU-on** and ≥ the hand-install under noise (OU-on 6/6 vs 4/6). This
+> CLOSES the emergent-formation residual (of the attractor WEIGHTS) that the slow-NMDA GO named open. **LOAD-BEARING
+> teeth (adversarially verified, coordinator raw-read + agent inline):** `btsp_noplateau` lesion = 0/6 (w_within≈1.5 →
+> the apical plateau IS the formation, not a re-install); genuine_formation=True; cross_dw≈0 + nonmem_dw≈0 (BTSP
+> potentiates ONLY within-assembly). **Design finding (honest):** a single-bridge SEQUENTIAL encode LEAKS (the
+> seconds-long BTSP eligibility trace bleeds across assemblies → perm ignites) → the fix is forming each assembly in
+> its OWN temporally-ISOLATED encoding episode (DG pattern-separation), giving cross_dw=0 by construction — so
+> multi-assembly specificity = plateau-gating + temporally-separated encoding. **HONEST SCOPE (NOT full gap#5 closure):**
+> assemblies are PRE-ASSIGNED — emergent SELECTION (emergent-DG) is separate; magnitude is ceiling-set; per-synapse
+> ~5000 is a connectivity-sparsity residual.
+> **CURRENT FRONTIER:** (a) **gap#5 EMERGENT-DG** — emergent assembly SELECTION (`2026-07-19-gap5-emergent-DG-ROOT-CAUSE`),
+> the remaining residual now that formation+readout are GO; pairs with temporally-separated encoding (a DG job). (b) the
+> NE-gain rate-homeostat + gain re-run (`6ecba7b69` next lever). (c) W4-graded-RSA→speaking INTEGRATION DEPRIORITIZED
+> (K=3 graded L1 argmax=identity). Pool: lane-D harder-k-WTA on pool40/42. **NB owner check-in pending — tonight's 5
+> results may reshape the next big steer; holding emergent-DG launch for that.** Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
