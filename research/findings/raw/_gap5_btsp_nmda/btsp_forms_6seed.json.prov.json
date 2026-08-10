@@ -1,0 +1,37 @@
+{
+ "run_id": "1786358462-3203653",
+ "runner": "research/runners/_gap5_btsp_forms_nmda_slow_reverberatory_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gap5_btsp_forms_nmda_slow_reverberatory_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--both-ou",
+  "--btsp-wmax",
+  "2500,5000,9000",
+  "--handinstall-w",
+  "2500,5000,9000",
+  "--train-events",
+  "40",
+  "--json",
+  "research/findings/raw/_gap5_btsp_nmda/btsp_forms_6seed.json"
+ ],
+ "git_sha": "9e9f8d2ff",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T06:41:02",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5259.5,
+ "corpus_check_query": "locus coeruleus norepinephrine multiplicative gain vigilance signal detection bridge neuromodulator",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gap5_btsp_nmda/btsp_forms_6seed.json"
+}
