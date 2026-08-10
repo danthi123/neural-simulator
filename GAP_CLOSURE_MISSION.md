@@ -21,7 +21,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **Merged into `main` (HEAD `bcba4da0` = origin/main), each verified on the live chat, 0 confab, no regression:**
 > **#1** sub-clausal no-confab moat (drops invented causal clauses; confab 3→0, 6-seed) · **#2/#2b** episodic dialogue
 > memory (turn-7 recall; GATE wired to the spiking gap#5 dendritic-dAP CA3 completion, `--spiking-episodic` default-OFF;
-> numpy dAP read=0 honest-negative→host-oracle guard, **cupy is the 6/6 GO backend**) · **#3/#3b/#3c** honest inner-state
+> host-oracle fallback keeps the live chat correct — turn 7 works, 0 confab). **⚠️ #2b CUPY-GO CLAIM UNDER CORRECTION
+> (2026-08-10, direct test):** the module's `EpisodicDapMemory` does NOT fire at its `GO_DEFAULTS` `kthresh=30` on EITHER
+> backend (apical_cue=0.0) — the earlier "cupy is the 6/6 GO backend / numpy backend-blocked" was an UNTESTED inference,
+> now falsified. Root cause = wrong kthresh (standalone dAP control: kt15 apical **0.551** GO, kt30 **0.000**) + assembly-
+> size (at kt15 cupy: cat 41-cell → **0.952** FIRES lesion 0.0; dog 13-cell → **0.0** silent). Mechanism WORKS at kt15
+> for adequate assemblies — this is the gap#5 size-aware residual, NOT a wall. Fix in progress (kthresh 30→15 + size-aware;
+> numpy@kt15 under test = "no cupy needed?"). Live chat UNAFFECTED (host-oracle). · **#3/#3b/#3c** honest inner-state
 > read-outs (affect self-report; structural self-affirmation + graded certainty; #3c certainty-band OPPONENT comparator
 > → confidence read ROBUST on ALL 6 seeds, min +0.052) · **#5** honest causal-query disclaimer (`bcba4da0`) — turn 4
 > "why did the dog go east?" now CONFIRMS the fact via the moat + HONESTLY DISCLOSES it has no causal faculty + refuses
