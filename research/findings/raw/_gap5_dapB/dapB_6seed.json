@@ -1,0 +1,671 @@
+{
+  "probe": "gap5_dendritic_dap_readout_completion",
+  "lever": "B",
+  "GO": true,
+  "status": "GO",
+  "verdict": "LEVER-B-GO apical-read GO 6/6 | soma-read GO 0/6 | emergent 6/6 | lever-load-bearing 6/6 | best apical_cue~0.5112756479178048",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go_apical": 6,
+  "n_go_soma": 0,
+  "n_emergent_membership": 6,
+  "n_lever_load_bearing": 6,
+  "densities": [
+    0.5
+  ],
+  "wmax": [
+    100.0
+  ],
+  "kthresh": [
+    15.0,
+    30.0
+  ],
+  "elapsed_seconds": 1538.5,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "emergent membership anti-cheat holds (all valid seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "membership DG-selected (mossy-LESION collapses), not hand-set"
+    },
+    {
+      "kind": "require",
+      "name": "BTSP formation genuine (all rows) -> a completion failure is a READOUT seam, not dead formation",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LEVER LOAD-BEARING: LINEAR (coincidence-off) control still FAILS (all valid seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the dendritic dAP readout is what completes, not the weights"
+    },
+    {
+      "kind": "control",
+      "name": "mossy-LESION collapses the selected membership (membership is DG-derived)",
+      "ok": true,
+      "detail": "treatment=69 control=0 |sep|=69 > 1",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "plasticity at recall (hebbian/stdp/btsp/bdsp)",
+      "why": "the frozen attractor is the read variable"
+    },
+    {
+      "process": "dendritic deep-CREDIT / BDSP learning (2026-05-17-dendritic-credit-assignment-NEGATIVE)",
+      "why": "this is a READOUT-bistability lever, not the tested-NEGATIVE hidden-credit rule; BDSP learning OFF"
+    },
+    {
+      "process": "OU membrane noise",
+      "why": "isolate the DETERMINISTIC per-cell bistability; OU-on can only add self-ignition"
+    }
+  ],
+  "undefined_reasons": [],
+  "per_seed": [
+    {
+      "seed": 42,
+      "assembly_sizes": [
+        33,
+        13,
+        21
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "emergent_not_preassigned_size": true,
+      "jaccard_vs_preassigned": [
+        0.0181,
+        0.0027,
+        0.016
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "linear_control_held_cue": 0.0,
+      "linear_control_held_perm": 0.0,
+      "linear_control_fails": true,
+      "rows": [
+        {
+          "seed": 42,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 15.0,
+          "w_within": 86.56385040283203,
+          "cross_dw": -0.0013172626495361328,
+          "nonmem_dw": 0.00019800662994384766,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.5166793990323402,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": true
+        },
+        {
+          "seed": 42,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 30.0,
+          "w_within": 86.56385040283203,
+          "cross_dw": -0.0013172626495361328,
+          "nonmem_dw": 0.00019800662994384766,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.0,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": false
+        }
+      ],
+      "best": {
+        "density": 0.5,
+        "btsp_w_max": 100.0,
+        "k_thresh": 15.0,
+        "apical_held_cue": 0.5166793990323402,
+        "apical_held_perm": 0.0,
+        "apical_held_nocue": 0.0,
+        "apical_no_encoding": 0.0,
+        "apical_recurrence_zero": 0.0,
+        "soma_held_cue": 0.0,
+        "soma_held_perm": 0.0,
+        "soma_held_nocue": 0.0,
+        "w_within": 86.56385040283203,
+        "genuine_formation": true,
+        "apical_GO": true,
+        "soma_GO": false
+      },
+      "seed_go_apical": true,
+      "seed_go_soma": false
+    },
+    {
+      "seed": 43,
+      "assembly_sizes": [
+        21,
+        25,
+        17
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "emergent_not_preassigned_size": true,
+      "jaccard_vs_preassigned": [
+        0.0026,
+        0.0105,
+        0.008
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "linear_control_held_cue": 0.0,
+      "linear_control_held_perm": 0.0,
+      "linear_control_fails": true,
+      "rows": [
+        {
+          "seed": 43,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 15.0,
+          "w_within": 83.72158813476562,
+          "cross_dw": -0.0100020170211792,
+          "nonmem_dw": 1.895427703857422e-05,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.2934472934472934,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": true
+        },
+        {
+          "seed": 43,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 30.0,
+          "w_within": 83.72158813476562,
+          "cross_dw": -0.0100020170211792,
+          "nonmem_dw": 1.895427703857422e-05,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.0,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": false
+        }
+      ],
+      "best": {
+        "density": 0.5,
+        "btsp_w_max": 100.0,
+        "k_thresh": 15.0,
+        "apical_held_cue": 0.2934472934472934,
+        "apical_held_perm": 0.0,
+        "apical_held_nocue": 0.0,
+        "apical_no_encoding": 0.0,
+        "apical_recurrence_zero": 0.0,
+        "soma_held_cue": 0.0,
+        "soma_held_perm": 0.0,
+        "soma_held_nocue": 0.0,
+        "w_within": 83.72158813476562,
+        "genuine_formation": true,
+        "apical_GO": true,
+        "soma_GO": false
+      },
+      "seed_go_apical": true,
+      "seed_go_soma": false
+    },
+    {
+      "seed": 44,
+      "assembly_sizes": [
+        32,
+        15,
+        16
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "emergent_not_preassigned_size": true,
+      "jaccard_vs_preassigned": [
+        0.0155,
+        0.0108,
+        0.0053
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "linear_control_held_cue": 0.0,
+      "linear_control_held_perm": 0.0,
+      "linear_control_fails": true,
+      "rows": [
+        {
+          "seed": 44,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 15.0,
+          "w_within": 81.67042541503906,
+          "cross_dw": 0.0033180713653564453,
+          "nonmem_dw": 0.0003044605255126953,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.4375,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": true
+        },
+        {
+          "seed": 44,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 30.0,
+          "w_within": 81.67042541503906,
+          "cross_dw": 0.0033180713653564453,
+          "nonmem_dw": 0.0003044605255126953,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.0,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": false
+        }
+      ],
+      "best": {
+        "density": 0.5,
+        "btsp_w_max": 100.0,
+        "k_thresh": 15.0,
+        "apical_held_cue": 0.4375,
+        "apical_held_perm": 0.0,
+        "apical_held_nocue": 0.0,
+        "apical_no_encoding": 0.0,
+        "apical_recurrence_zero": 0.0,
+        "soma_held_cue": 0.0,
+        "soma_held_perm": 0.0,
+        "soma_held_nocue": 0.0,
+        "w_within": 81.67042541503906,
+        "genuine_formation": true,
+        "apical_GO": true,
+        "soma_GO": false
+      },
+      "seed_go_apical": true,
+      "seed_go_soma": false
+    },
+    {
+      "seed": 100,
+      "assembly_sizes": [
+        22,
+        25,
+        21
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "emergent_not_preassigned_size": true,
+      "jaccard_vs_preassigned": [
+        0.0187,
+        0.0212,
+        0.016
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "linear_control_held_cue": 0.0,
+      "linear_control_held_perm": 0.0,
+      "linear_control_fails": true,
+      "rows": [
+        {
+          "seed": 100,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 15.0,
+          "w_within": 82.55722045898438,
+          "cross_dw": 0.0009046792984008789,
+          "nonmem_dw": 1.8358230590820312e-05,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.5454545454545454,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": true
+        },
+        {
+          "seed": 100,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 30.0,
+          "w_within": 82.55722045898438,
+          "cross_dw": 0.0009046792984008789,
+          "nonmem_dw": 1.8358230590820312e-05,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.025641025641025644,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": false
+        }
+      ],
+      "best": {
+        "density": 0.5,
+        "btsp_w_max": 100.0,
+        "k_thresh": 15.0,
+        "apical_held_cue": 0.5454545454545454,
+        "apical_held_perm": 0.0,
+        "apical_held_nocue": 0.0,
+        "apical_no_encoding": 0.0,
+        "apical_recurrence_zero": 0.0,
+        "soma_held_cue": 0.0,
+        "soma_held_perm": 0.0,
+        "soma_held_nocue": 0.0,
+        "w_within": 82.55722045898438,
+        "genuine_formation": true,
+        "apical_GO": true,
+        "soma_GO": false
+      },
+      "seed_go_apical": true,
+      "seed_go_soma": false
+    },
+    {
+      "seed": 101,
+      "assembly_sizes": [
+        23,
+        24,
+        24
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "emergent_not_preassigned_size": true,
+      "jaccard_vs_preassigned": [
+        0.0079,
+        0.0105,
+        0.0105
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "linear_control_held_cue": 0.0,
+      "linear_control_held_perm": 0.0,
+      "linear_control_fails": true,
+      "rows": [
+        {
+          "seed": 101,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 15.0,
+          "w_within": 80.8517074584961,
+          "cross_dw": 0.002610445022583008,
+          "nonmem_dw": 0.0003451108932495117,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.4444444444444445,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": true
+        },
+        {
+          "seed": 101,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 30.0,
+          "w_within": 80.8517074584961,
+          "cross_dw": 0.002610445022583008,
+          "nonmem_dw": 0.0003451108932495117,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.05555555555555555,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": false
+        }
+      ],
+      "best": {
+        "density": 0.5,
+        "btsp_w_max": 100.0,
+        "k_thresh": 15.0,
+        "apical_held_cue": 0.4444444444444445,
+        "apical_held_perm": 0.0,
+        "apical_held_nocue": 0.0,
+        "apical_no_encoding": 0.0,
+        "apical_recurrence_zero": 0.0,
+        "soma_held_cue": 0.0,
+        "soma_held_perm": 0.0,
+        "soma_held_nocue": 0.0,
+        "w_within": 80.8517074584961,
+        "genuine_formation": true,
+        "apical_GO": true,
+        "soma_GO": false
+      },
+      "seed_go_apical": true,
+      "seed_go_soma": false
+    },
+    {
+      "seed": 102,
+      "assembly_sizes": [
+        31,
+        26,
+        25
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "emergent_not_preassigned_size": true,
+      "jaccard_vs_preassigned": [
+        0.013,
+        0.0078,
+        0.0105
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "linear_control_held_cue": 0.0,
+      "linear_control_held_perm": 0.0,
+      "linear_control_fails": true,
+      "rows": [
+        {
+          "seed": 102,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 15.0,
+          "w_within": 80.67356872558594,
+          "cross_dw": 0.00686335563659668,
+          "nonmem_dw": -0.0002497434616088867,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.8301282051282052,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": true
+        },
+        {
+          "seed": 102,
+          "arm": "dap",
+          "density": 0.5,
+          "btsp_w_max": 100.0,
+          "k_thresh": 30.0,
+          "w_within": 80.67356872558594,
+          "cross_dw": 0.00686335563659668,
+          "nonmem_dw": -0.0002497434616088867,
+          "genuine_formation": true,
+          "up_thresh": -20.0,
+          "soma_held_cue": 0.0,
+          "soma_held_perm": 0.0,
+          "soma_held_nocue": 0.0,
+          "soma_no_encoding": 0.0,
+          "soma_recurrence_zero": 0.0,
+          "soma_GO": false,
+          "apical_held_cue": 0.21314102564102563,
+          "apical_held_perm": 0.0,
+          "apical_held_nocue": 0.0,
+          "apical_no_encoding": 0.0,
+          "apical_recurrence_zero": 0.0,
+          "apical_GO": true
+        }
+      ],
+      "best": {
+        "density": 0.5,
+        "btsp_w_max": 100.0,
+        "k_thresh": 15.0,
+        "apical_held_cue": 0.8301282051282052,
+        "apical_held_perm": 0.0,
+        "apical_held_nocue": 0.0,
+        "apical_no_encoding": 0.0,
+        "apical_recurrence_zero": 0.0,
+        "soma_held_cue": 0.0,
+        "soma_held_perm": 0.0,
+        "soma_held_nocue": 0.0,
+        "w_within": 80.67356872558594,
+        "genuine_formation": true,
+        "apical_GO": true,
+        "soma_GO": false
+      },
+      "seed_go_apical": true,
+      "seed_go_soma": false
+    }
+  ]
+}
