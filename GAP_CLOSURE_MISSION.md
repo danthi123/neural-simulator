@@ -15,6 +15,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (READ FIRST — live resume point)
 
+> **⭐ OVERNIGHT 2026-08-10 (owner asleep, autonomous) — the night's ledger (all banked + pushed both remotes):**
+> (1) **EPISODIC neural cue-recall = 6-seed GO** (`ead8e0b7`, recall 0.646 vs 0.25; completion-driven, permuted-
+> specific, lesion teeth) — ceiling-bounded (residual = deep gap#5 pathway drive). (2) **WTA REFRAME** (`35f9bb6c`):
+> the cross-arc "neural WTA negative" was an over-strong-inhibition OPERATING-POINT artifact; the separable-assembly
+> WTA is weight-controllable (verified 1.0/6). (3) **VALUE-CRITIC = a LEARNING wall, not a readout wall** (`ced73424`
+> homeostat NEG + `9cb07316` signal-amp NEG): BOTH readout-SNR duals fail → the residual is DA CREDIT ASSIGNMENT
+> (place the value on the aligned utterance; critic-argmax 0.556). (4) **COMPOSER is REPRESENTATION-robust to
+> correlated/naturalistic codes** (`9cb07316`): the "capacity break" is a readout-RULER offset artifact (cos-to-true
+> stays 0.99 at rho=0.99/r=1), not crosstalk — open question = an offset-invariant readout. (5) faithful-spiking-bind
+> **6-seed confirmed** (`3b30ea2f`); CA3→cortex readout drive runner-side EXHAUSTED (deep sim wall); breadth N=100
+> compute-bound (killed). Skill drift #12 extended; ROADMAP + master roadmap synced.
+> **CURRENT FRONTIER (DR running, `wvrrjr45s`): aimed new-mechanism designs for (a) the value-critic LEARNING stage
+> (DA credit, distinct-in-kind from the gateB NO-GO) and (b) the composer offset-invariant READOUT** — for the
+> morning's careful builds. GPU + pool FREE. Below: the composer arc history.
+
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
 > setups (operator class works, not naturalistic capacity)**; the "capacity located M*~√d" claim was **⛔ RETRACTED**
