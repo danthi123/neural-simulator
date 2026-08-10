@@ -1,0 +1,31 @@
+{
+ "run_id": "1786392797-3529707",
+ "runner": "research/runners/_neural_wta_word_decode_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8a655bcf4a1bdae0/research/runners/_neural_wta_word_decode_derisk.py",
+  "--bridge",
+  "/home/dant123/Projects/sim/bridges/v16/seed42.simstate.h5",
+  "--seeds",
+  "42",
+  "--cache",
+  "research/findings/raw/neural_wta_word_decode/_v16_seed42_spikes.npz"
+ ],
+ "git_sha": "f86b489fa",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T16:13:17",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/neural_wta_word_decode/_v16_seed42_spikes.npz"
+}
