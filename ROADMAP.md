@@ -23,6 +23,24 @@ Axon's CaP−CaD rule NO-GO (which validated our own SST-microcircuit). The gap#
 deep-credit-on-spikes frontier is a mapped, deprioritized boundary (the tool
 alarm that implied otherwise was retired).
 
+**2026-08-10 INTEGRATION PIVOT (owner-directed) + gap#5 CLOSE.** Two things landed. (A) **gap#5 episodic memory is
+mechanistically CLOSED end-to-end**: the emergent loop (DG-selects → BTSP one-shot FORMS the attractor → an intrinsic
+per-cell DENDRITIC dAP READOUT completes it cue-specifically, size/scale-independent, 6/6 GO `ab9f7dbe`). The
+recurrent-attractor completion path hit a self-drive-vs-cue wall at conversation scale (`544c0b742`, which also
+corrected the earlier "assembly-too-small" diagnosis via a control); the dendritic readout is what closed it. Under it:
+slow-NMDA reverberatory + BTSP formation are 6/6 GOs (`483587c0b`/`cee2ff124`). Also this cycle: the learn-to-speak
+LEARNING wall fixed (state-value critic), a reward-misspec re-diagnosis, and an NE-gain real-substrate honest-negative.
+(B) **The owner steered from mechanism-first-in-isolation to CONTINUOUS INTEGRATION** — wire GO faculties into the LIVE
+chat loop (`_stageA_full_integration_derisk` / `_conversation_turing_test`) and gate on "did the conversation get
+better", because running the actual chat is what exposes mis-scoped isolated GOs. Three integrations landed, each
+verified on the real 14-turn conversation: **#1 the sub-clausal no-confab moat** (drops ungrounded causal clauses the
+generator invents — confabulations 3→0, 6-seed); **#2 episodic dialogue memory** (the brain recalls the conversation
+instead of silence); **#3 honest inner-state read-outs** ("how do you feel?" → a functional affect self-report from the
+spiking valence differential, NEVER phenomenal; "are you a simulated brain?" → an honest structural self-affirmation +
+an honest-negative that the self_schema confidence relay doesn't yet discriminate). Composed live chat (seed 42): 6
+honest replies (facts / affect / curiosity-ask / episodic / self-model), 8 honest silences, **0 confabulations**.
+**The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
+
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
 TRUE-ONE-BRAIN conversation loop (honesty + affect + curiosity + no-confab moat,
 co-resident on one spiking bridge) is now **12/12 GO** (hardened past the 6-seed
