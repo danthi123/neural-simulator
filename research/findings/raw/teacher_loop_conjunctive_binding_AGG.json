@@ -1,0 +1,2476 @@
+{
+  "probe": "teacher_loop_conjunctive_binding_AGG",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "backend": "numpy",
+  "grids": [
+    "7x7",
+    "8x8"
+  ],
+  "held_out": [
+    "7x7:7",
+    "8x8:8"
+  ],
+  "s_values": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "mix_scale": 0.4,
+  "go_count": 2,
+  "n_seeds": 6,
+  "per_grid_s_means": {
+    "7x7": {
+      "0.0": {
+        "N": 49,
+        "chance": 0.02040816326530612,
+        "binding_heldout_recall_mean": 1.0,
+        "binding_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "additive_heldout_recall_mean": 1.0,
+        "additive_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "sum_ablation_heldout_recall_mean": 1.0,
+        "v2_heldout_recall_mean": 0.023809523809523808,
+        "flat_heldout_recall_mean": 0.047619047619047616,
+        "binding_seen_recall_mean": 1.0,
+        "nonadditivity_witness_mean": 5.219282859630169e-31
+      },
+      "0.25": {
+        "N": 49,
+        "chance": 0.02040816326530612,
+        "binding_heldout_recall_mean": 0.9761904761904763,
+        "binding_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          0.8571428571428571,
+          1.0,
+          1.0
+        ],
+        "additive_heldout_recall_mean": 0.9761904761904763,
+        "additive_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          0.8571428571428571,
+          1.0,
+          1.0
+        ],
+        "sum_ablation_heldout_recall_mean": 0.9761904761904763,
+        "v2_heldout_recall_mean": 0.0,
+        "flat_heldout_recall_mean": 0.047619047619047616,
+        "binding_seen_recall_mean": 1.0,
+        "nonadditivity_witness_mean": 0.01746724880746495
+      },
+      "0.5": {
+        "N": 49,
+        "chance": 0.02040816326530612,
+        "binding_heldout_recall_mean": 0.8095238095238094,
+        "binding_heldout_recall_per_seed": [
+          0.8571428571428571,
+          0.8571428571428571,
+          0.8571428571428571,
+          0.7142857142857143,
+          0.8571428571428571,
+          0.7142857142857143
+        ],
+        "additive_heldout_recall_mean": 0.8095238095238094,
+        "additive_heldout_recall_per_seed": [
+          0.8571428571428571,
+          0.8571428571428571,
+          0.8571428571428571,
+          0.7142857142857143,
+          0.8571428571428571,
+          0.7142857142857143
+        ],
+        "sum_ablation_heldout_recall_mean": 0.8095238095238094,
+        "v2_heldout_recall_mean": 0.0,
+        "flat_heldout_recall_mean": 0.047619047619047616,
+        "binding_seen_recall_mean": 0.9880952380952381,
+        "nonadditivity_witness_mean": 0.13793103378415159
+      },
+      "0.75": {
+        "N": 49,
+        "chance": 0.02040816326530612,
+        "binding_heldout_recall_mean": 0.5952380952380952,
+        "binding_heldout_recall_per_seed": [
+          0.8571428571428571,
+          0.2857142857142857,
+          0.5714285714285714,
+          0.7142857142857143,
+          0.2857142857142857,
+          0.8571428571428571
+        ],
+        "additive_heldout_recall_mean": 0.09523809523809523,
+        "additive_heldout_recall_per_seed": [
+          0.14285714285714285,
+          0.0,
+          0.0,
+          0.2857142857142857,
+          0.14285714285714285,
+          0.0
+        ],
+        "sum_ablation_heldout_recall_mean": 0.047619047619047616,
+        "v2_heldout_recall_mean": 0.0,
+        "flat_heldout_recall_mean": 0.047619047619047616,
+        "binding_seen_recall_mean": 1.0,
+        "nonadditivity_witness_mean": 0.5901639330051329
+      },
+      "1.0": {
+        "N": 49,
+        "chance": 0.02040816326530612,
+        "binding_heldout_recall_mean": 0.8333333333333334,
+        "binding_heldout_recall_per_seed": [
+          1.0,
+          0.7142857142857143,
+          0.7142857142857143,
+          1.0,
+          0.5714285714285714,
+          1.0
+        ],
+        "additive_heldout_recall_mean": 0.0,
+        "additive_heldout_recall_per_seed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sum_ablation_heldout_recall_mean": 0.023809523809523808,
+        "v2_heldout_recall_mean": 0.0,
+        "flat_heldout_recall_mean": 0.047619047619047616,
+        "binding_seen_recall_mean": 0.9880952380952381,
+        "nonadditivity_witness_mean": 0.999999999999917
+      }
+    },
+    "8x8": {
+      "0.0": {
+        "N": 64,
+        "chance": 0.015625,
+        "binding_heldout_recall_mean": 1.0,
+        "binding_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "additive_heldout_recall_mean": 1.0,
+        "additive_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "sum_ablation_heldout_recall_mean": 1.0,
+        "v2_heldout_recall_mean": 0.020833333333333332,
+        "flat_heldout_recall_mean": 0.041666666666666664,
+        "binding_seen_recall_mean": 1.0,
+        "nonadditivity_witness_mean": 9.472811962590504e-31
+      },
+      "0.25": {
+        "N": 64,
+        "chance": 0.015625,
+        "binding_heldout_recall_mean": 1.0,
+        "binding_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "additive_heldout_recall_mean": 1.0,
+        "additive_heldout_recall_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "sum_ablation_heldout_recall_mean": 1.0,
+        "v2_heldout_recall_mean": 0.0,
+        "flat_heldout_recall_mean": 0.041666666666666664,
+        "binding_seen_recall_mean": 1.0,
+        "nonadditivity_witness_mean": 0.017467248808250235
+      },
+      "0.5": {
+        "N": 64,
+        "chance": 0.015625,
+        "binding_heldout_recall_mean": 0.8541666666666666,
+        "binding_heldout_recall_per_seed": [
+          0.875,
+          0.75,
+          0.875,
+          0.75,
+          0.875,
+          1.0
+        ],
+        "additive_heldout_recall_mean": 0.8541666666666666,
+        "additive_heldout_recall_per_seed": [
+          0.875,
+          0.75,
+          0.875,
+          0.75,
+          0.875,
+          1.0
+        ],
+        "sum_ablation_heldout_recall_mean": 0.8541666666666666,
+        "v2_heldout_recall_mean": 0.0,
+        "flat_heldout_recall_mean": 0.041666666666666664,
+        "binding_seen_recall_mean": 0.9910714285714285,
+        "nonadditivity_witness_mean": 0.13793103378959312
+      },
+      "0.75": {
+        "N": 64,
+        "chance": 0.015625,
+        "binding_heldout_recall_mean": 0.5625,
+        "binding_heldout_recall_per_seed": [
+          0.625,
+          0.625,
+          0.25,
+          0.75,
+          0.625,
+          0.5
+        ],
+        "additive_heldout_recall_mean": 0.14583333333333334,
+        "additive_heldout_recall_per_seed": [
+          0.0,
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.375
+        ],
+        "sum_ablation_heldout_recall_mean": 0.041666666666666664,
+        "v2_heldout_recall_mean": 0.020833333333333332,
+        "flat_heldout_recall_mean": 0.041666666666666664,
+        "binding_seen_recall_mean": 0.9970238095238096,
+        "nonadditivity_witness_mean": 0.5901639330162107
+      },
+      "1.0": {
+        "N": 64,
+        "chance": 0.015625,
+        "binding_heldout_recall_mean": 0.7708333333333334,
+        "binding_heldout_recall_per_seed": [
+          1.0,
+          0.75,
+          0.5,
+          0.75,
+          0.875,
+          0.75
+        ],
+        "additive_heldout_recall_mean": 0.020833333333333332,
+        "additive_heldout_recall_per_seed": [
+          0.0,
+          0.0,
+          0.125,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sum_ablation_heldout_recall_mean": 0.041666666666666664,
+        "v2_heldout_recall_mean": 0.020833333333333332,
+        "flat_heldout_recall_mean": 0.041666666666666664,
+        "binding_seen_recall_mean": 1.0,
+        "nonadditivity_witness_mean": 0.9999999999999364
+      }
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": {
+        "grids": [
+          "7x7",
+          "8x8"
+        ],
+        "per_grid": {
+          "7x7": {
+            "N": 49,
+            "held_out_n": 7,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 3.8716210418953884e-31,
+                "chance": 0.02040816326530612
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.017467248796080387,
+                "chance": 0.02040816326530612
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.8571428571428571,
+                "additive_heldout_recall": 0.8571428571428571,
+                "sum_ablation_heldout_recall": 0.8571428571428571,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103370527493,
+                "chance": 0.02040816326530612
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.8571428571428571,
+                "additive_heldout_recall": 0.14285714285714285,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.4523809523809524,
+                "binding_minus_additive": 0.7142857142857142,
+                "nonadditivity_witness": 0.5901639328446887,
+                "chance": 0.02040816326530612
+              },
+              "1.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.07142857142857142,
+                "binding_minus_additive": 1.0,
+                "nonadditivity_witness": 0.9999999999999193,
+                "chance": 0.02040816326530612
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          },
+          "8x8": {
+            "N": 64,
+            "held_out_n": 8,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.125,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 9.714715147926847e-31,
+                "chance": 0.015625
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.0174672487897372,
+                "chance": 0.015625
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.875,
+                "additive_heldout_recall": 0.875,
+                "sum_ablation_heldout_recall": 0.875,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103366132745,
+                "chance": 0.015625
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.625,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.125,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.48214285714285715,
+                "binding_minus_additive": 0.625,
+                "nonadditivity_witness": 0.5901639327553003,
+                "chance": 0.015625
+              },
+              "1.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.125,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.017857142857142856,
+                "binding_minus_additive": 1.0,
+                "nonadditivity_witness": 0.9999999999999335,
+                "chance": 0.015625
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CONJUNCTIVE BINDING (recover zero-shot composition where superposition breaks)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.86 vs add 0.14 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.86 vs add 0.86"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 83.9"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 2.099"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.62 vs add 0.00 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 0.00 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.88 vs add 0.88"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 83.2"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 2.049"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_conjunctive_binding_s42.json"
+    },
+    {
+      "seed": 43,
+      "verdict": {
+        "grids": [
+          "7x7",
+          "8x8"
+        ],
+        "per_grid": {
+          "7x7": {
+            "N": 49,
+            "held_out_n": 7,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 3.214431104720133e-31,
+                "chance": 0.02040816326530612
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.01746724879809289,
+                "chance": 0.02040816326530612
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.8571428571428571,
+                "additive_heldout_recall": 0.8571428571428571,
+                "sum_ablation_heldout_recall": 0.8571428571428571,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 0.9523809523809523,
+                "additive_seen_recall": 0.9523809523809523,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.1379310337192182,
+                "chance": 0.02040816326530612
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.2857142857142857,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.38095238095238093,
+                "binding_minus_additive": 0.2857142857142857,
+                "nonadditivity_witness": 0.5901639328730489,
+                "chance": 0.02040816326530612
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.7142857142857143,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.0,
+                "binding_minus_additive": 0.7142857142857143,
+                "nonadditivity_witness": 0.9999999999999146,
+                "chance": 0.02040816326530612
+              }
+            },
+            "recover_ok": false,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": false
+          },
+          "8x8": {
+            "N": 64,
+            "held_out_n": 8,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 1.0791262134624164e-30,
+                "chance": 0.015625
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.017467248798601426,
+                "chance": 0.015625
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.75,
+                "additive_heldout_recall": 0.75,
+                "sum_ablation_heldout_recall": 0.75,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 0.9642857142857143,
+                "additive_seen_recall": 0.9642857142857143,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103372274232,
+                "chance": 0.015625
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.625,
+                "additive_heldout_recall": 0.125,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 0.9821428571428571,
+                "additive_seen_recall": 0.32142857142857145,
+                "binding_minus_additive": 0.5,
+                "nonadditivity_witness": 0.590163932880227,
+                "chance": 0.015625
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.75,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.125,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.017857142857142856,
+                "binding_minus_additive": 0.75,
+                "nonadditivity_witness": 0.9999999999999353,
+                "chance": 0.015625
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CONJUNCTIVE BINDING (recover zero-shot composition where superposition breaks)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: [7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30) (measured=False expect=True)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": "bind 0.29 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.71 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.86 vs add 0.86"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.71 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 0.95"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 90.1"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 2.513"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.62 vs add 0.12 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs add 0.00 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs add 0.75"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs sum_abl 0.12"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 0.96"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 90.1"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 4.593"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_conjunctive_binding_s43.json"
+    },
+    {
+      "seed": 44,
+      "verdict": {
+        "grids": [
+          "7x7",
+          "8x8"
+        ],
+        "per_grid": {
+          "7x7": {
+            "N": 49,
+            "held_out_n": 7,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 3.5623832204351423e-31,
+                "chance": 0.02040816326530612
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.017467248825209922,
+                "chance": 0.02040816326530612
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.8571428571428571,
+                "additive_heldout_recall": 0.8571428571428571,
+                "sum_ablation_heldout_recall": 0.8571428571428571,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103390709593,
+                "chance": 0.02040816326530612
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.5714285714285714,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.5714285714285714,
+                "binding_minus_additive": 0.5714285714285714,
+                "nonadditivity_witness": 0.5901639332552211,
+                "chance": 0.02040816326530612
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.7142857142857143,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.047619047619047616,
+                "binding_minus_additive": 0.7142857142857143,
+                "nonadditivity_witness": 0.9999999999999237,
+                "chance": 0.02040816326530612
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          },
+          "8x8": {
+            "N": 64,
+            "held_out_n": 8,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 8.774296963762777e-31,
+                "chance": 0.015625
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.017467248825241997,
+                "chance": 0.015625
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.875,
+                "additive_heldout_recall": 0.875,
+                "sum_ablation_heldout_recall": 0.875,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103390731876,
+                "chance": 0.015625
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.25,
+                "additive_heldout_recall": 0.125,
+                "sum_ablation_heldout_recall": 0.25,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.5714285714285714,
+                "binding_minus_additive": 0.125,
+                "nonadditivity_witness": 0.590163933255681,
+                "chance": 0.015625
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.5,
+                "additive_heldout_recall": 0.125,
+                "sum_ablation_heldout_recall": 0.125,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.017857142857142856,
+                "binding_minus_additive": 0.375,
+                "nonadditivity_witness": 0.9999999999999385,
+                "chance": 0.015625
+              }
+            },
+            "recover_ok": false,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": false
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CONJUNCTIVE BINDING (recover zero-shot composition where superposition breaks)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: [8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30) (measured=False expect=True)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.57 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.71 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.86 vs add 0.86"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.71 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 83.3"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 4.080"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": "bind 0.25 vs add 0.12 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.50 vs add 0.12 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.88 vs add 0.88"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.50 vs sum_abl 0.12"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.12"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 82.6"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 4.299"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_conjunctive_binding_s44.json"
+    },
+    {
+      "seed": 45,
+      "verdict": {
+        "grids": [
+          "7x7",
+          "8x8"
+        ],
+        "per_grid": {
+          "7x7": {
+            "N": 49,
+            "held_out_n": 7,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 1.0075823028311165e-30,
+                "chance": 0.02040816326530612
+              },
+              "0.25": {
+                "binding_heldout_recall": 0.8571428571428571,
+                "additive_heldout_recall": 0.8571428571428571,
+                "sum_ablation_heldout_recall": 0.8571428571428571,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.017467248813401483,
+                "chance": 0.02040816326530612
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.7142857142857143,
+                "additive_heldout_recall": 0.7142857142857143,
+                "sum_ablation_heldout_recall": 0.7142857142857143,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103382528205,
+                "chance": 0.02040816326530612
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.7142857142857143,
+                "additive_heldout_recall": 0.2857142857142857,
+                "sum_ablation_heldout_recall": 0.2857142857142857,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.42857142857142855,
+                "binding_minus_additive": 0.4285714285714286,
+                "nonadditivity_witness": 0.5901639330887964,
+                "chance": 0.02040816326530612
+              },
+              "1.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.14285714285714285,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.0,
+                "binding_minus_additive": 1.0,
+                "nonadditivity_witness": 0.9999999999999143,
+                "chance": 0.02040816326530612
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          },
+          "8x8": {
+            "N": 64,
+            "held_out_n": 8,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 1.0113933464586642e-30,
+                "chance": 0.015625
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.01746724882345689,
+                "chance": 0.015625
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.75,
+                "additive_heldout_recall": 0.75,
+                "sum_ablation_heldout_recall": 0.75,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 0.9821428571428571,
+                "additive_seen_recall": 0.9821428571428571,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103389495076,
+                "chance": 0.015625
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.75,
+                "additive_heldout_recall": 0.125,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.4642857142857143,
+                "binding_minus_additive": 0.625,
+                "nonadditivity_witness": 0.5901639332305216,
+                "chance": 0.015625
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.75,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.0,
+                "binding_minus_additive": 0.75,
+                "nonadditivity_witness": 0.9999999999999357,
+                "chance": 0.015625
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CONJUNCTIVE BINDING (recover zero-shot composition where superposition breaks)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.71 vs add 0.29 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.86 vs add 0.86"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.71 vs add 0.71"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs sum_abl 0.14"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 96.6"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 1.962"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs add 0.12 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs add 0.00 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs add 0.75"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 0.98"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 95.8"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 3.936"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_conjunctive_binding_s45.json"
+    },
+    {
+      "seed": 46,
+      "verdict": {
+        "grids": [
+          "7x7",
+          "8x8"
+        ],
+        "per_grid": {
+          "7x7": {
+            "N": 49,
+            "held_out_n": 7,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 6.929310153404795e-31,
+                "chance": 0.02040816326530612
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.017467248811297683,
+                "chance": 0.02040816326530612
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.8571428571428571,
+                "additive_heldout_recall": 0.8571428571428571,
+                "sum_ablation_heldout_recall": 0.8571428571428571,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 0.9761904761904762,
+                "additive_seen_recall": 0.9761904761904762,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103381070604,
+                "chance": 0.02040816326530612
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.2857142857142857,
+                "additive_heldout_recall": 0.14285714285714285,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.5,
+                "binding_minus_additive": 0.14285714285714285,
+                "nonadditivity_witness": 0.5901639330591457,
+                "chance": 0.02040816326530612
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.5714285714285714,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.14285714285714285,
+                "binding_seen_recall": 0.9285714285714286,
+                "additive_seen_recall": 0.047619047619047616,
+                "binding_minus_additive": 0.5714285714285714,
+                "nonadditivity_witness": 0.9999999999999121,
+                "chance": 0.02040816326530612
+              }
+            },
+            "recover_ok": false,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": false
+          },
+          "8x8": {
+            "N": 64,
+            "held_out_n": 8,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 9.182685563628636e-31,
+                "chance": 0.015625
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.01746724880632535,
+                "chance": 0.015625
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.875,
+                "additive_heldout_recall": 0.875,
+                "sum_ablation_heldout_recall": 0.875,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.13793103377625668,
+                "chance": 0.015625
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.625,
+                "additive_heldout_recall": 0.125,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.44642857142857145,
+                "binding_minus_additive": 0.5,
+                "nonadditivity_witness": 0.5901639329890814,
+                "chance": 0.015625
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.875,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.125,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.03571428571428571,
+                "binding_minus_additive": 0.875,
+                "nonadditivity_witness": 0.9999999999999338,
+                "chance": 0.015625
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CONJUNCTIVE BINDING (recover zero-shot composition where superposition breaks)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: [7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30) (measured=False expect=True)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": "bind 0.29 vs add 0.14 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.57 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.86 vs add 0.86"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.57 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 0.93"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 79.8"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 7.342"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.62 vs add 0.12 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.88 vs add 0.00 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.88 vs add 0.88"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.88 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 79.1"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 2.015"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_conjunctive_binding_s46.json"
+    },
+    {
+      "seed": 47,
+      "verdict": {
+        "grids": [
+          "7x7",
+          "8x8"
+        ],
+        "per_grid": {
+          "7x7": {
+            "N": 49,
+            "held_out_n": 7,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.14285714285714285,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 3.6621286090143865e-31,
+                "chance": 0.02040816326530612
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.01746724880070735,
+                "chance": 0.02040816326530612
+              },
+              "0.5": {
+                "binding_heldout_recall": 0.7142857142857143,
+                "additive_heldout_recall": 0.7142857142857143,
+                "sum_ablation_heldout_recall": 0.7142857142857143,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.1379310337373323,
+                "chance": 0.02040816326530612
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.8571428571428571,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.42857142857142855,
+                "binding_minus_additive": 0.8571428571428571,
+                "nonadditivity_witness": 0.5901639329098968,
+                "chance": 0.02040816326530612
+              },
+              "1.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.023809523809523808,
+                "binding_minus_additive": 1.0,
+                "nonadditivity_witness": 0.9999999999999176,
+                "chance": 0.02040816326530612
+              }
+            },
+            "recover_ok": true,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": true
+          },
+          "8x8": {
+            "N": 64,
+            "held_out_n": 8,
+            "by_s": {
+              "0.0": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 8.259978501013953e-31,
+                "chance": 0.015625
+              },
+              "0.25": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.017467248806138543,
+                "chance": 0.015625
+              },
+              "0.5": {
+                "binding_heldout_recall": 1.0,
+                "additive_heldout_recall": 1.0,
+                "sum_ablation_heldout_recall": 1.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 1.0,
+                "binding_minus_additive": 0.0,
+                "nonadditivity_witness": 0.1379310337749627,
+                "chance": 0.015625
+              },
+              "0.75": {
+                "binding_heldout_recall": 0.5,
+                "additive_heldout_recall": 0.375,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.35714285714285715,
+                "binding_minus_additive": 0.125,
+                "nonadditivity_witness": 0.590163932986453,
+                "chance": 0.015625
+              },
+              "1.0": {
+                "binding_heldout_recall": 0.75,
+                "additive_heldout_recall": 0.0,
+                "sum_ablation_heldout_recall": 0.0,
+                "v2_heldout_recall": 0.0,
+                "flat_heldout_recall": 0.0,
+                "binding_seen_recall": 1.0,
+                "additive_seen_recall": 0.03571428571428571,
+                "binding_minus_additive": 0.75,
+                "nonadditivity_witness": 0.9999999999999415,
+                "chance": 0.015625
+              }
+            },
+            "recover_ok": false,
+            "nocost_ok": true,
+            "conjunction_load_bearing": true,
+            "additive_broke_high_s": true,
+            "grid_go": false
+          }
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop CONJUNCTIVE BINDING (recover zero-shot composition where superposition breaks)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: [8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30) (measured=False expect=True)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.86 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 0.00 (chance 0.020)"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.71 vs add 0.71"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 92.0"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 2.051"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[7x7] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.75] binding RECOVERS held-out (>= additive+0.30)",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": "bind 0.50 vs add 0.38 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] binding RECOVERS held-out (>= additive+0.30 AND >= 0.5)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs add 0.00 (chance 0.016)"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.0] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.25] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=0.5] no low-s cost (binding >= additive-0.05)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 1.00 vs add 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] conjunction load-bearing (binding - sum_ablation >= 0.20)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "bind 0.75 vs sum_abl 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] binding taught (seen) recall >= 0.85 (min over s)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "min-seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8 s=1.0] additive baseline BROKE (<= 0.6, else nothing to recover)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "add 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind is NEURAL (reservoir spikes > 0)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "mean spikes 91.9"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] bind genuinely MULTIPLICATIVE (product != sum of factors)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "||prod-sum|| 4.386"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] world carries a real CONJUNCTION at high s (witness > 0.02)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "witness 1.000"
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] genuinely ZERO-SHOT (disjoint + coverage + no-leakage)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[8x8] 0 stored raw patterns + ruler untouched",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_conjunctive_binding_s47.json"
+    }
+  ]
+}
