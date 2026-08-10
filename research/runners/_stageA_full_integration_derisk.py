@@ -453,7 +453,8 @@ def _arbiter_regions():
 
 def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhibition: bool = False,
                     onebrain_k_max: int = 32, co_resident_forward_model: bool = False, fm_n_pool: int = FM_N_POOL,
-                    co_resident_affect_ladder: bool = False, aff_n_rungs: int = 8):
+                    co_resident_affect_ladder: bool = False, aff_n_rungs: int = 8,
+                    co_resident_certainty_opponent: bool = False):
     """Build ONE SimulationBridge: the composer rf slice FIRST, then (default-on) every faculty slice appended AFTER
     it. Returns (bridge, comp, idx, baseline_snap). When with_faculties=False, ONLY the rf slice is built (the
     default-off byte-identity baseline).
@@ -503,6 +504,18 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
         lad_r, ladder_names = _ladder_region_specs(int(aff_n_rungs))
         regions += lad_r
         pathways += _ladder_pathways(ladder_names)
+
+    # ---- INTEGRATION #3c: the certainty-band OPPONENT comparator, appended LAST (needs the honesty relay's workspace
+    # class members -> requires with_faculties). meta_opp = per-class comparator subpools (slow NMDA, integrates the
+    # settled balance-of-evidence); meta_opp_fs = per-class inhibitory relay. internal_density=0 (recurrence/edges are
+    # injected as union entries below with NO shared-plan RNG draw + NO out-edges to any pre-existing region) ->
+    # byte-identical to the seams-A/C build (append-LAST invariance). Flag off -> no meta_opp region -> byte-identical.
+    build_certainty_opponent = bool(co_resident_certainty_opponent and with_faculties)
+    if build_certainty_opponent:
+        regions.append(BrainRegion(name="meta_opp", n_neurons=int(meta.META_SIZE), exc_fraction=1.0,
+                                   internal_density=0.0, enable_nmda=True))
+        regions.append(BrainRegion(name="meta_opp_fs", n_neurons=int(meta.META_MARGIN_FS_SIZE * meta.K_CLASSES),
+                                   exc_fraction=0.0, internal_density=0.0, enable_nmda=False))
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -570,6 +583,28 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
         union["fs_to_meta"] = _dense_projection(ws_fs, meta_idx, float(meta.DEFAULT_META_INH_W), meta.META_GATE)
         union["meta_to_self_confid"] = _dense_projection(
             meta_idx, self_idx, float(integ.DEFAULT_META_TO_SELF_CONFID_W), integ.META_TO_SELF_CONFID_GATE)
+        # INTEGRATION #3c: the certainty-band OPPONENT comparator wiring (ported verbatim from the reference
+        # margin_abs monitor, _second_order_metacog_monitor_derisk._build_bridge). Each workspace class k excites its
+        # OWN comparator subpool meta_opp_k and its class-specific inhibitory relay meta_opp_fs_k; meta_opp_fs_k
+        # cross-inhibits the OTHER class's subpool. The read is |rate(meta_opp_1) - rate(meta_opp_0)| (opponent
+        # margin). All projections use the frozen META_GATE and have NO out-edges to any pre-existing region.
+        if build_certainty_opponent:
+            opp_idx_h = np.asarray(rm.indices("meta_opp"), dtype=np.int64)
+            opp_fs_h = np.asarray(rm.indices("meta_opp_fs"), dtype=np.int64)
+            sub = int(meta.META_SIZE // meta.K_CLASSES)
+            fsn = int(meta.META_MARGIN_FS_SIZE)
+            opp_member = {k: opp_idx_h[k * sub:(k + 1) * sub] for k in range(meta.K_CLASSES)}
+            opp_fs_member = {k: opp_fs_h[k * fsn:(k + 1) * fsn] for k in range(meta.K_CLASSES)}
+            for k in range(meta.K_CLASSES):
+                union[f"ws_{k}_to_meta_opp_{k}"] = _dense_projection(
+                    member[k], opp_member[k], CERT_OPP_EXC_W, meta.META_GATE)
+                union[f"ws_{k}_to_meta_opp_fs_{k}"] = _dense_projection(
+                    member[k], opp_fs_member[k], CERT_OPP_EXC_W, meta.META_GATE)
+                for j in range(meta.K_CLASSES):
+                    if j == k:
+                        continue
+                    union[f"meta_opp_fs_{k}_to_meta_opp_{j}"] = _dense_projection(
+                        opp_fs_member[k], opp_member[j], CERT_OPP_INH_W, meta.META_GATE)
         # 3-way arbiter competitive queuing.
         pool_idx = {p: np.asarray(rm.indices(p), dtype=np.int64) for p in pools}
         arb_fs = np.asarray(rm.indices("arb_fs"), dtype=np.int64)
@@ -627,6 +662,11 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
                         "speak_acc", "silence_acc")},
             "cur_ask": np.asarray(rm.indices("cur_ask"), dtype=np.int64),
         }
+        if build_certainty_opponent:
+            sub = int(meta.META_SIZE // meta.K_CLASSES)
+            opp_idx_h2 = np.asarray(rm.indices("meta_opp"), dtype=np.int64)
+            idx["meta_opp"] = {k: xp.asarray(opp_idx_h2[k * sub:(k + 1) * sub]) for k in range(meta.K_CLASSES)}
+            idx["meta_opp_n"] = {k: int(sub) for k in range(meta.K_CLASSES)}
 
     if co_resident_forward_model:
         idx["fm"] = np.asarray(rm.indices("fm_reservoir"), dtype=np.int64)
@@ -863,17 +903,99 @@ SETTLE_FREE_STEPS = 45         # settle+read window; short enough to PRECEDE the
 SETTLE_READ_LO = 10           # skip the settle transient; read the resolved window t >= SETTLE_READ_LO
 
 
+# ── INTEGRATION #3c: the certainty-band OPPONENT comparator that reads the winner-minus-loser MARGIN ───────────
+# #3b closed the inverted relay with the SEED-then-SETTLE read (pooled self_schema rate), but left a RESIDUAL: the
+# pooled read reports the winner-DOMINATED MAGNITUDE, so a SYMMETRIC-tie probe on which a random class PARTIALLY
+# latches reads too HIGH (elevated total activity looks confident), holding 2/6 seeds at +0.0143 < the +0.02 bar.
+# The fix ports the reference's proven `margin_abs` monitor (_second_order_metacog_monitor_derisk._build_bridge /
+# _run_trial, confidence_read='margin_abs'): a dedicated per-class OPPONENT comparator. Each workspace class k excites
+# its OWN meta subpool meta_opp_k AND, through a class-specific inhibitory relay meta_opp_fs_k, SUPPRESSES the other
+# class's subpool. The read is margin_abs = |rate(meta_opp_1) - rate(meta_opp_0)|. Why this is robust to tie-latching
+# where the pooled read is not: the read now measures the ASYMMETRY of the settled competition, not its magnitude. A
+# confident probe (520 vs 40) drives a LARGE asymmetry (one subpool high, the cross-inhibited other silent). A PARTIAL
+# latch under a symmetric tie is -- by definition -- a SMALL asymmetry (both classes still moderately co-active), so
+# its margin stays LOW regardless of WHICH class latched (the opponent differential is sign-symmetric via the abs).
+# The comparator regions are appended LAST with internal_density=0 and their projections injected as union entries
+# (no shared-plan RNG draw, no out-edges to any pre-existing region) -> byte-identical to the seams-A/C build
+# (append-LAST invariance; SEAM-A mechanism). Guarded by co_resident_certainty_opponent (default OFF); the turing
+# build turns it ON so turn 13 grades certainty from the opponent margin. See the 2026-08-10 INTEGRATION-3c finding.
+# Operating point fixed on the 6-seed sweep {42,43,44,100,101,102}. The reference margin_abs monitor used 1.4/2.2 for
+# a GRADED 2AFC read over a long slow-NMDA late window; our probes are FIXED extreme drives (confident 520/40, tie
+# 300/300) read over the #3b SHORT seed-then-settle window, so the comparator needs stronger feed-forward drive to
+# reach a graded firing rate. At 4.0/6.0 the confident/self margin holds ~0.07 while the (possibly latched) tie margin
+# stays <=0.021, giving all-6 separation >+0.052 (min seed 43 +0.0521, the #3b tie-latcher). Cross-inhibition
+# INH_W=6.0 > EXC_W=4.0 keeps a symmetric tie from letting one subpool run away.
+CERT_OPP_EXC_W = 4.0     # workspace_k -> meta_opp_k (+ -> meta_opp_fs_k) excitation
+CERT_OPP_INH_W = 6.0     # meta_opp_fs_k -> meta_opp_{j!=k} cross-inhibition
+CERT_OPP_META_SUB = meta.META_SIZE // meta.K_CLASSES   # per-class comparator subpool size (80//2 = 40)
+
+
+def _read_opponent_margin(bridge, xp, idx, baseline_snap, drive_class0: float, drive_class1: float,
+                          drive_steps: int, hold_frac: float, free_steps: int, read_lo: int) -> float:
+    """The certainty-band OPPONENT read: run the SAME seed-then-settle timing as the pooled self read, but read the
+    per-class comparator subpools meta_opp_k and return margin_abs = |rate(meta_opp_1) - rate(meta_opp_0)|. The
+    cross-inhibitory relay makes each subpool encode its class's winner-vs-loser margin, so a confident decision reads
+    a LARGE margin and a (possibly latched) symmetric tie reads a SMALL one -- robust to which class latches."""
+    _restore_state(bridge, baseline_snap)
+    bridge.cp_external_input_current[:] = 0.0
+    member = idx["member"]
+    m0 = xp.asarray(member[0])
+    m1 = xp.asarray(member[1])
+    opp = idx["meta_opp"]                 # {0: dev_idx, 1: dev_idx}
+    o0, o1 = opp[0], opp[1]
+    n0 = int(idx["meta_opp_n"][0])
+    n1 = int(idx["meta_opp_n"][1])
+    acc0 = 0
+    acc1 = 0
+    n_late = 0
+    # (1) SEED the competition with the full drive.
+    for _ in range(int(drive_steps)):
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[m0] = xp.float32(float(drive_class0))
+        bridge.cp_external_input_current[m1] = xp.float32(float(drive_class1))
+        bridge._run_one_simulation_step()
+    # (2) SETTLE+READ under a small holding drive so the recurrent WTA resolves; read the comparator subpools.
+    h = float(hold_frac)
+    for t in range(int(free_steps)):
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[m0] = xp.float32(float(drive_class0) * h)
+        bridge.cp_external_input_current[m1] = xp.float32(float(drive_class1) * h)
+        bridge._run_one_simulation_step()
+        if t >= int(read_lo):
+            acc0 += int(to_host(bridge.cp_firing_states[o0]).sum())
+            acc1 += int(to_host(bridge.cp_firing_states[o1]).sum())
+            n_late += 1
+    _restore_state(bridge, baseline_snap)
+    bridge.cp_external_input_current[:] = 0.0
+    r0 = acc0 / max(1, n_late) / max(1, n0)
+    r1 = acc1 / max(1, n_late) / max(1, n1)
+    return abs(r1 - r0)
+
+
 def read_honesty_self_rate(bridge, xp, idx, baseline_snap, drive_class0: float, drive_class1: float,
                            report_steps: int = 60, legacy_continuous: bool = False,
                            drive_steps: int = SETTLE_DRIVE_STEPS, hold_frac: float = SETTLE_HOLD_FRAC,
-                           free_steps: int = SETTLE_FREE_STEPS, read_lo: int = SETTLE_READ_LO) -> float:
-    """Drive the shared workspace class assemblies with (drive_class0, drive_class1), run the relay, and read the
-    self_schema mean firing rate off cp_firing_states -- the honesty organ's on-substrate graded confidence read.
-    A confident (imbalanced) decision -> higher self_schema rate; a tie (balanced) -> lower.
+                           free_steps: int = SETTLE_FREE_STEPS, read_lo: int = SETTLE_READ_LO,
+                           opponent=None) -> float:
+    """Drive the shared workspace class assemblies with (drive_class0, drive_class1), run the relay, and read a graded
+    on-substrate confidence value off cp_firing_states -- the honesty organ's graded confidence read. A confident
+    (imbalanced) decision -> higher value; a tie (balanced) -> lower.
 
-    Default: the two-phase SEED-then-SETTLE read (see the module note above) that lets the WTA RESOLVE so the read
-    reflects the winner-vs-loser MARGIN, not the pooled total drive. `legacy_continuous=True` reproduces the OLD
-    continuous full-clamp read (which inverted the separation) for the before/after control."""
+    Read selection (`opponent`): None (default) AUTO-uses the certainty-band OPPONENT margin read when the comparator
+    populations are present in `idx` (co_resident_certainty_opponent build) and falls back to the pooled self_schema
+    read otherwise; True forces the opponent read (requires the comparator); False forces the pooled self read.
+
+    The pooled read is the two-phase SEED-then-SETTLE read (#3b, see the module note) that lets the WTA RESOLVE so it
+    reflects the winner-vs-loser MARGIN not the pooled total drive; `legacy_continuous=True` reproduces the OLD
+    continuous full-clamp read (which inverted the separation) for the before/after control. The opponent read (#3c)
+    reads the per-class comparator subpools so the residual tie-latching cannot inflate it."""
+    use_opp = (opponent is not False) and (not legacy_continuous) and (idx.get("meta_opp") is not None)
+    if opponent is True and idx.get("meta_opp") is None:
+        raise ValueError("opponent read requested but no meta_opp comparator in this build "
+                         "(pass co_resident_certainty_opponent=True to build_one_brain)")
+    if use_opp:
+        return _read_opponent_margin(bridge, xp, idx, baseline_snap, drive_class0, drive_class1,
+                                     drive_steps, hold_frac, free_steps, read_lo)
     _restore_state(bridge, baseline_snap)
     bridge.cp_external_input_current[:] = 0.0
     member = idx["member"]
@@ -2036,6 +2158,100 @@ def run_subclausal_teeth(comp, facts):
     }
 
 
+def _threshold_hash(bridge, n):
+    """Hash the first n neurons' firing thresholds -- the append-LAST byte-identity check."""
+    import hashlib
+    th = to_host(bridge.cp_neuron_firing_thresholds[:int(n)]).astype(np.float64)
+    return hashlib.sha1(th.tobytes()).hexdigest()[:16]
+
+
+def certainty_opponent_sweep(seeds, out_path, drive_confident=(520.0, 40.0), drive_tie=(300.0, 300.0),
+                             self_drive=(520.0, 0.0), sep_eps=0.003, meaningful=0.02):
+    """INTEGRATION #3c 6-seed BEFORE/AFTER: on the production turing build (seams A+C) + the certainty-band OPPONENT
+    comparator, measure the confident-vs-tie SEPARATION for (before) the #3b pooled self_schema read and (after) the
+    opponent margin read, on every seed. Also confirms byte-identity (opponent appended LAST) by matching the pooled
+    read to #3b, and grades the live self-drive band. Writes a committed JSON (not a scratchpad script)."""
+    xp, _ = get_backend()
+    per = []
+    for sd in seeds:
+        # production turing build + the opponent comparator appended LAST.
+        bridge, comp, idx, snap = build_one_brain(
+            int(sd), with_faculties=True, co_resident_forward_model=True, co_resident_affect_ladder=True,
+            co_resident_certainty_opponent=True)
+        # byte-identity: the pre-existing neurons' thresholds must match a seams-A/C build with NO opponent.
+        b2, _c2, _i2, _s2 = build_one_brain(
+            int(sd), with_faculties=True, co_resident_forward_model=True, co_resident_affect_ladder=True,
+            co_resident_certainty_opponent=False)
+        n_pre = int(b2.core_config.num_neurons)
+        th_with = _threshold_hash(bridge, n_pre)
+        th_without = _threshold_hash(b2, n_pre)
+        byte_identical = bool(th_with == th_without)
+
+        # (before) pooled self_schema read (#3b); (after) opponent margin read (#3c). Same seed-then-settle timing.
+        assert_pooled = read_honesty_self_rate(bridge, xp, idx, snap, *drive_confident, opponent=False)
+        tie_pooled = read_honesty_self_rate(bridge, xp, idx, snap, *drive_tie, opponent=False)
+        self_pooled = read_honesty_self_rate(bridge, xp, idx, snap, *self_drive, opponent=False)
+        assert_opp = read_honesty_self_rate(bridge, xp, idx, snap, *drive_confident, opponent=True)
+        tie_opp = read_honesty_self_rate(bridge, xp, idx, snap, *drive_tie, opponent=True)
+        self_opp = read_honesty_self_rate(bridge, xp, idx, snap, *self_drive, opponent=True)
+
+        sep_pooled = float(assert_pooled) - float(tie_pooled)
+        sep_opp = float(assert_opp) - float(tie_opp)
+        # grade the live band from the opponent read (the cuts the turn-13 path uses).
+        band = "degenerate"
+        if sep_opp > sep_eps:
+            hedge_cut = tie_opp + 0.4 * sep_opp
+            assert_cut = tie_opp + 0.85 * sep_opp
+            band = certainty_band(self_opp, assert_cut, hedge_cut, False)
+        per.append({
+            "seed": int(sd),
+            "pooled_assert_rate": round(float(assert_pooled), 5), "pooled_tie_rate": round(float(tie_pooled), 5),
+            "pooled_sep": round(sep_pooled, 5),
+            "opponent_assert_margin": round(float(assert_opp), 5), "opponent_tie_margin": round(float(tie_opp), 5),
+            "opponent_self_margin": round(float(self_opp), 5),
+            "opponent_sep": round(sep_opp, 5),
+            "opponent_sep_gt_meaningful": bool(sep_opp > meaningful),
+            "opponent_reliable": bool(sep_opp > sep_eps),
+            "band": band,
+            "byte_identical_to_seamsAC": byte_identical,
+        })
+        print(f"[3c-sweep] seed={sd} pooled_sep={sep_pooled:+.4f} opponent_sep={sep_opp:+.4f} "
+              f">{meaningful}={sep_opp > meaningful} band={band} byte_identical={byte_identical}", flush=True)
+        del bridge, comp, b2
+    opp_seps = [p["opponent_sep"] for p in per]
+    pooled_seps = [p["pooled_sep"] for p in per]
+    result = {
+        "runner": "research/runners/_stageA_full_integration_derisk.py::certainty_opponent_sweep",
+        "cmd": "SIM_BACKEND=numpy .venv/bin/python -m research.runners._stageA_full_integration_derisk "
+               "--certainty-opponent-sweep --out " + str(out_path),
+        "mechanism": "certainty-band OPPONENT comparator (per-class meta_opp subpools + cross-inhibitory meta_opp_fs "
+                     "relay), ported from _second_order_metacog_monitor_derisk margin_abs; read=|rate(meta_opp_1)-"
+                     "rate(meta_opp_0)|; SAME seed-then-settle timing as #3b.",
+        "build": "seams A+C (production turing build) + co_resident_certainty_opponent",
+        "seeds": [int(s) for s in seeds],
+        "protocol": {"drive_steps": SETTLE_DRIVE_STEPS, "hold_frac": SETTLE_HOLD_FRAC,
+                     "free_steps": SETTLE_FREE_STEPS, "read_lo": SETTLE_READ_LO},
+        "drives": {"confident": list(drive_confident), "tie": list(drive_tie), "self": list(self_drive)},
+        "meaningful_bar": meaningful, "sep_eps": sep_eps,
+        "per_seed": per,
+        "pooled_sep_min": round(float(min(pooled_seps)), 5), "pooled_sep_mean": round(float(np.mean(pooled_seps)), 5),
+        "opponent_sep_min": round(float(min(opp_seps)), 5), "opponent_sep_mean": round(float(np.mean(opp_seps)), 5),
+        "opponent_all_positive": bool(all(s > 0 for s in opp_seps)),
+        "opponent_all_gt_meaningful": bool(all(s > meaningful for s in opp_seps)),
+        "opponent_reliable_count": int(sum(1 for p in per if p["opponent_reliable"])),
+        "turn13_assert_count": int(sum(1 for p in per if p["band"] == "assert")),
+        "byte_identical_all": bool(all(p["byte_identical_to_seamsAC"] for p in per)),
+    }
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, "w") as fh:
+        json.dump(result, fh, indent=2)
+    print(f"\n[3c-sweep] opponent_sep min={result['opponent_sep_min']:+.4f} mean={result['opponent_sep_mean']:+.4f} "
+          f"all>{meaningful}={result['opponent_all_gt_meaningful']} "
+          f"(pooled #3b baseline min={result['pooled_sep_min']:+.4f} mean={result['pooled_sep_mean']:+.4f}) "
+          f"byte_identical_all={result['byte_identical_all']} -> {out_path}", flush=True)
+    return result
+
+
 def main():
     ap = argparse.ArgumentParser(description="Stage-A FULL single-bridge live integration (single-seed smoke).")
     ap.add_argument("--seed", type=int, default=42)
@@ -2062,12 +2278,25 @@ def main():
                     help="Run ONLY the sub-clausal TEETH: replay the captured confabulating turns' raw mouth text "
                          "through the SVO moat (BEFORE) vs the sub-clausal moat (AFTER) + a matched grounded-vs-"
                          "invented subordinate pair, print verbatim, and exit.")
+    ap.add_argument("--certainty-opponent-sweep", action="store_true",
+                    help="INTEGRATION #3c: run the 6-seed BEFORE/AFTER certainty-band opponent-margin sweep "
+                         "(pooled self read vs the per-class opponent comparator), write JSON, and exit.")
+    ap.add_argument("--sweep-seeds", type=str, default="42,43,44,100,101,102",
+                    help="comma-separated seeds for --certainty-opponent-sweep")
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/lanes/stageA/stageA_full_integration_smoke.json")
     args = ap.parse_args()
 
     get_backend("numpy")
     xp, _ = get_backend()
+
+    # ---- INTEGRATION #3c sweep (builds its own per-seed bridges; no single-seed smoke): run + exit. ----
+    if args.certainty_opponent_sweep:
+        seeds = [int(s) for s in args.sweep_seeds.split(",") if s.strip()]
+        out = (args.out if args.out != "research/findings/raw/lanes/stageA/stageA_full_integration_smoke.json"
+               else "research/findings/raw/lanes/stageA/turing/certainty_opponent_margin_6seed.json")
+        certainty_opponent_sweep(seeds, out)
+        return
     faculty_rng = FacultyRNG(args.seed, ["moat", "honesty", "arbiter", "affect", "curiosity"])
     t0 = time.time()
     print(f"[stageA-full] seed={args.seed} moat_battery={args.moat_battery} backend={os.environ.get('SIM_BACKEND')}",

@@ -697,7 +697,8 @@ def main():
     print("[turing] building the ONE co-resident bridge (composer + honesty + arbiter + affect + curiosity + "
           "fm-reservoir(A) + affect-ladder(C)) ...", flush=True)
     bridge, comp, idx, baseline_snap = SA.build_one_brain(
-        args.seed, with_faculties=True, co_resident_forward_model=True, co_resident_affect_ladder=True)
+        args.seed, with_faculties=True, co_resident_forward_model=True, co_resident_affect_ladder=True,
+        co_resident_certainty_opponent=True)  # INTEGRATION #3c: turn 13 grades certainty from the opponent margin
     single_bridge = bool(getattr(comp, "_merged", None) is bridge)
     print(f"   single_bridge(composer._merged is bridge)={single_bridge} N={bridge.core_config.num_neurons}",
           flush=True)

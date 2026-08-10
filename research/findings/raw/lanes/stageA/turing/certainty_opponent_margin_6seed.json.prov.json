@@ -1,0 +1,26 @@
+{
+ "run_id": "1786397821-3585781",
+ "runner": "research/runners/_stageA_full_integration_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a4f5256f2373021b3/research/runners/_stageA_full_integration_derisk.py",
+  "--certainty-opponent-sweep"
+ ],
+ "git_sha": "d3ba52c0d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T17:37:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/stageA/turing/certainty_opponent_margin_6seed.json"
+}

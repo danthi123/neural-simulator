@@ -37,7 +37,9 @@ verified on the real 14-turn conversation: **#1 the sub-clausal no-confab moat**
 generator invents — confabulations 3→0, 6-seed); **#2 episodic dialogue memory** (the brain recalls the conversation
 instead of silence); **#3 honest inner-state read-outs** ("how do you feel?" → a functional affect self-report from the
 spiking valence differential, NEVER phenomenal; "are you a simulated brain?" → an honest structural self-affirmation +
-an honest-negative that the self_schema confidence relay doesn't yet discriminate). Composed live chat (seed 42): 6
+a graded certainty band — the self_schema confidence relay now discriminates confident-vs-tie ROBUSTLY on all 6 seeds
+(#3b seed-then-settle read flipped it positive; #3c a certainty-band opponent comparator cleared the +0.02 bar on
+every seed). Composed live chat (seed 42): 6
 honest replies (facts / affect / curiosity-ask / episodic / self-model), 8 honest silences, **0 confabulations**.
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 

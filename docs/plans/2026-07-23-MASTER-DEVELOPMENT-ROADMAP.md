@@ -408,16 +408,18 @@ diagnosis was itself falsified by a control). Loop = `_stageA_full_integration_d
 moat** (drops the generator's invented causal clauses, confabulations 3→0, 6-seed); **#2 episodic dialogue memory**
 (turn 7 no longer silent — honest recall; host buffer scaffold, spiking path = gap#5 dAP `ab9f7dbe`); **#3 honest
 inner-state read-outs** (turn 5 functional affect self-report from the spiking valence differential, NEVER phenomenal;
-turn 13 honest structural self-model + an honest-NEGATIVE that the self_schema confidence relay doesn't discriminate,
-sep -0.0025 — reported as an instrument limit). Composed chat (s42): 6 honest replies, 8 honest silences, 0 confab.
+turn 13 honest structural self-model; the self_schema confidence relay NOW discriminates — **#3b** seed-then-settle
+read flipped the sep from -0.0025 to +0.0190 (all 6 seeds positive), and **#3c** a certainty-band OPPONENT comparator
+(per-class meta_opp subpools + cross-inhibition, `margin_abs` ported) makes it ROBUST: all 6 seeds >+0.02 (min +0.0521,
+mean +0.0662), turn 13 grades the assert band. Composed chat (s42): 6 honest replies, 8 honest silences, 0 confab.
 **gap#5 episodic memory CLOSED end-to-end**: DG-select (GO) → BTSP one-shot FORM (GO `cee2ff124`) → intrinsic per-cell
 DENDRITIC dAP READOUT completes cue-specifically (size/scale-independent, 6/6 GO `ab9f7dbe`); the recurrent-completion
 path hit a self-drive-vs-cue-at-scale wall (`544c0b742`), the dendritic readout closed it; slow-NMDA reverberatory
 readout 6/6 (`483587c0b`). Also: learn-to-speak LEARNING wall fixed (state-value critic); NE-gain real-substrate
 honest-NEGATIVE (3/6, `6ecba7b69`); reward-misspec re-diagnosed. **NEXT = keep wiring GO faculties into the live chat,
 dependency-ordered, gate on the conversation** (next candidates: convert the episodic host-buffer to the on-substrate
-dAP recall; the self_schema-relay instrument fix so certainty bands grade self-reports; learn-to-speak word-choice at
-production vocab; make the honest-silence turns richer only where genuinely grounded).
+dAP recall; the self_schema-relay certainty-band read is now robust — #3b settle-read + #3c opponent comparator, DONE;
+learn-to-speak word-choice at production vocab; make the honest-silence turns richer only where genuinely grounded).
 
 **2026-08-08 UPDATE — OPEN-ENDED CONVERSATION arc (ultracode, owner-directed): the faculty-de-risk waves toward
 human-like fluency.** The TRUE-ONE-BRAIN loop (honesty + affect + curiosity + no-confab moat on one bridge) is

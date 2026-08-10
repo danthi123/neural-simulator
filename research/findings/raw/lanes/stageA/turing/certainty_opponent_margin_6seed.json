@@ -1,0 +1,131 @@
+{
+  "runner": "research/runners/_stageA_full_integration_derisk.py::certainty_opponent_sweep",
+  "cmd": "SIM_BACKEND=numpy .venv/bin/python -m research.runners._stageA_full_integration_derisk --certainty-opponent-sweep --out research/findings/raw/lanes/stageA/turing/certainty_opponent_margin_6seed.json",
+  "mechanism": "certainty-band OPPONENT comparator (per-class meta_opp subpools + cross-inhibitory meta_opp_fs relay), ported from _second_order_metacog_monitor_derisk margin_abs; read=|rate(meta_opp_1)-rate(meta_opp_0)|; SAME seed-then-settle timing as #3b.",
+  "build": "seams A+C (production turing build) + co_resident_certainty_opponent",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "protocol": {
+    "drive_steps": 35,
+    "hold_frac": 0.2,
+    "free_steps": 45,
+    "read_lo": 10
+  },
+  "drives": {
+    "confident": [
+      520.0,
+      40.0
+    ],
+    "tie": [
+      300.0,
+      300.0
+    ],
+    "self": [
+      520.0,
+      0.0
+    ]
+  },
+  "meaningful_bar": 0.02,
+  "sep_eps": 0.003,
+  "per_seed": [
+    {
+      "seed": 42,
+      "pooled_assert_rate": 0.02619,
+      "pooled_tie_rate": 0.01095,
+      "pooled_sep": 0.01524,
+      "opponent_assert_margin": 0.07643,
+      "opponent_tie_margin": 0.00143,
+      "opponent_self_margin": 0.07643,
+      "opponent_sep": 0.075,
+      "opponent_sep_gt_meaningful": true,
+      "opponent_reliable": true,
+      "band": "assert",
+      "byte_identical_to_seamsAC": true
+    },
+    {
+      "seed": 43,
+      "pooled_assert_rate": 0.03762,
+      "pooled_tie_rate": 0.01905,
+      "pooled_sep": 0.01857,
+      "opponent_assert_margin": 0.07286,
+      "opponent_tie_margin": 0.02071,
+      "opponent_self_margin": 0.07286,
+      "opponent_sep": 0.05214,
+      "opponent_sep_gt_meaningful": true,
+      "opponent_reliable": true,
+      "band": "assert",
+      "byte_identical_to_seamsAC": true
+    },
+    {
+      "seed": 44,
+      "pooled_assert_rate": 0.03619,
+      "pooled_tie_rate": 0.00857,
+      "pooled_sep": 0.02762,
+      "opponent_assert_margin": 0.07643,
+      "opponent_tie_margin": 0.00214,
+      "opponent_self_margin": 0.07643,
+      "opponent_sep": 0.07429,
+      "opponent_sep_gt_meaningful": true,
+      "opponent_reliable": true,
+      "band": "assert",
+      "byte_identical_to_seamsAC": true
+    },
+    {
+      "seed": 100,
+      "pooled_assert_rate": 0.03381,
+      "pooled_tie_rate": 0.01286,
+      "pooled_sep": 0.02095,
+      "opponent_assert_margin": 0.07357,
+      "opponent_tie_margin": 0.00214,
+      "opponent_self_margin": 0.07357,
+      "opponent_sep": 0.07143,
+      "opponent_sep_gt_meaningful": true,
+      "opponent_reliable": true,
+      "band": "assert",
+      "byte_identical_to_seamsAC": true
+    },
+    {
+      "seed": 101,
+      "pooled_assert_rate": 0.02571,
+      "pooled_tie_rate": 0.00667,
+      "pooled_sep": 0.01905,
+      "opponent_assert_margin": 0.07,
+      "opponent_tie_margin": 0.00214,
+      "opponent_self_margin": 0.07,
+      "opponent_sep": 0.06786,
+      "opponent_sep_gt_meaningful": true,
+      "opponent_reliable": true,
+      "band": "assert",
+      "byte_identical_to_seamsAC": true
+    },
+    {
+      "seed": 102,
+      "pooled_assert_rate": 0.03,
+      "pooled_tie_rate": 0.01333,
+      "pooled_sep": 0.01667,
+      "opponent_assert_margin": 0.07286,
+      "opponent_tie_margin": 0.01643,
+      "opponent_self_margin": 0.07286,
+      "opponent_sep": 0.05643,
+      "opponent_sep_gt_meaningful": true,
+      "opponent_reliable": true,
+      "band": "assert",
+      "byte_identical_to_seamsAC": true
+    }
+  ],
+  "pooled_sep_min": 0.01524,
+  "pooled_sep_mean": 0.01968,
+  "opponent_sep_min": 0.05214,
+  "opponent_sep_mean": 0.06619,
+  "opponent_all_positive": true,
+  "opponent_all_gt_meaningful": true,
+  "opponent_reliable_count": 6,
+  "turn13_assert_count": 6,
+  "byte_identical_all": true
+}
