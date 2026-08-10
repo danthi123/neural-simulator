@@ -41,6 +41,12 @@ a graded certainty band — the self_schema confidence relay now discriminates c
 (#3b seed-then-settle read flipped it positive; #3c a certainty-band opponent comparator cleared the +0.02 bar on
 every seed). Composed live chat (seed 42): 6
 honest replies (facts / affect / curiosity-ask / episodic / self-model), 8 honest silences, **0 confabulations**.
+**#5 (2026-08-10) honest causal-query disclaimer:** a "why did the dog go east?" now CONFIRMS the stored fact via the
+no-confab moat and HONESTLY DISCLOSES the absent causal faculty ("I have learned associations, not causes — I will
+not invent a reason") instead of DEFLECTING to other motion facts or letting the mouth invent a "because …" clause
+(the sub-clausal moat drops it) — **6/6 seeds, confab=0, only turn 4 changes** (byte-identical elsewhere, per-turn
+exact compare). The truly-emergent answer (COMPOSE stored facts into a grounded causal chain) is NAMED as the
+follow-on arc, per THE LAW. (`2026-08-10-INTEGRATION-5-honest-causal-query-disclaimer-turn4-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The

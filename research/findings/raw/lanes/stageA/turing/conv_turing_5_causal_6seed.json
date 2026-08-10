@@ -1,0 +1,161 @@
+{
+  "faculty": "INTEGRATION #5 -- honest causal-query ('why') disclaimer on turn 4 (Stage-A FULL one brain)",
+  "runner": "research/runners/_conversation_turing_test_derisk.py",
+  "brain": "research/runners/_stageA_full_integration_derisk.py::build_one_brain + gm_causal_reason_scan",
+  "git_sha_at_build": "a9404bcc4",
+  "backend": "numpy",
+  "mouth_device": "cpu",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "all_turn4_honest_disclaimer": true,
+  "all_fact_moat_confirmed": true,
+  "all_confab_zero": true,
+  "all_only_turn4_differs": true,
+  "live_generator_failure_mode": "DEFLECTION (restate other motion facts); no invented 'because' clause emitted on these 6 seeds -> dropped_causal_clauses empty. The deflection is suppressed by not emitting would_have_deflected_to; the invented-'because' drop is proven in the controlled matched-pair demo below.",
+  "controlled_subclausal_demo": {
+    "invented_causal_sentence": "The dog goes east because it was looking for water.",
+    "invented_before_svo_moat": "The dog goes east because it was looking for water.",
+    "invented_after_subclausal_moat": "The dog goes east.",
+    "invented_dropped_clauses": [
+      {
+        "connective": "because",
+        "segment": "it was looking for water",
+        "svo": null,
+        "stored": null
+      }
+    ],
+    "grounded_causal_sentence": "The dog goes east because the dog runs north.",
+    "grounded_after_subclausal_moat": "The dog goes east because the dog runs north.",
+    "matched_pair_ok": true,
+    "teeth_ok": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "turn4_source": "honest causal-query disclaimer (moat-confirmed fact + causal-faculty ABSENCE read-out)",
+      "turn4_reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "turn4_confabulated": false,
+      "causal_fact_confirmed": true,
+      "causal_stored_patient": "east",
+      "baseline_turn4_source": "spiking_generator_mouth",
+      "baseline_turn4_reply": "It looks at the river. The dog runs north.",
+      "causal_generator_raw": "The dog is heading east. It looks at the river. The dog runs north.",
+      "causal_would_have_deflected_to": "It looks at the river. The dog runs north.",
+      "causal_dropped_reason_clauses": [],
+      "causal_dropped_causal_clauses": [],
+      "n_confabulations_total": 0,
+      "baseline_n_confabulations_total": 0,
+      "turns_differing_vs_baseline": [
+        4
+      ],
+      "only_turn4_differs": true
+    },
+    {
+      "seed": 43,
+      "turn4_source": "honest causal-query disclaimer (moat-confirmed fact + causal-faculty ABSENCE read-out)",
+      "turn4_reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "turn4_confabulated": false,
+      "causal_fact_confirmed": true,
+      "causal_stored_patient": "east",
+      "baseline_turn4_source": "spiking_generator_mouth",
+      "baseline_turn4_reply": "The dog runs north.",
+      "causal_generator_raw": "The dog is on its way to the east. It sees a river. The dog runs north.",
+      "causal_would_have_deflected_to": "The dog runs north.",
+      "causal_dropped_reason_clauses": [],
+      "causal_dropped_causal_clauses": [],
+      "n_confabulations_total": 0,
+      "baseline_n_confabulations_total": 0,
+      "turns_differing_vs_baseline": [
+        4
+      ],
+      "only_turn4_differs": true
+    },
+    {
+      "seed": 44,
+      "turn4_source": "honest causal-query disclaimer (moat-confirmed fact + causal-faculty ABSENCE read-out)",
+      "turn4_reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "turn4_confabulated": false,
+      "causal_fact_confirmed": true,
+      "causal_stored_patient": "east",
+      "baseline_turn4_source": "spiking_generator_mouth",
+      "baseline_turn4_reply": "The dog then runs north.",
+      "causal_generator_raw": "A dog is looking towards the east. It sees a river nearby. The dog then runs north.",
+      "causal_would_have_deflected_to": "The dog then runs north.",
+      "causal_dropped_reason_clauses": [],
+      "causal_dropped_causal_clauses": [],
+      "n_confabulations_total": 0,
+      "baseline_n_confabulations_total": 0,
+      "turns_differing_vs_baseline": [
+        4
+      ],
+      "only_turn4_differs": true
+    },
+    {
+      "seed": 100,
+      "turn4_source": "honest causal-query disclaimer (moat-confirmed fact + causal-faculty ABSENCE read-out)",
+      "turn4_reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "turn4_confabulated": false,
+      "causal_fact_confirmed": true,
+      "causal_stored_patient": "east",
+      "baseline_turn4_source": "spiking_generator_mouth",
+      "baseline_turn4_reply": "A dog goes to the east. It looks at the river. The dog runs north.",
+      "causal_generator_raw": "A dog goes to the east. It looks at the river. The dog runs north.",
+      "causal_would_have_deflected_to": "A dog goes to the east. It looks at the river. The dog runs north.",
+      "causal_dropped_reason_clauses": [],
+      "causal_dropped_causal_clauses": [],
+      "n_confabulations_total": 0,
+      "baseline_n_confabulations_total": 0,
+      "turns_differing_vs_baseline": [
+        4
+      ],
+      "only_turn4_differs": true
+    },
+    {
+      "seed": 101,
+      "turn4_source": "honest causal-query disclaimer (moat-confirmed fact + causal-faculty ABSENCE read-out)",
+      "turn4_reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "turn4_confabulated": false,
+      "causal_fact_confirmed": true,
+      "causal_stored_patient": "east",
+      "baseline_turn4_source": "silence/frame_render_fallback",
+      "baseline_turn4_reply": "",
+      "causal_generator_raw": null,
+      "causal_would_have_deflected_to": null,
+      "causal_dropped_reason_clauses": [],
+      "causal_dropped_causal_clauses": [],
+      "n_confabulations_total": 0,
+      "baseline_n_confabulations_total": 0,
+      "turns_differing_vs_baseline": [
+        4
+      ],
+      "only_turn4_differs": true
+    },
+    {
+      "seed": 102,
+      "turn4_source": "honest causal-query disclaimer (moat-confirmed fact + causal-faculty ABSENCE read-out)",
+      "turn4_reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "turn4_confabulated": false,
+      "causal_fact_confirmed": true,
+      "causal_stored_patient": "east",
+      "baseline_turn4_source": "silence/frame_render_fallback",
+      "baseline_turn4_reply": "",
+      "causal_generator_raw": null,
+      "causal_would_have_deflected_to": null,
+      "causal_dropped_reason_clauses": [],
+      "causal_dropped_causal_clauses": [],
+      "n_confabulations_total": 0,
+      "baseline_n_confabulations_total": 0,
+      "turns_differing_vs_baseline": [
+        4
+      ],
+      "only_turn4_differs": true
+    }
+  ],
+  "device_note": "baseline conv_turing_3c_s42 was produced with --device cpu; byte-identity is defined and verified against the cpu baseline, so all runs here use --device cpu."
+}

@@ -1,0 +1,33 @@
+{
+ "run_id": "1786399432-3603103",
+ "runner": "research/runners/_conversation_turing_test_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/integration-5-honest-causal-query/research/runners/_conversation_turing_test_derisk.py",
+  "--seed",
+  "101",
+  "--device",
+  "cpu",
+  "--out",
+  "research/findings/raw/lanes/stageA/turing/conv_turing_5_s101.json",
+  "--md-out",
+  "research/findings/raw/lanes/stageA/turing/conv_turing_5_s101_transcript.md"
+ ],
+ "git_sha": "a9404bcc4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T18:03:52",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/stageA/turing/conv_turing_5_s101.json"
+}

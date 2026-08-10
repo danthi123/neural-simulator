@@ -1514,6 +1514,45 @@ def _gm_prose_reply(comp, mouth, topic, tone_token, fm_line=None, moat_on=True, 
             "gen_seconds": secs}
 
 
+# Sub-clausal connectives that INTRODUCE A CAUSAL/EXPLANATORY proposition (a "reason"). A strict subset of
+# `_GM_CLAUSE_CONNECTIVES`, used ONLY to LABEL which of the sub-clausal moat's DROPPED subordinate clauses were
+# invented REASONS (for the honest causal-query disclaimer, INTEGRATION #5). LABELLING only -- the DROP decision is
+# the sub-clausal moat's (`_gm_posthoc_verify(subclausal=True)` -> a clause that does not read back its patient),
+# unchanged and unaffected by this list.
+_GM_CAUSAL_CONNECTIVES = ("because", "since", "so that", "so")
+
+
+def gm_causal_reason_scan(comp, mouth, topic, tone_token):
+    """INTEGRATION #5 -- report which invented REASON clauses the sub-clausal moat DROPPED on the known-cue path,
+    for the honest causal-query disclaimer. This adds NO new decision and NO extra substrate/generator draw beyond
+    the known-cue reply: it makes the IDENTICAL `_gm_prose_reply(..., subclausal=True)` call (same args -> same RNG
+    consumption, so a caller that swaps the known-cue reply for this scan keeps later turns byte-identical) and then
+    READS its per-clause props. A 'reason' = an unverified NON-main clause the moat dropped; the causal ones
+    (because/since/so) are flagged separately. Returns None when there is no mouth/neighbourhood.
+
+    Returned dict:
+      prose                   -- the full `_gm_prose_reply` record (or None if 0 props verified / empty neighbourhood)
+      neighbourhood           -- the stored SVO neighbourhood the mouth was conditioned on
+      generator_raw           -- the mouth's RAW text (the 'before': may contain an invented 'because ...' clause)
+      would_have_deflected_to -- the moat-passed motion prose the known-cue path WOULD have emitted (the deflection)
+      dropped_reason_clauses  -- every unverified subordinate clause the sub-clausal moat removed (the 'after' delta)
+      dropped_causal_clauses  -- the subset introduced by a causal connective (the suppressed invented reasons)"""
+    nbhd = _gm_retrieve_neighbourhood(comp, topic, mouth["actions"]) if mouth else []
+    if not (mouth and nbhd):
+        return None
+    prose = _gm_prose_reply(comp, mouth, topic=topic, tone_token=tone_token, moat_on=True, subclausal=True)
+    if prose is None:
+        return {"prose": None, "neighbourhood": nbhd, "generator_raw": None,
+                "would_have_deflected_to": None, "dropped_reason_clauses": [], "dropped_causal_clauses": []}
+    dropped = [{"connective": pr.get("connective"), "segment_text": pr.get("segment_text"), "svo": pr.get("svo")}
+               for pr in prose.get("props", [])
+               if (not pr.get("is_main", True)) and not pr.get("verified")]
+    causal = [d for d in dropped if (d.get("connective") or "").lower() in _GM_CAUSAL_CONNECTIVES]
+    return {"prose": prose, "neighbourhood": prose["neighbourhood"], "generator_raw": prose["raw_text"],
+            "would_have_deflected_to": prose["utterance"], "dropped_reason_clauses": dropped,
+            "dropped_causal_clauses": causal}
+
+
 def _load_generator_mouth(seed, facts, T=16, max_new_tokens=64, device="cuda"):
     """Build the spiking-generator MOUTH bundle (the converted spiking Qwen forward + the SVO re-parse vocab sets
     derived from the STORED facts). GPU/torch -- constructed once in main() only when --generator-mouth is set."""

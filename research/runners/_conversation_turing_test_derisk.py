@@ -231,6 +231,38 @@ def _honest_self_model_answer(band, relay_reliable, self_rate, assert_rate, tie_
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+# HONEST CAUSAL-QUERY DISCLAIMER (INTEGRATION #5, 2026-08-10). A "why did X do Y" about a STORED (agent,action)
+# fact. The brain has NO causal/explanatory faculty -- it learned ASSOCIATIONS, not CAUSES. Previously turn 4 ran
+# the known-cue generator path, which DEFLECTED to the topic's OTHER motion facts and let the fluent mouth INVENT a
+# reason (the assessed defect). Now it CONFIRMS the fact via the no-confab moat and HONESTLY DISCLOSES the faculty
+# ABSENCE. Same status as the turn-5 affect / turn-13 self-model read-outs: the ONLY toy-world FACT asserted is the
+# moat-CONFIRMED patient (so it cannot be a confabulation), and the disclaimer is a FUNCTIONAL faculty-absence
+# read-out (NOT a phenomenal claim, NOT a claim to REASON about the absence). Like those two, it asserts nothing
+# about the toy world beyond the confirmed fact, so it is NOT scanned by `_detect_ungrounded` and does not touch the
+# confabulation count. The 'why'+known-cue TRIGGER and the disclaimer TEMPLATE are declared host scaffolds (same
+# status as the rest of the eval's turn routing).
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+_WHY_RE = re.compile(r"\bwhy\b", re.IGNORECASE)
+# Present-tense 3rd-person gloss for the confirmed-fact clause (display only; the DECISION is the moat read `stored`).
+_PRESENT3 = {"go": "goes", "run": "runs", "look": "looks at", "come": "comes", "stop": "stops"}
+
+
+def _honest_causal_answer(topic, action, stored):
+    """Turn-4 HONEST CAUSAL-QUERY read-out ANSWER. `stored` is the moat-CONFIRMED patient (the spiking VSA unbind
+    `comp.query_patient(topic, action)` computed in `_classify`; for a KNOWN cue it is never None). The fact clause
+    is emitted ONLY when `stored is not None` and states EXACTLY that moat read -> it cannot be a confabulation. The
+    remainder is a FUNCTIONAL FACULTY-ABSENCE read-out: the brain has learned ASSOCIATIONS, not CAUSES, has no
+    causal/explanatory model, and so honestly declines to give (or invent) a reason. Never a phenomenal claim."""
+    if stored is None:
+        return ("I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned "
+                "associations, not causes -- so I will not invent a reason.")
+    gloss = "%s %s %s" % (topic, _PRESENT3.get(action, action + "s"), stored)
+    return ("I know the %s -- that fact is stored, and my no-confab moat confirms it ((%s, %s) -> %s). But I have "
+            "no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it "
+            "-- and I will not invent one." % (gloss, topic, action, stored))
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
 def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, faculty_rng, episodic_mem=None):
     agents_set = {a for (a, _v, _p) in facts}
     actions_set = sorted({v for (_a, v, _p) in facts})
@@ -281,6 +313,11 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
         # referent), using the episode buffer as of PRIOR turns only -- otherwise the check self-fulfils.
         # ─────────────────────────────────────────────────────────────────────────────────────────────
         is_referential = "mentioned" in human.lower()
+        # CAUSAL-QUERY trigger (INTEGRATION #5): a 'why ...' about a KNOWN stored (agent,action) fact. Minimal by
+        # design -- a 'why' token AND an already-known cue -- NOT a hand-built NLP parser (declared host scaffold,
+        # same status as the eval's other turn routing). For every NON-'why' turn this is False, so those turns take
+        # the SAME branch as before and are BYTE-IDENTICAL.
+        is_causal_query = (not is_referential) and cls["kind"] == "known_cue" and bool(_WHY_RE.search(human))
 
         if is_referential:
             ref = cls["agent"] if cls["agent"] in agents_set else None
@@ -411,6 +448,68 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
                 rec["assessment"] = (
                     "REFERENTIAL/EPISODIC: nothing had been discussed before this turn, so the episodic-dialogue store "
                     "is empty and there is genuinely nothing to recall -> honest silence (no confabulation).")
+
+        elif is_causal_query:
+            # ── HONEST CAUSAL-QUERY DISCLAIMER (INTEGRATION #5) ──────────────────────────────────────────────
+            # A 'why ...' about a STORED (agent,action). Three parts, all reusing machinery turns 3-7 already use:
+            #   (1) CONFIRM the grounded fact via the no-confab MOAT -- cls["stored_patient"] is the spiking VSA
+            #       unbind comp.query_patient(agent, action) from _classify (the SAME read the known-cue path uses),
+            #       and for a known cue it is never None;
+            #   (2) HONESTLY DISCLOSE the causal-faculty ABSENCE (template; functional read-out, NOT phenomenal);
+            #   (3) do NOT deflect, and SUPPRESS the mouth's invented reason -- `SA.gm_causal_reason_scan` makes the
+            #       IDENTICAL known-cue `_gm_prose_reply(subclausal=True)` call (so the generator/moat RNG draw is
+            #       unchanged and turns 5-14 stay byte-identical) and reports which 'because ...' clause(s) the
+            #       sub-clausal moat DROPPED (the before/after). The deflecting motion prose is NOT emitted.
+            topic = cls["agent"]
+            action = cls["action"]
+            stored = cls["stored_patient"]     # moat-CONFIRMED patient (spiking VSA unbind; computed in _classify)
+            scan = SA.gm_causal_reason_scan(comp, mouth, topic, tone_tok) if mouth else None
+            reply = _honest_causal_answer(topic, action, stored)
+            rec["brain_reply"] = reply
+            rec["utterance_source"] = ("honest causal-query disclaimer (moat-confirmed fact + causal-faculty "
+                                       "ABSENCE read-out)")
+            rec["confabulated"] = False        # asserts ONLY the moat-confirmed fact -> no world-fact confab; the
+                                               # faculty-absence read-out asserts nothing about the toy world (as with
+                                               # the turn-5 affect / turn-13 self-model answers -> not surface-scanned).
+            rec["causal_query"] = True
+            rec["causal_fact_confirmed"] = bool(stored is not None)
+            rec["causal_stored_patient"] = stored
+            faculties = (["no-confab moat (fact CONFIRM)", "causal-faculty ABSENCE read-out (functional)",
+                          "sub-clausal moat (invented reason suppressed)"] + faculties)
+            if scan is not None:
+                rec["causal_generator_raw"] = scan["generator_raw"]
+                rec["causal_would_have_deflected_to"] = scan["would_have_deflected_to"]
+                rec["causal_dropped_reason_clauses"] = scan["dropped_reason_clauses"]
+                rec["causal_dropped_causal_clauses"] = scan["dropped_causal_clauses"]
+                faculties += ["world_model/RF-moat (SVO content)", "spiking_generator_mouth"]
+                prose = scan["prose"]
+                if prose is not None:
+                    # mirror the known-cue branch's episodic side-effects EXACTLY (so the episodic state after this
+                    # turn is byte-identical): this turn DID engage the topic, honestly recorded as discussed.
+                    episode_topics.append(topic)
+                    episode_mem.append({"turn": tno, "topic": topic,
+                                        "facts": [list(f) for f in prose["neighbourhood"]]})
+                    if episodic_mem is not None:
+                        try:
+                            episodic_mem.store(topic)
+                        except Exception as _e:
+                            rec.setdefault("episodic_store_errors", []).append(repr(_e))
+            n_dropped = len(rec.get("causal_dropped_reason_clauses", []) or [])
+            n_causal_dropped = len(rec.get("causal_dropped_causal_clauses", []) or [])
+            rec["assessment"] = (
+                "CAUSAL QUERY (HONEST DISCLAIMER): a 'why ...' about the STORED fact (%s,%s)->%s. The no-confab moat "
+                "CONFIRMS the fact (query_patient=%r -- the SAME spiking VSA unbind turns 3-7 use); the brain then "
+                "HONESTLY DISCLOSES that it has NO causal/explanatory faculty -- it learned ASSOCIATIONS, not CAUSES "
+                "-- rather than (a) DEFLECT to the topic's other motion facts (the prior turn-4 defect) or (b) let "
+                "the fluent mouth INVENT a reason. The invented-reason SUPPRESSION is the sub-clausal moat: on the "
+                "SAME generator call, %d unverified subordinate clause(s) (%d causal) were DROPPED (before/after in "
+                "causal_generator_raw vs causal_would_have_deflected_to). This is a FUNCTIONAL read-out of a faculty "
+                "ABSENCE (NOT a phenomenal claim, NOT reasoning about the absence); the 'why'+known-cue trigger and "
+                "the disclaimer template are declared host scaffolds (same status as the eval's turn routing and the "
+                "turn-5,13 read-out templates). FOLLOW-ON (named, per THE LAW): the truly-emergent answer would "
+                "COMPOSE stored facts into a grounded causal chain (dog goes east + dog looks at river => 'to reach "
+                "the river'); the brain lacks the relational/causal structure to do that -- that is the next arc."
+                % (topic, action, stored, stored, n_dropped, n_causal_dropped))
 
         elif cls["kind"] in ("known_cue", "topic"):
             topic = cls["agent"]
