@@ -1,0 +1,204 @@
+{
+  "runner": "_fm_drive_scaled_readout_derisk",
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/wf_b3f9c013-94b-1/research/runners/_fm_drive_scaled_readout_derisk.py",
+    "--seeds",
+    "44",
+    "--n-pool",
+    "1000",
+    "--out",
+    "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/ds6/ds_np1000_s44.json"
+  ],
+  "seeds": [
+    44
+  ],
+  "n_pool": 1000,
+  "results": [
+    {
+      "seed": 44,
+      "G": 5,
+      "n_pool": 1000,
+      "ens_p": 40,
+      "ffi_p": 8,
+      "norm_n": 12,
+      "backend": "numpy",
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.024760416666666663,
+      "syn_scale": 6.0,
+      "ffi_in": 1.4,
+      "ffi_out": 4.0,
+      "wta_ie_selected": 40.0,
+      "norm_gain_selected": 0.8,
+      "target_rate_selected": 0.01,
+      "setpoint_kp": 1400.0,
+      "setpoint_iters": 8,
+      "floor_max": 320.0,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.96,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.96,
+      "fixed_wta_train": 0.16,
+      "fixed_wta_heldout": 0.16,
+      "fixed_wta_ens_mean": 0.006823697916666668,
+      "scaled_norm_train": 0.5333333333333333,
+      "scaled_norm_heldout": 0.24,
+      "scaled_norm_ens_mean": 1.6406250000000002e-05,
+      "norm_pool_mean_spk": 0.11424479166666666,
+      "drive_scaled_train": 1.0,
+      "drive_scaled_heldout": 0.76,
+      "drive_scaled_ens_mean": 0.009503906250000001,
+      "lesion_wp_heldout": 0.68,
+      "lesion_silence_heldout": 0.0,
+      "matched_sham_heldout": 0.76,
+      "untrained_control_heldout": 0.04,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "drive_is_neural": true,
+      "seeded": true,
+      "elapsed_s": 2137.1,
+      "verdict": {
+        "label": "fm drive-scaled world-model read-out (homeostatic intrinsic-excitability set-point; Desai/Turrigiano)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "backend == numpy",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.024760416666666663 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (drive read)",
+            "ok": true,
+            "detail": "measured=0.009503906250000001 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (imported neural read; no host matmul/logit-argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "drive mechanism NEURAL (set-point on cp_firing_states -> tonic current, not a logit rescale)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained two-pathway synapses + a fixed lateral-inhibition WTA; the DRIVE mechanism is a per-ensemble HOMEOSTATIC INTRINSIC-EXCITABILITY SET-POINT controller (reads cp_firing_states, injects tonic cp_external_input_current) -- the accepted on-substrate read-out floor calibration, targeting a RATE set-point"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "drive_beats_fixed(>=+0.20)": true,
+          "beats_chance/prior(>=+0.20)": true,
+          "tracks_ceiling(>=twopath-0.20)": true,
+          "drive_recovered(ens_mean up)": true,
+          "wp_lesion_collapses(>=0.20)": false,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true
+        }
+      }
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "backend == numpy",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "two-pathway rate == ridge (decomposition exact)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reservoir active (feature)",
+      "ok": true,
+      "detail": "measured=0.024760416666666663 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ensembles active (drive read)",
+      "ok": true,
+      "detail": "measured=0.009503906250000001 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seeded (byte-identical substrate)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "content path clean (imported neural read; no host matmul/logit-argmax)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "drive mechanism NEURAL (set-point on cp_firing_states -> tonic current, not a logit rescale)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "matched sham UNCHANGED (|d|<=0.08)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f31873731a0>",
+      "note": ""
+    }
+  ],
+  "corpus_check_fresh": true,
+  "backend": "numpy"
+}
