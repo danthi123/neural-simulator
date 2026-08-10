@@ -1,0 +1,460 @@
+{
+  "probe": "teacher_loop_arity_capacity_resonator_AGG",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "backend": "numpy",
+  "M": 4,
+  "K": 3,
+  "d": 8,
+  "r_shared": [
+    2,
+    1
+  ],
+  "rhos": [
+    0.0,
+    0.5,
+    0.8,
+    0.95,
+    0.99,
+    1.0
+  ],
+  "by_cell_means": {
+    "rho0.0000_r2": {
+      "rho": 0.0,
+      "r_shared": 2,
+      "resonator_recall_mean": 1.0,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 1.0,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 2.5882655224727005,
+      "separation_margin_over_noise_mean": 30.50300170717033,
+      "euclid_corrected_recall_mean": 1.0,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9879176665026715,
+      "offdiag_cos_mean": 0.3057985366700895,
+      "resonator_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "classification": "both-fine"
+    },
+    "rho0.5000_r2": {
+      "rho": 0.5,
+      "r_shared": 2,
+      "resonator_recall_mean": 0.9375,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.9375,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 2.1417000604430982,
+      "separation_margin_over_noise_mean": 25.240177266485095,
+      "euclid_corrected_recall_mean": 1.0,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9863538527251533,
+      "offdiag_cos_mean": 0.36098631161821193,
+      "resonator_recall_per_seed": [
+        0.9375,
+        0.9375,
+        0.9375
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "classification": "both-fine"
+    },
+    "rho0.8000_r2": {
+      "rho": 0.8,
+      "r_shared": 2,
+      "resonator_recall_mean": 0.8958333333333334,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.8958333333333334,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 1.7676777176638268,
+      "separation_margin_over_noise_mean": 20.83228168496201,
+      "euclid_corrected_recall_mean": 0.9791666666666666,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9864074671403463,
+      "offdiag_cos_mean": 0.4351781480243913,
+      "resonator_recall_per_seed": [
+        0.9375,
+        0.875,
+        0.875
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        1.0,
+        0.9375,
+        1.0
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    },
+    "rho0.9500_r2": {
+      "rho": 0.95,
+      "r_shared": 2,
+      "resonator_recall_mean": 0.8958333333333334,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.8958333333333334,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 1.2373731621478254,
+      "separation_margin_over_noise_mean": 14.582582563377622,
+      "euclid_corrected_recall_mean": 0.8333333333333334,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9833724323777524,
+      "offdiag_cos_mean": 0.5522858797120187,
+      "resonator_recall_per_seed": [
+        0.9375,
+        0.8125,
+        0.9375
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        0.6875,
+        0.8125,
+        1.0
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    },
+    "rho0.9900_r2": {
+      "rho": 0.99,
+      "r_shared": 2,
+      "resonator_recall_mean": 0.7916666666666666,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.7916666666666666,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 0.9014684377787726,
+      "separation_margin_over_noise_mean": 10.623907422858352,
+      "euclid_corrected_recall_mean": 0.6041666666666666,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9806287055882882,
+      "offdiag_cos_mean": 0.6118537734248264,
+      "resonator_recall_per_seed": [
+        0.8125,
+        0.75,
+        0.8125
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        0.4375,
+        0.6875,
+        0.6875
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    },
+    "rho1.0000_r2": {
+      "rho": 1.0,
+      "r_shared": 2,
+      "resonator_recall_mean": 0.7916666666666666,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.7916666666666666,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 0.7316835845182464,
+      "separation_margin_over_noise_mean": 8.622973738160583,
+      "euclid_corrected_recall_mean": 0.4375,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9721210886988629,
+      "offdiag_cos_mean": 0.6399923948132206,
+      "resonator_recall_per_seed": [
+        0.8125,
+        0.75,
+        0.8125
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        0.4375,
+        0.5,
+        0.375
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    },
+    "rho0.0000_r1": {
+      "rho": 0.0,
+      "r_shared": 1,
+      "resonator_recall_mean": 1.0,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 1.0,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 2.5020992300178833,
+      "separation_margin_over_noise_mean": 29.487522212107223,
+      "euclid_corrected_recall_mean": 1.0,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9894740532620377,
+      "offdiag_cos_mean": 0.2709721111303188,
+      "resonator_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "classification": "both-fine"
+    },
+    "rho0.5000_r1": {
+      "rho": 0.5,
+      "r_shared": 1,
+      "resonator_recall_mean": 0.9375,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.9375,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 2.194137445372535,
+      "separation_margin_over_noise_mean": 25.85815777433271,
+      "euclid_corrected_recall_mean": 1.0,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9850937444124875,
+      "offdiag_cos_mean": 0.3838849318378277,
+      "resonator_recall_per_seed": [
+        0.8125,
+        1.0,
+        1.0
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "classification": "both-fine"
+    },
+    "rho0.8000_r1": {
+      "rho": 0.8,
+      "r_shared": 1,
+      "resonator_recall_mean": 0.8333333333333334,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.8333333333333334,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 1.4742542921975827,
+      "separation_margin_over_noise_mean": 17.37425345323332,
+      "euclid_corrected_recall_mean": 1.0,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.983983798857154,
+      "offdiag_cos_mean": 0.5236142811164678,
+      "resonator_recall_per_seed": [
+        0.6875,
+        0.875,
+        0.9375
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    },
+    "rho0.9500_r1": {
+      "rho": 0.95,
+      "r_shared": 1,
+      "resonator_recall_mean": 0.8333333333333334,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.8333333333333334,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 0.8578994299455883,
+      "separation_margin_over_noise_mean": 10.11044174139083,
+      "euclid_corrected_recall_mean": 0.9583333333333334,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9785046687898556,
+      "offdiag_cos_mean": 0.7205515136290463,
+      "resonator_recall_per_seed": [
+        0.8125,
+        0.75,
+        0.9375
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        0.875,
+        1.0,
+        1.0
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    },
+    "rho0.9900_r1": {
+      "rho": 0.99,
+      "r_shared": 1,
+      "resonator_recall_mean": 0.7708333333333334,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.7708333333333334,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 0.4452884734762384,
+      "separation_margin_over_noise_mean": 5.247774986259059,
+      "euclid_corrected_recall_mean": 0.5833333333333334,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9632903169371906,
+      "offdiag_cos_mean": 0.8905648318789144,
+      "resonator_recall_per_seed": [
+        0.75,
+        0.75,
+        0.8125
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        0.4375,
+        0.75,
+        0.5625
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    },
+    "rho1.0000_r1": {
+      "rho": 1.0,
+      "r_shared": 1,
+      "resonator_recall_mean": 0.8958333333333334,
+      "resonator_convergence_rate_mean": 1.0,
+      "resonator_recall_given_converged_mean": 0.8958333333333334,
+      "exhaustive_recall_mean": 1.0,
+      "separation_margin_mean": 0.11459654365760703,
+      "separation_margin_over_noise_mean": 1.3505332186646533,
+      "euclid_corrected_recall_mean": 0.20833333333333334,
+      "disjoint_corrected_recall_mean": 1.0,
+      "cos_to_true_mean": 0.9160101529626375,
+      "offdiag_cos_mean": 0.9999999999973636,
+      "resonator_recall_per_seed": [
+        0.8125,
+        0.875,
+        1.0
+      ],
+      "resonator_convergence_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exhaustive_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "euclid_recall_per_seed": [
+        0.1875,
+        0.25,
+        0.1875
+      ],
+      "classification": "RESONATOR-SUBOPTIMAL (representation identifiable @ exhaustive 1.00; resonator local-minima lose it)"
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "out": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/teacher_loop_arity_capacity_resonator_s42.json"
+    },
+    {
+      "seed": 43,
+      "out": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/teacher_loop_arity_capacity_resonator_s43.json"
+    },
+    {
+      "seed": 44,
+      "out": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/teacher_loop_arity_capacity_resonator_s44.json"
+    }
+  ]
+}
