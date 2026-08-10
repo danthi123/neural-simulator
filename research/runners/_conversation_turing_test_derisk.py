@@ -231,7 +231,7 @@ def _honest_self_model_answer(band, relay_reliable, self_rate, assert_rate, tie_
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
-def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, faculty_rng):
+def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, faculty_rng, episodic_mem=None):
     agents_set = {a for (a, _v, _p) in facts}
     actions_set = sorted({v for (_a, v, _p) in facts})
     ladder_live = "ladder" in idx
@@ -284,23 +284,73 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
 
         if is_referential:
             ref = cls["agent"] if cls["agent"] in agents_set else None
-            # EPISODIC-DIALOGUE MEMORY (2026-08-10 INTEGRATION #2). Recall from the per-turn episodic store built over
-            # PRIOR turns only (this turn has not appended, so the check cannot self-fulfil). Each stored episode holds
-            # the topic AND the grounded facts ACTUALLY surfaced that turn -- a genuine memory of what THIS dialogue
-            # SAID, not a re-query of the semantic store. SCAFFOLD SCOPE: `episode_mem` is a host buffer; the SPIKING
-            # path is the gap#5 dendritic-dAP READOUT completion (ab9f7dbe, 6/6 GO) -- each turn is a BTSP-formed
-            # assembly completed cue-specifically from the referential cue. HONESTY BAR: recall ONLY what was said; if
-            # `ref` was never discussed, DO NOT fabricate a recollection of it.
-            faculties = ["episodic-dialogue memory (per-turn topic+facts store; spiking path=gap#5 dAP-readout "
-                         "CA3 completion ab9f7dbe)"] + faculties
-            recalled = [ep for ep in episode_mem if ref is not None and ep["topic"] == ref]
-            discussed = []
+            # EPISODIC-DIALOGUE MEMORY (2026-08-10 INTEGRATION #4 -- spiking gate). The recall is completed from the
+            # store built over PRIOR turns only (this turn has not appended, so it cannot self-fulfil). TWO paths:
+            #   * host `episode_mem` = the ORACLE (fact content + fallback; declared host bookkeeping);
+            #   * the SPIKING GATE = the gap#5 dendritic-dAP READOUT completion (ab9f7dbe, 6/6 GO on cupy): each spoken
+            #     topic BTSP-formed a CA3 assembly (episodic WRITE, above), and here the referential cue COMPLETES it
+            #     cue-specifically via the two-compartment apical dAP read. `which topics were discussed` + `is the
+            #     referent in memory` are DECODED from which assemblies COMPLETE (a spiking pattern completion), not
+            #     scanned from the host list. LOAD-BEARING: the lesioned read (unformed baseline weights) collapses the
+            #     completion. HONESTY BAR: a referent never spoken -> its assembly never formed -> no completion ->
+            #     honest "not in memory", never a fabricated recollection.
+            faculties = ["episodic-dialogue memory (per-turn topic store; spiking gate=gap#5 dAP-readout CA3 "
+                         "completion ab9f7dbe)"] + faculties
+            # ---- host ORACLE (fact content + fallback) ----
+            host_recalled = [ep for ep in episode_mem if ref is not None and ep["topic"] == ref]
+            host_discussed = []
             for ep in episode_mem:
-                if ep["topic"] not in discussed:
-                    discussed.append(ep["topic"])
+                if ep["topic"] not in host_discussed:
+                    host_discussed.append(ep["topic"])
+            host_ref_in_mem = bool(host_recalled)
+            # ---- SPIKING dAP gate (the on-substrate episodic recall) ----
+            gate = "host-oracle"
+            discussed = list(host_discussed)
+            referent_in_memory = host_ref_in_mem
+            if episodic_mem is not None:
+                try:
+                    sp_discussed, sp_recmap = episodic_mem.discussed_topics(lesion=False)
+                    sp_les_discussed, sp_les_recmap = episodic_mem.discussed_topics(lesion=True)
+                    ref_read = sp_recmap.get(ref) if ref is not None else None
+                    rec["episodic_spiking_discussed"] = list(sp_discussed)
+                    rec["episodic_spiking_lesioned_discussed"] = list(sp_les_discussed)
+                    rec["episodic_spiking_reads"] = sp_recmap
+                    rec["episodic_spiking_lesioned_reads"] = sp_les_recmap
+                    # SELF-CONSISTENCY: does the spiking read COMPLETE every topic the host oracle says was stored?
+                    spiking_consistent = (all(sp_recmap[t]["in_memory"] for t in host_discussed)
+                                          if host_discussed else True)
+                    rec["episodic_spiking_consistent_with_store"] = bool(spiking_consistent)
+                    # LOAD-BEARING attribution on a stored topic: intact dAP completion vs the lesioned baseline read.
+                    probe_topic = host_discussed[0] if host_discussed else None
+                    if probe_topic is not None and probe_topic in sp_recmap:
+                        from tools.lab import attributable_to
+                        rec["episodic_recall_attributable_to"] = attributable_to(
+                            f"turn{tno} '{probe_topic}' episodic recall completion: dAP readout (intact) vs "
+                            f"lesioned baseline weights", float(sp_recmap[probe_topic]["apical_cue"]),
+                            float(sp_les_recmap[probe_topic]["apical_cue"]))
+                    if spiking_consistent:
+                        # the SPIKING gate carries the recall (load-bearing) -> it decides the case.
+                        gate = "spiking-dap"
+                        discussed = list(sp_discussed)
+                        referent_in_memory = bool(ref_read and ref_read["in_memory"])
+                        host_recalled = ([ep for ep in episode_mem if ref is not None and ep["topic"] == ref]
+                                         if referent_in_memory else [])
+                    else:
+                        # HONEST-NEGATIVE: the spiking completion did NOT fire for a stored topic on THIS backend (the
+                        # dAP apical read reads 0 on the numpy substrate -- it is the standing 6/6 GO on cupy).
+                        # Formation is genuine; the dendritic READOUT is backend-blocked. Fall back to the host ORACLE
+                        # for the reply so the eval does NOT regress, and record the quantified gap.
+                        gate = "host-oracle (spiking dAP readout did not fire on this backend -- honest-negative)"
+                        rec["episodic_spiking_backend_failed"] = True
+                except Exception as _e:
+                    rec["episodic_spiking_error"] = repr(_e)
+            rec["episodic_gate"] = gate
             rec["episodic_referent"] = ref
             rec["episodic_discussed_topics"] = list(discussed)
-            rec["episodic_referent_in_memory"] = bool(recalled)
+            rec["episodic_referent_in_memory"] = bool(referent_in_memory)
+            rec["episodic_host_discussed_topics"] = list(host_discussed)
+            rec["episodic_host_referent_in_memory"] = bool(host_ref_in_mem)
+            recalled = host_recalled
 
             def _render_facts(fact_list):
                 uniq = []
@@ -317,36 +367,41 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
                 # about it (union across the turns it came up), rendered deterministically from the episodic store.
                 reply, rfacts, sconf, ung = _render_facts([f for ep in recalled for f in ep["facts"]])
                 rec["brain_reply"] = reply
-                rec["utterance_source"] = "episodic-dialogue recall (genuine; host store, spiking path=gap#5 dAP readout)"
+                rec["utterance_source"] = "episodic-dialogue recall (genuine; gate=%s, fact content=host oracle)" % gate
                 rec["surface_confabulation"] = sconf
                 rec["ungrounded_words"] = ung
                 rec["confabulated"] = bool(sconf)
                 rec["episodic_recalled_facts"] = rfacts
                 rec["assessment"] = (
                     "REFERENTIAL/EPISODIC (GENUINE RECALL): '%s' WAS discussed earlier (turns %s); the reply replays "
-                    "the grounded facts ACTUALLY surfaced about it from the per-turn episodic-dialogue store -- a real "
-                    "memory of THIS conversation, not a re-query of the semantic store. Spiking path: the gap#5 "
-                    "dendritic-dAP READOUT (ab9f7dbe, 6/6 GO) completes each stored turn-assembly from the referential "
-                    "cue.%s" % (ref, [ep["turn"] for ep in recalled], (" Confabulated detail %s." % ung if sconf else "")))
+                    "the grounded facts ACTUALLY surfaced about it -- a real memory of THIS conversation. The recall "
+                    "GATE is %r: when 'spiking-dap', which-topics + referent-in-memory are DECODED from the gap#5 "
+                    "dendritic-dAP CA3 completion (ab9f7dbe) -- BTSP-formed assembly, cue-completed, lesion-collapses; "
+                    "the grounded fact CONTENT is rendered from the host oracle (a named residual scaffold).%s"
+                    % (ref, [ep["turn"] for ep in recalled], gate,
+                       (" Confabulated detail %s." % ung if sconf else "")))
             elif discussed:
                 # CASE B -- HONEST FALSE-PREMISE HANDLING: `ref` was NEVER discussed. The episodic read-out reports NO
                 # memory of it (a genuine query result, not a fabricated denial); rather than invent a `ref`
                 # recollection the brain HONESTLY recalls the ACTUAL prior topic(s) it did discuss. Grounded, honest,
                 # NOT silent, NOT confabulated -- an improvement on the bare silent abstain.
-                reply, rfacts, sconf, ung = _render_facts([f for ep in episode_mem for f in ep["facts"]])
+                reply, rfacts, sconf, ung = _render_facts(
+                    [f for ep in episode_mem if ep["topic"] in discussed for f in ep["facts"]])
                 rec["brain_reply"] = reply
-                rec["utterance_source"] = "episodic-dialogue recall (false-premise: recalls the ACTUAL prior topic)"
+                rec["utterance_source"] = "episodic-dialogue recall (false-premise; gate=%s, fact content=host oracle)" % gate
                 rec["surface_confabulation"] = sconf
                 rec["ungrounded_words"] = ung
                 rec["confabulated"] = bool(sconf)
                 rec["episodic_recalled_facts"] = rfacts
                 rec["assessment"] = (
                     "REFERENTIAL/EPISODIC (FALSE PREMISE, HONEST): the premise is FALSE -- no %s was actually discussed "
-                    "earlier (the episodic-dialogue store holds only topic(s) %s). The brain does NOT fabricate a %s "
-                    "recollection; instead it HONESTLY recalls the grounded facts of the topic(s) it DID discuss -- a "
-                    "real memory of THIS conversation. The 'no %s in memory' result is a genuine episodic-store query, "
-                    "not a fabricated denial. Non-silent, grounded, no confabulation.%s"
-                    % (ref or "referent", discussed, ref or "referent", ref or "referent",
+                    "earlier (the episodic store recalls only topic(s) %s). The brain does NOT fabricate a %s "
+                    "recollection; instead it HONESTLY recalls the grounded facts of the topic(s) it DID discuss. The "
+                    "recall GATE is %r: when 'spiking-dap', the discussed set + the 'no %s in memory' verdict are "
+                    "DECODED from the gap#5 dendritic-dAP CA3 completion (a stored topic COMPLETES, %s never formed so "
+                    "it does NOT), not a host-list scan; the fact CONTENT is the host oracle. Non-silent, grounded, no "
+                    "confabulation.%s"
+                    % (ref or "referent", discussed, ref or "referent", gate, ref or "referent", ref or "referent",
                        (" Confabulated detail %s." % ung if sconf else "")))
             else:
                 # CASE C -- nothing discussed yet: the episodic store is empty, so there is genuinely nothing to recall.
@@ -385,6 +440,15 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
                 # can recall what was genuinely SAID (not re-derive it from the semantic store).
                 episode_mem.append({"turn": tno, "topic": topic,
                                     "facts": [list(f) for f in prose["neighbourhood"]]})
+                # SPIKING episodic WRITE (2026-08-10 INTEGRATION #4): BTSP-form THIS topic's CA3 assembly on the
+                # dedicated dendritic-dAP readout bridge -- the on-substrate store the referential turn will complete
+                # from. Idempotent per topic (a topic spoken twice forms once). Host `episode_mem` above stays as the
+                # ORACLE (fact content + fallback). `episodic_mem is None` => host-only (byte-identical default).
+                if episodic_mem is not None:
+                    try:
+                        episodic_mem.store(topic)
+                    except Exception as _e:  # never let the store crash the eval; record + continue on host oracle
+                        rec.setdefault("episodic_store_errors", []).append(repr(_e))
                 confab_note = ("" if not surf_confab else
                                " ⚠ CONFABULATION: the fluent mouth added ungrounded detail %s -- content words "
                                "with NO basis in the 6 toy facts. The SVO post-hoc moat passed (the motion triples "
@@ -615,6 +679,12 @@ def main():
                     default="research/findings/raw/lanes/stageA/turing/conversation_turing_test_s42.json")
     ap.add_argument("--md-out", type=str,
                     default="research/findings/raw/lanes/stageA/turing/conversation_turing_test_s42_transcript.md")
+    ap.add_argument("--spiking-episodic", action="store_true",
+                    help="Wire the turn-7 episodic recall to the ON-SUBSTRATE gap#5 dendritic-dAP READOUT completion "
+                         "(each spoken topic BTSP-forms a CA3 assembly; the referential cue completes it). Default OFF "
+                         "= host `episode_mem` oracle (byte-identical). ON is SLOW (n_ca3=2000 emergent scale; ~6min "
+                         "formation) and is the standing 6/6 GO on cupy -- on the numpy substrate the dAP apical read "
+                         "reads 0 (an honest-negative; the eval falls back to the host oracle so it does not regress).")
     args = ap.parse_args()
 
     get_backend("numpy")
@@ -648,9 +718,25 @@ def main():
                                      device=args.device)
     print(f"   mouth: spiking_ops_enabled={mouth['spiking_ops_enabled']} T={mouth['T']}", flush=True)
 
+    # ---- (optional) build the SPIKING episodic-dialogue memory (gap#5 dAP readout) ----
+    episodic_mem = None
+    if args.spiking_episodic:
+        try:
+            from research.runners._episodic_dap_dialogue_memory import EpisodicDapMemory
+            topics = sorted({a for (a, _v, _p) in facts})
+            print(f"[turing] building the SPIKING episodic-dialogue memory (gap#5 dAP readout, ab9f7dbe) over topics "
+                  f"{topics} -- n_ca3=2000 emergent scale; SLOW on numpy (speed is secondary) ...", flush=True)
+            episodic_mem = EpisodicDapMemory(args.seed, topics, verbose=True)
+            print(f"[turing] episodic memory ready: n_ca3={episodic_mem.n_ca3} slots={episodic_mem.topic_slot} "
+                  f"sizes={episodic_mem.assembly_sizes}", flush=True)
+        except Exception as e:
+            print(f"[turing] WARNING: spiking episodic memory build FAILED ({e!r}); using host oracle buffer", flush=True)
+            episodic_mem = None
+
     # ---- run the 14-turn conversation ----
     print("[turing] running the 14 human turns ...", flush=True)
-    transcript = run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, faculty_rng)
+    transcript = run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, faculty_rng,
+                                  episodic_mem=episodic_mem)
 
     n_confab = sum(1 for r in transcript if r["confabulated"])
     n_gen = sum(1 for r in transcript if "spiking_generator_mouth" in (r["utterance_source"] or ""))
@@ -674,6 +760,16 @@ def main():
         "n_abstain_or_silence": int(n_abstain),
         "elapsed_seconds": round(time.time() - t0, 1),
     }
+    # ---- episodic-recall provenance (turn 7): spiking gate vs host oracle + load-bearing attribution ----
+    _t7 = next((r for r in transcript if r.get("turn") == 7), {})
+    meta["episodic_spiking_enabled"] = bool(args.spiking_episodic and episodic_mem is not None)
+    meta["episodic_turn7_gate"] = _t7.get("episodic_gate")
+    meta["episodic_turn7_discussed"] = _t7.get("episodic_discussed_topics")
+    meta["episodic_turn7_referent_in_memory"] = _t7.get("episodic_referent_in_memory")
+    meta["episodic_turn7_spiking_reads"] = _t7.get("episodic_spiking_reads")
+    meta["episodic_turn7_spiking_lesioned_reads"] = _t7.get("episodic_spiking_lesioned_reads")
+    meta["episodic_turn7_spiking_backend_failed"] = _t7.get("episodic_spiking_backend_failed")
+    meta["episodic_turn7_attributable_to"] = _t7.get("episodic_recall_attributable_to")
     out = {**meta, "transcript": transcript,
            "honest_summary": (
                "A TOY-WORLD spiking brain (2 agents, 3 actions, 6 stored facts). Of 14 human turns, the in-domain "
