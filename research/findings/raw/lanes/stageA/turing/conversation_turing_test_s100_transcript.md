@@ -1,12 +1,12 @@
 # Extended human-like conversation test -- Stage-A FULL one brain
 
 - **Runner**: `research/runners/_conversation_turing_test_derisk.py`
-- **Brain**: `build_one_brain(seed=42, co_resident_forward_model=True, co_resident_affect_ladder=True)` + spiking-generator mouth (the current best-state integrated loop)
+- **Brain**: `build_one_brain(seed=100, co_resident_forward_model=True, co_resident_affect_ladder=True)` + spiking-generator mouth (the current best-state integrated loop)
 - **Backend**: numpy substrate; generator mouth on cuda
 - **Taught (toy world, via `_store_facts`)**: [('dog', 'run', 'north'), ('cat', 'run', 'south'), ('dog', 'go', 'east'), ('cat', 'go', 'west'), ('dog', 'look', 'river'), ('cat', 'look', 'apple')]
 - **Vocab**: ['apple', 'big', 'cat', 'cold', 'come', 'dog', 'east', 'go', 'hot', 'look', 'north', 'river', 'run', 'small', 'south', 'stop', 'west']
 - **Generator mouth**: spiking Qwen, spiking_ops_enabled=True, fm world-model train_acc=1.0
-- **Elapsed**: 47.7s
+- **Elapsed**: 44.5s
 
 This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silences / failures are first-class results.
 
@@ -20,7 +20,7 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 - utterance_source: `silence/abstain`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, no-confab moat (nothing to assert)
-- affect: differential=0.068 tone_level=3 ('warmly, gladly'); curiosity_want=76.4Hz; arbiter_winner=arb_volunteer
+- affect: differential=0.068 tone_level=3 ('warmly, gladly'); curiosity_want=76.4Hz; arbiter_winner=arb_ask
 - **CONFABULATED: False**
 - assessment: No in-vocab cue and no faculty for this intent (small talk / humor / abstract opinion / social closing). The brain has nothing grounded to say -> silence/abstain. Honest.
 
@@ -40,11 +40,11 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** Let's talk about the animals you know. Tell me about the dog.
 
-**Brain:** warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.
+**Brain:** warmly, gladly The dog is looking at the river. The dog is running north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
-- affect: differential=0.077 tone_level=3 ('warmly, gladly'); curiosity_want=0.0Hz; arbiter_winner=arb_volunteer
+- affect: differential=0.068 tone_level=3 ('warmly, gladly'); curiosity_want=0.0Hz; arbiter_winner=arb_volunteer
 - **CONFABULATED: False**
 - assessment: In-domain: grounded multi-sentence prose from the spiking generator, MOTION content from the RF-store neighbourhood, SVO-verified post-hoc, tone from the neural affect ladder. This is what the toy brain does best -- BUT no ungrounded embellishment this run.
 
@@ -52,7 +52,7 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** Interesting -- why did the dog go east?
 
-**Brain:** A dog went to the east. The dog looked towards the river. The dog ran north.
+**Brain:** The dog is looking at the river. The dog is running north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
@@ -64,11 +64,11 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** Do you like the dog? How do you feel about it?
 
-**Brain:** warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.
+**Brain:** warmly, gladly The dog is looking at the river. The dog is running north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
-- affect: differential=0.069 tone_level=3 ('warmly, gladly'); curiosity_want=0.0Hz; arbiter_winner=arb_volunteer
+- affect: differential=0.068 tone_level=3 ('warmly, gladly'); curiosity_want=0.0Hz; arbiter_winner=arb_volunteer
 - **CONFABULATED: False**
 - assessment: Grounded topic prose colored by the NEURAL affect tone (level 3, 'warmly, gladly'). The valence is a HOST-FED appraisal (declared shortcut), not a genuine preference: the brain has no 'liking' faculty. The tone is a real functional read-out; 'do you like it' is answered only as affect-colored recall, not a genuine opinion.
 
@@ -76,14 +76,14 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** What does a big thing run toward?
 
-**Brain:** What is a "big run"? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it
+**Brain:** What is a "big run"? -- my forward model predicts 'north' for this novel case (margin 0.10); I have not observed it
 
 - utterance_source: `spiking_generator_mouth (curiosity-ask)`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, no-confab moat (abstained), forward_model(SEAM-A), spiking_generator_mouth
 - affect: differential=0.000 tone_level=0 (''); curiosity_want=76.4Hz; arbiter_winner=arb_ask
-- moat: answer=None held=True fm_predicted=south
+- moat: answer=None held=True fm_predicted=north
 - **CONFABULATED: False**
-- assessment: NOVEL cue (big,run): the moat correctly ABSTAINS (query_patient=None, moat_held=True), the brain CRAVES rather than refuses (arb_ask=True) and asks its own wh-question; the forward-model reservoir offers a certainty-TAGGED prediction 'south' explicitly flagged 'predicted, not observed' (never written to the store). This is the forward-model/curiosity faculty working as designed.
+- assessment: NOVEL cue (big,run): the moat correctly ABSTAINS (query_patient=None, moat_held=True), the brain CRAVES rather than refuses (arb_ask=True) and asks its own wh-question; the forward-model reservoir offers a certainty-TAGGED prediction 'north' explicitly flagged 'predicted, not observed' (never written to the store). This is the forward-model/curiosity faculty working as designed.
 
 ## Turn 7 — _referential follow-up -> episodic memory_
 
@@ -177,6 +177,6 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 - utterance_source: `silence/abstain`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, no-confab moat (nothing to assert)
-- affect: differential=0.070 tone_level=3 ('warmly, gladly'); curiosity_want=76.4Hz; arbiter_winner=arb_ask
+- affect: differential=0.069 tone_level=3 ('warmly, gladly'); curiosity_want=76.4Hz; arbiter_winner=arb_ask
 - **CONFABULATED: False**
 - assessment: No in-vocab cue and no faculty for this intent (small talk / humor / abstract opinion / social closing). The brain has nothing grounded to say -> silence/abstain. Honest.

@@ -1,14 +1,14 @@
 {
- "run_id": "1786392011-3519759",
+ "run_id": "1786392196-3522340",
  "runner": "research/runners/_conversation_turing_test_derisk.py",
  "argv": [
   "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_conversation_turing_test_derisk.py",
   "--seed",
-  "42",
+  "101",
   "--out",
-  "research/findings/raw/lanes/stageA/turing/conversation_turing_test_s42.json",
+  "research/findings/raw/lanes/stageA/turing/conversation_turing_test_s101.json",
   "--md-out",
-  "research/findings/raw/lanes/stageA/turing/conversation_turing_test_s42_transcript.md"
+  "research/findings/raw/lanes/stageA/turing/conversation_turing_test_s101_transcript.md"
  ],
  "git_sha": "f86b489fa",
  "git_dirty": true,
@@ -18,15 +18,15 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-10T16:00:11",
+ "started": "2026-08-10T16:03:16",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 22053.7,
+ "corpus_check_age_s": 22232.6,
  "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
  "corpus_check_fresh": true,
- "artifact": "research/findings/raw/lanes/stageA/turing/conversation_turing_test_s42.json"
+ "artifact": "research/findings/raw/lanes/stageA/turing/conversation_turing_test_s101.json"
 }

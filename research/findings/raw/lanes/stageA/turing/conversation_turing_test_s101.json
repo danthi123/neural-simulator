@@ -4,7 +4,7 @@
   "brain": "research/runners/_stageA_full_integration_derisk.py::build_one_brain (seams A+C + generator mouth)",
   "backend": "numpy",
   "mouth_device": "cuda",
-  "seed": 42,
+  "seed": 101,
   "single_bridge": true,
   "n_neurons": 25831,
   "taught_facts": [
@@ -64,7 +64,7 @@
   "n_confabulations": 0,
   "n_generator_replies": 4,
   "n_abstain_or_silence": 10,
-  "elapsed_seconds": 47.7,
+  "elapsed_seconds": 41.1,
   "transcript": [
     {
       "turn": 1,
@@ -97,17 +97,17 @@
       ],
       "confabulated": false,
       "assessment": "No in-vocab cue and no faculty for this intent (small talk / humor / abstract opinion / social closing). The brain has nothing grounded to say -> silence/abstain. Honest.",
-      "affect_differential": 0.06777777777777778,
+      "affect_differential": 0.07166666666666667,
       "affect_tone_level": 3,
       "affect_tone_token": "warmly, gladly",
       "host_fed_appraisal": 1.0,
-      "curiosity_want_hz": 76.38888888888889,
-      "arbiter_winner": "arb_volunteer",
-      "arbiter_margin": 0.0,
+      "curiosity_want_hz": 75.0,
+      "arbiter_winner": "arb_ask",
+      "arbiter_margin": 0.026666666481777783,
       "arbiter_rates": {
-        "arb_volunteer": 0.07307692307692308,
-        "arb_ask": 0.07307692307692308,
-        "arb_silent": 0.0019230769230769232
+        "arb_volunteer": 0.07019230769230769,
+        "arb_ask": 0.07403846153846154,
+        "arb_silent": 0.0
       }
     },
     {
@@ -145,13 +145,13 @@
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       }
     },
     {
@@ -183,7 +183,7 @@
         "kind": "topic",
         "stored_patient": null
       },
-      "brain_reply": "warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.",
+      "brain_reply": "warmly, gladly The dog is running north.",
       "utterance_source": "spiking_generator_mouth",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -194,19 +194,19 @@
       ],
       "confabulated": false,
       "assessment": "In-domain: grounded multi-sentence prose from the spiking generator, MOTION content from the RF-store neighbourhood, SVO-verified post-hoc, tone from the neural affect ladder. This is what the toy brain does best -- BUT no ungrounded embellishment this run.",
-      "affect_differential": 0.07722222222222222,
+      "affect_differential": 0.07166666666666667,
       "affect_tone_level": 3,
       "affect_tone_token": "warmly, gladly",
       "host_fed_appraisal": 1.0,
       "curiosity_want_hz": 0.0,
       "arbiter_winner": "arb_volunteer",
-      "arbiter_margin": 0.5976331324169323,
+      "arbiter_margin": 0.5999999967999999,
       "arbiter_rates": {
-        "arb_volunteer": 0.12980769230769232,
+        "arb_volunteer": 0.15,
         "arb_ask": 0.0,
-        "arb_silent": 0.032692307692307694
+        "arb_silent": 0.0375
       },
-      "mouth_raw_text": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+      "mouth_raw_text": "The dog is on its way to the east. It sees a river nearby. The dog is running north.",
       "mouth_neighbourhood": [
         [
           "dog",
@@ -224,7 +224,7 @@
           "north"
         ]
       ],
-      "mouth_n_verified": 3,
+      "mouth_n_verified": 1,
       "mouth_n_confab_emitted": 0,
       "svo_moat_confabulation": false,
       "surface_confabulation": false,
@@ -257,7 +257,7 @@
         "kind": "known_cue",
         "stored_patient": "east"
       },
-      "brain_reply": "A dog went to the east. The dog looked towards the river. The dog ran north.",
+      "brain_reply": "The dog is running north.",
       "utterance_source": "spiking_generator_mouth",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -274,13 +274,13 @@
       "host_fed_appraisal": 0.0,
       "curiosity_want_hz": 0.0,
       "arbiter_winner": "arb_silent",
-      "arbiter_margin": 0.9999999740000007,
+      "arbiter_margin": 0.9999999840000002,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
         "arb_ask": 0.0,
-        "arb_silent": 0.038461538461538464
+        "arb_silent": 0.0625
       },
-      "mouth_raw_text": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+      "mouth_raw_text": "The dog is on its way to the east. It sees a river nearby. The dog is running north.",
       "mouth_neighbourhood": [
         [
           "dog",
@@ -298,7 +298,7 @@
           "north"
         ]
       ],
-      "mouth_n_verified": 3,
+      "mouth_n_verified": 1,
       "mouth_n_confab_emitted": 0,
       "svo_moat_confabulation": false,
       "surface_confabulation": false,
@@ -331,7 +331,7 @@
         "kind": "topic",
         "stored_patient": null
       },
-      "brain_reply": "warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.",
+      "brain_reply": "warmly, gladly The dog is running north.",
       "utterance_source": "spiking_generator_mouth",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -342,19 +342,19 @@
       ],
       "confabulated": false,
       "assessment": "Grounded topic prose colored by the NEURAL affect tone (level 3, 'warmly, gladly'). The valence is a HOST-FED appraisal (declared shortcut), not a genuine preference: the brain has no 'liking' faculty. The tone is a real functional read-out; 'do you like it' is answered only as affect-colored recall, not a genuine opinion.",
-      "affect_differential": 0.06944444444444445,
+      "affect_differential": 0.0811111111111111,
       "affect_tone_level": 3,
       "affect_tone_token": "warmly, gladly",
       "host_fed_appraisal": 1.0,
       "curiosity_want_hz": 0.0,
       "arbiter_winner": "arb_volunteer",
-      "arbiter_margin": 0.6105263124476454,
+      "arbiter_margin": 0.6732026098030672,
       "arbiter_rates": {
-        "arb_volunteer": 0.14711538461538462,
+        "arb_volunteer": 0.12307692307692308,
         "arb_ask": 0.0,
-        "arb_silent": 0.035576923076923075
+        "arb_silent": 0.02403846153846154
       },
-      "mouth_raw_text": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+      "mouth_raw_text": "The dog is on its way to the east. It sees a river nearby. The dog is running north.",
       "mouth_neighbourhood": [
         [
           "dog",
@@ -372,7 +372,7 @@
           "north"
         ]
       ],
-      "mouth_n_verified": 3,
+      "mouth_n_verified": 1,
       "mouth_n_confab_emitted": 0,
       "svo_moat_confabulation": false,
       "surface_confabulation": false,
@@ -404,7 +404,7 @@
         "kind": "novel_cue",
         "stored_patient": null
       },
-      "brain_reply": "What is a \"big run\"? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it",
+      "brain_reply": "\"What is a 'big run'? -- my forward model predicts 'north' for this novel case (margin 0.14); I have not observed it",
       "utterance_source": "spiking_generator_mouth (curiosity-ask)",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -415,26 +415,26 @@
         "spiking_generator_mouth"
       ],
       "confabulated": false,
-      "assessment": "NOVEL cue (big,run): the moat correctly ABSTAINS (query_patient=None, moat_held=True), the brain CRAVES rather than refuses (arb_ask=True) and asks its own wh-question; the forward-model reservoir offers a certainty-TAGGED prediction 'south' explicitly flagged 'predicted, not observed' (never written to the store). This is the forward-model/curiosity faculty working as designed.",
+      "assessment": "NOVEL cue (big,run): the moat correctly ABSTAINS (query_patient=None, moat_held=True), the brain CRAVES rather than refuses (arb_ask=True) and asks its own wh-question; the forward-model reservoir offers a certainty-TAGGED prediction 'north' explicitly flagged 'predicted, not observed' (never written to the store). This is the forward-model/curiosity faculty working as designed.",
       "affect_differential": 0.0,
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       },
       "mouth_confab_leaked": 0,
-      "mouth_raw_text": "What is a \"big run\"?",
+      "mouth_raw_text": "\"What is a 'big run'? \"",
       "moat_answer": null,
       "moat_held": true,
       "asked_not_refused": true,
-      "forward_model_predicted": "south",
-      "forward_model_margin": 0.0922940212411844
+      "forward_model_predicted": "north",
+      "forward_model_margin": 0.13883481800211486
     },
     {
       "turn": 7,
@@ -479,11 +479,11 @@
       "host_fed_appraisal": 0.0,
       "curiosity_want_hz": 0.0,
       "arbiter_winner": "arb_silent",
-      "arbiter_margin": 0.9999999740000007,
+      "arbiter_margin": 0.9999999840000002,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
         "arb_ask": 0.0,
-        "arb_silent": 0.038461538461538464
+        "arb_silent": 0.0625
       }
     },
     {
@@ -520,13 +520,13 @@
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       }
     },
     {
@@ -573,13 +573,13 @@
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       }
     },
     {
@@ -615,13 +615,13 @@
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       }
     },
     {
@@ -656,13 +656,13 @@
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       }
     },
     {
@@ -701,13 +701,13 @@
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       }
     },
     {
@@ -750,13 +750,13 @@
       "affect_tone_level": 0,
       "affect_tone_token": "",
       "host_fed_appraisal": 0.0,
-      "curiosity_want_hz": 76.38888888888889,
+      "curiosity_want_hz": 75.0,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.5642458067775662,
+      "arbiter_margin": 0.5977653596554415,
       "arbiter_rates": {
         "arb_volunteer": 0.0,
-        "arb_ask": 0.1346153846153846,
-        "arb_silent": 0.0375
+        "arb_ask": 0.1375,
+        "arb_silent": 0.03461538461538462
       }
     },
     {
@@ -790,16 +790,16 @@
       ],
       "confabulated": false,
       "assessment": "No in-vocab cue and no faculty for this intent (small talk / humor / abstract opinion / social closing). The brain has nothing grounded to say -> silence/abstain. Honest.",
-      "affect_differential": 0.06972222222222223,
+      "affect_differential": 0.08055555555555556,
       "affect_tone_level": 3,
       "affect_tone_token": "warmly, gladly",
       "host_fed_appraisal": 1.0,
-      "curiosity_want_hz": 76.38888888888889,
-      "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.006993006942148836,
+      "curiosity_want_hz": 75.0,
+      "arbiter_winner": "arb_volunteer",
+      "arbiter_margin": 0.06382978676324128,
       "arbiter_rates": {
-        "arb_volunteer": 0.06826923076923076,
-        "arb_ask": 0.06923076923076923,
+        "arb_volunteer": 0.07211538461538461,
+        "arb_ask": 0.06346153846153846,
         "arb_silent": 0.0
       }
     }
