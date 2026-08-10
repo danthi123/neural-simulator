@@ -86,17 +86,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > multi-assembly specificity = plateau-gating + temporally-separated encoding. **HONEST SCOPE (NOT full gap#5 closure):**
 > assemblies are PRE-ASSIGNED — emergent SELECTION (emergent-DG) is separate; magnitude is ceiling-set; per-synapse
 > ~5000 is a connectivity-sparsity residual.
-> **CURRENT FRONTIER (RAG-corrected — all THREE gap#5 pieces are individually GO):** emergent-DG SELECTION is ALREADY a
-> 6-seed GO (`2026-07-19-gap5-emergent-DG-SELECTION-de-risked-GO-6seed-mossy-detonator-stable-separated.md`, recovered
-> at scale `2026-07-21`); BTSP FORMATION is GO (tonight, `cee2ff124`); slow-NMDA/dendritic COMPLETION readout is GO
-> (`483587c0b` / 2026-07-08). ⇒ **(a) the real frontier = the END-TO-END COMPOSITION** — novel input → DG selects +
-> pattern-separates an assembly → BTSP one-shot forms its CA3 attractor (in its own temporally-isolated encode episode)
-> → a partial cue completes it — ONE emergent episodic-memory loop replacing tonight's PRE-ASSIGNED assemblies with
-> emergently-SELECTED ones. **LAUNCHING a determine-then-build agent on this composition now** (owner's standing
-> "continue autonomously / do NOT defer"; redirectable at the check-in). (b) NE-gain rate-homeostat + gain re-run
-> (`6ecba7b69`). (c) W4-graded-RSA→speaking DEPRIORITIZED (K=3 argmax=identity). Pool: lane-D on pool40/42. Tonight's 5
-> results (learn-to-speak fix · reward-misspec · gap#5 slow-NMDA GO · gap#5 EMERGENT FORMATION GO · NE-gain honest-neg)
-> all banked + pushed. Below: composer arc history.
+> (12) **gap#5 END-TO-END COMPOSITION = INTEGRATION-SEAM NEGATIVE (`ddf5358a`, 6-seed) — the honest capstone.** The
+> three individually-GO pieces do NOT naively compose. Emergent-DG SELECTION composes (6/6: membership genuinely
+> DG-selected — mossy-lesion collapses it to 0, jaccard≈0.02 vs pre-assigned, index-space 6/6); BTSP FORMATION is
+> genuine + weight-specific (no-plateau 0, no-encoding 0, cross_dw≈0). **BUT the slow-NMDA+FS-basket COMPLETION readout
+> is NON-SPECIFIC on the SMALL, VARIABLE (~23-cell) emergently-selected assemblies** (perm≈nocue≈cue), and it FAILS even
+> HAND-INSTALLED → the seam is on the COMPLETION READOUT, NOT BTSP; a density sweep makes it WORSE (0.12→0.5 drives
+> cue/perm/nocue up together, perm exceeds cue). **The seam = FS-basket inhib (fb=60) + recurrent density were
+> implicitly tuned for the LARGER, UNIFORM ~72-cell pre-assigned assemblies, not the emergent ~23-cell regime** — the
+> "operating point IS the mechanism / companion process proxied by a constant" pattern. **NAMED FIX (the NEXT build):**
+> assembly-SIZE-aware completion = SPARSER recurrence (Guzman-Jonas ~1-2%) + **FEEDFORWARD divisive-normalization
+> inhibition that SCALES with the active-population size** (de Almeida-Idiart-Lisman / Pouille-Scanziani — the same
+> companion process that made SELECTION robust across a >10× range) + size-matched k_thresh; OR a stronger detonator →
+> larger/uniform assemblies.
+> **CURRENT FRONTIER:** (a) **the size-aware completion FIX** (feedforward divisive-norm FS-basket that scales with
+> active-pop size) — closes the gap#5 composition seam; the highest-leverage next build. (b) NE-gain rate-homeostat +
+> gain re-run (`6ecba7b69`). (c) W4-graded-RSA→speaking DEPRIORITIZED (K=3 argmax=identity). **Tonight's arc = 6 banked
+> results** (learn-to-speak fix · reward-misspec · gap#5 slow-NMDA GO · gap#5 EMERGENT FORMATION GO · NE-gain honest-neg ·
+> gap#5 composition-seam), all pushed both remotes; gap#5 has a COMPLETE honest map (readout GO → formation GO →
+> selection GO → composition seam + named fix). Pool: lane-D running. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
