@@ -21,11 +21,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > (`1f448d26`, a readout DC-offset artifact the verify caught) — corrected: shared-channel superposition composes
 > 1.00 through arity 6 with common-mode removal, **NO break in range**, so "where bundle needs bind" is REOPENED and
 > the arc is **NOT map-complete**. Bundling is practically adequate for conversational arities, so the synthetic
-> capacity edge is DEPRIORITIZED. **CURRENT FRONTIER (building):** EPISODIC CORTICAL CUE-RECALL — a neural
-> WTA-on-closed-bistable-CA3 readout (design-ready gate `2026-08-08-episodic-cortical-cue-recall-research-gate-*`;
-> burns down the host-argmax + no-recurrent-attractor shortcuts; NO sim edit). **NEXT COMMAND (once the draft lands):**
-> review the anti-cheat gates + closed-CA3 config, then `SIM_BACKEND=numpy PYTHONPATH=$PWD python -m
-> research.runners._episodic_cortical_cue_recall_derisk --seeds 42 43 44 ...` and adversarially verify before banking.
+> capacity edge is DEPRIORITIZED. **CURRENT FRONTIER = EPISODIC CORTICAL CUE-RECALL** (runner EXISTS:
+> `_riii_ca3_cortical_episodic_wta_derisk.py`; a study-agent's proposed new file was a redundant wrapper, deleted).
+> State: CA3 recurrent COMPLETION is CLOSED (within-assembly attractor potentiation, load-bearing) but SMOKE-only
+> (seed 42). TWO next actions:
+> **(1) QUEUED (GPU-free — HELD: user is gaming, Palworld on the 3090):** the completion 6-seed confirm —
+> `SIM_BACKEND=cupy .venv/bin/python -m research.runners._riii_ca3_cortical_episodic_wta_derisk --seeds
+> 42,43,44,100,101,102 --n-ca3 1500 --k-items 4 --assembly-frac 0.10 --ca3-cortex-density 1.0 --ca3-cue-frac 0.3
+> --recall-k-thresh 5 --attractor-w 80 --ca3-density 0.30 --out research/findings/raw/cortical_episodic_wta/_completion_loadbearing_6seed.json`
+> (closes the completion sub-wall at generalization; ~2h GPU; launch when the game stops).
+> **(2) THE DEEP OPEN WALL = the neural WTA readout** (still NEGATIVE, cross-arc characterized): a shared-inhibition
+> WTA latches on INTRINSIC assembly strength, not the cue-specific AFFERENT advantage
+> (`2026-08-08-pragmatics-readback-leg2-WTA-speaker-NEGATIVE`, `2026-08-07-source-monitor-joint-scale-NO-GO`,
+> `2026-04-26-cortex-wta`). **INSIGHT: this is the SAME common-mode problem as the composer's just-fixed DC-offset** —
+> the intrinsic strength is a common-mode; the surpass = **common-mode removal via divisive+subtractive inhibition**
+> (Carandini-Heeger / E%-max de Almeida-Idiart-Lisman). DR-gated (deep external research on cortical afferent-winner
+> selection first); likely a sim edit; deserves a fresh careful pass, NOT a fatigued one.
 > Pool large-N `comp_largeN` retention still running (~7h+, alive; fold in on landing). History below.
 
 > **⭐⭐⭐⭐⭐ THE BIGGEST RESULT: NEURAL COMPOSITIONAL GENERALIZATION on the spiking substrate = GO (`ea77003c5`,
