@@ -1,0 +1,98 @@
+{
+  "runner": "_pragmatic_readback_leg2_v3_statevalue_derisk",
+  "seeds": [
+    102
+  ],
+  "n_train": 360,
+  "aggregate": {
+    "critic": "host-EMA success-per-intent baseline (FLAGGED SHORTCUT; actor is fully neural)",
+    "fix_mean_advantage_sign_acc": 0.9799,
+    "fix_mean_actor_wta_vs_succopt": 1.0,
+    "fix_mean_weight_argmax_vs_succopt": 1.0,
+    "fix_mean_weight_sep_vs_succopt": 0.1997,
+    "fix_mean_untrained_weight_sep": 0.0006,
+    "fix_mean_actor_wta_vs_aligned": 0.3333,
+    "yoked_mean_actor_wta_vs_succopt": 1.0,
+    "yoked_mean_weight_argmax_vs_succopt": 1.0,
+    "yoked_mean_weight_sep_vs_succopt": 0.0921,
+    "chance": 0.3333,
+    "contingency_pass": false
+  },
+  "per_seed": [
+    {
+      "seed": 102,
+      "fix": {
+        "seed": 102,
+        "arm": "fix",
+        "neural_critic": false,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "advantage_sign_acc": 0.9799,
+        "advantage_sign_n": 299,
+        "actor_wta_acc_vs_succopt": 1.0,
+        "weight_argmax_acc_vs_succopt": 1.0,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.6667,
+        "weight_sep_vs_succopt": 0.19969,
+        "untrained_weight_sep_vs_succopt": 0.00061,
+        "weight_sep_vs_aligned": -0.05105,
+        "chance": 0.3333,
+        "elapsed_seconds": 167.3
+      },
+      "yoked": {
+        "seed": 102,
+        "arm": "yoked",
+        "neural_critic": false,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "advantage_sign_acc": 0.9825,
+        "advantage_sign_n": 286,
+        "actor_wta_acc_vs_succopt": 1.0,
+        "weight_argmax_acc_vs_succopt": 1.0,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.6667,
+        "weight_sep_vs_succopt": 0.09208,
+        "untrained_weight_sep_vs_succopt": 0.00061,
+        "weight_sep_vs_aligned": -0.01576,
+        "chance": 0.3333,
+        "elapsed_seconds": 170.9
+      }
+    }
+  ]
+}
