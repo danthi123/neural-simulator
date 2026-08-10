@@ -598,6 +598,14 @@ def main():
     ap.add_argument("--ceiling", action="store_true", help="instrument/ceiling probe (strong manual weights)")
     ap.add_argument("--smoke", action="store_true", help="single-seed, all conditions")
     ap.add_argument("--out", default=None)
+    # WTA operating-point + afferent-weight retune knobs (2026-08-10, additive; defaults = current values so the
+    # committed 6-seed is byte-identical). Per the reframe finding
+    # 2026-08-10-neural-WTA-separable-assemblies-weight-controllable-*: the WTA-negative is likely an over-strong
+    # lateral-inhibition / sub-crossover-afferent operating point (like the pragmatics v1 latch), NOT a common-mode.
+    ap.add_argument("--wta-ei-w", type=float, default=6.0, help="pool->WTA-basket excitatory weight")
+    ap.add_argument("--wta-ie-w", type=float, default=18.0, help="WTA-basket->pool inhibitory weight (lower = weaker latch)")
+    ap.add_argument("--ca3-cortex-w", type=float, default=4.0, help="ca3->cortex heteroassociative afferent weight")
+    ap.add_argument("--cortex-ca3-w", type=float, default=4.0, help="cortex->ca3 encode weight")
     a = ap.parse_args()
     seeds = _parse_seeds(" ".join(a.seeds))   # robust to comma- AND space-separated forms
 
@@ -620,7 +628,9 @@ def main():
         kw = dict(n_ca3=a.n_ca3, k_items=a.k_items, train_events=a.train_events, verbose=True,
                   assembly_frac=a.assembly_frac, ca3_cortex_density=a.ca3_cortex_density,
                   ca3_cue_frac=a.ca3_cue_frac, recall_k_thresh=a.recall_k_thresh,
-                  attractor_w=a.attractor_w, ca3_density=a.ca3_density)
+                  attractor_w=a.attractor_w, ca3_density=a.ca3_density,
+                  wta_ei_w=a.wta_ei_w, wta_ie_w=a.wta_ie_w,
+                  ca3_cortex_w=a.ca3_cortex_w, cortex_ca3_w=a.cortex_ca3_w)
         full = run(s, **kw)
         zero_rec = run(s, zero_recurrent=True, **kw)
         wta_off = run(s, wta_off=True, **kw)
