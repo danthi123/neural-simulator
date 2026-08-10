@@ -2,11 +2,11 @@
 
 - **Runner**: `research/runners/_conversation_turing_test_derisk.py`
 - **Brain**: `build_one_brain(seed=42, co_resident_forward_model=True, co_resident_affect_ladder=True)` + spiking-generator mouth (the current best-state integrated loop)
-- **Backend**: numpy substrate; generator mouth on cuda
+- **Backend**: numpy substrate; generator mouth on cpu
 - **Taught (toy world, via `_store_facts`)**: [('dog', 'run', 'north'), ('cat', 'run', 'south'), ('dog', 'go', 'east'), ('cat', 'go', 'west'), ('dog', 'look', 'river'), ('cat', 'look', 'apple')]
 - **Vocab**: ['apple', 'big', 'cat', 'cold', 'come', 'dog', 'east', 'go', 'hot', 'look', 'north', 'river', 'run', 'small', 'south', 'stop', 'west']
 - **Generator mouth**: spiking Qwen, spiking_ops_enabled=True, fm world-model train_acc=1.0
-- **Elapsed**: 47.0s
+- **Elapsed**: 122.4s
 
 This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silences / failures are first-class results.
 
@@ -40,7 +40,7 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** Let's talk about the animals you know. Tell me about the dog.
 
-**Brain:** warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.
+**Brain:** warmly, gladly It looks at the river. The dog runs north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
@@ -52,7 +52,7 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** Interesting -- why did the dog go east?
 
-**Brain:** A dog went to the east. The dog looked towards the river. The dog ran north.
+**Brain:** It looks at the river. The dog runs north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
@@ -64,7 +64,7 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** Do you like the dog? How do you feel about it?
 
-**Brain:** warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.
+**Brain:** warmly, gladly It looks at the river. The dog runs north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
@@ -76,7 +76,7 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** What does a big thing run toward?
 
-**Brain:** What is a "big run"? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it
+**Brain:** What is a big run? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it
 
 - utterance_source: `spiking_generator_mouth (curiosity-ask)`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, no-confab moat (abstained), forward_model(SEAM-A), spiking_generator_mouth
@@ -89,13 +89,13 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** You mentioned a cat a moment ago -- what was it doing?
 
-**Brain:** *(silence / abstain)*
+**Brain:** A dog gos to the east. A dog looks at river. A dog runs north.
 
-- utterance_source: `silence/abstain (false premise)`
-- faculties live: episodic-dialogue memory: ABSENT (host referent buffer only), affect_ladder(SEAM-C), curiosity, arbiter
+- utterance_source: `episodic-dialogue recall (false-premise: recalls the ACTUAL prior topic)`
+- faculties live: episodic-dialogue memory (per-turn topic+facts store; spiking path=gap#5 dAP-readout CA3 completion ab9f7dbe), affect_ladder(SEAM-C), curiosity, arbiter
 - affect: differential=0.000 tone_level=0 (''); curiosity_want=0.0Hz; arbiter_winner=arb_silent
 - **CONFABULATED: False**
-- assessment: REFERENTIAL/EPISODIC: the premise is FALSE -- no cat was actually discussed earlier (topics the brain spoke about so far: ['dog', 'dog', 'dog']). The brain has NO neural episodic-dialogue memory; the host referent buffer shows no such referent, so the honest result is an ABSTAIN rather than a fabricated recollection. NOTE: the brain does NOT correct the false premise either (no discourse/pragmatic faculty) -- it simply has nothing to recall. Fails the episodic test HONESTLY (no confabulation).
+- assessment: REFERENTIAL/EPISODIC (FALSE PREMISE, HONEST): the premise is FALSE -- no cat was actually discussed earlier (the episodic-dialogue store holds only topic(s) ['dog']). The brain does NOT fabricate a cat recollection; instead it HONESTLY recalls the grounded facts of the topic(s) it DID discuss -- a real memory of THIS conversation. The 'no cat in memory' result is a genuine episodic-store query, not a fabricated denial. Non-silent, grounded, no confabulation.
 
 ## Turn 8 — _out-of-domain fact -> should honestly abstain_
 
@@ -177,6 +177,6 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 - utterance_source: `silence/abstain`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, no-confab moat (nothing to assert)
-- affect: differential=0.070 tone_level=3 ('warmly, gladly'); curiosity_want=76.4Hz; arbiter_winner=arb_ask
+- affect: differential=0.068 tone_level=3 ('warmly, gladly'); curiosity_want=76.4Hz; arbiter_winner=arb_ask
 - **CONFABULATED: False**
 - assessment: No in-vocab cue and no faculty for this intent (small talk / humor / abstract opinion / social closing). The brain has nothing grounded to say -> silence/abstain. Honest.

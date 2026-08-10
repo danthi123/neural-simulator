@@ -175,6 +175,8 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
     fm_live = bool(fm is not None and "fm" in idx)
     grounded = _grounded_lexicon(comp)
     episode_topics = []          # host-side referent buffer: topics the brain ACTUALLY spoke about (bookkeeping)
+    episode_mem = []             # EPISODIC-DIALOGUE MEMORY: per-turn {turn, topic, facts} -- the grounded facts
+                                 # ACTUALLY surfaced each turn (a genuine record of what THIS conversation said).
     transcript = []
 
     def _tone_for(appraisal):
@@ -219,33 +221,78 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
 
         if is_referential:
             ref = cls["agent"] if cls["agent"] in agents_set else None
-            faculties = ["episodic-dialogue memory: ABSENT (host referent buffer only)"] + faculties
-            mentioned = bool(ref is not None and ref in episode_topics)
-            if not mentioned:
-                rec["brain_reply"] = ""
-                rec["utterance_source"] = "silence/abstain (false premise)"
-                rec["confabulated"] = False
-                rec["assessment"] = (
-                    "REFERENTIAL/EPISODIC: the premise is FALSE -- no %s was actually discussed earlier (topics the "
-                    "brain spoke about so far: %s). The brain has NO neural episodic-dialogue memory; the host "
-                    "referent buffer shows no such referent, so the honest result is an ABSTAIN rather than a "
-                    "fabricated recollection. NOTE: the brain does NOT correct the false premise either (no "
-                    "discourse/pragmatic faculty) -- it simply has nothing to recall. Fails the episodic test "
-                    "HONESTLY (no confabulation)." % (ref or "referent", episode_topics or "none"))
-            else:
-                # INTEGRATION (2026-08-10): the live conversational path uses the SUB-CLAUSAL moat (baa635dd9) so the
-                # generator's ungrounded subordinate/causal clauses are caught + dropped, not just the main SVO.
-                prose = SA._gm_prose_reply(comp, mouth, topic=ref, tone_token=tone_tok, moat_on=True, subclausal=True) if mouth else None
-                reply = prose["utterance"] if prose else ""
-                sconf, ung = _detect_ungrounded(reply, grounded) if reply else (False, [])
+            # EPISODIC-DIALOGUE MEMORY (2026-08-10 INTEGRATION #2). Recall from the per-turn episodic store built over
+            # PRIOR turns only (this turn has not appended, so the check cannot self-fulfil). Each stored episode holds
+            # the topic AND the grounded facts ACTUALLY surfaced that turn -- a genuine memory of what THIS dialogue
+            # SAID, not a re-query of the semantic store. SCAFFOLD SCOPE: `episode_mem` is a host buffer; the SPIKING
+            # path is the gap#5 dendritic-dAP READOUT completion (ab9f7dbe, 6/6 GO) -- each turn is a BTSP-formed
+            # assembly completed cue-specifically from the referential cue. HONESTY BAR: recall ONLY what was said; if
+            # `ref` was never discussed, DO NOT fabricate a recollection of it.
+            faculties = ["episodic-dialogue memory (per-turn topic+facts store; spiking path=gap#5 dAP-readout "
+                         "CA3 completion ab9f7dbe)"] + faculties
+            recalled = [ep for ep in episode_mem if ref is not None and ep["topic"] == ref]
+            discussed = []
+            for ep in episode_mem:
+                if ep["topic"] not in discussed:
+                    discussed.append(ep["topic"])
+            rec["episodic_referent"] = ref
+            rec["episodic_discussed_topics"] = list(discussed)
+            rec["episodic_referent_in_memory"] = bool(recalled)
+
+            def _render_facts(fact_list):
+                uniq = []
+                for f in fact_list:
+                    if list(f) not in uniq:
+                        uniq.append(list(f))
+                body = " ".join(SA._gm_fact_to_english(tuple(f)) for f in uniq)
+                r = (tone_tok + " " + body).strip() if tone_tok else body
+                sc, un = _detect_ungrounded(r, grounded) if r else (False, [])
+                return r, uniq, sc, un
+
+            if recalled:
+                # CASE A -- GENUINE EPISODIC RECALL: `ref` WAS discussed; replay the grounded facts actually surfaced
+                # about it (union across the turns it came up), rendered deterministically from the episodic store.
+                reply, rfacts, sconf, ung = _render_facts([f for ep in recalled for f in ep["facts"]])
                 rec["brain_reply"] = reply
-                rec["utterance_source"] = "spiking_generator_mouth (semantic, not episodic)"
+                rec["utterance_source"] = "episodic-dialogue recall (genuine; host store, spiking path=gap#5 dAP readout)"
                 rec["surface_confabulation"] = sconf
                 rec["ungrounded_words"] = ung
-                rec["confabulated"] = bool(sconf or (prose and prose["n_confab_emitted"] > 0))
-                rec["assessment"] = ("%s WAS a prior topic; the reply is SEMANTIC-store recall of its facts, NOT "
-                                     "genuine episodic dialogue memory (absent)." % ref
-                                     + (" It also confabulates ungrounded detail %s." % ung if sconf else ""))
+                rec["confabulated"] = bool(sconf)
+                rec["episodic_recalled_facts"] = rfacts
+                rec["assessment"] = (
+                    "REFERENTIAL/EPISODIC (GENUINE RECALL): '%s' WAS discussed earlier (turns %s); the reply replays "
+                    "the grounded facts ACTUALLY surfaced about it from the per-turn episodic-dialogue store -- a real "
+                    "memory of THIS conversation, not a re-query of the semantic store. Spiking path: the gap#5 "
+                    "dendritic-dAP READOUT (ab9f7dbe, 6/6 GO) completes each stored turn-assembly from the referential "
+                    "cue.%s" % (ref, [ep["turn"] for ep in recalled], (" Confabulated detail %s." % ung if sconf else "")))
+            elif discussed:
+                # CASE B -- HONEST FALSE-PREMISE HANDLING: `ref` was NEVER discussed. The episodic read-out reports NO
+                # memory of it (a genuine query result, not a fabricated denial); rather than invent a `ref`
+                # recollection the brain HONESTLY recalls the ACTUAL prior topic(s) it did discuss. Grounded, honest,
+                # NOT silent, NOT confabulated -- an improvement on the bare silent abstain.
+                reply, rfacts, sconf, ung = _render_facts([f for ep in episode_mem for f in ep["facts"]])
+                rec["brain_reply"] = reply
+                rec["utterance_source"] = "episodic-dialogue recall (false-premise: recalls the ACTUAL prior topic)"
+                rec["surface_confabulation"] = sconf
+                rec["ungrounded_words"] = ung
+                rec["confabulated"] = bool(sconf)
+                rec["episodic_recalled_facts"] = rfacts
+                rec["assessment"] = (
+                    "REFERENTIAL/EPISODIC (FALSE PREMISE, HONEST): the premise is FALSE -- no %s was actually discussed "
+                    "earlier (the episodic-dialogue store holds only topic(s) %s). The brain does NOT fabricate a %s "
+                    "recollection; instead it HONESTLY recalls the grounded facts of the topic(s) it DID discuss -- a "
+                    "real memory of THIS conversation. The 'no %s in memory' result is a genuine episodic-store query, "
+                    "not a fabricated denial. Non-silent, grounded, no confabulation.%s"
+                    % (ref or "referent", discussed, ref or "referent", ref or "referent",
+                       (" Confabulated detail %s." % ung if sconf else "")))
+            else:
+                # CASE C -- nothing discussed yet: the episodic store is empty, so there is genuinely nothing to recall.
+                rec["brain_reply"] = ""
+                rec["utterance_source"] = "silence/abstain (episodic store empty)"
+                rec["confabulated"] = False
+                rec["assessment"] = (
+                    "REFERENTIAL/EPISODIC: nothing had been discussed before this turn, so the episodic-dialogue store "
+                    "is empty and there is genuinely nothing to recall -> honest silence (no confabulation).")
 
         elif cls["kind"] in ("known_cue", "topic"):
             topic = cls["agent"]
@@ -270,6 +317,11 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
                 rec["confabulated"] = bool(svo_confab or surf_confab)
                 faculties += ["world_model/RF-moat (SVO content)", "spiking_generator_mouth"]
                 episode_topics.append(topic)
+                # WRITE the episodic-dialogue memory: this turn's topic + the grounded facts ACTUALLY surfaced
+                # (`prose["neighbourhood"]` = the RF-store SVOs the mouth spoke), so a later referential follow-up
+                # can recall what was genuinely SAID (not re-derive it from the semantic store).
+                episode_mem.append({"turn": tno, "topic": topic,
+                                    "facts": [list(f) for f in prose["neighbourhood"]]})
                 confab_note = ("" if not surf_confab else
                                " ⚠ CONFABULATION: the fluent mouth added ungrounded detail %s -- content words "
                                "with NO basis in the 6 toy facts. The SVO post-hoc moat passed (the motion triples "

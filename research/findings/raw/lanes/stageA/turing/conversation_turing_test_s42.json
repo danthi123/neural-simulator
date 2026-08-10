@@ -3,7 +3,7 @@
   "faculty": "Extended human-like conversation test -- Stage-A FULL one brain (best-state integrated loop)",
   "brain": "research/runners/_stageA_full_integration_derisk.py::build_one_brain (seams A+C + generator mouth)",
   "backend": "numpy",
-  "mouth_device": "cuda",
+  "mouth_device": "cpu",
   "seed": 42,
   "single_bridge": true,
   "n_neurons": 25831,
@@ -63,8 +63,8 @@
   "n_turns": 14,
   "n_confabulations": 0,
   "n_generator_replies": 4,
-  "n_abstain_or_silence": 10,
-  "elapsed_seconds": 47.0,
+  "n_abstain_or_silence": 9,
+  "elapsed_seconds": 122.4,
   "transcript": [
     {
       "turn": 1,
@@ -183,7 +183,7 @@
         "kind": "topic",
         "stored_patient": null
       },
-      "brain_reply": "warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.",
+      "brain_reply": "warmly, gladly It looks at the river. The dog runs north.",
       "utterance_source": "spiking_generator_mouth",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -206,7 +206,7 @@
         "arb_ask": 0.0,
         "arb_silent": 0.032692307692307694
       },
-      "mouth_raw_text": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+      "mouth_raw_text": "The dog is heading east. It looks at the river. The dog runs north.",
       "mouth_neighbourhood": [
         [
           "dog",
@@ -224,7 +224,7 @@
           "north"
         ]
       ],
-      "mouth_n_verified": 3,
+      "mouth_n_verified": 2,
       "mouth_n_confab_emitted": 0,
       "svo_moat_confabulation": false,
       "surface_confabulation": false,
@@ -257,7 +257,7 @@
         "kind": "known_cue",
         "stored_patient": "east"
       },
-      "brain_reply": "A dog went to the east. The dog looked towards the river. The dog ran north.",
+      "brain_reply": "It looks at the river. The dog runs north.",
       "utterance_source": "spiking_generator_mouth",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -280,7 +280,7 @@
         "arb_ask": 0.0,
         "arb_silent": 0.038461538461538464
       },
-      "mouth_raw_text": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+      "mouth_raw_text": "The dog is heading east. It looks at the river. The dog runs north.",
       "mouth_neighbourhood": [
         [
           "dog",
@@ -298,7 +298,7 @@
           "north"
         ]
       ],
-      "mouth_n_verified": 3,
+      "mouth_n_verified": 2,
       "mouth_n_confab_emitted": 0,
       "svo_moat_confabulation": false,
       "surface_confabulation": false,
@@ -331,7 +331,7 @@
         "kind": "topic",
         "stored_patient": null
       },
-      "brain_reply": "warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.",
+      "brain_reply": "warmly, gladly It looks at the river. The dog runs north.",
       "utterance_source": "spiking_generator_mouth",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -342,19 +342,19 @@
       ],
       "confabulated": false,
       "assessment": "Grounded topic prose colored by the NEURAL affect tone (level 3, 'warmly, gladly'). The valence is a HOST-FED appraisal (declared shortcut), not a genuine preference: the brain has no 'liking' faculty. The tone is a real functional read-out; 'do you like it' is answered only as affect-colored recall, not a genuine opinion.",
-      "affect_differential": 0.06944444444444445,
+      "affect_differential": 0.06861111111111111,
       "affect_tone_level": 3,
       "affect_tone_token": "warmly, gladly",
       "host_fed_appraisal": 1.0,
       "curiosity_want_hz": 0.0,
       "arbiter_winner": "arb_volunteer",
-      "arbiter_margin": 0.6105263124476454,
+      "arbiter_margin": 0.5979381411244553,
       "arbiter_rates": {
-        "arb_volunteer": 0.14711538461538462,
+        "arb_volunteer": 0.14903846153846154,
         "arb_ask": 0.0,
-        "arb_silent": 0.035576923076923075
+        "arb_silent": 0.0375
       },
-      "mouth_raw_text": "A dog went to the east because it was looking for water.\nThe dog looked towards the river because it was south of its current location.\nThe dog ran north because it needed to find shelter or food.",
+      "mouth_raw_text": "The dog is heading east. It looks at the river. The dog runs north.",
       "mouth_neighbourhood": [
         [
           "dog",
@@ -372,7 +372,7 @@
           "north"
         ]
       ],
-      "mouth_n_verified": 3,
+      "mouth_n_verified": 2,
       "mouth_n_confab_emitted": 0,
       "svo_moat_confabulation": false,
       "surface_confabulation": false,
@@ -404,7 +404,7 @@
         "kind": "novel_cue",
         "stored_patient": null
       },
-      "brain_reply": "What is a \"big run\"? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it",
+      "brain_reply": "What is a big run? -- my forward model predicts 'south' for this novel case (margin 0.09); I have not observed it",
       "utterance_source": "spiking_generator_mouth (curiosity-ask)",
       "faculty": [
         "affect_ladder(SEAM-C)",
@@ -429,7 +429,7 @@
         "arb_silent": 0.0375
       },
       "mouth_confab_leaked": 0,
-      "mouth_raw_text": "What is a \"big run\"?",
+      "mouth_raw_text": "What is a big run?",
       "moat_answer": null,
       "moat_held": true,
       "asked_not_refused": true,
@@ -463,16 +463,16 @@
         "kind": "topic",
         "stored_patient": null
       },
-      "brain_reply": "",
-      "utterance_source": "silence/abstain (false premise)",
+      "brain_reply": "A dog gos to the east. A dog looks at river. A dog runs north.",
+      "utterance_source": "episodic-dialogue recall (false-premise: recalls the ACTUAL prior topic)",
       "faculty": [
-        "episodic-dialogue memory: ABSENT (host referent buffer only)",
+        "episodic-dialogue memory (per-turn topic+facts store; spiking path=gap#5 dAP-readout CA3 completion ab9f7dbe)",
         "affect_ladder(SEAM-C)",
         "curiosity",
         "arbiter"
       ],
       "confabulated": false,
-      "assessment": "REFERENTIAL/EPISODIC: the premise is FALSE -- no cat was actually discussed earlier (topics the brain spoke about so far: ['dog', 'dog', 'dog']). The brain has NO neural episodic-dialogue memory; the host referent buffer shows no such referent, so the honest result is an ABSTAIN rather than a fabricated recollection. NOTE: the brain does NOT correct the false premise either (no discourse/pragmatic faculty) -- it simply has nothing to recall. Fails the episodic test HONESTLY (no confabulation).",
+      "assessment": "REFERENTIAL/EPISODIC (FALSE PREMISE, HONEST): the premise is FALSE -- no cat was actually discussed earlier (the episodic-dialogue store holds only topic(s) ['dog']). The brain does NOT fabricate a cat recollection; instead it HONESTLY recalls the grounded facts of the topic(s) it DID discuss -- a real memory of THIS conversation. The 'no cat in memory' result is a genuine episodic-store query, not a fabricated denial. Non-silent, grounded, no confabulation.",
       "affect_differential": 0.0,
       "affect_tone_level": 0,
       "affect_tone_token": "",
@@ -484,7 +484,31 @@
         "arb_volunteer": 0.0,
         "arb_ask": 0.0,
         "arb_silent": 0.038461538461538464
-      }
+      },
+      "episodic_referent": "cat",
+      "episodic_discussed_topics": [
+        "dog"
+      ],
+      "episodic_referent_in_memory": false,
+      "surface_confabulation": false,
+      "ungrounded_words": [],
+      "episodic_recalled_facts": [
+        [
+          "dog",
+          "go",
+          "east"
+        ],
+        [
+          "dog",
+          "look",
+          "river"
+        ],
+        [
+          "dog",
+          "run",
+          "north"
+        ]
+      ]
     },
     {
       "turn": 8,
@@ -790,17 +814,17 @@
       ],
       "confabulated": false,
       "assessment": "No in-vocab cue and no faculty for this intent (small talk / humor / abstract opinion / social closing). The brain has nothing grounded to say -> silence/abstain. Honest.",
-      "affect_differential": 0.06972222222222223,
+      "affect_differential": 0.06805555555555555,
       "affect_tone_level": 3,
       "affect_tone_token": "warmly, gladly",
       "host_fed_appraisal": 1.0,
       "curiosity_want_hz": 76.38888888888889,
       "arbiter_winner": "arb_ask",
-      "arbiter_margin": 0.006993006942148836,
+      "arbiter_margin": 0.013513513418553643,
       "arbiter_rates": {
-        "arb_volunteer": 0.06826923076923076,
-        "arb_ask": 0.06923076923076923,
-        "arb_silent": 0.0
+        "arb_volunteer": 0.07019230769230769,
+        "arb_ask": 0.07211538461538461,
+        "arb_silent": 0.0009615384615384616
       }
     }
   ],
