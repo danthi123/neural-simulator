@@ -1,0 +1,265 @@
+{
+ "runner": "_pragmatic_success_distinctiveness_learn_derisk",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "aggregate": {
+  "n_seeds": 6,
+  "n_train": 360,
+  "ema_beta": 0.4,
+  "PLAIN_fix_aligned": 0.4445,
+  "PRAG_fix_aligned": 0.5555,
+  "PLAIN_fix_own": 0.7778,
+  "PRAG_fix_own": 0.8889,
+  "PLAIN_all_contingent": false,
+  "PRAG_all_contingent": false,
+  "elapsed_seconds": 1357.9
+ },
+ "per_seed": [
+  {
+   "seed": 42,
+   "aligned": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "succ_opt_plain": {
+    "0": 0,
+    "1": 2,
+    "2": 2
+   },
+   "succ_opt_prag": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "PLAIN": {
+    "reward": "plain(S)",
+    "fix_weight_argmax_vs_own": 1.0,
+    "fix_weight_argmax_vs_aligned": 0.6667,
+    "fix_actor_wta_vs_aligned": 0.6667,
+    "fix_weight_sep_vs_own": 1.52951,
+    "yoked_weight_argmax_vs_own": 0.0,
+    "yoked_weight_sep_vs_own": -0.40418,
+    "untrained_weight_sep_vs_own": 0.0026,
+    "contingency_pass": true
+   },
+   "PRAG": {
+    "reward": "pragmatic(distinctiveness)",
+    "fix_weight_argmax_vs_own": 1.0,
+    "fix_weight_argmax_vs_aligned": 1.0,
+    "fix_actor_wta_vs_aligned": 1.0,
+    "fix_weight_sep_vs_own": 1.76179,
+    "yoked_weight_argmax_vs_own": 0.3333,
+    "yoked_weight_sep_vs_own": 0.01971,
+    "untrained_weight_sep_vs_own": 0.00275,
+    "contingency_pass": true
+   }
+  },
+  {
+   "seed": 43,
+   "aligned": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "succ_opt_plain": {
+    "0": 2,
+    "1": 2,
+    "2": 0
+   },
+   "succ_opt_prag": {
+    "0": 2,
+    "1": 2,
+    "2": 1
+   },
+   "PLAIN": {
+    "reward": "plain(S)",
+    "fix_weight_argmax_vs_own": 0.6667,
+    "fix_weight_argmax_vs_aligned": 0.0,
+    "fix_actor_wta_vs_aligned": 0.0,
+    "fix_weight_sep_vs_own": 1.16323,
+    "yoked_weight_argmax_vs_own": 0.3333,
+    "yoked_weight_sep_vs_own": 0.00533,
+    "untrained_weight_sep_vs_own": -1e-05,
+    "contingency_pass": true
+   },
+   "PRAG": {
+    "reward": "pragmatic(distinctiveness)",
+    "fix_weight_argmax_vs_own": 0.6667,
+    "fix_weight_argmax_vs_aligned": 0.0,
+    "fix_actor_wta_vs_aligned": 0.0,
+    "fix_weight_sep_vs_own": 1.06601,
+    "yoked_weight_argmax_vs_own": 0.6667,
+    "yoked_weight_sep_vs_own": 0.23439,
+    "untrained_weight_sep_vs_own": -0.00031,
+    "contingency_pass": false
+   }
+  },
+  {
+   "seed": 44,
+   "aligned": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "succ_opt_plain": {
+    "0": 2,
+    "1": 0,
+    "2": 2
+   },
+   "succ_opt_prag": {
+    "0": 1,
+    "1": 0,
+    "2": 2
+   },
+   "PLAIN": {
+    "reward": "plain(S)",
+    "fix_weight_argmax_vs_own": 0.6667,
+    "fix_weight_argmax_vs_aligned": 0.3333,
+    "fix_actor_wta_vs_aligned": 0.3333,
+    "fix_weight_sep_vs_own": 0.80432,
+    "yoked_weight_argmax_vs_own": 0.6667,
+    "yoked_weight_sep_vs_own": 0.30713,
+    "untrained_weight_sep_vs_own": -0.00112,
+    "contingency_pass": false
+   },
+   "PRAG": {
+    "reward": "pragmatic(distinctiveness)",
+    "fix_weight_argmax_vs_own": 1.0,
+    "fix_weight_argmax_vs_aligned": 0.3333,
+    "fix_actor_wta_vs_aligned": 0.3333,
+    "fix_weight_sep_vs_own": 2.28473,
+    "yoked_weight_argmax_vs_own": 0.0,
+    "yoked_weight_sep_vs_own": -0.17885,
+    "untrained_weight_sep_vs_own": -0.00203,
+    "contingency_pass": true
+   }
+  },
+  {
+   "seed": 100,
+   "aligned": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "succ_opt_plain": {
+    "0": 1,
+    "1": 1,
+    "2": 2
+   },
+   "succ_opt_prag": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "PLAIN": {
+    "reward": "plain(S)",
+    "fix_weight_argmax_vs_own": 1.0,
+    "fix_weight_argmax_vs_aligned": 0.6667,
+    "fix_actor_wta_vs_aligned": 0.3333,
+    "fix_weight_sep_vs_own": 0.8465,
+    "yoked_weight_argmax_vs_own": 0.6667,
+    "yoked_weight_sep_vs_own": 0.32461,
+    "untrained_weight_sep_vs_own": -0.00025,
+    "contingency_pass": false
+   },
+   "PRAG": {
+    "reward": "pragmatic(distinctiveness)",
+    "fix_weight_argmax_vs_own": 1.0,
+    "fix_weight_argmax_vs_aligned": 1.0,
+    "fix_actor_wta_vs_aligned": 0.6667,
+    "fix_weight_sep_vs_own": 0.9419,
+    "yoked_weight_argmax_vs_own": 0.3333,
+    "yoked_weight_sep_vs_own": 0.01027,
+    "untrained_weight_sep_vs_own": 0.00041,
+    "contingency_pass": true
+   }
+  },
+  {
+   "seed": 101,
+   "aligned": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "succ_opt_plain": {
+    "0": 0,
+    "1": 1,
+    "2": 0
+   },
+   "succ_opt_prag": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "PLAIN": {
+    "reward": "plain(S)",
+    "fix_weight_argmax_vs_own": 0.6667,
+    "fix_weight_argmax_vs_aligned": 1.0,
+    "fix_actor_wta_vs_aligned": 1.0,
+    "fix_weight_sep_vs_own": 1.47093,
+    "yoked_weight_argmax_vs_own": 0.0,
+    "yoked_weight_sep_vs_own": -0.41561,
+    "untrained_weight_sep_vs_own": 0.00296,
+    "contingency_pass": true
+   },
+   "PRAG": {
+    "reward": "pragmatic(distinctiveness)",
+    "fix_weight_argmax_vs_own": 1.0,
+    "fix_weight_argmax_vs_aligned": 1.0,
+    "fix_actor_wta_vs_aligned": 1.0,
+    "fix_weight_sep_vs_own": 2.4596,
+    "yoked_weight_argmax_vs_own": 0.3333,
+    "yoked_weight_sep_vs_own": -0.07928,
+    "untrained_weight_sep_vs_own": 0.00232,
+    "contingency_pass": true
+   }
+  },
+  {
+   "seed": 102,
+   "aligned": {
+    "0": 0,
+    "1": 1,
+    "2": 2
+   },
+   "succ_opt_plain": {
+    "0": 0,
+    "1": 0,
+    "2": 0
+   },
+   "succ_opt_prag": {
+    "0": 2,
+    "1": 1,
+    "2": 0
+   },
+   "PLAIN": {
+    "reward": "plain(S)",
+    "fix_weight_argmax_vs_own": 0.6667,
+    "fix_weight_argmax_vs_aligned": 0.0,
+    "fix_actor_wta_vs_aligned": 0.0,
+    "fix_weight_sep_vs_own": 1.21157,
+    "yoked_weight_argmax_vs_own": 0.0,
+    "yoked_weight_sep_vs_own": -0.25635,
+    "untrained_weight_sep_vs_own": 0.00061,
+    "contingency_pass": true
+   },
+   "PRAG": {
+    "reward": "pragmatic(distinctiveness)",
+    "fix_weight_argmax_vs_own": 0.6667,
+    "fix_weight_argmax_vs_aligned": 0.0,
+    "fix_actor_wta_vs_aligned": 0.0,
+    "fix_weight_sep_vs_own": 0.96523,
+    "yoked_weight_argmax_vs_own": 0.6667,
+    "yoked_weight_sep_vs_own": 0.08954,
+    "untrained_weight_sep_vs_own": -0.0003,
+    "contingency_pass": false
+   }
+  }
+ ]
+}

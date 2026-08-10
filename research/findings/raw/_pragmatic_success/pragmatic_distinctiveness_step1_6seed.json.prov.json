@@ -1,0 +1,35 @@
+{
+ "run_id": "1786353405-3149587",
+ "runner": "research/runners/_pragmatic_success_distinctiveness_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_pragmatic_success_distinctiveness_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--json",
+  "research/findings/raw/_pragmatic_success/pragmatic_distinctiveness_step1_6seed.json"
+ ],
+ "git_sha": "47a7ab1f8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T05:16:45",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1119.9,
+ "corpus_check_query": "CA3 recurrent LTP pattern-selective completion attractor strength weight density held-out",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pragmatic_success/pragmatic_distinctiveness_step1_6seed.json"
+}

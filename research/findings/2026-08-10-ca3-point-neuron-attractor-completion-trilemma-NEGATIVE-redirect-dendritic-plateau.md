@@ -15,6 +15,14 @@ This ran the weight×density held-out completion sweep the 2026-07-17 refutation
 residual (`2026-08-10-episodic-cortical-cue-recall-completion-6seed-GO-*` at 0.646; NOT a transmission wall — that was
 refuted 3×). Result: an honest negative that maps the trilemma and confirms the dendritic redirect.
 
+**Prior-work acknowledgment (RAG-checked — this CONFIRMS an already-established boundary, it does not discover it).**
+`2026-07-18-gap5-completion-trilemma-magnitude-vs-specificity-vs-bistability.md` already established the same verdict
+("the single-compartment point-neuron soma has NO INTRINSIC BISTABILITY: a recurrent attractor strong enough to
+complete is non-specific"), via the FROZEN Wang seed-42 attractor. This finding's DISTINCT contributions are (1) an
+UPPER-BOUND argument — the negative holds even with a HAND-INSTALLED PERFECT selective potentiation (the best any
+emergent LTP could produce), swept over weight×density×3 seeds; and (2) the instrument-bug catch below (the prior
+point-neuron runner's STDP-inert clock). It is confirmatory, not novel.
+
 ## The negative (favorable-case, so an upper bound)
 
 <!--derived-->
@@ -39,11 +47,23 @@ installed, the emergent-LTP point-neuron path can only be WORSE (weight-collapse
 
 The point soma cannot separate the two horns — magnitude and specificity are anti-correlated across weight (raise W
 for completion → perm overtakes; the third horn, silent rest, also breaks). This is the same structural point-soma
-limit hit in 2026-07-08/17 across scales. **⇒ REDIRECT: the dendritic-plateau completion readout**
-(`2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`, 5/6 GO / 6/6 MECHANISM, perm=0.000
-and nocue=0.000 on EVERY seed) — its bistable silent DOWN-state supplies selectivity DECOUPLED from magnitude, exactly
-the horn the point-neuron attractor cannot hold. The episodic-recall residual (0.646 → ceiling) should be lifted via
-that dendritic readout, NOT via point-neuron recurrent-attractor strength.
+limit hit in 2026-07-08/17 across scales. **⇒ REDIRECT: the two-compartment dendritic dAP READOUT** — the STANDING
+result is `2026-07-08-riii-onsubstrate-dendritic-dAP-completion-SURPASS-6seed.md` (held-out completion 0.571 vs LINEAR
+point-neuron 0.007, 6-seed, 4 controls, adversarially verified), a READOUT surpass on a HAND-INSTALLED attractor —
+its regenerative plateau supplies selectivity DECOUPLED from magnitude, exactly the horn the point-neuron attractor
+cannot hold. **Correction (RAG-checked): the LEARNED + seed-robust dendritic attractor is NOT closed, and the live
+leads have moved past sparse recurrence.** The 2026-07-18 "learned attractor CLOSED 6/6 perm=0" claims are RETRACTED
+(RETRACTION 1 self-sustaining artifact; RETRACTION 2 the Wang seed-42 result was a plasticity+OU-noise confound —
+frozen+noise-free it reads cue=0.000 DEAD or 0.500 noise-driven). BIOLOGICAL SPARSE recurrence (Guzman-Jonas ~2%) was
+TESTED and gives only PARTIAL specificity (cue/perm plateaus ~1.37×, far below the 3× GO bar;
+`2026-07-18-gap5-specificity-research-gate-assembly-selective-inhibition.md`). The current research-gate leads for a
+ROBUST bistable+specific attractor are (a) ASSEMBLY-SELECTIVE inhibition (Kim-Kim 2025, not global — global fb=35 made
+it WORSE) and (b) a SOMATIC slow-NMDA reverberatory attractor + E/I working point (Wang 2002 / Amit-Brunel / Kopsick,
+using slow-NMDA reverberation as the attractor rather than the dAP coincidence readout;
+`2026-07-18-gap5-bistable-completion-mechanism-research-gate.md`) — whether either reaches GO is the open frontier. So
+the episodic-recall residual (0.646 → ceiling) is lifted by the dendritic READOUT on a formed attractor, NOT by
+point-neuron
+recurrent-attractor strength — with the LEARNED-attractor robustness itself still an open frontier.
 
 ## Instrument-bug catch (the prior runner could not test trained LTP)
 
