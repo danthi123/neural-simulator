@@ -1,0 +1,369 @@
+{
+  "probe": "teacher_loop_arity3_composition",
+  "seed": 43,
+  "backend": "numpy",
+  "single_seed_smoke": false,
+  "K": 4,
+  "held_out": 16,
+  "held_out2": 4,
+  "elapsed_seconds": 1208.6,
+  "result": {
+    "seed": 43,
+    "K": 4,
+    "d_a": 8,
+    "d_b": 8,
+    "d_c": 8,
+    "n_in3": 26,
+    "substrate_byte_identical": true,
+    "substrate_seed_maxdiff": 0.0,
+    "sim_diff_empty": true,
+    "sim_diff_head": "",
+    "config": {
+      "K": 4,
+      "held3": 16,
+      "held2": 4,
+      "d_a": 8,
+      "d_b": 8,
+      "d_c": 8,
+      "noise": 0.12,
+      "gen_hidden": 96,
+      "gen_k": 96,
+      "gen_settle": 15,
+      "gen_lr": 0.8,
+      "w_clip": 4000.0,
+      "bdsp_wmax": 1000000000.0,
+      "conv_tol": 0.02,
+      "conv_max_epochs": 200,
+      "batch": 16,
+      "gen_epochs": 4,
+      "n_draws": 16,
+      "frozen_hidden": true
+    },
+    "arity3": {
+      "arity": 3,
+      "K1": 4,
+      "K2": 4,
+      "K3": 4,
+      "N": 64,
+      "P": 12,
+      "chance": 0.015625,
+      "n_in": 26,
+      "d_p": 24,
+      "held_out_n": 16,
+      "taught_n": 48,
+      "held_out_idx": [
+        2,
+        5,
+        6,
+        7,
+        10,
+        11,
+        16,
+        18,
+        23,
+        27,
+        29,
+        31,
+        47,
+        48,
+        51,
+        62
+      ],
+      "held_out_attrs": [
+        [
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          2,
+          2
+        ],
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          1,
+          3
+        ],
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          1,
+          3,
+          1
+        ],
+        [
+          1,
+          3,
+          3
+        ],
+        [
+          2,
+          3,
+          3
+        ],
+        [
+          3,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          3
+        ],
+        [
+          3,
+          3,
+          2
+        ]
+      ],
+      "taught_heldout_disjoint": true,
+      "every_heldout_primitive_seen_in_taught": true,
+      "no_leakage_heldout_never_trained": true,
+      "compositional_heldout_recall": 1.0,
+      "noncompositional_v2_heldout_recall": 0.0,
+      "flat_heldout_recall": 0.0625,
+      "compositional_seen_recall": 1.0,
+      "noncompositional_v2_seen_recall": 1.0,
+      "flat_seen_recall": 1.0,
+      "compositional_heldout_cos": 0.9996928359861359,
+      "compositional_seen_cos": 0.9997104388128998,
+      "noncompositional_v2_heldout_cos": 0.7460169561709171,
+      "lesion_localises_heldout": {
+        "lesionA_Ablock_delta": 1.5630792459537202,
+        "lesionA_other_delta": 0.0,
+        "lesionB_Bblock_delta": 1.5223925033923633,
+        "lesionB_other_delta": 0.0,
+        "lesionC_Cblock_delta": 1.697208416785962,
+        "lesionC_other_delta": 0.0,
+        "localises": true
+      },
+      "compositional_stored_raw_patterns": 0,
+      "compositional_used_ruler": false,
+      "heldout_miss_lowcos_interference": 0,
+      "heldout_miss_highcos_collision": 0
+    },
+    "arity2": {
+      "K1": 4,
+      "K2": 4,
+      "N": 16,
+      "P": 8,
+      "chance": 0.0625,
+      "n_in": 18,
+      "d_p": 16,
+      "held_out_n": 4,
+      "taught_n": 12,
+      "held_out_idx": [
+        0,
+        1,
+        5,
+        8
+      ],
+      "held_out_attrs": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      "taught_heldout_disjoint": true,
+      "every_heldout_primitive_seen_in_taught": true,
+      "no_leakage_heldout_never_trained": true,
+      "compositional_heldout_recall": 1.0,
+      "noncompositional_v2_heldout_recall": 0.25,
+      "flat_heldout_recall": 0.25,
+      "compositional_seen_recall": 1.0,
+      "noncompositional_v2_seen_recall": 1.0,
+      "flat_seen_recall": 1.0,
+      "compositional_heldout_cos": 0.9993247280073848,
+      "compositional_seen_cos": 0.9994941325648429,
+      "noncompositional_v2_heldout_cos": 0.8564282841295279,
+      "lesion_localises_heldout": {
+        "lesionA_Ablock_delta": 1.5194663637507304,
+        "lesionA_Bblock_delta": 0.0,
+        "lesionB_Bblock_delta": 1.3908984008849572,
+        "lesionB_Ablock_delta": 0.0,
+        "localises": true
+      },
+      "compositional_stored_raw_patterns": 0,
+      "compositional_used_ruler": false,
+      "heldout_miss_lowcos_interference": 0,
+      "heldout_miss_highcos_collision": 0
+    }
+  },
+  "verdict": {
+    "arity3_go": true,
+    "arity3": {
+      "N": 64,
+      "chance": 0.015625,
+      "held_out_n": 16,
+      "taught_n": 48,
+      "compositional_heldout_recall": 1.0,
+      "noncompositional_v2_heldout_recall": 0.0,
+      "flat_heldout_recall": 0.0625,
+      "compositional_seen_recall": 1.0,
+      "compositional_minus_v2": 1.0,
+      "compositional_minus_flat": 0.9375,
+      "compositional_heldout_cos": 0.9996928359861359,
+      "lesion_localises": true,
+      "heldout_miss_lowcos_interference": 0,
+      "heldout_miss_highcos_collision": 0
+    },
+    "arity2_baseline": {
+      "N": 16,
+      "chance": 0.0625,
+      "held_out_n": 4,
+      "compositional_heldout_recall": 1.0,
+      "noncompositional_v2_heldout_recall": 0.25,
+      "flat_heldout_recall": 0.25,
+      "compositional_seen_recall": 1.0
+    },
+    "substrate_byte_identical": true,
+    "sim_diff_empty": true,
+    "label": "teacher-loop ARITY-3 zero-shot composition (3-way neural superposition)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "[arity3] compositional HELD-OUT recall >= 0.5 (3-way zero-shot composition)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 (chance 0.0156) N=64"
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 vs v2 0.00"
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "comp 1.00 vs flat 0.06"
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] compositional SEEN (taught) recall >= 0.85 (sanity)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "seen 1.00"
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] composition NEURAL on held-out (3-way lesion localises)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "A:1.56 B:1.52 C:1.70"
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] taught/held-out DISJOINT",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] every held-out primitive seen in >= 1 taught fact",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] NO leakage (held-out never trained)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] 0 stored raw patterns (composes, not a buffer)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "[arity3] generator never read the ruler",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "[arity2 baseline] compositional held-out recall (the ~1.00 reference)",
+        "ok": true,
+        "detail": "1 vs floor 0.5",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(seed) substrate byte-identical",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max threshold diff 0.00e+00"
+      },
+      {
+        "kind": "require",
+        "name": "(sim) git diff main -- sim/ empty",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "corpus_check_fresh": true
+}

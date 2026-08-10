@@ -1,0 +1,441 @@
+{
+  "probe": "teacher_loop_arity3_composition_AGG",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "backend": "numpy",
+  "K": 4,
+  "held_out": 16,
+  "held_out2": 4,
+  "go_count": 2,
+  "n_seeds": 3,
+  "arity3": {
+    "N": 64,
+    "chance": 0.015625,
+    "compositional_heldout_recall_mean": 1.0,
+    "compositional_heldout_recall_per_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "noncompositional_v2_heldout_recall_mean": 0.041666666666666664,
+    "flat_heldout_recall_mean": 0.020833333333333332,
+    "compositional_seen_recall_mean": 1.0
+  },
+  "arity2_baseline": {
+    "N": 16,
+    "chance": 0.0625,
+    "compositional_heldout_recall_mean": 1.0,
+    "compositional_heldout_recall_per_seed": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": {
+        "arity3_go": true,
+        "arity3": {
+          "N": 64,
+          "chance": 0.015625,
+          "held_out_n": 16,
+          "taught_n": 48,
+          "compositional_heldout_recall": 1.0,
+          "noncompositional_v2_heldout_recall": 0.0625,
+          "flat_heldout_recall": 0.0,
+          "compositional_seen_recall": 1.0,
+          "compositional_minus_v2": 0.9375,
+          "compositional_minus_flat": 1.0,
+          "compositional_heldout_cos": 0.9997043667089273,
+          "lesion_localises": true,
+          "heldout_miss_lowcos_interference": 0,
+          "heldout_miss_highcos_collision": 0
+        },
+        "arity2_baseline": {
+          "N": 16,
+          "chance": 0.0625,
+          "held_out_n": 4,
+          "compositional_heldout_recall": 1.0,
+          "noncompositional_v2_heldout_recall": 0.0,
+          "flat_heldout_recall": 0.0,
+          "compositional_seen_recall": 1.0
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ARITY-3 zero-shot composition (3-way neural superposition)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[arity3] compositional HELD-OUT recall >= 0.5 (3-way zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.0156) N=64"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.06"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] composition NEURAL on held-out (3-way lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.68 B:1.61 C:1.54"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] every held-out primitive seen in >= 1 taught fact",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] generator never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "[arity2 baseline] compositional held-out recall (the ~1.00 reference)",
+            "ok": true,
+            "detail": "1 vs floor 0.5",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_arity3_composition_s42.json"
+    },
+    {
+      "seed": 43,
+      "verdict": {
+        "arity3_go": true,
+        "arity3": {
+          "N": 64,
+          "chance": 0.015625,
+          "held_out_n": 16,
+          "taught_n": 48,
+          "compositional_heldout_recall": 1.0,
+          "noncompositional_v2_heldout_recall": 0.0,
+          "flat_heldout_recall": 0.0625,
+          "compositional_seen_recall": 1.0,
+          "compositional_minus_v2": 1.0,
+          "compositional_minus_flat": 0.9375,
+          "compositional_heldout_cos": 0.9996928359861359,
+          "lesion_localises": true,
+          "heldout_miss_lowcos_interference": 0,
+          "heldout_miss_highcos_collision": 0
+        },
+        "arity2_baseline": {
+          "N": 16,
+          "chance": 0.0625,
+          "held_out_n": 4,
+          "compositional_heldout_recall": 1.0,
+          "noncompositional_v2_heldout_recall": 0.25,
+          "flat_heldout_recall": 0.25,
+          "compositional_seen_recall": 1.0
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop ARITY-3 zero-shot composition (3-way neural superposition)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[arity3] compositional HELD-OUT recall >= 0.5 (3-way zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.0156) N=64"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.06"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] composition NEURAL on held-out (3-way lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.56 B:1.52 C:1.70"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] every held-out primitive seen in >= 1 taught fact",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] generator never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "[arity2 baseline] compositional held-out recall (the ~1.00 reference)",
+            "ok": true,
+            "detail": "1 vs floor 0.5",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_arity3_composition_s43.json"
+    },
+    {
+      "seed": 44,
+      "verdict": {
+        "arity3_go": true,
+        "arity3": {
+          "N": 64,
+          "chance": 0.015625,
+          "held_out_n": 16,
+          "taught_n": 48,
+          "compositional_heldout_recall": 1.0,
+          "noncompositional_v2_heldout_recall": 0.0625,
+          "flat_heldout_recall": 0.0,
+          "compositional_seen_recall": 1.0,
+          "compositional_minus_v2": 0.9375,
+          "compositional_minus_flat": 1.0,
+          "compositional_heldout_cos": 0.9994402605440016,
+          "lesion_localises": true,
+          "heldout_miss_lowcos_interference": 0,
+          "heldout_miss_highcos_collision": 0
+        },
+        "arity2_baseline": {
+          "N": 16,
+          "chance": 0.0625,
+          "held_out_n": 4,
+          "compositional_heldout_recall": 1.0,
+          "noncompositional_v2_heldout_recall": 0.0,
+          "flat_heldout_recall": 0.0,
+          "compositional_seen_recall": 1.0
+        },
+        "substrate_byte_identical": true,
+        "sim_diff_empty": false,
+        "label": "teacher-loop ARITY-3 zero-shot composition (3-way neural superposition)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: (sim) git diff main -- sim/ empty (measured=False expect=True)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[arity3] compositional HELD-OUT recall >= 0.5 (3-way zero-shot composition)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 (chance 0.0156) N=64"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional held-out >= v2 held-out + 0.30 (composes, not memorizes)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs v2 0.06"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional held-out >= flat held-out + 0.30 (beats the instance floor)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "comp 1.00 vs flat 0.00"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] compositional SEEN (taught) recall >= 0.85 (sanity)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "seen 1.00"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] composition NEURAL on held-out (3-way lesion localises)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "A:1.60 B:1.54 C:1.61"
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] taught/held-out DISJOINT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] every held-out primitive seen in >= 1 taught fact",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] NO leakage (held-out never trained)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] 0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "[arity3] generator never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "[arity2 baseline] compositional held-out recall (the ~1.00 reference)",
+            "ok": true,
+            "detail": "1 vs floor 0.5",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_arity3_composition_s44.json"
+    }
+  ],
+  "corpus_check_fresh": true
+}
