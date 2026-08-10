@@ -18,12 +18,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **⭐⭐ LATER 2026-08-10 — THE INTEGRATION ARC (owner-steered; SUPERSEDES the overnight ledger below as the FRONTIER).**
 > Owner steer: stop de-risking faculties in isolation — WIRE each GO faculty into the LIVE 14-turn chat
 > (`_conversation_turing_test_derisk.py` over `build_one_brain`) and gate on *"did the conversation get better."*
-> **Merged into `main` (HEAD `a9404bcc` = origin/main), each verified on the live chat, 0 confab, no regression:**
+> **Merged into `main` (HEAD `bcba4da0` = origin/main), each verified on the live chat, 0 confab, no regression:**
 > **#1** sub-clausal no-confab moat (drops invented causal clauses; confab 3→0, 6-seed) · **#2/#2b** episodic dialogue
 > memory (turn-7 recall; GATE wired to the spiking gap#5 dendritic-dAP CA3 completion, `--spiking-episodic` default-OFF;
 > numpy dAP read=0 honest-negative→host-oracle guard, **cupy is the 6/6 GO backend**) · **#3/#3b/#3c** honest inner-state
 > read-outs (affect self-report; structural self-affirmation + graded certainty; #3c certainty-band OPPONENT comparator
-> → confidence read ROBUST on ALL 6 seeds, min +0.052). **gap#5 episodic memory mechanistically CLOSED end-to-end**
+> → confidence read ROBUST on ALL 6 seeds, min +0.052) · **#5** honest causal-query disclaimer (`bcba4da0`) — turn 4
+> "why did the dog go east?" now CONFIRMS the fact via the moat + HONESTLY DISCLOSES it has no causal faculty + refuses
+> to invent a reason, instead of deflecting; 6/6, 0 confab, only turn 4 changes. Follow-on = emergent causal COMPOSITION. **gap#5 episodic memory mechanistically CLOSED end-to-end**
 > (DG-select→BTSP forms→dendritic-dAP readout completes, 6/6 `ab9f7dbe`). Composed live chat (seed 42): 6 honest replies
 > + 8 honest silences (moat holding = success) + **0 confab**. Sharpest residual = **Turn 4** ("why did the dog go
 > east?"→deflects, no causal faculty).
@@ -36,18 +38,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > (worktree `integration-5-honest-causal-query`, off `a9404bcc`) — INTEGRATION #5 turn-4 honest causal-disclaimer;
 > coordinator merges. **(d)** state-heartbeat Monitor live.
 >
-> **D word-decode disposition (NOT a negative):** neural FS-WTA word-decode de-risk is GO (parity 1.000 vs host, 6/6,
-> hard-reset). The cupy `--no-hard-reset` run hit CHANCE (host too) but that is MIS-SCOPED — the real
-> `ConceptFrameSpeaker.spell(word, reset_steps=50)` RESETS between words, so zero-reset is not the live mode. **Re-run
-> the cupy confirmation with `reset_steps≈50` / `--hard-reset`** once VRAM frees. Bank as scope, not a wall.
+> **D word-decode disposition (SETTLED):** the neural FS-WTA word-decode MECHANISM is GO (parity 1.000 vs host
+> cosine-argmax, 6/6) on FRESH per-seed bridges where the substrate separates words. But the **v16 PRODUCTION speaker is
+> NOT word-separable on EITHER backend** — HOST cosine-argmax itself decodes at CHANCE (0.062) on both numpy AND cupy,
+> in both hard-reset and no-reset modes (`neural_wta_16word_{cupy,numpy}_v16_s42.json`). So this is NOT a WTA failure,
+> NOT a reset-mode issue, NOT a backend-load bug — the v16 speaker's `language_output` patterns are not linearly
+> separable by word. **The mechanism GO stands; the v16 wire-in needs a SEPARABLE speaker representation first (the
+> named follow-on).** Not a wall on the method.
 >
 > **BRANCH NOTE:** the integration arc lives on `main` (worktree `gate-b-v2-clean`, = origin/main). The PRIMARY repo
 > checkout is on the stale `codex/gap4-axon-capd-derisk` branch (different work + CRLF noise) — commit integration work
 > on `main`, not there.
 >
-> **NEXT (ordered):** land (a)→commit if it fires; merge (c) #5; merge (b) CI gate; re-run D cupy in the correct reset
-> mode; then reduce the 8 silences the RIGHT way — emergent breadth via the teacher-loop (EMERGENCE BAR), not hand-added
-> phatic handlers.
+> **NEXT (ordered):** land (a) cupy episodic → commit if turn-7 dAP fires; merge (b) CI gate; then the **EMERGENT-BREADTH
+> ARC** — reduce the 8 silences the RIGHT way (the brain LEARNS more grounded content it can genuinely say, per the
+> EMERGENCE BAR — NOT hand-added phatic handlers). Foundation already GO: teacher-loop learns 1 new fact + reuses it
+> (moat-leak residual, `2026-08-08`), grounded-P2 curriculum re-encode+recall+abstain 6/6, corpus-SVO fact-learning from
+> TinyStories (`2026-07-08`). Breadth-mapping agent scoping the exact wire-in + the moat-integrity gate. #5 causal +
+> D-word-decode both SETTLED (above).
 
 > **⭐ OVERNIGHT 2026-08-10 (owner asleep, autonomous) — the night's ledger (all banked + pushed both remotes):**
 > (1) **EPISODIC neural cue-recall = 6-seed GO** (`ead8e0b7`, recall 0.646 vs 0.25; completion-driven, permuted-
