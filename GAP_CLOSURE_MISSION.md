@@ -37,12 +37,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > east?"→deflects, no causal faculty).
 >
 > **⚠️ LIVE BACKGROUND WORK (do NOT double-launch; owner OK'd GPU while gaming IF VRAM<24GB, ~13GB used):**
-> **(a)** cupy `--spiking-episodic` eval (backgrounded waiter `b3tqsguud` re-invokes on completion) — decisive test of
-> whether the dAP episodic recall FIRES on cupy (STORE already fired `w_within=84.9`); if turn-7 `apical_cue>0` ⇒ recall
-> is GENUINELY SPIKING live ⇒ finding + commit artifact (NO eval edit → no conflict with (c)). **(b)** aggregator agent
-> `adca06d47a5751e5e` — multi-seed conversation-quality CI gate. **(c)** causal-query agent `a22bf78d9b149869f`
-> (worktree `integration-5-honest-causal-query`, off `a9404bcc`) — INTEGRATION #5 turn-4 honest causal-disclaimer;
-> coordinator merges. **(d)** state-heartbeat Monitor live.
+> **(a)** episodic-dAP FIX agent `a14998b8d4b12a4fd` (worktree off `d010af23`) — corrects the #2b cupy-GO claim + FIXES
+> the module: kthresh 30→15 (the real dAP GO working point) + size-aware small assemblies + numpy@kt15 determination +
+> 6-seed + correct finding/board/roadmap + wire the eval. Coordinator verifies+merges. **(b)** numpy kt15 module test
+> (`scratchpad/focused_episodic_kt15_numpy.out`, id `bhriz9hmg`) — decisive: does the module fire at kt15 on NUMPY (⇒
+> live chat gets genuinely-spiking recall with NO cupy needed)? The fix agent also reads it. **(c)** state-heartbeat
+> Monitor live. **DONE this session (merged+pushed, main=`d010af23`):** #5 causal-disclaimer (`bcba4da0`), #6 corpus-
+> breadth (`53e84397`, 6/6 GO adversarially re-verified: breadth 2→9, empty-kb control passes all 6). **ABANDONED:** the
+> CI-gate aggregator (agent `adca06d47a5751e5e` STALLED 2h46m, no artifact — re-attemptable nice-to-have, not blocking).
+> **KILLED:** the full cupy `--spiking-episodic` eval (HUNG — turn 7 built a 2nd full brain → >24GB VRAM deadlock;
+> replaced by the focused module test, which is how the #2b cupy claim got falsified).
 >
 > **D word-decode disposition (SETTLED):** the neural FS-WTA word-decode MECHANISM is GO (parity 1.000 vs host
 > cosine-argmax, 6/6) on FRESH per-seed bridges where the substrate separates words. But the **v16 PRODUCTION speaker is
