@@ -1,0 +1,35 @@
+{
+ "run_id": "1786370484-3314503",
+ "runner": "research/runners/_gap5_size_aware_completion_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gap5_size_aware_completion_derisk.py",
+  "--seeds",
+  "42",
+  "--no-lesion",
+  "--conditions",
+  "control_d012:0.12:60:-",
+  "sa_d05_ff400:0.05:60:400",
+  "sa_d08_ff400:0.08:60:400",
+  "--out",
+  "research/findings/raw/_gap5_e2e/size_aware_smoke_s42.json"
+ ],
+ "git_sha": "cff6a8e2f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T10:01:24",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 779.8,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gap5_e2e/size_aware_smoke_s42.json"
+}

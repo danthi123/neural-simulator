@@ -338,19 +338,26 @@ def form_btsp_multi(seed, build_kwargs, R_target, *, btsp_w_max, btsp_lr, encode
                 within_sum_per_post=R_target.within_sum_per_post())
 
 
-def _build_bridge(seed, *, n_ca3, ca3_density, ca3_fb_inhib, nmda_tau, nmda_ratio, enable_ou, element):
+def _build_bridge(seed, *, n_ca3, ca3_density, ca3_fb_inhib, nmda_tau, nmda_ratio, enable_ou, element,
+                  ca3_ff_inhib=None):
+    # ca3_ff_inhib (ADDITIVE, default None => byte-identical, no ca3_ff_basket built): when >0, build the E%-max
+    # FEEDFORWARD divisive-normalization ca3 basket (de Almeida-Idiart-Lisman 2009 / Pouille-Scanziani 2001) so the
+    # completion inhibition SCALES with the active-population size. During the COMPLETION read DG is silent, so the
+    # basket is driven by the ca3->ca3_ff_basket arm (the cue volley) -> disynaptic feedforward inhibition onto the
+    # held-out cells proportional to the number of active cells (the size-aware fix the SEAM finding named). Same
+    # divisive-norm companion process that made emergent-DG SELECTION size-robust across a >10x input range.
     _nmda_rec = (element == "nmda_slow")
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=ca3_density, coincidence=False, two_comp=False,
                     nmda_recurrent=_nmda_rec, nmda_tau=nmda_tau, nmda_ratio=nmda_ratio,
-                    ca3_fb_inhib=ca3_fb_inhib, train=False, enable_ou=enable_ou)
+                    ca3_fb_inhib=ca3_fb_inhib, ca3_ff_inhib=ca3_ff_inhib, train=False, enable_ou=enable_ou)
     cfg = bridge.core_config
     cfg.enable_hebbian_learning = False; cfg.enable_stdp = False; cfg.enable_structural_plasticity = False
     return bridge
 
 
 def run_seed(seed, *, n_ca3=400, ca3_density=0.12, assembly_frac=0.18, cue_frac=0.5, ca3_fb_inhib=60.0,
-             nmda_tau=100.0, nmda_ratio=1.0, drive_pA=300.0, warm_steps=200, read_steps=200, silence_steps=50,
-             enable_ou=False, element="nmda_slow",
+             ca3_ff_inhib=None, nmda_tau=100.0, nmda_ratio=1.0, drive_pA=300.0, warm_steps=200, read_steps=200,
+             silence_steps=50, enable_ou=False, element="nmda_slow",
              btsp_w_max_grid=(2500.0, 5000.0, 9000.0), btsp_lr=0.05, encode_drive=700.0, encode_plateau_pA=250.0,
              train_events=40, drive_steps=48, reset_steps=15,
              handinstall_W=(2500.0, 5000.0, 9000.0), kopsick_T=None, verbose=True, assemblies_ext=None):
@@ -358,8 +365,8 @@ def run_seed(seed, *, n_ca3=400, ca3_density=0.12, assembly_frac=0.18, cue_frac=
     from tools.lab import attributable_to
     cp, _ = get_backend()
     rows_out = []
-    build_kwargs = dict(n_ca3=n_ca3, ca3_density=ca3_density, ca3_fb_inhib=ca3_fb_inhib, nmda_tau=nmda_tau,
-                        nmda_ratio=nmda_ratio, enable_ou=False, element=element)   # ENCODE episodes are deterministic
+    build_kwargs = dict(n_ca3=n_ca3, ca3_density=ca3_density, ca3_fb_inhib=ca3_fb_inhib, ca3_ff_inhib=ca3_ff_inhib,
+                        nmda_tau=nmda_tau, nmda_ratio=nmda_ratio, enable_ou=False, element=element)   # ENCODE deterministic
     read_kwargs = dict(assembly_frac=assembly_frac, cue_frac=cue_frac, drive_pA=drive_pA,
                        warm_steps=warm_steps, read_steps=read_steps, silence_steps=silence_steps,
                        assemblies_ext=assemblies_ext)
