@@ -115,6 +115,10 @@ The reward/value + homeostatic-drive halves are essentially **DONE**; the affect
 
 **Language side is HAVE/BUILDABLE-NOW and emergent** (comprehension role-map, production grammar, lexicon all self-organized from corpus stream, NO `sim/` edit). **Reasoning splits sharply:** deductive + inductive + analogical inference run on the brain's own learned codes (GO); **causal, counterfactual, and free deliberation** bottleneck on the same missing organ — the learned forward model `s,a→s′` (gap#4).
 
+**⭐ 2026-08-09 — THE VSA COMPOSER IS BEING BIOLOGIZED (spiking), the host-shortcut retirement is UNDERWAY.** Neural compositional generalization = GO (`ea77003c5`, 6/6, verified): a spiking generator recalls NEVER-TAUGHT (a,b) combinations at 1.00 by neural SUPERPOSITION (VSA **bundle**) of two primitive spiking-readout outputs; floors at chance.
+**Bundle works; BIND (conjunction) is the named residual** — additive superposition breaks only at maximum non-linear mixing (interference test `5ae5f8979`, 6-seed, median first-break s=1.0), because a linear SUM can't separate conjunctively-mixed prototypes ⇒ needs a NON-LINEAR binding (dendritic-AND/sigma-pi/tensor — the D2 two-compartment substrate).
+RUNNING: conjunctive-binding de-risk (the composer BIND), deeper-arity (2→4), read-out drive-scaling. Storage: compositional generator stores O(√N) primitives (`e4417698d`). This maps the composer onto the substrate — bundle demonstrated, bind scoped to its biological mechanism.
+
 | Faculty | Tag | HAVE (cite) | WALL → SURPASS |
 |---|---|---|---|
 | **Comprehension (Wernicke, thematic roles)** | HAVE | voice-invariant `BridgeParser`; multi-cue Competition-Model parser (`case_aware_role_parser.py`, `attributed_parser.py`); **reservoir form→role** (`2026-07-03-emerge78-reservoir-form-to-role-GO.md`, non-local rel-clause 1.000; spiking `OnBridgeLSM` emerge80/82); wh-questions; nested clauses; D3 discourse | deep recursion (reservoir d\*=2) → **theta-gamma WM buffer+stack-match** (emerge85, d\*=3, faithful human bound); no abstain → **route parser through familiarity gate** ("didn't follow that") |

@@ -15,6 +15,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-09 (READ FIRST — live resume point)
 
+> **⭐⭐⭐⭐⭐ THE BIGGEST RESULT: NEURAL COMPOSITIONAL GENERALIZATION on the spiking substrate = GO (`ea77003c5`,
+> 6/6, adversarially verified) — the biologized composer.** The scalability arc ("will a year of data be too slow")
+> converged on COMPOSITIONALITY and delivered the composer's two operations on spikes: **BUNDLE (superposition)
+> WORKS** — a spiking generator recalls NEVER-TAUGHT (a,b) combinations at 1.00 by neural SUPERPOSITION of two
+> primitive spiking-readout outputs (fixed/flat floors at chance; lesion-localized; no leakage; verified). **BIND
+> (conjunction) is the named residual:** the interference stress test (`5ae5f8979`, 6-seed) shows bundle is robust
+> through moderate-to-strong non-linear mixing but breaks at MAXIMUM (median first-break s=1.0) — a linear SUM can't
+> separate conjunctively-mixed prototypes → the residual is a NON-LINEAR binding (dendritic-AND/sigma-pi/tensor).
+> Storage: a compositional generator stores O(√N) primitives (sub-linear), verified (`e4417698d`/`8c0c4b9ff`).
+> **⭐ 5 THREADS RUNNING (game off, local 20c + pool 36c):** conjunctive-binding=the composer BIND (`wf5y8a6ws`);
+> read-out drive/excitability scaling (`wontbhi8p`); deeper-composition arity 2→4 (`w5dtegvc9`); large-N
+> compositional retention on the POOL (`comp_largeN`, 10×10 finishing); [interference 6-seed DONE, banked]. The
+> POOL is UP (192.168.**0**.40-42, node@ + id_ed25519 aliases pool40/41/42; my "down" call was the wrong subnet).
+> **SCALABILITY, now a MAP not a wall:** retention closed@N=20 (non-forgetting generator `0933fdb7a`, re-diagnosed
+> as a query-code RANK fix not a recursion); storage sub-linear via compositional primitives; compute — fixed-k
+> prioritized replay NEGATIVE at scale (`777fcb0d`, needs sub-linear/compositional replay); capacity SLIPS at N=100
+> (`7ee36d66b`, bound-trap fix + small-N patch, NOT lifetime). The lifetime answer = CAPTURE SHARED STRUCTURE.
+
 > **⭐⭐⭐⭐⭐ N=20 BREADTH CRUX RESOLVED (2026-08-09, adversarially verified, banked) — and it was TWO things,
 > both honest.** An ultracode workflow (`wh7v93kqn`) + 4 external-research rounds (DR discipline) cracked it:
 > **(1) A BOUND-TRAP artifact.** Most of the historical "catastrophic forgetting" at N=20 (0.85→0.45) was the

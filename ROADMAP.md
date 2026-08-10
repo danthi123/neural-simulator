@@ -418,6 +418,18 @@ and change later behavior. A collection of connected demos is not enough.
     the brain does: a generator that doesn't forget its own dreams, and
     prioritized replay (don't replay every memory every night). Both are the
     next builds.
+  - **And it led somewhere bigger (2026-08-09).** Chasing "why doesn't a
+    lifetime of memory scale" led to the realization that experience *shares
+    structure*, so the brain should store the structure, not the instances —
+    i.e. compose. We then showed the spiking brain **can compose**: taught most
+    of a grid of two-attribute facts but *holding some combinations out*, a
+    spiking generator recalled the never-taught combinations perfectly (1.00,
+    6/6) by neurally superposing the primitives it had seen elsewhere — genuine
+    **zero-shot compositional generalization**, the core skill for producing
+    novel sentences. That's the project's VSA "composer" running in spikes. It's
+    robust until the attributes interfere strongly, where a linear sum can't
+    encode an AND — so the next build is a neural *binding* operation (dendritic
+    AND), already running.
 - Grow structure as needed through activity-dependent connections, neuron or
   region growth, pruning, homeostasis, and replay-based consolidation.
 - Turn the affect core into graded internal state that changes attention,
