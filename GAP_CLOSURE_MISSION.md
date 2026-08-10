@@ -108,15 +108,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > cue≥0.20/3× bar); a 9-point density×ff grid found no operating point; the hand-install (perfect W) self-ignites MORE
 > (stronger attractor = wrong direction). **⇒ the DEEP residual = the ~23-cell emergent assembly is fundamentally too
 > small for a RECURRENT bistable attractor at any inhibition** (vs 72-cell pre-assigned reaching GO).
-> **CURRENT FRONTIER (the two named next levers to close gap#5 composition):** (a) **DG detonator-gain → LARGER/uniform
-> emergent assemblies** (match the completion's recurrent-bistability size regime); (b) **intrinsic per-cell DENDRITIC
-> READOUT bistability** (size-INDEPENDENT — decouples cue-ignition from self-drive; the 2026-07-08 dAP readout's regime;
-> distinct from the tested-NEGATIVE dendritic deep-CREDIT rule). Then (c) NE-gain rate-homeostat re-run; (d)
-> W4-RSA→speaking DEPRIORITIZED. **Tonight's arc = 7 banked results** (learn-to-speak fix · reward-misspec · gap#5
-> slow-NMDA GO · gap#5 EMERGENT FORMATION GO · NE-gain honest-neg · gap#5 composition-seam · gap#5 size-aware-FF
-> PARTIAL), all pushed both remotes. gap#5 has a COMPLETE, DEEP honest map: readout GO → formation GO → selection GO →
-> composition seam → the seam's afferent-half is CLOSED, the small-assembly recurrent-bistability half is the residual +
-> two named levers. Pool: lane-D running. Below: composer arc history.
+> **(14) ⭐ gap#5 COMPOSITION SEAM CLOSED at the readout level — lever B GO 6/6 (`ab9f7dbe`); lever A NEGATIVE but
+> corrects the diagnosis (`4d689f5a`).** LEVER A (grow emergent assembly ~23→~76 cells, separation preserved, membership
+> emergent 6/6) is NEGATIVE (completion 0/6) — and its decisive control ELIMINATES "assembly size" as the cause: a clean
+> RANDOM 72-cell assembly at n_ca3=2000 self-ignites identically. So last night's "assembly-too-small" diagnosis was
+> ITSELF mis-scoped; the real cause is recurrent-attractor SELF-DRIVE coupling at composition SCALE (the formation GO's
+> wide window was an n_ca3=400 property that didn't survive to n_ca3=2000 at fixed fb_inhib=60). LEVER B (intrinsic
+> per-cell DENDRITIC dAP READOUT bistability — size/scale-INDEPENDENT, decouples cue-ignition from self-drive) **GOes
+> 6/6**: apical dAP read cue 0.29-0.83, perm=0, nocue=0 every seed; LINEAR control (same BTSP weights, coincidence OFF)
+> = cue 0.000 6/6 → the dendritic plateau IS the completer; emergent membership 6/6. HONEST scope: read as the DECOUPLED
+> apical UP-state (soma read 0/6) → a downstream apical-UP-state reader is needed; standalone hold-after-cue-offset (true
+> attractor memory) not yet measured; k_thresh=15 is a fixed constant (→ per-cell homeostat next); shown at density 0.5.
+> **⇒ gap#5 emergent episodic loop CLOSES with the dendritic dAP readout (readout-level GO). The remaining gap#5 work IS
+> the INTEGRATION: wire the dAP readout into the end-to-end loop as default + a downstream apical-UP-state reader.**
+> **CURRENT FRONTIER — INTEGRATION (owner-steered 2026-08-10 AM):** wire the GO faculties into the live loop + test
+> against real turns, not more isolated de-risk. First: (i) the learn-to-speak state-value critic + the depth-2
+> implicature substrate into the live SPEAKING loop (the first thing FELT in chat); (ii) the gap#5 dAP-readout episodic
+> loop end-to-end. (The prior two-lever frontier is RESOLVED above: A NEGATIVE/size-eliminated, B GO.) Also-open (lower
+> priority than integration): (c) NE-gain rate-homeostat re-run (`6ecba7b69`); (d) W4-RSA→speaking DEPRIORITIZED.
+> **Overnight+AM arc = 9 banked results** (learn-to-speak fix · reward-misspec · gap#5 slow-NMDA GO · gap#5 EMERGENT
+> FORMATION GO · NE-gain honest-neg · gap#5 composition-seam · gap#5 size-aware-FF PARTIAL · gap#5 lever-A size-eliminated
+> · gap#5 lever-B dAP-readout GO), all pushed both remotes. **gap#5 now has a COMPLETE map AND a readout-level CLOSE:**
+> readout GO → formation GO → selection GO → composition seam → afferent-half closed (FF divnorm) → the deep half
+> (self-drive-vs-cue at scale) CLOSED by the per-cell dendritic dAP readout (6/6) → remaining = the INTEGRATION (wire the
+> dAP readout + apical-UP-state reader into the loop). Pool: lane-D running. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
