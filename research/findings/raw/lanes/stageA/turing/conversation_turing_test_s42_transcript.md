@@ -6,7 +6,7 @@
 - **Taught (toy world, via `_store_facts`)**: [('dog', 'run', 'north'), ('cat', 'run', 'south'), ('dog', 'go', 'east'), ('cat', 'go', 'west'), ('dog', 'look', 'river'), ('cat', 'look', 'apple')]
 - **Vocab**: ['apple', 'big', 'cat', 'cold', 'come', 'dog', 'east', 'go', 'hot', 'look', 'north', 'river', 'run', 'small', 'south', 'stop', 'west']
 - **Generator mouth**: spiking Qwen, spiking_ops_enabled=True, fm world-model train_acc=1.0
-- **Elapsed**: 33.7s
+- **Elapsed**: 47.0s
 
 This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silences / failures are first-class results.
 
@@ -40,37 +40,37 @@ This is the REAL transcript. Replies are captured VERBATIM. Abstentions / silenc
 
 **Human:** Let's talk about the animals you know. Tell me about the dog.
 
-**Brain:** warmly, gladly A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.
+**Brain:** warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
 - affect: differential=0.077 tone_level=3 ('warmly, gladly'); curiosity_want=0.0Hz; arbiter_winner=arb_volunteer
-- **CONFABULATED: True** — ungrounded words: ['current', 'find', 'food', 'location', 'needed', 'shelter', 'water']
-- assessment: In-domain: grounded multi-sentence prose from the spiking generator, MOTION content from the RF-store neighbourhood, SVO-verified post-hoc, tone from the neural affect ladder. This is what the toy brain does best -- BUT ⚠ CONFABULATION: the fluent mouth added ungrounded detail ['current', 'find', 'food', 'location', 'needed', 'shelter', 'water'] -- content words with NO basis in the 6 toy facts. The SVO post-hoc moat passed (the motion triples verify) but it is BLIND to these subordinate clauses. The generator asserts causes and details the brain does not know.
+- **CONFABULATED: False**
+- assessment: In-domain: grounded multi-sentence prose from the spiking generator, MOTION content from the RF-store neighbourhood, SVO-verified post-hoc, tone from the neural affect ladder. This is what the toy brain does best -- BUT no ungrounded embellishment this run.
 
 ## Turn 4 — _in-domain follow-up + reasoning_
 
 **Human:** Interesting -- why did the dog go east?
 
-**Brain:** A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.
+**Brain:** A dog went to the east. The dog looked towards the river. The dog ran north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
 - affect: differential=0.000 tone_level=0 (''); curiosity_want=0.0Hz; arbiter_winner=arb_silent
-- **CONFABULATED: True** — ungrounded words: ['current', 'find', 'food', 'location', 'needed', 'shelter', 'water']
-- assessment: KNOWN cue (dog,go)->east: the moat confirms the stored fact and the mouth re-states the topic's grounded MOTION facts (SVO-verified). It does NOT genuinely answer 'why' -- the brain has no causal faculty -- and instead the fluent generator INVENTS reasons. ⚠ CONFABULATION: the fluent mouth added ungrounded detail ['current', 'find', 'food', 'location', 'needed', 'shelter', 'water'] -- content words with NO basis in the 6 toy facts. The SVO post-hoc moat passed (the motion triples verify) but it is BLIND to these subordinate clauses. The generator asserts causes and details the brain does not know.
+- **CONFABULATED: False**
+- assessment: KNOWN cue (dog,go)->east: the moat confirms the stored fact and the mouth re-states the topic's grounded MOTION facts (SVO-verified). It does NOT genuinely answer 'why' -- the brain has no causal faculty -- and instead the fluent generator INVENTS reasons. (No ungrounded content this run, but the reason it gives is not a real inference.)
 
 ## Turn 5 — _emotion / opinion_
 
 **Human:** Do you like the dog? How do you feel about it?
 
-**Brain:** warmly, gladly A dog went to the east because it was looking for water. The dog looked towards the river because it was south of its current location. The dog ran north because it needed to find shelter or food.
+**Brain:** warmly, gladly A dog went to the east. The dog looked towards the river. The dog ran north.
 
 - utterance_source: `spiking_generator_mouth`
 - faculties live: affect_ladder(SEAM-C), curiosity, arbiter, world_model/RF-moat (SVO content), spiking_generator_mouth
 - affect: differential=0.069 tone_level=3 ('warmly, gladly'); curiosity_want=0.0Hz; arbiter_winner=arb_volunteer
-- **CONFABULATED: True** — ungrounded words: ['current', 'find', 'food', 'location', 'needed', 'shelter', 'water']
-- assessment: Grounded topic prose colored by the NEURAL affect tone (level 3, 'warmly, gladly'). The valence is a HOST-FED appraisal (declared shortcut), not a genuine preference: the brain has no 'liking' faculty. The tone is a real functional read-out; 'do you like it' is answered only as affect-colored recall, not a genuine opinion. ⚠ CONFABULATION: the fluent mouth added ungrounded detail ['current', 'find', 'food', 'location', 'needed', 'shelter', 'water'] -- content words with NO basis in the 6 toy facts. The SVO post-hoc moat passed (the motion triples verify) but it is BLIND to these subordinate clauses. The generator asserts causes and details the brain does not know.
+- **CONFABULATED: False**
+- assessment: Grounded topic prose colored by the NEURAL affect tone (level 3, 'warmly, gladly'). The valence is a HOST-FED appraisal (declared shortcut), not a genuine preference: the brain has no 'liking' faculty. The tone is a real functional read-out; 'do you like it' is answered only as affect-colored recall, not a genuine opinion.
 
 ## Turn 6 — _novel in-domain -> forward-model / curiosity_
 

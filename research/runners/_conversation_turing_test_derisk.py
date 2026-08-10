@@ -233,7 +233,9 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
                     "discourse/pragmatic faculty) -- it simply has nothing to recall. Fails the episodic test "
                     "HONESTLY (no confabulation)." % (ref or "referent", episode_topics or "none"))
             else:
-                prose = SA._gm_prose_reply(comp, mouth, topic=ref, tone_token=tone_tok, moat_on=True) if mouth else None
+                # INTEGRATION (2026-08-10): the live conversational path uses the SUB-CLAUSAL moat (baa635dd9) so the
+                # generator's ungrounded subordinate/causal clauses are caught + dropped, not just the main SVO.
+                prose = SA._gm_prose_reply(comp, mouth, topic=ref, tone_token=tone_tok, moat_on=True, subclausal=True) if mouth else None
                 reply = prose["utterance"] if prose else ""
                 sconf, ung = _detect_ungrounded(reply, grounded) if reply else (False, [])
                 rec["brain_reply"] = reply
@@ -251,7 +253,7 @@ def run_conversation(bridge, xp, idx, baseline_snap, comp, facts, fm, mouth, fac
             nbhd = SA._gm_retrieve_neighbourhood(comp, topic, mouth["actions"]) if mouth else []
             prose = None
             if mouth and nbhd:
-                prose = SA._gm_prose_reply(comp, mouth, topic=topic, tone_token=tone_tok, moat_on=True)
+                prose = SA._gm_prose_reply(comp, mouth, topic=topic, tone_token=tone_tok, moat_on=True, subclausal=True)
             if prose is not None:
                 reply = prose["utterance"]
                 svo_confab = bool(prose["n_confab_emitted"] > 0)
