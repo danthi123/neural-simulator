@@ -39,9 +39,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > the "0.2 mV/1000×" was a weak-drive floor artifact — `2026-07-17-gap5-ca3-recurrents-NOT-silent-*`; **DOC-DRIFT I
 > introduced by re-citing the refuted 2026-07-08 claim — FIXED this cycle**). ⇒ the episodic residual is ATTRACTOR
 > STRENGTH/SPECIFICITY or the dendritic-plateau readout (config lever), NOT a sim transmission fix.
-> **CURRENT FRONTIER: reward-misspecification (`affbdf5b` running — RSA/distinctiveness success signal so the brain
-> says the ALIGNED utterance); NE-gain + activity-silent-WM 6-seed confirms; the attractor-strength completion sweep.**
-> GPU + pool staged. Below: composer arc history.
+> (8) **REWARD-MISSPEC BANKED (`a85f2aad`) = PARTIAL + a decisive RE-DIAGNOSIS.** The distinctiveness/RSA term is a
+> real partial (succ_opt==aligned 8/18→11/18; learned aligned 0.44→0.56 on 2/6, contingency preserved) but the wall is
+> a substrate coincidence-DETECTOR artifact (per-pool base-rate + per-(t,u) margin-SNR), NOT an RSA belief gap. **Five
+> RAG-caught corrections** (deep-research standards paid off): the "substrate can't do implicature" framing was WRONG —
+> depth-2 scalar implicature is a standing **6/6 GO** (W4, `2026-08-01`), so the belief gap is an INTEGRATION gap (the
+> leg2_v2 speaking pipeline sources a winner-take-all one-hot belief), not a substrate limit; the base-rate half is
+> closeable (host column-subtraction) but the per-cell residual is the recurring **margin-SNR / point-soma wall**
+> (redirect: the STANDING 2026-07-08 dendritic dAP READOUT 0.571 vs 0.007, NOT the RETRACTED 2026-07-18 learned-CLOSED);
+> per-neuron detector-homeostasis is NOT indicated for the SEPARABLE detector (WTA-premise reframe). Also FIXED the
+> committed CA3-trilemma finding's redirect (it cited the retracted 2026-07-18) + acknowledged it re-confirms the
+> already-established 2026-07-18 point-soma trilemma. Pool stocked (lane-D harder k-WTA; scout found A/B/E have no ready
+> cheap-CPU de-risk / E-runner retired).
+> **CURRENT FRONTIER (2 GPU agents RUNNING, results pending adversarial verify):** (a) **gap#5 ROBUST bistable+specific
+> CA3 completion** — the somatic slow-NMDA reverberatory attractor (Wang/Amit-Brunel/Kopsick) was UNTESTED; an agent is
+> running `_gap5_ca3_nmda_slow_reverberatory_derisk` (6-seed, plasticity-freeze + OU + permuted-cue anti-cheats) — a
+> claimed GO is IN FLIGHT, NOT yet verified (its finding tripped the refuted-mechanism gate; hold for verify). (b)
+> **NE-gain vigilance real-substrate** (idealized probe GO'd; promoting to the neuromodulator subsystem). Next levers:
+> the W4-graded-RSA→speaking-pipeline INTEGRATION (connect two GO pieces); the dendritic readout on the margin-SNR
+> detector. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
