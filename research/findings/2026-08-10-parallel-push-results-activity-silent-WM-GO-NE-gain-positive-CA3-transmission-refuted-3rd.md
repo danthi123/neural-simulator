@@ -40,6 +40,8 @@ gain (not an additive offset) is what improves d-prime. **Bound: this is an IDEA
 bridge.** NEXT = a real-substrate test (`enable_neuromodulator_subsystem=True`, gain on a bridge population) before
 a GO — queued.
 
+> **⤷ RESOLVED (2026-08-10, `6ecba7b69`) — the real-substrate test is an HONEST NEGATIVE, the idealized POSITIVE does NOT robustly transfer.** With the gain delivered by the REAL `NeuromodulatorManager.compute_synaptic_gain_multiplier()` (`bridge.py:8167`, scope=all — not a host multiply), d' rises with gain on only **3/6 seeds** (42/43/102); 44/100/101 go flat/negative. GO_ALL=False; mult-beats-additive 3/6. The homogeneous probe replaced per-neuron heterogeneity + OU + adaptive thresholds with constants, so one global operating point lands half the seeds outside the sensitive f-I band → next lever = pair the gain with a rate/threshold homeostat that first places each neuron on its sensitive curve, then apply the gain. (byte-identical-when-off holds 5/6 exactly + 1 harness state-reset residual — a fresh subsystem-ON bridge at g=1.0 is bit-identical to OFF including seed 44, so the guarded-off path does NOT leak.) See `2026-08-10-NE-LC-gain-vigilance-REAL-SUBSTRATE-does-not-robustly-transfer-3of6.md`.
+
 ## 3. CA3 recurrents "functionally silent" — REFUTED a 3rd time (+ the doc-drift it caused, fixed)
 
 <!--derived-->

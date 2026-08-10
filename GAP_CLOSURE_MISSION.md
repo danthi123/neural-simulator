@@ -63,10 +63,22 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > for bistable-window-width + silent-rest-at-low-inhibition. The OPEN residual = EMERGENT FORMATION into this operating
 > point (rate-Hebbian collapses; next = BTSP one-shot + Kopsick downscaling).** Agent handled the refuted-mechanism gate
 > honestly (cited the negative, no --no-verify).
-> **CURRENT FRONTIER:** (a) **NE-gain vigilance real-substrate** (agent — run IN FLIGHT, verdict pending; idealized probe
-> was GO). (b) **EMERGENT FORMATION** into the gap#5 reverberatory operating point (BTSP one-shot + Kopsick downscaling)
-> — the residual now that the dynamics de-risk is GO. (c) the W4-graded-RSA→speaking-pipeline INTEGRATION (connect two GO
-> pieces). Pool: lane-D harder-k-WTA queued. Below: composer arc history.
+> (10) **NE-gain vigilance real-substrate = HONEST NEGATIVE (`6ecba7b69`), 3/6.** Promoting the idealized-LIF POSITIVE
+> (d′ 2.0→4.25 clean monotone) to the REAL NeuromodulatorManager synaptic_gain (`bridge.py:8167`, scope=all — genuine
+> substrate delivery, NOT a host multiply): d′ rises with gain on only **3/6 seeds** (42/43/102); 44/100/101 go
+> flat/negative (GO_ALL=False; mult-beats-additive 3/6). The idealized probe does NOT robustly transfer — the
+> homogeneous probe replaced per-neuron heterogeneity + OU + adaptive thresholds with constants, so one global operating
+> point lands half the seeds outside the sensitive f-I band. **Next lever = pair the NE gain with a rate/threshold
+> homeostat that first seats each neuron on its sensitive curve, THEN apply the gain.** (byte-identical-when-off holds
+> 5/6 exact + 1 HARNESS state-reset residual — verified a fresh subsystem-ON bridge at g=1.0 is bit-identical to OFF
+> incl. seed 44; the guarded-off path does NOT leak.) An honest negative that maps the substrate limit (brain-based
+> standard: the deliverable). Parallel-push finding §2 "queued" pointer updated → this negative.
+> **CURRENT FRONTIER:** (a) **EMERGENT FORMATION** into the gap#5 reverberatory operating point (BTSP one-shot + Kopsick
+> downscaling; agent run `_gap5_btsp_forms_nmda_slow_reverberatory_derisk` IN FLIGHT, matched BTSP-formed-vs-handinstall
+> sweep) — the residual now that the dynamics de-risk is GO. (b) the NE-gain rate-homeostat + gain re-run. (c) the
+> W4-graded-RSA→speaking-pipeline INTEGRATION is DEPRIORITIZED (the K=3 benchmark's graded L1 argmax = identity, so
+> wiring it wouldn't change the speaking target — needs a pragmatic≠literal benchmark). Pool: lane-D harder-k-WTA
+> dispatched to pool40/42. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
