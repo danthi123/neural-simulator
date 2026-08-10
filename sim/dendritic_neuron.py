@@ -105,3 +105,77 @@ class DendriticLayer:
         ga = self.dendritic_plateau(va, z0_apical)
         return {"soma": gb * ga, "g_basal": gb, "g_apical": ga,
                 "v_basal": vb, "v_apical": va}
+
+    # ---------------------------------------------------------------
+    # ADDITIVE / DEFAULT-OFF extension (2026-08-09): the FAITHFUL
+    # SPIKING BAC coincidence. apical_basal_coincidence above returns a
+    # STATIC rate product phi(basal)*phi(apical) -- one host multiply,
+    # no time, no spikes (the 2026-08-09 adversarial verify flagged that
+    # as a rate sigma-pi, not a spiking-membrane coincidence). This
+    # method runs a REAL TEMPORAL spiking process and returns per-channel
+    # SPIKE COUNTS: the conjunction emerges from membrane dynamics over
+    # time -- there is NO host product anywhere in it.
+    #
+    # THE MECHANISM (Larkum 2013 BAC firing; Larkum/Zhu/Sakmann 1999 Ca2+
+    # plateau; catalog G.02 active dendrites + J.08 NMDA coincidence):
+    #   * basal drive (a saturating dendritic plateau phi, so it is
+    #     bounded) leaky-integrates the SOMA membrane v (tau_m);
+    #   * a supra-threshold APICAL drive IGNITES a regenerative Ca2+
+    #     plateau (graded, self-sustaining, decays with plateau_tau) that
+    #     injects a SUSTAINED depolarizing current (apical_gain) into the
+    #     soma across a temporal WINDOW;
+    #   * a somatic SPIKE (HARD threshold theta + reset + refractory)
+    #     fires ONLY when the basal depolarization coincides IN TIME with
+    #     an active apical plateau.
+    # The AND is the HARD SPIKE THRESHOLD acting on two individually
+    # sub-threshold inputs -- the conjunction a SOFT (sigmoid) soma
+    # cannot form (step() sums inside a sigmoid, so basal alone leaks
+    # through; a hard threshold with both inputs sub-threshold does not).
+    # theta is set homeostatically by the caller from taught-cell drive
+    # statistics (between the single-input peak and the coincident sum).
+    # Signed factors are carried by the caller as non-negative ON/OFF
+    # channels (a spiking population rate is >=0). basal_onset DELAYS the
+    # basal drive: the TEMPORAL-COINCIDENCE witness -- basal arriving
+    # after the plateau has decayed collapses the output to the AND floor
+    # (impossible for a static product, which has no time).
+    def bac_spiking_coincidence(self, x_basal, x_apical, theta,
+                                z0_basal=1.0, z0_apical=1.0, T=40,
+                                tau_m=3.0, plateau_tau=18.0,
+                                plateau_thresh=0.3, apical_gain=0.6,
+                                basal_onset=0, plateau_onset=6,
+                                refractory=2, v_reset=0.0,
+                                return_traces=False):
+        xb = self.dendritic_plateau(
+            np.maximum(np.atleast_1d(np.asarray(x_basal, float)), 0.0),
+            z0_basal)
+        xa = (np.maximum(np.atleast_1d(np.asarray(x_apical, float)), 0.0)
+              / max(float(z0_apical), 1e-9))
+        n = int(xb.shape[-1])
+        v = np.zeros(n)
+        plateau = np.zeros(n)
+        refr = np.zeros(n)
+        counts = np.zeros(n)
+        v_peak = np.zeros(n)
+        plateau_peak = np.zeros(n)
+        zero = np.zeros(n)
+        m_leak = float(np.exp(-1.0 / max(float(tau_m), 1e-9)))
+        a_leak = float(np.exp(-1.0 / max(float(plateau_tau), 1e-9)))
+        for t in range(int(T)):
+            if t < int(plateau_onset):
+                ig = self.dendritic_plateau(
+                    np.maximum(xa - float(plateau_thresh), 0.0), 1.0)
+                plateau = np.maximum(plateau, ig)   # graded regen ignition
+            plateau = plateau * a_leak              # Ca plateau decay
+            plateau_peak = np.maximum(plateau_peak, plateau)
+            basal = xb if t >= int(basal_onset) else zero
+            v = m_leak * v + basal + float(apical_gain) * plateau
+            v_peak = np.maximum(v_peak, v)
+            spike = (v >= float(theta)) & (refr <= 0.0)
+            counts = counts + spike.astype(float)
+            v = np.where(spike, float(v_reset), v)  # somatic reset
+            refr = np.where(spike, float(refractory),
+                            np.maximum(refr - 1.0, 0.0))
+        if return_traces:
+            return {"counts": counts, "v_peak": v_peak,
+                    "plateau_peak": plateau_peak}
+        return counts
