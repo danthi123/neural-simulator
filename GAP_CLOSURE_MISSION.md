@@ -33,10 +33,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **(2) THE DEEP OPEN WALL = the neural WTA readout** (still NEGATIVE, cross-arc characterized): a shared-inhibition
 > WTA latches on INTRINSIC assembly strength, not the cue-specific AFFERENT advantage
 > (`2026-08-08-pragmatics-readback-leg2-WTA-speaker-NEGATIVE`, `2026-08-07-source-monitor-joint-scale-NO-GO`,
-> `2026-04-26-cortex-wta`). **INSIGHT: this is the SAME common-mode problem as the composer's just-fixed DC-offset** —
-> the intrinsic strength is a common-mode; the surpass = **common-mode removal via divisive+subtractive inhibition**
-> (Carandini-Heeger / E%-max de Almeida-Idiart-Lisman). DR-gated (deep external research on cortical afferent-winner
-> selection first); likely a sim edit; deserves a fresh careful pass, NOT a fatigued one.
+> `2026-04-26-cortex-wta`). **DR DONE → DESIGN BANKED** (`d42fd05d`, research-gate
+> `2026-08-10-neural-WTA-afferent-winner-common-mode-removal-*`): the composer-DC-fix analogy was right in spirit but
+> REFINED — the composer offset was GLOBAL (one subtraction), the WTA bias is PER-ASSEMBLY, so pooled divisive-norm +
+> recall-time subtractive-FFI are REFUTED (rank-preserving / rank-1; objrel BOUNDARY + source-monitor NO-GO — do NOT
+> re-propose). Surpass = a **region-scoped per-neuron firing-rate HOMEOSTAT** (Diehl-Cook: raises always-firing
+> shared-core thresholds → shrinks the per-assembly common-mode) + **E%-max/gamma de-latch** — RUNNER-SIDE, **NO sim
+> edit** (anchors verified: `config.py:686-687` slow defaults = the too-slow-constant trap; region-scope
+> `bridge.py:525-533`; E%-max `_riii_ca3_coincidence_completion:80-102`). **FIRST TEST (cheapest decisive,
+> CPU-runnable — NOT GPU-blocked):** the pragmatics oracle afferent-swap (0.1667→~1.0) with the no-remover control
+> that MUST fail + attribution lesions. Scope = separable-assembly only (NOT co-resident source-monitor = dendritic,
+> mapped). Operating-point IS the mechanism → a fresh careful pass; serves task #7.
 > Pool large-N `comp_largeN` retention still running (~7h+, alive; fold in on landing). History below.
 
 > **⭐⭐⭐⭐⭐ THE BIGGEST RESULT: NEURAL COMPOSITIONAL GENERALIZATION on the spiking substrate = GO (`ea77003c5`,
