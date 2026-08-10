@@ -1,0 +1,66 @@
+{
+  "probe": "oracle_weight_wta_readout_v2",
+  "description": "COMMITTED oracle-weight acceptance gate (closes the v1 provenance gap; v1's probe was prose). intent[t]->utter[t]=W_ORACLE, others=W_OTHER, tonic UTT_DRIVE_PA, greedy WTA. The GRADED competition is weight-controllable iff mean acc >= 0.85 (v1 latch: 0.167).",
+  "operating_point": {
+    "W_ORACLE": 8.0,
+    "W_OTHER": 1.0,
+    "UTT_FS_W": 4.0,
+    "FS_UTT_W": 4.0,
+    "UTT_DRIVE_PA": 0.0,
+    "SETTLE_MS": 60,
+    "READ_UTT": 30
+  },
+  "chance": 0.3333333333333333,
+  "mean_oracle_weight_acc": 1.0,
+  "per_seed": {
+    "42": {
+      "choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "acc": 1.0
+    },
+    "43": {
+      "choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "acc": 1.0
+    },
+    "44": {
+      "choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "acc": 1.0
+    },
+    "100": {
+      "choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "acc": 1.0
+    },
+    "101": {
+      "choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "acc": 1.0
+    },
+    "102": {
+      "choice": {
+        "0": 0,
+        "1": 1,
+        "2": 2
+      },
+      "acc": 1.0
+    }
+  },
+  "passes_gate": true
+}

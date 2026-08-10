@@ -8,6 +8,8 @@ lane: EPISODIC / WTA-readout
 
 # Research gate — the neural WTA that selects on AFFERENT drive, not intrinsic strength: a region-scoped firing-rate HOMEOSTAT (the common-mode remover) + E%-max/gamma de-latch (the vehicle). Buildable-now, runner-side, NO sim edit. DR-gated design, verified anchors.
 
+> ⚠️ **PREMISE REFRAMED 2026-08-10 (same day) — see `2026-08-10-neural-WTA-separable-assemblies-weight-controllable-homeostat-premise-REFRAMED.md`.** The cheapest decisive test (the pragmatics afferent-swap probe below) showed the SEPARABLE-assembly WTA is ALREADY weight-controllable at learnable magnitudes (committed v2 oracle probe = 1.0/6 at W=8); the "0.167 latch negative" was a strong-inhibition + high-tonic OPERATING-POINT artifact, and disjoint assemblies have NO per-assembly common-mode for a homeostat to strip. **⇒ Do NOT build the homeostat against the separable case (pragmatics/episodic/cortex-wta) — the fix there is weaker lateral inhibition + a learnable afferent weight.** This gate's homeostat design remains valid ONLY as the far-future CO-RESIDENT/dendritic direction (a different substrate). The refuted-lever analysis + the co-resident→dendritic scoping below still stand.
+
 **Verdict: DESIGN READY / buildable_now = YES.** This is the surpass for the cross-arc-characterized neural-WTA
 wall. Produced by a 4-angle deep-research workflow (local corpus + external literature); the two "obvious" levers
 are REFUTED with the reason, so they are not re-proposed; the load-bearing file anchors are VERIFIED in code this
