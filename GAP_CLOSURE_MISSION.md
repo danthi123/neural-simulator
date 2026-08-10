@@ -99,12 +99,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > inhibition that SCALES with the active-population size** (de Almeida-Idiart-Lisman / Pouille-Scanziani — the same
 > companion process that made SELECTION robust across a >10× range) + size-matched k_thresh; OR a stronger detonator →
 > larger/uniform assemblies.
-> **CURRENT FRONTIER:** (a) **the size-aware completion FIX** (feedforward divisive-norm FS-basket that scales with
-> active-pop size) — closes the gap#5 composition seam; the highest-leverage next build. (b) NE-gain rate-homeostat +
-> gain re-run (`6ecba7b69`). (c) W4-graded-RSA→speaking DEPRIORITIZED (K=3 argmax=identity). **Tonight's arc = 6 banked
-> results** (learn-to-speak fix · reward-misspec · gap#5 slow-NMDA GO · gap#5 EMERGENT FORMATION GO · NE-gain honest-neg ·
-> gap#5 composition-seam), all pushed both remotes; gap#5 has a COMPLETE honest map (readout GO → formation GO →
-> selection GO → composition seam + named fix). Pool: lane-D running. Below: composer arc history.
+> (13) **gap#5 size-aware FF completion fix = PARTIAL / still-NO-GO (`544c0b742`, 6-seed) — the seam splits into two
+> halves; the fix closes ONE.** The feedforward divisive-norm FS-basket (scaling inhibition with active-pop size) IS
+> load-bearing — it CLOSES the AFFERENT-specificity half (perm 0.130→**0.000**, rest nocue 0.245→**0.047**; the
+> fixed-inhib control still fails 6/6, so the fix is verifiably engaged) — **BUT it does NOT open a bistable window:**
+> cue-completion and self-ignition share the WITHIN-assembly recurrent gain, so sparse-density + FF inhibition turns
+> BOTH down together (cue 0.246→0.070, a sub-threshold cue-preference 0.070>0.047 an order of magnitude below the
+> cue≥0.20/3× bar); a 9-point density×ff grid found no operating point; the hand-install (perfect W) self-ignites MORE
+> (stronger attractor = wrong direction). **⇒ the DEEP residual = the ~23-cell emergent assembly is fundamentally too
+> small for a RECURRENT bistable attractor at any inhibition** (vs 72-cell pre-assigned reaching GO).
+> **CURRENT FRONTIER (the two named next levers to close gap#5 composition):** (a) **DG detonator-gain → LARGER/uniform
+> emergent assemblies** (match the completion's recurrent-bistability size regime); (b) **intrinsic per-cell DENDRITIC
+> READOUT bistability** (size-INDEPENDENT — decouples cue-ignition from self-drive; the 2026-07-08 dAP readout's regime;
+> distinct from the tested-NEGATIVE dendritic deep-CREDIT rule). Then (c) NE-gain rate-homeostat re-run; (d)
+> W4-RSA→speaking DEPRIORITIZED. **Tonight's arc = 7 banked results** (learn-to-speak fix · reward-misspec · gap#5
+> slow-NMDA GO · gap#5 EMERGENT FORMATION GO · NE-gain honest-neg · gap#5 composition-seam · gap#5 size-aware-FF
+> PARTIAL), all pushed both remotes. gap#5 has a COMPLETE, DEEP honest map: readout GO → formation GO → selection GO →
+> composition seam → the seam's afferent-half is CLOSED, the small-assembly recurrent-bistability half is the residual +
+> two named levers. Pool: lane-D running. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
