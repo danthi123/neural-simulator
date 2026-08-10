@@ -2,11 +2,20 @@
 title: "The bundling-capacity limit is LOCATED: shared-channel neural superposition breaks at an arity M* that GROWS with channel dimension d — beyond M* the composer needs binding even for same-type composition (Plate/Kanerva ~1/sqrt(N) confirmed on spikes)"
 date: 2026-08-10
 type: finding
-status: contributing
+status: retracted
 lane: composer
 seeds: [42, 43, 44]
 seed-waiver: 3-seed per-d capacity sweep. The DELIVERABLE is a located LIMIT and its scaling with d, not a single headline number; the disjoint control isolating crosstalk holds 1.00 on every (d, M, seed), and shared recall at fixed M rises monotonically with d across all seeds — the law is robust; the per-seed M* noise at small N (below) is exactly what more seeds would average, and is already reported per-seed.
 ---
+
+> ⛔ **RETRACTED 2026-08-10** (registered in [`docs/RETRACTED.md`](../../docs/RETRACTED.md)). The central claim below
+> — "M* grows ~√d / the disjoint control isolates pure crosstalk" — is a **removable readout DC-offset (common-mode)
+> artifact**, caught by adversarial verification the same day. The Hebbian running-mean cleanup leaves each shared
+> bundle with a fact-INDEPENDENT offset C ~ (M−1)·Σcentroids whose norm GROWS with M (|C| > inter-prototype spacing
+> by M≥3), and Euclidean nearest-prototype was scored WITHOUT removing it — so the "capacity break" was that DC
+> offset, not bundling crosstalk (the disjoint control reads 1.00 only because concatenation accumulates no offset).
+> With a label-free common-mode removal, shared-channel superposition composes **1.00 through M=6 at d=8**. Superseded
+> by `2026-08-10-shared-channel-arity-capacity-CORRECTED-DC-offset-artifact.md`. Text kept for the record only.
 
 # Shared-channel arity capacity: M* is located and scales with dimension — this closes the last composer residual
 

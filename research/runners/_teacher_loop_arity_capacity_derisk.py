@@ -295,25 +295,44 @@ def _run_one_mode(seed, M, K, d, channel_mode, m_held, noise, gen_hidden, gen_k,
     no_leakage = bool(not (set(fed) & held_set))
     assert no_leakage, "a held-out fact index leaked into a training path"
 
-    def comp_pred(j):
-        return _nearest_proto(gen.regenerate(facts[j])[:d_p], protos)
+    regen = {j: gen.regenerate(facts[j])[:d_p] for j in range(N)}
+
+    # DC-OFFSET (common-mode) CORRECTION -- the fix for the 2026-08-10 confound (verify-caught, RETRACTED.md).
+    # The Hebbian running-mean cleanup leaves EACH regeneration with a FACT-INDEPENDENT offset C ~
+    # (M-1)*sum_m centroid_m: readout_m(v) target = primM[v] + sum_{m'!=m} centroid_{m'} (the co-occurring terms
+    # average to their family centroids, independent of v), so regenerate = proto + C. |C| grows ~(M-1)*sqrt(M) with
+    # arity while inter-proto spacing does NOT, so Euclidean nearest-proto CRATERS with M -- an artifact that looks
+    # exactly like a capacity break. Remove it LABEL-FREE (a subtractive common-mode / inhibitory reference): center
+    # each regeneration by the mean TAUGHT regeneration (inductive; no held-out labels), and the ruler by its own
+    # mean. This is the biology's DC-removal (feedforward inhibition / divisive normalization), not a metric hack.
+    C_hat = np.mean([regen[j] for j in taught_idx], axis=0)          # label-free common-mode estimate (taught only)
+    protos_mu = protos.mean(axis=0)
+    protos_c = protos - protos_mu[None, :]                            # ruler centered by its own mean (label-free)
+    offset_norm = float(np.linalg.norm(C_hat - protos_mu))           # the pure DC offset C (beyond the proto mean)
+    ip = [float(np.linalg.norm(protos[a] - protos[b])) for a in range(min(N, 24)) for b in range(min(N, 24)) if a < b]
+    interproto = float(np.mean(ip)) if ip else 1.0
+    offset_ratio = float(offset_norm / (interproto + 1e-12))         # >~0.5 => the DC offset dominates the ruler
+
+    def comp_pred_biased(j):                                          # the OLD (confounded) metric -- kept as a witness
+        return _nearest_proto(regen[j], protos)
+
+    def comp_pred(j):                                                 # the CORRECTED (common-mode-removed) metric
+        return _nearest_proto(regen[j] - C_hat, protos_c)
 
     def flat_pred(j):
         return flat.recall_nearest(j, protos)
 
-    comp_seen = _recall_fraction(taught_idx, comp_pred, protos)
-    comp_held = _recall_fraction(held_idx, comp_pred, protos)
+    comp_seen = _recall_fraction(taught_idx, comp_pred, protos_c)
+    comp_held = _recall_fraction(held_idx, comp_pred, protos_c)      # HEADLINE = corrected recall (the real capacity)
+    comp_held_biased = _recall_fraction(held_idx, comp_pred_biased, protos)
     flat_held = _recall_fraction(held_idx, flat_pred, protos)
-    comp_held_cos = float(np.mean([_cos(gen.regenerate(facts[j])[:d_p], protos[j]) for j in held_idx]))
+    comp_held_cos = float(np.mean([_cos(regen[j], protos[j]) for j in held_idx]))
 
     # lesion localisation on a sample of held-out facts (composition is NEURAL / separable)
     les_idx = held_idx[:min(6, len(held_idx))]
-    les_hit, les_sp = [], []
+    les_hit = []
     for j in les_idx:
-        full = gen.regenerate(facts[j])[:d_p]
-        l0 = gen.regenerate(facts[j], lesion=0)[:d_p]
-        les_hit.append(float(np.linalg.norm(full - l0)))
-        # a lesion of family 0 should change the regeneration (in shared it perturbs the sum; in disjoint only block 0)
+        les_hit.append(float(np.linalg.norm(regen[j] - gen.regenerate(facts[j], lesion=0)[:d_p])))
     lesion_delta = float(np.mean(les_hit)) if les_hit else 0.0
 
     return {
@@ -321,8 +340,11 @@ def _run_one_mode(seed, M, K, d, channel_mode, m_held, noise, gen_hidden, gen_k,
         "held_out_n": len(held_idx), "taught_n": len(taught_idx),
         "taught_heldout_disjoint": disjoint, "coverage_ok": coverage_ok, "no_leakage": no_leakage,
         "code_mean_abs": code_mean_abs,
-        "compositional_heldout_recall": comp_held, "compositional_seen_recall": comp_seen,
+        "compositional_heldout_recall": comp_held,                   # CORRECTED (common-mode-removed) = headline
+        "compositional_heldout_recall_biased": comp_held_biased,     # OLD confounded metric (witness of the DC artifact)
+        "compositional_seen_recall": comp_seen,
         "flat_heldout_recall": flat_held, "compositional_heldout_cos": comp_held_cos,
+        "dc_offset_norm": offset_norm, "interproto_spacing": interproto, "dc_offset_ratio": offset_ratio,
         "lesion_delta": lesion_delta,
         "stored_raw_patterns": int(gen._stored_raw_patterns), "used_ruler": bool(gen._used_ruler),
         "primitive_slots": gen.primitive_slots(),
@@ -351,20 +373,23 @@ def run(seed, M_values, K, d, held_frac, noise, gen_hidden, gen_k, gen_settle, g
                                  w_clip, bdsp_wmax, conv_tol, conv_max_epochs, n_draws)
         gap = float(disjoint["compositional_heldout_recall"] - shared["compositional_heldout_recall"])
         by_M[str(M)] = {"M": M, "N": N, "chance": shared["chance"], "held_out_n": shared["held_out_n"],
-                        "shared_heldout_recall": shared["compositional_heldout_recall"],
+                        "shared_heldout_recall": shared["compositional_heldout_recall"],           # CORRECTED
+                        "shared_heldout_recall_biased": shared["compositional_heldout_recall_biased"],
                         "disjoint_heldout_recall": disjoint["compositional_heldout_recall"],
                         "flat_heldout_recall": shared["flat_heldout_recall"],
                         "shared_seen_recall": shared["compositional_seen_recall"],
                         "disjoint_minus_shared": gap,
+                        "shared_dc_offset_ratio": shared["dc_offset_ratio"],
                         "shared_heldout_cos": shared["compositional_heldout_cos"],
                         "disjoint_heldout_cos": disjoint["compositional_heldout_cos"],
                         "code_mean_abs": shared["code_mean_abs"],
                         "shared_lesion_delta": shared["lesion_delta"], "disjoint_lesion_delta": disjoint["lesion_delta"],
                         "shared_full": shared, "disjoint_full": disjoint}
-        print(f"  [M={M} N={N}] HELD-OUT: shared {shared['compositional_heldout_recall']:.2f} | disjoint "
+        print(f"  [M={M} N={N}] HELD-OUT (corrected): shared {shared['compositional_heldout_recall']:.2f} "
+              f"[biased {shared['compositional_heldout_recall_biased']:.2f}] | disjoint "
               f"{disjoint['compositional_heldout_recall']:.2f} | flat {shared['flat_heldout_recall']:.2f} "
-              f"(chance {shared['chance']:.4f}) | GAP(disj-shared) {gap:+.2f} | shared-cos "
-              f"{shared['compositional_heldout_cos']:.3f} | seen(shared) {shared['compositional_seen_recall']:.2f}",
+              f"(chance {shared['chance']:.4f}) | GAP {gap:+.2f} | DC-ratio {shared['dc_offset_ratio']:.2f} | "
+              f"cos {shared['compositional_heldout_cos']:.3f} | seen {shared['compositional_seen_recall']:.2f}",
               flush=True)
 
     return {"seed": seed, "K": K, "d": d, "M_values": M_values,
@@ -393,58 +418,62 @@ def _verdict(result):
     from tools.verdict import Verdict
     from tools.lab import attributable_to
     by_M = result["by_M"]; M_values = sorted(result["M_values"])
-    v = Verdict("teacher-loop SHARED-CHANNEL ARITY CAPACITY (locate where bundle needs bind)", chance=None)
+    v = Verdict("teacher-loop SHARED-CHANNEL ARITY CAPACITY (DC-offset corrected: locate the REAL capacity + "
+                "demonstrate the biased-metric DC artifact)", chance=None)
 
     M0 = M_values[0]; r0 = by_M[str(M0)]; rtop = by_M[str(M_values[-1])]
-    # (1) shared composition WORKS at the low-M end (the setup is a real composition, not trivially broken)
+    # (1) CORRECTED shared composition WORKS at the low-M end (a real composition, not trivially broken)
     low_ok = bool(r0["shared_heldout_recall"] >= 0.5 and r0["shared_heldout_recall"] >= r0["flat_heldout_recall"] + 0.30)
-    attributable_to(f"[M={M0}] shared composition vs flat instance store (held-out)",
+    attributable_to(f"[M={M0}] corrected shared composition vs flat instance store (held-out)",
                     r0["shared_heldout_recall"], r0["flat_heldout_recall"])
-    v.require(f"[M={M0}] SHARED composition works (held-out >= 0.5 AND >= flat+0.30)", low_ok, expect=True,
-              note=f"shared {r0['shared_heldout_recall']:.2f} flat {r0['flat_heldout_recall']:.2f} "
+    v.require(f"[M={M0}] CORRECTED shared composition works (held-out >= 0.5 AND >= flat+0.30)", low_ok, expect=True,
+              note=f"corrected {r0['shared_heldout_recall']:.2f} flat {r0['flat_heldout_recall']:.2f} "
                    f"(chance {r0['chance']:.4f})")
 
-    # (2) the capacity cost is REAL: shared-vs-disjoint gap is positive by the top M, and non-decreasing overall
-    gaps = [by_M[str(M)]["disjoint_minus_shared"] for M in M_values]
-    gap_grows = bool(gaps[-1] > 0.0 and gaps[-1] >= gaps[0] - 1e-9)
-    v.require("capacity cost is REAL (disjoint-shared gap positive at top M and non-decreasing)", gap_grows,
-              expect=True, note=f"gaps over M {['%+.2f' % g for g in gaps]}")
+    # (2) THE DC-OFFSET CONFOUND IS DEMONSTRATED: where the BIASED metric craters, the CORRECTED metric recovers,
+    # and the DC-offset ratio (|C|/inter-proto) GROWS with M -- proving the old "capacity break" was the DC artifact,
+    # NOT bundling crosstalk. (This is the retraction's own evidence, self-contained.)
+    biased = [by_M[str(M)]["shared_heldout_recall_biased"] for M in M_values]
+    corrected = [by_M[str(M)]["shared_heldout_recall"] for M in M_values]
+    ratios = [by_M[str(M)]["shared_dc_offset_ratio"] for M in M_values]
+    recovers = [corrected[i] - biased[i] for i in range(len(M_values))]
+    confound_shown = bool(max(recovers) >= 0.30 and ratios[-1] >= ratios[0] and ratios[-1] > 0.5)
+    v.require("DC-offset confound DEMONSTRATED (corrected recovers where biased craters; |C|/inter-proto grows)",
+              confound_shown, expect=True,
+              note=f"biased {[round(x,2) for x in biased]} vs corrected {[round(x,2) for x in corrected]} | "
+                   f"DC-ratio {[round(x,2) for x in ratios]}")
 
-    # (3) disjoint (no-crosstalk control) stays high across the sweep (the degradation is crosstalk, not readout/N)
-    disj_holds = bool(all(by_M[str(M)]["disjoint_heldout_recall"] >= 0.5 for M in M_values))
-    v.require("disjoint control HOLDS across the sweep (>= 0.5 all M -> degradation is crosstalk, not N)", disj_holds,
-              expect=True, note=f"disjoint {[round(by_M[str(M)]['disjoint_heldout_recall'],2) for M in M_values]}")
-
-    # composition NEURAL (lesion perturbs regeneration) + housekeeping
+    # (3) composition NEURAL + housekeeping
     neural_ok = bool(rtop["shared_full"]["lesion_delta"] > 0.02 and r0["shared_full"]["lesion_delta"] > 0.02)
     not_buffer = bool(all(by_M[str(M)]["shared_full"]["stored_raw_patterns"] == 0 for M in M_values))
     no_ruler = bool(all(not by_M[str(M)]["shared_full"]["used_ruler"] for M in M_values))
-    zero_mean = bool(all(by_M[str(M)]["code_mean_abs"] < 0.35 for M in M_values))   # ~1/sqrt(d)-scale, near zero
     cover = bool(all(by_M[str(M)]["shared_full"]["coverage_ok"] and by_M[str(M)]["shared_full"]["no_leakage"]
                      and by_M[str(M)]["shared_full"]["taught_heldout_disjoint"] for M in M_values))
     v.require("composition is NEURAL (lesion perturbs regeneration)", neural_ok, expect=True,
               note=f"lesion-delta M0 {r0['shared_full']['lesion_delta']:.2f} Mtop {rtop['shared_full']['lesion_delta']:.2f}")
     v.require("0 stored raw patterns (composes, not a buffer)", not_buffer, expect=True)
     v.require("generator never read the ruler", no_ruler, expect=True)
-    v.require("codes are ZERO-MEAN (clean superposition, no DC pile-up)", zero_mean, expect=True,
-              note=f"mean|code| {[round(by_M[str(M)]['code_mean_abs'],3) for M in M_values]}")
     v.require("zero-shot integrity (disjoint split + coverage + no-leakage, all M)", cover, expect=True)
 
+    # (4) locate the REAL capacity limit from the CORRECTED recall (may be None in-range == capacity > M_max here)
     m_star = _locate_mstar(by_M, M_values)
     v.require("(seed) substrate byte-identical", bool(result["substrate_byte_identical"]), expect=True,
               note=f"max threshold diff {result['substrate_seed_maxdiff']:.2e}")
     v.require("(sim) git diff main -- sim/ empty (NO sim edit)", bool(result["sim_diff_empty"]), expect=True)
 
-    go = bool(low_ok and gap_grows and disj_holds and neural_ok and not_buffer and no_ruler and zero_mean and cover
+    go = bool(low_ok and confound_shown and neural_ok and not_buffer and no_ruler and cover
               and result["substrate_byte_identical"] and result["sim_diff_empty"])
     decision = v.decide(go=go)
-    return {"m_star": m_star, "m_star_note": ("located in-range" if m_star is not None
-                                              else f"capacity > M_max={M_values[-1]} at d={result['d']}"),
+    return {"m_star_corrected": m_star,
+            "m_star_note": ("located in-range (from CORRECTED recall)" if m_star is not None
+                            else f"corrected capacity > M_max={M_values[-1]} at d={result['d']}"),
+            "confound_demonstrated": confound_shown,
             "by_M": {str(M): {k: by_M[str(M)][k] for k in
-                              ("M", "N", "chance", "shared_heldout_recall", "disjoint_heldout_recall",
-                               "flat_heldout_recall", "shared_seen_recall", "disjoint_minus_shared",
-                               "shared_heldout_cos", "disjoint_heldout_cos")} for M in M_values},
-            "low_M_shared_works": low_ok, "capacity_cost_real": gap_grows, "disjoint_holds": disj_holds,
+                              ("M", "N", "chance", "shared_heldout_recall", "shared_heldout_recall_biased",
+                               "disjoint_heldout_recall", "flat_heldout_recall", "shared_seen_recall",
+                               "shared_dc_offset_ratio", "shared_heldout_cos", "disjoint_heldout_cos")}
+                     for M in M_values},
+            "low_M_shared_works": low_ok,
             "substrate_byte_identical": result["substrate_byte_identical"], "sim_diff_empty": result["sim_diff_empty"],
             **decision}
 
@@ -496,11 +525,13 @@ def main():
         print("\n" + "=" * 100, flush=True)
         for M in sorted(a.M_values):
             r = rv["by_M"][str(M)]
-            print(f"[cap] seed {s} M={M}: N={r['N']} | HELD-OUT shared {r['shared_heldout_recall']:.2f} vs disjoint "
-                  f"{r['disjoint_heldout_recall']:.2f} vs flat {r['flat_heldout_recall']:.2f} (chance {r['chance']:.4f}) "
-                  f"| GAP {r['disjoint_minus_shared']:+.2f}", flush=True)
-        print(f"[cap] seed {s} M* = {rv['m_star']} ({rv['m_star_note']}) | byte-id {rv['substrate_byte_identical']} "
-              f"sim-clean {rv['sim_diff_empty']} | VERDICT {rv['status']}", flush=True)
+            print(f"[cap] seed {s} M={M}: N={r['N']} | CORRECTED shared {r['shared_heldout_recall']:.2f} "
+                  f"[biased {r['shared_heldout_recall_biased']:.2f}] vs disjoint {r['disjoint_heldout_recall']:.2f} vs "
+                  f"flat {r['flat_heldout_recall']:.2f} (chance {r['chance']:.4f}) | DC-ratio "
+                  f"{r['shared_dc_offset_ratio']:.2f}", flush=True)
+        print(f"[cap] seed {s} corrected-M* = {rv['m_star_corrected']} ({rv['m_star_note']}) | confound-shown "
+              f"{rv['confound_demonstrated']} | byte-id {rv['substrate_byte_identical']} sim-clean "
+              f"{rv['sim_diff_empty']} | VERDICT {rv['status']}", flush=True)
         print(f"[cap] wrote {out_s}\n" + "=" * 100, flush=True)
 
     if len(seeds) > 1:
@@ -508,31 +539,37 @@ def main():
         Ms = sorted(a.M_values)
         agg = {"probe": "teacher_loop_arity_capacity_AGG", "seeds": seeds, "backend": os.environ.get("SIM_BACKEND"),
                "K": a.K, "d": a.d, "M_values": a.M_values, "go_count": go_n, "n_seeds": len(seeds),
-               "m_star_per_seed": [p["verdict"]["m_star"] for p in per_seed], "by_M_means": {}, "per_seed": per_seed}
+               "corrected_m_star_per_seed": [p["verdict"]["m_star_corrected"] for p in per_seed],
+               "confound_demonstrated_per_seed": [p["verdict"]["confound_demonstrated"] for p in per_seed],
+               "by_M_means": {}, "per_seed": per_seed}
         for M in Ms:
             sh = [p["verdict"]["by_M"][str(M)]["shared_heldout_recall"] for p in per_seed]
+            shb = [p["verdict"]["by_M"][str(M)]["shared_heldout_recall_biased"] for p in per_seed]
             dj = [p["verdict"]["by_M"][str(M)]["disjoint_heldout_recall"] for p in per_seed]
             fl = [p["verdict"]["by_M"][str(M)]["flat_heldout_recall"] for p in per_seed]
-            gp = [p["verdict"]["by_M"][str(M)]["disjoint_minus_shared"] for p in per_seed]
+            dr = [p["verdict"]["by_M"][str(M)]["shared_dc_offset_ratio"] for p in per_seed]
             agg["by_M_means"][str(M)] = {
                 "N": per_seed[0]["verdict"]["by_M"][str(M)]["N"],
                 "chance": per_seed[0]["verdict"]["by_M"][str(M)]["chance"],
-                "shared_heldout_recall_mean": float(np.nanmean(sh)),
-                "shared_heldout_recall_per_seed": [float(x) for x in sh],
+                "shared_corrected_recall_mean": float(np.nanmean(sh)),
+                "shared_corrected_recall_per_seed": [float(x) for x in sh],
+                "shared_biased_recall_mean": float(np.nanmean(shb)),
                 "disjoint_heldout_recall_mean": float(np.nanmean(dj)),
                 "flat_heldout_recall_mean": float(np.nanmean(fl)),
-                "disjoint_minus_shared_mean": float(np.nanmean(gp)),
+                "dc_offset_ratio_mean": float(np.nanmean(dr)),
             }
         agg_out = str(Path(a.out).with_name(Path(a.out).stem + "_AGG.json"))
         Path(agg_out).write_text(json.dumps(agg, indent=2, default=str))
         print("\n" + "#" * 100, flush=True)
-        print(f"[cap AGG] GO {go_n}/{len(seeds)} | M* per seed {agg['m_star_per_seed']}", flush=True)
+        print(f"[cap AGG] GO {go_n}/{len(seeds)} | corrected-M* per seed {agg['corrected_m_star_per_seed']} | "
+              f"confound-shown {agg['confound_demonstrated_per_seed']}", flush=True)
         for M in Ms:
             mm = agg["by_M_means"][str(M)]
-            print(f"   M={M}: N={mm['N']} | HELD-OUT shared {mm['shared_heldout_recall_mean']:.2f} vs disjoint "
-                  f"{mm['disjoint_heldout_recall_mean']:.2f} vs flat {mm['flat_heldout_recall_mean']:.2f} "
-                  f"(chance {mm['chance']:.4f}) | GAP {mm['disjoint_minus_shared_mean']:+.2f} | shared/seed "
-                  f"{mm['shared_heldout_recall_per_seed']}", flush=True)
+            print(f"   M={M}: N={mm['N']} | CORRECTED shared {mm['shared_corrected_recall_mean']:.2f} "
+                  f"[biased {mm['shared_biased_recall_mean']:.2f}] vs disjoint {mm['disjoint_heldout_recall_mean']:.2f} "
+                  f"vs flat {mm['flat_heldout_recall_mean']:.2f} (chance {mm['chance']:.4f}) | DC-ratio "
+                  f"{mm['dc_offset_ratio_mean']:.2f} | corrected/seed {mm['shared_corrected_recall_per_seed']}",
+                  flush=True)
         print(f"[cap AGG] wrote {agg_out}", flush=True)
         return 0 if go_n == len(seeds) else 1
 

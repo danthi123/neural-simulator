@@ -1,0 +1,533 @@
+{
+  "probe": "teacher_loop_arity_capacity_AGG",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "backend": "numpy",
+  "K": 3,
+  "d": 8,
+  "M_values": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "go_count": 3,
+  "n_seeds": 3,
+  "corrected_m_star_per_seed": [
+    null,
+    null,
+    null
+  ],
+  "confound_demonstrated_per_seed": [
+    true,
+    true,
+    true
+  ],
+  "by_M_means": {
+    "2": {
+      "N": 9,
+      "chance": 0.1111111111111111,
+      "shared_corrected_recall_mean": 1.0,
+      "shared_corrected_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "shared_biased_recall_mean": 0.8333333333333334,
+      "disjoint_heldout_recall_mean": 1.0,
+      "flat_heldout_recall_mean": 0.0,
+      "dc_offset_ratio_mean": 0.4004453013709719
+    },
+    "3": {
+      "N": 27,
+      "chance": 0.037037037037037035,
+      "shared_corrected_recall_mean": 0.9333333333333332,
+      "shared_corrected_recall_per_seed": [
+        1.0,
+        1.0,
+        0.8
+      ],
+      "shared_biased_recall_mean": 0.06666666666666667,
+      "disjoint_heldout_recall_mean": 1.0,
+      "flat_heldout_recall_mean": 0.0,
+      "dc_offset_ratio_mean": 0.9624646789551002
+    },
+    "4": {
+      "N": 81,
+      "chance": 0.012345679012345678,
+      "shared_corrected_recall_mean": 1.0,
+      "shared_corrected_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "shared_biased_recall_mean": 0.08333333333333333,
+      "disjoint_heldout_recall_mean": 1.0,
+      "flat_heldout_recall_mean": 0.0,
+      "dc_offset_ratio_mean": 1.864936171382683
+    },
+    "5": {
+      "N": 243,
+      "chance": 0.00411522633744856,
+      "shared_corrected_recall_mean": 1.0,
+      "shared_corrected_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "shared_biased_recall_mean": 0.02040816326530612,
+      "disjoint_heldout_recall_mean": 1.0,
+      "flat_heldout_recall_mean": 0.0,
+      "dc_offset_ratio_mean": 2.7923659476902194
+    },
+    "6": {
+      "N": 729,
+      "chance": 0.0013717421124828531,
+      "shared_corrected_recall_mean": 1.0,
+      "shared_corrected_recall_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "shared_biased_recall_mean": 0.01598173515981735,
+      "disjoint_heldout_recall_mean": 1.0,
+      "flat_heldout_recall_mean": 0.0,
+      "dc_offset_ratio_mean": 4.061870379167336
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": {
+        "m_star_corrected": null,
+        "m_star_note": "corrected capacity > M_max=6 at d=8",
+        "confound_demonstrated": true,
+        "by_M": {
+          "2": {
+            "M": 2,
+            "N": 9,
+            "chance": 0.1111111111111111,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.5,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 0.27317060611634353,
+            "shared_heldout_cos": 0.8599234269496758,
+            "disjoint_heldout_cos": 0.999878745050973
+          },
+          "3": {
+            "M": 3,
+            "N": 27,
+            "chance": 0.037037037037037035,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.0,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 0.7161436716168134,
+            "shared_heldout_cos": 0.8414210995435747,
+            "disjoint_heldout_cos": 0.9999652918848831
+          },
+          "4": {
+            "M": 4,
+            "N": 81,
+            "chance": 0.012345679012345678,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.0,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 2.488577040238642,
+            "shared_heldout_cos": 0.8529635137132743,
+            "disjoint_heldout_cos": 0.9999837758269476
+          },
+          "5": {
+            "M": 5,
+            "N": 243,
+            "chance": 0.00411522633744856,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.02040816326530612,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 3.272623226953248,
+            "shared_heldout_cos": 0.7616797707343249,
+            "disjoint_heldout_cos": 0.999993777328413
+          },
+          "6": {
+            "M": 6,
+            "N": 729,
+            "chance": 0.0013717421124828531,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.03424657534246575,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 4.744592114554514,
+            "shared_heldout_cos": 0.7829222770227824,
+            "disjoint_heldout_cos": 0.9999981388542244
+          }
+        },
+        "low_M_shared_works": true,
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop SHARED-CHANNEL ARITY CAPACITY (DC-offset corrected: locate the REAL capacity + demonstrate the biased-metric DC artifact)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[M=2] CORRECTED shared composition works (held-out >= 0.5 AND >= flat+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "corrected 1.00 flat 0.00 (chance 0.1111)"
+          },
+          {
+            "kind": "require",
+            "name": "DC-offset confound DEMONSTRATED (corrected recovers where biased craters; |C|/inter-proto grows)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "biased [0.5, 0.0, 0.0, 0.02, 0.03] vs corrected [1.0, 1.0, 1.0, 1.0, 1.0] | DC-ratio [0.27, 0.72, 2.49, 3.27, 4.74]"
+          },
+          {
+            "kind": "require",
+            "name": "composition is NEURAL (lesion perturbs regeneration)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "lesion-delta M0 2.66 Mtop 4.97"
+          },
+          {
+            "kind": "require",
+            "name": "0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "generator never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "zero-shot integrity (disjoint split + coverage + no-leakage, all M)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty (NO sim edit)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_arity_capacity_corrected_d8_s42.json"
+    },
+    {
+      "seed": 43,
+      "verdict": {
+        "m_star_corrected": null,
+        "m_star_note": "corrected capacity > M_max=6 at d=8",
+        "confound_demonstrated": true,
+        "by_M": {
+          "2": {
+            "M": 2,
+            "N": 9,
+            "chance": 0.1111111111111111,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 1.0,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 0.46025535554612557,
+            "shared_heldout_cos": 0.7539292829243491,
+            "disjoint_heldout_cos": 0.9998139661961346
+          },
+          "3": {
+            "M": 3,
+            "N": 27,
+            "chance": 0.037037037037037035,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.2,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 0.8860098974595936,
+            "shared_heldout_cos": 0.38668799717338836,
+            "disjoint_heldout_cos": 0.9999165518587289
+          },
+          "4": {
+            "M": 4,
+            "N": 81,
+            "chance": 0.012345679012345678,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.1875,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 1.2388726253437115,
+            "shared_heldout_cos": 0.7234370291784109,
+            "disjoint_heldout_cos": 0.9999752794876653
+          },
+          "5": {
+            "M": 5,
+            "N": 243,
+            "chance": 0.00411522633744856,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.02040816326530612,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 2.3232783405700057,
+            "shared_heldout_cos": 0.6830821574117604,
+            "disjoint_heldout_cos": 0.9999933410154442
+          },
+          "6": {
+            "M": 6,
+            "N": 729,
+            "chance": 0.0013717421124828531,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.0136986301369863,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 2.8452787260555565,
+            "shared_heldout_cos": 0.7067132115523022,
+            "disjoint_heldout_cos": 0.999997519087157
+          }
+        },
+        "low_M_shared_works": true,
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop SHARED-CHANNEL ARITY CAPACITY (DC-offset corrected: locate the REAL capacity + demonstrate the biased-metric DC artifact)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[M=2] CORRECTED shared composition works (held-out >= 0.5 AND >= flat+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "corrected 1.00 flat 0.00 (chance 0.1111)"
+          },
+          {
+            "kind": "require",
+            "name": "DC-offset confound DEMONSTRATED (corrected recovers where biased craters; |C|/inter-proto grows)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "biased [1.0, 0.2, 0.19, 0.02, 0.01] vs corrected [1.0, 1.0, 1.0, 1.0, 1.0] | DC-ratio [0.46, 0.89, 1.24, 2.32, 2.85]"
+          },
+          {
+            "kind": "require",
+            "name": "composition is NEURAL (lesion perturbs regeneration)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "lesion-delta M0 3.83 Mtop 4.28"
+          },
+          {
+            "kind": "require",
+            "name": "0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "generator never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "zero-shot integrity (disjoint split + coverage + no-leakage, all M)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty (NO sim edit)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_arity_capacity_corrected_d8_s43.json"
+    },
+    {
+      "seed": 44,
+      "verdict": {
+        "m_star_corrected": null,
+        "m_star_note": "corrected capacity > M_max=6 at d=8",
+        "confound_demonstrated": true,
+        "by_M": {
+          "2": {
+            "M": 2,
+            "N": 9,
+            "chance": 0.1111111111111111,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 1.0,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 0.46790994245044654,
+            "shared_heldout_cos": 0.9208384573176529,
+            "disjoint_heldout_cos": 0.999729040971221
+          },
+          "3": {
+            "M": 3,
+            "N": 27,
+            "chance": 0.037037037037037035,
+            "shared_heldout_recall": 0.8,
+            "shared_heldout_recall_biased": 0.0,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 1.2852404677888938,
+            "shared_heldout_cos": 0.7697781721732345,
+            "disjoint_heldout_cos": 0.9999044562376248
+          },
+          "4": {
+            "M": 4,
+            "N": 81,
+            "chance": 0.012345679012345678,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.0625,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 1.8673588485656956,
+            "shared_heldout_cos": 0.8020896988403206,
+            "disjoint_heldout_cos": 0.9999747637569201
+          },
+          "5": {
+            "M": 5,
+            "N": 243,
+            "chance": 0.00411522633744856,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.02040816326530612,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 2.7811962755474036,
+            "shared_heldout_cos": 0.7878499085554859,
+            "disjoint_heldout_cos": 0.9999913125515074
+          },
+          "6": {
+            "M": 6,
+            "N": 729,
+            "chance": 0.0013717421124828531,
+            "shared_heldout_recall": 1.0,
+            "shared_heldout_recall_biased": 0.0,
+            "disjoint_heldout_recall": 1.0,
+            "flat_heldout_recall": 0.0,
+            "shared_seen_recall": 1.0,
+            "shared_dc_offset_ratio": 4.595740296891938,
+            "shared_heldout_cos": 0.7627652074546744,
+            "disjoint_heldout_cos": 0.9999970413344035
+          }
+        },
+        "low_M_shared_works": true,
+        "substrate_byte_identical": true,
+        "sim_diff_empty": true,
+        "label": "teacher-loop SHARED-CHANNEL ARITY CAPACITY (DC-offset corrected: locate the REAL capacity + demonstrate the biased-metric DC artifact)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "[M=2] CORRECTED shared composition works (held-out >= 0.5 AND >= flat+0.30)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "corrected 1.00 flat 0.00 (chance 0.1111)"
+          },
+          {
+            "kind": "require",
+            "name": "DC-offset confound DEMONSTRATED (corrected recovers where biased craters; |C|/inter-proto grows)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "biased [1.0, 0.0, 0.06, 0.02, 0.0] vs corrected [1.0, 0.8, 1.0, 1.0, 1.0] | DC-ratio [0.47, 1.29, 1.87, 2.78, 4.6]"
+          },
+          {
+            "kind": "require",
+            "name": "composition is NEURAL (lesion perturbs regeneration)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "lesion-delta M0 2.99 Mtop 4.64"
+          },
+          {
+            "kind": "require",
+            "name": "0 stored raw patterns (composes, not a buffer)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "generator never read the ruler",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "zero-shot integrity (disjoint split + coverage + no-leakage, all M)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "(seed) substrate byte-identical",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": "max threshold diff 0.00e+00"
+          },
+          {
+            "kind": "require",
+            "name": "(sim) git diff main -- sim/ empty (NO sim edit)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      },
+      "out": "research/findings/raw/teacher_loop_arity_capacity_corrected_d8_s44.json"
+    }
+  ]
+}
