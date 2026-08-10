@@ -120,7 +120,9 @@ The reward/value + homeostatic-drive halves are essentially **DONE**; the affect
 **⇒ THE VSA COMPOSER IS BIOLOGIZED (bundle + bind on spikes).** Also: world-model read-out burn-down CLOSED (`f7687e59`, 6-seed GO — drive/excitability scaling fixes under-drive, 0.18→0.82 @n_pool=1000). Arity-3 GO (`9229adaf3`, bounded — disjoint channels, ~1/√N capacity not yet stressed). **FAITHFUL spiking-dendrite bind GO (`2d45f0506`, 2026-08-10)** — the rate-PARTIAL residual is CLOSED:
 `sim/dendritic_neuron.py:bac_spiking_coincidence` computes the bind as a REAL temporal Larkum-BAC coincidence (basal leaky-integrates the soma while a regenerative Ca plateau lowers the threshold; a HARD spike threshold on two sub-threshold inputs forms the AND a soft sigmoid can't) read out as SPIKE COUNTS.
 The TEMPORAL witness = 1.00 on every high-s cell all 3 seeds (delay basal past the plateau → full collapse; a static `phi*phi` cannot show this), matches the host-product bind 3/3, byte-identical, additions-only.
-ONE NAMED RESIDUAL remains: (2) SHARED-CHANNEL arity to locate the ~1/√N bundling-capacity limit.
+SHARED-CHANNEL arity capacity: an adversarial-verification workflow (2026-08-10) CAUGHT a confound — the first "M*~√N capacity break" finding (`353f2e64`) was a removable readout **DC-offset artifact**, now **⛔ RETRACTED** (`docs/RETRACTED.md`). CORRECTED (`1f448d26`): with a label-free common-mode removal, shared-channel superposition composes zero-shot **1.00 through arity 6 (N=729) at d=8 and d=16, 3/3 seeds — NO capacity break in range.**
+⇒ the "where bundle must hand off to bind" edge is **REOPENED, not located** (real limit is beyond M=6 at d≥8; needs a harder regime). **The composer arc is NOT map-complete.**
+The four mechanism GOs (bundle/bind/faithful-spiking-bind/arity-3) survived the same verification but are all on disjoint-by-construction or idealized-matched-world setups — they show the OPERATOR CLASS works, not naturalistic capacity.
 
 | Faculty | Tag | HAVE (cite) | WALL → SURPASS |
 |---|---|---|---|

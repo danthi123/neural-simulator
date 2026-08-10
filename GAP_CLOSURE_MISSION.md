@@ -28,7 +28,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **⭐ WORLD-MODEL READ-OUT BURN-DOWN CLOSED (`f7687e59`, 6-seed GO):** drive/excitability scaling (homeostatic
 > intrinsic-excitability set-point, verified neural) fixes the under-drive — neural read-out 0.18→0.82 @n_pool=1000
 > (85% of ceiling); fully-neural, capacity-scaling read-out.
-> **⭐ COMPOSER MAP — bundle GO · bind GO · arity-3 GO · FAITHFUL-spiking-dendrite bind GO (2026-08-10, residual #1 CLOSED).**
+> **⭐ COMPOSER — 4 mechanism GOs (bundle · bind · faithful-spiking-dendrite bind · arity-3), but NOT map-complete: the capacity edge is REOPENED after an adversarial-verify caught a confound (2026-08-10).**
+> **⚠️ ADVERSARIAL-VERIFY (8-agent workflow, 2026-08-10) verdict:** bundle/bind/faithful-spiking-bind/arity-3 all
+> SURVIVE — but on disjoint-by-construction or idealized-matched-world setups (operator class works, not naturalistic
+> capacity). **Claim 5 (arity capacity "M*~√d located", `353f2e64`) was CONFOUNDED → ⛔ RETRACTED** (`docs/RETRACTED.md`):
+> the shared-channel "break" was a removable readout **DC-offset artifact** (Hebbian running-mean leaves a
+> fact-independent offset C~(M-1)·Σcentroids that grows with M and swamps Euclidean nearest-proto; disjoint read 1.00
+> only because concat has no offset). CORRECTED (`1f448d26`): label-free common-mode removal → shared-channel
+> superposition composes **1.00 through arity 6 (N=729) at d=8 & d=16, 3/3 — NO break in range**; the real limit is
+> BEYOND M=6 (open, needs a harder regime). **⇒ "where bundle needs bind" is NOT located; the composer arc's forward
+> edge is unmeasured.** Hygiene TODO from the verify: the `_used_ruler`/`_stored_raw_patterns` witnesses are
+> never-mutated dead constants (relabel by-construction or make mutate-on-violation).
 > Arity-3 (`9229adaf3`, 3-seed GO, verify CONFIRMED): 3-way superposition composes zero-shot 1.00 — but BOUNDED
 > (disjoint channels = concatenation, so arity3==arity2 by construction; the ~1/√N capacity limit is NOT stressed →
 > shared-channel arity is the probe). **Faithful-dendritic bind: PARTIAL (`97660c6a2`) → GO (`2d45f0506`).** The
@@ -39,8 +49,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > the plateau → full collapse — a static `phi*phi` CANNOT show this), matches host-product 3/3, byte-identical,
 > additions-only. One honest bound: seed44/8×8/s=0.75 strict-gate miss is READOUT-bound (product 0.25 there, spiking
 > BEATS it at 0.38; T80 identical → not quantization). Guarded sim edit (default-off).
-> **THE ONE NAMED, HONEST RESIDUAL LEFT (deserves a careful build):** SHARED-CHANNEL arity — locate the bundling-
-> capacity limit (~1/√N, Plate/Kanerva) where superposition needs binding even for same-attribute-type composition.
+> **THE FORWARD EDGE (reopened, unmeasured):** the shared-channel capacity probe (above) found NO break in the tested
+> range once the DC artifact was removed, so "where superposition needs binding for same-type composition" is NOT
+> located — the real limit is beyond arity 6 at d≥8. NEXT probe = a HARDER regime (much larger arity, a weaker/noisier
+> readout, or genuinely interfering SAME-value codes) to find the true limit; only then is the composer map complete.
 > **STILL RUNNING (untracked, pool-detached — check via heartbeat):** large-N compositional retention (`comp_largeN`,
 > 8×8 done ~0.73-0.86, 10×10 at N=100 slow ~3h). Fold in the flat/fixed comparison when it lands.
 > The POOL is UP (192.168.**0**.40-42, node@ + id_ed25519 aliases pool40/41/42; my "down" call was the wrong subnet).
