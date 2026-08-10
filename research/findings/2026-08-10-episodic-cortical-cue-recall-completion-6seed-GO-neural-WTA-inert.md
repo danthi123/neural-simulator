@@ -47,7 +47,13 @@ the WTA latch strength is irrelevant** — the recall residual is NOT the WTA op
 
 - **Recall is 0.65, not ceiling.** CA3 completion magnitude is 0.18 (moderate) — the upstream attractor drive into
   the heteroassociative pathway is weak (the gap#5 completion is only ~0.2-0.33), so the cortical readout inherits a
-  soft ceiling. The residual 0.35 is readout specificity, not a broken mechanism.
+  soft ceiling. The residual 0.35 is readout specificity, not a broken mechanism. **A ceiling probe (strong manual
+  weights W=16/120/300, seed 42) BOUNDS this: even at W=300 the cortex→CA3 ignition tops out at 0.06 and — the
+  weakest link — the CA3→cortex readout drive fires the cortical readout at only 0.001-0.03 (CA3 assembly firing
+  0.13). So the recall runs on a WEAK-but-SPECIFIC readout, near the ceiling of the current pathway drive; lifting it
+  needs the deep gap#5 "functionally-silent recurrents / current-delivery" sim-internals fix (`2026-07-08-riii-
+  CORRECTION-...`: a weight-120 recurrent delivers ~0.2 mV, ~1000× too weak), NOT a runner-side tune.** ⇒ the
+  episodic recall arc is at its practical ceiling on the current substrate.
 - **The CA3 assembly is PRE-ASSIGNED** (a fixed sparse mask inherited from the closed completion) — this finding
   tests the READOUT given a working attractor; it does NOT claim emergent DG/mossy episode SELECTION (a separate
   downstream piece).
