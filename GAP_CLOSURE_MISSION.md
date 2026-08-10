@@ -13,7 +13,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-09 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-10 (READ FIRST — live resume point)
+
+> **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
+> dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
+> setups (operator class works, not naturalistic capacity)**; the "capacity located M*~√d" claim was **⛔ RETRACTED**
+> (`1f448d26`, a readout DC-offset artifact the verify caught) — corrected: shared-channel superposition composes
+> 1.00 through arity 6 with common-mode removal, **NO break in range**, so "where bundle needs bind" is REOPENED and
+> the arc is **NOT map-complete**. Bundling is practically adequate for conversational arities, so the synthetic
+> capacity edge is DEPRIORITIZED. **CURRENT FRONTIER (building):** EPISODIC CORTICAL CUE-RECALL — a neural
+> WTA-on-closed-bistable-CA3 readout (design-ready gate `2026-08-08-episodic-cortical-cue-recall-research-gate-*`;
+> burns down the host-argmax + no-recurrent-attractor shortcuts; NO sim edit). **NEXT COMMAND (once the draft lands):**
+> review the anti-cheat gates + closed-CA3 config, then `SIM_BACKEND=numpy PYTHONPATH=$PWD python -m
+> research.runners._episodic_cortical_cue_recall_derisk --seeds 42 43 44 ...` and adversarially verify before banking.
+> Pool large-N `comp_largeN` retention still running (~7h+, alive; fold in on landing). History below.
 
 > **⭐⭐⭐⭐⭐ THE BIGGEST RESULT: NEURAL COMPOSITIONAL GENERALIZATION on the spiking substrate = GO (`ea77003c5`,
 > 6/6, adversarially verified) — the biologized composer.** The scalability arc ("will a year of data be too slow")
