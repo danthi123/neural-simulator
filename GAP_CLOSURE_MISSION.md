@@ -86,11 +86,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > multi-assembly specificity = plateau-gating + temporally-separated encoding. **HONEST SCOPE (NOT full gap#5 closure):**
 > assemblies are PRE-ASSIGNED — emergent SELECTION (emergent-DG) is separate; magnitude is ceiling-set; per-synapse
 > ~5000 is a connectivity-sparsity residual.
-> **CURRENT FRONTIER:** (a) **gap#5 EMERGENT-DG** — emergent assembly SELECTION (`2026-07-19-gap5-emergent-DG-ROOT-CAUSE`),
-> the remaining residual now that formation+readout are GO; pairs with temporally-separated encoding (a DG job). (b) the
-> NE-gain rate-homeostat + gain re-run (`6ecba7b69` next lever). (c) W4-graded-RSA→speaking INTEGRATION DEPRIORITIZED
-> (K=3 graded L1 argmax=identity). Pool: lane-D harder-k-WTA on pool40/42. **NB owner check-in pending — tonight's 5
-> results may reshape the next big steer; holding emergent-DG launch for that.** Below: composer arc history.
+> **CURRENT FRONTIER (RAG-corrected — all THREE gap#5 pieces are individually GO):** emergent-DG SELECTION is ALREADY a
+> 6-seed GO (`2026-07-19-gap5-emergent-DG-SELECTION-de-risked-GO-6seed-mossy-detonator-stable-separated.md`, recovered
+> at scale `2026-07-21`); BTSP FORMATION is GO (tonight, `cee2ff124`); slow-NMDA/dendritic COMPLETION readout is GO
+> (`483587c0b` / 2026-07-08). ⇒ **(a) the real frontier = the END-TO-END COMPOSITION** — novel input → DG selects +
+> pattern-separates an assembly → BTSP one-shot forms its CA3 attractor (in its own temporally-isolated encode episode)
+> → a partial cue completes it — ONE emergent episodic-memory loop replacing tonight's PRE-ASSIGNED assemblies with
+> emergently-SELECTED ones. **LAUNCHING a determine-then-build agent on this composition now** (owner's standing
+> "continue autonomously / do NOT defer"; redirectable at the check-in). (b) NE-gain rate-homeostat + gain re-run
+> (`6ecba7b69`). (c) W4-graded-RSA→speaking DEPRIORITIZED (K=3 argmax=identity). Pool: lane-D on pool40/42. Tonight's 5
+> results (learn-to-speak fix · reward-misspec · gap#5 slow-NMDA GO · gap#5 EMERGENT FORMATION GO · NE-gain honest-neg)
+> all banked + pushed. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
