@@ -77,10 +77,16 @@ class Readout:
 
 
 def make_readout(bridge, seed, *, n_assembly=3, assembly_frac=0.18, cue_frac=0.5,
-                 drive_pA=300.0, warm_steps=200, read_steps=200, silence_steps=50):
+                 drive_pA=300.0, warm_steps=200, read_steps=200, silence_steps=50, assemblies_ext=None):
     """Build the slow-NMDA reverberatory readout on `bridge`. COPIED VERBATIM (variable-for-variable) from
     _gap5_ca3_nmda_slow_reverberatory_derisk.run_seed lines ~83-203 so the MEASUREMENT is provably identical; the
-    hand-install cross-check arm empirically confirms it reproduces the committed 6/6 GO on this bridge."""
+    hand-install cross-check arm empirically confirms it reproduces the committed 6/6 GO on this bridge.
+
+    assemblies_ext (ADDITIVE, default None => byte-identical): when provided, a list of CA3 GLOBAL-index arrays to use
+    as the assembly membership INSTEAD of the internal random permutation. This is the seam for the end-to-end
+    composition (`_gap5_emergent_end_to_end_episodic_loop_derisk.py`): the membership is DG-SELECTED (mossy detonator),
+    NOT a hand-set/random-permutation mask. All downstream masks/closures are built from whatever `assemblies` ends up
+    being, so the entire instrument (formation, cue/perm/nocue, cross_dw) is identical, only the membership emergent."""
     from sim.backend import get_backend, to_host
     cp, _ = get_backend()
 
@@ -100,10 +106,15 @@ def make_readout(bridge, seed, *, n_assembly=3, assembly_frac=0.18, cue_frac=0.5
     rec_mask = is_ca3[rows] & is_ca3[cols]                 # all ca3->ca3 (excitatory recurrent) synapses
     n_rec = int(to_host(cp.sum(rec_mask)))
 
-    rng = np.random.default_rng(seed)
-    perm_idx = rng.permutation(len(ca3_idx))
-    a_size = max(6, int(assembly_frac * len(ca3_idx)))
-    assemblies = [ca3_idx[perm_idx[a * a_size:(a + 1) * a_size]] for a in range(n_assembly)]
+    if assemblies_ext is not None:
+        # EMERGENT membership (end-to-end composition): DG-selected CA3 global indices, not a random permutation.
+        assemblies = [np.asarray(A, dtype=np.int64) for A in assemblies_ext]
+        a_size = int(np.mean([len(A) for A in assemblies])) if assemblies else 0
+    else:
+        rng = np.random.default_rng(seed)
+        perm_idx = rng.permutation(len(ca3_idx))
+        a_size = max(6, int(assembly_frac * len(ca3_idx)))
+        assemblies = [ca3_idx[perm_idx[a * a_size:(a + 1) * a_size]] for a in range(n_assembly)]
     withinA_masks = []
     within_union = cp.zeros(len(rows), dtype=cp.bool_)
     for A in assemblies:
@@ -293,17 +304,20 @@ def _form_one_assembly(bridge, R, ai, *, btsp_w_max, btsp_lr, encode_drive, enco
 
 
 def form_btsp_multi(seed, build_kwargs, R_target, *, btsp_w_max, btsp_lr, encode_drive, encode_plateau_pA,
-                    train_events, drive_steps, reset_steps, plateau=True):
+                    train_events, drive_steps, reset_steps, plateau=True, assemblies_ext=None):
     """EMERGENT multi-assembly formation. Each assembly is formed in its OWN isolated encoding episode (a fresh bridge,
     same seed/connectivity, only that assembly driven), then its BTSP-formed WITHIN-assembly weights are written onto
     the shared readout bridge R_target. This guarantees cross-assembly dW == 0 (specificity by construction) while every
-    within-assembly weight is the output of fused_btsp_update (never a hand-set constant). Returns diagnostics."""
+    within-assembly weight is the output of fused_btsp_update (never a hand-set constant). Returns diagnostics.
+
+    assemblies_ext (ADDITIVE, default None): forwarded to each isolated readout so the SAME emergent (DG-selected)
+    membership is formed on every episode bridge as on R_target (end-to-end composition)."""
     cp = R_target.cp; to_host = R_target.to_host
     for ai in range(len(R_target.assemblies)):
         bi = _build_bridge(seed, **build_kwargs)      # fresh, isolated (enable_ou False in build_kwargs)
         Ri = make_readout(bi, seed, assembly_frac=R_target._assembly_frac, cue_frac=R_target._cue_frac,
                           drive_pA=R_target._drive_pA, warm_steps=R_target._warm, read_steps=R_target._read,
-                          silence_steps=R_target._silence)
+                          silence_steps=R_target._silence, assemblies_ext=assemblies_ext)
         _form_one_assembly(bi, Ri, ai, btsp_w_max=btsp_w_max, btsp_lr=btsp_lr, encode_drive=encode_drive,
                            encode_plateau_pA=encode_plateau_pA, train_events=train_events,
                            drive_steps=drive_steps, reset_steps=reset_steps, plateau=plateau)
@@ -339,7 +353,7 @@ def run_seed(seed, *, n_ca3=400, ca3_density=0.12, assembly_frac=0.18, cue_frac=
              enable_ou=False, element="nmda_slow",
              btsp_w_max_grid=(2500.0, 5000.0, 9000.0), btsp_lr=0.05, encode_drive=700.0, encode_plateau_pA=250.0,
              train_events=40, drive_steps=48, reset_steps=15,
-             handinstall_W=(2500.0, 5000.0, 9000.0), kopsick_T=None, verbose=True):
+             handinstall_W=(2500.0, 5000.0, 9000.0), kopsick_T=None, verbose=True, assemblies_ext=None):
     from sim.backend import get_backend, to_host
     from tools.lab import attributable_to
     cp, _ = get_backend()
@@ -347,7 +361,8 @@ def run_seed(seed, *, n_ca3=400, ca3_density=0.12, assembly_frac=0.18, cue_frac=
     build_kwargs = dict(n_ca3=n_ca3, ca3_density=ca3_density, ca3_fb_inhib=ca3_fb_inhib, nmda_tau=nmda_tau,
                         nmda_ratio=nmda_ratio, enable_ou=False, element=element)   # ENCODE episodes are deterministic
     read_kwargs = dict(assembly_frac=assembly_frac, cue_frac=cue_frac, drive_pA=drive_pA,
-                       warm_steps=warm_steps, read_steps=read_steps, silence_steps=silence_steps)
+                       warm_steps=warm_steps, read_steps=read_steps, silence_steps=silence_steps,
+                       assemblies_ext=assemblies_ext)
 
     # ---------- (1) HAND-INSTALL CROSS-CHECK: reproduce the committed 6/6 GO on THIS bridge (readout fidelity) ----------
     bridge = _build_bridge(seed, **{**build_kwargs, "enable_ou": enable_ou})
@@ -379,7 +394,8 @@ def run_seed(seed, *, n_ca3=400, ca3_density=0.12, assembly_frac=0.18, cue_frac=
         R = make_readout(bridge, seed, **read_kwargs)
         diag = form_btsp_multi(seed, build_kwargs, R, btsp_w_max=wmax, btsp_lr=btsp_lr, encode_drive=encode_drive,
                                encode_plateau_pA=encode_plateau_pA, train_events=train_events,
-                               drive_steps=drive_steps, reset_steps=reset_steps, plateau=True)
+                               drive_steps=drive_steps, reset_steps=reset_steps, plateau=True,
+                               assemblies_ext=assemblies_ext)
         w1_within, cross_dw, nonmem_dw = diag["w_within"], diag["cross_dw"], diag["nonmem_dw"]
         within_sum = diag["within_sum_per_post"]
         # GENUINE-FORMATION teeth: within grew from the RULE, cross/non-member did NOT (specificity by construction)
@@ -420,7 +436,8 @@ def run_seed(seed, *, n_ca3=400, ca3_density=0.12, assembly_frac=0.18, cue_frac=
     R = make_readout(bridge, seed, **read_kwargs)
     diag = form_btsp_multi(seed, build_kwargs, R, btsp_w_max=wmax, btsp_lr=btsp_lr, encode_drive=encode_drive,
                            encode_plateau_pA=encode_plateau_pA, train_events=train_events,
-                           drive_steps=drive_steps, reset_steps=reset_steps, plateau=False)  # NO plateau -> no IS_post
+                           drive_steps=drive_steps, reset_steps=reset_steps, plateau=False,  # NO plateau -> no IS_post
+                           assemblies_ext=assemblies_ext)
     evals = [R.eval_assembly(A) for A in R.assemblies]
     hc = float(np.mean([e["held_cue"] for e in evals]))
     rows_out.append(dict(seed=seed, arm="btsp_noplateau", enable_ou=bool(enable_ou), element=element,
