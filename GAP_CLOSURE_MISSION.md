@@ -15,6 +15,40 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (READ FIRST — live resume point)
 
+> **⭐⭐ LATER 2026-08-10 — THE INTEGRATION ARC (owner-steered; SUPERSEDES the overnight ledger below as the FRONTIER).**
+> Owner steer: stop de-risking faculties in isolation — WIRE each GO faculty into the LIVE 14-turn chat
+> (`_conversation_turing_test_derisk.py` over `build_one_brain`) and gate on *"did the conversation get better."*
+> **Merged into `main` (HEAD `a9404bcc` = origin/main), each verified on the live chat, 0 confab, no regression:**
+> **#1** sub-clausal no-confab moat (drops invented causal clauses; confab 3→0, 6-seed) · **#2/#2b** episodic dialogue
+> memory (turn-7 recall; GATE wired to the spiking gap#5 dendritic-dAP CA3 completion, `--spiking-episodic` default-OFF;
+> numpy dAP read=0 honest-negative→host-oracle guard, **cupy is the 6/6 GO backend**) · **#3/#3b/#3c** honest inner-state
+> read-outs (affect self-report; structural self-affirmation + graded certainty; #3c certainty-band OPPONENT comparator
+> → confidence read ROBUST on ALL 6 seeds, min +0.052). **gap#5 episodic memory mechanistically CLOSED end-to-end**
+> (DG-select→BTSP forms→dendritic-dAP readout completes, 6/6 `ab9f7dbe`). Composed live chat (seed 42): 6 honest replies
+> + 8 honest silences (moat holding = success) + **0 confab**. Sharpest residual = **Turn 4** ("why did the dog go
+> east?"→deflects, no causal faculty).
+>
+> **⚠️ LIVE BACKGROUND WORK (do NOT double-launch; owner OK'd GPU while gaming IF VRAM<24GB, ~13GB used):**
+> **(a)** cupy `--spiking-episodic` eval (backgrounded waiter `b3tqsguud` re-invokes on completion) — decisive test of
+> whether the dAP episodic recall FIRES on cupy (STORE already fired `w_within=84.9`); if turn-7 `apical_cue>0` ⇒ recall
+> is GENUINELY SPIKING live ⇒ finding + commit artifact (NO eval edit → no conflict with (c)). **(b)** aggregator agent
+> `adca06d47a5751e5e` — multi-seed conversation-quality CI gate. **(c)** causal-query agent `a22bf78d9b149869f`
+> (worktree `integration-5-honest-causal-query`, off `a9404bcc`) — INTEGRATION #5 turn-4 honest causal-disclaimer;
+> coordinator merges. **(d)** state-heartbeat Monitor live.
+>
+> **D word-decode disposition (NOT a negative):** neural FS-WTA word-decode de-risk is GO (parity 1.000 vs host, 6/6,
+> hard-reset). The cupy `--no-hard-reset` run hit CHANCE (host too) but that is MIS-SCOPED — the real
+> `ConceptFrameSpeaker.spell(word, reset_steps=50)` RESETS between words, so zero-reset is not the live mode. **Re-run
+> the cupy confirmation with `reset_steps≈50` / `--hard-reset`** once VRAM frees. Bank as scope, not a wall.
+>
+> **BRANCH NOTE:** the integration arc lives on `main` (worktree `gate-b-v2-clean`, = origin/main). The PRIMARY repo
+> checkout is on the stale `codex/gap4-axon-capd-derisk` branch (different work + CRLF noise) — commit integration work
+> on `main`, not there.
+>
+> **NEXT (ordered):** land (a)→commit if it fires; merge (c) #5; merge (b) CI gate; re-run D cupy in the correct reset
+> mode; then reduce the 8 silences the RIGHT way — emergent breadth via the teacher-loop (EMERGENCE BAR), not hand-added
+> phatic handlers.
+
 > **⭐ OVERNIGHT 2026-08-10 (owner asleep, autonomous) — the night's ledger (all banked + pushed both remotes):**
 > (1) **EPISODIC neural cue-recall = 6-seed GO** (`ead8e0b7`, recall 0.646 vs 0.25; completion-driven, permuted-
 > specific, lesion teeth) — ceiling-bounded (residual = deep gap#5 pathway drive). (2) **WTA REFRAME** (`35f9bb6c`):
