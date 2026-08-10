@@ -28,10 +28,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **⭐ WORLD-MODEL READ-OUT BURN-DOWN CLOSED (`f7687e59`, 6-seed GO):** drive/excitability scaling (homeostatic
 > intrinsic-excitability set-point, verified neural) fixes the under-drive — neural read-out 0.18→0.82 @n_pool=1000
 > (85% of ceiling); fully-neural, capacity-scaling read-out.
-> **RUNNING:** arity-3 bundle (`w98aebiej`, retry — the first arity attempt failed on agent StructuredOutput cap);
-> large-N compositional retention on the POOL (`comp_largeN`, 10×10 finishing).
-> **NEXT (deepest composer residual, named):** move the bind MULTIPLY into the substrate's two-compartment DENDRITIC
-> machinery (`sim/dendritic_neuron.py`) so a real spiking dendrite computes the coincidence (currently a Hadamard of
+> **⭐ COMPOSER MAP COMPLETE (all banked): bundle GO · bind GO · arity-3 GO · faithful-spiking-dendrite PARTIAL.**
+> Arity-3 (`9229adaf3`, 3-seed GO, verify CONFIRMED): 3-way superposition composes zero-shot 1.00 — but BOUNDED
+> (disjoint channels = concatenation, so arity3==arity2 by construction; the ~1/√N capacity limit is NOT stressed →
+> shared-channel arity is the probe). Faithful-dendritic bind (`97660c6a2`, PARTIAL): a rate sigma-pi (plateau +
+> push-pull) recovers the conjunction, BUT adversarial verify CAUGHT the overclaim — it's still a host `gb*ga`, NOT
+> a spiking-membrane coincidence (`step()`/membrane dynamics bypassed). Guarded sim edit (+49/-0, default-off).
+> **THE TWO NAMED, HONEST RESIDUALS (both deserve a careful build, not a rush):** (1) the FAITHFUL spiking-dendrite
+> bind — route drives through `DendriticLayer.step()` so basal depol must coincide IN TIME with an apical plateau
+> (temporal coincidence in spikes, not a static product); (2) SHARED-CHANNEL arity — locate the bundling-capacity
+> limit where superposition needs binding even for same-type composition.
+> **STILL RUNNING (untracked, pool-detached — check via heartbeat):** large-N compositional retention (`comp_largeN`,
+> 8×8 done ~0.73-0.86, 10×10 at N=100 slow ~3h). Fold in the flat/fixed comparison when it lands.
+> **DEEPEST composer residual = the faithful spiking dendrite** — move the bind MULTIPLY into the substrate's
+> two-compartment DENDRITIC machinery (`sim/dendritic_neuron.py`) so a real spiking dendrite computes it (currently a Hadamard of
 > two readouts = a functional dendritic-AND). The POOL is UP (192.168.**0**.40-42, node@ + id_ed25519 aliases
 > pool40/41/42; my "down" call was the wrong subnet).
 > **SCALABILITY, now a MAP not a wall:** retention closed@N=20 (non-forgetting generator `0933fdb7a`, re-diagnosed
