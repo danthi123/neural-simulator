@@ -1,0 +1,244 @@
+{
+  "probe": "homeostat_mechanistic",
+  "seeds": [
+    42
+  ],
+  "results": {
+    "no_homeo": {
+      "42": {
+        "noise": {
+          "assembly_rate_cv_mean": 0.015971908132212356,
+          "assembly_rate_cv_per_intent": [
+            0.017,
+            0.0207,
+            0.0102
+          ],
+          "utter_neuron_rate_mean": 0.0461111111111111,
+          "utter_neuron_rate_cv": 0.3676179831822049,
+          "crit_neuron_rate_mean": 0.07444444444444445,
+          "crit_neuron_rate_cv": 0.1893817543325235
+        },
+        "oracle_selectivity_acc": 1.0,
+        "diag": {
+          "homeo": false,
+          "adapt_rate": 0.0,
+          "ema_alpha": 0.02,
+          "expose_steps": 0,
+          "expose_drive": 2500.0,
+          "freeze_after": true
+        },
+        "elapsed_s": 0.8
+      }
+    },
+    "homeo_a05_long_c30": {
+      "42": {
+        "noise": {
+          "assembly_rate_cv_mean": 0.041661819868231344,
+          "assembly_rate_cv_per_intent": [
+            0.0335,
+            0.0401,
+            0.0514
+          ],
+          "utter_neuron_rate_mean": 0.04759259259259259,
+          "utter_neuron_rate_cv": 0.4431529108633059,
+          "crit_neuron_rate_mean": 0.08333333333333333,
+          "crit_neuron_rate_cv": 0.30983866769287527
+        },
+        "oracle_selectivity_acc": 1.0,
+        "diag": {
+          "homeo": true,
+          "adapt_rate": 0.05,
+          "ema_alpha": 0.02,
+          "expose_steps": 3000,
+          "expose_drive": 2500.0,
+          "freeze_after": true,
+          "thr_before": {
+            "mean": -41.59925079345703,
+            "std": 7.429784297943115
+          },
+          "thr_after": {
+            "mean": -32.74037170410156,
+            "std": 3.9080560207366943
+          },
+          "ema_after": {
+            "mean": 0.08985500037670135,
+            "std": 0.02439579740166664,
+            "target": 0.02,
+            "frac_at_clip_max": 0.5166666666666667,
+            "frac_at_clip_min": 0.0
+          },
+          "thresh_max": -30.0
+        },
+        "elapsed_s": 9.0
+      }
+    },
+    "homeo_a05_long_c35": {
+      "42": {
+        "noise": {
+          "assembly_rate_cv_mean": 0.01550936286323279,
+          "assembly_rate_cv_per_intent": [
+            0.0188,
+            0.0113,
+            0.0164
+          ],
+          "utter_neuron_rate_mean": 0.04833333333333333,
+          "utter_neuron_rate_cv": 0.3726336799336083,
+          "crit_neuron_rate_mean": 0.0725,
+          "crit_neuron_rate_cv": 0.28256542631782355
+        },
+        "oracle_selectivity_acc": 1.0,
+        "diag": {
+          "homeo": true,
+          "adapt_rate": 0.05,
+          "ema_alpha": 0.02,
+          "expose_steps": 6000,
+          "expose_drive": 2500.0,
+          "freeze_after": true,
+          "thr_before": {
+            "mean": -6.757313251495361,
+            "std": 26.747224807739258
+          },
+          "thr_after": {
+            "mean": 7.720439434051514,
+            "std": 22.04343032836914
+          },
+          "ema_after": {
+            "mean": 0.06967893242835999,
+            "std": 0.016392335295677185,
+            "target": 0.02,
+            "frac_at_clip_max": 0.20333333333333334,
+            "frac_at_clip_min": 0.0
+          },
+          "thresh_max": 35.0
+        },
+        "elapsed_s": 15.5
+      }
+    },
+    "homeo_a2_long_c35": {
+      "42": {
+        "noise": {
+          "assembly_rate_cv_mean": 0.017014452538852382,
+          "assembly_rate_cv_per_intent": [
+            0.0166,
+            0.0197,
+            0.0147
+          ],
+          "utter_neuron_rate_mean": 0.047222222222222214,
+          "utter_neuron_rate_cv": 0.35587019910432693,
+          "crit_neuron_rate_mean": 0.06972222222222223,
+          "crit_neuron_rate_cv": 0.29597598567477096
+        },
+        "oracle_selectivity_acc": 1.0,
+        "diag": {
+          "homeo": true,
+          "adapt_rate": 0.2,
+          "ema_alpha": 0.02,
+          "expose_steps": 6000,
+          "expose_drive": 2500.0,
+          "freeze_after": true,
+          "thr_before": {
+            "mean": -6.757313251495361,
+            "std": 26.747224807739258
+          },
+          "thr_after": {
+            "mean": 29.749576568603516,
+            "std": 10.725790023803711
+          },
+          "ema_after": {
+            "mean": 0.06560340523719788,
+            "std": 0.014779431745409966,
+            "target": 0.02,
+            "frac_at_clip_max": 0.7066666666666667,
+            "frac_at_clip_min": 0.0
+          },
+          "thresh_max": 35.0
+        },
+        "elapsed_s": 15.9
+      }
+    },
+    "homeo_a2_xlong_c35": {
+      "42": {
+        "noise": {
+          "assembly_rate_cv_mean": 0.029660466768588578,
+          "assembly_rate_cv_per_intent": [
+            0.0304,
+            0.0295,
+            0.0291
+          ],
+          "utter_neuron_rate_mean": 0.04796296296296295,
+          "utter_neuron_rate_cv": 0.36748563376629545,
+          "crit_neuron_rate_mean": 0.07055555555555554,
+          "crit_neuron_rate_cv": 0.293670176357594
+        },
+        "oracle_selectivity_acc": 1.0,
+        "diag": {
+          "homeo": true,
+          "adapt_rate": 0.2,
+          "ema_alpha": 0.02,
+          "expose_steps": 12000,
+          "expose_drive": 2500.0,
+          "freeze_after": true,
+          "thr_before": {
+            "mean": -6.757313251495361,
+            "std": 26.747224807739258
+          },
+          "thr_after": {
+            "mean": 34.46944808959961,
+            "std": 4.028492450714111
+          },
+          "ema_after": {
+            "mean": 0.0659119039773941,
+            "std": 0.015834586694836617,
+            "target": 0.02,
+            "frac_at_clip_max": 0.97,
+            "frac_at_clip_min": 0.0
+          },
+          "thresh_max": 35.0
+        },
+        "elapsed_s": 31.8
+      }
+    },
+    "homeo_a2_xlong_c35_cont": {
+      "42": {
+        "noise": {
+          "assembly_rate_cv_mean": 0.029660466768588578,
+          "assembly_rate_cv_per_intent": [
+            0.0304,
+            0.0295,
+            0.0291
+          ],
+          "utter_neuron_rate_mean": 0.04796296296296295,
+          "utter_neuron_rate_cv": 0.36748563376629545,
+          "crit_neuron_rate_mean": 0.07055555555555554,
+          "crit_neuron_rate_cv": 0.293670176357594
+        },
+        "oracle_selectivity_acc": 1.0,
+        "diag": {
+          "homeo": true,
+          "adapt_rate": 0.2,
+          "ema_alpha": 0.02,
+          "expose_steps": 12000,
+          "expose_drive": 2500.0,
+          "freeze_after": false,
+          "thr_before": {
+            "mean": -6.757313251495361,
+            "std": 26.747224807739258
+          },
+          "thr_after": {
+            "mean": 34.46944808959961,
+            "std": 4.028492450714111
+          },
+          "ema_after": {
+            "mean": 0.0659119039773941,
+            "std": 0.015834586694836617,
+            "target": 0.02,
+            "frac_at_clip_max": 0.97,
+            "frac_at_clip_min": 0.0
+          },
+          "thresh_max": 35.0
+        },
+        "elapsed_s": 31.4
+      }
+    }
+  }
+}
