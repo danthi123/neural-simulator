@@ -1,0 +1,43 @@
+{
+ "run_id": "1786377879-3385035",
+ "runner": "research/runners/_gap5_leverA_detonator_gain_larger_assembly_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gap5_leverA_detonator_gain_larger_assembly_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--theta",
+  "0.10",
+  "--densities",
+  "0.06",
+  "0.08",
+  "--ffs",
+  "400.0",
+  "--struct-control",
+  "--out",
+  "research/findings/raw/_gap5_e2e/leverA_detonator_gain_6seed.json"
+ ],
+ "git_sha": "4a92c3a68",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T12:04:39",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 12521.0,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gap5_e2e/leverA_detonator_gain_6seed.json"
+}

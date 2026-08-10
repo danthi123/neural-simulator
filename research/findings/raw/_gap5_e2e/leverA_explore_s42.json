@@ -1,0 +1,237 @@
+{
+  "baseline": {
+    "sizes": [
+      36,
+      14,
+      23
+    ],
+    "pj_mean": 0.05379782940429841,
+    "pj_max": 0.11320754716981132
+  },
+  "grid": [
+    {
+      "label": "mossy_weight",
+      "kw": {
+        "mossy_weight": 3000
+      },
+      "sizes": [
+        32,
+        11,
+        22
+      ],
+      "mean": 21.666666666666668,
+      "pj_mean": 0.06001984126984127,
+      "pj_max": 0.125
+    },
+    {
+      "label": "mossy_weight",
+      "kw": {
+        "mossy_weight": 5000
+      },
+      "sizes": [
+        43,
+        14,
+        21
+      ],
+      "mean": 26.0,
+      "pj_mean": 0.056691975035628284,
+      "pj_max": 0.12280701754385964
+    },
+    {
+      "label": "mossy_weight",
+      "kw": {
+        "mossy_weight": 8000
+      },
+      "sizes": [
+        60,
+        13,
+        24
+      ],
+      "mean": 32.333333333333336,
+      "pj_mean": 0.04897660818713451,
+      "pj_max": 0.10526315789473684
+    },
+    {
+      "label": "mossy_weight",
+      "kw": {
+        "mossy_weight": 12000
+      },
+      "sizes": [
+        101,
+        14,
+        23
+      ],
+      "mean": 46.0,
+      "pj_mean": 0.041423001949317736,
+      "pj_max": 0.08771929824561403
+    },
+    {
+      "label": "mossy_density",
+      "kw": {
+        "mossy_density": 0.03
+      },
+      "sizes": [
+        43,
+        33,
+        36
+      ],
+      "mean": 37.333333333333336,
+      "pj_mean": 0.05586602754871003,
+      "pj_max": 0.0821917808219178
+    },
+    {
+      "label": "mossy_density",
+      "kw": {
+        "mossy_density": 0.05
+      },
+      "sizes": [
+        154,
+        81,
+        113
+      ],
+      "mean": 116.0,
+      "pj_mean": 0.10757130798824477,
+      "pj_max": 0.11715481171548117
+    },
+    {
+      "label": "mossy_density",
+      "kw": {
+        "mossy_density": 0.08
+      },
+      "sizes": [
+        344,
+        165,
+        185
+      ],
+      "mean": 231.33333333333334,
+      "pj_mean": 0.1796232760630113,
+      "pj_max": 0.20227272727272727
+    },
+    {
+      "label": "theta",
+      "kw": {
+        "theta": 0.1
+      },
+      "sizes": [
+        80,
+        61,
+        69
+      ],
+      "mean": 70.0,
+      "pj_mean": 0.06295317333445885,
+      "pj_max": 0.07971014492753623
+    },
+    {
+      "label": "theta",
+      "kw": {
+        "theta": 0.08
+      },
+      "sizes": [
+        117,
+        96,
+        98
+      ],
+      "mean": 103.66666666666667,
+      "pj_mean": 0.07016913729826117,
+      "pj_max": 0.08040201005025126
+    },
+    {
+      "label": "theta",
+      "kw": {
+        "theta": 0.05
+      },
+      "sizes": [
+        257,
+        256,
+        245
+      ],
+      "mean": 252.66666666666666,
+      "pj_mean": 0.1459853141182691,
+      "pj_max": 0.15935334872979215
+    },
+    {
+      "label": "amp_ca3w",
+      "kw": {
+        "amp_ca3w": 16
+      },
+      "sizes": [
+        68,
+        38,
+        51
+      ],
+      "mean": 52.333333333333336,
+      "pj_mean": 0.06692395976163802,
+      "pj_max": 0.09174311926605505
+    },
+    {
+      "label": "amp_ca3w",
+      "kw": {
+        "amp_ca3w": 20
+      },
+      "sizes": [
+        114,
+        75,
+        87
+      ],
+      "mean": 92.0,
+      "pj_mean": 0.07510333863275041,
+      "pj_max": 0.08648648648648649
+    },
+    {
+      "label": "amp_ca3w",
+      "kw": {
+        "amp_ca3w": 24
+      },
+      "sizes": [
+        191,
+        139,
+        155
+      ],
+      "mean": 161.66666666666666,
+      "pj_mean": 0.10653594771241831,
+      "pj_max": 0.13071895424836602
+    },
+    {
+      "label": "ca3_fb_inhib",
+      "kw": {
+        "ca3_fb_inhib": 15
+      },
+      "sizes": [
+        45,
+        16,
+        26
+      ],
+      "mean": 29.0,
+      "pj_mean": 0.04445486762559933,
+      "pj_max": 0.09230769230769231
+    },
+    {
+      "label": "ca3_fb_inhib",
+      "kw": {
+        "ca3_fb_inhib": 10
+      },
+      "sizes": [
+        55,
+        24,
+        29
+      ],
+      "mean": 36.0,
+      "pj_mean": 0.04577147998200629,
+      "pj_max": 0.10526315789473684
+    }
+  ],
+  "provenance": {
+    "backend": "cupy",
+    "device": "cuda:RTX3090",
+    "seeds": [
+      42
+    ],
+    "seed": 42,
+    "runner": "scratchpad/leverA_explore.py (5-knob separation-cost sweep; emergent-selection pipeline _gap5_emergent_dg_selection_derisk._build_bridge + _gap5_dg_selection_reset_scale_driver._drive_read)",
+    "argv": [
+      "leverA_explore.py"
+    ],
+    "note": "SIM_BACKEND=cupy; measures emergent assembly size vs pairwise Jaccard (separation cost) across mossy_weight/mossy_density/theta/amp_ca3w/ca3_fb_inhib knobs on n_ca3=2000",
+    "git_sha": "4a92c3a68a31f85eefa017246c15d95d02509458"
+  }
+}

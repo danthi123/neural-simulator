@@ -1,0 +1,621 @@
+{
+  "probe": "gap5_leverA_detonator_gain_larger_assembly",
+  "GO": false,
+  "verdict": "NEGATIVE grown-emergent completion GO 0/6 (emergent-membership 6/6; mean size 76, pairwise-Jaccard 0.062 = separation PRESERVED at target size; min nocue at cue>=0.20 = 0.271 >> 0.10 = window stays closed: cue & nocue coupled)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "theta": 0.1,
+  "densities": [
+    0.06,
+    0.08
+  ],
+  "ffs": [
+    "400.0"
+  ],
+  "wmax": 5000.0,
+  "n_go": 0,
+  "n_emergent_membership": 6,
+  "n_valid": 6,
+  "mean_size": 75.94444444444444,
+  "mean_pairwise_jaccard": 0.062073179047950226,
+  "elapsed_seconds": 4646.3,
+  "struct_control": {
+    "assembly": "uniform-random-72",
+    "n_ca3": 2000,
+    "rows": [
+      {
+        "density": 0.06,
+        "ff": 400.0,
+        "arm": "handinstall",
+        "held_cue": 0.22208333512147269,
+        "held_perm": 0.0,
+        "held_nocue": 0.2455555647611618,
+        "genuine_formation": null
+      },
+      {
+        "density": 0.06,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.19532406330108643,
+        "held_perm": 0.0,
+        "held_nocue": 0.18944445252418518,
+        "genuine_formation": true
+      },
+      {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "handinstall",
+        "held_cue": 0.29555556178092957,
+        "held_perm": 0.0,
+        "held_nocue": 0.25263887643814087,
+        "genuine_formation": null
+      },
+      {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.28898148735364276,
+        "held_perm": 0.00013888888255072138,
+        "held_nocue": 0.2530555725097656,
+        "genuine_formation": true
+      },
+      {
+        "density": 0.12,
+        "ff": 400.0,
+        "arm": "handinstall",
+        "held_cue": 0.3739814758300781,
+        "held_perm": 9.259259483466546e-05,
+        "held_nocue": 0.33319443464279175,
+        "genuine_formation": null
+      },
+      {
+        "density": 0.12,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.3686573803424835,
+        "held_perm": 0.0,
+        "held_nocue": 0.32583335041999817,
+        "genuine_formation": true
+      }
+    ],
+    "any_go": false
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "theta": 0.1,
+      "assembly_sizes": [
+        77,
+        60,
+        67
+      ],
+      "mean_size": 68.0,
+      "pairwise_jaccard_mean": 0.0649620846989268,
+      "pairwise_jaccard_max": 0.08270676691729323,
+      "jaccard_vs_preassigned": [
+        0.0284,
+        0.0407,
+        0.0305
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "rows": [
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.2145304133494695,
+          "held_perm": 0.025537454057484865,
+          "held_nocue": 0.2144871950149536,
+          "w_within": 4461.173828125,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.30341856678326923,
+          "held_perm": 0.11555756380160649,
+          "held_nocue": 0.31948721408843994,
+          "w_within": 4834.03955078125,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.2427631914615631,
+          "held_perm": 0.06943036988377571,
+          "held_nocue": 0.24320514500141144,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.3094892005125682,
+          "held_perm": 0.11255881935358047,
+          "held_nocue": 0.3223077356815338,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        }
+      ],
+      "seed_go": false,
+      "best": {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.30341856678326923,
+        "held_perm": 0.11555756380160649,
+        "held_nocue": 0.31948721408843994,
+        "w_within": 4834.03955078125,
+        "genuine_formation": true
+      },
+      "min_nocue_at_cue_ge_0.20": 0.2144871950149536
+    },
+    {
+      "seed": 43,
+      "theta": 0.1,
+      "assembly_sizes": [
+        69,
+        79,
+        67
+      ],
+      "mean_size": 71.66666666666667,
+      "pairwise_jaccard_mean": 0.05927960690928543,
+      "pairwise_jaccard_max": 0.06569343065693431,
+      "jaccard_vs_preassigned": [
+        0.0217,
+        0.0134,
+        0.0072
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "rows": [
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.2278746465841929,
+          "held_perm": 0.18666457136472067,
+          "held_nocue": 0.23671428859233856,
+          "w_within": 4572.810546875,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.27422163387139636,
+          "held_perm": 0.08391071856021881,
+          "held_nocue": 0.2874285578727722,
+          "w_within": 4767.1669921875,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.25616071621576947,
+          "held_perm": 0.19769222537676492,
+          "held_nocue": 0.25,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.30223282178243,
+          "held_perm": 0.09403570989767711,
+          "held_nocue": 0.303428590297699,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        }
+      ],
+      "seed_go": false,
+      "best": {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.27422163387139636,
+        "held_perm": 0.08391071856021881,
+        "held_nocue": 0.2874285578727722,
+        "w_within": 4767.1669921875,
+        "genuine_formation": true
+      },
+      "min_nocue_at_cue_ge_0.20": 0.23671428859233856
+    },
+    {
+      "seed": 44,
+      "theta": 0.1,
+      "assembly_sizes": [
+        99,
+        62,
+        51
+      ],
+      "mean_size": 70.66666666666667,
+      "pairwise_jaccard_mean": 0.06441262897417203,
+      "pairwise_jaccard_max": 0.07333333333333333,
+      "jaccard_vs_preassigned": [
+        0.0429,
+        0.0153,
+        0.0252
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "rows": [
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.23645202815532684,
+          "held_perm": 0.01980769137541453,
+          "held_nocue": 0.30000001192092896,
+          "w_within": 4457.69140625,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.3044880876938502,
+          "held_perm": 0.10974979897340138,
+          "held_nocue": 0.3579999804496765,
+          "w_within": 4724.6123046875,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.2586594025293986,
+          "held_perm": 0.073911174122865,
+          "held_nocue": 0.30820000171661377,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.2970656007528305,
+          "held_perm": 0.2452020545800527,
+          "held_nocue": 0.3600999712944031,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        }
+      ],
+      "seed_go": false,
+      "best": {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.3044880876938502,
+        "held_perm": 0.10974979897340138,
+        "held_nocue": 0.3579999804496765,
+        "w_within": 4724.6123046875,
+        "genuine_formation": true
+      },
+      "min_nocue_at_cue_ge_0.20": 0.30000001192092896
+    },
+    {
+      "seed": 100,
+      "theta": 0.1,
+      "assembly_sizes": [
+        78,
+        85,
+        88
+      ],
+      "mean_size": 83.66666666666667,
+      "pairwise_jaccard_mean": 0.06452085077157514,
+      "pairwise_jaccard_max": 0.08666666666666667,
+      "jaccard_vs_preassigned": [
+        0.0318,
+        0.012,
+        0.0299
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "rows": [
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.31591829657554626,
+          "held_perm": 0.21472937365372977,
+          "held_nocue": 0.3266666829586029,
+          "w_within": 4668.50537109375,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.3658874233563741,
+          "held_perm": 0.25735952456792194,
+          "held_nocue": 0.37051284313201904,
+          "w_within": 4857.82470703125,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.3270060618718465,
+          "held_perm": 0.24390935897827148,
+          "held_nocue": 0.3291025459766388,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.3696565131346385,
+          "held_perm": 0.24985883136590323,
+          "held_nocue": 0.375384658575058,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        }
+      ],
+      "seed_go": false,
+      "best": {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.3658874233563741,
+        "held_perm": 0.25735952456792194,
+        "held_nocue": 0.37051284313201904,
+        "w_within": 4857.82470703125,
+        "genuine_formation": true
+      },
+      "min_nocue_at_cue_ge_0.20": 0.3266666829586029
+    },
+    {
+      "seed": 101,
+      "theta": 0.1,
+      "assembly_sizes": [
+        63,
+        91,
+        84
+      ],
+      "mean_size": 79.33333333333333,
+      "pairwise_jaccard_mean": 0.05672159810955798,
+      "pairwise_jaccard_max": 0.06944444444444445,
+      "jaccard_vs_preassigned": [
+        0.0071,
+        0.0559,
+        0.0316
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "rows": [
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.1935581515232722,
+          "held_perm": 0.09897170340021451,
+          "held_nocue": 0.18015624582767487,
+          "w_within": 4399.81396484375,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.30094170570373535,
+          "held_perm": 0.09144345740787685,
+          "held_nocue": 0.28609374165534973,
+          "w_within": 4729.48583984375,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.23245825370152792,
+          "held_perm": 0.1564026822646459,
+          "held_nocue": 0.2420312464237213,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.31016714374224347,
+          "held_perm": 0.1292740658779318,
+          "held_nocue": 0.2803124785423279,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        }
+      ],
+      "seed_go": false,
+      "best": {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.30094170570373535,
+        "held_perm": 0.09144345740787685,
+        "held_nocue": 0.28609374165534973,
+        "w_within": 4729.48583984375,
+        "genuine_formation": true
+      },
+      "min_nocue_at_cue_ge_0.20": 0.28609374165534973
+    },
+    {
+      "seed": 102,
+      "theta": 0.1,
+      "assembly_sizes": [
+        79,
+        88,
+        80
+      ],
+      "mean_size": 82.33333333333333,
+      "pairwise_jaccard_mean": 0.062542304824184,
+      "pairwise_jaccard_max": 0.07051282051282051,
+      "jaccard_vs_preassigned": [
+        0.0063,
+        0.0119,
+        0.0189
+      ],
+      "lesion_sizes": [
+        0,
+        0,
+        0
+      ],
+      "mossy_lesion_collapses": true,
+      "membership_attributable_to_mossy": 1.0,
+      "anticheat1_emergent_membership": true,
+      "rows": [
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.2856439451376597,
+          "held_perm": 0.25666288038094837,
+          "held_nocue": 0.2606250047683716,
+          "w_within": 4672.65576171875,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "btsp",
+          "held_cue": 0.29711363712946576,
+          "held_perm": 0.2624242305755615,
+          "held_nocue": 0.33675000071525574,
+          "w_within": 4819.8681640625,
+          "genuine_formation": true
+        },
+        {
+          "density": 0.06,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.3018333415190379,
+          "held_perm": 0.2860075781742732,
+          "held_nocue": 0.27300000190734863,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        },
+        {
+          "density": 0.08,
+          "ff": 400.0,
+          "arm": "handinstall",
+          "held_cue": 0.3087954620520274,
+          "held_perm": 0.2716931899388631,
+          "held_nocue": 0.3283750116825104,
+          "w_within": 5000.0,
+          "genuine_formation": null
+        }
+      ],
+      "seed_go": false,
+      "best": {
+        "density": 0.08,
+        "ff": 400.0,
+        "arm": "btsp",
+        "held_cue": 0.29711363712946576,
+        "held_perm": 0.2624242305755615,
+        "held_nocue": 0.33675000071525574,
+        "w_within": 4819.8681640625,
+        "genuine_formation": true
+      },
+      "min_nocue_at_cue_ge_0.20": 0.2606250047683716
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "emergent membership anti-cheat holds (all valid seeds): DG-selected, not hand-set",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BTSP formation genuine (all btsp rows) -> a completion failure is a READOUT/bistability seam, not dead formation",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the lever ENGAGED: grown mean size in the ~72 formation-reference regime (>=50 cells)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "mean grown assembly size 76 cells (3 co-stored per seed)"
+    },
+    {
+      "kind": "require",
+      "name": "control WITHOUT the lever (~23-cell baseline) STILL fails: 0/6 in the 2026-08-10 size-aware PARTIAL",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "external established control; the lever is load-bearing on SIZE"
+    },
+    {
+      "kind": "control",
+      "name": "mossy-LESION collapses the grown membership (membership is DG-derived)",
+      "ok": true,
+      "detail": "treatment=227.833 control=0 |sep|=227.833 > 1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "window stays CLOSED: min nocue at cue>=0.20 is above the 0.10 rest-silence bar (the residual)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "mean min nocue at cue>=0.20 = 0.271"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "plasticity at recall (hebbian/stdp/btsp/bdsp)",
+      "why": "isolation: the formed attractor is the read variable"
+    },
+    {
+      "process": "OU membrane noise (OU-on NOT run)",
+      "why": "the self-drive coupling is DETERMINISTIC (present at OU-off, and in the uniform-random-72 control); OU can only add self-ignition, not open the window"
+    }
+  ],
+  "undefined_reasons": [],
+  "verdict_status": "NO-GO"
+}
