@@ -1,0 +1,41 @@
+{
+ "run_id": "1786356334-3182162",
+ "runner": "research/runners/_ne_lc_gain_vigilance_realbridge_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_ne_lc_gain_vigilance_realbridge_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-trials",
+  "120",
+  "--T",
+  "120",
+  "--byte-ident-trials",
+  "40",
+  "--out",
+  "research/findings/raw/lanes/ne_realbridge_6seed.json"
+ ],
+ "git_sha": "483587c0b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T06:05:34",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3444.2,
+ "corpus_check_query": "locus coeruleus norepinephrine multiplicative gain vigilance signal detection bridge neuromodulator",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/ne_realbridge_6seed.json"
+}

@@ -1,0 +1,377 @@
+{
+  "runner": "_ne_lc_gain_vigilance_realbridge_derisk",
+  "biology": "Aston-Jones & Cohen 2005 LC-NE adaptive gain (Annu.Rev.Neurosci.28:403-450)",
+  "gain_delivery": "sim NeuromodulatorManager synaptic_gain scope=all (bridge.py:8167) \u2014 REAL substrate, not a host multiply",
+  "additive_control_delivery": "sim NeuromodulatorManager excitability_drive scope=group:target (bridge.py:8488)",
+  "noise_floor": "cfg.enable_ou_process OU background on target pop only (cp_ou_neuron_mask); summed AFTER synaptic matvec so synaptic_gain does not scale it",
+  "params": {
+    "n_in": 40,
+    "n_tgt": 160,
+    "weight": 3.0,
+    "base_drive": 320.0,
+    "sig_drive": 18.0,
+    "ou_std": 60.0,
+    "T": 120,
+    "n_trials": 120,
+    "gains": [
+      1.0,
+      1.5,
+      2.0,
+      2.5
+    ]
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "gains": [
+        1.0,
+        1.5,
+        2.0,
+        2.5
+      ],
+      "sweep": {
+        "1.0": {
+          "dprime": 0.8109207152928292,
+          "mean_rate": 115.525,
+          "mean_present": 118.53333333333333,
+          "mean_absent": 112.51666666666667
+        },
+        "1.5": {
+          "dprime": 1.2989917011849226,
+          "mean_rate": 161.34583333333336,
+          "mean_present": 167.05,
+          "mean_absent": 155.64166666666668
+        },
+        "2.0": {
+          "dprime": 1.9574777889151136,
+          "mean_rate": 208.84583333333333,
+          "mean_present": 217.35,
+          "mean_absent": 200.34166666666667
+        },
+        "2.5": {
+          "dprime": 2.8580690409748155,
+          "mean_rate": 256.48333333333335,
+          "mean_present": 267.7583333333333,
+          "mean_absent": 245.20833333333334
+        }
+      },
+      "dprime_low": 0.8109207152928292,
+      "dprime_high": 2.8580690409748155,
+      "dprime_lift_high_minus_low": 2.0471483256819862,
+      "monotone": true,
+      "attributable_gain_lift": 0.7162697248852167,
+      "additive_control": {
+        "matched_offset_pA": 42.96875,
+        "dprime_additive": 0.8052665061830359,
+        "mean_rate_additive": 257.2416666666667,
+        "mean_rate_gain_high": 256.48333333333335,
+        "mult_minus_add_dprime": 2.0528025347917795,
+        "mult_beats_add": true
+      },
+      "byte_identical_control": {
+        "byte_identical": true,
+        "n_trials_compared": 40,
+        "hash_off": "af18f094bdda0f30",
+        "hash_on_gain1": "af18f094bdda0f30",
+        "max_abs_count_diff": 0.0
+      },
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "gains": [
+        1.0,
+        1.5,
+        2.0,
+        2.5
+      ],
+      "sweep": {
+        "1.0": {
+          "dprime": 0.1780925338438151,
+          "mean_rate": 72.78333333333333,
+          "mean_present": 73.51666666666667,
+          "mean_absent": 72.05
+        },
+        "1.5": {
+          "dprime": 0.2500094398976332,
+          "mean_rate": 94.75416666666666,
+          "mean_present": 95.74166666666666,
+          "mean_absent": 93.76666666666667
+        },
+        "2.0": {
+          "dprime": 0.5369687369164144,
+          "mean_rate": 118.14583333333334,
+          "mean_present": 120.03333333333333,
+          "mean_absent": 116.25833333333334
+        },
+        "2.5": {
+          "dprime": 0.9809270875830925,
+          "mean_rate": 142.3375,
+          "mean_present": 145.89166666666668,
+          "mean_absent": 138.78333333333333
+        }
+      },
+      "dprime_low": 0.1780925338438151,
+      "dprime_high": 0.9809270875830925,
+      "dprime_lift_high_minus_low": 0.8028345537392775,
+      "monotone": true,
+      "attributable_gain_lift": 0.8184446773892059,
+      "additive_control": {
+        "matched_offset_pA": 27.34375,
+        "dprime_additive": 0.0640642040470757,
+        "mean_rate_additive": 145.46666666666664,
+        "mean_rate_gain_high": 142.3375,
+        "mult_minus_add_dprime": 0.9168628835360169,
+        "mult_beats_add": true
+      },
+      "byte_identical_control": {
+        "byte_identical": true,
+        "n_trials_compared": 40,
+        "hash_off": "800872fbbac501ef",
+        "hash_on_gain1": "800872fbbac501ef",
+        "max_abs_count_diff": 0.0
+      },
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "gains": [
+        1.0,
+        1.5,
+        2.0,
+        2.5
+      ],
+      "sweep": {
+        "1.0": {
+          "dprime": 0.0444632073038931,
+          "mean_rate": 83.33333333333334,
+          "mean_present": 83.53333333333333,
+          "mean_absent": 83.13333333333334
+        },
+        "1.5": {
+          "dprime": -0.023891669007070536,
+          "mean_rate": 90.19999999999999,
+          "mean_present": 90.1,
+          "mean_absent": 90.3
+        },
+        "2.0": {
+          "dprime": -0.2338146883125316,
+          "mean_rate": 97.47916666666666,
+          "mean_present": 96.46666666666667,
+          "mean_absent": 98.49166666666666
+        },
+        "2.5": {
+          "dprime": -0.6081808969266711,
+          "mean_rate": 107.19583333333333,
+          "mean_present": 104.55833333333334,
+          "mean_absent": 109.83333333333333
+        }
+      },
+      "dprime_low": 0.0444632073038931,
+      "dprime_high": -0.6081808969266711,
+      "dprime_lift_high_minus_low": -0.6526441042305642,
+      "monotone": false,
+      "attributable_gain_lift": 1.0731085233498447,
+      "additive_control": {
+        "matched_offset_pA": 11.71875,
+        "dprime_additive": -0.043893421233782266,
+        "mean_rate_additive": 111.55416666666667,
+        "mean_rate_gain_high": 107.19583333333333,
+        "mult_minus_add_dprime": -0.5642874756928888,
+        "mult_beats_add": false
+      },
+      "byte_identical_control": {
+        "byte_identical": false,
+        "n_trials_compared": 40,
+        "hash_off": "d08ad74a36b3b33d",
+        "hash_on_gain1": "711577cab9417f13",
+        "max_abs_count_diff": 2.0
+      },
+      "GO": false
+    },
+    {
+      "seed": 100,
+      "gains": [
+        1.0,
+        1.5,
+        2.0,
+        2.5
+      ],
+      "sweep": {
+        "1.0": {
+          "dprime": 0.31801720954196466,
+          "mean_rate": 115.54583333333333,
+          "mean_present": 116.96666666666667,
+          "mean_absent": 114.125
+        },
+        "1.5": {
+          "dprime": 0.5121464178364775,
+          "mean_rate": 146.95,
+          "mean_present": 149.3,
+          "mean_absent": 144.6
+        },
+        "2.0": {
+          "dprime": 0.4471904979118416,
+          "mean_rate": 176.30416666666667,
+          "mean_present": 178.38333333333333,
+          "mean_absent": 174.225
+        },
+        "2.5": {
+          "dprime": 0.3598976898826347,
+          "mean_rate": 203.73333333333335,
+          "mean_present": 205.4,
+          "mean_absent": 202.06666666666666
+        }
+      },
+      "dprime_low": 0.31801720954196466,
+      "dprime_high": 0.3598976898826347,
+      "dprime_lift_high_minus_low": 0.041880480340670045,
+      "monotone": false,
+      "attributable_gain_lift": 0.11636773871576553,
+      "additive_control": {
+        "matched_offset_pA": 27.34375,
+        "dprime_additive": 0.3659093272993047,
+        "mean_rate_additive": 213.05416666666667,
+        "mean_rate_gain_high": 203.73333333333335,
+        "mult_minus_add_dprime": -0.00601163741666999,
+        "mult_beats_add": false
+      },
+      "byte_identical_control": {
+        "byte_identical": true,
+        "n_trials_compared": 40,
+        "hash_off": "a51e2df37c12430c",
+        "hash_on_gain1": "a51e2df37c12430c",
+        "max_abs_count_diff": 0.0
+      },
+      "GO": false
+    },
+    {
+      "seed": 101,
+      "gains": [
+        1.0,
+        1.5,
+        2.0,
+        2.5
+      ],
+      "sweep": {
+        "1.0": {
+          "dprime": -0.4252068418199045,
+          "mean_rate": 23.775,
+          "mean_present": 22.65,
+          "mean_absent": 24.9
+        },
+        "1.5": {
+          "dprime": -0.37686033573818023,
+          "mean_rate": 19.22083333333333,
+          "mean_present": 18.3,
+          "mean_absent": 20.141666666666666
+        },
+        "2.0": {
+          "dprime": -0.40322118210886493,
+          "mean_rate": 16.09583333333333,
+          "mean_present": 15.25,
+          "mean_absent": 16.941666666666666
+        },
+        "2.5": {
+          "dprime": -0.3632473911900547,
+          "mean_rate": 14.566666666666666,
+          "mean_present": 13.85,
+          "mean_absent": 15.283333333333333
+        }
+      },
+      "dprime_low": -0.4252068418199045,
+      "dprime_high": -0.3632473911900547,
+      "dprime_lift_high_minus_low": 0.061959450629849755,
+      "monotone": true,
+      "attributable_gain_lift": -0.17057094457543384,
+      "additive_control": {
+        "matched_offset_pA": 3.90625,
+        "dprime_additive": -0.5132392754343155,
+        "mean_rate_additive": 27.741666666666667,
+        "mean_rate_gain_high": 14.566666666666666,
+        "mult_minus_add_dprime": 0.14999188424426074,
+        "mult_beats_add": false
+      },
+      "byte_identical_control": {
+        "byte_identical": true,
+        "n_trials_compared": 40,
+        "hash_off": "da8056d9f4b9a757",
+        "hash_on_gain1": "da8056d9f4b9a757",
+        "max_abs_count_diff": 0.0
+      },
+      "GO": false
+    },
+    {
+      "seed": 102,
+      "gains": [
+        1.0,
+        1.5,
+        2.0,
+        2.5
+      ],
+      "sweep": {
+        "1.0": {
+          "dprime": 0.8037852073801738,
+          "mean_rate": 157.45833333333334,
+          "mean_present": 161.86666666666667,
+          "mean_absent": 153.05
+        },
+        "1.5": {
+          "dprime": 1.453856520892557,
+          "mean_rate": 205.5875,
+          "mean_present": 212.65,
+          "mean_absent": 198.525
+        },
+        "2.0": {
+          "dprime": 1.7761927963433952,
+          "mean_rate": 248.00416666666666,
+          "mean_present": 256.575,
+          "mean_absent": 239.43333333333334
+        },
+        "2.5": {
+          "dprime": 2.2334673309639004,
+          "mean_rate": 289.9041666666667,
+          "mean_present": 301.175,
+          "mean_absent": 278.6333333333333
+        }
+      },
+      "dprime_low": 0.8037852073801738,
+      "dprime_high": 2.2334673309639004,
+      "dprime_lift_high_minus_low": 1.4296821235837265,
+      "monotone": true,
+      "attributable_gain_lift": 0.6401177683520075,
+      "additive_control": {
+        "matched_offset_pA": 35.15625,
+        "dprime_additive": 0.8575029161677887,
+        "mean_rate_additive": 286.0625,
+        "mean_rate_gain_high": 289.9041666666667,
+        "mult_minus_add_dprime": 1.3759644147961116,
+        "mult_beats_add": true
+      },
+      "byte_identical_control": {
+        "byte_identical": true,
+        "n_trials_compared": 40,
+        "hash_off": "6ef6aeac6de03274",
+        "hash_on_gain1": "6ef6aeac6de03274",
+        "max_abs_count_diff": 0.0
+      },
+      "GO": true
+    }
+  ],
+  "n_seeds": 6,
+  "n_go": 3,
+  "n_monotone": 4,
+  "n_mult_beats_add": 3,
+  "n_byte_identical": 5,
+  "GO_ALL": false,
+  "gate": "d' monotone-up with gain & mult beats rate-matched additive on >=5/6 seeds AND byte-identical-when-off on all seeds",
+  "elapsed_s": 1587.3
+}
