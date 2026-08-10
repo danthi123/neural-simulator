@@ -74,9 +74,11 @@ untrained collapses). A cross-arc **WTA reframe** landed with it: the
 "silent/latched neural WTA" negative was largely an over-strong-inhibition
 OPERATING-POINT artifact (the separable-assembly WTA is weight-controllable,
 verified 1.0/6) — so recall runs on the heteroassociative afferent directly and
-the WTA competition is inert. The recall residual (0.65, not ceiling) is the
-weak CA3->cortex pathway drive (the deep gap#5 "functionally-silent recurrents"
-sim wall), so the arc is at its practical ceiling. Separately, the composer's
+the WTA competition is inert. The recall residual (0.65, not ceiling) is the CA3
+ATTRACTOR STRENGTH / SPECIFICITY (NOT a transmission wall — the "functionally-
+silent recurrents / 1000x-too-weak" reading was REFUTED 3x; the recurrents
+transmit + scale with weight), addressable via a recurrent-LTP completion sweep
+or the dendritic-plateau readout. Separately, the composer's
 shared-channel "capacity break" was **RETRACTED** as a readout DC-offset
 artifact (corrected: neural superposition composes through arity 6 with no break
 in range). Pragmatics Leg-2 stays open with its root cause now mapped — the

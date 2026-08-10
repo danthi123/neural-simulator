@@ -39,9 +39,14 @@ problem, not a representation limit. (Verdict AMBIGUOUS by the runner's own cont
 Runner `_riii_ca3_cortex_readout_drive_sweep_SMOKE.py`, seed 42 at the GO config: sweeping `--ca3-cortex-w`
 4→8→16→32 leaves recall IDENTICAL at 0.750 (max_cortex ~0.042 unchanged); baseline reproduces the known positive
 (permute 0.000, untrained 0.250 = specific). Both skeptical controls held (specificity did NOT rise with drive).
-⇒ the episodic recall residual (0.65, ceiling-bounded) is NOT liftable by runner-side readout weight — it is the
-gap#5 **functionally-silent recurrents / current-delivery cap** (a weight-120 recurrent delivers ~0.2 mV, ~1000×
-too weak; `2026-07-08-riii-CORRECTION-...`), a sim-internals wall. Confirms the ceiling-probe diagnosis.
+⇒ the episodic recall residual (0.65, ceiling-bounded) is NOT liftable by runner-side readout weight. **CORRECTION
+(2026-08-10, doc-drift fixed — the CA3 de-risk in the same-day parallel push caught this mis-citation):** the
+residual is NOT a "functionally-silent recurrents / ~1000×-too-weak transmission" wall — that `2026-07-08-riii-CORRECTION`
+claim was REFUTED 3× (`2026-07-17-gap5-ca3-recurrents-NOT-silent-transmission-refuted-*`: the ca3→ca3 recurrents
+transmit and scale ~linearly with weight — g_e scales ~30,000× over weight 0→1000; the "0.2 mV" was a weak-drive
+floor artifact; re-confirmed 2026-07-25 + a fresh probe this session). The genuine residual is the ATTRACTOR
+STRENGTH / SPECIFICITY (does trained recurrent LTP yield pattern-SELECTIVE completion — a tractable weight×density
+sweep) OR the dendritic-plateau completion readout (6-seed GO) — a config/runner lever, NOT a sim transmission fix.
 
 ## 3. Value-critic — the wall is the LEARNING stage, NOT the readout (BOTH readout-SNR duals fail)
 

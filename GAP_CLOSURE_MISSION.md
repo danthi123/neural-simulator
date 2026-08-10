@@ -30,11 +30,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > — an offset-invariant resonator + ML-exhaustive readout recall 1.00 across the whole rho×r sweep (even collinear
 > rho=1/r=1 where Euclidean craters to 0.21); the break was the Euclidean RULER; genuine limit = a margin/SNR collapse
 > in the degenerate corner. (5) faithful-spiking-bind **6-seed confirmed** (`3b30ea2f`); CA3→cortex readout drive
-> runner-side EXHAUSTED (deep sim wall); breadth N=100 compute-bound (killed). Skill drift #12 extended; docs synced.
-> **CURRENT FRONTIER (parallel push `wzf4b9vxx` running): the deferred CA3 functionally-silent-recurrents sim wall
-> (guarded transmission-gain fix — lifts episodic recall + every recurrent-attractor faculty) + breadth scaling +
-> activity-silent WM + NE-gain vigilance. NEXT builds: neural per-intent critic (burn down the host-EMA shortcut) +
-> a distinctiveness/pragmatic-cost term for the reward-misspec wall.** GPU + pool staged. Below: composer arc history.
+> runner-side EXHAUSTED; breadth N=100 compute-bound (killed). Skill drift #12 extended; docs synced.
+> **(6) LEARN-TO-SPEAK made FULLY BRAIN-BASED (`2fdfc3e5`): the neural per-intent spiking critic ALSO passes
+> contingency 6/6 (host-EMA shortcut burned down; s102 leak gone).** (7) parallel push `wzf4b9vxx` DONE: **NE-gain
+> vigilance POSITIVE** (multiplicative gain d′ 2.0→4.25, byte-identical-off) + **activity-silent WM POSITIVE**
+> (Mongillo STP, reactivation 0.75 vs 0.25, silent-delay verified) — both buildable-now A5 faculties, need 6-seed;
+> **CA3 "transmission wall" = ALREADY-DONE / REFUTED 3×** (the recurrents transmit + scale ~30,000× over weight;
+> the "0.2 mV/1000×" was a weak-drive floor artifact — `2026-07-17-gap5-ca3-recurrents-NOT-silent-*`; **DOC-DRIFT I
+> introduced by re-citing the refuted 2026-07-08 claim — FIXED this cycle**). ⇒ the episodic residual is ATTRACTOR
+> STRENGTH/SPECIFICITY or the dendritic-plateau readout (config lever), NOT a sim transmission fix.
+> **CURRENT FRONTIER: reward-misspecification (`affbdf5b` running — RSA/distinctiveness success signal so the brain
+> says the ALIGNED utterance); NE-gain + activity-silent-WM 6-seed confirms; the attractor-strength completion sweep.**
+> GPU + pool staged. Below: composer arc history.
 
 > **NOW (2026-08-10):** the COMPOSER arc is at an honest pause — 4 mechanism GOs (bundle · bind · faithful-spiking-
 > dendrite bind `2d45f0506` · arity-3) all SURVIVED an 8-agent adversarial-verify, **but on idealized/disjoint
