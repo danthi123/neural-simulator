@@ -37,8 +37,9 @@ it is NOT load-bearing: opening the WTA gate leaves the result unchanged. The re
 heteroassociative afferent selects the winner DIRECTLY (which is exactly the reframe
 `2026-08-10-neural-WTA-separable-assemblies-weight-controllable-*`: a separable-assembly WTA has no common-mode; the
 afferent decides, the competition is superfluous). So the "neural WTA sub-wall" is not a blocker for recall — it is
-an unused circuit at this operating point. (An operating-point retune — `wta_ie_w` 18→4 — is running to test whether
-a WEAKER latch lets the afferent-driven winner emerge more cleanly and lifts the 0.65.)
+an unused circuit at this operating point. **The operating-point retune CONFIRMS this: `wta_ie_w` 18→4 (weaker
+latch) leaves recall unchanged (0.625 @ wie=4, 3-seed, vs 0.646 @ wie=18; WTA still inert full-sep≈wta-off-sep), so
+the WTA latch strength is irrelevant** — the recall residual is NOT the WTA operating point.
 
 ## Honest residuals
 
@@ -53,5 +54,6 @@ a WEAKER latch lets the afferent-driven winner emerge more cleanly and lifts the
 - 3-way attribute recall (WHO/WHAT/WHEN) on disjoint cortical pools; the co-resident (source-monitor) case is out of
   scope (dendritic, mapped).
 
-Artifact: `research/findings/raw/cortical_episodic_wta/_completion_loadbearing_6seed.json` (verdict GO, all
-preconditions/controls pass). SIM_BACKEND=cupy.
+Artifacts: `research/findings/raw/cortical_episodic_wta/_completion_loadbearing_6seed.json` (verdict GO, all
+preconditions/controls pass); `research/findings/raw/cortical_episodic_wta/_retune_wie4_3seed.json` (the WTA-latch
+retune, recall 0.625 unchanged). SIM_BACKEND=cupy.
