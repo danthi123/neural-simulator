@@ -7,7 +7,9 @@ lane: emergence engine (recurrent spiking sequence/language cortex; roadmap L130
 instrument: research/runners/_emerge_hetero_ltd_allocation_derisk.py — an AllocLTDLearner subclass of the EMERGE-14 OnBridgeLearner that, at the ALLOCATE step, competes a new context's k winners against the codes already claimed this epoch by OTHER prev-winner SDRs and picks the k cells minimizing the MAX per-foreign-context overlap (heterosynaptic competition / lateral inhibition), plus an anti-Hebbian synaptic depression of the foreign coincidence afferents (reported). Reuse-by-import of the selective-write store's ContentStore/harvest/read/swap. hetero_ltd=False is the no-allocation-LTD baseline (= the load-bearing lesion). SIM_BACKEND=numpy (CPU); 1-seed SMOKE (6-seed command below).
 artifacts:
   - research/findings/raw/_emerge_hetero_ltd_allocation/smoke_nseq3_L16_cells8_seed42.json
+  - research/findings/raw/_emerge_hetero_ltd_allocation/hetero_nseq3_L16_cells8_6seed.json
   - research/runners/_emerge_hetero_ltd_allocation_derisk.py
+verdict: 6-SEED GO — heterosynaptic-competition allocation rescues the regime-C starvation wall (store 0.333->1.000, all anti-cheats hold across 6 seeds)
 ---
 
 # Emergence engine — HETEROSYNAPTIC-COMPETITION ALLOCATION keeps the on-bridge HTM-TM's allocation keys DISJOINT under full capacity starvation (n_cells=8), RESCUING the horizon where a content store ALONE collapsed to chance: the no-allocation-LTD baseline store is 0.333 (~chance, 1/3 contexts own a clean key) but WITH hetero-LTD the selective store recovers to 1.000 (3/3 contexts own a clean key). 1-seed SMOKE + the exact 6-seed command. <!--derived--> (0.667=2/3 and 0.333=1/3 are rounded displays of the full-precision values in the cited artifact)
@@ -87,14 +89,18 @@ source-monitor sibling, whose competitive encoding is likewise host-bookkept ("r
 activity"). The label-free, fully-synaptic, ONLINE realization (derive the foreign-code depression from the substrate's
 own firing during encoding, no host claim record) is the burn-down, shared with the source-monitor lane.
 
-## Verdict — SMOKE-GO (1-seed indicator; the 6-seed sweep is the decisive run)
+## Verdict — 6-SEED GO (decisive run RUN by coordinator)
 
 <!--derived-->
 The GO question — "does hetero-LTD allocation RESCUE regime C, keeping enough allocation keys disjoint that the selective
-store recovers the horizon where it previously collapsed to chance?" — is answered **yes on 1 seed**: baseline store
-0.333 (chance) -> hetero store 1.000, with the load-bearing lesion, attribution, selectivity, no-confab, and fair-capacity
-no-harm anti-cheats all holding, and clean-key contexts lifted 1/3 -> 3/3. The runner's OWN verdict prints SMOKE-GO. This
-is a 1-seed SMOKE indicator; the decisive run is the 6-seed sweep.
+store recovers the horizon where it previously collapsed to chance?" — is answered **yes**: baseline store 0.333
+(chance) -> hetero store 1.000, with the load-bearing lesion, attribution, selectivity, no-confab, and fair-capacity
+no-harm anti-cheats all holding, and clean-key contexts lifted 1/3 -> 3/3. **The 6-seed decisive sweep was RUN
+(coordinator, `research/findings/raw/_emerge_hetero_ltd_allocation/hetero_nseq3_L16_cells8_6seed.json`) and the runner's
+own verdict is GO** — the rescue + every anti-cheat holds across seeds 42/43/44/100/101/102. Honest scope unchanged:
+`foreign_l1_depressed=0.000` — the SELECTION competition (anti-collision winner choice) is the load-bearing lever, not
+the synaptic depression (inert at the sub-connected allocate step); the fully-synaptic label-free ONLINE version is the
+declared burn-down, shared with the source-monitor competitive-encoding lane (a cross-lane convergence).
 
 ## The decisive 6-seed command (CPU/numpy, NOT cupy; do NOT run the sweep here)
 
