@@ -70,6 +70,13 @@ now: the ACQUISITION is synaptic + the MOAT is learned. Declared burn-downs rema
 ONE brain — the merge is next), the host anti-Hebbian familiarity projector (spiking `v320` gate to swap in), the argmax
 read-out. SMALL-K demo standing BESIDE #6 (continual/sequential breadth is an OPEN arc, `frac_recalled~1/N` — the named
 scale-up mechanism). (`2026-08-10-INTEGRATION-7-plasticity-learned-facts-into-live-chat-6seed.md`)
+**#7 burn-down 2 (2026-08-10) — the moat is now FULLY SPIKING:** #7's learned familiarity/source-monitor gate was a
+host numpy anti-Hebbian projector; burn-down 2 swaps in the standing spiking v320 gate (same projector, read through a
+resonate-and-fire I/Q phasor conjunction) via an additive `--spiking-familiarity-gate` flag. **6/6 GO** — the full #7
+gate holds with the abstain decided on SPIKES (lesion the spiking pool → novelty margin 0.66-0.75→0.00, confab returns;
+byte-identical off). So both the plasticity-learned fact's ACQUISITION and its no-confab moat are now the brain's own.
+Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain step — next arc).
+(`2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The

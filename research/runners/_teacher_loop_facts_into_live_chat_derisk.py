@@ -95,6 +95,10 @@ from research.runners._teacher_loop_contrastive_familiarity_moat_derisk import (
     _train_eprop, _predict_settled, PATIENT_WORDS, ACTIONS, UNTAUGHT_REFERENT, HEADLINE_REFERENT,
     _mk_net, _single_class_batch, _heldout_acc, _majority, _readout_norm,
 )
+# BURN-DOWN #2 (additive/default-off): the SPIKING realization of the no-confab moat (the v320 GO gate).
+from research.runners._spiking_conjunctive_familiarity_gate import (  # noqa: E402
+    SpikingConjunctiveFamiliarityGate,
+)
 from tools.lab import attributable_to  # noqa: E402
 from tools.verdict import Verdict  # noqa: E402
 
@@ -135,6 +139,19 @@ K = len(PATIENT_WORDS)
 CHANCE = 1.0 / K
 TAUGHT_FACTS = [(r, "eats", TAUGHT[r]) for r in TAUGHT]      # the 3 plasticity facts, as (agent, action, patient)
 
+# BURN-DOWN #2: default-off swap of the moat's familiarity gate for its SPIKING realization (the v320 GO gate).
+# OFF -> the numpy ConjunctiveFamiliarityGate (#7's shipped default; byte-identity path unaffected). ON -> the abstain
+# is decided on SPIKES (spike-phasor conjunctive cue + the spiking anti-Hebbian familiarity readout). Set in main().
+SPIKING_GATE = False
+
+
+def _make_fam(seed):
+    """The moat's familiarity/source-monitor gate for the plasticity-learned facts. Selected by SPIKING_GATE so the
+    default (numpy) build stays byte-identical; the flag swaps in the SPIKING gate with the identical interface."""
+    if SPIKING_GATE:
+        return SpikingConjunctiveFamiliarityGate(int(seed), d_p=D_P, D=D_FAM)
+    return ConjunctiveFamiliarityGate(int(seed), d_p=D_P, D=D_FAM)
+
 
 class ChatShim(AcquiredReadComposer):
     """The moat-closure adapter + the ONE #7 delta: a transparent `__getattr__` passthrough so the shim is a drop-in
@@ -164,7 +181,7 @@ def _teach(seed, env, mispaired=False, single_class=False, freeze=False):
     net = _mk_net(N_IN, K, seed, HIDDEN, SETTLE, EPROP_LR, W_CLIP)
     if freeze:
         net.eprop_lr = 0.0
-    fam = ConjunctiveFamiliarityGate(seed, d_p=D_P, D=D_FAM)
+    fam = _make_fam(seed)
     for r in TAUGHT:
         fam.imprint(env, r, "eats")
     ro0 = _readout_norm(net)
@@ -303,7 +320,7 @@ def run_seed(seed, do_byte_identity=False):
 
     # ---- MATCHED (pre-teaching) BASELINE: same substrate, fresh net + UN-imprinted gate -> taught cues abstain ----
     net_u, fam_u, _ = _teach(int(seed), _make_env(int(seed)), freeze=True)   # net irrelevant; gate below is EMPTY
-    fam_empty = ConjunctiveFamiliarityGate(int(seed), d_p=D_P, D=D_FAM)      # NOT imprinted -> every cue novel
+    fam_empty = _make_fam(int(seed))                                          # NOT imprinted -> every cue novel
     shim_base = ChatShim(comp, env, net=net_u, fam=fam_empty, enabled=True, use_gate=True)
     tr_base = CF.run_chat(bridge, xp, idx, snap, shim_base, facts_all, turns)
     sum_base = CF._chat_summary(tr_base)
@@ -455,8 +472,11 @@ def build_verdict(recs, go):
                "CPU eval; the grounded CONTENT is the LEARNED read (what the mouth would render), not the mouth")
     v.disabled("ONE merged bridge",
                "OnBridgeEpropNet builds its OWN co-resident SimulationBridge; the merge is the named next step")
-    v.disabled("spiking familiarity gate (v320)",
-               "the source-monitor is a numpy anti-Hebbian projector; the spiking v320 gate is the swap-in target")
+    if SPIKING_GATE:
+        v.require("BURN-DOWN #2: abstain decided on SPIKES (spiking familiarity gate active)", True, expect=True)
+    else:
+        v.disabled("spiking familiarity gate (v320)",
+                   "the source-monitor is a numpy anti-Hebbian projector; the spiking v320 gate is the swap-in target")
     return v.decide(go=bool(go), verbose=False)
 
 
@@ -467,9 +487,15 @@ def main():
                     help="auto=first seed only (default); on=every seed; off=never")
     ap.add_argument("--smoke", action="store_true",
                     help="cheap-first single-seed smoke assertions (recall/abstain/lesion/byte-identity), then exit")
+    ap.add_argument("--spiking-familiarity-gate", action="store_true",
+                    help="BURN-DOWN #2 (additive/default-off): decide the moat abstain on SPIKES (the v320 spiking "
+                         "anti-Hebbian gate) instead of the numpy anti-Hebbian projector. Default off = #6 byte-identical.")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.replace(",", " ").split()]
+
+    global SPIKING_GATE
+    SPIKING_GATE = bool(a.spiking_familiarity_gate)
 
     if a.smoke:
         return _smoke(seeds[0])
@@ -477,8 +503,8 @@ def main():
     def _want_bi(i):
         return {"on": True, "off": False, "auto": (i == 0)}[a.byte_identity]
 
-    print("[INTEGRATION #7] plasticity-learned facts -> live chat | vocab=%d | TAUGHT=%s" % (len(V), TAUGHT),
-          flush=True)
+    print("[INTEGRATION #7] plasticity-learned facts -> live chat | vocab=%d | TAUGHT=%s | moat-gate=%s"
+          % (len(V), TAUGHT, "SPIKING (burn-down #2)" if SPIKING_GATE else "numpy (default)"), flush=True)
     recs = []
     for i, s in enumerate(seeds):
         with contextlib.redirect_stdout(io.StringIO()):
@@ -514,6 +540,7 @@ def main():
         os.makedirs(os.path.dirname(a.out), exist_ok=True)
         payload = {"verdict": "GO" if go else "PARTIAL", "verdict_earned": decided["status"],
                    "n_go": n_go, "n_seeds": len(recs), "seeds": seeds, "K_taught": len(TAUGHT), "taught": TAUGHT,
+                   "spiking_familiarity_gate": bool(SPIKING_GATE),
                    "sim_backend": os.environ.get("SIM_BACKEND", "numpy"),
                    "preconditions": decided["preconditions"], "disabled_processes": decided["disabled_processes"],
                    "byte_identity": recs[0]["byte_identity"], "per_seed": recs}
@@ -527,7 +554,8 @@ def _smoke(seed):
     """Cheap-first single-seed smoke (mouth-free): (i) each taught cue answers its own patient in the chat, (ii)
     dax+chases/wug+eats + OOD turns abstain, (iii) fam.lesion() collapses the margin (confab-abstain rides the
     learned projector), (iv) enabled=False reproduces the #6 default transcript. Only then is the 6-seed worth it."""
-    print("[SMOKE seed %d] building + teaching ..." % seed, flush=True)
+    print("[SMOKE seed %d] moat-gate=%s | building + teaching ..."
+          % (seed, "SPIKING (burn-down #2)" if SPIKING_GATE else "numpy (default)"), flush=True)
     with contextlib.redirect_stdout(io.StringIO()):
         r = run_seed(int(seed), do_byte_identity=True)
     ok = True

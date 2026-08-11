@@ -49,10 +49,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > a spiking Izhikevich readout), with a LEARNED familiarity gate as the no-confab moat — **6/6 GO** (taught-recall 0→3/3
 > while a FROZEN readout recalls 0 = content rode the weight change; moat FA=0 at chat scale; lesion the gate → confab
 > returns; byte-identical off). SMALL-K (3) demo beside #6 (host-store); continual/sequential breadth is the OPEN scale-up
-> arc (`frac_recalled~1/N`). **NEXT ARC (frontier) — the #7 burn-downs, per THE LAW:** (1) merge the co-resident e-prop
-> acquisition bridge INTO the one conversational bridge (two bridges → ONE brain); (2) swap the host anti-Hebbian
-> familiarity projector for the spiking `familiarity_gate_v320`; (3) the continual-learning arc for breadth scale-up. Or
-> a different GO faculty into the chat. State-heartbeat Monitor live. **✅ EPISODIC #2b FIXED + VERIFIED + MERGED:** the "cupy-GO / numpy-backend-blocked" claim
+> arc (`frac_recalled~1/N`). **✅ #7 BURN-DOWN 2 MERGED — the moat is now FULLY SPIKING:** the host anti-Hebbian
+familiarity projector is swapped for the spiking v320 gate (same projector, read through a resonate-and-fire I/Q phasor
+conjunction; additive `--spiking-familiarity-gate`), **6/6 GO** — the full #7 gate holds with the abstain on SPIKES
+(lesion the spiking pool → margin 0.66-0.75→0.00, confab returns; byte-identical off). So both the plasticity-learned
+fact's ACQUISITION and its no-confab moat are the brain's own. **NEXT ARC (frontier) — the remaining #7 burn-downs, per
+THE LAW:** (1) ⭐ merge the co-resident e-prop acquisition bridge + the gate's phasor render INTO the one conversational
+bridge (two/three bridges → ONE brain — the "one brain" non-negotiable, the highest-value next step, may need a faithful
+`sim/` co-residency edit); (2) the continual-learning arc for breadth scale-up; (3) the argmax patient read-out.
+Or a different GO faculty into the chat. State-heartbeat Monitor live. **✅ EPISODIC #2b FIXED + VERIFIED + MERGED:** the "cupy-GO / numpy-backend-blocked" claim
 > was a kthresh bug — corrected kthresh 30→**8** (the narrow dAP window: kt≥10 silences small assemblies, kt≤6
 > self-ignites). Recall now FIRES cue-specifically on **both backends 6/6** (cupy agent-verified + my 4 independent
 > fresh-builds 0.57–1.0; **numpy 0.909, no cupy needed** ⇒ live chat turn-7 recall genuinely spiking). #2b finding
