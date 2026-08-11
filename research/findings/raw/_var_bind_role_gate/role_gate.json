@@ -1,0 +1,370 @@
+{
+  "probe": "var_bind_role_gate",
+  "verdict": "SMOKE-GO (1-seed indicator; run the 6-seed sweep) \u2014 on the HARDER same-pool positional stream (subject NOT a token class), the memory composition still carries the ROLE-defined subject across NOVEL distractors when the gate TIMING is given: MARKER-ROLE held-out branch(verb) 1.000 >> HTM 0.000 >> n-gram 0.261 >> chance 0.250. HOLD load-bearing (lesion 0.000, hold-alive 0.1086 zero-input), gate protects the latch (always-open 0.16666666666666666), bind load-bearing (feat-scramble 0.000), no leakage (referent-shuffle 0.000), POSITIONAL (permuted-position 0.200 ~ chance, recency-gate 0.167 ~ chance). This confirms the MEMORY is not the residual; the LEARNED ROLE gate is (see the role-gate verdict). Reuse-by-import; NO sim/ edit.",
+  "role_gate_verdict": "ROLE-GATE POSITIVE (1-seed indicator; run the 6-seed sweep) (report with caveat) \u2014 a reward-driven write-gate with a RECURRENT onset-latch (REINFORCE on the verb-prediction DA, NO role/position label) LEARNED to gate by POSITION, not identity: held-out branch(verb) 1.000 (chance 0.250), fires pos0 1.00 / pos>0 0.00, and PASSES the token-identity control \u2014 the SAME nouns are LOADed at position 0 and IGNORED as distractors (gap +1.00 over 11 matched nouns). The EXISTING code-only IDENTITY gate FAILS it (acc 0.167, gap +0.00 \u2014 gates on token class, cannot condition on position), reproducing the finding's residual on the harder stream. The pos-oracle ceiling reads acc 0.133 (gap +0.00). CAVEAT: the recurrent latch + REINFORCE math are HOST; the on-substrate spiking realisations (a recurrent 'controller-seen' population + three-factor DA-gated plasticity) are the named next rungs.",
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "device": "cpu",
+  "smoke": true,
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "generalisation_defined_novel_heldout",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f0b17353880>",
+      "note": "held-out distractor tuples disjoint from train (a real generalisation regime), else UNDEFINED"
+    },
+    {
+      "kind": "require",
+      "name": "htm_baseline_at_or_below_chance",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f0b17353880>",
+      "note": "the HTM emergence-engine baseline must sit at/below chance on held-out (memorise-not-generalise)"
+    },
+    {
+      "kind": "require",
+      "name": "ngram_floor_at_chance",
+      "ok": true,
+      "detail": "measured=0.2611 expect=<function main.<locals>.<lambda> at 0x7f0b17353880>",
+      "note": "the best fixed-order n-gram HELD-OUT floor must be pinned near chance (the bar is meaningful)"
+    },
+    {
+      "kind": "require",
+      "name": "positional_task_marker_beats_permpos",
+      "ok": true,
+      "detail": "measured=0.8 expect=<function main.<locals>.<lambda> at 0x7f0b17353880>",
+      "note": "the ROLE is POSITIONAL: the position-0 marker must beat the permuted-position control by a margin, else the task is not genuinely positional (VALIDITY of the whole role premise)"
+    },
+    {
+      "kind": "require",
+      "name": "hold_zero_input_asserted",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f0b17353880>",
+      "note": "the slot sustained the latch with external input ASSERTED zero across the hold+read span"
+    }
+  ],
+  "mechanism": "the banked variable-binding WM (BG-gated slow-NMDA bistable HOLD slot; write = clear-then-load; content = the gated token's agreement feature = the lexicon) driven by a ROLE-based write-gate; the gate is the object of study \u2014 marker (position given) vs code-only identity (the existing mechanism) vs a reward-driven RECURRENT onset-latch gate (the candidate) vs a host pos-oracle ceiling \u2014 all trained ONLY on the verb-prediction reward, NO role/position label",
+  "task": "a HARDER same-pool positional agreement stream: ONE shared noun pool, subject = position 0, distractors = the SAME pool at positions 1..L (every noun is subject-or-distractor by POSITION, not identity); verb agrees with the subject's feature; held-out TEST = disjoint NOVEL distractor tuples; anti-cheats: lesion-the-hold + always-open (recency lure) + feature-scramble + referent-shuffle + hold-not-re-read + permuted-position + recency-gate + HTM/n-gram/last-token chance floors; CRUX = the token-identity control (same noun gated differently by position)",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "N_noun": 12,
+    "F_feat": 4,
+    "distances": [
+      2,
+      3
+    ],
+    "recur": 25.0,
+    "hold_steps": 18,
+    "load_steps": 30,
+    "clear_steps": 200,
+    "learned_episodes": 15,
+    "n_train": 120,
+    "n_test": 30,
+    "chance": 0.25,
+    "go_distance": 3
+  },
+  "go_point": {
+    "acc_marker": 1.0,
+    "feat_acc_marker": 1.0,
+    "hold_alive": 0.10861111111111113,
+    "hold_alive_lesion": 0.0,
+    "acc_lesion": 0.0,
+    "acc_feature_scramble": 0.0,
+    "acc_referent_shuffle": 0.0,
+    "acc_permuted_position": 0.2,
+    "acc_recency_gate": 0.16666666666666666,
+    "htm_test": 0.0,
+    "ngram_floor_test": 0.2611111111111111,
+    "lasttok_floor": 0.2611111111111111,
+    "acc_always_open": 0.16666666666666666,
+    "ident_gate": {
+      "acc": 0.16666666666666666,
+      "hold_alive": 0.03851851851851852,
+      "fire_pos0": 0.26666666666666666,
+      "fire_posgt0": 0.34444444444444444,
+      "token_identity_gap": 0.0,
+      "n_matched": 11.0
+    },
+    "recur_gate": {
+      "acc": 1.0,
+      "hold_alive": 0.10861111111111113,
+      "fire_pos0": 1.0,
+      "fire_posgt0": 0.0,
+      "token_identity_gap": 1.0,
+      "n_matched": 11.0
+    },
+    "posoracle_gate": {
+      "acc": 0.13333333333333333,
+      "hold_alive": 0.045370370370370366,
+      "fire_pos0": 0.43333333333333335,
+      "fire_posgt0": 0.5777777777777777,
+      "token_identity_gap": 0.0,
+      "n_matched": 11.0
+    },
+    "N": 12,
+    "F": 4,
+    "L": 3,
+    "distance": 4,
+    "chance": 0.25,
+    "path_space": 1728.0,
+    "gen_defined": true,
+    "zero_input_ok": true,
+    "per_seed": [
+      {
+        "seed": 42,
+        "N": 12,
+        "F": 4,
+        "L": 3,
+        "distance": 4,
+        "chance": 0.25,
+        "gen_defined": true,
+        "n_test": 30,
+        "path_space": 1728.0,
+        "acc_marker": 1.0,
+        "feat_acc_marker": 1.0,
+        "hold_alive": 0.10861111111111113,
+        "hold_alive_lesion": 0.0,
+        "zero_input_ok": true,
+        "acc_lesion": 0.0,
+        "acc_always_open": 0.16666666666666666,
+        "acc_feature_scramble": 0.0,
+        "acc_referent_shuffle": 0.0,
+        "acc_permuted_position": 0.2,
+        "acc_recency_gate": 0.16666666666666666,
+        "htm_test": 0.0,
+        "ngram_floor_test": 0.2611111111111111,
+        "ngram_order": 1,
+        "lasttok_floor": 0.2611111111111111,
+        "ident_gate": {
+          "acc": 0.16666666666666666,
+          "hold_alive": 0.03851851851851852,
+          "fire_pos0": 0.26666666666666666,
+          "fire_posgt0": 0.34444444444444444,
+          "token_identity_gap": 0.0,
+          "n_matched": 11
+        },
+        "recur_gate": {
+          "acc": 1.0,
+          "hold_alive": 0.10861111111111113,
+          "fire_pos0": 1.0,
+          "fire_posgt0": 0.0,
+          "token_identity_gap": 1.0,
+          "n_matched": 11
+        },
+        "posoracle_gate": {
+          "acc": 0.13333333333333333,
+          "hold_alive": 0.045370370370370366,
+          "fire_pos0": 0.43333333333333335,
+          "fire_posgt0": 0.5777777777777777,
+          "token_identity_gap": 0.0,
+          "n_matched": 11
+        }
+      }
+    ]
+  },
+  "points": [
+    {
+      "acc_marker": 1.0,
+      "feat_acc_marker": 1.0,
+      "hold_alive": 0.09898148148148148,
+      "hold_alive_lesion": 0.0,
+      "acc_lesion": 0.0,
+      "acc_feature_scramble": 0.0,
+      "acc_referent_shuffle": 0.0,
+      "acc_permuted_position": 0.43333333333333335,
+      "acc_recency_gate": 0.26666666666666666,
+      "htm_test": 0.0,
+      "ngram_floor_test": 0.25,
+      "lasttok_floor": 0.15,
+      "acc_always_open": 0.26666666666666666,
+      "ident_gate": {
+        "acc": 0.5333333333333333,
+        "hold_alive": 0.05037037037037038,
+        "fire_pos0": 0.6666666666666666,
+        "fire_posgt0": 0.35,
+        "token_identity_gap": 0.0,
+        "n_matched": 11.0
+      },
+      "recur_gate": {
+        "acc": 0.36666666666666664,
+        "hold_alive": 0.0350925925925926,
+        "fire_pos0": 0.9333333333333333,
+        "fire_posgt0": 0.8833333333333333,
+        "token_identity_gap": 0.0,
+        "n_matched": 11.0
+      },
+      "posoracle_gate": {
+        "acc": 0.23333333333333334,
+        "hold_alive": 0.04194444444444445,
+        "fire_pos0": 0.36666666666666664,
+        "fire_posgt0": 0.5666666666666667,
+        "token_identity_gap": 0.0,
+        "n_matched": 11.0
+      },
+      "N": 12,
+      "F": 4,
+      "L": 2,
+      "distance": 3,
+      "chance": 0.25,
+      "path_space": 144.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "N": 12,
+          "F": 4,
+          "L": 2,
+          "distance": 3,
+          "chance": 0.25,
+          "gen_defined": true,
+          "n_test": 30,
+          "path_space": 144.0,
+          "acc_marker": 1.0,
+          "feat_acc_marker": 1.0,
+          "hold_alive": 0.09898148148148148,
+          "hold_alive_lesion": 0.0,
+          "zero_input_ok": true,
+          "acc_lesion": 0.0,
+          "acc_always_open": 0.26666666666666666,
+          "acc_feature_scramble": 0.0,
+          "acc_referent_shuffle": 0.0,
+          "acc_permuted_position": 0.43333333333333335,
+          "acc_recency_gate": 0.26666666666666666,
+          "htm_test": 0.0,
+          "ngram_floor_test": 0.25,
+          "ngram_order": 2,
+          "lasttok_floor": 0.15,
+          "ident_gate": {
+            "acc": 0.5333333333333333,
+            "hold_alive": 0.05037037037037038,
+            "fire_pos0": 0.6666666666666666,
+            "fire_posgt0": 0.35,
+            "token_identity_gap": 0.0,
+            "n_matched": 11
+          },
+          "recur_gate": {
+            "acc": 0.36666666666666664,
+            "hold_alive": 0.0350925925925926,
+            "fire_pos0": 0.9333333333333333,
+            "fire_posgt0": 0.8833333333333333,
+            "token_identity_gap": 0.0,
+            "n_matched": 11
+          },
+          "posoracle_gate": {
+            "acc": 0.23333333333333334,
+            "hold_alive": 0.04194444444444445,
+            "fire_pos0": 0.36666666666666664,
+            "fire_posgt0": 0.5666666666666667,
+            "token_identity_gap": 0.0,
+            "n_matched": 11
+          }
+        }
+      ]
+    },
+    {
+      "acc_marker": 1.0,
+      "feat_acc_marker": 1.0,
+      "hold_alive": 0.10861111111111113,
+      "hold_alive_lesion": 0.0,
+      "acc_lesion": 0.0,
+      "acc_feature_scramble": 0.0,
+      "acc_referent_shuffle": 0.0,
+      "acc_permuted_position": 0.2,
+      "acc_recency_gate": 0.16666666666666666,
+      "htm_test": 0.0,
+      "ngram_floor_test": 0.2611111111111111,
+      "lasttok_floor": 0.2611111111111111,
+      "acc_always_open": 0.16666666666666666,
+      "ident_gate": {
+        "acc": 0.16666666666666666,
+        "hold_alive": 0.03851851851851852,
+        "fire_pos0": 0.26666666666666666,
+        "fire_posgt0": 0.34444444444444444,
+        "token_identity_gap": 0.0,
+        "n_matched": 11.0
+      },
+      "recur_gate": {
+        "acc": 1.0,
+        "hold_alive": 0.10861111111111113,
+        "fire_pos0": 1.0,
+        "fire_posgt0": 0.0,
+        "token_identity_gap": 1.0,
+        "n_matched": 11.0
+      },
+      "posoracle_gate": {
+        "acc": 0.13333333333333333,
+        "hold_alive": 0.045370370370370366,
+        "fire_pos0": 0.43333333333333335,
+        "fire_posgt0": 0.5777777777777777,
+        "token_identity_gap": 0.0,
+        "n_matched": 11.0
+      },
+      "N": 12,
+      "F": 4,
+      "L": 3,
+      "distance": 4,
+      "chance": 0.25,
+      "path_space": 1728.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "N": 12,
+          "F": 4,
+          "L": 3,
+          "distance": 4,
+          "chance": 0.25,
+          "gen_defined": true,
+          "n_test": 30,
+          "path_space": 1728.0,
+          "acc_marker": 1.0,
+          "feat_acc_marker": 1.0,
+          "hold_alive": 0.10861111111111113,
+          "hold_alive_lesion": 0.0,
+          "zero_input_ok": true,
+          "acc_lesion": 0.0,
+          "acc_always_open": 0.16666666666666666,
+          "acc_feature_scramble": 0.0,
+          "acc_referent_shuffle": 0.0,
+          "acc_permuted_position": 0.2,
+          "acc_recency_gate": 0.16666666666666666,
+          "htm_test": 0.0,
+          "ngram_floor_test": 0.2611111111111111,
+          "ngram_order": 1,
+          "lasttok_floor": 0.2611111111111111,
+          "ident_gate": {
+            "acc": 0.16666666666666666,
+            "hold_alive": 0.03851851851851852,
+            "fire_pos0": 0.26666666666666666,
+            "fire_posgt0": 0.34444444444444444,
+            "token_identity_gap": 0.0,
+            "n_matched": 11
+          },
+          "recur_gate": {
+            "acc": 1.0,
+            "hold_alive": 0.10861111111111113,
+            "fire_pos0": 1.0,
+            "fire_posgt0": 0.0,
+            "token_identity_gap": 1.0,
+            "n_matched": 11
+          },
+          "posoracle_gate": {
+            "acc": 0.13333333333333333,
+            "hold_alive": 0.045370370370370366,
+            "fire_pos0": 0.43333333333333335,
+            "fire_posgt0": 0.5777777777777777,
+            "token_identity_gap": 0.0,
+            "n_matched": 11
+          }
+        }
+      ]
+    }
+  ],
+  "elapsed_seconds": 129.8,
+  "HONEST_NOTE": "de-risks the finding's named residual: the barcode-CLASS write-gate on a SAME-POOL POSITIONAL grammar where the subject is NOT separable by identity. Reuse-by-import of the banked SpikingSlot (D3 slow-NMDA hold) + RUNG6c barcodes + the EMERGE-14 HTM/n-gram floors; NO sim/ edit. The write CONTENT (the agreement feature) is a host lexicon scaffold (exactly as verb_of was) \u2014 the GATE is the object of study. The recurrent latch + REINFORCE math are HOST (their spiking DA-gated realisations are the named next rungs). 1-seed is a SMOKE indicator; the 6-seed sweep is decisive. HONEST NEGATIVE (role NOT learned from reward alone) is the expected, first-class outcome and MORE valuable than a scaffolded role-GO."
+}
