@@ -380,9 +380,15 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   QUANTIFIED + surpassed as a diagnosis — sweeping the LIF integration window T shows the temporal window supplied the
 >   effective depth (floor 0.96@T24 → 0.44@T1). At small T, spatial DEPTH-2 DFA credit is load-bearing, but the 6-seed
 >   confirms the compositional task is **depth-2-SOLVABLE** ⇒ gap#4 deep-3 credit is **INSTRUMENT-BLOCKED**: no
->   depth-3-OBLIGATORY task exists to serve as the reference ceiling. A design+verify workflow is building one; that task
->   + the transport-free DFA depth-3 sweep on it is the real next experiment (supersedes "credit on top of the
->   representable forward" as the immediate step — you cannot test depth-3 credit without a depth-3 task).
+>   depth-3-OBLIGATORY task exists to serve as the reference ceiling. **A design+verify workflow then PROVED such a task
+>   is FUNDAMENTALLY IMPOSSIBLE at toy scale for a plain-MLP oracle** (5 families; Telgarsky depth-separation needs width
+>   exponential in the depth-*gap* (=1), and plain FC depth is capacity not an inductive bias —
+>   `2026-08-11-gap4-depth3-obligatory-task-is-provably-impossible-reframe-to-layer3-credit-fidelity.md`). ⇒ **CRUX
+>   REFRAMED: the "task-accuracy depth-2 can't reach" measurement is unachievable; re-pose gap#4 as LAYER-3 CREDIT
+>   FIDELITY** — transport-free DFA error must reach the 3rd hidden layer (cosine-alignment ≥0.6 & rising to the
+>   backprop-oracle layer-3 gradient; train-loss within 10% of the depth-3 oracle) on a target that provably *fits* only
+>   with layer 3 (tent³-fit / quasigroup³-fit). Do NOT wire a new `--task` into the depth3 accuracy runner. This is the
+>   achievable next experiment; corroborates 2026-08-02 depth-robust.
 > - **source monitoring:** the named surpass largely WORKS. Independent population-coded pools + up-only homeostatic
 >   scaling resolve no-harm STRUCTURALLY (5/6; the row's v8 "Turrigiano synaptic scaling" idea, confirmed), and the
 >   residual weak-encoding class — diagnosed as RIVAL CROSS-TALK, not weak own-encoding — is FIXED by **heterosynaptic-LTD

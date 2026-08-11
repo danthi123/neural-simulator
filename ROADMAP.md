@@ -138,9 +138,14 @@ load-bearing freeze-lesion; 1-seed smoke-GO) — moves the acquisition-at-scale 
 very-oldest fact, named next = a true multi-timescale chain. (C) **source-monitoring (item 3):** the recall-time-gain
 NO-GO's residual was diagnosed as rival cross-talk, and **heterosynaptic-LTD competitive encoding** clears both
 weak-encoding crux seeds (FAIL→PASS, no-harm structural; 1-seed smoke) — the same biology as (A)'s named next step (a
-cross-lane convergence). (D) **gap#4 deep-credit (item 7):** the 6-seed confirmed the crux is **instrument-blocked** —
-no depth-3-*obligatory* task exists (the compositional task is depth-2-solvable), so a design+verify workflow is
-building one. All are narrow de-risks (1-seed smokes / 6-seed confirms), not integrated capabilities.
+cross-lane convergence). (D) **gap#4 deep-credit (item 7) — CRUX REFRAMED:** the 6-seed confirmed the crux is instrument-blocked, and a
+design+verify workflow then PROVED a depth-3-*obligatory* task is **fundamentally impossible at toy scale for a
+plain-MLP oracle** (5 families; Telgarsky depth-separation needs width exponential in the depth-*gap*, and plain depth
+is capacity, not an inductive bias). So the whole "task-accuracy that depth-2 can't reach" measurement was
+unachievable — the crux is re-posed as **LAYER-3 CREDIT FIDELITY**: does transport-free DFA error reach the 3rd hidden
+layer (cosine-alignment to the backprop-oracle layer-3 gradient) on a target that provably *fits* only with layer 3
+(tent³). That is the achievable next test. All are narrow de-risks (smokes / 6-seed confirms), not integrated
+capabilities.
 
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
 TRUE-ONE-BRAIN conversation loop (honesty + affect + curiosity + no-confab moat,

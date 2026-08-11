@@ -77,6 +77,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   CPU-correct per the emergence finding). State-waiter armed on the sweeps; agents notify on completion.
 > - **OWED at wake:** MASTER-ROADMAP §7 walls-ledger semantic sync (ROADMAP.md done; freshness gate satisfied); the
 >   value-critic + emergence 6-seed commits; review the ⚠️ sim/ per-parameter reseed `1f4ea9f5` (default-off, det-9/9).
+> - **✅ ~10:30Z FINAL — the whole crux-forward-path wave LANDED + banked (~30 commits total, all pushed); both
+>   forward-looking docs + §7 synced.** All 4 crux agents + the value-critic/emergence 6-seeds resolved: metaplasticity
+>   6-seed NO-GO (mechanism real but sub-threshold → Benna-Fusi chain next); **source-monitoring competitive-encoding
+>   FIXES the weak-encoding crux** (244/259 FAIL→PASS, heterosynaptic-LTD at encoding — the residual pop-coding couldn't
+>   clear; full-6 is 5/6 gated by seed 702's no-learning control, not the mechanism); selective-write store RESTORES the
+>   emergence horizon (smoke-GO); value-critic PARTIAL (yoked-leak killed, 3/6 strict). **⭐ gap#4 CRUX REFRAMED via a
+>   6-agent workflow:** a depth-3-OBLIGATORY task is PROVABLY IMPOSSIBLE at toy scale (Telgarsky + depth-is-capacity) ⇒
+>   re-pose deep-credit as **LAYER-3 CREDIT FIDELITY** (transport-free cosine-alignment to the backprop-oracle layer-3
+>   gradient on a tent³-FIT target) — the achievable next test. Two runner instrument-bugs fixed (gap#4 leakage→UNDEFINED;
+>   competitive-encoding clean-seed no-op). Emergence full-surface 6-seed killed on a ~13-20h ETA (smoke stands).
+> - **NEXT (the single literal next build):** the gap#4 LAYER-3-CREDIT-FIDELITY de-risk — `--task tent3_fit` on the
+>   existing DendriticMLP+DFA-eprop harness, GO = layer-3 update cosine-align ≥0.6 & rising + train-loss within 10% of
+>   the depth-3 backprop oracle, depth-2 strictly worse; anti-cheats (oracle ceiling, permuted→0, depth-separating,
+>   apical-lesion collapses align, transport-free). Data-only, NO sim/ edit. **Also OWED:** ~129 accumulated worktrees
+>   need a careful cleanup pass (clutter, non-blocking).
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 
