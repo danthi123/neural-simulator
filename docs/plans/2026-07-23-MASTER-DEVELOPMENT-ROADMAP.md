@@ -425,6 +425,16 @@ a reason") instead of DEFLECTING to other motion facts or letting the mouth inve
 sub-clausal moat drops it) — **6/6 seeds, confab=0, only turn 4 changes** (byte-identical elsewhere, per-turn exact
 compare); the emergent grounded causal-chain answer is NAMED as the follow-on arc, per THE LAW
 (`2026-08-10-INTEGRATION-5-honest-causal-query-disclaimer-turn4-6seed.md`).
+**#5-follow-on emergent causal composition — de-risk GO** (2026-08-11): the follow-on chain is BUILT. "why did AGENT
+MOTION?" COMPOSES three `query_patient` moat reads — `(dog,go)→east` + `(dog,look)→river` + `(river,at)→east` ⇒ "the
+dog goes east to reach the river" (0 confab by construction) — and ABSTAINS to the #5 disclaimer on the two confab
+traps (a known goal in the WRONG direction; an object in the direction that is NOT the agent's goal). **6/6 seeds:
+2/2 correct chains, 6/6 correct abstains, 0 false-accepts, 0 confab; permuted-spatial collapses it (data-driven, not
+hardcoded).** Tier-1 graduates the #5 turn-4 disclaimer on the LIVE co-resident composer when the grounding is
+stored. HONEST SCOPE: the DATA path is de-risked (0 mis-bind/false-accept, as the `query_chain` GO's regime), but the
+JOIN POLICY + the `(object,at)→direction` grounding are DECLARED HOST SCAFFOLDS; the named neural successor is a
+LEARNED relational/spatial code (TEM factorised relation / co-occurrence stream cortex) so the chain EMERGES rather
+than being host-orchestrated (`2026-08-11-emergent-causal-composition-chain-6seed.md`).
 **gap#5 episodic memory CLOSED end-to-end**: DG-select (GO) → BTSP one-shot FORM (GO `cee2ff124`) → intrinsic per-cell
 DENDRITIC dAP READOUT completes cue-specifically (size/scale-independent, 6/6 GO `ab9f7dbe`); the recurrent-completion
 path hit a self-drive-vs-cue-at-scale wall (`544c0b742`), the dendritic readout closed it; slow-NMDA reverberatory

@@ -1,0 +1,311 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_seeds": 1,
+  "n_GO": 1,
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "tier0 GO on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "supported chains correct (2/2) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "abstains correct (6/6) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat false-accepts == 0 every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "confabulations == 0 every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat-battery false-accepts == 0 every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "permuted-spatial collapses the chain",
+      "ok": true,
+      "detail": "treatment=2 control=0 |sep|=2 > 0",
+      "note": "derange river/apple locations -> originally-grounded chains must abstain"
+    },
+    {
+      "kind": "require",
+      "name": "permuted-positive moves the supported set with the data (every seed)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "tier1 graduates the #5 turn-4 disclaimer (composed when supported, else #5 fallback)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "spiking generator mouth",
+      "why": "CPU numpy run; the grounded CONTENT is the RF-VSA query_patient read the mouth would render"
+    },
+    {
+      "process": "emergent relational/spatial code",
+      "why": "the motion+goal+spatial JOIN policy + the (object,at)->direction grounding are DECLARED HOST SCAFFOLDS; the named neural successor is a learned relational/spatial code"
+    }
+  ],
+  "undefined_reasons": [],
+  "grounding_attribution": 1.0,
+  "tier0_all_go": true,
+  "tier0_supported_correct": [
+    2
+  ],
+  "tier0_abstain_correct": [
+    6
+  ],
+  "tier0_false_accepts": [
+    0
+  ],
+  "tier0_confab": [
+    0
+  ],
+  "tier0_moat_battery_fa": [
+    0
+  ],
+  "tier0_permuted_still_supported": [
+    0
+  ],
+  "tier1_graduated": [
+    true
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "tier0": {
+        "seed": 42,
+        "n_grid": 8,
+        "n_supported_expected": 2,
+        "supported_correct": 2,
+        "abstain_correct": 6,
+        "false_accepts": 0,
+        "every_edge_moat_ok": 2,
+        "confab_count": 0,
+        "goal_shortcut_false_accepts": 0,
+        "spatial_shortcut_false_accepts": 0,
+        "moat_battery_false_accepts": 0,
+        "moat_battery_n": 8,
+        "permuted_spatial_still_supported": 0,
+        "permuted_positive_ok": true,
+        "GO": true,
+        "rows": [
+          {
+            "agent": "dog",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "river",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "river",
+            "dir": "east",
+            "obj_dir": "east",
+            "chain": [
+              [
+                "dog",
+                "go",
+                "east"
+              ],
+              [
+                "dog",
+                "look",
+                "river"
+              ],
+              [
+                "river",
+                "at",
+                "east"
+              ]
+            ],
+            "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY, because two more stored facts COMPOSE into a grounded reason: (dog, look) -> river, and (river, at) -> east. So the dog goes east to reach the river. Every link in that chain is moat-confirmed -- I composed it from what I stored, I did not invent it."
+          },
+          {
+            "agent": "cat",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "apple",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "apple",
+            "dir": "west",
+            "obj_dir": "west",
+            "chain": [
+              [
+                "cat",
+                "go",
+                "west"
+              ],
+              [
+                "cat",
+                "look",
+                "apple"
+              ],
+              [
+                "apple",
+                "at",
+                "west"
+              ]
+            ],
+            "answer": "I know the cat goes west -- that fact is stored, and my no-confab moat confirms it ((cat, go) -> west). This time I can say WHY, because two more stored facts COMPOSE into a grounded reason: (cat, look) -> apple, and (apple, at) -> west. So the cat goes west to reach the apple. Every link in that chain is moat-confirmed -- I composed it from what I stored, I did not invent it."
+          },
+          {
+            "agent": "dog",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "river",
+            "dir": "north",
+            "obj_dir": "east",
+            "chain": null,
+            "answer": "I know the dog runs north -- that fact is stored, and my no-confab moat confirms it ((dog, run) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "cat",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "apple",
+            "dir": "south",
+            "obj_dir": "west",
+            "chain": null,
+            "answer": "I know the cat runs south -- that fact is stored, and my no-confab moat confirms it ((cat, run) -> south). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "fish",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_goal",
+            "got_supported": false,
+            "got_reason": "no_goal",
+            "got_obj": null,
+            "dir": "east",
+            "obj_dir": null,
+            "chain": null,
+            "answer": "I know the fish goes east -- that fact is stored, and my no-confab moat confirms it ((fish, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "bird",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_spatial",
+            "got_supported": false,
+            "got_reason": "no_spatial",
+            "got_obj": "hill",
+            "dir": "north",
+            "obj_dir": null,
+            "chain": null,
+            "answer": "I know the bird goes north -- that fact is stored, and my no-confab moat confirms it ((bird, go) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "dog",
+            "motion": "come",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "obj_dir": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          },
+          {
+            "agent": "cat",
+            "motion": "stop",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "obj_dir": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          }
+        ]
+      },
+      "tier1": {
+        "seed": 42,
+        "with_spatial": {
+          "supported": true,
+          "obj": "river",
+          "chain": [
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "river",
+              "at",
+              "east"
+            ]
+          ],
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY, because two more stored facts COMPOSE into a grounded reason: (dog, look) -> river, and (river, at) -> east. So the dog goes east to reach the river. Every link in that chain is moat-confirmed -- I composed it from what I stored, I did not invent it.",
+          "confab": 0
+        },
+        "without_spatial": {
+          "supported": false,
+          "reason": "no_spatial",
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+          "matches_5_disclaimer": true
+        },
+        "graduated_when_supported_else_disclaimer": true
+      },
+      "GO": true,
+      "elapsed_s": 12.06
+    }
+  ]
+}

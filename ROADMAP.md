@@ -53,6 +53,16 @@ not invent a reason") instead of DEFLECTING to other motion facts or letting the
 (the sub-clausal moat drops it) — **6/6 seeds, confab=0, only turn 4 changes** (byte-identical elsewhere, per-turn
 exact compare). The truly-emergent answer (COMPOSE stored facts into a grounded causal chain) is NAMED as the
 follow-on arc, per THE LAW. (`2026-08-10-INTEGRATION-5-honest-causal-query-disclaimer-turn4-6seed.md`)
+**#5-follow-on (2026-08-11) emergent causal composition — de-risk GO:** the #5 follow-on chain is BUILT and measured.
+A "why did AGENT MOTION?" answer now COMPOSES three moat reads into a grounded goal-directed reason — `(dog,go)→east`
++ `(dog,look)→river` + `(river,at)→east` ⇒ "the dog goes east to reach the river" — every edge a `query_patient`
+moat read (0 confab by construction), and it ABSTAINS to the #5 disclaimer on the two confab traps (a known goal in
+the WRONG direction; an object in the direction that is NOT the agent's goal). **6/6 seeds: 2/2 correct chains, 6/6
+correct abstains, 0 false-accepts, 0 confab; permuted-spatial collapses the chain (data-driven).** Tier-1 graduates
+the #5 turn-4 disclaimer on the LIVE co-resident composer when the grounding is stored, else the byte-identical #5
+fallback. HONEST SCOPE: the DATA path is de-risked; the JOIN POLICY + spatial-grounding facts are declared host
+scaffolds — the named neural successor is a LEARNED relational/spatial code (TEM factorised relation / stream cortex)
+so the chain EMERGES rather than being host-orchestrated. (`2026-08-11-emergent-causal-composition-chain-6seed.md`)
 **#6 (2026-08-10) corpus-LEARNED grounded facts into the live chat:** the chat could only talk about dog/cat (2
 subjects, 6 hand-taught facts); now it stores relational facts MINED FROM THE CORPUS it "heard" (TinyStories),
 wired in via one additive `vocab` kwarg on `build_one_brain`. Grounded-subject BREADTH rises 2 → 9, grounded
