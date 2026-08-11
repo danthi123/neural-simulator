@@ -1,0 +1,37 @@
+{
+ "run_id": "1786424038-3878969",
+ "runner": "research/runners/_corpus_breadth_scaling_capacity_ceiling_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-breadth/research/runners/_corpus_breadth_scaling_capacity_ceiling_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--Ks",
+  "40,80,160,320",
+  "--live-K",
+  "320",
+  "--live-seeds",
+  "42",
+  "--cap-seeds",
+  "42,43,44",
+  "--out",
+  "research/findings/raw/lanes/stageA/corpus_breadth_scaling_capacity_ceiling_6seed.json"
+ ],
+ "git_sha": "826b1dfd9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-11T00:53:58",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/stageA/corpus_breadth_scaling_capacity_ceiling_6seed.json"
+}
