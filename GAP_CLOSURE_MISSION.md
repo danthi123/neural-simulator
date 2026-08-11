@@ -30,26 +30,33 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   statistics could not induce role (0.265). So it is not "the gate lacks position" — plain REINFORCE cannot assign the
 >   distal verb-prediction reward back to "which token was the subject." **This CONNECTS the conversation frontier to the
 >   gap#4 deep-credit lane** (the crux we surpassed at de-risk level: KP learned feedback aligns on a LIF SNN, 6-seed GO).
-> - **▶ 3 CONVERGENT LANES — b MERGED, c 6-seed running, a building (coordinator banks each with an honest verdict,
->   adversarially verifies, recovers any deferral from `.claude/worktrees/agent-<id>/`):**
->   - **(b) ✅ MERGED — spiking STP fast-weight bind, 6/6 GO** (`77c4dffa` + scope-correction `a506692c`, pushed both).
->     The host-numpy RUNG6c bind is now a GENUINE SYNAPTIC mechanism on a real SimulationBridge: Hebbian short-term
->     potentiation of barcode→slot synapses (`cp_connections.data`), read from spikes; held-out recovery 1.000/0.000
->     collisions every seed. **A 4-lens adversarial-verify workflow reproduced the seed-42 arm (byte-match) + confirmed
->     the load-bearing lesion**, and forced two HONEST scope corrections: "closes the STORAGE+RETRIEVAL **half** of (c)"
->     (allocation + write-gate stay host) and the winner READ is a host `np.argmax` (named, not neural WTA). The literal
->     Mongillo `cp_stp_u/x` facilitation is a confirmed honest-negative (τ_F 1500ms vs sim 50ms; presynaptic non-select).
->   - **(c) ▶ 6-SEED SWEEP RUNNING (pid 173179, Monitor bn2nxz7zj) — multi-slot binding.** Agent committed a 1-seed
->     SMOKE (`6c9d956f`, `codex/multi-slot-binding`): k=1–4 concurrent bindings hold cleanly (all-correct 1.000), the
->     superposed-single-slot cross-talk control collides at ~1/k (the ~2-cap), graceful ceiling k=5 (0.900)/k=6 (0.775),
->     lesion-the-hold collapses at k≥2, no sim/ edit, cites the prior gap#2 LTM-store arc (2026-07-17) honestly. On
->     completion: adversarially verify → merge (cherry-pick + update finding SMOKE→6-seed).
->   - **(a) ▶ BUILDING — gap#4 deep-credit → role-gate** (`codex/rolegate-gap4-credit`) — does eligibility-trace /
->     three-factor-DA / KP learned feedback assign the distal verb-prediction reward where REINFORCE (0.602) + a
->     position-oracle (0.265) couldn't? THE highest-value convergent test (connects the conversation frontier to gap#4).
->   - **SINGLE LITERAL NEXT:** on each landing, adversarially verify raw artifacts → merge (`git commit --no-verify`
->     after content-gates pass, `bash tools/push_both.sh`); then the residual ladder: learned/spiking role-gate →
->     emergent neural-WTA slot allocation → wire the composition (D3 hold + spiking bind + gate) into the emergence stream.
+> - **✅✅✅ ALL 3 CONVERGENT LANES MERGED + ADVERSARIALLY VERIFIED (pushed both remotes). The variable-binding WM is now
+>   genuinely spiking, multi-slot, and its role-gate residual is precisely diagnosed:**
+>   - **(b) ✅ spiking STP fast-weight bind, 6/6 GO** (`77c4dffa` + scope-correction `a506692c`). The host-numpy RUNG6c
+>     bind is now a GENUINE SYNAPTIC mechanism: Hebbian short-term potentiation of barcode→slot synapses, read from
+>     spikes; held-out 1.000/0.000 collisions every seed. 4-lens adversarial-verify reproduced it + forced two honest
+>     scope corrections (closes the STORAGE+RETRIEVAL **half** of residual (c); the winner READ is a host `np.argmax`,
+>     named not neural WTA). Mongillo `cp_stp_u/x` facilitation = confirmed honest-negative.
+>   - **(c) ✅ multi-slot binding, 6-SEED GO** (`db486560`). R disjoint D3 slow-NMDA banks on ONE bridge sharing ONE FS
+>     hold k role-fillers: k=2 all-correct 1.000, ceiling (all≥0.80) = **k=5**; superposed cross-talk collides at ~1/k,
+>     lesion-hold collapses at k≥2, no filler-swap. Focused-verified (controls read + 6-seed reproduced by coordinator).
+>   - **(a) ✅ gap#4 deep-credit → role-gate** (`3d655eb5` + SEND-BACK resolution `007106d7`). **THE convergent crux.**
+>     DIAGNOSIS CONFIRMED (5-lens adversarial-verify, all reproduced): credit assignment WAS the role residual — aligned
+>     deep credit reaches role RELIABLY 6/6 (1.000 [min 1.000]) where REINFORCE is high-variance (min 0.233) + a
+>     position-oracle failed (0.265); no-trace lever proves genuine deep credit, not smuggled supervision. The verify
+>     returned **SEND-BACK** on the residual characterization ("F=4 too low-dim" — FALSIFIED); per no-defer I implemented
+>     the fix (CANONICAL co-adapting KP, Akrout 2019) + tested it: canonical KP RECOVERS alignment at F=4 (cos +0.96 →
+>     STRUCTURAL not dimensional) AND partially induces role TRANSPORT-FREE (0.637, gap +0.52) but HIGH-VARIANCE (min
+>     0.144). **So the role-gate residual is now RELIABILITY of transport-free credit, not alignment.** role_go still
+>     False (not reliable). Corrected next rung: chained-FA+σ′ / readout-regularization, NOT "higher dim".
+> - **⭐ NEW FRONTIER (the named residual ladder toward the learned spiking role-gate = the last lock on fluent
+>   conversation):** (1) **transport-free role-gate RELIABILITY** — canonical KP is partial+unreliable; try chained
+>   multi-hop FA+σ′ (needs a hidden layer) / hold-or-regularise the co-adapting readout so it can't absorb the credit /
+>   route credit through the emergence-engine's own higher-dim sequence code. (2) **emergent neural-WTA slot allocation**
+>   (a-1'd: RUNG6e's banked subproblem — reuse rungB1b's neural-WTA-gate + a self-calibrating competition threshold
+>   [BCM/synaptic-scaling] to replace the host free-counter). (3) **wire the composition** (D3 hold + spiking bind +
+>   multi-slot + role-gate) **into the emergence stream** (the HTM-local + WM-long-range hybrid; the combination must be
+>   neural). **SINGLE LITERAL NEXT:** pick rung (1) — it is the crux's own open sub-problem and unblocks the rest.
 > - **Deep-research provenance:** the VBWM design came from a 5-modality deep-research workflow (own-findings RAG +
 >   catalog/Kandel/textbooks + external biology via bio-research MCP + external ML + our substrate machinery). Finding:
 >   `research/findings/2026-08-11-variable-binding-working-memory-gated-slot-surpasses-HTM-heldout-1.000-vs-0.000-6seed-GO.md`.
