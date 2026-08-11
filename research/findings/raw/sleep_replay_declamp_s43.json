@@ -1,0 +1,439 @@
+{
+  "probe": "teacher_loop_sleep_replay_declamp",
+  "seed": 43,
+  "backend": "numpy",
+  "single_seed_smoke": true,
+  "elapsed_seconds": 543.0,
+  "result": {
+    "seed": 43,
+    "K_classes": 10,
+    "chance": 0.1,
+    "n_max": 10,
+    "milestones": [
+      1,
+      5,
+      10
+    ],
+    "cap_baseline": 0.55,
+    "config": {
+      "hidden": 24,
+      "settle_steps": 25,
+      "epochs": 40,
+      "batch": 20,
+      "eprop_lr": 0.5,
+      "w_clip": 4000.0,
+      "n_draws": 32,
+      "d_p": 12,
+      "noise": 0.12,
+      "test_n": 40,
+      "replay_epochs": 24,
+      "replay_per_fact": 16,
+      "replay_noise": 0.1,
+      "declamp_wmax": 1000000000.0
+    },
+    "arms": {
+      "noreplay_clamped": {
+        "arm": "noreplay_clamped",
+        "bdsp_wmax": null,
+        "do_replay": false,
+        "scramble": false,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "ff_scale_build": {
+          "absmean": 110.18468475341797,
+          "frac_le6": 0.7222222222222222
+        },
+        "ff_scale_final": {
+          "absmean": 99.1010971069336,
+          "frac_le6": 0.6493055555555556
+        },
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.2,
+            "n_recalled": 1,
+            "N": 5,
+            "mean_retained_acc": 0.2,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.1,
+            "n_recalled": 1,
+            "N": 10,
+            "mean_retained_acc": 0.1,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        "wall_seconds": 52.1
+      },
+      "replay_clamped": {
+        "arm": "replay_clamped",
+        "bdsp_wmax": null,
+        "do_replay": true,
+        "scramble": false,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "ff_scale_build": {
+          "absmean": 110.18468475341797,
+          "frac_le6": 0.7222222222222222
+        },
+        "ff_scale_final": {
+          "absmean": 181.29893493652344,
+          "frac_le6": 0.6059027777777778
+        },
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.6,
+            "n_recalled": 3,
+            "N": 5,
+            "mean_retained_acc": 0.475,
+            "per_fact_acc": [
+              0.0,
+              0.7,
+              0.275,
+              0.9,
+              0.5
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.2,
+            "n_recalled": 2,
+            "N": 10,
+            "mean_retained_acc": 0.2,
+            "per_fact_acc": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.975,
+              0.0,
+              0.025,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "wall_seconds": 135.9
+      },
+      "noreplay_declamped": {
+        "arm": "noreplay_declamped",
+        "bdsp_wmax": 1000000000.0,
+        "do_replay": false,
+        "scramble": false,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.925,
+          0.975,
+          0.975,
+          1.0,
+          1.0,
+          0.975
+        ],
+        "mean_acquire_acc_immediate": 0.985,
+        "ff_scale_build": {
+          "absmean": 224.12649536132812,
+          "frac_le6": 0.4236111111111111
+        },
+        "ff_scale_final": {
+          "absmean": 288.7320556640625,
+          "frac_le6": 0.40625
+        },
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.8949999999999999,
+            "per_fact_acc": [
+              0.7,
+              1.0,
+              0.9,
+              0.875,
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.7,
+            "n_recalled": 7,
+            "N": 10,
+            "mean_retained_acc": 0.6775,
+            "per_fact_acc": [
+              0.0,
+              0.65,
+              0.55,
+              0.45,
+              0.475,
+              0.875,
+              0.775,
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "wall_seconds": 61.2
+      },
+      "replay_declamped": {
+        "arm": "replay_declamped",
+        "bdsp_wmax": 1000000000.0,
+        "do_replay": true,
+        "scramble": false,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.925,
+          0.975,
+          0.95,
+          1.0,
+          1.0,
+          0.975
+        ],
+        "mean_acquire_acc_immediate": 0.9824999999999999,
+        "ff_scale_build": {
+          "absmean": 224.12649536132812,
+          "frac_le6": 0.4236111111111111
+        },
+        "ff_scale_final": {
+          "absmean": 252.19830322265625,
+          "frac_le6": 0.4079861111111111
+        },
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 1.0,
+            "n_recalled": 5,
+            "N": 5,
+            "mean_retained_acc": 0.97,
+            "per_fact_acc": [
+              0.95,
+              1.0,
+              0.925,
+              1.0,
+              0.975
+            ]
+          },
+          "10": {
+            "frac_recalled": 1.0,
+            "n_recalled": 10,
+            "N": 10,
+            "mean_retained_acc": 0.915,
+            "per_fact_acc": [
+              0.875,
+              0.975,
+              0.975,
+              1.0,
+              0.7,
+              0.85,
+              0.825,
+              1.0,
+              0.95,
+              1.0
+            ]
+          }
+        },
+        "wall_seconds": 161.2
+      },
+      "scramble_declamped": {
+        "arm": "scramble_declamped",
+        "bdsp_wmax": 1000000000.0,
+        "do_replay": true,
+        "scramble": true,
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.925,
+          0.975,
+          0.95,
+          1.0,
+          1.0,
+          0.975
+        ],
+        "mean_acquire_acc_immediate": 0.9824999999999999,
+        "ff_scale_build": {
+          "absmean": 224.12649536132812,
+          "frac_le6": 0.4236111111111111
+        },
+        "ff_scale_final": {
+          "absmean": 293.91015625,
+          "frac_le6": 0.4010416666666667
+        },
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "5": {
+            "frac_recalled": 0.0,
+            "n_recalled": 0,
+            "N": 5,
+            "mean_retained_acc": 0.05500000000000001,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.025,
+              0.25
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.0,
+            "n_recalled": 0,
+            "N": 10,
+            "mean_retained_acc": 0.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "wall_seconds": 132.6
+      }
+    }
+  },
+  "verdict": {
+    "largest_N": 10,
+    "cap_baseline": 0.55,
+    "frac_recalled": {
+      "noreplay_clamped": 0.1,
+      "replay_clamped": 0.2,
+      "noreplay_declamped": 0.7,
+      "replay_declamped": 1.0,
+      "scramble_declamped": 0.0
+    },
+    "replay_declamped_acq": 0.9824999999999999,
+    "declamp_gain_replay": 0.8,
+    "clamp_forgetting_gain_noreplay": 0.6,
+    "replay_content_margin_declamped": 1.0,
+    "replay_over_noreplay_declamped": 0.30000000000000004,
+    "label": "teacher-loop sleep-replay + bdsp de-clamp",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "reaches",
+        "name": "(a1) de-clamped replay beats clamped replay",
+        "ok": true,
+        "detail": "before=0.2 after=1 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "(a2) de-clamped replay beats the named ~0.55 cap",
+        "ok": true,
+        "detail": "1 vs floor 0.55",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "(b) the CLAMP is load-bearing on forgetting (noreplay: declamped>clamped)",
+        "ok": true,
+        "detail": "before=0.1 after=0.7 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "(c) immediate acquisition stays perfect (replay_declamped)",
+        "ok": true,
+        "detail": "0.9825 vs floor 0.9",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.1
+  }
+}
