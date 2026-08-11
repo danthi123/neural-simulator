@@ -1,0 +1,30 @@
+{
+ "run_id": "1786490669-289523",
+ "runner": "research/runners/_emerge_wm_hybrid_neuralwta_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/emerge-wm-neuralwta/research/runners/_emerge_wm_hybrid_neuralwta_derisk.py",
+  "--seeds",
+  "43",
+  "--out",
+  "research/findings/raw/_emerge_wm_hybrid_neuralwta/seed_43.json"
+ ],
+ "git_sha": "a86f1409b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-11T19:24:29",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1521.2,
+ "corpus_check_query": "host np.argmax channel reads in the WM+HTM hybrid replaced by emergent neural-WTA",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_emerge_wm_hybrid_neuralwta/seed_43.json"
+}

@@ -165,6 +165,18 @@ depth-3 rung stays UNDEFINED not fabricated. (An instrument correction was also 
 is target-INDEPENDENT, so the FIT — not the alignment — is the valid signal.) All are narrow de-risks (smokes / 6-seed
 GO / negatives), not integrated capabilities.
 
+**2026-08-11 WM+HTM HYBRID — the north-star integration, brain-based read path (6-seed GO).** The emergence engine and
+the variable-binding working-memory faculty were combined: (rung-3b) a **separate-channel WM+HTM hybrid** routes the
+WM's held-subject and the HTM's local-class on distinct neural channels and binds them by a LEARNED dendritic
+conjunction — held-out 0.974 [min 0.938], subject preserved 1.000, 6-seed GO
+(`2026-08-11-emergence-WM-hybrid-separate-channel-GO-*`). Its one named host residual, the two per-channel `np.argmax`
+winner reads, was then **closed** (rung-3c): replacing both with the emergent down-ramp release-of-inhibition **neural-WTA
+read from spikes** holds the GO at parity (0.995 [min 0.969], subject 1.000; the WTA class read 0.995 even beats the
+argmax-with-threshold read 0.964) with NO host argmax in the verb read-out — AST-asserted; all lesions load-bearing
+(`2026-08-11-emergence-WM-hybrid-neural-WTA-reads-GO.md`, 6-seed GO). Honest sub-negative: the WTA self-calibration is
+not load-bearing on this CLEAN latch (it is in the rung-2 blur/allocation regime). Still a narrow de-risk (NO `sim/`
+edit; host stream/binder scaffold + labelled-line projections remain), not an integrated capability.
+
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
 TRUE-ONE-BRAIN conversation loop (honesty + affect + curiosity + no-confab moat,
 co-resident on one spiking bridge) is now **12/12 GO** (hardened past the 6-seed
