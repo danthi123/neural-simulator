@@ -147,10 +147,15 @@ layer, on a target (tent³) that provably *fits* only with layer 3. **That test 
 (seed 42, BP-depth-3 ceiling holds) is NO — transport-free DFA e-prop does NOT reach the 3rd hidden layer** (its fit
 sticks at the mean-predictor, indistinguishable from permuted + zero-feedback controls, while backprop fits): the known
 DFA fixed-feedback deep-layer limit. The 6-seed aggregate is honestly UNDEFINED (the tent³/width-8 backprop ceiling is
-seed-fragile). **Next = LEARNED feedback (weight-mirror / Kolen-Pollack) or the φ′-vanishing fix** — the feedback must be
-learned to align with the forward pathway so error reaches deep layers. (An instrument correction was banked too: the
-output-adjacent a3 alignment is target-INDEPENDENT, so the FIT — not the alignment — is the valid signal.) All are
-narrow de-risks (smokes / 6-seed confirms/negatives), not integrated capabilities.
+seed-fragile). **⭐ THE SURPASS THEN WORKED: transport-free LEARNED feedback (Kolen-Pollack) REACHES the 3rd hidden
+layer where fixed-DFA could not** — 6-valid-seed GO (6/15 ceiling-holding seeds), closing 66% of the BP-depth-2→depth-3
+fit gap vs fixed-DFA's −85%; freezing the feedback collapses it (−40% — the win is *learning* the feedback matrix G,
+whose deep-layer cos(G,Wᵀ) co-adapts 0.25→0.83 through training, never copied). **So the gap#4 deep-credit crux — the
+roadmap's load-bearing dependency — has its biological surpass demonstrated at de-risk level (rate MLP, host oracle).**
+Residual: KP *reaches* the deep layer but does not yet *match* the oracle (~forward-optimization gap); named next =
+more epochs / weight-mirror / the φ′-vanishing fix, then the on-SPIKES port. (An instrument correction was also banked:
+the output-adjacent a3 alignment is target-INDEPENDENT, so the FIT — not the alignment — is the valid signal.) All are
+narrow de-risks (smokes / 6-valid GO / negatives), not integrated capabilities.
 
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
 TRUE-ONE-BRAIN conversation loop (honesty + affect + curiosity + no-confab moat,

@@ -100,13 +100,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   metaplasticity + still leaves the oldest fact at 0.0; the continual residual is fact-CODE interference, redirect to
 >   **sparse/orthogonal fact codes** (a THIRD lane pointing at disjoint-codes-under-pressure — with source
 >   competitive-encoding + emergence hetero-allocation: one unifying biology across 3 cruxes).
-> - **NEXT (the single literal next builds, dependency-ordered):** (a) gap#4 LEARNED-FEEDBACK de-risk (weight-mirror /
->   Kolen-Pollack replacing DFA fixed feedback on the same tent³-fit / layer-3-fidelity harness — does learned feedback
->   reach layer 3 where DFA could not?) + a robustly-fittable depth-3 target so the 6-seed is decisive; (b) sparse/
->   orthogonal fact codes for continual acquisition-at-scale (the disjoint-codes mechanism, now convergent across 3
->   lanes). **Also OWED:** ~129 accumulated worktrees need a careful cleanup pass (clutter, non-blocking); two build
->   agents deferred/stalled this wave (coordinator-recovered both) — the reliable pattern is delegate-build + run-sweeps-
->   as-coordinator.
+> - **✅ ~11:45Z — ⭐⭐ gap#4 SURPASSED at de-risk level `6b95eb17`.** The gap#4 LEARNED-FEEDBACK build LANDED as a
+>   **6-valid-seed GO**: transport-free Kolen-Pollack learned feedback REACHES the 3rd hidden layer where fixed-DFA
+>   could NOT (closes 66% of the BP2→BP3 fit gap vs fixed-DFA −85%; freeze-feedback lever collapses it → the win is
+>   *learning* G, cos(G,Wᵀ) 0.25→0.83 co-adapted not copied — transport-free). **The roadmap's single load-bearing crux
+>   (gap#4 deep-credit) now has its biological surpass demonstrated (rate MLP / host oracle).** The full arc ran
+>   wall→reframe→honest-negative(fixed-DFA)→SURPASS(learned feedback). ROADMAP + master-roadmap §7 flipped toward
+>   SURPASSED-AT-DE-RISK.
+> - **NEXT (dependency-ordered):** (a) close the gap#4 RESIDUAL — KP *reaches* but doesn't yet *match* the oracle
+>   (~forward-optimization gap: more epochs / weight-mirror / φ′-vanishing fix), then the **on-SPIKES port** (the DFA/KP
+>   credit algebra onto the substrate — the real end target); (b) sparse/orthogonal fact codes for continual
+>   acquisition (agent in flight — the disjoint-codes mechanism, convergent across 3 lanes). **Also OWED:** ~129
+>   accumulated worktrees need a careful cleanup pass (clutter, non-blocking); build agents keep deferring/stalling
+>   (coordinator-recovered every time) — the reliable pattern is delegate-BUILD + run-sweeps-as-coordinator.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 

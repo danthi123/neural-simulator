@@ -389,6 +389,18 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   backprop-oracle layer-3 gradient; train-loss within 10% of the depth-3 oracle) on a target that provably *fits* only
 >   with layer 3 (tent³-fit / quasigroup³-fit). Do NOT wire a new `--task` into the depth3 accuracy runner. This is the
 >   achievable next experiment; corroborates 2026-08-02 depth-robust.
+>   **⭐ RESULT (2026-08-11, the full arc): the LAYER-3-FIDELITY test RAN and gap#4 is SURPASSED at de-risk level.** (1)
+>   Fixed-feedback DFA e-prop does NOT reach the 3rd hidden layer (its FIT sticks at the mean-predictor while backprop
+>   fits; depth-graded probe: DFA fits tent¹ through 3 layers but stalls tent²/³ — the wall is the target's
+>   COMPOSITIONAL depth, `...transport-free-DFA-does-NOT-reach-the-3rd-layer...`). (2) **The named biological surpass —
+>   transport-free LEARNED feedback (Kolen-Pollack) — REACHES the 3rd hidden layer: 6-valid-seed GO**, closing 66% of
+>   the BP-depth-2→depth-3 fit gap vs fixed-DFA's −85%; freezing the feedback collapses it (the win is *learning* G,
+>   cos(G,Wᵀ) co-adapting 0.25→0.83, never copied — transport-free) (`...gap4-learned-feedback-KP-reaches-the-3rd-hidden-
+>   layer...`). So gap#4 deep-credit-on-spikes' core question — does error reach deep layers WITHOUT weight transport —
+>   is answered YES (learned feedback), at rate-MLP / host-oracle de-risk level. **Residual + next:** KP *reaches* but
+>   does not yet *match* the oracle (~forward-optimization gap, ~more epochs / weight-mirror / φ′-vanishing); then the
+>   on-SPIKES port (the DFA/KP algebra onto the substrate). The wall-ledger gap#4 row can move from WALL toward
+>   SURPASSED-AT-DE-RISK.
 > - **source monitoring:** the named surpass largely WORKS. Independent population-coded pools + up-only homeostatic
 >   scaling resolve no-harm STRUCTURALLY (5/6; the row's v8 "Turrigiano synaptic scaling" idea, confirmed), and the
 >   residual weak-encoding class — diagnosed as RIVAL CROSS-TALK, not weak own-encoding — is FIXED by **heterosynaptic-LTD
