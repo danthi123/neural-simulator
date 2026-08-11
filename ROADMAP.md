@@ -102,6 +102,31 @@ Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain st
 (`2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
+**2026-08-11 OVERNIGHT BATCH (autonomous, ~two dozen de-risks banked).** The load-bearing net-new results, on top
+of the arc above: (1) **⭐ the "one brain" now holds through the INTERACTION level** — #7 burn-down 1 merged the
+e-prop acquisition net into disjoint slices of the SINGLE conversational bridge sharing ONE `cp_connections`
+(co-residency, byte-identity 6/6, `cd08cfde`/finding `INTEGRATION-7-burndown1`), then a genuine synaptic pathway
+`conv-cue → eprop_in` was injected on that merged bridge and LESIONING it collapses acquisition (load-bearing 6/6,
+`ed9f82f9`/`cross-region-synaptic-interaction`) — co-location became true cross-region interaction, the mission's
+core non-negotiable at the substrate+interaction level (still a narrow de-risk, not the whole integrated brain).
+(2) **Grounded breadth scaled 9→38 subjects** with the no-confab moat intact; the ceiling is a query-latency +
+`k_max=32` provisioning cap, not a moat leak — the capacity instrument was given discriminating teeth (a D=32 stress
+setting that CAN detect a leak; `corpus-breadth-scaling-capacity-ceiling`). (3) **gap#4 deep-credit (item 7)
+sharpened:** the apparent "spikes can't carry deep credit" boundary was ISOLATED to a TEMPORAL-DEPTH floor —
+shortening the credit horizon T collapses the 1-hidden floor 0.963→0.444, making spatial deep credit obligatory
+(1-seed smoke, 6-seed named; `gap4-TEMPORAL-DEPTH-FLOOR-ISOLATED`). (4) **Replay consolidation (item 4) corrected:**
+the ~0.55 retention "cap" was a `bdsp_wmax=6` clamp artifact, not fidelity — de-clamped replay reaches 1.00;
+interleaved generative replay did NOT beat self-replay but isolated acquisition-at-scale as the real bottleneck,
+naming metaplasticity next. (5) **Mouth on spikes:** the patient-word decision AND the affect tone-token selection in
+live chat now run on a spiking FS-WTA (lateral inhibition), not a host `max()` (parity 1.000 6/6). (6) **Honest
+negatives banked** (method boundaries, not closed capabilities): W4 graded-implicature RSA as the speaking belief
+source is faithful + 12× calibrated + moat-intact but does not move the alignment metric (residual = the
+coincidence-detector artifact); harder k-WTA is a real-but-insufficient contributor to visual invariance (and exposed
+a decode-quantization confound in the prior baseline); the fully-neural per-intent value critic is genuine + on-main
+but 3/6 on the STRICT contingency gate (an earlier "6/6" was a looser directional read — CORRECTED in place).
+Still in flight at write time: a recurrent language-cortex emergence probe and a source-monitoring consistency signal
+(item 3). Full detail in the `research/findings/2026-08-11-*.md` set.
+
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
 TRUE-ONE-BRAIN conversation loop (honesty + affect + curiosity + no-confab moat,
 co-resident on one spiking bridge) is now **12/12 GO** (hardened past the 6-seed
@@ -431,7 +456,12 @@ its controls and lesions, and is tested at the required seed coverage.
    state, source, or social consequence.
 7. **The deep-credit and scaling frontier remains open.** The project must
    distinguish a narrow mechanism de-risk from a local learning rule that can
-   grow useful structure on the real shared substrate.
+   grow useful structure on the real shared substrate. *(2026-08-11: the
+   apparent "spikes can't carry deep credit" boundary was ISOLATED to a
+   TEMPORAL-DEPTH floor — the LIF membrane's fixed integration window silently
+   supplied the effective depth; shortening it collapses the 1-hidden floor
+   0.963→0.444, so spatial/temporal deep credit is obligatory not optional.
+   1-seed smoke GO; the 6-seed T-sweep is the next step.)*
 8. **Compute is scheduled and measured under controlled conditions.** Early
    V14 performance attempts exposed repeated CuPy compilation, insufficient
    fusion, and unstable host/GPU conditions; each failed candidate remains

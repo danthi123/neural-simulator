@@ -1,0 +1,163 @@
+{
+  "n_go": 1,
+  "n_seeds": 1,
+  "D": 256,
+  "K_base": 6,
+  "K_sweep": [
+    6,
+    10,
+    14
+  ],
+  "n_restate": 5,
+  "D_stress": 64,
+  "K_stress": 18,
+  "base_cell_damage_overwrite_always": 0.0,
+  "base_cell_damage_reconsolidate": 0.0,
+  "base_cell_damage_naive_accumulate": 0.6,
+  "results": [
+    {
+      "seed": 42,
+      "D": 256,
+      "K_base": 6,
+      "capacity": [
+        {
+          "K": 6,
+          "baseline_recall": 1.0,
+          "rewrite_ok": true,
+          "isolation_after_1_correction": 1.0,
+          "pe": 0.9819138928030079,
+          "gate": 0.8131627008280345
+        },
+        {
+          "K": 10,
+          "baseline_recall": 1.0,
+          "rewrite_ok": true,
+          "isolation_after_1_correction": 1.0,
+          "pe": 1.0173121691048512,
+          "gate": 0.8596373387880416
+        },
+        {
+          "K": 14,
+          "baseline_recall": 1.0,
+          "rewrite_ok": true,
+          "isolation_after_1_correction": 1.0,
+          "pe": 1.0325937813510055,
+          "gate": 0.8835515412025043
+        }
+      ],
+      "baseline_recall_at_base": 1.0,
+      "pe_labile": 0.8300826691994365,
+      "fam_abstain": 0.20829370843212724,
+      "rewrite_ok": true,
+      "isolation_ok": true,
+      "correction_pe": 0.9921121478597398,
+      "restabilize_ok": true,
+      "restatement_pe": 0.733746606171564,
+      "moat_ok": true,
+      "lesion_ok": true,
+      "permuted_ok": true,
+      "arms_restatement_stress": {
+        "reconsolidate": {
+          "writes": 0,
+          "others_recall_after_restatements": 1.0,
+          "target_ok": true
+        },
+        "naive_accumulate": {
+          "writes": 5,
+          "others_recall_after_restatements": 0.4,
+          "target_ok": true
+        },
+        "overwrite_always": {
+          "writes": 5,
+          "others_recall_after_restatements": 1.0,
+          "target_ok": true
+        },
+        "do_nothing": {
+          "writes": 0,
+          "others_recall_after_restatements": 1.0,
+          "target_ok": true
+        }
+      },
+      "naive_accumulate_target_after_correction": "P1",
+      "naive_accumulate_rewrite_clean": true,
+      "base_cell": {
+        "D": 256,
+        "K": 6,
+        "baseline_recall": 1.0,
+        "pe_labile": 0.8300826691994365,
+        "fam_abstain": 0.20829370843212724,
+        "rewrite_ok": true,
+        "isolation_ok": true,
+        "correction_pe": 0.9921121478597398,
+        "restabilize_ok": true,
+        "restatement_pe": 0.733746606171564,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "permuted_ok": true,
+        "arms_restatement_stress": {
+          "reconsolidate": {
+            "writes": 0,
+            "others_recall_after_restatements": 1.0,
+            "target_ok": true
+          },
+          "naive_accumulate": {
+            "writes": 5,
+            "others_recall_after_restatements": 0.4,
+            "target_ok": true
+          },
+          "overwrite_always": {
+            "writes": 5,
+            "others_recall_after_restatements": 1.0,
+            "target_ok": true
+          },
+          "do_nothing": {
+            "writes": 0,
+            "others_recall_after_restatements": 1.0,
+            "target_ok": true
+          }
+        },
+        "naive_accumulate_target_after_correction": "P1",
+        "naive_accumulate_rewrite_clean": true
+      },
+      "stress_cell": {
+        "D": 64,
+        "K": 18,
+        "baseline_recall": 0.6111111111111112,
+        "pe_labile": 0.8853630526888062,
+        "fam_abstain": 0.20082277420769434,
+        "rewrite_ok": false,
+        "isolation_ok": false,
+        "correction_pe": 1.093943190866308,
+        "restabilize_ok": true,
+        "restatement_pe": 0.7450324686200265,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "permuted_ok": true,
+        "arms_restatement_stress": {
+          "reconsolidate": {
+            "writes": 0,
+            "others_recall_after_restatements": 0.5882352941176471,
+            "target_ok": true
+          },
+          "naive_accumulate": {
+            "writes": 5,
+            "others_recall_after_restatements": 0.29411764705882354,
+            "target_ok": true
+          },
+          "overwrite_always": {
+            "writes": 5,
+            "others_recall_after_restatements": 0.5882352941176471,
+            "target_ok": true
+          },
+          "do_nothing": {
+            "writes": 0,
+            "others_recall_after_restatements": 0.5882352941176471,
+            "target_ok": true
+          }
+        },
+        "naive_accumulate_target_after_correction": "P7",
+        "naive_accumulate_rewrite_clean": false
+      }
+    }
+  ]
+}
