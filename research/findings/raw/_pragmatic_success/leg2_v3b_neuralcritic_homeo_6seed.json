@@ -1,0 +1,549 @@
+{
+  "runner": "_pragmatic_readback_leg2_v3b_neuralcritic_homeo_derisk",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_train": 360,
+  "aggregate": {
+    "critic": "NEURAL spiking per-intent state-value critic + HOMEOSTATIC readout-gain calibration",
+    "homeo_beta": 0.1,
+    "fix_mean_advantage_sign_acc": 0.8898,
+    "fix_mean_actor_wta_vs_succopt": 0.5,
+    "fix_mean_weight_argmax_vs_succopt": 0.7778,
+    "fix_mean_weight_sep_vs_succopt": 0.1222,
+    "fix_mean_untrained_weight_sep": 0.0008,
+    "fix_mean_actor_wta_vs_aligned": 0.3333,
+    "fix_mean_homeo_gain_last": 0.4449,
+    "yoked_mean_actor_wta_vs_succopt": 0.3889,
+    "yoked_mean_weight_argmax_vs_succopt": 0.3889,
+    "yoked_mean_weight_sep_vs_succopt": -0.0007,
+    "chance": 0.3333,
+    "per_seed_contingency_pass": {
+      "42": true,
+      "43": true,
+      "44": false,
+      "100": false,
+      "101": true,
+      "102": false
+    },
+    "n_contingent": 3,
+    "contingency_pass_aggregate": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "fix": {
+        "seed": 42,
+        "arm": "fix",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.2489,
+        "crit_bar_final": 0.08171,
+        "succ_bar_final": 0.01992,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 2,
+          "2": 2
+        },
+        "trained_choice": {
+          "0": 1,
+          "1": 2,
+          "2": 1
+        },
+        "weight_argmax": {
+          "0": 0,
+          "1": 2,
+          "2": 2
+        },
+        "advantage_sign_acc": 0.9395,
+        "advantage_sign_n": 248,
+        "actor_wta_acc_vs_succopt": 0.3333,
+        "weight_argmax_acc_vs_succopt": 1.0,
+        "actor_wta_acc_vs_aligned": 0.0,
+        "untrained_wta_acc_vs_succopt": 0.3333,
+        "weight_sep_vs_succopt": 0.19531,
+        "untrained_weight_sep_vs_succopt": 0.0026,
+        "weight_sep_vs_aligned": -0.03448,
+        "chance": 0.3333,
+        "elapsed_seconds": 83.9
+      },
+      "yoked": {
+        "seed": 42,
+        "arm": "yoked",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.2315,
+        "crit_bar_final": 0.09305,
+        "succ_bar_final": 0.02081,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 2,
+          "2": 2
+        },
+        "trained_choice": {
+          "0": 2,
+          "1": 1,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "advantage_sign_acc": 0.728,
+        "advantage_sign_n": 261,
+        "actor_wta_acc_vs_succopt": 0.0,
+        "weight_argmax_acc_vs_succopt": 0.0,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.3333,
+        "weight_sep_vs_succopt": -0.01445,
+        "untrained_weight_sep_vs_succopt": 0.0026,
+        "weight_sep_vs_aligned": -0.00882,
+        "chance": 0.3333,
+        "elapsed_seconds": 100.0
+      }
+    },
+    {
+      "seed": 43,
+      "fix": {
+        "seed": 43,
+        "arm": "fix",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.4932,
+        "crit_bar_final": 0.09252,
+        "succ_bar_final": 0.04538,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 2,
+          "1": 2,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 1,
+          "1": 0,
+          "2": 2
+        },
+        "weight_argmax": {
+          "0": 2,
+          "1": 2,
+          "2": 1
+        },
+        "advantage_sign_acc": 0.9276,
+        "advantage_sign_n": 290,
+        "actor_wta_acc_vs_succopt": 0.0,
+        "weight_argmax_acc_vs_succopt": 0.6667,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.3333,
+        "weight_sep_vs_succopt": 0.04392,
+        "untrained_weight_sep_vs_succopt": -1e-05,
+        "weight_sep_vs_aligned": 0.01066,
+        "chance": 0.3333,
+        "elapsed_seconds": 89.5
+      },
+      "yoked": {
+        "seed": 43,
+        "arm": "yoked",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.5826,
+        "crit_bar_final": 0.08949,
+        "succ_bar_final": 0.05378,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 2,
+          "1": 2,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 2,
+          "1": 1,
+          "2": 1
+        },
+        "weight_argmax": {
+          "0": 2,
+          "1": 1,
+          "2": 2
+        },
+        "advantage_sign_acc": 0.9432,
+        "advantage_sign_n": 229,
+        "actor_wta_acc_vs_succopt": 0.3333,
+        "weight_argmax_acc_vs_succopt": 0.3333,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.3333,
+        "weight_sep_vs_succopt": -0.0003,
+        "untrained_weight_sep_vs_succopt": -1e-05,
+        "weight_sep_vs_aligned": 0.00349,
+        "chance": 0.3333,
+        "elapsed_seconds": 88.8
+      }
+    },
+    {
+      "seed": 44,
+      "fix": {
+        "seed": 44,
+        "arm": "fix",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.4274,
+        "crit_bar_final": 0.10258,
+        "succ_bar_final": 0.04342,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 2,
+          "1": 0,
+          "2": 2
+        },
+        "trained_choice": {
+          "0": 1,
+          "1": 1,
+          "2": 2
+        },
+        "weight_argmax": {
+          "0": 1,
+          "1": 2,
+          "2": 2
+        },
+        "advantage_sign_acc": 0.9361,
+        "advantage_sign_n": 219,
+        "actor_wta_acc_vs_succopt": 0.3333,
+        "weight_argmax_acc_vs_succopt": 0.3333,
+        "actor_wta_acc_vs_aligned": 0.6667,
+        "untrained_wta_acc_vs_succopt": 0.0,
+        "weight_sep_vs_succopt": 0.07225,
+        "untrained_weight_sep_vs_succopt": -0.00112,
+        "weight_sep_vs_aligned": -0.06448,
+        "chance": 0.3333,
+        "elapsed_seconds": 77.0
+      },
+      "yoked": {
+        "seed": 44,
+        "arm": "yoked",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.4152,
+        "crit_bar_final": 0.10027,
+        "succ_bar_final": 0.04151,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 2,
+          "1": 0,
+          "2": 2
+        },
+        "trained_choice": {
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "weight_argmax": {
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "advantage_sign_acc": 0.6888,
+        "advantage_sign_n": 241,
+        "actor_wta_acc_vs_succopt": 0.0,
+        "weight_argmax_acc_vs_succopt": 0.0,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.0,
+        "weight_sep_vs_succopt": -0.06298,
+        "untrained_weight_sep_vs_succopt": -0.00112,
+        "weight_sep_vs_aligned": -0.00655,
+        "chance": 0.3333,
+        "elapsed_seconds": 103.7
+      }
+    },
+    {
+      "seed": 100,
+      "fix": {
+        "seed": 100,
+        "arm": "fix",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.5175,
+        "crit_bar_final": 0.0772,
+        "succ_bar_final": 0.0402,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 1,
+          "1": 1,
+          "2": 2
+        },
+        "trained_choice": {
+          "0": 1,
+          "1": 1,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "advantage_sign_acc": 0.9084,
+        "advantage_sign_n": 251,
+        "actor_wta_acc_vs_succopt": 0.6667,
+        "weight_argmax_acc_vs_succopt": 0.6667,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.3333,
+        "weight_sep_vs_succopt": 0.04828,
+        "untrained_weight_sep_vs_succopt": -0.00025,
+        "weight_sep_vs_aligned": 0.02238,
+        "chance": 0.3333,
+        "elapsed_seconds": 85.9
+      },
+      "yoked": {
+        "seed": 100,
+        "arm": "yoked",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.5263,
+        "crit_bar_final": 0.07915,
+        "succ_bar_final": 0.04197,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 1,
+          "1": 1,
+          "2": 2
+        },
+        "trained_choice": {
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "weight_argmax": {
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "advantage_sign_acc": 0.8048,
+        "advantage_sign_n": 251,
+        "actor_wta_acc_vs_succopt": 0.6667,
+        "weight_argmax_acc_vs_succopt": 0.6667,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.3333,
+        "weight_sep_vs_succopt": 0.01086,
+        "untrained_weight_sep_vs_succopt": -0.00025,
+        "weight_sep_vs_aligned": -0.0084,
+        "chance": 0.3333,
+        "elapsed_seconds": 86.3
+      }
+    },
+    {
+      "seed": 101,
+      "fix": {
+        "seed": 101,
+        "arm": "fix",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.3476,
+        "crit_bar_final": 0.10627,
+        "succ_bar_final": 0.0371,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 0,
+          "1": 2,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "advantage_sign_acc": 0.7627,
+        "advantage_sign_n": 236,
+        "actor_wta_acc_vs_succopt": 0.6667,
+        "weight_argmax_acc_vs_succopt": 1.0,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.0,
+        "weight_sep_vs_succopt": 0.22829,
+        "untrained_weight_sep_vs_succopt": 0.00296,
+        "weight_sep_vs_aligned": 0.21053,
+        "chance": 0.3333,
+        "elapsed_seconds": 83.1
+      },
+      "yoked": {
+        "seed": 101,
+        "arm": "yoked",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.3569,
+        "crit_bar_final": 0.09854,
+        "succ_bar_final": 0.03629,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 0,
+          "1": 0,
+          "2": 2
+        },
+        "advantage_sign_acc": 0.6947,
+        "advantage_sign_n": 262,
+        "actor_wta_acc_vs_succopt": 0.6667,
+        "weight_argmax_acc_vs_succopt": 0.3333,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.0,
+        "weight_sep_vs_succopt": 0.027,
+        "untrained_weight_sep_vs_succopt": 0.00296,
+        "weight_sep_vs_aligned": 0.03545,
+        "chance": 0.3333,
+        "elapsed_seconds": 91.3
+      }
+    },
+    {
+      "seed": 102,
+      "fix": {
+        "seed": 102,
+        "arm": "fix",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.6347,
+        "crit_bar_final": 0.09033,
+        "succ_bar_final": 0.05699,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "advantage_sign_acc": 0.8645,
+        "advantage_sign_n": 251,
+        "actor_wta_acc_vs_succopt": 1.0,
+        "weight_argmax_acc_vs_succopt": 1.0,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.6667,
+        "weight_sep_vs_succopt": 0.14533,
+        "untrained_weight_sep_vs_succopt": 0.00061,
+        "weight_sep_vs_aligned": -0.05952,
+        "chance": 0.3333,
+        "elapsed_seconds": 226.3
+      },
+      "yoked": {
+        "seed": 102,
+        "arm": "yoked",
+        "neural_critic": true,
+        "homeo": true,
+        "homeo_gain_first": 1.0,
+        "homeo_gain_last": 0.5754,
+        "crit_bar_final": 0.09033,
+        "succ_bar_final": 0.05178,
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "trained_choice": {
+          "0": 0,
+          "1": 2,
+          "2": 0
+        },
+        "weight_argmax": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "advantage_sign_acc": 0.7444,
+        "advantage_sign_n": 266,
+        "actor_wta_acc_vs_succopt": 0.6667,
+        "weight_argmax_acc_vs_succopt": 1.0,
+        "actor_wta_acc_vs_aligned": 0.3333,
+        "untrained_wta_acc_vs_succopt": 0.6667,
+        "weight_sep_vs_succopt": 0.0356,
+        "untrained_weight_sep_vs_succopt": 0.00061,
+        "weight_sep_vs_aligned": 0.00583,
+        "chance": 0.3333,
+        "elapsed_seconds": 212.8
+      }
+    }
+  ]
+}
