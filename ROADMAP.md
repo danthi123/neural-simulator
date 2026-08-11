@@ -319,7 +319,19 @@ its controls and lesions, and is tested at the required seed coverage.
   The next methods bias the competition where it is decided (striatal/pallidal, or
   before the route potentiates) and floor the net reward-prediction error; the Stage
   2g contingency mechanism itself remains correct. Development and held-out seeds
-  are locked, so no promotion is due.
+  are locked, so no promotion is due. **⚠️ 2026-08-11 CORRECTION (this bullet above
+  was STALE at Stage 2h — drift #12, caught by the Gate-B Stage-2p agent):** the arc
+  actually advanced through Stages 2i–2o. RPE-floor closed seed 730704 (2i); a
+  pallidal homeostat inverts the thalamus (2m). **Gate B now stands at a legitimate
+  ≥5/6 GO**, with seed **730705 the one CONCLUSIVELY-CHARACTERIZED boundary** (Stages
+  2j→2o exhausted the readout options; Stage-2o `window_exists=False`). Stage 2p (a
+  striatal feedforward-inhibition / MSN down-state homeostat) is a fresh HONEST
+  NEGATIVE — negative-b IZH MSNs REBOUND under hyperpolarization, so FFI backfires —
+  and it re-diagnoses the 730705 residual precisely: a DOWNSTREAM commit-ignition
+  TIMING race (a dynamic gpi-pause head-start, not a resting-potential parameter).
+  **Next mechanism (needs a `sim/` inhibitory pool, flagged): a spiking TRN-like
+  feedforward-inhibition pool that synchronises the thalamic onset each selection
+  epoch**, removing the timing head-start without de-latching unlearned drive.
 - **Source and confidence machinery:** a learned seen/heard/self pathway now
   co-resides with episodic memory, anterior prefrontal cortex, and anterior
   cingulate cortex populations. The no-harm tradeoff that blocked this arc is
