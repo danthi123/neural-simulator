@@ -1,0 +1,543 @@
+{
+  "probe": "gap4_onspikes_kp_align",
+  "task": "depth2_xor_threshold",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "device": "cpu",
+  "config": {
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "T": 24,
+    "epochs": 200,
+    "bptt_epochs": 300,
+    "bptt_hidden": 96,
+    "lr": 0.05,
+    "lr_fa": 0.05,
+    "in_gain": 1.0,
+    "sigma_norm": true,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "train_subsample": 800
+  },
+  "elapsed_seconds": 276.9,
+  "rows": [
+    {
+      "seed": 42,
+      "n_hidden_layers": 2,
+      "epochs": 200,
+      "kp_lr": 0.2,
+      "sizes": [
+        10,
+        32,
+        32,
+        2
+      ],
+      "chance": 0.5487465181058496,
+      "bptt_acc": 0.7437325905292479,
+      "frozen_acc": 0.5069637883008357,
+      "fixed_fa_acc": 0.7493036211699164,
+      "kp_plus_acc": 0.8384401114206128,
+      "kp_minus_acc": 0.596100278551532,
+      "permuted_acc": 0.467966573816156,
+      "kp_plus_over_fixed": 0.08913649025069637,
+      "kp_minus_over_fixed": -0.15320334261838442,
+      "kp_plus_over_frozen": 0.33147632311977715,
+      "kp_minus_over_frozen": 0.08913649025069637,
+      "fixed_fa_bw_init": [
+        -0.0003846434703536381,
+        -0.044068770756619066
+      ],
+      "fixed_fa_bw_final": [
+        0.35375070026725725,
+        0.5013843579785155
+      ],
+      "kp_plus_bw_init": [
+        -0.0003846434703536381,
+        -0.044068770756619066
+      ],
+      "kp_plus_bw_final": [
+        0.2694071196748464,
+        0.5137367375065148
+      ],
+      "kp_minus_bw_init": [
+        -0.0003846434703536381,
+        -0.044068770756619066
+      ],
+      "kp_minus_bw_final": [
+        0.3142684609651461,
+        0.36900891191138513
+      ],
+      "kp_plus_bw_delta": [
+        0.26979176314520004,
+        0.5578055082631339
+      ],
+      "kp_minus_bw_delta": [
+        0.31465310443549976,
+        0.4130776826680042
+      ],
+      "kp_plus_bw_deep_init": -0.0003846434703536381,
+      "kp_plus_bw_deep_final": 0.2694071196748464,
+      "kp_minus_bw_deep_init": -0.0003846434703536381,
+      "kp_minus_bw_deep_final": 0.3142684609651461,
+      "kp_plus_bw_adj_final": 0.5137367375065148,
+      "kp_minus_bw_adj_final": 0.36900891191138513,
+      "bw_init_max_abs": 0.044068770756619066,
+      "fa_moved": false,
+      "kp_plus_moved": true,
+      "kp_minus_moved": true,
+      "no_transport": true,
+      "permuted_near_chance": true,
+      "bptt_solves": true
+    },
+    {
+      "seed": 43,
+      "n_hidden_layers": 2,
+      "epochs": 200,
+      "kp_lr": 0.2,
+      "sizes": [
+        10,
+        32,
+        32,
+        2
+      ],
+      "chance": 0.5376044568245125,
+      "bptt_acc": 0.7910863509749304,
+      "frozen_acc": 0.5654596100278552,
+      "fixed_fa_acc": 0.8802228412256268,
+      "kp_plus_acc": 0.8662952646239555,
+      "kp_minus_acc": 0.9025069637883009,
+      "permuted_acc": 0.5376044568245125,
+      "kp_plus_over_fixed": -0.013927576601671321,
+      "kp_minus_over_fixed": 0.02228412256267409,
+      "kp_plus_over_frozen": 0.3008356545961003,
+      "kp_minus_over_frozen": 0.3370473537604457,
+      "fixed_fa_bw_init": [
+        -0.00552602526380123,
+        0.14377659801594958
+      ],
+      "fixed_fa_bw_final": [
+        0.2827641947829947,
+        0.5035779812972221
+      ],
+      "kp_plus_bw_init": [
+        -0.00552602526380123,
+        0.14377659801594958
+      ],
+      "kp_plus_bw_final": [
+        0.2751231352922741,
+        0.46462536135408145
+      ],
+      "kp_minus_bw_init": [
+        -0.00552602526380123,
+        0.14377659801594958
+      ],
+      "kp_minus_bw_final": [
+        0.3197699733359452,
+        0.5140433867534107
+      ],
+      "kp_plus_bw_delta": [
+        0.28064916055607536,
+        0.32084876333813184
+      ],
+      "kp_minus_bw_delta": [
+        0.32529599859974645,
+        0.3702667887374611
+      ],
+      "kp_plus_bw_deep_init": -0.00552602526380123,
+      "kp_plus_bw_deep_final": 0.2751231352922741,
+      "kp_minus_bw_deep_init": -0.00552602526380123,
+      "kp_minus_bw_deep_final": 0.3197699733359452,
+      "kp_plus_bw_adj_final": 0.46462536135408145,
+      "kp_minus_bw_adj_final": 0.5140433867534107,
+      "bw_init_max_abs": 0.14377659801594958,
+      "fa_moved": false,
+      "kp_plus_moved": true,
+      "kp_minus_moved": true,
+      "no_transport": true,
+      "permuted_near_chance": true,
+      "bptt_solves": true
+    },
+    {
+      "seed": 44,
+      "n_hidden_layers": 2,
+      "epochs": 200,
+      "kp_lr": 0.2,
+      "sizes": [
+        10,
+        32,
+        32,
+        2
+      ],
+      "chance": 0.5236768802228412,
+      "bptt_acc": 0.7604456824512534,
+      "frozen_acc": 0.5682451253481894,
+      "fixed_fa_acc": 0.8272980501392758,
+      "kp_plus_acc": 0.8440111420612814,
+      "kp_minus_acc": 0.8189415041782729,
+      "permuted_acc": 0.5236768802228412,
+      "kp_plus_over_fixed": 0.01671309192200554,
+      "kp_minus_over_fixed": -0.008356545961002881,
+      "kp_plus_over_frozen": 0.275766016713092,
+      "kp_minus_over_frozen": 0.25069637883008355,
+      "fixed_fa_bw_init": [
+        0.043823184140498524,
+        -0.13315239187308425
+      ],
+      "fixed_fa_bw_final": [
+        0.3143945615815347,
+        0.49113992658317573
+      ],
+      "kp_plus_bw_init": [
+        0.043823184140498524,
+        -0.13315239187308425
+      ],
+      "kp_plus_bw_final": [
+        0.32923016612726796,
+        0.5318392724816814
+      ],
+      "kp_minus_bw_init": [
+        0.043823184140498524,
+        -0.13315239187308425
+      ],
+      "kp_minus_bw_final": [
+        0.34292880995123703,
+        0.41537163303925506
+      ],
+      "kp_plus_bw_delta": [
+        0.28540698198676945,
+        0.6649916643547656
+      ],
+      "kp_minus_bw_delta": [
+        0.2991056258107385,
+        0.5485240249123393
+      ],
+      "kp_plus_bw_deep_init": 0.043823184140498524,
+      "kp_plus_bw_deep_final": 0.32923016612726796,
+      "kp_minus_bw_deep_init": 0.043823184140498524,
+      "kp_minus_bw_deep_final": 0.34292880995123703,
+      "kp_plus_bw_adj_final": 0.5318392724816814,
+      "kp_minus_bw_adj_final": 0.41537163303925506,
+      "bw_init_max_abs": 0.13315239187308425,
+      "fa_moved": false,
+      "kp_plus_moved": true,
+      "kp_minus_moved": true,
+      "no_transport": true,
+      "permuted_near_chance": true,
+      "bptt_solves": true
+    },
+    {
+      "seed": 100,
+      "n_hidden_layers": 2,
+      "epochs": 200,
+      "kp_lr": 0.2,
+      "sizes": [
+        10,
+        32,
+        32,
+        2
+      ],
+      "chance": 0.5097493036211699,
+      "bptt_acc": 0.7576601671309192,
+      "frozen_acc": 0.5543175487465181,
+      "fixed_fa_acc": 0.8440111420612814,
+      "kp_plus_acc": 0.8607242339832869,
+      "kp_minus_acc": 0.8579387186629527,
+      "permuted_acc": 0.5097493036211699,
+      "kp_plus_over_fixed": 0.01671309192200554,
+      "kp_minus_over_fixed": 0.013927576601671321,
+      "kp_plus_over_frozen": 0.30640668523676884,
+      "kp_minus_over_frozen": 0.3036211699164346,
+      "fixed_fa_bw_init": [
+        0.03524047080035604,
+        -0.1784777752958781
+      ],
+      "fixed_fa_bw_final": [
+        0.3015347332363082,
+        0.3337308962726659
+      ],
+      "kp_plus_bw_init": [
+        0.03524047080035604,
+        -0.1784777752958781
+      ],
+      "kp_plus_bw_final": [
+        0.2879785933622806,
+        0.4446044074005437
+      ],
+      "kp_minus_bw_init": [
+        0.03524047080035604,
+        -0.1784777752958781
+      ],
+      "kp_minus_bw_final": [
+        0.268106222876422,
+        0.34012460001493805
+      ],
+      "kp_plus_bw_delta": [
+        0.25273812256192457,
+        0.6230821826964218
+      ],
+      "kp_minus_bw_delta": [
+        0.23286575207606597,
+        0.5186023753108162
+      ],
+      "kp_plus_bw_deep_init": 0.03524047080035604,
+      "kp_plus_bw_deep_final": 0.2879785933622806,
+      "kp_minus_bw_deep_init": 0.03524047080035604,
+      "kp_minus_bw_deep_final": 0.268106222876422,
+      "kp_plus_bw_adj_final": 0.4446044074005437,
+      "kp_minus_bw_adj_final": 0.34012460001493805,
+      "bw_init_max_abs": 0.1784777752958781,
+      "fa_moved": false,
+      "kp_plus_moved": true,
+      "kp_minus_moved": true,
+      "no_transport": true,
+      "permuted_near_chance": true,
+      "bptt_solves": true
+    },
+    {
+      "seed": 101,
+      "n_hidden_layers": 2,
+      "epochs": 200,
+      "kp_lr": 0.2,
+      "sizes": [
+        10,
+        32,
+        32,
+        2
+      ],
+      "chance": 0.5236768802228412,
+      "bptt_acc": 0.7576601671309192,
+      "frozen_acc": 0.5654596100278552,
+      "fixed_fa_acc": 0.8440111420612814,
+      "kp_plus_acc": 0.9052924791086351,
+      "kp_minus_acc": 0.9108635097493036,
+      "permuted_acc": 0.4763231197771588,
+      "kp_plus_over_fixed": 0.06128133704735372,
+      "kp_minus_over_fixed": 0.06685236768802227,
+      "kp_plus_over_frozen": 0.3398328690807799,
+      "kp_minus_over_frozen": 0.34540389972144847,
+      "fixed_fa_bw_init": [
+        0.04509519903141204,
+        0.19095457011625663
+      ],
+      "fixed_fa_bw_final": [
+        0.2587476324367181,
+        0.39859229773170746
+      ],
+      "kp_plus_bw_init": [
+        0.04509519903141204,
+        0.19095457011625663
+      ],
+      "kp_plus_bw_final": [
+        0.2722257448926355,
+        0.40220414552290334
+      ],
+      "kp_minus_bw_init": [
+        0.04509519903141204,
+        0.19095457011625663
+      ],
+      "kp_minus_bw_final": [
+        0.24855462456760083,
+        0.4395809331415346
+      ],
+      "kp_plus_bw_delta": [
+        0.22713054586122347,
+        0.2112495754066467
+      ],
+      "kp_minus_bw_delta": [
+        0.2034594255361888,
+        0.248626363025278
+      ],
+      "kp_plus_bw_deep_init": 0.04509519903141204,
+      "kp_plus_bw_deep_final": 0.2722257448926355,
+      "kp_minus_bw_deep_init": 0.04509519903141204,
+      "kp_minus_bw_deep_final": 0.24855462456760083,
+      "kp_plus_bw_adj_final": 0.40220414552290334,
+      "kp_minus_bw_adj_final": 0.4395809331415346,
+      "bw_init_max_abs": 0.19095457011625663,
+      "fa_moved": false,
+      "kp_plus_moved": true,
+      "kp_minus_moved": true,
+      "no_transport": true,
+      "permuted_near_chance": true,
+      "bptt_solves": true
+    },
+    {
+      "seed": 102,
+      "n_hidden_layers": 2,
+      "epochs": 200,
+      "kp_lr": 0.2,
+      "sizes": [
+        10,
+        32,
+        32,
+        2
+      ],
+      "chance": 0.5013927576601671,
+      "bptt_acc": 0.7632311977715878,
+      "frozen_acc": 0.5682451253481894,
+      "fixed_fa_acc": 0.8913649025069638,
+      "kp_plus_acc": 0.8885793871866295,
+      "kp_minus_acc": 0.9303621169916435,
+      "permuted_acc": 0.4986072423398329,
+      "kp_plus_over_fixed": -0.0027855153203342198,
+      "kp_minus_over_fixed": 0.03899721448467974,
+      "kp_plus_over_frozen": 0.32033426183844016,
+      "kp_minus_over_frozen": 0.3621169916434541,
+      "fixed_fa_bw_init": [
+        0.032266325338592056,
+        0.2359108012751087
+      ],
+      "fixed_fa_bw_final": [
+        0.368783771425573,
+        0.5995679392552538
+      ],
+      "kp_plus_bw_init": [
+        0.032266325338592056,
+        0.2359108012751087
+      ],
+      "kp_plus_bw_final": [
+        0.2704460401875626,
+        0.646922605685318
+      ],
+      "kp_minus_bw_init": [
+        0.032266325338592056,
+        0.2359108012751087
+      ],
+      "kp_minus_bw_final": [
+        0.28989442477809213,
+        0.5635515523746351
+      ],
+      "kp_plus_bw_delta": [
+        0.23817971484897052,
+        0.41101180441020935
+      ],
+      "kp_minus_bw_delta": [
+        0.25762809943950005,
+        0.3276407510995264
+      ],
+      "kp_plus_bw_deep_init": 0.032266325338592056,
+      "kp_plus_bw_deep_final": 0.2704460401875626,
+      "kp_minus_bw_deep_init": 0.032266325338592056,
+      "kp_minus_bw_deep_final": 0.28989442477809213,
+      "kp_plus_bw_adj_final": 0.646922605685318,
+      "kp_minus_bw_adj_final": 0.5635515523746351,
+      "bw_init_max_abs": 0.2359108012751087,
+      "fa_moved": false,
+      "kp_plus_moved": true,
+      "kp_minus_moved": true,
+      "no_transport": true,
+      "permuted_near_chance": true,
+      "bptt_solves": true
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "mean_chance": 0.5241411327762303,
+    "mean_bptt_acc": 0.7623026926648097,
+    "mean_frozen_acc": 0.5547818012999072,
+    "mean_fixed_fa_acc": 0.8393686165273909,
+    "mean_kp_plus_acc": 0.8672237697307335,
+    "mean_kp_minus_acc": 0.8361188486536676,
+    "mean_permuted_acc": 0.5023212627669452,
+    "mean_kp_plus_over_fixed": 0.027855153203342604,
+    "mean_kp_minus_over_fixed": -0.0032497678737233118,
+    "mean_kp_plus_over_frozen": 0.3124419684308264,
+    "mean_kp_minus_over_frozen": 0.28133704735376047,
+    "mean_kp_plus_bw_deep_init": 0.025085751762783964,
+    "mean_kp_plus_bw_deep_final": 0.2840684665894779,
+    "mean_kp_minus_bw_deep_init": 0.025085751762783964,
+    "mean_kp_minus_bw_deep_final": 0.29725375274574056,
+    "kp_plus_deep_align_delta": 0.2589827148266939,
+    "kp_minus_deep_align_delta": 0.27216800098295657,
+    "mean_kp_plus_bw_adj_final": 0.5006554216585072,
+    "mean_kp_minus_bw_adj_final": 0.4402801695391931,
+    "aligning_sign": "kp_minus",
+    "mean_bw_init_max_abs": 0.15439015122214939,
+    "bptt_solves_seeds": "6/6",
+    "permuted_near_chance_seeds": "6/6",
+    "no_transport_all": true,
+    "fa_frozen_all": true,
+    "kp_plus_moved_all": true,
+    "kp_minus_moved_all": true
+  },
+  "result": {
+    "status": "GO",
+    "go": true,
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "lever_kp_changes_accuracy",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the KP-vs-fixed_fa accuracy lever MOVED. If it did NOT (KP == fixed_fa == the permuted floor), the deep credit is DEAD at this depth and no verdict is earned -> UNDEFINED, the honest residual (KP cannot revive dead deep credit; e.g. a REDUNDANT-depth-3 XOR)."
+      },
+      {
+        "kind": "require",
+        "name": "bptt_ceiling_exists",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "BPTT solves the task on all seeds (6/6): a trainable-substrate ceiling exists"
+      },
+      {
+        "kind": "require",
+        "name": "permuted_at_chance",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "permuted-label FA sits at chance on all seeds (6/6): the signal is label-attributable"
+      },
+      {
+        "kind": "require",
+        "name": "transport_free_not_a_copy",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max |cos(Y_l, W_{l+1}^T)| at INIT = 0.154 (< 0.8 -> separate random stream, not a W^T copy)"
+      },
+      {
+        "kind": "require",
+        "name": "transport_free_no_byte_copy",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "no Y_l is byte-equal any forward W or its transpose, all seeds"
+      },
+      {
+        "kind": "require",
+        "name": "lever_kp_moves_feedback",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the aligning KP moved Y every seed; fixed_fa left Y frozen (freeze-G lever)"
+      },
+      {
+        "kind": "require",
+        "name": "kp_aligns_on_spikes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the aligning KP's deep-layer cos(Y,W^T) RISES by +0.259 init->final (the transport-free alignment signature on spikes; the other sign delta = +0.272)"
+      },
+      {
+        "kind": "require",
+        "name": "kp_beats_fixed_dfa",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the aligning KP beats fixed-DFA by +0.028 accuracy on spikes (learned feedback improves deep credit)"
+      },
+      {
+        "kind": "control",
+        "name": "kp_acc_differs_from_fixed",
+        "ok": true,
+        "detail": "treatment=0.867224 control=0.839369 |sep|=0.0278552 > 1e-06",
+        "note": "the aligning-KP accuracy must differ from fixed-DFA (the manipulation landed)"
+      }
+    ],
+    "undefined_reasons": [],
+    "aligning_sign": "kp_plus",
+    "kp_over_fixed": 0.027855153203342604,
+    "deep_align_delta": 0.2589827148266939
+  }
+}

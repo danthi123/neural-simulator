@@ -1,0 +1,212 @@
+{
+  "probe": "gap4_onspikes_kp_align",
+  "task": "depth2_xor_threshold",
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "device": "cpu",
+  "config": {
+    "hidden": 32,
+    "n_hidden_layers": 3,
+    "T": 24,
+    "epochs": 400,
+    "bptt_epochs": 300,
+    "bptt_hidden": 96,
+    "lr": 0.05,
+    "lr_fa": 0.05,
+    "in_gain": 1.0,
+    "sigma_norm": true,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "train_subsample": 800
+  },
+  "elapsed_seconds": 245.9,
+  "rows": [
+    {
+      "seed": 42,
+      "n_hidden_layers": 3,
+      "epochs": 400,
+      "kp_lr": 0.2,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "chance": 0.5487465181058496,
+      "bptt_acc": 0.7465181058495822,
+      "frozen_acc": 0.5654596100278552,
+      "fixed_fa_acc": 0.45125348189415043,
+      "kp_plus_acc": 0.45125348189415043,
+      "kp_minus_acc": 0.45125348189415043,
+      "permuted_acc": 0.45125348189415043,
+      "kp_plus_over_fixed": 0.0,
+      "kp_minus_over_fixed": 0.0,
+      "kp_plus_over_frozen": -0.11420612813370473,
+      "kp_minus_over_frozen": -0.11420612813370473,
+      "fixed_fa_bw_init": [
+        -0.00038464347035366617,
+        -0.06321828310307641,
+        0.04799537160399021
+      ],
+      "fixed_fa_bw_final": [
+        0.009554046612230008,
+        -0.012414485526045049,
+        -0.23094744823311275
+      ],
+      "kp_plus_bw_init": [
+        -0.00038464347035366617,
+        -0.06321828310307641,
+        0.04799537160399021
+      ],
+      "kp_plus_bw_final": [
+        -0.37869153384314147,
+        0.03036670971238669,
+        -0.32593675935653343
+      ],
+      "kp_minus_bw_init": [
+        -0.00038464347035366617,
+        -0.06321828310307641,
+        0.04799537160399021
+      ],
+      "kp_minus_bw_final": [
+        0.480265645198388,
+        0.0798591195826969,
+        -0.12171575076629369
+      ],
+      "kp_plus_bw_delta": [
+        -0.3783068903727878,
+        0.09358499281546309,
+        -0.37393213096052363
+      ],
+      "kp_minus_bw_delta": [
+        0.48065028866874165,
+        0.1430774026857733,
+        -0.1697111223702839
+      ],
+      "kp_plus_bw_deep_init": -0.00038464347035366617,
+      "kp_plus_bw_deep_final": -0.37869153384314147,
+      "kp_minus_bw_deep_init": -0.00038464347035366617,
+      "kp_minus_bw_deep_final": 0.480265645198388,
+      "kp_plus_bw_adj_final": -0.32593675935653343,
+      "kp_minus_bw_adj_final": -0.12171575076629369,
+      "bw_init_max_abs": 0.06321828310307641,
+      "fa_moved": false,
+      "kp_plus_moved": true,
+      "kp_minus_moved": true,
+      "no_transport": true,
+      "permuted_near_chance": true,
+      "bptt_solves": true
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 1,
+    "mean_chance": 0.5487465181058496,
+    "mean_bptt_acc": 0.7465181058495822,
+    "mean_frozen_acc": 0.5654596100278552,
+    "mean_fixed_fa_acc": 0.45125348189415043,
+    "mean_kp_plus_acc": 0.45125348189415043,
+    "mean_kp_minus_acc": 0.45125348189415043,
+    "mean_permuted_acc": 0.45125348189415043,
+    "mean_kp_plus_over_fixed": 0.0,
+    "mean_kp_minus_over_fixed": 0.0,
+    "mean_kp_plus_over_frozen": -0.11420612813370473,
+    "mean_kp_minus_over_frozen": -0.11420612813370473,
+    "mean_kp_plus_bw_deep_init": -0.00038464347035366617,
+    "mean_kp_plus_bw_deep_final": -0.37869153384314147,
+    "mean_kp_minus_bw_deep_init": -0.00038464347035366617,
+    "mean_kp_minus_bw_deep_final": 0.480265645198388,
+    "kp_plus_deep_align_delta": -0.3783068903727878,
+    "kp_minus_deep_align_delta": 0.48065028866874165,
+    "mean_kp_plus_bw_adj_final": -0.32593675935653343,
+    "mean_kp_minus_bw_adj_final": -0.12171575076629369,
+    "aligning_sign": "kp_minus",
+    "mean_bw_init_max_abs": 0.06321828310307641,
+    "bptt_solves_seeds": "1/1",
+    "permuted_near_chance_seeds": "1/1",
+    "no_transport_all": true,
+    "fa_frozen_all": true,
+    "kp_plus_moved_all": true,
+    "kp_minus_moved_all": true
+  },
+  "result": {
+    "status": "UNDEFINED",
+    "go": false,
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "lever_kp_changes_accuracy",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "the KP-vs-fixed_fa accuracy lever MOVED. If it did NOT (KP == fixed_fa == the permuted floor), the deep credit is DEAD at this depth and no verdict is earned -> UNDEFINED, the honest residual (KP cannot revive dead deep credit; e.g. a REDUNDANT-depth-3 XOR)."
+      },
+      {
+        "kind": "require",
+        "name": "bptt_ceiling_exists",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "BPTT solves the task on all seeds (1/1): a trainable-substrate ceiling exists"
+      },
+      {
+        "kind": "require",
+        "name": "permuted_at_chance",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "permuted-label FA sits at chance on all seeds (1/1): the signal is label-attributable"
+      },
+      {
+        "kind": "require",
+        "name": "transport_free_not_a_copy",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max |cos(Y_l, W_{l+1}^T)| at INIT = 0.063 (< 0.8 -> separate random stream, not a W^T copy)"
+      },
+      {
+        "kind": "require",
+        "name": "transport_free_no_byte_copy",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "no Y_l is byte-equal any forward W or its transpose, all seeds"
+      },
+      {
+        "kind": "require",
+        "name": "lever_kp_moves_feedback",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the aligning KP moved Y every seed; fixed_fa left Y frozen (freeze-G lever)"
+      },
+      {
+        "kind": "require",
+        "name": "kp_aligns_on_spikes",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "the aligning KP's deep-layer cos(Y,W^T) RISES by -0.378 init->final (the transport-free alignment signature on spikes; the other sign delta = +0.481)"
+      },
+      {
+        "kind": "require",
+        "name": "kp_beats_fixed_dfa",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "the aligning KP beats fixed-DFA by +0.000 accuracy on spikes (learned feedback improves deep credit)"
+      },
+      {
+        "kind": "control",
+        "name": "kp_acc_differs_from_fixed",
+        "ok": false,
+        "detail": "treatment=0.451253 control=0.451253 |sep|=0 > 1e-06",
+        "note": "the aligning-KP accuracy must differ from fixed-DFA (the manipulation landed)"
+      }
+    ],
+    "undefined_reasons": [
+      "unmet: lever_kp_changes_accuracy (measured=False expect=True)",
+      "unmet: kp_aligns_on_spikes (measured=False expect=True)",
+      "unmet: kp_beats_fixed_dfa (measured=False expect=True)",
+      "unmet: kp_acc_differs_from_fixed (treatment=0.451253 control=0.451253 |sep|=0 > 1e-06)"
+    ],
+    "aligning_sign": "kp_plus",
+    "kp_over_fixed": 0.0,
+    "deep_align_delta": -0.3783068903727878
+  }
+}
