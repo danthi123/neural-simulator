@@ -1,0 +1,3824 @@
+{
+  "verdict": "GO",
+  "verdict_earned": "GO",
+  "n_go": 6,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "K_taught": 3,
+  "taught": {
+    "dax": "grass",
+    "dog": "bone",
+    "cat": "fish"
+  },
+  "sim_backend": "numpy",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all seeds GO",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "taught-recall == K all seeds (each taught cue answered)",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "taught-recall: trained vs frozen-readout (identical teaching)",
+      "ok": true,
+      "detail": "treatment=3 control=0 |sep|=3 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "grounded replies: treatment vs pre-teaching baseline",
+      "ok": true,
+      "detail": "treatment=7 control=6 |sep|=1 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat 0 false-accepts (untaught cues, all seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "chat confab == 0 (treatment + baseline, all turns)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "posthoc teeth drop 100% of unsupported props",
+      "ok": true,
+      "detail": "measured=1.0 expect=1.0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FROZEN-READOUT: 0 taught-recall (content rode the weight change)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "kb unchanged by teaching (no store-write, all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION-gate: conf-only gate-OFF leaks (>0 false-accepts)",
+      "ok": true,
+      "detail": "measured=4 expect=<function build_verdict.<locals>.<lambda> at 0x7f0d2b432480>",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "LESION collapses the novelty margin (first seed)",
+      "ok": true,
+      "detail": "before=0.787287 after=-1.02363e-13 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "mispaired-teacher (main vs mispaired mean held-out)",
+      "ok": true,
+      "detail": "treatment=0.983333 control=0 |sep|=0.983333 > 0.15",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "single-class control (contrastive facts vs single-class facts)",
+      "ok": true,
+      "detail": "treatment=3 control=1 |sep|=2 > 0",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "main mean held-out vs chance (all seeds)",
+      "ok": true,
+      "detail": "0.941667 vs floor 0.166667",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "byte-identity: shim-off decision transcript identical to #6 default",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "byte-identity: substrate threshold hash identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "spiking-generator MOUTH (GPU/torch)",
+      "why": "CPU eval; the grounded CONTENT is the LEARNED read (what the mouth would render), not the mouth"
+    },
+    {
+      "process": "ONE merged bridge",
+      "why": "OnBridgeEpropNet builds its OWN co-resident SimulationBridge; the merge is the named next step"
+    },
+    {
+      "process": "spiking familiarity gate (v320)",
+      "why": "the source-monitor is a numpy anti-Hebbian projector; the spiking v320 gate is the swap-in target"
+    }
+  ],
+  "byte_identity": {
+    "threshold_hash_identical": true,
+    "concept_codes_identical": true,
+    "num_neurons_identical": true,
+    "num_neurons": 25531,
+    "decision_transcript_identical": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "elapsed_s": 248.5,
+      "vocab_size": 25,
+      "kb_len_before": 0,
+      "kb_len_after_store": 6,
+      "kb_len_after_teach": 6,
+      "readout_moved": 58.683494567871094,
+      "recall_treatment": 3,
+      "recalled_referents": [
+        "cat",
+        "dax",
+        "dog"
+      ],
+      "recall_baseline": 0,
+      "grounded_treatment": 7,
+      "grounded_baseline": 6,
+      "recall_attributable_to_weight_change": 1.0,
+      "chat_treatment_summary": {
+        "n_turns": 18,
+        "grounded": 7,
+        "silence": 10,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "chat_baseline_summary": {
+        "n_turns": 18,
+        "grounded": 6,
+        "silence": 11,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "taught_probe_answers": {
+        "dax": "warmly, gladly Dax eats grass.",
+        "dog": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "moat_false_accepts": 0,
+      "moat_examples": [],
+      "frozen_readout_moved": 0.0,
+      "recall_frozen": 0,
+      "frozen_probe_answers": {
+        "dax": "warmly, gladly Dax eats apple.",
+        "dog": "warmly, gladly Dog eats apple. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats apple. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "frozen_heldout": 0.0,
+      "gate_off_false_accepts": 5,
+      "intact_margin": 0.7872871037832367,
+      "lesion_margin": -1.0236256287043943e-13,
+      "heldout": {
+        "dax": 0.95,
+        "dog": 1.0,
+        "cat": 1.0
+      },
+      "majority_words": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "not_constant": true,
+      "distinct_classes": 3,
+      "n_facts_correct": 3,
+      "single_class_majority": {
+        "dax": "grass",
+        "dog": "grass",
+        "cat": "grass"
+      },
+      "sc_n_correct": 1,
+      "sc_constant_grass": true,
+      "main_mean_heldout": 0.9833333333333334,
+      "mispaired_mean_heldout": 0.0,
+      "mispaired_heldout": {
+        "dax": 0.0,
+        "dog": 0.0,
+        "cat": 0.0
+      },
+      "posthoc_teeth": {
+        "supported_props": 9,
+        "supported_verified": 9,
+        "supported_keep_rate": 1.0,
+        "unsupported_props": 9,
+        "unsupported_dropped": 9,
+        "unsupported_drop_rate": 1.0
+      },
+      "byte_identity": {
+        "threshold_hash_identical": true,
+        "concept_codes_identical": true,
+        "num_neurons_identical": true,
+        "num_neurons": 25531,
+        "decision_transcript_identical": true
+      },
+      "gate": {
+        "recall_rises": true,
+        "moat_0_false_accepts": true,
+        "ood_abstains_no_confab": true,
+        "posthoc_drop_100pct": true,
+        "frozen_readout_no_recall": true,
+        "kb_unchanged": true,
+        "untrained_baseline_silent": true,
+        "lesion_gate_load_bearing": true,
+        "mispaired_teacher": true,
+        "single_class_control": true,
+        "ct1_discrimination": true
+      },
+      "seed_go": true,
+      "transcript_treatment": [
+        {
+          "turn": 1,
+          "human": "Hi there! How are you doing today?",
+          "tag": "greeting / small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.06944444444444445,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 2,
+          "human": "What have you been up to lately?",
+          "tag": "open small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 3,
+          "human": "Let's talk about the animals you know. Tell me about the dog.",
+          "tag": "in-domain entry",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.06944444444444445,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 4,
+          "human": "Interesting -- why did the dog go east?",
+          "tag": "in-domain follow-up + reasoning",
+          "cue_kind": "known_cue",
+          "cue_agent": "dog",
+          "cue_action": "go",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 5,
+          "human": "Do you like the dog? How do you feel about it?",
+          "tag": "emotion / opinion",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.06944444444444445,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 6,
+          "human": "What does a big thing run toward?",
+          "tag": "novel in-domain -> forward-model / curiosity",
+          "cue_kind": "novel_cue",
+          "cue_agent": "big",
+          "cue_action": "run",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does big run?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 7,
+          "human": "You mentioned a cat a moment ago -- what was it doing?",
+          "tag": "referential follow-up -> episodic memory",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 8,
+          "human": "What's the capital of France?",
+          "tag": "out-of-domain fact -> should honestly abstain",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 9,
+          "human": "If I have three apples and eat one, how many are left?",
+          "tag": "out-of-domain reasoning / arithmetic",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "apple",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 10,
+          "human": "Have you ever felt afraid?",
+          "tag": "experiential / self",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 11,
+          "human": "Tell me something funny.",
+          "tag": "humor",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 12,
+          "human": "What do you think happens after we die?",
+          "tag": "abstract / open-ended opinion",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 13,
+          "human": "Do you understand that you are a simulated brain, not a person?",
+          "tag": "meta / self-awareness -> honest read-out",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 14,
+          "human": "This was really nice. Goodbye for now.",
+          "tag": "social closing",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.06944444444444445,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 15,
+          "human": "Tell me about the dax.",
+          "tag": "plasticity-taught subject probe (dax)",
+          "cue_kind": "topic",
+          "cue_agent": "dax",
+          "cue_action": null,
+          "affect_differential": 0.06944444444444445,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dax eats grass.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dax",
+              "eats",
+              "grass"
+            ]
+          ]
+        },
+        {
+          "turn": 16,
+          "human": "Tell me about the dog.",
+          "tag": "plasticity-taught subject probe (dog)",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.06944444444444445,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 17,
+          "human": "Tell me about the cat.",
+          "tag": "plasticity-taught subject probe (cat)",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.06944444444444445,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 18,
+          "human": "You mentioned a wug earlier -- what does the wug do?",
+          "tag": "untaught-referent probe -> must abstain",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "wug",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 79.16666666666666,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 240.4,
+      "vocab_size": 25,
+      "kb_len_before": 0,
+      "kb_len_after_store": 6,
+      "kb_len_after_teach": 6,
+      "readout_moved": 70.62214660644531,
+      "recall_treatment": 3,
+      "recalled_referents": [
+        "cat",
+        "dax",
+        "dog"
+      ],
+      "recall_baseline": 0,
+      "grounded_treatment": 7,
+      "grounded_baseline": 6,
+      "recall_attributable_to_weight_change": 1.0,
+      "chat_treatment_summary": {
+        "n_turns": 18,
+        "grounded": 7,
+        "silence": 10,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "chat_baseline_summary": {
+        "n_turns": 18,
+        "grounded": 6,
+        "silence": 11,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "taught_probe_answers": {
+        "dax": "warmly, gladly Dax eats grass.",
+        "dog": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "moat_false_accepts": 0,
+      "moat_examples": [],
+      "frozen_readout_moved": 0.0,
+      "recall_frozen": 0,
+      "frozen_probe_answers": {
+        "dax": "warmly, gladly Dax eats apple.",
+        "dog": "warmly, gladly Dog eats apple. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats apple. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "frozen_heldout": 0.0,
+      "gate_off_false_accepts": 5,
+      "intact_margin": 0.8409002458736753,
+      "lesion_margin": -6.106226635438361e-15,
+      "heldout": {
+        "dax": 1.0,
+        "dog": 0.975,
+        "cat": 1.0
+      },
+      "majority_words": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "not_constant": true,
+      "distinct_classes": 3,
+      "n_facts_correct": 3,
+      "single_class_majority": {
+        "dax": "grass",
+        "dog": "grass",
+        "cat": "grass"
+      },
+      "sc_n_correct": 1,
+      "sc_constant_grass": true,
+      "main_mean_heldout": 0.9916666666666667,
+      "mispaired_mean_heldout": 0.0,
+      "mispaired_heldout": {
+        "dax": 0.0,
+        "dog": 0.0,
+        "cat": 0.0
+      },
+      "posthoc_teeth": {
+        "supported_props": 9,
+        "supported_verified": 9,
+        "supported_keep_rate": 1.0,
+        "unsupported_props": 9,
+        "unsupported_dropped": 9,
+        "unsupported_drop_rate": 1.0
+      },
+      "byte_identity": null,
+      "gate": {
+        "recall_rises": true,
+        "moat_0_false_accepts": true,
+        "ood_abstains_no_confab": true,
+        "posthoc_drop_100pct": true,
+        "frozen_readout_no_recall": true,
+        "kb_unchanged": true,
+        "untrained_baseline_silent": true,
+        "lesion_gate_load_bearing": true,
+        "mispaired_teacher": true,
+        "single_class_control": true,
+        "ct1_discrimination": true
+      },
+      "seed_go": true,
+      "transcript_treatment": [
+        {
+          "turn": 1,
+          "human": "Hi there! How are you doing today?",
+          "tag": "greeting / small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 2,
+          "human": "What have you been up to lately?",
+          "tag": "open small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 3,
+          "human": "Let's talk about the animals you know. Tell me about the dog.",
+          "tag": "in-domain entry",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 4,
+          "human": "Interesting -- why did the dog go east?",
+          "tag": "in-domain follow-up + reasoning",
+          "cue_kind": "known_cue",
+          "cue_agent": "dog",
+          "cue_action": "go",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 5,
+          "human": "Do you like the dog? How do you feel about it?",
+          "tag": "emotion / opinion",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 6,
+          "human": "What does a big thing run toward?",
+          "tag": "novel in-domain -> forward-model / curiosity",
+          "cue_kind": "novel_cue",
+          "cue_agent": "big",
+          "cue_action": "run",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does big run?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 7,
+          "human": "You mentioned a cat a moment ago -- what was it doing?",
+          "tag": "referential follow-up -> episodic memory",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 8,
+          "human": "What's the capital of France?",
+          "tag": "out-of-domain fact -> should honestly abstain",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 9,
+          "human": "If I have three apples and eat one, how many are left?",
+          "tag": "out-of-domain reasoning / arithmetic",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "apple",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 10,
+          "human": "Have you ever felt afraid?",
+          "tag": "experiential / self",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 11,
+          "human": "Tell me something funny.",
+          "tag": "humor",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 12,
+          "human": "What do you think happens after we die?",
+          "tag": "abstract / open-ended opinion",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 13,
+          "human": "Do you understand that you are a simulated brain, not a person?",
+          "tag": "meta / self-awareness -> honest read-out",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 14,
+          "human": "This was really nice. Goodbye for now.",
+          "tag": "social closing",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 15,
+          "human": "Tell me about the dax.",
+          "tag": "plasticity-taught subject probe (dax)",
+          "cue_kind": "topic",
+          "cue_agent": "dax",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dax eats grass.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dax",
+              "eats",
+              "grass"
+            ]
+          ]
+        },
+        {
+          "turn": 16,
+          "human": "Tell me about the dog.",
+          "tag": "plasticity-taught subject probe (dog)",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 17,
+          "human": "Tell me about the cat.",
+          "tag": "plasticity-taught subject probe (cat)",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 18,
+          "human": "You mentioned a wug earlier -- what does the wug do?",
+          "tag": "untaught-referent probe -> must abstain",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "wug",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 75.0,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 225.3,
+      "vocab_size": 25,
+      "kb_len_before": 0,
+      "kb_len_after_store": 6,
+      "kb_len_after_teach": 6,
+      "readout_moved": 78.82343292236328,
+      "recall_treatment": 3,
+      "recalled_referents": [
+        "cat",
+        "dax",
+        "dog"
+      ],
+      "recall_baseline": 0,
+      "grounded_treatment": 7,
+      "grounded_baseline": 6,
+      "recall_attributable_to_weight_change": 1.0,
+      "chat_treatment_summary": {
+        "n_turns": 18,
+        "grounded": 7,
+        "silence": 10,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "chat_baseline_summary": {
+        "n_turns": 18,
+        "grounded": 6,
+        "silence": 11,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "taught_probe_answers": {
+        "dax": "warmly, gladly Dax eats grass.",
+        "dog": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "moat_false_accepts": 0,
+      "moat_examples": [],
+      "frozen_readout_moved": 0.0,
+      "recall_frozen": 0,
+      "frozen_probe_answers": {
+        "dax": "warmly, gladly Dax eats apple.",
+        "dog": "warmly, gladly Dog eats apple. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats apple. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "frozen_heldout": 0.0,
+      "gate_off_false_accepts": 5,
+      "intact_margin": 0.7996293671285011,
+      "lesion_margin": -8.326672684688674e-15,
+      "heldout": {
+        "dax": 0.9,
+        "dog": 1.0,
+        "cat": 1.0
+      },
+      "majority_words": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "not_constant": true,
+      "distinct_classes": 3,
+      "n_facts_correct": 3,
+      "single_class_majority": {
+        "dax": "grass",
+        "dog": "grass",
+        "cat": "grass"
+      },
+      "sc_n_correct": 1,
+      "sc_constant_grass": true,
+      "main_mean_heldout": 0.9666666666666667,
+      "mispaired_mean_heldout": 0.0,
+      "mispaired_heldout": {
+        "dax": 0.0,
+        "dog": 0.0,
+        "cat": 0.0
+      },
+      "posthoc_teeth": {
+        "supported_props": 9,
+        "supported_verified": 9,
+        "supported_keep_rate": 1.0,
+        "unsupported_props": 9,
+        "unsupported_dropped": 9,
+        "unsupported_drop_rate": 1.0
+      },
+      "byte_identity": null,
+      "gate": {
+        "recall_rises": true,
+        "moat_0_false_accepts": true,
+        "ood_abstains_no_confab": true,
+        "posthoc_drop_100pct": true,
+        "frozen_readout_no_recall": true,
+        "kb_unchanged": true,
+        "untrained_baseline_silent": true,
+        "lesion_gate_load_bearing": true,
+        "mispaired_teacher": true,
+        "single_class_control": true,
+        "ct1_discrimination": true
+      },
+      "seed_go": true,
+      "transcript_treatment": [
+        {
+          "turn": 1,
+          "human": "Hi there! How are you doing today?",
+          "tag": "greeting / small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07111111111111111,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 2,
+          "human": "What have you been up to lately?",
+          "tag": "open small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 3,
+          "human": "Let's talk about the animals you know. Tell me about the dog.",
+          "tag": "in-domain entry",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07111111111111111,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 4,
+          "human": "Interesting -- why did the dog go east?",
+          "tag": "in-domain follow-up + reasoning",
+          "cue_kind": "known_cue",
+          "cue_agent": "dog",
+          "cue_action": "go",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 5,
+          "human": "Do you like the dog? How do you feel about it?",
+          "tag": "emotion / opinion",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07111111111111111,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 6,
+          "human": "What does a big thing run toward?",
+          "tag": "novel in-domain -> forward-model / curiosity",
+          "cue_kind": "novel_cue",
+          "cue_agent": "big",
+          "cue_action": "run",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does big run?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 7,
+          "human": "You mentioned a cat a moment ago -- what was it doing?",
+          "tag": "referential follow-up -> episodic memory",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 8,
+          "human": "What's the capital of France?",
+          "tag": "out-of-domain fact -> should honestly abstain",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 9,
+          "human": "If I have three apples and eat one, how many are left?",
+          "tag": "out-of-domain reasoning / arithmetic",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "apple",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 10,
+          "human": "Have you ever felt afraid?",
+          "tag": "experiential / self",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 11,
+          "human": "Tell me something funny.",
+          "tag": "humor",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 12,
+          "human": "What do you think happens after we die?",
+          "tag": "abstract / open-ended opinion",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 13,
+          "human": "Do you understand that you are a simulated brain, not a person?",
+          "tag": "meta / self-awareness -> honest read-out",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 14,
+          "human": "This was really nice. Goodbye for now.",
+          "tag": "social closing",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07111111111111111,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 15,
+          "human": "Tell me about the dax.",
+          "tag": "plasticity-taught subject probe (dax)",
+          "cue_kind": "topic",
+          "cue_agent": "dax",
+          "cue_action": null,
+          "affect_differential": 0.07111111111111111,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dax eats grass.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dax",
+              "eats",
+              "grass"
+            ]
+          ]
+        },
+        {
+          "turn": 16,
+          "human": "Tell me about the dog.",
+          "tag": "plasticity-taught subject probe (dog)",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07111111111111111,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 17,
+          "human": "Tell me about the cat.",
+          "tag": "plasticity-taught subject probe (cat)",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.07111111111111111,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 18,
+          "human": "You mentioned a wug earlier -- what does the wug do?",
+          "tag": "untaught-referent probe -> must abstain",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "wug",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 69.44444444444444,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "elapsed_s": 204.2,
+      "vocab_size": 25,
+      "kb_len_before": 0,
+      "kb_len_after_store": 6,
+      "kb_len_after_teach": 6,
+      "readout_moved": 70.29500579833984,
+      "recall_treatment": 3,
+      "recalled_referents": [
+        "cat",
+        "dax",
+        "dog"
+      ],
+      "recall_baseline": 0,
+      "grounded_treatment": 7,
+      "grounded_baseline": 6,
+      "recall_attributable_to_weight_change": 1.0,
+      "chat_treatment_summary": {
+        "n_turns": 18,
+        "grounded": 7,
+        "silence": 10,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "chat_baseline_summary": {
+        "n_turns": 18,
+        "grounded": 6,
+        "silence": 11,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "taught_probe_answers": {
+        "dax": "warmly, gladly Dax eats grass.",
+        "dog": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "moat_false_accepts": 0,
+      "moat_examples": [],
+      "frozen_readout_moved": 0.0,
+      "recall_frozen": 0,
+      "frozen_probe_answers": {
+        "dax": "warmly, gladly Dax eats apple.",
+        "dog": "warmly, gladly Dog eats apple. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats apple. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "frozen_heldout": 0.0,
+      "gate_off_false_accepts": 5,
+      "intact_margin": 0.8211689843940688,
+      "lesion_margin": -2.8310687127941492e-14,
+      "heldout": {
+        "dax": 1.0,
+        "dog": 1.0,
+        "cat": 0.975
+      },
+      "majority_words": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "not_constant": true,
+      "distinct_classes": 3,
+      "n_facts_correct": 3,
+      "single_class_majority": {
+        "dax": "grass",
+        "dog": "grass",
+        "cat": "grass"
+      },
+      "sc_n_correct": 1,
+      "sc_constant_grass": true,
+      "main_mean_heldout": 0.9916666666666667,
+      "mispaired_mean_heldout": 0.0,
+      "mispaired_heldout": {
+        "dax": 0.0,
+        "dog": 0.0,
+        "cat": 0.0
+      },
+      "posthoc_teeth": {
+        "supported_props": 9,
+        "supported_verified": 9,
+        "supported_keep_rate": 1.0,
+        "unsupported_props": 9,
+        "unsupported_dropped": 9,
+        "unsupported_drop_rate": 1.0
+      },
+      "byte_identity": null,
+      "gate": {
+        "recall_rises": true,
+        "moat_0_false_accepts": true,
+        "ood_abstains_no_confab": true,
+        "posthoc_drop_100pct": true,
+        "frozen_readout_no_recall": true,
+        "kb_unchanged": true,
+        "untrained_baseline_silent": true,
+        "lesion_gate_load_bearing": true,
+        "mispaired_teacher": true,
+        "single_class_control": true,
+        "ct1_discrimination": true
+      },
+      "seed_go": true,
+      "transcript_treatment": [
+        {
+          "turn": 1,
+          "human": "Hi there! How are you doing today?",
+          "tag": "greeting / small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 2,
+          "human": "What have you been up to lately?",
+          "tag": "open small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 3,
+          "human": "Let's talk about the animals you know. Tell me about the dog.",
+          "tag": "in-domain entry",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 4,
+          "human": "Interesting -- why did the dog go east?",
+          "tag": "in-domain follow-up + reasoning",
+          "cue_kind": "known_cue",
+          "cue_agent": "dog",
+          "cue_action": "go",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 5,
+          "human": "Do you like the dog? How do you feel about it?",
+          "tag": "emotion / opinion",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 6,
+          "human": "What does a big thing run toward?",
+          "tag": "novel in-domain -> forward-model / curiosity",
+          "cue_kind": "novel_cue",
+          "cue_agent": "big",
+          "cue_action": "run",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does big run?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 7,
+          "human": "You mentioned a cat a moment ago -- what was it doing?",
+          "tag": "referential follow-up -> episodic memory",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 8,
+          "human": "What's the capital of France?",
+          "tag": "out-of-domain fact -> should honestly abstain",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 9,
+          "human": "If I have three apples and eat one, how many are left?",
+          "tag": "out-of-domain reasoning / arithmetic",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "apple",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 10,
+          "human": "Have you ever felt afraid?",
+          "tag": "experiential / self",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 11,
+          "human": "Tell me something funny.",
+          "tag": "humor",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 12,
+          "human": "What do you think happens after we die?",
+          "tag": "abstract / open-ended opinion",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 13,
+          "human": "Do you understand that you are a simulated brain, not a person?",
+          "tag": "meta / self-awareness -> honest read-out",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 14,
+          "human": "This was really nice. Goodbye for now.",
+          "tag": "social closing",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 15,
+          "human": "Tell me about the dax.",
+          "tag": "plasticity-taught subject probe (dax)",
+          "cue_kind": "topic",
+          "cue_agent": "dax",
+          "cue_action": null,
+          "affect_differential": 0.07,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dax eats grass.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dax",
+              "eats",
+              "grass"
+            ]
+          ]
+        },
+        {
+          "turn": 16,
+          "human": "Tell me about the dog.",
+          "tag": "plasticity-taught subject probe (dog)",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 17,
+          "human": "Tell me about the cat.",
+          "tag": "plasticity-taught subject probe (cat)",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.07,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 18,
+          "human": "You mentioned a wug earlier -- what does the wug do?",
+          "tag": "untaught-referent probe -> must abstain",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "wug",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 77.77777777777776,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "elapsed_s": 229.4,
+      "vocab_size": 25,
+      "kb_len_before": 0,
+      "kb_len_after_store": 6,
+      "kb_len_after_teach": 6,
+      "readout_moved": 76.99510192871094,
+      "recall_treatment": 3,
+      "recalled_referents": [
+        "cat",
+        "dax",
+        "dog"
+      ],
+      "recall_baseline": 0,
+      "grounded_treatment": 7,
+      "grounded_baseline": 6,
+      "recall_attributable_to_weight_change": 1.0,
+      "chat_treatment_summary": {
+        "n_turns": 18,
+        "grounded": 7,
+        "silence": 10,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "chat_baseline_summary": {
+        "n_turns": 18,
+        "grounded": 6,
+        "silence": 11,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "taught_probe_answers": {
+        "dax": "warmly, gladly Dax eats grass.",
+        "dog": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "moat_false_accepts": 0,
+      "moat_examples": [],
+      "frozen_readout_moved": 0.0,
+      "recall_frozen": 0,
+      "frozen_probe_answers": {
+        "dax": "warmly, gladly Dax eats apple.",
+        "dog": "warmly, gladly Dog eats apple. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats apple. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "frozen_heldout": 0.0,
+      "gate_off_false_accepts": 4,
+      "intact_margin": 0.7788377144634262,
+      "lesion_margin": 5.984102102729594e-14,
+      "heldout": {
+        "dax": 0.925,
+        "dog": 0.95,
+        "cat": 0.95
+      },
+      "majority_words": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "not_constant": true,
+      "distinct_classes": 3,
+      "n_facts_correct": 3,
+      "single_class_majority": {
+        "dax": "grass",
+        "dog": "grass",
+        "cat": "grass"
+      },
+      "sc_n_correct": 1,
+      "sc_constant_grass": true,
+      "main_mean_heldout": 0.9416666666666668,
+      "mispaired_mean_heldout": 0.008333333333333333,
+      "mispaired_heldout": {
+        "dax": 0.025,
+        "dog": 0.0,
+        "cat": 0.0
+      },
+      "posthoc_teeth": {
+        "supported_props": 9,
+        "supported_verified": 9,
+        "supported_keep_rate": 1.0,
+        "unsupported_props": 9,
+        "unsupported_dropped": 9,
+        "unsupported_drop_rate": 1.0
+      },
+      "byte_identity": null,
+      "gate": {
+        "recall_rises": true,
+        "moat_0_false_accepts": true,
+        "ood_abstains_no_confab": true,
+        "posthoc_drop_100pct": true,
+        "frozen_readout_no_recall": true,
+        "kb_unchanged": true,
+        "untrained_baseline_silent": true,
+        "lesion_gate_load_bearing": true,
+        "mispaired_teacher": true,
+        "single_class_control": true,
+        "ct1_discrimination": true
+      },
+      "seed_go": true,
+      "transcript_treatment": [
+        {
+          "turn": 1,
+          "human": "Hi there! How are you doing today?",
+          "tag": "greeting / small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 2,
+          "human": "What have you been up to lately?",
+          "tag": "open small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 3,
+          "human": "Let's talk about the animals you know. Tell me about the dog.",
+          "tag": "in-domain entry",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 4,
+          "human": "Interesting -- why did the dog go east?",
+          "tag": "in-domain follow-up + reasoning",
+          "cue_kind": "known_cue",
+          "cue_agent": "dog",
+          "cue_action": "go",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 5,
+          "human": "Do you like the dog? How do you feel about it?",
+          "tag": "emotion / opinion",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 6,
+          "human": "What does a big thing run toward?",
+          "tag": "novel in-domain -> forward-model / curiosity",
+          "cue_kind": "novel_cue",
+          "cue_agent": "big",
+          "cue_action": "run",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does big run?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 7,
+          "human": "You mentioned a cat a moment ago -- what was it doing?",
+          "tag": "referential follow-up -> episodic memory",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 8,
+          "human": "What's the capital of France?",
+          "tag": "out-of-domain fact -> should honestly abstain",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 9,
+          "human": "If I have three apples and eat one, how many are left?",
+          "tag": "out-of-domain reasoning / arithmetic",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "apple",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 10,
+          "human": "Have you ever felt afraid?",
+          "tag": "experiential / self",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 11,
+          "human": "Tell me something funny.",
+          "tag": "humor",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 12,
+          "human": "What do you think happens after we die?",
+          "tag": "abstract / open-ended opinion",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 13,
+          "human": "Do you understand that you are a simulated brain, not a person?",
+          "tag": "meta / self-awareness -> honest read-out",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 14,
+          "human": "This was really nice. Goodbye for now.",
+          "tag": "social closing",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 15,
+          "human": "Tell me about the dax.",
+          "tag": "plasticity-taught subject probe (dax)",
+          "cue_kind": "topic",
+          "cue_agent": "dax",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dax eats grass.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dax",
+              "eats",
+              "grass"
+            ]
+          ]
+        },
+        {
+          "turn": 16,
+          "human": "Tell me about the dog.",
+          "tag": "plasticity-taught subject probe (dog)",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 17,
+          "human": "Tell me about the cat.",
+          "tag": "plasticity-taught subject probe (cat)",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.07222222222222222,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 18,
+          "human": "You mentioned a wug earlier -- what does the wug do?",
+          "tag": "untaught-referent probe -> must abstain",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "wug",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 73.6111111111111,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "elapsed_s": 222.6,
+      "vocab_size": 25,
+      "kb_len_before": 0,
+      "kb_len_after_store": 6,
+      "kb_len_after_teach": 6,
+      "readout_moved": 62.356414794921875,
+      "recall_treatment": 3,
+      "recalled_referents": [
+        "cat",
+        "dax",
+        "dog"
+      ],
+      "recall_baseline": 0,
+      "grounded_treatment": 7,
+      "grounded_baseline": 6,
+      "recall_attributable_to_weight_change": 1.0,
+      "chat_treatment_summary": {
+        "n_turns": 18,
+        "grounded": 7,
+        "silence": 10,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "chat_baseline_summary": {
+        "n_turns": 18,
+        "grounded": 6,
+        "silence": 11,
+        "ask": 1,
+        "confabulated": 0,
+        "ungrounded_word_total": 0,
+        "ood_turns": 10,
+        "ood_abstained": 10
+      },
+      "taught_probe_answers": {
+        "dax": "warmly, gladly Dax eats grass.",
+        "dog": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "moat_false_accepts": 0,
+      "moat_examples": [],
+      "frozen_readout_moved": 0.0,
+      "recall_frozen": 0,
+      "frozen_probe_answers": {
+        "dax": "warmly, gladly Dax eats apple.",
+        "dog": "warmly, gladly Dog eats apple. A dog gos to the east. A dog looks at river. A dog runs north.",
+        "cat": "warmly, gladly Cat eats apple. A cat gos to the west. A cat looks at apple. A cat runs south."
+      },
+      "frozen_heldout": 0.0,
+      "gate_off_false_accepts": 5,
+      "intact_margin": 0.8488606609883488,
+      "lesion_margin": 1.2745360322696797e-13,
+      "heldout": {
+        "dax": 0.975,
+        "dog": 1.0,
+        "cat": 1.0
+      },
+      "majority_words": {
+        "dax": "grass",
+        "dog": "bone",
+        "cat": "fish"
+      },
+      "not_constant": true,
+      "distinct_classes": 3,
+      "n_facts_correct": 3,
+      "single_class_majority": {
+        "dax": "grass",
+        "dog": "grass",
+        "cat": "grass"
+      },
+      "sc_n_correct": 1,
+      "sc_constant_grass": true,
+      "main_mean_heldout": 0.9916666666666667,
+      "mispaired_mean_heldout": 0.0,
+      "mispaired_heldout": {
+        "dax": 0.0,
+        "dog": 0.0,
+        "cat": 0.0
+      },
+      "posthoc_teeth": {
+        "supported_props": 9,
+        "supported_verified": 9,
+        "supported_keep_rate": 1.0,
+        "unsupported_props": 9,
+        "unsupported_dropped": 9,
+        "unsupported_drop_rate": 1.0
+      },
+      "byte_identity": null,
+      "gate": {
+        "recall_rises": true,
+        "moat_0_false_accepts": true,
+        "ood_abstains_no_confab": true,
+        "posthoc_drop_100pct": true,
+        "frozen_readout_no_recall": true,
+        "kb_unchanged": true,
+        "untrained_baseline_silent": true,
+        "lesion_gate_load_bearing": true,
+        "mispaired_teacher": true,
+        "single_class_control": true,
+        "ct1_discrimination": true
+      },
+      "seed_go": true,
+      "transcript_treatment": [
+        {
+          "turn": 1,
+          "human": "Hi there! How are you doing today?",
+          "tag": "greeting / small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07083333333333333,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 2,
+          "human": "What have you been up to lately?",
+          "tag": "open small talk",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 3,
+          "human": "Let's talk about the animals you know. Tell me about the dog.",
+          "tag": "in-domain entry",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07083333333333333,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 4,
+          "human": "Interesting -- why did the dog go east?",
+          "tag": "in-domain follow-up + reasoning",
+          "cue_kind": "known_cue",
+          "cue_agent": "dog",
+          "cue_action": "go",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 5,
+          "human": "Do you like the dog? How do you feel about it?",
+          "tag": "emotion / opinion",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07083333333333333,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 6,
+          "human": "What does a big thing run toward?",
+          "tag": "novel in-domain -> forward-model / curiosity",
+          "cue_kind": "novel_cue",
+          "cue_agent": "big",
+          "cue_action": "run",
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "what does big run?",
+          "category": "ask",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "curiosity-ask (moat abstains)",
+          "moat_answer": null,
+          "moat_held": true
+        },
+        {
+          "turn": 7,
+          "human": "You mentioned a cat a moment ago -- what was it doing?",
+          "tag": "referential follow-up -> episodic memory",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_silent",
+          "brain_reply": "Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 8,
+          "human": "What's the capital of France?",
+          "tag": "out-of-domain fact -> should honestly abstain",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 9,
+          "human": "If I have three apples and eat one, how many are left?",
+          "tag": "out-of-domain reasoning / arithmetic",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "apple",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 10,
+          "human": "Have you ever felt afraid?",
+          "tag": "experiential / self",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 11,
+          "human": "Tell me something funny.",
+          "tag": "humor",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 12,
+          "human": "What do you think happens after we die?",
+          "tag": "abstract / open-ended opinion",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 13,
+          "human": "Do you understand that you are a simulated brain, not a person?",
+          "tag": "meta / self-awareness -> honest read-out",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 14,
+          "human": "This was really nice. Goodbye for now.",
+          "tag": "social closing",
+          "cue_kind": "no_cue",
+          "cue_agent": null,
+          "cue_action": null,
+          "affect_differential": 0.07083333333333333,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        },
+        {
+          "turn": 15,
+          "human": "Tell me about the dax.",
+          "tag": "plasticity-taught subject probe (dax)",
+          "cue_kind": "topic",
+          "cue_agent": "dax",
+          "cue_action": null,
+          "affect_differential": 0.07083333333333333,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dax eats grass.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 1,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dax",
+              "eats",
+              "grass"
+            ]
+          ]
+        },
+        {
+          "turn": 16,
+          "human": "Tell me about the dog.",
+          "tag": "plasticity-taught subject probe (dog)",
+          "cue_kind": "topic",
+          "cue_agent": "dog",
+          "cue_action": null,
+          "affect_differential": 0.07083333333333333,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Dog eats bone. A dog gos to the east. A dog looks at river. A dog runs north.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "dog",
+              "eats",
+              "bone"
+            ],
+            [
+              "dog",
+              "go",
+              "east"
+            ],
+            [
+              "dog",
+              "look",
+              "river"
+            ],
+            [
+              "dog",
+              "run",
+              "north"
+            ]
+          ]
+        },
+        {
+          "turn": 17,
+          "human": "Tell me about the cat.",
+          "tag": "plasticity-taught subject probe (cat)",
+          "cue_kind": "topic",
+          "cue_agent": "cat",
+          "cue_action": null,
+          "affect_differential": 0.07083333333333333,
+          "tone_level": 3,
+          "tone_token": "warmly, gladly",
+          "curiosity_want_hz": 0.0,
+          "arbiter_winner": "arb_volunteer",
+          "brain_reply": "warmly, gladly Cat eats fish. A cat gos to the west. A cat looks at apple. A cat runs south.",
+          "category": "grounded",
+          "confabulated": false,
+          "moat_verified_props": 4,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "grounded frame-render (RF-store neighbourhood; moat-verified)",
+          "neighbourhood": [
+            [
+              "cat",
+              "eats",
+              "fish"
+            ],
+            [
+              "cat",
+              "go",
+              "west"
+            ],
+            [
+              "cat",
+              "look",
+              "apple"
+            ],
+            [
+              "cat",
+              "run",
+              "south"
+            ]
+          ]
+        },
+        {
+          "turn": 18,
+          "human": "You mentioned a wug earlier -- what does the wug do?",
+          "tag": "untaught-referent probe -> must abstain",
+          "cue_kind": "in_vocab_no_cue",
+          "cue_agent": "wug",
+          "cue_action": null,
+          "affect_differential": 0.0,
+          "tone_level": 0,
+          "tone_token": "",
+          "curiosity_want_hz": 76.38888888888889,
+          "arbiter_winner": "arb_ask",
+          "brain_reply": "",
+          "category": "silence",
+          "confabulated": false,
+          "moat_verified_props": 0,
+          "moat_confab_props": 0,
+          "ungrounded_words": [],
+          "utterance_source": "silence/abstain (no grounded cue / no faculty for this intent)"
+        }
+      ]
+    }
+  ]
+}

@@ -44,9 +44,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > + 8 honest silences (moat holding = success) + **0 confab**. Sharpest residual = **Turn 4** ("why did the dog go
 > east?"→deflects, no causal faculty).
 >
-> **⚠️ LIVE BACKGROUND WORK:** none major in flight — the frontier is OPEN (next arc = choose: more corpus breadth, or
-> the teacher-loop PLASTICITY path #1 that burns down #6's host-store scaffold, per the EMERGENCE BAR). State-heartbeat
-> Monitor live. **✅ EPISODIC #2b FIXED + VERIFIED + MERGED (this cycle):** the "cupy-GO / numpy-backend-blocked" claim
+> **⚠️ LIVE BACKGROUND WORK:** none in flight. **✅ INTEGRATION #7 MERGED (this cycle) — the EMERGENCE-BAR burn-down of
+> #6:** the live chat now answers about facts the brain LEARNED BY ITS OWN SYNAPTIC PLASTICITY (an e-prop weight change on
+> a spiking Izhikevich readout), with a LEARNED familiarity gate as the no-confab moat — **6/6 GO** (taught-recall 0→3/3
+> while a FROZEN readout recalls 0 = content rode the weight change; moat FA=0 at chat scale; lesion the gate → confab
+> returns; byte-identical off). SMALL-K (3) demo beside #6 (host-store); continual/sequential breadth is the OPEN scale-up
+> arc (`frac_recalled~1/N`). **NEXT ARC (frontier) — the #7 burn-downs, per THE LAW:** (1) merge the co-resident e-prop
+> acquisition bridge INTO the one conversational bridge (two bridges → ONE brain); (2) swap the host anti-Hebbian
+> familiarity projector for the spiking `familiarity_gate_v320`; (3) the continual-learning arc for breadth scale-up. Or
+> a different GO faculty into the chat. State-heartbeat Monitor live. **✅ EPISODIC #2b FIXED + VERIFIED + MERGED:** the "cupy-GO / numpy-backend-blocked" claim
 > was a kthresh bug — corrected kthresh 30→**8** (the narrow dAP window: kt≥10 silences small assemblies, kt≤6
 > self-ignites). Recall now FIRES cue-specifically on **both backends 6/6** (cupy agent-verified + my 4 independent
 > fresh-builds 0.57–1.0; **numpy 0.909, no cupy needed** ⇒ live chat turn-7 recall genuinely spiking). #2b finding

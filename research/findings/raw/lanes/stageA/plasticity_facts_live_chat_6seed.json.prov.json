@@ -1,0 +1,29 @@
+{
+ "run_id": "1786412612-3739715",
+ "runner": "research/runners/_teacher_loop_facts_into_live_chat_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/integration-7-plasticity-chat/research/runners/_teacher_loop_facts_into_live_chat_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/lanes/stageA/plasticity_facts_live_chat_6seed.json"
+ ],
+ "git_sha": "d28f5c427",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-10T21:43:32",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/stageA/plasticity_facts_live_chat_6seed.json"
+}

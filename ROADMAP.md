@@ -60,6 +60,16 @@ replies 4 → 9 (+5) vs the 6-fact baseline, **6/6 seeds, confab=0**, the no-con
 overlap ~0; the empty-kb control confirms competence is in the FACTS, not the vocab). The additive param is
 byte-identical by default. The emergent successor (the stream cortex learning co-occurrence in SYNAPSES, not a
 host mine+store) is NAMED. (`2026-08-10-INTEGRATION-6-corpus-learned-facts-into-live-chat-6seed.md`)
+**#7 (2026-08-10) plasticity-LEARNED facts into the live chat — the EMERGENCE-BAR burn-down of #6:** #6 injected facts
+via a host `comp.store` (VSA write; the brain did not learn them). #7 replaces that at demo scale — the brain is TAUGHT
+3 facts by corrective interaction so the fact becomes an **e-prop weight change on a spiking Izhikevich readout**, and
+the chat answers about them with a **LEARNED familiarity gate** as the no-confab moat. **6/6 seeds**: taught-recall
+0→3/3 while a FROZEN readout recalls 0 (the content rode the weight change, not a host path); moat false-accepts 0 at
+chat scale; lesion the learned gate → confab returns (it is load-bearing); byte-identical off. Genuinely brain-based
+now: the ACQUISITION is synaptic + the MOAT is learned. Declared burn-downs remaining: two co-resident bridges (not yet
+ONE brain — the merge is next), the host anti-Hebbian familiarity projector (spiking `v320` gate to swap in), the argmax
+read-out. SMALL-K demo standing BESIDE #6 (continual/sequential breadth is an OPEN arc, `frac_recalled~1/N` — the named
+scale-up mechanism). (`2026-08-10-INTEGRATION-7-plasticity-learned-facts-into-live-chat-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
