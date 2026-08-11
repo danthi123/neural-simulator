@@ -123,13 +123,16 @@ OUT = Path("research/findings/raw/_var_bind_rolegate_gap4_credit/rolegate_gap4_c
 # ====================================================================================================================
 class EpropCreditGate(PolicyGate):
     def __init__(self, dim=_DIM, gain=4.0, lr=0.08, seed=0, feedback="kp", kp_lr=0.3, elig_leak=1.0,
-                 readout_scale=3.0, homeo=0.0, target_rate=None, b_init=0.0, kp_wd=0.01):
+                 readout_scale=3.0, homeo=0.0, target_rate=None, b_init=0.0, kp_wd=0.01, kp_ro_lr_scale=1.0):
         super().__init__("recurrent", dim=dim, gain=gain, lr=lr, seed=seed)
         self.feedback = feedback           # "kp" | "fixed" | "aligned" | "kp_canon"
         self.kp_lr = float(kp_lr)
         self.kp_wd = float(kp_wd)          # KP weight decay (Akrout 2019): the ALIGNMENT ATTRACTOR. Used ONLY by "kp_canon"
                                            # (canonical co-adapting KP). "kp" is the NON-canonical arm (frozen R, no decay,
                                            # B-only) -> anti-aligns; "kp_canon" co-adapts the forward readout R AND B with decay.
+        self.kp_ro_lr_scale = float(kp_ro_lr_scale)  # scale of the kp_canon forward-readout co-adapt rate vs the gate lr.
+                                           # 1.0 = full co-adapt (the readout can ABSORB credit the gate needs); <1 keeps R
+                                           # near the useful lexicon while B still aligns to R^T via KP+decay; 0 = R frozen.
         # intrinsic firing-rate HOMEOSTASIS (Turrigiano; the biological COMPANION to the plasticity rule): the gate
         # must fire ~once per sentence (LOAD the subject) -- but 1 subject vs L distractors biases the credit toward
         # "don't fire", collapsing the bias silent. A slow homeostatic nudge on b toward a target mean-rate keeps the
@@ -206,7 +209,7 @@ class EpropCreditGate(PolicyGate):
                 if self.feedback == "kp":                        # NON-canonical KP: co-adapt B ONLY (frozen R, NO decay) -> the honest-negative arm (anti-aligns)
                     B = B - self.kp_lr * self.lr * np.outer(m, delta)
                 elif self.feedback == "kp_canon":                # CANONICAL Kolen-Pollack (Akrout 2019): co-adapt forward R AND feedback B by the matched (transposed) gradient PLUS weight decay -- the decay is the alignment attractor
-                    R -= self.lr * (np.outer(delta, m) + self.kp_wd * R)          # forward readout co-adapts (task grad + decay)
+                    R -= self.lr * self.kp_ro_lr_scale * (np.outer(delta, m) + self.kp_wd * R)  # forward readout co-adapts (task grad + decay), rate-scaled
                     B -= self.kp_lr * self.lr * (np.outer(m, delta) + self.kp_wd * B)  # feedback tracks R^T (matched transpose + decay)
         if R is None:
             self.bw_cos_final = self._cos_to_I(B, F)
