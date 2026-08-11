@@ -107,12 +107,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   (gap#4 deep-credit) now has its biological surpass demonstrated (rate MLP / host oracle).** The full arc ran
 >   wall→reframe→honest-negative(fixed-DFA)→SURPASS(learned feedback). ROADMAP + master-roadmap §7 flipped toward
 >   SURPASSED-AT-DE-RISK.
-> - **NEXT (dependency-ordered):** (a) close the gap#4 RESIDUAL — KP *reaches* but doesn't yet *match* the oracle
->   (~forward-optimization gap: more epochs / weight-mirror / φ′-vanishing fix), then the **on-SPIKES port** (the DFA/KP
->   credit algebra onto the substrate — the real end target); (b) sparse/orthogonal fact codes for continual
->   acquisition (agent in flight — the disjoint-codes mechanism, convergent across 3 lanes). **Also OWED:** ~129
->   accumulated worktrees need a careful cleanup pass (clutter, non-blocking); build agents keep deferring/stalling
->   (coordinator-recovered every time) — the reliable pattern is delegate-BUILD + run-sweeps-as-coordinator.
+> - **✅ ~13:20Z — ⭐⭐ gap#4 SURPASS REACHED THE SPIKING SUBSTRATE `3b9c0bff` (6-seed GO).** The on-SPIKES KP port
+>   LANDED: transport-free KP learned feedback ALIGNS on the trainable LIF SNN (deep_align_delta +0.259, measured on
+>   spikes for the FIRST time) and beats fixed-DFA (+0.028 over 6 seeds), NO sim/ edit (the on-bridge e-prop machinery
+>   already supported it — the missing piece was the alignment instrument). OVERTURNS the 2026-08-01 "KP doesn't align
+>   on spikes" inference. So gap#4's core question — deep credit WITHOUT weight transport, ON THE ONE SPIKING SUBSTRATE
+>   — is answered YES at de-risk level. (Also banked: sparse/disjoint fact-codes PARTIAL `0f3cfd6f` — disjointness a real
+>   load-bearing lever but below metaplasticity; the evolve-skills recovery-recipe `930ddc6c`.)
+> - **NEXT (dependency-ordered):** (a) **port the depth-3-OBLIGATORY-task INSTRUMENT to spikes** — the gap#4 residual is
+>   now instrument-limited on spikes exactly as it was at rate level (no depth-3-obligatory *spiking* task; the tent³-FIT
+>   + ceiling-gating was never ported → the depth-3 rung stays UNDEFINED). Then re-pose the on-spikes KP alignment at
+>   genuine depth-3. (b) close the rate ~forward-opt residual (weight-mirror / more epochs / φ′-vanishing). (c) COMBINE
+>   disjoint-codes + consolidation for continual (both load-bearing, complementary). **Also OWED:** ~129 accumulated
+>   worktrees need a careful cleanup pass (clutter, non-blocking); build agents keep deferring — recovery-recipe now in
+>   the skill (`.claude/worktrees/agent-<id>/` holds the uncommitted runner; grab + run yourself, don't re-launch).
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 
