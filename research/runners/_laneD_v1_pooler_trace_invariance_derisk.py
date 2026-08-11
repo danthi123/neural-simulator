@@ -294,6 +294,44 @@ def _sdr(cells) -> set[int]:
 class TraceV1Pooler(OnSubstratePooler):
     """OnSubstratePooler with EMERGE-50 traced pre-activity."""
 
+    def __init__(self, *args, inhib_frac: float = 0.0, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        # Feedback-inhibition k-WTA strength (0 => plain top-k, exact legacy behavior).
+        self.inhib_frac = float(inhib_frac)
+
+    def _select(self, drive: np.ndarray) -> set[int]:
+        """Winner selection with an OPTIONAL feedback-inhibitory floor (harder k-WTA).
+
+        Plain competitive pooling here is a pure rank cut: the top ``k_win`` columns
+        win even when their drive is near zero, so an ambiguous held-out-position drive
+        (the cross-position instability) still fills the code with weakly/non-selective
+        columns. Cortical/hippocampal k-WTA is not a rank cut -- fast feedback inhibition
+        from PV+ basket cells sets an inhibitory conductance floor PROPORTIONAL to the
+        peak pool activity, and a column fires only if its excitatory drive clears that
+        floor (O'Reilly's kWTA / Leabra feedback inhibition; Foldiak-style lateral
+        inhibition). Here that is one line: keep a top-k column only if its drive is
+        >= ``inhib_frac`` * (peak drive). When drive is ambiguous, FEWER than k columns
+        survive, pruning the non-selective winners at SELECTION time -- competition, not
+        a post-hoc weight rescale. The peak column always clears its own floor for
+        ``inhib_frac`` <= 1, so the code is never empty while any drive is positive.
+        """
+        order = np.argsort(-drive)
+        topk = order[: self.k_win]
+        if self.inhib_frac <= 0.0:
+            return set(int(c) for c in topk)
+        peak = float(drive[order[0]]) if drive.size else 0.0
+        if peak <= 0.0:
+            return set(int(c) for c in topk)
+        floor = self.inhib_frac * peak
+        winners = [int(c) for c in topk if float(drive[c]) >= floor]
+        return set(winners) if winners else {int(order[0])}
+
+    def _winners(self, feats, boost=None) -> set[int]:  # type: ignore[override]
+        return self._select(self._drive(feats, boost))
+
+    def codon(self, feats) -> set[int]:  # type: ignore[override]
+        return self._select(self._drive(feats))
+
     def _winner_inactive_traced(self, win: set[int], trace_pre: np.ndarray, ld: float, thr: float = 0.05) -> None:
         active_mask = (np.asarray(trace_pre) > thr).astype(float)
         pre_active = np.zeros(self.nsyn)
@@ -396,6 +434,7 @@ def _train_trace_pooler(
         k_win=a.k_win,
         lp=a.pool_lr_pot,
         ld_wi=a.pool_lr_depress,
+        inhib_frac=a.inhib_frac,
     )
     pooler.train_trace(
         stream_feats,
@@ -466,7 +505,7 @@ def run_seed(seed: int, a: argparse.Namespace) -> dict:
     grouped_pooler = _train_trace_pooler(seed, n_in, a, grouped_stream)
     shuffled_pooler = _train_trace_pooler(seed, n_in, a, shuffled_stream)
     frozen_pooler = TraceV1Pooler(seed=seed, n_in=n_in, n_col=a.n_col, k_win=a.k_win,
-                                  lp=a.pool_lr_pot, ld_wi=a.pool_lr_depress)
+                                  lp=a.pool_lr_pot, ld_wi=a.pool_lr_depress, inhib_frac=a.inhib_frac)
 
     grouped_train = _codes_from_pooler(grouped_pooler, train_feats)
     grouped_held = _codes_from_pooler(grouped_pooler, held_feats)
@@ -551,6 +590,15 @@ def main() -> int:
     parser.add_argument("--t-active", type=int, default=24)
     parser.add_argument("--n-col", type=int, default=120)
     parser.add_argument("--k-win", type=int, default=8)
+    parser.add_argument(
+        "--inhib-frac",
+        type=float,
+        default=0.0,
+        help="Harder k-WTA: feedback-inhibitory floor as a fraction of peak pool drive. A top-k "
+        "column wins only if its drive >= inhib_frac*peak, so ambiguous held-position drive is "
+        "pruned at winner-SELECTION time (O'Reilly kWTA / PV feedback inhibition). 0 => plain top-k "
+        "(exact legacy behavior). Applied identically in learning, inference, and all control arms.",
+    )
     parser.add_argument("--epochs", type=int, default=12)
     parser.add_argument("--n-bouts", type=int, default=18)
     parser.add_argument("--bout-len", type=int, default=E50_BOUT_LEN)

@@ -1,0 +1,301 @@
+{
+  "summary": {
+    "probe": "laneD_v1_pooler_trace_invariance",
+    "overall_verdict": "TRACE-ROUTED-PARTIAL-1/3",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "per_seed_trace_go": [
+      false,
+      false,
+      true
+    ],
+    "chance": 0.3333,
+    "v1_pooler_trace_heldpos_decode_mean": 0.3889,
+    "v1_pooler_trace_margin_mean": 0.1167,
+    "shuffled_temporal_margin_mean": 0.0095,
+    "v1_complex_margin_mean": -0.0223,
+    "no_learning_margin_mean": 0.0049,
+    "mechanism": "Pixels -> existing Gabor/V1 -> V1-complex top features -> OnSubstratePooler permanences in cp_connections, trained with the EMERGE-50 Foldiak trace rule over same-category position-jittered temporal bouts. The shuffled-temporal arm uses the same multiset in randomized order.",
+    "go_gate": "Per seed: held-position decode >= chance+decode_margin, grouped trace held-to-train margin beats shuffled-temporal by trace_delta, beats V1-complex by v1_delta, beats no-learning by trace_delta, and per-image pixel scramble does not decode above chance+decode_margin.",
+    "config": {
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "n_categories": 3,
+      "n_train_pos": 4,
+      "n_held_pos": 1,
+      "position_axis": "y",
+      "n_ex": 2,
+      "image_size": 32,
+      "bar_len_frac": 0.35,
+      "orientation_offset_deg": 0.0,
+      "pixel_noise": 0.035,
+      "n_orientations": 8,
+      "n_frequencies": 2,
+      "n_pos": 8,
+      "rf_radius": 4,
+      "complex_norm": "local_orient_div",
+      "t_active": 24,
+      "n_col": 240,
+      "k_win": 8,
+      "inhib_frac": 0.67,
+      "epochs": 12,
+      "n_bouts": 18,
+      "bout_len": 12,
+      "trace_decay": 0.75,
+      "pool_lr_pot": 0.08,
+      "pool_lr_depress": 0.01,
+      "homeo_scale": false,
+      "homeo_target": -1.0,
+      "decode_margin": 0.1,
+      "trace_delta": 0.05,
+      "v1_delta": 0.02,
+      "out": "research/findings/raw/lanes/perception/v1_pooler_trace_hardkwta_recordedreadout_inhib0.67.json"
+    },
+    "elapsed_seconds": 86.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "chance": 0.3333,
+      "n_train_images": 24,
+      "n_held_images": 6,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.0,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.0304,
+        "held_train_cross_cos": 0.059,
+        "held_train_margin": -0.0286,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.3333,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.4141,
+        "held_train_cross_cos": 0.2773,
+        "held_train_margin": 0.1367,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.1667,
+        "scramble_decode": 0.6667,
+        "held_train_same_cos": 0.9323,
+        "held_train_cross_cos": 0.9349,
+        "held_train_margin": -0.0026,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.3333,
+        "scramble_decode": 0.5,
+        "held_train_same_cos": 0.0398,
+        "held_train_cross_cos": 0.042,
+        "held_train_margin": -0.0023,
+        "mean_code_activity": 0.0333
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.1393,
+        "pooler_margin_delta_vs_v1": 0.1653,
+        "decode_ok": false,
+        "trace_beats_shuffled": true,
+        "trace_beats_v1": true,
+        "trace_beats_no_learning": true,
+        "scramble_collapses": true,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    },
+    {
+      "seed": 43,
+      "chance": 0.3333,
+      "n_train_images": 24,
+      "n_held_images": 6,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.1667,
+        "scramble_decode": 0.5,
+        "held_train_same_cos": 0.0538,
+        "held_train_cross_cos": 0.0703,
+        "held_train_margin": -0.0165,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.3333,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.625,
+        "held_train_cross_cos": 0.5521,
+        "held_train_margin": 0.0729,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.5,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.5573,
+        "held_train_cross_cos": 0.5534,
+        "held_train_margin": 0.0039,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.1667,
+        "scramble_decode": 0.5,
+        "held_train_same_cos": 0.0391,
+        "held_train_cross_cos": 0.0352,
+        "held_train_margin": 0.0039,
+        "mean_code_activity": 0.0333
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.069,
+        "pooler_margin_delta_vs_v1": 0.0894,
+        "decode_ok": false,
+        "trace_beats_shuffled": true,
+        "trace_beats_v1": true,
+        "trace_beats_no_learning": true,
+        "scramble_collapses": true,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    },
+    {
+      "seed": 44,
+      "chance": 0.3333,
+      "n_train_images": 24,
+      "n_held_images": 6,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.1667,
+        "scramble_decode": 0.1667,
+        "held_train_same_cos": 0.0339,
+        "held_train_cross_cos": 0.0556,
+        "held_train_margin": -0.0217,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.5,
+        "scramble_decode": 0.1667,
+        "held_train_same_cos": 0.3542,
+        "held_train_cross_cos": 0.2135,
+        "held_train_margin": 0.1406,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.6667,
+        "scramble_decode": 0.5,
+        "held_train_same_cos": 0.6302,
+        "held_train_cross_cos": 0.6029,
+        "held_train_margin": 0.0273,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.3333,
+        "scramble_decode": 0.5,
+        "held_train_same_cos": 0.0418,
+        "held_train_cross_cos": 0.0286,
+        "held_train_margin": 0.0132,
+        "mean_code_activity": 0.0333
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.1133,
+        "pooler_margin_delta_vs_v1": 0.1623,
+        "decode_ok": true,
+        "trace_beats_shuffled": true,
+        "trace_beats_v1": true,
+        "trace_beats_no_learning": true,
+        "scramble_collapses": true,
+        "trace_go": true,
+        "verdict": "TRACE-ROUTED-GO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    }
+  ]
+}
