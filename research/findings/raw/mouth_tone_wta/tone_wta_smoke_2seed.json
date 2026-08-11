@@ -1,0 +1,238 @@
+{
+  "runner": "research.runners._mouth_tone_wta_readout_derisk",
+  "burns_down": "_stageA_full_integration_derisk._graded_tone_level (SEAM-C host tone binning)",
+  "mechanism": "FS-WTA lateral-inhibition selection over K=7 tone-level pools (spiking one-of-K)",
+  "residual_host": [
+    "afferent place-code (host-designed, not self-organized)",
+    "level->word lexicon lookup (fixed GRADED_TONE_LEVELS table)"
+  ],
+  "n_seeds": 2,
+  "n_go": 2,
+  "verdict": "UNDEFINED",
+  "parity_live_mean": 1.0,
+  "parity_synth_mean": 0.9917355371900827,
+  "clean_frac_mean": 0.9752066115702479,
+  "shuffle_parity_mean": 0.14462809917355374,
+  "parity_attributable_to_true_place_code": 0.8542,
+  "chance": 0.2,
+  "host_tol": 0.03,
+  "note_tol_eq_step_quirk": "tol==step==0.03 -> host levels +/-1 unreachable; spiking render inherits the same reachable set",
+  "input_gain": 1200.0,
+  "settle": 25,
+  "wall_clock_s": 5.1,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "parity(spiking token == host token) on LIVE ladder differentials == 1",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fd00cd97f60>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "parity on dense band sweep >= 0.98",
+      "ok": true,
+      "detail": "measured=0.9917355371900827 expect=<function main.<locals>.<lambda> at 0x7fd00cd97f60>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "WTA reads TRUE place-code (synth parity vs shuffled parity)",
+      "ok": true,
+      "detail": "treatment=0.991736 control=0.144628 |sep|=0.847107 > 0.4",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": ">=5/6 seeds match host",
+      "ok": false,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7fd00cd97f60>",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: >=5/6 seeds match host (measured=2 expect=<function main.<locals>.<lambda> at 0x7fd00cd97f60>)"
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "parity_synth": 0.9917355371900827,
+      "parity_live": 1.0,
+      "clean_frac": 0.9752066115702479,
+      "shuffle_parity": 0.1487603305785124,
+      "mean_margin": 3.7596418732782366,
+      "min_margin": 0.08333333333333348,
+      "reachable_levels": [
+        -3,
+        -2,
+        0,
+        2,
+        3
+      ],
+      "n_reachable": 5,
+      "lexicon_confined": true,
+      "fm4_saturates": true,
+      "sat_hi_token": "warmly, gladly",
+      "sat_lo_token": "coldly, reluctantly",
+      "live_rows": [
+        {
+          "appraisal": 0.0,
+          "differential": 0.0,
+          "host_level": 0,
+          "host_token": "",
+          "spiking_level": 0,
+          "spiking_token": "",
+          "clean": true,
+          "margin": 4.1667,
+          "agree": true
+        },
+        {
+          "appraisal": 0.2,
+          "differential": 0.00567,
+          "host_level": 0,
+          "host_token": "",
+          "spiking_level": 0,
+          "spiking_token": "",
+          "clean": true,
+          "margin": 4.1667,
+          "agree": true
+        },
+        {
+          "appraisal": 0.4,
+          "differential": 0.03333,
+          "host_level": 2,
+          "host_token": "gladly",
+          "spiking_level": 2,
+          "spiking_token": "gladly",
+          "clean": true,
+          "margin": 2.4167,
+          "agree": true
+        },
+        {
+          "appraisal": 0.6,
+          "differential": 0.05,
+          "host_level": 2,
+          "host_token": "gladly",
+          "spiking_level": 2,
+          "spiking_token": "gladly",
+          "clean": true,
+          "margin": 4.4167,
+          "agree": true
+        },
+        {
+          "appraisal": 0.8,
+          "differential": 0.06367,
+          "host_level": 3,
+          "host_token": "warmly, gladly",
+          "spiking_level": 3,
+          "spiking_token": "warmly, gladly",
+          "clean": true,
+          "margin": 2.9167,
+          "agree": true
+        },
+        {
+          "appraisal": 1.0,
+          "differential": 0.07433,
+          "host_level": 3,
+          "host_token": "warmly, gladly",
+          "spiking_level": 3,
+          "spiking_token": "warmly, gladly",
+          "clean": true,
+          "margin": 4.3333,
+          "agree": true
+        }
+      ],
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "parity_synth": 0.9917355371900827,
+      "parity_live": 1.0,
+      "clean_frac": 0.9752066115702479,
+      "shuffle_parity": 0.14049586776859505,
+      "mean_margin": 3.9345730027548216,
+      "min_margin": 0.08333333333333304,
+      "reachable_levels": [
+        -3,
+        -2,
+        0,
+        2,
+        3
+      ],
+      "n_reachable": 5,
+      "lexicon_confined": true,
+      "fm4_saturates": true,
+      "sat_hi_token": "warmly, gladly",
+      "sat_lo_token": "coldly, reluctantly",
+      "live_rows": [
+        {
+          "appraisal": 0.0,
+          "differential": 0.0,
+          "host_level": 0,
+          "host_token": "",
+          "spiking_level": 0,
+          "spiking_token": "",
+          "clean": true,
+          "margin": 4.4167,
+          "agree": true
+        },
+        {
+          "appraisal": 0.2,
+          "differential": 0.00667,
+          "host_level": 0,
+          "host_token": "",
+          "spiking_level": 0,
+          "spiking_token": "",
+          "clean": true,
+          "margin": 4.4167,
+          "agree": true
+        },
+        {
+          "appraisal": 0.4,
+          "differential": 0.032,
+          "host_level": 2,
+          "host_token": "gladly",
+          "spiking_level": 2,
+          "spiking_token": "gladly",
+          "clean": true,
+          "margin": 1.75,
+          "agree": true
+        },
+        {
+          "appraisal": 0.6,
+          "differential": 0.04733,
+          "host_level": 2,
+          "host_token": "gladly",
+          "spiking_level": 2,
+          "spiking_token": "gladly",
+          "clean": true,
+          "margin": 4.6667,
+          "agree": true
+        },
+        {
+          "appraisal": 0.8,
+          "differential": 0.063,
+          "host_level": 3,
+          "host_token": "warmly, gladly",
+          "spiking_level": 3,
+          "spiking_token": "warmly, gladly",
+          "clean": true,
+          "margin": 2.3333,
+          "agree": true
+        },
+        {
+          "appraisal": 1.0,
+          "differential": 0.06333,
+          "host_level": 3,
+          "host_token": "warmly, gladly",
+          "spiking_level": 3,
+          "spiking_token": "warmly, gladly",
+          "clean": true,
+          "margin": 2.5833,
+          "agree": true
+        }
+      ],
+      "seed_go": true
+    }
+  ]
+}
