@@ -30,15 +30,26 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   statistics could not induce role (0.265). So it is not "the gate lacks position" — plain REINFORCE cannot assign the
 >   distal verb-prediction reward back to "which token was the subject." **This CONNECTS the conversation frontier to the
 >   gap#4 deep-credit lane** (the crux we surpassed at de-risk level: KP learned feedback aligns on a LIF SNN, 6-seed GO).
-> - **▶ 3 CONVERGENT LANES IN FLIGHT (agents, committed-not-merged; coordinator banks each with an honest verdict +
->   recovers any deferral from `.claude/worktrees/agent-<id>/`):** (a) **gap#4 deep-credit → role-gate**
->   (`codex/rolegate-gap4-credit`) — does the eligibility-trace/three-factor-DA/KP machinery assign the distal reward
->   where REINFORCE couldn't? THE highest-value test. (b) **spiking STP fast-weight bind** (`codex/spiking-stp-bind`) —
->   burn the host-numpy bind down to Mongillo-2008 short-term plasticity (τ_f verified at source). (c) **multi-slot
->   binding** (`codex/multi-slot-binding`) — hold ≥2 role-fillers (subject AND object) without cross-talk; find the
->   capacity ceiling. **SINGLE LITERAL NEXT:** bank each of the 3 as it lands (verify raw artifacts, `git commit
->   --no-verify` after content-gates pass, `bash tools/push_both.sh`); then the residual ladder: spiking role-gate →
->   spiking bind → wire the composition into the emergence stream.
+> - **▶ 3 CONVERGENT LANES — b MERGED, c 6-seed running, a building (coordinator banks each with an honest verdict,
+>   adversarially verifies, recovers any deferral from `.claude/worktrees/agent-<id>/`):**
+>   - **(b) ✅ MERGED — spiking STP fast-weight bind, 6/6 GO** (`77c4dffa` + scope-correction `a506692c`, pushed both).
+>     The host-numpy RUNG6c bind is now a GENUINE SYNAPTIC mechanism on a real SimulationBridge: Hebbian short-term
+>     potentiation of barcode→slot synapses (`cp_connections.data`), read from spikes; held-out recovery 1.000/0.000
+>     collisions every seed. **A 4-lens adversarial-verify workflow reproduced the seed-42 arm (byte-match) + confirmed
+>     the load-bearing lesion**, and forced two HONEST scope corrections: "closes the STORAGE+RETRIEVAL **half** of (c)"
+>     (allocation + write-gate stay host) and the winner READ is a host `np.argmax` (named, not neural WTA). The literal
+>     Mongillo `cp_stp_u/x` facilitation is a confirmed honest-negative (τ_F 1500ms vs sim 50ms; presynaptic non-select).
+>   - **(c) ▶ 6-SEED SWEEP RUNNING (pid 173179, Monitor bn2nxz7zj) — multi-slot binding.** Agent committed a 1-seed
+>     SMOKE (`6c9d956f`, `codex/multi-slot-binding`): k=1–4 concurrent bindings hold cleanly (all-correct 1.000), the
+>     superposed-single-slot cross-talk control collides at ~1/k (the ~2-cap), graceful ceiling k=5 (0.900)/k=6 (0.775),
+>     lesion-the-hold collapses at k≥2, no sim/ edit, cites the prior gap#2 LTM-store arc (2026-07-17) honestly. On
+>     completion: adversarially verify → merge (cherry-pick + update finding SMOKE→6-seed).
+>   - **(a) ▶ BUILDING — gap#4 deep-credit → role-gate** (`codex/rolegate-gap4-credit`) — does eligibility-trace /
+>     three-factor-DA / KP learned feedback assign the distal verb-prediction reward where REINFORCE (0.602) + a
+>     position-oracle (0.265) couldn't? THE highest-value convergent test (connects the conversation frontier to gap#4).
+>   - **SINGLE LITERAL NEXT:** on each landing, adversarially verify raw artifacts → merge (`git commit --no-verify`
+>     after content-gates pass, `bash tools/push_both.sh`); then the residual ladder: learned/spiking role-gate →
+>     emergent neural-WTA slot allocation → wire the composition (D3 hold + spiking bind + gate) into the emergence stream.
 > - **Deep-research provenance:** the VBWM design came from a 5-modality deep-research workflow (own-findings RAG +
 >   catalog/Kandel/textbooks + external biology via bio-research MCP + external ML + our substrate machinery). Finding:
 >   `research/findings/2026-08-11-variable-binding-working-memory-gated-slot-surpasses-HTM-heldout-1.000-vs-0.000-6seed-GO.md`.
