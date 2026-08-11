@@ -1,0 +1,492 @@
+{
+  "probe": "multi_slot_binding",
+  "verdict": "SMOKE-GO (1-seed indicator; run the 6-seed sweep) \u2014 the multi-slot spiking WM (R banks of D3 slow-NMDA pools on ONE bridge, ONE shared FS) HOLDS k=2 role-filler bindings SIMULTANEOUSLY and carries each across NOVEL fillers: held-out ALL-correct 1.000 (per-slot [1.0, 1.0], >> chance 0.167). The HOLD is load-bearing (lesion-the-hold all 0.000, hold-alive [0.0992, 0.0891] with external input ASSERTED zero across the span), the SEPARATION is load-bearing (superposed-single-slot collides: all 0.0), NO filler-swap cross-talk (0.000), no topic->answer leakage (referent-shuffle per-slot 0.000). CAPACITY CEILING (all-correct>=0.80) = k=5. This scales the single-slot WM GO to multiple concurrent variables. NOTE: the role-by-position gate is a host marker (the LEARNED spiking role-gate is gap#4, per 739a8867); reuse-by-import; NO sim/ edit.",
+  "capacity_ceiling_all80": 5,
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "device": "cpu",
+  "smoke": true,
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "generalisation_defined_novel_heldout",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f770f3ec9a0>",
+      "note": "held-out filler tuples disjoint from train (a real generalisation regime), else UNDEFINED"
+    },
+    {
+      "kind": "require",
+      "name": "superposed_baseline_collides",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f770f3ec9a0>",
+      "note": "the superposed-single-slot control MUST collide (all-correct<=chance) or the separation is not the thing being tested (VALIDITY of the load-bearing control)"
+    },
+    {
+      "kind": "require",
+      "name": "referent_shuffle_at_chance",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f770f3ec9a0>",
+      "note": "the referent-shuffle per-slot readout must sit near chance (no topic->answer leakage)"
+    },
+    {
+      "kind": "require",
+      "name": "hold_zero_input_asserted",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f770f3ec9a0>",
+      "note": "every register sustained with external input ASSERTED zero across the hold+read span"
+    }
+  ],
+  "mechanism": "R banks of the D3 slow-NMDA (tau=100ms) bistable persistent-activity slot on ONE bridge sharing ONE FS inhibitory pool (build_persistent_slot K=R*n_slot); register r = pools [r*n_slot,(r+1)*n_slot); each fixed entity binds to a stable local slot via the RUNG6c content-agnostic Hebbian binder; a role-by-position MARKER gate LOADs each role's entity into its register; the k verbs are each predicted from the HELD bump of the correct register",
+  "task": "a k-role agreement clause [e_r]+[L fillers] per role then k agreeing verbs; held-out TEST = disjoint NOVEL filler tuples; anti-cheats: per-slot+all-correct recovery, lesion-the-hold, superposed-single-slot collide baseline, cross-talk (filler-swap + collapse), referent-shuffle, hold-not-re-read (zero-input assert); k swept to locate the capacity ceiling",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "n_ent": 6,
+    "n_slot": 6,
+    "n_fill": 10,
+    "distance": 2,
+    "ks": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "recur": 25.0,
+    "hold_steps": 18,
+    "load_steps": 30,
+    "clear_steps": 200,
+    "n_train": 40,
+    "n_test": 40,
+    "chance": 0.16666666666666666,
+    "go_k": 2
+  },
+  "go_point": {
+    "acc_all": 1.0,
+    "per_slot_mean": 1.0,
+    "filler_swap_rate": 0.0,
+    "collapse_rate": 0.0,
+    "lesion_all": 0.0,
+    "lesion_per_slot_mean": 0.0,
+    "refshuf_all": 0.0,
+    "refshuf_per_slot_mean": 0.0,
+    "superposed_all": 0.0,
+    "superposed_per_item": 0.5,
+    "per_slot": [
+      1.0,
+      1.0
+    ],
+    "alive_reg": [
+      0.0992,
+      0.0891
+    ],
+    "k": 2,
+    "chance": 0.16666666666666666,
+    "path_space": 10000.0,
+    "gen_defined": true,
+    "zero_input_ok": true,
+    "per_seed": [
+      {
+        "seed": 42,
+        "k": 2,
+        "chance": 0.16666666666666666,
+        "gen_defined": true,
+        "path_space": 10000.0,
+        "n_eval": 40,
+        "n_novel": 40,
+        "acc_all": 1.0,
+        "per_slot": [
+          1.0,
+          1.0
+        ],
+        "per_slot_mean": 1.0,
+        "alive_reg": [
+          0.09923611111111116,
+          0.08909722222222229
+        ],
+        "filler_swap_rate": 0.0,
+        "collapse_rate": 0.0,
+        "zero_input_ok": true,
+        "lesion_all": 0.0,
+        "lesion_per_slot_mean": 0.0,
+        "superposed_all": 0.0,
+        "superposed_per_item": 0.5,
+        "refshuf_all": 0.0,
+        "refshuf_per_slot_mean": 0.0
+      }
+    ]
+  },
+  "points": [
+    {
+      "acc_all": 1.0,
+      "per_slot_mean": 1.0,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0,
+      "lesion_all": 0.26666666666666666,
+      "lesion_per_slot_mean": 0.26666666666666666,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": null,
+      "superposed_per_item": null,
+      "per_slot": [
+        1.0
+      ],
+      "alive_reg": [
+        0.0833
+      ],
+      "k": 1,
+      "chance": 0.16666666666666666,
+      "path_space": 100.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 1,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100.0,
+          "n_eval": 30,
+          "n_novel": 30,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.08333333333333333
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.26666666666666666,
+          "lesion_per_slot_mean": 0.26666666666666666,
+          "superposed_all": null,
+          "superposed_per_item": null,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 1.0,
+      "per_slot_mean": 1.0,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.0,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.5,
+      "per_slot": [
+        1.0,
+        1.0
+      ],
+      "alive_reg": [
+        0.0992,
+        0.0891
+      ],
+      "k": 2,
+      "chance": 0.16666666666666666,
+      "path_space": 10000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 2,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000.0,
+          "n_eval": 40,
+          "n_novel": 40,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09923611111111116,
+            0.08909722222222229
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.5,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 1.0,
+      "per_slot_mean": 1.0,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.0,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.31666666666666676,
+      "per_slot": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "alive_reg": [
+        0.0895,
+        0.0841,
+        0.0607
+      ],
+      "k": 3,
+      "chance": 0.16666666666666666,
+      "path_space": 1000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 3,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000.0,
+          "n_eval": 40,
+          "n_novel": 40,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.08951388888888895,
+            0.08409722222222228,
+            0.060694444444444454
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.31666666666666676,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 1.0,
+      "per_slot_mean": 1.0,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.00625,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.25,
+      "per_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "alive_reg": [
+        0.0925,
+        0.0851,
+        0.0785,
+        0.0965
+      ],
+      "k": 4,
+      "chance": 0.16666666666666666,
+      "path_space": 100000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 4,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100000000.0,
+          "n_eval": 40,
+          "n_novel": 40,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09250000000000007,
+            0.08513888888888894,
+            0.07847222222222228,
+            0.09645833333333337
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.00625,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.25,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 0.9,
+      "per_slot_mean": 0.975,
+      "filler_swap_rate": 0.005,
+      "collapse_rate": 0.02,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.0,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.2000000000000001,
+      "per_slot": [
+        0.975,
+        1.0,
+        0.925,
+        0.975,
+        1.0
+      ],
+      "alive_reg": [
+        0.0884,
+        0.0787,
+        0.0691,
+        0.0891,
+        0.0831
+      ],
+      "k": 5,
+      "chance": 0.16666666666666666,
+      "path_space": 10000000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 5,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000000000.0,
+          "n_eval": 40,
+          "n_novel": 40,
+          "acc_all": 0.9,
+          "per_slot": [
+            0.975,
+            1.0,
+            0.925,
+            0.975,
+            1.0
+          ],
+          "per_slot_mean": 0.975,
+          "alive_reg": [
+            0.08840277777777786,
+            0.07868055555555561,
+            0.06909722222222225,
+            0.08909722222222224,
+            0.08312500000000003
+          ],
+          "filler_swap_rate": 0.005,
+          "collapse_rate": 0.02,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.2000000000000001,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 0.775,
+      "per_slot_mean": 0.9625,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0375,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.0,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.16666666666666674,
+      "per_slot": [
+        1.0,
+        1.0,
+        0.925,
+        0.975,
+        0.975,
+        0.9
+      ],
+      "alive_reg": [
+        0.0824,
+        0.0824,
+        0.0689,
+        0.0785,
+        0.0766,
+        0.056
+      ],
+      "k": 6,
+      "chance": 0.16666666666666666,
+      "path_space": 1000000000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 6,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000000000.0,
+          "n_eval": 40,
+          "n_novel": 40,
+          "acc_all": 0.775,
+          "per_slot": [
+            1.0,
+            1.0,
+            0.925,
+            0.975,
+            0.975,
+            0.9
+          ],
+          "per_slot_mean": 0.9625,
+          "alive_reg": [
+            0.08236111111111116,
+            0.08236111111111116,
+            0.06888888888888892,
+            0.0785416666666667,
+            0.07659722222222223,
+            0.05597222222222224
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0375,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.16666666666666674,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    }
+  ],
+  "elapsed_seconds": 76.9,
+  "HONEST_NOTE": "reuse-by-import of three banked GOs (D3 spiking NMDA hold + RUNG6c Hebbian bind + the agreement-stream vocab); NO sim/ edit. Complements the gap#2 keystone LTM-store arc (2026-07-17, competitive-slot RETRIEVAL P=3=1.00/P=4=0.79, hold NOT load-bearing there) by testing the WORKING-MEMORY hold (load-bearing NMDA, read the HELD bump) on the held-out agreement stream. Registers occupy DISJOINT pool banks with a SHARED FS, so cross-register filler-swap is impossible by construction (each register reads only its own pools, per the keystone 'separate slots never share a value pool'); the honest capacity signal is SUPPRESSION (a register loses its bump under shared inhibition) + the superposed-single-slot collide baseline (the ~2-cap regime). The role-by-position gate is a host marker (the learned spiking role-gate is gap#4). The BIND is host numpy; the verb readout is a host deref. 1-seed is a SMOKE indicator; the 6-seed sweep is decisive."
+}
