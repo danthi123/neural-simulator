@@ -191,6 +191,15 @@ class CoreSimConfig:
     heterogeneity_seed: int = -1  # Separate from main seed for reproducibility (-1 = use main seed)
     # Distribution specifications: {"param_name": {"type": "lognormal"|"gaussian", "mean_log"|"mean": X, "sigma_log"|"std": Y}}
     heterogeneity_distributions: dict = field(default_factory=dict)  # Empty by default, populated on demand
+    # Draw each per-neuron heterogeneity parameter from its OWN reseeded RNG
+    # substream (cp.random.seed(het_seed + i*STRIDE) before the i-th param),
+    # instead of drawing every parameter SEQUENTIALLY from one het_seed stream.
+    # DEFAULT-OFF preserves the legacy single-stream draw bit-for-bit. When ON,
+    # each param starts from position 0 of its own stream, so growing a draw by
+    # appending neurons LAST (the one-brain e-prop slice append) leaves the
+    # pre-existing neurons' values byte-identical -> the append-LAST seam is
+    # invariant (arguably more correct: each param from an independent substream).
+    per_parameter_heterogeneity_seed: bool = False
     # Diagnostic correction: draw every stochastic Izhikevich population field
     # from one host-side NumPy contract before transferring it to the backend.
     # Default-off preserves the established backend-native initialization path.

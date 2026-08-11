@@ -3317,6 +3317,16 @@ class SimulationBridge:
         
         # Set separate RNG state for heterogeneity (deterministic if seed provided)
         het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        # Per-parameter reseed (opt-in, DEFAULT OFF): draw each parameter from its
+        # OWN reseeded substream (position 0), so appending neurons LAST -- which
+        # grows every `size=n` draw -- leaves the pre-existing neurons' values
+        # byte-identical (the one-brain append-LAST seam is invariant). getattr
+        # keeps this safe for any config predating the flag. Default OFF => the
+        # legacy single-stream draw below is reached bit-for-bit.
+        per_param_seed = bool(getattr(cfg, "per_parameter_heterogeneity_seed", False))
+        # Stride between per-parameter substreams. A large prime keeps adjacent
+        # parameters' seeds far apart (no near-neighbour RNG correlation).
+        _HET_PER_PARAM_SEED_STRIDE = 1_000_003
         if backend_neutral:
             resolved_het_seed = (
                 het_seed if het_seed >= 0
@@ -3325,6 +3335,9 @@ class SimulationBridge:
             heterogeneity_rng = _backend_neutral_random_state(
                 resolved_het_seed, stream_name="Izhikevich heterogeneity"
             )
+            # Draw-time RNG; reassigned per parameter only when per_param_seed is
+            # ON. Left aliasing heterogeneity_rng otherwise => byte-identical.
+            active_rng = heterogeneity_rng
         elif het_seed >= 0:
             rng_state = _backend_get_random_state()
             cp.random.seed(het_seed)
@@ -3344,7 +3357,8 @@ class SimulationBridge:
         }
         
         applied_count = 0
-        for param_name, dist_spec in cfg.heterogeneity_distributions.items():
+        for param_index, (param_name, dist_spec) in enumerate(
+                cfg.heterogeneity_distributions.items()):
             target_array = param_map.get(param_name)
             if target_array is None or target_array.size != n:
                 if backend_neutral:
@@ -3358,6 +3372,18 @@ class SimulationBridge:
                 raise ValueError(
                     f"Heterogeneity distribution for {param_name} must be a mapping"
                 )
+            # Per-parameter reseed (opt-in). Reseed each drawn parameter to
+            # position 0 of its own substream keyed on its stable enumerate index
+            # (independent of n). Off => this block is skipped and the draws stay
+            # on the single het_seed stream established above (byte-identical).
+            if per_param_seed:
+                if backend_neutral:
+                    active_rng = _backend_neutral_random_state(
+                        resolved_het_seed + param_index * _HET_PER_PARAM_SEED_STRIDE,
+                        stream_name=f"Izhikevich heterogeneity[{param_name}]",
+                    )
+                elif het_seed >= 0:
+                    cp.random.seed(het_seed + param_index * _HET_PER_PARAM_SEED_STRIDE)
             dist_type = dist_spec.get("type")
             if dist_type == "lognormal":
                 # CuPy lognormal takes mean and sigma of underlying normal distribution
@@ -3370,7 +3396,7 @@ class SimulationBridge:
                         raise ValueError(
                             f"Invalid lognormal parameters for {param_name}"
                         )
-                    samples_host = heterogeneity_rng.lognormal(
+                    samples_host = active_rng.lognormal(
                         mean=mean_log,
                         sigma=sigma_log,
                         size=n,
@@ -3391,7 +3417,7 @@ class SimulationBridge:
                         raise ValueError(
                             f"Invalid gaussian parameters for {param_name}"
                         )
-                    samples_host = heterogeneity_rng.normal(
+                    samples_host = active_rng.normal(
                         loc=mean,
                         scale=std,
                         size=n,

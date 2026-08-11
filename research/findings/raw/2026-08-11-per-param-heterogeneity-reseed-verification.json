@@ -1,0 +1,99 @@
+{
+  "desc": "per_parameter_heterogeneity_seed verification (sim/bridge.py::_apply_parameter_heterogeneity)",
+  "backend": "cupy",
+  "device": "NVIDIA GeForce RTX 3090",
+  "config": {
+    "n": 200,
+    "seed": 42,
+    "model": "IZHIKEVICH",
+    "enable_parameter_heterogeneity": true,
+    "stride": 1000003
+  },
+  "default_off_hashes": {
+    "cp_neuron_firing_thresholds": "a205db4a879195d5",
+    "cp_izh_C": "a9b3f0d424b28632",
+    "cp_izh_a": "a5d0581b563be19d",
+    "cp_izh_b": "fafa43167b1d339c",
+    "cp_izh_d_increment": "94a036b52e172cd1",
+    "cp_izh_k": "640bd0fbfe45f507",
+    "cp_izh_vr": "d98da74c78579258",
+    "cp_izh_vt": "5eb9ce0455152af7",
+    "cp_izh_vpeak": "69a1137b96185736",
+    "cp_izh_c_reset": "c6eda509665eacf1"
+  },
+  "pre_edit_baseline_hashes": {
+    "cp_neuron_firing_thresholds": "a205db4a879195d5",
+    "cp_izh_C": "a9b3f0d424b28632",
+    "cp_izh_a": "a5d0581b563be19d",
+    "cp_izh_b": "fafa43167b1d339c",
+    "cp_izh_d_increment": "94a036b52e172cd1",
+    "cp_izh_k": "640bd0fbfe45f507",
+    "cp_izh_vr": "d98da74c78579258",
+    "cp_izh_vt": "5eb9ce0455152af7",
+    "cp_izh_vpeak": "69a1137b96185736",
+    "cp_izh_c_reset": "c6eda509665eacf1"
+  },
+  "default_off_byte_identical_vs_pre_edit": true,
+  "flagon_append_last_invariance": {
+    "cp_izh_a": {
+      "prefix_equal": true,
+      "maxdiff": 0.0,
+      "hash_pre200": "a5d0581b563be19d",
+      "hash_big280_prefix": "a5d0581b563be19d"
+    },
+    "cp_izh_b": {
+      "prefix_equal": true,
+      "maxdiff": 0.0,
+      "hash_pre200": "5d6149c76e9a54e8",
+      "hash_big280_prefix": "5d6149c76e9a54e8"
+    },
+    "cp_izh_d_increment": {
+      "prefix_equal": true,
+      "maxdiff": 0.0,
+      "hash_pre200": "ed5796064cf7fb19",
+      "hash_big280_prefix": "ed5796064cf7fb19"
+    },
+    "cp_izh_C": {
+      "prefix_equal": true,
+      "maxdiff": 0.0,
+      "hash_pre200": "ab0d7c15c053f6b3",
+      "hash_big280_prefix": "ab0d7c15c053f6b3"
+    }
+  },
+  "flagon_append_last_all_invariant": true,
+  "flagon_determinism": {
+    "cp_izh_a": {
+      "same_seed_identical": true,
+      "diff_seed_differs": true
+    },
+    "cp_izh_b": {
+      "same_seed_identical": true,
+      "diff_seed_differs": true
+    },
+    "cp_izh_d_increment": {
+      "same_seed_identical": true,
+      "diff_seed_differs": true
+    },
+    "cp_izh_C": {
+      "same_seed_identical": true,
+      "diff_seed_differs": true
+    }
+  },
+  "flagon_determinism_ok": true,
+  "blast_radius_on_vs_off_same_seed": {
+    "cp_neuron_firing_thresholds": "SAME",
+    "cp_izh_a": "SAME",
+    "cp_izh_b": "DIFFER",
+    "cp_izh_d_increment": "DIFFER",
+    "cp_izh_C": "DIFFER",
+    "cp_recovery_variable_u": "SAME",
+    "cp_ou_current": "SAME"
+  },
+  "pytest_test_determinism": {
+    "passed": 9,
+    "failed": 0,
+    "summary": "9 passed in 107.70s"
+  },
+  "base_commit": "826b1dfd9",
+  "worktree_head_before_commit": "826b1dfd952e54dd553f30fe20ba16f13aa998c5"
+}
