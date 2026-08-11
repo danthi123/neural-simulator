@@ -1,0 +1,26 @@
+{
+  "runner": "research.runners._teacher_loop_interleaved_generative_replay_derisk",
+  "argv": [
+    "-m",
+    "research.runners._teacher_loop_interleaved_generative_replay_derisk",
+    "--seed",
+    "42",
+    "--n-max",
+    "50",
+    "--milestones",
+    "25",
+    "50",
+    "--slow-hidden",
+    "120",
+    "--gen-hidden",
+    "96",
+    "--gen-k",
+    "96"
+  ],
+  "cmd": "SIM_BACKEND=numpy PYTHONPATH=$PWD OPENBLAS_NUM_THREADS=1 .venv/bin/python -u -m research.runners._teacher_loop_interleaved_generative_replay_derisk --seed 42 --n-max 50 --milestones 25 50 --slow-hidden 120 --gen-hidden 96 --gen-k 96",
+  "backend": "numpy",
+  "git_sha_base": "1f4ea9f50d63625c44981f0306f855e36dc67068",
+  "git_branch": "codex/continual-retention-mechanism",
+  "note": "1-seed N=50 SMOKE, numpy CPU, ~88min; sidecar written manually because --out was outside the repo so the auto-provenance sidecar path was skipped.",
+  "corpus_check_fresh": true
+}
