@@ -50,7 +50,7 @@ Akrout, Wilson, Humphreys, Lillicrap & Tweed 2019, "Deep Learning without Weight
 | mirror_KP (KP + warm-up; align-then-KP) | 0.936 [0.767] | +0.95 [+0.86] | 0.99 / 0.04 | +1.00 [+0.99] | YES, 6/6 |
 | kp_STRONG (KP + warm-up + boost + refresh) | 0.947 [0.833] | +0.91 [+0.75] | 0.98 / 0.07 | +0.95 [+0.94] | YES, 6/6 |
 
-Per-seed transport-free FA vs mirror_FA (L=6): FA = [1.000, 0.883, 0.333, 0.233, 0.217, 0.300] (bimodal — the 4 collapsing seeds sit at the onset floor); mirror_FA = [0.967, 0.950, 1.000, 0.983, 0.983, 1.000] (all 6 seeds cleared). The aligned ceiling on the same seeds = [0.800, 0.950, 1.000, 0.983, 0.983, 1.000]. mirror_FA is the SAME net + SAME credit rule + the SAME task as the failing FA arm — the ONLY difference is the pre-credit weight-mirror warm-up.
+Per-seed transport-free FA vs mirror_FA (L=6): FA = [1.000, 0.883, 0.333, 0.233, 0.217, 0.300] (bimodal — the 4 collapsing seeds sit at the onset floor); mirror_FA = [0.967, 0.950, 1.000, 0.983, 0.983, 1.000] (all 6 seeds cleared). The aligned ceiling on the same seeds = [0.800, 0.950, 1.000, 0.983, 0.983, 1.000]. mirror_FA is the SAME architecture + SAME credit rule + SAME task as the failing FA arm, differing only by the pre-credit weight-mirror warm-up (and its init seed-offset is 181 vs the FA baseline's 137 — different init, not the same net); the causal attribution to the warm-up does NOT rest on a single-init comparison — it rests on FOUR distinct warm-up offsets (181/187/193/199) all clearing 6/6 while BOTH non-warm-up baselines (FA, KP) fail.
 
 ## The residual was alignment TIMING, not capacity (the adversarial read the GO gate demanded)
 
