@@ -1,0 +1,88 @@
+{
+  "probe": "gateB_stage2p_refute_evidence",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "evidence": {
+    "seed": 730705,
+    "str_d1_true_baseline_arousal_off": [
+      0,
+      0
+    ],
+    "str_d1_cue_onset_arousal_on": [
+      86,
+      0
+    ],
+    "no_precue_baseline_lock": true,
+    "ffi_rebound_grid": [
+      {
+        "bias_pa": -10.0,
+        "str_d1": [
+          86,
+          0
+        ]
+      },
+      {
+        "bias_pa": -25.0,
+        "str_d1": [
+          86,
+          0
+        ]
+      },
+      {
+        "bias_pa": -50.0,
+        "str_d1": [
+          86,
+          0
+        ]
+      },
+      {
+        "bias_pa": -100.0,
+        "str_d1": [
+          88,
+          0
+        ]
+      },
+      {
+        "bias_pa": -200.0,
+        "str_d1": [
+          87,
+          0
+        ]
+      },
+      {
+        "bias_pa": -400.0,
+        "str_d1": [
+          86,
+          0
+        ]
+      }
+    ],
+    "ffi_bias_reduces_firing": false,
+    "fixg_calibrated_bias_pa": 0.0,
+    "fixe_scales": {
+      "gpi_1": 0.15,
+      "thal_0": 0.15
+    },
+    "fixe_trained_cascade": {
+      "str_d1": [
+        104.0,
+        286.0
+      ],
+      "thal": [
+        215.0,
+        228.0
+      ],
+      "commit": [
+        388.0,
+        0.0
+      ],
+      "motor": [
+        795.0,
+        0.0
+      ],
+      "n_act1": 0,
+      "n_trials": 8
+    },
+    "thal_inverts_but_commit_latches": true
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "probe": "gateB_stage2p_striatal_ffi_downstate_smoke",
+  "backend": "numpy",
+  "device": "CPU (NumPy backend)",
+  "fix_e": false,
+  "fix_g": true,
+  "smoke_seeds": [
+    730705
+  ],
+  "config": {
+    "fixg_asym_ratio": 3.0,
+    "fixg_bias_grid": [
+      -10.0,
+      -25.0,
+      -50.0,
+      -100.0,
+      -200.0,
+      -400.0
+    ],
+    "fixg_min_setpoint": 5.0
+  },
+  "per_seed": [
+    {
+      "seed": 730705,
+      "fix_e": false,
+      "fix_g": true,
+      "fixg_cal": {
+        "seed": 730705,
+        "baseline": [
+          86,
+          0
+        ],
+        "over_channel": 0,
+        "setpoint": 0.0,
+        "engaged": true,
+        "bias_pa": 0.0,
+        "baseline_over": 86,
+        "post_over": 86,
+        "probe_curve": [
+          {
+            "bias_pa": -10.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          },
+          {
+            "bias_pa": -25.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          },
+          {
+            "bias_pa": -50.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          },
+          {
+            "bias_pa": -100.0,
+            "str_d1": [
+              88,
+              0
+            ]
+          },
+          {
+            "bias_pa": -200.0,
+            "str_d1": [
+              87,
+              0
+            ]
+          },
+          {
+            "bias_pa": -400.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          }
+        ]
+      },
+      "refute_evidence": {
+        "seed": 730705,
+        "str_d1_true_baseline_arousal_off": [
+          0,
+          0
+        ],
+        "str_d1_cue_onset_arousal_on": [
+          86,
+          0
+        ],
+        "no_precue_baseline_lock": true,
+        "ffi_rebound_grid": [
+          {
+            "bias_pa": -10.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          },
+          {
+            "bias_pa": -25.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          },
+          {
+            "bias_pa": -50.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          },
+          {
+            "bias_pa": -100.0,
+            "str_d1": [
+              88,
+              0
+            ]
+          },
+          {
+            "bias_pa": -200.0,
+            "str_d1": [
+              87,
+              0
+            ]
+          },
+          {
+            "bias_pa": -400.0,
+            "str_d1": [
+              86,
+              0
+            ]
+          }
+        ],
+        "ffi_bias_reduces_firing": false,
+        "fixg_calibrated_bias_pa": 0.0,
+        "fixe_scales": {
+          "gpi_1": 0.15,
+          "thal_0": 0.15
+        },
+        "fixe_trained_cascade": {
+          "str_d1": [
+            104.0,
+            286.0
+          ],
+          "thal": [
+            215.0,
+            228.0
+          ],
+          "commit": [
+            388.0,
+            0.0
+          ],
+          "motor": [
+            795.0,
+            0.0
+          ],
+          "n_act1": 0,
+          "n_trials": 8
+        },
+        "thal_inverts_but_commit_latches": true
+      },
+      "byte_identity_off": {
+        "seed": 730705,
+        "byte_identical_off": true,
+        "mismatch": {}
+      },
+      "FIX_ON": {
+        "count_c1": [
+          37,
+          3
+        ],
+        "test_rate_c1": 0.0,
+        "test_rate_c0": 1.0,
+        "D_contingent": 0.0,
+        "D_yoked": -0.10000000000000003,
+        "contingency_gap": 0.10000000000000003,
+        "steer": false
+      },
+      "STAGE2K_BASE": {
+        "count_c1": [
+          37,
+          3
+        ],
+        "test_rate_c1": 0.0,
+        "D_contingent": 0.0,
+        "D_yoked": -0.10000000000000003,
+        "steer": false
+      },
+      "legitimacy_acq_lesion": {
+        "seed": 730705,
+        "D_contingent_acq_lesion": 0.0,
+        "p_action0_target1_acq_lesion": 1.0,
+        "acq_lesion_action1_does_not_win": true,
+        "n_clean_target1": 20,
+        "test_rate_target1": 0.0
+      },
+      "flips": false,
+      "verdict": {
+        "label": "Gate B 730705 delayed-credit action-specific + reversible via striatal FFI (FIX G)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: str_d1 over-channel baseline silenced toward set-point (before=86 after=86 moved=False)",
+          "unmet: YOKED is not contingent (sacred anti-cheat) (treatment=0 control=-0.1 |sep|=0.1 > 0.2)",
+          "unmet: contingent credit above no-credit floor (0 vs floor 0)",
+          "unmet: held-out 730705 expresses action 1 at test (test_rate_c1>0) (measured=False expect=True)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "FIX G engages (str_d1 baseline asymmetric)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "knob",
+            "name": "fixg_bias_pa",
+            "ok": true,
+            "detail": "requested=0 applied=0",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "str_d1 over-channel baseline silenced toward set-point",
+            "ok": false,
+            "detail": "before=86 after=86 moved=False",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "byte-identical when off (Stage-2k GO protected)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "control",
+            "name": "YOKED is not contingent (sacred anti-cheat)",
+            "ok": false,
+            "detail": "treatment=0 control=-0.1 |sep|=0.1 > 0.2",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "acquisition-lesion does NOT manufacture action 1 (contingency owned by D1)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "floor",
+            "name": "contingent credit above no-credit floor",
+            "ok": false,
+            "detail": "0 vs floor 0",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "held-out 730705 expresses action 1 at test (test_rate_c1>0)",
+            "ok": false,
+            "detail": "measured=False expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "spiking striatal FSI feedforward-inhibition population",
+            "why": "FIX G is a host-set tonic hyperpolarizing bias -- an honest SCAFFOLD for a real PV+ FSI / MSN-down-state pool; measured under this isolation"
+          }
+        ],
+        "chance": null
+      }
+    }
+  ],
+  "status": [
+    "UNDEFINED"
+  ],
+  "elapsed_seconds": 431.30971175798913
+}
