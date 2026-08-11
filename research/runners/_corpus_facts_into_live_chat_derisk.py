@@ -89,6 +89,10 @@ from research.runners._realcorpus_learn_corpus_facts_derisk import (  # noqa: E4
     mine_svo, VERB_NORM, NOUNS_EXTRA, VERBS,
 )
 from research.runners._realcorpus_cancellation_derisk import _ANIMALS  # noqa: E402
+# reuse-by-import the STANDING-GO neural FS-WTA word read-out (D-thread de-risk 8291776a / parity 1.000 6/6):
+# a lateral-inhibition winner-take-all over per-word scores + the E%-max common-mode-subtraction companion process.
+from research.runners._d3_spiking_attractor_derisk import build_fswta_score_bridge, fswta_drive  # noqa: E402
+from research.runners._neural_wta_word_decode_derisk import condition_scores  # noqa: E402
 from tools.lab import attributable_to  # noqa: E402
 from tools.verdict import Verdict  # noqa: E402
 
@@ -514,7 +518,173 @@ def build_verdict(recs, K, go):
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════════════════════
-def run_seed(seed, counter, toks, nouns, verbs, K, do_byte_identity=False):
+# NEURAL PATIENT READ-OUT (--neural-patient-readout; DEFAULT OFF = byte-identical). Burn the HOST argmax that
+# selects the patient WORD in the live chat. The grounded reply comes from `comp.query_patient(agent, action)`,
+# which (a) SELECTS the matching engram block via `_seq_block` (the no-confab MOAT: None -> abstain), then (b)
+# DECODES the patient word off that block's matched-filter cleanup membrane via `_select(patient_scores, words)`.
+# On the production CoResidentOneBrainComposer `_select` is `_spiking_select` -> it drives an Izhikevich bank and
+# returns `words[int(np.argmax(firing))]` -- a HOST ARGMAX over spike counts (exactly the "argmax over spike counts"
+# shortcut CLAUDE.md names). This routes that ONE decision -- the patient-word winner of the SELECTED block -- through
+# a spiking FS-WTA: the K candidate word-assemblies compete through a shared inhibitory FS pool (LATERAL INHIBITION);
+# the winner fires first, recruits FS, FS suppresses the runners-up -> a clean one-of-K SPIKING winner, no host
+# argmax over rates. It is the SAME standing-GO read-out the D-thread word-decode de-risk ran to parity 1.000 on 6/6
+# (8291776a / _neural_wta_word_decode_derisk), with the E%-max common-mode subtraction (`condition_scores`
+# mode=center; de Almeida-Idiart-Lisman feedforward inhibition) as the missing companion process of the raw cleanup
+# scores. The block SELECTION / abstain (`_seq_block`) is UNTOUCHED, so the no-confab moat is byte-identical by
+# construction; only the patient-word winner-selection moves onto spikes. Installed on the TREATMENT composer for the
+# live chat only; `query_patient` is a pure read of the frozen store, so the hook is restored cleanly afterwards.
+def _is_clause_patient(x):
+    return getattr(x, "_fields", None) == ("agent", "action", "patient")
+
+
+class NeuralPatientReadout:
+    """A spiking FS-WTA replacement for the patient-word `_select` argmax inside query_patient. Wraps query_patient:
+    keeps the host block SELECTION (`_seq_block`, the moat) and re-decodes ONLY the selected block's patient word on
+    the FS-WTA. Records, per patient decode: parity vs the host argmax winner (must be 1.0 for the grounded replies to
+    be UNCHANGED), whether the decision genuinely FIRED on spikes (not a no-fire host fallback), and the SHUFFLE
+    anti-cheat (permuted score-drive -> the winning pool agreeing with the true host winner collapses to ~chance)."""
+
+    def __init__(self, comp, wta_seed, input_gain=1200.0, settle=25, score_mode="center"):
+        self.comp = comp
+        self.wta_seed = int(wta_seed)
+        self.input_gain = float(input_gain)
+        self.settle = int(settle)
+        self.score_mode = score_mode
+        self._bridges = {}                                    # K -> FS-WTA bridge (cached; vocab K fixed in a chat)
+        self._rng = np.random.RandomState(int(wta_seed) + 7)  # shuffle-control RNG (mirrors the D-thread de-risk)
+        self._orig_qp = comp.query_patient                    # the host query_patient (block-selection + host decode)
+        self.n_decodes = self.n_parity = self.n_shuffle_parity = self.n_fired = 0
+        self.n_clause_fallback = 0
+        self.margins, self.Ks, self.mismatches = [], [], []
+
+    def _bridge(self, K):
+        sb = self._bridges.get(K)
+        if sb is None:
+            sb = build_fswta_score_bridge(seed=self.wta_seed, K=int(K))
+            self._bridges[K] = sb
+        return sb
+
+    def _read_block_capture(self, idx):
+        """Reconstruct the SELECTED block idx and read its roles with the HOST `_select` (the reference decode),
+        capturing the patient role's rectified matched-filter score vector (the drive the FS-WTA competes over).
+        `_read_block` calls `_select(scores, self.words)` once per main role in main_roles order, then polarity over
+        the 2-word codebook; the patient scores are the call at the patient index over the main vocab."""
+        comp = self.comp
+        patient_ri = list(comp.main_roles).index("patient")
+        cap, orig_sel, state = {}, comp._select, {"i": 0}
+
+        def _sel(scores, words):
+            if words is comp.words:
+                if state["i"] == patient_ri:
+                    cap["ps"] = np.asarray(scores, dtype=np.float64).copy()
+                state["i"] += 1
+            return orig_sel(scores, words)
+
+        comp._select = _sel
+        try:
+            got = comp._read_block(int(idx))
+        finally:
+            comp._select = orig_sel
+        return got, cap.get("ps")
+
+    def query_patient(self, agent, action, order_fn=None):
+        """Bound to THIS object (replaces comp.query_patient): host block-selection (moat) + FS-WTA patient decode."""
+        comp = self.comp
+        idx = comp._seq_block(agent, action)                  # the MOAT / block SELECTION -- host, UNCHANGED
+        if idx is None:
+            return None                                       # abstain (no-confab moat) -- byte-identical
+        stored = comp.kb[idx][0].get("patient") if idx < len(comp.kb) else None
+        if _is_clause_patient(stored):
+            self.n_clause_fallback += 1                       # embedded-clause patient: outside this rung -> host decode
+            return self._orig_qp(agent, action, order_fn=order_fn)
+        got, ps = self._read_block_capture(idx)
+        host_word = got.get("patient")
+        if host_word is None or ps is None:
+            return self._orig_qp(agent, action, order_fn=order_fn)  # confidence-gate blanked -> host (matches abstain)
+        words = list(comp.words)
+        K = len(words)
+        # afferent gain-control (E%-max common-mode subtraction; MONOTONIC) -> the FS-WTA competes over the drive.
+        sn = condition_scores(ps, mode=self.score_mode)
+        sb = self._bridge(K)
+        _, acc = fswta_drive(sb, K, sn, input_gain=self.input_gain, settle=self.settle)
+        fired = bool(float(acc.max()) > 0.0)
+        wta_word = words[int(np.argmax(acc))] if fired else host_word   # no-fire -> host fallback (recorded)
+        # SHUFFLE anti-cheat: permuted score-drive -> the winning POOL matching the true host winner is chance.
+        perm = self._rng.permutation(K)
+        _, acc_sh = fswta_drive(sb, K, sn[perm], input_gain=self.input_gain, settle=self.settle)
+        sh_word = words[int(np.argmax(acc_sh))] if float(acc_sh.max()) > 0.0 else None
+        srt = np.sort(sn)[::-1]
+        self.n_decodes += 1
+        self.n_parity += int(wta_word == host_word)
+        self.n_shuffle_parity += int(sh_word == host_word)
+        self.n_fired += int(fired)
+        self.margins.append(float(srt[0] - srt[1]) if K > 1 else 1.0)
+        self.Ks.append(K)
+        if wta_word != host_word:
+            self.mismatches.append((host_word, wta_word))
+        return comp._attributed_patient(idx, wta_word, got)   # flat fact -> the patient word; attr/clause via host
+
+    def summary(self):
+        n = max(1, self.n_decodes)
+        parity = self.n_parity / n
+        shuf = self.n_shuffle_parity / n
+        attrib = attributable_to(
+            "FS-WTA patient decode reading the true drive (parity vs shuffled-score parity)", parity, shuf)
+        return {
+            "n_decodes": int(self.n_decodes), "n_clause_fallback": int(self.n_clause_fallback),
+            "vocab_K": int(max(self.Ks)) if self.Ks else None,
+            "parity_wta_vs_host": parity, "shuffle_parity": shuf,
+            "frac_fired_on_spikes": self.n_fired / n,
+            "mean_margin": float(np.mean(self.margins)) if self.margins else None,
+            "min_margin": float(np.min(self.margins)) if self.margins else None,
+            "parity_attributable_to_true_drive": None if attrib is None else round(float(attrib), 4),
+            "mismatches": self.mismatches[:8],
+        }
+
+
+def _neural_readout_on_treatment(b_t, xp, i_t, s_t, c_t, facts_t, turns, tr_treat_host, sum_treat_host,
+                                 tier0_by_K, seed):
+    """Run the TREATMENT live chat a second time with the patient decision routed through the spiking FS-WTA, and
+    verify: (a) the grounded replies are UNCHANGED (the decision view is identical to the host-readout chat), (b)
+    every patient-word decision genuinely FIRED on spikes, (c) per-decode parity with the host argmax, (d) the
+    shuffle anti-cheat collapses to ~chance, (e) the no-confab moat still reads 0 false-accepts. `c_t.query_patient`
+    is restored in the finally so the composer is left untouched (query_patient is a pure read of the frozen store)."""
+    ro = NeuralPatientReadout(c_t, wta_seed=seed)
+    _orig_qp = c_t.query_patient
+    c_t.query_patient = ro.query_patient
+    try:
+        tr_treat_neural = run_chat(b_t, xp, i_t, s_t, c_t, facts_t, turns)
+    finally:
+        c_t.query_patient = _orig_qp
+    stats = ro.summary()
+    sum_treat_neural = _chat_summary(tr_treat_neural)
+    transcript_parity = bool(
+        json.dumps(_decision_view(tr_treat_host), sort_keys=True, default=str)
+        == json.dumps(_decision_view(tr_treat_neural), sort_keys=True, default=str))
+    moat_ok_treat = bool(all(r["moat_false_accepts"] == 0 for r in tier0_by_K.values()))
+    K = stats["vocab_K"] or 1
+    chance = 1.0 / max(1, K)
+    readout_go = bool(
+        transcript_parity
+        and stats["n_decodes"] > 0
+        and abs(stats["parity_wta_vs_host"] - 1.0) < 1e-9        # grounded replies unchanged (per-decode parity)
+        and stats["frac_fired_on_spikes"] >= 1.0 - 1e-9         # the decision genuinely on SPIKES
+        and stats["shuffle_parity"] < 0.5                       # permuted-drive -> chance (reads the true scores)
+        and moat_ok_treat                                       # moat == 0 false-accepts
+        and sum_treat_neural["confabulated"] == 0)
+    return {
+        "on": True, "readout_go": readout_go,
+        "transcript_decision_parity": transcript_parity,
+        "grounded_host": int(sum_treat_host["grounded"]), "grounded_neural": int(sum_treat_neural["grounded"]),
+        "moat_false_accepts_all_K": int(sum(r["moat_false_accepts"] for r in tier0_by_K.values())),
+        "confab_neural": int(sum_treat_neural["confabulated"]),
+        "chance": chance, "input_gain": ro.input_gain, "settle": ro.settle, "score_mode": ro.score_mode,
+        **stats,
+    }
+
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════════════════
+def run_seed(seed, counter, toks, nouns, verbs, K, do_byte_identity=False, neural_readout=False):
     """One seed: the Tier-0 capacity sweep (K in {10,20,K}), the Tier-1 baseline vs treatment live chat over ONE
     fixed expanded turn list, the post-hoc teeth, and (optionally) the byte-identity guard."""
     t_start = time.time()
@@ -543,6 +713,13 @@ def run_seed(seed, counter, toks, nouns, verbs, K, do_byte_identity=False):
     tr_treat = run_chat(b_t, xp, i_t, s_t, c_t, facts_t, turns)
     sum_treat = _chat_summary(tr_treat)
     treat_live14_silence = sum(1 for r in tr_treat[:len(TT.HUMAN_TURNS)] if r["category"] == "silence")
+
+    # NEURAL PATIENT READ-OUT (default OFF -> None -> byte-identical to INTEGRATION #6). When ON, re-run the SAME
+    # treatment chat with the patient WORD decision on a spiking FS-WTA and prove the grounded replies are unchanged.
+    neural_ro = None
+    if neural_readout:
+        neural_ro = _neural_readout_on_treatment(b_t, xp, i_t, s_t, c_t, facts_t, turns, tr_treat, sum_treat,
+                                                 tier0_by_K, seed)
 
     teeth = posthoc_teeth(c_t, facts_t, seed=seed)
 
@@ -585,6 +762,7 @@ def run_seed(seed, counter, toks, nouns, verbs, K, do_byte_identity=False):
         "grounded_attributable_to_facts": grounded_attrib,
         "breadth_attributable_to_facts": breadth_attrib,
         "posthoc_teeth": teeth, "byte_identity": bi,
+        "neural_patient_readout": neural_ro,
         "gate": {
             "grounded_rises": grounded_rises, "no_confab": no_confab, "ood_abstains": ood_abstains,
             "posthoc_teeth_drop_100pct": teeth_ok, "no_surface_confab": no_ungrounded,
@@ -603,6 +781,9 @@ def main():
     ap.add_argument("--corpus-path", default="data/corpus/tinystories.txt")
     ap.add_argument("--byte-identity", choices=["auto", "on", "off"], default="auto",
                     help="auto=on for the first seed only (default); on=every seed; off=never (parallel per-seed runs)")
+    ap.add_argument("--neural-patient-readout", action="store_true",
+                    help="route the live chat's patient WORD decision through a spiking FS-WTA (lateral inhibition) "
+                         "instead of the host cosine-argmax; DEFAULT OFF -> byte-identical to INTEGRATION #6")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
@@ -614,9 +795,14 @@ def main():
     counter, toks, nouns, verbs = build_corpus_counter(a.corpus_path)
     print("  mined %d distinct clean SVO triples from %d tokens" % (len(counter), len(toks)), flush=True)
 
+    if a.neural_patient_readout:
+        print("  [--neural-patient-readout] the live-chat patient WORD decision runs on a spiking FS-WTA "
+              "(lateral inhibition), not the host cosine-argmax", flush=True)
+
     recs = []
     for i, s in enumerate(seeds):
-        r = run_seed(s, counter, toks, nouns, verbs, a.K, do_byte_identity=_want_bi(i))
+        r = run_seed(s, counter, toks, nouns, verbs, a.K, do_byte_identity=_want_bi(i),
+                     neural_readout=a.neural_patient_readout)
         recs.append(r)
         t0 = r["tier0_headline"]
         print("  [seed %d] K=%d |V|=%d facts=%d | recall=%.3f breadth=%d (base 2) moat_fa=%d | "
@@ -634,6 +820,32 @@ def main():
 
     n_go = sum(1 for r in recs if r["seed_go"])
     go = bool(n_go == len(recs) and len(recs) > 0)
+
+    # ── NEURAL PATIENT READ-OUT parity table (when --neural-patient-readout). GO = grounded replies UNCHANGED
+    # (transcript decision parity + per-decode parity 1.0) AND the decision fired ON SPIKES AND moat == 0. ──────
+    ro_go = go
+    if a.neural_patient_readout:
+        ros = [r["neural_patient_readout"] for r in recs]
+        n_ro_go = sum(1 for x in ros if x and x["readout_go"])
+        ro_go = bool(n_ro_go == len(recs) and len(recs) > 0)
+        print("\n  ── NEURAL PATIENT READ-OUT (spiking FS-WTA vs host argmax) ──────────────────────────────────",
+              flush=True)
+        print("  seed | K  | decodes | parity | fired  | shuffle | attrib | tx-parity | grnd host->neural | moat_fa | GO",
+              flush=True)
+        for s, x in zip(seeds, ros):
+            print("  %4d | %2s | %7d | %.3f  | %.3f  | %.3f   | %5s  |   %5s   |   %2d -> %2d        | %6d  | %s"
+                  % (s, str(x["vocab_K"]), x["n_decodes"], x["parity_wta_vs_host"], x["frac_fired_on_spikes"],
+                     x["shuffle_parity"],
+                     ("%.2f" % x["parity_attributable_to_true_drive"]) if x["parity_attributable_to_true_drive"]
+                     is not None else "n/a",
+                     str(x["transcript_decision_parity"]), x["grounded_host"], x["grounded_neural"],
+                     x["moat_false_accepts_all_K"], "GO" if x["readout_go"] else "MISS"), flush=True)
+        allmm = [m for x in ros if x for m in x["mismatches"]]
+        print("  READ-OUT VERDICT: %s -- %d/%d seeds. The grounded replies are UNCHANGED (transcript + per-decode "
+              "parity with the host argmax), the patient WORD decision now fires on a spiking FS-WTA, the shuffle "
+              "control collapses to chance, and the no-confab moat still reads 0 false-accepts.%s"
+              % ("GO" if ro_go else "PARTIAL/NEGATIVE", n_ro_go, len(recs),
+                 ("" if not allmm else " HONEST-NEGATIVE mismatches (host->neural): %s" % allmm[:8])), flush=True)
 
     def _agg(fn):
         return [fn(r) for r in recs]
@@ -654,17 +866,24 @@ def main():
           "competence from vocab alone)." % ("GO" if go else "PARTIAL/NEGATIVE", n_go, len(recs)), flush=True)
 
     decided = build_verdict(recs, a.K, go)
+    # When the neural read-out is on, the DELIVERABLE verdict is the read-out GO (both the #6 base gate AND the
+    # spiking patient decision are required); when it is off, the verdict is the unchanged #6 base gate.
+    overall_go = bool(go and ro_go) if a.neural_patient_readout else go
     if a.out:
         os.makedirs(os.path.dirname(a.out), exist_ok=True)
-        payload = {"verdict": "GO" if go else "PARTIAL", "verdict_earned": decided["status"],
+        payload = {"verdict": "GO" if overall_go else "PARTIAL", "verdict_earned": decided["status"],
                    "n_go": n_go, "n_seeds": len(recs), "K": a.K, "seeds": seeds,
                    "sim_backend": os.environ.get("SIM_BACKEND", "numpy"),
+                   "neural_patient_readout_enabled": bool(a.neural_patient_readout),
+                   "neural_patient_readout_go": bool(ro_go) if a.neural_patient_readout else None,
+                   "neural_patient_readout_per_seed": [r["neural_patient_readout"] for r in recs]
+                   if a.neural_patient_readout else None,
                    "preconditions": decided["preconditions"], "disabled_processes": decided["disabled_processes"],
                    "byte_identity": bi, "per_seed": recs}
         with open(a.out, "w") as f:
             json.dump(payload, f, indent=2, default=str)
         print("  [saved] %s" % a.out, flush=True)
-    return go
+    return overall_go
 
 
 if __name__ == "__main__":
