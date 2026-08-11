@@ -1,0 +1,275 @@
+{
+  "probe": "continuous_learn_in_conversation",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "n_smoke_go": 6,
+  "GO_6of6": true,
+  "verdict_earned": "GO",
+  "sim_backend": "numpy",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all seeds SMOKE_GO",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "closed loop: pre-teach recall == 0 (all seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "closed loop: post-teach recall >= 1 (all seeds)",
+      "ok": true,
+      "detail": "measured=3 expect=<function _build_verdict.<locals>.<lambda> at 0x7f4275ebd580>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "within-run learning delta (post-teach vs pre-teach recall, same bridge)",
+      "ok": true,
+      "detail": "treatment=3 control=0 |sep|=3 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PERSISTENCE: weight survives the M intervening washing turns (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "K+M recall: treatment vs FROZEN-readout (content rode the weight change)",
+      "ok": true,
+      "detail": "treatment=3 control=0 |sep|=3 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "K+M recall: post-teach vs weight-LESION (reply rode the turn-K weights)",
+      "ok": true,
+      "detail": "treatment=3 control=0 |sep|=3 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FROZEN control recalls 0 at K+M (all seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "weight-LESION reverts to ignorance at K+M (all seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat 0 false-accepts (untaught cues, all seeds)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "kb unchanged by mid-conversation teaching (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "spiking familiarity gate (v320)",
+      "why": "the source-monitor is a numpy anti-Hebbian projector; the spiking v320 gate is the swap-in (burn-down #2)"
+    },
+    {
+      "process": "sequential/continual breadth (frac_recalled ~ 1/N)",
+      "why": "the learned-fact SET is the reliable K=3 joint-contrastive regime; continual breadth is the open arc"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "SMOKE_GO": true,
+      "recall_pre_teach": 0,
+      "recall_post_teach": 3,
+      "recall_frozen_post": 0,
+      "recall_after_weight_lesion": 0,
+      "weight_persisted_K_to_KplusM": true,
+      "readout_moved_at_teach": 41.47090530395508,
+      "readout_moved_frozen": 0.0,
+      "moat_false_accepts": 0,
+      "kb_unchanged_by_teaching": true,
+      "pre_teach_dax_reply": "",
+      "post_teach_dax_reply": "warmly, gladly Dax eats grass.",
+      "lesion_dax_reply": "warmly, gladly Dax eats apple.",
+      "frozen_dax_reply": "warmly, gladly Dax eats apple.",
+      "GO_flags": {
+        "closed_loop (pre==0 -> post>=1)": true,
+        "full_recall (post==K)": true,
+        "persistence (weight survives M turns + moved)": true,
+        "lesion_load_bearing (undo weight -> reverts)": true,
+        "frozen_control (no e-prop -> 0 recall)": true,
+        "moat_0_false_accepts": true,
+        "honesty (0 confab, OOD abstains)": true,
+        "kb_unchanged": true
+      },
+      "elapsed_s": 496.2
+    },
+    {
+      "seed": 43,
+      "SMOKE_GO": true,
+      "recall_pre_teach": 0,
+      "recall_post_teach": 3,
+      "recall_frozen_post": 0,
+      "recall_after_weight_lesion": 0,
+      "weight_persisted_K_to_KplusM": true,
+      "readout_moved_at_teach": 40.09266662597656,
+      "readout_moved_frozen": 0.0,
+      "moat_false_accepts": 0,
+      "kb_unchanged_by_teaching": true,
+      "pre_teach_dax_reply": "",
+      "post_teach_dax_reply": "warmly, gladly Dax eats grass.",
+      "lesion_dax_reply": "warmly, gladly Dax eats apple.",
+      "frozen_dax_reply": "warmly, gladly Dax eats apple.",
+      "GO_flags": {
+        "closed_loop (pre==0 -> post>=1)": true,
+        "full_recall (post==K)": true,
+        "persistence (weight survives M turns + moved)": true,
+        "lesion_load_bearing (undo weight -> reverts)": true,
+        "frozen_control (no e-prop -> 0 recall)": true,
+        "moat_0_false_accepts": true,
+        "honesty (0 confab, OOD abstains)": true,
+        "kb_unchanged": true
+      },
+      "elapsed_s": 476.2
+    },
+    {
+      "seed": 44,
+      "SMOKE_GO": true,
+      "recall_pre_teach": 0,
+      "recall_post_teach": 3,
+      "recall_frozen_post": 0,
+      "recall_after_weight_lesion": 0,
+      "weight_persisted_K_to_KplusM": true,
+      "readout_moved_at_teach": 41.61664962768555,
+      "readout_moved_frozen": 0.0,
+      "moat_false_accepts": 0,
+      "kb_unchanged_by_teaching": true,
+      "pre_teach_dax_reply": "",
+      "post_teach_dax_reply": "warmly, gladly Dax eats grass.",
+      "lesion_dax_reply": "warmly, gladly Dax eats apple.",
+      "frozen_dax_reply": "warmly, gladly Dax eats apple.",
+      "GO_flags": {
+        "closed_loop (pre==0 -> post>=1)": true,
+        "full_recall (post==K)": true,
+        "persistence (weight survives M turns + moved)": true,
+        "lesion_load_bearing (undo weight -> reverts)": true,
+        "frozen_control (no e-prop -> 0 recall)": true,
+        "moat_0_false_accepts": true,
+        "honesty (0 confab, OOD abstains)": true,
+        "kb_unchanged": true
+      },
+      "elapsed_s": 500.2
+    },
+    {
+      "seed": 100,
+      "SMOKE_GO": true,
+      "recall_pre_teach": 0,
+      "recall_post_teach": 3,
+      "recall_frozen_post": 0,
+      "recall_after_weight_lesion": 0,
+      "weight_persisted_K_to_KplusM": true,
+      "readout_moved_at_teach": 36.287899017333984,
+      "readout_moved_frozen": 0.0,
+      "moat_false_accepts": 0,
+      "kb_unchanged_by_teaching": true,
+      "pre_teach_dax_reply": "",
+      "post_teach_dax_reply": "warmly, gladly Dax eats grass.",
+      "lesion_dax_reply": "warmly, gladly Dax eats apple.",
+      "frozen_dax_reply": "warmly, gladly Dax eats apple.",
+      "GO_flags": {
+        "closed_loop (pre==0 -> post>=1)": true,
+        "full_recall (post==K)": true,
+        "persistence (weight survives M turns + moved)": true,
+        "lesion_load_bearing (undo weight -> reverts)": true,
+        "frozen_control (no e-prop -> 0 recall)": true,
+        "moat_0_false_accepts": true,
+        "honesty (0 confab, OOD abstains)": true,
+        "kb_unchanged": true
+      },
+      "elapsed_s": 498.0
+    },
+    {
+      "seed": 101,
+      "SMOKE_GO": true,
+      "recall_pre_teach": 0,
+      "recall_post_teach": 3,
+      "recall_frozen_post": 0,
+      "recall_after_weight_lesion": 0,
+      "weight_persisted_K_to_KplusM": true,
+      "readout_moved_at_teach": 40.96158981323242,
+      "readout_moved_frozen": 0.0,
+      "moat_false_accepts": 0,
+      "kb_unchanged_by_teaching": true,
+      "pre_teach_dax_reply": "",
+      "post_teach_dax_reply": "warmly, gladly Dax eats grass.",
+      "lesion_dax_reply": "warmly, gladly Dax eats apple.",
+      "frozen_dax_reply": "warmly, gladly Dax eats apple.",
+      "GO_flags": {
+        "closed_loop (pre==0 -> post>=1)": true,
+        "full_recall (post==K)": true,
+        "persistence (weight survives M turns + moved)": true,
+        "lesion_load_bearing (undo weight -> reverts)": true,
+        "frozen_control (no e-prop -> 0 recall)": true,
+        "moat_0_false_accepts": true,
+        "honesty (0 confab, OOD abstains)": true,
+        "kb_unchanged": true
+      },
+      "elapsed_s": 516.2
+    },
+    {
+      "seed": 102,
+      "SMOKE_GO": true,
+      "recall_pre_teach": 0,
+      "recall_post_teach": 3,
+      "recall_frozen_post": 0,
+      "recall_after_weight_lesion": 0,
+      "weight_persisted_K_to_KplusM": true,
+      "readout_moved_at_teach": 37.92936325073242,
+      "readout_moved_frozen": 0.0,
+      "moat_false_accepts": 0,
+      "kb_unchanged_by_teaching": true,
+      "pre_teach_dax_reply": "",
+      "post_teach_dax_reply": "warmly, gladly Dax eats grass.",
+      "lesion_dax_reply": "warmly, gladly Dax eats apple.",
+      "frozen_dax_reply": "warmly, gladly Dax eats apple.",
+      "GO_flags": {
+        "closed_loop (pre==0 -> post>=1)": true,
+        "full_recall (post==K)": true,
+        "persistence (weight survives M turns + moved)": true,
+        "lesion_load_bearing (undo weight -> reverts)": true,
+        "frozen_control (no e-prop -> 0 recall)": true,
+        "moat_0_false_accepts": true,
+        "honesty (0 confab, OOD abstains)": true,
+        "kb_unchanged": true
+      },
+      "elapsed_s": 687.1
+    }
+  ]
+}

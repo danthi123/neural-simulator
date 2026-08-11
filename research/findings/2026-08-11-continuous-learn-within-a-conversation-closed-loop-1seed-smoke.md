@@ -4,13 +4,17 @@ status: contributing
 date: 2026-08-11
 mechanism: a fact taught MID-CONVERSATION (turn K) by the brain's own co-resident e-prop plasticity changes the brain's LATER reply (turn K+M) on ONE persistent spiking bridge — a minimal closed learn-within-the-conversation loop
 lane: E-language / INTEGRATION (THE CONTINUOUS LOOP — perception→internal-state→speech→consequence→LEARNING)
-seeds: [42]
-seed-waiver: labelled 1-seed SMOKE; the decisive 6-seed command is returned but NOT run this pass (build + foreground smoke only, per the delegate-build/controller-runs discipline)
+seeds: [42, 43, 44, 100, 101, 102]
+verdict: 6-SEED GO (6/6, coordinator-run) — GO_6of6=True, verdict_earned=GO. The 1-seed smoke's closed learn-within-a-conversation loop holds across all six seeds.
 artifacts:
+  - research/findings/raw/lanes/stageA/continuous_learn_in_conversation_6seed.json
   - research/findings/raw/lanes/stageA/continuous_learn_in_conversation_s42_smoke.json
 runner: research/runners/_continuous_learn_in_conversation_derisk.py
 instrument: build_one_brain(co_resident_eprop=True) makes ONE persistent SimulationBridge; ONE CoResidentEpropNet (`_mk_merged_net`) + ONE ConjunctiveFamiliarityGate are constructed ONCE and never rebuilt; the conversation runs as SEGMENTS on the SAME bridge/shim/snap (pre-teach → learn → M intervening turns → query) via CF.run_chat; the mid-conversation learning event is I7._train_eprop on the persistent net (a real e-prop weight change in the shared cp_connections); the reply is read by AcquiredReadComposer.query_patient consulting the LIVE net. SIM_BACKEND=numpy, cfg.seed-controlled, NO sim/ edit, reuse-by-import.
 ---
+<!--derived-->
+**⭐ 6-SEED CONFIRMATION (coordinator-run, `research/findings/raw/lanes/stageA/continuous_learn_in_conversation_6seed.json`): GO 6/6 (`GO_6of6=True`, `verdict_earned=GO`).** The closed learn-within-a-conversation loop — a fact taught mid-conversation, via an on-substrate e-prop weight change, causally changing a LATER reply on ONE persistent spiking bridge, with the moat intact — holds on all six seeds (42/43/44/100/101/102), not just the smoke seed.
+
 
 # The continuous loop — a fact learned mid-conversation changes a later reply on ONE persistent brain (1-seed smoke)
 
