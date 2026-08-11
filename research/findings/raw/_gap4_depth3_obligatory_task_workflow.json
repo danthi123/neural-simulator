@@ -1,0 +1,50 @@
+{
+  "run_id": "wf_d2843076-028",
+  "runner": "workflow: gap4-depth3-obligatory-task (scratchpad/depth3_task_wf.js) — coordinator-authored summary of the 6-agent result",
+  "provenance": {
+    "source": "Workflow wf_d2843076-028 (6 agents: 5 design + 1 synthesis); coordinator-transcribed from the returned result + per-agent journal.jsonl",
+    "script": "scratchpad/depth3_task_wf.js",
+    "note": "the numpy MLP backprop-oracle probes ran in agent scratchpads (oracle_probe.py / oracle_probe2.py, ephemeral); this json records their reported held-out numbers + the synthesis verdict. NOT a single-runner artifact."
+  },
+  "backend": "numpy",
+  "device": "cpu",
+  "sim_backend": "numpy",
+  "preconditions": [
+    {"name": "oracle_ceiling_exists", "ok": true, "note": "each family's backprop oracle reaches high TRAIN accuracy (the task is fittable) — the held-out gap is generalization/separation, not un-fittability"},
+    {"name": "width_sweep_rules_out_underparameterization", "ok": true, "note": "depth-2 was swept to width 512; its held-out limit is representational/inductive, not capacity-starvation"},
+    {"name": "adversarial_refutation_ran", "ok": true, "note": "a dedicated verifier gave the depth-2 net its best shot (wide/long/Adam/weight-decay) per candidate; none reached the property"}
+  ],
+  "probe": "gap4-depth3-obligatory-task design+adversarial-verify workflow (wf_d2843076-028)",
+  "question": "does a task exist where a depth-2 backprop ORACLE underfits held-out at ALL widths (P1) AND a depth-3 oracle clears it >0.85, SGD-learnable, on a novel-combination split (P2)?",
+  "method": "self-contained numpy MLP backprop oracle (ReLU, softmax-CE / MSE, Adam), depth in {1,2,3,4,5} x width sweep {16..512} x 2 seeds, over 5 candidate task families + controls",
+  "n_families": 5,
+  "n_with_property": 0,
+  "n_survivors": 0,
+  "verdict": "ZERO — no task exhibits the property; the failure is STRUCTURAL (fundamental for a plain-MLP oracle class), not a search miss",
+  "per_family_heldout": [
+    {"family": "pointer_chase f^3(s) novel-fn", "d1": 0.70, "d2": 0.73, "d3": 0.74, "why": "no separation — high-in-degree-node shortcut"},
+    {"family": "hier_bool XOR->AND->parity", "d1": 0.86, "d2": 0.86, "d3": 0.93, "why": "depth-2 does NOT underfit; width substitutes for depth"},
+    {"family": "nested_lookup random tables", "d1": 0.67, "d2": 0.66, "d3": 0.59, "why": "depth-3 WORSE; pure memorization"},
+    {"family": "quasigroup depth-2 chain (control)", "d1": 0.00, "d2": 0.00, "d3": 0.00, "why": "shortcut-free => nobody generalizes"},
+    {"family": "quasigroup depth-3 chain (Latin square)", "d1": 0.11, "d2": 0.00, "d3": 0.00, "why": "all depths memorize (train->1.0, held-out below chance)"},
+    {"family": "tent^3 / tent^5 (Telgarsky)", "d2": 0.66, "d2_best": 0.99, "d3": 0.77, "why": "k=3 depth-2 CAN do it; k=5 nobody learns"}
+  ],
+  "obstruction": {
+    "representation_route": "the depth-2->depth-3 increment is ~one extra composition (squaring linear-piece count), but a width-W depth-2 net already yields O(W) pieces. Provable depth-2 lower bounds need width EXPONENTIAL in the depth-GAP, and the gap is 1 -> anything depth-3 represents (~2^3 oscillations) a width-16 depth-2 also represents (P1 fails). Forcing depth-2 to underfit needs depth >> 3, not SGD-learnable (tent^5 sat at chance for every depth incl 3-5) (P2 fails). The separable window and the learnable window do not overlap.",
+    "generalization_route": "systematic generalization needs an inductive bias to REUSE intermediate factors (weight-tying / bottleneck / recurrence / attention). Plain fully-connected depth is NOT that bias — it is capacity (more memorization; depth-3 generalized WORSE on nested_lookup). Add structure for depth-3 to generalize -> a shallow net exploits it too (P1 fails); remove it -> held-out underdetermined, no depth generalizes (P2 fails).",
+    "root_cause": "for a plain MLP, depth's only lever is representational capacity; the depth-2->depth-3 increment is exponentially small vs width (representation) and not an inductive bias at all (generalization) — so no bounded-width depth-2 net can be made to underfit EXACTLY what a bounded-width depth-3 net fits, at toy scale, under SGD."
+  },
+  "consequence_for_gap4": "the premise 're-pose the transport-free DFA e-prop depth-3 sweep on a depth-3-obligatory TASK with a plain-MLP oracle ceiling' is UNACHIEVABLE — no such task exists for that oracle class. This is fundamental, and CORROBORATES 2026-08-02-gap4-DFA-eprop-is-depth-robust-scales-to-N4. Do NOT wire a new --task into the depth3 runner; the held-out-accuracy framing cannot separate depth-2 from depth-3.",
+  "corrected_measurement": {
+    "reframe": "re-pose the depth-3 credit question as LAYER-3 CREDIT FIDELITY, not task accuracy depth-2 can't reach",
+    "task": "train a 3-hidden-layer net to FIT a genuinely depth-3-composed target where all-train fit provably engages layer 3 — tent^3 regression (v=tent(tent(tent(x))), MSE) or quasigroup DEPTH-3 chain (train-fit only). Small input, seconds. Additive --task tent3_fit / qgroup3_fit, default-off, data-only, NO sim/ edit.",
+    "go_gate": "transport-free DFA e-prop reaches (a) layer-3 weight-update cosine-alignment to the backprop-oracle layer-3 gradient >= 0.6 AND rising with training, AND (b) final train-loss within 10% of the backprop-oracle depth-3 loss. Compare vs the depth-2 oracle on the same target: depth-2 train-loss must be strictly worse (confirms depth-3-engaging on FIT).",
+    "anti_cheats": [
+      "backprop-oracle ceiling exists + hits loss~0 at depth-3",
+      "permuted-target => alignment <= 0 and no learning",
+      "depth-separating — the same rule at depth-2 cannot fit the depth-3 target (loss floor)",
+      "lever-moved — apical-lesion / B=0 collapses layer-3 alignment to ~0",
+      "transport-free assertion — credit path reads only fixed-random/KP feedback + local activity, never a forward W^T"
+    ]
+  }
+}
