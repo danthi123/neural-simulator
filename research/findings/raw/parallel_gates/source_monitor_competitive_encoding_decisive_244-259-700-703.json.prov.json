@@ -1,0 +1,37 @@
+{
+ "run_id": "1786436538-4038756",
+ "runner": "research/runners/_laneC_source_monitor_competitive_encoding_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_laneC_source_monitor_competitive_encoding_gate.py",
+  "--competitive-encoding",
+  "on",
+  "--seeds",
+  "244",
+  "259",
+  "700",
+  "701",
+  "702",
+  "703",
+  "--json",
+  "research/findings/raw/parallel_gates/source_monitor_competitive_encoding_decisive_244-259-700-703.json"
+ ],
+ "git_sha": "f1fa95ee9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-11T04:22:18",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 66545.9,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/parallel_gates/source_monitor_competitive_encoding_decisive_244-259-700-703.json"
+}

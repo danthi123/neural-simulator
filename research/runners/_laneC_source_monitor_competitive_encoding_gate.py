@@ -319,11 +319,15 @@ def evaluate_seed(seed: int, *, config: SourceMonitorConfigCompete | None = None
 
     # --- anti-cheats (execute, do not remember) --------------------------------
     # (d) the lever MOVED: foreign (cross-talk) synaptic weight was actually depressed.
+    #     REQUIRED only where there is cross-talk to depress (foreign_l1_before > 0 — the weak-encoding
+    #     seeds). On a CLEAN seed (no rival cross-talk) CE is CORRECTLY a no-op (foreign_l1 0 -> 0), which
+    #     is the expected no-harm-trivially-holds case, NOT a VOID test — requiring movement there would
+    #     crash the fresh-guard seeds where the mechanism should do nothing.
     lever(
         "competitive-encoding foreign L1",
         round(ce["foreign_l1_before"], 6),
         round(ce["foreign_l1_after"], 6),
-        required=bool(ce["enabled"]),
+        required=bool(ce["enabled"] and ce["foreign_l1_before"] > 0.0),
     )
     # (a) load-bearing on the weak class: the weakest-source floor criterion must FAIL
     #     when the mechanism is a no-op (competitive-encoding OFF == baseline).  Only
