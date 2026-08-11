@@ -87,11 +87,26 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   re-pose deep-credit as **LAYER-3 CREDIT FIDELITY** (transport-free cosine-alignment to the backprop-oracle layer-3
 >   gradient on a tent³-FIT target) — the achievable next test. Two runner instrument-bugs fixed (gap#4 leakage→UNDEFINED;
 >   competitive-encoding clean-seed no-op). Emergence full-surface 6-seed killed on a ~13-20h ETA (smoke stands).
-> - **NEXT (the single literal next build):** the gap#4 LAYER-3-CREDIT-FIDELITY de-risk — `--task tent3_fit` on the
->   existing DendriticMLP+DFA-eprop harness, GO = layer-3 update cosine-align ≥0.6 & rising + train-loss within 10% of
->   the depth-3 backprop oracle, depth-2 strictly worse; anti-cheats (oracle ceiling, permuted→0, depth-separating,
->   apical-lesion collapses align, transport-free). Data-only, NO sim/ edit. **Also OWED:** ~129 accumulated worktrees
->   need a careful cleanup pass (clutter, non-blocking).
+> - **✅ ~11:15Z FINAL-2 — the gap#4 LAYER-3-CREDIT-FIDELITY test RAN + 2 more crux next-mechanisms banked (~33 commits
+>   total).** (i) **⭐ gap#4 layer-3 credit fidelity `1bcca633`:** where testable (seed 42, BP-depth-3 ceiling holds),
+>   **transport-free DFA e-prop does NOT reach the 3rd hidden layer** — its fit sticks at the mean-predictor,
+>   indistinguishable from permuted + B=0-lesion, while BP-depth-3 fits (the known DFA fixed-feedback deep-layer limit).
+>   6-seed AGGREGATE honestly UNDEFINED (tent³/width-8 ceiling seed-fragile — instrument needs a robustly-fittable
+>   depth-3 target). Also fixed the runner's invalid a3-alignment gate → FIT gate (a3 is output-adjacent =
+>   target-independent). **Science next = LEARNED feedback (weight-mirror / Kolen-Pollack) or the φ′-vanishing fix.**
+>   (ii) **emergence hetero-competition allocation `d7f85069` = 6-SEED GO** — closes the regime-C starvation wall
+>   (store 0.333→1.000, all anti-cheats hold 6/6); the emergence allocation-capacity wall is closed at de-risk level.
+>   (iii) **Benna-Fusi chain `334ce884` = 6-seed NEGATIVE** — multi-timescale consolidation does NOT beat single-var
+>   metaplasticity + still leaves the oldest fact at 0.0; the continual residual is fact-CODE interference, redirect to
+>   **sparse/orthogonal fact codes** (a THIRD lane pointing at disjoint-codes-under-pressure — with source
+>   competitive-encoding + emergence hetero-allocation: one unifying biology across 3 cruxes).
+> - **NEXT (the single literal next builds, dependency-ordered):** (a) gap#4 LEARNED-FEEDBACK de-risk (weight-mirror /
+>   Kolen-Pollack replacing DFA fixed feedback on the same tent³-fit / layer-3-fidelity harness — does learned feedback
+>   reach layer 3 where DFA could not?) + a robustly-fittable depth-3 target so the 6-seed is decisive; (b) sparse/
+>   orthogonal fact codes for continual acquisition-at-scale (the disjoint-codes mechanism, now convergent across 3
+>   lanes). **Also OWED:** ~129 accumulated worktrees need a careful cleanup pass (clutter, non-blocking); two build
+>   agents deferred/stalled this wave (coordinator-recovered both) — the reliable pattern is delegate-build + run-sweeps-
+>   as-coordinator.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 

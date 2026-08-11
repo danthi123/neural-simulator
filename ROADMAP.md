@@ -143,9 +143,14 @@ design+verify workflow then PROVED a depth-3-*obligatory* task is **fundamentall
 plain-MLP oracle** (5 families; Telgarsky depth-separation needs width exponential in the depth-*gap*, and plain depth
 is capacity, not an inductive bias). So the whole "task-accuracy that depth-2 can't reach" measurement was
 unachievable — the crux is re-posed as **LAYER-3 CREDIT FIDELITY**: does transport-free DFA error reach the 3rd hidden
-layer (cosine-alignment to the backprop-oracle layer-3 gradient) on a target that provably *fits* only with layer 3
-(tent³). That is the achievable next test. All are narrow de-risks (smokes / 6-seed confirms), not integrated
-capabilities.
+layer, on a target (tent³) that provably *fits* only with layer 3. **That test was RUN, and the answer where testable
+(seed 42, BP-depth-3 ceiling holds) is NO — transport-free DFA e-prop does NOT reach the 3rd hidden layer** (its fit
+sticks at the mean-predictor, indistinguishable from permuted + zero-feedback controls, while backprop fits): the known
+DFA fixed-feedback deep-layer limit. The 6-seed aggregate is honestly UNDEFINED (the tent³/width-8 backprop ceiling is
+seed-fragile). **Next = LEARNED feedback (weight-mirror / Kolen-Pollack) or the φ′-vanishing fix** — the feedback must be
+learned to align with the forward pathway so error reaches deep layers. (An instrument correction was banked too: the
+output-adjacent a3 alignment is target-INDEPENDENT, so the FIT — not the alignment — is the valid signal.) All are
+narrow de-risks (smokes / 6-seed confirms/negatives), not integrated capabilities.
 
 **2026-08-08 OPEN-ENDED CONVERSATION arc (ultracode, owner-directed).** The
 TRUE-ONE-BRAIN conversation loop (honesty + affect + curiosity + no-confab moat,
