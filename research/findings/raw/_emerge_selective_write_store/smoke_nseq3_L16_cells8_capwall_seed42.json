@@ -1,0 +1,93 @@
+{
+  "probe": "emerge_selective_write_store",
+  "verdict": "HONEST NEGATIVE / BOUNDARY \u2014 the store did not cleanly restore the interference-broken horizon: store 0.333 did not restore (need >=0.90 and >= bare+0.15, bare 0.333); not load-bearing (store 0.333 vs lesion 0.333); selectivity inert (store 0.333 vs always-write 0.333) \u2014 the recovery is 'more memory', not selective write; not context-driven (swap 0.333 < 0.90). This maps the residual and names the next mechanism (the content-addressed completion of a merged allocation chain is the frontier the horizon finding handed over).",
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "cost_acknowledged": true,
+  "smoke": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "oracle>0.99_task_solvable",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f50ff7be980>",
+      "note": "else the task is not context-solvable -> INCONCLUSIVE, not a negative"
+    },
+    {
+      "kind": "require",
+      "name": "bare_broke_under_interference",
+      "ok": true,
+      "detail": "measured=0.3333 expect=<function main.<locals>.<lambda> at 0x7f50ff7be980>",
+      "note": "the store's job is to rescue a BROKEN horizon; if bare already holds there is nothing to rescue"
+    },
+    {
+      "kind": "require",
+      "name": "permute_attribution_instrument_collapses",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f50ff7be980>",
+      "note": "permuted keys must fall to <= chance, else the content-addressed recall is not key-driven"
+    }
+  ],
+  "mechanism": "SELECTIVE-WRITE (mismatch/novelty-gated) content-addressable store keyed on the on-bridge HTM Temporal-Memory's allocation SDRs (the priming-chain winner-cell subsets in the shared middle); content-addressed completion recovers a broken/merged priming chain by an earlier clean allocation key; the merged (ambiguous) keys are POISONED at write, so the read is not trapped by them",
+  "task": "EMERGE-14 overlap corpus [cue, <L middle>, branch]; branch depends on the cue L+1 tokens back (n-gram pinned at chance 1/n_seq); anti-cheats: store-lesion (load-bearing) + always-write (selectivity gate) + permute-keys (attribution) + swap-follows-context (no confab) + oracle",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "distances": [
+      16
+    ],
+    "n_seq": 3,
+    "k_win": 4,
+    "act_th": 3,
+    "slack": -4,
+    "n_cells": 8,
+    "epochs": 35,
+    "tau_read": 0.5,
+    "l_far": 16,
+    "chance": 0.3333333333333333
+  },
+  "points": [
+    {
+      "L": 16,
+      "distance": 17,
+      "n_cells": 8,
+      "chance": 0.3333333333333333,
+      "bare": 0.3333333333333333,
+      "store": 0.3333333333333333,
+      "store_lesion": 0.3333333333333333,
+      "always_write": 0.3333333333333333,
+      "permute": 0.0,
+      "swap_follows": 0.3333333333333333,
+      "markov": 0.3333333333333333,
+      "oracle": 1.0,
+      "n_sel_keys": 16.0,
+      "n_sel_poisoned": 16.0,
+      "n_always_keys": 32.0,
+      "n_always_ambiguous": 16.0,
+      "per_seed": [
+        {
+          "seed": 42,
+          "L": 16,
+          "distance": 17,
+          "n_cells": 8,
+          "chance": 0.3333333333333333,
+          "bare": 0.3333333333333333,
+          "store": 0.3333333333333333,
+          "store_lesion": 0.3333333333333333,
+          "always_write": 0.3333333333333333,
+          "permute": 0.0,
+          "swap_follows": 0.3333333333333333,
+          "markov": 0.3333333333333333,
+          "oracle": 1.0,
+          "n_sel_keys": 16,
+          "n_sel_poisoned": 16,
+          "n_always_keys": 32,
+          "n_always_ambiguous": 16
+        }
+      ]
+    }
+  ],
+  "elapsed_seconds": 12.4,
+  "HONEST_NOTE": "reuse-by-import of the EMERGE-14 on-bridge learner; NO sim/ edit. Memorise-and-recall horizon (apples-to-apples with the deltastore reservoir KV horizon). Keys are the HTM's OWN allocation SDRs in the SHARED MIDDLE (t>=1), NOT the raw cue input (t=0) \u2014 keying on t=0 would be a trivial cue->branch input lookup bypassing the HTM. 1-seed is a SMOKE indicator; the decisive run is the 6-seed sweep."
+}
