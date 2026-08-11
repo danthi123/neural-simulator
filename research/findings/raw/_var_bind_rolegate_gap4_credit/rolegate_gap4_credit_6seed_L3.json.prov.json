@@ -1,8 +1,8 @@
 {
- "run_id": "1786469689-170755",
+ "run_id": "1786472332-184417",
  "runner": "research/runners/_var_bind_rolegate_gap4_credit_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-a28524bdc3b49cca6/research/runners/_var_bind_rolegate_gap4_credit_derisk.py",
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_var_bind_rolegate_gap4_credit_derisk.py",
   "--seeds",
   "42",
   "43",
@@ -13,13 +13,11 @@
   "--distances",
   "3",
   "--n-test",
-  "48",
-  "--n-train",
-  "120",
+  "90",
   "--out",
   "research/findings/raw/_var_bind_rolegate_gap4_credit/rolegate_gap4_credit_6seed_L3.json"
  ],
- "git_sha": "739a8867f",
+ "git_sha": "3d655eb52",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -27,15 +25,15 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-11T13:34:49",
+ "started": "2026-08-11T14:18:52",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 116.0,
- "corpus_check_query": "role-gate credit assignment e-prop eligibility trace three-factor deep credit variable binding",
- "corpus_check_fresh": true,
+ "corpus_check_age_s": 102887.5,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": false,
  "artifact": "research/findings/raw/_var_bind_rolegate_gap4_credit/rolegate_gap4_credit_6seed_L3.json"
 }

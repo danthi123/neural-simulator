@@ -123,10 +123,13 @@ OUT = Path("research/findings/raw/_var_bind_rolegate_gap4_credit/rolegate_gap4_c
 # ====================================================================================================================
 class EpropCreditGate(PolicyGate):
     def __init__(self, dim=_DIM, gain=4.0, lr=0.08, seed=0, feedback="kp", kp_lr=0.3, elig_leak=1.0,
-                 readout_scale=3.0, homeo=0.0, target_rate=None, b_init=0.0):
+                 readout_scale=3.0, homeo=0.0, target_rate=None, b_init=0.0, kp_wd=0.01):
         super().__init__("recurrent", dim=dim, gain=gain, lr=lr, seed=seed)
-        self.feedback = feedback           # "kp" | "fixed" | "aligned"
+        self.feedback = feedback           # "kp" | "fixed" | "aligned" | "kp_canon"
         self.kp_lr = float(kp_lr)
+        self.kp_wd = float(kp_wd)          # KP weight decay (Akrout 2019): the ALIGNMENT ATTRACTOR. Used ONLY by "kp_canon"
+                                           # (canonical co-adapting KP). "kp" is the NON-canonical arm (frozen R, no decay,
+                                           # B-only) -> anti-aligns; "kp_canon" co-adapts the forward readout R AND B with decay.
         # intrinsic firing-rate HOMEOSTASIS (Turrigiano; the biological COMPANION to the plasticity rule): the gate
         # must fire ~once per sentence (LOAD the subject) -- but 1 subject vs L distractors biases the credit toward
         # "don't fire", collapsing the bias silent. A slow homeostatic nudge on b toward a target mean-rate keeps the
@@ -157,7 +160,10 @@ class EpropCreditGate(PolicyGate):
             B = np.eye(F, dtype=np.float64)                     # = R^T (weight TRANSPORT: the credit-fidelity ceiling)
         else:
             B = rB.normal(0.0, 1.0 / np.sqrt(F), (F, F))        # SEPARATE random feedback stream (transport-free)
-        self.bw_cos_init = self._cos_to_I(B, F)
+        # CANONICAL KP co-adapts a LEARNABLE forward readout R (init = the frozen readout, then adapts) alongside B; the
+        # other arms keep R frozen = readout_scale*I (implicit in `logits = readout_scale*m`).
+        R = (self.readout_scale * np.eye(F, dtype=np.float64)) if self.feedback == "kp_canon" else None
+        self.bw_cos_init = self._cos_to_I(B, F)                  # cos(B, R^T); R^T init == readout_scale*I -> same as cos(B,I)
         D = self.w.shape[0]
         for _ in range(episodes):
             order = np.random.permutation(len(stream))
@@ -187,19 +193,26 @@ class EpropCreditGate(PolicyGate):
                     if p > 0.5:
                         g = 1.0                                  # the recurrent latch (the 'controller-seen' signal)
                 # transport-free learning signal from the DISTAL verb-prediction error (readout R = fixed lexicon)
-                logits = self.readout_scale * m
+                logits = (R @ m) if R is not None else (self.readout_scale * m)
                 ez = np.exp(logits - logits.max()); probs = ez / ez.sum()
                 delta = probs.copy(); delta[true_feat] -= 1.0    # d CE(verb) / d logits
-                ell = self.readout_scale * (B @ delta)           # projected onto the feature memory (B != R^T)
+                ell = (B @ delta) if R is not None else (self.readout_scale * (B @ delta))  # learning signal (B != R^T)
                 self.w -= self.lr * (ell @ E_w)                  # grad = learning-signal . eligibility (three-factor)
                 self.w_e -= self.lr * float(ell @ E_we)
                 self.b -= self.lr * float(ell @ E_b)
                 if self.homeo > 0.0:                             # intrinsic firing-rate homeostasis (default-off companion)
                     tgt = self.target_rate if self.target_rate is not None else (1.0 / max(1, nC))
                     self.b -= self.homeo * (p_sum / max(1, nC) - tgt)
-                if self.feedback == "kp":                        # Kolen-Pollack: co-adapt B by the matched transposed delta
+                if self.feedback == "kp":                        # NON-canonical KP: co-adapt B ONLY (frozen R, NO decay) -> the honest-negative arm (anti-aligns)
                     B = B - self.kp_lr * self.lr * np.outer(m, delta)
-        self.bw_cos_final = self._cos_to_I(B, F)
+                elif self.feedback == "kp_canon":                # CANONICAL Kolen-Pollack (Akrout 2019): co-adapt forward R AND feedback B by the matched (transposed) gradient PLUS weight decay -- the decay is the alignment attractor
+                    R -= self.lr * (np.outer(delta, m) + self.kp_wd * R)          # forward readout co-adapts (task grad + decay)
+                    B -= self.kp_lr * self.lr * (np.outer(m, delta) + self.kp_wd * B)  # feedback tracks R^T (matched transpose + decay)
+        if R is None:
+            self.bw_cos_final = self._cos_to_I(B, F)
+        else:                                                     # canonical KP: alignment is B vs the (co-adapted) R^T
+            bR, rT = B.ravel(), R.T.ravel()
+            self.bw_cos_final = float(bR @ rT / (np.linalg.norm(bR) * np.linalg.norm(rT) + 1e-12))
 
 
 def _gate_stats(gate, slot_factory, test_seqs, code_of, feat_of, verb_tok_of_feat, F):
@@ -214,7 +227,7 @@ def _gate_stats(gate, slot_factory, test_seqs, code_of, feat_of, verb_tok_of_fea
 # One (seed, L) point
 # ====================================================================================================================
 def run_point(seed, N, F, L, n_train, n_test, recur, hold_steps, load_steps, clear_steps, episodes,
-              eprop_lr, kp_lr, readout_scale, homeo, b_init, reinf_episodes):
+              eprop_lr, kp_lr, readout_scale, homeo, b_init, reinf_episodes, kp_wd=0.01):
     np.random.seed(seed)                                          # the REINFORCE sampler + episode order use np.random
     rng = np.random.default_rng(seed)
     chance = 1.0 / F
@@ -260,14 +273,15 @@ def run_point(seed, N, F, L, n_train, n_test, recur, hold_steps, load_steps, cle
     # ---- THE gap#4 DEEP-CREDIT gates (same architecture + deployment; ONLY the credit rule differs) ----
     def _eprop(feedback, off, elig_leak=1.0, perm_reward=False, homeo_v=homeo, b0=b_init):
         g = EpropCreditGate(gain=4.0, lr=eprop_lr, seed=seed + off, feedback=feedback, kp_lr=kp_lr,
-                            elig_leak=elig_leak, readout_scale=readout_scale, homeo=homeo_v, b_init=b0)
+                            elig_leak=elig_leak, readout_scale=readout_scale, homeo=homeo_v, b_init=b0, kp_wd=kp_wd)
         g.train_eprop(train_seqs, code_of, feat_of, F, N, episodes=episodes, perm_reward=perm_reward)
         st = _gate_stats(g, _slot, test_seqs, code_of, feat_of, verb_tok_of_feat, F)
         st["bw_cos_init"] = g.bw_cos_init; st["bw_cos_final"] = g.bw_cos_final
         return st
 
     ep_aligned = _eprop("aligned", 41)                            # deep-credit + transport CEILING (credit-fidelity)
-    ep_kp = _eprop("kp", 53)                                      # deep-credit + transport-free KP-learned feedback
+    ep_kp = _eprop("kp", 53)                                      # deep-credit + transport-free NON-canonical KP (frozen R, no decay) -> anti-aligns
+    ep_kp_canon = _eprop("kp_canon", 61)                          # deep-credit + CANONICAL co-adapting KP (Akrout 2019): co-adapt R + B + weight decay -- the SEND-BACK confirm (is transport-free alignment structural, not dimensional?)
     ep_fixed = _eprop("fixed", 67)                                # deep-credit + transport-free fixed-random (DFA)
     ep_notrace = _eprop("aligned", 79, elig_leak=0.0)            # LEVER: no eligibility trace (only the last decision)
     ep_nohomeo = _eprop("aligned", 85, homeo_v=0.0, b0=0.0)      # LEVER: homeostasis OFF (the reliability companion)
@@ -279,12 +293,14 @@ def run_point(seed, N, F, L, n_train, n_test, recur, hold_steps, load_steps, cle
             "acc_lesion": acc_lesion, "acc_permuted_position": acc_permpos, "htm_test": htm_test,
             "ngram_floor_test": ngram_test, "ngram_order": ngram_order,
             "reinforce_gate": reinf, "reinforce8_gate": reinf8, "identity_gate": ident,
-            "eprop_aligned_gate": ep_aligned, "eprop_kp_gate": ep_kp, "eprop_fixed_gate": ep_fixed,
+            "eprop_aligned_gate": ep_aligned, "eprop_kp_gate": ep_kp, "eprop_kp_canon_gate": ep_kp_canon,
+            "eprop_fixed_gate": ep_fixed,
             "eprop_notrace_gate": ep_notrace, "eprop_nohomeo_gate": ep_nohomeo, "eprop_permreward_gate": ep_permrew}
 
 
 _GATE_KEYS = ["reinforce_gate", "reinforce8_gate", "identity_gate", "eprop_aligned_gate", "eprop_kp_gate",
-              "eprop_fixed_gate", "eprop_notrace_gate", "eprop_nohomeo_gate", "eprop_permreward_gate"]
+              "eprop_kp_canon_gate", "eprop_fixed_gate", "eprop_notrace_gate", "eprop_nohomeo_gate",
+              "eprop_permreward_gate"]
 
 
 def _agg_gate(per, key):
@@ -383,6 +399,7 @@ def main():
         chance = far["chance"]
         re, r8, iy = far["reinforce_gate"], far["reinforce8_gate"], far["identity_gate"]
         al, kp, fx = far["eprop_aligned_gate"], far["eprop_kp_gate"], far["eprop_fixed_gate"]
+        kpc = far["eprop_kp_canon_gate"]                         # CANONICAL co-adapting KP (the adversarial-verify confirm arm)
         nt, nh, pr = far["eprop_notrace_gate"], far["eprop_nohomeo_gate"], far["eprop_permreward_gate"]
 
         print(f"\n-- ROLE-GATE x gap#4 DEEP-CREDIT verdict at L={far['L']} (dist {far['distance']}, held-out novel "
@@ -429,7 +446,10 @@ def main():
                   f"(gap {al['token_identity_gap']:+.2f}[min {al['gap_min']:+.2f}], p0/p>0 {al['fire_pos0']:.2f}/"
                   f"{al['fire_posgt0']:.2f}); eprop_KP(transport-free) {kp['acc']:.3f}[min {kp['acc_min']:.3f}] "
                   f"(gap {kp['token_identity_gap']:+.2f}, cos(B,I) {kp.get('bw_cos_init', float('nan')):+.2f}->"
-                  f"{kp.get('bw_cos_final', float('nan')):+.2f}); eprop_fixed {fx['acc']:.3f} (gap "
+                  f"{kp.get('bw_cos_final', float('nan')):+.2f}); eprop_KP_CANON(canonical: co-adapt R+decay) "
+                  f"{kpc['acc']:.3f} (gap {kpc['token_identity_gap']:+.2f}, cos(B,R^T) "
+                  f"{kpc.get('bw_cos_init', float('nan')):+.2f}->{kpc.get('bw_cos_final', float('nan')):+.2f}); "
+                  f"eprop_fixed {fx['acc']:.3f} (gap "
                   f"{fx['token_identity_gap']:+.2f}); marker {far['acc_marker']:.3f}; chance {chance:.3f}. "
                   f"identity-gate crux {iy['token_identity_gap']:+.2f} (fails={identity_fails}). LEVERS: no-trace "
                   f"{nt['acc']:.3f} (trace-bites={trace_bites}); no-homeo min {nh['acc_min']:.3f} "
@@ -449,13 +469,21 @@ def main():
                        f"BPTT ceiling) reaches the MARKER CEILING reliably (aligned held-out {al['acc']:.3f}, gap "
                        f"{al['token_identity_gap']:+.2f}, fires pos0 {al['fire_pos0']:.2f}/pos>0 {al['fire_posgt0']:.2f}) "
                        f"where plain REINFORCE ({re['acc']:.3f}) and even the banked host position-oracle (0.265) FAILED. "
-                       f"{common} The eligibility TRACE and intrinsic HOMEOSTASIS are both load-bearing (levers bite); the "
-                       f"identity gate fails the crux. THE RESIDUAL, precisely: the TRANSPORT-FREE (brain-based) feedback "
-                       f"(KP/fixed) does NOT yet reach role at the F={far['F']} readout dim -- the SAME feedback-alignment "
-                       f"sub-problem the gap#4 lane already carries (fixed-DFA can't; KP-learned reaches it only at higher "
-                       f"dim). Next rung: a higher-dim / weight-mirror learned feedback, or the emergence-engine's own "
-                       f"sequence code supplying position -- trained WITH this deep-credit rule. NOT reward-over-token-"
-                       f"statistics, and NOT the credit rule in isolation. Reuse-by-import; NO sim/ edit.")
+                       f"{common} The eligibility TRACE is load-bearing (trace-bites={trace_bites}); intrinsic HOMEOSTASIS "
+                       f"is a worst-seed reliability aid (homeo-bites={homeo_bites}), NOT load-bearing when False; the "
+                       f"identity gate fails the crux. THE RESIDUAL, precisely (CORRECTED 2026-08-11 after adversarial "
+                       f"verify): the transport-free arms do NOT reach role -- but NOT because of readout dimension. The "
+                       f"NON-canonical KP (frozen R=I, no weight decay, B-only) has no alignment attractor so B ANTI-aligns "
+                       f"(cos(B,I) {kp.get('bw_cos_final', float('nan')):+.2f}); CANONICAL co-adapting KP (Akrout 2019: "
+                       f"co-adapt forward R + feedback B + weight decay) RECOVERS alignment at THIS F={far['F']} "
+                       f"(cos(B,R^T) {kpc.get('bw_cos_final', float('nan')):+.2f}) -- so the feedback-alignment residual is "
+                       f"STRUCTURAL, not dimensional. BUT aligned transport-free feedback is NECESSARY-NOT-SUFFICIENT: "
+                       f"canonical KP still does not reach role (acc {kpc['acc']:.3f}, gap "
+                       f"{kpc['token_identity_gap']:+.2f}) -- a DEEPER residual (the co-adapting readout appears to absorb "
+                       f"the credit pressure the gate needs). Next rung: chained multi-hop FA + sigma-prime (needs a hidden "
+                       f"layer this single-layer gate lacks), or hold/regularise the readout so it cannot absorb the credit, "
+                       f"or the emergence-engine's own sequence code supplying position -- trained WITH this deep-credit "
+                       f"rule. NOT 'higher readout dim'. Reuse-by-import; NO sim/ edit.")
         else:
             verdict = (f"ROLE-GATE HONEST NEGATIVE (first-class){smoketag} -- deep credit did NOT cleanly induce role even "
                        f"at the credit-fidelity ceiling. {common} The residual is NOT the credit rule alone -- it is the "
