@@ -106,7 +106,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   reads spikes, no leak. **⭐ THE NORTH-STAR INTEGRATION WORKS at de-risk level: the WM is a WORKING, load-bearing faculty
 >   combined into the emergence engine by a genuine neural conjunction to solve a compositional task neither can alone.**
 >   Honest residual (lane-b/c status): the per-channel subject/class IDENTIFICATION is a host argmax read instrument (the
->   COMBINATION is neural) → burndown = neural-WTA channel reads (reuse rung-2 / lever-3 stabilizer). NO sim/ edit.
+>   COMBINATION is neural) → burndown DONE: **rung-3c ✅ 6-SEED GO** (`51293023`) — the per-channel argmax reads are now
+>   the rung-2 emergent neural-WTA (down-ramp release-of-inhibition over K-pool D3 banks, winner read from spikes), the
+>   ENTIRE verb read path has NO host argmax (AST-enforced `no_host_argmax_in_read_path=True`), and it stays GO at ZERO
+>   cost: hybrid_wta_reads 0.995 [min 0.969] vs argmax-reads 0.974 (+0.021 — the WTA class read tracks the op-point the
+>   fixed threshold missed), subject preserved 1.000, teeth bite. Honest sub-negative (declared): the WTA self-calib
+>   doesn't bite on this clean latch (load-bearing only in the rung-2 blur regime). ⇒ the WM+HTM hybrid's read-out is now
+>   FULLY NEURAL. NO sim/ edit.
 >   **⭐⭐ ROLE-GATE RELIABILITY ARC (levers 1–5) IS COMPLETE + RESOLVED (2026-08-11):** transport-free credit RELIABLY
 >   induces the learned role-gate, via an align-then-train weight-mirror warm-up (lever 5 GO, `64fe447c`). The whole
 >   variable-binding-WM → conversation-faculty stack is now GO at de-risk/rate level: WM bind (spiking), multi-slot,
