@@ -67,11 +67,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   **UNTRAINED stabilized gate (random weights, zero learning) = 1.000 [min 1.000] on all 6 seeds**. The fire-once budget
 >   is an ONSET GATE that loads the first token — which IS the subject in this SUBJECT-FIRST stream. ⇒ **the entire
 >   reliability arc (levers 1–3) was on an ONSET-TRIVIAL task; the transport-free CREDIT question was never actually
->   testable here.** The residual is no longer basin/alignment/depth — it is the TASK. **LEVER 4 (the real test) = a
->   VARIABLE-SUBJECT-POSITION stream** (subject at a random ordinal each sentence, onset ≠ answer) so the structural
->   onset gate loads a distractor and ONLY a learned content/context-conditioned credit signal can solve it — making the
->   untrained + permuted-reward controls BITE and transport-free credit finally testable. (The stabilizer itself is a
->   BANKED reusable GO for the basin, and converges with rung 2's neural-WTA allocation.)
+>   testable here.** ⇒ **LEVER 4 = a VARIABLE-SUBJECT-POSITION stream** (Bates-MacWhinney case-cue role assignment:
+>   subject = the noun carrying an arbitrary LEARNED nominative tag at a RANDOM ordinal; onset ≠ answer) = **the CLEAN,
+>   ARC-CLOSING result** (`6cd33562`, task_valid=True — untrained 0.289 / permuted 0.281 / onset 0.289 all ≈ chance 0.25,
+>   the confound is GONE): on the genuinely-hard task, **transport-free credit does NOT reliably induce role** (chained-FA
+>   0.511 bimodal 2/6, canonical-KP 0.289 collapses 0/6) while **exact-feedback (transport) credit DOES** (aligned+stab
+>   0.950 [min 0.822], reliable 6/6; case-marker oracle 0.969). ⇒ **the role-gate reliability residual is now CLEANLY +
+>   DEFINITIVELY the transport-free FEEDBACK-ALIGNMENT RELIABILITY** — every other candidate (depth, σ′,
+>   alignment-recoverability, basin, task-onset-triviality) eliminated one-by-one across levers 1–4; FA differs from the
+>   reliable aligned arm ONLY in the feedback matrices. This is the SAME feedback-alignment sub-problem the gap#4 lane
+>   carries. **LEVER 5 (the role-gate's own next, a fresh arc) = stronger transport-free alignment** (longer Kolen-Pollack
+>   co-adaptation / weight-mirror warm-up) OR a cleaner hidden code making the NOM template linearly separable, trained
+>   with this credit rule. (The lever-3 stabilizer is a BANKED reusable GO for the basin; converges with rung 2's WTA.)
 >   (2) **emergent neural-WTA slot allocation** (a-1'd: RUNG6e's banked subproblem — reuse rungB1b's neural-WTA-gate + a
 >   self-calibrating competition threshold [BCM/synaptic-scaling] to replace the host free-counter). NB this CONVERGES
 >   with LEVER 3 — both need structural competition/WTA on the substrate.
@@ -82,11 +89,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   the emergence engine** (the north-star integration, demonstrated). BUT misses the strict +0.20 bar (0.641 vs 0.716):
 >   the fusion is LOSSY on the SUBJECT (WM subj 1.000 → hybrid 0.667) while class combines cleanly (0.974). Next = a
 >   SEPARATE-CHANNEL fusion (subject + class on distinct channels).
->   **SINGLE LITERAL NEXT:** LEVER 4 — re-run the role-gate reliability test on a VARIABLE-SUBJECT-POSITION stream
->   (subject at a random ordinal; onset ≠ answer), reusing the lever-2 hidden-layer + lever-3 stabilizer runners, so the
->   untrained + permuted-reward controls finally BITE and "does transport-free credit induce role" becomes testable. This
->   supersedes lever 3's onset-confounded result. (Rung 3's separate-channel fusion remains the parallel independent
->   lever; rung 2's neural-WTA allocation can reuse the lever-3 stabilizer.)
+>   **⭐ ROLE-GATE RELIABILITY ARC (levers 1–4) IS NOW CLEANLY CHARACTERIZED + CLOSED-TO-A-SINGLE-RESIDUAL:** the
+>   transport-free FEEDBACK-ALIGNMENT RELIABILITY (identical to the gap#4 lane's own long-open feedback-alignment rung).
+>   Every confound eliminated; the aligned/transport role-gate WORKS 6/6 (a usable scaffold). **SINGLE LITERAL NEXT (a
+>   VALUE FORK — owner may re-steer):** rung 3's **SEPARATE-CHANNEL FUSION** — the most tractable + north-star-relevant
+>   step (get a WORKING WM+HTM hybrid: fix the subject-corruption by routing subject + class on distinct channels, using
+>   the working aligned/host role-gate as the subject latch). In PARALLEL, the deep frontier is **LEVER 5** (stronger
+>   transport-free alignment / cleaner hidden code) = the role-gate's residual, which CONVERGES with the gap#4 lane —
+>   pursue it there, not as a separate role-gate arc. Rung 2's neural-WTA allocation reuses the lever-3 stabilizer (banked).
 > - **Deep-research provenance:** the VBWM design came from a 5-modality deep-research workflow (own-findings RAG +
 >   catalog/Kandel/textbooks + external biology via bio-research MCP + external ML + our substrate machinery). Finding:
 >   `research/findings/2026-08-11-variable-binding-working-memory-gated-slot-surpasses-HTM-heldout-1.000-vs-0.000-6seed-GO.md`.
