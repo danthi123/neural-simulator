@@ -1,0 +1,29 @@
+{
+ "run_id": "1786484641-244611",
+ "runner": "research/runners/_emerge_wm_hybrid_sepchan_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/emerge-wm-sepchan/research/runners/_emerge_wm_hybrid_sepchan_derisk.py",
+  "--seeds",
+  "42",
+  "--out",
+  "research/findings/raw/_emerge_wm_hybrid_sepchan/seed_42.json"
+ ],
+ "git_sha": "59e2f60c2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-11T17:44:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_emerge_wm_hybrid_sepchan/seed_42.json"
+}
