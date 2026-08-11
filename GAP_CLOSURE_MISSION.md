@@ -41,6 +41,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > - **COORDINATOR LOOP:** merge each branch as it lands (verify raw artifacts first); keep pool + 3090 saturated
 >   (relaunch/stock as jobs finish); launch more goal/roadmap arcs as budget allows. **MORNING:** read the
 >   continual-learning aggregate + the refreshed docs + report; decide on the flagged sim/ edit.
+> - **✅ BANKED so far (~06:00Z, all pushed both remotes):** (1) refreshed docs `58ee41ba`; (2) ⚠️ sim/ per-parameter
+>   heterogeneity reseed `1f4ea9f5` (one-brain enabler, DEFAULT-OFF, det-suite 9/9 — OWNER REVIEW); (3) spiking patient
+>   read-out in the live chat `ab042dc3` (6/6, argmax burned down); (4) W4-RSA belief HONEST-NEGATIVE `fa29f581` (confirms
+>   the wall is the DETECTOR not the belief); (5) **⭐ ONE-BRAIN merge `cd08cfde` (6/6 — chat now runs on a SINGLE
+>   SimulationBridge / cp_connections; co-residency)**; (6) emergent causal COMPOSITION `997080dd` (6/6 — turn-4 "why"
+>   graduates to a grounded moat-safe causal chain; the relational-code emergent successor named); (7) corpus breadth
+>   SCALES to 38 subjects / 253 facts, moat holds `5b7930cf` (from #6's 9). **IN FLIGHT:** cross-region synaptic
+>   INTERACTION (true one-brain, heavy sweep ~80min), continual-retention (interleaved-generative-replay), relational-
+>   spatial code (causal emergent follow-on), replay-consolidation lever. Pool + 3090 saturated on the continual-learning
+>   scale-up. Deferring agents handled by coordinator-run sweeps + waiters.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 
