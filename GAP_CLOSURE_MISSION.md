@@ -76,9 +76,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   DEFINITIVELY the transport-free FEEDBACK-ALIGNMENT RELIABILITY** — every other candidate (depth, σ′,
 >   alignment-recoverability, basin, task-onset-triviality) eliminated one-by-one across levers 1–4; FA differs from the
 >   reliable aligned arm ONLY in the feedback matrices. This is the SAME feedback-alignment sub-problem the gap#4 lane
->   carries. **LEVER 5 (the role-gate's own next, a fresh arc) = stronger transport-free alignment** (longer Kolen-Pollack
->   co-adaptation / weight-mirror warm-up) OR a cleaner hidden code making the NOM template linearly separable, trained
->   with this credit rule. (The lever-3 stabilizer is a BANKED reusable GO for the basin; converges with rung 2's WTA.)
+>   carries. **LEVER 5 = ✅ GO — THE CRUX IS RESOLVED** (`64fe447c`, adversarially verified MERGE-WITH-EDITS, reproduced
+>   + transport-free-ness unit-probe-confirmed): a TRANSPORT-FREE weight-mirror alignment WARM-UP (Akrout 2019 — B
+>   estimated from the forward map's NOISE RESPONSE, `E[outer(ξ, Wξ)]=Wᵀ`, NEVER reads Wᵀ) lifts the failing FA arm from
+>   0.494 [min 0.217] bimodal to **mirror_FA 0.981 [min 0.950] 6/6, matching the exact-feedback ceiling**, on the VALID
+>   hard varpos task (untrained/permuted/onset all bite; warm-up+permuted→0.000 proves the CREDIT carries it, not the
+>   alignment). **The elegant resolution: the residual was alignment TIMING, not magnitude** — aligning B BEFORE credit
+>   begins puts the gate in the role basin before the fire-everything attractor captures it (mirror_FA wins at cos 0.62
+>   while mirror_KP at cos 0.996 scores LOWER; lever-4 KP co-adapts to decent cos yet collapses). **⇒ TRANSPORT-FREE
+>   CREDIT RELIABLY INDUCES THE LEARNED ROLE-GATE — the whole reliability arc (levers 1–5) is COMPLETE.** Honest residual:
+>   resolved at the rate/host level (2-layer net + chained credit + host weight-mirror math); the on-substrate SPIKING
+>   realisation (DA-gated/noise-driven weight-mirror + lateral-inhibitory competition on the gate's spiking populations)
+>   is the named next rung — not "closed" until that spiking path is the deployed default. (Lever-3 stabilizer + rung-2
+>   WTA are banked reusable GOs for that spiking realisation.)
 >   (2) **emergent neural-WTA slot allocation = ✅ 6-SEED GO** (`29a7de1d`): RUNG6e's noise-picked wall is SURPASSED — an
 >   emergent neural WTA (down-ramp release-of-inhibition → one clean winner + HTM/Turrigiano homeostatic occupancy
 >   excitability steering the next entity to a free slot) replaces the host free-counter ENTITY-SPECIFICALLY: retrieve
@@ -97,14 +107,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   combined into the emergence engine by a genuine neural conjunction to solve a compositional task neither can alone.**
 >   Honest residual (lane-b/c status): the per-channel subject/class IDENTIFICATION is a host argmax read instrument (the
 >   COMBINATION is neural) → burndown = neural-WTA channel reads (reuse rung-2 / lever-3 stabilizer). NO sim/ edit.
->   **⭐ ROLE-GATE RELIABILITY ARC (levers 1–4) IS NOW CLEANLY CHARACTERIZED + CLOSED-TO-A-SINGLE-RESIDUAL:** the
->   transport-free FEEDBACK-ALIGNMENT RELIABILITY (identical to the gap#4 lane's own long-open feedback-alignment rung).
->   Every confound eliminated; the aligned/transport role-gate WORKS 6/6 (a usable scaffold). **SINGLE LITERAL NEXT (a
->   VALUE FORK — owner may re-steer):** rung 3's **SEPARATE-CHANNEL FUSION** — the most tractable + north-star-relevant
->   step (get a WORKING WM+HTM hybrid: fix the subject-corruption by routing subject + class on distinct channels, using
->   the working aligned/host role-gate as the subject latch). In PARALLEL, the deep frontier is **LEVER 5** (stronger
->   transport-free alignment / cleaner hidden code) = the role-gate's residual, which CONVERGES with the gap#4 lane —
->   pursue it there, not as a separate role-gate arc. Rung 2's neural-WTA allocation reuses the lever-3 stabilizer (banked).
+>   **⭐⭐ ROLE-GATE RELIABILITY ARC (levers 1–5) IS COMPLETE + RESOLVED (2026-08-11):** transport-free credit RELIABLY
+>   induces the learned role-gate, via an align-then-train weight-mirror warm-up (lever 5 GO, `64fe447c`). The whole
+>   variable-binding-WM → conversation-faculty stack is now GO at de-risk/rate level: WM bind (spiking), multi-slot,
+>   emergent-WTA allocation, the learned transport-free role-gate, AND the WM+HTM working neural hybrid. **The single
+>   remaining class of residual across ALL of these is the same: the on-substrate SPIKING realisation of the host/rate
+>   mechanisms** (the weight-mirror + chained credit; the WTA competition controller; the per-channel argmax reads) —
+>   each has a NAMED spiking next rung and banked reusable pieces (lever-3 stabilizer, rung-2 WTA). **SINGLE LITERAL NEXT
+>   (a VALUE FORK — owner may re-steer; flagged to owner this session):** the frontier has shifted from "which faculty
+>   works" to (A) **SCALE the working hybrid toward real-language conversation** (emergence-scale, GPU, IN FLIGHT) and
+>   (B) **the spiking-realisation burndown** of the now-GO rate mechanisms (rung-3c neural-WTA reads IN FLIGHT; then the
+>   spiking weight-mirror role-gate). Both advance the north-star; scale is the higher-leverage of the two.
 > - **Deep-research provenance:** the VBWM design came from a 5-modality deep-research workflow (own-findings RAG +
 >   catalog/Kandel/textbooks + external biology via bio-research MCP + external ML + our substrate machinery). Finding:
 >   `research/findings/2026-08-11-variable-binding-working-memory-gated-slot-surpasses-HTM-heldout-1.000-vs-0.000-6seed-GO.md`.
