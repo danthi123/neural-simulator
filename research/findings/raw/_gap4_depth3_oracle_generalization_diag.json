@@ -1,0 +1,22 @@
+{
+  "probe": "gap4_depth3_oracle_generalization_diagnostic",
+  "purpose": "Is the depth-3 RATE-oracle collapse (run_seed's DendriticMLP, full backprop) an OPTIMIZATION wall or a GENERALIZATION collapse? Train a depth-3 rate net on the SAME compositional-inheritance task (seed 42) across hyperparameters and read TRAIN vs held-out-INHERITANCE accuracy.",
+  "task": {"n_super": 12, "n_members": 8, "held_per_super": 3, "n_prop": 2, "member_id_dim": 3, "n_obs": 16, "noise": 0.02, "feature_seed": 0, "n_in": 7, "k_classes": 5, "n_inherit_heldout": 27, "chance": 0.333},
+  "seed": 42,
+  "backend": "numpy",
+  "depth_ladder_default_ep250_lr0.3_h96": [
+    {"n_hidden": 1, "train": 1.000, "inherit_heldout": 0.444},
+    {"n_hidden": 2, "train": 1.000, "inherit_heldout": 1.000},
+    {"n_hidden": 3, "train": 1.000, "inherit_heldout": 0.333}
+  ],
+  "depth3_hyperparam_sweep": [
+    {"lr": 0.05, "epochs": 800, "width": 96, "train": 1.000, "inherit_heldout": 0.407},
+    {"lr": 0.10, "epochs": 800, "width": 96, "train": 1.000, "inherit_heldout": 0.407},
+    {"lr": 0.05, "epochs": 250, "width": 96, "train": 0.428, "inherit_heldout": 0.333},
+    {"lr": 0.10, "epochs": 250, "width": 96, "train": 0.842, "inherit_heldout": 0.296},
+    {"lr": 0.30, "epochs": 800, "width": 96, "train": 1.000, "inherit_heldout": 0.296},
+    {"lr": 0.10, "epochs": 800, "width": 192, "train": 1.000, "inherit_heldout": 0.259}
+  ],
+  "interpretation": "GENERALIZATION collapse, NOT an optimization wall. Every depth-3 setting that FITS the training set (train->1.000) collapses to ~chance (0.259-0.407) on held-out INHERITANCE; the 2-hidden net generalizes PERFECTLY (train 1.000, inherit 1.000); wider (192) is WORSE (0.259). The compositional-inheritance task is depth-2-SOLVABLE, so the 3rd layer is surplus capacity that memorizes a non-compositional solution. => the depth-3-ceiling absence is a TASK property (no depth-3-obligatory signal), NOT a credit failure. The depth-3 credit rung is untestable on this task; it needs a depth-3-OBLIGATORY task whose held-out generalization requires 3 composition levels (a depth-2 rate net must UNDERFIT held-out).",
+  "reproduce": "SIM_BACKEND=numpy python (train DendriticMLP([n_in]+[w]*3+[k], seed=42) via research.runners._semantic_inheritance_deep_credit_derisk._train_oracle on make_task_semantic_inheritance(42, <task above>), eval _acc_on over inh_idx). Full driver committed at research/findings/raw/_gap4_depth3_oracle_generalization_diag.py"
+}

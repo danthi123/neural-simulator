@@ -1,0 +1,478 @@
+{
+  "probe": "gap4_spatial_depth3_smallT",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "T": 3,
+    "n_list": [
+      1,
+      2,
+      3
+    ],
+    "hidden": 32,
+    "epochs": 60,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "credit_mode": "eprop",
+    "train_subsample": 400,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "bars": {
+      "depth_gain": 0.05,
+      "depth3": 0.02,
+      "mono_tol": 0.03,
+      "perm_tol": 0.05,
+      "oracle": 0.8,
+      "t_small": 4
+    }
+  },
+  "elapsed_seconds": 83.5,
+  "result": {
+    "rows": [
+      {
+        "seed": 42,
+        "N": 1,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.5925925925925926,
+        "floor_inherit": 0.5925925925925926,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.4444444444444444,
+        "oracle_inherit": 0.4444444444444444,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 42,
+        "N": 2,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.7407407407407407,
+        "floor_inherit": 0.5925925925925926,
+        "depth_gain_vs_floor": 0.14814814814814814,
+        "permuted_inherit": 0.37037037037037035,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "seed": 42,
+        "N": 3,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4074074074074074,
+        "floor_inherit": 0.5925925925925926,
+        "depth_gain_vs_floor": -0.18518518518518517,
+        "permuted_inherit": 0.3333333333333333,
+        "oracle_inherit": 0.3333333333333333,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 43,
+        "N": 1,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4444444444444444,
+        "floor_inherit": 0.4444444444444444,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.25925925925925924,
+        "oracle_inherit": 0.37037037037037035,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 43,
+        "N": 2,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4444444444444444,
+        "floor_inherit": 0.4444444444444444,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.25925925925925924,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 43,
+        "N": 3,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4074074074074074,
+        "floor_inherit": 0.4444444444444444,
+        "depth_gain_vs_floor": -0.037037037037037035,
+        "permuted_inherit": 0.4074074074074074,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 44,
+        "N": 1,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.2962962962962963,
+        "floor_inherit": 0.2962962962962963,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.2962962962962963,
+        "oracle_inherit": 0.1111111111111111,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 44,
+        "N": 2,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4074074074074074,
+        "floor_inherit": 0.2962962962962963,
+        "depth_gain_vs_floor": 0.1111111111111111,
+        "permuted_inherit": 0.2962962962962963,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "seed": 44,
+        "N": 3,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4074074074074074,
+        "floor_inherit": 0.2962962962962963,
+        "depth_gain_vs_floor": 0.1111111111111111,
+        "permuted_inherit": 0.25925925925925924,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "seed": 100,
+        "N": 1,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.37037037037037035,
+        "floor_inherit": 0.37037037037037035,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.3333333333333333,
+        "oracle_inherit": 0.4074074074074074,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 100,
+        "N": 2,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4444444444444444,
+        "floor_inherit": 0.37037037037037035,
+        "depth_gain_vs_floor": 0.07407407407407407,
+        "permuted_inherit": 0.2962962962962963,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "seed": 100,
+        "N": 3,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.37037037037037035,
+        "floor_inherit": 0.37037037037037035,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.18518518518518517,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 101,
+        "N": 1,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.2962962962962963,
+        "floor_inherit": 0.2962962962962963,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.2222222222222222,
+        "oracle_inherit": 0.3333333333333333,
+        "stage0_depth_separating": false,
+        "trains_at_all": false
+      },
+      {
+        "seed": 101,
+        "N": 2,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.6666666666666666,
+        "floor_inherit": 0.2962962962962963,
+        "depth_gain_vs_floor": 0.37037037037037035,
+        "permuted_inherit": 0.2222222222222222,
+        "oracle_inherit": 0.37037037037037035,
+        "stage0_depth_separating": false,
+        "trains_at_all": true
+      },
+      {
+        "seed": 101,
+        "N": 3,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.5185185185185185,
+        "floor_inherit": 0.2962962962962963,
+        "depth_gain_vs_floor": 0.2222222222222222,
+        "permuted_inherit": 0.3333333333333333,
+        "oracle_inherit": 0.3333333333333333,
+        "stage0_depth_separating": false,
+        "trains_at_all": true
+      },
+      {
+        "seed": 102,
+        "N": 1,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4444444444444444,
+        "floor_inherit": 0.4444444444444444,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.25925925925925924,
+        "oracle_inherit": 0.37037037037037035,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 102,
+        "N": 2,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.5185185185185185,
+        "floor_inherit": 0.4444444444444444,
+        "depth_gain_vs_floor": 0.07407407407407407,
+        "permuted_inherit": 0.25925925925925924,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "seed": 102,
+        "N": 3,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4444444444444444,
+        "floor_inherit": 0.4444444444444444,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.3333333333333333,
+        "oracle_inherit": 0.7407407407407407,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      }
+    ],
+    "per_N": {
+      "1": {
+        "N": 1,
+        "mean_snn": 0.40740740740740744,
+        "std_snn": 0.10255091188787746,
+        "mean_floor": 0.40740740740740744,
+        "mean_gain": 0.0,
+        "mean_perm": 0.3024691358024691,
+        "mean_oracle": 0.3395061728395061,
+        "seeds_snn": {
+          "42": 0.5925925925925926,
+          "43": 0.4444444444444444,
+          "44": 0.2962962962962963,
+          "100": 0.37037037037037035,
+          "101": 0.2962962962962963,
+          "102": 0.4444444444444444
+        }
+      },
+      "2": {
+        "N": 2,
+        "mean_snn": 0.5370370370370371,
+        "std_snn": 0.12422599874998831,
+        "mean_floor": 0.40740740740740744,
+        "mean_gain": 0.12962962962962962,
+        "mean_perm": 0.2839506172839506,
+        "mean_oracle": 0.8950617283950617,
+        "seeds_snn": {
+          "42": 0.7407407407407407,
+          "43": 0.4444444444444444,
+          "44": 0.4074074074074074,
+          "100": 0.4444444444444444,
+          "101": 0.6666666666666666,
+          "102": 0.5185185185185185
+        }
+      },
+      "3": {
+        "N": 3,
+        "mean_snn": 0.4259259259259259,
+        "std_snn": 0.04660391626710339,
+        "mean_floor": 0.40740740740740744,
+        "mean_gain": 0.018518518518518517,
+        "mean_perm": 0.30864197530864196,
+        "mean_oracle": 0.7345679012345679,
+        "seeds_snn": {
+          "42": 0.4074074074074074,
+          "43": 0.4074074074074074,
+          "44": 0.4074074074074074,
+          "100": 0.37037037037037035,
+          "101": 0.5185185185185185,
+          "102": 0.4444444444444444
+        }
+      }
+    },
+    "oracle_per_N": {
+      "1": 0.3395061728395061,
+      "2": 0.8950617283950617,
+      "3": 0.7345679012345679
+    },
+    "n_lo": 1,
+    "n_hi": 3,
+    "T": 3,
+    "chance": 0.33333333333333326,
+    "floor_mean": 0.40740740740740744,
+    "deep_gain": 0.018518518518518434,
+    "step_gains": {
+      "1->2": 0.12962962962962965,
+      "2->3": -0.11111111111111122
+    },
+    "gain_2to3": -0.11111111111111122,
+    "monotone": false,
+    "frac_above_chance_from_depth": 0.19999999999999904,
+    "best_interp_N": 2,
+    "best_interp_gain": 0.12962962962962965,
+    "permuted_ok": false,
+    "task_fittable": true,
+    "oracle_at_Nhi": false,
+    "depth_sep_all": false,
+    "n1_is_floor": true,
+    "t_small": true,
+    "checks": {
+      "genuine_depth3": false,
+      "depth2_loadbearing": false,
+      "negative": false,
+      "depth_Nhi_instrument_absent": false
+    },
+    "go": false,
+    "verdict": "UNDEFINED: task NOT depth-separating at some (N,seed) (shallow oracle already fits) -> the task does not require depth, so a depth sweep says nothing about deep credit.",
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "temporal_window_small",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "T=3 <= 4 -> the LIF temporal integration cannot substitute for spatial depth"
+      },
+      {
+        "kind": "require",
+        "name": "task_fittable_ceiling_exists",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max-over-N rate DendriticMLP oracle >= 0.80 -> a learnable ceiling EXISTS (task interpretable)"
+      },
+      {
+        "kind": "require",
+        "name": "depth_Nhi_ceiling_trainable",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "depth-matched rate oracle at N=3 >= 0.80 -> the deepest arm is interpretable as a CREDIT result (else it is confounded by the deep net's own trainability)"
+      },
+      {
+        "kind": "require",
+        "name": "no_label_leakage",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "permuted-label <= chance+0.05 at every (N,seed) (one-sided; leakage would be ABOVE chance)"
+      },
+      {
+        "kind": "require",
+        "name": "task_depth_separating",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "stage0 depth-genuineness holds at every (N,seed): shallow oracle underfits, deep oracle fits"
+      },
+      {
+        "kind": "require",
+        "name": "n1_equals_1hidden_floor",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "snn(N=1) == the 1-hidden floor (identical arch+seed) -> substrate is deterministic; else void"
+      },
+      {
+        "kind": "reaches",
+        "name": "depth_lever_moved",
+        "ok": true,
+        "detail": "before=1 after=3 moved=True",
+        "note": "the N sweep actually changed the spatial hidden depth (control N=1 vs treatment N=3)"
+      }
+    ],
+    "undefined_reasons": [
+      "unmet: depth_Nhi_ceiling_trainable (measured=False expect=True)",
+      "unmet: no_label_leakage (measured=False expect=True)",
+      "unmet: task_depth_separating (measured=False expect=True)"
+    ],
+    "status": "UNDEFINED"
+  },
+  "verdict": "UNDEFINED: task NOT depth-separating at some (N,seed) (shallow oracle already fits) -> the task does not require depth, so a depth sweep says nothing about deep credit.",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "temporal_window_small",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "T=3 <= 4 -> the LIF temporal integration cannot substitute for spatial depth"
+    },
+    {
+      "kind": "require",
+      "name": "task_fittable_ceiling_exists",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max-over-N rate DendriticMLP oracle >= 0.80 -> a learnable ceiling EXISTS (task interpretable)"
+    },
+    {
+      "kind": "require",
+      "name": "depth_Nhi_ceiling_trainable",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "depth-matched rate oracle at N=3 >= 0.80 -> the deepest arm is interpretable as a CREDIT result (else it is confounded by the deep net's own trainability)"
+    },
+    {
+      "kind": "require",
+      "name": "no_label_leakage",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "permuted-label <= chance+0.05 at every (N,seed) (one-sided; leakage would be ABOVE chance)"
+    },
+    {
+      "kind": "require",
+      "name": "task_depth_separating",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "stage0 depth-genuineness holds at every (N,seed): shallow oracle underfits, deep oracle fits"
+    },
+    {
+      "kind": "require",
+      "name": "n1_equals_1hidden_floor",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "snn(N=1) == the 1-hidden floor (identical arch+seed) -> substrate is deterministic; else void"
+    },
+    {
+      "kind": "reaches",
+      "name": "depth_lever_moved",
+      "ok": true,
+      "detail": "before=1 after=3 moved=True",
+      "note": "the N sweep actually changed the spatial hidden depth (control N=1 vs treatment N=3)"
+    }
+  ]
+}

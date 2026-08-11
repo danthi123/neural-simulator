@@ -1,0 +1,262 @@
+{
+  "probe": "gap4_spatial_depth3_smallT",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "T": 3,
+    "n_list": [
+      1,
+      2,
+      3
+    ],
+    "hidden": 32,
+    "epochs": 60,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "credit_mode": "eprop",
+    "train_subsample": 400,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "bars": {
+      "depth_gain": 0.05,
+      "depth3": 0.02,
+      "mono_tol": 0.03,
+      "perm_tol": 0.05,
+      "oracle": 0.8,
+      "t_small": 4
+    }
+  },
+  "elapsed_seconds": 13.5,
+  "result": {
+    "rows": [
+      {
+        "seed": 42,
+        "N": 1,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.5925925925925926,
+        "floor_inherit": 0.5925925925925926,
+        "depth_gain_vs_floor": 0.0,
+        "permuted_inherit": 0.4444444444444444,
+        "oracle_inherit": 0.4444444444444444,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "seed": 42,
+        "N": 2,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.7407407407407407,
+        "floor_inherit": 0.5925925925925926,
+        "depth_gain_vs_floor": 0.14814814814814814,
+        "permuted_inherit": 0.37037037037037035,
+        "oracle_inherit": 1.0,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "seed": 42,
+        "N": 3,
+        "T": 3,
+        "chance": 0.3333333333333333,
+        "snn_inherit": 0.4074074074074074,
+        "floor_inherit": 0.5925925925925926,
+        "depth_gain_vs_floor": -0.18518518518518517,
+        "permuted_inherit": 0.3333333333333333,
+        "oracle_inherit": 0.3333333333333333,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      }
+    ],
+    "per_N": {
+      "1": {
+        "N": 1,
+        "mean_snn": 0.5925925925925926,
+        "std_snn": 0.0,
+        "mean_floor": 0.5925925925925926,
+        "mean_gain": 0.0,
+        "mean_perm": 0.4444444444444444,
+        "mean_oracle": 0.4444444444444444,
+        "seeds_snn": {
+          "42": 0.5925925925925926
+        }
+      },
+      "2": {
+        "N": 2,
+        "mean_snn": 0.7407407407407407,
+        "std_snn": 0.0,
+        "mean_floor": 0.5925925925925926,
+        "mean_gain": 0.14814814814814814,
+        "mean_perm": 0.37037037037037035,
+        "mean_oracle": 1.0,
+        "seeds_snn": {
+          "42": 0.7407407407407407
+        }
+      },
+      "3": {
+        "N": 3,
+        "mean_snn": 0.4074074074074074,
+        "std_snn": 0.0,
+        "mean_floor": 0.5925925925925926,
+        "mean_gain": -0.18518518518518517,
+        "mean_perm": 0.3333333333333333,
+        "mean_oracle": 0.3333333333333333,
+        "seeds_snn": {
+          "42": 0.4074074074074074
+        }
+      }
+    },
+    "oracle_per_N": {
+      "1": 0.4444444444444444,
+      "2": 1.0,
+      "3": 0.3333333333333333
+    },
+    "n_lo": 1,
+    "n_hi": 3,
+    "T": 3,
+    "chance": 0.3333333333333333,
+    "floor_mean": 0.5925925925925926,
+    "deep_gain": -0.18518518518518517,
+    "step_gains": {
+      "1->2": 0.14814814814814814,
+      "2->3": -0.3333333333333333
+    },
+    "gain_2to3": -0.3333333333333333,
+    "monotone": false,
+    "frac_above_chance_from_depth": -2.5,
+    "best_interp_N": 2,
+    "best_interp_gain": 0.14814814814814814,
+    "permuted_ok": false,
+    "task_fittable": true,
+    "oracle_at_Nhi": false,
+    "depth_sep_all": true,
+    "n1_is_floor": true,
+    "t_small": true,
+    "checks": {
+      "genuine_depth3": false,
+      "depth2_loadbearing": false,
+      "negative": false,
+      "depth_Nhi_instrument_absent": true
+    },
+    "go": false,
+    "verdict": "UNDEFINED (DEPTH-3 INSTRUMENT ABSENT): the depth-matched RATE ceiling COLLAPSES at N=3 (mean held-out oracle 0.333 < 0.80, ~chance) while a strictly-shallower net CEILINGS (max oracle 1.000). The deep rate net is the BEST-POSSIBLE credit (full backprop) yet its N=3 arm does not generalize -- so the SNN's N=3 arm is confounded by the deep net's own GENERALIZATION collapse, NOT the credit rule. The compositional task is depth-<3-SOLVABLE, so the extra depth is surplus capacity that overfits (the 3rd-layer ceiling fits TRAIN but collapses on held-out inheritance) -- there is no depth-3-OBLIGATORY signal for the deepest layer to latch onto. Depth-3 credit is UNTESTABLE on this task. Meanwhile the shallower spatial depth IS load-bearing at small T (best interpretable N=2: snn 0.741 vs floor 0.593, +0.148) -- the temporal floor is defeated for depth-2. Next mechanism: build a depth-3-OBLIGATORY task (held-out generalization REQUIRES 3 composition levels: a depth-<3 rate net must UNDERFIT held-out, a depth-3 net must CLEAR it), verify that ceiling, THEN re-pose the transport-free DFA depth-3 credit sweep at small T on it. (NB the permuted anti-cheat also trips at 1 seed: small ~27-item held set, 0.037 resolution -> pooled out by the 6-seed sweep, not read as leakage.)",
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "temporal_window_small",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "T=3 <= 4 -> the LIF temporal integration cannot substitute for spatial depth"
+      },
+      {
+        "kind": "require",
+        "name": "task_fittable_ceiling_exists",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max-over-N rate DendriticMLP oracle >= 0.80 -> a learnable ceiling EXISTS (task interpretable)"
+      },
+      {
+        "kind": "require",
+        "name": "depth_Nhi_ceiling_trainable",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "depth-matched rate oracle at N=3 >= 0.80 -> the deepest arm is interpretable as a CREDIT result (else it is confounded by the deep net's own trainability)"
+      },
+      {
+        "kind": "require",
+        "name": "no_label_leakage",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "permuted-label <= chance+0.05 at every (N,seed) (one-sided; leakage would be ABOVE chance)"
+      },
+      {
+        "kind": "require",
+        "name": "task_depth_separating",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "stage0 depth-genuineness holds at every (N,seed): shallow oracle underfits, deep oracle fits"
+      },
+      {
+        "kind": "require",
+        "name": "n1_equals_1hidden_floor",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "snn(N=1) == the 1-hidden floor (identical arch+seed) -> substrate is deterministic; else void"
+      },
+      {
+        "kind": "reaches",
+        "name": "depth_lever_moved",
+        "ok": true,
+        "detail": "before=1 after=3 moved=True",
+        "note": "the N sweep actually changed the spatial hidden depth (control N=1 vs treatment N=3)"
+      }
+    ],
+    "undefined_reasons": [
+      "unmet: depth_Nhi_ceiling_trainable (measured=False expect=True)",
+      "unmet: no_label_leakage (measured=False expect=True)"
+    ],
+    "status": "UNDEFINED"
+  },
+  "verdict": "UNDEFINED (DEPTH-3 INSTRUMENT ABSENT): the depth-matched RATE ceiling COLLAPSES at N=3 (mean held-out oracle 0.333 < 0.80, ~chance) while a strictly-shallower net CEILINGS (max oracle 1.000). The deep rate net is the BEST-POSSIBLE credit (full backprop) yet its N=3 arm does not generalize -- so the SNN's N=3 arm is confounded by the deep net's own GENERALIZATION collapse, NOT the credit rule. The compositional task is depth-<3-SOLVABLE, so the extra depth is surplus capacity that overfits (the 3rd-layer ceiling fits TRAIN but collapses on held-out inheritance) -- there is no depth-3-OBLIGATORY signal for the deepest layer to latch onto. Depth-3 credit is UNTESTABLE on this task. Meanwhile the shallower spatial depth IS load-bearing at small T (best interpretable N=2: snn 0.741 vs floor 0.593, +0.148) -- the temporal floor is defeated for depth-2. Next mechanism: build a depth-3-OBLIGATORY task (held-out generalization REQUIRES 3 composition levels: a depth-<3 rate net must UNDERFIT held-out, a depth-3 net must CLEAR it), verify that ceiling, THEN re-pose the transport-free DFA depth-3 credit sweep at small T on it. (NB the permuted anti-cheat also trips at 1 seed: small ~27-item held set, 0.037 resolution -> pooled out by the 6-seed sweep, not read as leakage.)",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "temporal_window_small",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "T=3 <= 4 -> the LIF temporal integration cannot substitute for spatial depth"
+    },
+    {
+      "kind": "require",
+      "name": "task_fittable_ceiling_exists",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max-over-N rate DendriticMLP oracle >= 0.80 -> a learnable ceiling EXISTS (task interpretable)"
+    },
+    {
+      "kind": "require",
+      "name": "depth_Nhi_ceiling_trainable",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "depth-matched rate oracle at N=3 >= 0.80 -> the deepest arm is interpretable as a CREDIT result (else it is confounded by the deep net's own trainability)"
+    },
+    {
+      "kind": "require",
+      "name": "no_label_leakage",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "permuted-label <= chance+0.05 at every (N,seed) (one-sided; leakage would be ABOVE chance)"
+    },
+    {
+      "kind": "require",
+      "name": "task_depth_separating",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "stage0 depth-genuineness holds at every (N,seed): shallow oracle underfits, deep oracle fits"
+    },
+    {
+      "kind": "require",
+      "name": "n1_equals_1hidden_floor",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "snn(N=1) == the 1-hidden floor (identical arch+seed) -> substrate is deterministic; else void"
+    },
+    {
+      "kind": "reaches",
+      "name": "depth_lever_moved",
+      "ok": true,
+      "detail": "before=1 after=3 moved=True",
+      "note": "the N sweep actually changed the spatial hidden depth (control N=1 vs treatment N=3)"
+    }
+  ]
+}
