@@ -54,13 +54,29 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   0.144]). **LEVER 1 = readout-regularization: HONEST-NEGATIVE** (`874f543b`, kp_ro_lr_scale sweep 3-seed): slowing the
 >   co-adapting readout does NOT recover reliability — it hurts (0.3→0.107); the variance is INTRINSIC to the SINGLE-LAYER
 >   joint R+B+gate dynamics, not the readout absorbing credit. ⇒ the remaining candidates require ADDING STRUCTURE: **LEVER
->   2 = a HIDDEN LAYER for chained multi-hop FA+σ′** (the gap#4 a-1 transport-free mechanism a single-layer gate can't
->   express) — AGENT LAUNCHED; and/or route credit through the emergence-engine's own higher-dim co-adapting sequence code.
->   (2) **emergent neural-WTA slot allocation**
->   (a-1'd: RUNG6e's banked subproblem — reuse rungB1b's neural-WTA-gate + a self-calibrating competition threshold
->   [BCM/synaptic-scaling] to replace the host free-counter). (3) **wire the composition** (D3 hold + spiking bind +
->   multi-slot + role-gate) **into the emergence stream** (the HTM-local + WM-long-range hybrid; the combination must be
->   neural). **SINGLE LITERAL NEXT:** pick rung (1) — it is the crux's own open sub-problem and unblocks the rest.
+>   2 = a HIDDEN LAYER for chained multi-hop FA+σ′** = **HONEST-NEGATIVE that SHARPENS the residual** (`4fc3cad9`,
+>   6-seed + adversarially confirmed from raw per-seed data): the residual is NOT depth (the 2-layer ALIGNED transport
+>   ceiling reaches role 1.000 [min 1.000] on ALL 6 seeds), NOT σ′ (load-bearing), and **NOT alignment** — co-adapting KP
+>   recovers cos(B,Wᵀ) 0.92–1.00 on EVERY seed yet role accuracy still collapses on seeds 42/44 (0.256/0.133). ⇒ the
+>   reliability wall is a **forward-dynamics FIRE-EVERYTHING BASIN instability** (collapsed seeds fire non-selectively;
+>   FA reaches 1.000 on seed 42, KP on seed 102 — seed-dependent). **LEVER 3 (the standing-lesson reframe) = a
+>   competitive/normalising forward stabilizer** (k-WTA / lateral inhibition that STRUCTURALLY FORBIDS the fire-everything
+>   fixed point) trained WITH the transport-free rule — competition is the "companion process we replaced with a scalar
+>   homeostatic nudge" (grounded: Refinetti 2021 align-then-memorise; rank-collapse). And/or route credit through the
+>   emergence-engine's own higher-dim co-adapting sequence code.
+>   (2) **emergent neural-WTA slot allocation** (a-1'd: RUNG6e's banked subproblem — reuse rungB1b's neural-WTA-gate + a
+>   self-calibrating competition threshold [BCM/synaptic-scaling] to replace the host free-counter). NB this CONVERGES
+>   with LEVER 3 — both need structural competition/WTA on the substrate.
+>   (3) **wire the composition into the emergence stream** = **6-SEED PARTIAL** (`9840f76`, coordinator-recovered from a
+>   deferred agent): the WM slot's held-subject wired as a NEURAL afferent (apical_drive, not a host ensemble) into the
+>   HTM engine GENUINELY COMBINES the faculties — hybrid 0.641 [min 0.562] BEATS both HTM-alone 0.224 and WM-alone 0.516;
+>   BOTH afferent lesions load-bearing; lesion-the-hold collapses (reads spikes) → **the WM is a LOAD-BEARING faculty in
+>   the emergence engine** (the north-star integration, demonstrated). BUT misses the strict +0.20 bar (0.641 vs 0.716):
+>   the fusion is LOSSY on the SUBJECT (WM subj 1.000 → hybrid 0.667) while class combines cleanly (0.974). Next = a
+>   SEPARATE-CHANNEL fusion (subject + class on distinct channels).
+>   **SINGLE LITERAL NEXT:** LEVER 3 — a competitive/normalising forward stabilizer (k-WTA/lateral inhibition) trained
+>   with the transport-free credit rule — the crux's now-precisely-isolated basin instability, and it converges with
+>   rung (2)'s neural-WTA allocation. (Rung 3's separate-channel fusion is the parallel independent lever.)
 > - **Deep-research provenance:** the VBWM design came from a 5-modality deep-research workflow (own-findings RAG +
 >   catalog/Kandel/textbooks + external biology via bio-research MCP + external ML + our substrate machinery). Finding:
 >   `research/findings/2026-08-11-variable-binding-working-memory-gated-slot-surpasses-HTM-heldout-1.000-vs-0.000-6seed-GO.md`.
