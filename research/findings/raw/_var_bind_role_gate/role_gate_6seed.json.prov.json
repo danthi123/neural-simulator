@@ -1,0 +1,41 @@
+{
+ "run_id": "1786465724-151898",
+ "runner": "research/runners/_var_bind_role_gate_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_var_bind_role_gate_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--distances",
+  "2",
+  "3",
+  "4",
+  "--n-test",
+  "90",
+  "--out",
+  "research/findings/raw/_var_bind_role_gate/role_gate_6seed.json"
+ ],
+ "git_sha": "13cf6c88e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-11T12:28:44",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 97333.1,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_var_bind_role_gate/role_gate_6seed.json"
+}

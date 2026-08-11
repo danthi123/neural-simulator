@@ -8,9 +8,30 @@ verdict: 1-SEED SMOKE. (1) The MEMORY composition holds on the HARDER same-pool 
 seeds: [42]
 runner: research/runners/_var_bind_role_gate_derisk.py
 artifacts:
+  - research/findings/raw/_var_bind_role_gate/role_gate_6seed.json
   - research/findings/raw/_var_bind_role_gate/role_gate.json
 instrument: reuse-by-import of the banked SpikingSlot (D3 slow-NMDA bistable HOLD, `_var_bind_gated_slot_derisk.SpikingSlot`) + the RUNG6c sparse barcodes (`_novel_referent_hebbian_fastweight_derisk._mint_codes`) + the EMERGE-14 on-bridge HTM engine and the n-gram HELD-OUT floor (`_emerge14_stageC_onbridge_learning_derisk`, `_emerge_stream_language_derisk`). The write CONTENT is the gated token's agreement feature (a host lexicon scaffold, exactly as verb_of was) — the GATE is the object of study. SIM_BACKEND=numpy device=cpu; NO sim/ edit.
 ---
+<!--derived-->
+## ⚠️ 6-SEED CORRECTION (coordinator-run, `research/findings/raw/_var_bind_role_gate/role_gate_6seed.json`) — the 1-seed existence-proof does NOT hold; role-gate is an HONEST NEGATIVE, and the residual is CREDIT ASSIGNMENT (deeper than the signal)
+
+The 1-seed smoke below (recurrent latch 0.857, gap +0.80) was the OPTIMISTIC TAIL. At 6 seeds:
+- **The MEMORY composition is still a GO** on the harder same-pool positional stream: MARKER-ROLE (gate timing given)
+  held-out **1.000** >> HTM 0.000, and it is POSITIONAL (permuted-position 0.259 ≈ chance, recency-gate 0.250 ≈ chance),
+  all teeth biting (lesion 0.046, always-open 0.225, feat-scramble 0.000, referent-shuffle 0.000). The memory is NOT the
+  residual.
+- **The reward-driven RECURRENT role-gate is an HONEST NEGATIVE:** held-out **0.602** (chance 0.250), token-identity gap
+  **+0.45** (over 12 matched nouns) — it gates by position SOMEWHAT (positive gap, above the identity gate's +0.00) but
+  does NOT cleanly induce syntactic role. The identity-only gate fails the crux (gap +0.00, gates by token class).
+- **The decisive finding — the residual is the CREDIT ASSIGNMENT, not the positional signal:** a HOST POS-ORACLE (raw
+  position fed IN, only the sign learned) STILL reached only acc 0.265 / gap +0.01. So even when position is HANDED to
+  it, reward-over-token-statistics with plain REINFORCE cannot cleanly induce role. Only the hand-wired MARKER drives
+  the WM to 1.000.
+- **Named next mechanism (now precise + connected):** role induction needs a POSITIONAL/STRUCTURAL substrate signal
+  (a spiking ordinal/phase code or a recurrent controller-seen population) **AND better CREDIT ASSIGNMENT** — the
+  gap#4 three-factor DA-gated distal-credit machinery we surpassed on spikes at de-risk level — NOT reward over token
+  statistics. This directly links the role-gate residual to the gap#4 deep-credit lane.
+
 
 # Role-based write-gate on a same-pool positional grammar — the reward-driven recurrent onset-latch learns syntactic ROLE (position, not identity), but it is high-variance; the code-only identity gate falls back to identity (1-seed SMOKE)
 
