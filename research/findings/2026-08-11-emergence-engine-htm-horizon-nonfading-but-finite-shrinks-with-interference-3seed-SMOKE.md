@@ -10,6 +10,15 @@ artifacts:
   - research/findings/raw/_emerge_htm_horizon/smoke_nseq3_L16_3seed.json
   - research/findings/raw/_emerge_htm_horizon/smoke_nseq2_L16_3seed.json
   - research/findings/raw/_emerge_htm_horizon/starved_nseq6_L8_cells16_3seed.json
+
+<!-- 6-SEED STATUS (coordinator, 2026-08-11): a full distance-sweep 6-seed confirm is COMPUTE-PROHIBITIVE at this
+config — ~33 min/cell for the 571k-synapse bridge rebuild x 24 cells (~13-20 h); a heavy run was measured then KILLED
+on that ETA. A single-cell probe (n_seq=4 / dist 17) informally reproduced the bare-HTM interference-break (6-seed mean
+htm ~0.75, HOLD=False) consistent with this smoke's 0.667/0.750 range — but that probe's config (single distance vs
+l_far=24) makes its OWN verdict a precondition-failure (UNDEFINED, not a negative), so it is NOT banked as an artifact.
+The 3-seed smoke stands; a clean full-surface 6-seed needs a lighter substrate / the pool (deferred, low marginal
+value since the selective-write store already RESTORES this break to 1.000). -->
+
   - research/runners/_emerge_htm_horizon_derisk.py
 ---
 
