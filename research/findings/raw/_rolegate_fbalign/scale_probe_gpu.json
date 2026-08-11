@@ -1,0 +1,226 @@
+{
+  "probe": "rolegate_fbalign_scale_probe",
+  "backend": "cupy",
+  "device": "gpu",
+  "chance": 0.25,
+  "vram_mb": 531.9,
+  "elapsed_seconds": 325.3,
+  "arms_per_second": 0.221,
+  "config": {
+    "widths": [
+      128,
+      512,
+      2048
+    ],
+    "student_depth": 3,
+    "F": 4,
+    "Din": 128,
+    "teacher_hidden": 48,
+    "teacher_depth": 2,
+    "scale_train": 4000,
+    "scale_test": 1000,
+    "scale_epochs": 25,
+    "scale_batch": 256,
+    "scale_lr": 0.05,
+    "kp_lr": 0.3,
+    "kp_wd": 0.01,
+    "mirror_steps": 5000,
+    "scale_seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ]
+  },
+  "results_by_width": {
+    "128": {
+      "aligned": {
+        "acc_mean": 0.6052,
+        "acc_min": 0.263,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.319,
+          0.777,
+          0.263,
+          0.716
+        ],
+        "deep_cos_mean": -0.0038,
+        "deep_cos_min": -0.014
+      },
+      "fa": {
+        "acc_mean": 0.6043,
+        "acc_min": 0.258,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.319,
+          0.777,
+          0.258,
+          0.716
+        ],
+        "deep_cos_mean": 0.0006,
+        "deep_cos_min": -0.0092
+      },
+      "kp": {
+        "acc_mean": 0.6045,
+        "acc_min": 0.259,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.319,
+          0.777,
+          0.259,
+          0.716
+        ],
+        "deep_cos_mean": 0.0068,
+        "deep_cos_min": -0.0008
+      },
+      "mirror_fa": {
+        "acc_mean": 0.5602,
+        "acc_min": 0.319,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.319,
+          0.777,
+          0.319,
+          0.39
+        ],
+        "deep_cos_mean": 0.9838,
+        "deep_cos_min": 0.9827
+      }
+    },
+    "512": {
+      "aligned": {
+        "acc_mean": 0.616,
+        "acc_min": 0.258,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.389,
+          0.777,
+          0.258,
+          0.716
+        ],
+        "deep_cos_mean": -0.0008,
+        "deep_cos_min": -0.0031
+      },
+      "fa": {
+        "acc_mean": 0.6047,
+        "acc_min": 0.236,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.236,
+          0.79,
+          0.33,
+          0.716
+        ],
+        "deep_cos_mean": -0.0002,
+        "deep_cos_min": -0.0024
+      },
+      "kp": {
+        "acc_mean": 0.5978,
+        "acc_min": 0.249,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.249,
+          0.777,
+          0.26,
+          0.745
+        ],
+        "deep_cos_mean": 0.0017,
+        "deep_cos_min": -0.0004
+      },
+      "mirror_fa": {
+        "acc_mean": 0.5548,
+        "acc_min": 0.236,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.236,
+          0.563,
+          0.258,
+          0.716
+        ],
+        "deep_cos_mean": 0.9491,
+        "deep_cos_min": 0.9469
+      }
+    },
+    "2048": {
+      "aligned": {
+        "acc_mean": 0.6087,
+        "acc_min": 0.236,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.236,
+          0.777,
+          0.367,
+          0.716
+        ],
+        "deep_cos_mean": 0.0001,
+        "deep_cos_min": -0.0003
+      },
+      "fa": {
+        "acc_mean": 0.5622,
+        "acc_min": 0.222,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.222,
+          0.416,
+          0.777,
+          0.33,
+          0.716
+        ],
+        "deep_cos_mean": 0.0002,
+        "deep_cos_min": -0.0002
+      },
+      "kp": {
+        "acc_mean": 0.6332,
+        "acc_min": 0.33,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.644,
+          0.42,
+          0.777,
+          0.33,
+          0.716
+        ],
+        "deep_cos_mean": 0.0008,
+        "deep_cos_min": 0.0002
+      },
+      "mirror_fa": {
+        "acc_mean": 0.5035,
+        "acc_min": 0.066,
+        "acc_max": 0.912,
+        "per_seed": [
+          0.912,
+          0.222,
+          0.328,
+          0.777,
+          0.066,
+          0.716
+        ],
+        "deep_cos_mean": 0.8171,
+        "deep_cos_min": 0.804
+      }
+    }
+  },
+  "HONEST_NOTE": "A GPU-appropriate BATCHED deep-MLP aligned/FA/KP/mirror_fa WIDTH sweep on a static arbitrary-cue-detection classification (the rate analog of the role task's core difficulty: gather the noun-class of the position whose tag==NOM; noun+tag in disjoint concat dims, ReLU hidden). It measures whether TRANSPORT-FREE feedback-alignment RELIABILITY (min accuracy over seeds) closes toward the aligned ceiling as hidden WIDTH grows, and whether the weight-mirror WARM-UP (mirror_fa) also fixes FA at scale. It is NOT the sequential role task (no WM latch); it isolates the width-dependence of the alignment reliability itself, at a scale where the GPU helps. The role task's own result at H=32 is the direct on-task measurement."
+}
