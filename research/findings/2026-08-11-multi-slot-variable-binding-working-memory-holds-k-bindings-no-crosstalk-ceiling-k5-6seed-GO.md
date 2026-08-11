@@ -1,18 +1,19 @@
 ---
 type: finding
-status: smoke
+status: go
 date: 2026-08-11
 mechanism: MULTI-SLOT variable-binding WORKING MEMORY — R banks of the D3 slow-NMDA bistable HOLD slot on ONE bridge sharing ONE FS pool, each bank latching one role-filler bind; holds >=2 bindings simultaneously across novel fillers with no cross-talk
 lane: emergence engine / working memory (scaling the single-slot variable-binding WM toward multi-variable language)
-verdict: 1-SEED SMOKE-GO (indicator; run the 6-seed sweep) — a spiking WM composed of R disjoint D3 NMDA banks sharing one FS pool HOLDS k=1,2,3,4 role-filler bindings SIMULTANEOUSLY and recovers EACH across NOVEL fillers (held-out ALL-correct 1.000, per-slot all 1.000, >> chance 1/6), then degrades GRACEFULLY (k=5 all-correct 0.900, k=6 0.775; per-slot stays ~0.96). CAPACITY CEILING (all-correct>=0.80) = k=5; clean (1.000) to k=4. All teeth bite: lesion-the-hold collapses (k>=2 -> 0.000), the SUPERPOSED-single-slot baseline collides at exactly ~1/k (item 0.500 at k=2 down to 1/6 at k=6 = the ~2-cap regime), filler-swap cross-talk ~0, referent-shuffle ~0, hold-alive positive with external input ASSERTED zero. The break past k=5 is modest register SUPPRESSION under the shared FS (collapse-rate 0.02@k5 -> 0.0375@k6), NOT catastrophic cross-talk. Residual (unchanged from single-slot): the role-by-position gate is a host MARKER (the LEARNED spiking role-gate is gap#4, per 739a8867); the BIND + verb readout are host. k>6 is confounded by the RUNG6c binder's _K=6 slot cap (guarded NOT-RUNNABLE) — a bigger binder is the lever to probe higher k.
-seeds: [42]
+verdict: 6-SEED GO (coordinator sweep confirms the 1-seed smoke) — a spiking WM composed of R disjoint D3 NMDA banks sharing one FS pool HOLDS k role-filler bindings SIMULTANEOUSLY and recovers EACH across NOVEL fillers. 6-seed held-out ALL-correct: k=2 1.000 (per-slot [1.0,1.0], >> chance 0.167), k=3 0.997, k=4 0.978, then GRACEFUL degradation (k=5 0.881, k=6 0.669; per-slot stays >=0.939). CAPACITY CEILING (all-correct>=0.80) = k=5 (the 1-seed smoke read k=5 0.900 / k=6 0.775; the 6-seed averages in harder seeds at high k but the ceiling is UNCHANGED). All teeth bite (6-seed): lesion-the-hold collapses (k>=2 -> 0.000), the SUPERPOSED-single-slot baseline collides (all-correct 0.0 at every k>=2; per-item exactly ~1/k, 0.500 at k=2 down to 0.167 at k=6 = the ~2-cap regime), filler-swap cross-talk <=0.0014, referent-shuffle 0.000, hold-alive positive with external input ASSERTED zero. The break past k=5 is modest register SUPPRESSION under the shared FS (collapse-rate 0.023@k5 -> 0.060@k6), NOT catastrophic cross-talk. Residual (unchanged from single-slot): the role-by-position gate is a host MARKER (the LEARNED spiking role-gate is gap#4, per 739a8867); the BIND is host numpy, and the register READ is a host `np.argmax` over each bank's pool rates (a read-out instrument, not neural WTA). k>6 is confounded by the RUNG6c binder's _K=6 slot cap (guarded NOT-RUNNABLE) — a bigger binder is the lever to probe higher k.
+seeds: [42, 43, 44, 100, 101, 102]
 runner: research/runners/_multi_slot_binding_derisk.py
 artifacts:
+  - research/findings/raw/_multi_slot_binding/multi_slot_6seed.json
   - research/findings/raw/_multi_slot_binding/multi_slot_smoke.json
 instrument: composition of THREE banked GOs (each re-read at source this session) — HOLD = R banks of the D3 slow-NMDA bistable persistent slot on ONE SimulationBridge sharing ONE FS inhibitory pool (`build_persistent_slot(seed, K=R*n_slot)`; register r = pools [r*n_slot,(r+1)*n_slot); the exact keystone step-2a coexistence substrate — separate assemblies, shared inhibition, NOT R separate brains); BIND = the RUNG6c content-agnostic Hebbian fast-weight binder (`HebbianBinder`; each fixed entity -> a stable local slot index); WRITE-GATE = a role-by-position MARKER (subject->reg0, object->reg1, ...). Task = a k-role agreement clause [e_r]+[L fillers] per role then k agreeing verbs, verb r agrees with the entity bound in register r; scored on HELD-OUT disjoint NOVEL filler tuples. SIM_BACKEND=numpy; NO sim/ edit.
 ---
 
-# Multi-slot variable-binding WORKING MEMORY: R disjoint NMDA banks (one shared FS) HOLD k role-filler bindings simultaneously, each recovered across novel fillers — no cross-talk to k=4 (1-seed SMOKE); the superposed single slot collides at ~1/k (the ~2-cap)
+# Multi-slot variable-binding WORKING MEMORY: R disjoint NMDA banks (one shared FS) HOLD k role-filler bindings simultaneously, each recovered across novel fillers — capacity ceiling k=5, clean to k=4 (6-seed GO); the superposed single slot collides at ~1/k (the ~2-cap)
 
 Conversation needs holding MULTIPLE variables at once — a SUBJECT *and* an OBJECT (or a small stack), each agreeing with
 its own verb across an arbitrary intervening span. The single-slot variable-binding WM GO
@@ -33,26 +34,29 @@ NMDA hold was NOT load-bearing). **This de-risk is the complementary, un-done pi
 the D3 NMDA HOLD is LOAD-BEARING (read the HELD bump, zero input), on the HELD-OUT AGREEMENT STREAM, with per-slot
 recovery + a cross-talk control + the memory teeth biting PER SLOT.
 
-## Result — 1-seed SMOKE-GO (`research/findings/raw/_multi_slot_binding/multi_slot_smoke.json`)
+## Result — 6-SEED GO (`research/findings/raw/_multi_slot_binding/multi_slot_6seed.json`; smoke `_smoke.json`)
 
 <!--derived-->
-Seed 42, n_ent=6 (chance 0.167), n_slot=6, n_fill=10, L=2 per role, held-out NOVEL filler tuples:
+Seeds [42,43,44,100,101,102], n_ent=6 (chance 0.167), n_slot=6, n_fill=10, L=2 per role, held-out NOVEL filler tuples
+(cross-seed means):
 
 | k | held-out ALL-correct | per-slot (mean) | LESION-the-hold ALL | SUPERPOSED-1slot (all / per-item) | filler-swap | collapse | referent-shuffle |
 |---|---|---|---|---|---|---|---|
-| 1 | **1.000** | 1.000 | 0.267 | n/a | 0.000 | 0.000 | 0.000 |
+| 1 | **1.000** | 1.000 | 0.147 | n/a | 0.000 | 0.000 | 0.000 |
 | 2 | **1.000** | 1.000 | **0.000** | **0.000 / 0.500** | 0.000 | 0.000 | 0.000 |
-| 3 | **1.000** | 1.000 | **0.000** | **0.000 / 0.317** | 0.000 | 0.000 | 0.000 |
-| 4 | **1.000** | 1.000 | 0.000 | **0.000 / 0.250** | 0.000 | 0.000 | 0.000 |
-| 5 | 0.900 | 0.975 | 0.000 | **0.000 / 0.200** | 0.005 | 0.020 | 0.000 |
-| 6 | 0.775 | 0.963 | 0.000 | **0.000 / 0.167** | 0.000 | 0.037 | 0.000 |
+| 3 | **0.997** | 0.999 | **0.000** | **0.000 / 0.332** | 0.000 | 0.000 | 0.000 |
+| 4 | **0.978** | 0.994 | 0.000 | **0.000 / 0.250** | 0.001 | 0.005 | 0.000 |
+| 5 | 0.881 | 0.976 | 0.000 | **0.000 / 0.200** | 0.001 | 0.023 | 0.000 |
+| 6 | 0.669 | 0.939 | 0.000 | **0.000 / 0.167** | 0.001 | 0.060 | 0.000 |
 
-**How many concurrent bindings hold cleanly: k=1,2,3,4 all at 1.000** (each register recovers ITS OWN entity's agreeing
+**How many concurrent bindings hold cleanly: k=2,3,4 at >=0.978** (each register recovers ITS OWN entity's agreeing
 verb; ALL-correct requires EVERY register right, so it is the product of k near-perfect per-slot reads). **CAPACITY
-CEILING (all-correct>=0.80) = k=5**; the break past it is GRACEFUL (k=5 all-correct 0.900, k=6 0.775) with per-slot
-recovery still ~0.96 — the fall is the product of k terms plus modest register SUPPRESSION under the shared FS
-(collapse-rate 0.020@k5 -> 0.037@k6), NOT a catastrophic cross-talk collapse at 2. This is far past the superposition
-~2 cap, which the SUPERPOSED-single-slot control reproduces (it collides at exactly ~1/k every k). k=6 is the largest k
+CEILING (all-correct>=0.80) = k=5** (unchanged from the smoke); the break past it is GRACEFUL (k=5 all-correct 0.881,
+k=6 0.669) with per-slot recovery still >=0.939 — the fall is the product of k terms plus modest register SUPPRESSION
+under the shared FS (collapse-rate 0.023@k5 -> 0.060@k6), NOT a catastrophic cross-talk collapse at 2. (The 6-seed high-k
+all-correct is a touch below the 1-seed smoke — 0.881/0.669 vs 0.900/0.775 — as harder seeds average in; the ceiling and
+the no-cross-talk headline are unchanged.) This is far past the superposition ~2 cap, which the SUPERPOSED-single-slot
+control reproduces (it collides to all-correct 0.0, per-item exactly ~1/k every k). k=6 is the largest k
 testable at n_ent=6 (distinct entities per clause), which is also the RUNG6c binder's _K=6 slot cap.
 
 **All anti-cheat teeth bite** (this is the surpass, not a scaffold artifact):
@@ -96,13 +100,16 @@ context, not load-bearing.
   1. **The gate's ROLE/TIMING is a host MARKER** (role-by-position: subject->reg0, object->reg1). `739a8867` established
      that even a host position-ORACLE fails to induce role at 6 seeds -> the residual is CREDIT ASSIGNMENT (gap#4). The
      LEARNED, EMERGENT, SPIKING multi-register role-gate is the open problem.
-  2. The BIND is host numpy (RUNG6c fast-weight; its spiking-STP realisation is a banked next rung); the verb read-out is
-     a host deref of the held bank.
-- **Named next steps (dependency-ordered):** (a) the 6-seed sweep (decisive; 1-seed is only an indicator); (b) to probe
-  the ceiling past k=6, raise the RUNG6c binder's slot count (`_K`) so more distinct entities/registers are addressable,
-  then re-sweep to see whether the soft shared-FS suppression edge (k~5-6 here) is the true limit or moves with capacity;
-  (c) the learned multi-register role-gate (gap#4); then (d) the spiking bind + wire into the emergence stream.
-  Reuse-by-import; NO `sim/` edit.
+  2. The BIND (single-slot) is now a banked SPIKING GO — Hebbian short-term potentiation on a real bridge
+     (`2026-08-11-spiking-hebbian-STP-bind-...-6seed-GO.md`); THIS multi-slot runner still uses the host-numpy RUNG6c
+     binder, and the verb read-out is a host `np.argmax`/deref of the held bank (the multi-register spiking-bind + neural
+     read are the reuse-forward step).
+- **Named next steps (dependency-ordered):** (a) ~~the 6-seed sweep~~ DONE (this finding — ceiling k=5 confirmed); (b) to
+  probe the ceiling past k=6, raise the RUNG6c binder's slot count (`_K`) so more distinct entities/registers are
+  addressable, then re-sweep to see whether the soft shared-FS suppression edge (k~5-6 here) is the true limit or moves
+  with capacity; (c) the learned multi-register role-gate (gap#4 — see the rolegate×deep-credit finding: credit
+  assignment IS the residual, transport-free feedback the open sub-problem); then (d) compose the multi-register spiking
+  bind + wire into the emergence stream. Reuse-by-import; NO `sim/` edit.
 
 ## The exact 6-seed command (decisive)
 

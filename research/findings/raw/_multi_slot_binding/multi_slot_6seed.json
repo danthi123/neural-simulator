@@ -1,0 +1,1567 @@
+{
+  "probe": "multi_slot_binding",
+  "verdict": "GO \u2014 the multi-slot spiking WM (R banks of D3 slow-NMDA pools on ONE bridge, ONE shared FS) HOLDS k=2 role-filler bindings SIMULTANEOUSLY and carries each across NOVEL fillers: held-out ALL-correct 1.000 (per-slot [1.0, 1.0], >> chance 0.167). The HOLD is load-bearing (lesion-the-hold all 0.000, hold-alive [0.0976, 0.0867] with external input ASSERTED zero across the span), the SEPARATION is load-bearing (superposed-single-slot collides: all 0.0), NO filler-swap cross-talk (0.000), no topic->answer leakage (referent-shuffle per-slot 0.000). CAPACITY CEILING (all-correct>=0.80) = k=5. This scales the single-slot WM GO to multiple concurrent variables. NOTE: the role-by-position gate is a host marker (the LEARNED spiking role-gate is gap#4, per 739a8867); reuse-by-import; NO sim/ edit.",
+  "capacity_ceiling_all80": 5,
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "device": "cpu",
+  "smoke": false,
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "generalisation_defined_novel_heldout",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fb4d07ec860>",
+      "note": "held-out filler tuples disjoint from train (a real generalisation regime), else UNDEFINED"
+    },
+    {
+      "kind": "require",
+      "name": "superposed_baseline_collides",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fb4d07ec860>",
+      "note": "the superposed-single-slot control MUST collide (all-correct<=chance) or the separation is not the thing being tested (VALIDITY of the load-bearing control)"
+    },
+    {
+      "kind": "require",
+      "name": "referent_shuffle_at_chance",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fb4d07ec860>",
+      "note": "the referent-shuffle per-slot readout must sit near chance (no topic->answer leakage)"
+    },
+    {
+      "kind": "require",
+      "name": "hold_zero_input_asserted",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fb4d07ec860>",
+      "note": "every register sustained with external input ASSERTED zero across the hold+read span"
+    }
+  ],
+  "mechanism": "R banks of the D3 slow-NMDA (tau=100ms) bistable persistent-activity slot on ONE bridge sharing ONE FS inhibitory pool (build_persistent_slot K=R*n_slot); register r = pools [r*n_slot,(r+1)*n_slot); each fixed entity binds to a stable local slot via the RUNG6c content-agnostic Hebbian binder; a role-by-position MARKER gate LOADs each role's entity into its register; the k verbs are each predicted from the HELD bump of the correct register",
+  "task": "a k-role agreement clause [e_r]+[L fillers] per role then k agreeing verbs; held-out TEST = disjoint NOVEL filler tuples; anti-cheats: per-slot+all-correct recovery, lesion-the-hold, superposed-single-slot collide baseline, cross-talk (filler-swap + collapse), referent-shuffle, hold-not-re-read (zero-input assert); k swept to locate the capacity ceiling",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "n_ent": 6,
+    "n_slot": 6,
+    "n_fill": 10,
+    "distance": 2,
+    "ks": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "recur": 25.0,
+    "hold_steps": 18,
+    "load_steps": 30,
+    "clear_steps": 200,
+    "n_train": 60,
+    "n_test": 60,
+    "chance": 0.16666666666666666,
+    "go_k": 2
+  },
+  "go_point": {
+    "acc_all": 1.0,
+    "per_slot_mean": 1.0,
+    "filler_swap_rate": 0.0,
+    "collapse_rate": 0.0,
+    "lesion_all": 0.0,
+    "lesion_per_slot_mean": 0.05028248587570622,
+    "refshuf_all": 0.0,
+    "refshuf_per_slot_mean": 0.0,
+    "superposed_all": 0.0,
+    "superposed_per_item": 0.5,
+    "per_slot": [
+      1.0,
+      1.0
+    ],
+    "alive_reg": [
+      0.0976,
+      0.0867
+    ],
+    "k": 2,
+    "chance": 0.16666666666666666,
+    "path_space": 10000.0,
+    "gen_defined": true,
+    "zero_input_ok": true,
+    "per_seed": [
+      {
+        "seed": 42,
+        "k": 2,
+        "chance": 0.16666666666666666,
+        "gen_defined": true,
+        "path_space": 10000.0,
+        "n_eval": 59,
+        "n_novel": 59,
+        "acc_all": 1.0,
+        "per_slot": [
+          1.0,
+          1.0
+        ],
+        "per_slot_mean": 1.0,
+        "alive_reg": [
+          0.09806967984934087,
+          0.0874764595103578
+        ],
+        "filler_swap_rate": 0.0,
+        "collapse_rate": 0.0,
+        "zero_input_ok": true,
+        "lesion_all": 0.0,
+        "lesion_per_slot_mean": 0.0,
+        "superposed_all": 0.0,
+        "superposed_per_item": 0.5,
+        "refshuf_all": 0.0,
+        "refshuf_per_slot_mean": 0.0
+      },
+      {
+        "seed": 43,
+        "k": 2,
+        "chance": 0.16666666666666666,
+        "gen_defined": true,
+        "path_space": 10000.0,
+        "n_eval": 59,
+        "n_novel": 59,
+        "acc_all": 1.0,
+        "per_slot": [
+          1.0,
+          1.0
+        ],
+        "per_slot_mean": 1.0,
+        "alive_reg": [
+          0.09778719397363463,
+          0.08940677966101698
+        ],
+        "filler_swap_rate": 0.0,
+        "collapse_rate": 0.0,
+        "zero_input_ok": true,
+        "lesion_all": 0.0,
+        "lesion_per_slot_mean": 0.1016949152542373,
+        "superposed_all": 0.0,
+        "superposed_per_item": 0.5,
+        "refshuf_all": 0.0,
+        "refshuf_per_slot_mean": 0.0
+      },
+      {
+        "seed": 44,
+        "k": 2,
+        "chance": 0.16666666666666666,
+        "gen_defined": true,
+        "path_space": 10000.0,
+        "n_eval": 60,
+        "n_novel": 60,
+        "acc_all": 1.0,
+        "per_slot": [
+          1.0,
+          1.0
+        ],
+        "per_slot_mean": 1.0,
+        "alive_reg": [
+          0.09550925925925927,
+          0.07953703703703704
+        ],
+        "filler_swap_rate": 0.0,
+        "collapse_rate": 0.0,
+        "zero_input_ok": true,
+        "lesion_all": 0.0,
+        "lesion_per_slot_mean": 0.0,
+        "superposed_all": 0.0,
+        "superposed_per_item": 0.5,
+        "refshuf_all": 0.0,
+        "refshuf_per_slot_mean": 0.0
+      },
+      {
+        "seed": 100,
+        "k": 2,
+        "chance": 0.16666666666666666,
+        "gen_defined": true,
+        "path_space": 10000.0,
+        "n_eval": 60,
+        "n_novel": 60,
+        "acc_all": 1.0,
+        "per_slot": [
+          1.0,
+          1.0
+        ],
+        "per_slot_mean": 1.0,
+        "alive_reg": [
+          0.09111111111111113,
+          0.08064814814814818
+        ],
+        "filler_swap_rate": 0.0,
+        "collapse_rate": 0.0,
+        "zero_input_ok": true,
+        "lesion_all": 0.0,
+        "lesion_per_slot_mean": 0.075,
+        "superposed_all": 0.0,
+        "superposed_per_item": 0.5,
+        "refshuf_all": 0.0,
+        "refshuf_per_slot_mean": 0.0
+      },
+      {
+        "seed": 101,
+        "k": 2,
+        "chance": 0.16666666666666666,
+        "gen_defined": true,
+        "path_space": 10000.0,
+        "n_eval": 59,
+        "n_novel": 59,
+        "acc_all": 1.0,
+        "per_slot": [
+          1.0,
+          1.0
+        ],
+        "per_slot_mean": 1.0,
+        "alive_reg": [
+          0.09844632768361582,
+          0.10009416195856871
+        ],
+        "filler_swap_rate": 0.0,
+        "collapse_rate": 0.0,
+        "zero_input_ok": true,
+        "lesion_all": 0.0,
+        "lesion_per_slot_mean": 0.0,
+        "superposed_all": 0.0,
+        "superposed_per_item": 0.5,
+        "refshuf_all": 0.0,
+        "refshuf_per_slot_mean": 0.0
+      },
+      {
+        "seed": 102,
+        "k": 2,
+        "chance": 0.16666666666666666,
+        "gen_defined": true,
+        "path_space": 10000.0,
+        "n_eval": 60,
+        "n_novel": 60,
+        "acc_all": 1.0,
+        "per_slot": [
+          1.0,
+          1.0
+        ],
+        "per_slot_mean": 1.0,
+        "alive_reg": [
+          0.10472222222222219,
+          0.08314814814814815
+        ],
+        "filler_swap_rate": 0.0,
+        "collapse_rate": 0.0,
+        "zero_input_ok": true,
+        "lesion_all": 0.0,
+        "lesion_per_slot_mean": 0.125,
+        "superposed_all": 0.0,
+        "superposed_per_item": 0.5,
+        "refshuf_all": 0.0,
+        "refshuf_per_slot_mean": 0.0
+      }
+    ]
+  },
+  "points": [
+    {
+      "acc_all": 1.0,
+      "per_slot_mean": 1.0,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0,
+      "lesion_all": 0.1472651895206243,
+      "lesion_per_slot_mean": 0.1472651895206243,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": null,
+      "superposed_per_item": null,
+      "per_slot": [
+        1.0
+      ],
+      "alive_reg": [
+        0.0788
+      ],
+      "k": 1,
+      "chance": 0.16666666666666666,
+      "path_space": 100.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 1,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100.0,
+          "n_eval": 25,
+          "n_novel": 25,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.08333333333333334
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.4,
+          "lesion_per_slot_mean": 0.4,
+          "superposed_all": null,
+          "superposed_per_item": null,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 43,
+          "k": 1,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100.0,
+          "n_eval": 36,
+          "n_novel": 36,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.08688271604938273
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": null,
+          "superposed_per_item": null,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 44,
+          "k": 1,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100.0,
+          "n_eval": 32,
+          "n_novel": 32,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.0662326388888889
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.28125,
+          "lesion_per_slot_mean": 0.28125,
+          "superposed_all": null,
+          "superposed_per_item": null,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 100,
+          "k": 1,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100.0,
+          "n_eval": 23,
+          "n_novel": 23,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.06509661835748794
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.08695652173913043,
+          "lesion_per_slot_mean": 0.08695652173913043,
+          "superposed_all": null,
+          "superposed_per_item": null,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 101,
+          "k": 1,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100.0,
+          "n_eval": 26,
+          "n_novel": 26,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.08557692307692309
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.11538461538461539,
+          "lesion_per_slot_mean": 0.11538461538461539,
+          "superposed_all": null,
+          "superposed_per_item": null,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 102,
+          "k": 1,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100.0,
+          "n_eval": 29,
+          "n_novel": 29,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.08544061302681999
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": null,
+          "superposed_per_item": null,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 1.0,
+      "per_slot_mean": 1.0,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.05028248587570622,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.5,
+      "per_slot": [
+        1.0,
+        1.0
+      ],
+      "alive_reg": [
+        0.0976,
+        0.0867
+      ],
+      "k": 2,
+      "chance": 0.16666666666666666,
+      "path_space": 10000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 2,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000.0,
+          "n_eval": 59,
+          "n_novel": 59,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09806967984934087,
+            0.0874764595103578
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.5,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 43,
+          "k": 2,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000.0,
+          "n_eval": 59,
+          "n_novel": 59,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09778719397363463,
+            0.08940677966101698
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.1016949152542373,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.5,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 44,
+          "k": 2,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09550925925925927,
+            0.07953703703703704
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.5,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 100,
+          "k": 2,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09111111111111113,
+            0.08064814814814818
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.075,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.5,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 101,
+          "k": 2,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000.0,
+          "n_eval": 59,
+          "n_novel": 59,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09844632768361582,
+            0.10009416195856871
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.5,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 102,
+          "k": 2,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.10472222222222219,
+            0.08314814814814815
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.125,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.5,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 0.9972222222222222,
+      "per_slot_mean": 0.9990740740740741,
+      "filler_swap_rate": 0.0,
+      "collapse_rate": 0.0,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.0,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.3324074074074073,
+      "per_slot": [
+        0.997,
+        1.0,
+        1.0
+      ],
+      "alive_reg": [
+        0.0962,
+        0.0891,
+        0.0804
+      ],
+      "k": 3,
+      "chance": 0.16666666666666666,
+      "path_space": 1000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 3,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09069444444444447,
+            0.08583333333333334,
+            0.05981481481481484
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.3277777777777777,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 43,
+          "k": 3,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.10046296296296293,
+            0.09425925925925929,
+            0.07263888888888893
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.33333333333333326,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 44,
+          "k": 3,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.9833333333333333,
+          "per_slot": [
+            0.9833333333333333,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 0.9944444444444444,
+          "alive_reg": [
+            0.09694444444444444,
+            0.08444444444444449,
+            0.07912037037037038
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.33333333333333326,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 100,
+          "k": 3,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.08611111111111115,
+            0.09041666666666667,
+            0.08879629629629632
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.33333333333333326,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 101,
+          "k": 3,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.10416666666666667,
+            0.09185185185185185,
+            0.10643518518518517
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.33333333333333326,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 102,
+          "k": 3,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.0989814814814815,
+            0.08791666666666666,
+            0.07537037037037038
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.33333333333333326,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 0.9777777777777779,
+      "per_slot_mean": 0.9944444444444444,
+      "filler_swap_rate": 0.0006944444444444445,
+      "collapse_rate": 0.004861111111111111,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.005555555555555556,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0006944444444444445,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.25,
+      "per_slot": [
+        1.0,
+        1.0,
+        1.0,
+        0.978
+      ],
+      "alive_reg": [
+        0.0978,
+        0.0832,
+        0.0878,
+        0.074
+      ],
+      "k": 4,
+      "chance": 0.16666666666666666,
+      "path_space": 100000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 4,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09425925925925925,
+            0.08439814814814818,
+            0.08162037037037038,
+            0.09430555555555559
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.004166666666666667,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.25,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 43,
+          "k": 4,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.95,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            0.95
+          ],
+          "per_slot_mean": 0.9875,
+          "alive_reg": [
+            0.09370370370370369,
+            0.08870370370370374,
+            0.08134259259259262,
+            0.061388888888888875
+          ],
+          "filler_swap_rate": 0.004166666666666667,
+          "collapse_rate": 0.008333333333333333,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.008333333333333333,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.25,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.004166666666666667
+        },
+        {
+          "seed": 44,
+          "k": 4,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09435185185185185,
+            0.07773148148148154,
+            0.09240740740740742,
+            0.09189814814814813
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.25,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 100,
+          "k": 4,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 1.0,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 1.0,
+          "alive_reg": [
+            0.09972222222222227,
+            0.07638888888888891,
+            0.08675925925925926,
+            0.06782407407407409
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.25,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 101,
+          "k": 4,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.9666666666666667,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            0.9666666666666667
+          ],
+          "per_slot_mean": 0.9916666666666667,
+          "alive_reg": [
+            0.11004629629629627,
+            0.08486111111111118,
+            0.09703703703703702,
+            0.0602314814814815
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.008333333333333333,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.020833333333333332,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.25,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 102,
+          "k": 4,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 100000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.95,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            0.95
+          ],
+          "per_slot_mean": 0.9875,
+          "alive_reg": [
+            0.09495370370370372,
+            0.08699074074074077,
+            0.08745370370370374,
+            0.06851851851851856
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0125,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.25,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 0.8805555555555556,
+      "per_slot_mean": 0.976111111111111,
+      "filler_swap_rate": 0.0011111111111111111,
+      "collapse_rate": 0.022777777777777782,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.0022222222222222222,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.19999999999999982,
+      "per_slot": [
+        0.997,
+        0.997,
+        0.986,
+        0.964,
+        0.936
+      ],
+      "alive_reg": [
+        0.0908,
+        0.0799,
+        0.0848,
+        0.0843,
+        0.0658
+      ],
+      "k": 5,
+      "chance": 0.16666666666666666,
+      "path_space": 10000000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 5,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.8833333333333333,
+          "per_slot": [
+            1.0,
+            1.0,
+            0.9166666666666666,
+            0.9666666666666667,
+            1.0
+          ],
+          "per_slot_mean": 0.9766666666666667,
+          "alive_reg": [
+            0.0832870370370371,
+            0.07939814814814819,
+            0.07236111111111113,
+            0.09240740740740742,
+            0.07902777777777778
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.023333333333333334,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.19999999999999982,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 43,
+          "k": 5,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.9833333333333333,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            0.9833333333333333,
+            1.0
+          ],
+          "per_slot_mean": 0.9966666666666666,
+          "alive_reg": [
+            0.09263888888888892,
+            0.08481481481481483,
+            0.08532407407407411,
+            0.0775,
+            0.07476851851851855
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0033333333333333335,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.19999999999999982,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 44,
+          "k": 5,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.85,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.85
+          ],
+          "per_slot_mean": 0.9700000000000001,
+          "alive_reg": [
+            0.09208333333333338,
+            0.07662037037037044,
+            0.08657407407407411,
+            0.0889814814814815,
+            0.038842592592592595
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.03,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.19999999999999982,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 100,
+          "k": 5,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.9833333333333333,
+          "per_slot": [
+            1.0,
+            0.9833333333333333,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "per_slot_mean": 0.9966666666666666,
+          "alive_reg": [
+            0.08768518518518521,
+            0.07245370370370376,
+            0.08898148148148152,
+            0.08828703703703704,
+            0.08055555555555556
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.0033333333333333335,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0033333333333333335,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.19999999999999982,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 101,
+          "k": 5,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.6666666666666666,
+          "per_slot": [
+            0.9833333333333333,
+            1.0,
+            1.0,
+            0.9166666666666666,
+            0.7666666666666667
+          ],
+          "per_slot_mean": 0.9333333333333333,
+          "alive_reg": [
+            0.10180555555555554,
+            0.08787037037037042,
+            0.0865277777777778,
+            0.07439814814814819,
+            0.043472222222222225
+          ],
+          "filler_swap_rate": 0.0033333333333333335,
+          "collapse_rate": 0.06333333333333334,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.01,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.19999999999999982,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 102,
+          "k": 5,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 10000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.9166666666666666,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            0.9166666666666666,
+            1.0
+          ],
+          "per_slot_mean": 0.9833333333333333,
+          "alive_reg": [
+            0.08759259259259267,
+            0.07851851851851853,
+            0.08884259259259263,
+            0.08416666666666668,
+            0.07810185185185188
+          ],
+          "filler_swap_rate": 0.0033333333333333335,
+          "collapse_rate": 0.013333333333333334,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.19999999999999982,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    },
+    {
+      "acc_all": 0.6694444444444444,
+      "per_slot_mean": 0.938888888888889,
+      "filler_swap_rate": 0.001388888888888889,
+      "collapse_rate": 0.05972222222222221,
+      "lesion_all": 0.0,
+      "lesion_per_slot_mean": 0.0004629629629629629,
+      "refshuf_all": 0.0,
+      "refshuf_per_slot_mean": 0.0,
+      "superposed_all": 0.0,
+      "superposed_per_item": 0.16666666666666663,
+      "per_slot": [
+        1.0,
+        1.0,
+        0.978,
+        0.922,
+        0.864,
+        0.869
+      ],
+      "alive_reg": [
+        0.0892,
+        0.0834,
+        0.0832,
+        0.0789,
+        0.0672,
+        0.0529
+      ],
+      "k": 6,
+      "chance": 0.16666666666666666,
+      "path_space": 1000000000000.0,
+      "gen_defined": true,
+      "zero_input_ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "k": 6,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.8,
+          "per_slot": [
+            1.0,
+            1.0,
+            0.8833333333333333,
+            0.95,
+            1.0,
+            0.9333333333333333
+          ],
+          "per_slot_mean": 0.961111111111111,
+          "alive_reg": [
+            0.08259259259259263,
+            0.08222222222222227,
+            0.06495370370370376,
+            0.0825,
+            0.0838888888888889,
+            0.05351851851851854
+          ],
+          "filler_swap_rate": 0.002777777777777778,
+          "collapse_rate": 0.03611111111111111,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.16666666666666663,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 43,
+          "k": 6,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.48333333333333334,
+          "per_slot": [
+            1.0,
+            1.0,
+            0.9833333333333333,
+            0.8666666666666667,
+            0.75,
+            0.8166666666666667
+          ],
+          "per_slot_mean": 0.9027777777777778,
+          "alive_reg": [
+            0.09199074074074078,
+            0.08388888888888892,
+            0.08120370370370371,
+            0.0653703703703704,
+            0.0602777777777778,
+            0.04583333333333335
+          ],
+          "filler_swap_rate": 0.002777777777777778,
+          "collapse_rate": 0.09444444444444444,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0027777777777777775,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.16666666666666663,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 44,
+          "k": 6,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.5333333333333333,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.85,
+            0.65
+          ],
+          "per_slot_mean": 0.9166666666666666,
+          "alive_reg": [
+            0.08717592592592598,
+            0.07921296296296303,
+            0.0911574074074074,
+            0.08041666666666673,
+            0.0541203703703704,
+            0.025879629629629634
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.08333333333333333,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.16666666666666663,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 100,
+          "k": 6,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.8833333333333333,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.9833333333333333,
+            0.8833333333333333
+          ],
+          "per_slot_mean": 0.9777777777777777,
+          "alive_reg": [
+            0.08138888888888894,
+            0.08291666666666671,
+            0.09319444444444444,
+            0.08569444444444448,
+            0.09046296296296298,
+            0.05129629629629632
+          ],
+          "filler_swap_rate": 0.002777777777777778,
+          "collapse_rate": 0.019444444444444445,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.16666666666666663,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 101,
+          "k": 6,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.6333333333333333,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            0.9,
+            0.6833333333333333,
+            1.0
+          ],
+          "per_slot_mean": 0.9305555555555556,
+          "alive_reg": [
+            0.10569444444444445,
+            0.08486111111111114,
+            0.0856944444444445,
+            0.08222222222222227,
+            0.04662037037037039,
+            0.08671296296296298
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.06944444444444445,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.16666666666666663,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        },
+        {
+          "seed": 102,
+          "k": 6,
+          "chance": 0.16666666666666666,
+          "gen_defined": true,
+          "path_space": 1000000000000.0,
+          "n_eval": 60,
+          "n_novel": 60,
+          "acc_all": 0.6833333333333333,
+          "per_slot": [
+            1.0,
+            1.0,
+            1.0,
+            0.8166666666666667,
+            0.9166666666666666,
+            0.9333333333333333
+          ],
+          "per_slot_mean": 0.9444444444444444,
+          "alive_reg": [
+            0.08662037037037042,
+            0.08754629629629633,
+            0.0830555555555556,
+            0.07736111111111116,
+            0.06782407407407412,
+            0.05393518518518519
+          ],
+          "filler_swap_rate": 0.0,
+          "collapse_rate": 0.05555555555555555,
+          "zero_input_ok": true,
+          "lesion_all": 0.0,
+          "lesion_per_slot_mean": 0.0,
+          "superposed_all": 0.0,
+          "superposed_per_item": 0.16666666666666663,
+          "refshuf_all": 0.0,
+          "refshuf_per_slot_mean": 0.0
+        }
+      ]
+    }
+  ],
+  "elapsed_seconds": 687.1,
+  "HONEST_NOTE": "reuse-by-import of three banked GOs (D3 spiking NMDA hold + RUNG6c Hebbian bind + the agreement-stream vocab); NO sim/ edit. Complements the gap#2 keystone LTM-store arc (2026-07-17, competitive-slot RETRIEVAL P=3=1.00/P=4=0.79, hold NOT load-bearing there) by testing the WORKING-MEMORY hold (load-bearing NMDA, read the HELD bump) on the held-out agreement stream. Registers occupy DISJOINT pool banks with a SHARED FS, so cross-register filler-swap is impossible by construction (each register reads only its own pools, per the keystone 'separate slots never share a value pool'); the honest capacity signal is SUPPRESSION (a register loses its bump under shared inhibition) + the superposed-single-slot collide baseline (the ~2-cap regime). The role-by-position gate is a host marker (the learned spiking role-gate is gap#4). The BIND is host numpy; the verb readout is a host deref. 1-seed is a SMOKE indicator; the 6-seed sweep is decisive."
+}
