@@ -58,9 +58,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   the crux — word-learning retention flat 100%); (11) continual-retention NEGATIVE `9368bf9c` (interleaved replay
 >   doesn't beat self-replay but ISOLATES the acquisition-at-scale collapse → metaplasticity named); (12) replay-declamp
 >   CORRECTION `265f8a6d` (the 0.55 "cap" was a bdsp_wmax=6 clamp confound; de-clamped hits 1.00); (13) mouth TONE-TOKEN
->   render on SPIKES `821fc4d1` (FS-WTA, parity_live 1.000 6/6). **STILL IN FLIGHT:** emergence-engine (recurrent language
->   cortex), source-monitoring lever, roadmap-walls WORKFLOW (gap#4/visual-identity/value-critic/reconsolidation). ROADMAP
->   batch-sync owed (agents' ROADMAP edits skipped during merges to avoid conflicts — git log is the record).
+>   render on SPIKES `821fc4d1` (FS-WTA, parity_live 1.000 6/6).
+> - **✅ ~07:35Z UPDATE — the whole in-flight wave landed + banked (~20 total, all pushed); ROADMAP.md batch-synced
+>   `9c3438d82`.** (14) breadth-ceiling REFINE `bf4e3d4e` (D=32 stress gives the capacity instrument discriminating
+>   teeth); (15) **gap#4 CRUX** `6f06b6f8` + 6-SEED ADJUDICATION `37b0f07e` — temporal-depth CONFOUND is real but the
+>   isolation is **1/6 clean, NOT robust at 2×32** (honest downgrade from the 1-seed smoke); spatial deep-credit stays
+>   OPEN; also fixed a runner verdict-mislabel (leakage precondition → UNDEFINED not a NEGATIVE); (16) reconsolidation
+>   lossy-store (in `9c3438d82`); (17) visual-identity PARTIAL `62edd94b` (harder k-WTA real-but-insufficient + exposes
+>   a decode-quantization confound); (18) **source-monitoring HONEST NEGATIVE 5/6** `ee7fee72` (population-coded pools
+>   resolve no-harm STRUCTURALLY but recall-time gain is not a universal floor-clearer → next = competitive ENCODING
+>   / heterosynaptic LTD); (19) **⭐ EMERGENCE ENGINE** `8ef368c0` (measured the on-bridge HTM-TM horizon — clean HOLD
+>   to dist 9, NON-FADING but FINITE, allocation-limited; **cupy is launch-bound SLOWER here → this arc is correctly
+>   CPU-bound**; next = selective-write store over HTM keys). W4-RSA / episodic-kt8 / seams-A+C were already on main.
+> - **IN FLIGHT NOW (~07:35Z):** 4 crux forward-path agents building (build-only spec → return 6-seed cmd): gap#4
+>   depth-3-at-small-T, metaplasticity for continual-acquisition-at-scale, selective-write store over HTM keys,
+>   competitive-encoding heterosynaptic-LTD for source-monitoring. + 2 CPU sweeps: value-critic 6-seed (finding
+>   pending its artifact) + emergence-HTM horizon 6-seed. Pool draining (~18). GPU legitimately idle (these arcs are
+>   CPU-correct per the emergence finding). State-waiter armed on the sweeps; agents notify on completion.
+> - **OWED at wake:** MASTER-ROADMAP §7 walls-ledger semantic sync (ROADMAP.md done; freshness gate satisfied); the
+>   value-critic + emergence 6-seed commits; review the ⚠️ sim/ per-parameter reseed `1f4ea9f5` (default-off, det-9/9).
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 
