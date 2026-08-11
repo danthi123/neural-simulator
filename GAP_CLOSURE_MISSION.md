@@ -79,9 +79,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   carries. **LEVER 5 (the role-gate's own next, a fresh arc) = stronger transport-free alignment** (longer Kolen-Pollack
 >   co-adaptation / weight-mirror warm-up) OR a cleaner hidden code making the NOM template linearly separable, trained
 >   with this credit rule. (The lever-3 stabilizer is a BANKED reusable GO for the basin; converges with rung 2's WTA.)
->   (2) **emergent neural-WTA slot allocation** (a-1'd: RUNG6e's banked subproblem — reuse rungB1b's neural-WTA-gate + a
->   self-calibrating competition threshold [BCM/synaptic-scaling] to replace the host free-counter). NB this CONVERGES
->   with LEVER 3 — both need structural competition/WTA on the substrate.
+>   (2) **emergent neural-WTA slot allocation = ✅ 6-SEED GO** (`29a7de1d`): RUNG6e's noise-picked wall is SURPASSED — an
+>   emergent neural WTA (down-ramp release-of-inhibition → one clean winner + HTM/Turrigiano homeostatic occupancy
+>   excitability steering the next entity to a free slot) replaces the host free-counter ENTITY-SPECIFICALLY: retrieve
+>   1.000 / collision 0.000 / recall 1.000 on all 6 seeds (matches the host ceiling), self-calibration LOAD-BEARING
+>   (lesion → collision 0.472 / recall 0.528, RUNG6e's failure returns), barcode-conditioning load-bearing (null →
+>   0.167). Honest residual: the competition CONTROLLER is host math (spike-fraction 0.76; the on-substrate spiking
+>   lateral-inhibitory realisation is the named next rung) — same lane-b/c status. **This emergent-WTA also serves
+>   rung-3b's channel-read burndown (replace its per-channel argmax with this WTA).**
 >   (3) **wire the composition into the emergence stream = ✅ 6-SEED GO — a WORKING WM+HTM NEURAL HYBRID** (rung-3 PARTIAL
 >   `9840f76` → rung-3b SEPARATE-CHANNEL fix `feb9e35a`, coordinator-recovered from a deferred agent). The rung-3 partial
 >   showed the neural fusion COMBINES the faculties (hybrid 0.641 beats both single systems) but was LOSSY on the subject
