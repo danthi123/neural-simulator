@@ -4,10 +4,11 @@ status: contributing
 date: 2026-08-11
 mechanism: deep-credit-on-spikes — LEARNED FEEDBACK (Kolen-Pollack): does transport-free *learned* feedback reach the 3rd hidden layer where FIXED-random DFA could not
 lane: gap#4 / deep-credit
-verdict: SMOKE GO (3/3 testable seeds). Transport-free KP-LEARNED feedback REACHES the 3rd hidden layer — it closes 55% of the BP-depth-2→BP-depth-3 FIT gap (per-seed 62/37/65%) where fixed-DFA stays at the mean-predictor floor (-17%); freezing the feedback (kp-lr=0) collapses it to -30%. This SURPASSES the prior fixed-feedback wall. Headline validation = the robust 6-valid-seed run (caller-launched).
-seeds: [42, 43, 44]
+verdict: 6-VALID-SEED GO (CONFIRMED). Transport-free KP-LEARNED feedback REACHES the 3rd hidden layer — over 6/15 ceiling-holding seeds it closes 66% of the BP-depth-2→BP-depth-3 FIT gap (>=50% bar) where fixed-DFA stays at the mean-predictor floor (-85%); freezing the feedback (kp-lr=0) collapses it to -40% (the win is DUE TO learning G). This SURPASSES the prior fixed-feedback wall at de-risk level. Residual: KP reaches but does not yet MATCH the oracle (~forward optimization).
+seeds: [42, 43, 44, 104, and 2 more of the 6/15 testable pool]
 artifacts:
   - research/findings/raw/_gap4_learned_feedback_smoke.json
+  - research/findings/raw/_gap4_learned_feedback_6valid.json
 runner: research/runners/_gap4_learned_feedback_derisk.py
 instrument: the layer-3-credit-fidelity harness of 2026-08-11, extended with (1) LEARNED transport-free feedback (Kolen-Pollack: each hidden feedback matrix G_l is updated by the SAME Adam step as W_l, transposed, so G_l co-adapts toward W_l^T by a LOCAL rule — never copied), and (2) PER-SEED ceiling-gating (a seed is scored only if BP-depth-3 fits AND BP-depth-2 underfits). Arms: BP-depth-3 (ceiling), BP-depth-2 (separation), KP (learned), fixed-DFA (prior baseline), frozen-KP=fixed-FA (the lever endpoint), permuted-KP. SIM_BACKEND=numpy.
 ---
@@ -43,6 +44,19 @@ transport-free LEARNED feedback crosses decisively to the depth-3-oracle side of
 fixed-feedback baselines stay at (or below) the mean-predictor. The deep-layer (a1) DFA-vs-BP credit-direction
 alignment goes fixed-DFA -0.26 → KP +0.47 — the learned feedback recovers the backprop credit DIRECTION at the deep
 layer, which fixed feedback anti-aligns. All 8 Verdict preconditions hold → GO. (Backend numpy/cpu.)
+
+## ⭐ 6-VALID-SEED CONFIRMATION (coordinator-run) — GO (`research/findings/raw/_gap4_learned_feedback_6valid.json`)
+
+<!--derived-->
+The robust-ceiling run (15-seed pool, per-seed ceiling-gated, `--min-testable 6`, epochs=8000) yields **6/15 testable
+(ceiling-holding) seeds and status GO**. Over those 6 valid seeds: **KP-learned feedback closes 66% of the BP-depth-2→
+BP-depth-3 fit gap** (KP loss 0.0092 vs bp3 1.1e-05 / bp2 0.024 / mean-predictor 0.042), where **fixed-DFA closes only
+−85%** (stays at the mean-predictor). The `kp_beats_dfa`, `go_kp`, `dfa_fails`, `perm_ok`, `kp_moved_all`, and
+`fa_frozen_all` checks ALL hold. **Freezing the feedback (kp-lr=0 → fixed-FA) collapses the gap-close to −40%** — the
+win is DUE TO learning the feedback G. Transport-free confirmed: `cos(G,Wᵀ)` init 0.253 → deep-layer final **0.826**
+(co-adapted through training, never copied — cos starts far from 1); deep (a1) DFA-vs-BP credit alignment −0.236 (fixed)
+→ **+0.696** (KP). **This CONFIRMS the smoke at 6 valid seeds: transport-free learned feedback reaches the 3rd hidden
+layer where fixed-feedback DFA could not — the gap#4 deep-credit surpass, at de-risk level.**
 
 ## The lever + anti-cheats (all executed, not asserted in prose)
 
