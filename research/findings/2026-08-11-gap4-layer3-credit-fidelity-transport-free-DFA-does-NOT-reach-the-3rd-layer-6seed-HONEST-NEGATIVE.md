@@ -37,6 +37,18 @@ backprop-depth-3 fits the (highly oscillatory) tent^3 target at width 8 on only 
 a negative** — you cannot conclude "DFA can't reach layer 3" on seeds where the ORACLE itself can't fit. (This is the
 verdict-preconditions discipline working: a failed precondition yields UNDEFINED, never a fabricated negative.)
 
+## Depth-graded diagnostic — the wall is COMPOSITIONAL-DEPTH of the target, not propagation through 3 layers
+
+<!--derived-->
+An independent parallel build (the recovered agent, corroborating commit `79d04ce5` on `codex/gap4-layer3-credit-fidelity`;
+richer H=16 smoke: BP-depth-3 7e-05, BP-depth-2 0.034, DFA 0.048, gap_close −41% — DFA WORSE than even the depth-2
+backprop oracle) ran a depth-GRADED probe that localizes the failure precisely: **transport-free DFA fits tent¹ through
+a 3-hidden network (loss ≈ 0 — credit propagates through 3 network LAYERS fine), but STALLS on tent² / tent³.** So the
+wall is NOT "error can't traverse 3 layers"; it is the **compositional depth of the TARGET** (nested tent maps) — exactly
+the regime where fixed-random feedback-alignment is known to degrade. The apical-lesion (B=0) bites exactly (deepest-layer
+weight-change 2.967 → 0.000; hidden gradient ≡ 0), and DFA regenerates byte-identically from the disjoint `seed+8888`
+feedback stream (provably transport-free, not derived from W).
+
 ## The instrument correction banked here (why the ALIGNMENT metric was invalid, and the FIT is the signal)
 
 <!--derived-->
