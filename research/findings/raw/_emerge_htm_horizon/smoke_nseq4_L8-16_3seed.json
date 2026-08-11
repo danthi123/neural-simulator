@@ -1,0 +1,136 @@
+{
+  "probe": "emerge_htm_horizon",
+  "verdict": "HONEST NEGATIVE / BOUNDARY \u2014 the emergence engine holds high-order structure to distance 9 (L=8) but NOT at the far distance: far htm 0.750 < 0.90; not context-driven (swap 0.750). This measures the allocation-based horizon and names the next mechanism (more cells / selective write / the content-addressable store) at the collapse point.",
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "oracle>0.99_task_solvable",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fab4512ede0>",
+      "note": "else the task is not context-solvable -> INCONCLUSIVE, not a negative"
+    },
+    {
+      "kind": "floor",
+      "name": "htm_above_chance",
+      "ok": true,
+      "detail": "0.75 vs floor 0.25",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "htm_vs_dAP_lesion_discriminates",
+      "ok": true,
+      "detail": "treatment=0.75 control=0 |sep|=0.75 > 0.2",
+      "note": "the priming-chain recurrence is load-bearing (instrument discriminates)"
+    },
+    {
+      "kind": "require",
+      "name": "untrained_control_collapses",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fab4512ede0>",
+      "note": ""
+    }
+  ],
+  "mechanism": "on-bridge HTM Temporal-Memory (allocation-based, non-fading priming chain over the sim/ fused_htm_permanence_update kernel on cp_connections.data) carrying high-order context through a shared middle of length L; measures the distal-structure HORIZON vs the fixed reservoir's fading ~5-15-token window",
+  "task": "EMERGE-14 overlap corpus [cue, <L middle>, branch]; branch depends on the cue L+1 tokens back (n-gram at branch pinned at chance 1/n_seq); dAP-lesion + swap-follows-context + untrained + capacity-starved control + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "distances": [
+      8,
+      16
+    ],
+    "n_seq": 4,
+    "k_win": 4,
+    "act_th": 3,
+    "slack": 8,
+    "epochs": 50,
+    "capacity_mode": "fair",
+    "fixed_cells": 16,
+    "l_far": 16,
+    "chance": 0.25
+  },
+  "horizon_L": 8,
+  "points": [
+    {
+      "L": 8,
+      "distance": 9,
+      "n_cells": 24,
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0,
+      "swap_follows": 1.0,
+      "markov": 0.25,
+      "oracle": 1.0,
+      "chance": 0.25,
+      "hold": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "htm": 1.0,
+          "swap_follows": 1.0,
+          "lesion": 0.0,
+          "untrained": 0.0
+        },
+        {
+          "seed": 43,
+          "htm": 1.0,
+          "swap_follows": 1.0,
+          "lesion": 0.0,
+          "untrained": 0.0
+        },
+        {
+          "seed": 44,
+          "htm": 1.0,
+          "swap_follows": 1.0,
+          "lesion": 0.0,
+          "untrained": 0.0
+        }
+      ]
+    },
+    {
+      "L": 16,
+      "distance": 17,
+      "n_cells": 24,
+      "htm": 0.75,
+      "lesion": 0.0,
+      "untrained": 0.0,
+      "swap_follows": 0.75,
+      "markov": 0.25,
+      "oracle": 1.0,
+      "chance": 0.25,
+      "hold": false,
+      "per_seed": [
+        {
+          "seed": 42,
+          "htm": 0.75,
+          "swap_follows": 0.75,
+          "lesion": 0.0,
+          "untrained": 0.0
+        },
+        {
+          "seed": 43,
+          "htm": 0.75,
+          "swap_follows": 0.75,
+          "lesion": 0.0,
+          "untrained": 0.0
+        },
+        {
+          "seed": 44,
+          "htm": 0.75,
+          "swap_follows": 0.75,
+          "lesion": 0.0,
+          "untrained": 0.0
+        }
+      ]
+    }
+  ],
+  "elapsed_seconds": 304.3,
+  "HONEST_NOTE": "reuse-by-import of the EMERGE-14 on-bridge learner; NO sim/ edit. Memorise-and-recall horizon (apples-to-apples with the deltastore reservoir KV horizon), NOT held-out generalisation (that is the EMERGE-18 axis). The n-gram floor is pinned at chance BY CONSTRUCTION (shared middle) \u2014 the meaningful bar is chance + the reservoir's fading horizon."
+}

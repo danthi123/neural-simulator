@@ -1,0 +1,99 @@
+{
+  "probe": "emerge_htm_horizon",
+  "verdict": "GO \u2014 the roadmap's emergence engine (allocation-based on-bridge HTM Temporal-Memory) carries HIGH-ORDER structure to distance 17 (L=16, mean branch-acc 1.000) >> chance 0.500 and >> the best fixed-order n-gram floor 0.500 (pinned at chance by the shared middle), FAR past the fixed reservoir's fading ~5-15-token window (and past the deltastore-with-clean-keys ~30). It is NON-FADING: dAP-lesion collapses it to 0.000 (the priming-chain recurrence is load-bearing), swap-follows-context 1.000 (the branch is DRIVEN by the distal cue, not a positional bias), untrained 0.000, multi-seed. Measured horizon (largest holding distance in the sweep): L=16. The wall is allocation CAPACITY (see the starved control), not distance. NO sim/ edit.",
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "oracle>0.99_task_solvable",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fca0813ae80>",
+      "note": "else the task is not context-solvable -> INCONCLUSIVE, not a negative"
+    },
+    {
+      "kind": "floor",
+      "name": "htm_above_chance",
+      "ok": true,
+      "detail": "1 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "htm_vs_dAP_lesion_discriminates",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.2",
+      "note": "the priming-chain recurrence is load-bearing (instrument discriminates)"
+    },
+    {
+      "kind": "require",
+      "name": "untrained_control_collapses",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fca0813ae80>",
+      "note": ""
+    }
+  ],
+  "mechanism": "on-bridge HTM Temporal-Memory (allocation-based, non-fading priming chain over the sim/ fused_htm_permanence_update kernel on cp_connections.data) carrying high-order context through a shared middle of length L; measures the distal-structure HORIZON vs the fixed reservoir's fading ~5-15-token window",
+  "task": "EMERGE-14 overlap corpus [cue, <L middle>, branch]; branch depends on the cue L+1 tokens back (n-gram at branch pinned at chance 1/n_seq); dAP-lesion + swap-follows-context + untrained + capacity-starved control + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "distances": [
+      16
+    ],
+    "n_seq": 2,
+    "k_win": 4,
+    "act_th": 3,
+    "slack": 8,
+    "epochs": 60,
+    "capacity_mode": "fair",
+    "fixed_cells": 16,
+    "l_far": 16,
+    "chance": 0.5
+  },
+  "horizon_L": 16,
+  "points": [
+    {
+      "L": 16,
+      "distance": 17,
+      "n_cells": 16,
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0,
+      "swap_follows": 1.0,
+      "markov": 0.5,
+      "oracle": 1.0,
+      "chance": 0.5,
+      "hold": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "htm": 1.0,
+          "swap_follows": 1.0,
+          "lesion": 0.0,
+          "untrained": 0.0
+        },
+        {
+          "seed": 43,
+          "htm": 1.0,
+          "swap_follows": 1.0,
+          "lesion": 0.0,
+          "untrained": 0.0
+        },
+        {
+          "seed": 44,
+          "htm": 1.0,
+          "swap_follows": 1.0,
+          "lesion": 0.0,
+          "untrained": 0.0
+        }
+      ]
+    }
+  ],
+  "elapsed_seconds": 52.2,
+  "HONEST_NOTE": "reuse-by-import of the EMERGE-14 on-bridge learner; NO sim/ edit. Memorise-and-recall horizon (apples-to-apples with the deltastore reservoir KV horizon), NOT held-out generalisation (that is the EMERGE-18 axis). The n-gram floor is pinned at chance BY CONSTRUCTION (shared middle) \u2014 the meaningful bar is chance + the reservoir's fading horizon."
+}
