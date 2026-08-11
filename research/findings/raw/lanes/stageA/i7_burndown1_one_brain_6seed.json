@@ -1,0 +1,129 @@
+{
+  "hook_applied": true,
+  "n_seeds": 6,
+  "n_byte_identity_held": 6,
+  "n_smoke_go": 6,
+  "GO_6of6": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "teeth_ok": true,
+      "one_brain_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "eprop_FF_edges_in_SAME_cp_connections_as_conversational": true,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92933,
+        "n_conversational_synapses": 91333,
+        "e-prop_teach_moves_ONLY_eprop_ff (conv weights unchanged)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1580
+      }
+    },
+    {
+      "seed": 43,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "teeth_ok": true,
+      "one_brain_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "eprop_FF_edges_in_SAME_cp_connections_as_conversational": true,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92919,
+        "n_conversational_synapses": 91319,
+        "e-prop_teach_moves_ONLY_eprop_ff (conv weights unchanged)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1568
+      }
+    },
+    {
+      "seed": 44,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "teeth_ok": true,
+      "one_brain_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "eprop_FF_edges_in_SAME_cp_connections_as_conversational": true,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92713,
+        "n_conversational_synapses": 91113,
+        "e-prop_teach_moves_ONLY_eprop_ff (conv weights unchanged)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1561
+      }
+    },
+    {
+      "seed": 100,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "teeth_ok": true,
+      "one_brain_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "eprop_FF_edges_in_SAME_cp_connections_as_conversational": true,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92910,
+        "n_conversational_synapses": 91310,
+        "e-prop_teach_moves_ONLY_eprop_ff (conv weights unchanged)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1593
+      }
+    },
+    {
+      "seed": 101,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "teeth_ok": true,
+      "one_brain_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "eprop_FF_edges_in_SAME_cp_connections_as_conversational": true,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 93033,
+        "n_conversational_synapses": 91433,
+        "e-prop_teach_moves_ONLY_eprop_ff (conv weights unchanged)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1570
+      }
+    },
+    {
+      "seed": 102,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "teeth_ok": true,
+      "one_brain_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "eprop_FF_edges_in_SAME_cp_connections_as_conversational": true,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 93115,
+        "n_conversational_synapses": 91515,
+        "e-prop_teach_moves_ONLY_eprop_ff (conv weights unchanged)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1588
+      }
+    }
+  ]
+}

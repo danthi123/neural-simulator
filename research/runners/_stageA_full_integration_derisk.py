@@ -454,7 +454,8 @@ def _arbiter_regions():
 def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhibition: bool = False,
                     onebrain_k_max: int = 32, co_resident_forward_model: bool = False, fm_n_pool: int = FM_N_POOL,
                     co_resident_affect_ladder: bool = False, aff_n_rungs: int = 8,
-                    co_resident_certainty_opponent: bool = False, vocab=DEFAULT_VOCAB):
+                    co_resident_certainty_opponent: bool = False, vocab=DEFAULT_VOCAB,
+                    co_resident_eprop: bool = False, eprop_dims=(34, 40, 6), eprop_ff_w_init: float = 2000.0):
     """Build ONE SimulationBridge: the composer rf slice FIRST, then (default-on) every faculty slice appended AFTER
     it. Returns (bridge, comp, idx, baseline_snap). When with_faculties=False, ONLY the rf slice is built (the
     default-off byte-identity baseline).
@@ -523,6 +524,20 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
                                    internal_density=0.0, enable_nmda=True))
         regions.append(BrainRegion(name="meta_opp_fs", n_neurons=int(meta.META_MARGIN_FS_SIZE * meta.K_CLASSES),
                                    exc_fraction=0.0, internal_density=0.0, enable_nmda=False))
+
+    # ---- INTEGRATION #7 burn-down #1 (ONE-BRAIN merge): the e-prop ACQUISITION net's three region slices, appended
+    # LAST (needs with_faculties so the single union+inject_explicit_wiring assembles the plastic FF too). eprop_in |
+    # eprop_h1 | eprop_out, each internal_density=0 (no shared-plan RNG draw) + enable_nmda=False + RS Izhikevich, so
+    # append-LAST index+draw invariance holds (the pre-existing neurons' thresholds stay byte-identical, the seams-A/C
+    # /opponent mechanism). The TWO plastic feedforward pathways (eprop_ff_0 in->h1, eprop_ff_1 h1->out zero-init) are
+    # injected into the SAME `union` dict below -> ONE SimulationBridge / ONE cp_connections hosts both the
+    # conversational synapses and the e-prop FF synapses. Flag off -> no eprop_* region -> byte-identical.
+    build_eprop = bool(co_resident_eprop and with_faculties)
+    if build_eprop:
+        _e_in, _e_h1, _e_out = (int(x) for x in eprop_dims)
+        for _enm, _enn in (("eprop_in", _e_in), ("eprop_h1", _e_h1), ("eprop_out", _e_out)):
+            regions.append(BrainRegion(name=_enm, n_neurons=_enn, exc_fraction=1.0, internal_density=0.0,
+                                       enable_nmda=False, izh_neuron_type="IZH2007_RS_CORTICAL_PYRAMIDAL"))
 
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -621,6 +636,35 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
             w_fs = 0.0 if lesion_arbiter_inhibition else ARB_FS_TO_POOL_W
             union[f"fs_to_{p}"] = _dense_projection(arb_fs, pool_idx[p], w_fs, ARB_GATE)
 
+        # INTEGRATION #7 burn-down #1 (ONE-BRAIN merge): inject the e-prop net's TWO plastic feedforward pathways into
+        # the SAME union -> they land in the SAME cp_connections array as every conversational synapse (substrate-level
+        # one-brain, per project_one_brain_substrate_vs_functional). Dense per-pathway (matches OnBridgeBDSPNet's FF
+        # init discipline): ff_0 = eprop_in->eprop_h1 Xavier * ff_w_init (drives spikes); ff_1 = eprop_h1->eprop_out
+        # ZERO-init (the Bellec-2020 leaky readout e-prop GROWS). plastic=True so the per-synapse plastic mask marks
+        # them movable; they carry NO plasticity_gate name -> the conversational gate-freezes (set_plasticity_gate 0.0)
+        # never touch them, and no conversational pathway ever reaches an eprop_* neuron (edges are eprop-internal only,
+        # no out-edge to any pre-existing region -> conversational decisions byte-identical). e-prop is the sole mover
+        # of these edges (via CoResidentEpropNet._apply_grads writing cp_connections.data at the FF slots directly).
+        if build_eprop:
+            e_in_g = np.asarray(rm.indices("eprop_in"), dtype=np.int64)
+            e_h1_g = np.asarray(rm.indices("eprop_h1"), dtype=np.int64)
+            e_out_g = np.asarray(rm.indices("eprop_out"), dtype=np.int64)
+            _erng = np.random.default_rng(int(seed))
+            _lim0 = float(np.sqrt(6.0 / (len(e_in_g) + len(e_h1_g))))
+            _W0 = (_erng.uniform(-_lim0, _lim0, (len(e_in_g), len(e_h1_g))) * float(eprop_ff_w_init)).astype(np.float32)
+            _P0, _Q0, _V0 = [], [], []
+            for _ai, _a in enumerate(e_in_g):
+                for _bi, _b in enumerate(e_h1_g):
+                    _P0.append(int(_a)); _Q0.append(int(_b)); _V0.append(float(_W0[_ai, _bi]))
+            union["eprop_ff_0"] = dict(pre_indices=_P0, post_indices=_Q0, initial_weights=_V0,
+                                       plastic=True, conn_type="ff")
+            _P1, _Q1, _V1 = [], [], []
+            for _a in e_h1_g:
+                for _b in e_out_g:
+                    _P1.append(int(_a)); _Q1.append(int(_b)); _V1.append(0.0)
+            union["eprop_ff_1"] = dict(pre_indices=_P1, post_indices=_Q1, initial_weights=_V1,
+                                       plastic=True, conn_type="ff")
+
         # SEAM-A: inject the fm reservoir's fixed-random recurrence as its OWN union entry (the region carries
         # internal_density=0 to stay OUT of the shared plan's rng stream). Uses rm._build_region_internal (the
         # engine's exact Erdős-Rényi builder) on a density-restored shadow with an INDEPENDENT rng, so the fm
@@ -686,6 +730,15 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
             "pos_readout": np.asarray(rm.indices(ladder_names["pos_readout"]), dtype=np.int64),
             "neg_readout": np.asarray(rm.indices(ladder_names["neg_readout"]), dtype=np.int64),
             "names": ladder_names,
+        }
+
+    # INTEGRATION #7 burn-down #1: the GLOBAL neuron indices of the co-resident e-prop slices (contiguous per region,
+    # in region order) -> CoResidentEpropNet binds its layer slices + FF _data_idx_flat to these on the merged bridge.
+    if build_eprop:
+        idx["eprop"] = {
+            "in": np.asarray(rm.indices("eprop_in"), dtype=np.int64),
+            "h1": np.asarray(rm.indices("eprop_h1"), dtype=np.int64),
+            "out": np.asarray(rm.indices("eprop_out"), dtype=np.int64),
         }
 
     comp = CoResidentOneBrainComposer(bridge, rf_base, build_parser=False, seed=seed, D=128, vocab=vocab,
