@@ -9,11 +9,11 @@ TWO measurement blocks (reuse-by-import #6; NO `sim/` edit; SIM_BACKEND=numpy; c
   A. CORPUS SWEEP -- the REAL learned-breadth axis. Sweep K in {40,80,160,320} (= the top-K mined TinyStories SVO
      triples, vocab GROWING with K). Per (seed,K): |V|, n_facts, grounded-subject BREADTH, RECALL on the stored (a,v)
      cues, and the MOAT (untaught-in-vocab false-accepts). Plus #6's anti-cheats at every K: permuted-corpus
-     provenance, empty-kb same-vocab control. Tier-1 LIVE mouth-free chat at the SCALED headline K (grounded-reply
-     RISE vs the 6-fact baseline, confab==0, OOD abstain, `_gm_posthoc_verify` drops 100% unsupported) + the additive
-     `vocab`-kwarg byte-identity guard (seed 42). query_patient is MEMOISED per measurement (a deterministic pure read
-     of the frozen store -> answer-identical, the SAME rationale #6's chat memo documents), so the O(K.D) resonate is
-     not paid redundantly.
+     provenance, empty-kb same-vocab control (with an `attributable_to` attribution: whose is the breadth?). Tier-1
+     LIVE mouth-free chat at the SCALED headline K (grounded-reply RISE vs the 6-fact baseline, confab==0, OOD abstain,
+     `_gm_posthoc_verify` drops 100% unsupported) + the additive `vocab`-kwarg byte-identity guard (seed 42).
+     query_patient is MEMOISED per measurement (a deterministic pure read of the frozen store -> answer-identical, the
+     SAME rationale #6's chat memo documents), so the O(K.D) resonate is not paid redundantly.
 
      SCOPING REALITY (measured, honest): the TinyStories corpus under the shipped noun/verb inventory
      (`_ANIMALS|NOUNS_EXTRA`, `VERBS`) contains only **247 distinct clean SVO triples over ~68 distinct concepts**, so
@@ -24,13 +24,13 @@ TWO measurement blocks (reuse-by-import #6; NO `sim/` edit; SIM_BACKEND=numpy; c
   B. CAPACITY-CEILING INSTRUMENT -- locate where the RF-phasor moat WOULD leak, since the corpus cannot fill it. The
      store is a LIST of INDEPENDENT per-fact composites (self.kb), NOT one superposed memory, so scaling the NUMBER of
      facts adds NO inter-fact crosstalk -- a query unbinds ONE 3-bind composite and cleans up against the |V| codebook.
-     The three genuine capacity axes at D=128, each swept to a leak or a bound:
-       (b1) CODEBOOK axis |V| in {68..8192}: per-role cleanup MARGIN (true cos - best-competitor cos) + cleanup
-            accuracy + moat false-accepts. Margin falls only ~sqrt(ln|V|)/sqrt(D) -> the codebook holds thousands of
-            concepts before a leak (the corpus's 68 is ~100x under it).
+     The three genuine capacity axes, each swept to a leak or a bound:
+       (b1) CODEBOOK axis D x |V|: per-role cleanup MARGIN + accuracy + moat false-accepts. Swept at a STRESS D=32
+            (where cleanup accuracy FALLS as |V| grows -> the |V| ceiling is LOCATED, giving the metric discriminating
+            power) beside the operating D=128 (holds to |V|=8192). The margin falls only ~sqrt(ln|V|)/sqrt(D).
        (b2) SUPERPOSITION axis L in {2..6}: role-fillers bundled into ONE composite (the store()'s '+-1 scheme K=5
             boundary' question). This is the within-fact load that actually breaks recovery -- SVO facts are L=3.
-       (b3) DIMENSION axis D in {8..128} at a fixed load: the D where the moat leaks -> D=128's headroom.
+       (b3) DIMENSION axis D in {8..128} at a fixed 3-bind load: the D where the moat leaks -> D=128's headroom.
 
 GO GATE (6 seeds 42/43/44/100/101/102): at EVERY corpus K, recall>=0.95 AND moat 0 false-accepts AND breadth STRICTLY
 rises with K (learned content, not vocab) AND provenance<0.5 AND empty-kb control gives 0 new-subject competence; plus
@@ -40,9 +40,9 @@ the ceiling is reported from block B (concept headroom / superposition L* / dime
 latency O(K.D)) -- a first-class result either way.
 
 ANTI-CHEATS (#6's, preserved): (1) permuted-corpus provenance overlap<0.5 at every K; (2) expanded moat battery
-untaught-in-vocab -> 0 false-accepts; (3) empty-kb same-vocab control -> breadth stays 2, 0 new-subject answers;
-(4) THIS de-risk IS the capacity sweep (#6 anti-cheat 4 generalised to K=320 + block B); (5) surface-confab scan
-`_detect_ungrounded`==0; (6) byte-identity of the additive vocab kwarg (seed 42).
+untaught-in-vocab -> 0 false-accepts; (3) empty-kb same-vocab control -> breadth stays 2, 0 new-subject answers +
+`attributable_to` attribution; (4) THIS de-risk IS the capacity sweep (#6 anti-cheat 4 generalised to K=320 + block B);
+(5) surface-confab scan `_detect_ungrounded`==0; (6) byte-identity of the additive vocab kwarg (seed 42).
 
 HONEST SCOPE (per THE LAW + docs/TERMS.md). DECLARED SCAFFOLDS (identical to #6): host SVO mining (linguistic
 environment), `comp.store` host VSA write (composer-as-idealization), `_gm_fact_to_english` host render. GENUINELY
@@ -56,7 +56,7 @@ Run (single-seed smoke):
       --seeds 42 --Ks 40,80,160,320 --live-K 320
 Full 6-seed foreground sweep:
   PYTHONPATH=$PWD SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._corpus_breadth_scaling_capacity_ceiling_derisk \
-      --seeds 42,43,44,100,101,102 --Ks 40,80,160,320 --live-K 320 \
+      --seeds 42,43,44,100,101,102 --Ks 40,80,160,320 --live-K 320 --live-seeds 42 --cap-seeds 42,43,44 \
       --out research/findings/raw/lanes/stageA/corpus_breadth_scaling_capacity_ceiling_6seed.json
 """
 from __future__ import annotations
@@ -272,6 +272,12 @@ def _role_cleanup(comp, comp_phases, role, true_word, words):
     return tv - best, bool(tv > best), argmax_word
 
 
+def _store_fact_dict(comp, fact):
+    """Store an arbitrary-role fact dict directly through the composer's OWN encode (the store() path only accepts
+    agent/action/patient[/attribute/polarity]; for the L-bundle superposition axis we bundle up to all 6 ROLES)."""
+    comp.kb.append((dict(fact), comp._encode(fact)))
+
+
 def _dense_store(comp, words, n_facts, n_ag, n_ac, seed, roles=("agent", "action", "patient")):
     """Store n_facts distinct dense facts (few agents/actions -> untaught in-domain pairs EXIST for the moat) using
     `roles` role-fillers per composite (roles>=3 stresses the within-fact superposition axis). Returns the fact list."""
@@ -280,7 +286,6 @@ def _dense_store(comp, words, n_facts, n_ag, n_ac, seed, roles=("agent", "action
     actions = words[n_ag:n_ag + n_ac]
     pool = words[n_ag + n_ac:]
     facts, seen, tries = [], set(), 0
-    L = len(roles)
     while len(facts) < n_facts and tries < n_facts * 40:
         tries += 1
         a = agents[int(rng.integers(0, len(agents)))]
@@ -293,15 +298,9 @@ def _dense_store(comp, words, n_facts, n_ag, n_ac, seed, roles=("agent", "action
             if extra not in fillers:
                 fillers[extra] = pool[int(rng.integers(0, len(pool)))]
         fact = {r: fillers[r] for r in roles}
-        comp._store_fact_dict(fact) if hasattr(comp, "_store_fact_dict") else _store_fact_dict(comp, fact)
+        _store_fact_dict(comp, fact)
         facts.append((fact, comp.kb[-1][1]))
     return facts, agents, actions
-
-
-def _store_fact_dict(comp, fact):
-    """Store an arbitrary-role fact dict directly through the composer's OWN encode (the store() path only accepts
-    agent/action/patient[/attribute/polarity]; for the L-bundle superposition axis we bundle up to all 6 ROLES)."""
-    comp.kb.append((dict(fact), comp._encode(fact)))
 
 
 def capacity_codebook_axis(seed, Ds=(32, 128), Vsizes=(68, 128, 256, 512, 1024, 2048, 4096, 8192), n_facts=64,
@@ -343,7 +342,7 @@ def capacity_codebook_axis(seed, Ds=(32, 128), Vsizes=(68, 128, 256, 512, 1024, 
 
 def capacity_superposition_axis(seed, D=128, Vsize=512, Ls=(2, 3, 4, 5, 6), n_facts=48):
     """b2 -- SUPERPOSITION axis: bundle L role-fillers into ONE composite (SVO=L3); the within-fact load that actually
-    breaks recovery. Measures per-role cleanup accuracy + the cued recall (unbind the non-cue roles)."""
+    breaks recovery. Measures per-role cleanup accuracy over stored facts."""
     role_order = list(ROLES)                                   # agent, action, patient, polarity, attribute, attribute2
     out = []
     for L in Ls:
@@ -478,9 +477,8 @@ def build_verdict(recs, Ks, cap, go):
         v.require("byte-identity: substrate threshold hash identical", bool(bi["threshold_hash_identical"]),
                   expect=True)
         v.require("byte-identity: default-build transcript identical", bool(bi["transcript_identical"]), expect=True)
-    # capacity instrument bounds (reported as measured facts, not pass/fail gates)
     v.require("capacity instrument: codebook holds >= corpus concepts at D=128",
-              int(cap["codebook_headroom_concepts"] or 0), expect=lambda m: m >= 68)
+              int(cap.get("codebook_headroom_concepts") or 0), expect=lambda m: m >= 68)
     v.disabled("spiking-generator MOUTH (GPU/torch)",
                "CPU eval; grounded CONTENT is the RF-VSA read (what the mouth would render), not the mouth")
     v.disabled("plasticity (STDP/Hebbian/homeostasis/STP/structural)",
@@ -515,7 +513,7 @@ def _print_ksweep_table(recs, Ks):
 
 
 def _print_capacity_tables(cap):
-    print("\n  CAPACITY-CEILING INSTRUMENT (synthetic; D=%d; seeds=%s) -- locates where the RF moat WOULD leak"
+    print("\n  CAPACITY-CEILING INSTRUMENT (synthetic; D=%d op; seeds=%s) -- locates where the RF moat WOULD leak"
           % (cap["D_default"], cap["seeds"]), flush=True)
     print("   b1 CODEBOOK axis D x |V| (3-bind SVO; D=32 STRESS discriminates, D=128 = operating point):", flush=True)
     print("     %-5s %-8s %-8s %-12s %-12s %-12s %-8s" %
@@ -601,7 +599,6 @@ def main():
     n_go = sum(1 for r in recs if r["seed_go"])
     go = bool(n_go == len(recs) and len(recs) > 0 and ksweep_go)
 
-    # locate the corpus ceiling across seeds
     corpus_ceilings = [r["corpus_ceiling_K"] for r in recs]
     located = None if all(c is None for c in corpus_ceilings) else min(c for c in corpus_ceilings if c is not None)
     max_facts = recs[0]["tier0_by_K"][max(Ks)]["n_facts_stored"]
@@ -612,10 +609,9 @@ def main():
               "(%d facts / %d grounded subjects at K=%d). The corpus is EXHAUSTED before any moat-margin "
               "degradation." % (max_facts, max_breadth, max(Ks)), flush=True)
         if cap is not None:
+            hr = cap["codebook_headroom_concepts"] or 68
             print("    Instrument bound: codebook holds >=%s concepts at D=128 (~%.0fx the corpus's ~68); the "
-                  "practical wall is query LATENCY O(K.D), not a moat leak."
-                  % (cap["codebook_headroom_concepts"],
-                     (cap["codebook_headroom_concepts"] or 68) / 68.0), flush=True)
+                  "practical wall is query LATENCY O(K.D), not a moat leak." % (hr, hr / 68.0), flush=True)
     else:
         print("    The moat first leaks / recall<0.95 at corpus K=%d." % located, flush=True)
 
@@ -627,11 +623,11 @@ def main():
 
     if a.out:
         os.makedirs(os.path.dirname(a.out), exist_ok=True)
-        # drop the bulky per-seed transcripts from the saved artifact (keep the decision + measurements)
         payload = {"verdict": "GO" if go else "PARTIAL", "verdict_earned": decided["status"],
                    "n_go": n_go, "n_seeds": len(recs), "Ks": Ks, "live_K": a.live_K, "seeds": seeds,
                    "sim_backend": os.environ.get("SIM_BACKEND", "numpy"),
-                   "located_corpus_ceiling_K": located, "max_corpus_facts": max_facts, "max_corpus_breadth": max_breadth,
+                   "located_corpus_ceiling_K": located, "max_corpus_facts": max_facts,
+                   "max_corpus_breadth": max_breadth,
                    "preconditions": decided["preconditions"], "disabled_processes": decided["disabled_processes"],
                    "byte_identity": next((r["byte_identity"] for r in recs if r.get("byte_identity")), None),
                    "capacity_instrument": cap, "per_seed": recs}

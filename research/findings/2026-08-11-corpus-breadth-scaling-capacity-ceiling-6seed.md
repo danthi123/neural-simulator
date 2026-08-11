@@ -5,7 +5,6 @@ date: 2026-08-11
 mechanism: corpus-mined SVO breadth swept K=40..320 through the RF-phasor VSA store; the no-confab moat's capacity ceiling located on three synthetic axes
 lane: H-memory (conversation integration / grounded-knowledge breadth capacity)
 seeds: [42, 43, 44, 100, 101, 102]
-supersedes_none: true
 follows: research/findings/2026-08-10-INTEGRATION-6-corpus-learned-facts-into-live-chat-6seed.md
 artifacts:
   - research/findings/raw/lanes/stageA/corpus_breadth_scaling_capacity_ceiling_6seed.json
@@ -36,7 +35,9 @@ This is well above #6's K=40 breadth of 9 → **GO**.
 | 320 | 253 | 68 | 38 | 1.000 | 0 | 0.09 | 0 | GO |
 
 (Values are the min breadth / min recall / summed moat-FA / max provenance-overlap / summed empty-kb-new over the 6
-seeds; all 6 seeds returned byte-identical breadth/recall/moat at each K.)
+seeds; all 6 seeds returned identical breadth/recall/moat at each K.) Attribution (`tools.lab.attributable_to`): the
+breadth is attributed to the stored FACTS by subtracting the empty-kb SAME-VOCAB control (breadth 2, new-subject
+answers 0 at every K) — the vocab growth alone grounds nothing.
 
 ## Scoping reality (measured, honest): the corpus is exhausted before any moat leak
 
@@ -47,22 +48,27 @@ facts (+6 curated = 253) / \|V\|=68. The corpus cannot reach the "~320-concept s
 ensemble; single-bridge ≈ 64 there). The RF-phasor composer here is a distinct substrate, so its capacity had to be
 measured directly (block B).
 
-## The capacity-ceiling instrument (block B) — where the RF-phasor moat WOULD leak (synthetic, D=128, seeds 42/43/44)
+## The capacity-ceiling instrument (block B) — where the RF-phasor moat WOULD leak (synthetic, seeds 42/43/44)
 
 The store is a **list of INDEPENDENT per-fact composites** (`self.kb`), NOT one superposed memory, so scaling the
 NUMBER of facts adds **no inter-fact crosstalk** — a query unbinds ONE 3-bind composite and cleans up against the \|V\|
-codebook. Three genuine capacity axes, each swept to a leak or a bound:
+codebook. Three genuine capacity axes, each swept to a leak or a bound (cleanup accuracy = min over seeds):
 
-- **b1 CODEBOOK axis \|V\| {68..8192}:** per-role cleanup accuracy **1.0** and **0 moat false-accepts** through
-  **\|V\|=8192 concepts** — ~120× the corpus's 68. The cleanup margin (true cos − best-competitor cos) falls only
-  ~√(ln\|V\|)/√D (mean 0.3763 → 0.2852; min 0.2287 → 0.1176 over that 120× range), nowhere near the 0 leak threshold.
+- **b1 CODEBOOK axis D × \|V\| {68..8192}.** At the operating **D=128**, per-role cleanup accuracy is **1.0** with
+  **0 moat false-accepts** through **\|V\|=8192 concepts** — ~120× the corpus's 68 — and the cleanup margin (true cos −
+  best-competitor cos) falls only from **min 0.2287** (\|V\|=68) to **0.1176** (\|V\|=8192), staying far above the 0
+  leak threshold (a ~√(ln\|V\|)/√D decay). To give the metric discriminating power (a metric pinned at ceiling is
+  uninterpretable), the SAME sweep at a **stress D=32** shows cleanup accuracy FALLING **0.9531 → 0.6667** as \|V\|
+  grows 68→8192, with a genuine moat false-accept appearing at \|V\|=2048 — proving the instrument CAN detect a leak,
+  so the D=128 hold is a real ceiling, not an always-pass.
 - **b2 SUPERPOSITION axis L {2..6}** (role-fillers bundled into ONE composite): cleanup accuracy **1.0 to L=4**, then
-  0.9958 (L=5), 0.9826 (L=6) — the within-fact superposition ceiling is **L≈5** (this is the store()'s own "±1 scheme
-  K=5 boundary" question; FHRR sits right at it). SVO facts are **L=3**, two binds of headroom.
-- **b3 DIMENSION axis D {8..128}** (fixed 3-bind, \|V\|=256): cleanup accuracy 0.2604 (D=8) → 0.5521 → 0.9167 →
-  0.9948 (D=64) → **1.0 (D=128)**; first sub-1.0 at D=64, so **D=128 is the min D with perfect cleanup** (≈2× the D≈32 knee).
-  Note **moat_FA stays 0 even at D=8** — the moat is CONSERVATIVE: recall/cleanup degrades first; a mis-decoded cue
-  still does not match the SPECIFIC untaught queried pair, so false-accepts never precede recall loss.
+  0.9958 (L=5), 0.9826 (L=6) — the within-fact superposition ceiling is **L≈5** (the store()'s own "±1 scheme K=5
+  boundary" question; FHRR sits right at it). SVO facts are **L=3**, two binds of headroom.
+- **b3 DIMENSION axis D {8..128}** (fixed 3-bind, \|V\|=256): cleanup accuracy climbs **0.2604 (D=8) → 0.5521 → 0.9167
+  → 0.9948 → 1.0 (D=128)** — the first row with perfect cleanup + 0 moat false-accepts is **D=128** (min ok D=128,
+  ~2× the D=32 knee where cleanup is 0.9167). **moat_FA stays 0 even at D=8** — the moat is CONSERVATIVE: recall/cleanup
+  degrades first; a mis-decoded cue still does not match the SPECIFIC untaught queried pair, so false-accepts never
+  precede recall loss.
 
 **Located ceiling.** The moat did NOT leak anywhere within the corpus: recall≥0.95 & moat==0 hold to the full corpus
 (253 facts / 38 grounded subjects at K=320). The RF-phasor codebook holds **≥8192 concepts** at D=128; the corpus (68)
@@ -78,7 +84,7 @@ holds, moat intact. But the live grounded count **plateaus at 9** while the stan
 to root cause (NOT a moat leak): the live chat uses the **CoResidentOneBrainComposer** on the merged bridge, whose
 substrate slice is provisioned for **`onebrain_k_max=32`** fact-blocks. `OneBrainComposer.store`
 (`research/runners/one_brain_composer.py:605`) raises `RuntimeError` on fact #33, and `_store_facts` catches+skips it,
-so the co-resident store holds **exactly 32 facts (7 distinct subjects → 9 grounded turns; verified:
+so the co-resident store holds **exactly 32 facts (7 distinct subjects → 9 grounded turns; verified directly:
 co_resident_kb_len=32)**. Extra corpus facts are simply not stored → the moat abstains on them (0 confab — the
 conservative direction). So there are **two ceilings**: the VSA moat-margin ceiling (≥8192 concepts, far above reach)
 and the **live-pipeline provisioning cap `k_max=32`** — and the latter, not the moat, is what bounds live breadth
@@ -91,8 +97,8 @@ store**, not merely a bigger `k_max`.
 1. **Permuted-corpus provenance** — mined-set overlap **0.05–0.09** across seeds/K (all < 0.5): the breadth is
    corpus-ORDER-derived, not a hand list.
 2. **Expanded moat battery** — untaught in-vocab cues → **0 false-accepts** at every K, every seed.
-3. **Empty-kb same-vocab control** — with the EXPANDED vocab but 0 corpus facts, breadth stays **2** and new-subject
-   answers = **0** at every K: the competence is in the FACTS, not the vocab growth.
+3. **Empty-kb same-vocab control + attribution** — with the EXPANDED vocab but 0 corpus facts, breadth stays **2** and
+   new-subject answers = **0** at every K; `attributable_to` attributes the breadth to the FACTS, not the vocab.
 4. **Capacity sweep** — this de-risk IS #6 anti-cheat 4 generalised to K=320 + the block-B ceiling instrument.
 5. **Surface-confab scan** — `_detect_ungrounded` = 0 on every live reply.
 6. **Byte-identity** — `build_one_brain(seed)` vs `build_one_brain(seed, vocab=DEFAULT_VOCAB)` bit-identical on the

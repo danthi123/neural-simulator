@@ -1,8 +1,8 @@
 {
- "run_id": "1786424038-3878969",
+ "run_id": "1786429017-3936121",
  "runner": "research/runners/_corpus_breadth_scaling_capacity_ceiling_derisk.py",
  "argv": [
-  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-breadth/research/runners/_corpus_breadth_scaling_capacity_ceiling_derisk.py",
+  "/home/dant123/Projects/sim-worktrees/breadth-scale-ceiling/research/runners/_corpus_breadth_scaling_capacity_ceiling_derisk.py",
   "--seeds",
   "42,43,44,100,101,102",
   "--Ks",
@@ -24,7 +24,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-11T00:53:58",
+ "started": "2026-08-11T02:16:57",
  "env": {
   "SIM_BACKEND": "numpy"
  },
