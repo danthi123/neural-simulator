@@ -55,18 +55,24 @@ The cognitive system is much earlier:
 
 | Area | Honest status |
 |---|---|
-| Shared brain | Multiple regions and pathways can occupy one simulation and update together. Several combined experiments use this architecture. |
+| Shared brain | Multiple regions and pathways can occupy one simulation and update together. Several combined experiments use this architecture, and the current conversational work co-locates several faculties in one live loop. A remaining step merges two co-resident spiking bridges into a single substrate. |
 | Grounded action | Navigation, action selection, reward learning, perception, memory, and replay have working research results, usually in constrained tasks. |
 | Grounded communication | A six-seed result joins learned visual association, hunger, a request-or-silence choice, and a world consequence. A newer six-seed result learns a tiny external vocal convention with two intents and two referents and succeeds on both untrained cross-combinations. It still uses injected motor exploration, fixed neural channels, and a host listener; it is preverbal learning, not natural language. |
-| Language | The repository contains simple question answering and bounded spiking language experiments. Fluent, open-ended conversation grounded in ongoing life is not yet achieved. |
+| Conversational integration (current frontier) | Work now wires validated faculties into a live fourteen-turn conversational test and asks whether the conversation itself improves. In a toy world (two agents, three actions, a small fact set) the brain gives grounded replies on in-domain turns and correctly stays silent on out-of-domain ones, which is the no-confabulation moat working rather than a gap. Landed and six-seed verified on the real chat: a sub-clausal moat check that drops ungrounded clauses the generator invents (confabulations three to zero); honest inner-state read-outs for affect, self-model, and a graded certainty band (functional read-outs, never felt states); an honest disclaimer when asked for a cause the brain has no faculty to compute; and grounded facts learned from a heard corpus (subject breadth two to nine) and, at small scale, taught by corrective interaction as spiking weight changes gated by a learned, now fully spiking no-confabulation check. Episodic recall of the prior dialogue runs on the spiking substrate. The sentence-forming generator is a declared articulation scaffold; several fact stores and self-report templates are named host scaffolds with brain-native replacements pending, and multi-fact continual learning is still open. |
+| Language | The repository contains simple question answering and bounded spiking language experiments, plus a live conversational loop that composes honest grounded replies and honest silences in a toy world. Fluent, open-ended conversation grounded in ongoing life is not yet achieved. |
 | Emotion and drives | Reward, value, persistent mood-like state, neuromodulator signals, and curiosity mechanisms exist in limited forms. A rich emotional system that develops through experience and broadly shapes behavior remains open. |
-| Memory and self-monitoring | Episodic memory, replay, confidence, authorship, and source-monitoring mechanisms exist, but important paths remain separate or partly defined by host code. |
+| Memory and self-monitoring | Episodic memory, replay, confidence, authorship, and source-monitoring mechanisms exist. The episodic composition seam is now mechanistically closed at the readout level: an emergent loop selects an assembly, one-shot plasticity forms the attractor, and an intrinsic per-cell dendritic plateau completes it cue-specifically (six-seed GO de-risk at one density, read during the cue). That spiking recall path now runs on the standard numpy substrate in the conversation's memory turn. Some fact content and self-report wording remain host scaffolds with brain-native replacements pending. |
 | Growth | Structural plasticity and capacity-growth infrastructure exist. A brain-native policy that safely grows a whole developing brain is not yet complete. |
 
 The central problem is integration. Passing a small test does not show that a
-mechanism can serve its role in a living brain. Current work therefore
-prioritizes broader causal loops in which perception, body state, memory,
-affect, communication, consequence, and learning depend on one another.
+mechanism can serve its role in a living brain, so the current frontier is a
+continuous-integration arc: validated faculties are wired into a live
+conversational loop one dependency at a time and kept only when the conversation
+itself measurably improves under causal controls and independent seeds. Running
+the real conversation, rather than an isolated probe, is what exposes a
+mechanism that was mis-scoped in isolation. Broader causal loops joining
+perception, body state, memory, affect, communication, consequence, and learning
+remain the goal; a first cluster of them now runs inside one conversational test.
 
 For a dated status report, see [Current State](docs/CURRENT-STATE.md). For the
 planned build order, see the [Roadmap](ROADMAP.md).

@@ -7,12 +7,18 @@ claim about the integrated simulated brain.
 ## Start Here
 
 1. Read the [README](README.md), [Current State](docs/CURRENT-STATE.md), and
-   [Roadmap](ROADMAP.md).
+   [Roadmap](ROADMAP.md). The current priority is integration: joining separately
+   validated mechanisms into shared causal loops, including a live conversational
+   loop, rather than adding another isolated capability.
 2. Follow the [Quickstart](QUICKSTART.md) for CPU or NVIDIA GPU setup.
 3. Check the [Scaffold Ledger](docs/SCAFFOLD-LEDGER.md) before adding a shortcut
    that may already have a planned replacement.
-4. Search the code, tests, and [`research/findings/`](research/findings/) for
-   earlier attempts, negative results, and corrections.
+4. Search the record before building. `tools/before_you_build.sh "<defect>"`
+   queries the local findings corpus and lists existing checks; also read the
+   code, tests, and [`research/findings/`](research/findings/) for earlier
+   attempts, negative results, and corrections.
+5. Enable the commit hooks so the automated checks run for you:
+   `git config core.hooksPath tools/githooks`.
 
 The repository has no `pyproject.toml` or package installer. Run commands from
 the repository root.
@@ -81,6 +87,12 @@ Test at two levels:
 2. **Whole behavior:** confirm the mechanism changes the integrated brain in the
    way its stated role predicts.
 
+Prefer a whole-behavior test that exercises the integrated loop the mechanism is
+meant to serve, such as the live conversational loop, over a standalone harness.
+In an integrated conversational evaluation most prompts fall outside the brain's
+grounded knowledge, and the correct response is to abstain; a silence that avoids
+fabricating an answer is a measured success, not a gap.
+
 Use causal controls where the claim requires them. Examples include removing the
 pathway, withholding the consequence, permuting labels, changing the relevant
 internal drive, or replaying the same reward without the required experience.
@@ -104,9 +116,11 @@ Record:
 - raw output path and provenance sidecar;
 - failed runs, exclusions, and analysis decisions.
 
-Use more than one seed before making a general capability claim when runtime
-allows. Report per-seed values as well as summaries. A smoke run proves that a
-path executes; it does not prove that the behavior is reliable.
+Use a fixed multi-seed set before making a general capability claim when runtime
+allows; the standard set here is 42, 43, 44, 100, 101, and 102. Report per-seed
+values as well as summaries, and treat a single-seed result as indicative only. A
+smoke run proves that a path executes; it does not prove that the behavior is
+reliable.
 
 Store durable experiment evidence under `research/findings/raw/` and write a
 dated report under `research/findings/`. Keep negative and corrected results.
@@ -123,6 +137,25 @@ python tools/finding_status.py --check research/findings/<finding>.md
 These checks help with provenance, stale claims, controls, and unsupported
 measurements. They do not replace reading the artifact or checking the
 experiment's measurement code.
+
+## Wording Of Claims
+
+Several words carry a precise, checkable meaning here. Before using one in a
+findings document, commit message, or status document, confirm its code
+condition in [`docs/TERMS.md`](docs/TERMS.md). In particular, "GO" names only the
+positive verdict of one specific gated test at its own seeds; it is never a
+faculty-wide, product, or consciousness claim.
+
+Describe internal-state read-outs — affect, valence, confidence, familiarity,
+self-model, uncertainty — as functional read-outs of measured neural signals. Do
+not describe them as felt experience, sentience, emotion, or a person inside the
+simulation. This distinction is a deliverable of the work, not a disclaimer added
+at the end.
+
+Keep negative, corrected, and superseded findings in the record. When a
+document's central claim dies, register it in
+[`docs/RETRACTED.md`](docs/RETRACTED.md); no current document may then cite that
+path without the retraction marker on the same line.
 
 ## Performance Evidence
 
@@ -174,18 +207,39 @@ For public-document changes, run:
 python tools/check_docs.py
 ```
 
+## Automated Checks
+
+Commit-time checks enforce the conventions above so they are not left to memory.
+Enable them once with `git config core.hooksPath tools/githooks`. The pre-commit
+hook blocks a commit that, for example, breaks the document-structure rules in
+[`docs/WRITING.md`](docs/WRITING.md), states a measurement in a new findings
+document that appears in no artifact the document cites, binds a biological
+mechanism to source anchors or configuration that no longer resolve, or leaves a
+new finding's status undeclared or a capability headlined from a single seed.
+
+The failure-class specification is
+[`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md); the individual
+checks live in [`tools/gates/`](tools/gates/). A deliberate, reviewable override
+is `git commit --no-verify`; it is visible in the reflog and should be rare and
+explained. When you notice a new failure mode these checks would not catch, add
+one line to [`research/FAILURE_LOG.md`](research/FAILURE_LOG.md) naming a gate
+that covers it or recording why it is not yet gateable.
+
 ## Pull Request Checklist
 
 - The change has one clear purpose.
 - Existing work and negative findings were checked first.
 - The whole-brain role and biological basis are explained when relevant.
 - New scaffolds are named, bounded, and assigned a removal condition.
+- Load-bearing terms are used only where their `docs/TERMS.md` conditions hold.
 - Unit, integration, and causal-control evidence match the claim.
 - Commands, seeds, backend, artifacts, and hardware are recorded.
 - Performance was measured when the changed path is performance-sensitive.
 - Public status documents were updated only when committed evidence supports the
   new wording.
 - No current document silently relies on a retracted or superseded result.
+- Automated document and finding checks pass, or a `--no-verify` override is
+  explained.
 
 In the pull request description, separate what the code does, what the evidence
 shows, what remains uncertain, and what is still temporary.

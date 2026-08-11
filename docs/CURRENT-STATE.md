@@ -1,12 +1,22 @@
 # Current State
 
-Status reviewed: 2026-08-05.
+Status reviewed: 2026-08-11.
 
 Neural Simulator is a capable CPU/GPU spiking-network simulator and a large
 collection of neuroscience-inspired experiments. It is **not yet an autonomous
 conversational mind**. It cannot currently live in a world, develop through
 ordinary human interaction, hold fluent open-ended conversations, or produce
 all of its cognition through one self-organizing spiking brain.
+
+The current frontier is **continuous integration**: validated faculties are now
+wired into one live fourteen-turn conversational loop, and each change is judged
+by whether the conversation actually improves, because running the real chat is
+what exposes results that only looked good in isolation. That chat still runs in
+a small toy world (two agents, three actions, a small fact set), so most turns
+correctly abstain, and the language "mouth" is a conventionally trained spiking
+language model kept as an explicit articulation scaffold. Episodic memory (the
+"gap#5" seam) is now mechanistically closed at the completion-readout level and
+wired into that loop.
 
 This page separates evidence for working components from partial integration
 and from abilities that have not been achieved.
@@ -26,16 +36,18 @@ They do not imply human-level versions of the named ability.
 | **Memory and replay components** | The repository contains tested episodic storage, pattern completion, replay, reconsolidation, and wake/sleep integration experiments. Uncued hippocampal replay can causally change cortical weights on one bridge. Local fast-spiking competition made one fresh seed much more selective, but hippocampus-independent recall remained seed-fragile and did not reliably depend on learned target identity or replay order. A learned index-relay successor produced no intact recovery on either fresh seed because its required sleep relay and inhibitory-loop activity never appeared, making that calibration invalid rather than negative. This does not establish general autobiographical memory or lifelong consolidation. See the [sleep-cycle finding](../research/findings/2026-07-25-gap5-onebrain-production-sleepcycle-merge-6seed-GO.md), [replay v2 no-go](../research/findings/2026-08-03-replay-cortical-consolidation-v2-calibration-NO-GO.md), and [replay v3 invalid result](../research/findings/2026-08-03-replay-cortical-consolidation-v3-calibration-UNDEFINED.md). |
 | **Reward, affect, and curiosity components** | Dopamine-like reward prediction, persistent affect-like state, separable modulatory axes, active affect clearing, and curiosity-related circuits have passed narrow causal tests. A fresh two-seed diagnostic retained neural clearing and restart but found no recurrent weight that produced graded, neutral-crossing valence; the state remained latch-like and formal testing stayed sealed. Some curiosity and appraisal quantities are still computed by host code, and the parts do not yet form a developing emotional life. See the [affect-axis result](../research/findings/2026-08-02-laneA-affect-axes-DISSOCIATE-6seed-GO-first-attempt-negative-was-a-measurement-artifact.md), [affect-clear result](../research/findings/2026-08-01-affect-BRAIN-BASED-active-clear-spiking-quench-fs-gate-6seed-GO-operating-region-mapped.md), [graded-affect boundary](../research/findings/2026-08-04-laneA-graded-affect-quench-v1-DIAGNOSTIC-RESULT.md), and [learning-progress result](../research/findings/2026-08-02-laneB-curiosity-learning-progress-slope-CPU-proxy-6seed-GO-next-onbridge-realization.md). |
 | **Large language-circuit forward execution** | A conventionally trained 267-million-parameter recurrent language checkpoint matched its non-spiking reference output through the tested resonate-and-fire spiking read path across six GPU seeds. This demonstrates numerical forward-path fidelity, not grounded language learning, biological training, or conversational ability. See the [language-circuit finding](../research/findings/2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md). |
+| **Episodic memory completion (gap#5)** | The episodic-composition seam is now mechanistically closed at the completion-readout level. In one emergent loop, a dentate-gyrus-like stage selects a small cell assembly, one-shot behavioral-timescale plasticity forms a recurrent attractor, and an intrinsic per-cell dendritic plateau read-out completes the memory from a partial cue in a way that does not depend on assembly size. Six seeds passed; permuted-cue, silent-rest, no-encoding, and recurrence-zeroed controls were all exactly zero, and a linear coincidence-off control failed, so the plateau (not the weights alone) is the completer. Honest boundary: this is a de-risk result at one density read during the cue; the shipped default completion path is still the recurrent read, so making the dendritic read the default is the remaining integration step, which the live-chat turn-7 recall (below) then took. It is distinct from the still-open deep-credit-on-spikes boundary (gap#4). See the [dendritic-readout finding](../research/findings/2026-08-10-gap5-lever-B-dendritic-dAP-readout-completes-emergent-small-assembly-6seed-GO.md). |
+| **Live conversational integration** | Validated faculties are wired into one live fourteen-turn chat, with grounded content read from the brain's own vector-symbolic memory and the language model kept off or as a declared articulation scaffold. Six changes each improved the real conversation. A no-confab check now verifies every main and subordinate clause against neural memory, dropping invented causal clauses (confabulations three to zero, six seeds). Turn 7 recalls the prior topic from a per-turn episodic store instead of falling silent, and after a corrected operating point that recall flows through the spiking dendritic completion path on both NumPy and GPU. Turn 5 ("how do you feel?") returns a functional affect read-out from the spiking valence differential, and turn 13 ("are you a simulated brain?") an honest structural self-affirmation with a graded certainty band; both are stated as functional read-outs, never as feeling or experience, and six seeds clear the certainty bar. Turn 4 ("why did the dog go east?") confirms the stored fact and honestly discloses the absent causal faculty rather than inventing a reason (six seeds). Corpus-mined relational facts raise grounded-subject breadth from two to nine (six seeds), and a demo-scale variant learns three facts as spiking weight changes gated by a learned, now fully spiking, no-confab check (six seeds). Boundaries: a toy world where most turns correctly abstain (silence is the moat working); two still-separate spiking bridges rather than one merged brain; host-side fact mining and storage, response templates, and an argmax read-out remain named scaffolds. See the [sub-clausal moat](../research/findings/2026-08-10-INTEGRATION1-subclausal-moat-live-chat-confab-6seed.md), [spiking turn-7 recall (corrected)](../research/findings/2026-08-10-episodic-dialogue-recall-wired-to-spiking-dAP-readout-numpy-backend-honest-negative.md), [certainty band](../research/findings/2026-08-10-INTEGRATION-3c-certainty-band-opponent-margin-robust-turn13-all6-clear-002.md), [causal disclaimer](../research/findings/2026-08-10-INTEGRATION-5-honest-causal-query-disclaimer-turn4-6seed.md), [corpus-learned facts](../research/findings/2026-08-10-INTEGRATION-6-corpus-learned-facts-into-live-chat-6seed.md), [plasticity-learned facts](../research/findings/2026-08-10-INTEGRATION-7-plasticity-learned-facts-into-live-chat-6seed.md), and [fully spiking moat](../research/findings/2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md). |
 
 ## Partially Achieved
 
 | Capability | What exists | What prevents the full claim |
 |---|---|---|
-| **A shared brain** | Several experiments place perception, memory, drives, action selection, and communication-related regions in one simulation network. | Most validated faculties were developed and tested in separate runners. They do not yet operate together as one continuous developing agent. |
+| **A shared brain** | A live conversational loop now runs several validated faculties together — grounded fact recall, a no-confab check, episodic dialogue memory, functional affect and self-model read-outs, and a curiosity ask — and judges changes by whether the whole conversation improves. | Integration has begun but is not complete: the loop still spans two separate spiking bridges rather than one merged substrate, many faculties were developed and tested in separate runners, and the world is a small toy set. Merging the co-resident bridges into one brain is the named next arc. |
 | **Stage B experiment screening** | The V14 engine completed a fresh 512-candidate, five-arm GPU engineering screen for Sobol indices 512-1023 and selected batch width 512 through a separate benchmark. Strict triage classified 421 candidates as engineering failures, 91 as inconclusive, and 0 as passes. A follow-up authenticated 36-trace diagnostic retired the old packet. The corrected successor's fused Stage 1 fast-Na/Kv3 clamp now runs on CPU and GPU, re-fits all 18 source endpoints, and produces an authenticated verdict with little manual handling. Eleven endpoints passed and seven failed. The exact failure set now opens a fixed, authenticated research gate automatically. | The current packet and the successor's first fast-channel state equations are structural NO-GOs, so no candidate is eligible for confirmation or compartment integration. Fast-Na activation/deactivation and Kv3 deactivation must be redesigned from focused current-level evidence before another search. The engine can plan, seal, dispatch, persist, resume, analyze, compile bounded observations, and route a preregistered failure into research, but it cannot accept scientific claims or preregister a valid replacement architecture by itself. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell SK cohort is unavailable. See the [fresh screen](../research/findings/2026-08-05-v14-stageB-sobol-v3-fresh-gpu-screen-ENGINEERING-NO-GO.md), [failure diagnostic](../research/findings/2026-08-05-v14-stageB-v3-failure-diagnostic-STRUCTURAL-NO-GO.md), [Stage 1 source transfer](../research/findings/2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md), and [V2 successor contract](../research/specs/v14_snr_stageB_structural_successor_v2.json). |
-| **Conversation** | Demos can parse constrained questions, retrieve simple stored facts, render bounded answers, and abstain on unknown cues. | Host parsing, fixed data structures, templates, confidence thresholds, and conventionally trained language components still perform important work. Dialogue is narrow and prompted rather than autonomous and open-ended. |
+| **Conversation** | The live fourteen-turn chat parses constrained questions, recalls grounded facts and the prior dialogue topic, reports functional affect and self-model read-outs with a graded certainty band, asks a curiosity question, and abstains on out-of-domain cues. A sub-clausal no-confab check keeps invented causal clauses out of every reply. | The world is a small toy set, so most turns correctly abstain rather than converse. The language "mouth" is a conventionally trained spiking model kept as an articulation scaffold, and host fact mining and storage, response templates, and some read-outs still perform important work. Dialogue is prompted and bounded, not autonomous and open-ended. |
 | **Grounded language** | Preverbal experiments now show one fixed request loop and learned selection among two intent and two referent channels from consequences. The tiny learned factors compose in combinations absent from training. Other experiments connect words with visual or conceptual patterns. | The learned signals are raw channels rather than words. Motor exploration, regional structure, perception currents, listener semantics, and readout remain scaffolded. The first intrinsic same-brain reversal attempt failed repeatability. Natural input, sequence learning, and conversation are unvalidated. |
-| **Honest uncertainty** | Familiarity, decision confidence, self-monitoring, authorship, and learned source-support mechanisms exist. Episode, source, aPFC, and ACC activity now coexist on one tested bridge. | Source strength missed its first development repeatability gate and is not yet connected from lived sensory experience through speech choice. Production still uses host-side thresholds. The brain is not a general truth checker. |
+| **Honest uncertainty** | Familiarity, decision confidence, self-monitoring, authorship, and learned source-support mechanisms exist. In the live chat, a sub-clausal no-confab check verifies each clause against neural memory, a graded certainty band accompanies self-report, one demo fact-gate is now fully spiking, and unsupported turns abstain — all stated as functional read-outs, never as claims about experience. | Earlier source-strength work missed a development repeatability gate, and honesty is not yet driven end-to-end from lived sensory experience through speech choice. Some gates and thresholds remain host-side, and the brain is not a general truth checker. |
 | **Memory-guided behavior** | Episodic storage, completion, replay, consolidation, and correction mechanisms work in small controlled tasks. | Some memories use engineered codes or slots; replay has known write/selectivity limits; retention and useful transfer have not been shown over an open-ended lifetime. |
 | **Emotion and motivation** | Body-drive, reward, mood-like persistence, modulatory axes, and affect clearing can causally alter selected behaviors. | Appraisal is not broadly learned from lived social history, emotional state is not richly integrated with language and memory, and current tests should not be interpreted as human-like emotion. |
 | **Curiosity** | Narrow circuits can favor learnable novelty and suppress some unproductive exploration. | Learning progress and action selection still rely partly on host arithmetic and task policy. Curiosity does not yet autonomously choose questions and sustain learning in the full brain. |
@@ -68,62 +80,48 @@ They do not imply human-level versions of the named ability.
 3. **Language fluency and biological learning are disconnected.** The largest
    language circuit was trained conventionally; grounded loops remain small and
    template-like.
-4. **Self-monitoring is not yet robust or end to end.** Local competition and
-   threshold homeostasis have not produced stable source margins across fresh
-   seeds, and host code still joins monitoring signals to the answer policy.
+4. **Self-monitoring is improving but not yet end to end.** The live chat now
+   runs a sub-clausal no-confab check and a graded certainty band, and one demo
+   fact-gate is fully spiking, but earlier source-margin work stayed
+   seed-fragile, host code still joins some monitoring to the answer policy, and
+   honesty is not yet driven from lived experience through speech choice.
 5. **Memory, affect, and curiosity are components rather than a life history.**
    Their tests are informative but too bounded to establish an enduring person-
    like state.
-6. **Scaffolds are widespread.** Fixed representations, routing, thresholds,
-   teachers, and host-computed psychological signals must be removed under
-   explicit tests.
+6. **Integration is partial and scaffolds are widespread.** The live loop still
+   spans two separate spiking bridges rather than one merged brain, and host
+   fact mining and storage, response templates, an argmax read-out, and other
+   fixed representations, routing, thresholds, and teachers must still be removed
+   under explicit tests. Continual, sequential learning of many facts without
+   forgetting remains unsolved and blocks scaling the learned-fact demo.
 
 ## Highest-Value Work
 
-The immediate priority remains reward credit for actions the brain actually
-completed. V13 tests whether autonomously active GPi/SNr-like output neurons on
-the shared spiking substrate can support clean action completion and later
-learning. Its original calibration cannot be used because the locked CPU-first
-order was violated. The backend correction is complete for the matched-state
-path: initialization and the corrected 1,200-step replay are exact across NumPy
-and the RTX 3090.
+The immediate priority is **continuous integration**: keep wiring validated
+faculties into the one live conversational loop and judge every change by
+whether the actual fourteen-turn chat gets better, because running the real
+conversation is what exposes results that only looked good in isolation. Recent
+integrations added a sub-clausal no-confab check, spiking episodic recall of the
+prior topic, functional affect and self-model read-outs with a graded certainty
+band, an honest causal-query disclaimer, corpus-learned grounded breadth, and a
+demo-scale fact learned as spiking weight changes behind a fully spiking
+no-confab gate. Each held across six seeds with zero confabulations and no
+regression on the other turns.
 
-The first replacement NumPy calibration found `100 pA` as its only passing
-point, but its v1 evidence chain failed closed on digest and sidecar sealing
-defects. V2 corrected those controls and ran fresh calibration partitions once
-on NumPy and the RTX 3090. Both backends again found only `100 pA` passing. The
-selection merge observed GO but could not be sealed because its command omitted
-the explicit NumPy backend required by the manifest contract. V2 is undefined,
-its calibration seed is consumed, and its unexecuted replication seed is
-retired. The command emitters and tests are corrected. V3 aborted before
-measurement on a runner/controller authority mismatch; no seed ran. V4 earned
-sealed cross-backend calibration GO at `100 pA`, then replication aborted before
-brain construction because selection validation omitted the process-correction
-context. V5 fixed that path, sealed calibration at `100 pA`, and completed both
-replication measurements. NumPy passed. CuPy failed only the registered
-inhibitory-response ceiling, but its valid scientific no-go exited as a process
-failure and could not receive a success receipt. V5 is undefined; calibration
-seed `216274` and replication seed `401461` are consumed. V6 corrected the
-outcome/exit contract, sealed calibration at `100 pA`, and earned replication
-and held-out GO on both backends. It stopped before the historical performance
-baseline because the frozen old revision does not contain the paired measurement
-runner. V7 used an audited package to repair that binding and reused sealed V6
-physiology without rerunning consumed seeds. Performance missed the
-default/old limit narrowly and v2 active overhead materially, and the candidate
-receipt failed because its output was outside the provenance scanner. V8 fixed
-the v2 overhead and corrected output placement; v2 active/default passed at
-`1.006836`, but normal default/old measured `1.059092` against `1.02`. V8 is a
-complete, honest performance NO-GO with no promotion value. The next step is a
-newly preregistered investigation of the normal default-path regression.
-Stage-1 remains sealed.
+The named next steps, each a mechanism rather than a deferral, are: merge the
+two co-resident spiking bridges into one brain (the "one brain" step); replace
+the host-side fact mining and vector-symbolic storage with a stream cortex that
+learns co-occurrence in synapses; make the dendritic completion read the default
+episodic path; replace the argmax read-out and remaining response templates with
+neural mechanisms; and reach continual, sequential learning of many facts
+without forgetting, which currently blocks scaling the learned-fact demo up to
+the corpus-learned breadth.
 
-In parallel, replay needs a different mechanism after its first target-plateau
-correction failed smoke seed `216` and was retired. Source-monitor v4 is retired
-after an undefined formal run and a measured lack of effect versus its learning
-lesion. Hierarchical visual identity is also retired after both valid formal
-seeds produced silent intact V2/IT populations and chance decoding.
-A larger language circuit is useful only after the brain has selected a
-grounded message, certainty, and decision to speak.
+Component arcs continue in support of this frontier — reward credit for actions
+the brain actually completed, replay-driven consolidation, source monitoring,
+and the larger conventionally trained language circuit — but a larger language
+circuit is useful only after the brain has selected a grounded message,
+certainty, and decision to speak.
 
 This order tests the central project claim early: whether a small integrated
 spiking brain can learn to say something because of what it perceives, needs,
