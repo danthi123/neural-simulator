@@ -1,0 +1,54 @@
+{
+  "probe": "untrained_stabilized_gate_zero_learning",
+  "N": 12,
+  "F": 4,
+  "L": 4,
+  "chance": 0.25,
+  "note": "CompetitiveHiddenChainedGate stabilize=True, NO train_chained call (random weights). Real spiking slot, held-out novel fillers.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "acc": 1.0,
+      "fire_pos0": 1.0,
+      "fire_posgt0": 0.0,
+      "token_identity_gap": 1.0
+    },
+    {
+      "seed": 43,
+      "acc": 1.0,
+      "fire_pos0": 1.0,
+      "fire_posgt0": 0.0,
+      "token_identity_gap": 1.0
+    },
+    {
+      "seed": 44,
+      "acc": 1.0,
+      "fire_pos0": 1.0,
+      "fire_posgt0": 0.0,
+      "token_identity_gap": 1.0
+    },
+    {
+      "seed": 100,
+      "acc": 1.0,
+      "fire_pos0": 1.0,
+      "fire_posgt0": 0.0,
+      "token_identity_gap": 1.0
+    },
+    {
+      "seed": 101,
+      "acc": 1.0,
+      "fire_pos0": 1.0,
+      "fire_posgt0": 0.0,
+      "token_identity_gap": 1.0
+    },
+    {
+      "seed": 102,
+      "acc": 1.0,
+      "fire_pos0": 1.0,
+      "fire_posgt0": 0.0,
+      "token_identity_gap": 1.0
+    }
+  ],
+  "acc_mean": 1.0,
+  "acc_min": 1.0
+}
