@@ -51,6 +51,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   INTERACTION (true one-brain, heavy sweep ~80min), continual-retention (interleaved-generative-replay), relational-
 >   spatial code (causal emergent follow-on), replay-consolidation lever. Pool + 3090 saturated on the continual-learning
 >   scale-up. Deferring agents handled by coordinator-run sweeps + waiters.
+> - **✅ ~07:00Z UPDATE — 13 banked (all pushed).** Added since 06:00Z: (8) relational-spatial code `fac64c47` (6/6 — the
+>   causal chain's GROUNDING now EMERGES from co-occurrence learning); (9) **⭐ CROSS-REGION synaptic INTERACTION
+>   `ed9f82f9` (6/6, pathway load-bearing) — co-residency becomes TRUE one-brain; the "one brain" non-negotiable is now
+>   COMPLETE through the interaction level**; (10) continual re-scope `265f8a6d`-area (continual_forgetting_eval is NOT
+>   the crux — word-learning retention flat 100%); (11) continual-retention NEGATIVE `9368bf9c` (interleaved replay
+>   doesn't beat self-replay but ISOLATES the acquisition-at-scale collapse → metaplasticity named); (12) replay-declamp
+>   CORRECTION `265f8a6d` (the 0.55 "cap" was a bdsp_wmax=6 clamp confound; de-clamped hits 1.00); (13) mouth TONE-TOKEN
+>   render on SPIKES `821fc4d1` (FS-WTA, parity_live 1.000 6/6). **STILL IN FLIGHT:** emergence-engine (recurrent language
+>   cortex), source-monitoring lever, roadmap-walls WORKFLOW (gap#4/visual-identity/value-critic/reconsolidation). ROADMAP
+>   batch-sync owed (agents' ROADMAP edits skipped during merges to avoid conflicts — git log is the record).
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 
