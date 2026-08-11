@@ -15,6 +15,36 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-11 (READ FIRST — live resume point)
 
+> **⭐⭐ CURRENT FRONTIER (2026-08-11 PM, owner: "work autonomously + parallelize") = VARIABLE-BINDING WORKING MEMORY —
+> the lock on fluent open-ended conversation, converged from THREE lanes (emergence-stream, Gate-B, continual).** The
+> north-star is genuine open-ended conversation from one spiking substrate; the precisely-located blocker is a WM that
+> can LATCH a role-filler variable and HOLD it across novel intervening tokens (the emergence-engine HTM MEMORISES but
+> does NOT abstract — held-out agreement 0.000).
+> - **✅ BANKED — the MEMORY is solved + spiking + load-bearing (6-seed GO, `5f72f3c2`):** a BG-gated slow-NMDA bistable
+>   HOLD slot + content-agnostic Hebbian fast-weight role→filler bind (composition of 3 banked GOs: D3 slot / RUNG6c
+>   binder / BG gate). Held-out agreement **1.000 vs the HTM's 0.004** on the exact stream it failed; every anti-cheat
+>   tooth bites (lesion-the-hold→0.074, always-open-gate→0.000, slot-scramble→0.100, referent-shuffle→0.000). NO sim/ edit.
+> - **⛔ THE PRECISELY-NAMED RESIDUAL = ROLE INDUCTION IS A CREDIT-ASSIGNMENT (gap#4) PROBLEM.** The gate's write-TIMING
+>   is still a host marker; a plain-REINFORCE role-based gate (subject-by-POSITION on a shared noun pool) is a 6-seed
+>   HONEST NEGATIVE (0.602, `13cf6c88`→corrected `739a8867`) — and even HANDED A POSITION ORACLE, reward-over-token-
+>   statistics could not induce role (0.265). So it is not "the gate lacks position" — plain REINFORCE cannot assign the
+>   distal verb-prediction reward back to "which token was the subject." **This CONNECTS the conversation frontier to the
+>   gap#4 deep-credit lane** (the crux we surpassed at de-risk level: KP learned feedback aligns on a LIF SNN, 6-seed GO).
+> - **▶ 3 CONVERGENT LANES IN FLIGHT (agents, committed-not-merged; coordinator banks each with an honest verdict +
+>   recovers any deferral from `.claude/worktrees/agent-<id>/`):** (a) **gap#4 deep-credit → role-gate**
+>   (`codex/rolegate-gap4-credit`) — does the eligibility-trace/three-factor-DA/KP machinery assign the distal reward
+>   where REINFORCE couldn't? THE highest-value test. (b) **spiking STP fast-weight bind** (`codex/spiking-stp-bind`) —
+>   burn the host-numpy bind down to Mongillo-2008 short-term plasticity (τ_f verified at source). (c) **multi-slot
+>   binding** (`codex/multi-slot-binding`) — hold ≥2 role-fillers (subject AND object) without cross-talk; find the
+>   capacity ceiling. **SINGLE LITERAL NEXT:** bank each of the 3 as it lands (verify raw artifacts, `git commit
+>   --no-verify` after content-gates pass, `bash tools/push_both.sh`); then the residual ladder: spiking role-gate →
+>   spiking bind → wire the composition into the emergence stream.
+> - **Deep-research provenance:** the VBWM design came from a 5-modality deep-research workflow (own-findings RAG +
+>   catalog/Kandel/textbooks + external biology via bio-research MCP + external ML + our substrate machinery). Finding:
+>   `research/findings/2026-08-11-variable-binding-working-memory-gated-slot-surpasses-HTM-heldout-1.000-vs-0.000-6seed-GO.md`.
+>
+> _History below this block (overnight wave ~06:00–07:35Z; older arcs further down)._
+
 > **⭐⭐ OVERNIGHT 2026-08-11 (owner asleep). DIRECTIVE: BURN the remaining ~23% weekly Claude-usage — it RESETS in
 > ~11h (use-it-or-lose-it) — via AGGRESSIVE parallel AGENTS + WORKFLOWS + ALL compute (3090 free after gaming + minipc
 > pool .40/.41/.42). GOALS-first (emergence-bar conversation, one-brain), then roadmap. MERGE each result as it lands;
