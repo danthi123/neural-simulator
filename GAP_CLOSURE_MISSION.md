@@ -50,9 +50,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >     0.144). **So the role-gate residual is now RELIABILITY of transport-free credit, not alignment.** role_go still
 >     False (not reliable). Corrected next rung: chained-FA+σ′ / readout-regularization, NOT "higher dim".
 > - **⭐ NEW FRONTIER (the named residual ladder toward the learned spiking role-gate = the last lock on fluent
->   conversation):** (1) **transport-free role-gate RELIABILITY** — canonical KP is partial+unreliable; try chained
->   multi-hop FA+σ′ (needs a hidden layer) / hold-or-regularise the co-adapting readout so it can't absorb the credit /
->   route credit through the emergence-engine's own higher-dim sequence code. (2) **emergent neural-WTA slot allocation**
+>   conversation):** (1) **transport-free role-gate RELIABILITY** — canonical KP is partial+unreliable (0.637 [min
+>   0.144]). **LEVER 1 = readout-regularization: HONEST-NEGATIVE** (`874f543b`, kp_ro_lr_scale sweep 3-seed): slowing the
+>   co-adapting readout does NOT recover reliability — it hurts (0.3→0.107); the variance is INTRINSIC to the SINGLE-LAYER
+>   joint R+B+gate dynamics, not the readout absorbing credit. ⇒ the remaining candidates require ADDING STRUCTURE: **LEVER
+>   2 = a HIDDEN LAYER for chained multi-hop FA+σ′** (the gap#4 a-1 transport-free mechanism a single-layer gate can't
+>   express) — AGENT LAUNCHED; and/or route credit through the emergence-engine's own higher-dim co-adapting sequence code.
+>   (2) **emergent neural-WTA slot allocation**
 >   (a-1'd: RUNG6e's banked subproblem — reuse rungB1b's neural-WTA-gate + a self-calibrating competition threshold
 >   [BCM/synaptic-scaling] to replace the host free-counter). (3) **wire the composition** (D3 hold + spiking bind +
 >   multi-slot + role-gate) **into the emergence stream** (the HTM-local + WM-long-range hybrid; the combination must be
