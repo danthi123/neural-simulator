@@ -374,6 +374,34 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-08-11 OVERNIGHT UPDATE (crux forward-paths — full detail in `research/findings/2026-08-11-*.md`; the rows
+> below are pre-this-batch and being superseded here).** Five walls moved:
+> - **gap#4 (deep-credit):** the row's "task is ~1-layer-solvable because the temporal-depth floor" caveat is now
+>   QUANTIFIED + surpassed as a diagnosis — sweeping the LIF integration window T shows the temporal window supplied the
+>   effective depth (floor 0.96@T24 → 0.44@T1). At small T, spatial DEPTH-2 DFA credit is load-bearing, but the 6-seed
+>   confirms the compositional task is **depth-2-SOLVABLE** ⇒ gap#4 deep-3 credit is **INSTRUMENT-BLOCKED**: no
+>   depth-3-OBLIGATORY task exists to serve as the reference ceiling. A design+verify workflow is building one; that task
+>   + the transport-free DFA depth-3 sweep on it is the real next experiment (supersedes "credit on top of the
+>   representable forward" as the immediate step — you cannot test depth-3 credit without a depth-3 task).
+> - **source monitoring:** the named surpass largely WORKS. Independent population-coded pools + up-only homeostatic
+>   scaling resolve no-harm STRUCTURALLY (5/6; the row's v8 "Turrigiano synaptic scaling" idea, confirmed), and the
+>   residual weak-encoding class — diagnosed as RIVAL CROSS-TALK, not weak own-encoding — is FIXED by **heterosynaptic-LTD
+>   competitive ENCODING** (seeds 244/259 FAIL→PASS, structural no-harm). Full-6 is 5/6, gated only by seed 702's
+>   no-learning CONTROL failure (instrument-invalid, not the mechanism). Residual scaffold: label-free spiking online LTD.
+> - **visual identity:** harder k-WTA (feedback-inhib floor) is a real-but-INSUFFICIENT contributor + exposed a
+>   decode-quantization confound in the recorded baseline; residual is the upstream REPRESENTATION (normalization), not
+>   another selection threshold.
+> - **R4 open-ended generation / emergence engine:** the on-bridge HTM Temporal-Memory horizon was MEASURED for the
+>   first time (clean HOLD, non-fading but finite, allocation-limited) and a **selective-write content-addressable store
+>   over its allocation keys RESTORES the interference-broken horizon** (0.667→1.000, non-distance-limited); residual =
+>   full-allocation-merge capacity wall → next = heterosynaptic-LTD ALLOCATION (same biology as source competitive-encoding
+>   — a cross-lane convergence). NB cupy is launch-bound SLOWER on these sub-1k-neuron loops; this arc is CPU-correct.
+> - **continual acquisition (memory saturation / consolidation):** **metaplastic e-prop** (Fusi/Benna-Fusi per-synapse
+>   consolidation) moves the acquisition-at-scale forgetting the right way (+mean, load-bearing + attributable, no
+>   acquisition cost) but is SUB-THRESHOLD at 6 seeds (1/6 strict) — the single hidden var lifts the middle not the oldest
+>   fact → next = a true multi-timescale Benna-Fusi CHAIN. The ~0.55 replay "cap" was earlier corrected to a bdsp_wmax
+>   clamp artifact.
+
 | # | Wall | Status | Biological surpass mechanism (named — NOT deferred) | Retire/close at |
 |---|---|---|---|---|
 | **gap#4** [mechanism: dendritic-plateau-coincidence-burst] [mechanism: deep-credit-on-spikes] | deep multi-layer directed credit for accuracy | **⭐ 2026-08-01 — ON-BRIDGE SPIKING: FORWARD-LEARNING SURPASSED, DEEP-CREDIT ATTRIBUTION NOT YET (corrected 2026-08-01 PM). Transport-free e-prop + population coding trains the FORWARD task on the PRODUCTION bridge — `inherit` rises with K (0.685 K=8 → 0.852 K=16), teacher signal load-bearing (permuted control clean). BUT the 6-seed bar RAN and BOTH deep-credit controls fail (SIGNAL 1/6 K=8, 0/6 K=16): shuffle-DFA leaks 4/6 at each K, and the runner's OWN frozen-hidden reservoir_control reports **deep_credit_share mean 0.066 (K=8) / 0.005 (K=16)** — at K=16 e-prop 0.852 vs a FROZEN random reservoir 0.852, i.e. training the hidden layers adds NOTHING (`2026-08-01-gap4-6seed-bar-RUN-deep-credit-control-shuffleDFA-leaks-forward-learning-real-attribution-not.md`; registry `deep-credit-on-spikes` corrected). ⛔ RETRACTED here: 'K=16 0.926 ABOVE ceiling / reproduced-with-provenance / residual only the 6-seed bar' — it read `eprop_inherit` (0.85) and never read the `deep_credit_share` (0.005) the same runner computed (silent-failure rules #1 + #7). REAL RESIDUAL = a MECHANISM that makes hidden-layer credit matter (the frozen-hidden control already EXISTS + ran; not more seeds): the learned instructive signal (arc B / §2.8), the φ′-vanishing fix, or the representable-forward expander. The LEARNED instructive signal (§2.8 "the true crux") is arc B, IN PROGRESS. The BDSP-path history below is retained for context. ⬇️** **CPU-rate learned self-predicting microcircuit 6-seed GO** (`2026-07-24-gap4-learned-selfpredicting-microcircuit-CPUrate-GO.md`, commit 56c90d67; advantage = **DATA EFFICIENCY** — wash at full data, +0.24–0.28 at scarce data, 21487ee6). **On-bridge SPIKING port = NEW WALL** (`2026-07-24-gap4-onbridge-spiking-6seed-nothing-learns-LAUNCH-BOUND-compute-wall.md`, 936bce6e): **0/6, nothing learns incl. the idealized ceiling** — the diagnostic exposed a **LAUNCH-BOUND compute wall** (99.9% CPU / 3% GPU, ~hours/arm) + severe under-powering, NOT a mechanism failure — ⛔ **THIS ROW IS STALE (flagged 2026-07-31).** The launch-bound framing was SUPERSEDED the same day by `2026-07-24-gap4-surpass-POWERED-NO-GO-tonic-pinned-frozen-representation-root-cause.md` (28741cc2): the compute confound was REMOVED and the ceiling still does not learn ⇒ **POWERED NO-GO**, root cause = φ′-vanishing credit (~1600× over depth at E≈0.04) + a **TONIC-PINNED FROZEN** hidden representation, tested **to 40 epochs**. ⚠️ **AND the forward half was then SURPASSED** (`2026-07-25-...-coincidence-plateau-reliable-expander-6seed-GO.md`: ho-linear 0.611, reproducibility 1.000, 6 seeds) — but **that expander has NEVER been combined with the credit runner** (`PlateauExpander` is imported only by its own probe). ⇒ **the highest-value gap#4 experiment — credit ON TOP OF the representable forward — has not been run** | (a) **surpass IN PROGRESS = shrunk-task** (fit a trainable-scale spiking net inside the compute budget); then confirm learned-vs-fixed feedback on spikes. (b) fix the **±5 BDSP weight-clamp** (`fused_bdsp_update` clips even at lr=0, 6a9a44c3 — may also cap accuracy). Rate-level: (b') learned microcircuit (Sacramento Eq.9) / (c) learned feedback (PAL/KP). Teacher-bridged interim | S3 (bridged) → S5 (internalized) |
