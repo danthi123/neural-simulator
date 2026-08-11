@@ -1,0 +1,35 @@
+{
+ "run_id": "1786481913-230395",
+ "runner": "research/runners/_var_bind_rolegate_varpos_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/rolegate-varpos/research/runners/_var_bind_rolegate_varpos_derisk.py",
+  "--merge-from",
+  "research/findings/raw/_rolegate_varpos/seed_42.json",
+  "research/findings/raw/_rolegate_varpos/seed_43.json",
+  "research/findings/raw/_rolegate_varpos/seed_44.json",
+  "research/findings/raw/_rolegate_varpos/seed_100.json",
+  "research/findings/raw/_rolegate_varpos/seed_101.json",
+  "research/findings/raw/_rolegate_varpos/seed_102.json",
+  "--out",
+  "research/findings/raw/_rolegate_varpos/varpos_6seed.json"
+ ],
+ "git_sha": "95162d5ac",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-11T16:58:33",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1031.2,
+ "corpus_check_query": "variable subject position cue-based role assignment case marker learnable cue",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_rolegate_varpos/varpos_6seed.json"
+}
