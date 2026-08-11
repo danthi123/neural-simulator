@@ -1,0 +1,1428 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "n_GO": 6,
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "tier0 GO on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "supported chains correct (2/2) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "abstains correct (6/6) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat false-accepts == 0 every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "confabulations == 0 every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "NO (object,at) fact stored -- grounding is ONLY the learned map (every seed)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "untrained map grounds 0 chains (training is load-bearing, every seed)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat-battery false-accepts == 0 every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "unlocated-object confabulation == 0 every seed (learned-code moat rejects hill)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "discrimination margin >= floor every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "permuted-map collapses the chain",
+      "ok": true,
+      "detail": "treatment=12 control=0 |sep|=12 > 0",
+      "note": "train the map on deranged (object,direction) co-occurrence -> true chains must abstain"
+    },
+    {
+      "kind": "require",
+      "name": "permuted-positive moves the supported set with the learned data (every seed)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "tier1 graduates the #5 disclaimer via the LEARNED code (composed when trained, else #5 fallback)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "spiking generator mouth",
+      "why": "CPU numpy run; the grounded CONTENT is the query_patient reads + the learned-code readout"
+    },
+    {
+      "process": "on-substrate (spiking) learned map",
+      "why": "the Hebbian heteroassociator is a rate/phasor associative memory; the spiking realization (ON/OFF rate + three-factor rule, per 2026-06-16) is the named next build"
+    }
+  ],
+  "undefined_reasons": [],
+  "grounding_attribution": 1.0,
+  "tier0_all_go": true,
+  "tier0_supported_correct": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "tier0_abstain_correct": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+  ],
+  "tier0_false_accepts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "tier0_confab": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "tier0_spatial_facts_stored": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "tier0_untrained_supported": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "tier0_permuted_still_supported": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "tier0_unlocated_confab": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "tier0_hill_loc_margin": [
+    0.2476,
+    0.2339,
+    0.0499,
+    0.179,
+    0.4453,
+    0.1951
+  ],
+  "tier0_min_grounded_margin": [
+    0.8819,
+    0.928,
+    0.9112,
+    0.9167,
+    0.9234,
+    0.902
+  ],
+  "tier1_graduated": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "tier0": {
+        "seed": 42,
+        "n_grid": 8,
+        "n_supported_expected": 2,
+        "supported_correct": 2,
+        "abstain_correct": 6,
+        "false_accepts": 0,
+        "every_svo_edge_moat_ok": 2,
+        "confab_count": 0,
+        "goal_shortcut_false_accepts": 0,
+        "spatial_shortcut_false_accepts": 0,
+        "moat_battery_false_accepts": 0,
+        "moat_battery_n": 8,
+        "spatial_facts_stored": 0,
+        "untrained_map_supported": 0,
+        "permuted_map_still_supported": 0,
+        "permuted_positive_ok": true,
+        "unlocated_confab": 0,
+        "hill_loc_margin": 0.2476,
+        "theta_locmargin": 0.6,
+        "min_grounded_margin": 0.8819,
+        "margin_floor": 0.1,
+        "grounded_margins": [
+          0.8968,
+          0.8819
+        ],
+        "GO": true,
+        "rows": [
+          {
+            "agent": "dog",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "river",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "river",
+            "dir": "east",
+            "join_sim": 0.9940399668105351,
+            "conf": 0.9940399668105351,
+            "margin": 0.8968055242895935,
+            "chain": [
+              [
+                "dog",
+                "go",
+                "east"
+              ],
+              [
+                "dog",
+                "look",
+                "river"
+              ]
+            ],
+            "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "cat",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "apple",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "apple",
+            "dir": "west",
+            "join_sim": 0.9941665007497655,
+            "conf": 0.9941665007497655,
+            "margin": 0.8819113937631038,
+            "chain": [
+              [
+                "cat",
+                "go",
+                "west"
+              ],
+              [
+                "cat",
+                "look",
+                "apple"
+              ]
+            ],
+            "answer": "I know the cat goes west -- that fact is stored, and my no-confab moat confirms it ((cat, go) -> west). This time I can say WHY: I stored that (cat, look) -> apple, and my LEARNED spatial code places the apple in the west (I never stored 'apple is west' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the cat goes west to reach the apple. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "dog",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "river",
+            "dir": "north",
+            "join_sim": 0.020392488442857543,
+            "conf": 0.9940399668105351,
+            "margin": -0.9736474783676775,
+            "chain": null,
+            "answer": "I know the dog runs north -- that fact is stored, and my no-confab moat confirms it ((dog, run) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "cat",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "apple",
+            "dir": "south",
+            "join_sim": 0.11225510698666175,
+            "conf": 0.9941665007497655,
+            "margin": -0.8819113937631038,
+            "chain": null,
+            "answer": "I know the cat runs south -- that fact is stored, and my no-confab moat confirms it ((cat, run) -> south). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "fish",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_goal",
+            "got_supported": false,
+            "got_reason": "no_goal",
+            "got_obj": null,
+            "dir": "east",
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the fish goes east -- that fact is stored, and my no-confab moat confirms it ((fish, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "bird",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_spatial",
+            "got_supported": false,
+            "got_reason": "no_spatial",
+            "got_obj": "hill",
+            "dir": "north",
+            "join_sim": 0.04202580840352528,
+            "conf": 0.7599969669346051,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the bird goes north -- that fact is stored, and my no-confab moat confirms it ((bird, go) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "dog",
+            "motion": "come",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          },
+          {
+            "agent": "cat",
+            "motion": "stop",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          }
+        ]
+      },
+      "tier1": {
+        "seed": 42,
+        "with_learned_map": {
+          "supported": true,
+          "obj": "river",
+          "join_sim": 0.993970156046244,
+          "margin": 0.876769050213172,
+          "grounding_is_learned_not_stored": true,
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+        },
+        "without_learned_map": {
+          "supported": false,
+          "reason": "no_spatial",
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+          "matches_5_disclaimer": true
+        },
+        "graduated_via_learned_code": true
+      },
+      "GO": true,
+      "elapsed_s": 12.25
+    },
+    {
+      "seed": 43,
+      "tier0": {
+        "seed": 43,
+        "n_grid": 8,
+        "n_supported_expected": 2,
+        "supported_correct": 2,
+        "abstain_correct": 6,
+        "false_accepts": 0,
+        "every_svo_edge_moat_ok": 2,
+        "confab_count": 0,
+        "goal_shortcut_false_accepts": 0,
+        "spatial_shortcut_false_accepts": 0,
+        "moat_battery_false_accepts": 0,
+        "moat_battery_n": 8,
+        "spatial_facts_stored": 0,
+        "untrained_map_supported": 0,
+        "permuted_map_still_supported": 0,
+        "permuted_positive_ok": true,
+        "unlocated_confab": 0,
+        "hill_loc_margin": 0.2339,
+        "theta_locmargin": 0.6,
+        "min_grounded_margin": 0.928,
+        "margin_floor": 0.1,
+        "grounded_margins": [
+          0.928,
+          0.9983
+        ],
+        "GO": true,
+        "rows": [
+          {
+            "agent": "dog",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "river",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "river",
+            "dir": "east",
+            "join_sim": 0.9942901436278841,
+            "conf": 0.9942901436278841,
+            "margin": 0.9280127906862106,
+            "chain": [
+              [
+                "dog",
+                "go",
+                "east"
+              ],
+              [
+                "dog",
+                "look",
+                "river"
+              ]
+            ],
+            "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "cat",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "apple",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "apple",
+            "dir": "west",
+            "join_sim": 0.9935451216027336,
+            "conf": 0.9935451216027336,
+            "margin": 0.9982698989936979,
+            "chain": [
+              [
+                "cat",
+                "go",
+                "west"
+              ],
+              [
+                "cat",
+                "look",
+                "apple"
+              ]
+            ],
+            "answer": "I know the cat goes west -- that fact is stored, and my no-confab moat confirms it ((cat, go) -> west). This time I can say WHY: I stored that (cat, look) -> apple, and my LEARNED spatial code places the apple in the west (I never stored 'apple is west' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the cat goes west to reach the apple. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "dog",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "river",
+            "dir": "north",
+            "join_sim": 0.06627735294167364,
+            "conf": 0.9942901436278841,
+            "margin": -0.9280127906862106,
+            "chain": null,
+            "answer": "I know the dog runs north -- that fact is stored, and my no-confab moat confirms it ((dog, run) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "cat",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "apple",
+            "dir": "south",
+            "join_sim": -0.023960674176081886,
+            "conf": 0.9935451216027336,
+            "margin": -1.0175057957788154,
+            "chain": null,
+            "answer": "I know the cat runs south -- that fact is stored, and my no-confab moat confirms it ((cat, run) -> south). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "fish",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_goal",
+            "got_supported": false,
+            "got_reason": "no_goal",
+            "got_obj": null,
+            "dir": "east",
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the fish goes east -- that fact is stored, and my no-confab moat confirms it ((fish, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "bird",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_spatial",
+            "got_supported": false,
+            "got_reason": "no_spatial",
+            "got_obj": "hill",
+            "dir": "north",
+            "join_sim": -0.012015911084486866,
+            "conf": 0.28113221910303254,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the bird goes north -- that fact is stored, and my no-confab moat confirms it ((bird, go) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "dog",
+            "motion": "come",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          },
+          {
+            "agent": "cat",
+            "motion": "stop",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          }
+        ]
+      },
+      "tier1": {
+        "seed": 43,
+        "with_learned_map": {
+          "supported": true,
+          "obj": "river",
+          "join_sim": 0.9941677417192105,
+          "margin": 0.9389684628100461,
+          "grounding_is_learned_not_stored": true,
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+        },
+        "without_learned_map": {
+          "supported": false,
+          "reason": "no_spatial",
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+          "matches_5_disclaimer": true
+        },
+        "graduated_via_learned_code": true
+      },
+      "GO": true,
+      "elapsed_s": 11.78
+    },
+    {
+      "seed": 44,
+      "tier0": {
+        "seed": 44,
+        "n_grid": 8,
+        "n_supported_expected": 2,
+        "supported_correct": 2,
+        "abstain_correct": 6,
+        "false_accepts": 0,
+        "every_svo_edge_moat_ok": 2,
+        "confab_count": 0,
+        "goal_shortcut_false_accepts": 0,
+        "spatial_shortcut_false_accepts": 0,
+        "moat_battery_false_accepts": 0,
+        "moat_battery_n": 8,
+        "spatial_facts_stored": 0,
+        "untrained_map_supported": 0,
+        "permuted_map_still_supported": 0,
+        "permuted_positive_ok": true,
+        "unlocated_confab": 0,
+        "hill_loc_margin": 0.0499,
+        "theta_locmargin": 0.6,
+        "min_grounded_margin": 0.9112,
+        "margin_floor": 0.1,
+        "grounded_margins": [
+          0.9552,
+          0.9112
+        ],
+        "GO": true,
+        "rows": [
+          {
+            "agent": "dog",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "river",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "river",
+            "dir": "east",
+            "join_sim": 0.9946176479545595,
+            "conf": 0.9946176479545595,
+            "margin": 0.9551776763011313,
+            "chain": [
+              [
+                "dog",
+                "go",
+                "east"
+              ],
+              [
+                "dog",
+                "look",
+                "river"
+              ]
+            ],
+            "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "cat",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "apple",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "apple",
+            "dir": "west",
+            "join_sim": 0.9945132610667404,
+            "conf": 0.9945132610667404,
+            "margin": 0.9112056891770945,
+            "chain": [
+              [
+                "cat",
+                "go",
+                "west"
+              ],
+              [
+                "cat",
+                "look",
+                "apple"
+              ]
+            ],
+            "answer": "I know the cat goes west -- that fact is stored, and my no-confab moat confirms it ((cat, go) -> west). This time I can say WHY: I stored that (cat, look) -> apple, and my LEARNED spatial code places the apple in the west (I never stored 'apple is west' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the cat goes west to reach the apple. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "dog",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "river",
+            "dir": "north",
+            "join_sim": -0.0055957104136172275,
+            "conf": 0.9946176479545595,
+            "margin": -1.0002133583681767,
+            "chain": null,
+            "answer": "I know the dog runs north -- that fact is stored, and my no-confab moat confirms it ((dog, run) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "cat",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "apple",
+            "dir": "south",
+            "join_sim": 0.08330757188964585,
+            "conf": 0.9945132610667404,
+            "margin": -0.9112056891770945,
+            "chain": null,
+            "answer": "I know the cat runs south -- that fact is stored, and my no-confab moat confirms it ((cat, run) -> south). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "fish",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_goal",
+            "got_supported": false,
+            "got_reason": "no_goal",
+            "got_obj": null,
+            "dir": "east",
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the fish goes east -- that fact is stored, and my no-confab moat confirms it ((fish, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "bird",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_spatial",
+            "got_supported": false,
+            "got_reason": "no_spatial",
+            "got_obj": "hill",
+            "dir": "north",
+            "join_sim": 0.010451598393657002,
+            "conf": 0.010451598393657002,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the bird goes north -- that fact is stored, and my no-confab moat confirms it ((bird, go) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "dog",
+            "motion": "come",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          },
+          {
+            "agent": "cat",
+            "motion": "stop",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          }
+        ]
+      },
+      "tier1": {
+        "seed": 44,
+        "with_learned_map": {
+          "supported": true,
+          "obj": "river",
+          "join_sim": 0.9945779080126428,
+          "margin": 0.9507877253256779,
+          "grounding_is_learned_not_stored": true,
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+        },
+        "without_learned_map": {
+          "supported": false,
+          "reason": "no_spatial",
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+          "matches_5_disclaimer": true
+        },
+        "graduated_via_learned_code": true
+      },
+      "GO": true,
+      "elapsed_s": 12.83
+    },
+    {
+      "seed": 100,
+      "tier0": {
+        "seed": 100,
+        "n_grid": 8,
+        "n_supported_expected": 2,
+        "supported_correct": 2,
+        "abstain_correct": 6,
+        "false_accepts": 0,
+        "every_svo_edge_moat_ok": 2,
+        "confab_count": 0,
+        "goal_shortcut_false_accepts": 0,
+        "spatial_shortcut_false_accepts": 0,
+        "moat_battery_false_accepts": 0,
+        "moat_battery_n": 8,
+        "spatial_facts_stored": 0,
+        "untrained_map_supported": 0,
+        "permuted_map_still_supported": 0,
+        "permuted_positive_ok": true,
+        "unlocated_confab": 0,
+        "hill_loc_margin": 0.179,
+        "theta_locmargin": 0.6,
+        "min_grounded_margin": 0.9167,
+        "margin_floor": 0.1,
+        "grounded_margins": [
+          0.9438,
+          0.9167
+        ],
+        "GO": true,
+        "rows": [
+          {
+            "agent": "dog",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "river",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "river",
+            "dir": "east",
+            "join_sim": 0.9924589454050939,
+            "conf": 0.9924589454050939,
+            "margin": 0.9438421476661993,
+            "chain": [
+              [
+                "dog",
+                "go",
+                "east"
+              ],
+              [
+                "dog",
+                "look",
+                "river"
+              ]
+            ],
+            "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "cat",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "apple",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "apple",
+            "dir": "west",
+            "join_sim": 0.9947092457588178,
+            "conf": 0.9947092457588178,
+            "margin": 0.9166982767881503,
+            "chain": [
+              [
+                "cat",
+                "go",
+                "west"
+              ],
+              [
+                "cat",
+                "look",
+                "apple"
+              ]
+            ],
+            "answer": "I know the cat goes west -- that fact is stored, and my no-confab moat confirms it ((cat, go) -> west). This time I can say WHY: I stored that (cat, look) -> apple, and my LEARNED spatial code places the apple in the west (I never stored 'apple is west' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the cat goes west to reach the apple. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "dog",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "river",
+            "dir": "north",
+            "join_sim": -0.007271779871985001,
+            "conf": 0.9924589454050939,
+            "margin": -0.999730725277079,
+            "chain": null,
+            "answer": "I know the dog runs north -- that fact is stored, and my no-confab moat confirms it ((dog, run) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "cat",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "apple",
+            "dir": "south",
+            "join_sim": 0.07801096897066753,
+            "conf": 0.9947092457588178,
+            "margin": -0.9166982767881503,
+            "chain": null,
+            "answer": "I know the cat runs south -- that fact is stored, and my no-confab moat confirms it ((cat, run) -> south). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "fish",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_goal",
+            "got_supported": false,
+            "got_reason": "no_goal",
+            "got_obj": null,
+            "dir": "east",
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the fish goes east -- that fact is stored, and my no-confab moat confirms it ((fish, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "bird",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_spatial",
+            "got_supported": false,
+            "got_reason": "no_spatial",
+            "got_obj": "hill",
+            "dir": "north",
+            "join_sim": 0.05686622311490816,
+            "conf": 0.23588089111279342,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the bird goes north -- that fact is stored, and my no-confab moat confirms it ((bird, go) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "dog",
+            "motion": "come",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          },
+          {
+            "agent": "cat",
+            "motion": "stop",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          }
+        ]
+      },
+      "tier1": {
+        "seed": 100,
+        "with_learned_map": {
+          "supported": true,
+          "obj": "river",
+          "join_sim": 0.9925303549450923,
+          "margin": 0.9452670227198972,
+          "grounding_is_learned_not_stored": true,
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+        },
+        "without_learned_map": {
+          "supported": false,
+          "reason": "no_spatial",
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+          "matches_5_disclaimer": true
+        },
+        "graduated_via_learned_code": true
+      },
+      "GO": true,
+      "elapsed_s": 13.41
+    },
+    {
+      "seed": 101,
+      "tier0": {
+        "seed": 101,
+        "n_grid": 8,
+        "n_supported_expected": 2,
+        "supported_correct": 2,
+        "abstain_correct": 6,
+        "false_accepts": 0,
+        "every_svo_edge_moat_ok": 2,
+        "confab_count": 0,
+        "goal_shortcut_false_accepts": 0,
+        "spatial_shortcut_false_accepts": 0,
+        "moat_battery_false_accepts": 0,
+        "moat_battery_n": 8,
+        "spatial_facts_stored": 0,
+        "untrained_map_supported": 0,
+        "permuted_map_still_supported": 0,
+        "permuted_positive_ok": true,
+        "unlocated_confab": 0,
+        "hill_loc_margin": 0.4453,
+        "theta_locmargin": 0.6,
+        "min_grounded_margin": 0.9234,
+        "margin_floor": 0.1,
+        "grounded_margins": [
+          1.0143,
+          0.9234
+        ],
+        "GO": true,
+        "rows": [
+          {
+            "agent": "dog",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "river",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "river",
+            "dir": "east",
+            "join_sim": 0.994459552322111,
+            "conf": 0.994459552322111,
+            "margin": 1.014285085551259,
+            "chain": [
+              [
+                "dog",
+                "go",
+                "east"
+              ],
+              [
+                "dog",
+                "look",
+                "river"
+              ]
+            ],
+            "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "cat",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "apple",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "apple",
+            "dir": "west",
+            "join_sim": 0.9949558948773034,
+            "conf": 0.9949558948773034,
+            "margin": 0.9234130612476896,
+            "chain": [
+              [
+                "cat",
+                "go",
+                "west"
+              ],
+              [
+                "cat",
+                "look",
+                "apple"
+              ]
+            ],
+            "answer": "I know the cat goes west -- that fact is stored, and my no-confab moat confirms it ((cat, go) -> west). This time I can say WHY: I stored that (cat, look) -> apple, and my LEARNED spatial code places the apple in the west (I never stored 'apple is west' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the cat goes west to reach the apple. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "dog",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "river",
+            "dir": "north",
+            "join_sim": -0.019825533229147936,
+            "conf": 0.994459552322111,
+            "margin": -1.014285085551259,
+            "chain": null,
+            "answer": "I know the dog runs north -- that fact is stored, and my no-confab moat confirms it ((dog, run) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "cat",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "apple",
+            "dir": "south",
+            "join_sim": 0.07154283362961383,
+            "conf": 0.9949558948773034,
+            "margin": -0.9234130612476896,
+            "chain": null,
+            "answer": "I know the cat runs south -- that fact is stored, and my no-confab moat confirms it ((cat, run) -> south). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "fish",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_goal",
+            "got_supported": false,
+            "got_reason": "no_goal",
+            "got_obj": null,
+            "dir": "east",
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the fish goes east -- that fact is stored, and my no-confab moat confirms it ((fish, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "bird",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_spatial",
+            "got_supported": false,
+            "got_reason": "no_spatial",
+            "got_obj": "hill",
+            "dir": "north",
+            "join_sim": -0.014298206266004074,
+            "conf": 0.802487538808553,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the bird goes north -- that fact is stored, and my no-confab moat confirms it ((bird, go) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "dog",
+            "motion": "come",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          },
+          {
+            "agent": "cat",
+            "motion": "stop",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          }
+        ]
+      },
+      "tier1": {
+        "seed": 101,
+        "with_learned_map": {
+          "supported": true,
+          "obj": "river",
+          "join_sim": 0.9934555049796154,
+          "margin": 1.0173133581393143,
+          "grounding_is_learned_not_stored": true,
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+        },
+        "without_learned_map": {
+          "supported": false,
+          "reason": "no_spatial",
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+          "matches_5_disclaimer": true
+        },
+        "graduated_via_learned_code": true
+      },
+      "GO": true,
+      "elapsed_s": 10.51
+    },
+    {
+      "seed": 102,
+      "tier0": {
+        "seed": 102,
+        "n_grid": 8,
+        "n_supported_expected": 2,
+        "supported_correct": 2,
+        "abstain_correct": 6,
+        "false_accepts": 0,
+        "every_svo_edge_moat_ok": 2,
+        "confab_count": 0,
+        "goal_shortcut_false_accepts": 0,
+        "spatial_shortcut_false_accepts": 0,
+        "moat_battery_false_accepts": 0,
+        "moat_battery_n": 8,
+        "spatial_facts_stored": 0,
+        "untrained_map_supported": 0,
+        "permuted_map_still_supported": 0,
+        "permuted_positive_ok": true,
+        "unlocated_confab": 0,
+        "hill_loc_margin": 0.1951,
+        "theta_locmargin": 0.6,
+        "min_grounded_margin": 0.902,
+        "margin_floor": 0.1,
+        "grounded_margins": [
+          0.902,
+          0.969
+        ],
+        "GO": true,
+        "rows": [
+          {
+            "agent": "dog",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "river",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "river",
+            "dir": "east",
+            "join_sim": 0.988319638989942,
+            "conf": 0.988319638989942,
+            "margin": 0.9020101228341075,
+            "chain": [
+              [
+                "dog",
+                "go",
+                "east"
+              ],
+              [
+                "dog",
+                "look",
+                "river"
+              ]
+            ],
+            "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "cat",
+            "motion": "go",
+            "expected_supported": true,
+            "expected_obj": "apple",
+            "expected_reason": "grounded",
+            "got_supported": true,
+            "got_reason": "grounded",
+            "got_obj": "apple",
+            "dir": "west",
+            "join_sim": 0.9893592367570346,
+            "conf": 0.9893592367570346,
+            "margin": 0.9690311062274252,
+            "chain": [
+              [
+                "cat",
+                "go",
+                "west"
+              ],
+              [
+                "cat",
+                "look",
+                "apple"
+              ]
+            ],
+            "answer": "I know the cat goes west -- that fact is stored, and my no-confab moat confirms it ((cat, go) -> west). This time I can say WHY: I stored that (cat, look) -> apple, and my LEARNED spatial code places the apple in the west (I never stored 'apple is west' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the cat goes west to reach the apple. The direction match is a similarity in the code I learned, not a rule I was given."
+          },
+          {
+            "agent": "dog",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "river",
+            "dir": "north",
+            "join_sim": -0.03271473800401877,
+            "conf": 0.988319638989942,
+            "margin": -1.0210343769939607,
+            "chain": null,
+            "answer": "I know the dog runs north -- that fact is stored, and my no-confab moat confirms it ((dog, run) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "cat",
+            "motion": "run",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "dir_mismatch",
+            "got_supported": false,
+            "got_reason": "dir_mismatch",
+            "got_obj": "apple",
+            "dir": "south",
+            "join_sim": 0.020328130529609446,
+            "conf": 0.9893592367570346,
+            "margin": -0.9690311062274252,
+            "chain": null,
+            "answer": "I know the cat runs south -- that fact is stored, and my no-confab moat confirms it ((cat, run) -> south). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "fish",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_goal",
+            "got_supported": false,
+            "got_reason": "no_goal",
+            "got_obj": null,
+            "dir": "east",
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the fish goes east -- that fact is stored, and my no-confab moat confirms it ((fish, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "bird",
+            "motion": "go",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "no_spatial",
+            "got_supported": false,
+            "got_reason": "no_spatial",
+            "got_obj": "hill",
+            "dir": "north",
+            "join_sim": 0.03686794869776322,
+            "conf": 0.23195334066178686,
+            "margin": null,
+            "chain": null,
+            "answer": "I know the bird goes north -- that fact is stored, and my no-confab moat confirms it ((bird, go) -> north). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one."
+          },
+          {
+            "agent": "dog",
+            "motion": "come",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          },
+          {
+            "agent": "cat",
+            "motion": "stop",
+            "expected_supported": false,
+            "expected_obj": null,
+            "expected_reason": "unstored_motion",
+            "got_supported": false,
+            "got_reason": "unstored_motion",
+            "got_obj": null,
+            "dir": null,
+            "join_sim": null,
+            "conf": null,
+            "margin": null,
+            "chain": null,
+            "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason."
+          }
+        ]
+      },
+      "tier1": {
+        "seed": 102,
+        "with_learned_map": {
+          "supported": true,
+          "obj": "river",
+          "join_sim": 0.9875878326716203,
+          "margin": 0.9146261653505733,
+          "grounding_is_learned_not_stored": true,
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). This time I can say WHY: I stored that (dog, look) -> river, and my LEARNED spatial code places the river in the east (I never stored 'river is east' as a fact -- I learned it from seeing them together). Those compose into a grounded reason: the dog goes east to reach the river. The direction match is a similarity in the code I learned, not a rule I was given."
+        },
+        "without_learned_map": {
+          "supported": false,
+          "reason": "no_spatial",
+          "reply": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+          "matches_5_disclaimer": true
+        },
+        "graduated_via_learned_code": true
+      },
+      "GO": true,
+      "elapsed_s": 12.64
+    }
+  ]
+}

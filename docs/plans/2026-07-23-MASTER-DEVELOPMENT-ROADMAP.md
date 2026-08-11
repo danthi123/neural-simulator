@@ -435,6 +435,19 @@ stored. HONEST SCOPE: the DATA path is de-risked (0 mis-bind/false-accept, as th
 JOIN POLICY + the `(object,at)→direction` grounding are DECLARED HOST SCAFFOLDS; the named neural successor is a
 LEARNED relational/spatial code (TEM factorised relation / co-occurrence stream cortex) so the chain EMERGES rather
 than being host-orchestrated (`2026-08-11-emergent-causal-composition-chain-6seed.md`).
+**#5-follow-on-2 LEARNED relational/spatial code — de-risk GO** (2026-08-11): the successor named just above is BUILT.
+The causal chain's GROUNDING now emerges from a learned code: the `(object,at)→direction` grounding is Hebbian-learned
+into a synaptic weight matrix from a NOISY co-occurrence stream (NO `(object,at)` fact stored — `query_patient(river,
+"at")` is `None`), and the direction join is a COSINE in that learned code, replacing the symbolic `dir==obj_dir`.
+**6/6 seeds: 2/2 chains, 6/6 abstains, 0 false-accepts, 0 confab, grounding 100% attributable to the learned map**;
+untrained-map grounds 0 (lever), permuted-map collapses the chain, and the unlocated object never confabulates a
+location — the learned-code moat is a readout direction-margin gate, because a linear associator has NO native
+"unlocated" state (it hallucinates a blend of trained directions; raw confidence swings 0.01–0.80, but the direction
+margin cleanly separates located 0.88–1.01 vs unlocated 0.05–0.45). Tier-1 graduates the #5 disclaimer on the LIVE
+composer via the learned map. HONEST SCOPE: the spatial GROUNDING + the join comparison now emerge, but the JOIN
+TOPOLOGY is still host-orchestrated, the associator is a rate/phasor matrix (spiking on-substrate = the named next
+build, per the ON/OFF learned binder `2026-06-16`), and it is toy-scale
+(`2026-08-11-emergent-relational-spatial-code-GO.md`).
 **gap#5 episodic memory CLOSED end-to-end**: DG-select (GO) → BTSP one-shot FORM (GO `cee2ff124`) → intrinsic per-cell
 DENDRITIC dAP READOUT completes cue-specifically (size/scale-independent, 6/6 GO `ab9f7dbe`); the recurrent-completion
 path hit a self-drive-vs-cue-at-scale wall (`544c0b742`), the dendritic readout closed it; slow-NMDA reverberatory

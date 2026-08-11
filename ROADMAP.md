@@ -63,6 +63,18 @@ the #5 turn-4 disclaimer on the LIVE co-resident composer when the grounding is 
 fallback. HONEST SCOPE: the DATA path is de-risked; the JOIN POLICY + spatial-grounding facts are declared host
 scaffolds — the named neural successor is a LEARNED relational/spatial code (TEM factorised relation / stream cortex)
 so the chain EMERGES rather than being host-orchestrated. (`2026-08-11-emergent-causal-composition-chain-6seed.md`)
+**#5-follow-on-2 (2026-08-11) LEARNED relational/spatial code — de-risk GO:** the successor named just above is BUILT.
+The causal chain's GROUNDING now emerges from a learned code, not a host fact: the `(object,at)→direction` grounding
+is Hebbian-learned into a synaptic weight matrix from a NOISY co-occurrence stream (no `(object,at)` fact is stored —
+`query_patient(river,"at")` is `None`), and the direction join is a COSINE in that learned code, replacing the
+symbolic `dir==obj_dir` test. The chain still grounds the 2 true "why" answers and abstains all 6 traps —
+**6/6 seeds: 2/2 chains, 6/6 abstains, 0 false-accepts, 0 confab, grounding 100% attributable to the learned map**;
+untrained-map grounds 0 (lever), permuted-map collapses the chain, and the unlocated object (`hill`) never
+confabulates a location (the learned-code moat = a readout direction-margin gate, since a linear associator has NO
+native "unlocated" state). Tier-1 graduates the #5 disclaimer on the LIVE composer via the learned map. HONEST SCOPE:
+the spatial GROUNDING + the join comparison now emerge, but the JOIN TOPOLOGY is still host-orchestrated, the
+associator is a rate/phasor matrix (spiking on-substrate = the named next build, per the ON/OFF learned binder), and
+it is toy-scale. (`2026-08-11-emergent-relational-spatial-code-GO.md`)
 **#6 (2026-08-10) corpus-LEARNED grounded facts into the live chat:** the chat could only talk about dog/cat (2
 subjects, 6 hand-taught facts); now it stores relational facts MINED FROM THE CORPUS it "heard" (TinyStories),
 wired in via one additive `vocab` kwarg on `build_one_brain`. Grounded-subject BREADTH rises 2 → 9, grounded
