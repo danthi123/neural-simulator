@@ -3,7 +3,7 @@ type: finding
 status: go
 date: 2026-08-11
 mechanism: the variable-binding fast-weight role->filler BIND realized as HEBBIAN short-term potentiation on a real spiking SimulationBridge — barcode input + K slot pools + shared FS, barcode->slot synapses PLASTIC via the rate-window Hebbian coactivity rule; the bind lives in cp_connections.data (real synapses), NOT a host numpy matrix
-lane: emergence engine / working memory (closes the WM-GO residual (c): "the fast-weight BIND is host numpy; its spiking-STP realisation is a banked next rung")
+lane: emergence engine / working memory (closes the STORAGE+RETRIEVAL half of WM-GO residual (c), allocation still host: "the fast-weight BIND is host numpy; its spiking-STP realisation is a banked next rung")
 verdict: 6-SEED GO — held-out NOVEL recovery 1.000 / 0.000 collisions every seed (reproduces the RUNG6c host binder GO as a genuine synaptic mechanism); all lesion teeth bite. The literal Mongillo STP facilitation (cp_stp_u/x) is the honest NEGATIVE (frozen-Hebbian arm 0.000-0.031, plus RUNG6d non-selectivity + a verified tau_F mismatch). Scope: slot ALLOCATION is host (as RUNG6c's free-counter); the STORAGE + RETRIEVAL are spiking/synaptic.
 seeds: [42, 43, 44, 100, 101, 102]
 runner: research/runners/_spiking_stp_bind_derisk.py
@@ -41,8 +41,9 @@ from init ~30 to ~71-212 in `cp_connections.data` on every seed (the fast weight
 <!--derived-->
 - The stored association lives in **`cp_connections.data`** (real synapse weights), written by the substrate's own
   rate-window Hebbian coactivity as barcode and slot neurons fire coincidentally (`reaches`: before 30 -> after ~150).
-- RETRIEVE reads only **`cp_firing_states`** (spikes); the binder object holds **no numpy `W`** (asserted). No host
-  fast-weight matrix is used in the read-out.
+- RETRIEVE reads only **`cp_firing_states`** (spikes); the winner is a HOST `np.argmax` over slot-pool spike counts
+  (a read-out INSTRUMENT, not neural WTA — the emergent neural-WTA allocation stays the RUNG6e-banked subproblem); the
+  binder object holds **no numpy `W`** (asserted). No host fast-weight matrix is used in the read-out.
 - backend asserted numpy; `cfg.seed` verified to actually seed the substrate (same seed -> identical firing thresholds);
   the `hebbian_max_weight` (4000) clamp exceeds every design weight (the plasticity-bound trap).
 
@@ -50,7 +51,8 @@ from init ~30 to ~71-212 in `cp_connections.data` on every seed (the fast weight
 
 <!--derived-->
 - **SPIKING + synaptic + load-bearing:** the BIND (write) and RETRIEVE (content-addressable read) — the substrate's
-  Hebbian synaptic plasticity does the potentiation; spikes do the read. This de-shortcuts the WM-GO residual (c).
+  Hebbian synaptic plasticity does the potentiation; spikes do the read. This de-shortcuts the STORAGE + RETRIEVAL half
+  of residual (c); slot ALLOCATION and the write-gate remain host (RUNG6e's banked emergent-WTA subproblem).
 - **HOST (inherited from RUNG6c, unchanged):** slot ALLOCATION (which fresh slot a new entity takes) is a host counter,
   and binding drives the target slot as a teaching clamp (the "post"). RUNG6c's `HebbianBinder` allocates with a `free`
   counter identically; this build does not add a shortcut beyond RUNG6c, it moves the STORAGE onto real synapses.
