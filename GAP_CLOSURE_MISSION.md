@@ -82,13 +82,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   (2) **emergent neural-WTA slot allocation** (a-1'd: RUNG6e's banked subproblem — reuse rungB1b's neural-WTA-gate + a
 >   self-calibrating competition threshold [BCM/synaptic-scaling] to replace the host free-counter). NB this CONVERGES
 >   with LEVER 3 — both need structural competition/WTA on the substrate.
->   (3) **wire the composition into the emergence stream** = **6-SEED PARTIAL** (`9840f76`, coordinator-recovered from a
->   deferred agent): the WM slot's held-subject wired as a NEURAL afferent (apical_drive, not a host ensemble) into the
->   HTM engine GENUINELY COMBINES the faculties — hybrid 0.641 [min 0.562] BEATS both HTM-alone 0.224 and WM-alone 0.516;
->   BOTH afferent lesions load-bearing; lesion-the-hold collapses (reads spikes) → **the WM is a LOAD-BEARING faculty in
->   the emergence engine** (the north-star integration, demonstrated). BUT misses the strict +0.20 bar (0.641 vs 0.716):
->   the fusion is LOSSY on the SUBJECT (WM subj 1.000 → hybrid 0.667) while class combines cleanly (0.974). Next = a
->   SEPARATE-CHANNEL fusion (subject + class on distinct channels).
+>   (3) **wire the composition into the emergence stream = ✅ 6-SEED GO — a WORKING WM+HTM NEURAL HYBRID** (rung-3 PARTIAL
+>   `9840f76` → rung-3b SEPARATE-CHANNEL fix `feb9e35a`, coordinator-recovered from a deferred agent). The rung-3 partial
+>   showed the neural fusion COMBINES the faculties (hybrid 0.641 beats both single systems) but was LOSSY on the subject
+>   (1.000→0.667). Rung-3b routes the WM-subject + HTM-class on DISTINCT neural channels combined by a LEARNED DENDRITIC
+>   CONJUNCTION bridge (conj_untrained→0.096 < chance proves the neural bind, NOT a host argmax): **hybrid 0.974 [min
+>   0.938] BEATS HTM-alone 0.224 + WM-alone 0.516, SUBJECT PRESERVED 1.000, class clean 0.974** — all lesions load-bearing,
+>   reads spikes, no leak. **⭐ THE NORTH-STAR INTEGRATION WORKS at de-risk level: the WM is a WORKING, load-bearing faculty
+>   combined into the emergence engine by a genuine neural conjunction to solve a compositional task neither can alone.**
+>   Honest residual (lane-b/c status): the per-channel subject/class IDENTIFICATION is a host argmax read instrument (the
+>   COMBINATION is neural) → burndown = neural-WTA channel reads (reuse rung-2 / lever-3 stabilizer). NO sim/ edit.
 >   **⭐ ROLE-GATE RELIABILITY ARC (levers 1–4) IS NOW CLEANLY CHARACTERIZED + CLOSED-TO-A-SINGLE-RESIDUAL:** the
 >   transport-free FEEDBACK-ALIGNMENT RELIABILITY (identical to the gap#4 lane's own long-open feedback-alignment rung).
 >   Every confound eliminated; the aligned/transport role-gate WORKS 6/6 (a usable scaffold). **SINGLE LITERAL NEXT (a
