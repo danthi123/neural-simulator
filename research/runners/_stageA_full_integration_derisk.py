@@ -455,7 +455,8 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
                     onebrain_k_max: int = 32, co_resident_forward_model: bool = False, fm_n_pool: int = FM_N_POOL,
                     co_resident_affect_ladder: bool = False, aff_n_rungs: int = 8,
                     co_resident_certainty_opponent: bool = False, vocab=DEFAULT_VOCAB,
-                    co_resident_eprop: bool = False, eprop_dims=(34, 40, 6), eprop_ff_w_init: float = 2000.0):
+                    co_resident_eprop: bool = False, eprop_dims=(34, 40, 6), eprop_ff_w_init: float = 2000.0,
+                    co_resident_eprop_cue: bool = False, eprop_cue_w: float = 2000.0):
     """Build ONE SimulationBridge: the composer rf slice FIRST, then (default-on) every faculty slice appended AFTER
     it. Returns (bridge, comp, idx, baseline_snap). When with_faculties=False, ONLY the rf slice is built (the
     default-off byte-identity baseline).
@@ -533,10 +534,21 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
     # injected into the SAME `union` dict below -> ONE SimulationBridge / ONE cp_connections hosts both the
     # conversational synapses and the e-prop FF synapses. Flag off -> no eprop_* region -> byte-identical.
     build_eprop = bool(co_resident_eprop and with_faculties)
+    # ---- CROSS-REGION arc (co_resident_eprop_cue, DEFAULT-OFF): a co-resident SENSORY-RELAY region `eprop_cue`
+    # (eprop_dims[0] neurons) appended LAST, plus a fixed one-to-one synaptic pathway eprop_cue -> eprop_in injected
+    # into the SAME union below. This closes the acquisition-INPUT host hand-off: instead of the host writing the
+    # rendered percept as EXTERNAL CURRENT onto eprop_in (co-location, burn-down #1), the percept is presented as
+    # sensory drive onto eprop_cue and the brain's OWN synapses carry it to the e-prop input layer -> a REAL
+    # cross-region synaptic pathway on the ONE cp_connections. Flag off / no eprop -> no eprop_cue region -> byte
+    # identical (append-LAST + internal_density=0 + no out-edge to any pre-existing region).
+    build_eprop_cue = bool(co_resident_eprop_cue and build_eprop)
     if build_eprop:
         _e_in, _e_h1, _e_out = (int(x) for x in eprop_dims)
         for _enm, _enn in (("eprop_in", _e_in), ("eprop_h1", _e_h1), ("eprop_out", _e_out)):
             regions.append(BrainRegion(name=_enm, n_neurons=_enn, exc_fraction=1.0, internal_density=0.0,
+                                       enable_nmda=False, izh_neuron_type="IZH2007_RS_CORTICAL_PYRAMIDAL"))
+        if build_eprop_cue:
+            regions.append(BrainRegion(name="eprop_cue", n_neurons=_e_in, exc_fraction=1.0, internal_density=0.0,
                                        enable_nmda=False, izh_neuron_type="IZH2007_RS_CORTICAL_PYRAMIDAL"))
 
     cfg = CoreSimConfig()
@@ -664,6 +676,20 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
                     _P1.append(int(_a)); _Q1.append(int(_b)); _V1.append(0.0)
             union["eprop_ff_1"] = dict(pre_indices=_P1, post_indices=_Q1, initial_weights=_V1,
                                        plastic=True, conn_type="ff")
+            # CROSS-REGION pathway: eprop_cue -> eprop_in, ONE-TO-ONE (diagonal), FIXED (plastic=False -> e-prop never
+            # touches it; excluded from every conversational plasticity gate too). Each sensory-relay neuron drives its
+            # matching e-prop input neuron via a real synapse -> eprop_in fires from SYNAPTIC transmission, not a host
+            # current write. Lands in the SAME cp_connections as every conversational + e-prop synapse. Lesionable
+            # (zero these slots) -> the acquisition input collapses, proving the pathway is load-bearing.
+            if build_eprop_cue:
+                e_cue_g = np.asarray(rm.indices("eprop_cue"), dtype=np.int64)
+                if len(e_cue_g) != len(e_in_g):
+                    raise RuntimeError("eprop_cue size must equal eprop_in size for the one-to-one relay")
+                _Pc = [int(a) for a in e_cue_g]
+                _Qc = [int(b) for b in e_in_g]
+                _Vc = [float(eprop_cue_w)] * len(e_cue_g)
+                union["eprop_cue_to_in"] = dict(pre_indices=_Pc, post_indices=_Qc, initial_weights=_Vc,
+                                                plastic=False, conn_type="ff")
 
         # SEAM-A: inject the fm reservoir's fixed-random recurrence as its OWN union entry (the region carries
         # internal_density=0 to stay OUT of the shared plan's rng stream). Uses rm._build_region_internal (the
@@ -740,6 +766,8 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
             "h1": np.asarray(rm.indices("eprop_h1"), dtype=np.int64),
             "out": np.asarray(rm.indices("eprop_out"), dtype=np.int64),
         }
+        if build_eprop_cue:
+            idx["eprop"]["cue"] = np.asarray(rm.indices("eprop_cue"), dtype=np.int64)
 
     comp = CoResidentOneBrainComposer(bridge, rf_base, build_parser=False, seed=seed, D=128, vocab=vocab,
                                       k_max=onebrain_k_max)

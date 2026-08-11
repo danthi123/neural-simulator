@@ -1,0 +1,238 @@
+{
+  "hook_applied": true,
+  "n_seeds": 6,
+  "n_byte_identity_held": 6,
+  "n_smoke_go": 6,
+  "n_cross_region_load_bearing": 6,
+  "GO_all": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "cross_region_load_bearing": true,
+      "heldout_mean_intact": 1.0,
+      "heldout_mean_lesion": 0.3333333333333333,
+      "teeth_ok": true,
+      "cross_region_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "cue->eprop_in synapse in SAME cp_connections": true,
+        "n_cue_synapses": 34,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92967,
+        "cue_edge_disjoint_from_plastic_FF": true,
+        "e-prop_teach_moves_ONLY_eprop_ff (cue+conv fixed)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1580,
+        "LESION cue->eprop_in: heldout_mean intact->lesion->restore": [
+          1.0,
+          0.333,
+          1.0
+        ],
+        "LESION cue->eprop_in: distinct_classes intact->lesion": [
+          3,
+          1
+        ],
+        "LESION cue->eprop_in: chat recall intact->lesion": [
+          3,
+          1
+        ],
+        "cross_region_pathway_load_bearing": true
+      }
+    },
+    {
+      "seed": 43,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "cross_region_load_bearing": true,
+      "heldout_mean_intact": 1.0,
+      "heldout_mean_lesion": 0.3333333333333333,
+      "teeth_ok": true,
+      "cross_region_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "cue->eprop_in synapse in SAME cp_connections": true,
+        "n_cue_synapses": 34,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92953,
+        "cue_edge_disjoint_from_plastic_FF": true,
+        "e-prop_teach_moves_ONLY_eprop_ff (cue+conv fixed)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1575,
+        "LESION cue->eprop_in: heldout_mean intact->lesion->restore": [
+          1.0,
+          0.333,
+          1.0
+        ],
+        "LESION cue->eprop_in: distinct_classes intact->lesion": [
+          3,
+          1
+        ],
+        "LESION cue->eprop_in: chat recall intact->lesion": [
+          3,
+          1
+        ],
+        "cross_region_pathway_load_bearing": true
+      }
+    },
+    {
+      "seed": 44,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "cross_region_load_bearing": true,
+      "heldout_mean_intact": 1.0,
+      "heldout_mean_lesion": 0.3333333333333333,
+      "teeth_ok": true,
+      "cross_region_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "cue->eprop_in synapse in SAME cp_connections": true,
+        "n_cue_synapses": 34,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92747,
+        "cue_edge_disjoint_from_plastic_FF": true,
+        "e-prop_teach_moves_ONLY_eprop_ff (cue+conv fixed)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1569,
+        "LESION cue->eprop_in: heldout_mean intact->lesion->restore": [
+          1.0,
+          0.333,
+          1.0
+        ],
+        "LESION cue->eprop_in: distinct_classes intact->lesion": [
+          3,
+          1
+        ],
+        "LESION cue->eprop_in: chat recall intact->lesion": [
+          3,
+          1
+        ],
+        "cross_region_pathway_load_bearing": true
+      }
+    },
+    {
+      "seed": 100,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "cross_region_load_bearing": true,
+      "heldout_mean_intact": 1.0,
+      "heldout_mean_lesion": 0.3333333333333333,
+      "teeth_ok": true,
+      "cross_region_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "cue->eprop_in synapse in SAME cp_connections": true,
+        "n_cue_synapses": 34,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 92944,
+        "cue_edge_disjoint_from_plastic_FF": true,
+        "e-prop_teach_moves_ONLY_eprop_ff (cue+conv fixed)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1593,
+        "LESION cue->eprop_in: heldout_mean intact->lesion->restore": [
+          1.0,
+          0.333,
+          1.0
+        ],
+        "LESION cue->eprop_in: distinct_classes intact->lesion": [
+          3,
+          1
+        ],
+        "LESION cue->eprop_in: chat recall intact->lesion": [
+          3,
+          1
+        ],
+        "cross_region_pathway_load_bearing": true
+      }
+    },
+    {
+      "seed": 101,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "cross_region_load_bearing": true,
+      "heldout_mean_intact": 1.0,
+      "heldout_mean_lesion": 0.3333333333333333,
+      "teeth_ok": true,
+      "cross_region_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "cue->eprop_in synapse in SAME cp_connections": true,
+        "n_cue_synapses": 34,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 93067,
+        "cue_edge_disjoint_from_plastic_FF": true,
+        "e-prop_teach_moves_ONLY_eprop_ff (cue+conv fixed)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1583,
+        "LESION cue->eprop_in: heldout_mean intact->lesion->restore": [
+          1.0,
+          0.333,
+          1.0
+        ],
+        "LESION cue->eprop_in: distinct_classes intact->lesion": [
+          3,
+          1
+        ],
+        "LESION cue->eprop_in: chat recall intact->lesion": [
+          3,
+          1
+        ],
+        "cross_region_pathway_load_bearing": true
+      }
+    },
+    {
+      "seed": 102,
+      "byte_identity_held": true,
+      "izh_params_that_differ": [],
+      "SMOKE_GO": true,
+      "taught_recall": 3,
+      "moat_false_accepts": 0,
+      "frozen_recall": 0,
+      "lesion_gate_load_bearing": true,
+      "cross_region_load_bearing": true,
+      "heldout_mean_intact": 1.0,
+      "heldout_mean_lesion": 0.3333333333333333,
+      "teeth_ok": true,
+      "cross_region_teeth": {
+        "single_SimulationBridge (net.br IS comp._merged IS bridge)": true,
+        "cue->eprop_in synapse in SAME cp_connections": true,
+        "n_cue_synapses": 34,
+        "n_eprop_ff_synapses": 1600,
+        "n_total_synapses": 93149,
+        "cue_edge_disjoint_from_plastic_FF": true,
+        "e-prop_teach_moves_ONLY_eprop_ff (cue+conv fixed)": true,
+        "n_data_slots_changed_by_a_teach_pass": 1581,
+        "LESION cue->eprop_in: heldout_mean intact->lesion->restore": [
+          1.0,
+          0.333,
+          1.0
+        ],
+        "LESION cue->eprop_in: distinct_classes intact->lesion": [
+          3,
+          1
+        ],
+        "LESION cue->eprop_in: chat recall intact->lesion": [
+          3,
+          1
+        ],
+        "cross_region_pathway_load_bearing": true
+      }
+    }
+  ]
+}
