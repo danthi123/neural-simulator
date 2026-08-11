@@ -406,7 +406,14 @@ better"** (running the real chat is what exposes mis-scoped isolated GOs — e.g
 diagnosis was itself falsified by a control). Loop = `_stageA_full_integration_derisk`; eval = `_conversation_turing_test_derisk`
 (14 human turns → verbatim replies + a confab count). LANDED, each verified on the real chat: **#1 sub-clausal no-confab
 moat** (drops the generator's invented causal clauses, confabulations 3→0, 6-seed); **#2 episodic dialogue memory**
-(turn 7 no longer silent — honest recall; host buffer scaffold, spiking path = gap#5 dAP `ab9f7dbe`); **#3 honest
+(turn 7 no longer silent — honest recall; host buffer scaffold, spiking path = gap#5 dAP `ab9f7dbe`; **#2b CORRECTED
+2026-08-10** — the `--spiking-episodic` module was mis-verified at `kthresh=30` (fired on NEITHER backend, a wrong
+operating point the standalone GO's pattern-MEAN had masked); the read has a NARROW kthresh window (kt≥10 silences the
+smallest ~13-cell emergent assemblies, kt≤6 self-ignites), and at the threaded `kthresh=8` it fires cue-specifically
+**6/6 on cupy AND on the live numpy substrate** (seed 42: cat 0.929 / dog 0.909, perm=nocue=lesion=0; smallest 13/14-
+cell assemblies fire), all in FRESH isolated builds, so turn-7 recall is genuinely spiking with no cupy needed — the
+"numpy backend-block" claim is RETRACTED, it was the operating point not forward-Euler;
+`research/findings/raw/_episodic_dap_kthresh/`); **#3 honest
 inner-state read-outs** (turn 5 functional affect self-report from the spiking valence differential, NEVER phenomenal;
 turn 13 honest structural self-model; the self_schema confidence relay NOW discriminates — **#3b** seed-then-settle
 read flipped the sep from -0.0025 to +0.0190 (all 6 seeds positive), and **#3c** a certainty-band OPPONENT comparator

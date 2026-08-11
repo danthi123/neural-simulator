@@ -1,0 +1,124 @@
+{
+  "seed": 42,
+  "backend": "cupy",
+  "sizes": {
+    "cat": 33,
+    "dog": 13
+  },
+  "sweep": [
+    {
+      "kthresh": 4,
+      "cat": {
+        "cue": 0.2941,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 33
+      },
+      "dog": {
+        "cue": 0.2857,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 13
+      }
+    },
+    {
+      "kthresh": 6,
+      "cat": {
+        "cue": 0.5882,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 33
+      },
+      "dog": {
+        "cue": 0.7143,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 13
+      }
+    },
+    {
+      "kthresh": 8,
+      "cat": {
+        "cue": 0.7647,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 33
+      },
+      "dog": {
+        "cue": 0.7143,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 13
+      }
+    },
+    {
+      "kthresh": 10,
+      "cat": {
+        "cue": 0.9412,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 33
+      },
+      "dog": {
+        "cue": 0.0,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": false,
+        "size": 13
+      }
+    },
+    {
+      "kthresh": 12,
+      "cat": {
+        "cue": 0.9412,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 33
+      },
+      "dog": {
+        "cue": 0.1429,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": false,
+        "size": 13
+      }
+    },
+    {
+      "kthresh": 15,
+      "cat": {
+        "cue": 0.9412,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": true,
+        "size": 33
+      },
+      "dog": {
+        "cue": 0.0,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion_cue": 0.0,
+        "in_memory": false,
+        "size": 13
+      }
+    }
+  ]
+}

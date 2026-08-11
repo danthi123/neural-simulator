@@ -1,0 +1,61 @@
+{
+  "seed": 42,
+  "backend": "numpy",
+  "sizes": {
+    "cat": 27,
+    "dog": 22
+  },
+  "sweep": [
+    {
+      "kthresh": 6,
+      "cat": {
+        "cue": 0.7857,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "size": 27
+      },
+      "dog": {
+        "cue": 0.9091,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "size": 22
+      }
+    },
+    {
+      "kthresh": 8,
+      "cat": {
+        "cue": 0.9286,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "size": 27
+      },
+      "dog": {
+        "cue": 0.9091,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "size": 22
+      }
+    },
+    {
+      "kthresh": 10,
+      "cat": {
+        "cue": 0.8571,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "size": 27
+      },
+      "dog": {
+        "cue": 0.3636,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "size": 22
+      }
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "kthresh": 8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "sizes": {
+        "cat": 33,
+        "dog": 13
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.5882,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 33,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.5714,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 13,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 43,
+      "sizes": {
+        "cat": 21,
+        "dog": 28
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.9091,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 21,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 28,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 44,
+      "sizes": {
+        "cat": 34,
+        "dog": 14
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.5882,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 34,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.8571,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 14,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 100,
+      "sizes": {
+        "cat": 19,
+        "dog": 25
+      },
+      "topics": {
+        "cat": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 19,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.7692,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 25,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 101,
+      "sizes": {
+        "cat": 27,
+        "dog": 24
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.9286,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 27,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.9167,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 24,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 102,
+      "sizes": {
+        "cat": 31,
+        "dog": 23
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.8125,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 31,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "size": 23,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    }
+  ],
+  "n_both_pass": 6
+}

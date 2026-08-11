@@ -38,9 +38,24 @@ from research.runners._gap5_btsp_forms_nmda_slow_reverberatory_derisk import (
 from research.runners._gap5_emergent_end_to_end_episodic_loop_derisk import emergent_assemblies
 
 
-# GO defaults, copied from the standing 6/6-GO dapB runner's argparse (ab9f7dbe).
+# GO defaults, copied from the standing 6/6-GO dapB runner's argparse (ab9f7dbe) -- EXCEPT kthresh.
+# ⛔ kthresh CORRECTED 30 -> 8 (2026-08-10, direct 6-seed test in FRESH isolated builds = the production path). The
+# apical dAP UP-fraction read has a NARROW per-assembly operating window in kthresh: kt=30 (the value this dict shipped
+# with) is far ABOVE it -> fires NOTHING on either backend (the #2b "cupy-GO" mis-verification); kt>=10 SILENCES the
+# smallest emergent assemblies (~13 cells: 0.57 @kt8 -> 0.0-0.43 @kt10, on the cliff); kt<=6 lets some emergent
+# memberships SELF-IGNITE (the nocue read goes UP with NO cue -> specificity fails: a fresh-build s102 dog reads
+# nocue=1.0 @kt6). kt=8 THREADS the window: the smallest 13-14-cell assembly fires (0.57-0.86) AND no self-ignition,
+# cue-specific on 6/6 seeds with perm=nocue=lesion(baseline)=0 (research/findings/raw/_episodic_dap_kthresh/
+# clean_verify_kt8.json). NB (i) the dapB runner SWEEPS kthresh {15,30} scoring the MEAN apical-UP over patterns (kt=15
+# wins, never kt=30) -- but this module reads ONE topic/recall and that mean MASKED the per-topic size failure; (ii) the
+# reuse-heavy per-topic sweep (sixseed_kt_sweep.json) is UNRELIABLE (state contamination across many live-mutated reads
+# on one bridge) and produced TWO artifacts -- it MISSED kt=6's self-ignition AND FABRICATED a kt=8 teeth-fail (s102 cat
+# lesion=1.0) -- both disproven by the fresh isolated builds (fresh s102@kt8 = clean BOTH-PASS); (iii) emergent assembly
+# membership is non-deterministic at the firing threshold (FMA/summation reorder, sim/kernels.py) so exact per-seed
+# reads vary build-to-build, but kt=8 passes across builds where kt=6 does not. gap#5 assembly-SIZE residual corrected
+# by the operating point, not a wall. The apical-UP read is NON-monotonic in kthresh; 8 is chosen empirically.
 GO_DEFAULTS = dict(
-    density=0.5, wmax=100.0, kthresh=30.0, plateau_strength=30.0, apical_R=0.15, self_regen=2.0,
+    density=0.5, wmax=100.0, kthresh=8.0, plateau_strength=30.0, apical_R=0.15, self_regen=2.0,
     v_hold=-35.0, apical_kir_g=1.0, apical_gc=0.3, apical_gc_read=0.3, up_thresh=-20.0, ca3_fb_inhib=60.0,
     btsp_lr=0.05, encode_drive=700.0, encode_plateau_pA=250.0, train_events=40, drive_steps=48, reset_steps=15,
     assembly_frac=0.18, cue_frac=0.5, drive_pA=300.0, warm_steps=100, read_steps=100, silence_steps=50,

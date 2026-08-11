@@ -21,13 +21,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > **Merged into `main` (HEAD `bcba4da0` = origin/main), each verified on the live chat, 0 confab, no regression:**
 > **#1** sub-clausal no-confab moat (drops invented causal clauses; confab 3→0, 6-seed) · **#2/#2b** episodic dialogue
 > memory (turn-7 recall; GATE wired to the spiking gap#5 dendritic-dAP CA3 completion, `--spiking-episodic` default-OFF;
-> host-oracle fallback keeps the live chat correct — turn 7 works, 0 confab). **⚠️ #2b CUPY-GO CLAIM UNDER CORRECTION
-> (2026-08-10, direct test):** the module's `EpisodicDapMemory` does NOT fire at its `GO_DEFAULTS` `kthresh=30` on EITHER
-> backend (apical_cue=0.0) — the earlier "cupy is the 6/6 GO backend / numpy backend-blocked" was an UNTESTED inference,
-> now falsified. Root cause = wrong kthresh (standalone dAP control: kt15 apical **0.551** GO, kt30 **0.000**) + assembly-
-> size (at kt15 cupy: cat 41-cell → **0.952** FIRES lesion 0.0; dog 13-cell → **0.0** silent). Mechanism WORKS at kt15
-> for adequate assemblies — this is the gap#5 size-aware residual, NOT a wall. Fix in progress (kthresh 30→15 + size-aware;
-> numpy@kt15 under test = "no cupy needed?"). Live chat UNAFFECTED (host-oracle). · **#3/#3b/#3c** honest inner-state
+> host-oracle fallback keeps the live chat correct — turn 7 works, 0 confab). **✅ #2b CUPY-GO CLAIM CORRECTED
+> (2026-08-10, direct 6-seed test in FRESH isolated builds):** the earlier "cupy is the 6/6 GO backend / numpy
+> backend-blocked" was an UNTESTED inference and FALSE at the shipped `GO_DEFAULTS kthresh=30` (module fired on NEITHER
+> backend). ROOT CAUSE = wrong operating point + assembly-SIZE: the standalone dapB SWEEPS kthresh {15,30} scoring the
+> MEAN over patterns (kt=15 wins), but this module reads ONE topic/recall and the mean MASKED that at kt≥10 the SMALL
+> emergent assemblies (~13 cells) go SILENT (kt=15 too), while kt≤6 lets some assemblies SELF-IGNITE (nocue read UP with
+> no cue). **FIXED: `GO_DEFAULTS kthresh 30→8`** — the narrow-window operating point that fires the 13-cell assembly AND
+> avoids self-ignition. Fresh isolated builds, per-topic, 6 seeds (`research/findings/raw/_episodic_dap_kthresh/clean_verify_kt8.json`):
+> at kt=8 BOTH toy topics fire cue-specifically **6/6** (apical_cue 0.57–1.0, perm=nocue=lesion=0, smallest 13/14-cell
+> assemblies included). **NUMPY (the live substrate) FIRES at kt=8** (seed 42: cat 0.929, dog 0.909, clean; also kt=6
+> 0.786/0.909) — so the live chat gets GENUINELY-SPIKING turn-7 recall with NO cupy needed (numpy under-read 0.09–0.14
+> @kt15, 0.0 @kt30 — the "backend-block" was the operating point). NB the reuse-heavy per-topic sweep was UNRELIABLE
+> (state contamination): it missed kt=6 self-ignition AND fabricated a kt=8 teeth-fail, both disproven by fresh builds —
+> the fresh-build truth is kt8 6/6, kt6 5/6. Finding corrected + old numpy-block claim retracted (partial,
+> `docs/RETRACTED.md`). Live chat UNAFFECTED (host-oracle default; `--spiking-episodic` now inherits kt=8, load-bearing). · **#3/#3b/#3c** honest inner-state
 > read-outs (affect self-report; structural self-affirmation + graded certainty; #3c certainty-band OPPONENT comparator
 > → confidence read ROBUST on ALL 6 seeds, min +0.052) · **#5** honest causal-query disclaimer (`bcba4da0`) — turn 4
 > "why did the dog go east?" now CONFIRMS the fact via the moat + HONESTLY DISCLOSES it has no causal faculty + refuses
@@ -36,13 +44,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > + 8 honest silences (moat holding = success) + **0 confab**. Sharpest residual = **Turn 4** ("why did the dog go
 > east?"→deflects, no causal faculty).
 >
-> **⚠️ LIVE BACKGROUND WORK (do NOT double-launch; owner OK'd GPU while gaming IF VRAM<24GB, ~13GB used):**
-> **(a)** episodic-dAP FIX agent `a14998b8d4b12a4fd` (worktree off `d010af23`) — corrects the #2b cupy-GO claim + FIXES
-> the module: kthresh 30→15 (the real dAP GO working point) + size-aware small assemblies + numpy@kt15 determination +
-> 6-seed + correct finding/board/roadmap + wire the eval. Coordinator verifies+merges. **(b)** numpy kt15 module test
-> (`scratchpad/focused_episodic_kt15_numpy.out`, id `bhriz9hmg`) — decisive: does the module fire at kt15 on NUMPY (⇒
-> live chat gets genuinely-spiking recall with NO cupy needed)? The fix agent also reads it. **(c)** state-heartbeat
-> Monitor live. **DONE this session (merged+pushed, main=`d010af23`):** #5 causal-disclaimer (`bcba4da0`), #6 corpus-
+> **⚠️ LIVE BACKGROUND WORK:** none major in flight — the frontier is OPEN (next arc = choose: more corpus breadth, or
+> the teacher-loop PLASTICITY path #1 that burns down #6's host-store scaffold, per the EMERGENCE BAR). State-heartbeat
+> Monitor live. **✅ EPISODIC #2b FIXED + VERIFIED + MERGED (this cycle):** the "cupy-GO / numpy-backend-blocked" claim
+> was a kthresh bug — corrected kthresh 30→**8** (the narrow dAP window: kt≥10 silences small assemblies, kt≤6
+> self-ignites). Recall now FIRES cue-specifically on **both backends 6/6** (cupy agent-verified + my 4 independent
+> fresh-builds 0.57–1.0; **numpy 0.909, no cupy needed** ⇒ live chat turn-7 recall genuinely spiking). #2b finding
+> `status: corrected` + RETRACTED.md partial-retraction row. Honest residuals (both host-oracle-guard-safety-netted):
+> cross-topic unformed read up to ~0.15 vs the 0.20 gate on s43; emergent-membership non-determinism (sizes vary at a
+> seed). State-heartbeat Monitor live. **DONE this session (merged+pushed, main=`d010af23`):** #5 causal-disclaimer (`bcba4da0`), #6 corpus-
 > breadth (`53e84397`, 6/6 GO adversarially re-verified: breadth 2→9, empty-kb control passes all 6). **ABANDONED:** the
 > CI-gate aggregator (agent `adca06d47a5751e5e` STALLED 2h46m, no artifact — re-attemptable nice-to-have, not blocking).
 > **KILLED:** the full cupy `--spiking-episodic` eval (HUNG — turn 7 built a 2nd full brain → >24GB VRAM deadlock;

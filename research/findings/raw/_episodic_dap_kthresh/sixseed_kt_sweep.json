@@ -1,0 +1,558 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "kts": [
+    6,
+    8,
+    10,
+    12
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "sizes": {
+        "cat": 35,
+        "dog": 13
+      },
+      "rows": [
+        {
+          "kthresh": 6,
+          "cat": {
+            "cue": 0.4444,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 35,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.7143,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 13,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 8,
+          "cat": {
+            "cue": 0.7778,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 35,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.7143,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 13,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 10,
+          "cat": {
+            "cue": 0.9444,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 35,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.4286,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 13,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 12,
+          "cat": {
+            "cue": 0.8333,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 35,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.2857,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 13,
+            "pass_go": true
+          },
+          "both_pass": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "sizes": {
+        "cat": 19,
+        "dog": 26
+      },
+      "rows": [
+        {
+          "kthresh": 6,
+          "cat": {
+            "cue": 0.7,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 19,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.6923,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 26,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 8,
+          "cat": {
+            "cue": 1.0,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 19,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.9231,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 26,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 10,
+          "cat": {
+            "cue": 0.7,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 19,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.7692,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 26,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 12,
+          "cat": {
+            "cue": 0.7,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 19,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.4615,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 26,
+            "pass_go": true
+          },
+          "both_pass": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "sizes": {
+        "cat": 30,
+        "dog": 16
+      },
+      "rows": [
+        {
+          "kthresh": 6,
+          "cat": {
+            "cue": 0.6,
+            "perm": 0.0667,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 30,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 1.0,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 16,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 8,
+          "cat": {
+            "cue": 1.0,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 30,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.875,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 16,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 10,
+          "cat": {
+            "cue": 1.0,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 30,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.375,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 16,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 12,
+          "cat": {
+            "cue": 0.9333,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 30,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.25,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 16,
+            "pass_go": true
+          },
+          "both_pass": true
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "sizes": {
+        "cat": 20,
+        "dog": 25
+      },
+      "rows": [
+        {
+          "kthresh": 6,
+          "cat": {
+            "cue": 0.8,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 20,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.7692,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 8,
+          "cat": {
+            "cue": 0.8,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 20,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.9231,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 10,
+          "cat": {
+            "cue": 0.4,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 20,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.9231,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 12,
+          "cat": {
+            "cue": 0.1,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 20,
+            "pass_go": false
+          },
+          "dog": {
+            "cue": 0.4615,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": false
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "sizes": {
+        "cat": 22,
+        "dog": 25
+      },
+      "rows": [
+        {
+          "kthresh": 6,
+          "cat": {
+            "cue": 0.7273,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 22,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.9231,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 8,
+          "cat": {
+            "cue": 0.9091,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 22,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 1.0,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 10,
+          "cat": {
+            "cue": 0.5455,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 22,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.9231,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 12,
+          "cat": {
+            "cue": 0.5455,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 22,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.9231,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 25,
+            "pass_go": true
+          },
+          "both_pass": true
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "sizes": {
+        "cat": 30,
+        "dog": 24
+      },
+      "rows": [
+        {
+          "kthresh": 6,
+          "cat": {
+            "cue": 0.6,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 30,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 1.0,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 24,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 8,
+          "cat": {
+            "cue": 0.8667,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 1.0,
+            "size": 30,
+            "pass_go": false
+          },
+          "dog": {
+            "cue": 0.9167,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 24,
+            "pass_go": true
+          },
+          "both_pass": false
+        },
+        {
+          "kthresh": 10,
+          "cat": {
+            "cue": 0.7333,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 30,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.5,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 24,
+            "pass_go": true
+          },
+          "both_pass": true
+        },
+        {
+          "kthresh": 12,
+          "cat": {
+            "cue": 0.6,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 30,
+            "pass_go": true
+          },
+          "dog": {
+            "cue": 0.4167,
+            "perm": 0.0,
+            "nocue": 0.0,
+            "lesion": 0.0,
+            "size": 24,
+            "pass_go": true
+          },
+          "both_pass": true
+        }
+      ]
+    }
+  ],
+  "kt_both_pass_count": {
+    "6": 6,
+    "8": 5,
+    "10": 6,
+    "12": 5
+  }
+}

@@ -1,0 +1,19 @@
+{
+ "run_id": "1786407995-3696520",
+ "runner": "scratchpad/clean_verify_kt8.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/clean_verify_kt8.py"
+ ],
+ "git_sha": "d010af23e",
+ "git_dirty": true,
+ "started": "2026-08-10T20:26:35",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "seeds": [42, 43, 44, 100, 101, 102],
+ "note": "Clean isolated per-seed GO verification at kthresh=8 (fresh build per seed, production path). Ran on cupy (RTX 3090); each seed logged 'backend=cupy'. Sibling clean_verify.json.prov.json mis-recorded THIS run's argv under the clean_verify.json name; this sidecar is the authoritative provenance for clean_verify_kt8.json.",
+ "artifact": "research/findings/raw/_episodic_dap_kthresh/clean_verify_kt8.json"
+}

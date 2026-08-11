@@ -1,14 +1,41 @@
 ---
 type: finding
-status: contributing
+status: corrected
 date: 2026-08-10
 mechanism: ca3-completion
 lane: EPISODIC
-seeds: [42]
+seeds: [42, 43, 44, 100, 101, 102]
 instrument: the 14-turn conversation eval `research/runners/_conversation_turing_test_derisk.py` (Stage-A FULL one brain; SIM_BACKEND=numpy substrate, generator mouth on cpu) with the turn-7 episodic recall wired to a NEW on-substrate module `research/runners/_episodic_dap_dialogue_memory.py::EpisodicDapMemory`, which reuses-by-import the standing 6/6-GO gap#5 dendritic-dAP READOUT completion (`research/runners/_gap5_dendritic_dap_readout_completion_derisk.py`, ab9f7dbe): emergent-DG membership + `_build_dap_readout` (two-compartment apical dAP) + `_form_one_assembly` (BTSP one-shot store) + `_apical_up_read` (held-cell apical UP-state completion) + `_held_cue_perm` (cue/held/perm geometry). Recall GATE = which CA3 assemblies COMPLETE from the referential cue; fact CONTENT = host `episode_mem` oracle. Load-bearing control: the lesioned read restores the UNFORMED baseline recurrent weights before the apical read (`attributable_to` intact-vs-lesioned). Backend comparison: the identical GO config is read on numpy (the eval substrate) vs its cupy GO (ab9f7dbe).
 ---
 
-# INTEGRATION #4 — the turn-7 episodic-dialogue recall is WIRED to the on-substrate gap#5 dendritic-dAP readout completion (a spiking pattern-completion, load-bearing on cupy); on the numpy conversation-eval substrate the dendritic apical read does not fire — a quantified honest-negative — so the eval keeps the host oracle with the spiking gate wired + a no-regression fallback
+## ⛔ CORRECTION (2026-08-10, direct 6-seed test in FRESH isolated builds) — the numpy "backend-block" was the WRONG kthresh (=30), NOT forward-Euler; at kthresh=8 the module FIRES cue-specifically on BOTH backends, 6/6
+
+**What was wrong.** The honest-negative below was measured at **`kthresh=30`** — the value the module's `GO_DEFAULTS` shipped with. A direct test (2026-08-10) shows `EpisodicDapMemory` fires on NEITHER backend for ANY assembly size at kthresh=30, so the numpy `0.000` was a **non-firing operating point, not a forward-Euler apical-integration limit**. The "cupy is the 6/6 GO backend [for this module] / numpy is backend-blocked" split was an UNTESTED INFERENCE from the standalone dapB GO; it is FALSE. TWO errors compounded: **(1) Wrong kthresh** — the standalone dapB runner SWEEPS `kthresh ∈ {15,30}` and picks the point maximising the MEAN apical-UP over ALL patterns; **kt=15 wins there, never kt=30** (`research/findings/raw/_gap5_dapB/dapB_6seed.json`: `best k_thresh=15.0` on 6/6). The module hard-coded kt=30 — the losing arm. **(2) The MEAN masked a per-topic SIZE failure** — this module reads ONE topic per recall, and even at kt=15 the SMALL (~13-cell) emergent assembly is SILENT (0.00) while the large one fires (0.94); the mean hid it.
+
+**The apical dAP UP-fraction read has a NARROW per-assembly operating window in kthresh**, and finding it required the FRESH isolated builds (the production path: build once at a kthresh, recall once), because the reuse-heavy per-topic sweep is unreliable (below). The window: **kt≥10 SILENCES the smallest emergent assemblies** (~13 cells: 0.57 @kt8 → 0.0–0.43 @kt10, on the cliff); **kt≤6 lets some emergent memberships SELF-IGNITE** — the `nocue` read (no cue driven) goes UP anyway, a specificity failure (a fresh-build s102 dog: `nocue=1.000` @kt6). **kt=8 threads the window.**
+
+**Corrected cupy verdict — FRESH isolated builds, module's OWN `in_memory` cue-specific gate, per topic, 6 seeds** (raw: `research/findings/raw/_episodic_dap_kthresh/clean_verify_kt8.json`). **At kthresh=8 BOTH toy topics fire cue-specifically on 6/6 seeds**, including the smallest 13/14-cell emergent assemblies, with perm=nocue=lesion(baseline)=0 (load-bearing teeth hold):
+
+| seed | cat apical_cue (size) | dog apical_cue (size) | perm | nocue | lesion (baseline) | both fire |
+|---|---|---|---|---|---|---|
+| 42 | 0.588 (33) | 0.571 (**13**) | 0.000 | 0.000 | 0.000 | ✓ |
+| 43 | 0.909 (21) | 1.000 (28) | 0.000 | 0.000 | 0.000 | ✓ |
+| 44 | 0.588 (34) | 0.857 (**14**) | 0.000 | 0.000 | 0.000 | ✓ |
+| 100 | 1.000 (19) | 0.769 (25) | 0.000 | 0.000 | 0.000 | ✓ |
+| 101 | 0.929 (27) | 0.917 (24) | 0.000 | 0.000 | 0.000 | ✓ |
+| 102 | 0.812 (31) | 1.000 (23) | 0.000 | 0.000 | 0.000 | ✓ |
+
+**The reuse-heavy per-topic SWEEP (`sixseed_kt_sweep.json`) is UNRELIABLE and produced TWO opposite artifacts, both disproven by the fresh builds:** it MISSED kt=6's self-ignition (its first-read s102 happened not to self-ignite → it reported a false "kt6 6/6") AND it FABRICATED a kt=8 teeth-fail (s102 cat `lesion=1.0` after ~12 prior live-mutated reads on the reused bridge — a state-contamination artifact; a fresh s102@kt8 build reads `lesion=0.0`, clean BOTH-PASS). The sweep's `{kt6:6/6, kt8:5/6}` is therefore an artifact; the fresh-build truth is **kt8: 6/6, kt6: 5/6** (s102 self-ignites at kt6). Emergent assembly membership is non-deterministic at the firing threshold (FMA/summation reorder, `sim/kernels.py`), so exact per-seed reads vary build-to-build — kt=8 passes across builds where kt=6 does not.
+
+**Corrected numpy verdict — the biggest win: the module FIRES on numpy at the corrected kthresh, so the LIVE CHAT (numpy substrate) gets a genuinely-spiking recall with NO cupy needed.** Seed 42, `research/findings/raw/_episodic_dap_kthresh/numpy_kt_sweep_s42.json`: at **kt=8** `cat(27)=0.929`, `dog(22)=0.909`; at **kt=6** `cat 0.786`, `dog 0.909` — both fire strongly, cue-specific, perm=nocue=lesion=**0.000**. Contrast the SAME numpy substrate at kt=15 (the old measurement's neighbour): `cat 0.143`, `dog 0.091` — under-reads, below the 0.20 gate; at kt=30 (the value the finding actually used) it is 0.000. **The apical dAP plateau reaches the UP state on numpy fine; the whole "backend-block" was the operating point.**
+
+**FIX APPLIED.** `GO_DEFAULTS` `kthresh 30 → 8` in `research/runners/_episodic_dap_dialogue_memory.py`; the conversation eval passes no kthresh override, so the corrected point flows into the `--spiking-episodic` path (numpy) automatically — turn-7 recall is now carried by the SPIKING completion, not the host-oracle fallback. This is the gap#5 assembly-SIZE residual (a small emergent assembly's weaker within-member cue volley needs a lower dendritic coincidence threshold, but too low self-ignites — kt=8 is the operating point that fires the small assembly without self-igniting) corrected by the operating point — **per THE LAW, the negative launched the fix; it was never a wall.** The original body below is retained for the record; **its `kthresh=30` numbers and every "numpy backend-blocked / forward-Euler" claim are SUPERSEDED by this section** (registered in `docs/RETRACTED.md`).
+
+---
+
+**Coordinator independent re-verification (2026-08-10, before merge).** Reproduced the fire in FRESH isolated builds outside the fix agent's process: 4 cupy builds (seeds 42/43 × both topics) → stored apical **0.57–1.0**, lesion 0; numpy seed-42 dog independently **0.909**, clean. **One ADDITIONAL control the agent's perm/nocue battery did not run** — recalling an UNSTORED cross-topic slot (its assembly never BTSP-formed) — reads **0.0 on seed 42** but **up to 0.154 on seed 43**: still BELOW the `COMPLETE_MIN=0.20` `in_memory` gate (so correctly classified NOT-in-memory), but a specificity MARGIN that, combined with the flagged build-to-build size non-determinism, is worth watching. **Both residuals are safety-netted by the eval's host-oracle self-consistency guard** (a spiking mis-fire → host-oracle fallback, never a confabulation), so the live chat's honesty is protected regardless. VERDICT UPHELD: kt=8 genuinely fires cue-specifically on both backends; the correction stands.
+
+# INTEGRATION #4 — the turn-7 episodic-dialogue recall is WIRED to the on-substrate gap#5 dendritic-dAP readout completion (a spiking pattern-completion, load-bearing on cupy); on the numpy conversation-eval substrate the dendritic apical read does not fire — a quantified honest-negative — so the eval keeps the host oracle with the spiking gate wired + a no-regression fallback  [⛔ SUPERSEDED — see the CORRECTION section above: the numpy non-firing was kthresh=30, not forward-Euler; at kthresh=8 the module fires cue-specifically on numpy (0.93/0.91) AND cupy 6/6]
 
 INTEGRATION #2 (main HEAD `77587122`) gave the chat episodic dialogue memory at turn 7 via a HOST per-turn buffer
 (`episode_mem`, a DECLARED SCAFFOLD — the brain did no memory; the recall was a Python dict scan). The brain-based-only

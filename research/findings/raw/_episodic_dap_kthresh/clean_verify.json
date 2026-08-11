@@ -1,0 +1,211 @@
+{
+  "primary_kt": 6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "kthresh": 6,
+      "sizes": {
+        "cat": 35,
+        "dog": 14
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.2778,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 35,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.8571,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 14,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 43,
+      "kthresh": 6,
+      "sizes": {
+        "cat": 25,
+        "dog": 26
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.6923,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 25,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.8462,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 26,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 44,
+      "kthresh": 6,
+      "sizes": {
+        "cat": 32,
+        "dog": 13
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.375,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 32,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 13,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 100,
+      "kthresh": 6,
+      "sizes": {
+        "cat": 18,
+        "dog": 23
+      },
+      "topics": {
+        "cat": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 18,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.6667,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 23,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 101,
+      "kthresh": 6,
+      "sizes": {
+        "cat": 25,
+        "dog": 26
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.8462,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 25,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 0.8462,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 26,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    },
+    {
+      "seed": 102,
+      "kthresh": 6,
+      "sizes": {
+        "cat": 31,
+        "dog": 24
+      },
+      "topics": {
+        "cat": {
+          "cue": 0.5625,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 31,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 1.0,
+          "lesion": 0.0,
+          "in_memory": false,
+          "size": 24,
+          "pass_go": false
+        }
+      },
+      "both_pass": false
+    }
+  ],
+  "diagnostic": [
+    {
+      "seed": 102,
+      "kthresh": 8,
+      "sizes": {
+        "cat": 29,
+        "dog": 24
+      },
+      "topics": {
+        "cat": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 29,
+          "pass_go": true
+        },
+        "dog": {
+          "cue": 1.0,
+          "perm": 0.0,
+          "nocue": 0.0,
+          "lesion": 0.0,
+          "in_memory": true,
+          "size": 24,
+          "pass_go": true
+        }
+      },
+      "both_pass": true
+    }
+  ],
+  "n_both_pass_kt6": 5
+}

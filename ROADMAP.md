@@ -35,7 +35,12 @@ chat loop (`_stageA_full_integration_derisk` / `_conversation_turing_test`) and 
 better", because running the actual chat is what exposes mis-scoped isolated GOs. Three integrations landed, each
 verified on the real 14-turn conversation: **#1 the sub-clausal no-confab moat** (drops ungrounded causal clauses the
 generator invents — confabulations 3→0, 6-seed); **#2 episodic dialogue memory** (the brain recalls the conversation
-instead of silence); **#3 honest inner-state read-outs** ("how do you feel?" → a functional affect self-report from the
+instead of silence; **#2b CORRECTED 2026-08-10** — the spiking gap#5 dAP recall path `--spiking-episodic` was
+mis-verified at `kthresh=30` (fired on neither backend); at the corrected `kthresh=8` (a narrow operating window — too
+high silences small assemblies, too low self-ignites) it fires cue-specifically 6/6 on cupy AND on the live numpy
+substrate (seed 42: cat 0.929 / dog 0.909, teeth clean; smallest 13-cell assemblies fire), all verified in fresh
+isolated builds, so turn-7 recall is genuinely spiking with no cupy needed — the "numpy backend-block" was the wrong
+operating point, not forward-Euler); **#3 honest inner-state read-outs** ("how do you feel?" → a functional affect self-report from the
 spiking valence differential, NEVER phenomenal; "are you a simulated brain?" → an honest structural self-affirmation +
 a graded certainty band — the self_schema confidence relay now discriminates confident-vs-tie ROBUSTLY on all 6 seeds
 (#3b seed-then-settle read flipped it positive; #3c a certainty-band opponent comparator cleared the +0.02 bar on
