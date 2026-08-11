@@ -13,7 +13,36 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-10 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-11 (READ FIRST — live resume point)
+
+> **⭐⭐ OVERNIGHT 2026-08-11 (owner asleep). DIRECTIVE: BURN the remaining ~23% weekly Claude-usage — it RESETS in
+> ~11h (use-it-or-lose-it) — via AGGRESSIVE parallel AGENTS + WORKFLOWS + ALL compute (3090 free after gaming + minipc
+> pool .40/.41/.42). GOALS-first (emergence-bar conversation, one-brain), then roadmap. MERGE each result as it lands;
+> do NOT double-launch. LIVE PARALLEL WAVE (branches are committed-not-pushed — coordinator adversarially verifies from
+> raw artifacts then merges to main):**
+> - **GOAL agents (self-contained build+6-seed-foreground+verify+commit):** breadth-scaling to the moat ceiling
+>   (`codex/breadth-scale-ceiling`), neural spiking patient read-out burning the argmax shortcut
+>   (`codex/neural-patient-readout`), W4-RSA graded-implicature belief source = task #12 (`codex/w4-rsa-belief-source`),
+>   **cross-region synaptic INTERACTION = true one-brain** (`codex/cross-region-one-brain`, off the #1 branch 463dd1a30).
+> - **⚠️ sim/ per-parameter-reseed agent** (`codex/sim-perparam-reseed`) — the PRODUCTION enabler for the one-brain
+>   merge: an ADDITIVE/DEFAULT-OFF cfg flag fixing `_apply_parameter_heterogeneity`'s single-RNG-stream draw so
+>   append-LAST is byte-identity-invariant (a JUSTIFIED sim/ edit per CLAUDE.md — also hardens every seam). **FLAG FOR
+>   OWNER morning review** (first sim/ edit of this arc).
+> - **docs-refresh WORKFLOW** (`codex/docs-refresh` worktree) — owner-requested: survey→rewrite README/CONTRIBUTING/
+>   CURRENT-STATE/HANDOFF/CHANGELOG (all ~1wk stale)→consistency-verify.
+> - **COMPUTE (token-free):** #1 one-brain 6-seed sweep (local numpy, `--hook`, →`i7_burndown1_one_brain_6seed.json`);
+>   the minipc POOL (dispatcher pid 1576) running **27 continual-forgetting jobs** (the #7 scale-up crux: frac_recalled
+>   ~1/N × sleep-consolidation × N-facts → `research/findings/raw/continual/cfe_*.json`); the **3090** on cupy LARGE-N
+>   continual (nb 16/32, the scale numpy can't reach).
+> - **#7 BURN-DOWN #1 (one-brain merge) STATUS:** the merge WORKS — ONE SimulationBridge, ONE cp_connections, 1600
+>   e-prop FF synapses co-resident with 91333 conv synapses, all teeth hold, smoke GO — but needs the sim/ reseed for
+>   PRODUCTION byte-identity (else the near-tie arbiter flips on 2/14 turns; no reply/moat change). Reaches CO-RESIDENCY;
+>   cross-region INTERACTION is the `codex/cross-region-one-brain` arc.
+> - **COORDINATOR LOOP:** merge each branch as it lands (verify raw artifacts first); keep pool + 3090 saturated
+>   (relaunch/stock as jobs finish); launch more goal/roadmap arcs as budget allows. **MORNING:** read the
+>   continual-learning aggregate + the refreshed docs + report; decide on the flagged sim/ edit.
+
+## ⭐ STATE OF THE PROJECT — 2026-08-10 (history below this line)
 
 > **⭐⭐ LATER 2026-08-10 — THE INTEGRATION ARC (owner-steered; SUPERSEDES the overnight ledger below as the FRONTIER).**
 > Owner steer: stop de-risking faculties in isolation — WIRE each GO faculty into the LIVE 14-turn chat
