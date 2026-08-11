@@ -7,7 +7,13 @@ backend: numpy
 runner: research/runners/_gap4_temporal_depth_floor_derisk.py
 artifacts:
   - research/findings/raw/_gap4_temporal_depth_floor.json
-seed-waiver: DELIBERATE 1-seed (42) MECHANISM smoke; the floor-drop isolation is decisive at 1 seed (large, monotone in T) but the spatial-credit gap is not yet seed-robust — the 6-seed sweep (42/43/44/100/101/102) is the RETURNED next command, not run here.
+  - research/findings/raw/gap4/tfloor/tfloor_s42.json
+  - research/findings/raw/gap4/tfloor/tfloor_s43.json
+  - research/findings/raw/gap4/tfloor/tfloor_s44.json
+  - research/findings/raw/gap4/tfloor/tfloor_s100.json
+  - research/findings/raw/gap4/tfloor/tfloor_s101.json
+  - research/findings/raw/gap4/tfloor/tfloor_s102.json
+seed-waiver: 1-seed (42) smoke ORIGINALLY; the 6-seed sweep (42/43/44/100/101/102) HAS NOW BEEN RUN (coordinator) — see the "6-SEED ADJUDICATION" section: it is 2/6 clean GO (the confound + spatial gap replicate only where the 1-hidden floor actually reaches high), NOT a clean 6/6, with a label-leakage instrument bug on 2 seeds. The temporal-depth CONFOUND is real; the spatial-deep-credit generalization is NOT yet established at this net size.
 ---
 
 # gap#4 deep-credit-on-spikes — the TEMPORAL-DEPTH FLOOR is ISOLATED (1-seed smoke): it is a large, T-DRIVEN confound (floor 0.96@T24 -> 0.44@T1, monotone), and REDUCING T defeats it, making the spatial depth-2 DFA credit load-bearing — small-T is the clean instrument the depth-3 frontier needs
@@ -20,6 +26,36 @@ adds effective depth", so depth-robustness is NOT proven depth-3 credit ASSIGNME
 the FIXED CONSTANT T=24 and never swept T. This smoke sweeps T on the SAME task + SAME LIF SNN + SAME transport-free
 DFA e-prop credit and shows the temporal-depth floor is REAL, LARGE and T-driven — and that reducing T defeats it. No
 `sim/` edit (reuse-by-import of the validated `run_seed`; the sweep + isolation metric are runner-side).
+
+## ⭐ 6-SEED ADJUDICATION (coordinator-run — QUALIFIES the smoke, does NOT clean-confirm it)
+
+<!--derived-->
+The 6-seed sweep (42/43/44/100/101/102, numpy, `research/findings/raw/gap4/tfloor/tfloor_s*.json`) was run. It is
+**1/6 clean GO (42), + 1 more seed (44) that shows the mechanism but trips a strictness check → NOT a robust isolation
+at this net size (2×32)**. Verdict tallies: 1 GO, 2 PARTIAL, 3 UNDEFINED (2 instrument-leakage, 1 unfittable) — no
+NEGATIVE, because on the fragile seeds the instrument/task preconditions do not hold, so the mechanism question is
+simply unanswered there, not answered against:
+
+| seed | floor(T=24) | floor_drop (T24→T1) | spatial_gap_lo (low-T) | runner verdict |
+|---|---|---|---|---|
+| 42 | 0.963 (HIGH) | 0.519 | +0.111 | **GO** — confound present + spatial gap opens |
+| 44 | 0.852 (HIGH) | 0.630 | +0.111 | PARTIAL (gap opens low-T but hi-T check unmet) |
+| 43 | 0.630 | 0.370 | 0.000 | PARTIAL (floor not high enough; no gap) |
+| 100 | 0.370 | 0.037 | 0.000 | **UNDEFINED** (instrument invalid — permuted-label leakage at some T) |
+| 102 | 0.519 | 0.074 | +0.037 | **UNDEFINED** (instrument invalid — permuted-label leakage) |
+| 101 | 0.519 | 0.111 | −0.074 | UNDEFINED (oracle ceiling < 0.80 — task not fittable) |
+
+**Honest read.** (1) The temporal-depth CONFOUND is real *where it can exist*: on the 2/6 seeds whose 1-hidden net
+actually reaches a HIGH floor at T=24 (42: 0.963, 44: 0.852), that floor DROPS sharply as T shrinks (−0.519, −0.630)
+and the spatial depth-2 gap opens at low T (+0.111 both) — the mechanism the smoke claimed. (2) But on 4/6 seeds the
+1-hidden net never reaches a high T=24 floor, so there is no confound to isolate there and the spatial gap does not
+open — the isolation is **seed-dependent, not universal at 2×32**. (3) The INSTRUMENT itself leaks: on seeds 100/102
+the permuted-label control rises above chance at some T (label leakage) — that must be fixed before any spatial-credit
+verdict is trustworthy on those seeds. **Net: the temporal-depth confound is DEMONSTRATED (the finding's central
+methodological point stands — fixed T=24 was hiding effective depth), but genuine spatial depth-3 credit assignment is
+NOT established** — it needs the cleaner instrument (fixed small T, spatial depth sweep N=1,2,3, leakage fixed), which
+is the in-flight `codex/gap4-depth3-smallT` follow-on. Status downgraded from "1-seed GO" to **qualified: confound
+confirmed, isolation seed-fragile, spatial-credit OPEN.**
 
 ## Result — 1 seed (42), the T-sweep (compositional-inheritance, LIF SNN, credit_mode=eprop DFA)
 

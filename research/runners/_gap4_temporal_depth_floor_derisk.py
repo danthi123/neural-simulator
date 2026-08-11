@@ -109,7 +109,11 @@ def run_sweep(seed, t_list, hidden, epochs, lr, in_gain, subsample, task_kwargs,
         verdict = ("UNDEFINED: oracle ceiling < %.2f at some T (task not fittable there) -> a floor/gap null is "
                    "uninterpretable at that T; not a score." % oracle_bar)
     elif not perm_ok:
-        verdict = "ANTI-CHEAT FAIL: permuted-label rises > chance+%.2f at some T (label leakage)." % perm_tol
+        # Label leakage is a PRECONDITION (instrument-validity) failure, NOT a mechanism verdict: a run whose
+        # permuted-label control rises above chance cannot yield a NEGATIVE, only UNDEFINED (per verdict-preconditions
+        # gate — a failed precondition makes floor/gap uninterpretable, the affect-eviction lesson).
+        verdict = ("UNDEFINED (instrument invalid): permuted-label rises > chance+%.2f at some T (label leakage) -> "
+                   "the floor/gap is uninterpretable at that T; not a mechanism score." % perm_tol)
     elif go:
         verdict = ("GO: TEMPORAL-DEPTH FLOOR ISOLATED. floor(T=%d)=%.3f HIGH drops to floor(T=%d)=%.3f "
                    "(-%.3f) as T shrinks, AND the spatial depth-2 DFA credit becomes load-bearing at low T "

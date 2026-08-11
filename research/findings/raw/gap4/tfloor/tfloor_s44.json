@@ -1,0 +1,189 @@
+{
+  "probe": "gap4_temporal_depth_floor_isolation",
+  "seed": 44,
+  "config": {
+    "t_list": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      24
+    ],
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "epochs": 60,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "credit_mode": "eprop",
+    "train_subsample": 400,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "bars": {
+      "floor_hi": 0.8,
+      "floor_drop": 0.15,
+      "gap_open": 0.05,
+      "gap_closed": 0.03,
+      "perm_tol": 0.05,
+      "oracle": 0.8
+    }
+  },
+  "elapsed_seconds": 30.0,
+  "result": {
+    "rows": [
+      {
+        "T": 1,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.2222222222222222,
+        "snn_inherit": 0.3333333333333333,
+        "spatial_gap": 0.1111111111111111,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.3333333333333333,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "T": 2,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.2962962962962963,
+        "snn_inherit": 0.4074074074074074,
+        "spatial_gap": 0.1111111111111111,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.37037037037037035,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 4,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.4074074074074074,
+        "snn_inherit": 0.48148148148148145,
+        "spatial_gap": 0.07407407407407407,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.3333333333333333,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 8,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.5185185185185185,
+        "snn_inherit": 0.8148148148148148,
+        "spatial_gap": 0.2962962962962963,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.2222222222222222,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 16,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.8518518518518519,
+        "snn_inherit": 0.9629629629629629,
+        "spatial_gap": 0.11111111111111105,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.2222222222222222,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 24,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.8518518518518519,
+        "snn_inherit": 0.9259259259259259,
+        "spatial_gap": 0.07407407407407407,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.3333333333333333,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      }
+    ],
+    "T_lo": 1,
+    "T_hi": 24,
+    "chance": 0.3333333333333333,
+    "floor_hi": 0.8518518518518519,
+    "floor_lo": 0.2222222222222222,
+    "floor_drop": 0.6296296296296297,
+    "spatial_gap_lo": 0.1111111111111111,
+    "spatial_gap_hi": 0.07407407407407407,
+    "permuted_ok": true,
+    "oracle_ok": true,
+    "checks": {
+      "c1_floor_hi": true,
+      "c2_floor_drops": true,
+      "c3_gap_opens": false
+    },
+    "go": false,
+    "verdict": "PARTIAL: floor_hi=True(0.852>=0.80) floor_drops=True(0.630>=0.15) gap_opens=False(lo 0.111>=0.05 & hi 0.074<=0.03).",
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "oracle_ceiling_exists",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "rate DendriticMLP oracle >= 0.80 at every T -> a null is interpretable"
+      },
+      {
+        "kind": "require",
+        "name": "no_label_leakage",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "permuted-label <= chance+0.05 at every T (one-sided; leakage would be ABOVE chance)"
+      },
+      {
+        "kind": "reaches",
+        "name": "timesteps_lever_moved",
+        "ok": true,
+        "detail": "before=24 after=1 moved=True",
+        "note": "the T sweep actually changed the temporal-integration window"
+      },
+      {
+        "kind": "require",
+        "name": "task_depth_separating",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "stage0 depth-genuineness holds at every T (shallow oracle underfits, deep oracle fits)"
+      }
+    ],
+    "undefined_reasons": []
+  },
+  "verdict": "PARTIAL: floor_hi=True(0.852>=0.80) floor_drops=True(0.630>=0.15) gap_opens=False(lo 0.111>=0.05 & hi 0.074<=0.03).",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "oracle_ceiling_exists",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "rate DendriticMLP oracle >= 0.80 at every T -> a null is interpretable"
+    },
+    {
+      "kind": "require",
+      "name": "no_label_leakage",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "permuted-label <= chance+0.05 at every T (one-sided; leakage would be ABOVE chance)"
+    },
+    {
+      "kind": "reaches",
+      "name": "timesteps_lever_moved",
+      "ok": true,
+      "detail": "before=24 after=1 moved=True",
+      "note": "the T sweep actually changed the temporal-integration window"
+    },
+    {
+      "kind": "require",
+      "name": "task_depth_separating",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "stage0 depth-genuineness holds at every T (shallow oracle underfits, deep oracle fits)"
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "probe": "gap4_temporal_depth_floor_isolation",
+  "seed": 42,
+  "config": {
+    "t_list": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      24
+    ],
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "epochs": 60,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "credit_mode": "eprop",
+    "train_subsample": 400,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "bars": {
+      "floor_hi": 0.8,
+      "floor_drop": 0.15,
+      "gap_open": 0.05,
+      "gap_closed": 0.03,
+      "perm_tol": 0.05,
+      "oracle": 0.8
+    }
+  },
+  "elapsed_seconds": 27.1,
+  "result": {
+    "rows": [
+      {
+        "T": 1,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.4444444444444444,
+        "snn_inherit": 0.5555555555555556,
+        "spatial_gap": 0.11111111111111116,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.2962962962962963,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 2,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.48148148148148145,
+        "snn_inherit": 0.5555555555555556,
+        "spatial_gap": 0.07407407407407413,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.2962962962962963,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 4,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.5925925925925926,
+        "snn_inherit": 0.7407407407407407,
+        "spatial_gap": 0.14814814814814814,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.37037037037037035,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 8,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.8888888888888888,
+        "snn_inherit": 0.8148148148148148,
+        "spatial_gap": -0.07407407407407407,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.25925925925925924,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      },
+      {
+        "T": 16,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.9259259259259259,
+        "snn_inherit": 1.0,
+        "spatial_gap": 0.07407407407407407,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.25925925925925924,
+        "stage0_depth_separating": true,
+        "trains_at_all": true
+      },
+      {
+        "T": 24,
+        "chance": 0.3333333333333333,
+        "floor_inherit": 0.9629629629629629,
+        "snn_inherit": 0.9629629629629629,
+        "spatial_gap": 0.0,
+        "oracle_inherit": 1.0,
+        "permuted_inherit": 0.2962962962962963,
+        "stage0_depth_separating": true,
+        "trains_at_all": false
+      }
+    ],
+    "T_lo": 1,
+    "T_hi": 24,
+    "chance": 0.3333333333333333,
+    "floor_hi": 0.9629629629629629,
+    "floor_lo": 0.4444444444444444,
+    "floor_drop": 0.5185185185185185,
+    "spatial_gap_lo": 0.11111111111111116,
+    "spatial_gap_hi": 0.0,
+    "permuted_ok": true,
+    "oracle_ok": true,
+    "checks": {
+      "c1_floor_hi": true,
+      "c2_floor_drops": true,
+      "c3_gap_opens": true
+    },
+    "go": true,
+    "verdict": "GO: TEMPORAL-DEPTH FLOOR ISOLATED. floor(T=24)=0.963 HIGH drops to floor(T=1)=0.444 (-0.519) as T shrinks, AND the spatial depth-2 DFA credit becomes load-bearing at low T (spatial_gap 0.111@T1 vs 0.000@T24). Reducing T DEFEATS the temporal floor -> small-T is the clean instrument where spatial deep credit is obligatory (re-pose the DFA-depth result there).",
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "oracle_ceiling_exists",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "rate DendriticMLP oracle >= 0.80 at every T -> a null is interpretable"
+      },
+      {
+        "kind": "require",
+        "name": "no_label_leakage",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "permuted-label <= chance+0.05 at every T (one-sided; leakage would be ABOVE chance)"
+      },
+      {
+        "kind": "reaches",
+        "name": "timesteps_lever_moved",
+        "ok": true,
+        "detail": "before=24 after=1 moved=True",
+        "note": "the T sweep actually changed the temporal-integration window"
+      },
+      {
+        "kind": "require",
+        "name": "task_depth_separating",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "stage0 depth-genuineness holds at every T (shallow oracle underfits, deep oracle fits)"
+      }
+    ],
+    "undefined_reasons": []
+  },
+  "verdict": "GO: TEMPORAL-DEPTH FLOOR ISOLATED. floor(T=24)=0.963 HIGH drops to floor(T=1)=0.444 (-0.519) as T shrinks, AND the spatial depth-2 DFA credit becomes load-bearing at low T (spatial_gap 0.111@T1 vs 0.000@T24). Reducing T DEFEATS the temporal floor -> small-T is the clean instrument where spatial deep credit is obligatory (re-pose the DFA-depth result there).",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "oracle_ceiling_exists",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "rate DendriticMLP oracle >= 0.80 at every T -> a null is interpretable"
+    },
+    {
+      "kind": "require",
+      "name": "no_label_leakage",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "permuted-label <= chance+0.05 at every T (one-sided; leakage would be ABOVE chance)"
+    },
+    {
+      "kind": "reaches",
+      "name": "timesteps_lever_moved",
+      "ok": true,
+      "detail": "before=24 after=1 moved=True",
+      "note": "the T sweep actually changed the temporal-integration window"
+    },
+    {
+      "kind": "require",
+      "name": "task_depth_separating",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "stage0 depth-genuineness holds at every T (shallow oracle underfits, deep oracle fits)"
+    }
+  ]
+}
