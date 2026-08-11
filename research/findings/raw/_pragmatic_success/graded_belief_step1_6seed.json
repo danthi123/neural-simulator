@@ -1,0 +1,356 @@
+{
+  "runner": "_pragmatic_graded_belief_source_derisk",
+  "faculty": "D pragmatics INTEGRATION: the W4 depth-2 graded-implicature RSA posterior wired as the leg2_v2 speaking-pipeline's listener-belief source (replacing the WTA one-hot collapse).",
+  "builds_on": [
+    "2026-08-01-W4-recursive-theory-of-mind-...-6seed-GO (depth-2 scalar implicature GO)",
+    "2026-08-10-reward-misspec-distinctiveness-PARTIAL-rediagnosed-as-detector-artifact-not-RSA-belief (named this INTEGRATION gap)"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "chance": 0.3333333333333333,
+  "n_train": 360,
+  "verdict": "NEGATIVE -- graded belief is FAITHFULLY WIRED (calibration 12x better, moat intact) but does NOT move the argmax pragmatic-alignment metric; the residual is the DETECTOR base-rate artifact + argmax-insensitivity (the finding's own re-diagnosis, now confirmed by direct A/B)",
+  "metric_moved": false,
+  "instrument_valid": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "onehot baseline reproduces the reward-misspec finding's 8/18 succ_opt==aligned (byte-identical belief source)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "measured onehot=8/18"
+    },
+    {
+      "kind": "require",
+      "name": "graded belief carries the some->not-all implicature (margin > 0.05)",
+      "ok": true,
+      "detail": "measured=0.5063 expect=<function build_summary.<locals>.<lambda> at 0x7f964d976a20>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "normalization-LESION collapses the graded implicature (the graded content is the FS divisive normalization, NOT host-injected)",
+      "ok": true,
+      "detail": "treatment=0.5063 control=0.0058 |sep|=0.5005 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "graded belief is BETTER CALIBRATED to the analytic RSA posterior than the one-hot",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA",
+      "why": "belief stores + RSA normalizer read at a fixed operating point; STEP-2 learns only via the reward-modulated three-factor rule (host-EMA state-value baseline, per v3)."
+    }
+  ],
+  "undefined_reasons": [],
+  "aggregate": {
+    "step1_succ_opt_vs_aligned_onehot": 8,
+    "step1_succ_opt_vs_aligned_graded": 7,
+    "step1_n_contexts": 18,
+    "step1_calib_l1_some_onehot": 0.5,
+    "step1_calib_l1_some_graded": 0.0406,
+    "step1_graded_implicature_margin": 0.5063,
+    "step1_graded_lesion_margin": 0.0058
+  },
+  "step1_per_seed": [
+    {
+      "seed": 42,
+      "onehot": {
+        "belief_some": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 2,
+          "2": 2
+        },
+        "agree_succ_opt_vs_aligned": 2,
+        "implicature_margin": 1.0,
+        "calib_l1_to_analytic_mean": 0.1667,
+        "calib_l1_to_analytic_some": 0.5
+      },
+      "graded": {
+        "belief_some": [
+          0.0,
+          0.7315,
+          0.2685
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 2,
+          "2": 2
+        },
+        "agree_succ_opt_vs_aligned": 2,
+        "implicature_margin": 0.463,
+        "calib_l1_to_analytic_mean": 0.0123,
+        "calib_l1_to_analytic_some": 0.037
+      },
+      "graded_lesion_implicature_margin": 0.0
+    },
+    {
+      "seed": 43,
+      "onehot": {
+        "belief_some": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 2,
+          "1": 2,
+          "2": 0
+        },
+        "agree_succ_opt_vs_aligned": 0,
+        "implicature_margin": 1.0,
+        "calib_l1_to_analytic_mean": 0.1667,
+        "calib_l1_to_analytic_some": 0.5
+      },
+      "graded": {
+        "belief_some": [
+          0.0,
+          0.7978,
+          0.2022
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 2,
+          "1": 2,
+          "2": 1
+        },
+        "agree_succ_opt_vs_aligned": 0,
+        "implicature_margin": 0.5955,
+        "calib_l1_to_analytic_mean": 0.0318,
+        "calib_l1_to_analytic_some": 0.0955
+      },
+      "graded_lesion_implicature_margin": 0.0029
+    },
+    {
+      "seed": 44,
+      "onehot": {
+        "belief_some": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 2,
+          "1": 0,
+          "2": 2
+        },
+        "agree_succ_opt_vs_aligned": 1,
+        "implicature_margin": 1.0,
+        "calib_l1_to_analytic_mean": 0.1667,
+        "calib_l1_to_analytic_some": 0.5
+      },
+      "graded": {
+        "belief_some": [
+          0.0,
+          0.7423,
+          0.2577
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 1,
+          "1": 0,
+          "2": 2
+        },
+        "agree_succ_opt_vs_aligned": 1,
+        "implicature_margin": 0.4845,
+        "calib_l1_to_analytic_mean": 0.0052,
+        "calib_l1_to_analytic_some": 0.0155
+      },
+      "graded_lesion_implicature_margin": -0.006
+    },
+    {
+      "seed": 100,
+      "onehot": {
+        "belief_some": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 1,
+          "1": 1,
+          "2": 2
+        },
+        "agree_succ_opt_vs_aligned": 2,
+        "implicature_margin": 1.0,
+        "calib_l1_to_analytic_mean": 0.1667,
+        "calib_l1_to_analytic_some": 0.5
+      },
+      "graded": {
+        "belief_some": [
+          0.0,
+          0.7551,
+          0.2449
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 1,
+          "1": 1,
+          "2": 2
+        },
+        "agree_succ_opt_vs_aligned": 2,
+        "implicature_margin": 0.5102,
+        "calib_l1_to_analytic_mean": 0.0034,
+        "calib_l1_to_analytic_some": 0.0102
+      },
+      "graded_lesion_implicature_margin": 0.0028
+    },
+    {
+      "seed": 101,
+      "onehot": {
+        "belief_some": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "agree_succ_opt_vs_aligned": 2,
+        "implicature_margin": 1.0,
+        "calib_l1_to_analytic_mean": 0.1667,
+        "calib_l1_to_analytic_some": 0.5
+      },
+      "graded": {
+        "belief_some": [
+          0.0,
+          0.7248,
+          0.2752
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "agree_succ_opt_vs_aligned": 2,
+        "implicature_margin": 0.4495,
+        "calib_l1_to_analytic_mean": 0.0168,
+        "calib_l1_to_analytic_some": 0.0505
+      },
+      "graded_lesion_implicature_margin": 0.0377
+    },
+    {
+      "seed": 102,
+      "onehot": {
+        "belief_some": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 0,
+          "1": 0,
+          "2": 0
+        },
+        "agree_succ_opt_vs_aligned": 1,
+        "implicature_margin": 1.0,
+        "calib_l1_to_analytic_mean": 0.1667,
+        "calib_l1_to_analytic_some": 0.5
+      },
+      "graded": {
+        "belief_some": [
+          0.0,
+          0.7674,
+          0.2326
+        ],
+        "aligned": {
+          "0": 0,
+          "1": 1,
+          "2": 2
+        },
+        "succ_opt": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "agree_succ_opt_vs_aligned": 0,
+        "implicature_margin": 0.5349,
+        "calib_l1_to_analytic_mean": 0.0116,
+        "calib_l1_to_analytic_some": 0.0349
+      },
+      "graded_lesion_implicature_margin": -0.0028
+    }
+  ],
+  "step2_per_seed": null,
+  "honest_scope": "The W4 graded-implicature RSA posterior is now FAITHFULLY wired as the speaking-pipeline belief source: belief('some') carries the graded [~0.73 SBNA, ~0.27 all] posterior (vs the one-hot [0,1,0]), matching analytic Frank-Goodman RSA and collapsing to flat under the normalization-lesion (moat intact). WHETHER this moves the finding's argmax pragmatic-alignment metric (succ_opt==aligned; learned-aligned) is the load-bearing A/B and is reported honestly. A FUNCTIONAL pragmatics correlate; NOT a claim of phenomenal access to another mind; self-report would be a functional read-out. numpy-CPU real spiking Izhikevich bridges; additive NEW runner; NO sim/ edit; --belief onehot reproduces the leg2_v2 baseline byte-for-byte.",
+  "elapsed_seconds": 28.1
+}

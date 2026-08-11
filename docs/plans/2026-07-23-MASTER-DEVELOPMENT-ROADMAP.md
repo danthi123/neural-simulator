@@ -429,7 +429,9 @@ compare); the emergent grounded causal-chain answer is NAMED as the follow-on ar
 DENDRITIC dAP READOUT completes cue-specifically (size/scale-independent, 6/6 GO `ab9f7dbe`); the recurrent-completion
 path hit a self-drive-vs-cue-at-scale wall (`544c0b742`), the dendritic readout closed it; slow-NMDA reverberatory
 readout 6/6 (`483587c0b`). Also: learn-to-speak LEARNING wall fixed (state-value critic); NE-gain real-substrate
-honest-NEGATIVE (3/6, `6ecba7b69`); reward-misspec re-diagnosed. **NEXT = keep wiring GO faculties into the live chat,
+honest-NEGATIVE (3/6, `6ecba7b69`); reward-misspec re-diagnosed.
+A first instance of that wiring landed (2026-08-11, `2026-08-11-W4-RSA-belief-source-into-speaking-pipeline-6seed.md`): the W4 graded-implicature RSA posterior was wired as the leg2_v2 speaking-pipeline belief source (additive NEW runner, `--belief onehot` byte-identical, NO sim/ edit) — an HONEST NEGATIVE on the metric. The belief is now graded + 12x better calibrated to the analytic Frank-Goodman RSA (moat: collapses under the normalization-lesion), but succ_opt==aligned (8->7/18) and learned-aligned (0.444->0.389) do NOT move: the residual is the coincidence-DETECTOR base-rate artifact + argmax-insensitivity (the graded refinement is sub-argmax), so NEXT for the metric = a dendritic-plateau detector (detector-SNR) + a magnitude-sensitive pragmatic reward.
+**NEXT = keep wiring GO faculties into the live chat,
 dependency-ordered, gate on the conversation** (next candidates: convert the episodic host-buffer to the on-substrate
 dAP recall; the self_schema-relay certainty-band read is now robust — #3b settle-read + #3c opponent comparator, DONE;
 learn-to-speak word-choice at production vocab; make the honest-silence turns richer only where genuinely grounded;

@@ -30,6 +30,7 @@ recurrent-attractor completion path hit a self-drive-vs-cue wall at conversation
 corrected the earlier "assembly-too-small" diagnosis via a control); the dendritic readout is what closed it. Under it:
 slow-NMDA reverberatory + BTSP formation are 6/6 GOs (`483587c0b`/`cee2ff124`). Also this cycle: the learn-to-speak
 LEARNING wall fixed (state-value critic), a reward-misspec re-diagnosis, and an NE-gain real-substrate honest-negative.
+Then (2026-08-11) the W4 graded-implicature RSA belief was wired into the leg2_v2 speaking pipeline (additive, default-off) and A/B'd at 6 seeds: the belief is now graded and 12x better calibrated to the ideal RSA (moat intact), but the HONEST NEGATIVE is that it does not move the pragmatic-alignment metric (succ_opt==aligned 8->7/18; learned-aligned 0.444->0.389) - the residual is the coincidence-DETECTOR artifact, not the belief, so next is a dendritic-plateau detector plus a magnitude-sensitive reward.
 (B) **The owner steered from mechanism-first-in-isolation to CONTINUOUS INTEGRATION** — wire GO faculties into the LIVE
 chat loop (`_stageA_full_integration_derisk` / `_conversation_turing_test`) and gate on "did the conversation get
 better", because running the actual chat is what exposes mis-scoped isolated GOs. Three integrations landed, each
