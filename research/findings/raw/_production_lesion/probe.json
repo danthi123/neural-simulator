@@ -48,17 +48,17 @@
   "in_loop": true,
   "recall_lesion_load_bearing": true,
   "before": {
-   "q": "what does cat chase?",
-   "answer": "dog chase cat",
-   "abstained": false
+   "q": "what does wolf hunt?",
+   "answer": "I don't know about that.",
+   "abstained": true
   },
   "after": {
-   "q": "what does cat chase?",
-   "answer": "cat chase bird",
+   "q": "what does wolf hunt?",
+   "answer": "wolf hunt deer",
    "abstained": false,
-   "lesioned_substrate_recall": "dog chase cat"
+   "lesioned_substrate_recall": "wolf hunt deer"
   },
-  "taught": "cat chase bird",
+  "taught": "wolf hunt deer",
   "hear_ok": true,
   "note": "substrate-first recall: a fact heard this turn is recalled from inner.what_does (the spiking substrate), role-aware; host QuestionRouter is the fallback. LEARN credit requires the recall lesion to flip it off."
  },

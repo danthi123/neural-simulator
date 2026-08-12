@@ -171,6 +171,11 @@ class RFPhasorComposer:
         rng = np.random.default_rng(seed)
         # phasor codes: phases in [0,1)^D per concept + per role (deterministic per seed)
         self.concepts = {w: rng.uniform(0.0, 1.0, self.D) for w in self.words}
+        # RUNTIME VOCABULARY GROWTH (in-loop learning): a word first heard mid-conversation gets a fresh sparse random
+        # phasor code allocated on demand (a new concept -> a new cell assembly), deterministic per seed via a dedicated
+        # growth RNG so store + later recall use the SAME code. This lets the brain learn a fact about a genuinely NEW
+        # thing ("otter caught clam"), not only facts made of build-time vocabulary. See _filler_phases.
+        self._growth_rng = np.random.default_rng(int(seed) + 777)
         # (cheat-A conversion, opt-in) SENSORY-GROUNDED codes: a {word: phases[D]} dict (e.g. real V1 Gabor responses
         # projected to phases) overrides the random codes for those words. Validated == random at parity (the
         # grounding INTERFACE works on the RF substrate). HONEST boundary: producing meaningful grounded codes (real
@@ -297,7 +302,18 @@ class RFPhasorComposer:
         """The phasor phases to bind for a filler: a concept's code, OR (recursively) a Clause's bound composite."""
         if _is_clause(filler):
             return self._encode({"agent": filler.agent, "action": filler.action, "patient": filler.patient})
-        return self.concepts[filler]
+        code = self.concepts.get(filler)
+        if code is None:
+            # RUNTIME GROWTH: allocate a fresh code for a never-seen word (a new concept assembly). Deterministic per
+            # seed; confab-safe (querying a never-stored word allocates a code but finds no matching fact -> abstain).
+            code = self._growth_rng.uniform(0.0, 1.0, self.D)
+            self.concepts[filler] = code
+            # the matched-filter cleanup/scan codebooks are built from self.words -> the grown word must join it so a
+            # recall can DECODE it (else the fact stores but the patient cannot be recovered). Kept sorted.
+            if isinstance(filler, str) and filler not in self.words:
+                import bisect
+                bisect.insort(self.words, filler)
+        return code
 
     def _encode(self, fact):
         bounds = [self._bind(self.roles[r], self._filler_phases(fact[r])) for r in ROLES if r in fact]

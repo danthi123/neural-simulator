@@ -56,6 +56,24 @@ self/identity questions and anything not in this form. NO `sim/` edit; runner-si
   lesion (level-3 confirmation) is a follow-up (the probe's coarse composer-lesion currently reads composer_type=None on
   the multiturn agent — a probe refinement).
 
+## UPDATE #2b (2026-08-12) — NEW WORDS + acquisition-by-talking (the known-word residual closed)
+
+The "known-word only" scope above is now closed. Two additions:
+- **Runtime code allocation** (`rf_phasor_composer.py`): `_filler_phases` allocates a fresh sparse random phasor code
+  for a never-seen word on demand (a new concept → a new assembly), deterministic via a `_growth_rng`, and adds it to
+  `self.words` so the matched-filter cleanup can DECODE it. Confab-safe (a never-stored new word finds no fact).
+- **Acquisition by talking** (`brain_chat_tui.py::_maybe_acquire`, called in `answer` before the gate): a declarative
+  3-word SVO ASSERTION (no wh-word, no "?") is TAUGHT (`inner.hear` → store with allocation) and acknowledged; a
+  question is never mistaken for an assertion.
+
+<!--derived-->
+Verified end-to-end on the real default brain (probe LEARN True, lesion-load-bearing True): owner types "wolf hunt
+deer" (wolf/hunt/deer ALL new) → "Got it — wolf hunt deer."; "what does wolf hunt?" → "wolf hunt deer"; "raven steal
+shiny" → learned + recalled; a question ("what does dog chase?") still recalls (not learns); "what does otter swim?"
+(never taught) → "I don't know about that." **The owner now grows the brain's knowledge by conversing with it.**
+Residual (the deeper LEARN): a BTSP/plasticity per-turn write for a LASTING episodic trace (today the fact lives in the
+composer substrate for the session); scaffold-retirement waits on #1 (the spiking selector replacing the host router).
+
 ## Ledger + gate
 
 `docs/PRODUCTION_INTEGRATION_LEDGER.yaml` in-loop-learning row -> wired/on_by_default YES; headline owner_visible_function

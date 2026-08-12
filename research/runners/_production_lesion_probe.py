@@ -68,20 +68,15 @@ def probe(seed=42):
     # LEARN — does the TURN incorporate a fact told mid-conversation? Teach a fact NOT pre-baked, then ask. Uses KNOWN
     # words ("cat chase bird" — the pre-baked cat-fact is "cat eat fish", so "cat chase ?" is genuinely new), which the
     # first in-loop-learning integration (substrate-recall fallback) covers; a NEW word needs on-the-fly code allocation.
-    learn = {"taught": "cat chase bird", "q": "what does cat chase?", "answer_word": "bird"}
+    # NEW WORDS ("wolf","hunt","deer" not in the build-time vocab) taught through the FULL production acquisition path
+    # (chat.answer parses the assertion + hears it via runtime code allocation) -> the owner grows the brain by talking.
+    learn = {"taught": "wolf hunt deer", "q": "what does wolf hunt?", "answer_word": "deer"}
     before = _ask(chat, learn["q"])
-    taught_ok = True
-    inner = getattr(agent, "agent", agent)
-    try:
-        if hasattr(inner, "hear"):
-            inner.hear(learn["taught"], polarity="AFFIRM")   # store to the substrate (as a taught assertion would)
-        elif hasattr(agent, "hear_multicue"):
-            agent.hear_multicue(learn["taught"])
-    except Exception as e:
-        taught_ok = "hear failed: %s" % type(e).__name__
+    taught = _ask(chat, learn["taught"])                     # ASSERTION -> the turn acquires it
+    taught_ok = "got it" in str(taught["answer"]).lower()
     after = _ask(chat, learn["q"])
-    learned = ("bird" not in str(before["answer"]).lower() or before.get("abstained")) and \
-              ("bird" in str(after["answer"]).lower())
+    learned = ("deer" not in str(before["answer"]).lower() or before.get("abstained")) and \
+              ("deer" in str(after["answer"]).lower())
     # LESION the substrate recall -> the taught fact must DISAPPEAR (proves LEARN is load-bearing on the substrate
     # path, not a host-list effect). If the answer is byte-identical with the recall lesioned, LEARN earns no credit.
     lesion_load_bearing = None

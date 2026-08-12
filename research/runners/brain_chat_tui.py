@@ -275,16 +275,42 @@ class ChatBrain:
                     return " ".join(toks)
         return question
 
+    def _maybe_acquire(self, question):
+        """IN-LOOP LEARNING acquisition: if the input is a declarative 3-word SVO ASSERTION (not a question), TEACH it to
+        the spiking substrate (`inner.hear` -> composer.store with runtime code allocation for any new word) and refresh
+        the recallable vocabulary, then acknowledge. Returns (answer, abstained) or None (not an assertion). This is what
+        lets the owner grow the brain's knowledge by talking to it."""
+        q = question.strip()
+        ql = q.lower()
+        if "?" in q or ql.split()[:1] and ql.split()[0] in (
+                "what", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "does", "do", "did"):
+            return None
+        toks = [t.strip(".,!?") for t in q.split() if t.strip(".,!?")]
+        if len(toks) != 3:                       # the minimal SVO assertion the parser handles
+            return None
+        a, v, p = toks
+        try:
+            self.inner.hear("%s %s %s" % (a, v, p), polarity="AFFIRM")
+        except Exception:
+            return None
+        self._refresh_facts()                    # pick up the new fact -> agents_set/actions_set now include it
+        return "Got it — %s %s %s." % (a, v, p), False
+
     def _substrate_recall(self, question):
         """IN-LOOP LEARNING recall: resolve (agent, action) from the question and recall the patient FROM THE SPIKING
         SUBSTRATE (`inner.what_does`), so a fact heard this conversation is answerable even though it is not in the
         build-time host snapshot. Returns [a, v, p] or None. No confabulation: `what_does` returns nothing unless the
         binding is genuinely stored. The known-agent/known-action requirement keeps it to facts the vocabulary covers
         (a genuinely NEW word needs on-the-fly code allocation — the next integration step)."""
+        _STOP = {"what", "who", "whom", "does", "do", "did", "is", "are", "was", "were", "the", "a", "an",
+                 "to", "it", "that", "this", "they", "them", "of", "about"}
         toks = [t.lower().strip(".,!?") for t in question.split()]
-        a = next((t for t in toks if t in self.agents_set), None)
-        v = next((t for t in toks if t in self.actions_set), None)
-        if not (a and v):
+        content = [t for t in toks if t and t not in _STOP]
+        # prefer a KNOWN agent/action (robust to word order); fall back to STRUCTURAL position (agent=1st content token,
+        # action=2nd) so a fact about a NEW thing ("what does wolf hunt?") is recallable after runtime code allocation.
+        a = next((t for t in content if t in self.agents_set), None) or (content[0] if content else None)
+        v = next((t for t in content if t in self.actions_set), None) or (content[1] if len(content) > 1 else None)
+        if not (a and v) or a == v:
             return None
         try:
             p = self.inner.what_does(a, v)
@@ -380,6 +406,9 @@ class ChatBrain:
         disc = self._discourse_turn(question)
         if disc is not None:
             return disc
+        acq = self._maybe_acquire(question)      # IN-LOOP LEARNING: teach an SVO assertion, then acknowledge
+        if acq is not None:
+            return acq
         gate_svo = self.gate(question)
         if gate_svo is None:
             return "I don't know about that.", True

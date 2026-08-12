@@ -50,13 +50,13 @@ rows:
     evidence: "brain_chat_tui.py:120-145"
 
   - key: in-loop-learning
-    faculty: "In-loop learning — a fact heard this turn is recalled from the substrate (chatting changes what the brain knows)"
+    faculty: "In-loop learning — the owner teaches ARBITRARY new facts by talking; they are recalled from the substrate"
     de_risked: YES
-    wired: YES                  # 2026-08-12 INTEGRATION #2: ChatBrain.gate is substrate-first (inner.what_does) on /api/brain-chat
-    on_by_default: YES          # default gate behavior; no flag; lesion-verified in the production lesion probe
+    wired: YES                  # 2026-08-12 INTEGRATION #2+#2b: ChatBrain acquires an SVO assertion (_maybe_acquire->hear) + substrate-first recall on /api/brain-chat
+    on_by_default: YES          # default turn behavior; no flag; lesion-verified in the production lesion probe
     scaffold_retired: NO        # the host QuestionRouter remains the FALLBACK (role-blind) — retired only when #1 (spiking selector) lands
-    host_scaffold_in_default: "host QuestionRouter is still the fallback recall; a genuinely NEW word still needs on-the-fly code allocation (next step)"
-    evidence: "brain_chat_tui.py gate() substrate-first + _substrate_recall; probe LEARN True + recall_lesion_load_bearing True; finding 2026-08-12-INTEGRATION2-in-loop-learning"
+    host_scaffold_in_default: "host QuestionRouter is still the fallback recall; the fuller LEARN (a BTSP/plasticity per-turn write for a LASTING trace) is the next depth"
+    evidence: "brain_chat_tui.py _maybe_acquire + gate() substrate-first + _substrate_recall; rf_phasor_composer.py runtime code allocation (_filler_phases + _growth_rng); probe LEARN True + lesion-load-bearing; finding 2026-08-12-INTEGRATION2 + 2b addendum"
 
   - key: open-ended-generation
     faculty: "Open-ended generation — novel content FROM THE BRAIN"
