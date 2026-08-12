@@ -33,19 +33,26 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   wall; the banked ~44% e-prop "wall" is SUBSTRATE-SPECIFIC, not the diagonal WKV store the cortex uses; scale to locate it).
 > - Master worklist = `docs/BURN_DOWN_LIST.md` (A–F). Prior wave-1 lanes (ae3a9673/aa587a4a/a8ce8a5a/a40606d7) all COMPLETED.
 >
+> **🟢 SINCE WAVE-2 (landed, on main + both remotes): E1 self-model AND E2 world-model are now BOTH WIRED** (`6d494219`,
+> `ab2feb8bf` — E1 11/11, E2 15/15, lesion-load-bearing, honesty-boundary preserved). The production `/api/brain-chat` turn
+> now runs NINE default-on spiking organs: choose · learn · generate · moat · affect · surprise · comprehension ·
+> metacog-confidence-hedge (E1) · world-model-expectation (E2). Ledger: 19 faculties, 7 default-on-spiking. **E3 BTSP
+> lasting-trace GO** also consolidated (`60f03a23`, host tag-and-capture caveat → `sim/`-kernel next rung).
+>
 > **🔴 LIVE BACKGROUND LANES (do NOT double-launch; consolidate each as it reports — verify additive+pushed, GO→checkout to
 > main+commit+`tools/push_both.sh`+update BURN_DOWN/ROADMAP):**
-> - **a26b258a** (main worktree, SEQUENTIAL production-wire): wiring E1 self-model honesty read-out + E2 world-model
->   expectation onto the default turn (co-resident-organ precedent, default-on).
-> - **ab8c2e2c** (isolated worktree): E3 BTSP per-turn LASTING trace ("the turn writes synapses") — corpus-first + de-risk,
->   anti-parking pattern (build+smoke inline, 6-seed in background; parent consolidates from its logfile/JSON).
-> - **deep-context K-sweep** (pid 763519, `research/findings/raw/_dc_scale_sweep.sh`, GPU, log `_dc_scale_sweep.log`):
->   scaling K/T to LOCATE the open-prose deep-context wall; consolidate the `_dc_scale_*.json` when it lands (parent's job).
+> - **ae2af976** (main worktree, SEQUENTIAL production-wire): VERIFY-then-WIRE D3 CURIOSITY (the last owner-named faculty) —
+>   verify-first gate (curiosity GOs are "audit in flight"; the E1 lesson = a claimed GO can be mis-read), wire only if clean.
+> - **afa8cdb7** (isolated worktree): B3 onebrain NEGATION storage (make the non-contradiction moat fire on production) — de-risk.
+> - **deep-context K-sweep** (SCRIPT pid 763518, `research/findings/raw/_dc_scale_sweep.sh`, GPU, log `_dc_scale_sweep.log`):
+>   scaling K/T to LOCATE the open-prose wall. EARLY SIGNAL: K16 all-saturate; K32 the wall APPEARS (eprop 0.75 < bptt 0.93)
+>   AND learned-KP-feedback TIES random (0.751≈0.752 → does NOT close the gap) while true-fb does — an emerging honest
+>   NEGATIVE for the KP lever. K64/K128/K64_T64 pending. Consolidate the full `_dc_scale_*.json` into the A1 finding (parent's job).
 > - **gap5-gamma** (pids 600657-9, `_gap5_spiking_gamma_recombination_derisk`): pre-existing gap5 lane, running.
 >
-> **SINGLE LITERAL NEXT:** consolidate a26b258a (E1/E2 wire) + ab8c2e2c (E3) + the deep-context K-sweep as each lands; keep
-> production-file wiring SEQUENTIAL; then continue `docs/BURN_DOWN_LIST.md` — WIRE the remaining GOs (D3 curiosity, D5 episodic,
-> D6 advanced-WM) and RESEARCH E4 gap#4-Izhikevich / E5 gap5-R4 / F2 __free-pollution / A2 template-stub / B2-B3 spiking-plausibility.
+> **SINGLE LITERAL NEXT:** consolidate ae2af976 (D3 curiosity) + afa8cdb7 (B3) + the deep-context K-sweep as each lands;
+> keep production-file wiring SEQUENTIAL; then WIRE remaining GOs (D5 episodic, D6 advanced-WM) + RESEARCH E4 gap#4-Izhikevich
+> / E5 gap5-R4 / F2 __free-pollution / A2 template-stub / B2 spiking-plausibility; and port the E3 tag-and-capture `sim/` kernel.
 
 > **🟢 LATEST (2026-08-12, this cycle): #0 one-brain-spiking-default AND #1 CHOOSE both landed.** (1) `/api/brain-chat`
 > (tiny-demo) builds `composer_kind="onebrain"` by default — recall is the resonate-and-fire step on firing neurons (HTTP
