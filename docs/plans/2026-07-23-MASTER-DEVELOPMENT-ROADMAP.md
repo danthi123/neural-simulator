@@ -9,6 +9,7 @@ date: 2026-07-23
 **Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-06** (current action-credit, source-monitor, replay-consolidation [v5+SFA interference wall CLOSED, order control is residual], and visual-identity boundaries are reflected in §§7-8). Update it as results/walls land.
 **Supersedes-by-extension:** `docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md` (that plan's F1–F6 are absorbed here as sub-faculties; this doc adds the full faculty map, the developmental staging spine, the theory-of-mind ladder the F-plan omitted, the walls ledger, and the parallelization map).
 **Anchors:** `GAP_CLOSURE_MISSION.md` · `CLAUDE.md` · the master directive (`project_master_directive_relentless_biological_emergence`).
+**⭐ FACULTY-MAP GAP AUDIT + PRIORITIZED BUILD PLAN (2026-08-12, a 12-agent grounded audit):** `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md` — the honest reckoning (the live brain is ~ONE integrated spiking family + a bench of ~40 unwired GOs; several organ internals still host-designed) and the Tier-1/2/3 next-faculty priorities. The keystone is a NEURAL WORKSPACE BUS (GNW ignition) + re-entrant deliberation (organs talk via ignition not Python; ACT on the conflict/confidence signals we only report). Read it for the forward faculty priorities; this master doc's §§2/7/8 remain the faculty-tag / wall-ledger / parallelization detail.
 
 ---
 

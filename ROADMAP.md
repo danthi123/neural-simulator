@@ -117,7 +117,14 @@ Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain st
 (`2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 The master worklist for it is now `docs/BURN_DOWN_LIST.md` (every host shortcut / un-wired GO / missing mechanism
-between the production default and the all-spiking one-brain goal).
+between the production default and the all-spiking one-brain goal). **The forward-looking FACULTY map — what a complete
+faithful human-brain emulation still needs, prioritized (a 12-agent grounded audit): `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md`.**
+Its headline: the live brain is ~ONE integrated spiking family + a bench of ~40 unwired GOs; the keystone next build is a
+NEURAL WORKSPACE BUS (GNW ignition) + re-entrant deliberation that lets the organs talk via ignition not Python and ACTS
+on the conflict/confidence signals we only report today — it unlocks reason-to-own-conclusions AND fixes the
+pipeline-not-a-brain root cause. Tier-1 also: autobiographical episodic + temporal self · multi-referent WM · causal
+forward-model + belief-revision · reason-giving revisable affect (discrete emotions + brain-based appraisal) ·
+conversational agency (repair + ask + self-initiate) · intuitive world-model / core common-sense.
 
 **2026-08-12 (batch) — the production one-brain gained CHOOSE·GENERATE·AFFECT·MOAT-generalization, and four faculties
 de-risked GO.** On top of the genuinely-spiking recall default below, this wave (all default-ON, lesion-load-bearing,
