@@ -89,8 +89,12 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   (more spikes / longer settle_steps / ensemble pool_k) — the one un-run leg that answers whether de-risk deep credit
 >   transfers to the substrate the brain runs. Housekeeping: rebuild the stale RAG index (KP findings are on main but
 >   not yet indexed); merge SoftHebb NO-GO (`codex/gap4-softhebb` 6da43b1d2, clean control — low priority).
->   **⭐ OWNER DECISION PENDING:** whether to keep all-in on gap#4 (now = the Izhikevich read-regime residual) or
->   re-point the crux at the mouth-burn-down + Gate-B (the Q_C reassessment says those are the true conversation gates).
+>   **⭐ OWNER APPROVED (2026-08-11) the re-point:** the CRUX moves to the **BPTT-mouth burn-down + Gate-B delayed-reward
+>   credit** (the true conversation gates); gap#4 stays open only on its ONE real residual (KP→Izhikevich + read-CV).
+>   Durable record of this whole arc: `2026-08-11-gap4-ALLIN-ARC-SUMMARY-...READ-BEFORE-RE-ATTACKING.md` +
+>   memory `project_gap4_wall_was_a_hyperparameter`. Owner also asked (pipeline-map workflow `whbgq2k92` running): in the
+>   CURRENT production state, is everything-except-the-mouth actually spiking/one-brain + can it converse fluently,
+>   open-endedly, AND learn — answer pending that honest map.
 >   (Full wave-2 synthesis + Q_C: workflow w3gupysfe journal.)
 > - **THE TELL (substrate vs rule), UPDATED:** Q5 already shows depth is non-obligatory (task side can't force it). If
 >   Q1/Q2/Q4 ALSO fail to ENTER-THE-REGIME (stay at majority-class / ≤ reservoir) while BPTT solves it → the point-neuron
