@@ -32,8 +32,15 @@
   ]
  ],
  "CHOOSE": {
-  "neural": false,
-  "note": "host QuestionRouter.match_fact decides which fact answers (keyword overlap); no neural content-selector on the default path"
+  "neural": true,
+  "abstains_on_unanswerable": true,
+  "lesion_load_bearing": true,
+  "probe": {
+   "q": "what does fish fly?",
+   "answer": "I don't know about that.",
+   "abstained": true
+  },
+  "note": "direct factual questions are decided by the SUBSTRATE (recall or honest abstain); the host router's keyword-confab is retired for them (lesion the substrate -> confab returns). Broader CHOOSE (neural question comprehension, open-ended topic) is further."
  },
  "GENERATE": {
   "open_ended": false,
@@ -68,9 +75,9 @@
   "note": "no composer recall method found to lesion (query_patient/query/recall/unbind)"
  },
  "owner_visible_function": {
-  "CHOOSE": false,
+  "CHOOSE": true,
   "GENERATE": false,
   "LEARN": true
  },
- "verdict": "The default production turn CHOOSE=False GENERATE=False LEARN=True. Some owner-visible function present."
+ "verdict": "The default production turn CHOOSE=True GENERATE=False LEARN=True. Some owner-visible function present."
 }

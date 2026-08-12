@@ -232,6 +232,7 @@ class ChatBrain:
         # resolve anaphora in the question FIRST (multi-turn): replace a leading 'it'/'that'/'they' with the held
         # referent, so a follow-up 'what does it eat' uses the prior turn's referent.
         q = self._resolve_anaphora(question)
+        anaphora_used = (q != question)          # the extracted agent came from the (noisy) discourse WM, not the user
         # SUBSTRATE-FIRST recall (production-integration #2, in-loop learning). For a well-formed "what does AGENT
         # ACTION?" question where AGENT+ACTION are known, recall the patient FROM THE SPIKING SUBSTRATE
         # (`inner.what_does`) — which is ROLE-AWARE (it queries the specific (agent, action) binding, not the host
@@ -239,8 +240,11 @@ class ChatBrain:
         # patient only if the binding is genuinely in the substrate, so this cannot confabulate (the no-confab moat
         # holds). The host QuestionRouter remains the fallback for self/identity questions and anything not in this form.
         sub = self._substrate_recall(q)
-        if sub is not None:
-            return sub
+        if sub == "__ABSTAIN__" and not anaphora_used:
+            return None                          # DIRECT well-formed query, substrate has no fact -> honest abstain
+                                                 # (fixes the host-router keyword CONFAB, e.g. "what does fish fly?").
+        if sub not in (None, "__ABSTAIN__"):     # anaphora abstain falls through: the WM referent may be noisy, so let
+            return sub                           # the host router try (its keyword match masks a bad WM pick).
         gate_svo, _score = self.router.match_fact(q, self.stored_facts)
         if gate_svo is None:
             return None
@@ -311,13 +315,19 @@ class ChatBrain:
         a = next((t for t in content if t in self.agents_set), None) or (content[0] if content else None)
         v = next((t for t in content if t in self.actions_set), None) or (content[1] if len(content) > 1 else None)
         if not (a and v) or a == v:
+            return None                          # could not extract a query -> let the host router try (self/identity)
+        # a self/identity query (a or v is a self-alias) is the host router's job, not the substrate's.
+        if a in self.router.self_aliases or v in self.router.self_aliases:
             return None
         try:
             p = self.inner.what_does(a, v)
         except Exception:
             return None
         if not p:
-            return None
+            # a WELL-FORMED question the substrate cannot answer -> ABSTAIN honestly. Do NOT fall through to the host
+            # router's role-blind keyword guess (that is the confabulation the CHOOSE gap produced, e.g. "what does fish
+            # fly?" -> "cat eat fish"). This retires the host router's CONFAB for well-formed queries.
+            return "__ABSTAIN__"
         if isinstance(p, str) and p in self.agents_set:
             self._note_referent(p)
         return [a, v, p]

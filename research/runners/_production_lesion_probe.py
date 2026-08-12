@@ -52,11 +52,28 @@ def probe(seed=42):
     # answer through the HOST QuestionRouter.match_fact (keyword overlap); there is no neural selector to lesion on this
     # path (ledger row content-selection: wired=NO). We record it as host-decided (a future neural selector, once wired,
     # is lesion-tested here).
-    from research.runners.brain_chat_tui import QuestionRouter
-    choose_is_neural = not isinstance(getattr(chat, "router", None), QuestionRouter)
-    out["CHOOSE"] = {"neural": bool(choose_is_neural),
-                     "note": "host QuestionRouter.match_fact decides which fact answers (keyword overlap); no neural "
-                             "content-selector on the default path" if not choose_is_neural else "neural selector present"}
+    # CHOOSE — does the SUBSTRATE decide the content of a direct factual question (recall or honest abstain), or does the
+    # host router keyword-CONFABULATE? Test a well-formed UNANSWERABLE question: a substrate-driven turn ABSTAINS; the old
+    # host router guessed a keyword-overlapping fact. Lesion the substrate recall -> the confab must return (load-bearing).
+    cq = "what does fish fly?"                                 # well-formed, no such fact
+    c_base = _ask(chat, cq)
+    choose_abstains = bool(c_base.get("abstained")) or "don't know" in str(c_base["answer"]).lower()
+    choose_lesion_load_bearing = None
+    if choose_abstains and hasattr(chat, "_substrate_recall"):
+        orig = chat._substrate_recall
+        chat._substrate_recall = lambda q: None               # remove substrate -> falls to host keyword guess
+        try:
+            c_les = _ask(chat, cq)
+        finally:
+            chat._substrate_recall = orig
+        # load-bearing if lesioning the substrate makes the turn CONFABULATE (stop abstaining) on the same question
+        choose_lesion_load_bearing = not (bool(c_les.get("abstained")) or "don't know" in str(c_les["answer"]).lower())
+    choose_is_neural = bool(choose_abstains and choose_lesion_load_bearing)
+    out["CHOOSE"] = {"neural": choose_is_neural, "abstains_on_unanswerable": choose_abstains,
+                     "lesion_load_bearing": choose_lesion_load_bearing, "probe": c_base,
+                     "note": "direct factual questions are decided by the SUBSTRATE (recall or honest abstain); the host "
+                             "router's keyword-confab is retired for them (lesion the substrate -> confab returns). "
+                             "Broader CHOOSE (neural question comprehension, open-ended topic) is further."}
 
     # GENERATE — does the brain produce NOVEL content, or only recall a pre-stored fact? Ask something that is NOT a
     # stored fact and requires composition; recall-only -> abstains ("I don't know").

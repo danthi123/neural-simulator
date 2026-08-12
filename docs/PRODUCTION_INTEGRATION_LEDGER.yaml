@@ -25,7 +25,9 @@ headline:
     # EMPIRICALLY MEASURED by running the real default brain: research/runners/_production_lesion_probe.py ->
     # research/findings/raw/_production_lesion/probe.json. A wiring earns credit only when it flips one of these to True
     # on THIS probe AND the lesion of its path flips it back off (load-bearing, not cosmetic).
-    choose: NO       # host QuestionRouter still decides which fact answers (role-blind keyword overlap); #1
+    choose: PARTIAL  # 2026-08-12 INTEGRATION #1: direct factual questions are decided by the SUBSTRATE (recall or honest
+                     # abstain), lesion-verified; the host router's keyword-CONFAB is retired for them. Residual: neural
+                     # question comprehension + open-ended topic choice; host still handles self/identity + noisy-anaphora.
     generate: NO     # recall-only; off-bridge Qwen articulates; #3
     learn: YES       # 2026-08-12 INTEGRATION #2: substrate-first recall — a fact heard this turn is recalled from the
                      # spiking substrate (inner.what_does), lesion-verified (disable the recall -> the taught fact
@@ -38,16 +40,16 @@ headline:
 
 rows:
   - key: content-selection
-    faculty: "Content selection — deciding WHAT to say (the biggest host gap)"
-    de_risked: PARTIAL          # SpikingSpreadingController / dlPFC is a GO but only steers elaboration, not the direct answer
-    wired: NO
-    on_by_default: NO
-    scaffold_retired: NO
-    host_scaffold_in_default: "QuestionRouter.match_fact — host keyword-overlap argmax (content_hits*10+brain_hit)"
+    faculty: "Content selection — direct factual questions decided by the substrate; host keyword-confab retired"
+    de_risked: YES
+    wired: YES                  # 2026-08-12 INTEGRATION #1: substrate-first recall + honest abstain on /api/brain-chat
+    on_by_default: YES          # default gate behavior; probe CHOOSE True + lesion-load-bearing
+    scaffold_retired: NO        # QuestionRouter still the fallback for self/identity + noisy-anaphora; broader CHOOSE (neural question comprehension, open-ended topic) further
+    host_scaffold_in_default: "QuestionRouter.match_fact still the self/identity + anaphora fallback (retired for direct factual questions — no more keyword-confab)"
     scaffold_symbol:
       file: research/runners/brain_chat_tui.py
       symbol: "def match_fact"
-    evidence: "brain_chat_tui.py:120-145"
+    evidence: "brain_chat_tui.py gate() substrate-first + __ABSTAIN__; probe CHOOSE True, lesion-load-bearing"
 
   - key: in-loop-learning
     faculty: "In-loop learning — the owner teaches ARBITRARY new facts by talking; they are recalled from the substrate"
