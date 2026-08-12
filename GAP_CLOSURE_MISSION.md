@@ -15,15 +15,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-12 (READ FIRST — live resume point)
 
-> **🟢 LATEST (2026-08-12, this cycle): the production chat recall is now GENUINELY SPIKING by DEFAULT (#0 landed).**
-> `/api/brain-chat` (tiny-demo) builds `composer_kind="onebrain"` by default — recall is the resonate-and-fire step on
-> firing neurons (HTTP activity trace: `composer='onebrain'`, 45730 readout neurons, frac_fired 1.7%%/~0), not the numpy
-> `_scan`. The blocker (a runtime-taught word STORED but never RECALLED under the spiking store) was a wrap-vs-inner
-> cleanup-codebook bug, FIXED via recruit-an-assembly (`OneBrainComposer vocab_headroom`, biological uncommitted-assembly
-> recruit). HTTP-verified CHOOSE+abstain+LEARN+rich-GENERATE, all onebrain. Commits `e82ab916`→`4d372876`→`1c2b9f586`;
-> byte-identical at headroom=0. **SINGLE LITERAL NEXT unchanged: #1 CHOOSE** — neuralize the question→(agent,action) PARSE
-> (still host token-matching in `_substrate_recall`) via `BridgeParser`, so the host `QuestionRouter` fallback can retire.
-> Speed secondary (the ~183s onebrain warm build is accepted).
+> **🟢 LATEST (2026-08-12, this cycle): #0 one-brain-spiking-default AND #1 CHOOSE both landed.** (1) `/api/brain-chat`
+> (tiny-demo) builds `composer_kind="onebrain"` by default — recall is the resonate-and-fire step on firing neurons (HTTP
+> trace: `composer='onebrain'`, 45730 readout neurons, frac_fired 1.7%%/~0), not the numpy `_scan`. The blocker (a
+> runtime-taught word STORED but never RECALLED) was a wrap-vs-inner cleanup-codebook bug, FIXED via recruit-an-assembly
+> (`OneBrainComposer vocab_headroom`). (2) #1 CHOOSE: the question→(agent,action) COMPREHENSION is now NEURAL — the
+> on-brain `BridgeParser` (position→role conjunction fires on Izhikevich neurons) is AUTHORITATIVE for factual-SVO
+> questions; the host `QuestionRouter` is RETIRED for them (a declined/lesioned parse ABSTAINS, no keyword-confab).
+> Lesion-load-bearing (lesion `role_of` → factual CHOOSE abstains, was "dog chase cat"→IDK). Commits
+> `e82ab916`→`4d372876`→`1c2b9f586`→`d3585b44`; byte-identical at headroom=0. **SINGLE LITERAL NEXT: retire the router's
+> SELF/IDENTITY path (neural self-model) OR the DEEPER LEARN (BTSP per-turn write for a LASTING trace) OR the rich/GENERATE
+> default (rich=True+neural_planner) — the router now only owns self/identity + the anaphora fallback.** Speed secondary
+> (the ~183s onebrain warm build is accepted).
 
 > **⭐⭐⭐⭐ THE GOAL (owner clarification 2026-08-11, SUPERSEDES the framing below): a WORKING all-spiking one-substrate
 > brain with ALL faculties ON BY DEFAULT in production — FULLY FUNCTIONAL when the owner runs it and chats with it. NOT a
@@ -65,8 +68,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   HTTP-verified: CHOOSE + abstain + LEARN (teach "wolf hunt deer" → recall) + rich GENERATE, all `composer='onebrain'`.
 >   Cost ~183s one-time warm build (speed secondary). Scaffold NOT retired (rf stays the CPU/test oracle + escape). Findings
 >   `2026-08-12-INTEGRATION-onebrain-is-now-the-production-default...` + `2026-08-12-onebrain-spiking-store...RESOLVED`.
-> - **#1 Content selection (the biggest host gap).** Route the default `/api/brain-chat` DIRECT answer through the spiking
->   dlPFC `SpikingSpreadingController`, replacing `QuestionRouter.match_fact`. "a keyword DB talks" → "the brain chooses."
+> - **✅ #1 CHOOSE — LANDED (2026-08-12, `d3585b44`, lesion-verified).** The question→(agent,action) COMPREHENSION is now
+>   NEURAL: `ChatBrain._neural_question_parse` presents the stripped content words (position-padded to SVO) to the on-brain
+>   `BridgeParser` (its (position,voice)→role conjunction FIRES the role map on Izhikevich neurons — the same parser
+>   `hear()` uses; `role_of` on the shared onebrain bridge = [agent,action,patient]). The parser is AUTHORITATIVE for a
+>   factual-SVO question (≥2 content words, no self-alias): a declined/lesioned parse ABSTAINS rather than falling to
+>   `QuestionRouter.match_fact`'s role-blind keyword confab -> the router is RETIRED for factual questions. Lesion-load-
+>   bearing (lesion `role_of` → both a taught and a build-time factual CHOOSE abstain). Residual: the parser is a 3-word
+>   SVO position map, so 3+-content questions (adjectives/oblique args) abstain honestly (richer comprehension = typed
+>   frames / multicue parser, a later wire-in); the router still owns self/identity + the anaphora fallback (scaffold
+>   PARTIAL). The broader "spiking dlPFC content-selector" vision remains for open-ended topic selection.
 > - **✅ #2 In-loop learning — LANDED (2026-08-12, `61b3de70`, lesion-verified).** `ChatBrain.gate` is now
 >   SUBSTRATE-FIRST: a fact heard this conversation is recalled from `inner.what_does` (the spiking substrate, role-aware)
 >   before the host router fallback. The production lesion probe flips LEARN False→True, and lesioning the recall flips it
