@@ -1,0 +1,74 @@
+{
+  "n_files": 12,
+  "by_depth": {
+    "2": {
+      "n_seeds": 6,
+      "majority": 0.5241411327762303,
+      "ff_mean": 0.7906220984215414,
+      "ff_min": 0.7576601671309192,
+      "ff_above_majority": 0.2664809656453111,
+      "top_layer_above_majority": 0.26648096564531104,
+      "reservoir_ridge": 0.6090993500464252,
+      "reservoir_ff": 0.5013927576601671,
+      "bptt_ceiling": 0.8101207056638812,
+      "permuted": 0.4948932219127205,
+      "beats_reservoir_by": 0.18152274837511606,
+      "directed_over_permuted": 0.29572887650882085,
+      "per_seed_GO": 5,
+      "six_seed_GO": true,
+      "n_enters_regime": 6,
+      "n_weak_coupling": 0,
+      "per_layer_acc_mean": [
+        0.7506963788300834,
+        0.7906220984215414
+      ]
+    },
+    "3": {
+      "n_seeds": 6,
+      "majority": 0.5241411327762303,
+      "ff_mean": 0.7804085422469824,
+      "ff_min": 0.7298050139275766,
+      "ff_above_majority": 0.2562674094707521,
+      "top_layer_above_majority": 0.15181058495821728,
+      "reservoir_ridge": 0.6230269266480966,
+      "reservoir_ff": 0.5083565459610028,
+      "bptt_ceiling": 0.8040854224698236,
+      "permuted": 0.4962859795728876,
+      "beats_reservoir_by": 0.15738161559888578,
+      "directed_over_permuted": 0.2841225626740947,
+      "per_seed_GO": 5,
+      "six_seed_GO": true,
+      "n_enters_regime": 6,
+      "n_weak_coupling": 0,
+      "per_layer_acc_mean": [
+        0.7627669452181988,
+        0.7887650882079851,
+        0.6759517177344475
+      ]
+    },
+    "4": {
+      "n_seeds": 6,
+      "majority": 0.5241411327762303,
+      "ff_mean": 0.7706592386258125,
+      "ff_min": 0.713091922005571,
+      "ff_above_majority": 0.24651810584958223,
+      "top_layer_above_majority": 0.12999071494893225,
+      "reservoir_ridge": 0.6151346332404829,
+      "reservoir_ff": 0.5111420612813371,
+      "bptt_ceiling": 0.7887650882079852,
+      "permuted": 0.4888579387186629,
+      "beats_reservoir_by": 0.15552460538532964,
+      "directed_over_permuted": 0.2818012999071495,
+      "per_seed_GO": 5,
+      "six_seed_GO": true,
+      "n_enters_regime": 6,
+      "n_weak_coupling": 0,
+      "per_layer_acc_mean": [
+        0.7595171773444753,
+        0.7822655524605385,
+        0.6940575673166203,
+        0.6541318477251625
+      ]
+    }
+  }
+}

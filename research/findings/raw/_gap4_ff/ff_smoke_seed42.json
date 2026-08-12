@@ -1,0 +1,68 @@
+{
+  "probe": "gap4_forwardforward_local",
+  "backend": "numpy",
+  "config": {
+    "n_list": [
+      3
+    ],
+    "hidden": 32,
+    "T": 24,
+    "epochs": 200,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "theta": 0.05,
+    "label_gain": 3.0,
+    "train_subsample": 2000,
+    "task": "xor",
+    "bptt_hidden": null,
+    "bptt_epochs": null,
+    "bptt_lr": null
+  },
+  "seeds": [
+    42
+  ],
+  "elapsed_seconds": 31.8,
+  "results": [
+    {
+      "seed": 42,
+      "N": 3,
+      "k_classes": 2,
+      "n_in": 10,
+      "chance": 0.5487465181058496,
+      "majority": 0.5487465181058496,
+      "ff_inherit": 0.5376044568245125,
+      "ff_train": 0.5969924812030075,
+      "ff_per_layer_acc": [
+        0.4568245125348189,
+        0.5543175487465181,
+        0.5125348189415042
+      ],
+      "ff_used_layers": [
+        1,
+        2
+      ],
+      "ff_reservoir_inherit": 0.520891364902507,
+      "ff_reservoir_per_layer_acc": [
+        0.45125348189415043,
+        0.520891364902507,
+        0.5013927576601671
+      ],
+      "reservoir_ridge_inherit": 0.649025069637883,
+      "reservoir_ridge_lambda": 10.0,
+      "bptt_ceiling_inherit": 0.649025069637883,
+      "permuted_inherit": 0.4623955431754875,
+      "enters_learning_regime": false,
+      "acc_above_majority": -0.011142061281337101,
+      "top_layer_above_majority": -0.03621169916434541,
+      "beats_reservoir_ridge_by": -0.11142061281337046,
+      "beats_reservoir_ff_by": 0.01671309192200554,
+      "directed_over_permuted": 0.07520891364902504,
+      "bptt_confirms_target": false,
+      "max_single_layer_acc": 0.5543175487465181,
+      "depth_contributes": false,
+      "weak_coupling_suspected": false,
+      "GO": false,
+      "task": "depth2_xor_threshold"
+    }
+  ]
+}

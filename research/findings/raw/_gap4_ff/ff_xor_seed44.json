@@ -1,0 +1,152 @@
+{
+  "probe": "gap4_forwardforward_local",
+  "backend": "numpy",
+  "config": {
+    "n_list": [
+      2,
+      3,
+      4
+    ],
+    "hidden": 32,
+    "T": 24,
+    "epochs": 350,
+    "lr": 1.0,
+    "in_gain": 1.0,
+    "theta": 0.05,
+    "label_gain": 3.0,
+    "train_subsample": 2000,
+    "task": "xor",
+    "bptt_hidden": 128,
+    "bptt_epochs": 200,
+    "bptt_lr": 0.2
+  },
+  "seeds": [
+    44
+  ],
+  "elapsed_seconds": 539.3,
+  "results": [
+    {
+      "seed": 44,
+      "N": 2,
+      "k_classes": 2,
+      "n_in": 10,
+      "chance": 0.5236768802228412,
+      "majority": 0.5236768802228412,
+      "ff_inherit": 0.7938718662952646,
+      "ff_train": 0.8766917293233083,
+      "ff_per_layer_acc": [
+        0.7437325905292479,
+        0.7938718662952646
+      ],
+      "ff_used_layers": [
+        1
+      ],
+      "ff_reservoir_inherit": 0.5125348189415042,
+      "ff_reservoir_per_layer_acc": [
+        0.49303621169916434,
+        0.5125348189415042
+      ],
+      "reservoir_ridge_inherit": 0.5933147632311978,
+      "reservoir_ridge_lambda": 1.0,
+      "bptt_ceiling_inherit": 0.8022284122562674,
+      "permuted_inherit": 0.5069637883008357,
+      "enters_learning_regime": true,
+      "acc_above_majority": 0.2701949860724234,
+      "top_layer_above_majority": 0.2701949860724234,
+      "beats_reservoir_ridge_by": 0.20055710306406682,
+      "beats_reservoir_ff_by": 0.2813370473537604,
+      "directed_over_permuted": 0.28690807799442897,
+      "bptt_confirms_target": true,
+      "max_single_layer_acc": 0.7938718662952646,
+      "depth_contributes": false,
+      "weak_coupling_suspected": false,
+      "GO": true,
+      "task": "depth2_xor_threshold"
+    },
+    {
+      "seed": 44,
+      "N": 3,
+      "k_classes": 2,
+      "n_in": 10,
+      "chance": 0.5236768802228412,
+      "majority": 0.5236768802228412,
+      "ff_inherit": 0.8050139275766016,
+      "ff_train": 0.8661654135338346,
+      "ff_per_layer_acc": [
+        0.7465181058495822,
+        0.8050139275766016,
+        0.7298050139275766
+      ],
+      "ff_used_layers": [
+        1,
+        2
+      ],
+      "ff_reservoir_inherit": 0.5543175487465181,
+      "ff_reservoir_per_layer_acc": [
+        0.49303621169916434,
+        0.5125348189415042,
+        0.5236768802228412
+      ],
+      "reservoir_ridge_inherit": 0.5933147632311978,
+      "reservoir_ridge_lambda": 100.0,
+      "bptt_ceiling_inherit": 0.7743732590529248,
+      "permuted_inherit": 0.5069637883008357,
+      "enters_learning_regime": true,
+      "acc_above_majority": 0.2813370473537604,
+      "top_layer_above_majority": 0.20612813370473537,
+      "beats_reservoir_ridge_by": 0.2116991643454038,
+      "beats_reservoir_ff_by": 0.25069637883008355,
+      "directed_over_permuted": 0.29805013927576596,
+      "bptt_confirms_target": true,
+      "max_single_layer_acc": 0.8050139275766016,
+      "depth_contributes": false,
+      "weak_coupling_suspected": false,
+      "GO": true,
+      "task": "depth2_xor_threshold"
+    },
+    {
+      "seed": 44,
+      "N": 4,
+      "k_classes": 2,
+      "n_in": 10,
+      "chance": 0.5236768802228412,
+      "majority": 0.5236768802228412,
+      "ff_inherit": 0.7855153203342619,
+      "ff_train": 0.8601503759398497,
+      "ff_per_layer_acc": [
+        0.7270194986072424,
+        0.7827298050139275,
+        0.713091922005571,
+        0.6935933147632312
+      ],
+      "ff_used_layers": [
+        1,
+        2,
+        3
+      ],
+      "ff_reservoir_inherit": 0.5487465181058496,
+      "ff_reservoir_per_layer_acc": [
+        0.49303621169916434,
+        0.5125348189415042,
+        0.5236768802228412,
+        0.520891364902507
+      ],
+      "reservoir_ridge_inherit": 0.5793871866295265,
+      "reservoir_ridge_lambda": 100.0,
+      "bptt_ceiling_inherit": 0.7966573816155988,
+      "permuted_inherit": 0.520891364902507,
+      "enters_learning_regime": true,
+      "acc_above_majority": 0.26183844011142066,
+      "top_layer_above_majority": 0.16991643454038996,
+      "beats_reservoir_ridge_by": 0.20612813370473537,
+      "beats_reservoir_ff_by": 0.23676880222841223,
+      "directed_over_permuted": 0.2646239554317549,
+      "bptt_confirms_target": true,
+      "max_single_layer_acc": 0.7827298050139275,
+      "depth_contributes": false,
+      "weak_coupling_suspected": false,
+      "GO": true,
+      "task": "depth2_xor_threshold"
+    }
+  ]
+}
