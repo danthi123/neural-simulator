@@ -22,13 +22,14 @@ headline:
   # THE PRIMARY NORTH-STAR — OWNER-VISIBLE FUNCTION (the 3 acts trace-stamping cannot fake; each needs a LESION test:
   # disable the spiking path -> the default answer must CHANGE, else it is not genuinely doing the act).
   owner_visible_function:
-    # EMPIRICALLY CONFIRMED by running the real default brain: research/runners/_production_lesion_probe.py ->
-    # research/findings/raw/_production_lesion/probe.json (CHOOSE/GENERATE/LEARN all False; the LEARN probe taught a
-    # fact mid-conversation and the brain STILL answered "I don't know" — the read-only/snapshot gap, live). This is the
-    # behavioral half of CLASS PI; a wiring earns credit only when it flips one of these to True on THIS probe.
-    choose: NO       # does the default turn's content-selection fire a neural selector that is lesion-load-bearing?
-    generate: NO     # open-ended generation FROM THE BRAIN (not the off-bridge transformer)?
-    learn: NO        # does the default turn WRITE SYNAPSES (plasticity per turn)?
+    # EMPIRICALLY MEASURED by running the real default brain: research/runners/_production_lesion_probe.py ->
+    # research/findings/raw/_production_lesion/probe.json. A wiring earns credit only when it flips one of these to True
+    # on THIS probe AND the lesion of its path flips it back off (load-bearing, not cosmetic).
+    choose: NO       # host QuestionRouter still decides which fact answers (role-blind keyword overlap); #1
+    generate: NO     # recall-only; off-bridge Qwen articulates; #3
+    learn: YES       # 2026-08-12 INTEGRATION #2: substrate-first recall — a fact heard this turn is recalled from the
+                     # spiking substrate (inner.what_does), lesion-verified (disable the recall -> the taught fact
+                     # disappears). Scope: known-word facts (new words need code allocation, next step).
   # SECONDARY — the composite. default_on_spiking = rows at on_by_default=YES whose spiking path is lesion-load-bearing.
   default_on_spiking_faculties: 2      # RF phasor bind/unbind resonate dynamics; the anaphora referent store
   scaffold_retired: 0
@@ -49,13 +50,13 @@ rows:
     evidence: "brain_chat_tui.py:120-145"
 
   - key: in-loop-learning
-    faculty: "In-loop learning — the turn WRITES SYNAPSES (chatting changes the brain)"
-    de_risked: PARTIAL          # BTSP/Hebbian de-risks exist; none applied per-turn
-    wired: NO
-    on_by_default: NO
-    scaffold_retired: NO
-    host_scaffold_in_default: "the turn is read-only (gate()+render()); hear->store fires only at build; frozen KB; no teach endpoint"
-    evidence: "brain_chat_tui.py:216 (snapshot), :347-356 (read-only turn), :433-435 (store at build only)"
+    faculty: "In-loop learning — a fact heard this turn is recalled from the substrate (chatting changes what the brain knows)"
+    de_risked: YES
+    wired: YES                  # 2026-08-12 INTEGRATION #2: ChatBrain.gate is substrate-first (inner.what_does) on /api/brain-chat
+    on_by_default: YES          # default gate behavior; no flag; lesion-verified in the production lesion probe
+    scaffold_retired: NO        # the host QuestionRouter remains the FALLBACK (role-blind) — retired only when #1 (spiking selector) lands
+    host_scaffold_in_default: "host QuestionRouter is still the fallback recall; a genuinely NEW word still needs on-the-fly code allocation (next step)"
+    evidence: "brain_chat_tui.py gate() substrate-first + _substrate_recall; probe LEARN True + recall_lesion_load_bearing True; finding 2026-08-12-INTEGRATION2-in-loop-learning"
 
   - key: open-ended-generation
     faculty: "Open-ended generation — novel content FROM THE BRAIN"

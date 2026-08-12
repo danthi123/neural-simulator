@@ -65,26 +65,41 @@ def probe(seed=42):
     out["GENERATE"] = {"open_ended": (not g.get("abstained", True)) and "don't know" not in g["answer"].lower(),
                        "probe": g, "note": "recall-only agent emits ONLY stored facts; novel composition -> abstain"}
 
-    # LEARN — does the TURN write synapses / incorporate a fact told mid-conversation? Teach a NEW fact, then ask.
-    learn = {"taught": "the otter caught a clam", "q": "what did the otter catch?"}
+    # LEARN — does the TURN incorporate a fact told mid-conversation? Teach a fact NOT pre-baked, then ask. Uses KNOWN
+    # words ("cat chase bird" — the pre-baked cat-fact is "cat eat fish", so "cat chase ?" is genuinely new), which the
+    # first in-loop-learning integration (substrate-recall fallback) covers; a NEW word needs on-the-fly code allocation.
+    learn = {"taught": "cat chase bird", "q": "what does cat chase?", "answer_word": "bird"}
     before = _ask(chat, learn["q"])
     taught_ok = True
+    inner = getattr(agent, "agent", agent)
     try:
-        # the acquisition path used by a LOADED brain; a live turn does NOT call this (read-only) — we call it directly
-        # to test whether, EVEN IF heard, the turn reflects it (the snapshot gap).
-        if hasattr(agent, "hear_multicue"):
+        if hasattr(inner, "hear"):
+            inner.hear(learn["taught"], polarity="AFFIRM")   # store to the substrate (as a taught assertion would)
+        elif hasattr(agent, "hear_multicue"):
             agent.hear_multicue(learn["taught"])
-        elif hasattr(agent, "hear_case"):
-            agent.hear_case(learn["taught"])
     except Exception as e:
         taught_ok = "hear failed: %s" % type(e).__name__
     after = _ask(chat, learn["q"])
-    learned = ("otter" not in str(before["answer"]).lower() or before.get("abstained")) and \
-              ("clam" in str(after["answer"]).lower())
-    out["LEARN"] = {"in_loop": bool(learned), "before": before, "after": after, "taught": learn["taught"],
-                    "hear_ok": taught_ok,
-                    "note": "gate() reads a stored_facts SNAPSHOT taken at build; a mid-turn hear is not reflected -> "
-                            "the turn learns nothing (read-only)"}
+    learned = ("bird" not in str(before["answer"]).lower() or before.get("abstained")) and \
+              ("bird" in str(after["answer"]).lower())
+    # LESION the substrate recall -> the taught fact must DISAPPEAR (proves LEARN is load-bearing on the substrate
+    # path, not a host-list effect). If the answer is byte-identical with the recall lesioned, LEARN earns no credit.
+    lesion_load_bearing = None
+    if learned and hasattr(chat, "_substrate_recall"):
+        orig = chat._substrate_recall
+        chat._substrate_recall = lambda q: None
+        try:
+            lesioned = _ask(chat, learn["q"])
+        finally:
+            chat._substrate_recall = orig
+        lesion_load_bearing = "bird" not in str(lesioned["answer"]).lower()
+        after["lesioned_substrate_recall"] = lesioned["answer"]
+    out["LEARN"] = {"in_loop": bool(learned and lesion_load_bearing is not False),
+                    "recall_lesion_load_bearing": lesion_load_bearing,
+                    "before": before, "after": after, "taught": learn["taught"], "hear_ok": taught_ok,
+                    "note": "substrate-first recall: a fact heard this turn is recalled from inner.what_does (the "
+                            "spiking substrate), role-aware; host QuestionRouter is the fallback. LEARN credit requires "
+                            "the recall lesion to flip it off."}
 
     # ---- coarse spiking-path lesion (validate the 2 default-on-spiking rows are LESION-LOAD-BEARING) ----
     # Lesion the composer's recall: force the composer.query/recall to fail and see if a fact-recall answer changes.

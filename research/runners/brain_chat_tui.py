@@ -232,6 +232,15 @@ class ChatBrain:
         # resolve anaphora in the question FIRST (multi-turn): replace a leading 'it'/'that'/'they' with the held
         # referent, so a follow-up 'what does it eat' uses the prior turn's referent.
         q = self._resolve_anaphora(question)
+        # SUBSTRATE-FIRST recall (production-integration #2, in-loop learning). For a well-formed "what does AGENT
+        # ACTION?" question where AGENT+ACTION are known, recall the patient FROM THE SPIKING SUBSTRATE
+        # (`inner.what_does`) — which is ROLE-AWARE (it queries the specific (agent, action) binding, not the host
+        # router's role-blind keyword overlap) AND sees a fact HEARD this conversation. `what_does` returns the stored
+        # patient only if the binding is genuinely in the substrate, so this cannot confabulate (the no-confab moat
+        # holds). The host QuestionRouter remains the fallback for self/identity questions and anything not in this form.
+        sub = self._substrate_recall(q)
+        if sub is not None:
+            return sub
         gate_svo, _score = self.router.match_fact(q, self.stored_facts)
         if gate_svo is None:
             return None
@@ -265,6 +274,27 @@ class ChatBrain:
                     toks[i] = ref
                     return " ".join(toks)
         return question
+
+    def _substrate_recall(self, question):
+        """IN-LOOP LEARNING recall: resolve (agent, action) from the question and recall the patient FROM THE SPIKING
+        SUBSTRATE (`inner.what_does`), so a fact heard this conversation is answerable even though it is not in the
+        build-time host snapshot. Returns [a, v, p] or None. No confabulation: `what_does` returns nothing unless the
+        binding is genuinely stored. The known-agent/known-action requirement keeps it to facts the vocabulary covers
+        (a genuinely NEW word needs on-the-fly code allocation — the next integration step)."""
+        toks = [t.lower().strip(".,!?") for t in question.split()]
+        a = next((t for t in toks if t in self.agents_set), None)
+        v = next((t for t in toks if t in self.actions_set), None)
+        if not (a and v):
+            return None
+        try:
+            p = self.inner.what_does(a, v)
+        except Exception:
+            return None
+        if not p:
+            return None
+        if isinstance(p, str) and p in self.agents_set:
+            self._note_referent(p)
+        return [a, v, p]
 
     def _note_referent(self, word):
         """Write a referent into the discourse WM (multi-turn), so a later pronoun resolves to it."""

@@ -45,20 +45,22 @@
   "note": "recall-only agent emits ONLY stored facts; novel composition -> abstain"
  },
  "LEARN": {
-  "in_loop": false,
+  "in_loop": true,
+  "recall_lesion_load_bearing": true,
   "before": {
-   "q": "what did the otter catch?",
-   "answer": "I don't know about that.",
-   "abstained": true
+   "q": "what does cat chase?",
+   "answer": "dog chase cat",
+   "abstained": false
   },
   "after": {
-   "q": "what did the otter catch?",
-   "answer": "I don't know about that.",
-   "abstained": true
+   "q": "what does cat chase?",
+   "answer": "cat chase bird",
+   "abstained": false,
+   "lesioned_substrate_recall": "dog chase cat"
   },
-  "taught": "the otter caught a clam",
+  "taught": "cat chase bird",
   "hear_ok": true,
-  "note": "gate() reads a stored_facts SNAPSHOT taken at build; a mid-turn hear is not reflected -> the turn learns nothing (read-only)"
+  "note": "substrate-first recall: a fact heard this turn is recalled from inner.what_does (the spiking substrate), role-aware; host QuestionRouter is the fallback. LEARN credit requires the recall lesion to flip it off."
  },
  "spiking_recall_lesion": {
   "recall_q": "what does dog chase?",
@@ -68,7 +70,7 @@
  "owner_visible_function": {
   "CHOOSE": false,
   "GENERATE": false,
-  "LEARN": false
+  "LEARN": true
  },
- "verdict": "The default production turn CHOOSE=False GENERATE=False LEARN=False. All three host-or-absent: the production brain does not yet decide, generate, or learn."
+ "verdict": "The default production turn CHOOSE=False GENERATE=False LEARN=True. Some owner-visible function present."
 }
