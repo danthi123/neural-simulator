@@ -137,13 +137,21 @@ rows:
     evidence: "core_sim_composition.py:428; rf enable_substrate_store default False"
 
   - key: moat-verify
-    faculty: "No-confab moat / VERIFY (recall-verify + abstain)"
+    faculty: "No-confab moat / VERIFY (recall-verify + abstain; CLAIM-LEVEL entailment over the multi-fact set)"
     de_risked: YES
     wired: YES
     on_by_default: YES          # the spiking recall-verify genuinely runs — one of the 2 default-on-spiking
-    scaffold_retired: NO        # but the abstain firewall + SVO re-parse around it are host
-    host_scaffold_in_default: "host keyword abstain gate + host SVO re-parse bracket the spiking recall-verify"
-    evidence: "brain_chat_tui.py:240 query_patient (spiking); :236-241 host abstain; :295-306 host re-parse"
+    scaffold_retired: NO        # the abstain firewall + clause decomposition/coverage around the substrate role-parse are host
+    host_scaffold_in_default: "host keyword abstain gate + host clause decomposition/coverage bracket the on-substrate per-clause role-parse"
+    # 2026-08-12 CLAIM-LEVEL GENERALIZATION WIRED (default-ON): the RichAnswerComposer multi-fact path now verifies each
+    # rendered sentence with the de-risked ClaimEntailmentVerifier over the SET of facts the turn gathered (IMPORTED from
+    # _moat_claim_entailment_derisk, NOT reimplemented; per-clause role assignment is the SAME on-brain parser the
+    # single-triple verify uses). So genuinely free-form MULTI-CLAUSE grounded prose survives the moat — the old check
+    # required the prose to re-parse to EXACTLY one gated SVO. Strict SUPERSET: a single grounded sentence still passes
+    # byte-identically; any response carrying even one ungrounded/contradictory asserted clause is rejected (0 leaks).
+    # Escape BRAIN_CLAIM_MOAT=0 + the single-fact turn both revert to the single-triple _verify. RESIDUAL: the clause
+    # decomposition + coverage + synonym/negation/hedge bookkeeping are a HOST verification harness.
+    evidence: "brain_chat_tui.py ChatBrain._verify_claim_set/_build_claim_verifier (reuses _moat_claim_entailment_derisk.ClaimEntailmentVerifier on self.inner.parse); rich_answer_composer.py _verify_rendered routes the >1-fact turn through it. Verified numpy-CPU seed42 THROUGH the production wiring: grounded 'The cat eats fish and the dog chases the cat.' PASSES where old single-triple rejects; full de-risk suite 30 cases/14 leak-cases -> 0 confab leaks; LESION BRAIN_CLAIM_MOAT=0 -> multi-clause grounded rendering reverts to reject (load-bearing); single-fact recall/abstain/learn unregressed. finding 2026-08-12-INTEGRATION-claim-level-entailment-moat-wired-multiclause"
 
   - key: anaphora-wm
     faculty: "Anaphora working memory (referent store)"

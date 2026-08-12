@@ -31,8 +31,14 @@ with the no-confab moat intact and the host/external piece deleted-or-demoted-to
 ## C. MOAT / VERIFY
 - **C1. `_verify` decomposition/coverage/entailment logic = host** (a legitimate verification HARNESS, like the existing
   `_verify` — the per-clause role-parse IS spiking via BridgeParser). The claim-level entailment generalization is de-risked
-  GO (0 confab leaks, 6-seed). Lower burn-down priority (a verification harness is defensible), but the decomposition could be
-  biologized later. STATUS: the GENERALIZATION is QUEUED to wire (into `_verify`); biologizing the host harness is RESEARCH-NEEDED (low priority).
+  GO (0 confab leaks, 6-seed). **GENERALIZATION WIRED (2026-08-12):** the RichAnswerComposer multi-fact path now routes
+  each rendered sentence through the de-risked `ClaimEntailmentVerifier` over the SET of facts the turn gathered
+  (`ChatBrain._verify_claim_set` / `rich_answer_composer._verify_rendered`, imported from `_moat_claim_entailment_derisk`,
+  NOT reimplemented) — genuinely free-form MULTI-CLAUSE grounded prose now survives the moat, while any response carrying
+  one ungrounded/contradictory clause is rejected (verified numpy-CPU through the production wiring: 0 leaks over the full
+  de-risk suite, load-bearing under the `BRAIN_CLAIM_MOAT=0` lesion). Escape flag + single-fact turn keep the single-triple
+  `_verify`. STATUS: **WIRED**; RESIDUAL: the clause decomposition + coverage + synonym/negation/hedge bookkeeping remain a
+  HOST verification harness (biologizing it is RESEARCH-NEEDED, low priority — a verification harness is defensible).
 
 ## D. UN-WIRED VALIDATED FACULTIES (clean GOs, currently default-OFF — the owner's named list)
 _(the faculty-integration audit is designing the concrete wiring for each; wire ONLY the clean GOs, load-bearing + default-on)_

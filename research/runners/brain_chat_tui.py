@@ -622,6 +622,60 @@ class ChatBrain:
         rsvo = [parsed.get("agent"), parsed.get("action"), parsed.get("patient")]
         return rsvo == list(gate_svo)
 
+    # --- the CLAIM-LEVEL moat generalization (de-risked ClaimEntailmentVerifier, wired for the multi-fact turn) ---
+    @staticmethod
+    def _claim_moat_enabled():
+        """The escape hatch. `BRAIN_CLAIM_MOAT=0` reverts to the exact single-triple `_verify` per rendered
+        sentence (the pre-generalization behaviour). Any other value (incl. unset) keeps the claim-level moat on
+        -- the production default, so genuinely free-form MULTI-CLAUSE grounded prose survives the moat."""
+        return os.environ.get("BRAIN_CLAIM_MOAT", "1") != "0"
+
+    def _build_claim_verifier(self, gated_facts):
+        """Build (and lazily cache on the gated SET) the de-risked ClaimEntailmentVerifier, REUSED BY IMPORT --
+        NOT reimplemented. It decomposes multi-clause prose into its asserted proposition set, role-parses EACH
+        clause on THIS brain's on-substrate parser (`self.inner.parse`, the same spiking role parser the
+        single-triple `_verify` uses), and accepts IFF every asserted proposition is entailed by `gated_facts`
+        (with the flagged-hypothesis carve-out + the coverage invariant). Returns None when the set is empty or
+        has a role-permutation collision (the verifier's own well-formedness guard) -> the caller falls back to
+        the single-triple `_verify` in the SAFE direction."""
+        key = frozenset(tuple(f) for f in gated_facts
+                        if isinstance(f, (list, tuple)) and len(f) == 3
+                        and all(isinstance(x, str) for x in f))
+        if not key:
+            return None
+        cache = getattr(self, "_claim_verifier_cache", None)
+        if cache is None:
+            cache = self._claim_verifier_cache = {}
+        if key in cache:
+            return cache[key]
+        from research.runners._moat_claim_entailment_derisk import (
+            ClaimEntailmentVerifier, VERB_SYNONYMS, _build_inflection_map)
+        gated = [list(f) for f in key]
+        nouns = {t for f in gated for t in (f[0], f[2])}
+        verbs = {f[1] for f in gated}
+        inflect = _build_inflection_map(sorted(verbs))
+        try:
+            ver = ClaimEntailmentVerifier(self.inner, gated, nouns, verbs, VERB_SYNONYMS, inflect)
+        except AssertionError:
+            ver = None                                   # role-permutation collision -> fall back (SAFE)
+        cache[key] = ver
+        return ver
+
+    def _verify_claim_set(self, surface, gated_facts):
+        """CLAIM-LEVEL VERIFY: does the rendered PROSE `surface` assert ONLY facts entailed by `gated_facts` (the
+        set the turn gathered)? Returns (accepted: bool, result: dict) via the de-risked ClaimEntailmentVerifier,
+        or (None, None) when the claim moat is DISABLED (escape flag) or the verifier is unbuildable -> the caller
+        must fall back to the single-triple `_verify` (byte-identical old behaviour). This is a strict SUPERSET of
+        `_verify`: a single grounded sentence still passes, AND multi-clause grounded prose passes, while any
+        response carrying even one ungrounded/contradictory asserted clause is rejected (0 confab leaks)."""
+        if not self._claim_moat_enabled():
+            return None, None
+        ver = self._build_claim_verifier(gated_facts)
+        if ver is None:
+            return None, None
+        res = ver.verify(surface)
+        return bool(res["accepted"]), res
+
     def _raw(self, gate_svo):
         """The brain's OWN renderer: the raw recalled triple as a plain sentence (no LLM)."""
         return " ".join(str(x) for x in gate_svo)

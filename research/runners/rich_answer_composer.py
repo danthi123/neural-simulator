@@ -486,9 +486,16 @@ class RichAnswerComposer:
         does constrain+verify per SVO and falls back to the raw triple on a verify miss -- but here we go a step
         further: a sentence whose render does NOT verify is DROPPED ENTIRELY (not spoken as a raw triple), so the
         paragraph contains ONLY verified, brain-sourced prose."""
+        # the CLAIM-LEVEL moat generalization: the gated SET for THIS turn is exactly the gathered facts, so a
+        # rendered sentence is accepted IFF every proposition it asserts is entailed by that set (the de-risked
+        # ClaimEntailmentVerifier). This lets genuinely free-form MULTI-CLAUSE fluent prose survive the moat
+        # (today's single-triple _verify requires the prose to re-parse to EXACTLY one gated SVO). A strict
+        # SUPERSET of the old per-sentence check, so a single grounded sentence still passes byte-identically;
+        # the escape flag BRAIN_CLAIM_MOAT=0 + a single-fact turn both revert to the single-triple _verify.
+        gated = [list(f) for f in facts]
         kept, dropped, sentences = [], [], []
         for svo in facts:
-            sent, verified = self._render_one_verified(svo)
+            sent, verified = self._render_one_verified(svo, gated=gated)
             if verified and sent:
                 sentences.append(sent)
                 kept.append(svo)
@@ -497,24 +504,38 @@ class RichAnswerComposer:
         paragraph = " ".join(sentences)
         return paragraph, kept, dropped
 
-    def _render_one_verified(self, svo):
-        """Render ONE gathered SVO and report (sentence, verified). Uses the renderer's constrain render +
-        the brain's VERIFY re-parse (chat._verify); returns verified=False (and drops) if the prose does not
-        re-parse to THIS svo, so an unsupported/drifted sentence never enters the paragraph."""
+    def _render_one_verified(self, svo, gated=None):
+        """Render ONE gathered SVO and report (sentence, verified). VERIFY re-parses the prose and DROPS the
+        sentence if it is not brain-grounded, so an unsupported/drifted sentence never enters the paragraph.
+        When the claim-level moat is enabled and the turn gathered >1 fact, VERIFY is the CLAIM-LEVEL entailment
+        gate over the gathered set (`chat._verify_claim_set`) -- multi-clause fluent prose survives IFF every
+        clause is grounded; otherwise it is the single-triple `chat._verify` (single-fact / escape-flag path)."""
         a, v, p = svo
         if self.chat.raw_mode or self.chat.renderer is None:
             # no fluent renderer (raw mode / --no-renderer): the raw triple IS the verified content (it came
             # straight from the brain's store), so emit it as a plain sentence.
             return self.chat._raw(svo), True
         surface, asserted = self.chat.renderer.render_svo(a, v, p)
-        if self.chat._verify(surface, asserted, svo):
+        if self._verify_rendered(surface, asserted, svo, gated):
             return surface, True
         # one tighter regenerate (if the renderer supports it), as the TUI does
         if hasattr(self.chat.renderer, "render_svo_regen"):
             surface2, asserted2 = self.chat.renderer.render_svo_regen(a, v, p)
-            if self.chat._verify(surface2, asserted2, svo):
+            if self._verify_rendered(surface2, asserted2, svo, gated):
                 return surface2, True
         return None, False
+
+    def _verify_rendered(self, surface, asserted, svo, gated):
+        """VERIFY a rendered sentence. CLAIM-LEVEL path (default, multi-fact turn): require the rendered PROSE to
+        assert ONLY facts entailed by the gathered SET -- a rendered sentence that is multi-clause fluent prose
+        survives IFF every clause is grounded, and any clause not entailed by the set (an injected/false/ungrounded
+        claim) rejects the whole sentence (the moat does NOT weaken). SINGLE-TRIPLE fallback (single-fact turn /
+        BRAIN_CLAIM_MOAT=0 / verifier unbuildable): the exact old `chat._verify` (re-parse to EXACTLY this svo)."""
+        if gated is not None and len(gated) > 1:
+            accepted, _res = self.chat._verify_claim_set(surface, gated)
+            if accepted is not None:                     # claim moat active -> its verdict is authoritative
+                return accepted
+        return self.chat._verify(surface, asserted, svo)
 
     # ------------------------------------------------------------------------------------------------
     # The full RICH turn.
