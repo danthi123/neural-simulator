@@ -1819,6 +1819,17 @@ async def _warm_chat_brain() -> None:
                     print("[webapp] startup: affect organ (co-resident graded-affect ladder) WARM", flush=True)
             except Exception as _ae:
                 print(f"[webapp] startup: affect organ warm skipped ({type(_ae).__name__}: {_ae})", flush=True)
+            # COMPREHENSION (Gate-B, D4): pre-build the co-resident spiking comprehension monitor so the first
+            # turn's role-binding read is fast. Best-effort + guarded (default-ON; BRAIN_COMPREHENSION_GATE=0 skips).
+            try:
+                from research.runners.comprehension_production_organ import comprehension_enabled
+                if comprehension_enabled():
+                    _get_comprehension_organ().ensure_built()
+                    print("[webapp] startup: comprehension monitor (co-resident SpikingRoleCompetition) WARM",
+                          flush=True)
+            except Exception as _ce:
+                print(f"[webapp] startup: comprehension monitor warm skipped ({type(_ce).__name__}: {_ce})",
+                      flush=True)
             dt = round(_t.time() - t0, 1)
             print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
@@ -2852,6 +2863,27 @@ def _get_affect_organ():
     return get_organ(seed=42)
 
 
+def _get_comprehension_organ():
+    """The process-shared spiking comprehension monitor (built once; the co-resident SpikingRoleCompetition)."""
+    from research.runners.comprehension_production_organ import get_organ
+    return get_organ(seed=42)
+
+
+def _brain_vocab(chat) -> set:
+    """The set of words the brain KNOWS (agents ∪ actions ∪ patients of its stored facts), lowercased. Used to
+    scope the comprehension monitor: a real word the brain knows but that is not in the toy cue lexicon is OUT of
+    the monitor's competence (passed through), while a genuinely-unknown token is OOV (judged)."""
+    try:
+        vocab = set()
+        for s in (getattr(chat, "agents_set", None), getattr(chat, "actions_set", None),
+                  getattr(chat, "patients_set", None)):
+            if s:
+                vocab |= {str(w).lower() for w in s}
+        return vocab
+    except Exception:
+        return set()
+
+
 def _update_session_mood(cache_key: tuple, appr: dict) -> dict:
     """EMA-update this session's mood from the message appraisal. A message with NO strongly-affective words
     (n_hits==0) HOLDS the prior mood (cross-turn persistence); an affective message moves it."""
@@ -3439,6 +3471,51 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
         })
 
+    # ── COMPREHENSION MEASUREMENT gate (Gate-B, D4, 2026-08-12) ─────────────────────────────────────────────
+    # BEFORE acting on an incoming TRANSITIVE ASSERTION, read a genuinely-SPIKING signal of whether the brain's
+    # role-binding RESOLVED (the co-resident `SpikingRoleCompetition` sel-pool margin off cp_firing_states,
+    # reuse-by-import from `comprehension_production_organ`, 6/6-GO D4 de-risk). On a LOW margin (OOV / content-
+    # ambiguous input the substrate could not comprehend), the brain honestly ABSTAINS ("my role-binding didn't
+    # resolve — I didn't follow that") instead of silently ingesting it — this STRENGTHENS the no-confab moat.
+    # SCOPE (non-regressive by construction): fires ONLY on a competent 3-content-token transitive (fully cue-
+    # covered OR genuinely OOV); questions / self-queries / anaphora / open-ended / real-but-untabled vocab are
+    # OUT OF SCOPE -> byte-identical, unchanged. GUARD: never abstains on a (agent,action) the brain KNOWS
+    # (`what_does` truthy) -> a known fact is honored (and D2 surprise, below, checks the patient instead).
+    # Default-ON; `BRAIN_COMPREHENSION_GATE=0` -> fully skipped (byte-identical oracle).
+    comprehension_info = None
+    try:
+        import research.runners.comprehension_production_organ as _CO
+        _comp_on = _CO.comprehension_enabled()
+    except Exception:
+        _CO = None
+        _comp_on = False
+    if _comp_on:
+        try:
+            corg = _get_comprehension_organ()
+            cj = corg.judge(msg, brain_vocab=_brain_vocab(chat), lesion=_CO.comprehension_lesioned())
+            if cj is not None:
+                comprehension_info = dict(cj)
+                a_c, v_c, p_c = cj["svo"]
+                # the brain KNOWS this (agent,action)? -> a spiking recall exists -> honor it (never abstain on a
+                # known fact); the mismatch of the asserted patient is D2's job, not comprehension's.
+                try:
+                    known = bool(chat.inner.what_does(a_c, v_c))
+                except Exception:
+                    known = False
+                comprehension_info["known_binding"] = bool(known)
+                if (not cj["comprehended"]) and (not known):
+                    # LOW margin + not a known binding -> the brain did not comprehend the roles -> honest abstain.
+                    comprehension_info["abstained"] = True
+                    return JSONResponse({
+                        "answer": _CO.didnt_follow_message(cj["svo"]),
+                        "abstained": True, "recalled_svo": None, "verified": False,
+                        "renderer": rname, "brain": req.brain, "source": source,
+                        "rich": False, "activity": None, "affect": affect_info,
+                        "comprehension": comprehension_info, "not_understood": True,
+                    })
+        except Exception as _ce:  # never let the comprehension read crash a turn — degrade to the normal answer
+            comprehension_info = {"on": True, "error": f"{type(_ce).__name__}: {_ce}"}
+
     # ── RICH path: a SUBSTANTIVE multi-sentence grounded reply ──────────
     # The RichAnswerComposer does its own GATE (direct recall + the moat) +
     # multi-hop chain + elaboration, VERIFY-checks each sentence, and carries
@@ -3496,6 +3573,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # AFFECT (Gate-B): the live mood that colored this turn's forthcomingness + prose manner (debug trace;
             # the tone token lives here, never on the surface). null when affect is disabled (BRAIN_AFFECT=0).
             "affect": affect_info,
+            # COMPREHENSION (Gate-B, D4): the spiking role-binding read for an in-scope transitive (margin/threshold/
+            # comprehended); null when out of scope or disabled (BRAIN_COMPREHENSION_GATE=0). A pass-through here.
+            "comprehension": comprehension_info,
         }
         if is_hyp:
             # additive markers (present ONLY on a generated-hypothesis turn): the guess flag, the (a,v,p) the fluent
@@ -3538,6 +3618,8 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # AFFECT (Gate-B): the live mood that colored this turn's prose manner (debug trace; single-fact path has
         # no forthcomingness lever, so only manner applies here). null when affect is disabled (BRAIN_AFFECT=0).
         "affect": affect_info,
+        # COMPREHENSION (Gate-B, D4): the spiking role-binding read for an in-scope transitive; null out of scope.
+        "comprehension": comprehension_info,
     })
 
 

@@ -82,20 +82,24 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   functional NOTICE ("my mismatch monitor reads this as surprising") + surprise-gated plasticity on the live turn.
 - **D3. Curiosity** (curiosity-inversion GO, learning-progress selection GO, curiosity-veto). Wire → drives a follow-up
   question on a novel/uncertain topic. STATUS: QUEUED (audit in flight).
-- **D4. Comprehension MEASUREMENT** ("measurement of understanding of spoken language"). **DE-RISKED GO 6/6 (2026-08-12),
-  QUEUED-FOR-WIRING:** a genuinely spiking comprehension-success read EXISTS — the on-brain `SpikingRoleCompetition`'s two
-  Wong-Wang accumulator pools (`sel_agent`/`sel_patient`, mutual inhibition) settle to a firing margin
-  `|firing(sel_agent)−firing(sel_patient)|` that is HIGH when thematic roles resolve cleanly and LOW on OOV / content-ambiguous
-  input (`research/runners/_spiking_comprehension_monitor_derisk.py`). Type-2-like AUC=1.000 all 6 seeds separating well-formed
-  from ill-formed (OOV / two-animate-ambiguous / two-inanimate-nonsense); lesion→exactly 0.500 (zeroing the learned cue→role
-  synapses collapses to chance, 100% attributable, anti-tautology); read on `cp_firing_states` (the host `_semantic_contrast`
-  dot-product — the shortcut this replaces — never called); reads COMPREHENSION not word-order (object-fronted "apple eat dog"
-  stays HIGH AUC=1.000, a position-inclusive read collapses); ~0.1–0.3 s/turn. **Surpassed the intuitive mechanism:** the
-  positional BridgeParser 3-role-ensemble margin is content-BLIND (never reads the token → AUC=0.500), so it cannot monitor its
-  own comprehension; the content-sensitive competition parser can. **RESIDUAL:** ceiling-pinned battery (calibrate on a
-  graded/near-threshold set next); scope = 2-noun transitive SVO (multi-clause/questions additive); structural malformedness
-  (no verb/wrong arity) still a host arity check. Wire → gate the turn on the margin → honest "my role-binding didn't resolve —
-  I didn't follow that" + abstain (strengthens the moat). Distinct from the E1 lane-C metacog BOUNDARY (a different faculty).
+- **D4. Comprehension MEASUREMENT** ("measurement of understanding of spoken language"). **WIRED (Gate-B, 2026-08-12).**
+  `/api/brain-chat` now reads a genuinely-SPIKING comprehension signal BEFORE acting on an incoming transitive assertion:
+  the co-resident `SpikingRoleCompetition`'s two Wong-Wang pools (`sel_agent`/`sel_patient`, mutual inhibition), driven by
+  the SEMANTIC (animacy+verbfit) cues only, settle to a firing margin `|agentEv_0−agentEv_1|` read off `cp_firing_states`
+  (reuse-by-import from `research/runners/comprehension_production_organ.py` → the 6/6-GO D4 de-risk, AUC=1.000, lesion→0.500;
+  the host `_semantic_contrast` dot-product never called). On a LOW margin (OOV / content-ambiguous input the substrate could
+  not resolve) the brain honestly ABSTAINS ("my role-binding didn't resolve — I didn't follow that") instead of ingesting it
+  — this STRENGTHENS the moat. SCOPE (non-regressive): fires ONLY on a competent 3-content-token transitive (fully cue-covered
+  OR fully OOV); questions / self-queries / anaphora / open-ended / real-but-untabled vocab are OUT OF SCOPE → byte-identical.
+  GUARD: never abstains on an (agent,action) the brain KNOWS (`what_does` truthy). Default-ON (`BRAIN_COMPREHENSION_GATE=0`
+  escape → byte-identical oracle), lesion-load-bearing (`BRAIN_COMPREHENSION_LESION=1` zeroes cue→role synapses → margin 0.338→0.000
+  on a well-formed input). Verified SYNCHRONOUSLY numpy-CPU through the real handler (7/7: comprehensible m=0.338 PASSES;
+  OOV m=0.026 + ambiguous m=0.142 → honest didn't-follow abstain; known-but-ambiguous m=0.088 HONORED; recall/abstain/anaphora
+  unregressed; flag-off comprehension:null). STATUS: **WIRED**. **RESIDUALS** (ride existing rows): (a) CO-RESIDENT on its own
+  `SpikingRoleCompetition` bridge, not merged onto the one recall bridge — **rides on the one-brain merge (§ below)**;
+  (b) VOCAB CEILING — the cue lexicon is the toy 2-noun transitive scope; a graded/near-threshold battery + a LEARNED cue
+  lexicon are the next rung; (c) structural malformedness (no verb/wrong arity) still a host arity check. Finding
+  `2026-08-12-GateB-comprehension-monitor-production-chat.md`. Distinct from the E1 lane-C metacog BOUNDARY (a different faculty).
 - **D5. Episodic memory** (gap5 one-brain CAPSTONE 6/6 GO: converse→sleep-replay→converse). Wire → recall of PAST TURNS on the
   live turn. STATUS: QUEUED.
 - **D6. Advanced WM binding** (wm-binding-advanced, de_risked YES). Wire → ≥2-referent anaphora / multi-slot. STATUS: QUEUED.

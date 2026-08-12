@@ -1,0 +1,46 @@
+{
+  "what": "Gate-B/D4 comprehension-monitor production wire — in-process synchronous verify on the real /api/brain-chat handler (SIM_BACKEND=numpy, BRAIN_COMPOSER_KIND=rf, stub renderer, rich=False). The D4 gate runs before the rich/single split (composer-independent). 7/7 checks PASS, ~77 s.",
+  "backend": "numpy",
+  "device": "cpu",
+  "provenance": {
+    "runner": "scratchpad/verify_d4.py (in-process call of webapp.server.brain_chat)",
+    "command": "SIM_BACKEND=numpy BRAIN_COMPOSER_KIND=rf python -u verify_d4.py",
+    "seed": 42,
+    "config": {"brain": "tiny-demo", "renderer": "stub", "rich": false, "composer_kind": "rf",
+               "BRAIN_AFFECT": "0", "organ_seed": 42}
+  },
+  "threshold": 0.249,
+  "calibration": {"min_well": 0.331, "max_ill": 0.167, "read_steps": 60, "n_calib": 24},
+  "default_arm": {
+    "what does the dog chase": {"comprehension": null, "abstained": false, "note": "recall question, out of scope, answered 'The dog chases cat.'"},
+    "what does the dragon do": {"comprehension": null, "abstained": true, "note": "untaught question, out of scope, moat unregressed"},
+    "the dog eats the bone": {"margin": 0.338, "threshold": 0.249, "comprehended": true, "known_binding": false, "not_understood": false, "note": "well-formed transitive PASSES the comprehension gate"},
+    "wug blicket toma": {"margin": 0.026, "threshold": 0.249, "comprehended": false, "known_binding": false, "not_understood": true, "note": "OOV -> honest didn't-follow abstain"},
+    "apple push rock": {"margin": 0.142, "threshold": 0.249, "comprehended": false, "known_binding": false, "not_understood": true, "note": "two-inanimate ambiguous -> honest didn't-follow abstain"},
+    "dog chase cat": {"margin": 0.088, "threshold": 0.249, "comprehended": false, "known_binding": true, "not_understood": false, "note": "ambiguous BUT KNOWN fact HONORED (guard) -> answered 'The dog chases cat.'"}
+  },
+  "lesion_arm": {
+    "the dog eats the bone": {"margin": 0.0, "comprehended": false, "not_understood": true, "note": "BRAIN_COMPREHENSION_LESION=1 zeroes cue->role synapses -> margin 0.338 -> 0.000 (load-bearing)"},
+    "wug blicket toma": {"margin": 0.0, "comprehended": false, "not_understood": true}
+  },
+  "flag_off_arm": {
+    "wug blicket toma": {"comprehension": null, "abstained": false, "answer": "The wug blickets toma.", "note": "BRAIN_COMPREHENSION_GATE=0 byte-identical oracle: brain blindly ingests OOV (what the wire strengthens against)"},
+    "the dog eats the bone": {"comprehension": null, "note": "byte-identical oracle"}
+  },
+  "checks": {
+    "recall_question_answered_out_of_scope": true,
+    "untaught_question_abstains_moat_unregressed": true,
+    "comprehensible_transitive_passes": true,
+    "oov_transitive_honest_abstain": true,
+    "ambiguous_transitive_honest_abstain": true,
+    "ambiguous_but_known_fact_honored": true,
+    "lesion_collapses_margin": true,
+    "all_pass": true
+  },
+  "derisk_reference": {
+    "finding": "research/findings/2026-08-12-spiking-comprehension-success-monitor-GO.md",
+    "auc_semantic_6seed": 1.0,
+    "auc_lesion": 0.5,
+    "n_go_seeds": 6
+  }
+}
