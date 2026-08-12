@@ -146,8 +146,11 @@ moat-safe unless noted):
   flag filed; do NOT wire until a real meta-d′>0 mechanism lands; mechanism search in flight, lead: a content-sensitive
   confidence read like D4's).
 - **Adversarial verification (2026-08-12):** D2, D4, A1a each survived an independent 3-skeptic refutation pass (9/9
-  refuted=false, high confidence; D2 reproduced byte-identically). **D4 comprehension monitor is now WIRED** into the
-  production `/api/brain-chat` turn (honest "I didn't follow that" + abstain, default-on, moat-strengthening); D2 in flight.
+  refuted=false, high confidence; D2 reproduced byte-identically). **D4 comprehension monitor AND D2 expectation/surprise
+  are now both WIRED** into the production `/api/brain-chat` turn (Gate-B, default-on, lesion-load-bearing): D4 honestly
+  abstains "I didn't follow that" on an un-comprehended transitive (moat-strengthening), D2 prepends an honest "that
+  surprises me — I'd learned <stored>" notice when an assertion contradicts a stored expectation (both verified numpy-CPU
+  through the real handler: D4 7/7, D2 8/8; findings 2026-08-12-GateB-comprehension/surprise-…-production-chat).
 
 **2026-08-12 — the production chat recall is now GENUINELY SPIKING by DEFAULT.** The `/api/brain-chat` chat brain builds
 `composer_kind="onebrain"` by default, so a factual question is recalled by the resonate-and-fire step on firing neurons
