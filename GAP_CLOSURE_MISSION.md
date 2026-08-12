@@ -25,13 +25,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > the ~20 Aug NO-GOs): [`docs/plans/2026-08-12-gap4-allin-derisk-queue.md`](docs/plans/2026-08-12-gap4-allin-derisk-queue.md).**
 > - **LAUNCHED (local, 4 lanes attacking the wall from 3 distinct mechanism classes + the enabler):** Q1 Forward-Forward/TP
 >   local contrastive (`codex/gap4-forwardforward`) · Q4 DECOLLE trainable-hidden local readouts (`codex/gap4-decolle`) ·
->   Q2 birdsong two-stage tutor (RL tutor + local Hebbian-follow, `codex/gap4-birdsong-tutor`) · Q5 obligatory-depth-3
->   FALSIFIABILITY instrument (`codex/gap4-depth3-instrument`, the enabler — a lane's "GO" is unfalsifiable without it).
-> - **PENDING:** Q3 DRTP-on-Izhikevich + Q9 EventProp-ceiling (AWS-GPU — local card is GAMING; `aws_gpu.sh` needs proper
->   provisioning) · Q8 DFA head-to-head (pool .40/.41/.42) · Q6/Q7 feed Q2 · Q10 fully-spiking burn-down (needs a Q1–Q4 GO).
-> - **THE TELL (substrate vs rule):** if Q5's instrument is built AND Q1/Q2/Q4 all fail on it while BPTT solves it →
->   the point-neuron spiking read carries no obligatory-depth-3 credit under ANY local rule → the ALIF substrate swap is
->   the real surpass. Correlated: Q3+Q9 both failing on Izhikevich where LIF succeeds → the Izhikevich neuron model is the wall.
+>   Q2 birdsong two-stage tutor (RL tutor + local Hebbian-follow, `codex/gap4-birdsong-tutor`).
+> - **✅ Q5 LANDED — 6-seed NEGATIVE that REFRAMES the assault** (`ebfcf736`): the obligatory-depth-3 FALSIFIABILITY
+>   instrument is **NOT constructible** — across 5 families (parity/xorandxor/mux/nestedxor/hier3), 0/6 satisfy
+>   (l2<=chance+0.06 ∧ l3>=0.80 ∧ jump>=0.15); whenever depth-3 generalises a matched-width depth-2 also does → **depth is
+>   never OBLIGATORY on this point-neuron substrate** (finite-read redundancy / weak-coupling). **⇒ SUCCESS CRITERION for
+>   Q1/Q2/Q4 is now ENTER-THE-REGIME (leave majority-class + BEAT the frozen reservoir where FA/KP collapse), NOT
+>   obligatory-depth-3 generalisation** (unmeasurable here). This is itself evidence toward the substrate-not-rule tell.
+> - **PENDING:** Q3 DRTP-on-Izhikevich + Q9 EventProp-ceiling (AWS-GPU — local card is GAMING; `aws_gpu.sh` is only a
+>   driver, no provisioner — NEEDS fresh provisioning or owner go-ahead) · Q8 DFA head-to-head (pool .40/.41/.42) · Q6/Q7
+>   feed Q2 · Q10 fully-spiking burn-down (needs a Q1–Q4 GO). NB most lanes are launch-bound (CPU) → local+pool 56-core suffices.
+> - **THE TELL (substrate vs rule), UPDATED:** Q5 already shows depth is non-obligatory (task side can't force it). If
+>   Q1/Q2/Q4 ALSO fail to ENTER-THE-REGIME (stay at majority-class / ≤ reservoir) while BPTT solves it → the point-neuron
+>   spiking read carries no deep credit under ANY local rule → the **ALIF substrate swap** is the real (scope-first)
+>   surpass. Correlated: Q3+Q9 both failing on Izhikevich where LIF succeeds → the Izhikevich neuron model is the wall.
 > - **COMPUTE:** local 20-core (the 4 lanes) + mini-PC pool .40/.41/.42 36-core (overflow seed-fans / Q8) + AWS-GPU
 >   (Q3/Q9). **SINGLE LITERAL NEXT:** recover/adversarially-verify each of the 4 lanes as it lands (agents tend to defer →
 >   coordinator recovers runner from `.claude/worktrees/agent-<id>/` or the codex branch, runs the 6-seed, banks the honest
