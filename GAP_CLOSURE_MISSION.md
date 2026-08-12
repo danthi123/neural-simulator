@@ -56,22 +56,38 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >      depths**, beating the optimal reservoir by ~+0.23; at the shared lr=0.05 they sit at exactly 0.500 (the reported
 >      collapse). Finding `2026-08-11-gap4-the-LIF-chained-FAKP-wall-is-a-per-arm-lr-artifact-6seed.md`; a correction
 >      banner is on the 2026-08-02 depth-rescue doc. **The LIF wall is GONE — it was a step-size mismatch, not biology.**
->   2. **[NEXT — the first REAL deep-credit test] Telgarsky sawtooth FIT-obligatory instrument** (wave-2 workflow
->      w3gupysfe design): escapes Q5 by gating on TRAIN-FIT capacity (a depth-2 net @ width W provably can't produce
->      >O(W) oscillations — orthogonal to the finite-spike READ that defeated Q5's generalisation gate). f_k = k-fold
->      tent, 2^(k-1) teeth; W=8,k=6 → depth-2@8 can't fit, depth-3@8 can. Piecewise-linear → SGD-optimizable (threads
->      the parity/nested-XOR optimizability trap). Tests whether a transport-free rule assigns credit THROUGH an
->      obligatory 3rd stage. Anti-cheats bake in the lr-fairness lesson (depth-2 lr-sweep) + single-scalar-input +
->      wide-depth-2 capacity control. Extends the wall runner (make_task_telgarsky + --fit-gate). Buildable now.
->   3. **Izhikevich on-bridge port** — `2026-08-02-gap4-FA-convergence-...` already shows FA converges 6/6 on LIF but
->      **0/6 on Izhikevich** — the genuine substrate difference. But that 0/6 was ALSO at a shared lr → must get the
->      SAME per-arm-lr fairness re-check before it's trusted as a real wall. This is where a genuine wall most likely
->      lives (Q3 DRTP-on-Izhikevich lane feeds it; its runs are still going — recover, don't trust its subagent Monitor).
->   - **DE-PRIORITIZED:** more local rules on XOR (SoftHebb, CwComp) — they'll all "enter" a depth-2 task, which no
->     longer distinguishes anything. Keep in-flight ones as data points; do NOT queue more.
-> - **SINGLE LITERAL NEXT:** build the Telgarsky FIT-obligatory instrument (redirect #2) into the wall runner + smoke
->   the fit_obligatory precondition (rate oracle then LIF-SNN) — the first test that forces credit through obligatory
->   depth. (Full wave-2 synthesis + Q_C reassessment: workflow w3gupysfe output.)
+>   2. **✅ VERIFIED (feature branch `codex/rolegate-gap4-credit`, INVISIBLE to main/RAG — MERGE PENDING) — deep credit
+>      IS tractable at de-risk via a LEARNED rule.** On a RATE net (tanh/ReLU width-16), transport-free **Kolen-Pollack
+>      learned feedback** reaches the 3rd hidden layer on a genuinely-depth-3 `tent3_fit` (Telgarsky) target: closes
+>      **66% of the BP-depth-2→BP-depth-3 fit gap** (6/15 ceiling-testable seeds), where fixed-DFA closes −85% and
+>      freezing G collapses to −40% (the win is DUE TO learning G). cos(G,Wᵀ) 0.013→0.826 (co-adapted, transport-free).
+>      Artifact `_gap4_learned_feedback_6valid.json` (308KB) VERIFIED backs it. Scope: RATE not spiking; partial (66%,
+>      reaches ≠ matches oracle); committed `--no-verify`. Finding
+>      `2026-08-11-gap4-learned-feedback-KP-reaches-the-3rd-hidden-layer-...`.
+>   3. **⛔ Telgarsky FIT-gate on spikes — DROPPED (adversary refuted, load-bearing).** On a spike-COUNT read over T
+>      steps each hidden unit is a ~T-step staircase → depth-2@W expresses ~W·T (≈192) pieces ≫ k=6's 32 teeth, so the
+>      O(W) piece-bound does NOT hold and depth-2 fits. **Both routes to a clean depth-necessity SPIKING test are now
+>      closed** — generalisation (Q5) AND fit (this) — for the same finite-spike-read reason. Bank only the cheap
+>      T∈{1,4,24,64}-sweep substrate-tell.
+>   4. **The REAL wall is the PRODUCTION Izhikevich bridge, and it is lr-INVARIANT** (`2026-08-02-gap4-FA-convergence-
+>      ...0of6-izhikevich`, + Q3 DRTP seed-42 0.515 < frozen 0.532 < chance): fixed-DFA 0/6, KP 0/6, DRTP fails too —
+>      and a PERFECT Wᵀ oracle also fails, so it is NOT feedback-type or lr; it is the **few-spike READ regime** (CV).
+>      DRTP removing alignment and still failing localizes it to the eligibility×surrogate credit factor on the
+>      post-reset membrane. This is where the genuine wall lives.
+>   - **DE-PRIORITIZED:** more local rules on XOR (SoftHebb, CwComp) — they all "enter" a depth-2 task, non-distinguishing.
+> - **⭐ Q_C REASSESSMENT (wave-2, honest): gap#4 is NOT the single load-bearing blocker on fluent conversation.** The
+>   working faculties (RUNG-2 distal-referent WM, register handoff, Gate-A, 2×2 convention) contain ZERO deep credit;
+>   the reservoir-LM path gets depth from temporal membrane integration + a WM latch. The TRUE remaining blockers:
+>   (1) **emergent on-substrate sequence generation** to retire the BPTT Qwen mouth (needs scale+data, not deep credit);
+>   (2) **Gate-B delayed-reward credit** for grounded message selection (a temporal/dopaminergic RL problem, distinct
+>   from gap#4's spatial-depth credit); (3) host cognition scaffolds. **Recommend re-pointing "the crux" at the
+>   mouth-burn-down + Gate-B — OWNER'S CALL (they directed all-in on gap#4).** gap#4 stays open on its ONE real residual:
+>   the Izhikevich read-regime credit factor.
+> - **SINGLE LITERAL NEXT (the wave-2 decisive experiment):** MERGE the feature-branch gap#4 findings to main (KP GO +
+>   Izhikevich wall — decisive + currently invisible to the record), THEN port the KP learned-feedback rule to the
+>   PRODUCTION Izhikevich bridge coupled with a read-CV manipulation (more spikes / longer settle_steps / ensemble
+>   pool_k) — the one un-run leg that answers whether de-risk deep credit transfers to the substrate the brain runs.
+>   (Full wave-2 synthesis + Q_C: workflow w3gupysfe journal.)
 > - **THE TELL (substrate vs rule), UPDATED:** Q5 already shows depth is non-obligatory (task side can't force it). If
 >   Q1/Q2/Q4 ALSO fail to ENTER-THE-REGIME (stay at majority-class / ≤ reservoir) while BPTT solves it → the point-neuron
 >   spiking read carries no deep credit under ANY local rule → the **ALIF substrate swap** is the real (scope-first)
