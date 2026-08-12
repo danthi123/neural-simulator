@@ -117,6 +117,17 @@ Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain st
 (`2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
+**2026-08-12 — the production chat recall is now GENUINELY SPIKING by DEFAULT.** The `/api/brain-chat` chat brain builds
+`composer_kind="onebrain"` by default, so a factual question is recalled by the resonate-and-fire step on firing neurons
+(the on-substrate cleanup + weight-store), not the numpy fast-path scan — HTTP-verified (every answer tagged
+`composer='onebrain'` with a live spike trace: 45730 readout neurons, ~1.7% fired on a match, ~0 on an honest abstain).
+The blocker was that a fact TAUGHT mid-conversation stored but never recalled on the spiking store — a wrap-vs-inner
+cleanup-codebook bug, fixed by "recruit-an-assembly" (the composer reserves a pool of uncommitted cleanup slots, like a
+cortex's uncommitted assemblies, and recruits one when a new word is learned). So teaching the brain a new fact by
+talking, and recalling it, now both happen on the spiking substrate. Cost: a ~183s one-time build (speed is secondary).
+Next: neuralize the question→role parse so the host keyword router can retire.
+(`2026-08-12-INTEGRATION-onebrain-is-now-the-production-default-genuinely-spiking-recall.md`)
+
 **2026-08-11 OVERNIGHT BATCH (autonomous, ~two dozen de-risks banked).** The load-bearing net-new results, on top
 of the arc above: (1) **⭐ the "one brain" now holds through the INTERACTION level** — #7 burn-down 1 merged the
 e-prop acquisition net into disjoint slices of the SINGLE conversational bridge sharing ONE `cp_connections`

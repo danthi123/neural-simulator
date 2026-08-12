@@ -15,6 +15,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-12 (READ FIRST — live resume point)
 
+> **🟢 LATEST (2026-08-12, this cycle): the production chat recall is now GENUINELY SPIKING by DEFAULT (#0 landed).**
+> `/api/brain-chat` (tiny-demo) builds `composer_kind="onebrain"` by default — recall is the resonate-and-fire step on
+> firing neurons (HTTP activity trace: `composer='onebrain'`, 45730 readout neurons, frac_fired 1.7%%/~0), not the numpy
+> `_scan`. The blocker (a runtime-taught word STORED but never RECALLED under the spiking store) was a wrap-vs-inner
+> cleanup-codebook bug, FIXED via recruit-an-assembly (`OneBrainComposer vocab_headroom`, biological uncommitted-assembly
+> recruit). HTTP-verified CHOOSE+abstain+LEARN+rich-GENERATE, all onebrain. Commits `e82ab916`→`4d372876`→`1c2b9f586`;
+> byte-identical at headroom=0. **SINGLE LITERAL NEXT unchanged: #1 CHOOSE** — neuralize the question→(agent,action) PARSE
+> (still host token-matching in `_substrate_recall`) via `BridgeParser`, so the host `QuestionRouter` fallback can retire.
+> Speed secondary (the ~183s onebrain warm build is accepted).
+
 > **⭐⭐⭐⭐ THE GOAL (owner clarification 2026-08-11, SUPERSEDES the framing below): a WORKING all-spiking one-substrate
 > brain with ALL faculties ON BY DEFAULT in production — FULLY FUNCTIONAL when the owner runs it and chats with it. NOT a
 > pile of default-off de-risk GOs beside a host pipeline.** The diagnosed drift: the project accumulated ~40 validated but
@@ -42,10 +52,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > retired): host QuestionRouter still the self/identity+anaphora fallback; broader CHOOSE (neural question comprehension)
 > unwired; Qwen renders surface; BTSP per-turn write is the deeper LEARN. **LESSON: verify on the ACTUAL production entry
 > point (gate/endpoint), not answer().** SCAFFOLD-RETIRED 0. Findings: 2026-08-12-INTEGRATION1/2/2b/3 (3 corrected).**
-> - **#0 One-brain default (cheap, unblocks the substrate).** Flip `composer_kind="onebrain"` in the four builders
->   (auto-enables spiking cleanup/store/learned-assoc/reciprocal-unbind). **GATE ON A LESION TEST, not the flip** — those
->   branches are byte-identical to numpy (`brain_conversational_agent.py:233 "== host argmax"`), so credit only if
->   lesioning the spiking path CHANGES the default answer; else it is cosmetic.
+> - **✅ #0 One-brain default — LANDED (2026-08-12, `4d372876`, HTTP-verified).** The production `/api/brain-chat`
+>   tiny-demo brain now builds `composer_kind="onebrain"` BY DEFAULT (`webapp/server.py` `BRAIN_COMPOSER_KIND` default
+>   flipped `rf`→`onebrain`; `=rf` is the escape). Recall now runs the resonate-and-fire step per query on the co-resident
+>   RF substrate (on-substrate cleanup + weight-store), NOT the numpy `_scan` fast path. **The credit is a MECHANISM claim
+>   (recall on FIRING NEURONS), proven by the HTTP activity trace — `composer='onebrain'`, 45730 readout neurons,
+>   `frac_fired` 1.7%% on a match / ~0 on an abstain — NOT an answer change** (onebrain and rf give the same answers by
+>   design; the point is the substrate computing them, so the "lesion must change the answer" test is the wrong test for
+>   an answer-preserving mechanism swap). Unblocked by the recruit-an-assembly fix (`e82ab916`): a fact taught mid-chat now
+>   lands + recalls on the SPIKING store (OneBrainComposer `vocab_headroom` — a pool of uncommitted cleanup slots, the
+>   biological adult-born-granule-cell recruit; the wrap-vs-inner codebook bug that dropped runtime-taught words is closed).
+>   HTTP-verified: CHOOSE + abstain + LEARN (teach "wolf hunt deer" → recall) + rich GENERATE, all `composer='onebrain'`.
+>   Cost ~183s one-time warm build (speed secondary). Scaffold NOT retired (rf stays the CPU/test oracle + escape). Findings
+>   `2026-08-12-INTEGRATION-onebrain-is-now-the-production-default...` + `2026-08-12-onebrain-spiking-store...RESOLVED`.
 > - **#1 Content selection (the biggest host gap).** Route the default `/api/brain-chat` DIRECT answer through the spiking
 >   dlPFC `SpikingSpreadingController`, replacing `QuestionRouter.match_fact`. "a keyword DB talks" → "the brain chooses."
 > - **✅ #2 In-loop learning — LANDED (2026-08-12, `61b3de70`, lesion-verified).** `ChatBrain.gate` is now
