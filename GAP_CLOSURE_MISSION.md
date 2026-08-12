@@ -15,7 +15,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-12 (READ FIRST — live resume point)
 
-> **⭐⭐⭐ TOP PRIORITY (2026-08-12, OWNER DIRECTIVE): ALL-IN ON gap#4 — full effort, max parallelization, all compute.**
+> **⭐⭐⭐⭐ THE GOAL (owner clarification 2026-08-11, SUPERSEDES the framing below): a WORKING all-spiking one-substrate
+> brain with ALL faculties ON BY DEFAULT in production — FULLY FUNCTIONAL when the owner runs it and chats with it. NOT a
+> pile of default-off de-risk GOs beside a host pipeline.** The diagnosed drift: the project accumulated ~40 validated but
+> DEFAULT-OFF spiking faculties while the production `/api/brain-chat` path stayed HOST (keyword content-selector + numpy
+> composer + off-bridge Qwen mouth) — because every discipline rewarded whether a MECHANISM is spiking + a de-risk is a GO,
+> and NONE checked whether it was WIRED INTO THE PRODUCTION DEFAULT + turned ON. **NEW SPINE: INTEGRATION-to-production-
+> default. Success is measured on the INTEGRATED PRODUCTION SYSTEM; a faculty is DONE only when WIRED + ON-BY-DEFAULT +
+> host-SCAFFOLD-RETIRED.** Baseline reality: `2026-08-11-PRODUCTION-chat-pipeline-is-largely-HOST-...` (code-traced: the
+> default chat is host comprehension + host content-selection + numpy composer + transformer mouth; the spiking substrate
+> only VERIFIES a host-chosen fact; no in-loop learning; not one-brain). **In flight (wjgvtko3i): the full production-
+> integration ledger (every faculty × de-risked/wired/on-by-default/scaffold-retired) + a MECHANICAL gate that catches the
+> "GO-but-default-off" drift + the integration-first roadmap restructure.** Memory: `project_goal_is_integrated_production_default_brain`.
+> The immediate top-priority becomes CLOSING THE PRODUCTION HOST GAPS (spiking content-selection, in-loop plasticity on the
+> answer path, open-ended generation from the brain, one-brain wiring, and turning the default-off GOs ON) — NOT another
+> isolated de-risk. gap#4 (below) stays open only on its one Izhikevich residual; it is no longer "the crux."
+
+> **⭐⭐⭐ (SUPERSEDED framing, kept for the compute-lane history) TOP PRIORITY (2026-08-12, OWNER DIRECTIVE): ALL-IN ON gap#4 — full effort, max parallelization, all compute.**
 > gap#4 (deep credit on real spikes) is THE gate on fluent open-ended conversation (a deep-research re-answer established
 > it: the WM/binding/role/hybrid stack is GO at rate level; the transformer mouth is reduced to a WKV linear-recurrence
 > but is still BPTT-trained; the one load-bearing residual is a LOCAL learning rule that gets a DEEP spiking net to learn
