@@ -1,0 +1,242 @@
+{
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "T": [
+      32
+    ],
+    "K": 16,
+    "F": 16,
+    "N": 192,
+    "H": 96,
+    "D": 64,
+    "epochs": 60,
+    "n_train": 6000,
+    "n_eval": 1500,
+    "batch": 256,
+    "device": "cuda",
+    "out": "/home/dant123/Projects/sim/.claude/worktrees/agent-a40606d7b8b094fbc/research/findings/raw/_dc_scale_K16_T32.json",
+    "smoke": false,
+    "gradcheck_only": false
+  },
+  "grad_check": {
+    "resid_theta_d": 1.1920928955078125e-07,
+    "resid_W_v": 4.76837158203125e-07,
+    "resid_W_g": 1.1920928955078125e-07,
+    "PASS": true
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "T": 32,
+      "K": 16,
+      "chance": 0.0625,
+      "ngram3": 0.06266666666666666,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.11733333333333333,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.15066666666666667,
+          "lr": 0.3
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.11733333333333333,
+          "lr": 0.03
+        }
+      },
+      "cue_scramble_acc": 0.06933333333333333,
+      "elapsed": 395.7
+    },
+    {
+      "seed": 43,
+      "T": 32,
+      "K": 16,
+      "chance": 0.0625,
+      "ngram3": 0.068,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.11666666666666667,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.158,
+          "lr": 0.3
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.11666666666666667,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 885.2
+    },
+    {
+      "seed": 44,
+      "T": 32,
+      "K": 16,
+      "chance": 0.0625,
+      "ngram3": 0.06,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.13,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.15533333333333332,
+          "lr": 0.3
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.13,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 1435.4
+    }
+  ],
+  "aggregate": {
+    "32": {
+      "fixed_store": {
+        "mean": 0.12133333333333333,
+        "std": 0.006134299440818784,
+        "vals": [
+          0.11733333333333333,
+          0.11666666666666667,
+          0.13
+        ]
+      },
+      "eprop_random": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "eprop_learnfb": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "eprop_truefb": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "bptt_ceiling": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "shuffle_elig": {
+        "mean": 0.15466666666666665,
+        "std": 0.0030307070437746325,
+        "vals": [
+          0.15066666666666667,
+          0.158,
+          0.15533333333333332
+        ]
+      },
+      "sign_flip": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "zero_signal": {
+        "mean": 0.12133333333333333,
+        "std": 0.006134299440818784,
+        "vals": [
+          0.11733333333333333,
+          0.11666666666666667,
+          0.13
+        ]
+      },
+      "_frac_learnfb_of_gap": null,
+      "_frac_truefb_of_gap": null,
+      "_frac_learnfb_of_ceiling": 1.0,
+      "_instrument_valid": false,
+      "_cue_scramble": 0.06933333333333333,
+      "_verdict": "INSTRUMENT_VACUOUS (fixed not at chance, or ceiling collapsed below the local rule at depth)"
+    }
+  }
+}

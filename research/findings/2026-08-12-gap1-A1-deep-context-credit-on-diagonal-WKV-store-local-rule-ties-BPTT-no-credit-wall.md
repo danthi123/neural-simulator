@@ -153,12 +153,26 @@ on a task too easy to separate the credit rules.
   dependency and better at long lag (vanishing-gradient-robust); (c) the store-credit is genuinely load-bearing and
   clean controls (shuffle/cue-scramble/zero) work — the instrument machinery is sound, it just needs a HARDER task.
 
-**Next rung (to LOCATE the real open-prose wall):** SCALE the task until the arms SEPARATE — push (i) content vocab K
-(feedback-alignment fails at large output dimension; Bartunov-2018 — random FB breaks on large-scale, learned FB
-needed), (ii) filler diversity F and lag T, and (iii) dependency STRUCTURE (multi-cue combination / long-range routing
-that a diagonal store + read-out cannot fake). The wall is LOCATED at the (K, T, depth) where `eprop_random` DROPS
-below `eprop_truefb`/`bptt` AND `eprop_learnfb` opens a gap over `eprop_random` — that is where the learned-feedback
-companion becomes load-bearing. A scaled run is launched (see Files).
+**SCALE-SWEEP RESULT (2026-08-12, `_dc_scale_*.json`, K∈{16,32,64,128}×T32 + K64×T64, 3-seed, N=192):** the K-sweep
+RAN and the picture is now sharp (mean accuracy per arm):
+- **K16 (too easy):** every e-prop arm saturates at 1.000 (== BPTT) — no credit signal to probe.
+- **K32 (the ONE informative point):** the credit WALL appears — `eprop_random` 0.752 and `eprop_learnfb` 0.751 both fall
+  short of `eprop_truefb`/`bptt` 0.931 — AND **learned-KP feedback does NOT close the gap** (`learnfb_frac_of_gap`
+  = −0.002; it ties random), while TRUE (weight-transport) feedback closes it fully. `sign_flip` 0.720, `shuffle_elig`
+  0.053 (control collapses). So: on the diagonal store a real deep-context credit gap opens, and the biologically-PLAUSIBLE
+  local feedbacks (random AND learned-KP) leave it — only biologically-IMPLAUSIBLE weight-transport closes it.
+- **K64 / K128 / K64×T64 (capacity wall, NOT a credit probe):** EVERYTHING — including BPTT — collapses to ~chance
+  (BPTT 0.062 / 0.015 / 0.026). Past K32 the task exceeds the learnable capacity of ALL arms at this N/epochs, so it no
+  longer isolates credit-assignment quality.
+
+**Refined verdict:** the earlier "inconclusive" is now partly RESOLVED — the deep-context credit wall is REAL and sits at
+K32 on this store, and the **learned-feedback (KP/DNI) lever is an HONEST NEGATIVE there (ties random, does not recover
+weight-transport)**. This banks the KP method and **launches the next mechanism search** (per the no-defer law): a
+biologically-plausible feedback that recovers transport's benefit at large output dimension WITHOUT collapsing capacity —
+candidates to de-risk next: a wider-N / more-epochs K32-family run to confirm the gap is credit-not-capacity, then
+**local target-propagation / difference-target-prop, a burst-multiplexed apical feedback, or a predictive-coding feedback
+that provably aligns** (the feedback-alignment-at-scale open problem). The scale axis that cleanly separates is K
+(output dimension), exactly as Bartunov-2018 predicts; T/lag was NOT the binding axis on the diagonal store.
 
 **The other genuine remaining residual (separate, already mapped):** porting the store's local credit to the
 PRODUCTION Izhikevich few-spike READ regime (2026-08-11: fixed-DFA/KP/DRTP and even a perfect W^T oracle give no

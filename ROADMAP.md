@@ -164,8 +164,11 @@ moat-safe unless noted):
   the wall — random AND sign-flipped feedback both tie/beat the BPTT ceiling (T=48), and at T=64 the BPTT ceiling is itself
   INVALID (vanishing-gradient: 0.599 < the forward-eligibility local rule 0.973). Bounded findings: the banked ~44% e-prop
   "wall" is SUBSTRATE-SPECIFIC (a full-W_rec reservoir), NOT the diagonal WKV store the generative cortex uses; a local
-  forward-eligibility rule ties/beats BPTT for a single-cue deep dependency. Next lever: SCALE (content-vocab K, filler
-  diversity, dependency depth) until the arms separate to LOCATE the wall (a K-sweep is running, pid 763519).
+  forward-eligibility rule ties/beats BPTT for a single-cue deep dependency. **K-SWEEP DONE (2026-08-12): the wall is
+  LOCATED at K32** (output dim) — e-prop random 0.752 = learned-KP 0.751 < BPTT 0.931, and **learned-KP feedback is an
+  HONEST NEGATIVE (ties random, does not close the gap; only weight-transport does)**; K64+ collapses ALL arms incl. BPTT
+  (capacity wall, not a credit probe). Banks the KP lever → next mechanism search: a biologically-plausible feedback that
+  recovers transport at large output dimension (target-prop / burst-multiplexed apical / aligning predictive-coding FB).
 - **E3 deeper-LEARN — BTSP plateau LASTING trace — 6/6 GO (with a host caveat):** a real on-bridge BTSP plateau write +
   spiking recall + a synaptic TAG-AND-CAPTURE persistence model — the plateau write still recalls after a 200-step decay
   window (54–92 Hz) where transient/static/moat writes decay below recall; lesion-load-bearing (95% of persistence
