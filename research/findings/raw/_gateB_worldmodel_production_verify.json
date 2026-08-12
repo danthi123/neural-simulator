@@ -1,0 +1,152 @@
+{
+  "results": {
+    "query_returns_prediction": true,
+    "update_predicts_persistence": true,
+    "violation_fires_surprise": true,
+    "persistence_no_surprise": true,
+    "lesion_query_margin_collapses": true,
+    "lesion_expected_fires": true,
+    "flagoff_null_worldmodel": true,
+    "flagoff_no_notice": true,
+    "flagoff_query_not_intercepted": true,
+    "reg_recall": true,
+    "reg_anaphora": true,
+    "reg_abstain": true,
+    "reg_D2": true,
+    "reg_D4": true,
+    "reg_E1_present": true
+  },
+  "intact_query": {
+    "on": true,
+    "lesioned": false,
+    "context_sign": 1,
+    "state": 0,
+    "pred_sign": 1,
+    "pred_pos_rate": 451.3888888888889,
+    "pred_neg_rate": 40.625,
+    "pred_margin": 410.7638888888889,
+    "kind": "query"
+  },
+  "violation": {
+    "on": true,
+    "lesioned": false,
+    "context_sign": 1,
+    "observed_sign": -1,
+    "state": 0,
+    "surprise_hz": 24.305555555555554,
+    "threshold": 12.152777777777777,
+    "surprised": true,
+    "calib": {
+      "state_pos": 0,
+      "state_neg": 2,
+      "expected_hz": [
+        0.0,
+        0.0
+      ],
+      "violated_hz": [
+        24.305555555555554,
+        49.30555555555556
+      ],
+      "threshold": 12.152777777777777,
+      "pos_states": [
+        0,
+        1,
+        3
+      ],
+      "neg_states": [
+        2,
+        4,
+        5
+      ]
+    },
+    "kind": "violation"
+  },
+  "persistence": {
+    "on": true,
+    "lesioned": false,
+    "kind": "update",
+    "context_sign": -1,
+    "predicted_next_sign": -1,
+    "pred_margin": -440.27777777777777
+  },
+  "lesion_query": {
+    "on": true,
+    "lesioned": true,
+    "context_sign": 1,
+    "state": 0,
+    "pred_sign": -1,
+    "pred_pos_rate": 0.0,
+    "pred_neg_rate": 0.0,
+    "pred_margin": 0.0,
+    "kind": "query"
+  },
+  "organ_expected_intact": {
+    "on": true,
+    "lesioned": false,
+    "context_sign": 1,
+    "observed_sign": 1,
+    "state": 0,
+    "surprise_hz": 0.0,
+    "threshold": 12.152777777777777,
+    "surprised": false,
+    "calib": {
+      "state_pos": 0,
+      "state_neg": 2,
+      "expected_hz": [
+        0.0,
+        0.0
+      ],
+      "violated_hz": [
+        24.305555555555554,
+        49.30555555555556
+      ],
+      "threshold": 12.152777777777777,
+      "pos_states": [
+        0,
+        1,
+        3
+      ],
+      "neg_states": [
+        2,
+        4,
+        5
+      ]
+    }
+  },
+  "organ_expected_lesion": {
+    "on": true,
+    "lesioned": true,
+    "context_sign": 1,
+    "observed_sign": 1,
+    "state": 0,
+    "surprise_hz": 52.083333333333336,
+    "threshold": 12.152777777777777,
+    "surprised": true,
+    "calib": {
+      "state_pos": 0,
+      "state_neg": 2,
+      "expected_hz": [
+        0.0,
+        0.0
+      ],
+      "violated_hz": [
+        24.305555555555554,
+        49.30555555555556
+      ],
+      "threshold": 12.152777777777777,
+      "pos_states": [
+        0,
+        1,
+        3
+      ],
+      "neg_states": [
+        2,
+        4,
+        5
+      ]
+    }
+  },
+  "violation_answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. I don't know about that.",
+  "query_answer": "My affective forward model expects this to keep going positive (predicted next-turn valence +, pool-rate margin +411 Hz) \u2014 that's a functional read of my world-model's prediction, not a felt expectation.",
+  "all_pass": true
+}

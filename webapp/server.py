@@ -1849,6 +1849,15 @@ async def _warm_chat_brain() -> None:
                     print("[webapp] startup: metacog organ (co-resident balance-of-evidence monitor) WARM", flush=True)
             except Exception as _me:
                 print(f"[webapp] startup: metacog organ warm skipped ({type(_me).__name__}: {_me})", flush=True)
+            # WORLD-MODEL (Gate-B, E2): pre-build the co-resident spiking affective forward model so the first
+            # expectation query / violation read is fast. Best-effort + guarded (default-ON; BRAIN_WORLDMODEL=0 skips).
+            try:
+                from research.runners.worldmodel_production_organ import worldmodel_enabled
+                if worldmodel_enabled():
+                    _get_worldmodel_organ().ensure_built()
+                    print("[webapp] startup: world-model organ (co-resident valence forward model) WARM", flush=True)
+            except Exception as _we:
+                print(f"[webapp] startup: world-model organ warm skipped ({type(_we).__name__}: {_we})", flush=True)
             dt = round(_t.time() - t0, 1)
             print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
@@ -2875,6 +2884,13 @@ _BRAIN_RICH: dict[tuple[str, str, str], object] = {}
 _SESSION_MOOD: dict[tuple[str, str, str], dict] = {}
 _MOOD_EMA_DECAY = 0.4   # a strong induction turn dominates; a neutral turn (0 affective hits) HOLDS the prior mood
 
+# ─── INTERNAL WORLDVIEW / AFFECTIVE WORLD-MODEL (Gate-B, E2): the brain's spiking forward model predicts the
+# next-turn affect and fires a surprise on an affect-trajectory violation ─────────────────────────────────────
+# Per-session forward-model STATE (the affective context sign + the prediction the model held from the prior
+# turn), keyed identically to the ChatBrain cache. Held host-side; the queryable PREDICTION + the surprise
+# MISMATCH are the load-bearing spiking reads. Cleared on reset. See research/runners/worldmodel_production_organ.py.
+_SESSION_WORLDVIEW: dict[tuple[str, str, str], dict] = {}
+
 
 def _get_affect_organ():
     """The process-shared spiking affect organ (built once, ~1s on the process backend)."""
@@ -2897,6 +2913,12 @@ def _get_surprise_organ():
 def _get_metacog_organ():
     """The process-shared spiking metacognition organ (built once; the co-resident balance-of-evidence monitor)."""
     from research.runners.metacog_production_organ import get_organ
+    return get_organ(seed=42)
+
+
+def _get_worldmodel_organ():
+    """The process-shared spiking affective world-model organ (built once; the co-resident valence forward model)."""
+    from research.runners.worldmodel_production_organ import get_organ
     return get_organ(seed=42)
 
 
@@ -3395,6 +3417,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _BRAIN_CHATS.pop(cache_key, None)
         _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
         _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
+        _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
@@ -3501,6 +3524,66 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "renderer": rname, "brain": req.brain, "source": source,
             "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
         })
+
+    # ── INTERNAL WORLDVIEW / AFFECTIVE WORLD-MODEL (Gate-B, E2, 2026-08-12) ──────────────────────────────────
+    # The brain maintains a spiking affective FORWARD MODEL: from the current affective context it PREDICTS the
+    # next-turn valence (QUERYABLE — "what do you expect / how is this going?"), and fires a genuinely-SPIKING
+    # SURPRISE when the actual next turn VIOLATES that prediction (an affective prediction-error). Reuse-by-import
+    # from `worldmodel_production_organ` (the E2 de-risk, 6/6 GO). The prediction read + the mismatch read are the
+    # load-bearing SPIKING parts; the valence APPRAISAL + the persistence state-selection are declared host
+    # boundaries (RESIDUAL, the named next rung: generic pos/neg pools, NOT bound to the ACTUAL interlocutor affect
+    # — the P0.3 valence latch + the W5 ToM channel). Additive + moat-safe: E2 only READS (a queryable expectation)
+    # or NOTICES (an honest surprise notice); it never manufactures a fact, flips an abstain, or changes WHICH
+    # answer the recall produced. Default-ON; `BRAIN_WORLDMODEL=0` -> fully skipped (byte-identical oracle).
+    worldmodel_info = None
+    worldmodel_prefix = ""
+    try:
+        import research.runners.worldmodel_production_organ as _WM
+        from research.runners.affect_production_organ import appraise_text as _wm_appraise
+        _wm_on = _WM.worldmodel_enabled()
+    except Exception:
+        _WM = None
+        _wm_on = False
+    if _wm_on:
+        try:
+            wm_state = _SESSION_WORLDVIEW.setdefault(cache_key, {"context_sign": 1, "expected_sign": None})
+            wm_lesion = _WM.worldmodel_lesioned()
+            # QUERYABLE expectation: an explicit "what do you expect / how is this going" -> read the two-pool
+            # spiking prediction for the current affective context and answer with an honest functional read-out.
+            if _WM.is_expectation_query(msg):
+                worg = _get_worldmodel_organ()
+                exp = worg.expectation(int(wm_state.get("context_sign", 1)), lesion=wm_lesion)
+                return JSONResponse({
+                    "answer": _WM.expectation_readout(exp),
+                    "abstained": False, "recalled_svo": None, "verified": True,
+                    "renderer": rname, "brain": req.brain, "source": source,
+                    "rich": False, "activity": None, "affect": affect_info,
+                    "worldmodel": dict(exp, kind="query"), "inner_state_readout": True,
+                })
+            # OTHERWISE: appraise THIS turn's affect; if it VIOLATES the prediction the model held from the prior
+            # turn, fire the spiking surprise + an honest notice; then update the held expectation (persistence prior:
+            # a positive context expects a positive next turn, so a sign FLIP is the affect-trajectory violation).
+            obs_val = float(_wm_appraise(msg).get("valence", 0.0))
+            obs_sign = 1 if obs_val > 0.02 else (-1 if obs_val < -0.02 else 0)
+            if obs_sign != 0:
+                worg = _get_worldmodel_organ()
+                held = wm_state.get("expected_sign")
+                if held is not None and obs_sign != held:
+                    sj = worg.read_surprise(int(wm_state.get("context_sign", 1)), obs_sign, lesion=wm_lesion)
+                    worldmodel_info = dict(sj)
+                    worldmodel_info["kind"] = "violation"
+                    if sj["surprised"]:
+                        worldmodel_prefix = _WM.worldmodel_surprise_notice(int(held))
+                # update the held expectation for the NEXT turn from THIS turn's observed context (persistence).
+                exp = worg.expectation(obs_sign, lesion=wm_lesion)
+                wm_state["context_sign"] = int(obs_sign)
+                wm_state["expected_sign"] = int(exp["pred_sign"])
+                if worldmodel_info is None:
+                    worldmodel_info = {"on": True, "lesioned": bool(wm_lesion), "kind": "update",
+                                       "context_sign": int(obs_sign), "predicted_next_sign": int(exp["pred_sign"]),
+                                       "pred_margin": float(exp["pred_margin"])}
+        except Exception as _we:  # never let the world-model read crash a turn — degrade to the normal answer
+            worldmodel_info = {"on": True, "error": f"{type(_we).__name__}: {_we}"}
 
     # ── COMPREHENSION MEASUREMENT gate (Gate-B, D4, 2026-08-12) ─────────────────────────────────────────────
     # BEFORE acting on an incoming TRANSITIVE ASSERTION, read a genuinely-SPIKING signal of whether the brain's
@@ -3652,7 +3735,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # SURPRISE (Gate-B, D2): if the asserted fact violated a stored expectation (a firing mismatch), PREPEND the
         # honest functional notice to the turn's answer. Additive; empty prefix when not surprised / disabled.
         resp = {
-            "answer": (surprise_prefix + r["answer"]) if surprise_prefix else r["answer"],
+            "answer": worldmodel_prefix + surprise_prefix + r["answer"],
             "abstained": bool(r["abstained"]),
             # the direct recall (the first supporting fact) is the gate hit,
             # surfaced for parity with the single-fact path's recalled_svo.
@@ -3681,6 +3764,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # SURPRISE (Gate-B, D2): the spiking expectation-violation read for an asserted fact with a stored
             # expectation (surprise_hz/threshold/surprised); null when no stored expectation or disabled (BRAIN_SURPRISE=0).
             "surprise": surprise_info,
+            # WORLD-MODEL (Gate-B, E2): the spiking affective forward-model read for this turn (kind=update with the
+            # predicted next-turn valence, or kind=violation with the fired surprise); null when disabled/neutral.
+            "worldmodel": worldmodel_info,
         }
         if is_hyp:
             # additive markers (present ONLY on a generated-hypothesis turn): the guess flag, the (a,v,p) the fluent
@@ -3712,10 +3798,10 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
-    # SURPRISE (Gate-B, D2): PREPEND the honest expectation-violation notice when the asserted fact fired the
-    # spiking mismatch unit. Additive; empty prefix when not surprised / disabled.
-    if surprise_prefix:
-        answer = surprise_prefix + answer
+    # WORLD-MODEL (Gate-B, E2) + SURPRISE (Gate-B, D2): PREPEND the honest affect-trajectory-violation notice
+    # (world-model) then the expectation-violation notice (surprise). Additive; empty prefixes when not firing.
+    if worldmodel_prefix or surprise_prefix:
+        answer = worldmodel_prefix + surprise_prefix + answer
 
     # METACOG (Gate-B, E1): read the spiking confidence of this recall answer; a LOW-confidence answer gets an
     # honest functional hedge PREPENDED (skip an abstain — no answer to qualify). Additive; null when disabled.
@@ -3748,6 +3834,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # METACOG (Gate-B, E1): the spiking balance-of-evidence confidence read for this recall answer
         # (balance/threshold/confident/mean_role_conf); null when abstained / disabled (BRAIN_METACOG=0).
         "metacog": metacog_info,
+        # WORLD-MODEL (Gate-B, E2): the spiking affective forward-model read for this turn (kind=update with the
+        # predicted next-turn valence, or kind=violation with the fired surprise); null when disabled/neutral.
+        "worldmodel": worldmodel_info,
     })
 
 

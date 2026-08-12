@@ -139,8 +139,23 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   uncertain"). **RESIDUAL/next rung (mapped):** loop-ablation does NOT collapse the balance read — it is "confidence =
   balance of evidence" (a genuine decision-variable read) but NOT architecturally type-1/type-2 DISSOCIABLE; the dissociable
   comparator (`margin_abs`) is seed-fragile 0/6 = the named next rung (make it robust via the D4 content-sensitive read).
-- **E2. Internal worldview / affective world-model** — **DE-RISKED GO 6/6 (2026-08-12), QUEUED-FOR-WIRING** (was
-  RESEARCH-NEEDED). The corpus audit confirmed the building blocks existed (D2 mismatch unit, HTM-TM sequence predictor,
+- **E2. Internal worldview / affective world-model** — **WIRED (Gate-B, 2026-08-12)** (was RESEARCH-NEEDED -> DE-RISKED
+  GO 6/6 -> now WIRED onto the DEFAULT turn). `/api/brain-chat` now runs the co-resident 2-channel spiking predictive-coding
+  VALENCE forward model (reuse-by-import from `research/runners/worldmodel_production_organ.py`): the next-turn-affect
+  prediction is QUERYABLE ("what do you expect / how is this going" -> the two-pool spike-rate read, an early-return honest
+  read-out), and an affect-trajectory VIOLATION fires a genuinely-SPIKING surprise (`cp_firing_states[surprise]`) that
+  PREPENDS an honest "that shifts the mood unexpectedly" notice. Default-ON (`BRAIN_WORLDMODEL=0` escape -> byte-identical
+  oracle), moat-safe (only READS/NOTICES — never manufactures a fact or flips an abstain), lesion-load-bearing
+  (`BRAIN_WORLDMODEL_LESION=1` zeroes the learned transition -> the queryable prediction margin collapses 411->0 AND an
+  EXPECTED observation flips 0->52 Hz surprised). Verified SYNCHRONOUSLY numpy-CPU through the real handler (15/15: queryable
+  +411 Hz margin; violation 24.3 Hz > thr 12.2 fires the notice; persistence no-surprise; lesion collapses both; flag-off
+  null + not-intercepted; recall/anaphora/abstain/D2/D4/E1 unregressed). Finding
+  `2026-08-12-GateB-worldmodel-affective-forward-model-production-chat.md`. **RESIDUAL (the mission's named NEXT RUNG, not
+  faked):** GENERIC pos/neg pools — binding the state+observation to the ACTUAL interlocutor affect (the P0.3 valence latch +
+  the W5 ToM channel) is the next rung (un-wired); the persistence state-SELECTION is a declared host mapping; Markov-1
+  first-order transition (HTM-TM high-order is a rung); teacher-driven (not self-organized); CO-RESIDENT on its own bridge
+  (rides on the one-brain merge, §). **The original de-risk record (for provenance):**
+  The corpus audit confirmed the building blocks existed (D2 mismatch unit, HTM-TM sequence predictor,
   W5 other-tagged affect, P0.3 valence latch) but NO validated *affective forward model*. Built one, brain-based, NO
   `sim/` edit (`research/runners/_affective_world_model_derisk.py`): a 2-channel spiking predictive-coding VALENCE forward
   model on the Izhikevich bridge — `state→pred_{pos,neg}` is an all-to-all plastic transition LEARNED FROM ZERO by Hebbian
