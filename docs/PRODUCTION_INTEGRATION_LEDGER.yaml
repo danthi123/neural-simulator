@@ -49,12 +49,13 @@ rows:
     de_risked: YES
     wired: YES                  # 2026-08-12 INTEGRATION #1: substrate-first recall + honest abstain on /api/brain-chat
     on_by_default: YES          # default gate behavior; probe CHOOSE True + lesion-load-bearing
-    scaffold_retired: NO        # QuestionRouter still the fallback for self/identity + noisy-anaphora; broader CHOOSE (neural question comprehension, open-ended topic) further
-    host_scaffold_in_default: "QuestionRouter.match_fact still the self/identity + anaphora fallback (retired for direct factual questions — no more keyword-confab)"
+    scaffold_retired: PARTIAL   # 2026-08-12 #1 CHOOSE: the question->(agent,action) PARSE is now NEURAL (on-brain BridgeParser role_of) + AUTHORITATIVE for factual-SVO questions -> the host QuestionRouter is RETIRED for them (a declined/lesioned parse ABSTAINS, no keyword-confab). Router still handles self/identity + the anaphora fallback.
+    host_scaffold_in_default: "QuestionRouter.match_fact retired for factual-SVO questions (the on-brain parser owns them); still the self/identity + noisy-anaphora fallback"
     scaffold_symbol:
       file: research/runners/brain_chat_tui.py
       symbol: "def match_fact"
-    evidence: "brain_chat_tui.py gate() substrate-first + __ABSTAIN__; probe CHOOSE True, lesion-load-bearing"
+    lesion_note: "LESION-LOAD-BEARING (2026-08-12): lesioning parser.role_of (junk role) makes BOTH a taught fact and a build-time fact ABSTAIN (was 'dog chase cat' -> IDK) — the neural parse is doing the comprehension, not the router. The comprehension is on FIRING neurons (the parser's (position,voice)->role conjunction)."
+    evidence: "brain_chat_tui.py gate() substrate-first + _neural_question_parse (parser.role_of) authoritative for factual-SVO + __ABSTAIN__; onebrain in-process gate() verified: healthy recall (brain->spikes, dog->cat, taught wolf->deer, anaphora it->cat eat fish, abstain fish/fly) + lesion -> factual CHOOSE abstains; finding 2026-08-12-INTEGRATION-1-CHOOSE-neural-question-parse"
 
   - key: in-loop-learning
     faculty: "In-loop learning — the owner teaches ARBITRARY new facts by talking; they are recalled from the substrate"

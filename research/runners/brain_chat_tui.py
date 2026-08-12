@@ -337,20 +337,56 @@ class ChatBrain:
         self._refresh_facts()                    # pick up the new fact -> agents_set/actions_set now include it
         return [a, v, p]                         # the acquired SVO; gate() returns it so the endpoint renders a confirm
 
+    def _neural_question_parse(self, content):
+        """CHOOSE (#1) — comprehend the question's (agent, action) NEURALLY. Present the stripped content words
+        (position-padded to SVO, the queried patient a placeholder) to the ON-BRAIN BridgeParser, whose (position,
+        voice)->role conjunction FIRES the role assignment on Izhikevich neurons — the SAME parser `hear()` uses to
+        comprehend a stored sentence. Returns (agent, action) or None. This replaces the host first-known-token /
+        positional heuristic so the question COMPREHENSION is on the substrate, not a Python vocabulary lookup. Requires
+        the composer to carry a parser (the onebrain default does); returns None otherwise, so the caller falls back to
+        the host heuristic (the rf escape path). Lesioning the parser -> role_of returns junk -> None -> the fact is not
+        recalled (the load-bearing test)."""
+        parser = getattr(getattr(self.inner, "composer", None), "parser", None)
+        if parser is None or len(content) < 2:
+            return None
+        padded = [content[0], content[1], "__q__"]           # SVO with the queried patient a placeholder
+        try:
+            role_map = {}
+            for pos in range(3):
+                role_map[parser.role_of(pos)] = padded[pos]  # each position's role FIRES on the parser ensembles
+        except Exception:
+            return None
+        a, v = role_map.get("agent"), role_map.get("action")
+        if not (a and v) or a == v or a == "__q__" or v == "__q__":
+            return None                                       # degenerate/lesioned parse -> let the caller fall back
+        return a, v
+
     def _substrate_recall(self, question):
         """IN-LOOP LEARNING recall: resolve (agent, action) from the question and recall the patient FROM THE SPIKING
         SUBSTRATE (`inner.what_does`), so a fact heard this conversation is answerable even though it is not in the
         build-time host snapshot. Returns [a, v, p] or None. No confabulation: `what_does` returns nothing unless the
-        binding is genuinely stored. The known-agent/known-action requirement keeps it to facts the vocabulary covers
-        (a genuinely NEW word needs on-the-fly code allocation — the next integration step)."""
+        binding is genuinely stored. The (agent, action) COMPREHENSION is NEURAL (the on-brain BridgeParser) on the
+        onebrain default, with a host heuristic fallback (the rf escape path)."""
         _STOP = {"what", "who", "whom", "does", "do", "did", "is", "are", "was", "were", "the", "a", "an",
                  "to", "it", "that", "this", "they", "them", "of", "about"}
         toks = [t.lower().strip(".,!?") for t in question.split()]
         content = [t for t in toks if t and t not in _STOP]
-        # prefer a KNOWN agent/action (robust to word order); fall back to STRUCTURAL position (agent=1st content token,
-        # action=2nd) so a fact about a NEW thing ("what does wolf hunt?") is recallable after runtime code allocation.
-        a = next((t for t in content if t in self.agents_set), None) or (content[0] if content else None)
-        v = next((t for t in content if t in self.actions_set), None) or (content[1] if len(content) > 1 else None)
+        # CHOOSE (#1): the on-brain parser OWNS a factual-SVO-shaped question (>=2 content words, none a self-alias).
+        # When it comprehends -> (agent, action) on FIRING neurons; when it DECLINES on such a question -> honest
+        # "__ABSTAIN__" (do NOT fall to the host router's role-blind keyword confab). This makes the comprehension
+        # genuinely on the substrate + LESION-LOAD-BEARING: lesion the parser -> role_of returns junk -> the factual
+        # CHOOSE abstains (the answer CHANGES). A self/identity/short question (or the rf escape — NO parser) keeps the
+        # host heuristic (prefer a KNOWN agent/action, else STRUCTURAL position) + the router fallback in gate().
+        has_self_alias = any(t in self.router.self_aliases for t in content)
+        parser_present = getattr(getattr(self.inner, "composer", None), "parser", None) is not None
+        if parser_present and len(content) >= 2 and not has_self_alias:
+            nq = self._neural_question_parse(content)
+            if nq is None:
+                return "__ABSTAIN__"             # factual-shaped question the on-brain parser could not comprehend -> abstain
+            a, v = nq
+        else:
+            a = next((t for t in content if t in self.agents_set), None) or (content[0] if content else None)
+            v = next((t for t in content if t in self.actions_set), None) or (content[1] if len(content) > 1 else None)
         if not (a and v) or a == v:
             return None                          # could not extract a query -> let the host router try (self/identity)
         # a self/identity query (a or v is a self-alias) is the host router's job, not the substrate's.
