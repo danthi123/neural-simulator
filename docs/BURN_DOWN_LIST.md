@@ -86,8 +86,28 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   rungs; (c) the `(agent,action)` recall + patient-block map key on surface tokens (light inflection tolerance). Finding
   `2026-08-12-GateB-surprise-expectation-violation-production-chat.md`. (Surprise-gated plasticity on the live turn = a
   QUEUED optional next step; the honest NOTICE is the wired deliverable.)
-- **D3. Curiosity** (curiosity-inversion GO, learning-progress selection GO, curiosity-veto). Wire → drives a follow-up
-  question on a novel/uncertain topic. STATUS: QUEUED (audit in flight).
+- **D3. Curiosity** (curiosity-inversion GO, learning-progress selection GO, curiosity-veto). **WIRED (Gate-B, 2026-08-12).**
+  `/api/brain-chat` now reads a genuinely-SPIKING CURIOSITY (crave) drive on an ABSTAIN: the brain's own epistemic gap
+  (it holds no answer → a maximal novelty scalar, the SAME signal the no-confab moat uses) feeds the `from_novelty`
+  neuromodulator (ALREADY committed additive/default-off in `sim/`, byte-identical when unused → NO new `sim/` edit) →
+  an `excitability_drive` on a spiking ASK pool → the ASK pool SPIKES; the wanting is read DIRECTLY off
+  `cp_firing_states[ask]` (reuse-by-import from `research/runners/curiosity_production_organ.py` → the DR-1 crave-drive,
+  on-bridge 6-seed CPU GO + 6/6-SAFE in Stage-A step-3; **corr(gap,SPIKING-want)=+0.996 reproduced numpy-CPU**, lesion→0
+  asks). When the ASK pool CRAVES (want ≥ a build-calibrated threshold) the brain APPENDS an honest FOLLOW-UP QUESTION
+  ("My curiosity is piqued — I haven't learned about `<topic>` yet: what can you tell me about `<topic>`?") — crave,
+  don't refuse. The moat is INVERTED, not broken: the answer stays an abstain (never a confabulated fact); the added
+  text is unambiguously a QUESTION. Default-ON (`BRAIN_CURIOSITY=0` escape → byte-identical oracle), lesion-load-bearing
+  (`BRAIN_CURIOSITY_LESION=1` removes the drive pathway → the SAME novel abstain's want collapses 129.2→5.4 Hz below
+  threshold → NO follow-up). Verified SYNCHRONOUSLY numpy-CPU through the real handler (24/24: novel abstain → curious
+  follow-up with topic; familiar recall → null/no follow-up; lesion → no follow-up; flag-off byte-identical +
+  additive:default==off+suffix; single-fact path too; recall/abstain/affect/D2/D4/E1/E2 unregressed). STATUS: **WIRED**.
+  **RESIDUALS** (ride existing rows): (a) ONLY the crave-DRIVE is wired (the 6-seed / 6/6-SAFE spiking part); the
+  learning-progress SELECTOR is a CPU-proxy host formula (on-bridge memory seed-fragile 1/6) + the noisy-TV VETO is a
+  host ELP TD tracker (survives the critic lesion) — NEITHER wired (a single-topic chat follow-up needs no multi-armed
+  LP selection nor a noise veto); (b) NOVELTY = the ABSTAIN (a BINARY epistemic gap), a declared host boundary — a
+  graded Bogacz-Brown familiarity novelty + curiosity on a low-confidence RECALL (already metacog-hedged) are named next
+  rungs; (c) the wh-FRAME is a host language scaffold (only the topic CONTENT is brain-surfaced); (d) CO-RESIDENT on its
+  own ASK bridge (rides on the one-brain merge, §). Finding `2026-08-12-GateB-curiosity-followup-production-chat.md`.
 - **D4. Comprehension MEASUREMENT** ("measurement of understanding of spoken language"). **WIRED (Gate-B, 2026-08-12).**
   `/api/brain-chat` now reads a genuinely-SPIKING comprehension signal BEFORE acting on an incoming transitive assertion:
   the co-resident `SpikingRoleCompetition`'s two Wong-Wang pools (`sel_agent`/`sel_patient`, mutual inhibition), driven by

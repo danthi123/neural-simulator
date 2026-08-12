@@ -2922,6 +2922,12 @@ def _get_worldmodel_organ():
     return get_organ(seed=42)
 
 
+def _get_curiosity_organ():
+    """The process-shared spiking curiosity organ (built once; the co-resident from_novelty -> ASK-pool drive)."""
+    from research.runners.curiosity_production_organ import get_organ
+    return get_organ(seed=42)
+
+
 def _brain_vocab(chat) -> set:
     """The set of words the brain KNOWS (agents ∪ actions ∪ patients of its stored facts), lowercased. Used to
     scope the comprehension monitor: a real word the brain knows but that is not in the toy cue lexicon is OUT of
@@ -3699,6 +3705,39 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as _me:  # never let the confidence read crash a turn — degrade to the un-hedged answer
             return "", {"on": True, "error": f"{type(_me).__name__}: {_me}"}
 
+    # ── CURIOSITY follow-up (Gate-B, D3, 2026-08-12) ─────────────────────────────────────────────────────────
+    # On an ABSTAIN (the no-confab moat refused -> the brain holds NO answer -> a maximal epistemic gap), read a
+    # genuinely-SPIKING curiosity drive off the co-resident ASK pool (`cp_firing_states[ask]` driven by the
+    # `from_novelty` neuromodulator, reuse-by-import from `curiosity_production_organ`, the DR-1 crave-drive, on-
+    # bridge 6-seed / 6/6-SAFE, corr(gap,want)=+0.996). When the ASK pool CRAVES (want >= threshold) the brain
+    # APPENDS an honest FOLLOW-UP QUESTION about the topic — crave, don't refuse. The moat is INVERTED, not broken:
+    # the answer stays an abstain (never a confabulated fact); the added text is unambiguously a QUESTION. Moat-safe
+    # + additive: it runs ONLY on an abstain (there is no answer to corrupt) and only APPENDS a question. A FAMILIAR
+    # topic (a confident recall) is OUT OF SCOPE -> byte-identical. Default-ON; `BRAIN_CURIOSITY=0` -> byte-identical.
+    try:
+        import research.runners.curiosity_production_organ as _CU
+        _curiosity_on = _CU.curiosity_enabled()
+    except Exception:
+        _CU = None
+        _curiosity_on = False
+
+    def _curiosity_followup(abstained):
+        """Read the spiking curiosity drive on an ABSTAIN. Returns (suffix, curiosity_info). Empty on a non-abstain
+        (out of scope -> byte-identical), when disabled, when no topic is extractable, or when the ASK pool is not
+        craving (want < threshold, e.g. under the lesion). The suffix is unambiguously a QUESTION (moat-safe)."""
+        if not _curiosity_on or not abstained:
+            return "", None
+        try:
+            topic = _CU.extract_topic(msg)
+            j = _get_curiosity_organ().judge(novelty=_CU.NOVEL_SIGNAL, lesion=_CU.curiosity_lesioned())
+            info = dict(j)
+            info["topic"] = topic
+            if j["curious"]:
+                return _CU.followup_question(topic), info
+            return "", info
+        except Exception as _cue:  # never let the curiosity read crash a turn — degrade to the bare abstain
+            return "", {"on": True, "error": f"{type(_cue).__name__}: {_cue}"}
+
     # ── RICH path: a SUBSTANTIVE multi-sentence grounded reply ──────────
     # The RichAnswerComposer does its own GATE (direct recall + the moat) +
     # multi-hop chain + elaboration, VERIFY-checks each sentence, and carries
@@ -3780,6 +3819,12 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _mc_prefix, resp["metacog"] = _metacog_qualify(resp.get("activity"), bool(r["abstained"]) or is_hyp)
         if _mc_prefix:
             resp["answer"] = _mc_prefix + resp["answer"]
+        # CURIOSITY (Gate-B, D3): on an ABSTAIN, APPEND an honest follow-up QUESTION when the spiking ASK pool
+        # craves (crave, don't refuse). A hypothesis is a guess (not an abstain) -> out of scope. Additive; the
+        # suffix is a QUESTION (moat-safe). null when disabled / not an abstain / not craving.
+        _cu_suffix, resp["curiosity"] = _curiosity_followup(bool(r["abstained"]) and not is_hyp)
+        if _cu_suffix:
+            resp["answer"] = resp["answer"] + _cu_suffix
         return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -3810,6 +3855,12 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if _mc_prefix:
         answer = _mc_prefix + answer
 
+    # CURIOSITY (Gate-B, D3): on an ABSTAIN, APPEND an honest follow-up QUESTION when the spiking ASK pool craves
+    # (crave, don't refuse). Additive; the suffix is a QUESTION (moat-safe). null when disabled / not an abstain.
+    _cu_suffix, curiosity_info = _curiosity_followup(abstained)
+    if _cu_suffix:
+        answer = answer + _cu_suffix
+
     return JSONResponse({
         "answer": answer,
         "abstained": abstained,
@@ -3837,6 +3888,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # WORLD-MODEL (Gate-B, E2): the spiking affective forward-model read for this turn (kind=update with the
         # predicted next-turn valence, or kind=violation with the fired surprise); null when disabled/neutral.
         "worldmodel": worldmodel_info,
+        # CURIOSITY (Gate-B, D3): the spiking ASK-pool crave read on an abstain (want_hz/threshold/curious/topic);
+        # null when disabled or not an abstain. A follow-up QUESTION is appended to the answer when curious.
+        "curiosity": curiosity_info,
     })
 
 

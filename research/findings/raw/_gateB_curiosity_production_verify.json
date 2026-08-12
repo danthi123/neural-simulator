@@ -1,0 +1,58 @@
+{
+  "what": "Gate-B/D3 curiosity crave-drive WIRED into /api/brain-chat — synchronous in-process verify on the REAL handler (SIM_BACKEND=numpy, GPU-free stub renderer, tiny-demo). One session -> one ChatBrain build; env-gated organ toggles per request.",
+  "runner_reproduction": {
+    "cmd": "SIM_BACKEND=numpy python -m research.runners._curiosity_seek_learn_onbridge_derisk --smoke --seeds 42",
+    "corr_gap_spiking_want": 0.996,
+    "lesion_total_asks": 0,
+    "verdict": "GO (1/1 seed 42) — corr(gap, cp_firing_states[ask])=+0.996, lesion(curiosity_excit_sensitivity=0)->0 asks"
+  },
+  "handler_reads": {
+    "default_abstain_answer": "I don't know about that. My curiosity is piqued — I haven't learned about dragon yet: what can you tell me about dragon?",
+    "default_abstain_curiosity_trace": {"want_hz": 129.16666666666666, "threshold": 65.88541666666666, "curious": true, "topic": "dragon"},
+    "lesion_abstain_answer": "I don't know about that.",
+    "lesion_curiosity_trace": {"want_hz": 5.4, "threshold": 65.9, "curious": false, "lesioned": true},
+    "flagoff_abstain_answer": "I don't know about that.",
+    "followup_suffix": " My curiosity is piqued — I haven't learned about dragon yet: what can you tell me about dragon?"
+  },
+  "checks": {
+    "recall_ok": true,
+    "recall_curiosity_null_out_of_scope": true,
+    "recall_no_suffix": true,
+    "abstain_ok_dont_know_survives": true,
+    "abstain_curious": true,
+    "abstain_topic_dragon": true,
+    "abstain_has_followup_question": true,
+    "abstain_want_ge_threshold": true,
+    "key_present_affect": true,
+    "key_present_surprise": true,
+    "key_present_comprehension": true,
+    "key_present_metacog": true,
+    "key_present_worldmodel": true,
+    "key_present_curiosity": true,
+    "lesion_abstains": true,
+    "lesion_curious_false": true,
+    "lesion_no_followup": true,
+    "lesion_want_lt_threshold_collapsed": true,
+    "flagoff_curiosity_null": true,
+    "flagoff_no_followup": true,
+    "flagoff_recall_no_suffix": true,
+    "additive_default_equals_off_plus_suffix": true,
+    "singlefact_abstain_followup": true,
+    "singlefact_recall_no_suffix": true
+  },
+  "n_pass": 24,
+  "n_total": 24,
+  "all_pass": true,
+  "summary": "24/24 handler checks PASS — novel abstain -> curious follow-up; lesion/flag-off collapse it; additive; single-fact path; organ keys unregressed",
+  "seed": 42,
+  "backend": "numpy",
+  "isolation_probe": {
+    "note": "curiosity_production_organ read in isolation (probe_curio_organ.py)",
+    "want_novel_hz": 129.17,
+    "want_familiar_hz": 4.34,
+    "want_lesion_novel_hz": 5.38,
+    "threshold_hz": 65.89,
+    "determinism_novel_repeat_hz": 130.9,
+    "topic_extraction": {"tell me about wombats": "wombats", "what does a quark do?": "quark", "please explain photosynthesis to me": "photosynthesis", "?": null}
+  }
+}
