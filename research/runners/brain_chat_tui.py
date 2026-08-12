@@ -627,6 +627,19 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="r
     return agent, DEFAULT_SELF_ALIASES, len(facts)
 
 
+def _resolve_composer_kind(args):
+    """The tiny-demo recall substrate for the TUI. Interactive default = 'onebrain' (the GENUINELY-SPIKING recall,
+    resonate-and-fire per query, runtime new-word LEARN — the same production default the webapp uses), so the owner
+    gets the full spiking brain in the TERMINAL too, not only the web UI. Resolution order: explicit --composer wins;
+    then the automated --smoke path forces 'rf' (the GPU-free smoke must stay fast + byte-identical); then the
+    BRAIN_COMPOSER_KIND env (shared with the webapp); else 'onebrain'. Pass --composer rf for the fast numpy path."""
+    if getattr(args, "composer", None):
+        return args.composer
+    if getattr(args, "smoke", False):
+        return "rf"
+    return os.environ.get("BRAIN_COMPOSER_KIND", "onebrain")
+
+
 def load_brain(args):
     """Resolve --load / --self-knowledge / --tiny-demo into (agent, self_aliases, n_facts, source_desc)."""
     use_mt = not args.no_multiturn
@@ -643,10 +656,11 @@ def load_brain(args):
         curriculum = args.curriculum or _SK_CURRICULUM
         agent, aliases, n = _load_self_knowledge(codes, curriculum, args.seed, use_mt, nr)
         return agent, aliases, n, f"self-knowledge brain (codes={os.path.relpath(codes, _REPO) if os.path.exists(codes) else 'seed-codes'})"
-    # tiny CPU demo (the GPU-FREE smoke)
+    # tiny CPU demo — interactive default is the genuinely-SPIKING onebrain recall (the --smoke path stays 'rf' fast)
     if args.tiny_demo or not args.load:
-        agent, aliases, n = _build_tiny_demo(args.seed, use_mt, nr)
-        return agent, aliases, n, "tiny CPU demo brain"
+        ck = _resolve_composer_kind(args)
+        agent, aliases, n = _build_tiny_demo(args.seed, use_mt, nr, composer_kind=ck)
+        return agent, aliases, n, f"tiny CPU demo brain (composer={ck})"
     raise FileNotFoundError(f"--load {args.load!r} is neither a developed-brain bundle nor a codes .json")
 
 
@@ -880,6 +894,10 @@ def main():
                     help="curriculum .json for the self-knowledge brain (default: _curriculum_self_knowledge.json).")
     ap.add_argument("--tiny-demo", action="store_true",
                     help="build a tiny CPU brain from a handful of facts (GPU-free fallback / smoke).")
+    ap.add_argument("--composer", choices=["rf", "onebrain"], default=None,
+                    help="tiny-demo recall substrate: 'onebrain' (GENUINELY SPIKING, resonate-and-fire, the interactive "
+                         "default) or 'rf' (numpy fast path). Default: onebrain interactively, rf under --smoke; the "
+                         "BRAIN_COMPOSER_KIND env is honored when this is unset. The onebrain build is ~180s (speed secondary).")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--no-multiturn", action="store_true",
                     help="use the bare BrainConversationalAgent (no discourse WM / anaphora).")
