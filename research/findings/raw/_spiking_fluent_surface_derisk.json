@@ -1,0 +1,348 @@
+{
+  "probe": "spiking_fluent_surface",
+  "verdict": "GO -- the brain's GENERATED novel hypothesis is rendered on FIRING NEURONS as a GRAMMATICAL, FAITHFUL, moat-safe utterance, composing the spiking BROCA render with the novel-content DRAW. Arm A (hedged transitive 'perhaps the <S> <V-3sg> the <O>'): grammatical 0.993, faithful 0.993 (the independent re-parse recovers the DRAWN SVO -- the moat), hypothesis-flag 1.00, 0 confab leaks. Every control collapses: PERMUTED 0.000, NO-LEARNING 0.000, EQUAL-DRIVE 0.000, WRONG-CONTENT recover 0.000 (vs main 0.993). Genuinely spiking: order = the SimulationBridge per-pool rate ranking (bridge advanced real spikes on every seed), NO torch/transformers in-process. Arm B (coordinated connective '... and ...' over two independently-drawn SVOs): grammatical 0.990, faithful 0.990 (BOTH drawn clauses recovered by the re-parse), permuted collapses 0.000. 6 seeds. ==> a brain-native SPIKING mouth that renders a DRAWN SVO grammatically-and-faithfully IS feasible; the agrammatic host f-string 'perhaps bear walk foot' can be RETIRED for the GENERATE channel's transitive hypotheses (+ a coordinating connective). HONEST: the DRAW's content SAMPLING is host bookkeeping over the brain's learned graph (the fully-spiking SWR-CA3 draw is a banked negative, _followon1); the RENDER-ORDER is on spikes; the A->W spell is the identity-surface callback (concept_speak_demo). Reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "arm_a_go": true,
+  "arm_b_go": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 7.1,
+  "bars": {
+    "main_grammatical_faithful": 0.95,
+    "control_ceiling": 0.2,
+    "margin": 0.6,
+    "arm_b_bar": 0.9
+  },
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "arm_a grammatical (min) > bar",
+      "ok": true,
+      "detail": "0.958333 vs floor 0.95",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "arm_a faithful (min) > bar",
+      "ok": true,
+      "detail": "0.958333 vs floor 0.95",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat: 0 confab leaks",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat: hypothesis-flag intact",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function _derisk.<locals>.<lambda> at 0x7f04a02f1120>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "controls collapse (perm/nolearn/equal <= ceiling)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _derisk.<locals>.<lambda> at 0x7f04a02f1120>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "wrong-content re-parse fails (<= 0.10)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _derisk.<locals>.<lambda> at 0x7f04a02f1120>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "genuinely spiking: bridge advanced spikes all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "genuinely spiking: no torch/transformers in-process",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "arm_b grammatical (min) >= 0.90",
+      "ok": true,
+      "detail": "measured=0.9375 expect=<function _derisk.<locals>.<lambda> at 0x7f04a02f1120>",
+      "note": ""
+    }
+  ],
+  "verdict_status": "GO",
+  "disabled_processes": [
+    {
+      "process": "STDP / Hebbian / OU noise on the slot bridge",
+      "why": "build_slot_bridge disables plasticity/noise -> the slot pools are DRIVEN, non-attractor read-out pools (the order lives in the primacy gradient + the spiking rate ranking, not in learned recurrence)"
+    }
+  ],
+  "headline": {
+    "arm_a_grammatical_mean": 0.993,
+    "arm_a_grammatical_min": 0.958,
+    "arm_a_faithful_mean": 0.993,
+    "arm_a_faithful_min": 0.958,
+    "arm_a_perm": 0.0,
+    "arm_a_nolearn": 0.0,
+    "arm_a_equal": 0.0,
+    "arm_a_wrong_content_mean": 0.0,
+    "arm_a_wrong_content_max": 0.0,
+    "arm_b_grammatical_mean": 0.99,
+    "arm_b_grammatical_min": 0.938,
+    "arm_b_faithful_mean": 0.99,
+    "arm_b_faithful_min": 0.938,
+    "arm_b_perm": 0.0
+  },
+  "spiking_authenticity_probe": {
+    "graded_drive_rates": [
+      0.429,
+      0.4,
+      0.39,
+      0.237,
+      0.171,
+      0.098
+    ],
+    "bridge_spiked": true,
+    "graded_order_recovers_template": true,
+    "equal_drive_rates": [
+      0.298,
+      0.306,
+      0.359,
+      0.278,
+      0.29,
+      0.319
+    ],
+    "equal_drive_spread": 0.081
+  },
+  "aggregate": {
+    "arm_a": {
+      "grammatical": {
+        "mean": 0.9930555555555555,
+        "min": 0.9583333333333334,
+        "max": 1.0
+      },
+      "faithful": {
+        "mean": 0.9930555555555555,
+        "min": 0.9583333333333334,
+        "max": 1.0
+      },
+      "hyp_flag": {
+        "mean": 1.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "confab_leaks_total": 0,
+      "perm_grammatical": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "nolearn_grammatical": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "equal_grammatical": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "wrong_content_recover": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "all_spiked": true
+    },
+    "arm_b": {
+      "grammatical": {
+        "mean": 0.9895833333333334,
+        "min": 0.9375,
+        "max": 1.0
+      },
+      "faithful": {
+        "mean": 0.9895833333333334,
+        "min": 0.9375,
+        "max": 1.0
+      },
+      "perm_grammatical": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      }
+    },
+    "no_torch_all": true
+  },
+  "sample_transcript": {
+    "arm_a": "perhaps the tove tromps the fish",
+    "arm_b": "the tove tromps the fish and the hawk watches the brog"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "arm_a": {
+        "n_items": 24,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "hyp_flag": 1.0,
+        "confab_leaks": 0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "nolearn_grammatical": 0.0,
+        "equal_grammatical": 0.0,
+        "wrong_content_recover": 0.0,
+        "sample": "perhaps the tove tromps the fish"
+      },
+      "arm_b": {
+        "n_items": 16,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "sample": "the tove tromps the fish and the hawk watches the brog"
+      },
+      "no_torch": true
+    },
+    {
+      "seed": 43,
+      "arm_a": {
+        "n_items": 24,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "hyp_flag": 1.0,
+        "confab_leaks": 0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "nolearn_grammatical": 0.0,
+        "equal_grammatical": 0.0,
+        "wrong_content_recover": 0.0,
+        "sample": "perhaps the dax nudges the plim"
+      },
+      "arm_b": {
+        "n_items": 16,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "sample": "the dax nudges the plim and the fendle follows the frog"
+      },
+      "no_torch": true
+    },
+    {
+      "seed": 44,
+      "arm_a": {
+        "n_items": 24,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "hyp_flag": 1.0,
+        "confab_leaks": 0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "nolearn_grammatical": 0.0,
+        "equal_grammatical": 0.0,
+        "wrong_content_recover": 0.0,
+        "sample": "perhaps the blicket tromps the moth"
+      },
+      "arm_b": {
+        "n_items": 16,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "sample": "the blicket tromps the moth and the bear zonks the grint"
+      },
+      "no_torch": true
+    },
+    {
+      "seed": 100,
+      "arm_a": {
+        "n_items": 24,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "hyp_flag": 1.0,
+        "confab_leaks": 0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "nolearn_grammatical": 0.0,
+        "equal_grammatical": 0.0,
+        "wrong_content_recover": 0.0,
+        "sample": "perhaps the tove snerks the plim"
+      },
+      "arm_b": {
+        "n_items": 16,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "sample": "the tove snerks the plim and the wolf prowls the wisp"
+      },
+      "no_torch": true
+    },
+    {
+      "seed": 101,
+      "arm_a": {
+        "n_items": 24,
+        "grammatical": 0.9583333333333334,
+        "faithful": 0.9583333333333334,
+        "hyp_flag": 1.0,
+        "confab_leaks": 0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "nolearn_grammatical": 0.0,
+        "equal_grammatical": 0.0,
+        "wrong_content_recover": 0.0,
+        "sample": "perhaps the crow chases the snod"
+      },
+      "arm_b": {
+        "n_items": 16,
+        "grammatical": 0.9375,
+        "faithful": 0.9375,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "sample": "the crow chases the snod and the dax tromps the hare"
+      },
+      "no_torch": true
+    },
+    {
+      "seed": 102,
+      "arm_a": {
+        "n_items": 24,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "hyp_flag": 1.0,
+        "confab_leaks": 0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "nolearn_grammatical": 0.0,
+        "equal_grammatical": 0.0,
+        "wrong_content_recover": 0.0,
+        "sample": "perhaps the blicket snerks the fish"
+      },
+      "arm_b": {
+        "n_items": 16,
+        "grammatical": 1.0,
+        "faithful": 1.0,
+        "spiked": true,
+        "perm_grammatical": 0.0,
+        "sample": "the blicket snerks the fish and the fox hunts the frog"
+      },
+      "no_torch": true
+    }
+  ],
+  "mechanism": "COMPOSE the spiking BROCA render (EMERGE-59/61: per-clause slot ORDER learned by competitive queuing, produced ON SPIKES as the per-pool spiking-RATE ranking on a real SimulationBridge; position-independent via the EMERGE-61 wash-out; every word via the A->W read-out) WITH the brain's novel-content DRAW (weighted resample over its LEARNED association graph -- the _burndown_3E GO proposer mechanism). The composed pipeline renders a GENERATED novel-but-plausible SVO as a grammatical, faithful surface on firing neurons, replacing the agrammatic host f-string. Independent held-out grammar check + moat re-parse (recover the drawn SVO). Arm A: hedged transitive 'perhaps the <S> <V-3sg> the <O>'. Arm B: coordinated connective '... and ...' over a drawn 2-hop chain (anaphoric O1==S2).",
+  "honest_scope": "RENDER-ORDER is on spikes (the load-bearing new claim). DRAW content SAMPLING is host bookkeeping over the brain's learned graph (the fully-spiking SWR-CA3 draw, _followon1, is a banked HONEST_NEGATIVE -- a separate residual). The A->W spell is the identity-surface callback (its spiking validation is concept_speak_demo, 100% multi-seed). Open arbitrary prose (a from-scratch spiking sequence-LM) is the separate deep-context BOUNDARY (2026-07-11 R1-stream-eprop-longrange), NOT this lever. NO sim/ edit."
+}
