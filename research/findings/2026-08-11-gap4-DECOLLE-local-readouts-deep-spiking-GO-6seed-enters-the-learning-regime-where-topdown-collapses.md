@@ -11,7 +11,32 @@ artifacts:
   - research/findings/raw/_gap4_decolle/hier3smoke_N3_s42.json
 ---
 
-# gap#4 crux — the FIRST CRACK in the spiking-credit wall: DECOLLE per-layer LOCAL readouts get a DEEP (N=3 AND N=4) spiking net INTO the learning regime on REAL spikes (6-seed GO), where the top-down CHAINED FA/KP rule collapses to majority-class — the named surpass, on the TRAINABLE surrogate-gradient substrate
+# gap#4 — DECOLLE per-layer LOCAL readouts reshape a DEEP (N=3,4) spiking net's hidden layers to ~0.95 selectivity + beat the OPTIMAL frozen reservoir on REAL spikes (6-seed)  ⚠️ CORRECTED — see the correction block: the "where chained FA/KP collapse" pillar is an lr artifact; NOT a unique crack, NOT "deep credit"
+
+## ⚠️ ADVERSARIAL-VERIFY CORRECTION (2026-08-11, workflow wrufiei6u — MERGE-WITH-EDITS). Read this FIRST; it re-scopes the title + verdict below.
+
+The deep-layer RESHAPING result is CONFIRMED; the "where the top-down CHAINED FA/KP collapse" pillar is RETRACTED as an lr artifact.
+
+- **RETRACTED — the WALL-baseline row (chained FA/KP = 0.500, modal 1.00) and "where the top-down chained rule
+  collapses to majority-class".** At the shared lr=0.05 the chained FA/KP diverge to single-class; a skeptic re-ran
+  them at a FAIR per-arm lr (0.01–0.02) and they TOO enter at N=3/4 (FA 0.84–0.93, KP 0.84–0.90). The collapse was an
+  **lr-divergence artifact**, not the credit rule failing. DECOLLE is therefore **NOT uniquely capable**, and the
+  "FIRST CRACK where top-down could not" framing does not hold. (The 2026-08-02 chained-FA/KP wall is itself now under
+  review — see `2026-08-11-gap4-wave1-verification-corrected-the-FA-KP-wall-is-partly-an-lr-artifact.md`.)
+- **CONFIRMED — DECOLLE reshapes every deep hidden layer** to ~0.95 ridge class-selectivity (vs the frozen reservoir's
+  ~0.55), byte-identically reproduced, anti-cheats biting (shuffled-target → chance; no readout-transport). Report the
+  FAIR margin: DECOLLE beats the **OPTIMAL-ridge** reservoir by **+0.30 (N=3, 0.926−0.623) / +0.33 (N=4)** — use this,
+  NOT the +0.37/+0.42 vs the WEAK frozen (0.556/0.522). A genuine result: a local, transport-free rule (each layer its
+  own fixed-random readout target) builds class-selective deep features and beats the optimal reservoir.
+- **BUT it is NOT "deep credit".** DECOLLE gives each layer its OWN local target — no credit flows THROUGH depth. And
+  XOR is depth-2-obligatory (the finding's own scope note): the extra layers are redundant, so this does not
+  demonstrate credit through genuinely-obligatory depth. The BPTT ceiling needs `--bptt-hidden 128 --bptt-epochs 400`
+  or the runner returns UNDEFINED (a repro landmine).
+
+**Scope, corrected:** DECOLLE reshapes deep layers + beats the optimal reservoir on a depth-2 task, via per-layer local
+targets (not deep credit), and is NOT uniquely capable vs fairly-tuned FA/KP. The gap#4 DEEP-credit question remains
+OPEN. Everything below is the ORIGINAL (pre-correction) text; where it says "FIRST CRACK"/"where the top-down chained
+rule collapses", the three bullets above govern.
 
 <!--derived-->
 **One-line verdict.** The wall located this month was UPSTREAM of the feedback question: on the trainable LIF SNN the
