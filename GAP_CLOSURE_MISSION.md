@@ -32,9 +32,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   never OBLIGATORY on this point-neuron substrate** (finite-read redundancy / weak-coupling). **⇒ SUCCESS CRITERION for
 >   Q1/Q2/Q4 is now ENTER-THE-REGIME (leave majority-class + BEAT the frozen reservoir where FA/KP collapse), NOT
 >   obligatory-depth-3 generalisation** (unmeasurable here). This is itself evidence toward the substrate-not-rule tell.
-> - **PENDING:** Q3 DRTP-on-Izhikevich + Q9 EventProp-ceiling (AWS-GPU — local card is GAMING; `aws_gpu.sh` is only a
->   driver, no provisioner — NEEDS fresh provisioning or owner go-ahead) · Q8 DFA head-to-head (pool .40/.41/.42) · Q6/Q7
->   feed Q2 · Q10 fully-spiking burn-down (needs a Q1–Q4 GO). NB most lanes are launch-bound (CPU) → local+pool 56-core suffices.
+> - **⭐⭐ WAVE-1 RESULT — THE WALL IS CRACKED (a coherent, convergent picture):** the deep-spiking learning regime is
+>   reachable with a PER-LAYER LOCAL TARGET (not a top-down error, not a sidestep of σ′).
+>   - **Q1 Forward-Forward GO + Q4 DECOLLE GO** (2 INDEPENDENT local rules, both 6/6 enter the regime where chained
+>     FA/KP + a perfect Wᵀ oracle sit at chance): DECOLLE 0.926/0.941 @ N=3/4 (per-layer selectivity ~0.95, beats optimal
+>     reservoir +0.37/+0.42), FF ~0.78 (~97% of BPTT, not weak-coupling). **UNDER ADVERSARIAL VERIFICATION** (`wrufiei6u`,
+>     4-lens: genuine deep-layer learning vs reservoir-with-readout + fair wall baselines) — MERGE PENDING that verdict.
+>   - **Q2 birdsong tutor NEGATIVE** (`ce658de4`) SHARPENS it: a two-stage low-dim tutor fails even with a PERFECT oracle
+>     target (Stage-B: a low-dim OUTPUT target broadcast carries no per-layer HIDDEN-target info) → **the missing
+>     ingredient is a per-layer hidden target — exactly what FF/DECOLLE supply and the tutor doesn't.** (Bonus: genuine
+>     measured node-perturbation OUTPERFORMS the tutor here → a named successor, scope-caveated to the surrogate-LIF net.)
+> - **PENDING:** Q3 DRTP-on-Izhikevich (on the freed 3090 — Palworld closed) · Q9 EventProp-ceiling · Q8 DFA head-to-head
+>   (pool) · Q6/Q7 (measured-NP / critic) · Q10 fully-spiking burn-down (needs a verified Q1/Q4 GO). **SINGLE LITERAL
+>   NEXT:** land `wrufiei6u`; if Q1/Q4 survive → MERGE both (the first verified gap#4 cracks) + the next rung is a
+>   FITTABLE obligatory-depth-3 task (BPTT can fit it) + the Izhikevich port of the winning local rule (does the crack
+>   hold on the production neuron model, or is it LIF-only → the substrate tell).
 > - **THE TELL (substrate vs rule), UPDATED:** Q5 already shows depth is non-obligatory (task side can't force it). If
 >   Q1/Q2/Q4 ALSO fail to ENTER-THE-REGIME (stay at majority-class / ≤ reservoir) while BPTT solves it → the point-neuron
 >   spiking read carries no deep credit under ANY local rule → the **ALIF substrate swap** is the real (scope-first)
