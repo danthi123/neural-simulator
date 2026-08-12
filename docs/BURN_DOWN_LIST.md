@@ -68,8 +68,18 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   LADDER (sign + level), a smooth-magnitude **continuum is still a BOUNDARY**. Curiosity/self-model/reward (rest of the
   old D1 bundle) remain QUEUED.
 - **D2. Expectation / consequences / RPE** (limbic-core RPE battery GO, neural-reward GO, value-critic RANK1 GO). RPE =
-  prediction-error = SURPRISE on expectation-violating input. Wire → a surprise signal on the live turn. STATUS: QUEUED
-  (audit in flight) — VERIFY it's a genuine spiking RPE, not a host formula (a host-formula RPE is itself a shortcut).
+  prediction-error = SURPRISE on expectation-violating input. **DE-RISKED GO 6/6 (2026-08-12), QUEUED-FOR-WIRING:** the
+  existing spiking RPEs are all over a SCALAR reward; the conversational need is a CONTENT-space contradiction ("dog eats
+  grass" vs stored "(dog,eats)→meat"), which today would be a host `recalled==asserted` string compare (a shortcut). The
+  de-risk (`research/runners/_spiking_expectation_rpe_derisk.py`) built the genuinely-spiking replacement: a predictive-
+  coding MISMATCH unit — a `surprise` pool gets EXCITATION from the asserted-patient code + topographic SUBTRACTIVE
+  INHIBITION (GABA_A/PV-like) from the recalled expectation; confirm→cancel→~0 Hz, contradict/novel→un-inhibited→fires.
+  6/6 GO (confirm 0.3–2.5 Hz vs violate 7.5–9.9 Hz, 3.5–30.9×), brain-based (a `cp_firing_states[surprise]` read, no host
+  subtraction, `current_reward_signal==0`), lesion-decisive (zeroing the prediction collapses to ~1.0× → 100% attributable
+  to the prediction). **RESIDUAL/boundary:** precision — at low prediction gain GO drops to 3/6 (the divisive-normalization/
+  gain-match companion process, proxied by a fixed weight); the which-patient mapping is a topographic prior with Hebbian
+  strength (fully-learned CA3 all-to-all recall + homeostatic gain precision = the named next rungs). Wire → an honest
+  functional NOTICE ("my mismatch monitor reads this as surprising") + surprise-gated plasticity on the live turn.
 - **D3. Curiosity** (curiosity-inversion GO, learning-progress selection GO, curiosity-veto). Wire → drives a follow-up
   question on a novel/uncertain topic. STATUS: QUEUED (audit in flight).
 - **D4. Comprehension MEASUREMENT** (multiframe / passive / object-relative comprehension GOs — "measurement of understanding

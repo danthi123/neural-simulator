@@ -116,6 +116,29 @@ byte-identical off). So both the plasticity-learned fact's ACQUISITION and its n
 Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain step — next arc).
 (`2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
+The master worklist for it is now `docs/BURN_DOWN_LIST.md` (every host shortcut / un-wired GO / missing mechanism
+between the production default and the all-spiking one-brain goal).
+
+**2026-08-12 (batch) — the production one-brain gained CHOOSE·GENERATE·AFFECT·MOAT-generalization, and four faculties
+de-risked GO.** On top of the genuinely-spiking recall default below, this wave (all default-ON, lesion-load-bearing,
+moat-safe unless noted):
+- **CHOOSE neuralized** — a factual question's (agent,action) parse is now owned by the on-brain `BridgeParser`
+  role-resolution, so the host keyword `QuestionRouter` retires for factual-SVO (self/identity + noisy-anaphora residual).
+- **AFFECT wired (D1)** — `/api/brain-chat` reads the live mood NEURALLY off a co-resident graded-affect ladder and
+  colors the DEFAULT turn: mood-congruent forthcomingness (WHAT it volunteers) + prose manner (HOW), plus the honest
+  inner-state read-out. Residuals ride on A1 (the manner conditions the external Qwen mouth) + the one-brain merge.
+- **MOAT generalized (C1)** — genuinely free-form MULTI-CLAUSE prose now survives the no-confab moat via claim-level
+  entailment (per-clause role-parse on the on-brain BridgeParser, 0 leaks 6-seed); any one ungrounded clause is rejected.
+- **GENERATE (#3E)** — the brain VOLUNTEERS novel grounded propositions via generative replay over its learned graph
+  (6-seed GO, plausibility-gate load-bearing, moat intact); its SURFACE is now spoken by the brain-native SPIKING BROCA
+  (A1a, transformer-free) with a vocab-agnostic spiking DRAW (B1 GO). Residual = open ARBITRARY prose (the deep-context
+  wall, in research) still routes through the Qwen mouth (burn-down A1).
+- **D2 expectation/SURPRISE — 6/6 GO** (a genuinely spiking predictive-coding mismatch unit; wireable; precision boundary
+  mapped). **D4 comprehension-MEASUREMENT — 6/6 GO** (the spiking `SpikingRoleCompetition` margin reads whether an
+  utterance was understood, AUC 1.000, lesion→chance, content-not-position; the positional BridgeParser margin is
+  content-blind so it was surpassed, not adopted; wireable → honest "I didn't follow that").
+- **E1 self-model / metacognition = BOUNDARY** (type-2 metacog at chance despite a MIS-CALIBRATED GO gate — instrument
+  flag filed; do NOT wire until a real meta-d′>0 mechanism lands).
 
 **2026-08-12 — the production chat recall is now GENUINELY SPIKING by DEFAULT.** The `/api/brain-chat` chat brain builds
 `composer_kind="onebrain"` by default, so a factual question is recalled by the resonate-and-fire step on firing neurons
