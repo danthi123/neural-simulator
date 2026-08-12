@@ -23,6 +23,21 @@ Axon's CaP−CaD rule NO-GO (which validated our own SST-microcircuit). The gap#
 deep-credit-on-spikes frontier is a mapped, deprioritized boundary (the tool
 alarm that implied otherwise was retired).
 
+**2026-08-11 gap#4 ALL-IN — a wall turned out to be a hyperparameter.** The owner
+directed an all-in push on gap#4 (deep credit through a deep spiking net with a
+local, transport-free rule — the gate on fluent conversation). Wave-1 found two
+local rules (Forward-Forward, DECOLLE) that get a deep spiking net to leave
+majority-class and beat the *optimal* random reservoir — but adversarial
+verification corrected the "cracks the wall" story: at a *fair per-arm learning
+rate* the chained feedback-alignment rules that the 2026-08-02 finding said
+"collapse at depth ≥3" **also learn** (6-seed: enter at N=3 and N=4, both arms,
+beating the reservoir; the "collapse" only happened at one shared, unfair
+learning rate). So the located wall, on the fast test substrate, was a step-size
+mismatch, not biology. This does *not* prove genuine deep credit yet — the test
+task only needs 2 layers — so wave-2 builds a task that provably needs depth-3
+(a sawtooth-fit capacity test) and re-checks the *production* neuron model
+(Izhikevich), which is the one place a real wall may still live.
+
 **2026-08-10 INTEGRATION PIVOT (owner-directed) + gap#5 CLOSE.** Two things landed. (A) **gap#5 episodic memory is
 mechanistically CLOSED end-to-end**: the emergent loop (DG-selects → BTSP one-shot FORMS the attractor → an intrinsic
 per-cell DENDRITIC dAP READOUT completes it cue-specifically, size/scale-independent, 6/6 GO `ab9f7dbe`). The

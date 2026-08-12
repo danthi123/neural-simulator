@@ -1,0 +1,12 @@
+
+=== per-arm-tuned FA/KP baseline -- 6 seeds, XOR ===
+ N |   maj frzOpt  bptt | FAbest    lr ent  /6 | KPbest    lr ent  /6 | FA@.05 KP@.05
+ 2 | 0.524  0.609 0.792 |  0.881 0.020   Y  6/6 |  0.885 0.020   Y  6/6 |  0.839  0.878
+ 3 | 0.524  0.623 0.792 |  0.856 0.010   Y  6/6 |  0.847 0.010   Y  6/6 |  0.500  0.500
+ 4 | 0.524  0.615 0.779 |  0.844 0.005   Y  6/6 |  0.866 0.005   Y  6/6 |  0.500  0.500
+
+--- VERDICT (N>=3, the wall depths) ---
+  N=3: WALL IS AN LR ARTIFACT — FA or KP ENTER at a fair per-arm lr (FA 6/6, KP 6/6)
+  N=4: WALL IS AN LR ARTIFACT — FA or KP ENTER at a fair per-arm lr (FA 6/6, KP 6/6)
+
+  OVERALL: ⛔ the 2026-08-02 chained-FA/KP wall is (at least partly) an lr-tuning ARTIFACT on XOR

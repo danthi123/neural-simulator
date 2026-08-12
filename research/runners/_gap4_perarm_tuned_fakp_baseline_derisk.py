@@ -89,7 +89,11 @@ def aggregate(paths):
     rows = []
     for p in sorted(glob.glob(paths)):
         with open(p) as f:
-            rows.append(json.load(f))
+            blob = json.load(f)
+        # each file is {"config":..., "results":[{seed, per_depth}]} -- flatten to per-seed rows
+        for r in blob.get("results", [blob]):
+            if "per_depth" in r:
+                rows.append(r)
     if not rows:
         print("no result files matched", paths)
         return

@@ -50,18 +50,28 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   - **Q2 birdsong tutor NEGATIVE** (`ce658de4`): a two-stage low-dim tutor fails even with a perfect oracle target —
 >     a low-dim OUTPUT target carries no per-layer HIDDEN-target info. (Stands; interpreted under the correction.)
 > - **⇒ THE REDIRECT (wave-2 — the gap#4 deep-credit question is still OPEN, now correctly aimed):**
->   1. **[HIGHEST] Per-arm-tuned FA/KP baseline** across tasks + depths — re-measure the 2026-08-02 wall with a fair
->      per-arm lr grid. *Does the chained transport-free wall survive fair tuning, or was it an artifact throughout?*
->      This decides whether gap#4 has a wall at all on the LIF surrogate substrate.
->   2. **A fittable genuinely-deep task** (fan-in-2 compositional hierarchy BPTT can fit + depth load-bearing) → run
->      FF/DECOLLE-vs-tuned-FA/KP there to actually test obligatory-depth credit.
->   3. **Izhikevich on-bridge port** — the FA-convergence root cause differs on point-neuron Izhikevich; a genuine
->      substrate wall (if any) most likely lives there, not on the LIF surrogate net.
->   - **DE-PRIORITIZED:** more local rules on XOR (SoftHebb pid349045, CwComp) — they'll all "enter" a depth-2 task,
->     which no longer distinguishes anything. Keep in-flight ones as data points; do NOT queue more. Q3 DRTP-on-Izhikevich
->     (pid348963, running) folds into redirect #3.
-> - **SINGLE LITERAL NEXT:** build + launch the per-arm-tuned FA/KP baseline (redirect #1) across XOR N=2,3,4 — the test
->   that says whether the located wall is real or an lr artifact.
+>   1. **✅ DONE — Per-arm-tuned FA/KP baseline (`_gap4_perarm_tuned_fakp_baseline_derisk.py`, 6-seed):** the
+>      2026-08-02 "chained FA/KP collapse at N≥3" wall on the LIF surrogate is a **per-arm LEARNING-RATE ARTIFACT**.
+>      At fair lr (0.005–0.02) FA/KP ENTER at N=3 (FA 0.856 / KP 0.847) and N=4 (0.844 / 0.866), **6/6 both arms both
+>      depths**, beating the optimal reservoir by ~+0.23; at the shared lr=0.05 they sit at exactly 0.500 (the reported
+>      collapse). Finding `2026-08-11-gap4-the-LIF-chained-FAKP-wall-is-a-per-arm-lr-artifact-6seed.md`; a correction
+>      banner is on the 2026-08-02 depth-rescue doc. **The LIF wall is GONE — it was a step-size mismatch, not biology.**
+>   2. **[NEXT — the first REAL deep-credit test] Telgarsky sawtooth FIT-obligatory instrument** (wave-2 workflow
+>      w3gupysfe design): escapes Q5 by gating on TRAIN-FIT capacity (a depth-2 net @ width W provably can't produce
+>      >O(W) oscillations — orthogonal to the finite-spike READ that defeated Q5's generalisation gate). f_k = k-fold
+>      tent, 2^(k-1) teeth; W=8,k=6 → depth-2@8 can't fit, depth-3@8 can. Piecewise-linear → SGD-optimizable (threads
+>      the parity/nested-XOR optimizability trap). Tests whether a transport-free rule assigns credit THROUGH an
+>      obligatory 3rd stage. Anti-cheats bake in the lr-fairness lesson (depth-2 lr-sweep) + single-scalar-input +
+>      wide-depth-2 capacity control. Extends the wall runner (make_task_telgarsky + --fit-gate). Buildable now.
+>   3. **Izhikevich on-bridge port** — `2026-08-02-gap4-FA-convergence-...` already shows FA converges 6/6 on LIF but
+>      **0/6 on Izhikevich** — the genuine substrate difference. But that 0/6 was ALSO at a shared lr → must get the
+>      SAME per-arm-lr fairness re-check before it's trusted as a real wall. This is where a genuine wall most likely
+>      lives (Q3 DRTP-on-Izhikevich lane feeds it; its runs are still going — recover, don't trust its subagent Monitor).
+>   - **DE-PRIORITIZED:** more local rules on XOR (SoftHebb, CwComp) — they'll all "enter" a depth-2 task, which no
+>     longer distinguishes anything. Keep in-flight ones as data points; do NOT queue more.
+> - **SINGLE LITERAL NEXT:** build the Telgarsky FIT-obligatory instrument (redirect #2) into the wall runner + smoke
+>   the fit_obligatory precondition (rate oracle then LIF-SNN) — the first test that forces credit through obligatory
+>   depth. (Full wave-2 synthesis + Q_C reassessment: workflow w3gupysfe output.)
 > - **THE TELL (substrate vs rule), UPDATED:** Q5 already shows depth is non-obligatory (task side can't force it). If
 >   Q1/Q2/Q4 ALSO fail to ENTER-THE-REGIME (stay at majority-class / ≤ reservoir) while BPTT solves it → the point-neuron
 >   spiking read carries no deep credit under ANY local rule → the **ALIF substrate swap** is the real (scope-first)

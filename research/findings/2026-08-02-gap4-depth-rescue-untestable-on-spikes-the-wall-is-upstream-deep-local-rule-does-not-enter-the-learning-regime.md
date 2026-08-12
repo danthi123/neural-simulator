@@ -10,6 +10,18 @@ artifacts:
 
 # gap#4 crux — the KP-depth-rescue is UNTESTABLE on spikes at depth-3+ because the wall is UPSTREAM of the feedback question: the transport-free LOCAL rule does not get a DEEP (N>=3) spiking net into the learning regime at all (both FA and KP collapse to majority-class), so credit-alignment — a LEARNED quantity — is undefined there; the one VALID depth-2 point is KP > fixed-FA (directional, consistent with the rate result)
 
+## ⚠️ CORRECTION (2026-08-11) — the central "FA/KP collapse at N≥3" claim below is a per-arm LEARNING-RATE ARTIFACT.
+
+**The load-bearing claim of this finding — "at N≥3 NEITHER arm trains; both collapse to byte-identical majority-class
+output" — was measured at a single SHARED learning rate (lr=0.05) across arms of very different gradient scale.** A
+6-seed per-arm-lr sweep (`2026-08-11-gap4-the-LIF-chained-FAKP-wall-is-a-per-arm-lr-artifact-6seed.md`,
+`_gap4_perarm_tuned_fakp_baseline_derisk.py`) shows the SAME chained FA/KP arms, on the SAME forward init and XOR task,
+**leave majority-class and beat the optimal reservoir at N=3 (FA 0.856 / KP 0.847) and N=4 (0.844 / 0.866), 6/6 seeds,
+at a fair per-arm lr (0.005–0.02)** — while reproducing the exact 0.500 collapse at the shared lr=0.05. So "the wall is
+upstream / the deep local rule does not enter the regime" is FALSE on the LIF surrogate substrate; it was a step-size
+mismatch. The depth-2 KP>FA directional point still stands. This does NOT reach the Izhikevich production substrate
+(FA converges 0/6 there — a separate, still-open question). Read the correction finding before citing anything below.
+
 <!--derived-->
 **One-line verdict.** After two failed attempts to BUILD an obligatory-depth-3 accuracy task on spikes (nested-XOR =
 unoptimizable parity; hier3 = memorization shortcut + depth-3 underfit), this measures the depth-rescue MECHANISM
