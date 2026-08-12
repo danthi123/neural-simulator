@@ -182,7 +182,8 @@ class BrainConversationalAgent:
                  embedded_relativizers=None, embedded_readout_redundancy=3,
                  defer_parser=False, communicable_mode=False, communicable_draw="spiking",
                  communicable_config=None, speak_value_Q=None, D=128,
-                 enable_self_schema_honesty=False, self_schema_honesty_config=None):
+                 enable_self_schema_honesty=False, self_schema_honesty_config=None,
+                 vocab_headroom=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -261,11 +262,17 @@ class BrainConversationalAgent:
             # fresh random codes the divnorm-WTA agent-line decode falls below firing (over-abstention, the SAFE
             # direction, moat 0-FA -- the de-risk _burndown_1A_c2_smallvocab_derisk.json: a code-MARGIN boundary, NOT a
             # match_thresh re-cal), so the host read stays the byte-identical oracle here. See the #3 fold plan.
+            # vocab_headroom: a RESERVE of uncommitted cleanup slots so a fact taught mid-conversation is laid down +
+            # recalled on the SPIKING store (the recruit-an-assembly path). The production onebrain chat needs this ON
+            # (default 128) -- without it a runtime new word's code lives only on the inner comp and the outer cleanup
+            # codebook is blind to it, so the taught fact stores but never recalls (2026-08-12 wrap-vs-inner bug). The
+            # numpy/test-oracle onebrain path can pass 0 for byte-identical layout.
             self.composer = OneBrainComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
                                              enable_attributed=enable_attributed,
                                              enable_multiframe=enable_multiframe,
                                              enable_spiking_cleanup=enable_spiking_cleanup,
-                                             integrated_loop=integrated_loop)
+                                             integrated_loop=integrated_loop,
+                                             vocab_headroom=(128 if vocab_headroom is None else int(vocab_headroom)))
         elif composer_kind == "slotbinder":
             # the gap-#2 SlotBinderComposer: a fully-spiking competitive-slot binder (each (fact, role) -> its own
             # slot = the win over the FHRR superposition cap) with content-addressable multi-fact recall by a neural

@@ -116,7 +116,8 @@ class OneBrainComposer:
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
                  enable_seq_vocab_shrink=True, persistent_loop=True, typed_roles=None, framecq_seed=None,
-                 use_spiking_cq=None, frame_lexicon=None, trace=False, persistent_store=False):
+                 use_spiking_cq=None, frame_lexicon=None, trace=False, persistent_store=False,
+                 vocab_headroom=0):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # PERSISTENT STORE (2026-07-20, fact-store on the substrate, opt-in DEFAULT-OFF = byte-identical): when True the
         # fact composites live IN the device synapses (cp_rf_store_re/im via rf_set_store_weights) and PERSIST across
@@ -289,6 +290,25 @@ class OneBrainComposer:
         self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period, grounded_codes=grounded_codes,
                                      local_reciprocal_unbind=local_reciprocal_unbind)
         self.words = list(self.comp.words)              # the cleanup codebook = the composer's ACTUAL vocab
+        # --- runtime vocabulary growth via a RESERVE of uncommitted cleanup slots (recruit-an-assembly) ---
+        # A cortex holds a pool of UNCOMMITTED assemblies (adult-born granule cells / silent synapses) that get
+        # RECRUITED when a new concept is learned -- it does NOT re-architect on every new word. So reserve
+        # `vocab_headroom` blank codebook slots HERE (sized into the layout + bridge below, since cb/n_total cascade
+        # from V); runtime word-learning then RECRUITS a free slot (binds the new word to that slot's fixed code)
+        # with NO layout/bridge change. Each reserved slot's code is used by BOTH the bind (self.comp.concepts[w])
+        # and the cleanup (self.words) once recruited, so decode is consistent. DEFAULT vocab_headroom=0 => V/cb/
+        # n_total/the bridge are byte-identical to before (the rf/numpy oracle + every existing test unchanged); the
+        # PRODUCTION onebrain chat sets a headroom so a fact taught mid-conversation is laid down + recalled on the
+        # spiking store. See 2026-08-12-onebrain-spiking-store... (the wrap-vs-inner codebook bug this closes).
+        self._recruit_rng = np.random.default_rng(int(seed) + 90210)
+        self._free_slots = []
+        for _k in range(max(0, int(vocab_headroom))):
+            _ph = f"__free{_k}__"
+            if _ph in self.comp.concepts:                # avoid the (astronomically unlikely) name collision
+                continue
+            self.comp.concepts[_ph] = self._recruit_rng.uniform(0.0, 1.0, self.D)
+            self._free_slots.append(len(self.words))
+            self.words.append(_ph)
         self.V = len(self.words)
         self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)
         self.pol_words = list(self.comp.pol_words)                   # ["AFFIRM","NEGATE"] -- cleaned up SEPARATELY from
@@ -420,9 +440,46 @@ class OneBrainComposer:
         fact = {"agent": agent, "action": action, "patient": noun, "polarity": pol}
         if self.enable_attributed and attr is not None:
             fact["attribute"] = attr
+        # RECRUIT any never-seen main-role filler into a reserved cleanup slot BEFORE binding, so the bind and the
+        # cleanup use the SAME code. Without this the new word's code lives only on the inner comp while the outer
+        # cleanup codebook (self.words, copied once at construction) stays blind to it -> the taught fact STORES but
+        # never RECALLS (the wrap-vs-inner codebook bug). No-op when vocab_headroom=0 (the pool is empty).
+        recruited = False
+        for _r in self.main_roles:
+            _v = fact.get(_r)
+            if isinstance(_v, str):
+                recruited = self._recruit_word(_v) or recruited
+        if recruited:
+            self._csr_cache.clear()                          # the cleanup operator changed -> rebuild on next batched read
         roles = [r for r in self.bind_roles if r in fact]       # bind only present roles, in canonical order
         self._store_composite([fact[r] for r in roles], roles)
         return fact
+
+    def _recruit_word(self, w):
+        """Recruit a never-seen concept into a reserved (uncommitted) cleanup slot -- the biological recruit-an-
+        assembly (a pool of uncommitted assemblies is claimed when a new concept is learned). The word takes a free
+        slot's FIXED code as BOTH its bind code (self.comp.concepts[w]) and its cleanup code (self.words[slot]); if
+        the inner comp already allocated a code for w, that code is reused (so any fact already bound with it stays
+        consistent). No layout/bridge change (the slot was pre-allocated by vocab_headroom). Returns True iff a
+        recruit happened (caller clears the cleanup cache). A word already in the cleanup codebook, or an exhausted
+        pool, is a no-op (False)."""
+        if not isinstance(w, str) or w in self._word_index:
+            return False                                     # already decodable by the outer cleanup
+        if not self._free_slots:
+            return False                                     # pool exhausted (headroom too small) -> stays a decode miss
+        s = self._free_slots.pop(0)
+        ph = self.words[s]
+        reserve_code = self.comp.concepts.pop(ph, None)
+        code = self.comp.concepts.get(w)
+        if code is None:
+            code = reserve_code if reserve_code is not None else self._recruit_rng.uniform(0.0, 1.0, self.D)
+            self.comp.concepts[w] = code
+        if w not in self.comp.words:
+            import bisect; bisect.insort(self.comp.words, w)
+        self.words[s] = w                                    # the cleanup slot now decodes to the real word
+        self._word_index.pop(ph, None)
+        self._word_index[w] = s
+        return True
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO sentence with the on-bridge parser (its role firing selects each bind) + store the fact.
