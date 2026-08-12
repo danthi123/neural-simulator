@@ -1,0 +1,753 @@
+{
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "T": [
+      48,
+      64
+    ],
+    "K": 6,
+    "F": 6,
+    "N": 128,
+    "H": 64,
+    "D": 32,
+    "epochs": 50,
+    "n_train": 2500,
+    "n_eval": 800,
+    "batch": 256,
+    "device": "cuda",
+    "out": "/home/dant123/Projects/sim/.claude/worktrees/agent-a40606d7b8b094fbc/research/findings/raw/_spiking_deepcontext_generation.json",
+    "smoke": false,
+    "gradcheck_only": false
+  },
+  "grad_check": {
+    "resid_theta_d": 1.1920928955078125e-07,
+    "resid_W_v": 4.76837158203125e-07,
+    "resid_W_g": 1.1920928955078125e-07,
+    "PASS": true
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "T": 48,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.17125,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.17625,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.995,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.1975,
+          "lr": 0.3
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.17625,
+          "lr": 0.03
+        }
+      },
+      "cue_scramble_acc": 0.18125,
+      "elapsed": 76.4
+    },
+    {
+      "seed": 43,
+      "T": 48,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.13625,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.215,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.70125,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.70125,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.24625,
+          "lr": 0.3
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.215,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 145.4
+    },
+    {
+      "seed": 44,
+      "T": 48,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.165,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.27875,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.27375,
+          "lr": 0.03
+        },
+        "sign_flip": {
+          "acc": 0.79125,
+          "lr": 0.1
+        },
+        "zero_signal": {
+          "acc": 0.27875,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 212.2
+    },
+    {
+      "seed": 100,
+      "T": 48,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.1775,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.2675,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.31375,
+          "lr": 0.1
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.2675,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 279.8
+    },
+    {
+      "seed": 101,
+      "T": 48,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.17,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.23125,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.87375,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.87375,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.235,
+          "lr": 0.3
+        },
+        "sign_flip": {
+          "acc": 0.9775,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.23125,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 355.4
+    },
+    {
+      "seed": 102,
+      "T": 48,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.14375,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.22,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.9925,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.22125,
+          "lr": 0.1
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.22,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 454.1
+    },
+    {
+      "seed": 42,
+      "T": 64,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.175,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.18875,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.375,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.4775,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.185,
+          "lr": 0.1
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.18875,
+          "lr": 0.03
+        }
+      },
+      "cue_scramble_acc": 0.15625,
+      "elapsed": 597.3
+    },
+    {
+      "seed": 43,
+      "T": 64,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.18,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.21625,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 0.98625,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 0.9375,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.39125,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.4125,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.21625,
+          "lr": 0.03
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.21625,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 860.9
+    },
+    {
+      "seed": 44,
+      "T": 64,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.17875,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.255,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.90375,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.62,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.2575,
+          "lr": 0.03
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.255,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 1328.8
+    },
+    {
+      "seed": 100,
+      "T": 64,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.1775,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.2,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.95375,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.88125,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.185,
+          "lr": 0.1
+        },
+        "sign_flip": {
+          "acc": 0.39625,
+          "lr": 0.1
+        },
+        "zero_signal": {
+          "acc": 0.2,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 1685.0
+    },
+    {
+      "seed": 101,
+      "T": 64,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.1875,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.18125,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 0.8525,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 0.8525,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.60625,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.60625,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.17875,
+          "lr": 0.03
+        },
+        "sign_flip": {
+          "acc": 0.92875,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.18125,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 2033.0
+    },
+    {
+      "seed": 102,
+      "T": 64,
+      "K": 6,
+      "chance": 0.16666666666666666,
+      "ngram3": 0.1625,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.18625,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 0.43125,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 0.595,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.1875,
+          "lr": 0.03
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.18625,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 2264.4
+    }
+  ],
+  "aggregate": {
+    "48": {
+      "fixed_store": {
+        "mean": 0.23145833333333332,
+        "std": 0.034121540321165,
+        "vals": [
+          0.17625,
+          0.215,
+          0.27875,
+          0.2675,
+          0.23125,
+          0.22
+        ]
+      },
+      "eprop_random": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "eprop_learnfb": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "eprop_truefb": {
+        "mean": 0.9279166666666666,
+        "std": 0.11110868052897076,
+        "vals": [
+          1.0,
+          0.70125,
+          1.0,
+          1.0,
+          0.87375,
+          0.9925
+        ]
+      },
+      "bptt_ceiling": {
+        "mean": 0.9283333333333333,
+        "std": 0.11135450771697068,
+        "vals": [
+          0.995,
+          0.70125,
+          1.0,
+          1.0,
+          0.87375,
+          1.0
+        ]
+      },
+      "shuffle_elig": {
+        "mean": 0.24791666666666665,
+        "std": 0.03746989532352012,
+        "vals": [
+          0.1975,
+          0.24625,
+          0.27375,
+          0.31375,
+          0.235,
+          0.22125
+        ]
+      },
+      "sign_flip": {
+        "mean": 0.9614583333333333,
+        "std": 0.0765615787926439,
+        "vals": [
+          1.0,
+          1.0,
+          0.79125,
+          1.0,
+          0.9775,
+          1.0
+        ]
+      },
+      "zero_signal": {
+        "mean": 0.23145833333333332,
+        "std": 0.034121540321165,
+        "vals": [
+          0.17625,
+          0.215,
+          0.27875,
+          0.2675,
+          0.23125,
+          0.22
+        ]
+      },
+      "_frac_learnfb_of_gap": -0.0,
+      "_frac_truefb_of_gap": 1.005813953488373,
+      "_frac_learnfb_of_ceiling": 1.1028400597907324,
+      "_instrument_valid": true,
+      "_cue_scramble": 0.18125,
+      "_verdict": "NO_CREDIT_WALL: a transport-free LOCAL rule (diagonal e-prop, random feedback) TIES the BPTT ceiling on the diagonal WKV/SSM store; genuine (shuffle+cue_scramble collapse). The learned-feedback (DNI) arm is a NULL confirmation -- there is no eprop->bptt gap to close."
+    },
+    "64": {
+      "fixed_store": {
+        "mean": 0.20458333333333334,
+        "std": 0.025265946559659223,
+        "vals": [
+          0.18875,
+          0.21625,
+          0.255,
+          0.2,
+          0.18125,
+          0.18625
+        ]
+      },
+      "eprop_random": {
+        "mean": 0.973125,
+        "std": 0.05417828401060089,
+        "vals": [
+          1.0,
+          0.98625,
+          1.0,
+          1.0,
+          0.8525,
+          1.0
+        ]
+      },
+      "eprop_learnfb": {
+        "mean": 0.965,
+        "std": 0.05524566347989073,
+        "vals": [
+          1.0,
+          0.9375,
+          1.0,
+          1.0,
+          0.8525,
+          1.0
+        ]
+      },
+      "eprop_truefb": {
+        "mean": 0.6102083333333332,
+        "std": 0.23787078147716156,
+        "vals": [
+          0.375,
+          0.39125,
+          0.90375,
+          0.95375,
+          0.60625,
+          0.43125
+        ]
+      },
+      "bptt_ceiling": {
+        "mean": 0.5987499999999999,
+        "std": 0.14703670176750655,
+        "vals": [
+          0.4775,
+          0.4125,
+          0.62,
+          0.88125,
+          0.60625,
+          0.595
+        ]
+      },
+      "shuffle_elig": {
+        "mean": 0.20166666666666666,
+        "std": 0.02772321029189962,
+        "vals": [
+          0.185,
+          0.21625,
+          0.2575,
+          0.185,
+          0.17875,
+          0.1875
+        ]
+      },
+      "sign_flip": {
+        "mean": 0.8875000000000001,
+        "std": 0.2212288125448401,
+        "vals": [
+          1.0,
+          1.0,
+          1.0,
+          0.39625,
+          0.92875,
+          1.0
+        ]
+      },
+      "zero_signal": {
+        "mean": 0.20458333333333334,
+        "std": 0.025265946559659223,
+        "vals": [
+          0.18875,
+          0.21625,
+          0.255,
+          0.2,
+          0.18125,
+          0.18625
+        ]
+      },
+      "_frac_learnfb_of_gap": 0.02170283806343919,
+      "_frac_truefb_of_gap": 0.9693934335002782,
+      "_frac_learnfb_of_ceiling": 1.929175475687104,
+      "_instrument_valid": false,
+      "_cue_scramble": 0.15625,
+      "_verdict": "INSTRUMENT_VACUOUS"
+    }
+  }
+}

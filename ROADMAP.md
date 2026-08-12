@@ -153,6 +153,12 @@ moat-safe unless noted):
   abstains "I didn't follow that" on an un-comprehended transitive (moat-strengthening), D2 prepends an honest "that
   surprises me — I'd learned <stored>" notice when an assertion contradicts a stored expectation (both verified numpy-CPU
   through the real handler: D4 7/7, D2 8/8; findings 2026-08-12-GateB-comprehension/surprise-…-production-chat).
+- **A1 open-prose deep-context — INCONCLUSIVE (not a GO, honest):** the controlled-lag credit task is TOO EASY to exhibit
+  the wall — random AND sign-flipped feedback both tie/beat the BPTT ceiling (T=48), and at T=64 the BPTT ceiling is itself
+  INVALID (vanishing-gradient: 0.599 < the forward-eligibility local rule 0.973). Bounded findings: the banked ~44% e-prop
+  "wall" is SUBSTRATE-SPECIFIC (a full-W_rec reservoir), NOT the diagonal WKV store the generative cortex uses; a local
+  forward-eligibility rule ties/beats BPTT for a single-cue deep dependency. Next lever: SCALE (content-vocab K, filler
+  diversity, dependency depth) until the arms separate to LOCATE the wall (a K-sweep is running, pid 763519).
 
 **2026-08-12 — the production chat recall is now GENUINELY SPIKING by DEFAULT.** The `/api/brain-chat` chat brain builds
 `composer_kind="onebrain"` by default, so a factual question is recalled by the resonate-and-fire step on firing neurons
