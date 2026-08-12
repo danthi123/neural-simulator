@@ -1,12 +1,12 @@
 {
- "run_id": "1786510613-418250",
+ "run_id": "1786515074-439481",
  "runner": "research/runners/_production_lesion_probe.py",
  "argv": [
   "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_production_lesion_probe.py",
   "--out",
   "research/findings/raw/_production_lesion/probe.json"
  ],
- "git_sha": "666fdb5e3",
+ "git_sha": "fd82fd55f",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -14,14 +14,14 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-12T00:56:53",
+ "started": "2026-08-12T02:11:14",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 140718.1,
+ "corpus_check_age_s": 145183.7,
  "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
  "corpus_check_fresh": false,
  "artifact": "research/findings/raw/_production_lesion/probe.json"

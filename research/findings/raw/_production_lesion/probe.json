@@ -43,12 +43,12 @@
   "note": "direct factual questions are decided by the SUBSTRATE (recall or honest abstain); the host router's keyword-confab is retired for them (lesion the substrate -> confab returns). Broader CHOOSE (neural question comprehension, open-ended topic) is further."
  },
  "GENERATE": {
-  "open_ended": true,
-  "n_facts_chained": 2,
-  "assoc_lesion_load_bearing": true,
+  "open_ended": false,
+  "n_facts_chained": 0,
+  "assoc_lesion_load_bearing": null,
   "probe": {
    "q": "tell me about dog",
-   "answer": "dog chase cat. cat eat fish.",
+   "answer": "dog chase cat",
    "abstained": false
   },
   "note": "associative generation: 'tell me about X' chains >1 fact via the dlPFC spiking spreading-activation (elaborate); lesion it -> collapses to the single primary fact. Broader open-ended generation (novel sentences on any topic) is the emerge stream-cortex, further."
@@ -68,7 +68,7 @@
    "lesioned_substrate_recall": "wolf hunt deer"
   },
   "taught": "wolf hunt deer",
-  "hear_ok": true,
+  "hear_ok": false,
   "note": "substrate-first recall: a fact heard this turn is recalled from inner.what_does (the spiking substrate), role-aware; host QuestionRouter is the fallback. LEARN credit requires the recall lesion to flip it off."
  },
  "spiking_recall_lesion": {
@@ -78,8 +78,8 @@
  },
  "owner_visible_function": {
   "CHOOSE": true,
-  "GENERATE": true,
+  "GENERATE": false,
   "LEARN": true
  },
- "verdict": "The default production turn CHOOSE=True GENERATE=True LEARN=True. Some owner-visible function present."
+ "verdict": "The default production turn CHOOSE=True GENERATE=False LEARN=True. Some owner-visible function present."
 }
