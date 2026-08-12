@@ -31,6 +31,28 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > answer path, open-ended generation from the brain, one-brain wiring, and turning the default-off GOs ON) — NOT another
 > isolated de-risk. gap#4 (below) stays open only on its one Izhikevich residual; it is no longer "the crux."
 
+> **⭐⭐⭐ THE WIRING BACKLOG (the active front — ranked; the ledger `docs/PRODUCTION_INTEGRATION_LEDGER.yaml` is the
+> tracked truth, `gates/production_integration` CLASS PI enforces it). Headline: ~93% of the live chat's load-bearing
+> cognition is host; CHOOSE/GENERATE/LEARN all host-or-absent; DEFAULT-ON-SPIKING ≈ 2/14 faculties; SCAFFOLD-RETIRED 0.**
+> - **#0 One-brain default (cheap, unblocks the substrate).** Flip `composer_kind="onebrain"` in the four builders
+>   (auto-enables spiking cleanup/store/learned-assoc/reciprocal-unbind). **GATE ON A LESION TEST, not the flip** — those
+>   branches are byte-identical to numpy (`brain_conversational_agent.py:233 "== host argmax"`), so credit only if
+>   lesioning the spiking path CHANGES the default answer; else it is cosmetic.
+> - **#1 Content selection (the biggest host gap).** Route the default `/api/brain-chat` DIRECT answer through the spiking
+>   dlPFC `SpikingSpreadingController`, replacing `QuestionRouter.match_fact`. "a keyword DB talks" → "the brain chooses."
+> - **#2 In-loop learning (load-bearing on the north-star).** Make `ChatBrain.answer` write plasticity per turn + add a
+>   teach path; today `hear→store` fires only at build (the turn is read-only). The brain must learn from talking.
+> - **#3 Open-ended generation.** Wire the emerge15-21 stream-cortex generator into `/api/brain-chat`; demote the
+>   off-bridge Qwen mouth to fallback; flip `enable_neural_render=True`.
+> - **Then Tier-A flips** (`rich=True`+`neural_planner=True`, `PairEventRegister(spiking=True)`) and **Tier-B wire-ins**
+>   (episodic BTSP/CA3 into the turn, affect/curiosity/self-model driving the live turn, Ordered-WM-V2 for ≥2 referents,
+>   slotbinder) — each with a named target ledger level + a LESION probe. **Every wire-in updates its ledger row + must
+>   pass the PI gate.** Speed is SECONDARY (non-negotiable) — re-measure latency, don't pre-forbid.
+> - **SINGLE LITERAL NEXT:** start #0/#1 as a real `sim/`-touching integration (additive, default-flip-guarded) — the
+>   first faculty moved from de-risk to production-default — and build the nightly LESION probe (`build the default
+>   ChatBrain, disable each spiking path, assert the answer changes`) that turns the ledger's level-3 claims from
+>   consistency-checked to truth-checked.
+
 > **⭐⭐⭐ (SUPERSEDED framing, kept for the compute-lane history) TOP PRIORITY (2026-08-12, OWNER DIRECTIVE): ALL-IN ON gap#4 — full effort, max parallelization, all compute.**
 > gap#4 (deep credit on real spikes) is THE gate on fluent open-ended conversation (a deep-research re-answer established
 > it: the WM/binding/role/hybrid stack is GO at rate level; the transformer mouth is reduced to a WKV linear-recurrence

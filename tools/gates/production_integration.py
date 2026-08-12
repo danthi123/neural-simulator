@@ -1,0 +1,338 @@
+"""CLASS PI — A GO THAT IS NOT WIRED INTO THE PRODUCTION DEFAULT, CLAIMED AS IF IT WERE.
+
+THE DEFECT, named by the owner 2026-08-11. Every existing discipline scores a MECHANISM (is it spiking? is the
+de-risk a GO?). NONE scored whether a GO is reachable + ON-BY-DEFAULT in the production `/api/brain-chat` turn with its
+host scaffold retired. So ~40 spiking faculties were banked "GO/closed/integrated" while the live chat ran a HOST
+pipeline: `QuestionRouter.match_fact` (keyword-overlap) chooses WHAT to say, a numpy VSA composer recalls it, and an
+off-bridge Qwen transformer speaks it — the three acts that define the brain (CHOOSE, GENERATE, LEARN) all host-or-absent
+(code-traced: research/findings/2026-08-11-PRODUCTION-chat-pipeline-is-largely-HOST-not-one-brain-spiking-code-traced-honest-inventory.md).
+The drift was invisible because the words "wired / one-brain / integrated / on-by-default / production" in a finding are
+CLAIMS THAT TOUCH NO CHECK.
+
+WHAT THIS GATE ENFORCES. A declared-truth ledger (docs/PRODUCTION_INTEGRATION_LEDGER.yaml) whose every row's levels
+carry machine-checkable anchors into live source, plus a claim<->ledger link. Three sub-checks:
+
+  A  LEDGER <-> SOURCE (anti-lying-ledger). For each row's default_anchor the gate reads the RHS literal at `assign` and
+     DERIVES the expected value FROM the on_by_default LEVEL (NO => the OFF literal must be present at the declared count,
+     the ON literal absent; YES => the reverse). For scaffold_symbol, the host symbol must be PRESENT iff
+     scaffold_retired=NO. So flipping the source (enable_neural_render False->True) WITHOUT moving the row blocks; and
+     hand-editing the row to on_by_default:YES while the source literal stays False ALSO blocks. The expected literal is
+     derived from the level, never a separable hand-set `expect` (the adversary's theatre-hole fix).
+
+  B  CLAIM <-> LEDGER (anti-overclaim). A staged doc containing a production-integration CLAIM TOKEN ("wired into
+     production", "on by default", "integrated into /api/brain-chat", "one brain in production", "scaffold retired", ...)
+     must declare `integration_faculty: <key>` in frontmatter, and that row's levels must SUPPORT the claim
+     (wired+on_by_default for wired/on-by-default/integrated; + scaffold_retired for one-brain/scaffold-retired). Else the
+     row's own `host_scaffold_in_default` is printed as the refutation. This mirrors closure_names_mechanism: the author
+     must NAME the key; the key's status is authoritative.
+
+  C  RATCHET (standing measurement). Recompute headline.total_faculties == len(rows) and headline.scaffold_retired ==
+     count(scaffold_retired==YES); a mismatch blocks (mechanical drift, like summary_doc_freshness).
+
+HONEST BOUNDARY. A static gate proves reachable + default-on (config-as-source), NOT correctness, and cannot see a
+runtime brain.json manifest override (developed_brain_io) — those need a nightly BEHAVIORAL probe that builds the default
+ChatBrain and runs a lesion battery. LEVEL-3 ("spiking, on by default") credit is only real under a LESION test (disable
+the spiking path -> the default answer must CHANGE); this gate enforces CONSISTENCY-WITH-THE-GRADE, the probe enforces
+the grade's truth.
+"""
+from __future__ import annotations
+
+import os
+import re
+
+NAME = "production-integration"
+CLASS_ID = "PI"
+BLOCKING = True
+
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+LEDGER_REL = "docs/PRODUCTION_INTEGRATION_LEDGER.yaml"
+
+# Files whose edit must re-check the anchors (a source flip without a ledger move must block).
+ANCHORED_FILES = (
+    "webapp/server.py",
+    "research/runners/brain_chat_tui.py",
+    "research/runners/rf_phasor_composer.py",
+    "research/runners/brain_conversational_agent.py",
+    "research/runners/rich_answer_composer.py",
+    LEDGER_REL,
+)
+
+# Narrow, explicit PRODUCTION-INTEGRATION claim tokens (not generic "GO" — that is closure_names_mechanism's job).
+CLAIM_TOKENS = [
+    (re.compile(r"\bwired into (?:the )?(?:production|/api/brain-chat|the live loop)\b", re.I), "wired"),
+    (re.compile(r"\bon[- ]by[- ]default in production\b", re.I), "on_by_default"),
+    (re.compile(r"\bintegrated into (?:the )?(?:production|/api/brain-chat|live loop|default turn)\b", re.I), "integrated"),
+    (re.compile(r"\bone[- ]brain in production\b", re.I), "onebrain"),
+    (re.compile(r"\bscaffold[- ]retired\b", re.I), "scaffold_retired"),
+    (re.compile(r"\bruns (?:by default|in the default (?:turn|chat|path))\b", re.I), "on_by_default"),
+]
+FACULTY_RE = re.compile(r"^integration_faculty:\s*(\S+)\s*$", re.M)
+
+
+# ---------------------------------------------------------------- minimal YAML read (rows + anchors + headline)
+def _load_ledger(text):
+    """Parse the ledger with PyYAML if present, else a scoped fallback for our fixed schema. Returns dict or None."""
+    try:
+        import yaml  # noqa
+        return yaml.safe_load(text)
+    except Exception:
+        pass
+    # Fallback: parse just what the gate needs (headline.total_faculties/scaffold_retired + row levels + anchors).
+    data = {"headline": {}, "rows": []}
+    # headline scalars
+    for k in ("total_faculties", "scaffold_retired", "default_on_spiking_faculties"):
+        m = re.search(r"^\s{2}%s:\s*(\d+)" % k, text, re.M)
+        if m:
+            data["headline"][k] = int(m.group(1))
+    # rows: split on "  - key:"
+    for block in re.split(r"\n\s{2}-\s+key:\s*", text)[1:]:
+        row = {}
+        row["key"] = block.splitlines()[0].strip()
+        for lvl in ("de_risked", "wired", "on_by_default", "scaffold_retired"):
+            m = re.search(r"^\s{4}%s:\s*(\S+)" % lvl, block, re.M)
+            if m:
+                row[lvl] = m.group(1).strip()
+        for f in ("host_scaffold_in_default",):
+            m = re.search(r'^\s{4}%s:\s*"?(.+?)"?\s*$' % f, block, re.M)
+            if m:
+                row[f] = m.group(1)
+        # default_anchor entries
+        anchors = []
+        for a in re.split(r"\n\s{6}-\s+file:\s*", block)[1:]:
+            anc = {"file": a.splitlines()[0].strip()}
+            for fld in ("assign", "off_value", "on_value", "count"):
+                m = re.search(r"^\s{8}%s:\s*(.+?)\s*$" % fld, a, re.M)
+                if m:
+                    anc[fld] = m.group(1).strip().strip('"')
+            if "count" in anc:
+                anc["count"] = int(anc["count"])
+            if "assign" in anc:
+                anchors.append(anc)
+        if anchors:
+            row["default_anchor"] = anchors
+        sc = re.search(r"^\s{4}scaffold_symbol:\s*\n\s{6}file:\s*(\S+)\s*\n\s{6}symbol:\s*\"?(.+?)\"?\s*$", block, re.M)
+        if sc:
+            row["scaffold_symbol"] = {"file": sc.group(1).strip(), "symbol": sc.group(2).strip()}
+        data["rows"].append(row)
+    return data
+
+
+def _read(rel):
+    full = rel if os.path.isabs(rel) else os.path.join(_ROOT, rel)
+    try:
+        return open(full, errors="ignore").read()
+    except OSError:
+        return None
+
+
+def _count_assign(text, assign, value):
+    """Count `assign = value` occurrences, whitespace- and quote-robust. value: True/False or a (maybe-quoted) string."""
+    v = str(value).strip().strip('"').strip("'")
+    if v in ("True", "False", "None"):
+        pat = r"\b%s\s*(?::[^=\n]+)?=\s*%s\b" % (re.escape(assign), v)
+    else:
+        pat = r"\b%s\s*(?::[^=\n]+)?=\s*['\"]%s['\"]" % (re.escape(assign), re.escape(v))
+    return len(re.findall(pat, text))
+
+
+# ---------------------------------------------------------------- the three sub-checks (operate on a parsed ledger)
+def _check_anchors(data):
+    problems = []
+    for row in data.get("rows", []):
+        key = row.get("key", "?")
+        lvl = str(row.get("on_by_default", "")).upper()
+        for anc in row.get("default_anchor", []) or []:
+            src = _read(anc["file"])
+            if src is None:
+                problems.append("[A] row %r: default_anchor file %s not found" % (key, anc["file"]))
+                continue
+            off_ct = _count_assign(src, anc["assign"], anc.get("off_value", "False"))
+            on_ct = _count_assign(src, anc["assign"], anc.get("on_value", "True"))
+            want = anc.get("count", 1)
+            if lvl == "NO":
+                if off_ct != want or on_ct != 0:
+                    problems.append(
+                        "[A] row %r says on_by_default:NO but %s in %s has off=%d (expect %d) / on=%d (expect 0) — "
+                        "the source and the ledger disagree: either the faculty was turned ON without recording it, or "
+                        "the ledger is stale." % (key, anc["assign"], anc["file"], off_ct, want, on_ct))
+            elif lvl == "YES":
+                if on_ct < 1 or off_ct != 0:
+                    problems.append(
+                        "[A] row %r says on_by_default:YES but %s in %s has on=%d / off=%d (expect off=0) — the ledger "
+                        "claims default-on while the source still assigns the OFF value." % (key, anc["assign"], anc["file"], on_ct, off_ct))
+            # PARTIAL / other: no literal derivable, skip (Check B still governs any claim).
+        sc = row.get("scaffold_symbol")
+        if sc:
+            src = _read(sc["file"])
+            if src is None:
+                problems.append("[A] row %r: scaffold_symbol file %s not found" % (key, sc["file"]))
+            else:
+                present = sc["symbol"] in src
+                retired = str(row.get("scaffold_retired", "")).upper() == "YES"
+                if retired and present:
+                    problems.append("[A] row %r says scaffold_retired:YES but the host symbol %r is STILL PRESENT in %s"
+                                    % (key, sc["symbol"], sc["file"]))
+                if not retired and not present:
+                    problems.append("[A] row %r says scaffold_retired:%s but the host symbol %r is GONE from %s — the "
+                                    "scaffold was retired without recording it." % (key, row.get("scaffold_retired"), sc["symbol"], sc["file"]))
+    return problems
+
+
+def _check_ratchet(data):
+    problems = []
+    h = data.get("headline", {}) or {}
+    rows = data.get("rows", [])
+    if "total_faculties" in h and h["total_faculties"] != len(rows):
+        problems.append("[C] headline.total_faculties=%s but the ledger has %d rows" % (h["total_faculties"], len(rows)))
+    got_retired = sum(1 for r in rows if str(r.get("scaffold_retired", "")).upper() == "YES")
+    if "scaffold_retired" in h and h["scaffold_retired"] != got_retired:
+        problems.append("[C] headline.scaffold_retired=%s but %d rows have scaffold_retired:YES" % (h["scaffold_retired"], got_retired))
+    return problems
+
+
+def _check_claim(text, rel, data):
+    """A doc using a production-integration claim token must name a supporting ledger key."""
+    hit = None
+    for rx, kind in CLAIM_TOKENS:
+        m = rx.search(text)
+        if m:
+            hit = (m.group(0), kind)
+            break
+    if not hit:
+        return []
+    phrase, kind = hit
+    fm = FACULTY_RE.search(text[:text.find("\n---", 3) + 4] if text.startswith("---") else "")
+    rows = {r.get("key"): r for r in data.get("rows", [])}
+    if not fm:
+        return ["[B] %s: uses a production-integration claim %r but declares no `integration_faculty: <key>`. Name the "
+                "ledger row so the claim can be adjudicated against the production default." % (rel, phrase[:50])]
+    key = fm.group(1)
+    row = rows.get(key)
+    if row is None:
+        return ["[B] %s: integration_faculty:%r is not a row in %s" % (rel, key, LEDGER_REL)]
+    wired = str(row.get("wired", "")).upper() == "YES"
+    on_def = str(row.get("on_by_default", "")).upper() == "YES"
+    retired = str(row.get("scaffold_retired", "")).upper() == "YES"
+    need_retired = kind in ("onebrain", "scaffold_retired")
+    ok = wired and on_def and (retired if need_retired else True)
+    if not ok:
+        return ["[B] %s: claims %r for faculty %r, but its ledger row is wired=%s on_by_default=%s scaffold_retired=%s. "
+                "Host still in the default path: %s" % (rel, phrase[:40], key, row.get("wired"), row.get("on_by_default"),
+                                                        row.get("scaffold_retired"), row.get("host_scaffold_in_default", "?"))]
+    return []
+
+
+# ---------------------------------------------------------------- entry points
+def check(paths):
+    if paths is None or len(paths) == 0:
+        return []  # legacy audited on touch
+    norm = [p.replace("\\", "/") for p in paths]
+    problems = []
+    ledger_text = _read(LEDGER_REL)
+    if ledger_text is None:
+        # only complain if something in scope needs it
+        if any(p == LEDGER_REL or p in ANCHORED_FILES for p in norm):
+            return ["[PI] %s is missing — the production-integration ledger must exist." % LEDGER_REL]
+        return []
+    data = _load_ledger(ledger_text)
+    if not data or not data.get("rows"):
+        return ["[PI] %s failed to parse / has no rows." % LEDGER_REL]
+
+    # A + C run when the ledger or any anchored source file is staged.
+    if any(p == LEDGER_REL or p in ANCHORED_FILES for p in norm):
+        problems += _check_anchors(data)
+        problems += _check_ratchet(data)
+    # B runs on staged governed docs.
+    for p in norm:
+        if not p.endswith(".md"):
+            continue
+        if not (p.startswith("research/findings/") or p.endswith("GAP_CLOSURE_MISSION.md")
+                or p.endswith("ROADMAP.md") or "docs/plans/" in p):
+            continue
+        t = _read(p)
+        if t:
+            problems += _check_claim(t, p, data)
+    return problems
+
+
+def selftest():
+    """FAILING DIRECTION FIRST for each sub-check, then negative controls."""
+    import tempfile
+    bad = []
+
+    # ---- Check A: level-derived literal ----
+    src = "x=1\nenable_neural_render = True\nenable_neural_render=True\n"  # source turned ON (2x True)
+    data_off = {"headline": {"total_faculties": 1, "scaffold_retired": 0},
+                "rows": [{"key": "neural-render", "on_by_default": "NO", "scaffold_retired": "NO",
+                          "default_anchor": [{"file": "__mem__", "assign": "enable_neural_render",
+                                              "off_value": "False", "on_value": "True", "count": 2}]}]}
+    # monkeypatch _read to serve the in-memory source
+    import tools.gates.production_integration as self_mod
+    orig_read = self_mod._read
+    self_mod._read = lambda rel: src if rel == "__mem__" else orig_read(rel)
+    try:
+        if not _check_anchors(data_off):
+            bad.append("[A] did NOT catch on_by_default:NO while source assigns True (source flipped on, ledger stale)")
+        # theatre hole: row flipped to YES while source still False
+        src2 = "enable_neural_render = False\nenable_neural_render=False\n"
+        self_mod._read = lambda rel: src2 if rel == "__mem__" else orig_read(rel)
+        data_yes = {"rows": [{"key": "nr", "on_by_default": "YES", "scaffold_retired": "NO",
+                              "default_anchor": [{"file": "__mem__", "assign": "enable_neural_render",
+                                                  "off_value": "False", "on_value": "True", "count": 2}]}]}
+        if not _check_anchors(data_yes):
+            bad.append("[A] THEATRE HOLE: did NOT catch on_by_default:YES while source still assigns False")
+        # negative control: consistent (NO + source False)
+        data_ok = {"rows": [{"key": "nr", "on_by_default": "NO", "scaffold_retired": "NO",
+                             "default_anchor": [{"file": "__mem__", "assign": "enable_neural_render",
+                                                 "off_value": "False", "on_value": "True", "count": 2}]}]}
+        if _check_anchors(data_ok):
+            bad.append("[A] FALSE POSITIVE: flagged a consistent NO-level row with matching OFF source")
+        # scaffold symbol: retired=NO but symbol GONE
+        self_mod._read = lambda rel: "no such thing here" if rel == "__mem__" else orig_read(rel)
+        data_sc = {"rows": [{"key": "cs", "scaffold_retired": "NO",
+                             "scaffold_symbol": {"file": "__mem__", "symbol": "def match_fact"}}]}
+        if not _check_anchors(data_sc):
+            bad.append("[A] did NOT catch scaffold_retired:NO while the host symbol is GONE")
+        self_mod._read = lambda rel: "def match_fact(self):" if rel == "__mem__" else orig_read(rel)
+        data_sc2 = {"rows": [{"key": "cs", "scaffold_retired": "YES",
+                              "scaffold_symbol": {"file": "__mem__", "symbol": "def match_fact"}}]}
+        if not _check_anchors(data_sc2):
+            bad.append("[A] did NOT catch scaffold_retired:YES while the host symbol is STILL PRESENT")
+    finally:
+        self_mod._read = orig_read
+
+    # ---- Check C: ratchet ----
+    if not _check_ratchet({"headline": {"total_faculties": 5}, "rows": [{"key": "a"}]}):
+        bad.append("[C] did NOT catch total_faculties mismatch")
+    if not _check_ratchet({"headline": {"scaffold_retired": 3},
+                           "rows": [{"key": "a", "scaffold_retired": "NO"}]}):
+        bad.append("[C] did NOT catch scaffold_retired count mismatch")
+    if _check_ratchet({"headline": {"total_faculties": 1, "scaffold_retired": 0},
+                       "rows": [{"key": "a", "scaffold_retired": "NO"}]}):
+        bad.append("[C] FALSE POSITIVE: flagged a consistent header")
+
+    # ---- Check B: claim<->ledger ----
+    data = {"rows": [{"key": "content-selection", "wired": "NO", "on_by_default": "NO", "scaffold_retired": "NO",
+                      "host_scaffold_in_default": "QuestionRouter.match_fact"},
+                     {"key": "semantic-recall", "wired": "YES", "on_by_default": "YES", "scaffold_retired": "YES"}]}
+    with tempfile.TemporaryDirectory() as d:
+        def claim(body, fac=None):
+            fm = "---\ntype: finding\n%s---\n\n%s\n" % (("integration_faculty: %s\n" % fac) if fac else "", body)
+            return fm
+        # 1. claim token, no integration_faculty declared
+        if not _check_claim(claim("This faculty is now wired into production and load-bearing."), "research/findings/a.md", data):
+            bad.append("[B] did NOT catch a production claim with no integration_faculty")
+        # 2. claim naming a row that does NOT support it
+        if not _check_claim(claim("Now integrated into /api/brain-chat.", "content-selection"), "research/findings/b.md", data):
+            bad.append("[B] did NOT catch an 'integrated' claim on a wired=NO row")
+        # 3. negative control: claim naming a row that DOES support it
+        if _check_claim(claim("Now integrated into /api/brain-chat.", "semantic-recall"), "research/findings/c.md", data):
+            bad.append("[B] FALSE POSITIVE: flagged a supported integration claim")
+        # 4. negative control: no claim token at all
+        if _check_claim(claim("Held-out accuracy rises to 0.61 under the expander."), "research/findings/d.md", data):
+            bad.append("[B] FALSE POSITIVE: flagged an ordinary finding with no production claim")
+
+    # ---- scoping ----
+    if check(None) or check([]):
+        bad.append("SCOPE LEAK: standalone/empty mode must not scan")
+    return bad

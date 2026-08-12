@@ -1,0 +1,181 @@
+# PRODUCTION-INTEGRATION LEDGER — the honest state of the DEFAULT /api/brain-chat turn.
+#
+# THE GOAL (owner, 2026-08-11): a working all-spiking one-substrate brain with ALL faculties ON BY DEFAULT in
+# production, fully functional when chatted with. A faculty is DONE only when WIRED + ON-BY-DEFAULT + SCAFFOLD-RETIRED.
+# This file is the tracked truth; tools/gates/production_integration.py (CLASS PI) cross-checks every row's levels
+# against live source (anchors) and blocks any doc that CLAIMS a faculty is integrated/wired/on-by-default/one-brain
+# beyond what its row supports. Seeded 2026-08-11 from workflow wjgvtko3i (12-agent code-trace, adversarially checked).
+#
+# LEVELS (each a verified value: YES / PARTIAL / NO):
+#   de_risked        validated GO at runner/de-risk level (6-seed etc.)
+#   wired            reachable from webapp/server.py /api/brain-chat -> the ChatBrain it builds (not only a runner)
+#   on_by_default    runs in the DEFAULT config the owner gets (no opt-in flag, not default-off, not behind rich=True)
+#   scaffold_retired the host shortcut it replaces is GONE from the default path (deleted / demoted to test-oracle)
+# A row is INTEGRATED only when wired=YES AND on_by_default=YES AND scaffold_retired=YES.
+#
+# ANCHORS (the machine-checkable part). default_anchor: the gate reads the RHS literal at `assign` and derives the
+# expected value FROM the on_by_default LEVEL (NO => must be off_value; YES => must be on_value). scaffold_symbol: while
+# scaffold_retired=NO the host symbol MUST be present; =YES it must be absent. If source flips without the ledger moving
+# (or the ledger flips without the source), the anchor mismatches and the gate BLOCKS.
+
+headline:
+  # THE PRIMARY NORTH-STAR — OWNER-VISIBLE FUNCTION (the 3 acts trace-stamping cannot fake; each needs a LESION test:
+  # disable the spiking path -> the default answer must CHANGE, else it is not genuinely doing the act).
+  owner_visible_function:
+    choose: NO       # does the default turn's content-selection fire a neural selector that is lesion-load-bearing?
+    generate: NO     # open-ended generation FROM THE BRAIN (not the off-bridge transformer)?
+    learn: NO        # does the default turn WRITE SYNAPSES (plasticity per turn)?
+  # SECONDARY — the composite. default_on_spiking = rows at on_by_default=YES whose spiking path is lesion-load-bearing.
+  default_on_spiking_faculties: 2      # RF phasor bind/unbind resonate dynamics; the anaphora referent store
+  scaffold_retired: 0
+  total_faculties: 14
+  note: "~93% of the live chat's load-bearing cognition is host/numpy/off-bridge; ~7% spiking. CHOOSE/GENERATE/LEARN all host-or-absent."
+
+rows:
+  - key: content-selection
+    faculty: "Content selection — deciding WHAT to say (the biggest host gap)"
+    de_risked: PARTIAL          # SpikingSpreadingController / dlPFC is a GO but only steers elaboration, not the direct answer
+    wired: NO
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "QuestionRouter.match_fact — host keyword-overlap argmax (content_hits*10+brain_hit)"
+    scaffold_symbol:
+      file: research/runners/brain_chat_tui.py
+      symbol: "def match_fact"
+    evidence: "brain_chat_tui.py:120-145"
+
+  - key: in-loop-learning
+    faculty: "In-loop learning — the turn WRITES SYNAPSES (chatting changes the brain)"
+    de_risked: PARTIAL          # BTSP/Hebbian de-risks exist; none applied per-turn
+    wired: NO
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "the turn is read-only (gate()+render()); hear->store fires only at build; frozen KB; no teach endpoint"
+    evidence: "brain_chat_tui.py:216 (snapshot), :347-356 (read-only turn), :433-435 (store at build only)"
+
+  - key: open-ended-generation
+    faculty: "Open-ended generation — novel content FROM THE BRAIN"
+    de_risked: PARTIAL          # emerge15-21 stream-cortex generators are GO at runner level
+    wired: NO
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "recall-only (emits ONLY stored facts); off-bridge Qwen articulates; emerge15-21 wired nowhere in webapp"
+    evidence: "no emerge15-21 refs in webapp/server.py; recall-only agent"
+
+  - key: neural-render
+    faculty: "Neural word-order articulation (Broca-like; enable_neural_render)"
+    de_risked: PARTIAL
+    wired: PARTIAL
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "off-bridge Qwen2.5-0.5B transformer (or host templates); enable_neural_render=False on all builders"
+    default_anchor:
+      - file: webapp/server.py
+        assign: enable_neural_render
+        off_value: "False"
+        on_value: "True"
+        count: 2
+    evidence: "server.py enable_neural_render=False x2"
+
+  - key: one-brain-substrate
+    faculty: "One shared substrate (vs per-op bridges + host glue); composer_kind"
+    de_risked: PARTIAL          # OneBrainComposer built + byte-identity-gated
+    wired: PARTIAL
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "composer_kind='rf' hardcoded (numpy cleanup/store/np.conj); onebrain branch default-off; per-op _bridge_cache"
+    default_anchor:
+      - file: research/runners/brain_chat_tui.py
+        assign: composer_kind
+        off_value: "\"rf\""
+        on_value: "\"onebrain\""
+        count: 4
+    lesion_note: "composer_kind='onebrain' auto-enables 5 spiking branches that are byte-identical to numpy (bca:233 '== host argmax') — flipping it earns integration credit ONLY under a lesion test (default answer must CHANGE)."
+    evidence: "brain_chat_tui.py:425,430,472,475 composer_kind='rf'; brain_conversational_agent.py:231-235"
+
+  - key: discourse-planner
+    faculty: "Discourse planner (dlPFC neural planner; multi-sentence content)"
+    de_risked: YES
+    wired: PARTIAL
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "neural_planner=False forced for latency; rich=False default -> single-fact host path"
+    default_anchor:
+      - file: webapp/server.py
+        assign: neural_planner
+        off_value: "False"
+        on_value: "True"
+        count: 2
+    evidence: "server.py:3009 neural_planner=False; :3207 rich=False"
+
+  - key: semantic-recall
+    faculty: "Semantic fact recall (VSA bind/unbind)"
+    de_risked: YES
+    wired: YES
+    on_by_default: YES          # genuinely runs every turn
+    scaffold_retired: NO        # but on the numpy VSA fast path by default, not the spiking store
+    host_scaffold_in_default: "host VSA unbind (enable_substrate_store=False -> numpy composite + host bind/unbind)"
+    evidence: "core_sim_composition.py:428; rf enable_substrate_store default False"
+
+  - key: moat-verify
+    faculty: "No-confab moat / VERIFY (recall-verify + abstain)"
+    de_risked: YES
+    wired: YES
+    on_by_default: YES          # the spiking recall-verify genuinely runs — one of the 2 default-on-spiking
+    scaffold_retired: NO        # but the abstain firewall + SVO re-parse around it are host
+    host_scaffold_in_default: "host keyword abstain gate + host SVO re-parse bracket the spiking recall-verify"
+    evidence: "brain_chat_tui.py:240 query_patient (spiking); :236-241 host abstain; :295-306 host re-parse"
+
+  - key: anaphora-wm
+    faculty: "Anaphora working memory (referent store)"
+    de_risked: YES
+    wired: YES
+    on_by_default: YES          # spiking V1 referent store runs — the 2nd default-on-spiking
+    scaffold_retired: NO        # host pronoun detect/substitute around it; single-attractor (ties on >=2 referents)
+    host_scaffold_in_default: "host pronoun detection + string substitution; SpikingLoopContextBuffer single-slot"
+    evidence: "brain_chat_tui.py:253-267 host pronoun ops; SpikingLoopContextBuffer"
+
+  - key: discourse-register
+    faculty: "Discourse event register (who-did-what-before; D3)"
+    de_risked: YES
+    wired: PARTIAL
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "PairEventRegister(spiking=False) — host numpy; spiking twin PairSpikingRegister unused"
+    evidence: "brain_chat_tui.py:415,468 PairEventRegister(spiking=False)"
+
+  - key: episodic-memory
+    faculty: "Episodic memory (BTSP one-shot / CA3 completion)"
+    de_risked: YES              # gap#5 episodic loop is a GO
+    wired: NO
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "absent — the turn is stateless recall over a frozen KB; no BTSP/CA3 in the chat endpoint"
+    evidence: "no episodic imports in webapp chat path"
+
+  - key: wm-binding-advanced
+    faculty: "Advanced WM/binding (SlotBinder, Ordered-WM-V2, RUNG-2 buffers)"
+    de_risked: YES              # multiple 6-seed GOs
+    wired: NO
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "GO but no production caller passes composer_kind='slotbinder'; Ordered-WM-V2 not imported by the chat graph"
+    evidence: "no production caller for slotbinder / Ordered-WM-V2 / rung-2 buffers"
+
+  - key: affect-curiosity-self
+    faculty: "Affect / curiosity / self-model / reward (incl. Gate-B)"
+    de_risked: YES              # Phase-0 6-seed GOs (curiosity/affect/self-schema)
+    wired: NO
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "zero refs to affect|emotion|curiosity|self_schema in the chat pipeline; none drives the live turn"
+    evidence: "grep of the 3 chat modules: no affect/curiosity/self-model references"
+
+  - key: perception-motor
+    faculty: "Perception / motor (sensory encoding, motor pools)"
+    de_risked: PARTIAL          # nav/perception de-risks; not part of the text-chat turn
+    wired: NO
+    on_by_default: NO
+    scaffold_retired: NO
+    host_scaffold_in_default: "not exercised by the text chat turn (world/body faculties; legitimate host I/O boundary aside)"
+    evidence: "text chat has no perception/motor path"
