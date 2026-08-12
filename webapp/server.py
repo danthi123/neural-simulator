@@ -3357,11 +3357,16 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as e:
             raise HTTPException(500, f"rich chat turn failed: {type(e).__name__}: {e}")
         facts = [list(f) for f in r.get("facts", [])]
-        return JSONResponse({
+        # OPEN-ENDED GENERATION (#3E): a generated HYPOTHESIS turn returns NO supporting facts (a guess is not a
+        # recalled fact) but carries `hypothesis`/`hypothesis_svo`. Surface those so the client can render the
+        # guess distinctly + so the SVO the fluent prose asserts is checkable, WITHOUT reporting it as recalled.
+        is_hyp = bool(r.get("hypothesis"))
+        resp = {
             "answer": r["answer"],
             "abstained": bool(r["abstained"]),
             # the direct recall (the first supporting fact) is the gate hit,
             # surfaced for parity with the single-fact path's recalled_svo.
+            # A hypothesis has no recalled fact -> null (it is a guess, not knowledge).
             "recalled_svo": facts[0] if facts else None,
             # every kept sentence is gate-sourced + verify-checked, so the
             # multi-sentence reply is verified-by-construction (unless it
@@ -3377,7 +3382,15 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # B3: what the brain DID this turn (the LAST spiking recall the rich gate ran), or null. The rich path
             # plans over multiple supporting facts; last_trace reflects the most recent query (the direct recall).
             "activity": _read_activity(),
-        })
+        }
+        if is_hyp:
+            # additive markers (present ONLY on a generated-hypothesis turn): the guess flag, the (a,v,p) the fluent
+            # prose asserts (VERIFY re-parse target), and whether the fluent mouth (True) or the raw template
+            # fallback (False) produced the surface. A non-hypothesis rich turn is byte-identical (no extra keys).
+            resp["hypothesis"] = True
+            resp["hypothesis_svo"] = list(r.get("hypothesis_svo") or [])
+            resp["fluent_hypothesis"] = bool(r.get("fluent_hypothesis"))
+        return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
     # Peek the GATE so we can report the recalled fact (exactly what the TUI

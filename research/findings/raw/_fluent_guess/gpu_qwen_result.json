@@ -1,0 +1,105 @@
+{
+  "model_device": "cuda:0",
+  "guesses": [
+    {
+      "q": "what might dog do",
+      "svo": [
+        "dog",
+        "like",
+        "fish"
+      ],
+      "surface": "Maybe the dog likes to eat fish -- that's a guess from what I've learned, not something I was taught.",
+      "fluent": true,
+      "flagged": true,
+      "svo_words_in_surface": true,
+      "render_s": 1.7
+    },
+    {
+      "q": "what might cat eat",
+      "svo": [
+        "cat",
+        "eat",
+        "bone"
+      ],
+      "surface": "Maybe the cat eats the bone -- that's a guess from what I've learned, not something I was taught.",
+      "fluent": true,
+      "flagged": true,
+      "svo_words_in_surface": true,
+      "render_s": 1.1
+    },
+    {
+      "q": "guess about dog",
+      "svo": [
+        "dog",
+        "eat",
+        "bird"
+      ],
+      "surface": "Maybe the dog eats the bird -- that's a guess from what I've learned, not something I was taught.",
+      "fluent": true,
+      "flagged": true,
+      "svo_words_in_surface": true,
+      "render_s": 0.7
+    },
+    {
+      "q": "what might mouse eat",
+      "svo": [
+        "mouse",
+        "eat",
+        "cat"
+      ],
+      "surface": "Maybe the mouse eats the cat -- that's a guess from what I've learned, not something I was taught.",
+      "fluent": true,
+      "flagged": true,
+      "svo_words_in_surface": true,
+      "render_s": 0.6
+    },
+    {
+      "q": "what might bird chase",
+      "svo": [
+        "bird",
+        "chase",
+        "cat"
+      ],
+      "surface": "Maybe a bird chased a cat through the park -- that's a guess from what I've learned, not something I was taught.",
+      "fluent": true,
+      "flagged": true,
+      "svo_words_in_surface": true,
+      "render_s": 2.8
+    },
+    {
+      "q": "tell me something new about dog",
+      "svo": [
+        "dog",
+        "like",
+        "fish"
+      ],
+      "surface": "Maybe the dog likes to eat fish -- that's a guess from what I've learned, not something I was taught.",
+      "fluent": true,
+      "flagged": true,
+      "svo_words_in_surface": true,
+      "render_s": 2.0
+    }
+  ],
+  "moat_abstain": [
+    {
+      "q": "what might dragon do",
+      "gate": null,
+      "abstained": true
+    },
+    {
+      "q": "guess about wizard",
+      "gate": null,
+      "abstained": true
+    },
+    {
+      "q": "tell me something new about unicorn",
+      "gate": null,
+      "abstained": true
+    }
+  ],
+  "adversarial": {
+    "forced_wrong_patient": "bird",
+    "adv_surface": "The dog chased the bird.",
+    "verify_as_true_svo": false
+  }
+}

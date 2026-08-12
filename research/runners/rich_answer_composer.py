@@ -331,6 +331,14 @@ class RichAnswerComposer:
         direct = self._direct_fact(question)
         if direct is None:
             return None, []                                   # the brain has no matched fact -> ABSTAIN
+        # OPEN-ENDED GENERATION (#3E): an open-ended prompt makes chat.gate VOLUNTEER a generated HYPOTHESIS (a
+        # HypothesisSVO). It is a single, clearly-FLAGGED guess -- it MUST NOT be chained/elaborated with stored
+        # recall (mixing a guess with asserted facts blurs the honesty boundary, and its own novel (a,v,p) is not
+        # a stored fact to speak as knowledge). Return it ALONE (topic None -> no discourse-thread pollution);
+        # `answer()` renders it fluently as a flagged guess (SVO-verified, template fallback).
+        from research.runners.brain_chat_tui import HypothesisSVO
+        if isinstance(direct, HypothesisSVO):
+            return None, [direct]
         a, v, p = direct
         # the discourse TOPIC for the chain + elaboration: the answer's PATIENT if the brain can say more about
         # it (it is itself an agent of some fact), else the question's subject `a`.
@@ -524,6 +532,16 @@ class RichAnswerComposer:
                    else "I don't know about that.")
             return {"answer": msg, "abstained": True, "facts": [], "dropped": [],
                     "n_sentences": 0, "topic": topic, "followup": followup}
+        # OPEN-ENDED GENERATION (#3E): a generated HYPOTHESIS is a single, clearly-FLAGGED guess (rendered FLUENTLY
+        # via the mouth, SVO-verified so the mouth can't swap the content; the raw flagged template is the fallback).
+        # It does NOT advance the discourse thread (there is no recalled topic to follow up on) and is NEVER reported
+        # as a recalled fact -- `hypothesis`/`hypothesis_svo` mark it as a guess for the endpoint.
+        from research.runners.brain_chat_tui import HypothesisSVO
+        if len(facts) == 1 and isinstance(facts[0], HypothesisSVO):
+            surface, fluent = self.chat.render_hypothesis_verified(facts[0])
+            return {"answer": surface, "abstained": False, "facts": [], "dropped": [],
+                    "n_sentences": 1, "topic": None, "followup": followup,
+                    "hypothesis": True, "hypothesis_svo": list(facts[0]), "fluent_hypothesis": bool(fluent)}
         paragraph, kept, dropped = self.render_paragraph(facts)
         if not kept:
             # every gathered sentence failed VERIFY (a faculty that could not faithfully render anything) ->

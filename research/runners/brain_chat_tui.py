@@ -589,13 +589,13 @@ class ChatBrain:
         """Render the gated SVO into a fluent sentence (CONSTRAIN) and VERIFY the content re-parses to the gated
         fact. Returns the verified fluent string, or the brain's raw triple on a verify miss / raw mode / no
         renderer. NEVER emits unverified generative prose as the answer."""
-        # OPEN-ENDED GENERATION (#3E): a moat-verified HYPOTHESIS is rendered as an EXPLICIT guess, clearly marked
-        # as not-taught knowledge (the honesty boundary is a deliverable). It bypasses the fluent-render+VERIFY of
-        # a stored fact: there is no stored fact to re-parse against — the proposal was already gated (plausible +
-        # non-contradictory) and moat-verified (not a known fact) in gate().
+        # OPEN-ENDED GENERATION (#3E): a moat-verified HYPOTHESIS is rendered as an EXPLICIT, clearly-FLAGGED guess
+        # (the honesty boundary is a deliverable). We now speak it as FLUENT prose via the mouth — SVO-VERIFIED so
+        # the mouth cannot swap the content — but framed 'Maybe ... -- that's a guess ...' so it can never be
+        # mistaken for asserted knowledge; a mouth-verify miss / GPU-free host falls back to the raw flagged
+        # template. The proposal was already gated (plausible + non-contradictory) + moat-verified in gate().
         if isinstance(gate_svo, HypothesisSVO):
-            a, v, p = gate_svo
-            return f"perhaps {a} {v} {p}  [a guess from what I've learned -- not something I was taught]"
+            return self.render_hypothesis(gate_svo)
         a, v, p = gate_svo
         if self.raw_mode or self.renderer is None:
             return self._raw(gate_svo)
@@ -625,6 +625,50 @@ class ChatBrain:
     def _raw(self, gate_svo):
         """The brain's OWN renderer: the raw recalled triple as a plain sentence (no LLM)."""
         return " ".join(str(x) for x in gate_svo)
+
+    # --- OPEN-ENDED GENERATION (#3E): render a generated HYPOTHESIS as a FLUENT, clearly-FLAGGED guess ---
+    def render_hypothesis(self, hyp):
+        """Render a GENERATED, moat-verified HYPOTHESIS (a #3E novel proposition) as a clearly-FLAGGED guess.
+        Prefer FLUENT prose via the mouth, framed 'Maybe <fluent> -- that's a guess ...', VERIFYING that the
+        fluent sentence re-parses to the SAME (a, v, p) the hypothesis asserts (so the mouth cannot swap the
+        content). On a verify miss / no renderer / raw mode, fall back to the raw FLAGGED template 'perhaps a v
+        p'. The guess is NEVER surfaced as an asserted fact -- the honesty framing is explicit in the surface text
+        either way."""
+        return self.render_hypothesis_verified(hyp)[0]
+
+    def render_hypothesis_verified(self, hyp):
+        """As `render_hypothesis`, but also report whether the FLUENT mouth output VERIFIED (True) or the raw
+        flagged template FALLBACK was used (False). Returns (surface, fluent_verified). The VERIFY is the same
+        re-parse the recall path uses: the fluent sentence must carry the hypothesis's exact (a, v, p)."""
+        a, v, p = hyp
+        template = self._hypothesis_template(a, v, p)
+        if self.raw_mode or self.renderer is None:
+            return template, False                    # GPU-free / --raw: the honest raw flagged guess
+        surface, asserted = self.renderer.render_svo(a, v, p)
+        if self._verify(surface, asserted, hyp):
+            return self._frame_guess(surface), True
+        # a generative mouth can DRIFT: one tighter re-prompt (if supported), else the raw flagged template
+        if hasattr(self.renderer, "render_svo_regen"):
+            surface2, asserted2 = self.renderer.render_svo_regen(a, v, p)
+            if self._verify(surface2, asserted2, hyp):
+                return self._frame_guess(surface2), True
+        return template, False                        # mouth swapped/garbled the content -> honest flagged fallback
+
+    @staticmethod
+    def _hypothesis_template(a, v, p):
+        """The raw FLAGGED-guess surface (GPU-free fallback / a mouth-verify miss). Byte-identical to the pre-fluent
+        template so the moat framing is unchanged when the mouth is unavailable."""
+        return f"perhaps {a} {v} {p}  [a guess from what I've learned -- not something I was taught]"
+
+    @staticmethod
+    def _frame_guess(surface):
+        """Frame a VERIFIED fluent sentence as an EXPLICIT guess (the honesty boundary is a deliverable): the
+        fluent content is kept verbatim, lower-cased into a 'Maybe ...' lead so it can never be read as asserted
+        knowledge, with the not-taught disclaimer appended."""
+        g = surface.strip().rstrip(".")
+        if g[:1].isupper():
+            g = g[0].lower() + g[1:]
+        return f"Maybe {g} -- that's a guess from what I've learned, not something I was taught."
 
     # --- discourse event tracking (who is doing it now / who was doing it before) ---
     def _discourse_turn(self, line):
