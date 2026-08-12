@@ -42,13 +42,17 @@ ARMS (all on the SAME LIF forward + SAME task):
   ff_permuted     : FF trained on SHUFFLED labels -> must collapse to chance (isolates the correct-label-attributable lift).
 
 Run (numpy CPU; fan across seeds as parallel processes -- launch-bound):
+    # NOTE: the GO operating point needs --lr 1.0 --label-gain 3.0 (+ a tuned BPTT ceiling). The default lr
+    #       reproduces CHANCE (a GO=False landmine) -- always pass these flags. See the finding's Reproduce block.
     # smoke (one seed, N=3):
     SIM_BACKEND=numpy .venv/bin/python -m research.runners._gap4_forwardforward_local_derisk \
-        --task-xor --seed 42 --n-list 3 --epochs 120 \
+        --task-xor --seed 42 --n-list 3 --epochs 350 --lr 1.0 --label-gain 3.0 \
+        --bptt-hidden 128 --bptt-epochs 200 --bptt-lr 0.2 \
         --out research/findings/raw/_gap4_ff/ff_smoke_seed42.json
     # one seed, all depths N=2,3,4 (one process per seed; fan 6):
     SIM_BACKEND=numpy .venv/bin/python -m research.runners._gap4_forwardforward_local_derisk \
-        --task-xor --seed 42 --n-list 2 3 4 --epochs 200 \
+        --task-xor --seed 42 --n-list 2 3 4 --epochs 350 --lr 1.0 --label-gain 3.0 \
+        --bptt-hidden 128 --bptt-epochs 200 --bptt-lr 0.2 \
         --out research/findings/raw/_gap4_ff/ff_xor_seed42.json
 """
 from __future__ import annotations

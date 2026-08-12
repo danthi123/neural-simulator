@@ -13,7 +13,35 @@ artifacts:
   - research/findings/raw/_gap4_ff/ff_xor_seed102.json
 ---
 
-# gap#4 — a per-layer LOCAL contrastive (spiking Forward-Forward) rule ENTERS the deep-spiking learning regime at N=3 AND N=4, where every top-down credit path collapsed to chance — the wall's first crack (6-seed)
+# gap#4 — a per-layer LOCAL contrastive (spiking Forward-Forward) rule enters the deep-spiking learning regime (leaves majority-class + beats the OPTIMAL frozen reservoir) at N=3 AND N=4, 6-seed  ⚠️ CORRECTED — see the correction block: NOT a unique crack vs FA/KP, and NOT "deep credit"
+
+## ⚠️ ADVERSARIAL-VERIFY CORRECTION (2026-08-11, workflow wrufiei6u — MERGE-WITH-EDITS). Read this FIRST; it re-scopes the title + verdict below.
+
+Two clauses are RETRACTED; the enter-the-regime result is CONFIRMED.
+
+- **RETRACTED — "where every top-down credit path collapsed" / "the wall's first crack".** A skeptic re-ran the
+  chained transport-free FA/KP arms through the SAME `_train_snn_arm` at a FAIR per-arm learning rate (lr 0.01–0.02,
+  not the shared 0.05) and they TOO enter the regime at N=3 and N=4 (FA 0.84–0.93, KP 0.84–0.90, above the reservoir).
+  The "FA/KP collapse to majority-class at N≥3" was an **lr-divergence artifact at the shared lr**, not a property of
+  the credit rule. So FF is **NOT uniquely capable**, and this does NOT show a local rule cracks a wall a top-down rule
+  could not. (It also puts the 2026-08-02 "chained FA/KP wall" itself under review — see the synthesis finding
+  `2026-08-11-gap4-wave1-verification-corrected-the-FA-KP-wall-is-partly-an-lr-artifact.md`.)
+- **RETRACTED — "depth is contributing, not decorative / the deep layers are obligatory" (the §"NOT weak-coupling"
+  claim).** The finding's OWN numbers refute it: at N=3 the BEST single hidden layer reads 0.789 while the FULL
+  accumulated stack reads 0.780 (N=4: 0.782 vs 0.771) — a single layer does as well as or better than the whole stack,
+  so `depth_contributes=False`. On XOR (depth-2-obligatory) the extra depth adds nothing; this does NOT demonstrate
+  DEEP credit. `n_weak_coupling=0` (every layer above majority) is true and is retained — but "above majority" is not
+  "obligatory".
+- **CONFIRMED (triply reproduced) — enter-the-regime.** FF leaves majority-class 6/6 and beats the OPTIMAL-ridge frozen
+  reservoir by +0.16 (a fair, strong floor). Only the hidden weights update, the local objective carries the signal
+  (permuted → chance), anti-cheats bite, NO sim/ edit. What is real: **a local, transport-free rule builds task-useful
+  selective features in every layer of a deep spiking net and beats the optimal random reservoir on a depth-2 task.**
+  That is a genuine R3-reframe result — NOT "deep credit", NOT a unique crack.
+
+**Scope, corrected:** enter-the-regime + beat-optimal-reservoir on a depth-2 task. The gap#4 DEEP-credit question
+remains OPEN — it needs a fittable genuinely-deep task (BPTT can fit + depth obligatory) and a per-arm-tuned FA/KP
+baseline. Everything below is the ORIGINAL (pre-correction) text; where it says "first crack"/"where top-down could
+not"/"depth is contributing", the three bullets above govern.
 
 <!--derived-->
 **One-line verdict.** On the SAME trainable LIF SNN + SAME depth-2 XOR→threshold task where the located wall
