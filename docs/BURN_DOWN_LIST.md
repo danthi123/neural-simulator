@@ -14,8 +14,20 @@ with the no-confab moat intact and the host/external piece deleted-or-demoted-to
 ## A. ARTICULATION — the "mouth" (the #1 shortcut)
 - **A1. Fluent surface = EXTERNAL pretrained Qwen-0.5B transformer** (`model.generate()` off-bridge; only 3 nonlinearities
   rate-code-approximated — NO spikes/membrane/LIF; external weights, not the brain's own circuitry). The single biggest host
-  shortcut. **Burn-down → a brain-native SPIKING generation circuit.** STATUS: RESEARCH-NEEDED / IN-PROGRESS (spiking-generation
-  de-risk agent has a 6-seed run in flight; the emerge stream-cortex hit a deep-context BOUNDARY on spikes, banked).
+  shortcut. **Burn-down → a brain-native SPIKING generation circuit.** STATUS: RESEARCH-NEEDED / IN-PROGRESS. The residual now
+  NARROWS to open ARBITRARY prose (the banked deep-context wall) — the structured GENERATE surface is spiking (A1a).
+  - **A1a. GENERATE-channel SURFACE — WIRED brain-native SPIKING (2026-08-12).** The #3E GENERATE channel's hypothesis
+    SURFACE is now spoken by FIRING NEURONS, transformer-free: `ChatBrain.render_hypothesis_verified` renders a structured
+    (transitive SVO) hypothesis via the composed spiking BROCA — `"perhaps the <S> <V-3sg> the <O>"`, word order = the
+    per-pool spiking-RATE ranking on a real Izhikevich `SimulationBridge` (EMERGE-59/61 × the #3E draw, reuse-by-import from
+    `research/runners/_spiking_fluent_surface_derisk.py`, 6-seed GO) — replacing the agrammatic host f-string
+    `"perhaps bear walk foot"`. Re-parse VERIFIED (the SAME moat the recall path uses → recovers the drawn SVO) or it falls
+    back to the raw flagged template (0 leaks); the guess stays clearly FLAGGED. Default-ON (`BRAIN_SPIKING_MOUTH=0` escape
+    → the Qwen/stub mouth, byte-identical), lesion-load-bearing (OFF → reverts). Verified SYNCHRONOUSLY numpy-CPU:
+    end-to-end `"what might a dog chase"` → `"perhaps the dog chases the hare  [a guess …]"` (moat-recovered), 4/4 direct
+    verbs grammatical+faithful, independent held-out parser recovers the SVO, discriminative verify (wrong content rejected),
+    no torch on the path, recall/abstain/anaphora/discourse unregressed (byte-identical smoke verdict pristine==modified).
+    **RESIDUAL (still Qwen):** open ARBITRARY prose the spiking Broca can't frame = the banked deep-context wall (A1 above).
 - **A2. Template-stub renderer** (the GPU-free fallback) — a deterministic SVO template, not fluent. Acceptable only as the
   CPU test-oracle; the production default should be the fluent path (A1 target). STATUS: QUEUED.
 

@@ -12,6 +12,16 @@ brain (its grounded concept codes + its stored facts + its vocab) and runs a mul
 The render is GATED + VERIFIED: the brain supplies + verifies the CONTENT (the moat holds EVEN WITH a real
 generative LLM in the loop); the faculty's only job is fluent surface form.
 
+GENERATE channel (#3E) SURFACE -- brain-native SPIKING mouth (production default): when the brain VOLUNTEERS a
+novel grounded HYPOTHESIS (an open-ended "what might a dog do" turn -> a moat-verified `HypothesisSVO`), its
+surface is rendered grammatically ON FIRING NEURONS by the composed spiking BROCA ("perhaps the <S> <V-3sg> the
+<O>": word order = the per-pool spiking-RATE ranking on a real Izhikevich SimulationBridge, EMERGE-59/61 x the
+#3E draw, `_spiking_fluent_surface_derisk`, 6-seed GO), TRANSFORMER-FREE -- replacing the agrammatic host
+f-string 'perhaps bear walk foot'. It is re-parse VERIFIED (the same moat the recall path uses) so it recovers
+the drawn SVO; a verify miss falls back to the raw flagged template (NEVER a leak); the guess stays clearly
+FLAGGED either way. Escape: `BRAIN_SPIKING_MOUTH=0` reverts to the pre-spiking mouth (Qwen / stub / template).
+Open ARBITRARY prose the spiking Broca can't frame still falls back to the Qwen mouth -- the banked A1 residual.
+
 LOAD SOURCES (auto-detected from --load):
   * a `developed_brain_io` BUNDLE directory (brain.json + grounded_codes.npz + facts.json + lineage/) -- the
     self-contained "developed brain" the develop loop / a save_developed_brain call writes. THE GENERIC PATH.
@@ -691,11 +701,27 @@ class ChatBrain:
         return self.render_hypothesis_verified(hyp)[0]
 
     def render_hypothesis_verified(self, hyp):
-        """As `render_hypothesis`, but also report whether the FLUENT mouth output VERIFIED (True) or the raw
-        flagged template FALLBACK was used (False). Returns (surface, fluent_verified). The VERIFY is the same
-        re-parse the recall path uses: the fluent sentence must carry the hypothesis's exact (a, v, p)."""
+        """As `render_hypothesis`, but also report whether the FLUENT surface VERIFIED (True) or the raw flagged
+        template FALLBACK was used (False). Returns (surface, fluent_verified). The VERIFY is the same re-parse the
+        recall path uses: the fluent sentence must carry the hypothesis's exact (a, v, p).
+
+        SURFACE ORDER OF PREFERENCE (production default): the BRAIN-NATIVE SPIKING BROCA mouth renders a supported
+        structured hypothesis (a transitive SVO) grammatically ON FIRING NEURONS -- word order = the per-pool
+        spiking-RATE ranking on a real Izhikevich SimulationBridge (EMERGE-59/61, composed with the #3E draw in
+        `_spiking_fluent_surface_derisk`, 6-seed GO) -- transformer-FREE, replacing the agrammatic host f-string.
+        It is re-parse VERIFIED (the moat) so it recovers the DRAWN SVO; a verify miss falls back to the raw flagged
+        template (NEVER a leak). The escape flag `BRAIN_SPIKING_MOUTH=0`, OR content the spiking Broca can't frame
+        (open/multi-word prose), falls through to the pre-spiking mouth (off-bridge Qwen / template-stub / raw
+        flagged template) -- the documented A1 residual (open arbitrary prose = the banked deep-context wall)."""
         a, v, p = hyp
         template = self._hypothesis_template(a, v, p)
+        # (1) BRAIN-NATIVE SPIKING MOUTH -- the production default for a structured (transitive SVO) hypothesis.
+        if self._spiking_mouth_enabled() and self._hyp_frame_supported(hyp):
+            spk = self._render_hypothesis_spiking(hyp)
+            if spk is not None:
+                return spk, True                      # grammatical, moat-verified, flagged -- produced on spikes
+            return template, False                    # spiking verify miss -> honest flagged fallback (NO leak)
+        # (2) the PRE-SPIKING mouth (escape flag BRAIN_SPIKING_MOUTH=0, or content the spiking Broca can't frame).
         if self.raw_mode or self.renderer is None:
             return template, False                    # GPU-free / --raw: the honest raw flagged guess
         surface, asserted = self.renderer.render_svo(a, v, p)
@@ -723,6 +749,62 @@ class ChatBrain:
         if g[:1].isupper():
             g = g[0].lower() + g[1:]
         return f"Maybe {g} -- that's a guess from what I've learned, not something I was taught."
+
+    # --- BRAIN-NATIVE SPIKING BROCA mouth for the GENERATE channel (#3E surface; REUSE-BY-IMPORT, NO sim/ edit) ---
+    @staticmethod
+    def _spiking_mouth_enabled():
+        """Escape hatch. `BRAIN_SPIKING_MOUTH=0` reverts the GENERATE-channel hypothesis SURFACE to the pre-spiking
+        mouth (off-bridge Qwen / template-stub / raw flagged template) -- byte-identical to the pre-wire behaviour.
+        Any other value (incl. unset) keeps the brain-native SPIKING Broca render ON -- the production default."""
+        return os.environ.get("BRAIN_SPIKING_MOUTH", "1") != "0"
+
+    @staticmethod
+    def _hyp_frame_supported(hyp):
+        """True iff the hypothesis fits a structured frame the spiking BROCA supports (a transitive SVO with single-
+        WORD alphabetic roles, subject != object). Open/arbitrary content (empty / multi-word roles) is NOT frameable
+        here -> the caller falls back to the current mouth (the documented A1 residual = open arbitrary prose)."""
+        if not isinstance(hyp, (list, tuple)) or len(hyp) != 3:
+            return False
+        a, v, p = hyp
+        return all(isinstance(x, str) and x.isalpha() for x in (a, v, p)) and a != p
+
+    def _spiking_broca_producer(self):
+        """Lazily build + cache the reused spiking BROCA clause producer (EMERGE-59/61 order read-out on a real
+        Izhikevich SimulationBridge). Built ONCE (bridge build + competitive-queuing learn of the 6-slot hedged-
+        transitive order, ~0.35 s CPU); each hypothesis then emits in ~5 ms via the EMERGE-61 inter-utterance
+        wash-out (the producer's `emit` restores the post-init substrate state before every clause). REUSE-BY-IMPORT
+        from `_spiking_fluent_surface_derisk` -- NO reimplementation, NO sim/ edit."""
+        prod = getattr(self, "_spk_producer", None)
+        if prod is None:
+            from research.runners._spiking_fluent_surface_derisk import SpikingClauseProducer, HEDGED_TRANSITIVE
+            seed = int(getattr(self.inner, "seed", 42))
+            prod = SpikingClauseProducer(seed)
+            prod.learn(len(HEDGED_TRANSITIVE))         # competitive-queuing learn of the hedged-transitive slot order
+            self._spk_producer = prod
+        return prod
+
+    def _render_hypothesis_spiking(self, hyp):
+        """Render a GENERATED hypothesis SVO grammatically ON FIRING NEURONS (the composed spiking BROCA render:
+        'perhaps the <S> <V-3sg> the <O>', word order = the per-pool spiking-RATE ranking on the SimulationBridge),
+        then re-parse VERIFY (the SAME moat the recall path uses -> `_verify` re-parses the surface PROSE) that the
+        rendered sentence recovers the DRAWN (a, v, p). Returns the framed FLAGGED guess on a verify PASS, or None on
+        a verify miss (-> the caller uses the raw flagged template; NEVER a leak). Transformer-FREE: this path never
+        touches the Qwen mouth."""
+        from research.runners._spiking_fluent_surface_derisk import HEDGED_TRANSITIVE
+        from research.runners._emerge57_ra_refinetune_emerge_frames_derisk import emerge_v3
+        a, v, p = hyp
+        dctx = {"subject": a, "verb_3sg": emerge_v3(v), "object": p}
+        surface = " ".join(self._spiking_broca_producer().emit(HEDGED_TRANSITIVE, dctx))
+        if self._verify(surface, None, hyp):           # the moat: the spiking sentence must recover THIS (a, v, p)
+            return self._frame_guess_spiking(surface)
+        return None                                    # verify miss -> caller falls back to the flagged template
+
+    @staticmethod
+    def _frame_guess_spiking(surface):
+        """Frame the SPIKING-Broca hedged surface ('perhaps the S V-3sg the O') as an EXPLICIT flagged guess. The
+        surface already leads with the epistemic hedge 'perhaps' (the spiking Broca's own CONN slot); we append the
+        SAME not-taught disclaimer the raw template uses, so the honesty framing is identical whichever mouth spoke."""
+        return f"{surface.strip()}  [a guess from what I've learned -- not something I was taught]"
 
     # --- discourse event tracking (who is doing it now / who was doing it before) ---
     def _discourse_turn(self, line):
