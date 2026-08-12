@@ -1,0 +1,34 @@
+{
+ "run_id": "1786535445-578657",
+ "runner": "research/runners/_second_order_metacog_monitor_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_second_order_metacog_monitor_derisk.py",
+  "--seeds",
+  "42",
+  "--confidence-read",
+  "learned_acc",
+  "--learned-feature-mode",
+  "dynamic",
+  "--n-trials",
+  "160",
+  "--backend",
+  "numpy",
+  "--json",
+  "research/findings/raw/metacog/metacog_learnedacc_s42.json"
+ ],
+ "git_sha": "e4eec09f4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-12T07:50:45",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 37245.2,
+ "corpus_check_query": "gap4 SoftHebb soft-WTA Hebbian deep spiking unsupervised local",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/metacog/metacog_learnedacc_s42.json"
+}
