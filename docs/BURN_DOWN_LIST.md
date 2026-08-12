@@ -111,8 +111,22 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
 - **D6. Advanced WM binding** (wm-binding-advanced, de_risked YES). Wire → ≥2-referent anaphora / multi-slot. STATUS: QUEUED.
 
 ## E. MISSING MECHANISMS / BOUNDARIES (need RESEARCH before they can be wired — do NOT fake integration)
-- **E1. Self-model / metacognition — DE-RISKED GO 6/6 (2026-08-12), QUEUED-FOR-WIRING** (was BOUNDARY; the "at chance"
-  finding was a MIS-READ, corrected). Two parts: (1) INSTRUMENT — the "mis-calibrated GO gate" bug did NOT exist; the gate
+- **E1. Self-model / metacognition — WIRED (Gate-B, 2026-08-12)** (was BOUNDARY -> DE-RISKED GO 6/6 -> now WIRED onto the
+  DEFAULT turn). `/api/brain-chat` now reads a genuinely-SPIKING confidence of the answer the brain is about to give off the
+  co-resident balance-of-evidence monitor (`|rate(asm1)-rate(asm0)|` from `cp_firing_states`, reuse-by-import from
+  `research/runners/metacog_production_organ.py` -> the E1 balance de-risk); the evidence is the brain's OWN mean role-decode
+  confidence. On a LOW-confidence answer the brain honestly QUALIFIES it (an honest FUNCTIONAL hedge — "my decision-margin
+  reads this as low-confidence"), never a phenomenal claim, never a content change. Default-ON (`BRAIN_METACOG=0` escape ->
+  byte-identical oracle), moat-safe (only qualifies an already-produced answer; an abstain is skipped), lesion-load-bearing
+  (`BRAIN_METACOG_LESION=1` removes the evidence differential -> a confident answer FLIPS to hedged). Verified SYNCHRONOUSLY
+  numpy-CPU through the real handler (11/11: high-conf recall no hedge; low-conf recall hedged; abstain skipped; lesion flips
+  high->hedge; flag-off null+byte-identical; recall/anaphora/abstain/D2/D4 unregressed). Finding
+  `2026-08-12-GateB-metacog-confidence-readout-production-chat.md`. **RESIDUALS** (ride existing rows): (a) EVIDENCE = the parse
+  confidence (a COMPONENT of answer confidence), not a full recall-vs-alternatives balance (the rf magnitude/frac signals are
+  saturated on the tiny-demo) — a richer recall-margin evidence is the next rung; (b) NOT type-1/type-2 DISSOCIABLE (the
+  balance read is an ENCODING read, so the load-bearing lesion is on the encoding; the dissociable `margin_abs` comparator is
+  seed-fragile = the named next rung); (c) CO-RESIDENT on its own metacog-workspace bridge — rides on the one-brain merge (§).
+  **The original de-risk record (for provenance):** (1) INSTRUMENT — the "mis-calibrated GO gate" bug did NOT exist; the gate
   already required `type2_auc≥0.65 AND meta_d>0 AND m_ratio≥0.60 AND controls`. The old boundary finding conflated a chance
   `meta_rate` run's type-2 numbers with a genuine `learned_acc` run's GO verdict (correction banner added to it). Hardened
   anyway (CLAUDE.md rule 9): extracted a pure `_seed_go_decision`, added `selftest()`/`--selftest` that FAILS in its failing

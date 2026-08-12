@@ -1,0 +1,75 @@
+{
+  "results": {
+    "hi_no_hedge": true,
+    "lo_hedge": true,
+    "abstain_skipped": true,
+    "lesion_flips_hi_to_hedge": true,
+    "flagoff_null_metacog": true,
+    "flagoff_answer_byte_identical": true,
+    "reg_recall": true,
+    "reg_anaphora": true,
+    "reg_abstain": true,
+    "reg_D2_surprise_present": true,
+    "reg_D4_comprehension_present": true
+  },
+  "hi": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 0.738451554772971,
+    "balance": 0.0018906250000000008,
+    "threshold": 0.001421874999999999,
+    "confident": true,
+    "calib": {
+      "mean_hi": 0.0021308593750000004,
+      "min_hi": 0.0015624999999999988,
+      "mean_lo": 0.0008867187500000001,
+      "max_lo": 0.0012812499999999994,
+      "clean_gap": true,
+      "read_reps": 8,
+      "role_conf_lo": 0.35,
+      "role_conf_hi": 0.52
+    },
+    "mean_role_conf": 0.47553676431140507
+  },
+  "lo": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 0.2948807825659097,
+    "balance": 0.0009531250000000008,
+    "threshold": 0.001421874999999999,
+    "confident": false,
+    "calib": {
+      "mean_hi": 0.0021308593750000004,
+      "min_hi": 0.0015624999999999988,
+      "mean_lo": 0.0008867187500000001,
+      "max_lo": 0.0012812499999999994,
+      "clean_gap": true,
+      "read_reps": 8,
+      "role_conf_lo": 0.35,
+      "role_conf_hi": 0.52
+    },
+    "mean_role_conf": 0.40012973303620464
+  },
+  "hi_lesion": {
+    "on": true,
+    "lesioned": true,
+    "evidence": 0.738451554772971,
+    "balance": 0.0008906249999999999,
+    "threshold": 0.001421874999999999,
+    "confident": false,
+    "calib": {
+      "mean_hi": 0.0021308593750000004,
+      "min_hi": 0.0015624999999999988,
+      "mean_lo": 0.0008867187500000001,
+      "max_lo": 0.0012812499999999994,
+      "clean_gap": true,
+      "read_reps": 8,
+      "role_conf_lo": 0.35,
+      "role_conf_hi": 0.52
+    },
+    "mean_role_conf": 0.47553676431140507
+  },
+  "hi_answer": "The brain uses spikes.",
+  "lo_answer": "My decision-margin reads this as low-confidence, so take it as uncertain: The dog chases cat.",
+  "all_pass": true
+}

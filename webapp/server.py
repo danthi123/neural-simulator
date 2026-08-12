@@ -1840,6 +1840,15 @@ async def _warm_chat_brain() -> None:
                           flush=True)
             except Exception as _se:
                 print(f"[webapp] startup: surprise organ warm skipped ({type(_se).__name__}: {_se})", flush=True)
+            # METACOG (Gate-B, E1): pre-build the co-resident spiking balance-of-evidence confidence monitor so the
+            # first turn's confidence read is fast. Best-effort + guarded (default-ON; BRAIN_METACOG=0 skips it).
+            try:
+                from research.runners.metacog_production_organ import metacog_enabled
+                if metacog_enabled():
+                    _get_metacog_organ().ensure_built()
+                    print("[webapp] startup: metacog organ (co-resident balance-of-evidence monitor) WARM", flush=True)
+            except Exception as _me:
+                print(f"[webapp] startup: metacog organ warm skipped ({type(_me).__name__}: {_me})", flush=True)
             dt = round(_t.time() - t0, 1)
             print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
@@ -2885,6 +2894,12 @@ def _get_surprise_organ():
     return get_organ(seed=42)
 
 
+def _get_metacog_organ():
+    """The process-shared spiking metacognition organ (built once; the co-resident balance-of-evidence monitor)."""
+    from research.runners.metacog_production_organ import get_organ
+    return get_organ(seed=42)
+
+
 def _brain_vocab(chat) -> set:
     """The set of words the brain KNOWS (agents ∪ actions ∪ patients of its stored facts), lowercased. Used to
     scope the comprehension monitor: a real word the brain knows but that is not in the toy cue lexicon is OUT of
@@ -3569,6 +3584,38 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as _se:  # never let the surprise read crash a turn — degrade to the un-noticed answer
             surprise_info = {"on": True, "error": f"{type(_se).__name__}: {_se}"}
 
+    # ── SELF-MODEL / METACOGNITION confidence read-out (Gate-B, E1, 2026-08-12) ──────────────────────────────
+    # AFTER the gate/moat produces (or refuses) an answer, read a genuinely-SPIKING confidence of that answer off
+    # the co-resident balance-of-evidence monitor (`|rate(asm1)-rate(asm0)|` from cp_firing_states, reuse-by-import
+    # from `metacog_production_organ`, the E1 balance de-risk, 6/6 GO). The evidence is the brain's OWN mean
+    # role-decode confidence (its spiking parse certainty for the answer). On a LOW-confidence answer the brain
+    # honestly QUALIFIES it (an honest FUNCTIONAL hedge, never a phenomenal claim, never a content change). Moat-safe
+    # + additive: it only qualifies an ALREADY-produced, moat-verified answer; an abstain (no answer) is skipped.
+    # Default-ON; `BRAIN_METACOG=0` -> fully skipped (byte-identical oracle).
+    try:
+        import research.runners.metacog_production_organ as _MC
+        _metacog_on = _MC.metacog_enabled()
+    except Exception:
+        _MC = None
+        _metacog_on = False
+
+    def _metacog_qualify(activity, no_answer):
+        """Read the spiking confidence of the answer just produced. Returns (hedge_prefix, metacog_info). Skips an
+        abstain / guess (no recalled answer to qualify) and any turn with no decoded-role confidence (out of scope)."""
+        if not _metacog_on or no_answer:
+            return "", None
+        try:
+            mrc = _MC.mean_role_confidence(activity)
+            ev = _MC.evidence_from_role_conf(mrc)
+            if ev is None:
+                return "", None
+            j = _get_metacog_organ().judge(ev, lesion=_MC.metacog_lesioned())
+            info = dict(j)
+            info["mean_role_conf"] = (float(mrc) if mrc is not None else None)
+            return (("" if j["confident"] else _MC.hedge_prefix()), info)
+        except Exception as _me:  # never let the confidence read crash a turn — degrade to the un-hedged answer
+            return "", {"on": True, "error": f"{type(_me).__name__}: {_me}"}
+
     # ── RICH path: a SUBSTANTIVE multi-sentence grounded reply ──────────
     # The RichAnswerComposer does its own GATE (direct recall + the moat) +
     # multi-hop chain + elaboration, VERIFY-checks each sentence, and carries
@@ -3642,6 +3689,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["hypothesis"] = True
             resp["hypothesis_svo"] = list(r.get("hypothesis_svo") or [])
             resp["fluent_hypothesis"] = bool(r.get("fluent_hypothesis"))
+        # METACOG (Gate-B, E1): qualify a low-confidence RECALL answer with an honest functional hedge (skip an
+        # abstain or a flagged guess — no recalled answer to qualify). Additive; null when disabled/out-of-scope.
+        _mc_prefix, resp["metacog"] = _metacog_qualify(resp.get("activity"), bool(r["abstained"]) or is_hyp)
+        if _mc_prefix:
+            resp["answer"] = _mc_prefix + resp["answer"]
         return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -3665,6 +3717,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if surprise_prefix:
         answer = surprise_prefix + answer
 
+    # METACOG (Gate-B, E1): read the spiking confidence of this recall answer; a LOW-confidence answer gets an
+    # honest functional hedge PREPENDED (skip an abstain — no answer to qualify). Additive; null when disabled.
+    _sf_activity = _read_activity()
+    _mc_prefix, metacog_info = _metacog_qualify(_sf_activity, abstained)
+    if _mc_prefix:
+        answer = _mc_prefix + answer
+
     return JSONResponse({
         "answer": answer,
         "abstained": abstained,
@@ -3677,7 +3736,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # B3: what the brain DID this turn -- the decoded role chips + match confidence, which engram block answered
         # (or null -> abstained), and a scalar RF firing/|Z| gauge. Read-only of the spiking recall the gate already
         # ran (composer.query_patient); null for the rate composer / when the matcher abstained before any query.
-        "activity": _read_activity(),
+        "activity": _sf_activity,
         # AFFECT (Gate-B): the live mood that colored this turn's prose manner (debug trace; single-fact path has
         # no forthcomingness lever, so only manner applies here). null when affect is disabled (BRAIN_AFFECT=0).
         "affect": affect_info,
@@ -3686,6 +3745,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # SURPRISE (Gate-B, D2): the spiking expectation-violation read for an asserted fact with a stored
         # expectation; null when no stored expectation or disabled (BRAIN_SURPRISE=0).
         "surprise": surprise_info,
+        # METACOG (Gate-B, E1): the spiking balance-of-evidence confidence read for this recall answer
+        # (balance/threshold/confident/mean_role_conf); null when abstained / disabled (BRAIN_METACOG=0).
+        "metacog": metacog_info,
     })
 
 
