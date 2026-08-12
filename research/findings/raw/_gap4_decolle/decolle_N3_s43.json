@@ -1,0 +1,345 @@
+{
+  "probe": "gap4_decolle_local_readouts",
+  "task": "xor",
+  "seeds": [
+    43
+  ],
+  "config": {
+    "n_hidden_layers": 3,
+    "hidden": 32,
+    "T": 24,
+    "epochs": 200,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "sigma_norm": true,
+    "train_subsample": 2000,
+    "bptt_hidden": 128,
+    "bptt_epochs": 400,
+    "bptt_lr": null
+  },
+  "elapsed_seconds": 482.6,
+  "results": [
+    {
+      "seed": 43,
+      "task": "xor",
+      "n_hidden_layers": 3,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "k": 2,
+      "chance": 0.5376044568245125,
+      "seeded_substrate_ok": true,
+      "arms": {
+        "decolle": {
+          "arm": "decolle",
+          "held_acc": 0.8774373259052924,
+          "above_majority": 0.3398328690807799,
+          "pred_modal_frac": 0.6044568245125348,
+          "layer_spike_rates": [
+            0.3890126546223958,
+            0.526702880859375,
+            0.5123723347981771,
+            0.3157958984375
+          ],
+          "leaves_majority": true
+        },
+        "chained_fa": {
+          "arm": "chained_fa",
+          "held_acc": 0.5376044568245125,
+          "above_majority": 0.0,
+          "pred_modal_frac": 1.0,
+          "layer_spike_rates": [
+            0.4983927408854167,
+            0.41558074951171875,
+            0.348114013671875,
+            0.0
+          ],
+          "leaves_majority": false
+        },
+        "chained_fa_kp": {
+          "arm": "chained_fa_kp",
+          "held_acc": 0.5376044568245125,
+          "above_majority": 0.0,
+          "pred_modal_frac": 1.0,
+          "layer_spike_rates": [
+            0.49848683675130206,
+            0.3640645345052083,
+            0.2652587890625,
+            0.0
+          ],
+          "leaves_majority": false
+        },
+        "dfa_eprop": {
+          "arm": "dfa_eprop",
+          "held_acc": 0.871866295264624,
+          "above_majority": 0.3342618384401115,
+          "pred_modal_frac": 0.5013927576601671,
+          "layer_spike_rates": [
+            0.392730712890625,
+            0.2328058878580729,
+            0.26485951741536456,
+            0.2765706380208333
+          ],
+          "leaves_majority": true
+        },
+        "bptt_ceiling": {
+          "arm": "bptt_ceiling",
+          "held_acc": 0.8050139275766016,
+          "above_majority": 0.2674094707520891,
+          "pred_modal_frac": 0.5543175487465181,
+          "layer_spike_rates": [
+            0.392886479695638,
+            0.16686312357584634,
+            0.08128738403320312,
+            0.10030110677083333
+          ],
+          "leaves_majority": true
+        },
+        "frozen_reservoir": {
+          "arm": "frozen_reservoir",
+          "held_acc": 0.5403899721448467,
+          "above_majority": 0.0027855153203342198,
+          "pred_modal_frac": 0.7688022284122563,
+          "layer_spike_rates": [
+            0.40313466389973956,
+            0.1727320353190104,
+            0.06679534912109375,
+            0.023763020833333332
+          ],
+          "leaves_majority": false
+        },
+        "decolle_shuffled": {
+          "arm": "decolle_shuffled",
+          "held_acc": 0.48467966573816157,
+          "above_majority": -0.05292479108635095,
+          "pred_modal_frac": 0.6573816155988857,
+          "layer_spike_rates": [
+            0.43939971923828125,
+            0.44563039143880206,
+            0.62823486328125,
+            0.24479166666666666
+          ],
+          "leaves_majority": false
+        }
+      },
+      "per_layer_selectivity_ridge": {
+        "decolle": [
+          0.8941504178272981,
+          0.9052924791086351,
+          0.9108635097493036
+        ],
+        "frozen_reservoir": [
+          0.5236768802228412,
+          0.5793871866295265,
+          0.5069637883008357
+        ],
+        "chained_fa": [
+          0.3983286908077994,
+          0.5431754874651811,
+          0.5153203342618384
+        ]
+      },
+      "decolle_local_readout_acc_per_hidden": [
+        0.8802228412256268,
+        0.9108635097493036,
+        0.9080779944289693
+      ],
+      "frozen_optimal_matched_inherit": 0.5821727019498607,
+      "no_readout_transport": true,
+      "decolle_beats_frozen": 0.3370473537604457,
+      "decolle_enters_regime": true,
+      "fa_collapsed": true,
+      "kp_collapsed": true,
+      "shuffled_collapses": true,
+      "bptt_confirms_target": true,
+      "GO": true,
+      "attribution_decolle_vs_shuffled": 0.4476190476190476,
+      "attribution_decolle_vs_frozen": 0.38412698412698415,
+      "verdict": {
+        "label": "gap4 DECOLLE local readouts xor N3h s43",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "floor",
+            "name": "labelled BPTT ceiling above chance (a target exists)",
+            "ok": true,
+            "detail": "0.805014 vs floor 0.537604",
+            "note": "if the ceiling cannot beat chance no target exists -> UNDEFINED, not a NO-GO (hier3 task-fit wall)"
+          },
+          {
+            "kind": "floor",
+            "name": "DECOLLE above chance",
+            "ok": true,
+            "detail": "0.877437 vs floor 0.537604",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "BPTT confirms a target (> chance+0.15)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "DECOLLE enters the learning regime (above_majority>=0.20 AND leaves majority-class)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "control",
+            "name": "DECOLLE vs frozen-reservoir floor",
+            "ok": true,
+            "detail": "treatment=0.877437 control=0.54039 |sep|=0.337047 > 0.1",
+            "note": "DECOLLE must beat the fixed-hidden reservoir (trained readout only) by >=0.10"
+          },
+          {
+            "kind": "control",
+            "name": "DECOLLE vs shuffled-label DECOLLE (anti-cheat)",
+            "ok": true,
+            "detail": "treatment=0.877437 control=0.48468 |sep|=0.392758 > 0.1",
+            "note": "the local error must carry correct-label signal"
+          },
+          {
+            "kind": "require",
+            "name": "chained fixed-FA collapses to majority-class (the located wall)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "chained KP collapses to majority-class (the located wall)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "no readout weight transport (B_l != W and != W^T)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "substrate genuinely seeded (build-twice identical)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": 0.5376044568245125
+      },
+      "verdict_status": "GO",
+      "below_chance": false
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 1,
+    "mean_chance": 0.5376044568245125,
+    "mean_decolle_acc": 0.8774373259052924,
+    "min_decolle_acc": 0.8774373259052924,
+    "mean_decolle_above_majority": 0.3398328690807799,
+    "min_decolle_above_majority": 0.3398328690807799,
+    "mean_chained_fa_acc": 0.5376044568245125,
+    "mean_chained_fa_kp_acc": 0.5376044568245125,
+    "mean_dfa_eprop_acc": 0.871866295264624,
+    "mean_bptt_acc": 0.8050139275766016,
+    "mean_frozen_reservoir_acc": 0.5403899721448467,
+    "mean_frozen_optimal_matched": 0.5821727019498607,
+    "mean_decolle_shuffled_acc": 0.48467966573816157,
+    "mean_decolle_beats_frozen": 0.3370473537604457,
+    "decolle_enters_regime_seeds": "1/1",
+    "fa_collapsed_seeds": "1/1",
+    "kp_collapsed_seeds": "1/1",
+    "shuffled_collapses_seeds": "1/1",
+    "bptt_confirms_target_seeds": "1/1",
+    "no_readout_transport_all": true,
+    "seeded_substrate_all": true,
+    "GO_seeds": "1/1"
+  },
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "labelled BPTT ceiling above chance (a target exists)",
+      "ok": true,
+      "detail": "0.805014 vs floor 0.537604",
+      "note": "if the ceiling cannot beat chance no target exists -> UNDEFINED, not a NO-GO (hier3 task-fit wall)"
+    },
+    {
+      "kind": "floor",
+      "name": "DECOLLE above chance",
+      "ok": true,
+      "detail": "0.877437 vs floor 0.537604",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BPTT confirms a target (> chance+0.15)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "DECOLLE enters the learning regime (above_majority>=0.20 AND leaves majority-class)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "DECOLLE vs frozen-reservoir floor",
+      "ok": true,
+      "detail": "treatment=0.877437 control=0.54039 |sep|=0.337047 > 0.1",
+      "note": "DECOLLE must beat the fixed-hidden reservoir (trained readout only) by >=0.10"
+    },
+    {
+      "kind": "control",
+      "name": "DECOLLE vs shuffled-label DECOLLE (anti-cheat)",
+      "ok": true,
+      "detail": "treatment=0.877437 control=0.48468 |sep|=0.392758 > 0.1",
+      "note": "the local error must carry correct-label signal"
+    },
+    {
+      "kind": "require",
+      "name": "chained fixed-FA collapses to majority-class (the located wall)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "chained KP collapses to majority-class (the located wall)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no readout weight transport (B_l != W and != W^T)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "substrate genuinely seeded (build-twice identical)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "verdict_status": "GO",
+  "below_chance": false,
+  "verdict": "GO \u2014 [xor N=3h] DECOLLE 0.877 (min 0.877, above-maj mean +0.340) | WALL: chained-FA 0.538 (collapsed 1/1), KP 0.538 (collapsed 1/1) | DFA 0.872 | BPTT ceiling 0.805 (1/1 confirm target) | frozen 0.540 (opt 0.582) | shuffled 0.485 (1/1 collapse) | decolle-beats-frozen +0.337 | chance 0.538. GO 1/1 (decolle enters regime 1/1)."
+}
