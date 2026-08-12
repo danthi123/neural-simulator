@@ -1,0 +1,61 @@
+{
+  "probe": "gap4_birdsong_two_stage_tutor_teach",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "T": 24,
+    "epochs": 150,
+    "lr": 0.2,
+    "lr_out": 0.2,
+    "lr_tutor": 0.2,
+    "sigma": 0.5,
+    "beta": 2.0,
+    "in_gain": 1.0,
+    "train_subsample": 400,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "arms": [
+      "reservoir",
+      "bptt",
+      "oracle_tutor"
+    ]
+  },
+  "elapsed_seconds": 36.0,
+  "results": [
+    {
+      "seed": 42,
+      "chance": 0.3333333333333333,
+      "majority": 0.3333333333333333,
+      "k_classes": 5,
+      "stage0_depth_separating": true,
+      "oracle_inherit": 1.0,
+      "n_hidden_layers": 2,
+      "reservoir_inherit": 0.37037037037037035,
+      "reservoir_train": 0.525,
+      "reservoir_majority_pred_frac": 0.5925925925925926,
+      "reservoir_n_distinct_pred": 4,
+      "bptt_inherit": 0.8148148148148148,
+      "bptt_train": 0.9925,
+      "bptt_majority_pred_frac": 0.2962962962962963,
+      "bptt_n_distinct_pred": 4,
+      "oracle_tutor_inherit": 0.3333333333333333,
+      "oracle_tutor_train": 0.43,
+      "oracle_tutor_majority_pred_frac": 0.6666666666666666,
+      "oracle_tutor_n_distinct_pred": 3,
+      "enters_regime": false,
+      "beats_reservoir_by": NaN,
+      "above_chance_by": NaN
+    }
+  ]
+}
