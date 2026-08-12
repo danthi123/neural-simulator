@@ -746,6 +746,140 @@ def _fmt_credit(r):
             f"    => {r['READ']}")
 
 
+# ============================================================================================================
+# THE 2026-08-02 FA-CONVERGENCE MEASUREMENT (`--measure-fa-convergence`, ADDITIVE, default OFF). Update 4 of the
+# finding REFUTED phi'-vanishing (the atan surrogate is HEALTHY, psi 0.31-0.32, dynamic-range 0.94) and the
+# FD-oracle credit-factor read DEGRADED at the trained state (FD-vs-readoutgrad cos +0.916 init -> +0.235 trained),
+# so the trained-state alignment was NOT clean. This probe AVOIDS the FD oracle entirely and measures the classic
+# Lillicrap-2016 feedback-alignment CONVERGENCE signature DIRECTLY: during e-prop training, do the FORWARD weights
+# ALIGN to the FIXED feedback so the transport-free credit approaches the true-gradient direction? Measured as
+# cos(W_forward, B_direct^T) per epoch -- NO oracle, NO finite-difference perturbation. Logs (per epoch, for the
+# on-bridge net trained by REAL e-prop, ALL layers):
+#   (1) fa_cos[li] = cos( downstream-forward-chain(li) , B_direct[li]^T ) per hidden pathway. For the LAST hidden
+#       layer the chain IS the H_last->out readout weight (the classic Lillicrap readout FA signature). RISING over
+#       epochs => FA CONVERGES; flat/~0 => it does NOT. Weight-only read (no forward) -> logged EVERY epoch.
+#   (2) credit_align[li] = mean_batch cos( delta_k @ B_direct[li] , delta_k @ chain(li)^T ) -- the DELIVERED DFA
+#       credit direction vs the TRANSPORT gradient direction (weight transport is legitimate in a MEASUREMENT, never
+#       in the learning rule). An FD-FREE cross-check of (1) at the credit-signal level. RISING => the delivered
+#       credit is becoming the true gradient.
+#   (3) eprop_inherit per epoch: does held-out accuracy track the alignment.
+# Compare to the LIF reference (_snn_bptt_forward_vs_learning_isolation_derisk --measure-fa-convergence), where the
+# SAME e-prop DFA rule TRAINS (inherit ~0.895) -- the "FA converges" fingerprint. LIF cos RISES + Izhikevich cos
+# FLAT => FA-convergence fails on the point-neuron Izhikevich substrate specifically (the precisely-named residual,
+# pointing to a different local rule / the dendritic substrate). Izhikevich cos ALSO rises but accuracy stays at
+# chance => alignment converges but the credit magnitude/eligibility is the issue (a distinct next mechanism). NO
+# sim/ edit -- W (cp_connections.data, read via to_host + reshape) and B_direct are host-side; the weight read is a
+# measurement, not a transport used by the rule.
+
+
+def _ff_weight(net, p):
+    """FF pathway p forward weight matrix (n_pre_phys, n_post_phys), read from the substrate cp_connections (the SAME
+    .data slots e-prop moves). A MEASUREMENT read: weight transport is legitimate in a diagnostic, never in the rule."""
+    from sim.backend import to_host
+    return np.asarray(to_host(net.br.cp_connections.data[net._data_idx_flat[p]]), dtype=np.float64).reshape(
+        net.sizes_phys[p], net.sizes_phys[p + 1])
+
+
+def _fa_forward_chain(net, li):
+    """Downstream forward map from hidden pathway li's POST layer to the output = product of FF pathway weight
+    matrices (li+1 .. readout). For the LAST hidden pathway this is exactly the H_last->out readout weight (the
+    classic Lillicrap readout FA signature). Shape (sizes_phys[li+1], sizes_phys[-1])."""
+    L = len(net.sizes) - 1                       # number of FF pathways; readout index = L-1
+    M = _ff_weight(net, li + 1)
+    for p in range(li + 2, L):
+        M = M @ _ff_weight(net, p)
+    return M
+
+
+def measure_fa_convergence(seed, a):
+    """FA-CONVERGENCE measurement (deliverable): per-epoch cos(forward-weight, B_direct^T) as the on-bridge e-prop
+    trains ALL layers on the (sparse representable) codon. Avoids the FD oracle. Returns a dict with the per-epoch
+    trajectory + a decisive RISES/FLAT read on the top (readout) hidden pathway."""
+    t0 = time.time()
+    use_expander = (a.mode != "raw")
+    Rtr, ytr, Rte, yte, inh_idx, k, chance, meta, codon_sparsity, repro = _make_codon(seed, use_expander, a)
+    if a.train_subsample and len(Rtr) > a.train_subsample:
+        srng = np.random.default_rng(seed + 13)
+        keep = srng.permutation(len(Rtr))[:a.train_subsample]
+        Rtr_b, ytr_b = Rtr[keep], ytr[keep]
+    else:
+        Rtr_b, ytr_b = Rtr, ytr
+    n_in = int(Rtr_b.shape[1])
+    hp = dict(tonic_h_pA=a.tonic_h_pA, tonic_o_pA=a.tonic_o_pA, ff_w_init=a.ff_w_init, pbar_alpha=a.pbar_alpha,
+              in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale)
+    net = _build_net_for_measure(n_in, k, seed, a, hp)     # train_layers=None => ALL layers train (FA can develop)
+    if net.logit_source == "leaky_readout":
+        net.fit_readout_norm(Rtr_b)
+    n_hp = len(net.B_direct)
+
+    # fixed measurement batch for the credit-align cross-check (item 2)
+    mb = min(int(a.fd_batch), len(Rtr_b))
+    mrng = np.random.default_rng(seed + 909)
+    m_idx = mrng.permutation(len(Rtr_b))[:mb]
+
+    def _fa_cos_now():
+        return [_cos(_fa_forward_chain(net, li), net.B_direct[li].T) for li in range(n_hp)]
+
+    def _credit_align_now():
+        chains = [_fa_forward_chain(net, li) for li in range(n_hp)]
+        cols = [[] for _ in range(n_hp)]
+        for i in m_idx:
+            sp, vv, acts = net._forward_record(Rtr_b[i])
+            logits = net._logits_from(sp, vv, acts)
+            p = _softmax(np.asarray(logits, dtype=np.float64) / net.logit_temp)
+            oh = np.zeros_like(p); oh[int(ytr_b[i])] = 1.0
+            dk = p - oh                                     # (k,) softmax error
+            for li in range(n_hp):
+                cols[li].append(_cos(dk @ net.B_direct[li], dk @ chains[li].T))   # DFA credit vs transport gradient
+        return [float(np.nanmean(c)) if c else float("nan") for c in cols]
+
+    def _rec(ep, heavy):
+        r = {"epoch": ep, "fa_cos": _fa_cos_now()}
+        if heavy:
+            r["credit_align"] = _credit_align_now()
+            r["inherit"] = net.acc_on(Rte, yte, inh_idx)
+        else:
+            r["credit_align"] = None; r["inherit"] = None
+        return r
+
+    traj = [_rec(0, True)]                        # init (pre-training) read
+    rng = np.random.default_rng(seed + 777)       # SAME stream _train_eprop uses (faithful training dynamics)
+    for ep in range(1, a.epochs + 1):
+        perm = rng.permutation(len(Rtr_b))
+        for i in range(0, len(Rtr_b), a.batch):
+            b = perm[i:i + a.batch]
+            net.train_batch(Rtr_b[b], ytr_b[b])
+        heavy = ((ep % max(1, a.fa_eval_every) == 0) or ep == a.epochs)
+        traj.append(_rec(ep, heavy))
+
+    fa_top = [rec["fa_cos"][-1] for rec in traj]              # the LAST hidden pathway = the readout FA signature
+    inh = [rec["inherit"] for rec in traj if rec["inherit"] is not None]
+    init_c = fa_top[0]; final_c = fa_top[-1]
+    peak_c = max(fa_top, key=lambda v: abs(v))
+    rise = final_c - init_c
+    converges = bool(abs(peak_c) - abs(init_c) > 0.05 and final_c > init_c)
+    read = (f"FA {'CONVERGES' if converges else 'does NOT converge (flat/near-0)'}: top-hidden cos(W,B^T) "
+            f"init {init_c:+.3f} -> final {final_c:+.3f} (peak {peak_c:+.3f}, rise {rise:+.3f}); "
+            f"eprop_inherit {(inh[0] if inh else float('nan')):.3f} -> {(inh[-1] if inh else float('nan')):.3f} "
+            f"(chance {chance:.3f}).")
+    return {"seed": seed, "substrate": "izhikevich", "task": ("xor" if a.task_xor else "inheritance"),
+            "mode": ("expander" if use_expander else "raw"), "act_th": a.act_th,
+            "credit": ("microcircuit" if a.microcircuit else "kp" if a.learned_feedback else "fixed_dfa"),
+            "k_classes": k, "chance": chance, "codon_sparsity": codon_sparsity, "codon_reproducibility": repro,
+            "n_features_in": n_in, "n_hidden_pathways": n_hp, "epochs": a.epochs, "fa_eval_every": a.fa_eval_every,
+            "fa_cos_top_init": init_c, "fa_cos_top_final": final_c, "fa_cos_top_peak": peak_c,
+            "fa_cos_top_rise": rise, "fa_converges": converges,
+            "inherit_init": (inh[0] if inh else float("nan")), "inherit_final": (inh[-1] if inh else float("nan")),
+            "trajectory": traj, "READ": read, "elapsed_seconds": round(time.time() - t0, 1)}
+
+
+def _fmt_fa(r):
+    return (f"[seed {r['seed']} {r['substrate']} {r['credit']} {r['mode']}] codon_sparsity "
+            f"{r.get('codon_sparsity', float('nan')):.3f} | top-hidden cos(W,B^T) {r['fa_cos_top_init']:+.3f} -> "
+            f"{r['fa_cos_top_final']:+.3f} (peak {r['fa_cos_top_peak']:+.3f}) | inherit {r['inherit_init']:.3f} -> "
+            f"{r['inherit_final']:.3f} (chance {r['chance']:.3f}) ({r['elapsed_seconds']:.0f}s)\n    => {r['READ']}")
+
+
 def run_one(seed, n_prop, use_expander, a):
     """One (seed, n_prop, representation): oracle ceiling + full e-prop + frozen-hidden reservoir + permuted +
     shuffle-DFA on the chosen forward. Returns the metrics dict with deep_credit_share."""
@@ -963,6 +1097,16 @@ def main():
     ap.add_argument("--credit-measure-on", choices=["init", "trained"], default="init",
                     help="operating point for the credit-factor read: 'init' (default; readout-fit + hidden at the "
                          "reservoir init = the start of hidden learning) or 'trained' (all layers trained first).")
+    # FA-CONVERGENCE probe (additive, default off): the FD-oracle-FREE trained-state alignment read.
+    ap.add_argument("--measure-fa-convergence", action="store_true",
+                    help="FA-CONVERGENCE probe (no training verdict): per-epoch cos(forward-weight, B_direct^T) as "
+                         "on-bridge e-prop trains ALL layers -- the FD-oracle-free Lillicrap-2016 FA signature "
+                         "(rising => FA converges; flat/~0 => it does not). Additive, default off. Run on "
+                         "--task-xor --act-th 3 --mode expander; compare to the LIF-reference runner's same flag. "
+                         "Reuses --fd-batch for the item-(2) credit-align cross-check batch.")
+    ap.add_argument("--fa-eval-every", type=int, default=1,
+                    help="epoch cadence for the HEAVY per-epoch reads (credit_align + eprop_inherit) under "
+                         "--measure-fa-convergence; the cheap cos(W,B^T) read is logged EVERY epoch regardless.")
     # expander
     ap.add_argument("--n-col", type=int, default=200, help="PlateauExpander columns (the probe's N_COL)")
     ap.add_argument("--act-th", type=int, default=None,
@@ -1045,6 +1189,47 @@ def main():
         print("\n" + "=" * 100, flush=True)
         print(f"[credit-factor] {summary['verdict']}", flush=True)
         print(f"[credit-factor] wrote {a.out}\n" + "=" * 100, flush=True)
+        return 0 if (err is None and rows) else 1
+
+    # ---- THE FA-CONVERGENCE BRANCH (additive; per-epoch cos(W,B^T) trajectory, no training GO verdict) ----
+    if a.measure_fa_convergence:
+        t0 = time.time(); err = None; rows = []
+        try:
+            for s in a.seeds:
+                r = measure_fa_convergence(s, a)
+                rows.append(r)
+                print(_fmt_fa(r), flush=True)
+                try:
+                    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+                    Path(a.out).write_text(json.dumps({"probe": "gap4_fa_convergence", "partial": True,
+                                                       "config": vars(a), "rows": rows}, indent=2, default=str))
+                except Exception as _ck:
+                    print(f"[warn] checkpoint failed ({_ck})", flush=True)
+        except Exception as e:
+            err = repr(e); traceback.print_exc()
+        def _amean(key):
+            vals = [r[key] for r in rows if isinstance(r.get(key), (int, float)) and r.get(key) == r.get(key)]
+            return float(np.mean(vals)) if vals else float("nan")
+        n_conv = int(sum(1 for r in rows if r.get("fa_converges")))
+        summary = {"probe": "gap4_fa_convergence", "seeds": a.seeds, "config": vars(a),
+                   "elapsed_seconds": round(time.time() - t0, 1), "rows": rows, "error": err,
+                   "aggregate": {"fa_cos_top_init": _amean("fa_cos_top_init"),
+                                 "fa_cos_top_final": _amean("fa_cos_top_final"),
+                                 "fa_cos_top_peak": _amean("fa_cos_top_peak"),
+                                 "fa_cos_top_rise": _amean("fa_cos_top_rise"),
+                                 "inherit_final": _amean("inherit_final"),
+                                 "n_converges": n_conv, "n_seeds": len(rows)}}
+        summary["verdict"] = (
+            f"FA-CONVERGENCE (izhikevich, {len(rows)}/{len(a.seeds)} seed(s)): top-hidden cos(W,B^T) "
+            f"{_amean('fa_cos_top_init'):+.3f} -> {_amean('fa_cos_top_final'):+.3f} "
+            f"(peak {_amean('fa_cos_top_peak'):+.3f}, rise {_amean('fa_cos_top_rise'):+.3f}); "
+            f"inherit_final {_amean('inherit_final'):.3f}; converges {n_conv}/{len(rows)}"
+            + (f" | ERROR {err}" if err else ""))
+        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
+        print("\n" + "=" * 100, flush=True)
+        print(f"[fa-convergence] {summary['verdict']}", flush=True)
+        print(f"[fa-convergence] wrote {a.out}\n" + "=" * 100, flush=True)
         return 0 if (err is None and rows) else 1
 
     modes = ["raw", "expander"] if a.mode == "both" else [a.mode]

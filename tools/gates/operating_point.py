@@ -19,27 +19,39 @@ then any achieved value outside [0.5x, 1.5x] of the set-point is a problem. **It
 artifact with a firing rate and no recorded target passes, always — that is the deliberate scope limit, not an
 oversight, and it is why the gap#4 instance above is out of reach.
 
-WHY THESE EXACT RULES — each one is a false positive that was MEASURED on the real corpus, not a guess.
-  · **Bare `target_rate` is NOT a set-point here.** 96 corpus files carry it and the ones inspected mean "the
-    firing rate OF the target word" — a measurement. Paired against the sibling `top_rate` it manufactured 30+
-    confident false alarms (`catastrophic_forgetting_probe_*`, `silent_interval_*`, `direct_binding_*`). Only
-    keys carrying a homeostasis/set-point word, or the explicit `target_firing_rate` form, count.
-  · **A generic `*_rate` is NOT an achieved firing rate.** `homeo_target=40.0` vs `scored_rate=2168.0` looks like
-    a 53x miss and is two unrelated quantities (`_cortex_*`, `_multibridge_*`, `_production_cortex_4bridge`).
-    The achieved side is an explicit STEM allow-list, not a suffix match.
-  · **Cross-unit pairs are refused.** A set-point of 0.002 (fraction) is never compared against 40.0 (Hz): both
-    sides must sit in the same regime (<=1.0 vs >1.0). This is what stops units noise, and it costs coverage.
-  · **A disabled mechanism is not an operating point.** Three `_volley_*n800_*.json` runs record
-    `homeostasis_target_rate=0.035` next to `place_homeostasis: false` — the set-point is inert. A set-point
-    whose sibling enable-flags are ALL false is skipped.
+WHY THESE EXACT RULES. Four narrowings; each was a false positive OBSERVED on this corpus while building the
+gate. The ablation is measured, not asserted — every figure below is `flagged` from `corpus_scan()` with that
+one rule removed (reproduce by monkeypatching the named symbol):
+                                                          artifacts flagged   problem lines
+      SHIPPED, all four rules                                     1                 1
+      minus the bare-`target_rate` exclusion                      1                 1
+      minus the achieved allow-list (`_ACH_RE`)                   8                 8
+      minus the mechanism-off guard (`_mechanism_off`)            4                10
+      minus the same-units guard (`_regime`)                      1                 1
+      ALL FOUR DROPPED                                           58               175
+  · **A generic `*_rate` is NOT an achieved firing rate** (+7 artifacts when dropped). `homeo_target=40.0` vs
+    `scored_rate=2168.0` reads as a 53x miss and is two unrelated quantities — `_cortex_conversation_*`,
+    `_multibridge_*`, `_production_cortex_4bridge`, `_phase1_composer_*`. The achieved side is an explicit STEM
+    allow-list, never a suffix match.
+  · **A disabled mechanism is not an operating point** (+3 artifacts when dropped). `_volley_n800_ablate`,
+    `_volley_n800_norhythm` and `_volley_ping_n800_STEP1_GO` each record `homeostasis_target_rate=0.035` next
+    to `place_homeostasis: false`. A set-point whose enable-flags are ALL false is skipped.
+  · **Bare `target_rate` is NOT a set-point** and **cross-unit pairs are refused**: BOTH cost zero on today's
+    corpus and are kept anyway, honestly labelled as forward guards. 96 files carry `target_rate` meaning "the
+    firing rate OF the target word" (`catastrophic_forgetting_probe_*`, `silent_interval_*`, `direct_binding_*`
+    pair it with `top_rate`); it costs nothing only because `top_rate` is not in the achieved allow-list, and
+    the day someone writes `firing_rate` beside it, it would fire on a measurement. Same for units: nothing
+    today pairs a 0.002 fraction with a 40.0 Hz figure, but an early draft of this gate reported exactly that
+    as a 53x miss. Dropping all four at once gives 58 artifacts / 175 lines — the guards interlock.
   · **Scoping by subtree.** A set-point nested at `/per_run[2]/` is compared only against values under
     `/per_run[2]/`; one at the root (or inside `args`/`config`/`params`) applies to the whole artifact.
 
-CALIBRATION, measured over the full corpus (7673 JSONs, `python -m tools.gates.operating_point`): **1 artifact
-flags** — `laneD_norm/AGG_norm_arms.json`, the case that motivated the gate. Before the four rules above the same
-scan flagged 64, every one of the extra 63 a false alarm. A gate that flags hundreds of legacy files gets
-switched off, which is worse than no gate; this one is scoped so that its full-corpus audit IS its evidence.
-`check([])` returns nothing (nothing of this kind staged); `check(None)` runs the audit.
+CALIBRATION over the full corpus (7151 artifacts; `python -m tools.gates.operating_point`, ~1s): **1 artifact
+flags** — `laneD_norm/AGG_norm_arms.json`, the case that motivated the gate. Verified lossless: parsing all
+7151 files instead of byte-filtering to 25 gives an IDENTICAL problem list, and raising the traversal caps to
+depth=40 / list=100000 / leaves=5e6 changes the verdict by zero artifacts. A gate that flags hundreds of legacy
+files gets switched off, which is worse than no gate; this one is scoped so its full-corpus audit IS its
+evidence. `check([])` returns nothing (nothing of this kind staged); `check(None)` runs the audit.
 
 ESCAPE HATCH. A top-level non-empty `"operating_point_ack": "<why>"` exempts the artifact. That is not a
 loophole — the failure being prevented is that NOBODY NOTICED, so writing down "ran 2.15x hot, homeostasis was
@@ -55,7 +67,8 @@ WHAT THIS GATE CANNOT CATCH.
   · **Non-rate operating points** — weight scale, drive in pA, plateau duration, learning-rate regime. The
     families here are firing rate / activity / sparsity only. Widening the allow-list is how this gate grows.
   · **Cross-unit misses.** A genuine 1000x error recorded as 0.002 vs 4.3 reads as a unit mismatch and is
-    refused. Deliberate: the unit-confusion false alarms outnumbered the real hits 63 to 1.
+    refused. Deliberate, and it is a real hole: a run that is catastrophically off target looks exactly like a
+    run whose two numbers are in different units, and this gate resolves that ambiguity toward silence.
   · **Sub-tolerance drift.** 1.4x off target is silent. TOL is 0.5 because homeostatic set-points in biology
     are not tight and because sweep arms legitimately vary; the measured case is 2.15x.
   · Artifacts outside `research/findings/raw/`, non-JSON artifacts, and anything never staged.
@@ -301,7 +314,7 @@ def check(paths) -> list:
 
 def corpus_scan() -> dict:
     """The full audit. Cheap because `_prefilter` rejects on bytes before anything is parsed."""
-    hits, scanned, parsed = [], 0, 0
+    hits, scanned, parsed, artifacts = [], 0, 0, 0
     for root, _d, names in os.walk(os.path.join(_REPO_ROOT, "research", "findings", "raw")):
         for n in sorted(names):
             p = os.path.join(root, n)
@@ -317,8 +330,11 @@ def corpus_scan() -> dict:
                 continue
             parsed += 1
             rel = os.path.relpath(p, _REPO_ROOT).replace("\\", "/")
-            hits += [s.replace(p, rel, 1) for s in _problems_for(p)]
-    return {"scanned": scanned, "parsed": parsed, "flagged": len(hits), "problems": hits}
+            got = [s.replace(p, rel, 1) for s in _problems_for(p)]
+            artifacts += 1 if got else 0
+            hits += got
+    # `flagged` counts ARTIFACTS; `problems` can be longer (one line per set-point instance in a file).
+    return {"scanned": scanned, "parsed": parsed, "flagged": artifacts, "problems": hits}
 
 
 def selftest() -> list:
@@ -430,7 +446,8 @@ def selftest() -> list:
 
 if __name__ == "__main__":
     res = corpus_scan()
-    print("class OP operating point — scanned %d artifacts, parsed %d with a recorded set-point, flagged %d"
-          % (res["scanned"], res["parsed"], res["flagged"]))
+    print("class OP operating point — scanned %d artifacts, parsed %d carrying a recorded set-point, "
+          "flagged %d artifact(s) / %d problem(s)"
+          % (res["scanned"], res["parsed"], res["flagged"], len(res["problems"])))
     for p in res["problems"]:
         print("  " + p)

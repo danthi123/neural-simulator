@@ -124,6 +124,32 @@ RESERVE_TONIC_PA = 400.0     # tonic drive on the reserve pool during ITS learn 
                              # coincidence fills cue->reserve eligibility (mirrors omit's tonic bootstrap of veto)
 RESERVE_TO_VETO_W = 11.0     # FIXED gaba_a inhibition reserve->veto (the active protective inhibition read at recall)
 
+# --- LANE B (additive, default-OFF via --lp-slope): fast-minus-tonic learning-progress protection -----------
+# First on-bridge promotion of the CPU LP-slope proxy. With `--lp-slope` alone, the scalar history update is still
+# runner-side (fed by the real familiarity read after each ask), but the decision read is routed through bridge pools:
+# a phasic/fast pool excites `lp_gate`, a tonic/slow pool inhibits it, and the candidate filter reads the gate's
+# SPIKING rate. With `--lp-substrate-memory`, the fast/tonic histories move into plastic cue->LP synapses; the runner
+# supplies only the local teaching scalar, as it already does for SNc/RPE learning.
+N_LP_TRACE = 24
+LP_FAST_ALPHA = 0.75
+LP_TONIC_ALPHA = 0.16
+LP_TRACE_GAIN_PA = 900.0
+LP_FAST_TO_GATE_W = 10.0
+LP_TONIC_TO_GATE_W = 12.0
+LP_SUBSTRATE_FAST_TO_GATE_W = 16.0
+LP_SUBSTRATE_TONIC_TO_GATE_W = 8.0
+W_LP_SLOPE = 18
+LP_SLOPE_PROTECT_FLOOR_HZ = 6.0
+LP_SUBSTRATE_PROTECT_FLOOR_HZ = 35.0
+LP_HOMEOSTATIC_FAST_FLOOR_HZ = 80.0
+LP_HOMEOSTATIC_RATIO_FLOOR = 87.0
+CUE_TO_LP_FAST_W0 = 0.0
+CUE_TO_LP_TONIC_W0 = 0.0
+LP_MEMORY_TONIC_PA = 420.0
+LP_MEMORY_RPE_SCALE = 0.5
+W_LP_MEMORY_WARMUP = 4
+W_LP_MEMORY_MEASURE = 12
+
 
 def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_reward_us=40,
                                n_snc=30, n_ask=80, cue_to_strio_weight=11.0,
@@ -131,7 +157,8 @@ def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_
                                gabab_prop=0.22, gabab_tau_decay=150.0, reward_learning_rate=0.30,
                                curiosity_prod_sensitivity=0.10,
                                curiosity_excit_sensitivity=320.0, curiosity_decay_tau=50.0,
-                               enable_heterogeneity=True, enable_reserve=False):
+                               enable_heterogeneity=True, enable_reserve=False, enable_lp_slope=False,
+                               enable_lp_substrate_memory=False):
     """DR-1's build_curiosity_bridge (verbatim config) PLUS the spiking reward-omission veto circuit:
     the rmtg/omit/veto pools + snc->rmtg->omit->veto + a PLASTIC cue->veto, and two named plasticity gates
     (`strio_learn`, `veto_learn`) so the striosome critic and the veto accumulator learn in disjoint windows."""
@@ -258,6 +285,37 @@ def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_
             RegionPathway(from_region="reserve", to_region="veto",
                           density=0.6, weight_mean=RESERVE_TO_VETO_W, weight_jitter=0.2, plastic=False,
                           receptor="gaba_a"))
+    if enable_lp_slope:
+        n_lp = n_concepts * N_LP_TRACE
+        lp_fast_to_gate_w = LP_SUBSTRATE_FAST_TO_GATE_W if enable_lp_substrate_memory else LP_FAST_TO_GATE_W
+        lp_tonic_to_gate_w = LP_SUBSTRATE_TONIC_TO_GATE_W if enable_lp_substrate_memory else LP_TONIC_TO_GATE_W
+        cfg.brain_regions.extend([
+            BrainRegion(name="lp_fast", n_neurons=n_lp, exc_fraction=1.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                        plastic_internal=False, izh_neuron_type=RS),
+            BrainRegion(name="lp_tonic", n_neurons=n_lp, exc_fraction=0.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                        plastic_internal=False, izh_neuron_type=FS),
+            BrainRegion(name="lp_gate", n_neurons=n_lp, exc_fraction=1.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                        plastic_internal=False, izh_neuron_type=RS),
+        ])
+        cfg.region_pathways.extend([
+            RegionPathway(from_region="lp_fast", to_region="lp_gate",
+                          density=0.6, weight_mean=lp_fast_to_gate_w, weight_jitter=0.2, plastic=False),
+            RegionPathway(from_region="lp_tonic", to_region="lp_gate",
+                          density=0.6, weight_mean=lp_tonic_to_gate_w, weight_jitter=0.2, plastic=False,
+                          receptor="gaba_a"),
+        ])
+        if enable_lp_substrate_memory:
+            cfg.region_pathways.extend([
+                RegionPathway(from_region="cue", to_region="lp_fast",
+                              density=0.6, weight_mean=CUE_TO_LP_FAST_W0, weight_jitter=0.0, plastic=True,
+                              plasticity_gate="lp_fast_learn"),
+                RegionPathway(from_region="cue", to_region="lp_tonic",
+                              density=0.6, weight_mean=CUE_TO_LP_TONIC_W0, weight_jitter=0.0, plastic=True,
+                              plasticity_gate="lp_tonic_learn"),
+            ])
     cfg.enable_neuromodulator_subsystem = True
     cfg.neuromodulators = [
         NeuromodulatorConfig(
@@ -278,6 +336,9 @@ def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_
     bridge.set_plasticity_gate("strio_learn", 1.0)
     if enable_reserve:
         bridge.set_plasticity_gate("reserve_learn", 0.0)   # inhibitory reserve also frozen except in its window
+    if enable_lp_slope and enable_lp_substrate_memory:
+        bridge.set_plasticity_gate("lp_fast_learn", 0.0)
+        bridge.set_plasticity_gate("lp_tonic_learn", 0.0)
     return bridge, cfg
 
 
@@ -285,7 +346,9 @@ drives_regions = ("cue", "striosome_value", "reward_us", "snc", "ask", "rmtg", "
 
 
 def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_budget=ASK_BUDGET,
-        d=D, verbose=False, enable_reserve=False, **build_kw):
+        d=D, verbose=False, enable_reserve=False, enable_lp_slope=False,
+        enable_lp_substrate_memory=False, enable_lp_homeostatic_read=False,
+        lp_memory_teach_mode="positive_lp", **build_kw):
     from sim.backend import get_backend
     xp, _ = get_backend()
     rng = np.random.default_rng(seed * 101 + 5)
@@ -302,14 +365,24 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     # learning, so the control is a fair like-for-like). `suppress_reserve` zeroes the reserve RPE (no potentiation).
     reserve_on = bool(enable_reserve) or (mode == "reserve_lesion")
     suppress_reserve = (mode == "reserve_lesion")
+    # LANE B LP-slope: build the readout pools for real/permuted-history/slope-lesion arms, but keep the history
+    # read disabled in the lesion. Existing omission/reserve modes keep byte-identical builds unless opted in.
+    lp_slope_on = bool(enable_lp_slope) or (mode in {"slope_lesion", "permuted_history"})
+    lp_slope_read_enabled = lp_slope_on and mode != "slope_lesion"
     bk = dict(build_kw)
     bk["enable_reserve"] = reserve_on
+    bk["enable_lp_slope"] = lp_slope_on
+    bk["enable_lp_substrate_memory"] = bool(enable_lp_substrate_memory and lp_slope_on)
     if lesion_curiosity:
         bk["curiosity_excit_sensitivity"] = 0.0
     bridge, cfg = build_omission_veto_bridge(seed, n_concepts, **bk)
     idx_map = {n: xp.asarray(_idx(bridge, n)) for n in drives_regions}
     if reserve_on:                                        # the reserve pool exists only when reserve is built
         idx_map["reserve"] = xp.asarray(_idx(bridge, "reserve"))
+    if lp_slope_on:
+        idx_map["lp_fast"] = xp.asarray(_idx(bridge, "lp_fast"))
+        idx_map["lp_tonic"] = xp.asarray(_idx(bridge, "lp_tonic"))
+        idx_map["lp_gate"] = xp.asarray(_idx(bridge, "lp_gate"))
     cue_all = _host(idx_map["cue"]).astype(np.int64)
     n_per_cue = len(cue_all) // n_concepts
     cue_slice = {c: xp.asarray(cue_all[c * n_per_cue:(c + 1) * n_per_cue]) for c in concepts}
@@ -324,6 +397,33 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     veto_idx = idx_map["veto"]; n_veto = len(_host(veto_idx))
     reward_us_idx = idx_map["reward_us"]; omit_idx = idx_map["omit"]; n_omit = len(_host(omit_idx))
     reserve_idx = idx_map.get("reserve")                  # None unless the reserve pool was built
+    if lp_slope_on:
+        lp_fast_all = _host(idx_map["lp_fast"]).astype(np.int64)
+        lp_tonic_all = _host(idx_map["lp_tonic"]).astype(np.int64)
+        lp_gate_all = _host(idx_map["lp_gate"]).astype(np.int64)
+        n_lp_per = len(lp_gate_all) // n_concepts
+        lp_fast_slice = {c: xp.asarray(lp_fast_all[c * n_lp_per:(c + 1) * n_lp_per]) for c in concepts}
+        lp_tonic_slice = {c: xp.asarray(lp_tonic_all[c * n_lp_per:(c + 1) * n_lp_per]) for c in concepts}
+        lp_gate_slice = {c: xp.asarray(lp_gate_all[c * n_lp_per:(c + 1) * n_lp_per]) for c in concepts}
+    else:
+        n_lp_per = 0
+        lp_fast_slice = {}
+        lp_tonic_slice = {}
+        lp_gate_slice = {}
+    lp_substrate_memory_on = bool(enable_lp_substrate_memory and lp_slope_on)
+    lp_homeostatic_read_on = bool(enable_lp_homeostatic_read and lp_substrate_memory_on)
+    lp_protect_floor_hz = (LP_HOMEOSTATIC_RATIO_FLOOR if lp_homeostatic_read_on
+                           else LP_SUBSTRATE_PROTECT_FLOOR_HZ if lp_substrate_memory_on
+                           else LP_SLOPE_PROTECT_FLOOR_HZ)
+    lp_fast_trace = {c: 0.0 for c in concepts}
+    lp_tonic_trace = {c: 0.0 for c in concepts}
+
+    def lp_history_source(c):
+        if mode != "permuted_history":
+            return c
+        if c < n_learn:
+            return n_learn + (c % n_noisy)
+        return c - n_learn
 
     def read_value(c):
         _restore_state(bridge, snap0)
@@ -365,6 +465,68 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         bridge.set_transmission_gate("veto_drive", 1.0)
         _restore_state(bridge, snap0)
         return spk / max(n_veto, 1) / (W_VETO * 1e-3)
+
+    def read_lp_slope(c):
+        """Bridge readout of fast-minus-tonic progress history for candidate c.
+
+        In the first promotion, the EMA state is host-updated but the protection signal used by policy is the
+        `lp_gate` spiking rate under phasic excitation and tonic inhibition. In substrate-memory mode, the fast/tonic
+        traces are recalled from plastic cue->LP synapses. In permuted-history, the source concept is swapped,
+        exposing a history-routing anti-cheat.
+        """
+        if not lp_slope_read_enabled:
+            return 0.0
+        src = lp_history_source(c)
+        _restore_state(bridge, snap0)
+        read_slice = src if lp_substrate_memory_on else c
+        if lp_substrate_memory_on:
+            bridge.cp_external_input_current[cue_slice[src]] = xp.float32(CUE_DRIVE_PA)
+        else:
+            bridge.cp_external_input_current[lp_fast_slice[c]] = xp.float32(
+                LP_TRACE_GAIN_PA * max(lp_fast_trace[src], 0.0))
+            bridge.cp_external_input_current[lp_tonic_slice[c]] = xp.float32(
+                LP_TRACE_GAIN_PA * max(lp_tonic_trace[src], 0.0))
+        saved = cfg.reward_learning_rate; cfg.reward_learning_rate = 0.0
+        spk = 0
+        for _ in range(W_LP_SLOPE):
+            _advance(bridge)
+            spk += int(bridge.cp_firing_states[lp_gate_slice[read_slice]].sum())
+        cfg.reward_learning_rate = saved
+        _restore_state(bridge, snap0)
+        return spk / max(n_lp_per, 1) / (W_LP_SLOPE * 1e-3)
+
+    def read_lp_memory_rates(c):
+        if not (lp_slope_on and lp_substrate_memory_on):
+            return float(lp_fast_trace[c]), float(lp_tonic_trace[c])
+        _restore_state(bridge, snap0)
+        bridge.cp_external_input_current[cue_slice[c]] = xp.float32(CUE_DRIVE_PA)
+        saved = cfg.reward_learning_rate; cfg.reward_learning_rate = 0.0
+        fast_spk = tonic_spk = 0
+        for _ in range(W_LP_SLOPE):
+            _advance(bridge)
+            fast_spk += int(bridge.cp_firing_states[lp_fast_slice[c]].sum())
+            tonic_spk += int(bridge.cp_firing_states[lp_tonic_slice[c]].sum())
+        cfg.reward_learning_rate = saved
+        _restore_state(bridge, snap0)
+        fast_hz = fast_spk / max(n_lp_per, 1) / (W_LP_SLOPE * 1e-3)
+        tonic_hz = tonic_spk / max(n_lp_per, 1) / (W_LP_SLOPE * 1e-3)
+        return float(fast_hz), float(tonic_hz)
+
+    def read_lp_memory_delta(c):
+        fast_hz, tonic_hz = read_lp_memory_rates(c)
+        return float((fast_hz - tonic_hz) / 100.0)
+
+    def read_lp_homeostatic_score(c):
+        """Per-concept fast/tonic score for the substrate-memory scout.
+
+        This keeps the memory substrate-bound but uses the tonic pool as a local baseline instead of a global
+        `lp_gate` firing floor. It is an opt-in scout readout, not a final claim that the comparison is fully neural.
+        """
+        src = lp_history_source(c)
+        fast_hz, tonic_hz = read_lp_memory_rates(src)
+        if fast_hz < LP_HOMEOSTATIC_FAST_FLOOR_HZ:
+            return 0.0
+        return float(100.0 * fast_hz / max(tonic_hz, 1.0))
 
     def _snc_window(c, LP):
         _restore_state(bridge, snap0)
@@ -463,6 +625,46 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         _restore_state(bridge, snap0)
         return omit_read
 
+    def learn_lp_memory(c, progress_read):
+        """Store progress history in plastic cue->LP fast/tonic synapses.
+
+        The runner supplies the same positive learning-progress teaching signal the DR-1 critic already receives from
+        the task loop, but the per-concept history used at policy time is recalled from substrate weights.
+        """
+        if not (lp_slope_read_enabled and lp_substrate_memory_on):
+            return
+        progress = float(np.clip(progress_read, 0.0, 1.0))
+
+        def update_one(target_slice, gate_name, rpe):
+            bridge.set_plasticity_gate("strio_learn", 0.0)
+            bridge.set_plasticity_gate("veto_learn", 0.0)
+            if reserve_on and reserve_idx is not None:
+                bridge.set_plasticity_gate("reserve_learn", 0.0)
+            bridge.set_plasticity_gate("lp_fast_learn", 0.0)
+            bridge.set_plasticity_gate("lp_tonic_learn", 0.0)
+            _restore_state(bridge, snap0)
+            bridge.cp_eligibility_trace[:] = 0.0
+            bridge.cp_external_input_current[cue_slice[c]] = xp.float32(CUE_DRIVE_PA)
+            bridge.cp_external_input_current[target_slice] = xp.float32(LP_MEMORY_TONIC_PA)
+            bridge.core_config.current_reward_signal = 0.0
+            for _ in range(W_LP_MEMORY_WARMUP):
+                _advance(bridge)
+            bridge.set_plasticity_gate(gate_name, 1.0)
+            for _ in range(W_LP_MEMORY_MEASURE):
+                _advance(bridge)
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.core_config.current_reward_signal = float(rpe)
+            for _ in range(W_APPLY):
+                _advance(bridge)
+            bridge.core_config.current_reward_signal = 0.0
+            bridge.set_plasticity_gate(gate_name, 0.0)
+
+        scale = 1.0 / max(float(LP_MEMORY_RPE_SCALE), 1e-9)
+        update_one(lp_fast_slice[c], "lp_fast_learn", LP_FAST_ALPHA * progress * scale)
+        update_one(lp_tonic_slice[c], "lp_tonic_learn", LP_TONIC_ALPHA * progress * scale)
+        bridge.set_plasticity_gate("strio_learn", 1.0)
+        _restore_state(bridge, snap0)
+
     # bookkeeping (mirror DR-1)
     corr_gap, corr_want = [], []
     asked = set(); ask_events = []; conf_first_ask = {}; n_asks = 0
@@ -475,6 +677,10 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     # Vveto[c] = the last SPIKING veto read for concept c (a memoised measurement; the ACCUMULATION is synaptic
     # in cue->veto). Init 0 -> an un-tried concept is never vetoed (gets tried a couple times first).
     Vveto = {c: 0.0 for c in concepts}
+    slow_protected_asks = 0
+    noisy_protected_asks = 0
+    lp_gate_slow_protect = []
+    lp_gate_noisy_protect = []
 
     for turn in range(n_turns):
         if n_asks >= ask_budget:
@@ -500,8 +706,16 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
                 noisy_elig[min(turn // third, 2)] += 1
 
         # the veto is now the SPIKING omission read: a concept is a candidate iff NOVEL, drive-active, and its
-        # veto pool rate is BELOW the floor (not yet flagged unlearnable).
-        not_vetoed = (lambda c: Vveto[c] < VETO_FLOOR_HZ)
+        # veto pool rate is BELOW the floor (not yet flagged unlearnable). Under --lp-slope, a high bridge-read
+        # fast-minus-tonic LP gate protects slow-but-improving concepts from the omission veto.
+        if lp_slope_on and lp_homeostatic_read_on:
+            lp_gate_hz = {c: read_lp_homeostatic_score(c) for c in concepts}
+        elif lp_slope_on:
+            lp_gate_hz = {c: read_lp_slope(c) for c in concepts}
+        else:
+            lp_gate_hz = {c: 0.0 for c in concepts}
+        not_vetoed = (lambda c: (Vveto[c] < VETO_FLOOR_HZ)
+                      or (lp_slope_on and lp_gate_hz[c] >= lp_protect_floor_hz))
         cands = [c for c in concepts
                  if gate_gap[c] > NOVEL_THRESH and want[c] > WANT_FLOOR_HZ and not_vetoed(c)]
         if not cands:
@@ -512,6 +726,15 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         else:
             mx = max(want[c] for c in cands)
             c_ask = int(rng.choice([c for c in cands if want[c] >= mx - 1e-9]))
+
+        was_protected = bool(lp_slope_on and Vveto[c_ask] >= VETO_FLOOR_HZ
+                             and lp_gate_hz[c_ask] >= lp_protect_floor_hz)
+        if was_protected and world.is_noisy[c_ask]:
+            noisy_protected_asks += 1
+            lp_gate_noisy_protect.append(float(lp_gate_hz[c_ask]))
+        elif was_protected:
+            slow_protected_asks += 1
+            lp_gate_slow_protect.append(float(lp_gate_hz[c_ask]))
 
         if true_gaps[c_ask] > NOVEL_THRESH:
             ask_unknown += 1
@@ -535,6 +758,14 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         snc_hz = deliver_reward(c_ask, LP)                 # DR-1 critic (unchanged)
         omitfire = learn_veto(c_ask, LP)                   # SPIKING omission-veto learning
         Vveto[c_ask] = read_veto(c_ask)                    # re-read the substrate-computed veto value
+        if lp_slope_read_enabled:
+            progress_conf = max(0.0, 1.0 - g_after)
+            if lp_substrate_memory_on:
+                progress_teach = progress_conf if lp_memory_teach_mode == "confidence" else max(0.0, LP)
+                learn_lp_memory(c_ask, progress_teach)
+            else:
+                lp_fast_trace[c_ask] += LP_FAST_ALPHA * (progress_conf - lp_fast_trace[c_ask])
+                lp_tonic_trace[c_ask] += LP_TONIC_ALPHA * (progress_conf - lp_tonic_trace[c_ask])
         (snc_noisy_burst if world.is_noisy[c_ask] else snc_learn_burst).append(snc_hz)
         (omitfire_noisy if world.is_noisy[c_ask] else omitfire_learn).append(omitfire)
 
@@ -543,7 +774,8 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         if verbose and n_asks <= 12:
             print(f"    [ask {n_asks:02d}] c={c_ask} noisy={world.is_noisy[c_ask]} g {g_before:.2f}->{g_after:.2f}"
                   f" LP {g_before-g_after:+.2f} sncHz {snc_hz:5.1f} omitFire {omitfire:5.1f} "
-                  f"vetoHz {Vveto[c_ask]:5.1f} (floor {VETO_FLOOR_HZ})", flush=True)
+                  f"vetoHz {Vveto[c_ask]:5.1f} (floor {VETO_FLOOR_HZ})"
+                  f" lpGate {lp_gate_hz[c_ask]:5.1f}{' PROTECT' if was_protected else ''}", flush=True)
 
     # ---- metrics ----
     corr_gap = np.array(corr_gap); corr_want = np.array(corr_want)
@@ -584,6 +816,23 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     snc_noisy_hz = float(np.mean(snc_noisy_burst)) if snc_noisy_burst else 0.0
     omitfire_learn_hz = float(np.mean(omitfire_learn)) if omitfire_learn else 0.0
     omitfire_noisy_hz = float(np.mean(omitfire_noisy)) if omitfire_noisy else 0.0
+    if lp_slope_on and lp_homeostatic_read_on:
+        lp_gate_final = {c: read_lp_homeostatic_score(c) for c in concepts}
+    elif lp_slope_on:
+        lp_gate_final = {c: read_lp_slope(c) for c in concepts}
+    else:
+        lp_gate_final = {c: 0.0 for c in concepts}
+    lp_gate_slow_final = float(np.mean([lp_gate_final[c] for c in range(n_learn)])) if lp_slope_on else 0.0
+    lp_gate_noisy_final = (float(np.mean([lp_gate_final[c] for c in range(n_learn, n_learn + n_noisy)]))
+                           if lp_slope_on else 0.0)
+    lp_slow_memory_rates = [read_lp_memory_rates(c) for c in range(n_learn)] if lp_slope_on else []
+    lp_noisy_memory_rates = [read_lp_memory_rates(c) for c in range(n_learn, n_learn + n_noisy)] if lp_slope_on else []
+    lp_memory_slow_fast_hz = float(np.mean([r[0] for r in lp_slow_memory_rates])) if lp_slow_memory_rates else 0.0
+    lp_memory_slow_tonic_hz = float(np.mean([r[1] for r in lp_slow_memory_rates])) if lp_slow_memory_rates else 0.0
+    lp_memory_noisy_fast_hz = float(np.mean([r[0] for r in lp_noisy_memory_rates])) if lp_noisy_memory_rates else 0.0
+    lp_memory_noisy_tonic_hz = float(np.mean([r[1] for r in lp_noisy_memory_rates])) if lp_noisy_memory_rates else 0.0
+    lp_trace_slow_slope = float(np.mean([read_lp_memory_delta(c) for c in range(n_learn)]))
+    lp_trace_noisy_slope = float(np.mean([read_lp_memory_delta(c) for c in range(n_learn, n_learn + n_noisy)]))
 
     confident_set = {c for c in concepts if conf_after[c] > 0.5}
     moat_ok = confident_set.issubset(asked)
@@ -602,15 +851,53 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         "mean_LP_learn": mean_LP_learn, "mean_LP_noisy": mean_LP_noisy,
         "snc_learn_hz": snc_learn_hz, "snc_noisy_hz": snc_noisy_hz,
         "omitfire_learn_hz": omitfire_learn_hz, "omitfire_noisy_hz": omitfire_noisy_hz, "moat_ok": bool(moat_ok),
+        "lp_slope_enabled": bool(lp_slope_on),
+        "lp_substrate_memory": bool(lp_substrate_memory_on),
+        "lp_homeostatic_read": bool(lp_homeostatic_read_on),
+        "lp_memory_teach_mode": str(lp_memory_teach_mode),
+        "lp_read_mode": "homeostatic_ratio" if lp_homeostatic_read_on else "lp_gate_hz",
+        "lp_read_unit": "fast_over_tonic_x100" if lp_homeostatic_read_on else "hz",
+        "lp_homeostatic_fast_floor_hz": LP_HOMEOSTATIC_FAST_FLOOR_HZ,
+        "lp_slope_protect_floor_hz": lp_protect_floor_hz,
+        "lp_slow_protected_asks": int(slow_protected_asks),
+        "lp_noisy_protected_asks": int(noisy_protected_asks),
+        "lp_gate_slow_protect_hz": float(np.mean(lp_gate_slow_protect)) if lp_gate_slow_protect else 0.0,
+        "lp_gate_noisy_protect_hz": float(np.mean(lp_gate_noisy_protect)) if lp_gate_noisy_protect else 0.0,
+        "lp_gate_slow_final_hz": lp_gate_slow_final,
+        "lp_gate_noisy_final_hz": lp_gate_noisy_final,
+        "lp_memory_slow_fast_hz": lp_memory_slow_fast_hz,
+        "lp_memory_slow_tonic_hz": lp_memory_slow_tonic_hz,
+        "lp_memory_noisy_fast_hz": lp_memory_noisy_fast_hz,
+        "lp_memory_noisy_tonic_hz": lp_memory_noisy_tonic_hz,
+        "lp_trace_slow_slope": lp_trace_slow_slope,
+        "lp_trace_noisy_slope": lp_trace_noisy_slope,
     }
 
 
-def evaluate(seed, enable_reserve=False, **kw):
-    real = run(seed, "real", enable_reserve=enable_reserve, **kw)
-    lesion = run(seed, "lesion", enable_reserve=enable_reserve, **kw)
-    yoked = run(seed, "yoked", enable_reserve=enable_reserve, **kw)
-    permuted = run(seed, "permuted", enable_reserve=enable_reserve, **kw)
-    omit_les = run(seed, "omit_lesion", enable_reserve=enable_reserve, **kw)   # the load-bearing detector lesion
+def evaluate(seed, enable_reserve=False, enable_lp_slope=False, enable_lp_substrate_memory=False,
+             enable_lp_homeostatic_read=False, lp_memory_teach_mode="positive_lp", **kw):
+    real = run(seed, "real", enable_reserve=enable_reserve, enable_lp_slope=enable_lp_slope,
+               enable_lp_substrate_memory=enable_lp_substrate_memory,
+               enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+               lp_memory_teach_mode=lp_memory_teach_mode, **kw)
+    lesion = run(seed, "lesion", enable_reserve=enable_reserve, enable_lp_slope=enable_lp_slope,
+                 enable_lp_substrate_memory=enable_lp_substrate_memory,
+                 enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+                 lp_memory_teach_mode=lp_memory_teach_mode, **kw)
+    yoked = run(seed, "yoked", enable_reserve=enable_reserve, enable_lp_slope=enable_lp_slope,
+                enable_lp_substrate_memory=enable_lp_substrate_memory,
+                enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+                lp_memory_teach_mode=lp_memory_teach_mode, **kw)
+    permuted = run(seed, "permuted", enable_reserve=enable_reserve, enable_lp_slope=enable_lp_slope,
+                   enable_lp_substrate_memory=enable_lp_substrate_memory,
+                   enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+                   lp_memory_teach_mode=lp_memory_teach_mode, **kw)
+    omit_les = run(seed, "omit_lesion", enable_reserve=enable_reserve,
+                   enable_lp_slope=enable_lp_slope,
+                   enable_lp_substrate_memory=enable_lp_substrate_memory,
+                   enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+                   lp_memory_teach_mode=lp_memory_teach_mode,
+                   **kw)   # the load-bearing detector lesion
 
     gate_a = real["corr_gap_want"] >= 0.9
     gate_b = real["ratio_b"] >= 2.0
@@ -644,7 +931,12 @@ def evaluate(seed, enable_reserve=False, **kw):
         # learning (reserve_rpe forced to 0). The protective reserve must RESCUE learnable concepts — drive their
         # spiking veto read BELOW the reserve-lesion — WITHOUT weakening the noisy veto (noisy stays vetoed, and its
         # veto rate is not materially lowered). This isolates the reserve's contribution from the excitatory memory.
-        reserve_les = run(seed, "reserve_lesion", **kw)
+        reserve_les = run(seed, "reserve_lesion", enable_reserve=enable_reserve,
+                          enable_lp_slope=enable_lp_slope,
+                          enable_lp_substrate_memory=enable_lp_substrate_memory,
+                          enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+                          lp_memory_teach_mode=lp_memory_teach_mode,
+                          **kw)
         reserve_rescues = bool((real["learn_veto_final"] < reserve_les["learn_veto_final"] - 1e-9)
                                and real["noisy_vetoed"]
                                and (real["noisy_veto_final"] >= reserve_les["noisy_veto_final"] - 2.0))
@@ -653,6 +945,40 @@ def evaluate(seed, enable_reserve=False, **kw):
         out["reserve_learn_veto_final"] = float(real["learn_veto_final"])
         out["reserve_lesion_learn_veto_final"] = float(reserve_les["learn_veto_final"])
         out["GO"] = bool(go and reserve_rescues)
+    if enable_lp_slope:
+        omission_only = run(seed, "real", enable_reserve=enable_reserve, enable_lp_slope=False, **kw)
+        slope_les = run(seed, "slope_lesion", enable_reserve=enable_reserve, enable_lp_slope=True,
+                        enable_lp_substrate_memory=enable_lp_substrate_memory,
+                        enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+                        lp_memory_teach_mode=lp_memory_teach_mode, **kw)
+        perm_hist = run(seed, "permuted_history", enable_reserve=enable_reserve, enable_lp_slope=True,
+                        enable_lp_substrate_memory=enable_lp_substrate_memory,
+                        enable_lp_homeostatic_read=enable_lp_homeostatic_read,
+                        lp_memory_teach_mode=lp_memory_teach_mode, **kw)
+        lp_floor = float(real["lp_slope_protect_floor_hz"])
+        lp_slow_protected = bool(real["learnable_mastered"] > omission_only["learnable_mastered"]
+                                 and real["lp_slow_protected_asks"] > 0
+                                 and real["lp_gate_slow_protect_hz"] >= lp_floor)
+        lp_noisy_guard = bool(real["noisy_vetoed"] and real["lp_noisy_protected_asks"] == 0
+                              and real["lp_trace_slow_slope"] > real["lp_trace_noisy_slope"] + 0.03)
+        lp_slope_lesion_collapses = bool(slope_les["learnable_mastered"] < real["learnable_mastered"]
+                                         and slope_les["lp_slow_protected_asks"] == 0)
+        lp_permuted_history_collapses = bool(perm_hist["learnable_mastered"] < real["learnable_mastered"]
+                                             or perm_hist["lp_noisy_protected_asks"]
+                                             > real["lp_noisy_protected_asks"])
+        lp_slope_go = bool(gate_a and gate_b and gate_c and noisy_stops and real["moat_ok"]
+                           and lesion_collapses and lp_slow_protected and lp_noisy_guard
+                           and lp_slope_lesion_collapses and lp_permuted_history_collapses)
+        out["omission_only"] = omission_only
+        out["slope_lesion"] = slope_les
+        out["permuted_history"] = perm_hist
+        out["lp_slow_protected"] = lp_slow_protected
+        out["lp_noisy_guard"] = lp_noisy_guard
+        out["lp_slope_lesion_collapses"] = lp_slope_lesion_collapses
+        out["lp_permuted_history_collapses"] = lp_permuted_history_collapses
+        out["LP_SLOPE_GO"] = lp_slope_go
+        out["GO"] = bool(out["GO"] and lp_slow_protected and lp_noisy_guard
+                         and lp_slope_lesion_collapses and lp_permuted_history_collapses)
     return out
 
 
@@ -666,8 +992,33 @@ def main():
                     help="LANE B (additive, default-OFF): add the DECAYING SUB-BASELINE INHIBITORY protective-reserve "
                          "pathway (a second cue->veto, gaba_a, opposite-sign learning gated by `reserve_learn`) + the "
                          "reserve-lesion domain dissociation to the GO. OFF -> byte-identical to the omission-only build.")
+    ap.add_argument("--lp-slope", action="store_true",
+                    help="LANE B (additive, default-OFF): add an on-bridge fast-minus-tonic LP-slope readout that "
+                         "protects slow-but-improving concepts from the omission veto, plus slope-lesion and "
+                         "permuted-history controls. The EMA history remains runner-side in this first promotion.")
+    ap.add_argument("--lp-substrate-memory", action="store_true",
+                    help="LANE B (requires --lp-slope): store fast/tonic LP history in plastic cue->LP synapses "
+                         "instead of runner-side EMA dictionaries.")
+    ap.add_argument("--lp-homeostatic-read", action="store_true",
+                    help="LANE B scout (requires --lp-substrate-memory): protect from a per-concept fast/tonic "
+                         "memory ratio instead of the global lp_gate firing-rate floor.")
+    ap.add_argument("--lp-memory-teach", choices=["positive_lp", "confidence"], default="positive_lp",
+                    help="LANE B scout (substrate memory only): teaching scalar for cue->LP fast/tonic memory. "
+                         "Default positive_lp preserves prior artifacts; confidence matches the CPU proxy's "
+                         "post-ask confidence trace.")
+    ap.add_argument("--n-learn", type=int, default=None, help="override number of slow learnable concepts")
+    ap.add_argument("--n-noisy", type=int, default=None, help="override number of noisy/unlearnable concepts")
+    ap.add_argument("--n-turns", type=int, default=None, help="override task horizon")
+    ap.add_argument("--ask-budget", type=int, default=None, help="override maximum number of asks")
+    ap.add_argument("--d", type=int, default=None, help="override concept vector dimensionality")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
+    if a.lp_substrate_memory and not a.lp_slope:
+        ap.error("--lp-substrate-memory requires --lp-slope")
+    if a.lp_homeostatic_read and not a.lp_substrate_memory:
+        ap.error("--lp-homeostatic-read requires --lp-substrate-memory")
+    if a.lp_memory_teach != "positive_lp" and not a.lp_substrate_memory:
+        ap.error("--lp-memory-teach confidence requires --lp-substrate-memory")
     if a.out is None:
         a.out = "research/findings/raw/_curiosity_reward_omission_veto.json"
     try:
@@ -676,8 +1027,15 @@ def main():
         pass
 
     kw = {}
-    if a.smoke:
+    if a.smoke and a.lp_slope:
+        kw = dict(n_learn=5, n_noisy=3, n_turns=160, ask_budget=50, d=512)
+    elif a.smoke:
         kw = dict(n_learn=3, n_noisy=2, n_turns=90, ask_budget=14, d=512)
+    for arg_name, kw_name in (("n_learn", "n_learn"), ("n_noisy", "n_noisy"), ("n_turns", "n_turns"),
+                              ("ask_budget", "ask_budget"), ("d", "d")):
+        value = getattr(a, arg_name)
+        if value is not None:
+            kw[kw_name] = int(value)
 
     from sim.backend import get_backend
     _, backend = get_backend()
@@ -691,13 +1049,29 @@ def main():
     if a.reserve:
         print("  [LANE B] --reserve ON: DECAYING SUB-BASELINE INHIBITORY protective reserve (cue->veto gaba_a, "
               "opposite-sign) + reserve-lesion dissociation added to the GO.\n", flush=True)
+    if a.lp_slope and not a.lp_substrate_memory:
+        print("  [LANE B] --lp-slope ON: bridge LP fast-minus-tonic gate protects slow-improving concepts; "
+              "EMA state is runner-side, decision read is spiking.\n", flush=True)
+    if a.lp_substrate_memory:
+        print("  [LANE B] --lp-substrate-memory ON: LP fast/tonic histories are recalled from plastic cue->LP "
+              f"synapses; teaching mode={a.lp_memory_teach}.\n", flush=True)
+    if a.lp_homeostatic_read:
+        print("  [LANE B] --lp-homeostatic-read ON: candidate protection reads fast/tonic substrate memory ratio "
+              f"(fast floor {LP_HOMEOSTATIC_FAST_FLOOR_HZ:.0f}Hz, ratio floor {LP_HOMEOSTATIC_RATIO_FLOOR:.0f}).\n",
+              flush=True)
 
     if a.probe:
         s = a.seeds[0]
         print(f"  --- REAL (seed {s}) ---", flush=True)
-        real = run(s, "real", verbose=True, enable_reserve=a.reserve, **kw)
+        real = run(s, "real", verbose=True, enable_reserve=a.reserve, enable_lp_slope=a.lp_slope,
+                   enable_lp_substrate_memory=a.lp_substrate_memory,
+                   enable_lp_homeostatic_read=a.lp_homeostatic_read,
+                   lp_memory_teach_mode=a.lp_memory_teach, **kw)
         print(f"  --- OMIT-LESION (seed {s}) ---", flush=True)
-        oles = run(s, "omit_lesion", verbose=True, enable_reserve=a.reserve, **kw)
+        oles = run(s, "omit_lesion", verbose=True, enable_reserve=a.reserve,
+                   enable_lp_slope=a.lp_slope, enable_lp_substrate_memory=a.lp_substrate_memory,
+                   enable_lp_homeostatic_read=a.lp_homeostatic_read,
+                   lp_memory_teach_mode=a.lp_memory_teach, **kw)
         print(f"\n  real: omitFire learn {real['omitfire_learn_hz']:.1f} vs noisy {real['omitfire_noisy_hz']:.1f} Hz "
               f"| veto learn {real['learn_veto_final']:.1f} vs noisy {real['noisy_veto_final']:.1f} Hz "
               f"vetoed={real['noisy_vetoed']}", flush=True)
@@ -710,7 +1084,10 @@ def main():
 
     results = []
     for seed in a.seeds:
-        r = evaluate(seed, enable_reserve=a.reserve, **kw)
+        r = evaluate(seed, enable_reserve=a.reserve, enable_lp_slope=a.lp_slope,
+                     enable_lp_substrate_memory=a.lp_substrate_memory,
+                     enable_lp_homeostatic_read=a.lp_homeostatic_read,
+                     lp_memory_teach_mode=a.lp_memory_teach, **kw)
         results.append(r)
         re = r["real"]; ol = r["omit_lesion"]
         print(f"  [seed {seed}] corr(gap,want) {re['corr_gap_want']:+.3f} | ask-ratio unk/known {re['ratio_b']:.2f} | "
@@ -733,17 +1110,66 @@ def main():
                   f"{r['reserve_lesion_learn_veto_final']:.1f}Hz (reserve rescues learnable={r['reserve_rescues']}) | "
                   f"reserve-lesion noisy {r['reserve_lesion']['noisy_veto_final']:.1f}Hz vetoed="
                   f"{r['reserve_lesion']['noisy_vetoed']}", flush=True)
+        if "lp_slow_protected" in r:
+            oo = r["omission_only"]; sl = r["slope_lesion"]; ph = r["permuted_history"]
+            unit = re.get("lp_read_unit", "hz")
+            print(f"            LP-SLOPE: protected slow asks {re['lp_slow_protected_asks']} "
+                  f"at {re['lp_gate_slow_protect_hz']:.1f}{unit}, protected-noisy {re['lp_noisy_protected_asks']} | "
+                  f"gate final slow {re['lp_gate_slow_final_hz']:.1f}{unit} vs noisy "
+                  f"{re['lp_gate_noisy_final_hz']:.1f}{unit}",
+                  flush=True)
+            print(f"            LP controls: omission-only mastered {oo['learnable_mastered']} vs real "
+                  f"{re['learnable_mastered']} | slope-lesion mastered {sl['learnable_mastered']} | "
+                  f"permuted-history mastered {ph['learnable_mastered']} and protected-noisy "
+                  f"{ph['lp_noisy_protected_asks']}", flush=True)
         flags = (f"a={r['gate_a_corr']} b={r['gate_b_askratio']} c={r['gate_c_conf_rise']} "
                  f"noisy-stops={r['noisy_stops_honest']} curiosity-lesion={r['lesion_collapses']} "
                  f"yoked={r['yoked_collapses']} permuted={r['permuted_collapses']} "
                  f"omit-lesion-collapses={r['omit_lesion_collapses_veto']}"
-                 + (f" reserve-rescues={r['reserve_rescues']}" if "reserve_rescues" in r else ""))
-        print(f"            [{flags}]  ==>  {'GO' if r['GO'] else 'NO'}\n", flush=True)
+                 + (f" reserve-rescues={r['reserve_rescues']}" if "reserve_rescues" in r else "")
+                 + (f" lp-protect={r['lp_slow_protected']} lp-noisy={r['lp_noisy_guard']} "
+                    f"lp-lesion={r['lp_slope_lesion_collapses']} lp-perm-history="
+                    f"{r['lp_permuted_history_collapses']} lp-slope-go={r['LP_SLOPE_GO']}"
+                    if "lp_slow_protected" in r else ""))
+        print(f"            [{flags}]  ==>  {'GO' if r['GO'] else 'NO'}"
+              f"{' | LP-SLOPE-GO' if r.get('LP_SLOPE_GO') else ''}\n", flush=True)
 
     n_go = sum(r["GO"] for r in results)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, "w") as fh:
-        json.dump({"results": results, "backend": backend, "smoke": a.smoke, "kw": kw}, fh, indent=2, default=str)
+        json.dump({
+            "runner": __file__,
+            "argv": sys.argv,
+            "backend": backend,
+            "sim_backend": backend,
+            "smoke": a.smoke,
+            "kw": kw,
+            "lp_slope_config": {
+                "enabled": bool(a.lp_slope),
+                "substrate_memory": bool(a.lp_substrate_memory),
+                "homeostatic_read": bool(a.lp_homeostatic_read),
+                "memory_teach_mode": a.lp_memory_teach,
+                "n_lp_trace": N_LP_TRACE,
+                "fast_alpha": LP_FAST_ALPHA,
+                "tonic_alpha": LP_TONIC_ALPHA,
+                "trace_gain_pa": LP_TRACE_GAIN_PA,
+                "memory_tonic_pa": LP_MEMORY_TONIC_PA,
+                "memory_rpe_scale": LP_MEMORY_RPE_SCALE,
+                "memory_warmup": W_LP_MEMORY_WARMUP,
+                "memory_measure": W_LP_MEMORY_MEASURE,
+                "fast_to_gate_w": LP_FAST_TO_GATE_W,
+                "tonic_to_gate_w": LP_TONIC_TO_GATE_W,
+                "substrate_fast_to_gate_w": LP_SUBSTRATE_FAST_TO_GATE_W,
+                "substrate_tonic_to_gate_w": LP_SUBSTRATE_TONIC_TO_GATE_W,
+                "substrate_protect_floor_hz": LP_SUBSTRATE_PROTECT_FLOOR_HZ,
+                "homeostatic_fast_floor_hz": LP_HOMEOSTATIC_FAST_FLOOR_HZ,
+                "homeostatic_ratio_floor": LP_HOMEOSTATIC_RATIO_FLOOR,
+                "cue_to_lp_fast_w0": CUE_TO_LP_FAST_W0,
+                "cue_to_lp_tonic_w0": CUE_TO_LP_TONIC_W0,
+                "protect_floor_hz": LP_SLOPE_PROTECT_FLOOR_HZ,
+            },
+            "results": results,
+        }, fh, indent=2, default=str)
     print(f"{'='*104}", flush=True)
     print(f"  REWARD-OMISSION VETO: {n_go}/{len(results)} seeds GO "
           f"({'ALL GO' if n_go == len(results) else 'partial/negative — pins the exact spiking wall'})", flush=True)

@@ -17,8 +17,10 @@ never tried, on THIS session's breakthrough substrate (the movable plateau hidde
 MECHANISM (rate/analytic; the on-bridge SPIKING port is a LATER rung -- this de-risk decides whether DFC is worth it):
   Forward:    Mrg_free = graded plateau margin per column (the hidden activation); logits = Mrg_free @ W_out.
   Controller: u <- leaky closed loop, K steps: e_ctrl = softmax((Mrg_free+u) @ W_out) - Y ; u += dt*(-alpha*u - ctrl_sign*(e_ctrl @ Q.T)).
-              u is the control nudge that, ADDED to the hidden, reduces output error. Q is FIXED random (C,k),
-              INDEPENDENT of W_out, never updated -> transport-free FEEDBACK. W_out is read only in the FORWARD pass.
+              u is the control nudge that, ADDED to the hidden, reduces output error. Q (C,k) is random-INITIALIZED
+              INDEPENDENT of W_out and LEARNED transport-free by a Kolen-Pollack rule (the SAME local pre x error signal
+              that trains W_out updates Q, with weight decay) -> Q ALIGNS to W_out without ever reading it (alignment,
+              NOT a copy: Q^T.W_out diag>0, cos<1). W_out is read only in the FORWARD pass.
   Learn:      the transport-free DELTA rule ΔW ∝ +lr * u.T @ pre  (move the input weights so the free hidden PRODUCES
               the control nudge), then excitatory clip + per-column L2 renorm to the initial norm (the SAME local
               homeostatic companion as the unsupervised/supervised rules). The hidden update reads ONLY (u, pre, lr) --
@@ -35,7 +37,9 @@ GO GATE (depth_helps-style, set against BOTH nulls it must break; 6-seed 42 43 4
   - DFC held-out beats BOTH frozen-plateau AND unsupervised by margin >= --margin-go on >= 5/6 seeds; AND
   - deep_credit_share_dfc > deep_credit_share_unsup on >= 5/6 seeds (target dcs_dfc >= 0.30, clearly past unsup 0.14); AND
   - all anti-cheats hold. Anything less is an HONEST NEGATIVE that closes DFC on this substrate (a mapped verdict).
-ANTI-CHEATS (all must hold): no-weight-transport (Q fixed / != W_out / immutable / hidden-update invariant to W_out);
+ANTI-CHEATS (all must hold): no-weight-transport (the hidden credit update reads only the control nudge u, invariant to
+  W_out; the feedback Q is LEARNED by a transport-free Kolen-Pollack rule -- a shared local pre x error signal, never a
+  copy of W_out -- and ALIGNS to it (Q^T.W_out diag>0, cos<1); Akrout et al. 2019, alignment != weight copying);
   WRONG-SIGN control anti-learns (flip ctrl_sign -> held-out degrades BELOW frozen -> the control signal is load-bearing
   and sign-correct); shuffle-control across the batch -> degrade toward unsupervised (per-sample routing load-bearing);
   DFC-on-permuted-labels -> collapse to ~frozen (benefit is label-dependent); plateau LESION -> floor; reproducibility
@@ -72,22 +76,24 @@ from research.runners._gap4_plastic_plateau_credit_derisk import (
 
 
 class DFCPlateauExpander(PlasticPlateauExpander):
-    def init_dfc(self, k, seed):
-        """Forward readout W_out (trained by its OWN gradient) + FIXED RANDOM controller matrix Q (transport-free).
-        Q is drawn from an RNG stream INDEPENDENT of W_out, is never W_out^T, and is never updated."""
+    def init_dfc(self, k, seed, fb_wd=0.02):
+        """Forward readout W_out (trained by its OWN gradient) + controller feedback matrix Q, LEARNED transport-free.
+        Q is drawn from an RNG stream INDEPENDENT of W_out and is NOT a copy of W_out; it is updated by the SAME local
+        pre x error signal that trains W_out (Kolen-Pollack), which ALIGNS Q to W_out without ever reading it."""
         rng_out = np.random.default_rng(seed * 999 + 17)          # readout init stream
         rng_Q = np.random.default_rng(seed * 777 + 5)             # Q stream -- INDEPENDENT of W_out (transport-free)
+        self.fb_wd = float(fb_wd)                                  # Kolen-Pollack feedback weight decay
         self.k = int(k)
         self.W_out = rng_out.standard_normal((self.NC, self.k)) * 0.01     # small forward readout (trained)
         self.b_out = np.zeros(self.k)
-        self.Q = rng_Q.standard_normal((self.NC, self.k)) / np.sqrt(self.k)  # FIXED random controller feedback
-        self.Q0 = self.Q.copy()                                   # snapshot -> assert Q immutable across training
+        self.Q = rng_Q.standard_normal((self.NC, self.k)) / np.sqrt(self.k)  # random-INIT controller feedback (KP-learned)
+        self.Q0 = self.Q.copy()                                   # snapshot -> assert Q MOVED (learned) via KP
         return self
 
     def run_controller(self, Mrg_free, Y, ctrl_steps, alpha, dt, ctrl_sign=1.0):
         """CLOSED-LOOP leaky controller. Returns u (N,C): the nudge that, ADDED to the free hidden, reduces output
-        error. Uses W_out in the FORWARD pass only; the FEEDBACK error->hidden is via the fixed random Q (transport-
-        free). ctrl_sign=-1 flips the drive (the wrong-sign anti-cheat -> should anti-learn)."""
+        error. Uses W_out in the FORWARD pass only; the FEEDBACK error->hidden is via Q (transport-free: KP-learned,
+        never W_out^T). ctrl_sign=-1 flips the drive (the wrong-sign anti-cheat -> should anti-learn)."""
         u = np.zeros_like(Mrg_free)
         for _ in range(int(ctrl_steps)):
             logits = (Mrg_free + u) @ self.W_out + self.b_out     # controlled forward (recomputed each step = closed loop)
@@ -113,18 +119,24 @@ class DFCPlateauExpander(PlasticPlateauExpander):
                         ctrl_sign=1.0, shuffle_control=False, ctrl_rng=None):
         """One DFC batch: free forward -> closed-loop controller -> delta-rule hidden update + readout SGD.
         shuffle_control breaks the per-sample control routing (the load-bearing DFC control)."""
-        Mrg = np.asarray([self.margin(a) for a in active_sets])   # (N, C) free plateau margin = hidden activation
-        Y = np.eye(self.k)[np.asarray(y, int)]                    # onehot
-        u = self.run_controller(Mrg, Y, ctrl_steps, alpha, dt, ctrl_sign=ctrl_sign)   # closed-loop control nudge
+        Mrg = np.asarray([self.margin(a) for a in active_sets])   # (N, C) raw plateau margin
+        scale = float(np.mean(np.abs(Mrg))) + 1e-9
+        Mn = Mrg / scale                                          # normalized for a non-saturating softmax
+        Y = np.eye(self.k)[np.asarray(y, int)]
+        u = self.run_controller(Mn, Y, ctrl_steps, alpha, dt, ctrl_sign=ctrl_sign)
         if shuffle_control and ctrl_rng is not None:
-            u = u[ctrl_rng.permutation(len(u))]                   # ANTI-CHEAT: destroy per-sample control routing
-        mag = self._hidden_update_from_control(u, pre_mat, lr)    # transport-free delta rule (no W_out read)
-        # co-train the output readout by its OWN gradient (last layer; standard SGD, NOT a hidden transport)
-        logits = Mrg @ self.W_out + self.b_out
+            u = u[ctrl_rng.permutation(len(u))]
+        mag = self._hidden_update_from_control(u, pre_mat, lr)
+        # readout co-train (own gradient) + KOLEN-POLLACK feedback learning: the SAME local error signal
+        # dWout = Mn.T @ gout updates BOTH W_out and the feedback Q (with weight decay) -> Q ALIGNS to W_out
+        # transport-free (Q is LEARNED by a local pre x error product; it never reads W_out or W_out^T).
+        logits = Mn @ self.W_out + self.b_out
         e = _sm(logits) - Y
         gout = e / len(active_sets)
-        self.W_out -= lr_out * (Mrg.T @ gout)
+        dWout = Mn.T @ gout
+        self.W_out -= lr_out * dWout + self.fb_wd * self.W_out
         self.b_out -= lr_out * gout.sum(0)
+        self.Q -= lr_out * dWout + self.fb_wd * self.Q
         return mag
 
 
@@ -140,7 +152,7 @@ def _train_dfc(exp, af, pre, y, epochs, lr, lr_out, ctrl_steps, alpha, dt,
 
 
 def run_seed(seed, n_col, epochs, lr_unsup, lr_dfc, lr_out, w0, jitter, k_th, n_sub, hidden,
-             oracle_epochs, oracle_lr, oracle_batch, ctrl_steps, ctrl_alpha, ctrl_dt, task_kwargs, margin_go,
+             oracle_epochs, oracle_lr, oracle_batch, ctrl_steps, ctrl_alpha, ctrl_dt, fb_wd, task_kwargs, margin_go,
              verbose=True):
     (Xtr, ytr, _), (Xte, yte, _), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     n_in = Xtr.shape[1]; k = meta["k_classes"]; inh = idx["inh_idx"]
@@ -181,7 +193,7 @@ def run_seed(seed, n_col, epochs, lr_unsup, lr_dfc, lr_out, w0, jitter, k_th, n_
     out["unsup_codon_diversity"] = _codon_diversity(Cb_un)
 
     # ARM 3: DFC plateau plasticity (the new arm)
-    exp.init_dfc(k, seed)                                          # attach forward readout W_out + FIXED random Q
+    exp.init_dfc(k, seed, fb_wd=fb_wd)                             # attach forward readout W_out + LEARNED (KP) feedback Q
     dfc_mags = _train_dfc(exp, af_b, pre_b, yb, epochs, lr_dfc, lr_out, ctrl_steps, ctrl_alpha, ctrl_dt, seed=seed)
     dfc_tr, dfc_ho, Cb_dfc, _ = _readout_acc(exp, af_b, yb, af_h, yh, k)
     out["dfc_plateau_train"] = dfc_tr; out["dfc_plateau_heldout"] = dfc_ho
@@ -209,47 +221,51 @@ def run_seed(seed, n_col, epochs, lr_unsup, lr_dfc, lr_out, w0, jitter, k_th, n_
     Ctr = np.asarray([exp.codon(a) for a in af_b]); Cte = np.asarray([exp.codon(a) for a in af_h])
     clf_p = fit_lin(Ctr, yperm, k)
     out["permuted_readout_heldout"] = float(np.mean(clf_p(Cte) == yh))
-    exp_perm = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed)
+    exp_perm = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed, fb_wd=fb_wd)
     _train_dfc(exp_perm, af_b, pre_b, yperm, epochs, lr_dfc, lr_out, ctrl_steps, ctrl_alpha, ctrl_dt, seed=seed)
     _, out["dfc_on_permuted_heldout"], _, _ = _readout_acc(exp_perm, af_b, yb, af_h, yh, k)
 
     # ---- ANTI-CHEAT: shuffle the control nudge across the batch -> degrade toward the unsupervised arm ----
-    exp_sh = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed)
+    exp_sh = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed, fb_wd=fb_wd)
     _train_dfc(exp_sh, af_b, pre_b, yb, epochs, lr_dfc, lr_out, ctrl_steps, ctrl_alpha, ctrl_dt,
                shuffle_control=True, seed=seed)
     _, out["shuffle_control_heldout"], _, _ = _readout_acc(exp_sh, af_b, yb, af_h, yh, k)
 
     # ---- ANTI-CHEAT: WRONG-SIGN control (drive AWAY from error reduction) -> anti-learns BELOW frozen ----
-    exp_ws = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed)
+    exp_ws = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed, fb_wd=fb_wd)
     _train_dfc(exp_ws, af_b, pre_b, yb, epochs, lr_dfc, lr_out, ctrl_steps, ctrl_alpha, ctrl_dt,
                ctrl_sign=-1.0, seed=seed)
     _, out["wrong_sign_heldout"], _, _ = _readout_acc(exp_ws, af_b, yb, af_h, yh, k)
 
     # ---- ANTI-CHEAT: plateau/apical LESION -> floor (DFC-trained on a lesioned plateau) ----
-    lex = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th, lesion=True).init_dfc(k, seed)
+    lex = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th, lesion=True).init_dfc(k, seed, fb_wd=fb_wd)
     _train_dfc(lex, af_b, pre_b, yb, epochs, lr_dfc, lr_out, ctrl_steps, ctrl_alpha, ctrl_dt, seed=seed)
     _, out["lesion_heldout"], _, _ = _readout_acc(lex, af_b, yb, af_h, yh, k)
 
-    # ---- ANTI-CHEAT: NO-TRANSPORT (Q fixed-random / != W_out / immutable; hidden update invariant to W_out) ----
-    exp.init_dfc(k, seed)
+    # ---- ANTI-CHEAT: NO-TRANSPORT (credit update reads only u/pre/lr; Q LEARNED transport-free, ALIGNS but != copy) ----
+    # NB: run against the ARM-3-trained `exp` (do NOT re-init -> Q must have MOVED from Q0 via Kolen-Pollack).
     hsig = set(inspect.signature(DFCPlateauExpander._hidden_update_from_control).parameters)
     no_transport_code = hsig.isdisjoint({"W_out", "Wout", "readout", "clf", "forward_W", "Wt", "Q"})
-    q_not_transpose = bool(exp.Q.shape == exp.W_out.shape and not np.allclose(exp.Q, exp.W_out, atol=1e-6))
-    q_immutable = bool(np.array_equal(exp.Q, exp.Q0))
+    q_learned = bool(not np.allclose(exp.Q, exp.Q0))              # Q MOVED via Kolen-Pollack (transport-free) -> must be True
+    q_not_verbatim_copy = bool(not np.allclose(exp.Q, exp.W_out, atol=1e-6))  # KP ALIGNS Q to W_out but != a verbatim copy
+    QtW = exp.Q.T @ exp.W_out                                    # DIAGNOSTIC (reported, NOT gated): positive diag => aligned
+    out["q_align_diag"] = float(np.mean(np.diag(QtW)))           # >0 => Q aligned to W_out => KP working
+    out["q_wout_cosine"] = float((exp.Q.ravel() @ exp.W_out.ravel())
+                                 / (np.linalg.norm(exp.Q) * np.linalg.norm(exp.W_out) + 1e-12))
     # runtime: hidden update is INVARIANT to W_out given a FIXED injected control u (proves W_out is not read on backward)
     u_fixed = np.random.default_rng(0).standard_normal((24, n_col))
-    pA = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed)
-    pB = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed)
+    pA = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed, fb_wd=fb_wd)
+    pB = DFCPlateauExpander(n_in, n_col, seed, w0=w0, jitter=jitter, k_th=k_th).init_dfc(k, seed, fb_wd=fb_wd)
     pB.W_out = np.random.default_rng(12345).standard_normal((n_col, k)) * 5.0   # WILDLY different W_out
     pA.restore_frozen(); pB.restore_frozen()
     pA._hidden_update_from_control(u_fixed, pre_b[:24], lr_dfc); dA = pA._get_data()
     pB._hidden_update_from_control(u_fixed, pre_b[:24], lr_dfc); dB = pB._get_data()
     no_transport_runtime = bool(np.allclose(dA, dB, atol=1e-6) and not np.allclose(dA, pA.W0, atol=1e-6))
     out["no_transport_code"] = bool(no_transport_code)
-    out["no_transport_Q_not_transpose"] = q_not_transpose
-    out["no_transport_Q_immutable"] = q_immutable
+    out["no_transport_Q_learned"] = q_learned
+    out["no_transport_Q_not_verbatim_copy"] = q_not_verbatim_copy
     out["no_transport_runtime"] = no_transport_runtime
-    out["no_transport"] = bool(no_transport_code and q_not_transpose and q_immutable and no_transport_runtime)
+    out["no_transport"] = bool(no_transport_code and q_not_verbatim_copy and q_learned and no_transport_runtime)
 
     if verbose:
         print(f"  [seed {seed}] n_in={n_in} k={k} chance={chance:.3f} n_ho={len(yh)} n_sub={len(Xb)} N_COL={n_col} "
@@ -265,8 +281,9 @@ def run_seed(seed, n_col, epochs, lr_unsup, lr_dfc, lr_out, w0, jitter, k_th, n_
               f"dfc-on-permuted {out['dfc_on_permuted_heldout']:.3f}(->frozen) | shuffle-control "
               f"{out['shuffle_control_heldout']:.3f}(->unsup) | wrong-sign {out['wrong_sign_heldout']:.3f}(<frozen) | "
               f"lesion {out['lesion_heldout']:.3f}(~floor)", flush=True)
-        print(f"    [no-transport] code={out['no_transport_code']} Q!=Wt={out['no_transport_Q_not_transpose']} "
-              f"Q-immut={out['no_transport_Q_immutable']} runtime={out['no_transport_runtime']}", flush=True)
+        print(f"    [no-transport] code={out['no_transport_code']} Q-learned={out['no_transport_Q_learned']} "
+              f"Q-not-copy={out['no_transport_Q_not_verbatim_copy']} align-diag={out['q_align_diag']:+.3f} "
+              f"runtime={out['no_transport_runtime']}", flush=True)
     return out
 
 
@@ -277,7 +294,8 @@ def main():
     ap.add_argument("--epochs", type=int, default=30)
     ap.add_argument("--lr-unsup", type=float, default=0.02, help="unsupervised covariance lr (parent default)")
     ap.add_argument("--lr-dfc", type=float, default=0.05, help="DFC (control-target) hidden lr")
-    ap.add_argument("--lr-out", type=float, default=0.5, help="output readout SGD lr")
+    ap.add_argument("--lr-out", type=float, default=0.2, help="output readout SGD lr")
+    ap.add_argument("--fb-wd", type=float, default=0.02, help="Kolen-Pollack feedback weight decay")
     ap.add_argument("--w0", type=float, default=0.35)
     ap.add_argument("--jitter", type=float, default=0.15)
     ap.add_argument("--k-th", type=float, default=None)
@@ -310,7 +328,7 @@ def main():
         for s in a.seeds:
             per.append(run_seed(s, a.n_col, a.epochs, a.lr_unsup, a.lr_dfc, a.lr_out, a.w0, a.jitter, a.k_th,
                                 a.n_sub, a.hidden, a.oracle_epochs, a.oracle_lr, a.oracle_batch,
-                                a.ctrl_steps, a.ctrl_alpha, a.ctrl_dt, task_kwargs, a.margin_go))
+                                a.ctrl_steps, a.ctrl_alpha, a.ctrl_dt, a.fb_wd, task_kwargs, a.margin_go))
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
@@ -318,7 +336,7 @@ def main():
                "config": {"n_col": a.n_col, "epochs": a.epochs, "lr_unsup": a.lr_unsup, "lr_dfc": a.lr_dfc,
                           "lr_out": a.lr_out, "w0": a.w0, "jitter": a.jitter, "k_th": a.k_th, "n_sub": a.n_sub,
                           "hidden": a.hidden, "oracle_epochs": a.oracle_epochs, "ctrl_steps": a.ctrl_steps,
-                          "ctrl_alpha": a.ctrl_alpha, "ctrl_dt": a.ctrl_dt, "task": task_kwargs,
+                          "ctrl_alpha": a.ctrl_alpha, "ctrl_dt": a.ctrl_dt, "fb_wd": a.fb_wd, "task": task_kwargs,
                           "margin_go": a.margin_go},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
     if err is None and per:

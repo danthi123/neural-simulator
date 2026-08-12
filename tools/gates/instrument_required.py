@@ -29,30 +29,36 @@ BREAKTHROUGH/SURPASSED/CLOSED/SUCCESS in caps) must carry decomposition evidence
 Families 1-3 mirror the three instruments above: null/shuffle, budget/attribution, control-comparison.
 
 CALIBRATION, against this tree (`python -m tools.gates.instrument_required`). 1845 findings; **283 carry
-frontmatter**; of those **87 assert a live positive headline** (retracted/superseded/void skipped); **12 fire —
-13.8%**, none later than 2026-07-20, and every one a GO resting on a bare score, a test count, or a runnable
-demo. The other 1562 legacy findings are NEVER scanned: frontmatter is the opt-in, exactly as in `single_seed`,
-because retro-firing on a thousand historical documents is the cry-wolf failure that gets a gate switched off.
-In staged mode an EMPTY path list returns nothing; only `paths=None` audits the corpus.
+frontmatter**; of those **85 assert a live positive headline** (retracted/superseded/void skipped); **11 fire —
+12.9%**, none later than 2026-07-20. The other 1562 legacy findings are NEVER scanned: frontmatter is the
+opt-in, exactly as in `single_seed`, because retro-firing on a thousand historical documents is the cry-wolf
+failure that gets a gate switched off. In staged mode an EMPTY path list returns nothing; only `paths=None`
+audits the corpus (0.3 s, well inside the registry's 12 s budget).
 
-ROUTE COVERAGE, measured independently rather than assumed: prose 75/87, artifact 29/87, declared 0/87 — and
-the 29 artifact-passers are a strict SUBSET of the 75. **On today's corpus the artifact route adds ZERO
+WHAT THE 11 ACTUALLY ARE, read rather than characterised in bulk: parity-against-a-numpy-reference de-risks
+(`phase1-tpam-cleanup`, `fhrr-layer-a`, `rf-on-bridge`, `FHRR-pivot`), capability/demo GOs
+(`DIRECTION-M-COMPLETE`, `single-substrate-grounded-conversation-REACHABLE`), a retention score
+(`encoding-axis-64word`), an infrastructure GO carried by a test count (`session-e1-neuromodulator`), and two
+PARTIAL GOs (`cluster-d-v2`, `phase3-grounded-codes`). Several are defensible claims whose instrument is simply
+unnamed — which is the point: the remedy is one `instrument:` line, not a re-run.
+
+ROUTE COVERAGE, measured independently rather than assumed: prose 74/85, artifact 28/85, declared 0/85 — and
+the 28 artifact-passers are a strict SUBSET of the 74. **On today's corpus the artifact route adds ZERO
 independent coverage**, and the declared route none at all because `instrument:` is new here. Stated because a
 three-route gate that is really a one-route gate is the shape of a check that cannot fail; routes 1 and 2 are
-kept for the terse finding that cites an aggregate instead of tabulating it, not because they are pulling
-weight today.
+kept for the terse finding that cites an aggregate instead of tabulating it, not because they pull weight today.
 
-Which VOCABULARY carries it, by deletion (marginal fires if the term were removed): `byte-identical`/`vs
-isolated` **+7** — the one-brain and additive-default-off findings, where the reference comparison IS the
-instrument; `oracle` **+1** (a `| numpy oracle | 1.000 |` results row); `anti-cheat` **+1** (this project's own
-name for a control); `N arms` and `lr=0` **+0** — carried entirely by other terms today and kept only against
-a future terse write-up. The loosest two were audited by hand at the single document each carries, and both are
-real reference comparisons rather than passing mentions.
+Which VOCABULARY carries it, by deletion (fire count if the term were removed, from 11): `byte-identical`/`vs
+isolated` **→18** — the one-brain and additive-default-off findings, where the reference comparison IS the
+instrument; `oracle` **→12** (one `| numpy oracle | 1.000 |` results row); `anti-cheat` **→12** (this project's
+own name for a control); `N arms` and `lr=0` **→11**, carried entirely by other terms today and kept only
+against a future terse write-up. The two loosest were audited by hand at the single document each carries, and
+both are real reference comparisons rather than passing mentions.
 
 DIVERGENCE FROM `single_seed`, deliberate and named: that gate also skips `status: corrected`. This one does
 NOT — a corrected finding still asserts its revised GO, and a correction is itself evidence that the original
 instrument was inadequate, so it is the last population to exempt. **Measured effect today: none.** Skipping
-`corrected` would drop the candidate pool 87 → 77 and leave the fire count at 12; all 10 corrected candidates
+`corrected` would drop the candidate pool 85 → 76 and leave the fire count at 11; all 9 corrected candidates
 already pass. The divergence is a forward-looking choice, not a difference this tree demonstrates.
 
 WHAT THIS GATE CANNOT CATCH.
@@ -88,6 +94,11 @@ BLOCKING = True
 _POSITIVE = re.compile(r"\b(SOLVED|WORKS|CONFIRMED|VALIDATED|BREAKTHROUGH|SURPASSED|CLOSED|SUCCESS)\b")
 _NEGATIVE = re.compile(r"⛔|\b(RETRACT\w*|VOID|NO-GO|NEGATIVE|REFUTED|CONFOUNDED|WITHDRAWN|FALSE)\b")
 _GO_FALSE_FRIENDS = re.compile(r"NO[-/ ]GO|GO[-/ ]NO[-/ ]GO|GO[- ]gates?", re.I)
+# A refinement over `single_seed`'s whole-zone negative test, found by hand-auditing this gate's own 12 hits:
+# "Direction I Stage 1 CLOSED: PFC NMDA bistability genuinely FAILS at substrate scale" scores CLOSED as a
+# positive verdict. A verdict word whose OWN LINE says the thing failed is not a positive verdict. This only
+# ever SUPPRESSES (the whole-zone check still runs first), so it cannot widen the fire rate.
+_FAILS = re.compile(r"\b(fail\w*|does not|doesn't|do not|cannot|can't|never|unsuccessful|abandon\w*)\b", re.I)
 _WITHDRAWN = ("retracted", "superseded", "void")
 
 # The declaration route. Accepts the frontmatter key, a body line, and the `**Instrument:**` bold form these
@@ -163,11 +174,14 @@ def _headline_zone(text):
 def _asserts_positive(zone):
     if _NEGATIVE.search(zone):
         return None
-    m = _POSITIVE.search(zone)
-    if m:
-        return m.group(1)
-    if re.search(r"(?<![A-Za-z-])GO(?![-A-Za-z])", _GO_FALSE_FRIENDS.sub("", zone)):
-        return "GO"
+    for line in zone.splitlines():
+        if _FAILS.search(line):
+            continue                                  # this line reports a failure, whatever word it opens with
+        m = _POSITIVE.search(line)
+        if m:
+            return m.group(1)
+        if re.search(r"(?<![A-Za-z-])GO(?![-A-Za-z])", _GO_FALSE_FRIENDS.sub("", line)):
+            return "GO"
     return None
 
 
@@ -312,18 +326,22 @@ def audit():
         if not _asserts_positive(_headline_zone(text)):
             continue
         pos_n += 1
-        ok, how = _evidence(path, text, fm)
-        if not ok:
+        # INDEPENDENT per route, not first-match-wins. `_evidence` short-circuits on the cheapest route, so
+        # reporting ITS answer would show the artifact route at 0 and read as dead code, when it in fact covers
+        # 28/85 as a subset of prose. A calibration tool that misreports its own routes is the failure this
+        # whole registry exists to prevent, one level up.
+        declared = _declared_instrument(text, fm)[0]
+        prose = _prose_decomposition(text)[0]
+        root = path.replace(os.sep, "/").split("research/findings/")[0] or "."
+        artifact = _artifact_decomposition(text, root)[0]
+        routes["declared"] += bool(declared)
+        routes["prose"] += bool(prose)
+        routes["artifact"] += bool(artifact)
+        if not (declared or prose or artifact):
             firing.append(os.path.basename(path))
-        elif how.startswith("frontmatter") or how.startswith("declared"):
-            routes["declared"] += 1
-        elif how.startswith("reported"):
-            routes["prose"] += 1
-        else:
-            routes["artifact"] += 1
     return {"findings": total, "with_frontmatter": fm_n, "live_positive_headlines": pos_n,
             "fire": len(firing), "fire_pct": round(100.0 * len(firing) / pos_n, 1) if pos_n else 0.0,
-            "passed_via": routes, "firing": firing}
+            "passed_via_independent": routes, "firing": firing}
 
 
 def selftest():
@@ -364,6 +382,14 @@ def selftest():
         "m_no_frontmatter.md":       (bare.split("---\n\n", 1)[1],                                False),
         "n_retracted.md":            (bare.replace("status: live", "status: retracted"),          False),
         "o_negative_headline.md":    (bare.replace("SOLVED", "⛔ NOT SOLVED"),                     False),
+        # the per-line failure refinement, both directions. Found by auditing this gate's own corpus hits:
+        # "Direction I Stage 1 CLOSED: PFC NMDA bistability genuinely FAILS at substrate scale" is not a GO.
+        "r_closed_but_fails.md":     (bare.replace("# gap#7 SOLVED: the plateau-gated rule WORKS",
+                                                   "# gap#7 CLOSED: the plateau-gated rule genuinely fails "
+                                                   "at substrate scale")
+                                          .replace("**Status:** GO,", "**Status:** the rule does not engage,"),
+                                                                                                  False),
+        "s_fails_on_another_line.md": (bare + "\n## What fails\n\nThe unrelated control path.\n",  True),
         "p_corrected_still_checked.md": (bare.replace("status: live", "status: corrected"),       True),
     }
     bad = []
@@ -411,6 +437,6 @@ if __name__ == "__main__":                                        # the audit vi
     print("class I instrument-required — %d findings, %d with frontmatter, %d live positive headlines, "
           "%d FIRE (%.1f%%)" % (a["findings"], a["with_frontmatter"], a["live_positive_headlines"],
                                 a["fire"], a["fire_pct"]))
-    print("  passed via: %s" % a["passed_via"])
+    print("  passed via (INDEPENDENT, routes overlap): %s" % dict(a["passed_via_independent"]))
     for f in a["firing"]:
         print("    FIRE  %s" % f)
