@@ -15,6 +15,34 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-12 (READ FIRST — live resume point)
 
+> **🟢🟢 LATEST (2026-08-12, WIRING+DE-RISK WAVE — overnight parallel push). The production one-brain turn gained
+> AFFECT·GENERATE·MOAT-generalization·CHOOSE, and four faculties de-risked GO. All LANDED on `main` + both remotes:**
+> - **WIRED default-on:** AFFECT (D1 — live mood read NEURALLY off a co-resident graded-affect ladder colors WHAT it
+>   volunteers [forthcomingness] + HOW [prose manner] + honest inner-state read-out); MOAT generalized (C1 — claim-level
+>   entailment lets free-form MULTI-CLAUSE prose survive the no-confab moat, 0 leaks); GENERATE (#3E replay volunteers
+>   novel grounded propositions, 6-seed GO) with its SURFACE now the brain-native SPIKING BROCA (A1a, transformer-free,
+>   `55be6d7ab`) over a vocab-agnostic spiking DRAW (B1 GO); CHOOSE neuralized (on-brain BridgeParser owns factual-SVO).
+> - **DE-RISKED GO 6/6, consolidated, QUEUED-FOR-WIRING:** D2 expectation/SURPRISE (`f51f17ff3` — spiking predictive-coding
+>   mismatch unit, lesion-decisive, brain-based) + D4 comprehension-MEASUREMENT (`7780451d2` — spiking SpikingRoleCompetition
+>   sel-margin reads "did I understand", AUC 1.000, lesion→chance, surpassed the content-blind positional parser).
+> - **MAPPED BOUNDARY:** E1 self-model/metacog = type-2 at chance + a MIS-CALIBRATED GO gate (instrument bug); launched the
+>   mechanism search (see live lane E1). Master worklist = `docs/BURN_DOWN_LIST.md` (categories A–F).
+>
+> **🔴 LIVE BACKGROUND LANES (do NOT double-launch; consolidate each as it reports — verify additive+pushed, GO→checkout to
+> main+commit+`tools/push_both.sh`+update BURN_DOWN/ROADMAP, wire the wireable sequentially):**
+> - **ae3a9673** (main worktree, SEQUENTIAL production-wire): wiring D2 surprise + D4 comprehension-gate onto the default
+>   `/api/brain-chat` turn (honest "I didn't follow that"/"that surprises me" + abstain), affect-wire precedent, default-on.
+> - **aa587a4a** (isolated worktree): E2 internal-worldview / affective-world-model — corpus-audit + de-risk.
+> - **a8ce8a5a** (isolated worktree): E1 self-model/metacog — FIX the mis-calibrated GO gate + search for genuine meta-d′>0
+>   (lead: D4 showed a CONTENT-sensitive competition margin carries type-2 where a content-blind one is at chance).
+> - **a40606d7** (isolated worktree): A1 open-prose deep-context spiking generation — PARKED on a LONG training run
+>   (pid 728587, `_spiking_deepcontext_generation_derisk`); resume via SendMessage when the run lands (won't auto-notify).
+> - **gap5-gamma** (pids 600657-9, `_gap5_spiking_gamma_recombination_derisk` s42/43/44): pre-existing gap5 lane, running.
+>
+> **SINGLE LITERAL NEXT:** consolidate the reporting agents (above) as each lands; keep every production-file wiring
+> SEQUENTIAL (one agent on `brain_chat_tui.py`/`server.py` at a time); continue down `docs/BURN_DOWN_LIST.md` (D5 episodic,
+> D6 advanced-WM, D3 curiosity next to wire; E3 BTSP-per-turn / E4 gap#4-Izhikevich / E5 gap5-R4 / F2 __free-pollution to research).
+
 > **🟢 LATEST (2026-08-12, this cycle): #0 one-brain-spiking-default AND #1 CHOOSE both landed.** (1) `/api/brain-chat`
 > (tiny-demo) builds `composer_kind="onebrain"` by default — recall is the resonate-and-fire step on firing neurons (HTTP
 > trace: `composer='onebrain'`, 45730 readout neurons, frac_fired 1.7%%/~0), not the numpy `_scan`. The blocker (a
