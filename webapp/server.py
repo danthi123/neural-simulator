@@ -1810,6 +1810,15 @@ async def _warm_chat_brain() -> None:
             chat._brain_chat_source = source  # type: ignore[attr-defined]
             cache_key = ("default", default_brain, renderer)
             _BRAIN_CHATS.setdefault(cache_key, chat)
+            # AFFECT (Gate-B): pre-build the co-resident spiking affect organ so the first turn's mood read is
+            # fast. Best-effort + guarded (default-ON; BRAIN_AFFECT=0 skips it); a failure never blocks chat.
+            try:
+                from research.runners.affect_production_organ import affect_enabled
+                if affect_enabled():
+                    _get_affect_organ().ensure_built()
+                    print("[webapp] startup: affect organ (co-resident graded-affect ladder) WARM", flush=True)
+            except Exception as _ae:
+                print(f"[webapp] startup: affect organ warm skipped ({type(_ae).__name__}: {_ae})", flush=True)
             dt = round(_t.time() - t0, 1)
             print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
@@ -2825,6 +2834,35 @@ _BRAIN_CHATS: dict[tuple[str, str, str], object] = {}
 # (it carries discourse-thread state so 'tell me more' walks forward).
 _BRAIN_RICH: dict[tuple[str, str, str], object] = {}
 
+# ─── AFFECT / EMOTION (Gate-B, 2026-08-12): the brain's live MOOD colors the production turn ─────────────────
+# The mood is a persistent spiking STATE read NEURALLY off the co-resident graded-affect ladder
+# (`research.runners.affect_production_organ`, reuse-by-import, NO sim/ edit). It colors WHAT the brain volunteers
+# (forthcomingness: how many gate-matched, moat-verified facts) AND HOW it phrases them (the fluent mouth's PROSE
+# is warmer/curter). Default-ON; `BRAIN_AFFECT=0` -> the byte-identical oracle. The moat/recall/abstain paths are
+# UNCHANGED (affect only colors an ALREADY-matched answer; it can never manufacture a fact or flip an abstain).
+# Per-session mood STATE (EMA of the appraised valence/arousal), keyed identically to the ChatBrain cache. Held
+# host-side; the NEURAL read (the ladder differential) is the load-bearing spiking part. Cleared on reset.
+_SESSION_MOOD: dict[tuple[str, str, str], dict] = {}
+_MOOD_EMA_DECAY = 0.4   # a strong induction turn dominates; a neutral turn (0 affective hits) HOLDS the prior mood
+
+
+def _get_affect_organ():
+    """The process-shared spiking affect organ (built once, ~1s on the process backend)."""
+    from research.runners.affect_production_organ import get_organ
+    return get_organ(seed=42)
+
+
+def _update_session_mood(cache_key: tuple, appr: dict) -> dict:
+    """EMA-update this session's mood from the message appraisal. A message with NO strongly-affective words
+    (n_hits==0) HOLDS the prior mood (cross-turn persistence); an affective message moves it."""
+    m = _SESSION_MOOD.get(cache_key) or {"valence": 0.0, "arousal": 0.0}
+    if int(appr.get("n_hits", 0)) > 0:
+        d = _MOOD_EMA_DECAY
+        m = {"valence": d * m["valence"] + (1.0 - d) * float(appr["valence"]),
+             "arousal": d * m["arousal"] + (1.0 - d) * float(appr["arousal"])}
+    _SESSION_MOOD[cache_key] = m
+    return m
+
 
 def _default_brain_renderer() -> str:
     """Pick the out-of-box renderer: `qwen` only when a CUDA GPU is
@@ -3293,6 +3331,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if req.reset:
         _BRAIN_CHATS.pop(cache_key, None)
         _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
+        _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
@@ -3339,6 +3378,67 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
 
     rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
 
+    # ── AFFECT / EMOTION coloring (Gate-B, 2026-08-12) ──────────────────────────────────────────────────────
+    # Read the brain's live MOOD off the co-resident spiking graded-affect ladder and prepare (a) a CONTENT plan
+    # (forthcomingness — how many gate-matched facts to volunteer) and (b) a prose MANNER template (warmer/curter
+    # phrasing). Default-ON; `BRAIN_AFFECT=0` -> fully skipped (byte-identical oracle). The moat/recall/abstain
+    # paths below are UNCHANGED — affect only colors an already-matched answer. `affect_info` is attached to the
+    # response for the debug trace (the tone TOKEN lives here ONLY, never on the user-facing surface).
+    affect_info = None
+    affect_plan = None
+    try:
+        import research.runners.affect_production_organ as _AO
+        _affect_on = _AO.affect_enabled()
+    except Exception:
+        _AO = None
+        _affect_on = False
+    if _affect_on:
+        try:
+            organ = _get_affect_organ()
+            appr = _AO.appraise_text(msg)
+            mood = _update_session_mood(cache_key, appr)
+            lesion = _AO.affect_lesioned()
+            read = organ.read_differential(mood["valence"], lesion=lesion)
+            diff = float(read["differential"])
+            level = _AO.tone_level(diff)
+            affect_plan = _AO.content_plan(level)
+            manner_tmpl = _AO.manner_template_for(level)
+            tol = _AO.SA.LADDER_NEUTRAL_TOL
+            affect_info = {
+                "on": True, "lesioned": bool(lesion), "composer": "onebrain",
+                "differential": diff,
+                "valence_sign": ("+" if diff > tol else ("-" if diff < -tol else "0")),
+                "tone_level": int(level),
+                # DEBUG readout ONLY — the tone TOKEN is a trace field, never prepended to the answer surface.
+                "tone_token": _AO.SA._graded_tone_token(level),
+                "forthcomingness": affect_plan,
+                "manner_template": manner_tmpl,
+                "appraisal_valence": float(mood["valence"]), "appraisal_arousal": float(mood["arousal"]),
+                "appraisal_hits": appr.get("words", []),
+                "pos_rate": float(read["pos_rate"]), "neg_rate": float(read["neg_rate"]),
+            }
+            # install the mood-conditioned renderer (once per ChatBrain) + set THIS turn's manner template.
+            base_r = getattr(chat, "renderer", None)
+            if base_r is not None and not isinstance(base_r, _AO.MoodConditionedRenderer):
+                chat.renderer = _AO.MoodConditionedRenderer(base_r)
+            wrapped = getattr(chat, "renderer", None)
+            if isinstance(wrapped, _AO.MoodConditionedRenderer):
+                wrapped.manner = manner_tmpl
+        except Exception as _e:  # never let affect crash a turn — degrade to the un-colored answer
+            affect_info = {"on": True, "error": f"{type(_e).__name__}: {_e}"}
+            affect_plan = None
+
+    # HONEST inner-state READ-OUT (Wire-2): 'how do you feel' -> answered by the live valence differential (a
+    # functional read, never a phenomenal claim). Gated on an explicit feel-query so it never hijacks a recall turn.
+    if _affect_on and affect_info is not None and "error" not in affect_info and _AO.is_feel_query(msg):
+        _m = _SESSION_MOOD.get(cache_key) or {"valence": 0.0, "arousal": 0.0}
+        return JSONResponse({
+            "answer": _AO.feel_readout(affect_info["differential"], _m["valence"], _m["arousal"]),
+            "abstained": False, "recalled_svo": None, "verified": True,
+            "renderer": rname, "brain": req.brain, "source": source,
+            "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
+        })
+
     # ── RICH path: a SUBSTANTIVE multi-sentence grounded reply ──────────
     # The RichAnswerComposer does its own GATE (direct recall + the moat) +
     # multi-hop chain + elaboration, VERIFY-checks each sentence, and carries
@@ -3353,7 +3453,18 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if use_rich:
         try:
             rich = _get_rich_composer(cache_key, chat)
-            r = rich.answer(msg)
+            # AFFECT content coloring (the genuine WHAT): set THIS turn's forthcomingness (how many gate-matched
+            # facts to volunteer + elaboration depth) from the mood plan; restore after so the cache is unchanged.
+            _saved_plan = None
+            if affect_plan is not None:
+                _saved_plan = (rich.max_sentences, rich.max_elaborations)
+                rich.max_sentences = int(affect_plan["max_sentences"])
+                rich.max_elaborations = int(affect_plan["max_elaborations"])
+            try:
+                r = rich.answer(msg)
+            finally:
+                if _saved_plan is not None:
+                    rich.max_sentences, rich.max_elaborations = _saved_plan
         except Exception as e:
             raise HTTPException(500, f"rich chat turn failed: {type(e).__name__}: {e}")
         facts = [list(f) for f in r.get("facts", [])]
@@ -3382,6 +3493,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # B3: what the brain DID this turn (the LAST spiking recall the rich gate ran), or null. The rich path
             # plans over multiple supporting facts; last_trace reflects the most recent query (the direct recall).
             "activity": _read_activity(),
+            # AFFECT (Gate-B): the live mood that colored this turn's forthcomingness + prose manner (debug trace;
+            # the tone token lives here, never on the surface). null when affect is disabled (BRAIN_AFFECT=0).
+            "affect": affect_info,
         }
         if is_hyp:
             # additive markers (present ONLY on a generated-hypothesis turn): the guess flag, the (a,v,p) the fluent
@@ -3421,6 +3535,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # (or null -> abstained), and a scalar RF firing/|Z| gauge. Read-only of the spiking recall the gate already
         # ran (composer.query_patient); null for the rate composer / when the matcher abstained before any query.
         "activity": _read_activity(),
+        # AFFECT (Gate-B): the live mood that colored this turn's prose manner (debug trace; single-fact path has
+        # no forthcomingness lever, so only manner applies here). null when affect is disabled (BRAIN_AFFECT=0).
+        "affect": affect_info,
     })
 
 
@@ -3441,6 +3558,7 @@ def brain_chat_reset(req: BrainChatResetRequest) -> JSONResponse:
     existed = cache_key in _BRAIN_CHATS
     _BRAIN_CHATS.pop(cache_key, None)
     _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
+    _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
     return JSONResponse({"reset": existed, "session": req.session,
                          "brain": req.brain, "renderer": renderer})
 
