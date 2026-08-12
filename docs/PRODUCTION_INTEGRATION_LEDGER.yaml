@@ -28,12 +28,14 @@ headline:
     choose: PARTIAL  # 2026-08-12 INTEGRATION #1: direct factual questions are decided by the SUBSTRATE (recall or honest
                      # abstain), lesion-verified; the host router's keyword-CONFAB is retired for them. Residual: neural
                      # question comprehension + open-ended topic choice; host still handles self/identity + noisy-anaphora.
-    generate: PARTIAL # 2026-08-12 INTEGRATION #3: ASSOCIATIVE generation — "tell me about X" chains >1 fact via the dlPFC
-                     # spiking spreading-activation (elaborate), lesion-verified. Broader open-ended (novel sentences on
-                     # any topic) = the emerge stream-cortex, further; off-bridge Qwen still the surface renderer.
-    learn: YES       # 2026-08-12 INTEGRATION #2: substrate-first recall — a fact heard this turn is recalled from the
-                     # spiking substrate (inner.what_does), lesion-verified (disable the recall -> the taught fact
-                     # disappears). Scope: known-word facts (new words need code allocation, next step).
+    generate: TUI-ONLY # ⚠️ CORRECTED 2026-08-12: INTEGRATION #3 (associative multi-fact generation via the dlPFC spiking
+                     # `elaborate`) is on ChatBrain.ANSWER() / the TUI — NOT the default /api/brain-chat endpoint, which
+                     # calls gate()+render() (single-fact, server.py:3345) or the rich RichAnswerComposer path. The
+                     # HTTP verification caught this: my probe had tested answer(); on the endpoint (gate) GENERATE=False.
+                     # To reach the default endpoint it must move into gate/the endpoint or the rich path. NOT on production.
+    learn: YES       # 2026-08-12 INTEGRATION #2 + fix: acquisition moved INTO gate() (an SVO assertion is taught + returned),
+                     # so it reaches the /api/brain-chat endpoint; substrate-first recall. Production-path probe (gate+render):
+                     # teach "wolf hunt deer" -> recall "wolf hunt deer", lesion-verified. Runtime code allocation for new words.
   # SECONDARY — the composite. default_on_spiking = rows at on_by_default=YES whose spiking path is lesion-load-bearing.
   default_on_spiking_faculties: 2      # RF phasor bind/unbind resonate dynamics; the anaphora referent store
   scaffold_retired: 0
@@ -63,13 +65,13 @@ rows:
     evidence: "brain_chat_tui.py _maybe_acquire + gate() substrate-first + _substrate_recall; rf_phasor_composer.py runtime code allocation (_filler_phases + _growth_rng); probe LEARN True + lesion-load-bearing; finding 2026-08-12-INTEGRATION2 + 2b addendum"
 
   - key: open-ended-generation
-    faculty: "Generation — the brain VOLUNTEERS associated knowledge about a topic (associative), lesion-verified"
+    faculty: "Generation — associative multi-fact topic reply (on the TUI/answer path; NOT the default endpoint yet)"
     de_risked: YES
-    wired: YES                  # 2026-08-12 INTEGRATION #3: _maybe_generate wires describe + dlPFC elaborate on /api/brain-chat
-    on_by_default: YES          # default turn: "tell me about X" chains facts; probe GENERATE True + assoc-lesion-load-bearing
-    scaffold_retired: NO        # ASSOCIATIVE generation only; broader open-ended (novel sentences, any topic) = the emerge stream-cortex, unwired; Qwen still the surface renderer
-    host_scaffold_in_default: "off-bridge Qwen articulates the surface; the emerge15-21 stream-cortex free-generator is not yet wired (broader open-ended generation)"
-    evidence: "brain_chat_tui.py _maybe_generate (describe + elaborate spreading-activation); probe GENERATE True, assoc_lesion_load_bearing True; finding 2026-08-12-INTEGRATION3"
+    wired: NO                   # ⚠️ CORRECTED: _maybe_generate is in ChatBrain.answer(), which the /api/brain-chat endpoint does NOT call (it uses gate()+render() or the rich path); HTTP verification caught it
+    on_by_default: NO           # not on the default endpoint; production-path probe (gate+render) GENERATE=False
+    scaffold_retired: NO
+    host_scaffold_in_default: "the default endpoint (gate()+render()) does single-fact recall; the rich RichAnswerComposer path does its own (host) multi-sentence; my spiking _maybe_generate must move into gate/the endpoint to reach production"
+    evidence: "brain_chat_tui.py _maybe_generate on answer() only; production-path probe GENERATE=False (n_facts 0 via gate); finding 2026-08-12-INTEGRATION3 + correction"
 
   - key: neural-render
     faculty: "Neural word-order articulation (Broca-like; enable_neural_render)"

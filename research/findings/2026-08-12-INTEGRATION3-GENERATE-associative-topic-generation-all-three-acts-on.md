@@ -12,6 +12,18 @@ artifacts:
 verification: production lesion probe — GENERATE open_ended=True, n_facts_chained=2, assoc_lesion_load_bearing=True; CHOOSE=True, LEARN=True.
 ---
 
+## ⚠️ CORRECTION (2026-08-12, same day) — GENERATE is NOT on the default /api/brain-chat endpoint. Read this first.
+
+The HTTP verification (restarting the webapp + POSTing to the real endpoint) caught an ENTRY-POINT error: my probe
+tested `chat.answer()`, but the default `/api/brain-chat` endpoint (rich=False) calls `chat.gate()` + `chat.render()`
+DIRECTLY (webapp/server.py:3345), and the rich path uses `RichAnswerComposer` — **neither calls `answer()`**. My
+`_maybe_generate` (this integration) lives in `answer()`, so it does NOT reach the production endpoint. The corrected
+production-path probe (gate+render) reads **GENERATE=False** on the endpoint. **So this associative generation is real
+on the TUI/answer path but is NOT on production** until it is moved into `gate()`/the endpoint or the rich path. The
+"all three acts on production" headline was WRONG; the honest state is **CHOOSE + LEARN on the production endpoint
+(both in gate(); LEARN's acquisition was moved into gate() as part of this fix), GENERATE on the TUI/answer only.** The
+ledger `open-ended-generation` row is corrected to wired=NO. Everything below overstates the endpoint reach for GENERATE.
+
 # INTEGRATION #3 (GENERATE) — the brain volunteers associated knowledge about a topic; all three owner-visible acts are now on
 
 ## The change

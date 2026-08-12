@@ -33,11 +33,16 @@ def _build_default_brain(seed=42):
 
 
 def _ask(chat, q):
+    # THE PRODUCTION PATH: /api/brain-chat (rich=False) calls chat.gate() then chat.render() — NOT chat.answer()
+    # (webapp/server.py:3345-3349). The probe MUST test what the endpoint runs, or it verifies the wrong entry point
+    # (the 2026-08-12 catch: LEARN/GENERATE were added to answer() and did NOT reach the endpoint).
     try:
-        ans, abstained = chat.answer(q)
-    except Exception as e:  # be robust: a probe must not crash the battery
+        svo = chat.gate(q)
+        if svo is None:
+            return {"q": q, "answer": "I don't know about that.", "abstained": True}
+        return {"q": q, "answer": chat.render(svo), "abstained": False}
+    except Exception as e:
         return {"q": q, "answer": "<error: %s>" % type(e).__name__, "abstained": None, "error": str(e)[:200]}
-    return {"q": q, "answer": ans, "abstained": bool(abstained)}
 
 
 def probe(seed=42):

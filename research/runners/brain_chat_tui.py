@@ -231,6 +231,9 @@ class ChatBrain:
         (gate_svo or None). An anaphor in the question is resolved from the discourse WM (multi-turn)."""
         # resolve anaphora in the question FIRST (multi-turn): replace a leading 'it'/'that'/'they' with the held
         # referent, so a follow-up 'what does it eat' uses the prior turn's referent.
+        acq = self._maybe_acquire(question)      # IN-LOOP LEARNING (production path): an SVO ASSERTION is TAUGHT here in
+        if acq is not None:                      # gate() so the /api/brain-chat endpoint (which calls gate(), NOT
+            return acq                           # answer()) reaches it; gate returns the acquired SVO -> render confirms.
         q = self._resolve_anaphora(question)
         anaphora_used = (q != question)          # the extracted agent came from the (noisy) discourse WM, not the user
         # SUBSTRATE-FIRST recall (production-integration #2, in-loop learning). For a well-formed "what does AGENT
@@ -332,7 +335,7 @@ class ChatBrain:
         except Exception:
             return None
         self._refresh_facts()                    # pick up the new fact -> agents_set/actions_set now include it
-        return "Got it — %s %s %s." % (a, v, p), False
+        return [a, v, p]                         # the acquired SVO; gate() returns it so the endpoint renders a confirm
 
     def _substrate_recall(self, question):
         """IN-LOOP LEARNING recall: resolve (agent, action) from the question and recall the patient FROM THE SPIKING
@@ -450,13 +453,10 @@ class ChatBrain:
         disc = self._discourse_turn(question)
         if disc is not None:
             return disc
-        gen = self._maybe_generate(question)     # GENERATION: volunteer associated knowledge about a topic
+        gen = self._maybe_generate(question)     # GENERATION (TUI/answer path): multi-fact associative topic reply
         if gen is not None:
             return gen
-        acq = self._maybe_acquire(question)      # IN-LOOP LEARNING: teach an SVO assertion, then acknowledge
-        if acq is not None:
-            return acq
-        gate_svo = self.gate(question)
+        gate_svo = self.gate(question)           # gate() now also handles ACQUISITION (assertions) -> reaches the webapp
         if gate_svo is None:
             return "I don't know about that.", True
         return self.render(gate_svo), False

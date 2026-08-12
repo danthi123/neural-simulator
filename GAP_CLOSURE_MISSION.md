@@ -32,14 +32,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > isolated de-risk. gap#4 (below) stays open only on its one Izhikevich residual; it is no longer "the crux."
 
 > **⭐⭐⭐ THE WIRING BACKLOG (the active front — ranked; the ledger `docs/PRODUCTION_INTEGRATION_LEDGER.yaml` is the
-> tracked truth, `gates/production_integration` CLASS PI enforces it). **⭐ HEADLINE (lesion-probe measured, 2026-08-12):
-> ALL THREE owner-visible acts are now ON + lesion-verified — CHOOSE ✓ (#1) / GENERATE ✓ (#3) / LEARN ✓ (#2/#2b) — on the
-> default `/api/brain-chat` turn (baseline: all False).** The brain now DECIDES (recall or honest abstain, host confab
-> retired), LEARNS (owner teaches arbitrary new facts by talking, runtime code allocation, recalled from the substrate),
-> and GENERATES (volunteers associated knowledge about a topic via the dlPFC spiking spreading-activation). Each PARTIAL
-> (scaffold NOT retired): host QuestionRouter still the self/identity+anaphora fallback; broader CHOOSE (neural question
-> comprehension) + broader GENERATE (emerge stream-cortex) unwired; Qwen still renders surface; BTSP per-turn write is the
-> deeper LEARN. SCAFFOLD-RETIRED 0. Findings: 2026-08-12-INTEGRATION1/2/2b/3.**
+> tracked truth, `gates/production_integration` CLASS PI enforces it). **⭐ HEADLINE (2026-08-12, CORRECTED against the
+> ACTUAL /api/brain-chat endpoint — the HTTP test caught an entry-point error: the probe had tested `chat.answer()`, but
+> the endpoint calls `gate()`+`render()`): on the PRODUCTION endpoint — CHOOSE ✓ (#1, in gate) + LEARN ✓ (#2/#2b,
+> acquisition MOVED into gate); GENERATE is on the TUI/`answer()` path only, NOT the default endpoint (#3 must move into
+> gate/the endpoint or the rich path). Baseline was all False.** The brain now DECIDES (recall or honest abstain, host
+> confab retired) and LEARNS (owner teaches arbitrary new facts by talking, runtime code allocation, recalled from the
+> substrate) ON THE ENDPOINT, both lesion-verified via the production-path probe (gate+render). Each PARTIAL (scaffold NOT
+> retired): host QuestionRouter still the self/identity+anaphora fallback; broader CHOOSE (neural question comprehension)
+> unwired; Qwen renders surface; BTSP per-turn write is the deeper LEARN. **LESSON: verify on the ACTUAL production entry
+> point (gate/endpoint), not answer().** SCAFFOLD-RETIRED 0. Findings: 2026-08-12-INTEGRATION1/2/2b/3 (3 corrected).**
 > - **#0 One-brain default (cheap, unblocks the substrate).** Flip `composer_kind="onebrain"` in the four builders
 >   (auto-enables spiking cleanup/store/learned-assoc/reciprocal-unbind). **GATE ON A LESION TEST, not the flip** — those
 >   branches are byte-identical to numpy (`brain_conversational_agent.py:233 "== host argmax"`), so credit only if
