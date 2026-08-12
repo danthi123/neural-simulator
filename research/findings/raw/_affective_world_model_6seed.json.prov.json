@@ -1,0 +1,31 @@
+{
+ "run_id": "1786569253-757978",
+ "runner": "research/runners/_affective_world_model_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aa587a4ae8ec79759/research/runners/_affective_world_model_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--n-reps",
+  "22",
+  "--out",
+  "research/findings/raw/_affective_world_model_6seed.json"
+ ],
+ "git_sha": "7780451d2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-12T17:14:13",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affective_world_model_6seed.json"
+}

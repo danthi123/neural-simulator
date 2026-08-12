@@ -107,8 +107,23 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
 ## E. MISSING MECHANISMS / BOUNDARIES (need RESEARCH before they can be wired — do NOT fake integration)
 - **E1. Self-model / metacognition = BOUNDARY** (type-2 at chance despite a mis-calibrated GO gate, 2026-08-12). Genuine
   meta-d′ > 0 is the missing mechanism. RESEARCH-NEEDED (+ audit the mis-calibrated gate). Do NOT wire until it's a real GO.
-- **E2. Internal worldview / affective world-model** — likely ABSENT/unvalidated as a production faculty (audit confirming).
-  RESEARCH-NEEDED.
+- **E2. Internal worldview / affective world-model** — **DE-RISKED GO 6/6 (2026-08-12), QUEUED-FOR-WIRING** (was
+  RESEARCH-NEEDED). The corpus audit confirmed the building blocks existed (D2 mismatch unit, HTM-TM sequence predictor,
+  W5 other-tagged affect, P0.3 valence latch) but NO validated *affective forward model*. Built one, brain-based, NO
+  `sim/` edit (`research/runners/_affective_world_model_derisk.py`): a 2-channel spiking predictive-coding VALENCE forward
+  model on the Izhikevich bridge — `state→pred_{pos,neg}` is an all-to-all plastic transition LEARNED FROM ZERO by Hebbian
+  co-fire (each state learns which valence follows — a 2-way discrimination that sidesteps the n-way CA3 pattern-separation
+  wall); the prediction is delivered as subtractive GABA_A inhibition to `surprise_{pos,neg}` error units that `obs_{pos,neg}`
+  excites. Expected turn→prediction cancels observation→~0 Hz; violated→un-inhibited channel fires; prediction read = a
+  two-pool spike-rate difference; surprise = a `cp_firing_states` read (NO host argmax/reward/compare). 6/6 GO: predicted-
+  valence acc 1.00, expected-turn surprise 0 Hz vs violated 37–46 Hz; lesion 3/3 (zero the learned transition → ratio→1.0×,
+  100% attributable); dual-scored shuffle 3/3+3/3 (structure not template); update-on-error shifts the prediction toward the
+  new observation. **Instrument verified in BOTH directions** (caught a false-null from explicit-Euler instability at high
+  cue AND a false-GO from a weak-firing cancellation artifact — fixed by the pred→surprise gain match, the precision
+  companion the wall-reframe predicts). **RESIDUAL/next rungs:** Markov-1→HTM-TM high-order (context-dependent); 2-way
+  valence→CA3 sparse pattern-sep for a full state rollout; generic pos/neg→bind to P0.3 latch + W5 ToM so it predicts the
+  INTERLOCUTOR's affect; teacher-driven (learned but not `self-organized`, a declared boundary). Wire → a queryable "what do
+  you expect / how is this going" + surprise on interlocutor-affect violation. Reuses the D2 [[surprise]] mechanism family.
 - **E3. Deeper LEARN — a BTSP/plateau per-turn LASTING trace** (today LEARN writes the RF store, a synaptic write, but a
   BTSP plateau lasting trace is the fuller "the turn writes synapses"). RESEARCH-NEEDED.
 - **E4. gap#4 deep credit on the Izhikevich production substrate** (the read-regime residual; fixed-FA doesn't converge on

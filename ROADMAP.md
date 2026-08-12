@@ -137,8 +137,17 @@ moat-safe unless noted):
   mapped). **D4 comprehension-MEASUREMENT — 6/6 GO** (the spiking `SpikingRoleCompetition` margin reads whether an
   utterance was understood, AUC 1.000, lesion→chance, content-not-position; the positional BridgeParser margin is
   content-blind so it was surpassed, not adopted; wireable → honest "I didn't follow that").
+- **E2 internal worldview / affective world-model — 6/6 GO** (was "likely absent"): a spiking predictive-coding VALENCE
+  FORWARD MODEL — a plastic `state→pred_{pos,neg}` transition learned from zero, delivered as subtractive GABA_A inhibition
+  to spiking error units; expected turn cancels→~0 Hz, violated fires (37–46 Hz); lesion 100% attributable; the instrument
+  was verified in BOTH directions (a false-null and a false-GO both caught). Wireable → a queryable "what do you expect /
+  how is this going" + surprise on interlocutor-affect violation.
 - **E1 self-model / metacognition = BOUNDARY** (type-2 metacog at chance despite a MIS-CALIBRATED GO gate — instrument
-  flag filed; do NOT wire until a real meta-d′>0 mechanism lands).
+  flag filed; do NOT wire until a real meta-d′>0 mechanism lands; mechanism search in flight, lead: a content-sensitive
+  confidence read like D4's).
+- **Adversarial verification (2026-08-12):** D2, D4, A1a each survived an independent 3-skeptic refutation pass (9/9
+  refuted=false, high confidence; D2 reproduced byte-identically). **D4 comprehension monitor is now WIRED** into the
+  production `/api/brain-chat` turn (honest "I didn't follow that" + abstain, default-on, moat-strengthening); D2 in flight.
 
 **2026-08-12 — the production chat recall is now GENUINELY SPIKING by DEFAULT.** The `/api/brain-chat` chat brain builds
 `composer_kind="onebrain"` by default, so a factual question is recalled by the resonate-and-fire step on firing neurons
