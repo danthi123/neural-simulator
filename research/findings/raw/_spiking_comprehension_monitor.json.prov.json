@@ -1,0 +1,31 @@
+{
+ "run_id": "1786564849-722254",
+ "runner": "research/runners/_spiking_comprehension_monitor_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a45bbc6ea3b47e85b/research/runners/_spiking_comprehension_monitor_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--n-per-cond",
+  "20",
+  "--out",
+  "research/findings/raw/_spiking_comprehension_monitor.json"
+ ],
+ "git_sha": "78f36b3a2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-12T16:00:49",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_spiking_comprehension_monitor.json"
+}
