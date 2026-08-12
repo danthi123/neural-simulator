@@ -28,11 +28,12 @@ headline:
     choose: PARTIAL  # 2026-08-12 INTEGRATION #1: direct factual questions are decided by the SUBSTRATE (recall or honest
                      # abstain), lesion-verified; the host router's keyword-CONFAB is retired for them. Residual: neural
                      # question comprehension + open-ended topic choice; host still handles self/identity + noisy-anaphora.
-    generate: TUI-ONLY # ⚠️ CORRECTED 2026-08-12: INTEGRATION #3 (associative multi-fact generation via the dlPFC spiking
-                     # `elaborate`) is on ChatBrain.ANSWER() / the TUI — NOT the default /api/brain-chat endpoint, which
-                     # calls gate()+render() (single-fact, server.py:3345) or the rich RichAnswerComposer path. The
-                     # HTTP verification caught this: my probe had tested answer(); on the endpoint (gate) GENERATE=False.
-                     # To reach the default endpoint it must move into gate/the endpoint or the rich path. NOT on production.
+    generate: RICH-TOGGLE # RE-CORRECTED 2026-08-12 (verified): associative multi-fact generation IS on the endpoint via
+                     # the RICH path (the UI's "rich" toggle) — the RichAnswerComposer uses the spiking `elaborate`
+                     # (dlPFC spreading-activation) for content, and I flipped neural_planner=True (server.py:3009) so the
+                     # ORDERING is spiking too (relevance_by_latency). "tell me about dog" -> "dog chase cat cat eat fish".
+                     # on_by_default=NO (needs the rich toggle); the DEFAULT single-fact path is recall. My _maybe_generate
+                     # (in answer()) was a redundant duplicate of the rich path. (My prior TUI-ONLY note over-corrected.)
     learn: YES       # 2026-08-12 INTEGRATION #2 + fix: acquisition moved INTO gate() (an SVO assertion is taught + returned),
                      # so it reaches the /api/brain-chat endpoint; substrate-first recall. Production-path probe (gate+render):
                      # teach "wolf hunt deer" -> recall "wolf hunt deer", lesion-verified. Runtime code allocation for new words.
@@ -65,13 +66,13 @@ rows:
     evidence: "brain_chat_tui.py _maybe_acquire + gate() substrate-first + _substrate_recall; rf_phasor_composer.py runtime code allocation (_filler_phases + _growth_rng); probe LEARN True + lesion-load-bearing; finding 2026-08-12-INTEGRATION2 + 2b addendum"
 
   - key: open-ended-generation
-    faculty: "Generation — associative multi-fact topic reply (on the TUI/answer path; NOT the default endpoint yet)"
+    faculty: "Generation — associative multi-fact topic reply via the RICH path (spiking elaborate + spiking ordering)"
     de_risked: YES
-    wired: NO                   # ⚠️ CORRECTED: _maybe_generate is in ChatBrain.answer(), which the /api/brain-chat endpoint does NOT call (it uses gate()+render() or the rich path); HTTP verification caught it
-    on_by_default: NO           # not on the default endpoint; production-path probe (gate+render) GENERATE=False
-    scaffold_retired: NO
-    host_scaffold_in_default: "the default endpoint (gate()+render()) does single-fact recall; the rich RichAnswerComposer path does its own (host) multi-sentence; my spiking _maybe_generate must move into gate/the endpoint to reach production"
-    evidence: "brain_chat_tui.py _maybe_generate on answer() only; production-path probe GENERATE=False (n_facts 0 via gate); finding 2026-08-12-INTEGRATION3 + correction"
+    wired: YES                  # RE-CORRECTED: the RICH endpoint path (RichAnswerComposer) generates via the spiking elaborate; reachable from /api/brain-chat when rich=True
+    on_by_default: NO           # requires the UI "rich" toggle; the default single-fact path is recall. (My _maybe_generate on answer() was a redundant duplicate.)
+    scaffold_retired: NO        # broader open-ended (novel sentences on any topic, beyond the association graph) = the emerge stream-cortex, unwired; Qwen renders surface
+    host_scaffold_in_default: "the DEFAULT single-fact path does recall (no generation); broader open-ended generation (emerge stream-cortex) unwired; Qwen renders the surface"
+    evidence: "rich_answer_composer.py uses the spiking elaborate; server.py:3009 neural_planner=True (spiking ordering, my flip); 'tell me about dog' -> 'dog chase cat cat eat fish'; finding 2026-08-12-INTEGRATION3 + corrections"
 
   - key: neural-render
     faculty: "Neural word-order articulation (Broca-like; enable_neural_render)"

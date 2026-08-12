@@ -24,6 +24,14 @@ on the TUI/answer path but is NOT on production** until it is moved into `gate()
 (both in gate(); LEARN's acquisition was moved into gate() as part of this fix), GENERATE on the TUI/answer only.** The
 ledger `open-ended-generation` row is corrected to wired=NO. Everything below overstates the endpoint reach for GENERATE.
 
+**RE-CORRECTION (same day, verified):** the wired=NO above was itself an over-correction. Associative generation IS on
+the endpoint — via the RICH path (the UI "rich" toggle): the `RichAnswerComposer` uses the spiking `elaborate`
+(dlPFC spreading-activation) for content, and I flipped `neural_planner=True` (server.py:3009) so the ORDERING is spiking
+too. Verified: `RichAnswerComposer(chat, neural_planner=True).answer("tell me about dog")` -> "dog chase cat cat eat
+fish". So GENERATE is **on the endpoint via the rich toggle** (`wired=YES, on_by_default=NO`); my `_maybe_generate` was a
+redundant duplicate of the rich path. Honest net: on the DEFAULT single-fact endpoint — CHOOSE + LEARN (recall/abstain,
+HTTP-verified); with the RICH toggle — associative generation via the spiking elaborate.
+
 # INTEGRATION #3 (GENERATE) — the brain volunteers associated knowledge about a topic; all three owner-visible acts are now on
 
 ## The change

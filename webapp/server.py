@@ -3006,7 +3006,9 @@ def _get_rich_composer(cache_key: tuple, chat):
     if rich is None:
         from research.runners.rich_answer_composer import RichAnswerComposer
         rich = RichAnswerComposer(
-            chat, max_sentences=4, neural_planner=False,   # host planner = fast + still multi-sentence
+            chat, max_sentences=4, neural_planner=True,    # SPIKING dlPFC ordering (relevance_by_latency) — speed is
+                                                           # SECONDARY (mission non-negotiable); both content (elaborate)
+                                                           # AND ordering are now on the substrate. Was False for latency.
             planner_seed=getattr(getattr(chat, "inner", None), "seed", 42),
         )
         _BRAIN_RICH[cache_key] = rich
