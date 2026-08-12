@@ -157,7 +157,20 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   INTERLOCUTOR's affect; teacher-driven (learned but not `self-organized`, a declared boundary). Wire → a queryable "what do
   you expect / how is this going" + surprise on interlocutor-affect violation. Reuses the D2 [[surprise]] mechanism family.
 - **E3. Deeper LEARN — a BTSP/plateau per-turn LASTING trace** (today LEARN writes the RF store, a synaptic write, but a
-  BTSP plateau lasting trace is the fuller "the turn writes synapses"). RESEARCH-NEEDED.
+  BTSP plateau lasting trace is the fuller "the turn writes synapses"). **DE-RISKED GO 6/6 (2026-08-12), with a HOST caveat.**
+  The corpus check found prior BTSP work measured the WRITE (2026-07-18 on-bridge BTSP GO: held plateau potentiates
+  one-shot, held_dw ~110 vs transient ~13) + recall IMMEDIATELY after — but never whether the write LASTS. This de-risk
+  (`research/runners/_gap4_btsp_lasting_trace_recall_after_delay_derisk.py`) closes that: a real on-bridge BTSP write
+  (`enable_btsp` + bistable BDSP apical) + spiking recall, with a synaptic TAG-AND-CAPTURE persistence model (Frey-Morris
+  1997 / Lisman CaMKII / Bittner-Magee 2017 — supra-barrier synapses stabilized, sub-barrier passively decay). 6/6 GO: the
+  plateau still recalls after a 200-step decay window (54–92 Hz) while transient/moat/static writes decay below recall;
+  lesion-load-bearing (the IDENTICAL plateau write stays ~1100 with capture, decays to 0.3 without → recall fails, 95%
+  attributable); the crux control shows the failure is DECAY not a weak write; instrument shown CAPABLE OF FAILING (β=0 and
+  barrier=100 both correctly return BOUNDARY). **HOST CAVEAT (honest):** the LASTING/capture side is a runner host model,
+  NOT a spiking kernel yet; NOT `consolidation` in the TERMS sense (no replay executes); low absolute firing → "decayed
+  below recall" is a within-seed ~17× contrast. **NEXT RUNG (named):** port tag-and-capture to a guarded default-OFF
+  byte-identical-when-off `sim/` kernel (alongside `hebbian_weight_decay`), then WIRE under production LEARN so a taught
+  fact's per-turn write is a genuine on-substrate BTSP plateau + capture. Related to [[surprise]]/gap#4 credit family.
 - **E4. gap#4 deep credit on the Izhikevich production substrate** (the read-regime residual; fixed-FA doesn't converge on
   Izhikevich where LIF does). RESEARCH-NEEDED (KP/microcircuit levers being swept).
 - **E5. gap5-R4 emergent-assembly BTSP completion = BOUNDARY** (writes but cue-completion ≈0 on emergent assemblies).

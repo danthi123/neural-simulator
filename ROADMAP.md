@@ -159,6 +159,12 @@ moat-safe unless noted):
   "wall" is SUBSTRATE-SPECIFIC (a full-W_rec reservoir), NOT the diagonal WKV store the generative cortex uses; a local
   forward-eligibility rule ties/beats BPTT for a single-cue deep dependency. Next lever: SCALE (content-vocab K, filler
   diversity, dependency depth) until the arms separate to LOCATE the wall (a K-sweep is running, pid 763519).
+- **E3 deeper-LEARN — BTSP plateau LASTING trace — 6/6 GO (with a host caveat):** a real on-bridge BTSP plateau write +
+  spiking recall + a synaptic TAG-AND-CAPTURE persistence model — the plateau write still recalls after a 200-step decay
+  window (54–92 Hz) where transient/static/moat writes decay below recall; lesion-load-bearing (95% of persistence
+  attributable to capture); instrument shown capable of failing (β=0, barrier=100 → BOUNDARY). Honest caveat: the capture
+  side is a runner host model, not a spiking kernel yet. Next rung: a guarded default-OFF `sim/` capture kernel, then wire
+  under production LEARN so a taught fact's per-turn write is a genuine on-substrate BTSP plateau.
 
 **2026-08-12 — the production chat recall is now GENUINELY SPIKING by DEFAULT.** The `/api/brain-chat` chat brain builds
 `composer_kind="onebrain"` by default, so a factual question is recalled by the resonate-and-fire step on firing neurons

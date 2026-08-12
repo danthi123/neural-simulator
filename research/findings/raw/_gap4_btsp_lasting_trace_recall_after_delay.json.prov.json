@@ -1,0 +1,33 @@
+{
+ "run_id": "1786572887-787188",
+ "runner": "research/runners/_gap4_btsp_lasting_trace_recall_after_delay_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ab8c2e2cc95c00168/research/runners/_gap4_btsp_lasting_trace_recall_after_delay_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102"
+ ],
+ "git_sha": "1ae84bd99",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-12T18:14:47",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1950.0,
+ "corpus_check_query": "BTSP plateau behavioral timescale lasting trace per-turn learning",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gap4_btsp_lasting_trace_recall_after_delay.json"
+}

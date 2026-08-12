@@ -1,0 +1,533 @@
+{
+  "probe": "gap4_btsp_lasting_trace_recall_after_delay",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "params": {
+    "n_pre": 64,
+    "write_steps": 150,
+    "window_steps": 200,
+    "recall_steps": 200,
+    "w0": 0.3,
+    "btsp_w_max": 10.0,
+    "btsp_lr": 0.04,
+    "barrier": 2.0,
+    "beta": 0.04,
+    "static_w": 1.5,
+    "recall_drive": 2000.0,
+    "pulse_pA": 120.0
+  },
+  "recall_hi": 0.015,
+  "recall_lo": 0.008,
+  "elapsed_seconds": 4.7,
+  "per_seed": [
+    {
+      "seed": 42,
+      "conditions": {
+        "plateau": {
+          "condition": "plateau",
+          "seed": 42,
+          "w_after_write": 1128.9466552734375,
+          "w_pre_window": 1123.802978515625,
+          "w_post_window": 1100.962646484375,
+          "recall_t0_target": 0.09125,
+          "recall_after_target": 0.0925,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "transient": {
+          "condition": "transient",
+          "seed": 42,
+          "w_after_write": 309.9766845703125,
+          "w_pre_window": 309.9766845703125,
+          "w_post_window": 0.08822136372327805,
+          "recall_t0_target": 0.03625,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "moat": {
+          "condition": "moat",
+          "seed": 42,
+          "w_after_write": 76.80000305175781,
+          "w_pre_window": 76.80000305175781,
+          "w_post_window": 0.021857770159840584,
+          "recall_t0_target": 0.0125,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "plateau_nocapture": {
+          "condition": "plateau_nocapture",
+          "seed": 42,
+          "w_after_write": 1128.9466552734375,
+          "w_pre_window": 1123.802978515625,
+          "w_post_window": 0.3198414742946625,
+          "recall_t0_target": 0.09125,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "static_subbarrier": {
+          "condition": "static_subbarrier",
+          "seed": 42,
+          "w_after_write": 384.0,
+          "w_pre_window": 384.0,
+          "w_post_window": 0.10928881913423538,
+          "recall_t0_target": 0.04,
+          "recall_after_target": 0.00125,
+          "recall_after_distr": 0.00125,
+          "off_dw": 0.0
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.0975,
+        "recall_zero_weight": 0.0025
+      }
+    },
+    {
+      "seed": 43,
+      "conditions": {
+        "plateau": {
+          "condition": "plateau",
+          "seed": 43,
+          "w_after_write": 1078.556640625,
+          "w_pre_window": 1073.970703125,
+          "w_post_window": 1018.1687622070312,
+          "recall_t0_target": 0.07375,
+          "recall_after_target": 0.07875,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "transient": {
+          "condition": "transient",
+          "seed": 43,
+          "w_after_write": 290.50726318359375,
+          "w_pre_window": 290.50726318359375,
+          "w_post_window": 0.08268022537231445,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "moat": {
+          "condition": "moat",
+          "seed": 43,
+          "w_after_write": 76.80000305175781,
+          "w_pre_window": 76.80000305175781,
+          "w_post_window": 0.021857770159840584,
+          "recall_t0_target": 0.00625,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "plateau_nocapture": {
+          "condition": "plateau_nocapture",
+          "seed": 43,
+          "w_after_write": 1078.556640625,
+          "w_pre_window": 1073.970703125,
+          "w_post_window": 0.3056589365005493,
+          "recall_t0_target": 0.07375,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        },
+        "static_subbarrier": {
+          "condition": "static_subbarrier",
+          "seed": 43,
+          "w_after_write": 384.0,
+          "w_pre_window": 384.0,
+          "w_post_window": 0.10928881913423538,
+          "recall_t0_target": 0.0325,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.08375,
+        "recall_zero_weight": 0.0025
+      }
+    },
+    {
+      "seed": 44,
+      "conditions": {
+        "plateau": {
+          "condition": "plateau",
+          "seed": 44,
+          "w_after_write": 1129.1661376953125,
+          "w_pre_window": 1110.267822265625,
+          "w_post_window": 1061.5697021484375,
+          "recall_t0_target": 0.06875,
+          "recall_after_target": 0.06875,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "transient": {
+          "condition": "transient",
+          "seed": 44,
+          "w_after_write": 305.8652038574219,
+          "w_pre_window": 305.8652038574219,
+          "w_post_window": 0.08705119788646698,
+          "recall_t0_target": 0.02375,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "moat": {
+          "condition": "moat",
+          "seed": 44,
+          "w_after_write": 76.80000305175781,
+          "w_pre_window": 76.80000305175781,
+          "w_post_window": 0.021857770159840584,
+          "recall_t0_target": 0.005,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "plateau_nocapture": {
+          "condition": "plateau_nocapture",
+          "seed": 44,
+          "w_after_write": 1129.1661376953125,
+          "w_pre_window": 1110.267822265625,
+          "w_post_window": 0.31598925590515137,
+          "recall_t0_target": 0.06875,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "static_subbarrier": {
+          "condition": "static_subbarrier",
+          "seed": 44,
+          "w_after_write": 384.0,
+          "w_pre_window": 384.0,
+          "w_post_window": 0.10928881913423538,
+          "recall_t0_target": 0.0325,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.005,
+          "off_dw": 0.0
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.07625,
+        "recall_zero_weight": 0.00125
+      }
+    },
+    {
+      "seed": 100,
+      "conditions": {
+        "plateau": {
+          "condition": "plateau",
+          "seed": 100,
+          "w_after_write": 1065.3466796875,
+          "w_pre_window": 1054.2177734375,
+          "w_post_window": 990.1792602539062,
+          "recall_t0_target": 0.05125,
+          "recall_after_target": 0.05375,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "transient": {
+          "condition": "transient",
+          "seed": 100,
+          "w_after_write": 283.48736572265625,
+          "w_pre_window": 283.48736572265625,
+          "w_post_window": 0.08068232238292694,
+          "recall_t0_target": 0.01625,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "moat": {
+          "condition": "moat",
+          "seed": 100,
+          "w_after_write": 76.80000305175781,
+          "w_pre_window": 76.80000305175781,
+          "w_post_window": 0.021857770159840584,
+          "recall_t0_target": 0.00625,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "plateau_nocapture": {
+          "condition": "plateau_nocapture",
+          "seed": 100,
+          "w_after_write": 1065.3466796875,
+          "w_pre_window": 1054.2177734375,
+          "w_post_window": 0.30003708600997925,
+          "recall_t0_target": 0.05125,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        },
+        "static_subbarrier": {
+          "condition": "static_subbarrier",
+          "seed": 100,
+          "w_after_write": 384.0,
+          "w_pre_window": 384.0,
+          "w_post_window": 0.10928881913423538,
+          "recall_t0_target": 0.02375,
+          "recall_after_target": 0.0,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.06125,
+        "recall_zero_weight": 0.00125
+      }
+    },
+    {
+      "seed": 101,
+      "conditions": {
+        "plateau": {
+          "condition": "plateau",
+          "seed": 101,
+          "w_after_write": 1174.059326171875,
+          "w_pre_window": 1145.18408203125,
+          "w_post_window": 1124.6363525390625,
+          "recall_t0_target": 0.0725,
+          "recall_after_target": 0.07125,
+          "recall_after_distr": 0.00125,
+          "off_dw": 0.0
+        },
+        "transient": {
+          "condition": "transient",
+          "seed": 101,
+          "w_after_write": 308.1890563964844,
+          "w_pre_window": 308.1890563964844,
+          "w_post_window": 0.08771258592605591,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00125,
+          "off_dw": 0.0
+        },
+        "moat": {
+          "condition": "moat",
+          "seed": 101,
+          "w_after_write": 76.80000305175781,
+          "w_pre_window": 76.80000305175781,
+          "w_post_window": 0.021857770159840584,
+          "recall_t0_target": 0.0075,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00125,
+          "off_dw": 0.0
+        },
+        "plateau_nocapture": {
+          "condition": "plateau_nocapture",
+          "seed": 101,
+          "w_after_write": 1174.059326171875,
+          "w_pre_window": 1145.18408203125,
+          "w_post_window": 0.32592669129371643,
+          "recall_t0_target": 0.0725,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00125,
+          "off_dw": 0.0
+        },
+        "static_subbarrier": {
+          "condition": "static_subbarrier",
+          "seed": 101,
+          "w_after_write": 384.0,
+          "w_pre_window": 384.0,
+          "w_post_window": 0.10928881913423538,
+          "recall_t0_target": 0.03375,
+          "recall_after_target": 0.00125,
+          "recall_after_distr": 0.0025,
+          "off_dw": 0.0
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.08375,
+        "recall_zero_weight": 0.005
+      }
+    },
+    {
+      "seed": 102,
+      "conditions": {
+        "plateau": {
+          "condition": "plateau",
+          "seed": 102,
+          "w_after_write": 1136.44189453125,
+          "w_pre_window": 1123.410888671875,
+          "w_post_window": 1095.155029296875,
+          "recall_t0_target": 0.06125,
+          "recall_after_target": 0.065,
+          "recall_after_distr": 0.0,
+          "off_dw": 0.0
+        },
+        "transient": {
+          "condition": "transient",
+          "seed": 102,
+          "w_after_write": 301.1280517578125,
+          "w_pre_window": 301.1280517578125,
+          "w_post_window": 0.08570298552513123,
+          "recall_t0_target": 0.01875,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.0,
+          "off_dw": 0.0
+        },
+        "moat": {
+          "condition": "moat",
+          "seed": 102,
+          "w_after_write": 76.80000305175781,
+          "w_pre_window": 76.80000305175781,
+          "w_post_window": 0.021857770159840584,
+          "recall_t0_target": 0.0025,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.0,
+          "off_dw": 0.0
+        },
+        "plateau_nocapture": {
+          "condition": "plateau_nocapture",
+          "seed": 102,
+          "w_after_write": 1136.44189453125,
+          "w_pre_window": 1123.410888671875,
+          "w_post_window": 0.31972989439964294,
+          "recall_t0_target": 0.06125,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.0,
+          "off_dw": 0.0
+        },
+        "static_subbarrier": {
+          "condition": "static_subbarrier",
+          "seed": 102,
+          "w_after_write": 384.0,
+          "w_pre_window": 384.0,
+          "w_post_window": 0.10928881913423538,
+          "recall_t0_target": 0.0275,
+          "recall_after_target": 0.0,
+          "recall_after_distr": 0.00375,
+          "off_dw": 0.0
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.07375,
+        "recall_zero_weight": 0.0
+      }
+    }
+  ],
+  "label": "gap4 BTSP plateau lasting trace (recall-after-delay)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "L1 lasting: plateau fires after window; transient+moat decayed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "L2 crux: static+transient recalled at t0; static decayed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "L3 lesion: no-capture plateau decayed below recall",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "L4 anti-magnitude: static sub-barrier decayed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "L5 attributability: distractor half silent",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "instrument (off byte-id / maint inert / readout distinguishes)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "plateau vs no-capture lesion (recall-after)",
+      "ok": true,
+      "detail": "treatment=0.0716667 control=0.00354167 |sep|=0.068125 > 0.015",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "plateau recall-after exceeds the spontaneous floor",
+      "ok": true,
+      "detail": "0.0716667 vs floor 0.00208333",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "capture retains the plateau weight (else it decays)",
+      "ok": true,
+      "detail": "before=0.314531 after=1065.11 moved=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    },
+    {
+      "process": "Hebbian",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    },
+    {
+      "process": "homeostasis",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    },
+    {
+      "process": "short-term plasticity",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    },
+    {
+      "process": "reward modulation",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    },
+    {
+      "process": "structural plasticity",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    },
+    {
+      "process": "NMDA",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    },
+    {
+      "process": "input divisive norm",
+      "why": "isolation: the write phase leaves on-bridge BTSP as the sole weight mover"
+    }
+  ],
+  "chance": null,
+  "GO": true,
+  "verdict": "GO -- a per-turn BTSP PLATEAU write is a LASTING trace. After a 200-step decay window of intervening activity, the plateau-written fact is STILL RECALLABLE (post-target fires, recall 0.07); a NON-plateau (transient) write that recalled at t0 has DECAYED below recall (0.00); the moat (silent apical) and a large sub-barrier STATIC weight both fail; and REMOVING the tag-and-capture maintenance (no-capture lesion) makes the plateau trace decay too (0.00) -> the persistence is the capture x plateau interaction, not the big write alone. 6-seed. Spiking WRITE + spiking RECALL on the real bridge; the LASTING side is a runner-level tag-and-capture MODEL (next rung: a guarded default-off sim/ kernel).",
+  "HONEST_NOTE": "Spiking WRITE (real on-bridge BTSP + bistable BDSP apical) and spiking RECALL (post firing) on a real SimulationBridge; recall is a BEHAVIOURAL read (not a weight read). The LASTING side (tag-and-capture stabilization) is a RUNNER-LEVEL MODEL applied to cp_connections.data (Frey&Morris 1997; Lisman 1985; Bittner&Magee 2017 for the supra-threshold plateau write) -- NOT yet a sim/ kernel. NOT 'consolidation' in the TERMS.md sense (no replay path executes). NO new sim/ edit."
+}
