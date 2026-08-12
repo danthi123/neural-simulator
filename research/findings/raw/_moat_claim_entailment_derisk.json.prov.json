@@ -1,0 +1,25 @@
+{
+ "run_id": "1786554095-660978",
+ "runner": "research/runners/_moat_claim_entailment_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a06b444310bb23ba2/research/runners/_moat_claim_entailment_derisk.py"
+ ],
+ "git_sha": "63eec2165",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-12T13:01:35",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_moat_claim_entailment_derisk.json"
+}
