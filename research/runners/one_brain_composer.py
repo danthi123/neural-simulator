@@ -768,8 +768,14 @@ class OneBrainComposer:
         byte-identical host argmax (the numpy-CPU + test-oracle path). When ON: the fully-on-substrate spiking WTA
         (`_spiking_select`). The single dispatch the three cleanup read sites share (per-block, batched, clause)."""
         if self.enable_spiking_cleanup:
-            return self._spiking_select(scores, words)
-        return words[int(np.argmax(np.asarray(scores, dtype=float)))]
+            w = self._spiking_select(scores, words)
+        else:
+            w = words[int(np.argmax(np.asarray(scores, dtype=float)))]
+        # A reserved (unrecruited) cleanup slot must never surface as a decoded role word: an UNBOUND role's noise can
+        # argmax onto a "__free*__" placeholder -> report None (the render already ignores an unbound role; this also
+        # keeps the owner-visible activity trace clean). A recruited word was renamed to the real word, so it is never
+        # masked. No-op at vocab_headroom=0 (no "__free*__" words exist) => byte-identical.
+        return None if (isinstance(w, str) and w.startswith("__free")) else w
 
     def _read_block(self, block_idx):
         """Reconstruct block_idx + unbind all roles IN PARALLEL (one settle, no phase drift). The main roles (agent,
@@ -1029,7 +1035,10 @@ class OneBrainComposer:
                 return (None, None)
             j = int(np.argmax(s)); peak = float(s.max())
             conf = float(np.clip(s[j] / peak, 0.0, 1.0)) if peak > 0.0 else 0.0
-            return (vocab[j], conf)
+            w = vocab[j]
+            if isinstance(w, str) and w.startswith("__free"):    # a reserved (unrecruited) slot -> not a real decode
+                return (None, conf)
+            return (w, conf)
         out = {}
         for ri, role in enumerate(self.main_roles):
             out[role] = _winner(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], self.words)
