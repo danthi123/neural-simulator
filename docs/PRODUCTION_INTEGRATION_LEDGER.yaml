@@ -28,7 +28,9 @@ headline:
     choose: PARTIAL  # 2026-08-12 INTEGRATION #1: direct factual questions are decided by the SUBSTRATE (recall or honest
                      # abstain), lesion-verified; the host router's keyword-CONFAB is retired for them. Residual: neural
                      # question comprehension + open-ended topic choice; host still handles self/identity + noisy-anaphora.
-    generate: NO     # recall-only; off-bridge Qwen articulates; #3
+    generate: PARTIAL # 2026-08-12 INTEGRATION #3: ASSOCIATIVE generation — "tell me about X" chains >1 fact via the dlPFC
+                     # spiking spreading-activation (elaborate), lesion-verified. Broader open-ended (novel sentences on
+                     # any topic) = the emerge stream-cortex, further; off-bridge Qwen still the surface renderer.
     learn: YES       # 2026-08-12 INTEGRATION #2: substrate-first recall — a fact heard this turn is recalled from the
                      # spiking substrate (inner.what_does), lesion-verified (disable the recall -> the taught fact
                      # disappears). Scope: known-word facts (new words need code allocation, next step).
@@ -61,13 +63,13 @@ rows:
     evidence: "brain_chat_tui.py _maybe_acquire + gate() substrate-first + _substrate_recall; rf_phasor_composer.py runtime code allocation (_filler_phases + _growth_rng); probe LEARN True + lesion-load-bearing; finding 2026-08-12-INTEGRATION2 + 2b addendum"
 
   - key: open-ended-generation
-    faculty: "Open-ended generation — novel content FROM THE BRAIN"
-    de_risked: PARTIAL          # emerge15-21 stream-cortex generators are GO at runner level
-    wired: NO
-    on_by_default: NO
-    scaffold_retired: NO
-    host_scaffold_in_default: "recall-only (emits ONLY stored facts); off-bridge Qwen articulates; emerge15-21 wired nowhere in webapp"
-    evidence: "no emerge15-21 refs in webapp/server.py; recall-only agent"
+    faculty: "Generation — the brain VOLUNTEERS associated knowledge about a topic (associative), lesion-verified"
+    de_risked: YES
+    wired: YES                  # 2026-08-12 INTEGRATION #3: _maybe_generate wires describe + dlPFC elaborate on /api/brain-chat
+    on_by_default: YES          # default turn: "tell me about X" chains facts; probe GENERATE True + assoc-lesion-load-bearing
+    scaffold_retired: NO        # ASSOCIATIVE generation only; broader open-ended (novel sentences, any topic) = the emerge stream-cortex, unwired; Qwen still the surface renderer
+    host_scaffold_in_default: "off-bridge Qwen articulates the surface; the emerge15-21 stream-cortex free-generator is not yet wired (broader open-ended generation)"
+    evidence: "brain_chat_tui.py _maybe_generate (describe + elaborate spreading-activation); probe GENERATE True, assoc_lesion_load_bearing True; finding 2026-08-12-INTEGRATION3"
 
   - key: neural-render
     faculty: "Neural word-order articulation (Broca-like; enable_neural_render)"

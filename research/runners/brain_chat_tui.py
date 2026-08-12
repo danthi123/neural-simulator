@@ -279,6 +279,40 @@ class ChatBrain:
                     return " ".join(toks)
         return question
 
+    def _maybe_generate(self, question):
+        """GENERATION: for an open-ended TOPIC prompt ('tell me about X' / 'describe X' / 'what about X'), VOLUNTEER what
+        the brain knows about X by CHAINING ASSOCIATIONS on the substrate — describe(X) plus the dlPFC spiking
+        `elaborate` (spreading-activation content-selection) to a related concept and describe THAT. This is generation
+        from the brain's own knowledge, beyond single-fact recall. Returns (answer, abstained) or None. No confab:
+        describe() returns None for an unknown topic (-> falls through to abstain)."""
+        ql = question.lower().strip().rstrip("?. ")
+        topic = None
+        for pat in ("tell me about ", "describe ", "what about ", "what do you know about ", "say something about "):
+            if ql.startswith(pat):
+                topic = ql[len(pat):].strip().split()[-1] if ql[len(pat):].strip() else None
+                break
+        if not topic:
+            return None
+        topic = topic.strip(".,!?")
+        if topic in self.router.self_aliases:
+            topic = "brain"
+        try:
+            primary = self.inner.describe(topic)
+        except Exception:
+            primary = None
+        if not primary:
+            return None                          # unknown topic -> let the pipeline abstain (no confabulation)
+        parts = [primary]
+        try:                                     # ONE associative hop via the dlPFC spiking spreading-activation control
+            assoc = self.inner.elaborate(topic)
+            if assoc and assoc != topic:
+                more = self.inner.describe(assoc)
+                if more and more != primary:
+                    parts.append(more)
+        except Exception:
+            pass
+        return " ".join(p.rstrip(".") + "." for p in parts), False
+
     def _maybe_acquire(self, question):
         """IN-LOOP LEARNING acquisition: if the input is a declarative 3-word SVO ASSERTION (not a question), TEACH it to
         the spiking substrate (`inner.hear` -> composer.store with runtime code allocation for any new word) and refresh
@@ -416,6 +450,9 @@ class ChatBrain:
         disc = self._discourse_turn(question)
         if disc is not None:
             return disc
+        gen = self._maybe_generate(question)     # GENERATION: volunteer associated knowledge about a topic
+        if gen is not None:
+            return gen
         acq = self._maybe_acquire(question)      # IN-LOOP LEARNING: teach an SVO assertion, then acknowledge
         if acq is not None:
             return acq

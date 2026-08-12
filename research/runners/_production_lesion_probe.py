@@ -77,10 +77,28 @@ def probe(seed=42):
 
     # GENERATE — does the brain produce NOVEL content, or only recall a pre-stored fact? Ask something that is NOT a
     # stored fact and requires composition; recall-only -> abstains ("I don't know").
-    novel_q = "what is the meaning of freedom?"
-    g = _ask(chat, novel_q)
-    out["GENERATE"] = {"open_ended": (not g.get("abstained", True)) and "don't know" not in g["answer"].lower(),
-                       "probe": g, "note": "recall-only agent emits ONLY stored facts; novel composition -> abstain"}
+    # GENERATE — does the brain VOLUNTEER associated knowledge about a topic (associative generation), or only recall a
+    # single fact? "tell me about dog" -> the brain should chain >1 fact via the dlPFC spiking spreading-activation
+    # (elaborate). Lesion elaborate -> the chain collapses to the single primary fact (load-bearing).
+    gq = "tell me about dog"
+    g = _ask(chat, gq)
+    n_facts = str(g["answer"]).count(".")                    # each chained fact ends with "."
+    generates = (not g.get("abstained", True)) and "don't know" not in str(g["answer"]).lower() and n_facts >= 2
+    gen_lesion_load_bearing = None
+    if generates and hasattr(getattr(agent, "agent", agent), "elaborate"):
+        inner = getattr(agent, "agent", agent)
+        orig = inner.elaborate
+        inner.elaborate = lambda *a, **k: None               # remove the associative spreading-activation
+        try:
+            g_les = _ask(chat, gq)
+        finally:
+            inner.elaborate = orig
+        gen_lesion_load_bearing = str(g_les["answer"]).count(".") < n_facts   # collapsed to fewer facts
+    out["GENERATE"] = {"open_ended": bool(generates and gen_lesion_load_bearing is not False),
+                       "n_facts_chained": n_facts, "assoc_lesion_load_bearing": gen_lesion_load_bearing, "probe": g,
+                       "note": "associative generation: 'tell me about X' chains >1 fact via the dlPFC spiking "
+                               "spreading-activation (elaborate); lesion it -> collapses to the single primary fact. "
+                               "Broader open-ended generation (novel sentences on any topic) is the emerge stream-cortex, further."}
 
     # LEARN — does the TURN incorporate a fact told mid-conversation? Teach a fact NOT pre-baked, then ask. Uses KNOWN
     # words ("cat chase bird" — the pre-baked cat-fact is "cat eat fish", so "cat chase ?" is genuinely new), which the
