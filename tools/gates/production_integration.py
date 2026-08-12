@@ -57,16 +57,25 @@ ANCHORED_FILES = (
     LEDGER_REL,
 )
 
-# Narrow, explicit PRODUCTION-INTEGRATION claim tokens (not generic "GO" — that is closure_names_mechanism's job).
+# Narrow, explicit PRODUCTION-INTEGRATION claim tokens. Check B is a HEURISTIC overclaim-catcher (the hard mechanical
+# enforcement is Check A's source anchors + Check C's ratchet); it is deliberately CONSERVATIVE (few false positives)
+# because a gate that false-alarms on goal/drift prose gets bypassed. Generic goal vocabulary ("on by default in
+# production") is NOT a token — it is how the goal is stated; only unambiguous faculty-CLAIM phrasings fire.
 CLAIM_TOKENS = [
     (re.compile(r"\bwired into (?:the )?(?:production|/api/brain-chat|the live loop)\b", re.I), "wired"),
-    (re.compile(r"\bon[- ]by[- ]default in production\b", re.I), "on_by_default"),
     (re.compile(r"\bintegrated into (?:the )?(?:production|/api/brain-chat|live loop|default turn)\b", re.I), "integrated"),
-    (re.compile(r"\bone[- ]brain in production\b", re.I), "onebrain"),
-    (re.compile(r"\bscaffold[- ]retired\b", re.I), "scaffold_retired"),
-    (re.compile(r"\bruns (?:by default|in the default (?:turn|chat|path))\b", re.I), "on_by_default"),
+    (re.compile(r"\bnow (?:on[- ]by[- ]default|the production default|running by default)\b", re.I), "on_by_default"),
+    (re.compile(r"\b(?:its |the )host scaffold (?:is|has been) retired\b", re.I), "scaffold_retired"),
 ]
 FACULTY_RE = re.compile(r"^integration_faculty:\s*(\S+)\s*$", re.M)
+# A DESCRIPTIVE / NEGATED / drift-discussion use is not an affirmative claim (mirrors closure_names_mechanism's guard):
+# "NONE checked whether it was wired into production", "NOT yet integrated", "the goal is to become on by default",
+# "stayed host". Searched UNANCHORED in the ~48 chars before the claim phrase (a negation a few words back still governs).
+NEG_CONTEXT_RE = re.compile(
+    r"\b(?:not|no|none|never|whether|without|isn't|wasn't|aren't|weren't|neither|nor|"
+    r"stay(?:ed|s)?|still|host|de-?risk|default-off|would|to\s+become|become(?:s)?|"
+    r"must|should|needs?|goal|target|yet)\b",
+    re.I)
 
 
 # ---------------------------------------------------------------- minimal YAML read (rows + anchors + headline)
@@ -194,9 +203,14 @@ def _check_claim(text, rel, data):
     """A doc using a production-integration claim token must name a supporting ledger key."""
     hit = None
     for rx, kind in CLAIM_TOKENS:
-        m = rx.search(text)
-        if m:
+        for m in rx.finditer(text):
+            # skip a DESCRIPTIVE / NEGATED use (drift-discussion, a goal, a de-risk) — only an AFFIRMATIVE claim fires.
+            pre = text[max(0, m.start() - 48):m.start()]
+            if NEG_CONTEXT_RE.search(pre):
+                continue
             hit = (m.group(0), kind)
+            break
+        if hit:
             break
     if not hit:
         return []
@@ -331,6 +345,13 @@ def selftest():
         # 4. negative control: no claim token at all
         if _check_claim(claim("Held-out accuracy rises to 0.61 under the expander."), "research/findings/d.md", data):
             bad.append("[B] FALSE POSITIVE: flagged an ordinary finding with no production claim")
+        # 5. negative control: a NEGATED / descriptive drift-discussion use must NOT fire
+        if _check_claim(claim("NONE checked whether it was wired into the production default; the drift is the goal."),
+                        "research/findings/e.md", data):
+            bad.append("[B] FALSE POSITIVE: flagged a NEGATED/descriptive 'wired into production' (drift discussion)")
+        if _check_claim(claim("Today it is NOT integrated into /api/brain-chat; the goal is to become on by default."),
+                        "research/findings/f.md", data):
+            bad.append("[B] FALSE POSITIVE: flagged a 'NOT integrated / goal to become' descriptive use")
 
     # ---- scoping ----
     if check(None) or check([]):
