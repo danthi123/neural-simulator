@@ -15,6 +15,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-12 (READ FIRST — live resume point)
 
+> **🚨 STANDING OPERATING MODE (owner directive 2026-08-12, ultracode ON): WIRE + VALIDATE *ALL* the GOs into the
+> production single-substrate fully-spiking emergent onebrain (except host internals not easily biologized), and
+> CONCURRENTLY biologize shortcuts + wire them in. NO fixed phases — parallelize via WORKFLOWS. Only limits: COMPUTE
+> (full 3090 + local CPU + minipc pool .40-42 [stale, sync before use]) + FILE-EDIT CONTENTION. Deep research + RAG at
+> EVERY wall + new task.**
+>
+> **THE EXECUTION MODEL (the repeating WAVE — respects file-contention):** (1) PARALLEL build+validate every unwired GO
+> and every biologization in ISOLATED worktrees (separate files → zero contention); each agent VERIFY-FIRSTs (the E1
+> lesson: a claimed GO can be mis-read/host-formula/seed-fragile → RAG the record, read the runner's own verdict,
+> reproduce), builds a `*_production_organ.py` + a standalone verify harness + a precise server.py WIRING SPEC, commits to
+> its worktree branch. (2) SERIAL integrate: ONE agent per wave wires all validated organs into `webapp/server.py`
+> (the SOLE shared-file editor), verifies the composed turn (all default-on, no conflict, no regression), commits+pushes.
+> (3) Loop: consolidate, launch the next wave. Bigger builds (GNW bus, causal forward-model, feedback-alignment) run as
+> DEDICATED deep-research lanes in parallel (isolated, research phase = no server.py). ANTI-PARKING pattern for long runs:
+> build+smoke inline, launch the 6-seed BACKGROUND + report pid+logfile, parent consolidates (do NOT detach-and-park).
+> The prioritized faculty backlog is `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md` (Tier-1: GNW workspace
+> bus [keystone] · autobiographical-episodic+temporal-self · multi-referent WM · causal forward-model+belief-revision ·
+> reason-giving revisable affect · conversational agency [repair/ask/self-initiate] · intuitive world-model).
+>
+> **🖥️ HW NOTE (2026-08-12):** owner turns MONITORS OFF during heavy-GPU stretches (esp. the 165Hz ultrawide — ~3.3 GB/s
+> scanout) — modest (few-%) speedup under the 300W cap but mainly a cooler/lower-power → less-crash-prone card; owner
+> watches via iOS, signal when the heavy stretch winds down / they can turn on anytime to use the machine.
+
+
 > **🟢🟢🟢 LATEST (2026-08-12, WIRING+DE-RISK WAVE 2 — overnight parallel push). The production one-brain turn now runs
 > AFFECT·GENERATE·MOAT-gen·CHOOSE·SURPRISE·COMPREHENSION default-on, and SIX faculties de-risked GO. All on `main`+both remotes:**
 > - **WIRED default-on:** AFFECT (D1); MOAT generalized (C1, claim-level entailment, 0 leaks); GENERATE (#3E replay + the
