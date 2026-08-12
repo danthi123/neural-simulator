@@ -111,8 +111,20 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
 - **D6. Advanced WM binding** (wm-binding-advanced, de_risked YES). Wire → ≥2-referent anaphora / multi-slot. STATUS: QUEUED.
 
 ## E. MISSING MECHANISMS / BOUNDARIES (need RESEARCH before they can be wired — do NOT fake integration)
-- **E1. Self-model / metacognition = BOUNDARY** (type-2 at chance despite a mis-calibrated GO gate, 2026-08-12). Genuine
-  meta-d′ > 0 is the missing mechanism. RESEARCH-NEEDED (+ audit the mis-calibrated gate). Do NOT wire until it's a real GO.
+- **E1. Self-model / metacognition — DE-RISKED GO 6/6 (2026-08-12), QUEUED-FOR-WIRING** (was BOUNDARY; the "at chance"
+  finding was a MIS-READ, corrected). Two parts: (1) INSTRUMENT — the "mis-calibrated GO gate" bug did NOT exist; the gate
+  already required `type2_auc≥0.65 AND meta_d>0 AND m_ratio≥0.60 AND controls`. The old boundary finding conflated a chance
+  `meta_rate` run's type-2 numbers with a genuine `learned_acc` run's GO verdict (correction banner added to it). Hardened
+  anyway (CLAUDE.md rule 9): extracted a pure `_seed_go_decision`, added `selftest()`/`--selftest` that FAILS in its failing
+  direction (chance type-2 → NO-GO even with type-1 fine), fixed a latent always-False `domain_control`. (2) MECHANISM —
+  following the D4 lead, a `balance` confidence read = `|rate(asm₁)−rate(asm₀)|`, the workspace WTA margin read directly from
+  `cp_firing_states` (Vickers balance-of-evidence / Kepecs distance-to-bound), clears the corrected gate 6/6: type2_auc
+  0.668–0.815, meta_d 1.04–2.25, m_ratio 0.66–1.84, permuted collapses to chance, within-class holds, read ENTIRELY from
+  spikes. **First PURE-SPIKING meta-d′>0 to clear 6/6** (the prior `learned_acc` 6/6 uses a HOST logistic regression = a
+  shortcut). Unblocks the honesty-boundary self-report read-out ("my familiarity monitor reads this as novel → I'm
+  uncertain"). **RESIDUAL/next rung (mapped):** loop-ablation does NOT collapse the balance read — it is "confidence =
+  balance of evidence" (a genuine decision-variable read) but NOT architecturally type-1/type-2 DISSOCIABLE; the dissociable
+  comparator (`margin_abs`) is seed-fragile 0/6 = the named next rung (make it robust via the D4 content-sensitive read).
 - **E2. Internal worldview / affective world-model** — **DE-RISKED GO 6/6 (2026-08-12), QUEUED-FOR-WIRING** (was
   RESEARCH-NEEDED). The corpus audit confirmed the building blocks existed (D2 mismatch unit, HTM-TM sequence predictor,
   W5 other-tagged affect, P0.3 valence latch) but NO validated *affective forward model*. Built one, brain-based, NO

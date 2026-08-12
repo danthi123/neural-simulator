@@ -13,6 +13,8 @@ verification: local 6-seed. metacog: verdict=GO all seeds BUT type2_auc {42:0.53
 
 # lane-C self-model is a BOUNDARY — metacognition at chance despite a GO label; self-schema seed-fragile
 
+> ⚠️ **CORRECTION (2026-08-12) — see `2026-08-12-laneC-metacog-INSTRUMENT-FIX-and-balance-of-evidence-pure-spiking-meta-d.md`.** The central metacog claim here (the "second-order metacog monitor reports verdict=GO on all 6 seeds while type-2 is at chance / the GO gate is mis-calibrated and checks type-1 not type-2") is NOT reproducible and is contradicted by the very artifacts cited. The per-seed GO logic requires `type2_auc≥0.65 AND meta_d>0 AND m_ratio≥0.60`; re-running shows the `meta_rate` read (chance type-2) correctly reports NEGATIVE, and the cited `learned_acc --dynamic` artifacts show GO with GENUINE type-2 (type2_auc 0.77–0.92). The GO label was correct; this finding conflated a chance-read's type-2 numbers with a genuine-read's GO verdict. The gate is now self-tested (`--selftest`) to fail on a chance-level type-2 input. The separate self-schema→metacog INTEGRATION sub-result below (3/6 GO, seed-fragile) is unaffected and still stands.
+
 ## What ran + why it matters
 
 The roadmap §3 self-model faculty (the brain knowing the SOURCE and STRENGTH of its knowledge — the honesty-boundary

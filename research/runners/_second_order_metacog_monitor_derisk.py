@@ -137,7 +137,11 @@ DEFAULT_NMDA_TAU = 150.0
 # rate; `margin_abs` reads abs(meta_0 - meta_1), removing class/subpool bias while still reading only neural state.
 DEFAULT_CONFIDENCE_READ = "meta_rate"
 LEARNED_ACC_CONFIDENCE_READ = "learned_acc"
-CONFIDENCE_READ_CHOICES = ("meta_rate", "margin", "margin_abs", LEARNED_ACC_CONFIDENCE_READ)
+# `balance`: the Part-2 BRAIN-BASED read -- confidence = the ABSOLUTE MARGIN of the first-order workspace WTA
+# competition, read DIRECTLY from cp_firing_states over the evidence window (Vickers balance-of-evidence; the
+# metacog analogue of the D4 comprehension-monitor sel-pool margin). No downstream pool, no host classifier.
+BALANCE_CONFIDENCE_READ = "balance"
+CONFIDENCE_READ_CHOICES = ("meta_rate", "margin", "margin_abs", BALANCE_CONFIDENCE_READ, LEARNED_ACC_CONFIDENCE_READ)
 
 # Opt-in learned monitor only. Calibration uses a feedback-trained, clipped logistic delta rule over the workspace's
 # own spike-rate features; evaluation emits confidence by driving the spiking meta_schema/aPFC pool with that learned
@@ -630,6 +634,10 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
                 union[f"margin_fs_{k}_to_meta_{j}"] = _dense_projection(
                     margin_fs_idx[k], meta_member_idx[j], w_inh, META_GATE
                 )
+    elif confidence_read == BALANCE_CONFIDENCE_READ:
+        # balance: NO downstream meta wiring. The confidence IS the first-order workspace WTA margin, read
+        # directly from cp_firing_states in _run_trial. The meta_schema region is left present but unused.
+        pass
     else:
         # learned_acc: the runner-local calibration learns an ACC/aPFC error/conflict read, then drives the
         # meta_schema/aPFC pool as a bounded confidence current during the report phase. No fixed workspace->meta
@@ -641,7 +649,7 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
         inh.extend(rm.inhibitory_indices(region.name))
     bridge.inject_explicit_wiring(union, output_inhibitory_indices=inh or None)
     bridge.set_plasticity_gate(WS_LOOP_GATE, 0.0)
-    if confidence_read != LEARNED_ACC_CONFIDENCE_READ:
+    if confidence_read not in (LEARNED_ACC_CONFIDENCE_READ, BALANCE_CONFIDENCE_READ):
         bridge.set_plasticity_gate(META_GATE, 0.0)
 
     # settle to a true quiescent rest, snapshot (each trial restores this).
@@ -711,6 +719,7 @@ def _run_trial(bridge, xp, idx, snap, drive_pa):
                     )
     nlate = float(FREE_STEPS - late_start)
     n_asm_steps = float(max(1, n_asm_steps))
+    asm_rate = {k: asm_acc[k] / (n_asm_steps * ASSEMBLY_SIZE) for k in range(K_CLASSES)}
     if idx.get("confidence_read") in {"margin", "margin_abs"}:
         meta_sub_size = META_SIZE // K_CLASSES
         meta_by_class = {k: meta_member_acc[k] / (nlate * meta_sub_size) for k in range(K_CLASSES)}
@@ -718,11 +727,17 @@ def _run_trial(bridge, xp, idx, snap, drive_pa):
             meta_conf = abs(meta_by_class[1] - meta_by_class[0])
         else:
             meta_conf = max(meta_by_class.values())
+    elif idx.get("confidence_read") == BALANCE_CONFIDENCE_READ:
+        # BALANCE-OF-EVIDENCE (Vickers): confidence = the ABSOLUTE MARGIN of the first-order workspace WTA
+        # competition, read DIRECTLY from cp_firing_states over the SAME evidence window as the decision. The
+        # settled decision-variable separation IS the confidence -- no downstream pool, no host formula.
+        meta_by_class = None
+        meta_conf = abs(asm_rate[1] - asm_rate[0])
     else:
         meta_by_class = None
         meta_conf = meta_acc / (nlate * META_SIZE)
     return {
-        "assembly": {k: asm_acc[k] / (n_asm_steps * ASSEMBLY_SIZE) for k in range(K_CLASSES)},
+        "assembly": asm_rate,
         "meta": meta_conf,
         "meta_by_class": meta_by_class,
     }
@@ -962,12 +977,17 @@ def evaluate_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
     permuted_collapsed = bool(t2_perm["type2_auc"] <= thresholds["chance_type2_auc"]
                               and t2_perm["meta_d"] <= thresholds["collapse_meta_d"])
 
-    # ---- GO (per-seed) ----
-    in_window = bool(thresholds["type1_acc_lo"] <= type1_accuracy <= thresholds["type1_acc_hi"])
-    go_type2 = bool(t2["type2_auc"] >= thresholds["type2_auc"])
-    go_meta = bool(t2["meta_d"] > 0.0 and t2["m_ratio"] >= thresholds["m_ratio"])
-    go = bool(in_window and go_type2 and go_meta
-              and lesion_meta_collapsed and domain_dissociation_ok and permuted_collapsed and within_class_ok)
+    # ---- GO (per-seed) -- pure, SELF-TESTED decision. `selftest()` locks the FAILING DIRECTION:
+    # a chance-level type-2 input (type2_auc~0.5, meta_d~0) CANNOT produce GO even with type-1 in window
+    # and all controls clean (CLAUDE.md rule 9 / gate-registry discipline: a gate that cannot fail in its
+    # failing direction is not trusted). This is the instrument fix for the silent-failure class. ----
+    controls = {
+        "lesion_meta_collapsed": lesion_meta_collapsed,
+        "domain_dissociation_ok": domain_dissociation_ok,
+        "permuted_collapsed": permuted_collapsed,
+        "within_class_ok": within_class_ok,
+    }
+    go, go_components = _seed_go_decision(t2, type1_accuracy, controls, thresholds)
 
     r = {
         "seed": int(seed), "n_trials": int(n_trials),
@@ -976,7 +996,8 @@ def evaluate_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
             "type1_accuracy": type1_accuracy, "d1": d1, "c1": c1, "hr": hr, "far": far,
             "type2_auc": t2["type2_auc"], "meta_d": t2["meta_d"], "m_ratio": t2["m_ratio"],
             "conf_correct_mean": t2["conf_correct_mean"], "conf_error_mean": t2["conf_error_mean"],
-            "conf_vs_signal_spearman": conf_vs_sig_spearman, "in_operating_window": in_window,
+            "conf_vs_signal_spearman": conf_vs_sig_spearman,
+            "in_operating_window": go_components["in_operating_window"],
         },
         "within_class_correctness": {
             "per_class_type2_auc": {str(k): v for k, v in per_class_t2_auc.items()},
@@ -993,10 +1014,7 @@ def evaluate_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
             "type2_auc": t2_perm["type2_auc"], "meta_d": t2_perm["meta_d"],
             "meta_d_attributable": meta_d_attributable_permuted, "collapsed": permuted_collapsed,
         },
-        "go_components": {"in_operating_window": in_window, "type2": go_type2, "meta": go_meta,
-                          "meta_lesion_collapses": lesion_meta_collapsed,
-                          "domain_dissociation": domain_dissociation_ok,
-                          "permuted_collapses": permuted_collapsed, "within_class_correctness": within_class_ok},
+        "go_components": go_components,
         "go": go,
     }
     if verbose:
@@ -1028,6 +1046,231 @@ def _print_seed(r):
     print(f"    >>> seed GO = {r['go']}  {r['go_components']}", flush=True)
 
 
+# ── PART 2: BALANCE-OF-EVIDENCE monitor (a PURE-SPIKING, content/evidence-sensitive confidence read) ─────────
+def _balance_preconditions(per_seed, verdict, n_go, n_seeds):
+    """File-property preconditions that must travel WITH the balance verdict (verdict-preconditions gate).
+    Each entry is measured (ok is a real bool, never None); all hold for a genuine balance run."""
+    return [
+        {"name": "per_seed_type1_type2_meta_metrics_recorded",
+         "ok": bool(per_seed) and all(
+             "intact" in r and all(k in r["intact"] for k in ("type1_accuracy", "type2_auc", "meta_d", "m_ratio"))
+             for r in per_seed)},
+        {"name": "permuted_within_class_and_loop_ablation_controls_recorded",
+         "ok": bool(per_seed) and all(
+             all(k in r for k in ("permuted_confidence", "within_class_correctness", "loop_ablation"))
+             for r in per_seed)},
+        {"name": "confidence_read_from_firing_states_no_host_formula",
+         "ok": bool(per_seed) and all(
+             bool(r.get("read_from_firing_states")) and not bool(r.get("host_confidence_formula_used", False))
+             for r in per_seed)},
+        {"name": "verdict_derived_from_recorded_seed_go_flags",
+         "ok": verdict == ("GO" if n_go == n_seeds else ("PARTIAL" if n_go > 0 else "NEGATIVE"))},
+    ]
+
+
+def evaluate_balance_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
+                          attractor_weight, nmda_tau, thresholds, verbose=False):
+    """Evaluate the `balance` confidence read for one seed.
+
+    MECHANISM (brain-based-only): the confidence is the ABSOLUTE MARGIN of the first-order workspace WTA
+    competition -- |rate(assembly_1) - rate(assembly_0)| -- read DIRECTLY from `cp_firing_states` over the
+    evidence window (Vickers balance-of-evidence; Kepecs; Fleming/Lau meta-d'). This is the metacog analogue of
+    the D4 comprehension-monitor sel-pool margin (content-sensitive spiking competition), which carried a genuine
+    type-2 signal (AUC 1.0) exactly where a content-blind read was at chance. NO downstream meta pool, NO host
+    classifier -- the settled decision-variable separation IS the confidence.
+
+    CONTROLS:
+      * PERMUTED (load-bearing): decorrelate the margin from the trial -> type-2 must fall to chance. This is the
+        `type-2 back to chance when the confidence's informative content is destroyed` control.
+      * WITHIN-CLASS: the margin predicts correct/error even WITHIN a fixed stimulus class -> it reports
+        how-sure-I-was, not which-stimulus.
+      * LOOP-ABLATION (mechanistic diagnostic): zero the recurrent accumulator loop (attractor_weight=0) and
+        re-read -> does the SETTLED competition, vs the raw input encoding, carry the type-2 signal? Reported
+        honestly; NOT required for GO (balance-of-evidence is theoretically not dissociable from first-order
+        encoding -- the dissociable-but-seed-fragile comparator is `margin_abs`).
+
+    GO (pre-registered): type-1 in [0.60,0.90] AND type2_auc>=0.65 AND meta_d>0 AND m_ratio>=0.60 AND permuted
+    collapses AND within-class OK. Returns a per-seed result dict."""
+    stimulus, drive, sig = make_trials(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise)
+
+    def run_block(bridge, xp, idx, snap):
+        response = np.zeros(n_trials, dtype=int)
+        confidence = np.zeros(n_trials, dtype=np.float64)
+        for i in range(n_trials):
+            r = _run_trial(bridge, xp, idx, snap, drive[i])
+            response[i] = _response_from_assembly(r["assembly"])
+            confidence[i] = r["meta"]           # <-- the balance-of-evidence margin, read from cp_firing_states
+        return response, confidence
+
+    # ---- INTACT ----
+    bridge, xp, idx, snap = build_metacog_bridge(seed=seed, lesion_meta=False, attractor_weight=attractor_weight,
+                                                 nmda_tau=nmda_tau, confidence_read=BALANCE_CONFIDENCE_READ)
+    assert idx.get("confidence_read") == BALANCE_CONFIDENCE_READ  # brain-based read; no host confidence formula
+    response, confidence = run_block(bridge, xp, idx, snap)
+    type1_accuracy = float(np.mean(response == stimulus))
+    d1, c1, hr, far = _type1_sdt(stimulus, response)
+    t2 = _score_type2(stimulus, response, confidence, c1, d1, seed=seed)
+    conf_vs_sig_spearman = _spearman(sig, confidence)
+
+    # ---- WITHIN-CLASS ----
+    correct = (response == stimulus)
+    per_class_t2_auc = {}
+    for k in range(K_CLASSES):
+        m = stimulus == k
+        if int(m.sum()) >= 4 and correct[m].any() and (~correct[m]).any():
+            per_class_t2_auc[k] = float(_auc(confidence[m], correct[m]))
+        else:
+            per_class_t2_auc[k] = None
+    valid_pc = [v for v in per_class_t2_auc.values() if v is not None]
+    within_class_ok = bool(valid_pc and min(valid_pc) >= thresholds["within_class_t2_auc"])
+
+    # ---- PERMUTED (load-bearing collapse) ----
+    rng = np.random.default_rng(seed * 777 + 13)
+    perm = rng.permutation(n_trials)
+    t2_perm = _score_type2(stimulus, response, confidence[perm], c1, d1, seed=seed)
+    permuted_collapsed = bool(t2_perm["type2_auc"] <= thresholds["chance_type2_auc"]
+                              and t2_perm["meta_d"] <= thresholds["collapse_meta_d"])
+    meta_d_attributable_permuted = attributable_to(
+        "balance meta-d' from true trial pairing (permuted vs intact)", t2["meta_d"], t2_perm["meta_d"],
+        warn_below=-1.0)
+
+    # ---- LOOP-ABLATION diagnostic: zero the recurrent accumulator loop -> is the SETTLED competition load-bearing? ----
+    bridge_l, xp_l, idx_l, snap_l = build_metacog_bridge(seed=seed, lesion_meta=False, attractor_weight=0.0,
+                                                         nmda_tau=nmda_tau, confidence_read=BALANCE_CONFIDENCE_READ)
+    response_l, confidence_l = run_block(bridge_l, xp_l, idx_l, snap_l)
+    type1_accuracy_l = float(np.mean(response_l == stimulus))
+    d1_l, c1_l, _, _ = _type1_sdt(stimulus, response_l)
+    t2_l = _score_type2(stimulus, response_l, confidence_l, c1_l, d1_l, seed=seed)
+    ablation_collapsed = bool(t2_l["type2_auc"] <= thresholds["chance_type2_auc"]
+                              and t2_l["meta_d"] <= thresholds["collapse_meta_d"])
+    meta_d_attributable_ablation = attributable_to(
+        "balance meta-d' from the SETTLED recurrent competition (loop-ablation vs intact)",
+        t2["meta_d"], t2_l["meta_d"], warn_below=-1.0)
+
+    # ---- GO (pre-registered for the balance read) ----
+    in_window = bool(thresholds["type1_acc_lo"] <= type1_accuracy <= thresholds["type1_acc_hi"])
+    go_type2 = bool(t2["type2_auc"] >= thresholds["type2_auc"])
+    go_meta = bool(t2["meta_d"] > 0.0 and t2["m_ratio"] >= thresholds["m_ratio"])
+    go = bool(in_window and go_type2 and go_meta and permuted_collapsed and within_class_ok)
+
+    r = {
+        "seed": int(seed), "n_trials": int(n_trials), "confidence_read": BALANCE_CONFIDENCE_READ,
+        "intact": {
+            "type1_accuracy": type1_accuracy, "d1": d1, "c1": c1, "hr": hr, "far": far,
+            "type2_auc": t2["type2_auc"], "meta_d": t2["meta_d"], "m_ratio": t2["m_ratio"],
+            "conf_correct_mean": t2["conf_correct_mean"], "conf_error_mean": t2["conf_error_mean"],
+            "conf_vs_signal_spearman": conf_vs_sig_spearman, "in_operating_window": in_window,
+        },
+        "within_class_correctness": {
+            "per_class_type2_auc": {str(k): v for k, v in per_class_t2_auc.items()},
+            "min_per_class_type2_auc": (float(min(valid_pc)) if valid_pc else None),
+            "within_class_ok": within_class_ok,
+        },
+        "permuted_confidence": {
+            "type2_auc": t2_perm["type2_auc"], "meta_d": t2_perm["meta_d"],
+            "meta_d_attributable": meta_d_attributable_permuted, "collapsed": permuted_collapsed,
+        },
+        "loop_ablation": {
+            "type1_accuracy": type1_accuracy_l, "d1": d1_l,
+            "type2_auc": t2_l["type2_auc"], "meta_d": t2_l["meta_d"], "m_ratio": t2_l["m_ratio"],
+            "meta_d_attributable": meta_d_attributable_ablation, "collapsed": ablation_collapsed,
+        },
+        "read_from_firing_states": True, "host_confidence_formula_used": False,
+        "go_components": {"in_operating_window": in_window, "type2": go_type2, "meta": go_meta,
+                          "permuted_collapses": permuted_collapsed, "within_class_correctness": within_class_ok},
+        "go": go,
+    }
+    if verbose:
+        it = r["intact"]; wc = r["within_class_correctness"]; pp = r["permuted_confidence"]; ab = r["loop_ablation"]
+        print(f"  [seed {seed}] BALANCE  type1_acc={it['type1_accuracy']:.3f} d'={it['d1']:+.2f} | "
+              f"type2_auc={it['type2_auc']:.3f} (chance .5) meta_d={it['meta_d']:.2f} M-ratio={it['m_ratio']:.2f} "
+              f"| in_window={in_window}", flush=True)
+        print(f"           conf correct/error mean = {it['conf_correct_mean']}/{it['conf_error_mean']}  "
+              f"conf~signal spearman={it['conf_vs_signal_spearman']:+.2f}", flush=True)
+        print(f"    WITHIN-CLASS per-class type2_auc={wc['per_class_type2_auc']} min={wc['min_per_class_type2_auc']} "
+              f"ok={wc['within_class_ok']}", flush=True)
+        print(f"    PERMUTED     type2_auc={pp['type2_auc']:.3f} meta_d={pp['meta_d']:.2f} collapsed={pp['collapsed']}",
+              flush=True)
+        print(f"    LOOP-ABLATE  type1_acc={ab['type1_accuracy']:.3f} type2_auc={ab['type2_auc']:.3f} "
+              f"meta_d={ab['meta_d']:.2f} collapsed={ab['collapsed']}  (diagnostic; not a GO requirement)", flush=True)
+        print(f"    >>> seed GO = {go}  {r['go_components']}", flush=True)
+    return r
+
+
+def run_balance_mode(seeds, n_trials, args):
+    """6-seed driver for the balance-of-evidence read: loop `evaluate_balance_seed`, aggregate, write JSON."""
+    print(f"[metacog:balance] BALANCE-OF-EVIDENCE monitor (PURE-SPIKING, content/evidence-sensitive) | "
+          f"seeds={seeds} n_trials={n_trials} backend={args.backend} base_pa={args.base_pa} "
+          f"sig[{args.sig_lo},{args.sig_hi}] stim_noise={args.stim_noise} attractor_w={args.attractor_weight} "
+          f"nmda_tau={args.nmda_tau}", flush=True)
+    print("[metacog:balance] confidence = |rate(asm_1) - rate(asm_0)| read DIRECTLY from cp_firing_states over the "
+          "evidence window (Vickers balance-of-evidence; the D4 sel-pool-margin analogue). No host formula.", flush=True)
+    t0 = time.time()
+    per_seed = [evaluate_balance_seed(s, n_trials, args.base_pa, args.sig_lo, args.sig_hi, args.stim_noise,
+                                      args.attractor_weight, args.nmda_tau, DEFAULT_THRESHOLDS, verbose=True)
+                for s in seeds]
+    n_go = sum(1 for r in per_seed if r["go"])
+    all_go = bool(n_go == len(per_seed))
+    verdict = "GO" if all_go else ("PARTIAL" if n_go > 0 else "NEGATIVE")
+
+    def _mean(path):
+        vals = []
+        for r in per_seed:
+            v = r
+            for k in path:
+                v = v[k]
+            if v is not None:
+                vals.append(v)
+        return float(np.mean(vals)) if vals else None
+
+    agg = {
+        "mean_type1_accuracy": _mean(["intact", "type1_accuracy"]),
+        "mean_d1": _mean(["intact", "d1"]),
+        "mean_type2_auc": _mean(["intact", "type2_auc"]),
+        "mean_meta_d": _mean(["intact", "meta_d"]),
+        "mean_m_ratio": _mean(["intact", "m_ratio"]),
+        "mean_permuted_type2_auc": _mean(["permuted_confidence", "type2_auc"]),
+        "mean_loop_ablation_type2_auc": _mean(["loop_ablation", "type2_auc"]),
+        "all_in_window": all(r["intact"]["in_operating_window"] for r in per_seed),
+        "all_permuted_collapse": all(r["permuted_confidence"]["collapsed"] for r in per_seed),
+        "all_within_class_ok": all(r["within_class_correctness"]["within_class_ok"] for r in per_seed),
+        "all_loop_ablation_collapse": all(r["loop_ablation"]["collapsed"] for r in per_seed),
+        "all_read_from_firing_states": all(r["read_from_firing_states"] for r in per_seed),
+    }
+    out = {
+        "runner": "_second_order_metacog_monitor_derisk",
+        "faculty": "F4 self-model/metacognition -- BALANCE-OF-EVIDENCE monitor (pure-spiking, brain-based read)",
+        "theory": ("Vickers balance-of-evidence confidence read DIRECTLY from the first-order workspace WTA margin "
+                   "(cp_firing_states); the D4 comprehension-monitor sel-pool-margin analogue -- Fleming/Lau meta-d'"),
+        "seeds": seeds, "n_trials": n_trials, "backend": args.backend, "confidence_read": BALANCE_CONFIDENCE_READ,
+        "thresholds": DEFAULT_THRESHOLDS, "verdict": verdict, "n_go": n_go, "n_seeds": len(seeds),
+        "aggregate": agg, "per_seed": per_seed,
+        "preconditions": _balance_preconditions(per_seed, verdict, n_go, len(seeds)),
+        "honest_scope": ("The confidence read is a PURE spiking read (the first-order competition margin from "
+                         "cp_firing_states), NOT a host classifier (unlike learned_acc). It discriminates the "
+                         "brain's OWN correct-vs-error trials (type-2 AUC / meta-d'), collapses when the trial "
+                         "pairing is permuted, and predicts correctness WITHIN a fixed stimulus class. It is a "
+                         "FUNCTIONAL metacognition correlate, NOT a claim of subjective experience. Balance-of-"
+                         "evidence confidence is theoretically NOT type-1/type-2 dissociable (it IS the decision "
+                         "variable); the dissociable comparator (margin_abs) is seed-fragile and remains the next rung."),
+    }
+    os.makedirs(os.path.dirname(os.path.abspath(args.json)), exist_ok=True)
+    with open(args.json, "w") as f:
+        json.dump(out, f, indent=2)
+    print(f"\n[metacog:balance] === VERDICT: {verdict} ({n_go}/{len(seeds)} seeds GO) ===", flush=True)
+    print(f"[metacog:balance]   mean type1_acc={agg['mean_type1_accuracy']:.3f} d'={agg['mean_d1']:+.2f} | "
+          f"mean type2_auc={agg['mean_type2_auc']:.3f} meta_d={agg['mean_meta_d']:.2f} "
+          f"M-ratio={agg['mean_m_ratio']:.2f}", flush=True)
+    print(f"[metacog:balance]   permuted mean type2_auc={agg['mean_permuted_type2_auc']:.3f} "
+          f"(collapse all={agg['all_permuted_collapse']}) | within-class all={agg['all_within_class_ok']} | "
+          f"in-window all={agg['all_in_window']}", flush=True)
+    print(f"[metacog:balance]   loop-ablation mean type2_auc={agg['mean_loop_ablation_type2_auc']:.3f} "
+          f"(collapse all={agg['all_loop_ablation_collapse']}; diagnostic) | "
+          f"read_from_firing_states all={agg['all_read_from_firing_states']}", flush=True)
+    print(f"[metacog:balance]   elapsed={time.time()-t0:.1f}s  wrote {args.json}", flush=True)
+    return 0 if all_go else 1
+
+
 DEFAULT_THRESHOLDS = {
     "type1_acc_lo": 0.60, "type1_acc_hi": 0.90,   # operating window: genuine errors, not ceiling/chance
     "type2_auc": 0.65,                            # confidence separates correct from error
@@ -1038,6 +1281,108 @@ DEFAULT_THRESHOLDS = {
     "max_d1_shift": 0.30,                         # domain dissociation: type-1 d' UNCHANGED under meta-lesion
     "max_acc_shift": 0.06,                        # domain dissociation: type-1 accuracy UNCHANGED under meta-lesion
 }
+
+
+def _seed_go_decision(t2, type1_accuracy, controls, thresholds):
+    """PURE per-seed GO decision (no I/O, no bridge) so it can be self-tested against its FAILING DIRECTION.
+
+    A GO REQUIRES genuine type-2 metacognitive sensitivity: `type2_auc >= thresholds['type2_auc']` AND
+    `meta_d > 0` AND `m_ratio >= thresholds['m_ratio']`, with type-1 accuracy in the operating window, AND every
+    anti-cheat control clean. There is NO path to GO that skips the type-2 metrics -- a chance-level type-2 input
+    (type2_auc ~0.5, meta_d ~0) is NO-GO regardless of type-1 accuracy or the controls. `selftest()` asserts this.
+
+    `t2` = {"type2_auc", "meta_d", "m_ratio"}. `controls` = {"lesion_meta_collapsed", "domain_dissociation_ok",
+    "permuted_collapsed", "within_class_ok"}. Returns (go: bool, components: dict)."""
+    in_window = bool(thresholds["type1_acc_lo"] <= type1_accuracy <= thresholds["type1_acc_hi"])
+    go_type2 = bool(t2["type2_auc"] >= thresholds["type2_auc"])
+    go_meta = bool(t2["meta_d"] > 0.0 and t2["m_ratio"] >= thresholds["m_ratio"])
+    go = bool(in_window and go_type2 and go_meta
+              and controls["lesion_meta_collapsed"] and controls["domain_dissociation_ok"]
+              and controls["permuted_collapsed"] and controls["within_class_ok"])
+    components = {
+        "in_operating_window": in_window, "type2": go_type2, "meta": go_meta,
+        "meta_lesion_collapses": bool(controls["lesion_meta_collapsed"]),
+        "domain_dissociation": bool(controls["domain_dissociation_ok"]),
+        "permuted_collapses": bool(controls["permuted_collapsed"]),
+        "within_class_correctness": bool(controls["within_class_ok"]),
+    }
+    return go, components
+
+
+def selftest(thresholds=None, verbose=True):
+    """INSTRUMENT SELF-CHECK -- the gate must be able to FAIL in its failing direction (CLAUDE.md rule 9;
+    the same discipline the tools/gates registry enforces). Two independent halves:
+
+      (A) The type-2 SCORER can tell SIGNAL from NOISE (rule 3: a refutation is only as trustworthy as the proof
+          the instrument could have detected an effect). Confidence PERFECTLY aligned with correctness must score
+          type2_auc ~ 1.0 and meta_d > 0; RANDOM confidence must score type2_auc ~ 0.5 and meta_d ~ 0.
+
+      (B) The GO DECISION genuinely REQUIRES type-2 sensitivity. A CHANCE-LEVEL type-2 input (type2_auc = 0.50,
+          meta_d = 0, m_ratio = 0) must be NO-GO even with type-1 in window and ALL controls clean -- this is the
+          exact silent-failure the 2026-08-12 lane-C finding accused the gate of; this locks it out. A genuine
+          strong type-2 with clean controls is GO, and any single failed control flips it back to NO-GO.
+
+    Raises AssertionError on any violation; returns True if all pass."""
+    th = dict(DEFAULT_THRESHOLDS if thresholds is None else thresholds)
+    ok = True
+
+    # ---- (A) scorer separates signal from noise ----
+    rng = np.random.default_rng(20260812)
+    n = 600
+    stimulus = rng.integers(0, K_CLASSES, size=n).astype(int)
+    # ~25% error rate -> type-1 accuracy ~0.75 (in window), balanced criterion so c1 ~ 0.
+    flip = rng.random(n) < 0.25
+    response = np.where(flip, 1 - stimulus, stimulus).astype(int)
+    correct = (response == stimulus)
+    d1, c1, _, _ = _type1_sdt(stimulus, response)
+    # SIGNAL confidence: monotone in correctness (correct trials get a higher draw than errors), with overlap.
+    conf_signal = np.where(correct, rng.normal(1.0, 0.4, n), rng.normal(0.0, 0.4, n))
+    # NOISE confidence: independent of the trial.
+    conf_noise = rng.normal(0.0, 1.0, n)
+    t2_sig = _score_type2(stimulus, response, conf_signal, c1, d1, seed=1)
+    t2_noise = _score_type2(stimulus, response, conf_noise, c1, d1, seed=1)
+    if verbose:
+        print(f"[selftest A] signal: type2_auc={t2_sig['type2_auc']:.3f} meta_d={t2_sig['meta_d']:.3f}  | "
+              f"noise: type2_auc={t2_noise['type2_auc']:.3f} meta_d={t2_noise['meta_d']:.3f}", flush=True)
+    assert t2_sig["type2_auc"] >= 0.80 and t2_sig["meta_d"] > 0.5, \
+        f"scorer FAILED to detect a real type-2 signal: {t2_sig}"
+    assert 0.42 <= t2_noise["type2_auc"] <= 0.58 and t2_noise["meta_d"] <= th["collapse_meta_d"], \
+        f"scorer HALLUCINATED type-2 signal from noise: {t2_noise}"
+
+    # ---- (B) GO decision requires type-2 ----
+    clean = {"lesion_meta_collapsed": True, "domain_dissociation_ok": True,
+             "permuted_collapsed": True, "within_class_ok": True}
+    # (B1) THE failing-direction check: chance type-2, everything else perfect -> NO-GO.
+    go_chance, comp_chance = _seed_go_decision(
+        {"type2_auc": 0.50, "meta_d": 0.0, "m_ratio": 0.0}, 0.75, clean, th)
+    # (B1b) near-miss type-2 (0.64 < 0.65 bar) with a positive meta_d -> still NO-GO.
+    go_near, _ = _seed_go_decision(
+        {"type2_auc": th["type2_auc"] - 0.01, "meta_d": 1.5, "m_ratio": 1.0}, 0.75, clean, th)
+    # (B2) genuine strong type-2 with clean controls -> GO.
+    go_strong, _ = _seed_go_decision(
+        {"type2_auc": 0.85, "meta_d": 2.0, "m_ratio": 1.0}, 0.75, clean, th)
+    # (B3) strong type-2 but ONE control fails (permuted leak) -> NO-GO.
+    leak = dict(clean, permuted_collapsed=False)
+    go_leak, _ = _seed_go_decision(
+        {"type2_auc": 0.85, "meta_d": 2.0, "m_ratio": 1.0}, 0.75, leak, th)
+    # (B4) strong type-2 but type-1 out of window (ceiling) -> NO-GO.
+    go_ceiling, _ = _seed_go_decision(
+        {"type2_auc": 0.85, "meta_d": 2.0, "m_ratio": 1.0}, 0.98, clean, th)
+    if verbose:
+        print(f"[selftest B] chance->{go_chance} near-miss->{go_near} strong->{go_strong} "
+              f"permuted-leak->{go_leak} ceiling->{go_ceiling}", flush=True)
+    assert go_chance is False, "GATE PASSED A CHANCE-LEVEL TYPE-2 INPUT (the exact silent-failure to lock out)"
+    assert comp_chance["type2"] is False and comp_chance["meta"] is False, \
+        "chance-level type-2 must fail the type2 AND meta components"
+    assert go_near is False, "GATE PASSED a type2_auc below the pre-registered bar"
+    assert go_strong is True, "GATE FAILED a genuine strong type-2 with clean controls"
+    assert go_leak is False, "GATE PASSED despite a permuted-confidence leak (a control that must be load-bearing)"
+    assert go_ceiling is False, "GATE PASSED with type-1 out of the operating window"
+
+    if verbose:
+        print("[selftest] PASS -- the gate fails in its failing direction (chance type-2 -> NO-GO) and the "
+              "type-2 scorer separates signal from noise.", flush=True)
+    return True
 
 
 def main():
@@ -1090,7 +1435,13 @@ def main():
     ap.add_argument("--learned-feature-mode", type=str, default=DEFAULT_LEARNED_FEATURE_MODE,
                     choices=LEARNED_FEATURE_MODE_CHOICES,
                     help="learned_acc only: static average-rate features or dynamic late-conflict/persistence features")
+    ap.add_argument("--selftest", action="store_true",
+                    help="run the INSTRUMENT self-check (gate fails in its failing direction; no bridge) and exit")
     args = ap.parse_args()
+
+    if args.selftest:
+        selftest()
+        return 0
 
     global DECISION_WINDOW
     DECISION_WINDOW = args.decision_window
@@ -1104,6 +1455,9 @@ def main():
     else:
         seeds = args.seeds if args.seeds is not None else [args.seed]
         n_trials = args.n_trials
+
+    if args.confidence_read == BALANCE_CONFIDENCE_READ:
+        return run_balance_mode(seeds, n_trials, args)
 
     learned_config = None
     if args.confidence_read == LEARNED_ACC_CONFIDENCE_READ:
@@ -1195,9 +1549,14 @@ def main():
                 "ok": all("intact" in r and "type2_auc" in r["intact"] and "meta_d" in r["intact"] for r in per_seed),
             },
             {
+                # domain dissociation is recorded UNDER meta_lesion (meta_lesion.domain_dissociation_ok);
+                # the within-class correctness control is its own block. (Fixed 2026-08-12: the old check
+                # required a top-level "domain_control" key that this runner never writes, so the precondition
+                # was ALWAYS False -- a silent broken instrument check.)
                 "name": "lesion_permutation_and_domain_controls_recorded",
                 "ok": all(
-                    all(k in r for k in ("meta_lesion", "domain_control", "permuted_confidence"))
+                    all(k in r for k in ("meta_lesion", "permuted_confidence", "within_class_correctness"))
+                    and "domain_dissociation_ok" in r["meta_lesion"]
                     for r in per_seed
                 ),
             },

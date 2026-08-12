@@ -1,0 +1,112 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition -- BALANCE-OF-EVIDENCE monitor (pure-spiking, brain-based read)",
+  "theory": "Vickers balance-of-evidence confidence read DIRECTLY from the first-order workspace WTA margin (cp_firing_states); the D4 comprehension-monitor sel-pool-margin analogue -- Fleming/Lau meta-d'",
+  "seeds": [
+    44
+  ],
+  "n_trials": 160,
+  "backend": "numpy",
+  "confidence_read": "balance",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "verdict": "GO",
+  "n_go": 1,
+  "n_seeds": 1,
+  "aggregate": {
+    "mean_type1_accuracy": 0.78125,
+    "mean_d1": 1.6583920256402553,
+    "mean_type2_auc": 0.8089142857142857,
+    "mean_meta_d": 2.248655413168353,
+    "mean_m_ratio": 1.3559251240973706,
+    "mean_permuted_type2_auc": 0.5182857142857142,
+    "mean_loop_ablation_type2_auc": 0.8253333333333334,
+    "all_in_window": true,
+    "all_permuted_collapse": true,
+    "all_within_class_ok": true,
+    "all_loop_ablation_collapse": false,
+    "all_read_from_firing_states": true
+  },
+  "per_seed": [
+    {
+      "seed": 44,
+      "n_trials": 160,
+      "confidence_read": "balance",
+      "intact": {
+        "type1_accuracy": 0.78125,
+        "d1": 1.6583920256402553,
+        "c1": -0.438744268674151,
+        "hr": 0.8975903614457831,
+        "far": 0.34810126582278483,
+        "type2_auc": 0.8089142857142857,
+        "meta_d": 2.248655413168353,
+        "m_ratio": 1.3559251240973706,
+        "conf_correct_mean": 0.003934999999999999,
+        "conf_error_mean": 0.000592857142857143,
+        "conf_vs_signal_spearman": 0.057098910113676314,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.6917211328976035,
+          "1": 0.8589527027027027
+        },
+        "min_per_class_type2_auc": 0.6917211328976035,
+        "within_class_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5182857142857142,
+        "meta_d": 0.12404006385501472,
+        "meta_d_attributable": 0.9448381183134493,
+        "collapsed": true
+      },
+      "loop_ablation": {
+        "type1_accuracy": 0.9375,
+        "d1": 2.9973078785025353,
+        "type2_auc": 0.8253333333333334,
+        "meta_d": 2.2439116132863988,
+        "m_ratio": 0.7486423498167509,
+        "meta_d_attributable": 0.0021096161973836545,
+        "collapsed": false
+      },
+      "read_from_firing_states": true,
+      "host_confidence_formula_used": false,
+      "go_components": {
+        "in_operating_window": true,
+        "type2": true,
+        "meta": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true
+      },
+      "go": true
+    }
+  ],
+  "preconditions": [
+    {
+      "name": "per_seed_type1_type2_meta_metrics_recorded",
+      "ok": true
+    },
+    {
+      "name": "permuted_within_class_and_loop_ablation_controls_recorded",
+      "ok": true
+    },
+    {
+      "name": "confidence_read_from_firing_states_no_host_formula",
+      "ok": true
+    },
+    {
+      "name": "verdict_derived_from_recorded_seed_go_flags",
+      "ok": true
+    }
+  ],
+  "honest_scope": "The confidence read is a PURE spiking read (the first-order competition margin from cp_firing_states), NOT a host classifier (unlike learned_acc). It discriminates the brain's OWN correct-vs-error trials (type-2 AUC / meta-d'), collapses when the trial pairing is permuted, and predicts correctness WITHIN a fixed stimulus class. It is a FUNCTIONAL metacognition correlate, NOT a claim of subjective experience. Balance-of-evidence confidence is theoretically NOT type-1/type-2 dissociable (it IS the decision variable); the dissociable comparator (margin_abs) is seed-fragile and remains the next rung."
+}

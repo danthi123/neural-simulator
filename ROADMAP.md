@@ -142,9 +142,11 @@ moat-safe unless noted):
   to spiking error units; expected turn cancels→~0 Hz, violated fires (37–46 Hz); lesion 100% attributable; the instrument
   was verified in BOTH directions (a false-null and a false-GO both caught). Wireable → a queryable "what do you expect /
   how is this going" + surprise on interlocutor-affect violation.
-- **E1 self-model / metacognition = BOUNDARY** (type-2 metacog at chance despite a MIS-CALIBRATED GO gate — instrument
-  flag filed; do NOT wire until a real meta-d′>0 mechanism lands; mechanism search in flight, lead: a content-sensitive
-  confidence read like D4's).
+- **E1 self-model / metacognition — 6/6 GO** (the earlier "at chance" BOUNDARY was a MIS-READ finding, now corrected): a
+  PURE-SPIKING balance-of-evidence confidence read (`|rate(asm₁)−rate(asm₀)|`, the workspace WTA margin off
+  `cp_firing_states`) clears a self-tested type-2 gate 6/6 (meta_d 1.04–2.25, permuted→chance) — the first pure-spiking
+  meta-d′>0 (the prior 6/6 used a host logistic regression). Unblocks the honesty-boundary self-report. Mapped limit: it is
+  balance-of-evidence confidence, not architecturally type-1/type-2 DISSOCIABLE (that comparator stays seed-fragile = next rung).
 - **Adversarial verification (2026-08-12):** D2, D4, A1a each survived an independent 3-skeptic refutation pass (9/9
   refuted=false, high confidence; D2 reproduced byte-identically). **D4 comprehension monitor AND D2 expectation/surprise
   are now both WIRED** into the production `/api/brain-chat` turn (Gate-B, default-on, lesion-load-bearing): D4 honestly
