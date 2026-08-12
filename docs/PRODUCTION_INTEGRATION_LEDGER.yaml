@@ -96,18 +96,18 @@ rows:
     #                            is FIXED via recruit-an-assembly (OneBrainComposer vocab_headroom, a reserve of
     #                            uncommitted cleanup slots). Genuinely-spiking recall + runtime LEARN COMPOSE (resonate
     #                            step per query, NOT the numpy _scan fast path). Byte-identical at vocab_headroom=0.
-    wired: NO                   # still not the production DEFAULT (default tiny-demo/webapp build is composer_kind='rf')
-    on_by_default: NO
-    scaffold_retired: NO
-    host_scaffold_in_default: "composer_kind='rf' hardcoded (numpy _scan_first_match fast path, host np. cleanup); the genuinely-spiking onebrain path is de-risked + working but default-off"
+    wired: YES                  # 2026-08-12: the webapp /api/brain-chat tiny-demo brain builds composer_kind=onebrain
+    on_by_default: YES          # the production webapp default is now onebrain (BRAIN_COMPOSER_KIND defaults to 'onebrain'); BRAIN_COMPOSER_KIND=rf is the escape to the numpy fast path
+    scaffold_retired: NO        # the rf numpy fast path remains as the CPU/test oracle + the env escape
+    host_scaffold_in_default: "none for the recall MECHANISM (the resonate-and-fire onebrain store is the default); the rf numpy _scan fast path is the opt-out oracle (BRAIN_COMPOSER_KIND=rf), not the default"
     default_anchor:
-      - file: research/runners/brain_chat_tui.py
-        assign: composer_kind
-        off_value: "\"rf\""
-        on_value: "\"onebrain\""
-        count: 4
-    lesion_note: "The one-brain property is a MECHANISM claim (recall on FIRING NEURONS via resonate, not numpy _scan) — proven by the code path + the ~180x slowdown, NOT by an answer change (onebrain and rf give the same answers by design; the point is the substrate that computes them). Flipping the default to onebrain is the next step, gated on RICH/GENERATE + the HTTP endpoint under onebrain + accepting ~183s startup (speed secondary)."
-    evidence: "one_brain_composer.py vocab_headroom + _recruit_word (recruit-an-assembly); brain_conversational_agent.py:264 vocab_headroom=128 on the onebrain path; finding 2026-08-12-onebrain-spiking-store...RESOLVED; e2e onebrain ChatBrain CHOOSE+LEARN×2+abstain+anaphora verified"
+      - file: webapp/server.py
+        assign: _ck
+        off_value: "os.environ.get(\"BRAIN_COMPOSER_KIND\", \"rf\")"
+        on_value: "os.environ.get(\"BRAIN_COMPOSER_KIND\", \"onebrain\")"
+        count: 1
+    lesion_note: "The one-brain property is a MECHANISM claim (recall on FIRING NEURONS via resonate, not numpy _scan) — proven by the HTTP activity trace (composer='onebrain', 45730 readout neurons, frac_fired ~1.7%% on a match / ~0 on abstain), NOT by an answer change (onebrain and rf give the same answers by design; the point is the substrate computing them). The TUI/smoke _build_tiny_demo default stays 'rf' (fast GPU-free smoke); only the webapp production default flipped."
+    evidence: "webapp/server.py BRAIN_COMPOSER_KIND default 'onebrain'; _build_tiny_demo(composer_kind=) plumbing; one_brain_composer.py vocab_headroom recruit-an-assembly; HTTP-verified on /api/brain-chat: CHOOSE 'The dog chases cat.' + abstain + LEARN 'wolf hunt deer'->'The wolf hunts deer.' (matched_fact_index=5) + rich GENERATE 'The dog chases cat. The cat eats fish.', all composer='onebrain'; finding 2026-08-12-onebrain-spiking-store...RESOLVED"
 
   - key: discourse-planner
     faculty: "Discourse planner (dlPFC neural planner; multi-sentence content)"

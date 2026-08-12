@@ -543,9 +543,14 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
     return agent, aliases, n
 
 
-def _build_tiny_demo(seed, use_multiturn, enable_neural_render):
+def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="rf"):
     """A tiny CPU brain for the GPU-FREE smoke: a handful of self-facts + a couple of object facts. Mirrors the
-    self-knowledge shape so the smoke exercises self-reference + the moat + multi-turn anaphora."""
+    self-knowledge shape so the smoke exercises self-reference + the moat + multi-turn anaphora.
+
+    `composer_kind` (default 'rf' = the numpy fast-path recall, byte-identical to before): pass 'onebrain' for the
+    GENUINELY-SPIKING recall (resonate-and-fire per query + the on-substrate cleanup/store; runtime new-word LEARN
+    works via the vocab_headroom recruit-an-assembly path). The onebrain build is much slower (~180s) but is the
+    brain-based-only recall the mission requires; speed is secondary."""
     from research.runners.brain_conversational_agent import BrainConversationalAgent
     # base-form verbs so the template-stub's 3rd-person inflection reads cleanly (use->uses, learn->learns).
     # 'cat' is the OBJECT of (dog chase cat) AND the SUBJECT of (cat eat fish) -- the validated chainable-referent
@@ -575,10 +580,10 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render):
         except Exception as _e:
             print(f"[tui] discourse event register unavailable ({_e!r}); who-was-before disabled.", flush=True)
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts, seed=seed,
-                               enable_neural_render=enable_neural_render, composer_kind="rf",
+                               enable_neural_render=enable_neural_render, composer_kind=composer_kind,
                                enable_biased_competition=False, defer_planner=True, event_register=ev_reg)
     else:
-        agent = BrainConversationalAgent(seed=seed, concepts=concepts, composer_kind="rf",
+        agent = BrainConversationalAgent(seed=seed, concepts=concepts, composer_kind=composer_kind,
                                          enable_neural_render=enable_neural_render)
     inner = getattr(agent, "agent", agent)
     for a, v, p in facts:

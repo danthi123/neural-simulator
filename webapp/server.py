@@ -2949,8 +2949,13 @@ def _build_chat_brain(brain: str, renderer: str):
 
     # --- load the brain (mirrors brain_chat_tui.load_brain precedence) ---
     if brain in ("", "tiny-demo", "tiny", "demo"):
+        # BRAIN_COMPOSER_KIND (default 'rf' = the numpy fast-path recall): set 'onebrain' for the GENUINELY-SPIKING
+        # recall (resonate-and-fire per query, runtime new-word LEARN via vocab_headroom). The onebrain build is
+        # ~180s (speed secondary); it is the brain-based-only recall the mission requires. Env-gated so the flip to
+        # spiking-by-default is one setting, and it can be verified via the real endpoint before becoming the default.
+        _ck = os.environ.get("BRAIN_COMPOSER_KIND", "onebrain")
         agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
-                                              enable_neural_render=False)
+                                              enable_neural_render=False, composer_kind=_ck)
         source = "tiny-demo"
     elif brain in ("self-knowledge", "self_knowledge", "self"):
         agent, aliases, _n = _load_self_knowledge(
