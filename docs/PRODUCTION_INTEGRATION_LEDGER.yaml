@@ -28,12 +28,13 @@ headline:
     choose: PARTIAL  # 2026-08-12 INTEGRATION #1: direct factual questions are decided by the SUBSTRATE (recall or honest
                      # abstain), lesion-verified; the host router's keyword-CONFAB is retired for them. Residual: neural
                      # question comprehension + open-ended topic choice; host still handles self/identity + noisy-anaphora.
-    generate: RICH-TOGGLE # RE-CORRECTED 2026-08-12 (verified): associative multi-fact generation IS on the endpoint via
-                     # the RICH path (the UI's "rich" toggle) — the RichAnswerComposer uses the spiking `elaborate`
-                     # (dlPFC spreading-activation) for content, and I flipped neural_planner=True (server.py:3009) so the
-                     # ORDERING is spiking too (relevance_by_latency). "tell me about dog" -> "dog chase cat cat eat fish".
-                     # on_by_default=NO (needs the rich toggle); the DEFAULT single-fact path is recall. My _maybe_generate
-                     # (in answer()) was a redundant duplicate of the rich path. (My prior TUI-ONLY note over-corrected.)
+    generate: PARTIAL # 2026-08-12 UPGRADED: open-ended NOVEL-proposition generation (#3E) is now WIRED onto the DEFAULT
+                     # gate()/render() — an explicit open-ended prompt ("what might X ...", "guess ...") returns a FLAGGED
+                     # "perhaps a v p" hypothesis (novel + plausibility-gated over the brain's own fact-graph + moat-verified),
+                     # prompt-triggered, on the default turn (no rich toggle). The RICH path (RichAnswerComposer, spiking
+                     # elaborate + neural_planner=True) also remains for associative multi-fact replies. RESIDUAL host shortcut:
+                     # the generative DRAW is the b2 host oracle (the spiking WTA sampler hardcodes the taxonomy) -> PARTIAL,
+                     # not full spiking. See the open-ended-generation row. (The DEFAULT recall path stays byte-identical.)
     learn: YES       # 2026-08-12 INTEGRATION #2 + fix: acquisition moved INTO gate() (an SVO assertion is taught + returned),
                      # so it reaches the /api/brain-chat endpoint; substrate-first recall. Production-path probe (gate+render):
                      # teach "wolf hunt deer" -> recall "wolf hunt deer", lesion-verified. Runtime code allocation for new words.
@@ -67,13 +68,13 @@ rows:
     evidence: "brain_chat_tui.py _maybe_acquire + gate() substrate-first + _substrate_recall; rf_phasor_composer.py runtime code allocation (_filler_phases + _growth_rng); probe LEARN True + lesion-load-bearing; finding 2026-08-12-INTEGRATION2 + 2b addendum"
 
   - key: open-ended-generation
-    faculty: "Generation — associative multi-fact topic reply via the RICH path (spiking elaborate + spiking ordering)"
+    faculty: "Generation — the brain VOLUNTEERS a NOVEL grounded proposition on an open-ended prompt (#3E generative replay over its own fact-association graph), moat-verified + flagged as a hypothesis; the RICH path's associative multi-fact reply also remains"
     de_risked: YES
-    wired: YES                  # RE-CORRECTED: the RICH endpoint path (RichAnswerComposer) generates via the spiking elaborate; reachable from /api/brain-chat when rich=True
-    on_by_default: NO           # requires the UI "rich" toggle; the default single-fact path is recall. (My _maybe_generate on answer() was a redundant duplicate.)
-    scaffold_retired: NO        # broader open-ended (novel sentences on any topic, beyond the association graph) = the emerge stream-cortex, unwired; Qwen renders surface
-    host_scaffold_in_default: "the DEFAULT single-fact path does recall (no generation); broader open-ended generation (emerge stream-cortex) unwired; Qwen renders the surface"
-    evidence: "rich_answer_composer.py uses the spiking elaborate; server.py:3009 neural_planner=True (spiking ordering, my flip); 'tell me about dog' -> 'dog chase cat cat eat fish'; finding 2026-08-12-INTEGRATION3 + corrections"
+    wired: YES                  # 2026-08-12 INTEGRATION: #3E generative-replay WIRED onto the DEFAULT gate()/render() of /api/brain-chat (not only rich=True). An explicit open-ended prompt ("what might X ...", "tell me something new about X", "what else about X", "guess ...") returns a FLAGGED "perhaps a v p" hypothesis. Verified in-process AND over HTTP (composer=onebrain).
+    on_by_default: YES          # fires on the DEFAULT single-fact turn — no flag, not behind rich=True. PROMPT-TRIGGERED by design (an explicit open-ended lead-in); EVERY other question is byte-identical (recall/abstain/learn/anaphora untouched; verified pristine==modified smoke).
+    scaffold_retired: NO        # residual host shortcuts: the generative DRAW is the b2 HOST oracle (the spiking WTA sampler hardcodes the 8x8 taxonomy pools, cannot encode an arbitrary conversational vocab); the plausibility graph is host-computed over the brain's own facts; non-contradiction is inert on the onebrain composer (negation not stored as retrievable 'no' — an onebrain scope limit; the reused gate DOES fire on the rf composer); broader novel-sentence generation (emerge stream-cortex) unwired; Qwen renders the surface.
+    host_scaffold_in_default: "the DEFAULT recall path is unchanged (recall/abstain); open-ended generation is a prompt-triggered branch whose generative DRAW is the b2 host oracle (numpy weighted sample) over a host-computed co-occurrence graph of the brain's own facts; onebrain negation unstored so the non-contradiction gate is inert there; broader emerge stream-cortex unwired"
+    evidence: "brain_chat_tui.py _parse_open_ended + _build_generation_proposer (clean co-occurrence over stored facts) + _generate_hypothesis (REUSES b2 GenerativeReplayProposer _plausible/_contradicts/_sample_weighted) + render() HypothesisSVO. onebrain in-process gate(): 'what might dog eat?' -> 'perhaps dog eat cat' (novel+plausible+moat-verified), 0/30 confab leaks, unknown-topic abstains, no-regression all-True; HTTP /api/brain-chat composer=onebrain returns the flagged guess. rf: non-contradiction gate returns 'no' + never re-proposes the negated fact; plausibility gate LOAD-BEARING (uniform-random floor 0.116 vs gated 1.000 -> 8.63x). finding 2026-08-12-INTEGRATION-open-ended-generation-brain-volunteers-novel-propositions-on-default-chat"
 
   - key: neural-render
     faculty: "Neural word-order articulation (Broca-like; enable_neural_render)"

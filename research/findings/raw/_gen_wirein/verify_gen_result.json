@@ -1,0 +1,204 @@
+{
+  "checks": {
+    "c_no_regression": {
+      "recall_dog_chase": true,
+      "anaphora_it_eat": true,
+      "abstain_fish_fly": true,
+      "inloop_teach": true,
+      "inloop_recall": true
+    },
+    "a_generation": {
+      "is_hypothesis_type": true,
+      "hypothesis": [
+        "dog",
+        "eat",
+        "cat"
+      ],
+      "novel_not_stored": true,
+      "topic_respected": true,
+      "moat_not_known": true,
+      "is_plausible": true,
+      "render_flagged": true,
+      "rendered": "perhaps dog eat cat  [a guess from what I've learned -- not something I was taught]"
+    },
+    "a_moat_0confab": {
+      "n": 30,
+      "leaks_known": 0,
+      "leaks_stored": 0,
+      "abstains": 0,
+      "samples": [
+        [
+          "dog",
+          "eat",
+          "bird"
+        ],
+        [
+          "cat",
+          "eat",
+          "sheep"
+        ],
+        [
+          "fox",
+          "chase",
+          "worm"
+        ],
+        [
+          "bird",
+          "eat",
+          "cat"
+        ],
+        [
+          "wolf",
+          "chase",
+          "cat"
+        ],
+        [
+          "cat",
+          "eat",
+          "sheep"
+        ],
+        [
+          "fox",
+          "eat",
+          "cat"
+        ],
+        [
+          "dog",
+          "chase",
+          "bird"
+        ],
+        [
+          "bird",
+          "chase",
+          "cat"
+        ],
+        [
+          "wolf",
+          "eat",
+          "bird"
+        ],
+        [
+          "dog",
+          "eat",
+          "bird"
+        ],
+        [
+          "cat",
+          "eat",
+          "sheep"
+        ]
+      ]
+    },
+    "a_unknown_topic_abstains": true,
+    "a_contradiction_rejected": {
+      "is_it_true_no": false,
+      "contradicts_flag": false,
+      "negated_never_proposed": false,
+      "proposed_fish_count": 8
+    },
+    "b_lesion": {
+      "gated_accepted": 36,
+      "gated_true_plausible_frac": 1.0,
+      "lesioned_accepted": 49,
+      "lesioned_true_plausible_frac": 0.735,
+      "lesioned_examples": [
+        "dog eat fish",
+        "fox chase meat",
+        "dog eat sheep",
+        "cat chase fish",
+        "cat chase deer",
+        "wolf chase cat",
+        "brain learn memory",
+        "fox chase cat",
+        "brain store spikes",
+        "wolf eat cat",
+        "fox chase deer",
+        "wolf chase bird"
+      ],
+      "gate_load_bearing": false
+    }
+  },
+  "examples": {},
+  "timings": {
+    "build_s": 196.3,
+    "teach_s": 41.6,
+    "one_generate_s": 8.26,
+    "total_s": 638.9
+  },
+  "stored_facts": [
+    [
+      "bird",
+      "chase",
+      "worm"
+    ],
+    [
+      "bird",
+      "eat",
+      "seed"
+    ],
+    [
+      "brain",
+      "learn",
+      "words"
+    ],
+    [
+      "brain",
+      "store",
+      "memory"
+    ],
+    [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    [
+      "cat",
+      "chase",
+      "bird"
+    ],
+    [
+      "cat",
+      "eat",
+      "fish"
+    ],
+    [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    [
+      "dog",
+      "eat",
+      "meat"
+    ],
+    [
+      "fox",
+      "chase",
+      "bird"
+    ],
+    [
+      "fox",
+      "eat",
+      "meat"
+    ],
+    [
+      "wolf",
+      "chase",
+      "deer"
+    ],
+    [
+      "wolf",
+      "eat",
+      "sheep"
+    ]
+  ],
+  "verdict": {
+    "GO": false,
+    "c_no_regression": true,
+    "a_generation": true,
+    "a_moat_0confab": true,
+    "a_unknown_abstains": true,
+    "a_contradiction_rejected": false,
+    "b_lesion_load_bearing": false
+  }
+}

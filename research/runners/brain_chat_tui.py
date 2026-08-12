@@ -68,6 +68,45 @@ _SK_CURRICULUM = os.path.join(_REPO, "research", "findings", "raw", "_curriculum
 
 
 # ============================================================================================================
+# OPEN-ENDED GENERATION (production wire-in of the 6-seed-GO #3E "brain owns open-ended generation" faculty).
+# On an EXPLICIT open-ended prompt ("what might X ...", "tell me something new about X", "what else about X",
+# "guess ..."), the brain VOLUNTEERS a NOVEL grounded proposition via generative replay over its OWN learned
+# association graph (the substrate-learned Hebbian co-occurrence on the onebrain path), gated by the validated
+# #3E/b2 plausibility + non-contradiction gate, moat-verified (a proposal that contradicts a stored fact or
+# passes known-fact retrieval is REJECTED -> abstain), and rendered as a FLAGGED hypothesis ("perhaps a v p").
+# `_NOT_OPEN_ENDED` is the sentinel `_parse_open_ended` returns for EVERY non-matching turn, so gate() stays
+# byte-identical on the recall / abstain / learn / anaphora paths. `HypothesisSVO` is a list subclass so it
+# still behaves as an [a, v, p] triple everywhere a plain gate result flows (JSON, transcript), while render()
+# can recognise it and mark it as a guess (never asserted as knowledge).
+# ============================================================================================================
+
+_NOT_OPEN_ENDED = object()
+
+
+class HypothesisSVO(list):
+    """A GENERATED, moat-verified HYPOTHESIS triple [a, v, p] (plausible + non-contradictory + NOT a known
+    fact). A `list` subclass so it flows unchanged through everything that treats a gate result as [a, v, p]
+    (the webapp JSON `recalled_svo`, the smoke transcript), while `render()` recognises it and renders an
+    explicit guess rather than an asserted fact."""
+    __slots__ = ()
+
+
+# Each entry: (compiled regex on the lowercased/stripped question, has_topic). Named groups: `topic` (the
+# subject to generate about) and, for "what might", an optional `action`. These fixed lead-ins are the WHOLE
+# trigger surface — a normal recall ("what does dog chase"), teach ("dog eat bone"), yes/no, or anaphora turn
+# matches NONE of them, so it never enters the generation branch (gate() stays byte-identical).
+_OPEN_ENDED_PATTERNS = [
+    (re.compile(r"^what might (?:a |an |the )?(?P<topic>[a-z]+)(?:\s+(?P<action>[a-z]+))?\b"), True),
+    (re.compile(r"^tell me something (?:new |else |more )?about (?:a |an |the )?(?P<topic>[a-z]+)\b"), True),
+    (re.compile(r"^what else (?:about|can you (?:tell me|say)(?: something)? about|do you know about) "
+                r"(?:a |an |the )?(?P<topic>[a-z]+)\b"), True),
+    (re.compile(r"^(?:make something up|imagine something|dream up something) about "
+                r"(?:a |an |the )?(?P<topic>[a-z]+)\b"), True),
+    (re.compile(r"^guess(?:\s+.*?\babout (?:a |an |the )?(?P<topic>[a-z]+)\b)?"), True),
+]
+
+
+# ============================================================================================================
 # Self-reference + a free-text question -> a (kind, cue) the brain answers against its stored SVO facts.
 # (The keyword->fact matcher is faithful: it routes a question to the stored fact whose WORDS the question
 # mentions, synonym-resolved; an unmatched question ABSTAINS -- the no-confab moat. Ported from the
@@ -212,6 +251,22 @@ class ChatBrain:
         self.has_event_register = self.is_multiturn and getattr(agent, "_event_register", None) is not None
         self._boundary_seen = False          # "who was doing it before?" only has meaning AFTER a discourse boundary
         self._heard_any_clause = False
+        # OPEN-ENDED GENERATION (#3E wire-in): a lazily-built, fact-count-cached b2 generative-replay proposer over
+        # the brain's OWN association structure. Fires ONLY on an explicit open-ended prompt (see gate()); every
+        # other turn is untouched. Config below matches the #3E de-risk operating point (tau = 50th pctile of the
+        # positive co-occurrence edges; see `_gen_spiking` below for the DRAW choice).
+        self._gen_proposer = None
+        self._gen_nfacts = None
+        self._gen_tau_pct = 50.0
+        self._gen_n_attempts = 400
+        self._gen_min_facts = 3
+        self._gen_seed = int(getattr(self.inner, "seed", 42)) * 7 + 1
+        # the generative DRAW is the b2 HOST oracle (numpy weighted sampling). The b2 SPIKING soft-WTA sampler
+        # (SpikingWTASampler) hardcodes the 8x8-taxonomy role pools and KeyErrors on an arbitrary conversational
+        # vocab, so it cannot encode a runtime-grown lexicon; the host oracle is the b2-sanctioned numpy path
+        # (`_genfrontier_b2` retains it for exactly the numpy-CPU/reproducibility case). The LOAD-BEARING part is
+        # the plausibility SIGNAL — the brain's own learned fact-association graph — which is the brain's here.
+        self._gen_spiking = False
         # the brain's stored facts (string-only roles) + content-token sets for the VERIFY re-parse
         self._refresh_facts()
 
@@ -229,6 +284,15 @@ class ChatBrain:
     def gate(self, question):
         """Resolve the question to a stored fact and VERIFY it against the spiking recall. Returns
         (gate_svo or None). An anaphor in the question is resolved from the discourse WM (multi-turn)."""
+        # OPEN-ENDED GENERATION (#3E production wire-in) — fires ONLY on an EXPLICIT open-ended prompt pattern
+        # ("what might X ...", "tell me something new about X", "what else about X", "guess ..."). On a match, the
+        # brain VOLUNTEERS a novel grounded proposition via generative replay over its own learned association
+        # graph, moat-verified + FLAGGED as a hypothesis (or abstains -> None; never confabulates). For EVERY
+        # OTHER question `_parse_open_ended` returns the `_NOT_OPEN_ENDED` sentinel and gate() falls through to the
+        # unchanged recall/abstain/learn/anaphora pipeline below — byte-identical.
+        oe = self._parse_open_ended(question)
+        if oe is not _NOT_OPEN_ENDED:
+            return self._generate_hypothesis(*oe)
         # resolve anaphora in the question FIRST (multi-turn): replace a leading 'it'/'that'/'they' with the held
         # referent, so a follow-up 'what does it eat' uses the prior turn's referent.
         acq = self._maybe_acquire(question)      # IN-LOOP LEARNING (production path): an SVO ASSERTION is TAUGHT here in
@@ -264,6 +328,113 @@ class ChatBrain:
             if isinstance(p, str) and p in self.agents_set:
                 self._note_referent(p)
             return [a, v, p]
+        return None
+
+    # --- OPEN-ENDED GENERATION (#3E: the brain VOLUNTEERS novel grounded propositions via generative replay) ---
+    def _parse_open_ended(self, question):
+        """Detect an EXPLICIT open-ended generation prompt. Returns `(topic, action)` on a match (either may be
+        None: a bare 'guess' -> free generation), else the `_NOT_OPEN_ENDED` sentinel. Deliberately conservative:
+        only the fixed lead-ins in `_OPEN_ENDED_PATTERNS` match, so a normal recall/teach/yes-no/anaphora turn
+        never enters the generation branch and gate() stays byte-identical."""
+        ql = question.lower().strip()
+        for rx, _has_topic in _OPEN_ENDED_PATTERNS:
+            m = rx.match(ql)
+            if m is None:
+                continue
+            gd = m.groupdict()
+            topic = (gd.get("topic") or "").strip(".,!? ") or None
+            action = (gd.get("action") or "").strip(".,!? ") or None
+            if topic in self.router.self_aliases:      # 'you'/'it' -> the brain's self-facts
+                topic = "brain"
+            return (topic, action)
+        return _NOT_OPEN_ENDED
+
+    def _build_generation_proposer(self):
+        """Build (and fact-count cache) the #3E/b2 `GenerativeReplayProposer` over the brain's OWN association
+        structure. The plausibility graph P is the brain's CLEAN concept co-occurrence over its stored facts (the
+        agent's association structure — every fact's agent/action/patient co-occur), which is what the dlPFC
+        `_assoc_graph` learned graph approximates but WITHOUT that graph's dense reserve-slot noise (which floods
+        implausible recombinations) and WITH the runtime-taught facts the fixed-vocab `_learned_assoc` never sees.
+        tau = the 50th percentile of the positive edges (the #3E operating point → 'related' = co-occurred). This
+        is the same host-computed selectional-preference plausibility signal #3E used (there a corpus PPMI; here
+        the brain's own heard facts), gating the reused b2 proposer's replay. Returns the proposer, or None when
+        the brain knows too few facts (-> the caller abstains, never confabulates)."""
+        facts = list(self.stored_facts)
+        if len(facts) < self._gen_min_facts:
+            return None
+        if self._gen_proposer is not None and self._gen_nfacts == len(facts):
+            return self._gen_proposer
+        # clean concept co-occurrence over the brain's stored facts (agent/action/patient of each fact co-occur).
+        graph = {}
+        for a, v, p in facts:
+            cs = [c for c in (a, v, p) if isinstance(c, str)]
+            for x in cs:
+                for y in cs:
+                    if x != y:
+                        graph.setdefault(x, {})[y] = graph.get(x, {}).get(y, 0.0) + 1.0
+        vocab = sorted(graph.keys())
+        if len(vocab) < 3:
+            return None
+        row = {w: i for i, w in enumerate(vocab)}
+        P = np.zeros((len(vocab), len(vocab)), dtype=float)
+        for a, nbrs in graph.items():
+            for b, w in nbrs.items():
+                P[row[a], row[b]] = float(w)          # symmetric by construction of the co-occurrence
+        pos = P[P > 0]
+        if pos.size == 0:
+            return None
+        tau = float(np.percentile(pos, self._gen_tau_pct))
+        from research.runners._genfrontier_b2_generative_replay_derisk import GenerativeReplayProposer
+        # the proposer reads the SAME composer the brain answers through (so a generated proposition must not
+        # contradict a stored fact, and must never pass known-fact retrieval). negated=[] here: the composer's own
+        # `ask_yes_no` (which the proposer's non-contradiction gate reads) still catches any stored negation.
+        self._gen_proposer = GenerativeReplayProposer(
+            self.inner.composer, facts, [], P, row, tau,
+            np.random.default_rng(self._gen_seed), use_spiking_sampler=self._gen_spiking)
+        self._gen_nfacts = len(facts)
+        return self._gen_proposer
+
+    def _generate_hypothesis(self, topic=None, action=None, n_attempts=None):
+        """GENERATE a novel grounded proposition (the #3E faculty), optionally about `topic` (its agent) and/or
+        `action`. Draws role-fillers with the reused b2 proposer's OWN weighted sampler (`_sample_weighted` /
+        `_weight_partner`), gates each candidate with the reused b2 `_plausible` (selectional-preference over the
+        brain's learned association graph) + `_contradicts` (non-contradiction vs the composer's store), then
+        MOAT-VERIFIES it (not a degenerate self-loop; matches the requested topic/action; and — the no-confab
+        guarantee — must NOT pass known-fact retrieval: `what_does` != patient AND `is_it_true` == 'unknown').
+        EARLY-STOPS at the first passing proposal (so a turn runs only a few spiking moat queries, not a full
+        exhaustive replay) and returns it as a FLAGGED `HypothesisSVO`; returns None (honest abstain) when no
+        plausible grounded proposal exists. An unknown topic (not a known agent) ABSTAINS — the brain does not
+        invent about what it has never heard of."""
+        if topic is not None and topic not in self.agents_set:
+            return None                                # unknown subject -> abstain (no confabulation)
+        prop = self._build_generation_proposer()
+        if prop is None:
+            return None
+        if action is not None and action not in self.actions_set:
+            action = None                              # a requested action the brain doesn't know -> don't hard-filter
+        agents = [topic] if topic is not None else list(prop.agents)
+        if not agents or not prop.actions or not prop.patients:
+            return None
+        n = int(self._gen_n_attempts if n_attempts is None else n_attempts)
+        rng = prop.rng
+        seen = set()
+        for _ in range(n):
+            a = agents[0] if len(agents) == 1 else agents[int(rng.integers(len(agents)))]
+            ac = action if action is not None else prop._sample_weighted(
+                prop.actions, prop._weight_partner((a,), prop.actions))
+            p = prop._sample_weighted(prop.patients, prop._weight_partner((a, ac), prop.patients))
+            triple = (a, ac, p)
+            if a == p or triple in seen or triple in prop.all_stored:
+                continue                               # degenerate / repeat / a stored fact (only NOVEL counts)
+            seen.add(triple)
+            if not prop._plausible(a, ac, p):          # b2 selectional-preference plausibility gate (reused)
+                continue
+            if prop._contradicts(a, ac, p):            # b2 non-contradiction gate (reads the composer's ask_yes_no)
+                continue
+            # MOAT VERIFY (the #3E hypothesis-not-known guarantee): a HYPOTHESIS never passes as a known fact.
+            if self.inner.what_does(a, ac) == p or self.inner.is_it_true(a, ac, p) != "unknown":
+                continue
+            return HypothesisSVO([a, ac, p])
         return None
 
     def _resolve_anaphora(self, question):
@@ -418,6 +589,13 @@ class ChatBrain:
         """Render the gated SVO into a fluent sentence (CONSTRAIN) and VERIFY the content re-parses to the gated
         fact. Returns the verified fluent string, or the brain's raw triple on a verify miss / raw mode / no
         renderer. NEVER emits unverified generative prose as the answer."""
+        # OPEN-ENDED GENERATION (#3E): a moat-verified HYPOTHESIS is rendered as an EXPLICIT guess, clearly marked
+        # as not-taught knowledge (the honesty boundary is a deliverable). It bypasses the fluent-render+VERIFY of
+        # a stored fact: there is no stored fact to re-parse against — the proposal was already gated (plausible +
+        # non-contradictory) and moat-verified (not a known fact) in gate().
+        if isinstance(gate_svo, HypothesisSVO):
+            a, v, p = gate_svo
+            return f"perhaps {a} {v} {p}  [a guess from what I've learned -- not something I was taught]"
         a, v, p = gate_svo
         if self.raw_mode or self.renderer is None:
             return self._raw(gate_svo)

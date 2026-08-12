@@ -1,0 +1,116 @@
+{
+  "turns": [
+    {
+      "teach": "dog eat meat",
+      "answer": "The dog eats meat.",
+      "recalled_svo": [
+        "dog",
+        "eat",
+        "meat"
+      ]
+    },
+    {
+      "teach": "bird eat seed",
+      "answer": "The bird eats seed.",
+      "recalled_svo": [
+        "bird",
+        "eat",
+        "seed"
+      ]
+    },
+    {
+      "teach": "fox eat meat",
+      "answer": "The fox eats meat.",
+      "recalled_svo": [
+        "fox",
+        "eat",
+        "meat"
+      ]
+    },
+    {
+      "teach": "cat chase bird",
+      "answer": "The cat chases bird.",
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "bird"
+      ]
+    },
+    {
+      "teach": "bird chase worm",
+      "answer": "The bird chases worm.",
+      "recalled_svo": [
+        "bird",
+        "chase",
+        "worm"
+      ]
+    },
+    {
+      "teach": "wolf eat sheep",
+      "answer": "The wolf eats sheep.",
+      "recalled_svo": [
+        "wolf",
+        "eat",
+        "sheep"
+      ]
+    },
+    {
+      "open_ended": "what might dog eat?",
+      "answer": "perhaps dog eat cat  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": [
+        "dog",
+        "eat",
+        "cat"
+      ],
+      "composer": "onebrain"
+    },
+    {
+      "open_ended": "tell me something new about cat",
+      "answer": "perhaps cat chase worm  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": [
+        "cat",
+        "chase",
+        "worm"
+      ],
+      "composer": "onebrain"
+    },
+    {
+      "open_ended": "guess something about fox",
+      "answer": "perhaps fox eat cat  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": [
+        "fox",
+        "eat",
+        "cat"
+      ],
+      "composer": "onebrain"
+    },
+    {
+      "open_ended": "what might dragon do?",
+      "answer": "I don't know about that.",
+      "abstained": true,
+      "recalled_svo": null,
+      "composer": null
+    }
+  ],
+  "build_turn": {
+    "answer": "The dog chases cat.",
+    "recalled_svo": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "composer": "onebrain",
+    "abstained": false
+  },
+  "control_recall": {
+    "answer": "The cat eats fish.",
+    "recalled_svo": [
+      "cat",
+      "eat",
+      "fish"
+    ]
+  }
+}

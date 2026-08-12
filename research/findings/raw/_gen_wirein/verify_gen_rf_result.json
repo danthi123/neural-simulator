@@ -1,0 +1,45 @@
+{
+  "a_generation_rf": {
+    "is_hypothesis": true,
+    "hypothesis": [
+      "dog",
+      "eat",
+      "cat"
+    ],
+    "rendered": "perhaps dog eat cat  [a guess from what I've learned -- not something I was taught]"
+  },
+  "noncontradiction_rf": {
+    "is_it_true_dog_eat_fish": "no",
+    "contradicts_flag": true,
+    "negated_never_proposed_in_60": true,
+    "proposed_fish_count": 0
+  },
+  "lesion_rf": {
+    "gated_true_plausible_frac": 1.0,
+    "lesion_hardgate_true_plausible_frac": 0.729,
+    "random_uniform_baseline_true_plausible_frac": 0.116,
+    "advantage_ratio_gated_over_random": 8.63,
+    "n_implausible_admitted_by_lesion": 13,
+    "implausible_examples_gate_rejects": [
+      "brain store words",
+      "brain use memory",
+      "fox chase meat",
+      "bird eat worm",
+      "brain store spikes",
+      "bird chase seed",
+      "cat chase fish",
+      "brain learn memory",
+      "dog chase meat",
+      "wolf chase sheep",
+      "brain use words",
+      "brain learn spikes",
+      "wolf eat deer"
+    ],
+    "gate_load_bearing": true
+  },
+  "verdict_rf": {
+    "a_generation": true,
+    "noncontradiction_gate_works": true,
+    "plausibility_gate_load_bearing": true
+  }
+}
