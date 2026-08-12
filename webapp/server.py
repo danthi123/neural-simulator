@@ -2843,6 +2843,28 @@ def _default_brain_renderer() -> str:
     return "stub"
 
 
+def _brain_rich_default() -> bool:
+    """The production default for /api/brain-chat when a request OMITS `rich`.
+
+    Production default is the FLUENT multi-sentence path (the RichAnswerComposer:
+    multi-fact recall + multi-hop chain + elaboration, each sentence VERIFY-checked
+    so the no-confab moat extends to multi-sentence). This flips the historical
+    single-SVO default (2026-08-12, production-integration: the integrated
+    production turn must be fluent, not a one-line template).
+
+    ESCAPE / kill-switch: ``BRAIN_RICH=0`` (or false/no/off) in the environment
+    forces the OLD single-SVO path globally for callers that don't specify `rich`.
+    A per-request ``rich=False`` still overrides this to the single-SVO path, and
+    ``rich=True`` still overrides to the fluent path — this only sets the default
+    when the field is absent. NOTE: fluent PROSE additionally needs the qwen mouth
+    (SIM_BACKEND=cupy + CUDA torch); GPU-free hosts get the multi-sentence TEMPLATE
+    stub, which is still multi-sentence + moat-gated but not prose."""
+    v = os.environ.get("BRAIN_RICH")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
 def _pin_bridge_backend() -> None:
     """Re-assert the global ``sim.backend`` cache to whatever backend
     ``sim.bridge`` bound at import (``sim.bridge._backend_name``).
@@ -2993,19 +3015,16 @@ def _get_rich_composer(cache_key: tuple, chat):
     renderer gets its own multi-sentence discourse thread (so 'tell me more'
     elaborates forward within that conversation).
 
-    LATENCY (2026-06-24): the interactive WEBAPP console deliberately uses the
-    HOST discourse-planner (``neural_planner=False``). The owner cares about
-    snappiness — the console must answer in a few seconds. The NEURAL dlPFC
-    planner builds + steps a per-topic ``SimulationBridge`` ON THE GPU *every
-    turn*, which on the GPU webapp pushes a turn past ~75s (timeout). The host
-    planner still produces a SUBSTANTIVE multi-sentence grounded reply (the host
-    gather/order/relevance/breadth/stop heuristics + the "too thin" fix) — it
-    only drops the per-turn bridge build. The direct gate (the no-confab MOAT),
-    the role-chase chain hop, and the per-sentence VERIFY are identical either
-    way (the planner only steers WHICH grounded facts to bring up), so dropping
-    the neural planner does NOT weaken the moat. The neural planner stays the
-    ``brain_chat_tui --rich`` default (the 3G flip) — only the interactive
-    webapp trades it for latency.
+    PLANNER (2026-08-12): the webapp now uses the NEURAL dlPFC planner
+    (``neural_planner=True`` below) — speed is SECONDARY (mission non-negotiable),
+    so both the elaboration CONTENT and the relevance-by-latency ORDERING run on
+    the substrate. It builds + steps a per-topic ``SimulationBridge`` ON THE GPU
+    every turn (the earlier host-planner default was chosen only for latency and
+    has been retired). The direct gate (the no-confab MOAT), the role-chase chain
+    hop, and the per-sentence VERIFY are unchanged by the planner choice (the
+    planner only steers WHICH grounded facts to bring up + in what order), so the
+    moat is identical either way. This is what the DEFAULT ``/api/brain-chat``
+    turn now runs (``_brain_rich_default`` is ON) — a fluent MULTI-SENTENCE reply.
     """
     rich = _BRAIN_RICH.get(cache_key)
     if rich is None:
@@ -3211,7 +3230,15 @@ class BrainChatRequest(BaseModel):
     # session-cached RichAnswerComposer wrapping the warm ChatBrain. A bare
     # 'tell me more' / 'why?' follow-up elaborates the held topic further.
     # rich=False keeps the single-fact verified answer (the host path).
-    rich: bool = False
+    #
+    # DEFAULT (2026-08-12, production-integration): the field is now TRI-STATE
+    # (None = unspecified). When a caller OMITS `rich`, the turn takes the
+    # production default from `_brain_rich_default()` — the FLUENT multi-sentence
+    # path (BRAIN_RICH env, default ON). An EXPLICIT `rich=False` in the body
+    # still forces the old single-SVO path byte-identically (the per-request
+    # escape); `BRAIN_RICH=0` in the environment forces it globally (the
+    # production kill-switch). Explicit `rich=True` always takes the fluent path.
+    rich: bool | None = None
     # If True, drop the cached ChatBrain for this (session, brain,
     # renderer) before answering (rebuilds — for 'start fresh').
     reset: bool = False
@@ -3316,7 +3343,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # The RichAnswerComposer does its own GATE (direct recall + the moat) +
     # multi-hop chain + elaboration, VERIFY-checks each sentence, and carries
     # the discourse thread (so a 'tell me more' follow-up elaborates forward).
-    if req.rich:
+    #
+    # `rich` is TRI-STATE (None = the caller omitted it): resolve the effective
+    # mode from the production default (`_brain_rich_default()`, fluent-ON, env
+    # BRAIN_RICH) UNLESS the request set it explicitly. So the DEFAULT turn is
+    # fluent multi-sentence; an explicit `rich=False` escapes to the byte-
+    # identical single-SVO path below; `rich=True` forces fluent.
+    use_rich = req.rich if req.rich is not None else _brain_rich_default()
+    if use_rich:
         try:
             rich = _get_rich_composer(cache_key, chat)
             r = rich.answer(msg)

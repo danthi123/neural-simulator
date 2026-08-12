@@ -1,0 +1,96 @@
+brains: {"brains": [{"id": "tiny-demo", "label": "Tiny demo (GPU-free)", "kind": "builtin", "n_facts": 5, "vocab_size": 8, "loadable": true, "note": "A handful of built-in self + object facts; no GPU. Good fo
+
+=== DEFAULT no-rich  'what are you' ===
+  answer: 'The brain uses spikes for communication. The brain learns words.'
+  abstained: False
+  recalled_svo: ['brain', 'use', 'spikes']
+  verified: True
+  renderer: 'off-bridge Qwen-0.5B (spiking forward)'
+  rich: True
+  n_sentences: 2
+  supporting_facts: [['brain', 'use', 'spikes'], ['brain', 'learn', 'words']]
+  _elapsed_s: 13.1
+  activity.composer: 'onebrain'
+
+=== DEFAULT no-rich  'how do you learn' ===
+  answer: "I don't know about that."
+  abstained: True
+  recalled_svo: None
+  verified: False
+  renderer: 'off-bridge Qwen-0.5B (spiking forward)'
+  rich: True
+  n_sentences: 0
+  supporting_facts: []
+  _elapsed_s: 1.8
+  activity.composer: 'onebrain'
+
+=== DEFAULT no-rich  moat 'capital of france' ===
+  answer: "I don't know about that."
+  abstained: True
+  recalled_svo: None
+  verified: False
+  renderer: 'off-bridge Qwen-0.5B (spiking forward)'
+  rich: True
+  n_sentences: 0
+  supporting_facts: []
+  _elapsed_s: 2.1
+  activity.composer: 'onebrain'
+
+=== TEACH 'wolf hunt deer' ===
+  answer: 'A wolf hunts deer.'
+  abstained: False
+  recalled_svo: ['wolf', 'hunt', 'deer']
+  verified: True
+  renderer: 'off-bridge Qwen-0.5B (spiking forward)'
+  rich: True
+  n_sentences: 1
+  supporting_facts: [['wolf', 'hunt', 'deer']]
+  _elapsed_s: 9.9
+  activity.composer: 'onebrain'
+
+=== RECALL 'what does the wolf hunt' ===
+  answer: 'A wolf hunts deer.'
+  abstained: False
+  recalled_svo: ['wolf', 'hunt', 'deer']
+  verified: True
+  renderer: 'off-bridge Qwen-0.5B (spiking forward)'
+  rich: True
+  n_sentences: 1
+  supporting_facts: [['wolf', 'hunt', 'deer']]
+  _elapsed_s: 11.6
+  activity.composer: 'onebrain'
+
+=== ESCAPE rich=False 'what does the dog chase' ===
+  answer: 'The dog chased the cat.'
+  abstained: False
+  recalled_svo: ['dog', 'chase', 'cat']
+  verified: True
+  renderer: 'off-bridge Qwen-0.5B (spiking forward)'
+  rich: False
+  _elapsed_s: 6.0
+  activity.composer: 'onebrain'
+
+=== ESCAPE rich=False moat 'dragon breathe' ===
+  answer: "I don't know about that."
+  abstained: True
+  recalled_svo: None
+  verified: False
+  renderer: 'off-bridge Qwen-0.5B (spiking forward)'
+  rich: False
+  _elapsed_s: 2.6
+  activity.composer: 'onebrain'
+
+----- CHECKS -----
+  [PASS] default d1 rich==True
+  [PASS] default d1 n_sentences>1
+  [PASS] default d1 renderer qwen
+  [PASS] default d1 composer onebrain
+  [PASS] default d1 not abstained
+  [PASS] moat d3 abstained
+  [PASS] teach d4 recalled wolf/hunt/deer
+  [PASS] recall d5 mentions deer
+  [PASS] escape e1 rich==False
+  [PASS] escape e1 single recalled_svo dog/chase/cat
+  [PASS] escape e2 abstained
+
+RESULT: ALL PASS

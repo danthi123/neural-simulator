@@ -1142,6 +1142,13 @@ def test_brain_chat_tiny_demo_answers_and_abstains(client, monkeypatch):
     assert data["recalled_svo"] == ["dog", "chase", "cat"]
     assert "cat" in data["answer"].lower()
     assert data["renderer"]  # a renderer name string
+    # DEFAULT (2026-08-12): a turn that OMITS `rich` now takes the FLUENT
+    # multi-sentence path (production-integration), so the response is
+    # rich=True with >=1 grounded sentence (the stub renderer here still
+    # produces a multi-SENTENCE reply; qwen makes it prose — see
+    # _brain_rich_default / _default_brain_renderer).
+    assert data["rich"] is True
+    assert (data.get("n_sentences") or 0) >= 1
 
     # An untaught cue must ABSTAIN — the no-confab moat.
     res2 = client.post("/api/brain-chat", json={
@@ -1155,6 +1162,63 @@ def test_brain_chat_tiny_demo_answers_and_abstains(client, monkeypatch):
     assert "don't know" in data2["answer"].lower()
 
     # Clean up the warm cache so the test is hermetic.
+    client.post("/api/brain-chat/reset", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_rich_default_env(monkeypatch):
+    """`_brain_rich_default()` (the production default for /api/brain-chat when
+    a request OMITS `rich`) is ON by default, and `BRAIN_RICH=0/false/off`
+    forces the single-SVO escape globally. Unit test — no brain build."""
+    from webapp.server import _brain_rich_default
+    monkeypatch.delenv("BRAIN_RICH", raising=False)
+    assert _brain_rich_default() is True          # default: fluent multi-sentence
+    for off in ("0", "false", "no", "off", "", "FALSE"):
+        monkeypatch.setenv("BRAIN_RICH", off)
+        assert _brain_rich_default() is False, off
+    for on in ("1", "true", "yes", "on"):
+        monkeypatch.setenv("BRAIN_RICH", on)
+        assert _brain_rich_default() is True, on
+
+
+def test_brain_chat_rich_false_escape_is_single_svo(client, monkeypatch):
+    """The ESCAPE: an EXPLICIT `rich=False` in the body keeps the OLD single-SVO
+    path (rich=False in the response, one recalled fact, no multi-sentence
+    supporting_facts) even though the omit-default is now the fluent path.
+    Nothing regresses for a caller that opts out. CPU-only (stub renderer)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-escape"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub",
+        "message": "what does the dog chase", "rich": False,
+    })
+    assert res.status_code == 200, res.text
+    data = res.json()
+    assert data["rich"] is False               # the single-SVO path ran
+    assert data["abstained"] is False
+    assert data["recalled_svo"] == ["dog", "chase", "cat"]
+    assert "cat" in data["answer"].lower()
+    # the single-fact response carries no rich multi-sentence fields
+    assert "n_sentences" not in data
+    assert "supporting_facts" not in data
+
+    # the moat still holds on the escape path
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub",
+        "message": "what does the dragon breathe", "rich": False,
+    })
+    assert res2.status_code == 200, res2.text
+    data2 = res2.json()
+    assert data2["rich"] is False
+    assert data2["abstained"] is True
+    assert data2["recalled_svo"] is None
+
     client.post("/api/brain-chat/reset", json={
         "session": sess, "brain": "tiny-demo", "renderer": "stub"})
 

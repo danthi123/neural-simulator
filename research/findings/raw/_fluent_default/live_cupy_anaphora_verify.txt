@@ -1,0 +1,31 @@
+=== ESC dog chase ===
+  answer: 'The dog chased the cat.'
+  abstained: False
+  recalled_svo: ['dog', 'chase', 'cat']
+  rich: False
+  _s: 2.1
+
+=== ESC it eat (anaphora it->cat) ===
+  answer: 'The cat eats fish.'
+  abstained: False
+  recalled_svo: ['cat', 'eat', 'fish']
+  rich: False
+  _s: 1.7
+
+=== RICH dog chase ===
+  answer: 'The dog chased the cat. The cat eats fish.'
+  abstained: False
+  recalled_svo: ['dog', 'chase', 'cat']
+  rich: True
+  n_sentences: 2
+  _s: 4.4
+
+=== RICH it eat (anaphora it->cat) ===
+  answer: 'The cat eats fish.'
+  abstained: False
+  recalled_svo: ['cat', 'eat', 'fish']
+  rich: True
+  n_sentences: 1
+  _s: 3.8
+
+DONE

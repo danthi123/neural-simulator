@@ -114,17 +114,17 @@ rows:
   - key: discourse-planner
     faculty: "Discourse planner (dlPFC neural planner; multi-sentence content)"
     de_risked: YES
-    wired: PARTIAL
-    on_by_default: NO
-    scaffold_retired: NO
-    host_scaffold_in_default: "neural_planner=False forced for latency; rich=False default -> single-fact host path"
+    wired: YES                   # 2026-08-12 INTEGRATION: the DEFAULT /api/brain-chat turn now runs the RICH multi-sentence path (RichAnswerComposer, neural_planner=True), not the single-SVO host path. The single-SVO path is now the OPT-OUT escape (rich=False in the body, or BRAIN_RICH=0).
+    on_by_default: YES           # the fluent MULTI-SENTENCE reply is the default turn: BrainChatRequest.rich defaults to None -> _brain_rich_default() -> True; the neural dlPFC planner (relevance-by-latency ordering) runs every default turn. Escape: rich=False / BRAIN_RICH=0 -> byte-identical single-SVO.
+    scaffold_retired: NO         # residual scaffold: the fluent PROSE surface is the external Qwen-0.5B mouth (requires SIM_BACKEND=cupy; GPU-free falls back to the multi-sentence TEMPLATE stub); the gather/relevance/breadth/stop are host heuristics steering WHICH grounded facts to bring up (the moat + per-sentence VERIFY are on the substrate path).
+    host_scaffold_in_default: "the fluent multi-sentence SURFACE is the off-bridge Qwen-0.5B mouth (SIM_BACKEND=cupy; GPU-free -> multi-sentence template stub); host gather/order/relevance/stop heuristics pick WHICH facts to raise (content recall + per-sentence VERIFY moat are on the onebrain substrate)"
     default_anchor:
       - file: webapp/server.py
         assign: neural_planner
         off_value: "False"
         on_value: "True"
-        count: 2
-    evidence: "server.py:3009 neural_planner=False; :3207 rich=False"
+        count: 1
+    evidence: "webapp/server.py: BrainChatRequest.rich default None + _brain_rich_default() (env BRAIN_RICH, default True) -> the omit-default turn takes _get_rich_composer (neural_planner=True). Live HTTP-verified (SIM_BACKEND=cupy) on /api/brain-chat: default 'what are you' -> 'The brain uses spikes for communication. The brain learns words.' (renderer=qwen, rich=True, n_sentences=2, composer=onebrain); moat 'capital of france' abstains; teach 'wolf hunt deer' -> recall 'A wolf hunts deer.'; escape rich=False -> single-SVO 'The dog chased the cat.' finding 2026-08-12-INTEGRATION-default-chat-turn-is-fluent-multi-sentence"
 
   - key: semantic-recall
     faculty: "Semantic fact recall (VSA bind/unbind)"
