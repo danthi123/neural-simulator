@@ -56,10 +56,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   in-loop-learning is LANDED + lesion-verified** (LEARN True). **SINGLE LITERAL NEXT: #1 CHOOSE** — replace the host
 >   `QuestionRouter` (role-blind keyword overlap; it still confabulates on malformed questions + is the fallback that
 >   blocks scaffold-retirement) with a spiking content-selector on the default turn, verified by the probe flipping
->   CHOOSE→True. NOTE the spiking selector is a CHARACTERIZATION probe, not a drop-in — it needs de-risk work first
->   (the direct-selection persistence is an open spiking-tuning problem, `2026-06-03-content-selection-milestone2`).
->   Parallel: the deeper LEARN (new-word on-the-fly code allocation + a BTSP per-turn write) retires the frozen-vocab +
->   read-only residual.
+>   CHOOSE→True. **CHOOSE scoped this session (research done, deep-research gate):** #2 already made the SELECTION
+>   substrate-based (`what_does`); CHOOSE's residual is the QUESTION→(agent,action) PARSE, still host token-matching in
+>   `_substrate_recall`. The neural parser `BridgeParser` (brain_conversational_agent.py:28, spiking Izhikevich Hebbian
+>   role map) is a STRICT 3-word SVO parser (`assert len(words)==3`) → cannot parse a question directly. **Tractable
+>   de-risk path:** strip wh/aux → present the content words (padded to SVO, patient=unknown) to BridgeParser for NEURAL
+>   role-assignment (replacing the host first-known-token heuristic); verify by lesioning BridgeParser + refine the
+>   probe's CHOOSE test from "router-gone" to "parse-is-neural". Harder full path: neural question comprehension + the
+>   dlPFC selector (open tuning problem, `2026-06-03-content-selection-milestone2`). Parallel: deeper LEARN (new-word
+>   on-the-fly code allocation + a BTSP per-turn write) retires the frozen-vocab + read-only residual.
 
 > **⭐⭐⭐ (SUPERSEDED framing, kept for the compute-lane history) TOP PRIORITY (2026-08-12, OWNER DIRECTIVE): ALL-IN ON gap#4 — full effort, max parallelization, all compute.**
 > gap#4 (deep credit on real spikes) is THE gate on fluent open-ended conversation (a deep-research re-answer established
