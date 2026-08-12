@@ -56,14 +56,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >      depths**, beating the optimal reservoir by ~+0.23; at the shared lr=0.05 they sit at exactly 0.500 (the reported
 >      collapse). Finding `2026-08-11-gap4-the-LIF-chained-FAKP-wall-is-a-per-arm-lr-artifact-6seed.md`; a correction
 >      banner is on the 2026-08-02 depth-rescue doc. **The LIF wall is GONE — it was a step-size mismatch, not biology.**
->   2. **✅ VERIFIED (feature branch `codex/rolegate-gap4-credit`, INVISIBLE to main/RAG — MERGE PENDING) — deep credit
->      IS tractable at de-risk via a LEARNED rule.** On a RATE net (tanh/ReLU width-16), transport-free **Kolen-Pollack
->      learned feedback** reaches the 3rd hidden layer on a genuinely-depth-3 `tent3_fit` (Telgarsky) target: closes
->      **66% of the BP-depth-2→BP-depth-3 fit gap** (6/15 ceiling-testable seeds), where fixed-DFA closes −85% and
->      freezing G collapses to −40% (the win is DUE TO learning G). cos(G,Wᵀ) 0.013→0.826 (co-adapted, transport-free).
->      Artifact `_gap4_learned_feedback_6valid.json` (308KB) VERIFIED backs it. Scope: RATE not spiking; partial (66%,
->      reaches ≠ matches oracle); committed `--no-verify`. Finding
->      `2026-08-11-gap4-learned-feedback-KP-reaches-the-3rd-hidden-layer-...`.
+>   2. **✅ VERIFIED + ON MAIN (commit `6b95eb177`; the wave-2 "invisible/uncommitted" flag was a STALE RAG INDEX, not a
+>      missing merge — git main HAS it; rebuild the RAG index) — deep credit IS tractable at de-risk via a LEARNED rule.**
+>      On a RATE net (tanh/ReLU width-16), transport-free **Kolen-Pollack learned feedback** reaches the 3rd hidden layer
+>      on a genuinely-depth-3 `tent3_fit` (Telgarsky) target: closes **66% of the BP-depth-2→BP-depth-3 fit gap** (6/15
+>      ceiling-testable seeds), where fixed-DFA closes −85% and freezing G collapses to −40% (the win is DUE TO learning
+>      G). cos(G,Wᵀ) 0.013→0.826 (co-adapted, transport-free). Artifact `_gap4_learned_feedback_6valid.json` (308KB)
+>      VERIFIED backs it (go:true, all 6 checks). Scope: RATE not spiking; partial (66%, reaches ≠ matches oracle).
+>      Finding `2026-08-11-gap4-learned-feedback-KP-reaches-the-3rd-hidden-layer-...` (on main).
 >   3. **⛔ Telgarsky FIT-gate on spikes — DROPPED (adversary refuted, load-bearing).** On a spike-COUNT read over T
 >      steps each hidden unit is a ~T-step staircase → depth-2@W expresses ~W·T (≈192) pieces ≫ k=6's 32 teeth, so the
 >      O(W) piece-bound does NOT hold and depth-2 fits. **Both routes to a clean depth-necessity SPIKING test are now
@@ -83,10 +83,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   from gap#4's spatial-depth credit); (3) host cognition scaffolds. **Recommend re-pointing "the crux" at the
 >   mouth-burn-down + Gate-B — OWNER'S CALL (they directed all-in on gap#4).** gap#4 stays open on its ONE real residual:
 >   the Izhikevich read-regime credit factor.
-> - **SINGLE LITERAL NEXT (the wave-2 decisive experiment):** MERGE the feature-branch gap#4 findings to main (KP GO +
->   Izhikevich wall — decisive + currently invisible to the record), THEN port the KP learned-feedback rule to the
->   PRODUCTION Izhikevich bridge coupled with a read-CV manipulation (more spikes / longer settle_steps / ensemble
->   pool_k) — the one un-run leg that answers whether de-risk deep credit transfers to the substrate the brain runs.
+> - **SINGLE LITERAL NEXT (the wave-2 decisive experiment):** the KP GO is already on main — so (1) let the Q3
+>   Izhikevich 6-seed land + RECOVER it (deferred agent, pid ~378241 running — characterizes the real read-regime wall),
+>   then (2) port the KP learned-feedback rule to the PRODUCTION Izhikevich bridge coupled with a read-CV manipulation
+>   (more spikes / longer settle_steps / ensemble pool_k) — the one un-run leg that answers whether de-risk deep credit
+>   transfers to the substrate the brain runs. Housekeeping: rebuild the stale RAG index (KP findings are on main but
+>   not yet indexed); merge SoftHebb NO-GO (`codex/gap4-softhebb` 6da43b1d2, clean control — low priority).
+>   **⭐ OWNER DECISION PENDING:** whether to keep all-in on gap#4 (now = the Izhikevich read-regime residual) or
+>   re-point the crux at the mouth-burn-down + Gate-B (the Q_C reassessment says those are the true conversation gates).
 >   (Full wave-2 synthesis + Q_C: workflow w3gupysfe journal.)
 > - **THE TELL (substrate vs rule), UPDATED:** Q5 already shows depth is non-obligatory (task side can't force it). If
 >   Q1/Q2/Q4 ALSO fail to ENTER-THE-REGIME (stay at majority-class / ≤ reservoir) while BPTT solves it → the point-neuron
