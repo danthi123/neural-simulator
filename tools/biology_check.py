@@ -76,6 +76,9 @@ a superset written alongside it: it walks each `add_argument(...)` call with a p
 booleans they are, and reads string and boolean defaults as well as numbers. It resolves in tiers -- argparse,
 then a module-level assignment, then a `"key": value` mapping entry -- and if one tier yields two DIFFERENT values
 it reports AMBIGUOUS rather than picking one, because a resolver that guesses is a check that cannot be trusted.
+It will follow EXACTLY ONE hop through a module-level constant (`default=BOUT_LEN` with `BOUT_LEN = 12` above it,
+which is how `_emerge50_trace_rule_derisk.py` is actually written), and only when that constant has a single
+unambiguous literal binding.
 
 WHAT THIS STILL CANNOT CATCH (state it, so nobody mistakes green for verified):
   * A default is not a run. A runner can default to `laps=1` and be launched with `--laps 5`; the value that
@@ -352,6 +355,18 @@ def resolve_config_default(text, key):
         if raw is None:
             return ("nodefault", None, ev)
         val = _norm_source(raw)
+        if val is _UNPARSED and re.match(r"^[A-Za-z_][A-Za-z_0-9]*$", raw.strip()):
+            # ONE hop through a module-level constant, because that is how real runners are written:
+            # `--bout-len` in _emerge50_trace_rule_derisk.py is `default=BOUT_LEN` with `BOUT_LEN = 12` at the
+            # top of the file.  Refusing to follow that would report NOT-EVALUABLE on perfectly readable code,
+            # and a gate that cries wolf on the common case is a gate someone switches off.  Exactly one hop,
+            # and only when the constant has exactly one unambiguous literal binding -- otherwise stay UNPARSED.
+            hop = _assign_defaults(text, raw.strip())
+            hop_raws = sorted({h[0] for h in hop})
+            if len(hop_raws) == 1:
+                hop_val = _norm_source(hop_raws[0])
+                if hop_val is not _UNPARSED:
+                    return ("ok", hop_val, "%s -> %s = %s" % (ev, raw.strip(), hop_raws[0]))
         if val is _UNPARSED:
             return ("unparsed", raw, ev)
         return ("ok", val, ev)
@@ -744,10 +759,18 @@ def selftest():
         ("PROTOCOL UNENFORCEABLE",
          '- rule: "one-shot induction"\n  why: "five laps erase the field"\n  check: laps eq 1',
          'p.add_argument("--laps", type=int)'),
-        # 14. a non-literal default: UNDEFINED is not a pass.
+        # 14. a non-literal default with nothing to resolve it to: UNDEFINED is not a pass.
         ("PROTOCOL NOT EVALUABLE",
          '- rule: "one-shot induction"\n  why: "five laps erase the field"\n  check: laps eq 1',
          'p.add_argument("--laps", type=int, default=DEFAULT_LAPS)'),
+        # 14b. ...but a module constant IS followed, one hop, and must still catch the violation behind it.
+        ("PROTOCOL CONTRADICTS BIOLOGY",
+         '- rule: "one-shot induction"\n  why: "five laps erase the field"\n  check: laps eq 1',
+         'DEFAULT_LAPS = 5\np.add_argument("--laps", type=int, default=DEFAULT_LAPS)'),
+        # 14c. an AMBIGUOUS constant must not be followed -- two bindings, no guess.
+        ("PROTOCOL NOT EVALUABLE",
+         '- rule: "one-shot induction"\n  why: "five laps erase the field"\n  check: laps eq 1',
+         'DEFAULT_LAPS = 5\nDEFAULT_LAPS = 1\np.add_argument("--laps", type=int, default=DEFAULT_LAPS)'),
         # 15. two different resolutions -> say so, do not pick one.
         ("PROTOCOL AMBIGUOUS",
          '- rule: "one-shot induction"\n  why: "five laps erase the field"\n  check: laps eq 1',
@@ -786,6 +809,10 @@ def selftest():
         ('- rule: "excluded modes"\n  why: "not_in must pass when the value is absent from the set"\n'
          '  check: presentation not_in shuffled,random',
          'p.add_argument("--presentation", default="grouped")'),
+        # the real _emerge50 shape: `default=BOUT_LEN` with `BOUT_LEN = 12` at module level, must be QUIET.
+        ('- rule: "the trace must outlast one presentation"\n  why: "a bout of one is a no-op"\n'
+         '  check: bout_len gte 2',
+         'BOUT_LEN = 12\np.add_argument("--bout-len", type=int, default=BOUT_LEN)'),
     ]
 
     try:
@@ -831,6 +858,44 @@ def selftest():
                 fails.append("SCHEMA: a well-formed protocol rule was rejected: %r"
                              % check_protocol_schema(fm_ok or {}, "st-schema.md"))
 
+            # ---- guarantee #1: SOURCE POINTERS MUST RESOLVE ----------------------------------------------
+            # This is the check that already caught a FABRICATED Kandel quote before it was committed (a line
+            # attributed verbatim to the textbook that is not present in full-book.txt).  It was left uncovered
+            # by the first draft of this selftest, and a mutation test walked straight through it.
+            edir = os.path.join(td, "entries"); os.makedirs(edir)
+            corpus = os.path.join(edir, "corpus.txt")
+            open(corpus, "w").write("...is a biochemical detector of the near simultaneity of the input...\n")
+            open(os.path.join(edir, "impl.py"), "w").write("x = 1\n")
+            head = "---\ntype: biology\nid: st-entry\nmechanism: m\n"
+            oksrc = 'sources:\n  - path: %s\n    anchor: "near simultaneity of"\n' % corpus
+
+            def _entry(body):
+                p = os.path.join(edir, "e.md")
+                open(p, "w").write(body)
+                return check_entry(p, verbose=False)
+
+            ENTRY_CATCH = [
+                ("ANCHOR NOT FOUND", head + 'sources:\n  - path: %s\n    anchor: "usually have more than one '
+                                            'firing field"\n---\nb\n' % corpus),
+                ("SOURCE PATH DOES NOT RESOLVE", head + 'sources:\n  - path: %s/gone.txt\n    anchor: "x"\n'
+                                                        '---\nb\n' % edir),
+                ("NO SOURCE", head + "---\nb\n"),
+                ("missing required field 'mechanism'", "---\ntype: biology\nid: st-entry\n" + oksrc + "---\nb\n"),
+                ("implemented_by path missing",
+                 head + oksrc + "implemented_by:\n  - %s/deleted_runner.py\n---\nb\n" % edir),
+                ("no frontmatter", "this file has no frontmatter at all\n"),
+                ("has no anchor quote", head + 'sources:\n  - path: "PMC7289271"\n---\nb\n'),
+            ]
+            for marker, body in ENTRY_CATCH:
+                n_catch += 1
+                got = _entry(body)
+                if not any(marker in g for g in got):
+                    fails.append("ENTRY case %r did NOT fire: got %r" % (marker, got))
+            n_pass += 1
+            clean = _entry(head + oksrc + "implemented_by:\n  - %s/impl.py\n---\nb\n" % edir)
+            if clean:
+                fails.append("ENTRY: a well-formed entry with a RESOLVING anchor was rejected: %r" % clean)
+
             # ---- the legacy path is LIVE and BLOCKING: pin its exact strings, not merely its behaviour ----
             n_catch += 1
             lbio = os.path.join(td, "legacy", "bio"); os.makedirs(lbio)
@@ -855,7 +920,7 @@ def selftest():
     finally:
         BIO_DIR = saved_bio
 
-    if n_catch < 20 or n_pass < 6:
+    if n_catch < 33 or n_pass < 10:
         fails.append("the selftest itself thinned out (%d catch / %d pass cases) — a shrinking selftest is how a "
                      "gate quietly stops checking" % (n_catch, n_pass))
     return fails
