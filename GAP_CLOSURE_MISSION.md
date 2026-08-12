@@ -13,7 +13,31 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-11 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-12 (READ FIRST — live resume point)
+
+> **⭐⭐⭐ TOP PRIORITY (2026-08-12, OWNER DIRECTIVE): ALL-IN ON gap#4 — full effort, max parallelization, all compute.**
+> gap#4 (deep credit on real spikes) is THE gate on fluent open-ended conversation (a deep-research re-answer established
+> it: the WM/binding/role/hybrid stack is GO at rate level; the transformer mouth is reduced to a WKV linear-recurrence
+> but is still BPTT-trained; the one load-bearing residual is a LOCAL learning rule that gets a DEEP spiking net to learn
+> — zero external precedent). **THE LOCATED WALL:** on real few-spike DEEP (N>=3) spiking nets, even a perfect Wᵀ oracle
+> (align 0.999) gives NO directed credit through the finite-spike σ′ read; deep nets don't enter the learning regime
+> (FA/KP collapse to majority-class). **THE PLAN + ranked de-risk queue Q1–Q10 (with exclusion list so we don't re-run
+> the ~20 Aug NO-GOs): [`docs/plans/2026-08-12-gap4-allin-derisk-queue.md`](docs/plans/2026-08-12-gap4-allin-derisk-queue.md).**
+> - **LAUNCHED (local, 4 lanes attacking the wall from 3 distinct mechanism classes + the enabler):** Q1 Forward-Forward/TP
+>   local contrastive (`codex/gap4-forwardforward`) · Q4 DECOLLE trainable-hidden local readouts (`codex/gap4-decolle`) ·
+>   Q2 birdsong two-stage tutor (RL tutor + local Hebbian-follow, `codex/gap4-birdsong-tutor`) · Q5 obligatory-depth-3
+>   FALSIFIABILITY instrument (`codex/gap4-depth3-instrument`, the enabler — a lane's "GO" is unfalsifiable without it).
+> - **PENDING:** Q3 DRTP-on-Izhikevich + Q9 EventProp-ceiling (AWS-GPU — local card is GAMING; `aws_gpu.sh` needs proper
+>   provisioning) · Q8 DFA head-to-head (pool .40/.41/.42) · Q6/Q7 feed Q2 · Q10 fully-spiking burn-down (needs a Q1–Q4 GO).
+> - **THE TELL (substrate vs rule):** if Q5's instrument is built AND Q1/Q2/Q4 all fail on it while BPTT solves it →
+>   the point-neuron spiking read carries no obligatory-depth-3 credit under ANY local rule → the ALIF substrate swap is
+>   the real surpass. Correlated: Q3+Q9 both failing on Izhikevich where LIF succeeds → the Izhikevich neuron model is the wall.
+> - **COMPUTE:** local 20-core (the 4 lanes) + mini-PC pool .40/.41/.42 36-core (overflow seed-fans / Q8) + AWS-GPU
+>   (Q3/Q9). **SINGLE LITERAL NEXT:** recover/adversarially-verify each of the 4 lanes as it lands (agents tend to defer →
+>   coordinator recovers runner from `.claude/worktrees/agent-<id>/` or the codex branch, runs the 6-seed, banks the honest
+>   verdict); provision AWS for Q3; the moment Q5's instrument lands, re-check Q1/Q4 against it (falsifiable depth-3).
+> - **⤷ The variable-binding-WM → conversation faculty stack below is COMPLETE + GO at rate level (this is what made gap#4
+>   the sole remaining gate). History of that arc follows.**
 
 > **⭐⭐ CURRENT FRONTIER (2026-08-11 PM, owner: "work autonomously + parallelize") = VARIABLE-BINDING WORKING MEMORY —
 > the lock on fluent open-ended conversation, converged from THREE lanes (emergence-stream, Gate-B, continual).** The
