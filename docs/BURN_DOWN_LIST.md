@@ -68,18 +68,24 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   LADDER (sign + level), a smooth-magnitude **continuum is still a BOUNDARY**. Curiosity/self-model/reward (rest of the
   old D1 bundle) remain QUEUED.
 - **D2. Expectation / consequences / RPE** (limbic-core RPE battery GO, neural-reward GO, value-critic RANK1 GO). RPE =
-  prediction-error = SURPRISE on expectation-violating input. **DE-RISKED GO 6/6 (2026-08-12), QUEUED-FOR-WIRING:** the
-  existing spiking RPEs are all over a SCALAR reward; the conversational need is a CONTENT-space contradiction ("dog eats
-  grass" vs stored "(dog,eats)→meat"), which today would be a host `recalled==asserted` string compare (a shortcut). The
-  de-risk (`research/runners/_spiking_expectation_rpe_derisk.py`) built the genuinely-spiking replacement: a predictive-
-  coding MISMATCH unit — a `surprise` pool gets EXCITATION from the asserted-patient code + topographic SUBTRACTIVE
-  INHIBITION (GABA_A/PV-like) from the recalled expectation; confirm→cancel→~0 Hz, contradict/novel→un-inhibited→fires.
-  6/6 GO (confirm 0.3–2.5 Hz vs violate 7.5–9.9 Hz, 3.5–30.9×), brain-based (a `cp_firing_states[surprise]` read, no host
-  subtraction, `current_reward_signal==0`), lesion-decisive (zeroing the prediction collapses to ~1.0× → 100% attributable
-  to the prediction). **RESIDUAL/boundary:** precision — at low prediction gain GO drops to 3/6 (the divisive-normalization/
-  gain-match companion process, proxied by a fixed weight); the which-patient mapping is a topographic prior with Hebbian
-  strength (fully-learned CA3 all-to-all recall + homeostatic gain precision = the named next rungs). Wire → an honest
-  functional NOTICE ("my mismatch monitor reads this as surprising") + surprise-gated plasticity on the live turn.
+  prediction-error = SURPRISE on expectation-violating input. **WIRED (Gate-B, 2026-08-12).** `/api/brain-chat` now runs a
+  genuinely-SPIKING predictive-coding MISMATCH unit when the user asserts a fact `(agent,action,patient)` for which the
+  brain HOLDS a stored `(agent,action)→patient` (reuse-by-import from `research/runners/surprise_production_organ.py` →
+  the 6/6-GO D2 de-risk): cue→`patient_expected` (FS/PV-like, GABA_A subtractive inhibition = the recalled prediction);
+  `patient_asserted`→`surprise` (excitation). Confirm cancels (~0 Hz), contradict/novel fires. The EXPECTED patient is
+  RECALLED by the brain's own spiking `what_does` (not a host lookup); the mismatch is a `cp_firing_states[surprise]` read
+  (NO host `recalled==asserted` compare, `current_reward_signal==0`). On a firing surprise the brain PREPENDS an honest
+  functional NOTICE ("that surprises me — I'd learned <stored>"). Default-ON (`BRAIN_SURPRISE=0` escape → byte-identical
+  oracle), lesion-load-bearing (`BRAIN_SURPRISE_LESION=1` removes the prediction → the SAME confirm input flips 0.00→4.92 Hz
+  surprised). Verified SYNCHRONOUSLY numpy-CPU through the real handler (8/8: teach→null; confirm 0.00 Hz not-surprised;
+  contradict 5.61 Hz surprised → honest notice; contradict≥3× confirm; lesion makes the same confirm fire; flag-off null).
+  STATUS: **WIRED**. **RESIDUALS** (ride existing rows): (a) CO-RESIDENT on its own mismatch-circuit bridge, not merged onto
+  the one recall bridge — **rides on the one-brain merge (§ below)**; (b) PRECISION BOUNDARY — at low prediction gain the GO
+  drops to 3/6 (the divisive-normalization/gain-match companion process, proxied by a fixed weight); wired at the ROBUST
+  `cue_to_expected_weight=0.8` (6/6 GO); fully-learned CA3 all-to-all recall + homeostatic gain precision = the named next
+  rungs; (c) the `(agent,action)` recall + patient-block map key on surface tokens (light inflection tolerance). Finding
+  `2026-08-12-GateB-surprise-expectation-violation-production-chat.md`. (Surprise-gated plasticity on the live turn = a
+  QUEUED optional next step; the honest NOTICE is the wired deliverable.)
 - **D3. Curiosity** (curiosity-inversion GO, learning-progress selection GO, curiosity-veto). Wire → drives a follow-up
   question on a novel/uncertain topic. STATUS: QUEUED (audit in flight).
 - **D4. Comprehension MEASUREMENT** ("measurement of understanding of spoken language"). **WIRED (Gate-B, 2026-08-12).**

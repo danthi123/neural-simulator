@@ -1,0 +1,42 @@
+{
+  "what": "Gate-B/D2 expectation-violation/surprise production wire — in-process synchronous verify on the real /api/brain-chat handler (SIM_BACKEND=numpy, BRAIN_COMPOSER_KIND=rf, stub renderer, rich=False). 8/8 checks PASS, ~42 s.",
+  "backend": "numpy",
+  "device": "cpu",
+  "provenance": {
+    "runner": "scratchpad/verify_d2.py (in-process call of webapp.server.brain_chat)",
+    "command": "SIM_BACKEND=numpy BRAIN_COMPOSER_KIND=rf python -u verify_d2.py",
+    "seed": 42,
+    "config": {"brain": "tiny-demo", "renderer": "stub", "rich": false, "composer_kind": "rf",
+               "BRAIN_AFFECT": "0", "organ_seed": 42, "cue_to_expected_weight": 0.8}
+  },
+  "threshold": 2.73,
+  "calibration": {"confirm_hz": 0.2, "contradict_hz": 5.44, "novel_hz": 5.27, "cue_to_expected_weight": 0.8},
+  "default_arm": {
+    "teach wolf hunt deer": {"surprise": null, "note": "no stored expectation yet -> surprise skipped"},
+    "confirm wolf hunt deer": {"surprise_hz": 0.0, "threshold": 2.73, "surprised": false, "stored_patient": "deer", "asserted_patient": "deer", "note": "stored==asserted -> ~0 Hz, no notice"},
+    "contradict wolf hunt rock": {"surprise_hz": 5.61, "threshold": 2.73, "surprised": true, "stored_patient": "deer", "asserted_patient": "rock", "note": "FIRES -> honest notice prepended: 'That surprises me — my mismatch monitor fired: I'd learned that wolf hunt deer.'"}
+  },
+  "lesion_arm": {
+    "lesion_confirm wolf hunt deer": {"surprise_hz": 4.92, "threshold": 2.73, "surprised": true, "stored_patient": "deer", "asserted_patient": "deer", "note": "BRAIN_SURPRISE_LESION=1 removes the prediction inhibition -> the SAME CONFIRM input that is 0.00 Hz intact now FIRES (load-bearing)"},
+    "intact_confirm_restored wolf hunt deer": {"surprise_hz": 0.0, "surprised": false, "note": "prediction restored -> back to ~0 Hz (separation restored)"}
+  },
+  "flag_off_arm": {
+    "wolf hunt deer": {"surprise": null, "note": "BRAIN_SURPRISE=0 byte-identical oracle: no read, no notice"}
+  },
+  "checks": {
+    "teach_no_surprise": true,
+    "confirm_not_surprised": true,
+    "confirm_no_notice": true,
+    "contradict_surprised_firing": true,
+    "contradict_notice_prepended": true,
+    "contradict_ge_3x_confirm": true,
+    "lesion_makes_confirm_fire_load_bearing": true,
+    "intact_confirm_restored": true,
+    "all_pass": true
+  },
+  "derisk_reference": {
+    "finding": "research/findings/2026-08-12-spiking-expectation-violation-surprise-conversational-6seed-GO-mechanism.md",
+    "n_go_seeds": 6,
+    "note": "confirm 0.3-2.5 Hz vs violate 7.5-9.9 Hz, 3.5-30.9x; lesion collapses to ~1.0x; robust op point cue_to_expected_weight=0.8"
+  }
+}

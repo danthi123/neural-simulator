@@ -1830,6 +1830,16 @@ async def _warm_chat_brain() -> None:
             except Exception as _ce:
                 print(f"[webapp] startup: comprehension monitor warm skipped ({type(_ce).__name__}: {_ce})",
                       flush=True)
+            # SURPRISE (Gate-B, D2): pre-build the co-resident spiking expectation-violation circuit so the first
+            # assertion's mismatch read is fast. Best-effort + guarded (default-ON; BRAIN_SURPRISE=0 skips it).
+            try:
+                from research.runners.surprise_production_organ import surprise_enabled
+                if surprise_enabled():
+                    _get_surprise_organ().ensure_built()
+                    print("[webapp] startup: surprise organ (co-resident predictive-coding mismatch unit) WARM",
+                          flush=True)
+            except Exception as _se:
+                print(f"[webapp] startup: surprise organ warm skipped ({type(_se).__name__}: {_se})", flush=True)
             dt = round(_t.time() - t0, 1)
             print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
@@ -2869,6 +2879,12 @@ def _get_comprehension_organ():
     return get_organ(seed=42)
 
 
+def _get_surprise_organ():
+    """The process-shared spiking expectation-violation organ (built once; the co-resident mismatch circuit)."""
+    from research.runners.surprise_production_organ import get_organ
+    return get_organ(seed=42)
+
+
 def _brain_vocab(chat) -> set:
     """The set of words the brain KNOWS (agents ∪ actions ∪ patients of its stored facts), lowercased. Used to
     scope the comprehension monitor: a real word the brain knows but that is not in the toy cue lexicon is OUT of
@@ -3516,6 +3532,43 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as _ce:  # never let the comprehension read crash a turn — degrade to the normal answer
             comprehension_info = {"on": True, "error": f"{type(_ce).__name__}: {_ce}"}
 
+    # ── EXPECTATION-VIOLATION / SURPRISE (Gate-B, D2, 2026-08-12) ────────────────────────────────────────────
+    # When the user ASSERTS a fact (agent,action,patient) for which the brain ALREADY HOLDS a stored
+    # (agent,action)->patient association, run a genuinely-SPIKING predictive-coding MISMATCH unit (the co-resident
+    # circuit, reuse-by-import from `surprise_production_organ`, 6/6-GO D2 de-risk): the recalled expectation
+    # delivers GABA_A SUBTRACTIVE inhibition, the asserted patient excitation; confirm cancels (~0 Hz), a
+    # contradiction/novelty fires. The signal is a windowed `cp_firing_states[surprise]` rate (NO host
+    # recalled==asserted compare). On a firing surprise the brain PREPENDS an honest functional NOTICE. Additive,
+    # moat-safe (runs only when a stored expectation exists; never manufactures a fact or flips an abstain).
+    # Default-ON; `BRAIN_SURPRISE=0` -> fully skipped (byte-identical oracle).
+    surprise_info = None
+    surprise_prefix = ""
+    try:
+        import research.runners.surprise_production_organ as _SO
+        _surprise_on = _SO.surprise_enabled()
+    except Exception:
+        _SO = None
+        _surprise_on = False
+    if _surprise_on:
+        try:
+            asrt = _SO.extract_assertion(msg)
+            if asrt is not None:
+                a_s, v_s, p_asserted = asrt
+                # the EXPECTED patient is RECALLED by the brain's own spiking recall (not a host lookup): what_does
+                # returns the stored patient for (agent,action), or falsy if the brain holds no expectation here.
+                try:
+                    p_stored = chat.inner.what_does(a_s, v_s)
+                except Exception:
+                    p_stored = None
+                if p_stored:
+                    sorg = _get_surprise_organ()
+                    sj = sorg.judge(a_s, v_s, str(p_stored), str(p_asserted), lesion=_SO.surprise_lesioned())
+                    surprise_info = dict(sj)
+                    if sj["surprised"]:
+                        surprise_prefix = _SO.surprise_notice(a_s, v_s, str(p_stored))
+        except Exception as _se:  # never let the surprise read crash a turn — degrade to the un-noticed answer
+            surprise_info = {"on": True, "error": f"{type(_se).__name__}: {_se}"}
+
     # ── RICH path: a SUBSTANTIVE multi-sentence grounded reply ──────────
     # The RichAnswerComposer does its own GATE (direct recall + the moat) +
     # multi-hop chain + elaboration, VERIFY-checks each sentence, and carries
@@ -3549,8 +3602,10 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # recalled fact) but carries `hypothesis`/`hypothesis_svo`. Surface those so the client can render the
         # guess distinctly + so the SVO the fluent prose asserts is checkable, WITHOUT reporting it as recalled.
         is_hyp = bool(r.get("hypothesis"))
+        # SURPRISE (Gate-B, D2): if the asserted fact violated a stored expectation (a firing mismatch), PREPEND the
+        # honest functional notice to the turn's answer. Additive; empty prefix when not surprised / disabled.
         resp = {
-            "answer": r["answer"],
+            "answer": (surprise_prefix + r["answer"]) if surprise_prefix else r["answer"],
             "abstained": bool(r["abstained"]),
             # the direct recall (the first supporting fact) is the gate hit,
             # surfaced for parity with the single-fact path's recalled_svo.
@@ -3576,6 +3631,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # COMPREHENSION (Gate-B, D4): the spiking role-binding read for an in-scope transitive (margin/threshold/
             # comprehended); null when out of scope or disabled (BRAIN_COMPREHENSION_GATE=0). A pass-through here.
             "comprehension": comprehension_info,
+            # SURPRISE (Gate-B, D2): the spiking expectation-violation read for an asserted fact with a stored
+            # expectation (surprise_hz/threshold/surprised); null when no stored expectation or disabled (BRAIN_SURPRISE=0).
+            "surprise": surprise_info,
         }
         if is_hyp:
             # additive markers (present ONLY on a generated-hypothesis turn): the guess flag, the (a,v,p) the fluent
@@ -3602,6 +3660,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
+    # SURPRISE (Gate-B, D2): PREPEND the honest expectation-violation notice when the asserted fact fired the
+    # spiking mismatch unit. Additive; empty prefix when not surprised / disabled.
+    if surprise_prefix:
+        answer = surprise_prefix + answer
+
     return JSONResponse({
         "answer": answer,
         "abstained": abstained,
@@ -3620,6 +3683,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         "affect": affect_info,
         # COMPREHENSION (Gate-B, D4): the spiking role-binding read for an in-scope transitive; null out of scope.
         "comprehension": comprehension_info,
+        # SURPRISE (Gate-B, D2): the spiking expectation-violation read for an asserted fact with a stored
+        # expectation; null when no stored expectation or disabled (BRAIN_SURPRISE=0).
+        "surprise": surprise_info,
     })
 
 
