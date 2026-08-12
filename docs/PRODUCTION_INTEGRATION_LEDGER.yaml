@@ -22,6 +22,10 @@ headline:
   # THE PRIMARY NORTH-STAR — OWNER-VISIBLE FUNCTION (the 3 acts trace-stamping cannot fake; each needs a LESION test:
   # disable the spiking path -> the default answer must CHANGE, else it is not genuinely doing the act).
   owner_visible_function:
+    # EMPIRICALLY CONFIRMED by running the real default brain: research/runners/_production_lesion_probe.py ->
+    # research/findings/raw/_production_lesion/probe.json (CHOOSE/GENERATE/LEARN all False; the LEARN probe taught a
+    # fact mid-conversation and the brain STILL answered "I don't know" — the read-only/snapshot gap, live). This is the
+    # behavioral half of CLASS PI; a wiring earns credit only when it flips one of these to True on THIS probe.
     choose: NO       # does the default turn's content-selection fire a neural selector that is lesion-load-bearing?
     generate: NO     # open-ended generation FROM THE BRAIN (not the off-bridge transformer)?
     learn: NO        # does the default turn WRITE SYNAPSES (plasticity per turn)?

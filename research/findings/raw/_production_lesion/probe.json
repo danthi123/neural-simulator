@@ -1,0 +1,74 @@
+{
+ "seed": 42,
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._production_lesion_probe",
+ "n_stored_facts": 5,
+ "stored_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ]
+ ],
+ "CHOOSE": {
+  "neural": false,
+  "note": "host QuestionRouter.match_fact decides which fact answers (keyword overlap); no neural content-selector on the default path"
+ },
+ "GENERATE": {
+  "open_ended": false,
+  "probe": {
+   "q": "what is the meaning of freedom?",
+   "answer": "I don't know about that.",
+   "abstained": true
+  },
+  "note": "recall-only agent emits ONLY stored facts; novel composition -> abstain"
+ },
+ "LEARN": {
+  "in_loop": false,
+  "before": {
+   "q": "what did the otter catch?",
+   "answer": "I don't know about that.",
+   "abstained": true
+  },
+  "after": {
+   "q": "what did the otter catch?",
+   "answer": "I don't know about that.",
+   "abstained": true
+  },
+  "taught": "the otter caught a clam",
+  "hear_ok": true,
+  "note": "gate() reads a stored_facts SNAPSHOT taken at build; a mid-turn hear is not reflected -> the turn learns nothing (read-only)"
+ },
+ "spiking_recall_lesion": {
+  "recall_q": "what does dog chase?",
+  "composer_type": null,
+  "note": "no composer recall method found to lesion (query_patient/query/recall/unbind)"
+ },
+ "owner_visible_function": {
+  "CHOOSE": false,
+  "GENERATE": false,
+  "LEARN": false
+ },
+ "verdict": "The default production turn CHOOSE=False GENERATE=False LEARN=False. All three host-or-absent: the production brain does not yet decide, generate, or learn."
+}
