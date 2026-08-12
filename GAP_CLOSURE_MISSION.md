@@ -32,21 +32,36 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   never OBLIGATORY on this point-neuron substrate** (finite-read redundancy / weak-coupling). **⇒ SUCCESS CRITERION for
 >   Q1/Q2/Q4 is now ENTER-THE-REGIME (leave majority-class + BEAT the frozen reservoir where FA/KP collapse), NOT
 >   obligatory-depth-3 generalisation** (unmeasurable here). This is itself evidence toward the substrate-not-rule tell.
-> - **⭐⭐ WAVE-1 RESULT — THE WALL IS CRACKED (a coherent, convergent picture):** the deep-spiking learning regime is
->   reachable with a PER-LAYER LOCAL TARGET (not a top-down error, not a sidestep of σ′).
->   - **Q1 Forward-Forward GO + Q4 DECOLLE GO** (2 INDEPENDENT local rules, both 6/6 enter the regime where chained
->     FA/KP + a perfect Wᵀ oracle sit at chance): DECOLLE 0.926/0.941 @ N=3/4 (per-layer selectivity ~0.95, beats optimal
->     reservoir +0.37/+0.42), FF ~0.78 (~97% of BPTT, not weak-coupling). **UNDER ADVERSARIAL VERIFICATION** (`wrufiei6u`,
->     4-lens: genuine deep-layer learning vs reservoir-with-readout + fair wall baselines) — MERGE PENDING that verdict.
->   - **Q2 birdsong tutor NEGATIVE** (`ce658de4`) SHARPENS it: a two-stage low-dim tutor fails even with a PERFECT oracle
->     target (Stage-B: a low-dim OUTPUT target broadcast carries no per-layer HIDDEN-target info) → **the missing
->     ingredient is a per-layer hidden target — exactly what FF/DECOLLE supply and the tutor doesn't.** (Bonus: genuine
->     measured node-perturbation OUTPERFORMS the tutor here → a named successor, scope-caveated to the surrogate-LIF net.)
-> - **PENDING:** Q3 DRTP-on-Izhikevich (on the freed 3090 — Palworld closed) · Q9 EventProp-ceiling · Q8 DFA head-to-head
->   (pool) · Q6/Q7 (measured-NP / critic) · Q10 fully-spiking burn-down (needs a verified Q1/Q4 GO). **SINGLE LITERAL
->   NEXT:** land `wrufiei6u`; if Q1/Q4 survive → MERGE both (the first verified gap#4 cracks) + the next rung is a
->   FITTABLE obligatory-depth-3 task (BPTT can fit it) + the Izhikevich port of the winning local rule (does the crack
->   hold on the production neuron model, or is it LIF-only → the substrate tell).
+> - **⭐⭐ WAVE-1 RESULT — VERIFIED + CORRECTED (`wrufiei6u` MERGE-WITH-EDITS; merged `d97cdf0ec`/`06b2b4f42`; synthesis
+>   `2026-08-11-gap4-wave1-verification-corrected-the-FA-KP-wall-is-partly-an-lr-artifact.md`). The "wall is cracked"
+>   claim I reported was INFLATED — the honesty correction is the deliverable.**
+>   - **CONFIRMED (real, triply reproduced):** Q1 FF + Q4 DECOLLE — two independent LOCAL transport-free rules — get a
+>     deep (N=3,4) spiking net to leave majority-class and BEAT the OPTIMAL-ridge frozen reservoir (FF +0.16; DECOLLE
+>     +0.30/+0.33 vs the *optimal* floor, per-layer selectivity ~0.95 vs 0.55). Anti-cheats bite, NO sim/ edit. Real
+>     claim: *a local rule builds task-useful selective features in every layer of a deep spiking net and beats the
+>     optimal random reservoir on a depth-2 task.* A genuine R3 result.
+>   - **RETRACTED:** "cracks a wall where top-down credit COULD NOT enter / uniquely capable." A skeptic re-ran the
+>     chained transport-free FA/KP at a FAIR per-arm lr (0.01–0.02, not the shared 0.05) → **they TOO enter at N=3/4**
+>     (FA 0.84–0.93, KP 0.84–0.90). The 2026-08-02 "FA/KP collapse at N≥3" wall is therefore **partly an lr-divergence
+>     artifact**, not (only) the credit rule. Also RETRACTED: "deep credit / depth obligatory" — FF's best single layer
+>     (0.789) ≥ full stack (0.780) ⇒ `depth_contributes=False`; DECOLLE trains each layer by its own local target (no
+>     credit through depth). **Combined with Q5 (depth non-obligatory / unconstructible): NOTHING in wave-1 tests DEEP
+>     credit — everything is depth-2-solvable and everything (local rules AND fair-lr FA/KP) solves it.**
+>   - **Q2 birdsong tutor NEGATIVE** (`ce658de4`): a two-stage low-dim tutor fails even with a perfect oracle target —
+>     a low-dim OUTPUT target carries no per-layer HIDDEN-target info. (Stands; interpreted under the correction.)
+> - **⇒ THE REDIRECT (wave-2 — the gap#4 deep-credit question is still OPEN, now correctly aimed):**
+>   1. **[HIGHEST] Per-arm-tuned FA/KP baseline** across tasks + depths — re-measure the 2026-08-02 wall with a fair
+>      per-arm lr grid. *Does the chained transport-free wall survive fair tuning, or was it an artifact throughout?*
+>      This decides whether gap#4 has a wall at all on the LIF surrogate substrate.
+>   2. **A fittable genuinely-deep task** (fan-in-2 compositional hierarchy BPTT can fit + depth load-bearing) → run
+>      FF/DECOLLE-vs-tuned-FA/KP there to actually test obligatory-depth credit.
+>   3. **Izhikevich on-bridge port** — the FA-convergence root cause differs on point-neuron Izhikevich; a genuine
+>      substrate wall (if any) most likely lives there, not on the LIF surrogate net.
+>   - **DE-PRIORITIZED:** more local rules on XOR (SoftHebb pid349045, CwComp) — they'll all "enter" a depth-2 task,
+>     which no longer distinguishes anything. Keep in-flight ones as data points; do NOT queue more. Q3 DRTP-on-Izhikevich
+>     (pid348963, running) folds into redirect #3.
+> - **SINGLE LITERAL NEXT:** build + launch the per-arm-tuned FA/KP baseline (redirect #1) across XOR N=2,3,4 — the test
+>   that says whether the located wall is real or an lr artifact.
 > - **THE TELL (substrate vs rule), UPDATED:** Q5 already shows depth is non-obligatory (task side can't force it). If
 >   Q1/Q2/Q4 ALSO fail to ENTER-THE-REGIME (stay at majority-class / ≤ reservoir) while BPTT solves it → the point-neuron
 >   spiking read carries no deep credit under ANY local rule → the **ALIF substrate swap** is the real (scope-first)
