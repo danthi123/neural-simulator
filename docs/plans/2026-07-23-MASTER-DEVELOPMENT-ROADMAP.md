@@ -6,10 +6,120 @@ date: 2026-07-23
 
 # MASTER DEVELOPMENT ROADMAP — toward a genuinely-conversing, feeling, self-aware sim-brain
 
-**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-06** (current action-credit, source-monitor, replay-consolidation [v5+SFA interference wall CLOSED, order control is residual], and visual-identity boundaries are reflected in §§7-8). Update it as results/walls land.
+**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-13** (a big 2026-08-12/13 production-wiring + faculty-audit wave landed; **read §0 first** — it is the current forward truth and supersedes any older status below where they disagree). Update it as results/walls land.
 **Supersedes-by-extension:** `docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md` (that plan's F1–F6 are absorbed here as sub-faculties; this doc adds the full faculty map, the developmental staging spine, the theory-of-mind ladder the F-plan omitted, the walls ledger, and the parallelization map).
 **Anchors:** `GAP_CLOSURE_MISSION.md` · `CLAUDE.md` · the master directive (`project_master_directive_relentless_biological_emergence`).
 **⭐ FACULTY-MAP GAP AUDIT + PRIORITIZED BUILD PLAN (2026-08-12, a 12-agent grounded audit):** `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md` — the honest reckoning (the live brain is ~ONE integrated spiking family + a bench of ~40 unwired GOs; several organ internals still host-designed) and the Tier-1/2/3 next-faculty priorities. The keystone is a NEURAL WORKSPACE BUS (GNW ignition) + re-entrant deliberation (organs talk via ignition not Python; ACT on the conflict/confidence signals we only report). Read it for the forward faculty priorities; this master doc's §§2/7/8 remain the faculty-tag / wall-ledger / parallelization detail.
+
+---
+
+## 0. STATE AS OF 2026-08-13 — what is live, and the ordered path (READ FIRST)
+
+> This section is the current forward truth. It supersedes any older status below where they disagree. Companions: the
+> DONE-work log in prose is [`ROADMAP.md`](../../ROADMAP.md); the forward FACULTY detail (Tier-1/2/3 + sequencing) is the
+> [faculty-map gap audit](2026-08-12-faculty-map-gap-audit-and-roadmap.md); the host-shortcut worklist is
+> [`docs/BURN_DOWN_LIST.md`](../BURN_DOWN_LIST.md); the machine-checked wiring truth is
+> [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
+> ties them to the staged path.
+
+### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
+
+The default chat turn builds the genuinely-spiking `composer_kind="onebrain"` recall (resonate-and-fire on firing
+neurons, not the numpy fast path) and runs a bank of co-resident spiking organ reads — each default-on, moat-safe, and
+lesion-load-bearing (disable the spiking path → the answer changes). The ledger counts **12 NEW default-on spiking reads**
+(B3/B4/T1-6 reuse existing reads, adding no new substrate):
+
+- **CHOOSE** (PARTIAL) — a factual (agent,action) parse is owned by the on-brain BridgeParser; the host QuestionRouter is
+  retired for factual-SVO (self/identity + noisy-anaphora residual).
+- **LEARN** (YES) — an SVO assertion is acquired in-loop and recalled from the substrate (runtime code allocation).
+- **GENERATE #3E** (PARTIAL) — volunteers a novel grounded proposition; SURFACE via the spiking Broca (A1a) + a
+  vocab-agnostic spiking DRAW (B1/F1); plausibility likelihood + SVO template + moat still host.
+- **MOAT (C1)** — claim-level entailment over the multi-fact set (free-form multi-clause prose survives; 0 leaks 6-seed).
+- **D1 AFFECT** — mood colors WHAT + HOW; appraisal VALUE = DR-2 learned distributional valence (salience gate + norms host).
+- **D2 SURPRISE · D4 COMPREHENSION · E1 METACOG · E2 AFFECTIVE-WORLD-MODEL · D3 CURIOSITY · D5 EPISODIC-recall-gate ·
+  D6 MULTI-REFERENT-WM · D3/F2 DISCOURSE-REGISTER** — each a spiking co-resident read (honest notice / abstain / hedge /
+  follow-up-question / recall-gate / ≥2-referent read-back / who-was-before), all lesion-load-bearing.
+- **B3 NON-CONTRADICTION + B4 RECONSOLIDATION + T1-6 OTHER-REPAIR** — reuse the recall composer / the D2 surprise window /
+  the D4 per-noun read; no new substrate.
+
+### 0.2 The honest reckoning (non-inflated — this is the bar the plan must not flatter)
+
+Summing the list above OVER-states the brain. Against the project's DONE bar (production-default + scaffold-retired), the
+true tally is **~ONE integrated spiking faculty family + a bench of ~40 unwired GO de-risks** — the owner's own diagnosed
+"~40 default-off GOs beside a host pipeline" drift, reproduced at audit scale. **`scaffold_retired: 0` across the whole
+ledger: nothing yet meets the full DONE bar.** Four residuals temper even the wired core:
+
+1. **"One brain" is CO-RESIDENCY, not one substrate.** Each organ is a Python function in `server.py` that snapshots its
+   own co-resident bridge and returns; routing/sequencing/combination is HOST control flow — organs talk through Python,
+   not synapses. Genuine cross-synaptic interaction is proven for exactly ONE pathway (acquisition).
+2. **Spiking recall is resonate-and-fire over a HOST-DESIGNED VSA bind/unbind algebra + hand-assigned assemblies** — a
+   lookup dressed as resonance (frac_fired ~1.7%, a numpy oracle underneath), not emergent structure.
+3. **AFFECT appraisal cognition is host** — DR-2 learns the valence VALUE, but the salience gate + seed norms are Warriner,
+   the learning is numpy not spiking, and the injection is host.
+4. **METACOG/E1 is a decision-variable (balance-of-evidence) read, not a dissociable second-order monitor** (the
+   dissociable comparator is seed-fragile). **The mouth is still Qwen for open ARBITRARY prose** (structured GENERATE is
+   the spiking Broca).
+
+### 0.3 The de-risked bench (GO, unwired) and the mapped boundaries
+
+**Wireable GOs waiting (highest leverage first):** the GNW N-organ ignition BUS (T1-1, 6/6 GO, wiring design at
+[`2026-08-13-gnw-norgan-bus-production-wiring.md`](2026-08-13-gnw-norgan-bus-production-wiring.md)) — the keystone; the
+LEARNED CAUSAL FORWARD-MODEL grounded in the real fact-store (T1-4, 6/6 GO); the INTUITIVE WORLD-MODEL / object-permanence
+rung (T1-7, VoE boundary surpassed 6/6); the autobiographical converse→sleep-replay→converse capstone (gap5, GO); E3 BTSP
+lasting-trace LEARN (6/6 GO, host-capture caveat); the Phase-0 self/social GOs (DR-3 self-schema, W3 false-belief, DR-1
+curiosity-selector, P0.3 affect-state). See the faculty audit for the full Tier-1/2/3 map.
+
+**Mapped boundaries (each a verdict on a METHOD, never a closed capability):**
+- **gap#4 (deep credit on spikes) is NOT the conversation blocker and has largely dissolved.** The located LIF wall was a
+  per-arm learning-rate artifact; transport-free LEARNED feedback (Kolen-Pollack) reaches the 3rd hidden layer at de-risk
+  level; and the last production-Izhikevich "few-spike READ" residual was carried at parity by POPULATION CODING (6/6 GO,
+  runner-only, 2026-08-13). Residual = wire it. A deprioritized PARALLEL research track, never a gate on the wiring.
+- **gap#5 (episodic) is mechanistically CLOSED end-to-end** (DG-select → BTSP one-shot form → dendritic dAP readout, 6/6);
+  residual = emergent assembly SELECTION (E5 boundary) + merge onto one-brain + a neural reader + a learned place-field band.
+- Others (source-monitoring · compositional CLS consolidation · executed-action credit · visual identity · R4 open prose)
+  each carry a named biological surpass + a quantified residual in §7 — none abandoned.
+
+### 0.4 THE ORDERED PATH — organized by the three defining properties still missing
+
+The north-star is FLUID open-ended conversation × ONE true substrate × EMERGENT faculties, all default-on. The live brain
+is functional but is a host-orchestrated pipeline of separately-validated spiking organs. The path closes exactly those
+three gaps:
+
+**PROPERTY 1 — FLUID OPEN-ENDED CONVERSATION (retire the Qwen mouth, burn-down A1).** Mapped rungs, in order: (i) the
+few-spike Izhikevich READ is de-risked at parity via population coding (DONE, runner-only) → (ii) add the shared-inhibitory
+FS-WTA to cut the spike budget below P=8 → (iii) route the state→logits projection through read-out neurons (retire the
+host matmul) → (iv) local-credit the BPTT store → (v) WIRE it as the default surface, demoting Qwen to the CPU test-oracle.
+In parallel: scale the spiking HTM-TM / WKV generator toward open prose (R4; the 267M LM is banked at val_ppl 45.66).
+Owner-sanctioned: Qwen may remain the early articulation crutch WHILE the faculties are load-bearing on the experience, so
+this is a long-horizon track, not a Phase-A/B blocker.
+
+**PROPERTY 2 — ONE TRUE SUBSTRATE (replace host orchestration).** The single highest-leverage structural move: (i) WIRE the
+GNW N-organ bus into production `brain_chat` so organs write SUBTHRESHOLD drive into a shared workspace and IGNITION (not a
+Python `if/else` combine) selects + broadcasts the winner, with re-entry + ACC-gated deliberation + an STN veto — this both
+turns the pipeline into one substrate whose own dynamics author a turn AND lets the brain ACT on the conflict/confidence
+signals it currently only reports; (ii) whole-brain MERGE — move every co-resident organ bridge onto the single recall
+bridge so interaction is cross-synaptic, not co-residency (closes the "rides the one-brain merge, #1" residual every wired
+organ declares).
+
+**PROPERTY 3 — EMERGENT (faculties LEARNED, not hand-wired).** Retire the host-designed STRUCTURE inside the organs (the
+VSA bind/unbind algebra, the WTA topology, the appraisal lexicon + salience gate, the JOIN topology, the plausibility gate)
+via on-bridge self-organization, and grow new structure with deep credit on the PRODUCTION substrate (gap#4 upstream, now
+unblocked at de-risk level) driven by the developmental TEACHER-LOOP (§4: contingent correction on the brain's OWN outputs,
+faded toward real humans). This is where the genuine research frontier lives; it runs in parallel and never gates the wiring.
+
+**FACULTY FILL (Tier-2/3, per the faculty audit §3–4):** prospective memory · systems-consolidation remote/semantic store ·
+directed forgetting + interference resolution · means-ends / hierarchical planning · task-switching · a SECOND (aversive)
+motivational axis · intrinsic conversational reward · self-conscious/social emotions · affective empathy · joint attention ·
+social norms / trust / moral reasoning · the cerebellar forward-model · interval timing · a circadian/sleep homeostat
+(the brain decides WHEN to sleep) · stable value/temperament · non-associative learning (habituation/sensitization) · the
+salience-network controller. Tier-3 (embodiment-gated perception/motor, prosody, interoceptive proto-self) is DEFERRED
+until a body / acoustic channel exists.
+
+**SEQUENCING (faculty audit §6).** **Phase A** — wire the already-GO bench into the default turn (cheap; burns down the
+drift fastest: causal forward-model, world-model rung, autobiographical episodic loop, multi-referent write-gate). **Phase
+B** — the GNW-bus structural keystone (do it AFTER A, so it broadcasts among a richer organ set). **Phase C** — the
+reasoning / world-model + deep-credit + mouth-retirement research frontier: start early, run in PARALLEL, gate nothing.
+All expressed developmentally (S0 proto → S5 human-ready) via the develop-loop (§4).
 
 ---
 
@@ -384,6 +494,15 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-08-13 RECONCILIATION (read §0.3 for the live status; the rows below retain the mechanism detail).** Two rows
+> are materially stale in their VERDICT (not their biology): (1) the **gap#4** row still reads as an open on-bridge wall —
+> superseded: the located wall was largely a per-arm-lr artifact, learned feedback (KP) reaches the 3rd hidden layer at
+> de-risk level, and the production-Izhikevich few-spike READ residual is now carried at parity by POPULATION CODING (6/6
+> GO, runner-only, 2026-08-13); gap#4 is NOT the conversation blocker and is a deprioritized parallel track. (2) The
+> **gap#5** row's "emergent FORMATION open / readout GO" is now **CLOSED end-to-end** (DG-select → BTSP form → dendritic
+> dAP readout, 6/6); the live residual is emergent assembly SELECTION (E5) + one-brain merge + neural reader. All other
+> rows stand; the FORWARD faculty priorities live in the [faculty audit](2026-08-12-faculty-map-gap-audit-and-roadmap.md).
+
 > **⭐ 2026-08-11 OVERNIGHT UPDATE (crux forward-paths — full detail in `research/findings/2026-08-11-*.md`; the rows
 > below are pre-this-batch and being superseded here).** Five walls moved:
 > - **gap#4 (deep-credit):** the row's "task is ~1-layer-solvable because the temporal-depth floor" caveat is now
@@ -455,6 +574,18 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**⭐ 2026-08-13 — THE ORDERED NEXT ACTIONS ARE §0.4 (this supersedes the "real frontier now" list far below).** In
+priority order, matching the three missing properties: **(1)** WIRE the GNW N-organ bus into production `brain_chat` to
+REPLACE the host organ-orchestration (design at `2026-08-13-gnw-norgan-bus-production-wiring.md`) — the single biggest move
+toward one true substrate. **(2)** Phase-A wiring of the de-risked Tier-1 bench into the default turn: the grounded causal
+forward-model (T1-4), the object-permanence world-model rung (T1-7), the autobiographical episodic converse→sleep-replay
+loop (gap5), the multi-referent learned write-gate. **(3)** Mouth-retirement rungs (A1): FS-WTA spike-budget cut → readout
+projection → local-credit the store → wire, demoting Qwen to the oracle. **(4, parallel, gates nothing)** deep credit on
+the PRODUCTION Izhikevich substrate + on-bridge self-organization of the host-designed organ structure (the EMERGENT
+track). The older dated batches below (2026-08-10 integration pivot down to the 2026-08-04/08-01 portfolio, and the "real
+frontier now" 5-item list — V13 Stage-0, executed-action credit, source attribution, visual identity, integrate-cleared)
+are retained as the HISTORICAL record of how the current state was reached; where any conflicts with §0, §0 wins.
 
 **2026-08-10 UPDATE — INTEGRATION PIVOT (owner-directed) is now the CURRENT FRONTIER; gap#5 CLOSED.** The owner steered
 off mechanism-first-in-isolation: **wire GO faculties into the LIVE chat loop and gate on "did the conversation get
