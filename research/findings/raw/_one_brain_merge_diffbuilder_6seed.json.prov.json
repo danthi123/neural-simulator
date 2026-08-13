@@ -1,0 +1,32 @@
+{
+ "run_id": "1786641675-1219946",
+ "runner": "research/runners/_one_brain_merge_Norgan_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a1d255b9a025daa81/research/runners/_one_brain_merge_Norgan_derisk.py",
+  "--mode",
+  "diffbuilder",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_one_brain_merge_diffbuilder_6seed.json"
+ ],
+ "git_sha": "fb27b6109",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T13:21:15",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1153.1,
+ "corpus_check_query": "scale one-substrate merge to N organs and different builders",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_one_brain_merge_diffbuilder_6seed.json"
+}

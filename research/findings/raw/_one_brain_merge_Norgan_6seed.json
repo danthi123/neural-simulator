@@ -1,0 +1,426 @@
+{
+  "mode": "one_brain_merge_norgan",
+  "n_organs": 3,
+  "per_region_threshold_heterogeneity": true,
+  "results": [
+    {
+      "seed": 42,
+      "n_organs": 3,
+      "determinism_ok": true,
+      "one_shared_pool": true,
+      "n_all_neurons": 3168,
+      "n_per_organ": {
+        "_A": 1056,
+        "_B": 1056,
+        "_C": 1056
+      },
+      "init_maxerr": 0.0,
+      "init_per_organ_maxerr": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "init_byte_identical": true,
+      "organ_separation_ratio": {
+        "_A": 50.39999999999999,
+        "_B": 21.294117647058822,
+        "_C": 32.82608695652174
+      },
+      "all_organs_functional": true,
+      "pairs": [
+        {
+          "pair": [
+            0,
+            1
+          ],
+          "src": "_A",
+          "dst": "_B",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 22.69965277777778,
+          "interaction_lesion_hz": 0.0,
+          "attribution_frac": 1.0,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            0,
+            2
+          ],
+          "src": "_A",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 25.057870370370374,
+          "interaction_lesion_hz": -0.13744212962962976,
+          "attribution_frac": 1.005484988452656,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            1,
+            2
+          ],
+          "src": "_B",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 31.691261574074073,
+          "interaction_lesion_hz": 0.6076388888888893,
+          "attribution_frac": 0.9808262953663547,
+          "load_bearing": true
+        }
+      ],
+      "all_pairs_load_bearing": true,
+      "structural_go": true
+    },
+    {
+      "seed": 43,
+      "n_organs": 3,
+      "determinism_ok": true,
+      "one_shared_pool": true,
+      "n_all_neurons": 3168,
+      "n_per_organ": {
+        "_A": 1056,
+        "_B": 1056,
+        "_C": 1056
+      },
+      "init_maxerr": 0.0,
+      "init_per_organ_maxerr": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "init_byte_identical": true,
+      "organ_separation_ratio": {
+        "_A": 12.311475409836067,
+        "_B": 20.583333333333332,
+        "_C": 17.795454545454547
+      },
+      "all_organs_functional": true,
+      "pairs": [
+        {
+          "pair": [
+            0,
+            1
+          ],
+          "src": "_A",
+          "dst": "_B",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 34.5630787037037,
+          "interaction_lesion_hz": -0.02893518518518512,
+          "attribution_frac": 1.000837170364169,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            0,
+            2
+          ],
+          "src": "_A",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 31.04021990740741,
+          "interaction_lesion_hz": -0.05787037037037024,
+          "attribution_frac": 1.0018643672803542,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            1,
+            2
+          ],
+          "src": "_B",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 33.12355324074074,
+          "interaction_lesion_hz": 1.7763568394002505e-15,
+          "attribution_frac": 1.0,
+          "load_bearing": true
+        }
+      ],
+      "all_pairs_load_bearing": true,
+      "structural_go": true
+    },
+    {
+      "seed": 44,
+      "n_organs": 3,
+      "determinism_ok": true,
+      "one_shared_pool": true,
+      "n_all_neurons": 3168,
+      "n_per_organ": {
+        "_A": 1056,
+        "_B": 1056,
+        "_C": 1056
+      },
+      "init_maxerr": 0.0,
+      "init_per_organ_maxerr": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "init_byte_identical": true,
+      "organ_separation_ratio": {
+        "_A": 22.303030303030305,
+        "_B": 7.69,
+        "_C": 16.139999999999997
+      },
+      "all_organs_functional": true,
+      "pairs": [
+        {
+          "pair": [
+            0,
+            1
+          ],
+          "src": "_A",
+          "dst": "_B",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 23.893229166666668,
+          "interaction_lesion_hz": -0.25318287037037024,
+          "attribution_frac": 1.0105964274901604,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            0,
+            2
+          ],
+          "src": "_A",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 23.712384259259256,
+          "interaction_lesion_hz": -0.06510416666666785,
+          "attribution_frac": 1.00274557657108,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            1,
+            2
+          ],
+          "src": "_B",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 25.875289351851855,
+          "interaction_lesion_hz": -0.014467592592591672,
+          "attribution_frac": 1.0005591277606933,
+          "load_bearing": true
+        }
+      ],
+      "all_pairs_load_bearing": true,
+      "structural_go": true
+    },
+    {
+      "seed": 100,
+      "n_organs": 3,
+      "determinism_ok": true,
+      "one_shared_pool": true,
+      "n_all_neurons": 3168,
+      "n_per_organ": {
+        "_A": 1056,
+        "_B": 1056,
+        "_C": 1056
+      },
+      "init_maxerr": 0.0,
+      "init_per_organ_maxerr": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "init_byte_identical": true,
+      "organ_separation_ratio": {
+        "_A": 22.060606060606062,
+        "_B": 4976851.851851853,
+        "_C": 16.022727272727273
+      },
+      "all_organs_functional": false,
+      "pairs": [
+        {
+          "pair": [
+            0,
+            1
+          ],
+          "src": "_A",
+          "dst": "_B",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 31.26446759259259,
+          "interaction_lesion_hz": -0.02893518518518512,
+          "attribution_frac": 1.000925497454882,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            0,
+            2
+          ],
+          "src": "_A",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 32.56655092592593,
+          "interaction_lesion_hz": -0.14467592592592737,
+          "attribution_frac": 1.0044424700133276,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            1,
+            2
+          ],
+          "src": "_B",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 35.481770833333336,
+          "interaction_lesion_hz": 0.5135995370370381,
+          "attribution_frac": 0.9855249745158001,
+          "load_bearing": true
+        }
+      ],
+      "all_pairs_load_bearing": true,
+      "structural_go": false
+    },
+    {
+      "seed": 101,
+      "n_organs": 3,
+      "determinism_ok": true,
+      "one_shared_pool": true,
+      "n_all_neurons": 3168,
+      "n_per_organ": {
+        "_A": 1056,
+        "_B": 1056,
+        "_C": 1056
+      },
+      "init_maxerr": 0.0,
+      "init_per_organ_maxerr": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "init_byte_identical": true,
+      "organ_separation_ratio": {
+        "_A": 7.313725490196079,
+        "_B": 18.564102564102566,
+        "_C": 5.892307692307692
+      },
+      "all_organs_functional": true,
+      "pairs": [
+        {
+          "pair": [
+            0,
+            1
+          ],
+          "src": "_A",
+          "dst": "_B",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 22.381365740740744,
+          "interaction_lesion_hz": -0.036168981481480955,
+          "attribution_frac": 1.0016160310277957,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            0,
+            2
+          ],
+          "src": "_A",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 20.146122685185183,
+          "interaction_lesion_hz": -0.17361111111111072,
+          "attribution_frac": 1.0086175942549371,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            1,
+            2
+          ],
+          "src": "_B",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 28.7109375,
+          "interaction_lesion_hz": 0.014467592592593448,
+          "attribution_frac": 0.9994960947341899,
+          "load_bearing": true
+        }
+      ],
+      "all_pairs_load_bearing": true,
+      "structural_go": true
+    },
+    {
+      "seed": 102,
+      "n_organs": 3,
+      "determinism_ok": true,
+      "one_shared_pool": true,
+      "n_all_neurons": 3168,
+      "n_per_organ": {
+        "_A": 1056,
+        "_B": 1056,
+        "_C": 1056
+      },
+      "init_maxerr": 0.0,
+      "init_per_organ_maxerr": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "init_byte_identical": true,
+      "organ_separation_ratio": {
+        "_A": 10.76923076923077,
+        "_B": 15.727272727272725,
+        "_C": 61.66666666666667
+      },
+      "all_organs_functional": true,
+      "pairs": [
+        {
+          "pair": [
+            0,
+            1
+          ],
+          "src": "_A",
+          "dst": "_B",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 21.390335648148145,
+          "interaction_lesion_hz": -0.007233796296295836,
+          "attribution_frac": 1.0003381805884344,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            0,
+            2
+          ],
+          "src": "_A",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 30.324074074074073,
+          "interaction_lesion_hz": -0.007233796296297612,
+          "attribution_frac": 1.0002385496183206,
+          "load_bearing": true
+        },
+        {
+          "pair": [
+            1,
+            2
+          ],
+          "src": "_B",
+          "dst": "_C",
+          "cross_edges_zeroed": 55296,
+          "interaction_intact_hz": 36.64641203703704,
+          "interaction_lesion_hz": -0.036168981481480955,
+          "attribution_frac": 1.000986971969996,
+          "load_bearing": true
+        }
+      ],
+      "all_pairs_load_bearing": true,
+      "structural_go": true
+    }
+  ],
+  "n_seeds": 6,
+  "n_one_shared_pool": 6,
+  "n_determinism_ok": 6,
+  "n_init_byte_identical": 6,
+  "n_all_organs_functional": 5,
+  "n_all_pairs_load_bearing": 6,
+  "n_structural_go": 5,
+  "max_init_maxerr": 0.0,
+  "structural_verdict": "GO",
+  "init_byteid_verdict": "GO",
+  "cross_weight": 12.0
+}
