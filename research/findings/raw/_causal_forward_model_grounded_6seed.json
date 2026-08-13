@@ -1,0 +1,1036 @@
+{
+  "mode": "causal_forward_model_grounded",
+  "facts": {
+    "A": [
+      "dog",
+      "go",
+      "east"
+    ],
+    "B": [
+      "dog",
+      "reach",
+      "river"
+    ],
+    "D": [
+      "dog",
+      "drink",
+      "water"
+    ],
+    "C": [
+      "sun",
+      "rise",
+      "sky"
+    ],
+    "X": [
+      "bird",
+      "sing",
+      "dawn"
+    ],
+    "Y": [
+      "dog",
+      "wake",
+      "morning"
+    ]
+  },
+  "intact": [
+    {
+      "seed": 42,
+      "mode": "intact",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 163888888.89,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 166.67,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": true
+    },
+    {
+      "seed": 43,
+      "mode": "intact",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 166.67,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": true
+    },
+    {
+      "seed": 44,
+      "mode": "intact",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 166.67,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": true
+    },
+    {
+      "seed": 100,
+      "mode": "intact",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 163888888.89,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 166.67,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": true
+    },
+    {
+      "seed": 101,
+      "mode": "intact",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 158333333.33,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 163.89,
+        "cause_separation": 163.89,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 163.89,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": true
+    },
+    {
+      "seed": 102,
+      "mode": "intact",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 163.89,
+        "cause_separation": 163.89,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 163.89,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": true
+    }
+  ],
+  "edge_lesion": [
+    {
+      "seed": 42,
+      "mode": "edge_lesion",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "edge_lesion",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "edge_lesion",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": null,
+      "go": false
+    }
+  ],
+  "ground_lesion_D": [
+    {
+      "seed": 42,
+      "mode": "ground_lesion_D",
+      "n_recalled_events": 5,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": false,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 166.67,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "ground_lesion_D",
+      "n_recalled_events": 5,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": false,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 166.67,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "ground_lesion_D",
+      "n_recalled_events": 5,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": false,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "C",
+      "why_is_C": true,
+      "why_fact_confirmed": true,
+      "why_target_rate_C": 166.67,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "go": false
+    }
+  ],
+  "ground_lesion_C": [
+    {
+      "seed": 42,
+      "mode": "ground_lesion_C",
+      "n_recalled_events": 5,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": false,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 163888888.89,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "ground_lesion_C",
+      "n_recalled_events": 5,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": false,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "ground_lesion_C",
+      "n_recalled_events": 5,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": false,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": null,
+      "go": false
+    }
+  ],
+  "corr_only": [
+    {
+      "seed": 42,
+      "mode": "corr_only",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 163888888.89,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 166.67,
+        "Y_rate_do_C": 155.56,
+        "cause_separation": -11.11,
+        "X_not_cause_of_Y": false
+      },
+      "why_cause": "X",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 155.56,
+      "why_target_rate_X": 225.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "corr_only",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 166.67,
+        "Y_rate_do_C": 155.56,
+        "cause_separation": -11.11,
+        "X_not_cause_of_Y": false
+      },
+      "why_cause": "X",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 155.56,
+      "why_target_rate_X": 227.78,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "corr_only",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": true,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 161.11,
+        "Y_rate_do_C": 152.78,
+        "cause_separation": -8.33,
+        "X_not_cause_of_Y": false
+      },
+      "why_cause": "X",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 152.78,
+      "why_target_rate_X": 225.0,
+      "w_AD": 0.2,
+      "what_if_answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "why_answer": null,
+      "go": false
+    }
+  ],
+  "shuffle": [
+    {
+      "seed": 42,
+      "mode": "shuffle",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.0,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 76.67,
+        "offchain_max": 148.33,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "shuffle",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.0,
+      "fwd_directed_ratio": 0.0,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 150.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": null,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "shuffle",
+      "n_recalled_events": 6,
+      "recall_status": {
+        "0": true,
+        "1": true,
+        "2": true,
+        "3": true,
+        "4": true,
+        "5": true
+      },
+      "moat_battery_fa": 0,
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 202777777.78,
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 150.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "unseen_fact_confirmed": false,
+      "confab": false,
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "why_cause": "A",
+      "why_is_C": false,
+      "why_fact_confirmed": false,
+      "why_target_rate_C": 0.0,
+      "why_target_rate_X": 0.0,
+      "w_AD": 0.2,
+      "what_if_answer": null,
+      "why_answer": null,
+      "go": false
+    }
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "verdict": "GO",
+  "verdict_label": "GO",
+  "event_set_grounded": 6,
+  "moat_battery_ok": 6,
+  "forward_acc_min": 1.0,
+  "unseen_moat_confirmed": 6,
+  "confab_any": 0,
+  "why_grounded": 6,
+  "cause_correct": 6,
+  "edge_lesion_collapse": 3,
+  "ground_lesion_D_collapse": 3,
+  "ground_lesion_C_collapse": 3,
+  "corr_only_wrong": 3,
+  "shuffle_fail": 3,
+  "intact_cause_separation": 166.67,
+  "corr_cause_separation": -10.183333333333334,
+  "cause_attributable_to_do_prune": 1.0610987780244396,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "intact GO on >=5/6 seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "event set grounded: 6/6 facts moat-recalled (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat battery abstains 0 false-accepts (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "forward-prediction accuracy 1.0 (min over seeds)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "UNSEEN consequence is a moat-confirmed real fact (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "0 confabulation (predicted consequence always a real fact)",
+      "ok": true,
+      "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "WHY reads the real cause fact + survives DO-probe (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "cause-vs-correlation: X not a cause of Y (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "edge-lesion collapses forward prediction (3/3)",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "GROUNDING-lesion(drop D) collapses the what-if (3/3) \u2014 composer load-bearing",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "GROUNDING-lesion(drop C) collapses the why-cause (3/3) \u2014 composer load-bearing",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "corr_only WRONGLY makes X cause Y \u2014 DO-prune load-bearing (3/3)",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "shuffle fails to reproduce true chain (3/3)",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f4be0380b80>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "DO-intervention separation vs corr_only",
+      "ok": true,
+      "detail": "treatment=166.67 control=-10.1833 |sep|=176.853 > 1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "cause separation attributable to DO-prune (>=0.8)",
+      "ok": true,
+      "detail": "measured=1.0610987780244396 expect=<function main.<locals>.<lambda> at 0x7f4be0380cc0>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "OU background process",
+      "why": "deterministic regime for a controllable operating point"
+    },
+    {
+      "process": "conductance noise",
+      "why": "deterministic regime"
+    },
+    {
+      "process": "grounding-by-shared-substrate",
+      "why": "events are DERIVED from + gated by the composer's moat recall (grounding-by-derivation); driving the event blocks directly from the composer's UNBIND SPIKES in one merged bridge is the named next rung"
+    },
+    {
+      "process": "spiking-mismatch-driven DA",
+      "why": "the DA sign is delivered by the teacher (the environment boundary); a spiking mismatch unit driving from_reward DA is the next rung"
+    },
+    {
+      "process": "high-order (history-dependent) transitions",
+      "why": "the model is FIRST-ORDER (state -> next); the HTM-TM high-order predictor (EMERGE-15 GO) is the named composition"
+    }
+  ],
+  "verdict_status": "GO"
+}

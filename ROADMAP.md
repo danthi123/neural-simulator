@@ -205,6 +205,12 @@ moat-safe unless noted):
   learning + uniform read gain. Next rungs (declared): teacher-delivered DA sign → drive from a spiking mismatch unit;
   first-order → compose HTM-TM high-order; ground events in the emergent relational code. Wireable → a production spiking
   "what happens if <state>?" / "why did <state>?" that the host JOIN can't serve. TWO Tier-1 levers now de-risked (with GNW).
+  **GROUNDED (2026-08-13, 6/6 GO):** the model now runs over the REAL conversational fact-store (the `query_patient` no-confab
+  moat the live chat uses), not toy blocks — answers a real-fact why/what-if ("if the dog goes east it will drink water,
+  rolled forward through it reaching the river, moat-confirmed"; "the dog wakes because the sun rises — survives a DO-probe").
+  The grounding-lesion (drop a fact from the composer → its event vanishes → the causal edge never forms) is load-bearing
+  (real grounding, not relabeling); moat 0-confab; corr-only/shuffle collapse. Production-WIREABLE (a co-resident why/what-if
+  organ, 4-step spec). Honest residual: grounding-BY-DERIVATION, not yet by a shared merged substrate; DA sign teacher-delivered.
 - **E3 deeper-LEARN — BTSP plateau LASTING trace — 6/6 GO (with a host caveat):** a real on-bridge BTSP plateau write +
   spiking recall + a synaptic TAG-AND-CAPTURE persistence model — the plateau write still recalls after a 200-step decay
   window (54–92 Hz) where transient/static/moat writes decay below recall; lesion-load-bearing (95% of persistence
