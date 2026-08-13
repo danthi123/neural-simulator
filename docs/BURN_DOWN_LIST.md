@@ -349,6 +349,30 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   + smoke flag-off byte-identical, default-ON discourse resolves. STATUS: **WIRED**. Commit `d817effd0`. **RESIDUALS**: the
   transition-δ RNN (`multislot_rnn`, rate-learned), the boundary/connective detection + referent/verb parse are host; the
   register is co-resident (rides the one-brain merge, #1). **neural-render PARTIAL** — still not default-on (QUEUED).
+- **T1-4. Causal WHY / WHAT-IF forward model — WIRED / default-ON (2026-08-13).** `/api/brain-chat` now answers a real
+  "what happens if <agent> <action>?" (forward-SIMULATION of an unseen consequence — the substrate rolls
+  A=(dog,go,east)->B=(dog,reach,river)->D=(dog,drink,water) though A->D was NEVER taught) and "why did <agent>
+  <action>?" (the directed cause that survives a Pearl DO-probe — Y=(dog,wake,morning) reads C=(sun,rise,sky), never
+  the correlate X=(bird,sing)) — the reasoning rung a host triple-JOIN cannot serve. The `brain_chat` handler runs a
+  DISJOINT why-did/what-happens-if turn class (after the affect/episodic/worldmodel/multiref/discourse read-outs,
+  before comprehension/surprise/rich), routed through the co-resident spiking forward model (reuse-by-import from
+  `research/runners/causal_whatif_production_organ.py` — the grounded de-risk, 6/6 GO — + its toy primitives; NO `sim/`
+  edit). MOAT-SAFE: the consequence/cause is emitted ONLY when `composer.query_patient` CONFIRMS it (the no-confab moat
+  the live recall uses); an unconfirmed/unmapped causal query ABSTAINS to the honest `_honest_causal_answer` disclaimer
+  (INTEGRATION #5 fallback) — 0 confabulation. The grounding is READ-ONLY (the organ's event set + causal curriculum are
+  gated by the LIVE composer's moat recall; it never writes a fact). Default-ON (`BRAIN_CAUSAL=0` -> the block is fully
+  skipped, byte-identical), lesion-load-bearing (`BRAIN_CAUSAL_LESION=1` zeroes the learned forward edges -> BOTH
+  why/what-if collapse to the honest abstain). Verified numpy-CPU through the REAL handler: what-if moat-confirmed
+  consequence; why DO-surviving moat-confirmed cause; unmapped + grounding-unconfirmed abstains (0 confab); LESION
+  collapse; byte-identical-when-off (recall/abstain panel flag on==off + causal query flag-off no key) + canonical
+  `brain_chat_tui --smoke` byte-identical (server.py stashed vs present). STATUS: **WIRED**. Finding
+  `2026-08-13-causal-whatif-production-organ-wired-into-brain-chat.md`. **RESIDUALS** (declared next rungs):
+  (a) GROUNDING-BY-DERIVATION not shared-substrate-merge — the events are DERIVED from + gated by the composer's moat
+  recall, but the composer's unbind SPIKES do not yet directly DRIVE the forward-model event blocks in ONE merged
+  bridge (co-resident forward-model bridge, rides the one-brain merge #1); (b) the DA sign + causal episode ORDER are
+  teacher-delivered (a spiking-mismatch DA is the next rung); (c) FIRST-ORDER + the canonical CHAIN/CONFOUND causal
+  STRUCTURE is teacher-rendered (wired scope = the validated chain-source what-if + confound why; anything outside
+  abstains honestly). NOT `scaffold_retired` (the host causal disclaimer remains the abstain fallback).
 - **F4. Any host-computed reward / value / neuromodulator** on the live turn (audit D2 to confirm none are host-formula).
 - **F5. The co-resident organs are COMBINED by HOST PYTHON, not by the substrate** — `ChatBrain.gate()` (reached from
   `webapp/server.py::brain_chat`) snapshots a spiking recall + a reverse-binding VERIFY + a router fallback and fuses

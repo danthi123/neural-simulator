@@ -1,0 +1,187 @@
+{
+  "runner": "_causal_whatif_production_organ_verify",
+  "go": true,
+  "status": "GO",
+  "whatif_ok": true,
+  "why_ok": true,
+  "c1_ok": true,
+  "c2_ok": true,
+  "lesion_ok": true,
+  "byte_identical_ok": true,
+  "rows": {
+    "A_whatif": {
+      "answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+      "causal": {
+        "on": true,
+        "lesioned": false,
+        "kind": "what_if",
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343,
+        "confirmed": true,
+        "confab": false,
+        "answer": "If the dog goes east, it will drink water \u2014 a consequence I rolled forward through dog reaching the river, and my no-confab moat confirms (dog,drink)->water is a fact I stored.",
+        "consequence_fact": [
+          "dog",
+          "drink",
+          "water"
+        ],
+        "agent": "dog",
+        "action": "go"
+      },
+      "ok": true
+    },
+    "B_why": {
+      "answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+      "causal": {
+        "on": true,
+        "lesioned": false,
+        "kind": "why",
+        "cause": "C",
+        "why_is_C": true,
+        "Y_rate_do_C": 166.67,
+        "Y_rate_do_X": 0.0,
+        "X_not_cause_of_Y": true,
+        "why_target_rate_C": 166.66666666666666,
+        "why_target_rate_X": 0.0,
+        "confirmed": true,
+        "answer": "The dog wakes (morning) because the sun rises \u2014 that cause survives a DO-probe (forcing the sun to rise makes the dog wake; forcing the bird to sing does NOT), so it is a cause not a mere correlation, and (sun,rise)->sky is a fact I stored.",
+        "cause_fact": [
+          "sun",
+          "rise",
+          "sky"
+        ],
+        "agent": "dog",
+        "action": "wake"
+      },
+      "ok": true
+    },
+    "C1_unmapped_abstain": {
+      "answer": "I cannot confirm that as a stored fact. I have no causal or explanatory model -- I have learned associations, not causes -- so I will not invent a reason.",
+      "causal": {
+        "on": true,
+        "lesioned": false,
+        "kind": "why",
+        "agent": "dog",
+        "action": "why",
+        "confirmed": false,
+        "answer": null,
+        "abstained": true
+      },
+      "confab": false,
+      "ok": true
+    },
+    "C2_grounding_abstain": {
+      "answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "causal": {
+        "on": true,
+        "lesioned": false,
+        "kind": "what_if",
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343,
+        "confirmed": false,
+        "confab": false,
+        "answer": null,
+        "consequence_fact": null,
+        "agent": "dog",
+        "action": "go",
+        "abstained": true
+      },
+      "confab": false,
+      "ok": true
+    },
+    "D_lesion": {
+      "whatif_answer": "I know the dog goes east -- that fact is stored, and my no-confab moat confirms it ((dog, go) -> east). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "why_answer": "I know the dog wakes morning -- that fact is stored, and my no-confab moat confirms it ((dog, wake) -> morning). But I have no stored reason WHY: I have learned associations, not causes, so I have no causal model to explain it -- and I will not invent one.",
+      "whatif_collapse": true,
+      "why_collapse": true,
+      "ok": true
+    },
+    "E_byte_identical": {
+      "rows": [
+        {
+          "q": "what does dog chase?",
+          "identical": true,
+          "no_causal_key": true
+        },
+        {
+          "q": "what does cat eat?",
+          "identical": true,
+          "no_causal_key": true
+        },
+        {
+          "q": "what does fish fly?",
+          "identical": true,
+          "no_causal_key": true
+        },
+        {
+          "q": "what does ball roll?",
+          "identical": true,
+          "no_causal_key": true
+        }
+      ],
+      "off_causal_query_no_key": true,
+      "ok": true
+    }
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "WHAT-IF: moat-confirmed rolled-forward consequence (dog->drink water)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "WHY: DO-surviving moat-confirmed cause (dog wakes because the sun rose)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ABSTAIN(C1): unmapped causal query -> honest disclaimer, 0 confab",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ABSTAIN(C2): grounding-unconfirmed (no D) -> honest abstain, 0 confab",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION: forward-edge lesion collapses BOTH why + what-if to abstain",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BYTE-IDENTICAL-when-off (real handler) + causal query flag-off no key",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "grounding-by-shared-substrate",
+      "why": "events grounded READ-ONLY by the live composer's moat recall (grounding-by-derivation); driving the event blocks from the composer's unbind spikes is the next rung"
+    },
+    {
+      "process": "spiking-mismatch-driven DA",
+      "why": "the DA sign + causal episode ORDER are teacher-delivered (the environment boundary); a spiking mismatch unit driving the DA is the next rung"
+    }
+  ],
+  "undefined_reasons": []
+}

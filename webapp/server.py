@@ -2961,6 +2961,15 @@ def _get_reconsolidation_organ():
     return get_organ(seed=42)
 
 
+def _get_causal_organ(cache_key):
+    """The PER-SESSION spiking causal why/what-if forward-model organ (lazy build ~1-2s on the first causal turn).
+    Keyed by the ChatBrain cache (NOT a process singleton): the organ grounds READ-ONLY against THIS brain's live
+    composer (its event set + causal curriculum are gated by that composer's moat recall), so a per-brain organ
+    keeps one brain's grounding out of another's. Cleared on reset. See research/runners/causal_whatif_production_organ.py."""
+    from research.runners.causal_whatif_production_organ import get_organ
+    return get_organ(cache_key, seed=42)
+
+
 def _get_noncontradiction_organ():
     """The process-shared non-contradiction assertion-gate organ (stateless; reads the ONE production recall composer
     directly — no co-resident bridge added). See research/runners/b3_noncontradiction_production_organ.py."""
@@ -3487,6 +3496,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             _EP_reset.reset_episodic_organ(cache_key)
         except Exception:
             pass
+        try:  # drop this brain's causal why/what-if organ (T1-4) so a re-taught brain re-grounds against its composer
+            import research.runners.causal_whatif_production_organ as _CA_reset
+            _CA_reset.reset_organ(cache_key)
+        except Exception:
+            pass
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
@@ -3782,6 +3796,78 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                 })
         except Exception as _dre:
             pass   # never let the discourse read crash a turn — fall through to the normal path
+
+    # ── CAUSAL WHY / WHAT-IF ORGAN (Gate-B, T1-4, 2026-08-13) ────────────────────────────────────────────────
+    # A co-resident spiking CAUSAL FORWARD MODEL, grounded READ-ONLY in the brain's REAL fact store, answers a real
+    # "what happens if <agent> <action>?" (forward-SIMULATION of an unseen consequence — the substrate rolls
+    # A=(dog,go,east) -> B=(dog,reach,river) -> D=(dog,drink,water) though A->D was never taught) and "why did
+    # <agent> <action>?" (the directed cause that survives a Pearl DO-probe — Y=(dog,wake,morning) reads C=(sun,rise,
+    # sky), never the correlate X=(bird,sing)). Reuse-by-import from `causal_whatif_production_organ` (the grounded
+    # de-risk, 6/6 GO). It owns a DISJOINT turn class (an explicit why-did/what-happens-if whose (agent,action) maps
+    # to a known agent), placed AFTER the affect/episodic/worldmodel/multiref/discourse read-outs (so their short-
+    # circuits keep precedence) and BEFORE comprehension/surprise/rich (so the causal query is not mis-read as an
+    # assertion). MOAT-SAFE: the consequence/cause is emitted ONLY when `composer.query_patient` CONFIRMS it (the
+    # no-confab moat the live recall uses); an unconfirmed/unmapped causal query ABSTAINS to the honest
+    # `_honest_causal_answer` disclaimer (INTEGRATION #5 fallback) — 0 confabulation. A causal query about an UNKNOWN
+    # agent falls THROUGH unchanged (byte-identical). LESION (`BRAIN_CAUSAL_LESION=1`): zero the learned forward
+    # edges -> the forward-simulation cannot roll A->B->D and the DO-probe predecessor is no longer C -> BOTH
+    # why/what-if collapse to the honest abstain (load-bearing). Default-ON; `BRAIN_CAUSAL=0` -> fully skipped
+    # (byte-identical oracle). RESIDUALS (declared): grounding-by-DERIVATION not shared-substrate-merge (co-resident
+    # forward-model bridge, burn-down #1); the DA sign is teacher-delivered; the causal STRUCTURE is teacher-rendered
+    # (the wired scope is the validated chain-source what-if + confound why).
+    causal_info = None
+    try:
+        import research.runners.causal_whatif_production_organ as _CA
+        _causal_on = _CA.causal_enabled()
+    except Exception:
+        _CA = None
+        _causal_on = False
+    if _causal_on:
+        try:
+            _kind = _CA.is_causal_query(msg)
+            if _kind is not None:
+                evt, c_agent, c_action = _CA.extract_cue(msg, agents=getattr(chat, "agents_set", None))
+                if c_agent is not None:            # a KNOWN agent -> OUR disjoint causal turn (else fall through)
+                    _cause_composer = getattr(getattr(chat, "inner", None), "composer", None)
+                    les = _CA.causal_lesioned()
+                    c_answer = None
+                    if _cause_composer is not None:
+                        corg = _get_causal_organ(cache_key)
+                        if _kind == "what_if" and evt == _CA.A:            # the validated chain-source what-if
+                            j = corg.what_if(_cause_composer, lesion=les)
+                            causal_info = dict(j, agent=c_agent, action=c_action)
+                            c_answer = j["answer"]
+                        elif _kind == "why" and evt == _CA.Y:              # the validated confound why
+                            j = corg.why(_cause_composer, lesion=les)
+                            causal_info = dict(j, agent=c_agent, action=c_action)
+                            c_answer = j["answer"]
+                    # ABSTAIN (0 confab): an unmapped causal target OR the forward model could not moat-confirm ->
+                    # the honest disclaimer (never a confabulated cause/consequence). `stored` is the moat read for
+                    # the (agent,action) — for a KNOWN fact it states EXACTLY that read; None -> the generic decline.
+                    if c_answer is None:
+                        from research.runners._conversation_turing_test_derisk import _honest_causal_answer
+                        _stored = None
+                        try:
+                            if _cause_composer is not None and c_action:
+                                _stored = _cause_composer.query_patient(c_agent, c_action)
+                        except Exception:
+                            _stored = None
+                        c_answer = _honest_causal_answer(c_agent, c_action, _stored)
+                        if causal_info is None:
+                            causal_info = {"on": True, "lesioned": bool(les), "kind": _kind,
+                                           "agent": c_agent, "action": c_action, "confirmed": False, "answer": None}
+                        causal_info["abstained"] = True
+                    _c_confirmed = bool(causal_info.get("confirmed"))
+                    return JSONResponse({
+                        "answer": c_answer,
+                        "abstained": (not _c_confirmed),
+                        "recalled_svo": None, "verified": _c_confirmed,
+                        "renderer": rname, "brain": req.brain, "source": source, "rich": False,
+                        "activity": None, "affect": affect_info, "worldmodel": worldmodel_info,
+                        "multiref": multiref_info, "causal": causal_info, "inner_state_readout": True,
+                    })
+        except Exception as _cae:  # never let the causal read crash a turn — fall through to the normal path
+            causal_info = {"on": True, "error": f"{type(_cae).__name__}: {_cae}"}
 
     # ── COMPREHENSION MEASUREMENT gate (Gate-B, D4, 2026-08-12) ─────────────────────────────────────────────
     # BEFORE acting on an incoming TRANSITIVE ASSERTION, read a genuinely-SPIKING signal of whether the brain's
