@@ -15,6 +15,37 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-13 (READ FIRST — live resume point)
 
+> **🌙 OVERNIGHT AUTONOMOUS (owner to bed 2026-08-13 ~02:30 EDT — "continue all night, max compute, parallelize, deep
+> research + RAG, get as much done as possible before tomorrow's check-in; best judgement, don't wait on me"). Full
+> compute is ours (3090 + CPU; minipc pool .40-42 is STALE — sync before use). gap5-gamma killed. Keep the box SATURATED:
+> consolidate each lane as it lands, relaunch waves, never idle. Heartbeat Monitor b0hkwgbna is live.**
+>
+> **LANDED since the wave-3 block below (all on main + both remotes):** GNW keystone 6/6 GO + N-organ BUS 6/6 GO
+> (`ce18d59e`) + SHADOW-WIRED into production default-off (`2cce00cca`, substrate reproduces the host's organ-combination
+> via ignition 9/9, lesion-load-bearing — the first one-substrate step); causal forward-model GROUNDED in the real
+> fact-store 6/6 GO (`fed71f61`, wiring in flight); world-model object-permanence FIRST RUNG (`73b9f6b8`) + VoE-magnitude
+> boundary SURPASSED via divisive PC 6/6 (`d6cf5824`); A1 mouth few-spike READ dissolved via population coding 6/6
+> (`a0e2bae7`); B1 vocab-agnostic spiking DRAW + D3 discourse register WIRED (wire-all-GOs workflow); DR-2 appraisal
+> biologized; T1-6 other-repair WIRED. MASTER ROADMAP refreshed to an honest §0 (`49f65d00`); ROADMAP.md honest-reading
+> banner (`8e1329d4`). **6/7 Tier-1 levers moved.** Honest reckoning UNCHANGED: ~one integrated spiking family + a bench
+> of unwired de-risks; still CO-RESIDENCY (bus shadow-wired, not replacing); mouth still Qwen for open prose (read cheaper,
+> matmul-retirement = a mapped boundary); organ internals still host. The 3 missing properties = FLUID mouth · ONE
+> substrate · EMERGENT.
+>
+> **🔴 LIVE LANES (do NOT double-launch; consolidate each as it lands → checkout to main + commit + push_both + sync docs):**
+> - **ae1fc527** (main worktree): WIRE the causal why/what-if organ into brain_chat (grounded, per the 4-step spec).
+> - **aff06cc6** (iso, GPU): EMERGENCE — self-organize a host-designed organ internal (the deepest bar).
+> - **ae0f0585** (iso, GPU): AFFECT deepening — fully-spiking appraisal (retire Warriner gate) + discrete emotions + reappraisal (T1-5).
+> - **a282bb4e** (iso, CPU): PROSPECTIVE MEMORY (Tier-2) — hold an intention across turns, fire on cue.
+> - **a7dc2b64** (iso, GPU): W4 scalar-implicature ToM — genuinely-spiking belief source (closes pending Task #12).
+> - **DEFERRED CONSOLIDATION (banked on branch, main-was-busy):** mouth-rung `e62cc02c6` (FS-WTA read-budget −3–5× 6/6 GO +
+>   the state→logits matmul-retirement mapped BOUNDARY, next lever = inhibitory shadow interneurons) — consolidate when main frees.
+>
+> **SINGLE LITERAL NEXT:** consolidate ae1fc527 + the 4 iso lanes + the deferred mouth-rung as each lands; relaunch a fresh
+> wave to keep compute full (next candidates: bus host-REPLACEMENT [after shadow], mouth signed-read-out [shadow interneurons],
+> one-brain MERGE, discrete-emotion wiring, self-initiation/DMN, interoceptive affect, remaining Tier-2/3). RAG at every wall.
+
+
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
 > SEVEN Tier-1 levers moved this session. Production `/api/brain-chat` now runs ~12 default-on spiking faculties.**
 > - **WIRED default-on this session (on top of affect/surprise/comprehension/metacog/worldmodel/curiosity + base recall/
