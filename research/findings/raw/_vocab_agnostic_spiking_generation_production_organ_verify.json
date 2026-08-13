@@ -1,0 +1,142 @@
+{
+ "probe": "vocab_agnostic_spiking_generation_production_organ_verify",
+ "seed": 42,
+ "operating_point": {
+  "base_pA": 110.0,
+  "gain_pA": 160.0,
+  "read_window": 120,
+  "ou_std": 200.0
+ },
+ "runtime_lexicon": {
+  "n_agents": 8,
+  "n_actions": 10,
+  "n_patients": 16,
+  "vocab": 34,
+  "tau": 1.0
+ },
+ "taxonomy_sampler_keyerrors": true,
+ "vocab_agnostic_builds": true,
+ "provenance": {
+  "n_spiking_draws": 160,
+  "n_host_rng_draws": 0
+ },
+ "n_accepted_hypotheses": 14,
+ "example_hypotheses": [
+  [
+   "bird",
+   "eat",
+   "berry"
+  ],
+  [
+   "owl",
+   "eat",
+   "fish"
+  ],
+  [
+   "owl",
+   "eat",
+   "hay"
+  ],
+  [
+   "cat",
+   "eat",
+   "mouse"
+  ],
+  [
+   "dog",
+   "eat",
+   "berry"
+  ],
+  [
+   "horse",
+   "eat",
+   "fish"
+  ]
+ ],
+ "moat_leaks": 0,
+ "intact_plausible_fraction": 0.828,
+ "lesion_plausible_fraction": 0.035,
+ "lesion_collapses": true,
+ "plausibility_attributable_to_likelihood": 0.957,
+ "noiseless_distinct_winners_over_12": 1,
+ "flag_off_byte_identical": true,
+ "flag_off_n_accepted": 16,
+ "label": "vocab_agnostic_spiking_draw_production_organ",
+ "status": "GO",
+ "go": true,
+ "undefined_reasons": [],
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "WALL: taxonomy sampler blocked on runtime vocab",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "WALL removed: vocab-agnostic sampler builds",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "draw on FIRING NEURONS (0 host-rng draws)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "draw ran on spikes (>0 spiking draws)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "integration yields >=1 novel grounded hypothesis",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "MOAT: 0 leaks",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "control",
+   "name": "LESION plausibility (intact vs likelihood-ablated)",
+   "ok": true,
+   "detail": "treatment=0.827586 control=0.0353982 |sep|=0.792188 > 0.413793",
+   "note": "uniform drive collapses the drawn plausibility -> the likelihood is load-bearing"
+  },
+  {
+   "kind": "require",
+   "name": "NOISE-ABLATION: ou_std=0 -> deterministic argmax",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "FLAG-OFF byte-identical to host oracle draw",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "disabled_processes": [
+  {
+   "process": "recurrent plasticity in the WTA bank",
+   "why": "the sampler is an unwired GENERIC_UNSTRUCTURED Izhikevich bank (STDP/Hebb/STP/homeostasis off) -- the DRAW is spiking; the likelihood/template/moat remain host scaffolds (carrier residuals)"
+  }
+ ],
+ "chance": null,
+ "verdict": "GO",
+ "failed_gates": []
+}

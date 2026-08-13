@@ -277,6 +277,15 @@ class ChatBrain:
         # (`_genfrontier_b2` retains it for exactly the numpy-CPU/reproducibility case). The LOAD-BEARING part is
         # the plausibility SIGNAL — the brain's own learned fact-association graph — which is the brain's here.
         self._gen_spiking = False
+        # VOCAB-AGNOSTIC SPIKING DRAW organ (B1 burn-down, 2026-08-13): converts the #3E generative DRAW above from
+        # the host oracle to a genuinely-SPIKING soft-WTA read off cp_firing_states. The b2 taxonomy SpikingWTASampler
+        # KeyErrors on a runtime lexicon (see comment above); this organ induces role pools from the brain's OWN
+        # stored-fact concepts (no taxonomy) and pre-injects a taxonomy-free VocabAgnosticSpikingSampler. Built LAZILY
+        # on the first open-ended generation turn (per-ChatBrain, avoiding process-singleton cache thrashing across
+        # sessions/brains), so a session that never generates never imports it and its non-generation turns are
+        # untouched. Default-ON; BRAIN_SPIKING_DRAW=0 leaves `_gen_spiking=False` -> the host oracle draw
+        # (byte-identical). See research/runners/vocab_agnostic_spiking_generation_production_organ.py.
+        self._spiking_draw_organ = None
         # the brain's stored facts (string-only roles) + content-token sets for the VERIFY re-parse
         self._refresh_facts()
 
@@ -420,6 +429,19 @@ class ChatBrain:
         prop = self._build_generation_proposer()
         if prop is None:
             return None
+        # Route the #3E generative DRAW through the VOCAB-AGNOSTIC spiking soft-WTA (default-ON, B1 burn-down): the b2
+        # taxonomy sampler KeyErrors on runtime vocab, so install() induces role pools from the brain's OWN stored-fact
+        # concepts and pre-injects a taxonomy-free VocabAgnosticSpikingSampler onto `prop` (flips use_spiking_sampler=True).
+        # The UNCHANGED loop below then draws on FIRING NEURONS (prop._sample_weighted -> the injected sampler ->
+        # draw_from_weights reads cp_firing_states). BRAIN_SPIKING_DRAW=0 -> install() is a no-op -> the host oracle draw
+        # (byte-identical). BRAIN_SPIKING_DRAW_LESION=1 -> likelihood ablated (uniform drive) -> plausibility collapses.
+        # Every downstream gate (_plausible / _contradicts) + the #3E moat verify are UNTOUCHED.
+        if self._spiking_draw_organ is None:
+            from research.runners.vocab_agnostic_spiking_generation_production_organ import (
+                VocabAgnosticSpikingDrawOrgan,
+            )
+            self._spiking_draw_organ = VocabAgnosticSpikingDrawOrgan(seed=self._gen_seed)
+        self._spiking_draw_organ.install(prop)
         if action is not None and action not in self.actions_set:
             action = None                              # a requested action the brain doesn't know -> don't hard-filter
         agents = [topic] if topic is not None else list(prop.agents)
