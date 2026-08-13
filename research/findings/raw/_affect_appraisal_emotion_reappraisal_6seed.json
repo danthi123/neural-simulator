@@ -1,0 +1,781 @@
+{
+  "probe": "affect_appraisal_emotion_reappraisal (faculty-map T1-5)",
+  "verdict": "GO (6-seed) -- SPIKING APPRAISAL -> DISCRETE EMOTION + REAPPRAISAL. RUNG (a): a spiking on-bridge opponent population reads valence from the LEARNED substrate code -- held-out concepts (never in the ridge train split) appraise to a spiking differential correlating r=+0.745 with true valence, the salience gate is EMERGENT (|differential| tracks valence strength r=+0.270; the input-lesion collapses it to 0.000 vs 0.019), and shuffling code<->word collapses the read (-0.050) -- the host Warriner SALIENCE GATE is retired to the substrate. RUNG (b): multi-dimensional appraisal (valence x agency x certainty) converges onto 4 Panksepp emotion categories in a shared-FS Wong-Wang WTA -- the 4 conditions select their intended emotion at accuracy 0.83; a vmPFC->amygdala reappraisal gate down-regulates the negative appraisal by 83% (reap-lesioned -0%); the WTA lesion collapses categorical margin (0.230 -> 0.135). Brain-based (reads off cp_firing_states); NO sim/ edit. RESIDUAL: opponent weights ridge-fit + Warriner-SEEDED (seed norms NOT retired); folding into build_one_brain is the production-integration rung.",
+  "GO": true,
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "A1 rung-a held-out r >= 0.45",
+      "ok": true,
+      "detail": "0.744862 vs floor 0.45",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "A2 |differential| tracks valence strength (r > 0.2)",
+      "ok": true,
+      "detail": "measured=0.27034041676951437 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "A2 input-lesion collapses the opponent differential",
+      "ok": true,
+      "detail": "treatment=0.018826 control=0.000173611 |sep|=0.0186523 > 0.00941298",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "A3 shuffle code<->word collapses the read",
+      "ok": true,
+      "detail": "treatment=0.744862 control=-0.0498007 |sep|=0.794662 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "B1 emotion discrimination >= 0.75",
+      "ok": true,
+      "detail": "measured=0.8333333333333334 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "B2 reappraisal down-regulates the amygdala >= 25%",
+      "ok": true,
+      "detail": "measured=0.8270166666666666 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "B3 WTA-lesion collapses the categorical margin",
+      "ok": true,
+      "detail": "treatment=0.229617 control=0.13531 |sep|=0.0943071 > 0.0803658",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "B4 reap-lesion abolishes the down-regulation",
+      "ok": true,
+      "detail": "measured=-0.0020499999999999997 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "B5 mismatched appraisal collapses discrimination to ~chance",
+      "ok": true,
+      "detail": "treatment=0.833333 control=0.333333 |sep|=0.5 > 0.4",
+      "note": ""
+    }
+  ],
+  "verdict_earned": {
+    "label": "spiking appraisal -> discrete emotion + reappraisal",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "A1 rung-a held-out r >= 0.45",
+        "ok": true,
+        "detail": "0.744862 vs floor 0.45",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "A2 |differential| tracks valence strength (r > 0.2)",
+        "ok": true,
+        "detail": "measured=0.27034041676951437 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "A2 input-lesion collapses the opponent differential",
+        "ok": true,
+        "detail": "treatment=0.018826 control=0.000173611 |sep|=0.0186523 > 0.00941298",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "A3 shuffle code<->word collapses the read",
+        "ok": true,
+        "detail": "treatment=0.744862 control=-0.0498007 |sep|=0.794662 > 0.25",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "B1 emotion discrimination >= 0.75",
+        "ok": true,
+        "detail": "measured=0.8333333333333334 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "B2 reappraisal down-regulates the amygdala >= 25%",
+        "ok": true,
+        "detail": "measured=0.8270166666666666 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "B3 WTA-lesion collapses the categorical margin",
+        "ok": true,
+        "detail": "treatment=0.229617 control=0.13531 |sep|=0.0943071 > 0.0803658",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "B4 reap-lesion abolishes the down-regulation",
+        "ok": true,
+        "detail": "measured=-0.0020499999999999997 expect=<function main.<locals>.<lambda> at 0x7f98723bdbc0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "B5 mismatched appraisal collapses discrimination to ~chance",
+        "ok": true,
+        "detail": "treatment=0.833333 control=0.333333 |sep|=0.5 > 0.4",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "STDP / Hebbian / reward-mod / homeostasis / short-term & structural plasticity",
+        "why": "a fixed-wiring spiking appraisal opponent + emotion WTA is the scope; the opponent weights are ridge-fit + Warriner-SEEDED and a self-organized learned mapping is the named follow-on"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "A1_rung_a_held_out_r>=0.45": true,
+    "A2_salience_gate_magnitude_tracks_valence_and_input_lesion_collapses": true,
+    "A3_shuffle_code_word_collapses": true,
+    "B1_emotion_discrimination>=0.75_and_distinct": true,
+    "B2_reappraisal_downregulates_amygdala>=25%": true,
+    "B3_WTA_lesion_collapses_margin>=35%": true,
+    "B4_reap_lesion_abolishes_downreg": true,
+    "B5_mismatched_appraisal_collapses_discrimination": true
+  },
+  "means": {
+    "a_r_real": 0.7448615653222324,
+    "a_r_shuffled": -0.04980065012741897,
+    "a_abs_r": 0.27034041676951437,
+    "a_salience_sep": 0.0070660673315217125,
+    "a_intact_diff_abs": 0.018825954861111112,
+    "a_lesion_diff_abs": 0.00017361111111111112,
+    "b_accuracy": 0.8333333333333334,
+    "b_vminus_drop_frac": 0.8270166666666666,
+    "b_vminus_drop_frac_reap_lesioned": -0.0020499999999999997,
+    "b_neg_emo_rate_drop": -0.007516666666666667,
+    "b_margin_intact": 0.22961666666666666,
+    "b_margin_wta_lesion": 0.13530954214369378,
+    "b_accuracy_wta_lesion": 0.6666666666666666,
+    "b_accuracy_mismatched": 0.3333333333333333,
+    "b_noinput_win_rate": 0.08619791666666667,
+    "b_driven_win_rate": 0.09107916666666667
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.6921762362839646,
+      "a_r_shuffled": -0.1403500813050473,
+      "a_abs_r": 0.2283288584028852,
+      "a_salience_sep": 0.007739955357142857,
+      "a_intact_diff_abs": 0.016822916666666667,
+      "a_lesion_diff_abs": 0.0,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3875,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.1147,
+            "emo_care": 0.0409,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0506
+          }
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.1907,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.065,
+            "emo_care": 0.0956,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0066
+          }
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.3686,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0088,
+            "emo_care": 0.0262,
+            "emo_fear": 0.1131,
+            "emo_rage": 0.0522
+          }
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.0277,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0247,
+            "emo_care": 0.0544,
+            "emo_fear": 0.0603,
+            "emo_rage": 0.0638
+          }
+        }
+      ],
+      "b_vminus_drop_frac": 0.7959,
+      "b_vminus_drop_frac_reap_lesioned": 0.0,
+      "b_neg_emo_rate_drop": -0.00014999999999999996,
+      "b_margin_intact": 0.243625,
+      "b_margin_wta_lesion": 0.17627514711849232,
+      "b_accuracy_wta_lesion": 0.75,
+      "b_driven_win_rate": 0.0968,
+      "b_accuracy_mismatched": 0.25,
+      "b_noinput_win_rate": 0.08625,
+      "b_noinput_margin": 0.26605504391886203,
+      "b_reap_rows": [
+        {
+          "cond": "threat_uncertain",
+          "vminus_base": 0.0612,
+          "vminus_reap": 0.0125,
+          "vminus_drop_frac": 0.7959,
+          "vminus_drop_frac_reap_lesioned": 0.0,
+          "neg_emo_rate_drop": -0.0153
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "vminus_base": 0.0612,
+          "vminus_reap": 0.0125,
+          "vminus_drop_frac": 0.7959,
+          "vminus_drop_frac_reap_lesioned": 0.0,
+          "neg_emo_rate_drop": 0.015
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.804096455405116,
+      "a_r_shuffled": 0.10541874737248054,
+      "a_abs_r": 0.3796930857622878,
+      "a_salience_sep": 0.008643518518518517,
+      "a_intact_diff_abs": 0.019270833333333334,
+      "a_lesion_diff_abs": 0.0010416666666666667,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3931,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.1191,
+            "emo_care": 0.0341,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0519
+          }
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.0754,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0747,
+            "emo_care": 0.0869,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0078
+          }
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.2634,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0069,
+            "emo_care": 0.0234,
+            "emo_fear": 0.1034,
+            "emo_rage": 0.0603
+          }
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_fear",
+          "margin": 0.0311,
+          "ok": false,
+          "rates": {
+            "emo_seeking": 0.0306,
+            "emo_care": 0.0488,
+            "emo_fear": 0.0519,
+            "emo_rage": 0.0369
+          }
+        }
+      ],
+      "b_vminus_drop_frac": 0.8512,
+      "b_vminus_drop_frac_reap_lesioned": -0.014,
+      "b_neg_emo_rate_drop": -0.008450000000000001,
+      "b_margin_intact": 0.19075,
+      "b_margin_wta_lesion": 0.12131447154469627,
+      "b_accuracy_wta_lesion": 0.25,
+      "b_driven_win_rate": 0.090325,
+      "b_accuracy_mismatched": 0.5,
+      "b_noinput_win_rate": 0.088125,
+      "b_noinput_margin": 0.27027026832237644,
+      "b_reap_rows": [
+        {
+          "cond": "threat_uncertain",
+          "vminus_base": 0.0672,
+          "vminus_reap": 0.01,
+          "vminus_drop_frac": 0.8512,
+          "vminus_drop_frac_reap_lesioned": -0.014,
+          "neg_emo_rate_drop": -0.0244
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "vminus_base": 0.0672,
+          "vminus_reap": 0.01,
+          "vminus_drop_frac": 0.8512,
+          "vminus_drop_frac_reap_lesioned": -0.014,
+          "neg_emo_rate_drop": 0.0075
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.7175202804005094,
+      "a_r_shuffled": -0.02270694683073905,
+      "a_abs_r": 0.185560544148492,
+      "a_salience_sep": 0.006054837164750958,
+      "a_intact_diff_abs": 0.018404947916666668,
+      "a_lesion_diff_abs": 0.0,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3798,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.1113,
+            "emo_care": 0.05,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0478
+          }
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.1743,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0563,
+            "emo_care": 0.08,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0053
+          }
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.2865,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0103,
+            "emo_care": 0.0306,
+            "emo_fear": 0.1031,
+            "emo_rage": 0.0572
+          }
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_fear",
+          "margin": 0.1307,
+          "ok": false,
+          "rates": {
+            "emo_seeking": 0.0172,
+            "emo_care": 0.0447,
+            "emo_fear": 0.0581,
+            "emo_rage": 0.0378
+          }
+        }
+      ],
+      "b_vminus_drop_frac": 0.9276,
+      "b_vminus_drop_frac_reap_lesioned": -0.0452,
+      "b_neg_emo_rate_drop": -0.0178,
+      "b_margin_intact": 0.242825,
+      "b_margin_wta_lesion": 0.13864128759309377,
+      "b_accuracy_wta_lesion": 0.5,
+      "b_driven_win_rate": 0.088125,
+      "b_accuracy_mismatched": 0.25,
+      "b_noinput_win_rate": 0.0884375,
+      "b_noinput_margin": 0.2466960335034641,
+      "b_reap_rows": [
+        {
+          "cond": "threat_uncertain",
+          "vminus_base": 0.0691,
+          "vminus_reap": 0.005,
+          "vminus_drop_frac": 0.9276,
+          "vminus_drop_frac_reap_lesioned": -0.0452,
+          "neg_emo_rate_drop": -0.0356
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "vminus_base": 0.0691,
+          "vminus_reap": 0.005,
+          "vminus_drop_frac": 0.9276,
+          "vminus_drop_frac_reap_lesioned": -0.0452,
+          "neg_emo_rate_drop": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.7533923143630532,
+      "a_r_shuffled": -0.2263577649118639,
+      "a_abs_r": 0.28481417147651356,
+      "a_salience_sep": 0.0038774038461538464,
+      "a_intact_diff_abs": 0.018763020833333335,
+      "a_lesion_diff_abs": 0.0,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.4127,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.115,
+            "emo_care": 0.0406,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0478
+          }
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.2149,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0559,
+            "emo_care": 0.0866,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0097
+          }
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.2804,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0078,
+            "emo_care": 0.0288,
+            "emo_fear": 0.1134,
+            "emo_rage": 0.0638
+          }
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_fear",
+          "margin": 0.0118,
+          "ok": false,
+          "rates": {
+            "emo_seeking": 0.015,
+            "emo_care": 0.0525,
+            "emo_fear": 0.0537,
+            "emo_rage": 0.0503
+          }
+        }
+      ],
+      "b_vminus_drop_frac": 0.82395,
+      "b_vminus_drop_frac_reap_lesioned": 0.0024000000000000002,
+      "b_neg_emo_rate_drop": -0.0026500000000000004,
+      "b_margin_intact": 0.22995000000000002,
+      "b_margin_wta_lesion": 0.11783256512744496,
+      "b_accuracy_wta_lesion": 0.75,
+      "b_driven_win_rate": 0.092175,
+      "b_accuracy_mismatched": 0.25,
+      "b_noinput_win_rate": 0.0859375,
+      "b_noinput_margin": 0.30331753324498556,
+      "b_reap_rows": [
+        {
+          "cond": "threat_uncertain",
+          "vminus_base": 0.0634,
+          "vminus_reap": 0.0112,
+          "vminus_drop_frac": 0.8227,
+          "vminus_drop_frac_reap_lesioned": -0.0049,
+          "neg_emo_rate_drop": -0.0137
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "vminus_base": 0.0644,
+          "vminus_reap": 0.0112,
+          "vminus_drop_frac": 0.8252,
+          "vminus_drop_frac_reap_lesioned": 0.0097,
+          "neg_emo_rate_drop": 0.0084
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.8157498306711743,
+      "a_r_shuffled": -0.04390285177219929,
+      "a_abs_r": 0.33853550305547647,
+      "a_salience_sep": 0.009727564102564102,
+      "a_intact_diff_abs": 0.020247395833333334,
+      "a_lesion_diff_abs": 0.0,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3706,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.115,
+            "emo_care": 0.0425,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0528
+          }
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.1871,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0591,
+            "emo_care": 0.0862,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0069
+          }
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.3346,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0091,
+            "emo_care": 0.02,
+            "emo_fear": 0.1059,
+            "emo_rage": 0.0528
+          }
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_care",
+          "margin": 0.0065,
+          "ok": false,
+          "rates": {
+            "emo_seeking": 0.0206,
+            "emo_care": 0.0488,
+            "emo_fear": 0.0481,
+            "emo_rage": 0.0466
+          }
+        }
+      ],
+      "b_vminus_drop_frac": 0.8202,
+      "b_vminus_drop_frac_reap_lesioned": 0.0175,
+      "b_neg_emo_rate_drop": -0.0117,
+      "b_margin_intact": 0.22469999999999998,
+      "b_margin_wta_lesion": 0.11839070312554088,
+      "b_accuracy_wta_lesion": 0.75,
+      "b_driven_win_rate": 0.088975,
+      "b_accuracy_mismatched": 0.5,
+      "b_noinput_win_rate": 0.083125,
+      "b_noinput_margin": 0.31034482514013934,
+      "b_reap_rows": [
+        {
+          "cond": "threat_uncertain",
+          "vminus_base": 0.0712,
+          "vminus_reap": 0.0128,
+          "vminus_drop_frac": 0.8202,
+          "vminus_drop_frac_reap_lesioned": 0.0175,
+          "neg_emo_rate_drop": -0.0247
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "vminus_base": 0.0712,
+          "vminus_reap": 0.0128,
+          "vminus_drop_frac": 0.8202,
+          "vminus_drop_frac_reap_lesioned": 0.0175,
+          "neg_emo_rate_drop": 0.0013
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.6862342748095769,
+      "a_r_shuffled": 0.029094996682855166,
+      "a_abs_r": 0.20511033777143126,
+      "a_salience_sep": 0.006353124999999998,
+      "a_intact_diff_abs": 0.01944661458333333,
+      "a_lesion_diff_abs": 0.0,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3523,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.1116,
+            "emo_care": 0.0319,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0534
+          }
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.2343,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0572,
+            "emo_care": 0.0922,
+            "emo_fear": 0.0,
+            "emo_rage": 0.0066
+          }
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.2843,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0069,
+            "emo_care": 0.0172,
+            "emo_fear": 0.1009,
+            "emo_rage": 0.0563
+          }
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.1125,
+          "ok": true,
+          "rates": {
+            "emo_seeking": 0.0125,
+            "emo_care": 0.0359,
+            "emo_fear": 0.0444,
+            "emo_rage": 0.0556
+          }
+        }
+      ],
+      "b_vminus_drop_frac": 0.74325,
+      "b_vminus_drop_frac_reap_lesioned": 0.026999999999999996,
+      "b_neg_emo_rate_drop": -0.0043500000000000014,
+      "b_margin_intact": 0.24585,
+      "b_margin_wta_lesion": 0.13940307835289442,
+      "b_accuracy_wta_lesion": 1.0,
+      "b_driven_win_rate": 0.090075,
+      "b_accuracy_mismatched": 0.25,
+      "b_noinput_win_rate": 0.0853125,
+      "b_noinput_margin": 0.3220338958099069,
+      "b_reap_rows": [
+        {
+          "cond": "threat_uncertain",
+          "vminus_base": 0.0697,
+          "vminus_reap": 0.0178,
+          "vminus_drop_frac": 0.7444,
+          "vminus_drop_frac_reap_lesioned": 0.0314,
+          "neg_emo_rate_drop": -0.0256
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "vminus_base": 0.0691,
+          "vminus_reap": 0.0178,
+          "vminus_drop_frac": 0.7421,
+          "vminus_drop_frac_reap_lesioned": 0.0226,
+          "neg_emo_rate_drop": 0.0169
+        }
+      ]
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "seed_frac": 0.5,
+    "n_vocab": 139,
+    "backend": "cupy"
+  },
+  "mechanism": "rung(a): DR-2 learned PPMI code -> code_in spikes -> learned rectified-opponent FF (Namburi-Tye V+/V-) -> spiking differential = valence (emergent salience gate). rung(b): valence x agency x certainty appraisal dims -> wired OCC/Scherer/Barrett mapping -> 4 Panksepp emotion attractors in a shared-FS Wong-Wang WTA -> discrete winner; vmPFC->amygdala GABA reappraisal gate.",
+  "HONEST_RESIDUALS": "opponent weights ridge-fit in numpy + SEEDED from Warriner norms (seed supervision NOT retired -- only the GATE + the READ are); agency/certainty conditions set as sensory drive (the situation); standalone de-risk bridge (build_one_brain fold-in pending).",
+  "elapsed_seconds": 37.5
+}
