@@ -1,0 +1,250 @@
+{
+  "probe": "affect_graded_strength_third_factor (Bayer-Glimcher graded DA-magnitude)",
+  "verdict": "BOUNDARY / HONEST NEGATIVE (build-informative, SMOKE(1-seed)) -- the graded DA-magnitude (PPMI-contingency) third factor reads held-out STRENGTH r=-0.331 (boundary +0.199, ridge-Warriner +0.470, gap-to-ridge +0.801), SIGN r=+0.502 (min +0.502). strength lift over boundary -0.531 in 0/1; sign-only -0.336; permute-mag sig 0/1; no-cond +0.000; permute-code sig 1/1. FAILED: ['G2_strength_toward_ridge(>=0.20)', 'G2_strength_lift_over_boundary(>=0.08_mean)', 'G2_strength_lift_in>=5of6_seeds', 'G3a_permute_magnitude_beaten_all_seeds', 'G3b_signonly_below_graded(>=0.05)']. The residual is graded-strength fidelity of the self-organized signal; the next mechanism is a fully-spiking graded three-factor write / a graded innate-US-magnitude channel, NOT a wall and NOT the refuted deep-credit rule -- the gap IS the deliverable.",
+  "GO": false,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=24)",
+      "ok": true,
+      "detail": "vocab=137"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=20)",
+      "ok": true,
+      "detail": "min_n_held=62"
+    },
+    {
+      "name": "no_conditioning_reads_zero(|r|<0.15)",
+      "ok": true,
+      "detail": "no_conditioning_r=+0.0000"
+    },
+    {
+      "name": "innate_US_signal_present(corr(psum,Warriner)>0)",
+      "ok": true,
+      "detail": "corr_psum_warriner=+0.462"
+    },
+    {
+      "name": "graded_arm_carries_graded_info(G_cv>0.1; per-seed lever asserts MOVED)",
+      "ok": true,
+      "detail": "graded_mag_cv=0.682; the run_seed lever asserts the graded arm MOVED vs the boundary arm every seed (purity_saturated_frac=0.040 is reported, not a validity gate: purity need not pin to 1.0 for the A/B to be valid)"
+    },
+    {
+      "name": "weights_warriner_free(asserted; no-cond collapse is load-bearing)",
+      "ok": true,
+      "detail": "graded_da_magnitude + selforg_opponent_weights take no Warriner arg; corrupting s_true leaves the weights byte-identical; G4 no-cond collapse confirms the weights come from conditioning"
+    }
+  ],
+  "verdict_earned": {
+    "label": "graded DA-magnitude third factor (affect valence STRENGTH surpass)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: G2 graded STRENGTH r >= 0.20 (toward ridge 0.27) (-0.331447 vs floor 0.2)",
+      "unmet: G2 strength lift in >= 5/6 seeds (measured=0 expect=<function main.<locals>.<lambda> at 0x7f672a7c42c0>)",
+      "unmet: G3a permute-magnitude beaten (perm-p<0.05) in ALL seeds (measured=0 expect=<function main.<locals>.<lambda> at 0x7f672a7c42c0>)",
+      "unmet: G3b graded STRENGTH lifts over unit-magnitude sign-only (magnitude is the lever) (treatment=-0.331447 control=-0.336435 |sep|=0.00498844 > 0.05)"
+    ],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "G1 graded held-out SIGN r >= 0.45",
+        "ok": true,
+        "detail": "0.50158 vs floor 0.45",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G1 every seed SIGN r >= 0.25",
+        "ok": true,
+        "detail": "measured=0.5015802852305346 expect=<function main.<locals>.<lambda> at 0x7f672a7c42c0>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "G2 graded STRENGTH r >= 0.20 (toward ridge 0.27)",
+        "ok": false,
+        "detail": "-0.331447 vs floor 0.2",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "G2 graded STRENGTH lifts over the saturating boundary",
+        "ok": true,
+        "detail": "treatment=-0.331447 control=0.199186 |sep|=0.530633 > 0.08",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G2 strength lift in >= 5/6 seeds",
+        "ok": false,
+        "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7f672a7c42c0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G3a permute-magnitude beaten (perm-p<0.05) in ALL seeds",
+        "ok": false,
+        "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7f672a7c42c0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "G3b graded STRENGTH lifts over unit-magnitude sign-only (magnitude is the lever)",
+        "ok": false,
+        "detail": "treatment=-0.331447 control=-0.336435 |sep|=0.00498844 > 0.05",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "G4 no-conditioning lesion collapses the read",
+        "ok": true,
+        "detail": "treatment=0.50158 control=0 |sep|=0.50158 > 0.35158",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G5 permute-code beaten (perm-p<0.05) in ALL seeds",
+        "ok": true,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f672a7c42c0>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "Warriner appraisal SEED (ridge target) + the SATURATING RW sign-only third factor -- RETIRED: the opponent weights derive from the self-organized conditioning map with a GRADED, non-saturating DA-magnitude (PPMI-contingency) third factor, ~10 innate primary signs, NO Warriner",
+        "why": "this de-risk's whole point; Warriner is EVAL-only ground-truth, never a weight input"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "G1_sign_holds_mean>=0.45": true,
+    "G1_sign_every_seed>=0.25": true,
+    "G2_strength_toward_ridge(>=0.20)": false,
+    "G2_strength_lift_over_boundary(>=0.08_mean)": false,
+    "G2_strength_lift_in>=5of6_seeds": false,
+    "G3a_permute_magnitude_beaten_all_seeds": false,
+    "G3b_signonly_below_graded(>=0.05)": false,
+    "G4_no_conditioning_collapses(<0.15)": true,
+    "G5_permute_code_all_seeds": true
+  },
+  "means": {
+    "sign_graded": 0.5015802852305346,
+    "sign_graded_min": 0.5015802852305346,
+    "sign_boundary": 0.6335736173182841,
+    "sign_signonly": 0.499803605389791,
+    "sign_ridge": 0.8254421642672847,
+    "str_graded": -0.3314469280063793,
+    "str_boundary": 0.1991863511941434,
+    "str_signonly": -0.3364353650767411,
+    "str_ridge": 0.46964483104046134,
+    "str_us_oracle": 0.4764917758146801,
+    "sign_us_oracle": 0.6690829829990566,
+    "str_us_free": 0.1270835089151685,
+    "sign_us_free": 0.5679391284957995,
+    "str_lift_over_boundary": -0.5306332792005227,
+    "str_lift_seeds": 0,
+    "str_graded_minus_signonly": 0.004988437070361784,
+    "no_conditioning": 0.0,
+    "permcode_seeds_sig": 1,
+    "permmag_seeds_sig": 0,
+    "intact_abs": 0.02205078125,
+    "lesion_abs": 0.0,
+    "corr_psum_warriner": 0.461737595920204,
+    "r_perp_graded": 0.11643599562295734,
+    "purity_saturated_frac": 0.04,
+    "graded_mag_cv": 0.6822703707763608
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 137,
+      "code_dim": 64,
+      "n_reinforced": 125,
+      "n_train": 63,
+      "n_held": 62,
+      "n_held_probe": 48,
+      "purity_saturated_frac": 0.04,
+      "graded_mag_cv": 0.6822703707763608,
+      "corr_purity_gradedmag": 0.7833170003229861,
+      "a_r_sign_graded": 0.5015802852305346,
+      "a_r_sign_boundary": 0.6335736173182841,
+      "a_r_sign_signonly": 0.499803605389791,
+      "a_r_sign_ridge": 0.8254421642672847,
+      "a_r_str_graded": -0.3314469280063793,
+      "a_r_str_boundary": 0.1991863511941434,
+      "a_r_str_signonly": -0.3364353650767411,
+      "a_r_str_ridge": 0.46964483104046134,
+      "a_r_str_us_oracle": 0.4764917758146801,
+      "a_r_sign_us_oracle": 0.6690829829990566,
+      "a_r_str_us_free": 0.1270835089151685,
+      "a_r_sign_us_free": 0.5679391284957995,
+      "a_intact_abs_graded": 0.02205078125,
+      "a_lesion_abs_graded": 0.0,
+      "a_r_perp_graded": 0.11643599562295734,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_sign_r_graded": 0.5351527662761141,
+      "a_lin_str_r_graded": -0.40298582960332335,
+      "a_permcode_perm_p": 0.04132231404958678,
+      "a_permcode_null_mean": 0.012435142640911001,
+      "a_permmag_perm_p": 0.8181818181818182,
+      "a_permmag_null_mean": -0.29704978687860834,
+      "corr_psum_warriner": 0.461737595920204
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 8000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "seed_frac": 0.5,
+    "n_perm": 120,
+    "n_vocab": 137,
+    "appetitive_pool": [
+      "hug",
+      "kiss",
+      "cuddle",
+      "cake",
+      "candy",
+      "sweet",
+      "warm",
+      "treat",
+      "food",
+      "cozy"
+    ],
+    "aversive_pool": [
+      "hurt",
+      "pain",
+      "sick",
+      "cry",
+      "scared",
+      "afraid",
+      "cold",
+      "hungry",
+      "bite",
+      "fall"
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "third factor s_c^graded = sign(RW_ratio) * |Sum_k sign_k * PPMI(concept,primary_k)|, replacing the SATURATING RW asymptote s_c=(n_pos-n_neg)/(n_pos+n_neg). PPMI = the Rescorla-Wagner CONTINGENCY = graded DA-magnitude (Bayer-Glimcher 2005); NON-saturating so graded valence STRENGTH is encoded in the opponent weights. Sign held FIXED across arms (boundary=|RW purity|, graded=|PPMI|, sign-only=1) so any strength delta is purely the magnitude term. Weights via the same Warriner-free selforg_opponent_weights + spiking opponent read off cp_firing_states.",
+  "HONEST_RESIDUALS": "Warriner is EVAL-only ground-truth, NEVER a weight input (asserted; graded_da_magnitude takes no Warriner arg). Residuals: (1) ~2*n_each innate primary SIGNS host-supplied (the faithful floor); (2) rate-level numpy Hebbian map (a fully-spiking graded three-factor write is the next rung); (3) standalone de-risk bridge (build_one_brain fold-in pending).",
+  "elapsed_seconds": 9.9
+}
