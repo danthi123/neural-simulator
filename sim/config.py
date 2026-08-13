@@ -211,6 +211,21 @@ class CoreSimConfig:
     # (valid but divergent) stream position. Mirrors per_parameter_heterogeneity_seed
     # (each stream reset to position 0, keyed on a stable per-slice index).
     per_region_threshold_heterogeneity: bool = False
+    # Draw each brain region's per-neuron PARAMETER heterogeneity slice (the
+    # jittered Izhikevich a/b/d/C -- and HH -- values that _apply_parameter_
+    # heterogeneity otherwise samples as ONE `size=n` draw per parameter from the
+    # single global RNG stream, indexed by absolute pool position) from a
+    # REGION-SCOPED RNG keyed on a stable hash of the region name. DEFAULT-OFF
+    # preserves the legacy global draw bit-for-bit (the region-scoped overwrite
+    # block is skipped entirely, so the flag OFF is byte-identical to today). When
+    # ON, a region's parameter-heterogeneity pattern is invariant to its
+    # co-residents / its position in the shared pool -- so MERGING an organ whose
+    # graded rate code REQUIRES enable_parameter_heterogeneity onto one shared
+    # substrate no longer shifts its param-het to a different (valid but divergent)
+    # stream position. EXACTLY mirrors per_region_threshold_heterogeneity (each
+    # stream reset to position 0, keyed on a stable per-region + per-parameter
+    # index); the global draw runs FIRST so global-RNG consumption is preserved.
+    per_region_parameter_heterogeneity: bool = False
     # PER-REGION HOMEOSTASIS ISOLATION (2026-08-13; the one-substrate 2-organ
     # merge's SECOND byte-identity cause). Homeostatic threshold adaptation is a
     # CONTINUOUS companion process: `fused_homeostasis_update` pulls every

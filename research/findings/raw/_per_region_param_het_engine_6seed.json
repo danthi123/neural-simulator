@@ -1,0 +1,32 @@
+{
+  "mode": "per_region_param_het_engine",
+  "n_seeds": 6,
+  "n_position_invariant_on": 6,
+  "n_position_dependent_off": 6,
+  "n_determinism_on": 6,
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "position_invariant_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "R's param-het slice byte-identical alone-vs-co-resident with the flag ON, all seeds"
+    },
+    {
+      "kind": "require",
+      "name": "position_dependent_off_control",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "the SAME slice DIFFERS with the flag OFF (the flag is load-bearing, not a no-op)"
+    },
+    {
+      "kind": "require",
+      "name": "determinism_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "the co-resident pool built twice at one seed is byte-identical, all seeds"
+    }
+  ],
+  "undefined_reasons": []
+}

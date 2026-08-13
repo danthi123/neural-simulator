@@ -1,0 +1,184 @@
+{
+  "mode": "per_region_param_het_cluster",
+  "n_seeds": 6,
+  "results": [
+    {
+      "seed": 42,
+      "metacog_maxdelta_on": 0.0,
+      "metacog_worst_on": "margin[1.00]",
+      "metacog_maxdelta_off": 0.0007500000000000024,
+      "metacog_byte_identical": true,
+      "metacog_alive": true,
+      "metacog_go": true,
+      "pragmatic_maxdelta_on": 0.0,
+      "pragmatic_worst_on": "belief[some][none]",
+      "pragmatic_maxdelta_off": 0.015885151206252113,
+      "pragmatic_byte_identical": true,
+      "pragmatic_alive": true,
+      "pragmatic_go": true
+    },
+    {
+      "seed": 43,
+      "metacog_maxdelta_on": 0.0,
+      "metacog_worst_on": "margin[1.00]",
+      "metacog_maxdelta_off": 0.0015937500000000005,
+      "metacog_byte_identical": true,
+      "metacog_alive": false,
+      "metacog_go": false,
+      "pragmatic_maxdelta_on": 0.0,
+      "pragmatic_worst_on": "belief[some][none]",
+      "pragmatic_maxdelta_off": 0.05285484980509059,
+      "pragmatic_byte_identical": true,
+      "pragmatic_alive": true,
+      "pragmatic_go": true
+    },
+    {
+      "seed": 44,
+      "metacog_maxdelta_on": 0.0,
+      "metacog_worst_on": "margin[1.00]",
+      "metacog_maxdelta_off": 0.001359375000000002,
+      "metacog_byte_identical": true,
+      "metacog_alive": true,
+      "metacog_go": true,
+      "pragmatic_maxdelta_on": 0.0,
+      "pragmatic_worst_on": "belief[some][none]",
+      "pragmatic_maxdelta_off": 0.0044039635672105115,
+      "pragmatic_byte_identical": true,
+      "pragmatic_alive": true,
+      "pragmatic_go": true
+    },
+    {
+      "seed": 100,
+      "metacog_maxdelta_on": 0.0,
+      "metacog_worst_on": "margin[1.00]",
+      "metacog_maxdelta_off": 0.0012500000000000002,
+      "metacog_byte_identical": true,
+      "metacog_alive": true,
+      "metacog_go": true,
+      "pragmatic_maxdelta_on": 0.0,
+      "pragmatic_worst_on": "belief[some][none]",
+      "pragmatic_maxdelta_off": 0.01723796314642362,
+      "pragmatic_byte_identical": true,
+      "pragmatic_alive": true,
+      "pragmatic_go": true
+    },
+    {
+      "seed": 101,
+      "metacog_maxdelta_on": 0.0,
+      "metacog_worst_on": "margin[1.00]",
+      "metacog_maxdelta_off": 0.0024374999999999996,
+      "metacog_byte_identical": true,
+      "metacog_alive": true,
+      "metacog_go": true,
+      "pragmatic_maxdelta_on": 0.0,
+      "pragmatic_worst_on": "belief[some][none]",
+      "pragmatic_maxdelta_off": 0.04221964906030107,
+      "pragmatic_byte_identical": true,
+      "pragmatic_alive": true,
+      "pragmatic_go": true
+    },
+    {
+      "seed": 102,
+      "metacog_maxdelta_on": 0.0,
+      "metacog_worst_on": "margin[1.00]",
+      "metacog_maxdelta_off": 0.0009375000000000017,
+      "metacog_byte_identical": true,
+      "metacog_alive": true,
+      "metacog_go": true,
+      "pragmatic_maxdelta_on": 0.0,
+      "pragmatic_worst_on": "belief[some][none]",
+      "pragmatic_maxdelta_off": 0.050270143293399155,
+      "pragmatic_byte_identical": true,
+      "pragmatic_alive": true,
+      "pragmatic_go": true
+    }
+  ],
+  "n_metacog_byte_identical": 6,
+  "n_pragmatic_byte_identical": 6,
+  "n_metacog_go": 5,
+  "n_pragmatic_go": 6,
+  "metacog_verdict": "GO",
+  "pragmatic_verdict": "GO",
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "metacog_read_byte_identical_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "metacog production read max delta 0.0 merged-vs-co-resident, flag ON, all seeds"
+    },
+    {
+      "kind": "require",
+      "name": "pragmatic_read_byte_identical_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "pragmatic production read max delta 0.0 merged-vs-co-resident, flag ON, all seeds"
+    },
+    {
+      "kind": "control",
+      "name": "flag_is_load_bearing",
+      "ok": true,
+      "detail": "treatment=0.0528548 control=0 |sep|=0.0528548 > 0",
+      "note": "with the flag OFF the reads DIVERGE (position-shifted param-het) -> not a no-op"
+    }
+  ],
+  "undefined_reasons": [],
+  "affect_boundary": [
+    {
+      "seed": 42,
+      "affect_ou_on_delta": 156.48062133789062,
+      "affect_ou_off_control_delta": 0.0,
+      "affect_has_neuromod": true,
+      "affect_boundary_confirmed": true,
+      "affect_verdict": "BOUNDARY",
+      "affect_reason": "OU size-n per-step global draw (open seam) + global neuromodulator subsystem"
+    },
+    {
+      "seed": 43,
+      "affect_ou_on_delta": 147.09273147583008,
+      "affect_ou_off_control_delta": 0.0,
+      "affect_has_neuromod": true,
+      "affect_boundary_confirmed": true,
+      "affect_verdict": "BOUNDARY",
+      "affect_reason": "OU size-n per-step global draw (open seam) + global neuromodulator subsystem"
+    },
+    {
+      "seed": 44,
+      "affect_ou_on_delta": 185.6696014404297,
+      "affect_ou_off_control_delta": 0.0,
+      "affect_has_neuromod": true,
+      "affect_boundary_confirmed": true,
+      "affect_verdict": "BOUNDARY",
+      "affect_reason": "OU size-n per-step global draw (open seam) + global neuromodulator subsystem"
+    },
+    {
+      "seed": 100,
+      "affect_ou_on_delta": 163.2365264892578,
+      "affect_ou_off_control_delta": 0.0,
+      "affect_has_neuromod": true,
+      "affect_boundary_confirmed": true,
+      "affect_verdict": "BOUNDARY",
+      "affect_reason": "OU size-n per-step global draw (open seam) + global neuromodulator subsystem"
+    },
+    {
+      "seed": 101,
+      "affect_ou_on_delta": 146.30556869506836,
+      "affect_ou_off_control_delta": 0.0,
+      "affect_has_neuromod": true,
+      "affect_boundary_confirmed": true,
+      "affect_verdict": "BOUNDARY",
+      "affect_reason": "OU size-n per-step global draw (open seam) + global neuromodulator subsystem"
+    },
+    {
+      "seed": 102,
+      "affect_ou_on_delta": 202.82482528686523,
+      "affect_ou_off_control_delta": 0.0,
+      "affect_has_neuromod": true,
+      "affect_boundary_confirmed": true,
+      "affect_verdict": "BOUNDARY",
+      "affect_reason": "OU size-n per-step global draw (open seam) + global neuromodulator subsystem"
+    }
+  ],
+  "note": "per-region param-het makes metacog + pragmatic reads invariant to co-residence on one co-stepped pool (byte-identical); affect needs per-region OU + neuromod (mapped boundary)"
+}

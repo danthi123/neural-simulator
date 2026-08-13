@@ -535,11 +535,22 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
                          attractor_weight: float = DEFAULT_ATTRACTOR_WEIGHT,
                          meta_exc_w: float = DEFAULT_META_EXC_W, meta_inh_w: float = DEFAULT_META_INH_W,
                          nmda_tau: float = DEFAULT_NMDA_TAU,
-                         confidence_read: str = DEFAULT_CONFIDENCE_READ):
+                         confidence_read: str = DEFAULT_CONFIDENCE_READ,
+                         coresident_regions=None, per_region_param_het: bool = False,
+                         per_region_thresh: bool = False):
     """One `SimulationBridge`: `workspace` (K accumulator assemblies + shared inhibition) + slow-NMDA `meta_schema`
     monitor. The monitor reads the first-order competition via a fixed workspace->meta excitation + fs->meta
     feed-forward inhibition; under `lesion_meta` both read weights are 0 (severs the monitor's ACCESS while the
-    workspace competition -- the first-order decision -- runs unchanged). Returns (bridge, xp, idx, snap)."""
+    workspace competition -- the first-order decision -- runs unchanged). Returns (bridge, xp, idx, snap).
+
+    ONE-BRAIN MERGE hooks (additive, DEFAULT-PRESERVING -> byte-identical when unused):
+      * `coresident_regions`: a list of INERT (density-0, unwired) BrainRegions PREPENDED to the metacog regions,
+        so the metacog neurons co-reside on ONE bridge at a NON-ZERO offset -- the exact position shift a shared
+        pool introduces. They add NO pathways, so they consume NO build_wiring_plan RNG (metacog's own edges stay
+        byte-identical) and NO cross-synapse; all metacog wiring auto-shifts via rm.indices.
+      * `per_region_param_het` / `per_region_thresh`: enable the region-scoped param- / threshold-heterogeneity
+        draws so the metacog slice is INVARIANT to that offset (else the global size-n draws are position-shifted).
+    Default None/False reproduces the standalone build bit-for-bit."""
     xp, _ = get_backend()
 
     n_ws = ASSEMBLY_SIZE * K_CLASSES
@@ -565,6 +576,11 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
                       weight_mean=FS_TO_WS_WEIGHT, weight_jitter=0.0, plastic=False),
     ]
 
+    # ONE-BRAIN MERGE: prepend inert (density-0, unwired) co-resident regions so metacog lands at a non-zero
+    # offset on a shared, co-stepped pool (default None -> byte-identical standalone build).
+    if coresident_regions:
+        regions = list(coresident_regions) + regions
+
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = regions
@@ -575,6 +591,10 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
     cfg.connections_per_neuron = 0
     cfg.num_traits = 1
     cfg.seed = int(seed)
+    # Region-scoped heterogeneity draws (default OFF -> byte-identical) make the metacog slice invariant to the
+    # co-resident offset above.
+    cfg.per_region_parameter_heterogeneity = bool(per_region_param_het)
+    cfg.per_region_threshold_heterogeneity = bool(per_region_thresh)
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
     # slow NMDA -> the monitor INTEGRATES the settled balance-of-evidence (long NR2B-like decay; Wang persistent NMDA).

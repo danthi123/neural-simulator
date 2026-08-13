@@ -2555,6 +2555,20 @@ class SimulationBridge:
                 self._apply_parameter_heterogeneity(
                     cfg, n, backend_neutral=backend_neutral_izh
                 )
+                # PER-REGION parameter heterogeneity (opt-in; DEFAULT OFF -> this
+                # block is SKIPPED, so the global draw above stands byte-identical
+                # and the global RNG has been consumed exactly as before). When ON,
+                # OVERWRITE each brain region's slice of the jittered Izhikevich/HH
+                # param arrays with a draw from a REGION-SCOPED RNG keyed on a stable
+                # hash of the region name, so a region's param-het pattern is
+                # invariant to its co-residents / its position in the shared pool
+                # (the one-substrate merge seam for organs whose graded rate code
+                # REQUIRES parameter heterogeneity). The legacy draw already ran, so
+                # (a) global-RNG consumption is preserved bit-for-bit and (b) any
+                # neuron NOT owned by a region keeps its legacy jittered value.
+                if (getattr(cfg, "per_region_parameter_heterogeneity", False)
+                        and self.region_manager is not None):
+                    self._overwrite_region_scoped_parameter_heterogeneity(cfg, n)
 
             # Packet-backed HH values are authoritative and must be applied
             # after optional legacy heterogeneity. Legacy-only initialization
@@ -3377,6 +3391,136 @@ class SimulationBridge:
             host_thresholds[idx_arr] = region_rng.uniform(
                 lo, hi, idx_arr.size
             ).astype(np.float32)
+
+    # Strides for the per-region PARAMETER-heterogeneity substreams. A large prime
+    # region stride keeps adjacent regions' seeds far apart; a distinct per-parameter
+    # stride decorrelates parameters within a region. Distinct from the threshold
+    # region stride so a region's threshold and parameter substreams never coincide.
+    _PARAM_HET_REGION_SEED_STRIDE = 2_000_003
+    _PARAM_HET_PER_PARAM_STRIDE = 1_000_003
+
+    @staticmethod
+    def _draw_region_het_param_host(rng, dist_spec, size):
+        """Draw `size` host float32 samples for ONE heterogeneity parameter, reproducing
+        _apply_parameter_heterogeneity's backend-neutral draw+clip math EXACTLY (so a
+        region-scoped slice is bit-for-bit what the same distribution would produce)."""
+        dist_type = dist_spec.get("type")
+        if dist_type == "lognormal":
+            mean_log = float(dist_spec["mean_log"])
+            sigma_log = float(dist_spec["sigma_log"])
+            if (not math.isfinite(mean_log) or not math.isfinite(sigma_log)
+                    or sigma_log < 0.0):
+                raise ValueError("Invalid lognormal parameters for region param-het")
+            samples = rng.lognormal(mean=mean_log, sigma=sigma_log,
+                                    size=size).astype(np.float32)
+        elif dist_type == "gaussian":
+            mean = float(dist_spec["mean"])
+            std = float(dist_spec["std"])
+            if (not math.isfinite(mean) or not math.isfinite(std) or std < 0.0):
+                raise ValueError("Invalid gaussian parameters for region param-het")
+            samples = rng.normal(loc=mean, scale=std, size=size).astype(np.float32)
+            if mean > 0:
+                np.clip(samples, mean * 0.1, mean * 3.0, out=samples)
+            elif mean < 0:
+                np.clip(samples, mean * 3.0, mean * 0.1, out=samples)
+        else:
+            raise ValueError(
+                f"Unsupported region param-het distribution {dist_type!r}"
+            )
+        if not np.isfinite(samples).all():
+            raise ValueError("Region param-het draw produced non-finite values")
+        return samples
+
+    def _overwrite_region_scoped_parameter_heterogeneity(self, cfg, n):
+        """OVERWRITE each brain region's slice of the jittered per-neuron Izhikevich/HH
+        parameter arrays with a draw from a REGION-SCOPED RNG (opt-in via
+        cfg.per_region_parameter_heterogeneity).
+
+        _apply_parameter_heterogeneity otherwise draws each parameter as ONE `size=n`
+        uniform/normal/lognormal sample over the whole pool from the global RNG stream,
+        so an organ's slice depends on the total pool size AND its absolute position:
+        merging a second organ onto one substrate shifts that organ to a different
+        (valid but divergent) stream position and it receives a DIFFERENT seeded
+        param-het than it would standalone. Here each region draws each parameter from
+        its OWN substream reset to position 0, keyed on a STABLE zlib.crc32 hash of the
+        region name (process-independent, unlike the salted builtin `hash`) plus a
+        per-parameter stride, so a region's param-het pattern is invariant to its
+        co-residents. The caller has ALREADY run the global draw (in
+        _apply_parameter_heterogeneity), so (a) global-RNG consumption is preserved
+        bit-for-bit and (b) any neuron NOT owned by a region keeps its legacy value.
+
+        EXACTLY mirrors _overwrite_region_scoped_thresholds (an independent host
+        substream per slice, reset to position 0, keyed on a stable index). Uses the
+        backend-neutral host RNG unconditionally (like the threshold sibling) so the
+        region-scoped values are identical on the numpy and cupy backends.
+        """
+        import zlib
+        if not cfg.heterogeneity_distributions or self.region_manager is None:
+            return
+        param_map = {
+            "izh_C_val": getattr(self, "cp_izh_C", None),
+            "izh_a_val": getattr(self, "cp_izh_a", None),
+            "izh_b_val": getattr(self, "cp_izh_b", None),
+            "izh_d_val": getattr(self, "cp_izh_d_increment", None),
+            "hh_C_m": getattr(self, "cp_hh_C_m", None),
+            "hh_g_Na_max": getattr(self, "cp_hh_g_Na_max", None),
+            "hh_g_K_max": getattr(self, "cp_hh_g_K_max", None),
+            "hh_g_L": getattr(self, "cp_hh_g_L", None),
+        }
+        het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        resolved = het_seed if het_seed >= 0 else self.runtime_state.actual_seed_used
+        if resolved is None or resolved < 0:
+            resolved = 0
+        # Which region neurons receive the overwrite mirrors the global apply's three
+        # cases: global flag ON -> ALL region neurons (legacy applies to everyone);
+        # global OFF + per-region het mask -> only the masked (enable_heterogeneity)
+        # neurons, so unmasked per-region presets stay deterministic.
+        global_on = bool(cfg.enable_parameter_heterogeneity)
+        host_mask = None
+        if not global_on and self.cp_heterogeneity_neuron_mask is not None:
+            host_mask = np.asarray(
+                _backend_to_host(self.cp_heterogeneity_neuron_mask)
+            ).astype(bool)
+        # Precompute each region's (masked) index slice once.
+        region_slices = []
+        for region in self.region_manager.regions():
+            indices = self.region_manager.indices(region.name)
+            if not indices:
+                continue
+            idx_arr = np.asarray(sorted(int(i) for i in indices), dtype=np.int64)
+            if idx_arr.size == 0 or int(idx_arr.max()) >= n:
+                continue
+            if host_mask is not None:
+                idx_arr = idx_arr[host_mask[idx_arr]]
+                if idx_arr.size == 0:
+                    continue
+            name_key = int(zlib.crc32(region.name.encode("utf-8"))) & 0xFFFFFFFF
+            region_slices.append((region.name, name_key, idx_arr))
+        if not region_slices:
+            return
+        # Overwrite one parameter array at a time (single host round-trip per array).
+        for param_index, (param_name, dist_spec) in enumerate(
+                cfg.heterogeneity_distributions.items()):
+            target_array = param_map.get(param_name)
+            if target_array is None or target_array.size != n:
+                continue
+            host_arr = np.asarray(
+                _backend_to_host(target_array), dtype=np.float32
+            ).copy()
+            for region_name, name_key, idx_arr in region_slices:
+                region_seed = (
+                    int(resolved)
+                    + name_key * self._PARAM_HET_REGION_SEED_STRIDE
+                    + param_index * self._PARAM_HET_PER_PARAM_STRIDE
+                ) & 0xFFFFFFFF
+                region_rng = _backend_neutral_random_state(
+                    region_seed,
+                    stream_name=f"Izhikevich heterogeneity[{region_name}][{param_name}]",
+                )
+                host_arr[idx_arr] = self._draw_region_het_param_host(
+                    region_rng, dist_spec, int(idx_arr.size)
+                )
+            target_array[:] = cp.asarray(host_arr, dtype=cp.float32)
 
     def _apply_parameter_heterogeneity(self, cfg, n, *, backend_neutral=False):
         """Applies parameter heterogeneity by drawing per-neuron values from distributions.

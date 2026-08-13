@@ -268,6 +268,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   unlocks the metacog/pragmatic/affect cluster (largest, 3 organs). NO `sim/` edit here (one default-preserving
 >   `research/runners` kwarg add; smoke byte-identical; `test_determinism` 9/9). `2026-08-13-merge-production-rung2-BOUNDARY.md`;
 >   runner `_onebrain_merge_rung2_verify.py`.
+> - **[PI] PER-REGION PARAM-HET `sim/` EDIT — CLUSTER MERGE GO (2026-08-13):** built the rung-2-named engine feature
+>   `cfg.per_region_parameter_heterogeneity` (guarded, default-off, additive; `SimulationBridge.
+>   _overwrite_region_scoped_parameter_heterogeneity` overwrites each region's Izhikevich param-het slice from a
+>   name-keyed `zlib.crc32` substream AFTER the global draw — EXACTLY mirroring `per_region_threshold_heterogeneity`).
+>   **Engine 6/6:** a region's param-het slice is position-INVARIANT alone-vs-co-resident with the flag ON (DIVERGES
+>   OFF); determinism 6/6; OFF-path substrate hash BYTE-IDENTICAL to HEAD (git-stash, all 6 seeds). **Cluster 6/6:**
+>   the METACOG (balance-of-evidence confidence) + PRAGMATIC (scalar-implicature RSA belief) production reads are
+>   BYTE-IDENTICAL (max delta **0.0**) with their regions co-resident on ONE co-stepped pool (flag ON); OFF they
+>   diverge — so 2 of the 3 cluster organs now share the substrate byte-identically, faculties alive. **AFFECT =
+>   MEASURED BOUNDARY:** its read runs `enable_ou_process=True` (a size-n per-step GLOBAL `cp.random.randn(n)` draw →
+>   position-shifted) + the global neuromodulator subsystem, so param-het alone can't make it byte-identical (OU-on
+>   co-resident delta ~1.5e2 vs OU-off control 0.0, 6/6) → needs per-region OU + neuromod (mapped next rungs). Zero
+>   regression: `test_determinism` 9/9, smoke byte-identical, both edited de-risk builders' DEFAULT path byte-identical
+>   to HEAD, rung-1 guard still 0.0 (6/6). **Honest residual:** a FULLY-WIRED same-`region_manager` both-organ merge
+>   adds a THIRD seam — `build_wiring_plan`'s shared-RNG sparse-pathway ORDER dependence — solved by per-organ-plan
+>   remap or a per-region wiring seed (next rung). `2026-08-13-per-region-param-het-cluster-GO.md`; runners
+>   `_per_region_param_het_engine_verify.py` + `_per_region_param_het_cluster_verify.py`.
 >
 > **🔴 LIVE LANES (owner-approved, concurrent):**
 > - **[GC] (iso):** GRADED/CONDUCTANCE mouth read — resolve the winner from the continuous signed conductance margin (not a

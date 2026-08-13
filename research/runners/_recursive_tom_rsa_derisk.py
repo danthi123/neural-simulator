@@ -391,18 +391,26 @@ RSA_READ = 45                # read the mean per-item rate over the last RSA_REA
 RSA_MARGIN_EPS = 0.012
 
 
-def build_rsa_bridge(seed, normalize=True):
+def build_rsa_bridge(seed, normalize=True, coresident_regions=None,
+                     per_region_param_het=False, per_region_thresh=False):
     """A competitive assembly population = the RSA normalizer. K=3 item assemblies (states OR utterances -- the
     op is identical) sharing ONE FS pool that performs DIVISIVE normalization via feedback inhibition. Driving
     each item with a current and reading its graded rate = a proportional (softmax-at-alpha=1) normalization.
     `normalize=False` sets the fs->exc weight to 0 (the normalization LESION: rates ride the raw input, no
-    single-vs-multi-item contrast -> no implicature)."""
+    single-vs-multi-item contrast -> no implicature).
+
+    ONE-BRAIN MERGE hooks (additive, DEFAULT-PRESERVING -> byte-identical when unused): `coresident_regions` is a
+    list of INERT (density-0, unwired) BrainRegions PREPENDED so the RSA neurons co-reside on ONE bridge at a
+    non-zero offset (they add no pathways -> consume no build_wiring_plan RNG -> RSA's edges stay byte-identical,
+    no cross-synapse); `per_region_param_het` / `per_region_thresh` make the RSA slice invariant to that offset."""
     xp, _ = get_backend()
     regions = [
         BrainRegion(name="item", n_neurons=RSA_ITEM_SIZE * 3, exc_fraction=1.0, internal_density=0.0,
                     enable_nmda=False),
         BrainRegion(name="item_fs", n_neurons=RSA_FS_N, exc_fraction=0.0, internal_density=0.0, enable_nmda=False),
     ]
+    if coresident_regions:
+        regions = list(coresident_regions) + regions
     pathways = [
         RegionPathway(from_region="item", to_region="item_fs", density=0.6, weight_mean=RSA_EXC_FS_W,
                       weight_jitter=0.0, plastic=False),
@@ -423,6 +431,8 @@ def build_rsa_bridge(seed, normalize=True):
               "enable_short_term_plasticity", "enable_structural_plasticity", "enable_ou_process", "enable_nmda"):
         setattr(cfg, f, False)
     cfg.enable_parameter_heterogeneity = True
+    cfg.per_region_parameter_heterogeneity = bool(per_region_param_het)
+    cfg.per_region_threshold_heterogeneity = bool(per_region_thresh)
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
