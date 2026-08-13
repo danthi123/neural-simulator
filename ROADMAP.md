@@ -253,8 +253,11 @@ moat-safe unless noted):
   moat the live chat uses), not toy blocks — answers a real-fact why/what-if ("if the dog goes east it will drink water,
   rolled forward through it reaching the river, moat-confirmed"; "the dog wakes because the sun rises — survives a DO-probe").
   The grounding-lesion (drop a fact from the composer → its event vanishes → the causal edge never forms) is load-bearing
-  (real grounding, not relabeling); moat 0-confab; corr-only/shuffle collapse. Production-WIREABLE (a co-resident why/what-if
-  organ, 4-step spec). Honest residual: grounding-BY-DERIVATION, not yet by a shared merged substrate; DA sign teacher-delivered.
+  (real grounding, not relabeling); moat 0-confab; corr-only/shuffle collapse. **WIRED into the default /api/brain-chat turn
+  (2026-08-13):** a co-resident why/what-if organ answers "what happens if the dog goes east?" (moat-confirmed rolled-forward
+  consequence) + "why did the dog wake?" (DO-surviving cause), default-ON (`BRAIN_CAUSAL=0` escape), lesion-load-bearing,
+  moat-safe (unconfirmed → honest abstain, 0 confab); real-handler verified numpy-CPU + byte-identical-when-off. Honest
+  residual: grounding-BY-DERIVATION, not yet by a shared merged substrate; DA sign teacher-delivered.
 - **Intuitive world-model / core common-sense (T1-7, the hardest Tier-1) — first rung de-risked, mapped BOUNDARY:** a
   spiking OBJECT FILE (slow-NMDA recurrent attractor maintains an object through occlusion with ZERO input) + a
   predictive-coding surprise read gives a real OBJECT-PERMANENCE primitive (the Spelke/Baillargeon signature). Load-bearing
