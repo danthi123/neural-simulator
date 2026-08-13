@@ -98,7 +98,16 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   already-matched answer), lesion-load-bearing (`affect_out=0` collapses the coloring; matched fact byte-identical).
   Also the honest inner-state read-out ("how do you feel" → the live valence differential). STATUS: **WIRED**; residuals:
   (a) the MANNER-coloring conditions the EXTERNAL Qwen mouth (host-mediated) — **rides on A1** (brain-native spiking
-  mouth); (b) the appraisal INJECTION (host DR-2 valence lexicon → neuromodulator) is a declared host scaffold;
+  mouth); (b) the appraisal VALUE is now the **DR-2 LEARNED distributional valence** (2026-08-12): each strong word's
+  valence is inferred by leave-one-out label-propagation over the brain's learned co-occurrence graph (6-seed held-out
+  r≈+0.81; 97.4% sign-agreement with the norm on the gated words), sourced from a cached map, NOT a hardcoded lookup —
+  this closed the audit's #1 over-credit (the injection was a raw Warriner lookup mislabeled "DR-2 learned"). REMAINING
+  host residual: the affect-word SALIENCE GATE + the SEED norms are still Warriner (DR-2 is SEEDED from them — the
+  lexicon is propagated, NOT retired; a full drop-in would color plain content/action words like cat/sit/run, breaking
+  neutral-default — measured), the LEARNING is numpy not spiking, and the injection is host. **Next rung = a
+  fully-spiking on-bridge opponent V+/V- appraisal population** (moves the learning onto the substrate). Default-ON
+  (`BRAIN_AFFECT_DR2=0` → raw-norm value, byte-identical oracle). See finding
+  `2026-08-12-D1-affect-appraisal-value-learned-DR2-not-hardcoded-lexicon`;
   (c) the affect organ is a co-resident affect/honesty/arbiter bridge run ALONGSIDE the recall composer, not merged
   onto the ONE recall bridge — **rides on the one-brain merge (§ below)**; (d) the held value is a quantized bistable
   LADDER (sign + level), a smooth-magnitude **continuum is still a BOUNDARY**. Curiosity/self-model/reward (rest of the

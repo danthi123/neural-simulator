@@ -1,0 +1,28 @@
+{
+ "run_id": "1786587990-887914",
+ "runner": "research/runners/_affect_distributional_tag_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_affect_distributional_tag_derisk.py",
+  "--emit-map",
+  "research/findings/raw/_affect_learned_valence_map.json"
+ ],
+ "git_sha": "1bfc69596",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-12T22:26:30",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 217987.3,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_affect_learned_valence_map.json"
+}

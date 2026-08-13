@@ -1,0 +1,94 @@
+{
+ "probe": "D1 affect appraisal-value DR-2-learned wiring verify (numpy-CPU, real /api/brain-chat)",
+ "learned_vs_norm_leave_one_out": {
+  "strong_words_pearson_r": 0.907,
+  "strong_words_sign_agreement": 0.974,
+  "n_strong": 78,
+  "note": "leave-one-out learned map vs Warriner norm on the production strong-word filter; 2 near-zero edge flips (win/war)"
+ },
+ "appraise_level": {
+  "raw_norm_happy_joy_love_valence": 0.808,
+  "learned_happy_joy_love_valence": 0.783,
+  "note": "mean signed valence over happy/joy/love; raw==pre-change WARRINER lookup (byte-identical oracle)"
+ },
+ "handler_verify": {
+  "faculty_neutral_byte_identical_ON_vs_OFF": true,
+  "POS_colored_ON": {
+   "level": 2,
+   "diff": 0.03888888888888889,
+   "words": [
+    "happy",
+    "joy",
+    "love"
+   ],
+   "valence": 0.46973499999999996
+  },
+  "NEG_colored_ON": {
+   "level": 0,
+   "diff": -0.0002777777777777778,
+   "words": [
+    "sad",
+    "angry",
+    "afraid"
+   ],
+   "valence": -0.17394099999999996
+  },
+  "POS_colored_OFF_valence": 0.48499999999999993,
+  "lesion_collapses": {
+   "level": 0,
+   "diff": 0.0
+  },
+  "elapsed_s": 979.0
+ },
+ "checks": {
+  "affect_coloring_driven_by_dr2": "PASS (POS -> level +2, elaborations 2->3)",
+  "faculties_byte_identical_ON_vs_OFF": true,
+  "flag_off_reverts_to_raw_norm": "PASS (OFF valence EMA 0.485 = raw; unit: appraise(DR2=0)==raw WARRINER byte-for-byte)",
+  "lesion_collapses_coloring": "PASS (affect_out=0 -> level +2 -> 0, diff 0.0)"
+ },
+ "HONEST_NOTE": "value-only swap; a full learned-gate drop-in bleeds affect onto sit/run/play/cat (learned>=sad) -> breaks neutral-default (measured). Learning is numpy label-prop, not spiking; salience gate + seed norms remain Warriner. Fully-spiking opponent-population appraisal = next rung.",
+ "dr2_reproduction": {
+  "held_out_r_mean": 0.811,
+  "held_out_r_min": 0.765,
+  "held_out_r_max": 0.831,
+  "smoke_r": 0.806,
+  "r_permuted": -0.064,
+  "r_shuffled": -0.144,
+  "source_6seed": "research/findings/raw/_affect_distributional_tag_6seed.json",
+  "source_smoke": "research/findings/raw/_affect_distributional_tag.json"
+ },
+ "claim_values": [
+  0.811,
+  0.765,
+  0.831,
+  0.806,
+  0.064,
+  -0.064,
+  0.144,
+  -0.144,
+  0.907,
+  0.974,
+  0.0389,
+  0.485,
+  0.808,
+  0.4697,
+  0.783,
+  0.46973,
+  0.48499
+ ],
+ "backend": "numpy",
+ "device": "cpu",
+ "seed": 42,
+ "provenance": {
+  "runner": "scratchpad/handler_verify2.py (in-process real /api/brain-chat, tiny-demo, stub renderer)",
+  "argv": [
+   "handler_verify2.py"
+  ],
+  "backend": "numpy",
+  "device": "cpu",
+  "seed": 42,
+  "run_id": "dr2-wiring-verify-1786590218",
+  "note": "numpy-CPU (GPU reserved for owner game); byte-identity asserted by EXACT per-turn tuple compare (answer, abstained, recalled_svo, tone_level)"
+ },
+ "byte_identity_method": "exact per-turn tuple compare (answer, abstained, recalled_svo, tone_level) ON vs OFF"
+}

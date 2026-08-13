@@ -11,8 +11,17 @@ Stage-A affect faculty:
     + the honesty relay + the 3-way arbiter, all co-resident. 6-seed GO for the valence SIGN + a graded bistable
     LADDER (2026-08-08). We READ the held mood NEURALLY as the population-rate differential
     rate(aff_pos_readout) - rate(aff_neg_readout) through the `affect_out` transmission gate.
-  * the appraisal CONTENT source = the DR-2 learned per-word valence lexicon (WARRINER-approximate VAD), a DECLARED
-    host scaffold (the injection is host; the READ-BACK through affect_out is the load-bearing spiking part).
+  * the appraisal VALUE source = the DR-2 LEARNED distributional valence (2026-08-12). Each strongly-affective word's
+    valence/arousal is now sourced from a cached LEAVE-ONE-OUT learned map (`_affect_learned_valence_map.json`,
+    built by `_affect_distributional_tag_derisk.build_learned_valence_map` -- seed-clamped label-propagation over the
+    LEARNED co-occurrence graph, every word inferred from all OTHERS so no word carries its own hand-assigned norm;
+    6-seed held-out GO r~0.81). This RETIRES the hardcoded per-word value LOOKUP (the audit's #1 over-credit: the
+    injection was a raw Warriner-lexicon read mis-labelled as "DR-2 learned"). Default-ON; `BRAIN_AFFECT_DR2=0`
+    reverts to the raw norm value (byte-identical oracle). HONEST RESIDUALS (declared): (a) the affect-word SALIENCE
+    GATE (which words move the mood) + the SEED norms are still Warriner -- DR-2 is SEEDED from them, it does NOT
+    retire the lexicon; (b) the learning is numpy PPMI + label-prop, NOT spiking; (c) the fully-spiking on-bridge
+    opponent V+/V- appraisal population is the named next rung. The injection into the ladder is still host; the
+    READ-BACK through affect_out is the load-bearing spiking part.
 
 THE HONESTY FLOOR is preserved BY CONSTRUCTION: affect is applied ONLY as (a) forthcomingness (how many already-
 gate-matched, moat-verified facts to volunteer) and (b) prose MANNER (phrasing/warmth of a sentence whose SVO the
@@ -35,12 +44,14 @@ flip bug). NO `sim/` edit; additive; default-ON with the `BRAIN_AFFECT` env esca
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 
 import numpy as np
 
-# The DR-2 learned per-word valence lexicon (WARRINER-approximate VAD, 1..9 scale) + the stop set.
+# The Warriner-approximate affect-salience NORMS (the affect-word vocabulary + the seed norms) + the stop set.
+# These are the SEED/gate host scaffold; the per-word appraisal VALUE now comes from the DR-2 learned map below.
 from research.runners._affect_distributional_tag_derisk import WARRINER, STOP
 # The validated Stage-A co-resident affect brain + the graded-ladder constants + helpers (reuse-by-import).
 from research.runners import _stageA_full_integration_derisk as SA
@@ -49,27 +60,66 @@ from sim.backend import get_backend, to_host
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
-# APPRAISAL from the DR-2 per-word valence lexicon (declared host scaffold). Only STRONGLY-affective words move the
-# mood; mildly-valenced content nouns (dog ~6.9, cat ~6.6) are filtered so a plain fact query reads ~neutral.
+# APPRAISAL. The affect-word SALIENCE GATE (which words move the mood) is the Warriner norm vocabulary -- only
+# STRONGLY-affective words pass, so a plain fact query reads ~neutral (mildly-valenced content/action words like
+# dog/cat/sit are filtered). The per-word VALUE is now sourced from the DR-2 LEARNED map (experience-derived),
+# NOT the raw hardcoded value. `BRAIN_AFFECT_DR2=0` reverts the VALUE to the raw norm (byte-identical oracle).
+# WHY the value-only swap (honest, measured 2026-08-12): distributional valence genuinely bleeds affect onto
+# high-frequency action words (sit/run/jump/play/cat learn positive valence >= real affect words in TinyStories),
+# so a FULL drop-in (learned value AND learned gate) would color a plain "what does the cat eat" -- breaking the
+# neutral-fact invariant. The norm-gate preserves neutral-default; the learned VALUE is the genuine provenance step.
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 _WORD_RE = re.compile(r"[a-zA-Z']+")
 _STRONG_MARGIN = 2.0   # |valence - 5| >= this to count as an affective word (filters mild content nouns)
 
+_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_LEARNED_MAP_PATH = os.path.join(_REPO, "research", "findings", "raw", "_affect_learned_valence_map.json")
+_LEARNED_VALENCE: dict | None = None   # lazily-loaded {word: (v9, a9)} DR-2 leave-one-out learned map
+
+
+def dr2_enabled() -> bool:
+    """Default-ON. `BRAIN_AFFECT_DR2` in {0,false,no,off} -> the appraisal VALUE reverts to the raw Warriner norm
+    (the byte-identical oracle for the pre-DR-2 hardcoded-lexicon path)."""
+    v = os.environ.get("BRAIN_AFFECT_DR2")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+def _get_learned_valence() -> dict:
+    """The cached DR-2 LEARNED valence map (built by build_learned_valence_map). Loaded once; a missing artifact
+    -> {} (appraise falls back to the raw norm, declared)."""
+    global _LEARNED_VALENCE
+    if _LEARNED_VALENCE is None:
+        try:
+            with open(_LEARNED_MAP_PATH, encoding="utf-8") as fh:
+                d = json.load(fh)
+            raw = d.get("map", d)
+            _LEARNED_VALENCE = {str(w).lower(): (float(v[0]), float(v[1])) for w, v in raw.items()}
+        except Exception:
+            _LEARNED_VALENCE = {}
+    return _LEARNED_VALENCE
+
 
 def appraise_text(text: str) -> dict:
-    """Appraise a message from the DR-2 lexicon. Returns {'valence': [-1,1], 'arousal': [0,1], 'n_hits', 'words'}.
-    valence = mean over strongly-affective in-lexicon words of (warriner_valence - 5)/4; arousal = mean (a-1)/8.
-    n_hits==0 -> a neutral message (the caller HOLDS the prior mood, giving cross-turn persistence)."""
+    """Appraise a message. Returns {'valence': [-1,1], 'arousal': [0,1], 'n_hits', 'words'}. A word MOVES the mood
+    iff it is strongly affect-bearing in the Warriner norm (the salience gate); its VALUE is the DR-2 LEARNED
+    valence/arousal (experience-derived; raw norm iff BRAIN_AFFECT_DR2=0 or the word is not in the learned map).
+    valence = mean over gated words of (v9 - 5)/4; arousal = mean (a - 1)/8. n_hits==0 -> a neutral message (the
+    caller HOLDS the prior mood, giving cross-turn persistence)."""
     toks = [w.lower() for w in _WORD_RE.findall(text or "")]
+    use_learned = dr2_enabled()
+    learned = _get_learned_valence() if use_learned else {}
     vals, ars, hits = [], [], []
     for w in toks:
         if w in STOP or w not in WARRINER:
             continue
-        v9, a9 = WARRINER[w]
-        if abs(v9 - 5.0) < _STRONG_MARGIN:      # not strongly affective -> ignore (keeps neutral queries neutral)
+        v9_norm, a9_norm = WARRINER[w]
+        if abs(v9_norm - 5.0) < _STRONG_MARGIN:   # not strongly affective -> ignore (keeps neutral queries neutral)
             continue
-        vals.append((v9 - 5.0) / 4.0)           # signed valence in [-1, 1]
-        ars.append((a9 - 1.0) / 8.0)            # arousal in [0, 1]
+        v9, a9 = learned.get(w, (v9_norm, a9_norm)) if use_learned else (v9_norm, a9_norm)
+        vals.append((v9 - 5.0) / 4.0)             # signed valence in [-1, 1]
+        ars.append((a9 - 1.0) / 8.0)              # arousal in [0, 1]
         hits.append(w)
     if not vals:
         return {"valence": 0.0, "arousal": 0.0, "n_hits": 0, "words": []}

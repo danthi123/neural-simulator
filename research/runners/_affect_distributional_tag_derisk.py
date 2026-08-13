@@ -294,6 +294,49 @@ def _aggregate_verdict(rows, go_r=0.55, collapse=0.20):
     return go, checks, means
 
 
+# =============================================================================================================
+# PRODUCTION MAP: a LEAVE-ONE-OUT learned per-word valence/arousal map (composes the de-risked primitives above,
+# NO reimplementation). Every word's value is inferred by seed-clamped propagation over the LEARNED co-occurrence
+# graph seeded from ALL OTHER words (the target word held out), so NO word carries its own hand-assigned norm --
+# the per-word appraisal VALUE is fully experience-derived. Reused by the production affect organ (appraise_text)
+# to source the appraisal VALUE from DR-2 learned propagation instead of the raw norm dict. Deterministic (no RNG).
+# HONEST: the SEED norms + the affect-salience vocabulary are still Warriner (this map does NOT retire them -- it is
+# SEEDED from them + propagated in numpy); the fully-spiking opponent-population appraisal is the further rung.
+# =============================================================================================================
+def build_learned_valence_map(max_stories=60000, n_hub=500, window=4, min_count=5, knn=12, n_hops=2):
+    """Return ({word: [v9_learned, a9_learned]} on the 1..9 Warriner scale, meta). Leave-one-out label-propagation
+    over the learned co-occurrence graph; a single global std-ratio gain restores the norm SPREAD (a scalar readout
+    calibration -- per-word sign/rank is 100% learned). Deterministic."""
+    stories = load_stories(max_stories)
+    vocab, C = build_cooccurrence(stories, n_hub, window, min_count)
+    codes = codes_from_cooccurrence(C)
+    P = affinity_knn(codes, knn)
+    n = len(vocab)
+    val = np.array([WARRINER[w][0] for w in vocab], float)
+    aro = np.array([WARRINER[w][1] for w in vocab], float)
+    sV = (val - 5.0) / 4.0
+    sA = (aro - 5.0) / 4.0
+    vp_seed, vm_seed = opponent_seed(val)
+    lv = np.zeros(n, float)   # learned signed valence, leave-one-out
+    la = np.zeros(n, float)   # learned signed arousal,  leave-one-out
+    for i in range(n):
+        m = np.ones(n, bool); m[i] = False
+        lv[i] = propagate(P, m, vp_seed, n_hops)[i] - propagate(P, m, vm_seed, n_hops)[i]
+        la[i] = propagate(P, m, sA, n_hops)[i]
+    gV = float(sV.std() / (lv.std() + 1e-12))   # global std-ratio gains (scalar spread calibration to the norms)
+    gA = float(sA.std() / (la.std() + 1e-12))
+    v9 = np.clip(5.0 + gV * lv * 4.0, 1.0, 9.0)
+    a9 = np.clip(5.0 + gA * la * 4.0, 1.0, 9.0)
+    mp = {vocab[i]: [round(float(v9[i]), 4), round(float(a9[i]), 4)] for i in range(n)}
+    meta = {"n_words": n, "gain_valence": round(gV, 4), "gain_arousal": round(gA, 4),
+            "config": {"max_stories": max_stories, "n_hub": n_hub, "window": window,
+                       "min_count": min_count, "knn": knn, "n_hops": n_hops},
+            "n_hubs": int(C.shape[1]),
+            "note": "leave-one-out DR-2 distributional valence; SEEDED from Warriner norms (NOT a retirement); "
+                    "numpy PPMI + label-prop (NOT spiking). Fully-spiking opponent-population appraisal = next rung."}
+    return mp, meta
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
@@ -307,7 +350,18 @@ def main():
     ap.add_argument("--n-hops", type=int, default=2, help="spreading-activation hops (1-2 = EMERGE-30 read)")
     ap.add_argument("--warriner-csv", default=None, help="optional real Warriner CSV: word,valence[,arousal]")
     ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--emit-map", default=None, help="build+write the LEAVE-ONE-OUT learned valence map (JSON) "
+                    "for the production affect organ, then exit (composes the de-risked primitives; deterministic)")
     a = ap.parse_args()
+
+    if a.emit_map:
+        t0 = time.time()
+        mp, meta = build_learned_valence_map(a.max_stories, a.n_hub, a.window, a.min_count, a.knn, a.n_hops)
+        Path(a.emit_map).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.emit_map).write_text(json.dumps({"map": mp, "meta": meta}, indent=1, default=str))
+        print(f"[emit-map] wrote {len(mp)} learned per-word valence/arousal entries to {a.emit_map} "
+              f"(gV={meta['gain_valence']}, gA={meta['gain_arousal']}, {round(time.time()-t0,1)}s)", flush=True)
+        return 0
 
     if a.warriner_csv and os.path.exists(a.warriner_csv):
         WARRINER.clear()
