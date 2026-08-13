@@ -1,0 +1,375 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "onebrain_seeds": [
+    42,
+    43,
+    44
+  ],
+  "pass_bar": 5,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "intact revises the belief (rf)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PE boundary: re-statement does not open the window (rf C1)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "spiking window gate is load-bearing (contradict opens, restate closed)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no-confab moat: never-stored -> abstain",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion collapses belief revision (rf south->north)",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag-off byte-identical to append-only production path",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "onebrain (production default) revises + lesion-load-bearing",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "revision attributable to the in-place update (>=0.99 not in lesion control)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+      "note": ""
+    }
+  ],
+  "verdict_detail": {
+    "label": "reconsolidation production organ \u2014 D2-gated in-place belief revision",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "intact revises the belief (rf)",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "PE boundary: re-statement does not open the window (rf C1)",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "spiking window gate is load-bearing (contradict opens, restate closed)",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no-confab moat: never-stored -> abstain",
+        "ok": true,
+        "detail": "measured=6 expect=6",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "lesion collapses belief revision (rf south->north)",
+        "ok": true,
+        "detail": "measured=6 expect=6",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag-off byte-identical to append-only production path",
+        "ok": true,
+        "detail": "measured=6 expect=6",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "onebrain (production default) revises + lesion-load-bearing",
+        "ok": true,
+        "detail": "measured=3 expect=3",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "revision attributable to the in-place update (>=0.99 not in lesion control)",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f4685fba980>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "cue-addressed spiking reactivation (kb cue-match selects the fact; rides one-brain merge)",
+        "why": "the co-resident residual the surprise/comprehension organs also carry"
+      }
+    ],
+    "chance": null
+  },
+  "attribution": {
+    "rf_belief_revision_treatment": 1.0,
+    "rf_belief_revision_control": 0.0,
+    "rf_attributable_to_inplace_update": 1.0,
+    "onebrain_treatment": 1.0,
+    "onebrain_control": 0.0,
+    "onebrain_attributable_to_inplace_update": 1.0
+  },
+  "rf": {
+    "n_pass": 6,
+    "n_intact": 6,
+    "n_c1": 6,
+    "n_gate_load_bearing": 6,
+    "n_moat": 6,
+    "n_lesion_load_bearing": 6,
+    "n_flagoff_identical": 6,
+    "rows": [
+      {
+        "seed": 42,
+        "contradict_surprise_hz": 5.613,
+        "contradict_threshold": 2.731,
+        "window_opened_contradict": true,
+        "intact_action": "rewrite",
+        "intact_q": "south",
+        "intact_n": 1,
+        "intact_untouched": "south",
+        "restate_surprise_hz": 0.0,
+        "window_opened_restate": false,
+        "restate_action": "restabilize",
+        "restate_n": 1,
+        "restate_gate_lesion_opens": true,
+        "moat_action": "abstain",
+        "lesion_action": "lesioned_nowrite",
+        "lesion_q": "north",
+        "lesion_n": 2,
+        "intact_ok": true,
+        "c1_ok": true,
+        "gate_load_bearing": true,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "flagoff_identical": true,
+        "seed_pass": true
+      },
+      {
+        "seed": 43,
+        "contradict_surprise_hz": 5.613,
+        "contradict_threshold": 2.731,
+        "window_opened_contradict": true,
+        "intact_action": "rewrite",
+        "intact_q": "south",
+        "intact_n": 1,
+        "intact_untouched": "south",
+        "restate_surprise_hz": 0.0,
+        "window_opened_restate": false,
+        "restate_action": "restabilize",
+        "restate_n": 1,
+        "restate_gate_lesion_opens": true,
+        "moat_action": "abstain",
+        "lesion_action": "lesioned_nowrite",
+        "lesion_q": "north",
+        "lesion_n": 2,
+        "intact_ok": true,
+        "c1_ok": true,
+        "gate_load_bearing": true,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "flagoff_identical": true,
+        "seed_pass": true
+      },
+      {
+        "seed": 44,
+        "contradict_surprise_hz": 5.613,
+        "contradict_threshold": 2.731,
+        "window_opened_contradict": true,
+        "intact_action": "rewrite",
+        "intact_q": "south",
+        "intact_n": 1,
+        "intact_untouched": "south",
+        "restate_surprise_hz": 0.0,
+        "window_opened_restate": false,
+        "restate_action": "restabilize",
+        "restate_n": 1,
+        "restate_gate_lesion_opens": true,
+        "moat_action": "abstain",
+        "lesion_action": "lesioned_nowrite",
+        "lesion_q": "north",
+        "lesion_n": 2,
+        "intact_ok": true,
+        "c1_ok": true,
+        "gate_load_bearing": true,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "flagoff_identical": true,
+        "seed_pass": true
+      },
+      {
+        "seed": 100,
+        "contradict_surprise_hz": 5.613,
+        "contradict_threshold": 2.731,
+        "window_opened_contradict": true,
+        "intact_action": "rewrite",
+        "intact_q": "south",
+        "intact_n": 1,
+        "intact_untouched": "south",
+        "restate_surprise_hz": 0.0,
+        "window_opened_restate": false,
+        "restate_action": "restabilize",
+        "restate_n": 1,
+        "restate_gate_lesion_opens": true,
+        "moat_action": "abstain",
+        "lesion_action": "lesioned_nowrite",
+        "lesion_q": "north",
+        "lesion_n": 2,
+        "intact_ok": true,
+        "c1_ok": true,
+        "gate_load_bearing": true,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "flagoff_identical": true,
+        "seed_pass": true
+      },
+      {
+        "seed": 101,
+        "contradict_surprise_hz": 5.613,
+        "contradict_threshold": 2.731,
+        "window_opened_contradict": true,
+        "intact_action": "rewrite",
+        "intact_q": "south",
+        "intact_n": 1,
+        "intact_untouched": "south",
+        "restate_surprise_hz": 0.0,
+        "window_opened_restate": false,
+        "restate_action": "restabilize",
+        "restate_n": 1,
+        "restate_gate_lesion_opens": true,
+        "moat_action": "abstain",
+        "lesion_action": "lesioned_nowrite",
+        "lesion_q": "north",
+        "lesion_n": 2,
+        "intact_ok": true,
+        "c1_ok": true,
+        "gate_load_bearing": true,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "flagoff_identical": true,
+        "seed_pass": true
+      },
+      {
+        "seed": 102,
+        "contradict_surprise_hz": 5.613,
+        "contradict_threshold": 2.731,
+        "window_opened_contradict": true,
+        "intact_action": "rewrite",
+        "intact_q": "south",
+        "intact_n": 1,
+        "intact_untouched": "south",
+        "restate_surprise_hz": 0.0,
+        "window_opened_restate": false,
+        "restate_action": "restabilize",
+        "restate_n": 1,
+        "restate_gate_lesion_opens": true,
+        "moat_action": "abstain",
+        "lesion_action": "lesioned_nowrite",
+        "lesion_q": "north",
+        "lesion_n": 2,
+        "intact_ok": true,
+        "c1_ok": true,
+        "gate_load_bearing": true,
+        "moat_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "flagoff_identical": true,
+        "seed_pass": true
+      }
+    ]
+  },
+  "onebrain": {
+    "n_pass": 3,
+    "n_lesion_load_bearing": 3,
+    "rows": [
+      {
+        "seed": 42,
+        "path": "onebrain",
+        "window_hz": 5.613,
+        "opened": true,
+        "intact_q": "south",
+        "intact_n": 1,
+        "untouched": true,
+        "lesion_q": "north",
+        "intact_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "seed_pass": true
+      },
+      {
+        "seed": 43,
+        "path": "onebrain",
+        "window_hz": 5.613,
+        "opened": true,
+        "intact_q": "south",
+        "intact_n": 1,
+        "untouched": true,
+        "lesion_q": "north",
+        "intact_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "seed_pass": true
+      },
+      {
+        "seed": 44,
+        "path": "onebrain",
+        "window_hz": 5.613,
+        "opened": true,
+        "intact_q": "south",
+        "intact_n": 1,
+        "untouched": true,
+        "lesion_q": "north",
+        "intact_ok": true,
+        "lesion_ok": true,
+        "lesion_load_bearing": true,
+        "seed_pass": true
+      }
+    ]
+  }
+}

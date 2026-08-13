@@ -1,0 +1,30 @@
+{
+ "run_id": "1786577521-832086",
+ "runner": "research/runners/_reconsolidation_production_organ_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_d991d656-00e-3/research/runners/_reconsolidation_production_organ_verify.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--onebrain-seeds",
+  "42,43,44"
+ ],
+ "git_sha": "de8d71f9f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-12T19:32:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1318.5,
+ "corpus_check_query": "reconsolidation",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_reconsolidation_production_organ_verify.json"
+}

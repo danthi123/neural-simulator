@@ -1,0 +1,27 @@
+{
+ "run_id": "1786578082-836104",
+ "runner": "research/runners/_gnw_coincidence_integrator_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gnw_coincidence_integrator_derisk.py",
+  "--calibrate",
+  "--seed",
+  "42",
+  "--D",
+  "256"
+ ],
+ "git_sha": "e4eec09f4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-12T19:41:22",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 773.3,
+ "corpus_check_query": "B3-noncontradiction",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_coincidence_integrator/calibration_seed42.json"
+}

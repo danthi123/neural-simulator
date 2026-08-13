@@ -1,0 +1,632 @@
+{
+  "runner": "_burndown_B3_onebrain_negation_moat_derisk",
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "D": 128,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "recall_neg_ok == 1.0 all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "stored negations recall as 'no' on the spiking substrate"
+    },
+    {
+      "kind": "require",
+      "name": "recall_aff_ok == 1.0 all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "stored affirmations recall as 'yes'"
+    },
+    {
+      "kind": "require",
+      "name": "moat 0 false-accepts intact",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": "every contradicting assertion rejected"
+    },
+    {
+      "kind": "require",
+      "name": "gate fired (rejections == contradictions) all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the gate is not inert"
+    },
+    {
+      "kind": "require",
+      "name": "0 over-blocks all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "consistent restatements + novel assertions accepted"
+    },
+    {
+      "kind": "control",
+      "name": "lesion breaches vs intact false-accepts",
+      "ok": true,
+      "detail": "treatment=18 control=0 |sep|=18 > 0",
+      "note": "disable negation storage -> contradictions slip through (moat inert)"
+    },
+    {
+      "kind": "require",
+      "name": "lesion negation genuinely gone all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "ask_yes_no reads 'yes' on the would-be-NEGATE fact in the lesion (not a bug)"
+    },
+    {
+      "kind": "control",
+      "name": "no-store rejections collapse vs intact",
+      "ok": true,
+      "detail": "treatment=36 control=0 |sep|=36 > 0",
+      "note": "store nothing -> the gate cannot reject (rejection is store-driven, not templated)"
+    },
+    {
+      "kind": "require",
+      "name": "shuffle tracks store all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "every gate decision == (shuffled_pol != asserted_pol)"
+    },
+    {
+      "kind": "require",
+      "name": "shuffle reject set moved all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the reject set follows the permuted store -> not a fixed template"
+    }
+  ],
+  "undefined_reasons": [],
+  "GO": true,
+  "go_intact_all": true,
+  "go_lesion_all": true,
+  "go_nostore_all": true,
+  "go_shuffle_all": true,
+  "total_false_accepts_intact": 0,
+  "total_false_accepts_lesion": 18,
+  "lesion_negation_gone_all": true,
+  "rows": [
+    {
+      "seed": 42,
+      "D": 128,
+      "intact": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 1.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 0,
+        "n_rejections": 6,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "canon_neg_recall_no": true,
+      "canon_yn": "no",
+      "lesion": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 3,
+        "n_rejections": 3,
+        "n_contradictions": 6,
+        "over_blocks": 3,
+        "reject_set": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          0
+        ]
+      },
+      "lesion_canon_yn": "yes",
+      "lesion_canon_negation_gone": true,
+      "nostore": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 0.0,
+        "moat_false_accepts": 6,
+        "n_rejections": 0,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "shuffle_recall_ok": 1.0,
+      "shuffle_tracks_store": 1.0,
+      "shuffle_reject_set": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      "shuffle_reject_set_moved": 1,
+      "shuffled_pols": [
+        "NEGATE",
+        "AFFIRM",
+        "NEGATE",
+        "AFFIRM",
+        "AFFIRM",
+        "NEGATE"
+      ],
+      "go_intact": true,
+      "go_lesion": true,
+      "go_nostore": true,
+      "go_shuffle": true,
+      "go": true
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "intact": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 1.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 0,
+        "n_rejections": 6,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "canon_neg_recall_no": true,
+      "canon_yn": "no",
+      "lesion": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 3,
+        "n_rejections": 3,
+        "n_contradictions": 6,
+        "over_blocks": 3,
+        "reject_set": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          0
+        ]
+      },
+      "lesion_canon_yn": "yes",
+      "lesion_canon_negation_gone": true,
+      "nostore": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 0.0,
+        "moat_false_accepts": 6,
+        "n_rejections": 0,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "shuffle_recall_ok": 1.0,
+      "shuffle_tracks_store": 1.0,
+      "shuffle_reject_set": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "shuffle_reject_set_moved": 1,
+      "shuffled_pols": [
+        "NEGATE",
+        "AFFIRM",
+        "AFFIRM",
+        "AFFIRM",
+        "NEGATE",
+        "NEGATE"
+      ],
+      "go_intact": true,
+      "go_lesion": true,
+      "go_nostore": true,
+      "go_shuffle": true,
+      "go": true
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "intact": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 1.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 0,
+        "n_rejections": 6,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "canon_neg_recall_no": true,
+      "canon_yn": "no",
+      "lesion": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 3,
+        "n_rejections": 3,
+        "n_contradictions": 6,
+        "over_blocks": 3,
+        "reject_set": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          0
+        ]
+      },
+      "lesion_canon_yn": "yes",
+      "lesion_canon_negation_gone": true,
+      "nostore": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 0.0,
+        "moat_false_accepts": 6,
+        "n_rejections": 0,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "shuffle_recall_ok": 1.0,
+      "shuffle_tracks_store": 1.0,
+      "shuffle_reject_set": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "shuffle_reject_set_moved": 1,
+      "shuffled_pols": [
+        "NEGATE",
+        "NEGATE",
+        "AFFIRM",
+        "NEGATE",
+        "AFFIRM",
+        "AFFIRM"
+      ],
+      "go_intact": true,
+      "go_lesion": true,
+      "go_nostore": true,
+      "go_shuffle": true,
+      "go": true
+    },
+    {
+      "seed": 100,
+      "D": 128,
+      "intact": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 1.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 0,
+        "n_rejections": 6,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "canon_neg_recall_no": true,
+      "canon_yn": "no",
+      "lesion": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 3,
+        "n_rejections": 3,
+        "n_contradictions": 6,
+        "over_blocks": 3,
+        "reject_set": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          0
+        ]
+      },
+      "lesion_canon_yn": "yes",
+      "lesion_canon_negation_gone": true,
+      "nostore": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 0.0,
+        "moat_false_accepts": 6,
+        "n_rejections": 0,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "shuffle_recall_ok": 1.0,
+      "shuffle_tracks_store": 1.0,
+      "shuffle_reject_set": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "shuffle_reject_set_moved": 1,
+      "shuffled_pols": [
+        "AFFIRM",
+        "AFFIRM",
+        "AFFIRM",
+        "NEGATE",
+        "NEGATE",
+        "NEGATE"
+      ],
+      "go_intact": true,
+      "go_lesion": true,
+      "go_nostore": true,
+      "go_shuffle": true,
+      "go": true
+    },
+    {
+      "seed": 101,
+      "D": 128,
+      "intact": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 1.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 0,
+        "n_rejections": 6,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "canon_neg_recall_no": true,
+      "canon_yn": "no",
+      "lesion": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 3,
+        "n_rejections": 3,
+        "n_contradictions": 6,
+        "over_blocks": 3,
+        "reject_set": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          0
+        ]
+      },
+      "lesion_canon_yn": "yes",
+      "lesion_canon_negation_gone": true,
+      "nostore": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 0.0,
+        "moat_false_accepts": 6,
+        "n_rejections": 0,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "shuffle_recall_ok": 1.0,
+      "shuffle_tracks_store": 1.0,
+      "shuffle_reject_set": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shuffle_reject_set_moved": 1,
+      "shuffled_pols": [
+        "AFFIRM",
+        "NEGATE",
+        "NEGATE",
+        "AFFIRM",
+        "NEGATE",
+        "AFFIRM"
+      ],
+      "go_intact": true,
+      "go_lesion": true,
+      "go_nostore": true,
+      "go_shuffle": true,
+      "go": true
+    },
+    {
+      "seed": 102,
+      "D": 128,
+      "intact": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 1.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 0,
+        "n_rejections": 6,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "canon_neg_recall_no": true,
+      "canon_yn": "no",
+      "lesion": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 1.0,
+        "moat_false_accepts": 3,
+        "n_rejections": 3,
+        "n_contradictions": 6,
+        "over_blocks": 3,
+        "reject_set": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          0
+        ]
+      },
+      "lesion_canon_yn": "yes",
+      "lesion_canon_negation_gone": true,
+      "nostore": {
+        "n_facts": 6,
+        "n_neg": 3,
+        "n_aff": 3,
+        "recall_neg_ok": 0.0,
+        "recall_aff_ok": 0.0,
+        "moat_false_accepts": 6,
+        "n_rejections": 0,
+        "n_contradictions": 6,
+        "over_blocks": 0,
+        "reject_set": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "shuffle_recall_ok": 1.0,
+      "shuffle_tracks_store": 1.0,
+      "shuffle_reject_set": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shuffle_reject_set_moved": 1,
+      "shuffled_pols": [
+        "AFFIRM",
+        "NEGATE",
+        "NEGATE",
+        "AFFIRM",
+        "NEGATE",
+        "AFFIRM"
+      ],
+      "go_intact": true,
+      "go_lesion": true,
+      "go_nostore": true,
+      "go_shuffle": true,
+      "go": true
+    }
+  ],
+  "verdict": "GO -- the non-contradiction moat FIRES on the onebrain (production-default) substrate: stored negations recall, contradicting assertions are rejected (0 false-accepts), consistent+novel assertions accepted; the negation storage is load-bearing (lesion breaches) and the rejection is store-driven (no-store + shuffle controls)."
+}

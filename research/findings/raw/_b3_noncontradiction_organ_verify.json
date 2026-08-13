@@ -1,0 +1,230 @@
+{
+  "harness": "_b3_noncontradiction_organ_verify",
+  "organ": "research/runners/b3_noncontradiction_production_organ.py",
+  "reuses": "research/runners/_burndown_B3_onebrain_negation_moat_derisk.py (6-seed GO)",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "D": 128,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "intact rejects contradictions BOTH directions all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "natural inflected text -> spiking polarity recall -> REJECT"
+    },
+    {
+      "kind": "require",
+      "name": "consistent restatements accepted all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "asserted polarity == stored polarity -> accept (0 over-block)"
+    },
+    {
+      "kind": "require",
+      "name": "novel + out-of-scope + diff-patient accepted all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "moat: unknown -> accept, never a fabricated rejection; questions None"
+    },
+    {
+      "kind": "require",
+      "name": "lemma fallback maps eats->eat all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "declared surface-first/lemma-fallback recalls the stored lemma on inflected input"
+    },
+    {
+      "kind": "require",
+      "name": "LESION goes inert all seeds (recall bypass + storage)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the spiking recall is load-bearing: bypass it or strip the stored negation -> gate inert"
+    },
+    {
+      "kind": "require",
+      "name": "read-only byte-identical all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the organ never mutates the store (flag-off turn is unchanged)"
+    },
+    {
+      "kind": "require",
+      "name": "flags + polarity + morphology host logic ok",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "default-ON, escape/lesion flags, negation detector, lemma candidates"
+    }
+  ],
+  "undefined_reasons": [],
+  "intact_rejections": 12,
+  "lesion_rejections": 0,
+  "rejection_attributable_to_recall": 1.0,
+  "flags_polarity": {
+    "checks": {
+      "default_on": true,
+      "off_0": true,
+      "off_false": true,
+      "off_no": true,
+      "off_off": true,
+      "lesion_default_off": true,
+      "lesion_on": true,
+      "pol_affirm": true,
+      "pol_not": true,
+      "pol_nt": true,
+      "pol_never": true,
+      "lemma_eats": true,
+      "lemma_chases": true,
+      "lemma_flies": true,
+      "lemma_base_ss_kept": true,
+      "extract_svo": true,
+      "extract_neg_svo": true,
+      "extract_question_none": true
+    },
+    "ok": true
+  },
+  "rows": [
+    {
+      "seed": 42,
+      "D": 128,
+      "canon_before": "no",
+      "canon_lesion": "yes",
+      "canon_after": "no",
+      "checks": {
+        "contradict_negate": true,
+        "lemma_fallback_maps": true,
+        "consistent_negate": true,
+        "contradict_affirm": true,
+        "consistent_affirm": true,
+        "novel_accept": true,
+        "question_out_of_scope": true,
+        "diff_patient_unknown": true,
+        "lesion_inert": true,
+        "storage_lesion_negation_gone": true,
+        "storage_lesion_slips_through": true,
+        "read_only_idempotent": true
+      },
+      "ok": true
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "canon_before": "no",
+      "canon_lesion": "yes",
+      "canon_after": "no",
+      "checks": {
+        "contradict_negate": true,
+        "lemma_fallback_maps": true,
+        "consistent_negate": true,
+        "contradict_affirm": true,
+        "consistent_affirm": true,
+        "novel_accept": true,
+        "question_out_of_scope": true,
+        "diff_patient_unknown": true,
+        "lesion_inert": true,
+        "storage_lesion_negation_gone": true,
+        "storage_lesion_slips_through": true,
+        "read_only_idempotent": true
+      },
+      "ok": true
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "canon_before": "no",
+      "canon_lesion": "yes",
+      "canon_after": "no",
+      "checks": {
+        "contradict_negate": true,
+        "lemma_fallback_maps": true,
+        "consistent_negate": true,
+        "contradict_affirm": true,
+        "consistent_affirm": true,
+        "novel_accept": true,
+        "question_out_of_scope": true,
+        "diff_patient_unknown": true,
+        "lesion_inert": true,
+        "storage_lesion_negation_gone": true,
+        "storage_lesion_slips_through": true,
+        "read_only_idempotent": true
+      },
+      "ok": true
+    },
+    {
+      "seed": 100,
+      "D": 128,
+      "canon_before": "no",
+      "canon_lesion": "yes",
+      "canon_after": "no",
+      "checks": {
+        "contradict_negate": true,
+        "lemma_fallback_maps": true,
+        "consistent_negate": true,
+        "contradict_affirm": true,
+        "consistent_affirm": true,
+        "novel_accept": true,
+        "question_out_of_scope": true,
+        "diff_patient_unknown": true,
+        "lesion_inert": true,
+        "storage_lesion_negation_gone": true,
+        "storage_lesion_slips_through": true,
+        "read_only_idempotent": true
+      },
+      "ok": true
+    },
+    {
+      "seed": 101,
+      "D": 128,
+      "canon_before": "no",
+      "canon_lesion": "yes",
+      "canon_after": "no",
+      "checks": {
+        "contradict_negate": true,
+        "lemma_fallback_maps": true,
+        "consistent_negate": true,
+        "contradict_affirm": true,
+        "consistent_affirm": true,
+        "novel_accept": true,
+        "question_out_of_scope": true,
+        "diff_patient_unknown": true,
+        "lesion_inert": true,
+        "storage_lesion_negation_gone": true,
+        "storage_lesion_slips_through": true,
+        "read_only_idempotent": true
+      },
+      "ok": true
+    },
+    {
+      "seed": 102,
+      "D": 128,
+      "canon_before": "no",
+      "canon_lesion": "yes",
+      "canon_after": "no",
+      "checks": {
+        "contradict_negate": true,
+        "lemma_fallback_maps": true,
+        "consistent_negate": true,
+        "contradict_affirm": true,
+        "consistent_affirm": true,
+        "novel_accept": true,
+        "question_out_of_scope": true,
+        "diff_patient_unknown": true,
+        "lesion_inert": true,
+        "storage_lesion_negation_gone": true,
+        "storage_lesion_slips_through": true,
+        "read_only_idempotent": true
+      },
+      "ok": true
+    }
+  ],
+  "ALL_OK": true,
+  "verdict": "PASS -- the non-contradiction organ FIRES on the production spiking recall from NATURAL inflected text (rejects contradictions both directions, accepts consistent/novel/out-of-scope), the recall is LOAD-BEARING (organ-lesion + storage-lesion both go inert), it is READ-ONLY (byte-identical flag-off), and it is MOAT-SAFE (unknown -> accept, never a fabricated rejection)."
+}

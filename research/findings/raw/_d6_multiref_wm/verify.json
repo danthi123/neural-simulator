@@ -1,0 +1,122 @@
+{
+  "probe": "d6_multiref_wm_production_verify",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "ks": [
+    2,
+    3,
+    4
+  ],
+  "PASS": true,
+  "gates": {
+    "intact_ok": true,
+    "lesion_ok": true,
+    "lesion_load_bearing": true,
+    "superposed_collides": true,
+    "flag_off_and_scope_ok": true,
+    "moat_ok": true
+  },
+  "intact": {
+    "2": {
+      "all_recovered_rate": 1.0,
+      "hold_alive_min": 0.06342592592592593,
+      "zero_input_ok": true
+    },
+    "3": {
+      "all_recovered_rate": 1.0,
+      "hold_alive_min": 0.0638888888888889,
+      "zero_input_ok": true
+    },
+    "4": {
+      "all_recovered_rate": 1.0,
+      "hold_alive_min": 0.05879629629629631,
+      "zero_input_ok": true
+    }
+  },
+  "lesion": {
+    "2": {
+      "all_recovered_rate": 0.0,
+      "hold_alive_min": 0.0
+    },
+    "3": {
+      "all_recovered_rate": 0.0,
+      "hold_alive_min": 0.0
+    },
+    "4": {
+      "all_recovered_rate": 0.0,
+      "hold_alive_min": 0.0
+    }
+  },
+  "superposed": {
+    "k": 2,
+    "mean_referents_recovered_single_register": 1.0
+  },
+  "flags": {
+    "enabled['0']": true,
+    "enabled['false']": true,
+    "enabled['off']": true,
+    "enabled['1']": true,
+    "enabled['']": true,
+    "enabled[default]": true,
+    "lesioned[1]": true,
+    "lesioned[default]": true,
+    "scope_no_referent_None": true,
+    "scope_single_referent_None": true,
+    "scope_pronoun_only_None": true
+  },
+  "moat": {
+    "two_held_and_recovered": true,
+    "no_invented_referent": true,
+    "hold_query_reads_back_both": true,
+    "readout": "I'm holding 2 referents in working memory at once: dog and cat.",
+    "output_is_readout_not_fact": true,
+    "sample_j": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "composer": "onebrain",
+      "n_referents": 2,
+      "input_order": [
+        "dog",
+        "cat"
+      ],
+      "recovered": {
+        "0": "dog",
+        "1": "cat"
+      },
+      "hold_alive_min": 0.09166666666666667,
+      "zero_input_ok": true,
+      "all_recovered": true,
+      "is_hold_query": false
+    },
+    "sample_jq": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "composer": "onebrain",
+      "n_referents": 2,
+      "input_order": [
+        "dog",
+        "cat"
+      ],
+      "recovered": {
+        "0": "dog",
+        "1": "cat"
+      },
+      "hold_alive_min": 0.08611111111111111,
+      "zero_input_ok": true,
+      "all_recovered": true,
+      "is_hold_query": true,
+      "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+    }
+  },
+  "elapsed_seconds": 6.1,
+  "NOTE": "reuse-by-import of the 6-seed GO _multi_slot_binding_derisk.MultiSlotHold (R banks of D3 slow-NMDA, ONE shared FS) + the RUNG6c HebbianBinder; NO sim/ edit. The spiking HOLD is load-bearing (lesion recur=0 collapses the >=2 read-back); the referent PARSE + role-by-position WRITE MARKER + argmax READ are declared host residuals (the learned spiking write-gate is the open rung, gap#4)."
+}

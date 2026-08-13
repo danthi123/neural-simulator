@@ -1,0 +1,116 @@
+{
+  "seed": 42,
+  "backend": "numpy",
+  "checks": {
+    "flag_semantics": {
+      "ok": true,
+      "detail": {
+        "{}": {
+          "got": true,
+          "expect": true,
+          "ok": true
+        },
+        "{'BRAIN_EPISODIC': '0'}": {
+          "got": false,
+          "expect": false,
+          "ok": true
+        },
+        "{'BRAIN_EPISODIC': 'off'}": {
+          "got": false,
+          "expect": false,
+          "ok": true
+        },
+        "{'BRAIN_EPISODIC': '1'}": {
+          "got": true,
+          "expect": true,
+          "ok": true
+        },
+        "lesion:{}": {
+          "got": false,
+          "expect": false,
+          "ok": true
+        },
+        "lesion:{'BRAIN_EPISODIC_LESION': '1'}": {
+          "got": true,
+          "expect": true,
+          "ok": true
+        },
+        "lesion:{'BRAIN_EPISODIC_LESION': '0'}": {
+          "got": false,
+          "expect": false,
+          "ok": true
+        }
+      }
+    },
+    "idle_builds_nothing": {
+      "ok": true,
+      "mem_is_none": true,
+      "idle_recall_in_memory": false
+    },
+    "intact_fires": {
+      "ok": true,
+      "apical_cue": 0.9090909090909091,
+      "perm": 0.0,
+      "nocue": 0.0
+    },
+    "lesion_collapses": {
+      "ok": true,
+      "intact_cue": 0.9090909090909091,
+      "lesion_cue": 0.0
+    },
+    "unstored_abstains": {
+      "ok": true,
+      "cat_cue": 0.0
+    },
+    "discussed_decode": {
+      "ok": true,
+      "discussed": [
+        "dog"
+      ]
+    }
+  },
+  "reads": {
+    "dog_intact": {
+      "topic": "dog",
+      "slot": 1,
+      "formed": true,
+      "in_memory": true,
+      "apical_cue": 0.9090909090909091,
+      "apical_perm": 0.0,
+      "apical_nocue": 0.0,
+      "lesioned": false,
+      "reason": "spiking-dap-completion"
+    },
+    "dog_lesion": {
+      "topic": "dog",
+      "slot": 1,
+      "formed": false,
+      "in_memory": false,
+      "apical_cue": 0.0,
+      "apical_perm": 0.0,
+      "apical_nocue": 0.0,
+      "lesioned": true,
+      "reason": "spiking-dap-completion"
+    },
+    "cat_unstored": {
+      "topic": "cat",
+      "slot": 0,
+      "formed": false,
+      "in_memory": false,
+      "apical_cue": 0.0,
+      "apical_perm": 0.0,
+      "apical_nocue": 0.0,
+      "lesioned": false,
+      "reason": "spiking-dap-completion"
+    },
+    "discussed": [
+      "dog"
+    ]
+  },
+  "disclosures": {
+    "dog": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 0.91). A dog runs north.",
+    "cat": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+  },
+  "ALL_OK": true,
+  "wall_s": 869.3927154541016
+}
