@@ -1,0 +1,5 @@
+[baseline floor78] n=40 silent=0.325
+  integrate-rate: mass=0.120 agree=0.200
+  first-to-fire : mass=0.072 agree=0.125
+== adaptive per-position lift (ramp floor until a pool fires): recovers silent positions? ==
+  n_silent=15 recovered_mass=0.227 recovered_agree=0.333 still_silent=1

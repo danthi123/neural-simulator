@@ -1,0 +1,6 @@
+baseline floor78 dn0 rec0        -> read_fid=0.733 oracle=1.414 proj=0.518 silent=0.25 agree=0.275 (n=40)
+rec0.6                           -> read_fid=0.733 oracle=1.414 proj=0.518 silent=0.25 agree=0.275 (n=40)
+rec1.0                           -> read_fid=0.711 oracle=1.414 proj=0.502 silent=0.25 agree=0.25 (n=40)
+floor86 dn1.0 rec0               -> read_fid=0.748 oracle=1.414 proj=0.529 silent=0.2 agree=0.275 (n=40)
+floor86 dn1.0 rec0.8             -> read_fid=0.748 oracle=1.414 proj=0.529 silent=0.2 agree=0.275 (n=40)
+floor90 dn2.0 rec0.8             -> read_fid=0.751 oracle=1.414 proj=0.531 silent=0.15 agree=0.25 (n=40)

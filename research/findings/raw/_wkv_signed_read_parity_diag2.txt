@@ -1,0 +1,11 @@
+== A: give dn a tonic floor + strong weights, does it fire + sharpen (fewer active pools)? ==
+floor78 dn0 (baseline)                       dn_fire=     0.0 winspk=   4.6 margin=  1.20 active=  13.3 agree=0.30
+floor78 dn_inh12 dn_exc4 dn_floor90          dn_fire=    60.3 winspk=   0.2 margin=  0.00 active=   1.5 agree=0.00
+floor78 dn_inh30 dn_exc4 dn_floor90          dn_fire=    59.8 winspk=   0.2 margin=  0.10 active=   1.0 agree=0.00
+floor86 dn_inh12 dn_exc4 dn_floor90          dn_fire=    60.9 winspk=   0.5 margin=  0.10 active=   3.6 agree=0.00
+floor86 dn_inh30 dn_exc8 dn_floor95          dn_fire=    67.1 winspk=   0.3 margin=  0.10 active=   2.1 agree=0.00
+== B: at a higher floor (winner fires robustly), does recurrent amplify the margin? ==
+floor86 rec0                                 dn_fire=     0.0 winspk=   6.0 margin=  1.40 active=  20.8 agree=0.30
+floor86 rec8                                 dn_fire=     0.0 winspk=   6.9 margin=  1.30 active=  20.9 agree=0.30
+floor86 rec20                                dn_fire=     0.0 winspk=   8.3 margin=  1.50 active=  21.1 agree=0.30
+floor92 rec20                                dn_fire=     0.0 winspk=   8.8 margin=  1.40 active=  28.1 agree=0.20

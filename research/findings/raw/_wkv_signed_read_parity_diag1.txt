@@ -1,0 +1,11 @@
+== does dn fire / does its strength change pool dynamics? ==
+floor78 dn0 rec0 (baseline)        dn_fire=     0.0 win_margin=  1.50 active_pools=  14.2
+floor78 dn2 rec0                   dn_fire=     0.0 win_margin=  1.50 active_pools=  14.2
+floor78 dn8 rec0                   dn_fire=     0.0 win_margin=  1.50 active_pools=  14.2
+floor78 dn20 rec0                  dn_fire=     0.0 win_margin=  1.50 active_pools=  14.2
+floor90 dn8 rec0                   dn_fire=     0.0 win_margin=  2.00 active_pools=  31.3
+== does recurrent within-pool excitation change the margin? ==
+floor78 dn0 rec3                   dn_fire=     0.0 win_margin=  1.67 active_pools=  14.2
+floor78 dn0 rec8                   dn_fire=     0.0 win_margin=  1.67 active_pools=  14.2
+floor78 dn0 rec20                  dn_fire=     0.0 win_margin=  2.17 active_pools=  14.3
+floor70 dn0 rec8                   dn_fire=     0.0 win_margin=  1.17 active_pools=   8.8
