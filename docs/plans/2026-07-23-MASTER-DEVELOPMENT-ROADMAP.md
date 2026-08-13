@@ -49,7 +49,12 @@ date: 2026-07-23
 > (`99654d6fe`, 5/6 near-GO): reading the substrate overturned the "belief-magnitude" story — the ~2× overshoot is a
 > READ-TOPOGRAPHY artifact (whole-pop landscape leaks an off-target belief-only AND-gate); reading the true-intent
 > detector lands the implicature cell on 0.20 exactly (graded +0.0905, 5/6). The remaining W4 residual is ONE seed's
-> detector OPERATING-POINT → next = detector-side homeostatic gain. **Affect: valence⊥arousal EMERGES** (`4ccf4225b`,
+> detector OPERATING-POINT → **CLOSED 6/6 by [WH] (`5f19f5297`)**: a content-free per-detector homeostat (Turrigiano
+> intrinsic-excitability + Carandini-Heeger divisive-norm) rescues seed-44; graded beats onehot on all 4 objectives 6/6
+> (mean +0.150). **The W4 / Task-#12 pragmatic arc is de-risk-CLOSED** (detector→read-out→objective→operating-point all
+> surpassed; the homeostatic-gain theme validated as the W4-SPECIFIC lever, not a shared primitive). Remaining step =
+> production-wiring the belief into the speaking pipeline. **Also WAVE-8: prospective memory WIRED to production**
+> (`bcd53cf36`, default-on organ #13, HOLD+RELEASE spiking; cue→action binding still host = `scaffold_retired: NO`). **Affect: valence⊥arousal EMERGES** (`4ccf4225b`,
 > near-GO): from the same stream, valence = reinforcer difference, arousal = engagement sum (predicts held-out arousal
 > r=+0.265, tracks intensity not sign); residual = the info-thin sum-proxy → next = a spiking-LC / bodily-state source.
 > **CROSS-CUTTING (do NOT over-claim a shared fix — see the FALSIFIED note above): the recurring last-mile residual is
