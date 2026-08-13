@@ -52,6 +52,7 @@ NO `sim/` edit; reuse-by-import; process backend (cupy in production, numpy in t
 """
 from __future__ import annotations
 
+import contextlib
 import os
 import re
 
@@ -166,8 +167,14 @@ class SurpriseProductionOrgan:
     Each read drives the prediction (cue) then the assertion (cue + asserted patient) and reads surprise firing."""
 
     def __init__(self, seed: int = 42, cue_to_expected_weight: float = 0.8, n_reps: int = 22,
-                 hz_target: float = 0.5, gain_eta: float = 0.18, gain_max: float = 3.0, homeo_reps: int = 12):
+                 hz_target: float = 0.5, gain_eta: float = 0.18, gain_max: float = 3.0, homeo_reps: int = 12,
+                 shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE (opt-in, default-off): when a MergedSubstrate is injected, the intact circuit is this
+        # organ's region SLICE of the SHARED spiking bridge (built + trained + read here) instead of its own
+        # bridge. The lesioned twin stays standalone (a diagnostic, not the production intact path). See
+        # research/runners/onebrain_merge_production.py.
+        self._shared = shared
         self.cue_w = float(cue_to_expected_weight)     # 0.8 = the robust 6/6-GO operating point (de-risk)
         self.n_reps = int(n_reps)
         # ── the per-block HOMEOSTATIC PREDICTION-GAIN equalizer (the precision companion; de-risk GO 6/6) ──
@@ -193,6 +200,18 @@ class SurpriseProductionOrgan:
     def _build_one(self, lesion=False):
         from sim.backend import get_backend
         xp, _ = get_backend()
+        if self._shared is not None and not lesion:
+            # ONE-BRAIN MERGE: train + read this organ's SLICE of the SHARED spiking bridge. The regions,
+            # per-neuron init and block-diagonal wiring are built by MergedSubstrate; here we only run the same
+            # Hebbian cue->expected training this organ always runs, on the shared substrate.
+            self._shared.ensure_built()
+            bridge, cfg, meta = self._shared.bridge, self._shared.cfg, self._shared.meta_surprise
+            idx_map = self._shared.surprise_idx_map()
+            bridge._blk = meta["blk"]                       # this organ's block size before it drives (shared bridge)
+            cfg.enable_hebbian_learning = True              # train_expectation assumes plasticity ON
+            train_expectation(bridge, cfg, idx_map, meta, xp, n_reps=self.n_reps)
+            cfg.enable_hebbian_learning = False
+            return bridge, cfg, meta, xp, idx_map
         bridge, cfg, meta = build_expectation_circuit(
             self.seed, n_trained=8, n_novel=4, blk=24, cue_blk=24,
             cue_to_expected_weight=self.cue_w)
@@ -210,6 +229,7 @@ class SurpriseProductionOrgan:
         """Per-stored-block CONFIRM surprise rate (Hz): drive cue i (prediction phase) then cue i + asserted i, read
         the surprise pool — the organ's OWN read path (identical to `measure_conditions`' confirm branch)."""
         nt = self.meta["n_trained"]
+        self.bridge._blk = self.meta["blk"]   # claim this organ's block size before driving (shared-bridge safe)
         rates = []
         for i in range(nt):
             _hard_reset(self.bridge)
@@ -256,6 +276,7 @@ class SurpriseProductionOrgan:
         if homeostat_on:
             self._homeostat()
         # calibrate the confirm-vs-contradict threshold on the (homeostatted) circuit (the de-risk's measure).
+        self.bridge._blk = self.meta["blk"]   # claim this organ's block size before driving (shared-bridge safe)
         res = measure_conditions(self.bridge, self.cfg, self.idx_map, self.meta, self.xp)
         conf, contra, nov = res["confirm_hz"], res["contradict_hz"], res["novel_hz"]
         self.threshold = 0.5 * (conf + min(contra, nov))   # midpoint of confirm and the weaker violation
@@ -312,10 +333,16 @@ class SurpriseProductionOrgan:
         bridge = st["bridge"] if lesion else self.bridge
         idx_map = st["idx_map"] if lesion else self.idx_map
         xp = st["xp"] if lesion else self.xp
-        _hard_reset(bridge)
-        r = _drive_read(bridge, idx_map,
-                        {"cue": (s, 600.0), "patient_asserted": (t, 600.0)},
-                        60, xp, ["surprise"], pre_drives={"cue": (s, 600.0)}, pre_steps=60)
+        bridge._blk = self.meta["blk"]        # claim this organ's block size before driving (shared-bridge safe)
+        # ONE-BRAIN MERGE: keep this read from leaving a homeostatic footprint on the co-resident organ (the
+        # active organ still self-adapts exactly as standalone; only the co-resident's slice is restored).
+        guard = (self._shared.read_isolation("surprise")
+                 if (self._shared is not None and not lesion) else contextlib.nullcontext())
+        with guard:
+            _hard_reset(bridge)
+            r = _drive_read(bridge, idx_map,
+                            {"cue": (s, 600.0), "patient_asserted": (t, 600.0)},
+                            60, xp, ["surprise"], pre_drives={"cue": (s, 600.0)}, pre_steps=60)
         return float(r["surprise"])
 
     def judge(self, agent: str, action: str, p_stored: str, p_asserted: str, lesion: bool = False) -> dict:
@@ -335,10 +362,14 @@ _ORGAN: SurpriseProductionOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> SurpriseProductionOrgan:
-    """The process-shared surprise organ (built once on first use)."""
+    """The process-shared surprise organ (built once on first use). When the ONE-BRAIN MERGE flag is ON
+    (`BRAIN_ONEBRAIN_MERGE=1`, default-off) the organ is backed by the process-shared MergedSubstrate it
+    co-inhabits with the world-model organ (ONE spiking bridge); OFF -> its own bridge exactly as today."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = SurpriseProductionOrgan(seed=seed)
+        from research.runners.onebrain_merge_production import merge_enabled, get_merged_substrate
+        shared = get_merged_substrate(seed) if merge_enabled() else None
+        _ORGAN = SurpriseProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 
 

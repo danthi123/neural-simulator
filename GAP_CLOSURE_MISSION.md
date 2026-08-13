@@ -245,14 +245,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   + top-K argmax onto spiking read-out neurons (read-fid 0.035→0.55, 16×; semi-coherent prose) — real biologization of
 >   the hardest gap. PARITY boundary root-caused (companions moved nothing): the sign is load-bearing only in the sparse
 >   ~1.5-spike regime → next = read in the GRADED/CONDUCTANCE domain (continuous margin).
+> - **[PI] MERGE→PRODUCTION rung 1 GO (2026-08-13):** the SURPRISE (D2 expectation-violation) + WORLD-MODEL (E2 affective
+>   forward-model) production organs now run on ONE shared `SimulationBridge` behind a default-off `BRAIN_ONEBRAIN_MERGE`
+>   flag (2 merge flags ON, no cross synapse) — **6/6 GO**: both organs' production reads (through the real
+>   `SurpriseProductionOrgan`/`WorldModelProductionOrgan` classes + their `judge`/`expectation` APIs) are BYTE-IDENTICAL
+>   merged-vs-co-resident (max delta 0.0), one shared `cp_` array (N=1584), both faculties alive, determinism 9/9. Flag OFF
+>   = today (smoke byte-identical to a stashed baseline; `test_determinism` 9/9). Closed a THIRD, READ-TIME homeostasis
+>   seam (the world-model's homeostatically-silenced FS pred neurons fire spontaneously → footprint the co-resident during
+>   its reads; the participation-gated isolation can't freeze them) with a read-isolation guard that restores the
+>   co-resident's neural slice per read (preserves each organ's own self-drift; a no-op flag-off). NO `sim/` edit.
+>   `2026-08-13-merge-production-integration-rung1-GO.md`; runner `_onebrain_merge_rung1_verify.py`.
 >
 > **🔴 LIVE LANES (owner-approved, concurrent):**
 > - **[GC] (iso):** GRADED/CONDUCTANCE mouth read — resolve the winner from the continuous signed conductance margin (not a
 >   1–2-spike count) to break the parity wall (graded dendritic plateau template). Toward the substrate carrying articulation.
-> - **[PI] (main, serial):** MERGE→PRODUCTION rung 1 — migrate the first TWO compatible co-resident production organs onto
->   ONE shared bridge behind a default-off flag, byte-identical + no-regression (co-residency → shared substrate for 1 pair).
 >
-> **SINGLE LITERAL NEXT:** consolidate [GC]/[PI] as each lands (trust-but-verify [PI]'s guarded production wiring); then —
+> **SINGLE LITERAL NEXT:** consolidate [GC] as it lands; migrate the NEXT production organ(s) onto the shared substrate
+> (rung 2 — the diffbuilder pairs with genuine `dt_ms`/`homeostasis` conflicts need the mapped per-organ scoping); then —
 > migrate the rest of the organ set onto the shared substrate; fluid-mouth next rung (LIP ramp accumulator / learned read
 > if graded-conductance falls short); discrete-emotion wire; general pragmatic front-end. RAG at every wall.
 

@@ -54,6 +54,7 @@ NO `sim/` edit; reuse-by-import; process backend (cupy in production, numpy in t
 """
 from __future__ import annotations
 
+import contextlib
 import os
 import re
 import statistics as _st
@@ -107,8 +108,13 @@ class WorldModelProductionOrgan:
     observed_sign)` reads whether the observation violates the held prediction (a `cp_firing_states[surprise]` rate)."""
 
     def __init__(self, seed: int = 42, n_states: int = 6, n_reps: int = 22,
-                 cue_pa: float = 1000.0, obs_pa: float = 400.0, hold: int = 60, pre_steps: int = 60):
+                 cue_pa: float = 1000.0, obs_pa: float = 400.0, hold: int = 60, pre_steps: int = 60,
+                 shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE (opt-in, default-off): when a MergedSubstrate is injected, the intact circuit is this
+        # organ's region SLICE of the SHARED spiking bridge (built + trained + read here) instead of its own
+        # bridge. The lesioned twin stays standalone (a diagnostic). See onebrain_merge_production.py.
+        self._shared = shared
         self.n_states = int(n_states)
         self.n_reps = int(n_reps)
         self.cue_pa = float(cue_pa)
@@ -125,6 +131,18 @@ class WorldModelProductionOrgan:
     def _build_one(self, lesion: bool = False) -> dict:
         from sim.backend import get_backend
         xp, _ = get_backend()
+        if self._shared is not None and not lesion:
+            # ONE-BRAIN MERGE: train + read this organ's SLICE of the SHARED spiking bridge. The regions +
+            # per-neuron init are built by MergedSubstrate; here we only run the same Hebbian state->valence
+            # transition training this organ always runs, on the shared substrate.
+            self._shared.ensure_built()
+            bridge, cfg, meta = self._shared.bridge, self._shared.cfg, self._shared.meta_worldmodel
+            idx_map = self._shared.worldmodel_idx_map()
+            bridge._blk = meta["blk"]                       # this organ's block size before it drives (shared bridge)
+            vmap = _valence_map(self.seed, meta["n_states"])
+            train_transition(bridge, cfg, idx_map, meta, xp, vmap, n_reps=self.n_reps)  # sets hebbian ON internally
+            cfg.enable_hebbian_learning = False
+            return {"bridge": bridge, "cfg": cfg, "meta": meta, "xp": xp, "idx_map": idx_map, "vmap": vmap}
         bridge, cfg, meta = build_world_model_circuit(self.seed, n_states=self.n_states)
         idx_map = {n: xp.asarray(_idx(bridge, n)) for n in _REGIONS}
         vmap = _valence_map(self.seed, meta["n_states"])
@@ -138,8 +156,12 @@ class WorldModelProductionOrgan:
     def _predict(self, st: dict, s: int):
         """The queryable SPIKING prediction for state `s`: drive the state cue, read (pred_pos, pred_neg) rates."""
         b, xp, idx_map = st["bridge"], st["xp"], st["idx_map"]
-        _hard_reset(b)
-        pr = _drive_read(b, idx_map, {"state": (s, self.cue_pa)}, self.pre_steps, xp, ["pred_pos", "pred_neg"])
+        b._blk = st["meta"]["blk"]            # claim this organ's block size before driving (shared-bridge safe)
+        guard = (self._shared.read_isolation("worldmodel")
+                 if (self._shared is not None and st is self._st) else contextlib.nullcontext())
+        with guard:
+            _hard_reset(b)
+            pr = _drive_read(b, idx_map, {"state": (s, self.cue_pa)}, self.pre_steps, xp, ["pred_pos", "pred_neg"])
         sign = 1 if (pr["pred_pos"] - pr["pred_neg"]) > 0 else -1
         return sign, float(pr["pred_pos"]), float(pr["pred_neg"])
 
@@ -148,11 +170,15 @@ class WorldModelProductionOrgan:
         (state cue establishes the top-down prediction), then ASSERTION phase (state + observed valence drive) ->
         read cp_firing_states[surprise_{pos,neg}]. Observed matches prediction -> cancel ~0; violates -> FIRES."""
         b, xp, idx_map = st["bridge"], st["xp"], st["idx_map"]
+        b._blk = st["meta"]["blk"]            # claim this organ's block size before driving (shared-bridge safe)
         obs_region = "obs_pos" if observed_sign > 0 else "obs_neg"
-        _hard_reset(b)
-        r = _drive_read(b, idx_map, {"state": (s, self.cue_pa), obs_region: (None, self.obs_pa)},
-                        self.hold, xp, ["surprise_pos", "surprise_neg"],
-                        pre_drives={"state": (s, self.cue_pa)}, pre_steps=self.pre_steps)
+        guard = (self._shared.read_isolation("worldmodel")
+                 if (self._shared is not None and st is self._st) else contextlib.nullcontext())
+        with guard:
+            _hard_reset(b)
+            r = _drive_read(b, idx_map, {"state": (s, self.cue_pa), obs_region: (None, self.obs_pa)},
+                            self.hold, xp, ["surprise_pos", "surprise_neg"],
+                            pre_drives={"state": (s, self.cue_pa)}, pre_steps=self.pre_steps)
         return float(r["surprise_pos"] + r["surprise_neg"])
 
     def ensure_built(self):
@@ -222,10 +248,14 @@ _ORGAN: WorldModelProductionOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> WorldModelProductionOrgan:
-    """The process-shared affective world-model organ (built once on first use)."""
+    """The process-shared affective world-model organ (built once on first use). When the ONE-BRAIN MERGE flag is
+    ON (`BRAIN_ONEBRAIN_MERGE=1`, default-off) the organ is backed by the process-shared MergedSubstrate it
+    co-inhabits with the surprise organ (ONE spiking bridge); OFF -> its own bridge exactly as today."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = WorldModelProductionOrgan(seed=seed)
+        from research.runners.onebrain_merge_production import merge_enabled, get_merged_substrate
+        shared = get_merged_substrate(seed) if merge_enabled() else None
+        _ORGAN = WorldModelProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 
 
