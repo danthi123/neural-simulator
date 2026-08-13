@@ -125,16 +125,40 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   holds (r=+0.509). Redirect (not another tweak): a SEPARATE graded AROUSAL/intensity channel (LC-noradrenergic /
 >   interoceptive) — the valence⊥arousal circumplex separation. The affect-strength thread CONVERGES on a new-faculty need.
 >
-> **🔴 LIVE LANES — WAVE-7 (staggered isolated de-risks; close three arcs; consolidate each → checkout to main):**
-> - **[B] (iso):** W4 BELIEF-MAGNITUDE calibration — calibrate the graded belief's neural landscape so its implicature
->   cell lands on the analytic 0.20 instead of overshooting ~2×; the LAST W4 lever (closes the whole W4 / Task-#12 arc).
-> - **[R] (iso):** AFFECT AROUSAL channel — a SEPARATE graded arousal/intensity read (LC-noradrenergic / interoceptive,
->   distinct from the valence-sign opponent) carrying the per-concept magnitude the sparse valence channel provably can't.
-> - **[S] (iso):** PROSPECTIVE SFA+NMDA amplifier — spike-frequency-adaptation / FS-divisive-norm at the coincidence-vs-hold
->   timescale + a supralinear NMDA coincidence amplifier for the seed-100 gain deficit (from [H]); target fire_on_cue 6/6.
+> **✅ WAVE-7 CONSOLIDATED (2026-08-13, all on main + both remotes):**
+> - **[S] prospective SFA+NMDA** → **GO — ARC CLOSED** (`21679712a`): fire_on_cue **4/6→6/6**, all silence clauses 6/6,
+>   ratios 7.4–9.4. Load-bearing ablation OVERTURNED the brief: only the NMDA COINCIDENCE-PLATEAU does the work (SFA
+>   neither necessary nor sufficient); both stuck seeds were "coincidence too weak vs a fixed threshold," one mechanism
+>   fixes both. Silence-safe by construction (pool θ = 1.05× worst single input, real `cp_conductance_g_nmda`). Remaining
+>   scaffold: the cue→action content binding (one-shot Hebbian / Gollwitzer, named). Production-wire = separate step.
+> - **[B] W4 belief-magnitude** → **BOUNDARY 5/6 (near-GO), wall REFINED** (`460bced3b`): read the substrate first and
+>   overturned [W]'s premise — the ~2× overshoot is NOT belief-magnitude and NOT the plateau, it's a READ-TOPOGRAPHY
+>   artifact (whole-pop sum leaks an off-target belief-only AND-gate into the implicature cell). Reading the TRUE-INTENT
+>   detector lands the cell on 0.20 exactly → graded +0.0905, 5/6 (non-circular, inverse-transfer certified). Residual =
+>   ONE adverse seed's detector OPERATING-POINT; next = detector-side homeostatic gain / divisive normalization.
+> - **[R] affect arousal channel** → **BOUNDARY (near-GO)** (`5153cdcd`): a SEPARATE emergent arousal dimension from the
+>   SAME stream (valence = reinforcer DIFFERENCE, arousal = engagement SUM) predicts held-out arousal (r=+0.265,
+>   lesion→0, Warriner eval-only), tracks intensity not sign — the valence⊥arousal circumplex EMERGES. BOUNDARY: ⊥ holds
+>   4/6 (partly the labels' own real valence-arousal asymmetry) + the sum-proxy is info-thin (~13% strength lift). Next =
+>   a richer source (spiking LC population / autonomic bodily-state).
 >
-> **SINGLE LITERAL NEXT:** consolidate WAVE-7 [B]/[R]/[S] as each lands; then — surprise-organ homeostatic-gain (from
-> [N]), discrete-emotion production wire, one-brain MERGE (co-resident bridges → one substrate), self-initiation/DMN,
+> **⭐ CROSS-CUTTING THEME (bank, do NOT over-claim a shared fix — [M] falsified that move):** tonight's last-mile
+> residuals recur as the SAME CLASS — [H] (prospective operating-point), [R] (per-polarity gain-balance), [B] (detector
+> operating-point) all name **homeostatic-gain / divisive-normalization across heterogeneity** as the final lever. This
+> is the CLAUDE.md "missing companion process" (a per-unit homeostat proxied by a constant), recurring faculty-by-faculty.
+> Each faculty's homeostat is a DISTINCT de-risk (not proven one shared primitive closes all — that is a hypothesis).
+>
+> **🔴 LIVE LANES — WAVE-8 (staggered; consolidate each → checkout to main):**
+> - **[PW] (main, serial — ONLY agent on main):** PRODUCTION-WIRE the prospective-memory faculty (now GO end-to-end) into
+>   /api/brain-chat as a co-resident organ (default-on, escape flag, lesion-load-bearing, byte-identical-off) — the SPINE
+>   (integration-to-production-default).
+> - **[WH] (iso):** W4 DETECTOR operating-point homeostatic gain — stabilize the fractional-implicature response across
+>   heterogeneity so seed-44 doesn't fall out; targets the W4 arc's last seed → 6/6 GO (from [B]).
+> - **[AL] (iso):** AFFECT richer arousal source — a spiking LC-like arousal population / autonomic bodily-state proxy to
+>   lift the info-thin arousal read (from [R]).
+>
+> **SINGLE LITERAL NEXT:** consolidate WAVE-8 [PW]/[WH]/[AL] as each lands; then — surprise-organ homeostatic-gain (from
+> [N]), discrete-emotion production wire, prospective cue→action Hebbian binding, one-brain MERGE, self-initiation/DMN,
 > remaining Tier-2/3. RAG at every wall.
 
 
