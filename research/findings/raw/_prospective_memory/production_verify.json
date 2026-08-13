@@ -1,0 +1,218 @@
+{
+  "runner": "_prospective_memory_production_verify",
+  "go": true,
+  "status": "GO",
+  "a_fire_on_cue_ok": true,
+  "b_wrong_cue_ok": true,
+  "lesion_ok": true,
+  "intact_vs_lesion_ok": true,
+  "byte_identical_ok": true,
+  "intact_fire_rel": 0.34055555555555556,
+  "lesion_fire_rel": 0.04055555555555555,
+  "fire_attribution": 0.8809135399673735,
+  "rows": {
+    "A_fire_on_cue": {
+      "formation": {
+        "answer": "Okay \u2014 I'll hold onto that and remind you to water the plants when I mention the garden comes up.",
+        "prospective": {
+          "held": true,
+          "action": "water the plants",
+          "cue_clause": "I mention the garden",
+          "cue_keywords": [
+            "garden"
+          ],
+          "lesioned": false,
+          "held_after_lesion": null,
+          "calib": {
+            "bias_pA": {
+              "A": -983.3,
+              "B": -900.0
+            },
+            "plateau_diag": {
+              "A": {
+                "g_single_cue": 36.683,
+                "g_single_held": 126.876,
+                "g_coinc": 165.478,
+                "theta": 133.22,
+                "coinc_over_theta": true,
+                "coinc_margin": 32.259
+              },
+              "B": {
+                "g_single_cue": 31.761,
+                "g_single_held": 130.747,
+                "g_coinc": 164.317,
+                "theta": 137.284,
+                "coinc_over_theta": true,
+                "coinc_margin": 27.032
+              }
+            },
+            "fire_thr": 0.2,
+            "silent_max": 0.06
+          },
+          "kind": "formation"
+        },
+        "ok": true
+      },
+      "intervening": [
+        {
+          "q": "what does the dog chase?",
+          "fired": false,
+          "held": 0.3438,
+          "reminder_leak": false
+        },
+        {
+          "q": "what does the cat eat?",
+          "fired": false,
+          "held": 0.3438,
+          "reminder_leak": false
+        },
+        {
+          "q": "tell me about the sky",
+          "fired": false,
+          "held": 0.3438,
+          "reminder_leak": false
+        }
+      ],
+      "silent_before_ok": true,
+      "held_alive_ok": true,
+      "cue": {
+        "answer": "(Reminder \u2014 you asked me to water the plants when I mention the garden came up, and I mention the garden just came up.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about garden yet: what can you tell me about garden?",
+        "prospective": {
+          "is_cue": true,
+          "fired": true,
+          "rel": 0.34055555555555556,
+          "held": 0.3333333333333333,
+          "threshold": 0.2,
+          "silent_max": 0.06,
+          "lesioned": false,
+          "cue_clause": "I mention the garden",
+          "action": "water the plants",
+          "kind": "monitor"
+        },
+        "ok": true
+      }
+    },
+    "B_wrong_cue": {
+      "b1_topic": {
+        "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about weather yet: what can you tell me about weather?",
+        "prospective": {
+          "is_cue": false,
+          "fired": false,
+          "rel": 0.0,
+          "held": 0.34,
+          "threshold": 0.2,
+          "silent_max": 0.06,
+          "lesioned": false,
+          "cue_clause": "I mention the garden",
+          "action": "water the plants",
+          "kind": "monitor"
+        },
+        "ok": true
+      },
+      "b2_spiking_specificity": {
+        "rel_A_on_slotB_cue": 0.0,
+        "threshold": 0.2,
+        "ok": true
+      },
+      "ok": true
+    },
+    "C_lesion": {
+      "formation": {
+        "lesioned": true,
+        "held_after_lesion": 0.0
+      },
+      "cue": {
+        "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about garden yet: what can you tell me about garden?",
+        "prospective": {
+          "is_cue": true,
+          "fired": false,
+          "rel": 0.04055555555555555,
+          "held": 0.0,
+          "threshold": 0.2,
+          "silent_max": 0.06,
+          "lesioned": true,
+          "cue_clause": "I mention the garden",
+          "action": "water the plants",
+          "kind": "monitor"
+        }
+      },
+      "intact_fire_rel": 0.34055555555555556,
+      "lesion_fire_rel": 0.04055555555555555,
+      "fire_attribution": 0.8809135399673735,
+      "collapse_ok": true,
+      "measured_collapse_ok": true,
+      "intact_fires_vs_lesion_silent": true,
+      "ok": true
+    },
+    "D_byte_identical": {
+      "rows": [
+        {
+          "q": "what does dog chase?",
+          "identical": true,
+          "no_prospective_key": true
+        },
+        {
+          "q": "what does cat eat?",
+          "identical": true,
+          "no_prospective_key": true
+        },
+        {
+          "q": "what does fish fly?",
+          "identical": true,
+          "no_prospective_key": true
+        },
+        {
+          "q": "what does the dragon do?",
+          "identical": true,
+          "no_prospective_key": true
+        }
+      ],
+      "off_formation_falls_through": true,
+      "ok": true
+    }
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "FIRES-ON-CUE + SILENT-BEFORE: formed, held silent across distractors, fired on the cue",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "SILENT-ON-WRONG-CUE: different topic silent + spiking cue-specificity (rel_A<thr on slot-B cue)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION-LOAD-BEARING: latch zeroed at formation -> held collapses -> the cue does NOT fire",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "INTACT fires vs LESION silent (the fire is caused by the spiking latch)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BYTE-IDENTICAL-when-off (real handler) + formation-phrased flag-off no key/no ack",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "learned cue->action content binding",
+      "why": "the cue->action CONTENT is installed SYNAPTICALLY at build (the fixed slot-A outer-product edges) + the intention/cue TEXT + cue-presence are host-derived (a language/sensory boundary); one-shot Hebbian potentiation at intention-formation (Gollwitzer implementation-intentions) is the named next rung. The HOLD + coincidence-gated RELEASE are spiking."
+    }
+  ],
+  "undefined_reasons": []
+}

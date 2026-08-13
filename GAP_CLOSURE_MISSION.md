@@ -148,18 +148,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > is the CLAUDE.md "missing companion process" (a per-unit homeostat proxied by a constant), recurring faculty-by-faculty.
 > Each faculty's homeostat is a DISTINCT de-risk (not proven one shared primitive closes all — that is a hypothesis).
 >
+> **✅ [PW] PROSPECTIVE MEMORY PRODUCTION-WIRED (2026-08-13, on main):** the GO prospective faculty is now a co-resident
+> spiking organ on the DEFAULT /api/brain-chat turn (finding `2026-08-13-prospective-memory-production-wired.md`; organ
+> `research/runners/prospective_memory_production_organ.py` reuse-by-import of the GO `SFANmdaProspectiveMemory`; NO
+> `sim/` edit). A FORMATION turn ("remind me to X when Y") latches the intention (persistent-attractor) + a disjoint
+> ack; later turns read the held×cue coincidence off `cp_firing_states` and, on a fire, PREPEND the reminder. Verified
+> through the REAL handler (`_prospective_memory_production_verify` GO): fires-on-cue, silent-before, wrong-cue silent +
+> spiking cue-specificity, `BRAIN_PMEM_LESION=1` collapses the fire, `BRAIN_PMEM=0` byte-identical, smoke unchanged.
+> `wired:YES / on_by_default:YES / scaffold_retired:NO` (residual: cue→action content is synaptically installed →
+> one-shot Hebbian / Gollwitzer is the retirement rung). ~13 default-on spiking faculties now.
+>
 > **🔴 LIVE LANES — WAVE-8 (staggered; consolidate each → checkout to main):**
-> - **[PW] (main, serial — ONLY agent on main):** PRODUCTION-WIRE the prospective-memory faculty (now GO end-to-end) into
->   /api/brain-chat as a co-resident organ (default-on, escape flag, lesion-load-bearing, byte-identical-off) — the SPINE
->   (integration-to-production-default).
 > - **[WH] (iso):** W4 DETECTOR operating-point homeostatic gain — stabilize the fractional-implicature response across
 >   heterogeneity so seed-44 doesn't fall out; targets the W4 arc's last seed → 6/6 GO (from [B]).
 > - **[AL] (iso):** AFFECT richer arousal source — a spiking LC-like arousal population / autonomic bodily-state proxy to
 >   lift the info-thin arousal read (from [R]).
 >
-> **SINGLE LITERAL NEXT:** consolidate WAVE-8 [PW]/[WH]/[AL] as each lands; then — surprise-organ homeostatic-gain (from
-> [N]), discrete-emotion production wire, prospective cue→action Hebbian binding, one-brain MERGE, self-initiation/DMN,
-> remaining Tier-2/3. RAG at every wall.
+> **SINGLE LITERAL NEXT:** [PW] LANDED (prospective wired); consolidate WAVE-8 [WH]/[AL] as each lands; then —
+> surprise-organ homeostatic-gain (from [N]), discrete-emotion production wire, prospective cue→action Hebbian binding
+> (the [PW] retirement rung), one-brain MERGE, self-initiation/DMN, remaining Tier-2/3. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's

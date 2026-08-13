@@ -2941,6 +2941,14 @@ _SESSION_MULTIREF: dict = {}
 # See research/runners/d3_discourse_event_register_production_organ.py. ───────────────────────────────────────────
 _SESSION_DISCOURSE: dict = {}
 
+# ─── PROSPECTIVE MEMORY (Gate-B, 2026-08-13): a spiking intention-LATCH + BA10 cue-MONITOR that HOLDS a deferred
+# intention ("remind me to X when Y") across intervening turns and RELEASES it only when the cue appears. The latch
+# is a PERSISTENT co-resident spiking bridge that must survive BETWEEN turns, and the held intention is THIS
+# conversation's — so the organ is PER-SESSION (keyed identically to the ChatBrain cache; cleared on reset). The
+# substrate calibration (homeostat bias + NMDA-plateau threshold) is process-cached per seed, so only the
+# intention-holding bridge is per-session. See research/runners/prospective_memory_production_organ.py. ────────────
+_SESSION_PMEM: dict = {}
+
 
 def _get_multiref_organ(cache_key):
     """The PER-SESSION spiking multi-referent WM buffer (lazy build ~0.46s on the first >=2-referent turn). NOT a
@@ -2975,6 +2983,19 @@ def _get_noncontradiction_organ():
     directly — no co-resident bridge added). See research/runners/b3_noncontradiction_production_organ.py."""
     from research.runners.b3_noncontradiction_production_organ import get_organ
     return get_organ(seed=42)
+
+
+def _get_pmem_organ(cache_key):
+    """The PER-SESSION spiking prospective-memory organ (lazy build on the first intention-formation turn, ~seconds
+    on numpy — the substrate calibration is process-cached per seed). NOT a process singleton: the held deferred
+    intention + the persistent latch bridge that carries it across turns are THIS conversation's; one organ per
+    cache_key isolates them. Cleared on reset. See research/runners/prospective_memory_production_organ.py."""
+    org = _SESSION_PMEM.get(cache_key)
+    if org is None:
+        from research.runners.prospective_memory_production_organ import ProspectiveMemoryOrgan
+        org = ProspectiveMemoryOrgan(seed=42)
+        _SESSION_PMEM[cache_key] = org
+    return org
 
 
 def _episodic_store_ok() -> bool:
@@ -3491,6 +3512,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
         _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
         _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
+        _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
         try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
             import research.runners.d5_episodic_production_organ as _EP_reset
             _EP_reset.reset_episodic_organ(cache_key)
@@ -3626,6 +3648,63 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "renderer": rname, "brain": req.brain, "source": source,
             "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
         })
+
+    # ── PROSPECTIVE MEMORY (Gate-B, 2026-08-13) ──────────────────────────────────────────────────────────────
+    # A co-resident spiking intention-LATCH + BA10 cue-MONITOR holds a deferred intention ("remind me to X when Y")
+    # across intervening turns and RELEASES it only when the cue appears — reuse-by-import from
+    # `prospective_memory_production_organ` (the de-risked GO `SFANmdaProspectiveMemory`: a persistent-attractor PFC
+    # intention LATCH + an NMDA/dendritic-plateau coincidence CUE-MONITOR; fire_on_cue 6/6, every silence clause 6/6).
+    # Two behaviours: (i) a FORMATION turn ("remind me to X when Y" / "when Y, do X") is a DISJOINT class — it LATCHES
+    # the intention (a spiking self-sustaining cortex<->dlpfc attractor) and short-circuits with an acknowledgement;
+    # (ii) on later turns, when an intention is HELD, the cue-monitor is READ — a cue turn drives the cue and reads the
+    # SPIKING held x cue coincidence off cp_firing_states (rel >= the frozen FIRE_THR): on a fire the reminder is
+    # PREPENDED to the normal turn (which still answers what the user actually said); a non-cue turn ADVANCES the hold
+    # (persistence). The fire is gated by the HELD intention (the coincidence), not the host cue-match — proven by the
+    # lesion. Placed right after AFFECT so a "remind me..." formation is not mis-read as a recall/assertion by the
+    # episodic/comprehension/surprise gates below. Default-ON; `BRAIN_PMEM=0` -> the whole block is skipped and no
+    # `prospective` key is added (byte-identical oracle). `BRAIN_PMEM_LESION=1` -> the latch is zeroed after formation
+    # (the held assembly collapses -> the SAME cue does NOT fire -> NO reminder; load-bearing). HOST-SCAFFOLD (flagged):
+    # the cue->action CONTENT binding is synaptically installed at build + the intention/cue TEXT and cue-presence are
+    # host-derived (a language/sensory boundary, like curiosity's wh-frame + novelty); the HOLD + coincidence-gated
+    # RELEASE are spiking (wired/on-by-default; scaffold NOT retired — one-shot Hebbian cue->action is the named rung).
+    pmem_prefix = ""
+    prospective_info = None
+    try:
+        import research.runners.prospective_memory_production_organ as _PM
+        _pmem_on = _PM.pmem_enabled()
+    except Exception:
+        _PM = None
+        _pmem_on = False
+    if _pmem_on:
+        try:
+            _pm_formation = _PM.parse_intention(msg)
+            if _pm_formation is not None:
+                # (i) FORMATION: latch the deferred intention (a disjoint acknowledgement turn class).
+                porg = _get_pmem_organ(cache_key)
+                finfo = porg.form_intention(_pm_formation["action"], _pm_formation["cue_clause"],
+                                            _pm_formation["cue_keywords"], lesion=_PM.pmem_lesioned())
+                return JSONResponse({
+                    "answer": _PM.acknowledgement_text(_pm_formation["action"], _pm_formation["cue_clause"]),
+                    "abstained": False, "recalled_svo": None, "verified": True,
+                    "renderer": rname, "brain": req.brain, "source": source, "rich": False,
+                    "activity": None, "affect": affect_info,
+                    "prospective": dict(finfo, kind="formation"), "inner_state_readout": True,
+                })
+            else:
+                # (ii) an intention already held? -> read the cue-monitor this turn (a fire -> a reminder PREFIX;
+                # a non-cue turn advances the hold). Only reads if an intention was formed earlier this session.
+                porg = _SESSION_PMEM.get(cache_key)
+                if porg is not None and porg.held:
+                    rd = porg.read_turn(msg)
+                    prospective_info = dict(rd, kind="monitor")
+                    if rd["fired"]:
+                        pmem_prefix = _PM.reminder_text(rd["action"], rd["cue_clause"])
+                        # NOTE: the intention is CONSUMED (porg.clear) only when the reminder is actually DELIVERED
+                        # on a main answer path (below) — so if THIS turn hits a disjoint short-circuit (episodic /
+                        # comprehension-repair / causal / ...) that drops the prefix, the intention STAYS held and
+                        # fires again on the next main-path cue mention (the reminder is never silently lost).
+        except Exception as _pme:  # never let the prospective read crash a turn — degrade to the normal turn
+            prospective_info = {"on": True, "error": f"{type(_pme).__name__}: {_pme}"}
 
     # ── EPISODIC RECALL of PAST TURNS — Hook A: REFERENTIAL RECALL (Gate-B, D5, 2026-08-12) ──────────────────
     # On a referential turn ("earlier you told me about X", "you mentioned a cat"), decide whether topic X was
@@ -4182,7 +4261,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # SURPRISE (Gate-B, D2): if the asserted fact violated a stored expectation (a firing mismatch), PREPEND the
         # honest functional notice to the turn's answer. Additive; empty prefix when not surprised / disabled.
         resp = {
-            "answer": worldmodel_prefix + surprise_prefix + reconsolidation_prefix + r["answer"],
+            "answer": pmem_prefix + worldmodel_prefix + surprise_prefix + reconsolidation_prefix + r["answer"],
             "abstained": bool(r["abstained"]),
             # the direct recall (the first supporting fact) is the gate hit,
             # surfaced for parity with the single-fact path's recalled_svo.
@@ -4244,6 +4323,15 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _cu_suffix, resp["curiosity"] = _curiosity_followup(bool(r["abstained"]) and not is_hyp)
         if _cu_suffix:
             resp["answer"] = resp["answer"] + _cu_suffix
+        # PROSPECTIVE MEMORY (Gate-B): the held-intention cue-monitor read for this turn (kind=monitor with the
+        # spiking rel/held + fired), attached ONLY when the organ was active this turn (an intention held) — a turn
+        # with no held intention / BRAIN_PMEM=0 adds NO key (byte-identical). The reminder is already prepended above.
+        if prospective_info is not None:
+            resp["prospective"] = prospective_info
+        if pmem_prefix:  # the reminder was DELIVERED on this main path -> consume the intention (fires once)
+            _pd = _SESSION_PMEM.get(cache_key)
+            if _pd is not None:
+                _pd.clear()
         # GNW BUS observability (rich path): the rich composer's DIRECT recall runs through the bus-authored
         # `chat.gate` too, so attach the last bus decision when BRAIN_GNW_BUS is on. Default-OFF -> no key (byte-
         # identical). The bus AUTHORS the combination regardless of this flag (the flag only gates the debug block).
@@ -4281,8 +4369,8 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # WORLD-MODEL (Gate-B, E2) + SURPRISE (Gate-B, D2) + RECONSOLIDATION (Gate-B, F): PREPEND the honest affect-
     # trajectory-violation notice (world-model), then the expectation-violation notice (surprise), then the
     # belief-revision notice (reconsolidation). Additive; empty prefixes when not firing.
-    if worldmodel_prefix or surprise_prefix or reconsolidation_prefix:
-        answer = worldmodel_prefix + surprise_prefix + reconsolidation_prefix + answer
+    if pmem_prefix or worldmodel_prefix or surprise_prefix or reconsolidation_prefix:
+        answer = pmem_prefix + worldmodel_prefix + surprise_prefix + reconsolidation_prefix + answer
 
     # METACOG (Gate-B, E1): read the spiking confidence of this recall answer; a LOW-confidence answer gets an
     # honest functional hedge PREPENDED (skip an abstain — no answer to qualify). Additive; null when disabled.
@@ -4352,6 +4440,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # no extra key). Carries the substrate's committed decision + host-vs-bus agreement for this turn.
     if gnw_bus_info is not None:
         _resp["gnw_bus"] = gnw_bus_info
+    # PROSPECTIVE MEMORY (Gate-B): the held-intention cue-monitor read, attached ONLY when the organ was active this
+    # turn (an intention held). No held intention / BRAIN_PMEM=0 -> no key -> byte-identical. Reminder prepended above.
+    if prospective_info is not None:
+        _resp["prospective"] = prospective_info
+    if pmem_prefix:  # the reminder was DELIVERED on this main path -> consume the intention (fires once)
+        _pd = _SESSION_PMEM.get(cache_key)
+        if _pd is not None:
+            _pd.clear()
     return JSONResponse(_resp)
 
 
@@ -4373,6 +4469,7 @@ def brain_chat_reset(req: BrainChatResetRequest) -> JSONResponse:
     _BRAIN_CHATS.pop(cache_key, None)
     _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
     _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
+    _SESSION_PMEM.pop(cache_key, None)  # clear the held prospective intention + its latch bridge (Gate-B pmem)
     return JSONResponse({"reset": existed, "session": req.session,
                          "brain": req.brain, "renderer": renderer})
 
