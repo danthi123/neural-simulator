@@ -87,18 +87,31 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > residuals, two named levers, neither the refuted credit rule. (Lesson: an adversarial de-risk killed a plausible
 > unifying summary claim — this is why the insight was tested, not wired.)
 >
-> **🔴 LIVE LANES — WAVE-5 (staggered isolated de-risks; do NOT double-launch; consolidate each → checkout to main):**
-> - **[M] (iso):** MAGNITUDE-PRESERVING read-out — apply the GO'd graded dendritic plateau (`enable_graded_dendritic_plateau`,
->   Mikulasch-Priesemann) to the W4 detector (does M1 move now?) AND check it lifts the affect salience-strength. Closes [E]+[K].
-> - **[H] (iso):** PROSPECTIVE per-pool homeostat — self-inhibitory FS divisive-normalization / intrinsic-plasticity
->   threshold adaptation per `rel` pool → fire_on_cue amplitude on ALL 6 seeds (the missing companion process).
-> - **[N] (iso):** GNW-bus HETEROGENEOUS organ — add a spiking surprise/affect (non-composer) organ as one of the N
->   ignition votes → deepen the one-substrate claim (the named bus follow-on rung).
+> **✅ WAVE-5 CONSOLIDATED (2026-08-13, all on main + both remotes @ `d8ff1694e`):**
+> - **[N] GNW-bus HETEROGENEOUS organ** → **GO** (`b020be5b1`): a genuinely non-composer organ (the production
+>   surprise/familiarity monitor, never calls `query_patient`) as one of the N ignition votes — substrate-combination
+>   6/6 (ignite-when-voted 1.0, abstain-when-withheld 1.0, every collapse control 0.0). One-substrate DEEPENED. Honest
+>   separate axis: het read-precision 0.9375 (rides the surprise organ's own boundary, disclosed — not the bus's).
+> - **[M] magnitude read-out** → **BOUNDARY** (`d9bf250b7`): FALSIFIED the shared-fix hypothesis (see corrected insight
+>   above) — W4 = objective/metric-limited, affect = weight-source-limited.
+> - **[H] prospective homeostat** → **BOUNDARY** (`d8ff1694e`): per-pool intrinsic-plasticity set-point GUARANTEES
+>   silence 6/6 + lifts fire_on_cue 3/6→4/6; residual RELOCATED to a coincidence-SEPARATION/gain deficit (seed-100
+>   fire/silent 1.94 < 3.33) → next = SFA / FS-divisive-norm at the coincidence-vs-hold timescale + a supralinear NMDA
+>   coincidence amplifier (divisive-norm ALONE would worsen seed-100).
 >
-> **SINGLE LITERAL NEXT:** consolidate [H]/[N] as each lands ([M] BOUNDARY landed `e503d8552`); then the two DISTINCT
-> post-[M] levers — W4 INFORMATIVENESS-WEIGHTED objective (Frank-Goodman 2012) + affect GRADED reinforcement-strength
-> third factor (Bayer-Glimcher 2005); plus GNW-bus full retirement (`gate_via_bus`, scaffold_retired step), one-brain
-> MERGE, self-initiation/DMN, interoceptive affect, remaining Tier-2/3. RAG at every wall.
+> **🔴 LIVE LANES — WAVE-6 (staggered; consolidate each → checkout to main):**
+> - **[Q] (main, serial — ONLY agent on main):** GNW-bus FULL RETIREMENT — a `gate_via_bus` that NEVER computes the host
+>   combination (the `scaffold_retired` step for the one-substrate flip). Gate: byte-identical STILL holds with the host
+>   combination code removed + escape flag kept; honest boundary if any covered class regresses (do NOT force it).
+> - **[W] (iso):** W4 INFORMATIVENESS-WEIGHTED objective (Frank-Goodman 2012) — replace the intent-averaged M1 with an
+>   informativeness-weighted pragmatic objective so the graded belief's implicature signal is rewarded. Closes [M]-W4.
+> - **[A] (iso):** AFFECT GRADED reinforcement-strength third factor (DA-magnitude / non-saturating associative strength,
+>   Bayer-Glimcher 2005) — retire the Rescorla-Wagner saturation so graded valence-STRENGTH lifts to the ridge. Closes [M]-affect + [E].
+>
+> **SINGLE LITERAL NEXT:** consolidate WAVE-6 [Q]/[W]/[A] as each lands ([Q] owns main); then — prospective
+> SFA+NMDA coincidence amplifier (from [H]), surprise-organ homeostatic-gain (from [N]'s read-precision axis),
+> discrete-emotion production wire (after [A] lifts the graded bars), one-brain MERGE, self-initiation/DMN,
+> interoceptive affect, remaining Tier-2/3. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
