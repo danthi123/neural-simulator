@@ -1,0 +1,40 @@
+{
+ "run_id": "1786662312-1367547",
+ "runner": "research/runners/_self_initiated_spontaneous_thought_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9420b9da718a4c8f/research/runners/_self_initiated_spontaneous_thought_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-mem",
+  "2",
+  "--rest-steps",
+  "6000",
+  "--acid-steps",
+  "1000",
+  "--gain-scale",
+  "2"
+ ],
+ "git_sha": "37e7f5206",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T19:05:12",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_self_initiated_spontaneous_thought_derisk.json"
+}

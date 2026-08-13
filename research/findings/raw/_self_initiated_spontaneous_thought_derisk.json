@@ -1,0 +1,1019 @@
+{
+  "probe": "self_initiated_spontaneous_thought",
+  "GO": true,
+  "n_go": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 2,
+  "rest_steps": 6000,
+  "gain_scale": 2.0,
+  "noise": {
+    "rate": 0.015,
+    "pa": 1500.0,
+    "dur": 10
+  },
+  "curiosity_gain_attribution": 0.6562490694166487,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seeds passing all four anti-cheats >= threshold",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f7091313c40>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "curiosity-steered: novel-tag vs no-tag baseline (mass)",
+      "ok": true,
+      "detail": "treatment=0.23968 control=0.0823902 |sep|=0.15729 > 0.05",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "coherent: surfaced member vs random floor",
+      "ok": true,
+      "detail": "treatment=0.383012 control=0.0435186 |sep|=0.339494 > 0.15",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "coherence member above the random floor",
+      "ok": true,
+      "detail": "0.383012 vs floor 0.0435186",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "internally-generated: NO-NOISE + GAIN-ONLY acids silent every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "store-lesion collapses coherence (NO-ENCODE member == 0) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "plasticity byte-frozen during rest every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "elapsed_seconds": 1022.6,
+  "verdict": "GO 6/6 -- a stored bistable CA3 store SPONTANEOUSLY reactivates coherent content under non-specific noise (no prompt) and a NOVEL curiosity-tag surfaces that same thought MORE than a FAMILIAR tag: mean reactivation-mass novel-tag 0.2397 vs familiar-tag 0.1015 vs no-tag baseline 0.0824 (66% of the surfacing attributable to the curiosity gain); coherence member 0.38 vs random 0.04. => the FIRST self-initiated/spontaneous-thought correlate (internally-generated + coherent + curiosity-steered + lesion-load-bearing) is de-risked.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_mem": 2,
+      "want_novel_hz": 117.53472222222221,
+      "want_familiar_hz": 8.333333333333332,
+      "gain_novel": 3.0,
+      "gain_familiar": 1.1418020679468242,
+      "curiosity": {
+        "threshold_hz": 58.85416666666666,
+        "calib": {
+          "want_novel_hz": 114.4097222222222,
+          "want_familiar_hz": 3.2986111111111107,
+          "threshold_hz": 58.85416666666666,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within_prepare": 68.68668365478516,
+      "baseline": [
+        {
+          "n_events": 5,
+          "n_specific": 3,
+          "member": 0.2949232954545455,
+          "random": 0.04277765151515152,
+          "spec": 0.252145643939394,
+          "duty": 0.0235,
+          "dwell": 105.0,
+          "mass": 0.11963888888888889,
+          "mass_rand": 0.04518402777777778,
+          "mass_net": 0.0744548611111111
+        },
+        {
+          "n_events": 5,
+          "n_specific": 0,
+          "member": 0.0717316287878788,
+          "random": 0.04277765151515152,
+          "spec": 0.028953977272727284,
+          "duty": 0.0235,
+          "dwell": 0.0,
+          "mass": 0.059173611111111114,
+          "mass_rand": 0.043923611111111115,
+          "mass_net": 0.01525
+        }
+      ],
+      "novel_tag": [
+        {
+          "n_events": 4,
+          "n_specific": 4,
+          "member": 0.40610576923076924,
+          "random": 0.04391426282051282,
+          "spec": 0.36219150641025644,
+          "duty": 0.005,
+          "dwell": 492.0,
+          "mass": 0.25633680555555555,
+          "mass_rand": 0.045844444444444445,
+          "mass_net": 0.2104923611111111
+        },
+        {
+          "n_events": 4,
+          "n_specific": 0,
+          "member": 0.09719253232206862,
+          "random": 0.04203812944028418,
+          "spec": 0.05515440288178444,
+          "duty": 0.020833333333333332,
+          "dwell": 0.0,
+          "mass": 0.09578680555555555,
+          "mass_rand": 0.044138888888888894,
+          "mass_net": 0.051647916666666654
+        }
+      ],
+      "familiar_tag": [
+        {
+          "n_events": 4,
+          "n_specific": 3,
+          "member": 0.32135416666666666,
+          "random": 0.043484312996031754,
+          "spec": 0.2778698536706349,
+          "duty": 0.025833333333333333,
+          "dwell": 143.0,
+          "mass": 0.14204791666666666,
+          "mass_rand": 0.045371875000000006,
+          "mass_net": 0.09667604166666666
+        },
+        {
+          "n_events": 4,
+          "n_specific": 0,
+          "member": 0.07652800583835068,
+          "random": 0.04392484050013684,
+          "spec": 0.03260316533821383,
+          "duty": 0.025333333333333333,
+          "dwell": 0.0,
+          "mass": 0.058034027777777775,
+          "mass_rand": 0.04394155092592592,
+          "mass_net": 0.014092476851851853
+        }
+      ],
+      "gain_only": {
+        "total_dwell": 0.0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.42535400390625
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "max_member": 0.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.4239730834961,
+      "store_lesion": {
+        "total_dwell": 0.0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "w_within_noencode": 0.4991965889930725,
+      "steering": {
+        "mass_novel": 0.26214027777777776,
+        "mass_familiar": 0.11076851851851852,
+        "mass_baseline": 0.0897048611111111,
+        "steer_ratio_mass": 2.3665593914569922,
+        "events_novel": 8.0,
+        "events_familiar": 8.0,
+        "events_baseline": 10.0,
+        "dwell_novel": 492.0,
+        "dwell_familiar": 143.0,
+        "dwell_baseline": 105.0,
+        "pooled_member": 0.40610576923076924,
+        "pooled_random": 0.04391426282051282,
+        "per_assembly_novel_mass": [
+          0.2104923611111111,
+          0.051647916666666654
+        ],
+        "per_assembly_familiar_mass": [
+          0.09667604166666666,
+          0.014092476851851853
+        ],
+        "per_assembly_baseline_mass": [
+          0.0744548611111111,
+          0.01525
+        ],
+        "per_assembly_novel_events": [
+          4,
+          4
+        ],
+        "per_assembly_novel_dwell": [
+          492.0,
+          0.0
+        ]
+      },
+      "checks": {
+        "internally_generated": true,
+        "coherent": true,
+        "steered": true,
+        "store_lesion_load_bearing": true,
+        "steer_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "n_mem": 2,
+      "want_novel_hz": 127.77777777777777,
+      "want_familiar_hz": 7.465277777777777,
+      "gain_novel": 3.0,
+      "gain_familiar": 1.1168478260869565,
+      "curiosity": {
+        "threshold_hz": 65.36458333333333,
+        "calib": {
+          "want_novel_hz": 125.52083333333331,
+          "want_familiar_hz": 5.208333333333333,
+          "threshold_hz": 65.36458333333333,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within_prepare": 72.45755767822266,
+      "baseline": [
+        {
+          "n_events": 6,
+          "n_specific": 3,
+          "member": 0.2832938256766382,
+          "random": 0.04365888000165344,
+          "spec": 0.2396349456749847,
+          "duty": 0.027833333333333335,
+          "dwell": 137.0,
+          "mass": 0.12432569444444444,
+          "mass_rand": 0.043415856481481475,
+          "mass_net": 0.08090983796296297
+        },
+        {
+          "n_events": 6,
+          "n_specific": 0,
+          "member": 0.06601708765771266,
+          "random": 0.04365888000165344,
+          "spec": 0.022358207656059215,
+          "duty": 0.027833333333333335,
+          "dwell": 0.0,
+          "mass": 0.05236180555555556,
+          "mass_rand": 0.043506365740740745,
+          "mass_net": 0.008855439814814813
+        }
+      ],
+      "novel_tag": [
+        {
+          "n_events": 6,
+          "n_specific": 6,
+          "member": 0.39346754488201857,
+          "random": 0.043172418772747724,
+          "spec": 0.3502951261092708,
+          "duty": 0.0075,
+          "dwell": 340.0,
+          "mass": 0.25066180555555556,
+          "mass_rand": 0.04412523148148148,
+          "mass_net": 0.20653657407407408
+        },
+        {
+          "n_events": 4,
+          "n_specific": 0,
+          "member": 0.08705458678554705,
+          "random": 0.04452789782880843,
+          "spec": 0.042526688956738626,
+          "duty": 0.030666666666666665,
+          "dwell": 0.0,
+          "mass": 0.08575138888888889,
+          "mass_rand": 0.04363599537037038,
+          "mass_net": 0.042115393518518514
+        }
+      ],
+      "familiar_tag": [
+        {
+          "n_events": 8,
+          "n_specific": 5,
+          "member": 0.3009412598417136,
+          "random": 0.042843082402019214,
+          "spec": 0.25809817743969443,
+          "duty": 0.023666666666666666,
+          "dwell": 134.0,
+          "mass": 0.13530902777777779,
+          "mass_rand": 0.043504629629629636,
+          "mass_net": 0.09180439814814814
+        },
+        {
+          "n_events": 5,
+          "n_specific": 0,
+          "member": 0.09399179483114001,
+          "random": 0.04368400924311024,
+          "spec": 0.050307785588029764,
+          "duty": 0.026833333333333334,
+          "dwell": 0.0,
+          "mass": 0.06458680555555556,
+          "mass_rand": 0.04353680555555556,
+          "mass_net": 0.02105
+        }
+      ],
+      "gain_only": {
+        "total_dwell": 0.0,
+        "max_member": 0.0,
+        "apical_rest_max": -71.97370910644531
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "max_member": 0.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.45563507080078,
+      "store_lesion": {
+        "total_dwell": 0.0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "w_within_noencode": 0.5001622438430786,
+      "steering": {
+        "mass_novel": 0.2486519675925926,
+        "mass_familiar": 0.11285439814814814,
+        "mass_baseline": 0.08976527777777779,
+        "steer_ratio_mass": 2.203298867148961,
+        "events_novel": 10.0,
+        "events_familiar": 13.0,
+        "events_baseline": 12.0,
+        "dwell_novel": 340.0,
+        "dwell_familiar": 134.0,
+        "dwell_baseline": 137.0,
+        "pooled_member": 0.39346754488201857,
+        "pooled_random": 0.043172418772747724,
+        "per_assembly_novel_mass": [
+          0.20653657407407408,
+          0.042115393518518514
+        ],
+        "per_assembly_familiar_mass": [
+          0.09180439814814814,
+          0.02105
+        ],
+        "per_assembly_baseline_mass": [
+          0.08090983796296297,
+          0.008855439814814813
+        ],
+        "per_assembly_novel_events": [
+          6,
+          4
+        ],
+        "per_assembly_novel_dwell": [
+          340.0,
+          0.0
+        ]
+      },
+      "checks": {
+        "internally_generated": true,
+        "coherent": true,
+        "steered": true,
+        "store_lesion_load_bearing": true,
+        "steer_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "n_mem": 2,
+      "want_novel_hz": 136.1111111111111,
+      "want_familiar_hz": 11.805555555555555,
+      "gain_novel": 3.0,
+      "gain_familiar": 1.1734693877551021,
+      "curiosity": {
+        "threshold_hz": 69.96527777777779,
+        "calib": {
+          "want_novel_hz": 133.50694444444446,
+          "want_familiar_hz": 6.423611111111111,
+          "threshold_hz": 69.96527777777779,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within_prepare": 66.6550064086914,
+      "baseline": [
+        {
+          "n_events": 6,
+          "n_specific": 4,
+          "member": 0.30198072721598,
+          "random": 0.04140381164169788,
+          "spec": 0.26057691557428214,
+          "duty": 0.024166666666666666,
+          "dwell": 124.0,
+          "mass": 0.11898819444444445,
+          "mass_rand": 0.04504247685185186,
+          "mass_net": 0.07394571759259258
+        },
+        {
+          "n_events": 6,
+          "n_specific": 0,
+          "member": 0.06345785216396171,
+          "random": 0.04140381164169788,
+          "spec": 0.02205404052226384,
+          "duty": 0.024166666666666666,
+          "dwell": 0.0,
+          "mass": 0.052925,
+          "mass_rand": 0.04521284722222222,
+          "mass_net": 0.00771215277777778
+        }
+      ],
+      "novel_tag": [
+        {
+          "n_events": 7,
+          "n_specific": 7,
+          "member": 0.38791173715863153,
+          "random": 0.040961770124716544,
+          "spec": 0.346949967033915,
+          "duty": 0.0085,
+          "dwell": 272.0,
+          "mass": 0.2413173611111111,
+          "mass_rand": 0.04577604166666666,
+          "mass_net": 0.19554131944444444
+        },
+        {
+          "n_events": 6,
+          "n_specific": 0,
+          "member": 0.10319727129202937,
+          "random": 0.04347530178439357,
+          "spec": 0.05972196950763579,
+          "duty": 0.025166666666666667,
+          "dwell": 0.0,
+          "mass": 0.09935763888888889,
+          "mass_rand": 0.04555636574074074,
+          "mass_net": 0.05380127314814815
+        }
+      ],
+      "familiar_tag": [
+        {
+          "n_events": 7,
+          "n_specific": 5,
+          "member": 0.3173889105209353,
+          "random": 0.042788280968648,
+          "spec": 0.27460062955228737,
+          "duty": 0.023333333333333334,
+          "dwell": 155.0,
+          "mass": 0.13903888888888888,
+          "mass_rand": 0.04522291666666667,
+          "mass_net": 0.09381597222222221
+        },
+        {
+          "n_events": 6,
+          "n_specific": 0,
+          "member": 0.07466910752264504,
+          "random": 0.044780836990115834,
+          "spec": 0.02988827053252921,
+          "duty": 0.023,
+          "dwell": 0.0,
+          "mass": 0.05999444444444445,
+          "mass_rand": 0.045166550925925926,
+          "mass_net": 0.014827893518518521
+        }
+      ],
+      "gain_only": {
+        "total_dwell": 0.0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.467529296875
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "max_member": 0.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.466552734375,
+      "store_lesion": {
+        "total_dwell": 0.0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "w_within_noencode": 0.49837663769721985,
+      "steering": {
+        "mass_novel": 0.2493425925925926,
+        "mass_familiar": 0.10864386574074072,
+        "mass_baseline": 0.08165787037037037,
+        "steer_ratio_mass": 2.2950452921806406,
+        "events_novel": 13.0,
+        "events_familiar": 13.0,
+        "events_baseline": 12.0,
+        "dwell_novel": 272.0,
+        "dwell_familiar": 155.0,
+        "dwell_baseline": 124.0,
+        "pooled_member": 0.38791173715863153,
+        "pooled_random": 0.040961770124716544,
+        "per_assembly_novel_mass": [
+          0.19554131944444444,
+          0.05380127314814815
+        ],
+        "per_assembly_familiar_mass": [
+          0.09381597222222221,
+          0.014827893518518521
+        ],
+        "per_assembly_baseline_mass": [
+          0.07394571759259258,
+          0.00771215277777778
+        ],
+        "per_assembly_novel_events": [
+          7,
+          6
+        ],
+        "per_assembly_novel_dwell": [
+          272.0,
+          0.0
+        ]
+      },
+      "checks": {
+        "internally_generated": true,
+        "coherent": true,
+        "steered": true,
+        "store_lesion_load_bearing": true,
+        "steer_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "n_mem": 2,
+      "want_novel_hz": 139.0625,
+      "want_familiar_hz": 13.541666666666664,
+      "gain_novel": 3.0,
+      "gain_familiar": 1.1947565543071161,
+      "curiosity": {
+        "threshold_hz": 74.82638888888889,
+        "calib": {
+          "want_novel_hz": 141.84027777777777,
+          "want_familiar_hz": 7.812499999999998,
+          "threshold_hz": 74.82638888888889,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within_prepare": 67.2293930053711,
+      "baseline": [
+        {
+          "n_events": 8,
+          "n_specific": 1,
+          "member": 0.2610329206468912,
+          "random": 0.043072631897310205,
+          "spec": 0.21796028874958107,
+          "duty": 0.0225,
+          "dwell": 52.0,
+          "mass": 0.10619375,
+          "mass_rand": 0.04513634259259259,
+          "mass_net": 0.061057407407407414
+        },
+        {
+          "n_events": 8,
+          "n_specific": 0,
+          "member": 0.066327296410017,
+          "random": 0.043072631897310205,
+          "spec": 0.023254664512706795,
+          "duty": 0.0225,
+          "dwell": 0.0,
+          "mass": 0.053697916666666665,
+          "mass_rand": 0.04402499999999999,
+          "mass_net": 0.009672916666666677
+        }
+      ],
+      "novel_tag": [
+        {
+          "n_events": 5,
+          "n_specific": 5,
+          "member": 0.3792460317460318,
+          "random": 0.046740079365079366,
+          "spec": 0.33250595238095243,
+          "duty": 0.008166666666666666,
+          "dwell": 239.0,
+          "mass": 0.24048819444444444,
+          "mass_rand": 0.04589467592592592,
+          "mass_net": 0.19459351851851853
+        },
+        {
+          "n_events": 6,
+          "n_specific": 0,
+          "member": 0.10272699357520786,
+          "random": 0.04267305996472664,
+          "spec": 0.060053933610481225,
+          "duty": 0.016666666666666666,
+          "dwell": 0.0,
+          "mass": 0.09297361111111112,
+          "mass_rand": 0.044273958333333335,
+          "mass_net": 0.04869965277777778
+        }
+      ],
+      "familiar_tag": [
+        {
+          "n_events": 6,
+          "n_specific": 4,
+          "member": 0.3026232117527095,
+          "random": 0.04208115875774234,
+          "spec": 0.2605420529949672,
+          "duty": 0.023,
+          "dwell": 129.0,
+          "mass": 0.13137569444444444,
+          "mass_rand": 0.04527210648148148,
+          "mass_net": 0.08610358796296297
+        },
+        {
+          "n_events": 6,
+          "n_specific": 0,
+          "member": 0.07029279651675484,
+          "random": 0.042986748374118165,
+          "spec": 0.02730604814263669,
+          "duty": 0.020166666666666666,
+          "dwell": 0.0,
+          "mass": 0.05245347222222222,
+          "mass_rand": 0.04403240740740741,
+          "mass_net": 0.008421064814814812
+        }
+      ],
+      "gain_only": {
+        "total_dwell": 0.0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.46002960205078
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "max_member": 0.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.46111297607422,
+      "store_lesion": {
+        "total_dwell": 0.0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "w_within_noencode": 0.500886857509613,
+      "steering": {
+        "mass_novel": 0.2432931712962963,
+        "mass_familiar": 0.09452465277777777,
+        "mass_baseline": 0.07073032407407409,
+        "steer_ratio_mass": 2.5738594551440994,
+        "events_novel": 11.0,
+        "events_familiar": 12.0,
+        "events_baseline": 16.0,
+        "dwell_novel": 239.0,
+        "dwell_familiar": 129.0,
+        "dwell_baseline": 52.0,
+        "pooled_member": 0.3792460317460318,
+        "pooled_random": 0.046740079365079366,
+        "per_assembly_novel_mass": [
+          0.19459351851851853,
+          0.04869965277777778
+        ],
+        "per_assembly_familiar_mass": [
+          0.08610358796296297,
+          0.008421064814814812
+        ],
+        "per_assembly_baseline_mass": [
+          0.061057407407407414,
+          0.009672916666666677
+        ],
+        "per_assembly_novel_events": [
+          5,
+          6
+        ],
+        "per_assembly_novel_dwell": [
+          239.0,
+          0.0
+        ]
+      },
+      "checks": {
+        "internally_generated": true,
+        "coherent": true,
+        "steered": true,
+        "store_lesion_load_bearing": true,
+        "steer_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 101,
+      "n_mem": 2,
+      "want_novel_hz": 119.27083333333331,
+      "want_familiar_hz": 7.291666666666666,
+      "gain_novel": 3.0,
+      "gain_familiar": 1.1222707423580787,
+      "curiosity": {
+        "threshold_hz": 61.80555555555555,
+        "calib": {
+          "want_novel_hz": 120.65972222222221,
+          "want_familiar_hz": 2.9513888888888884,
+          "threshold_hz": 61.80555555555555,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within_prepare": 65.5828628540039,
+      "baseline": [
+        {
+          "n_events": 8,
+          "n_specific": 1,
+          "member": 0.27551540071770336,
+          "random": 0.04170029032097289,
+          "spec": 0.23381511039673045,
+          "duty": 0.0185,
+          "dwell": 54.0,
+          "mass": 0.10659861111111112,
+          "mass_rand": 0.04438935185185185,
+          "mass_net": 0.06220925925925926
+        },
+        {
+          "n_events": 8,
+          "n_specific": 0,
+          "member": 0.06324499102870815,
+          "random": 0.04170029032097289,
+          "spec": 0.021544700707735245,
+          "duty": 0.0185,
+          "dwell": 0.0,
+          "mass": 0.05561736111111111,
+          "mass_rand": 0.04550289351851852,
+          "mass_net": 0.010114467592592588
+        }
+      ],
+      "novel_tag": [
+        {
+          "n_events": 5,
+          "n_specific": 5,
+          "member": 0.3605952380952381,
+          "random": 0.042089947089947094,
+          "spec": 0.318505291005291,
+          "duty": 0.0031666666666666666,
+          "dwell": 139.0,
+          "mass": 0.21512638888888888,
+          "mass_rand": 0.044984375,
+          "mass_net": 0.1701420138888889
+        },
+        {
+          "n_events": 8,
+          "n_specific": 0,
+          "member": 0.08707551129426129,
+          "random": 0.04278142647283273,
+          "spec": 0.04429408482142857,
+          "duty": 0.0195,
+          "dwell": 0.0,
+          "mass": 0.08958194444444445,
+          "mass_rand": 0.04574062500000001,
+          "mass_net": 0.04384131944444444
+        }
+      ],
+      "familiar_tag": [
+        {
+          "n_events": 6,
+          "n_specific": 2,
+          "member": 0.2802379950296617,
+          "random": 0.04402816608545776,
+          "spec": 0.23620982894420395,
+          "duty": 0.019333333333333334,
+          "dwell": 89.0,
+          "mass": 0.11625486111111111,
+          "mass_rand": 0.0443744212962963,
+          "mass_net": 0.07188043981481482
+        },
+        {
+          "n_events": 9,
+          "n_specific": 0,
+          "member": 0.06489508433952879,
+          "random": 0.046365708186764734,
+          "spec": 0.01852937615276405,
+          "duty": 0.021833333333333333,
+          "dwell": 0.0,
+          "mass": 0.05599930555555555,
+          "mass_rand": 0.045470949074074084,
+          "mass_net": 0.010528356481481468
+        }
+      ],
+      "gain_only": {
+        "total_dwell": 0.0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.4520263671875
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "max_member": 0.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.4513168334961,
+      "store_lesion": {
+        "total_dwell": 0.0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "w_within_noencode": 0.5000158548355103,
+      "steering": {
+        "mass_novel": 0.21398333333333333,
+        "mass_familiar": 0.08240879629629629,
+        "mass_baseline": 0.07232372685185184,
+        "steer_ratio_mass": 2.596607922338388,
+        "events_novel": 13.0,
+        "events_familiar": 15.0,
+        "events_baseline": 16.0,
+        "dwell_novel": 139.0,
+        "dwell_familiar": 89.0,
+        "dwell_baseline": 54.0,
+        "pooled_member": 0.3605952380952381,
+        "pooled_random": 0.042089947089947094,
+        "per_assembly_novel_mass": [
+          0.1701420138888889,
+          0.04384131944444444
+        ],
+        "per_assembly_familiar_mass": [
+          0.07188043981481482,
+          0.010528356481481468
+        ],
+        "per_assembly_baseline_mass": [
+          0.06220925925925926,
+          0.010114467592592588
+        ],
+        "per_assembly_novel_events": [
+          5,
+          8
+        ],
+        "per_assembly_novel_dwell": [
+          139.0,
+          0.0
+        ]
+      },
+      "checks": {
+        "internally_generated": true,
+        "coherent": true,
+        "steered": true,
+        "store_lesion_load_bearing": true,
+        "steer_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "n_mem": 2,
+      "want_novel_hz": 144.44444444444443,
+      "want_familiar_hz": 9.201388888888888,
+      "gain_novel": 3.0,
+      "gain_familiar": 1.1274038461538463,
+      "curiosity": {
+        "threshold_hz": 73.87152777777777,
+        "calib": {
+          "want_novel_hz": 143.22916666666666,
+          "want_familiar_hz": 4.513888888888888,
+          "threshold_hz": 73.87152777777777,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within_prepare": 71.31521606445312,
+      "baseline": [
+        {
+          "n_events": 4,
+          "n_specific": 2,
+          "member": 0.2922884523589554,
+          "random": 0.04917792155549397,
+          "spec": 0.24311053080346146,
+          "duty": 0.023166666666666665,
+          "dwell": 107.0,
+          "mass": 0.11663819444444444,
+          "mass_rand": 0.04449467592592593,
+          "mass_net": 0.07214351851851851
+        },
+        {
+          "n_events": 4,
+          "n_specific": 0,
+          "member": 0.08398100671347622,
+          "random": 0.04917792155549397,
+          "spec": 0.03480308515798226,
+          "duty": 0.023166666666666665,
+          "dwell": 0.0,
+          "mass": 0.06336944444444445,
+          "mass_rand": 0.045354050925925926,
+          "mass_net": 0.018015393518518524
+        }
+      ],
+      "novel_tag": [
+        {
+          "n_events": 8,
+          "n_specific": 8,
+          "member": 0.37074675621345027,
+          "random": 0.04423311289290936,
+          "spec": 0.3265136433205409,
+          "duty": 0.010333333333333333,
+          "dwell": 174.0,
+          "mass": 0.22650069444444446,
+          "mass_rand": 0.045040856481481484,
+          "mass_net": 0.18145983796296297
+        },
+        {
+          "n_events": 6,
+          "n_specific": 0,
+          "member": 0.08332846913817729,
+          "random": 0.043991646862858384,
+          "spec": 0.03933682227531891,
+          "duty": 0.016666666666666666,
+          "dwell": 0.0,
+          "mass": 0.08469513888888888,
+          "mass_rand": 0.045487384259259266,
+          "mass_net": 0.03920775462962962
+        }
+      ],
+      "familiar_tag": [
+        {
+          "n_events": 4,
+          "n_specific": 3,
+          "member": 0.30588004298941796,
+          "random": 0.04815719039351852,
+          "spec": 0.25772285259589944,
+          "duty": 0.0255,
+          "dwell": 125.0,
+          "mass": 0.13046736111111112,
+          "mass_rand": 0.04459120370370371,
+          "mass_net": 0.08587615740740742
+        },
+        {
+          "n_events": 5,
+          "n_specific": 0,
+          "member": 0.0688334034792368,
+          "random": 0.04700066638608306,
+          "spec": 0.021832737093153757,
+          "duty": 0.024,
+          "dwell": 0.0,
+          "mass": 0.05924722222222222,
+          "mass_rand": 0.0452855324074074,
+          "mass_net": 0.01396168981481482
+        }
+      ],
+      "gain_only": {
+        "total_dwell": 0.0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.4450454711914
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "max_member": 0.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.4642562866211,
+      "store_lesion": {
+        "total_dwell": 0.0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "w_within_noencode": 0.5014191269874573,
+      "steering": {
+        "mass_novel": 0.22066759259259258,
+        "mass_familiar": 0.09983784722222225,
+        "mass_baseline": 0.09015891203703703,
+        "steer_ratio_mass": 2.210259923788457,
+        "events_novel": 14.0,
+        "events_familiar": 9.0,
+        "events_baseline": 8.0,
+        "dwell_novel": 174.0,
+        "dwell_familiar": 125.0,
+        "dwell_baseline": 107.0,
+        "pooled_member": 0.37074675621345027,
+        "pooled_random": 0.04423311289290936,
+        "per_assembly_novel_mass": [
+          0.18145983796296297,
+          0.03920775462962962
+        ],
+        "per_assembly_familiar_mass": [
+          0.08587615740740742,
+          0.01396168981481482
+        ],
+        "per_assembly_baseline_mass": [
+          0.07214351851851851,
+          0.018015393518518524
+        ],
+        "per_assembly_novel_events": [
+          8,
+          6
+        ],
+        "per_assembly_novel_dwell": [
+          174.0,
+          0.0
+        ]
+      },
+      "checks": {
+        "internally_generated": true,
+        "coherent": true,
+        "steered": true,
+        "store_lesion_load_bearing": true,
+        "steer_lesion_load_bearing": true
+      },
+      "seed_go": true
+    }
+  ]
+}
