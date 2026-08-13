@@ -60,17 +60,37 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > valence into affect's opponent weights) is the clean next rung. Reckoning UNCHANGED: still CO-RESIDENCY (GNW bus
 > shadow-wired, not replacing); mouth still Qwen for open prose. The 3 missing properties = FLUID mouth · ONE substrate · EMERGENT.
 >
-> **🔴 LIVE LANES — WAVE-4 (staggered; do NOT double-launch; consolidate each → checkout to main + commit + push_both):**
-> - **[E] (iso de-risk):** COMPOSE emergence→affect — replace affect's Warriner-seeded ridge-fit opponent weights with
->   emergence's self-organized valence (retire the seed; emergent bar).
-> - **[K] (iso de-risk):** W4 DETECTOR-K recalibration — recalibrate coincidence_k_threshold to fractional graded
->   coincident drive (Larkum 2013 / Frank & Goodman 2012 grounded) to unblock the pragmatic-alignment metric.
-> - **[P] (main, serial — ONLY agent on main):** promote the GNW N-organ ignition BUS from shadow to the DEFAULT
->   organ-combination on /api/brain-chat (substrate ignition REPLACES host gate() — the one-substrate step). Gate:
->   byte-identical answers on a broad real-query panel + no moat regression + lesion-load-bearing + escape flag.
+> **✅ WAVE-4 CONSOLIDATED (2026-08-13 overnight, all on main + both remotes @ `5d53b6b03`):**
+> - **[P] GNW-bus FLIP** → **ONE-SUBSTRATE MILESTONE** (`789481fc2`): the N-organ ignition bus is now the DEFAULT
+>   organ-combination on /api/brain-chat — the substrate's consensus-ignition + WTA AUTHORS the combine verdict,
+>   replacing host `if recalled == p`. 22/22 byte-identical across query classes, moat holds, bus-lesion collapses the
+>   DELIVERED answer (attribution to ignition 1.0), escape `BRAIN_GNW_BUS_HOST=1`. §0.2 residual #1 PARTIALLY surpassed.
+>   Honest: `scaffold_retired: NO` (host `gate()` runs computed-then-overridden; full retirement = `gate_via_bus`);
+>   organs still one-composer reads (heterogeneous non-composer organ = named rung).
+> - **[E] compose emergence→affect** → **BOUNDARY** (`27ca71e43`): deriving the affect opponent weights from the
+>   self-organized conditioning map (NO Warriner) RETIRES the seed for held-out VALENCE (r=+0.508, no-cond lesion→0);
+>   but graded-STRENGTH underperforms (salience r=+0.10 vs ridge 0.27; discrim 0.75). Soft residual; 3 levers tried;
+>   next = a graded reinforcement-strength third factor (DA-magnitude), distinct from the refuted credit rule.
+> - **[K] W4 detector-k** → **BOUNDARY** (`5d53b6b03`): the recalibration SURPASSED the base-rate wall (detector now
+>   reads the fractional mass, graded 0.360 vs onehot 0.136 6/6) — but the valid metric (M1) still loses (−0.046, 0/6)
+>   and the anti-cheat refused M2 (failed scramble). Root cause: the all-or-none plateau is a THRESHOLD, not a
+>   magnitude-preserving read (saturated output overshoots the RSA magnitude). Next = the GO'd `enable_graded_dendritic_plateau`.
 >
-> **SINGLE LITERAL NEXT:** consolidate [E]/[K]/[P] as each lands; then next candidates — discrete-emotion production wire
-> (after [E] retires the seed), prospective per-pool homeostat, mouth shadow-interneuron signed read, one-brain MERGE,
+> **⭐ CROSS-CUTTING INSIGHT (bank it):** [E] and [K] independently hit the SAME wall — the substrate reads
+> SIGN/present-absent robustly but graded MAGNITUDE weakly (affect salience-strength; pragmatic belief magnitude). The
+> shared surpass is a MAGNITUDE-PRESERVING read-out (the GO'd `enable_graded_dendritic_plateau` / a graded-DA third
+> factor) — one lane closes both boundaries. This is the top next lever.
+>
+> **🔴 LIVE LANES — WAVE-5 (staggered isolated de-risks; do NOT double-launch; consolidate each → checkout to main):**
+> - **[M] (iso):** MAGNITUDE-PRESERVING read-out — apply the GO'd graded dendritic plateau (`enable_graded_dendritic_plateau`,
+>   Mikulasch-Priesemann) to the W4 detector (does M1 move now?) AND check it lifts the affect salience-strength. Closes [E]+[K].
+> - **[H] (iso):** PROSPECTIVE per-pool homeostat — self-inhibitory FS divisive-normalization / intrinsic-plasticity
+>   threshold adaptation per `rel` pool → fire_on_cue amplitude on ALL 6 seeds (the missing companion process).
+> - **[N] (iso):** GNW-bus HETEROGENEOUS organ — add a spiking surprise/affect (non-composer) organ as one of the N
+>   ignition votes → deepen the one-substrate claim (the named bus follow-on rung).
+>
+> **SINGLE LITERAL NEXT:** consolidate [M]/[H]/[N] as each lands; then — GNW-bus full retirement (`gate_via_bus`,
+> scaffold_retired step), discrete-emotion production wire (after [M] lifts the graded bars), one-brain MERGE,
 > self-initiation/DMN, interoceptive affect, remaining Tier-2/3. RAG at every wall.
 
 
