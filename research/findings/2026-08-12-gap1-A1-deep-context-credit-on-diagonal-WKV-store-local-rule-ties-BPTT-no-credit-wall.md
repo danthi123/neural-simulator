@@ -165,14 +165,18 @@ RAN and the picture is now sharp (mean accuracy per arm):
   (BPTT 0.062 / 0.015 / 0.026). Past K32 the task exceeds the learnable capacity of ALL arms at this N/epochs, so it no
   longer isolates credit-assignment quality.
 
-**Refined verdict:** the earlier "inconclusive" is now partly RESOLVED — the deep-context credit wall is REAL and sits at
-K32 on this store, and the **learned-feedback (KP/DNI) lever is an HONEST NEGATIVE there (ties random, does not recover
-weight-transport)**. This banks the KP method and **launches the next mechanism search** (per the no-defer law): a
-biologically-plausible feedback that recovers transport's benefit at large output dimension WITHOUT collapsing capacity —
-candidates to de-risk next: a wider-N / more-epochs K32-family run to confirm the gap is credit-not-capacity, then
-**local target-propagation / difference-target-prop, a burst-multiplexed apical feedback, or a predictive-coding feedback
-that provably aligns** (the feedback-alignment-at-scale open problem). The scale axis that cleanly separates is K
-(output dimension), exactly as Bartunov-2018 predicts; T/lag was NOT the binding axis on the diagonal store.
+**⛔ CORRECTED verdict (2026-08-12, wider-N VALIDITY check — supersedes the "wall is real at K32" reading above):** the
+K32 gap is a **CAPACITY-REGIME ARTIFACT, NOT a feedback-quality wall.** The validity run
+(`_dc_K32_validity_widerN.json`: same K=32 but N 192→384, H 96→192, epochs 60→80, 3-seed) gives **eprop_random 0.998 =
+eprop_learnfb 0.998 ≈ eprop_truefb 1.000 = bptt_ceiling 1.000** (fixed_store 0.070, shuffle_elig 0.074 — controls
+collapse). So once the net has ADEQUATE CAPACITY the gap VANISHES: biologically-plausible random-feedback e-prop reaches
+the ceiling. The N=192 gap (eprop 0.752 < bptt 0.931) was diagnostic of a **capacity-limited regime** — BPTT itself only
+reached 0.931 there, i.e. NOT a valid credit ceiling — so the earlier "learned-KP ties random = honest negative" was
+**capacity-confounded**, not a genuine feedback-quality result. **This is the "verify a refutation as hard as a
+confirmation" discipline (silent-failure rule 3) catching a wrong wall before it drove a mechanism search.** Net: on the
+diagonal WKV store there is **NO fundamental deep-context credit-quality wall** — a transport-free local rule handles the
+sequence credit at adequate capacity; the feedback-alignment-at-scale hunt on this instrument is MOOT. (The KP lever is
+neither confirmed nor refuted as a *mechanism* — the instrument never posed a real credit gap for it to close.)
 
 **The other genuine remaining residual (separate, already mapped):** porting the store's local credit to the
 PRODUCTION Izhikevich few-spike READ regime (2026-08-11: fixed-DFA/KP/DRTP and even a perfect W^T oracle give no

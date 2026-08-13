@@ -1,0 +1,243 @@
+{
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "T": [
+      32
+    ],
+    "K": 32,
+    "F": 24,
+    "N": 384,
+    "H": 192,
+    "D": 64,
+    "epochs": 80,
+    "n_train": 6000,
+    "n_eval": 1500,
+    "batch": 256,
+    "device": "cuda",
+    "out": "research/findings/raw/_dc_K32_validity_widerN.json",
+    "smoke": false,
+    "gradcheck_only": false
+  },
+  "grad_check": {
+    "resid_theta_d": 1.1920928955078125e-07,
+    "resid_W_v": 4.76837158203125e-07,
+    "resid_W_g": 1.1920928955078125e-07,
+    "PASS": true
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "T": 32,
+      "K": 32,
+      "chance": 0.03125,
+      "ngram3": 0.034666666666666665,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.07933333333333334,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 0.9973333333333333,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 0.9973333333333333,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.08666666666666667,
+          "lr": 0.1
+        },
+        "sign_flip": {
+          "acc": 0.996,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.07933333333333334,
+          "lr": 0.03
+        }
+      },
+      "cue_scramble_acc": 0.042,
+      "elapsed": 532.9
+    },
+    {
+      "seed": 43,
+      "T": 32,
+      "K": 32,
+      "chance": 0.03125,
+      "ngram3": 0.029333333333333333,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.06533333333333333,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 0.9993333333333333,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 0.9993333333333333,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.066,
+          "lr": 0.03
+        },
+        "sign_flip": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.06533333333333333,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 1371.9
+    },
+    {
+      "seed": 44,
+      "T": 32,
+      "K": 32,
+      "chance": 0.03125,
+      "ngram3": 0.034,
+      "arms": {
+        "fixed_store": {
+          "acc": 0.066,
+          "lr": 0.03
+        },
+        "eprop_random": {
+          "acc": 0.998,
+          "lr": 0.3
+        },
+        "eprop_learnfb": {
+          "acc": 0.998,
+          "lr": 0.3
+        },
+        "eprop_truefb": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "bptt_ceiling": {
+          "acc": 1.0,
+          "lr": 0.3
+        },
+        "shuffle_elig": {
+          "acc": 0.07,
+          "lr": 0.1
+        },
+        "sign_flip": {
+          "acc": 0.9986666666666667,
+          "lr": 0.3
+        },
+        "zero_signal": {
+          "acc": 0.066,
+          "lr": 0.03
+        }
+      },
+      "elapsed": 2102.7
+    }
+  ],
+  "aggregate": {
+    "32": {
+      "fixed_store": {
+        "mean": 0.07022222222222223,
+        "std": 0.00644827472379863,
+        "vals": [
+          0.07933333333333334,
+          0.06533333333333333,
+          0.066
+        ]
+      },
+      "eprop_random": {
+        "mean": 0.9982222222222221,
+        "std": 0.0008314794192830955,
+        "vals": [
+          0.9973333333333333,
+          0.9993333333333333,
+          0.998
+        ]
+      },
+      "eprop_learnfb": {
+        "mean": 0.9982222222222221,
+        "std": 0.0008314794192830955,
+        "vals": [
+          0.9973333333333333,
+          0.9993333333333333,
+          0.998
+        ]
+      },
+      "eprop_truefb": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "bptt_ceiling": {
+        "mean": 1.0,
+        "std": 0.0,
+        "vals": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "shuffle_elig": {
+        "mean": 0.07422222222222223,
+        "std": 0.008949791362489896,
+        "vals": [
+          0.08666666666666667,
+          0.066,
+          0.07
+        ]
+      },
+      "sign_flip": {
+        "mean": 0.9982222222222222,
+        "std": 0.0016629588385662008,
+        "vals": [
+          0.996,
+          1.0,
+          0.9986666666666667
+        ]
+      },
+      "zero_signal": {
+        "mean": 0.07022222222222223,
+        "std": 0.00644827472379863,
+        "vals": [
+          0.07933333333333334,
+          0.06533333333333333,
+          0.066
+        ]
+      },
+      "_frac_learnfb_of_gap": 0.0,
+      "_frac_truefb_of_gap": 1.0,
+      "_frac_learnfb_of_ceiling": 0.9980879541108986,
+      "_instrument_valid": false,
+      "_cue_scramble": 0.042,
+      "_credit_attributable_frac": 0.9555600241303037,
+      "_verdict": "INSTRUMENT_VACUOUS (fixed not at chance, or ceiling collapsed below the local rule at depth)"
+    }
+  }
+}
