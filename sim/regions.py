@@ -780,7 +780,24 @@ class RegionManager:
     def pathways(self) -> List[RegionPathway]:
         return list(self._pathways)
 
-    def build_wiring_plan(self, seed: int = 0) -> Dict[str, dict]:
+    # Strides for the per-region / per-pathway wiring substream seeds (opt-in via
+    # per_region_seed). Distinct large primes so a region's internal-wiring seed and
+    # a pathway's seed never coincide at the same base seed.
+    _WIRING_REGION_SEED_STRIDE = 2_000_003
+    _WIRING_PATHWAY_SEED_STRIDE = 5_000_011
+
+    @classmethod
+    def _wiring_substream(cls, seed: int, name: str, stride: int) -> "random.Random":
+        """A `random.Random` seeded from a STABLE zlib.crc32 hash of `name` (plus a
+        per-kind stride), keyed on the base `seed`. Process-independent (crc32, not
+        the salted builtin hash), so a region's / pathway's synapse placement is
+        invariant to co-residence ORDER on a shared region_manager."""
+        import zlib
+        name_key = int(zlib.crc32(name.encode("utf-8"))) & 0xFFFFFFFF
+        sub_seed = (int(seed) + name_key * int(stride)) & 0xFFFFFFFF
+        return random.Random(sub_seed)
+
+    def build_wiring_plan(self, seed: int = 0, per_region_seed: bool = False) -> Dict[str, dict]:
         """Build a `wiring_plan` dict in the format consumed by
         bridge.inject_explicit_wiring().
 
@@ -800,6 +817,15 @@ class RegionManager:
 
         Determinism: rng seeded from `seed`. Independent of initialize()'s
         seed so the same RegionManager can re-build with different seeds.
+
+        `per_region_seed` (opt-in, DEFAULT-OFF -> byte-identical to the legacy
+        single shared-stream draw): each region's internal-connectivity draw AND
+        each pathway's draw use their OWN RNG seeded from a stable zlib.crc32 hash of
+        the region / pathway name (keyed on `seed`), so a region's / pathway's
+        synapse placement is INVARIANT to co-residence ORDER. Otherwise ONE shared
+        `random.Random(seed)` is threaded through every region-internal THEN every
+        pathway in list order, so a region's placement depends on how much RNG the
+        regions/pathways before it consumed (the one-substrate merge's order seam).
         """
         if self._total_neurons == 0:
             return {}
@@ -809,7 +835,11 @@ class RegionManager:
 
         # ----- Internal connectivity per region -----
         for region in self._regions:
-            entry = self._build_region_internal(region, rng)
+            region_rng = (
+                self._wiring_substream(seed, region.name, self._WIRING_REGION_SEED_STRIDE)
+                if per_region_seed else rng
+            )
+            entry = self._build_region_internal(region, region_rng)
             if entry is None:
                 continue
             plan[f"{region.name}_internal"] = entry
@@ -820,7 +850,13 @@ class RegionManager:
                 raise KeyError(pw.from_region)
             if pw.to_region not in self._indices:
                 raise KeyError(pw.to_region)
-            entry = self._build_pathway(pw, rng)
+            pathway_rng = (
+                self._wiring_substream(
+                    seed, f"pathway_{pw.from_region}_to_{pw.to_region}",
+                    self._WIRING_PATHWAY_SEED_STRIDE)
+                if per_region_seed else rng
+            )
+            entry = self._build_pathway(pw, pathway_rng)
             if entry is None:
                 continue
             plan[f"pathway_{pw.from_region}_to_{pw.to_region}"] = entry

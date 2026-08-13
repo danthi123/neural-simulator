@@ -1,0 +1,57 @@
+{
+  "mode": "per_region_ou_wiring_engine",
+  "n_seeds": 6,
+  "n_ou_position_invariant_on": 6,
+  "n_ou_position_dependent_off": 6,
+  "n_ou_determinism_on": 6,
+  "worst_ou_off_delta": 202.82482528686523,
+  "n_wiring_order_invariant_on": 6,
+  "n_wiring_order_dependent_off": 6,
+  "n_wiring_determinism_on": 6,
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "ou_position_invariant_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "R's cp_ou_current trajectory byte-identical alone-vs-co-resident, per_region_ou_seed ON, all seeds"
+    },
+    {
+      "kind": "require",
+      "name": "ou_position_dependent_off_control",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "the SAME OU trajectory DIFFERS with the flag OFF (load-bearing, not a no-op)"
+    },
+    {
+      "kind": "require",
+      "name": "ou_determinism_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "co-resident OU pool built twice at one seed is identical"
+    },
+    {
+      "kind": "require",
+      "name": "wiring_order_invariant_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "R-internal + pathway A->B placement byte-identical regardless of co-residence order, flag ON"
+    },
+    {
+      "kind": "require",
+      "name": "wiring_order_dependent_off_control",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "the SAME placements DIFFER with the flag OFF (order-dependent shared stream)"
+    },
+    {
+      "kind": "require",
+      "name": "wiring_determinism_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "the wiring plan built twice at one seed is identical"
+    }
+  ],
+  "undefined_reasons": []
+}

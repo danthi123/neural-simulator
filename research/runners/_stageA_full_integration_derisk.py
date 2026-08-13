@@ -456,7 +456,9 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
                     co_resident_affect_ladder: bool = False, aff_n_rungs: int = 8,
                     co_resident_certainty_opponent: bool = False, vocab=DEFAULT_VOCAB,
                     co_resident_eprop: bool = False, eprop_dims=(34, 40, 6), eprop_ff_w_init: float = 2000.0,
-                    co_resident_eprop_cue: bool = False, eprop_cue_w: float = 2000.0):
+                    co_resident_eprop_cue: bool = False, eprop_cue_w: float = 2000.0,
+                    coresident_regions=None, per_region_param_het: bool = False,
+                    per_region_thresh: bool = False, per_region_ou: bool = False):
     """Build ONE SimulationBridge: the composer rf slice FIRST, then (default-on) every faculty slice appended AFTER
     it. Returns (bridge, comp, idx, baseline_snap). When with_faculties=False, ONLY the rf slice is built (the
     default-off byte-identity baseline).
@@ -551,10 +553,26 @@ def build_one_brain(seed: int, with_faculties: bool = True, lesion_arbiter_inhib
             regions.append(BrainRegion(name="eprop_cue", n_neurons=_e_in, exc_fraction=1.0, internal_density=0.0,
                                        enable_nmda=False, izh_neuron_type="IZH2007_RS_CORTICAL_PYRAMIDAL"))
 
+    # ONE-BRAIN MERGE hook (additive, DEFAULT-PRESERVING -> byte-identical when unused): PREPEND a list of INERT
+    # (density-0, unwired) BrainRegions so the whole brain (rf + faculties + ladder) lands at a NON-ZERO offset on a
+    # shared, co-stepped pool -- the exact position shift a shared pool introduces. They add NO pathways, so they
+    # consume NO build_wiring_plan RNG (every pre-existing region-internal + pathway draw is byte-identical) and NO
+    # cross-synapse; all wiring auto-shifts via rm.indices. The three per-region heterogeneity/noise seams
+    # (per_region_param_het / per_region_thresh / per_region_ou) make each region's init + per-step OU realization
+    # INVARIANT to that offset (else the global size-n draws are position-shifted). Default None/False reproduces the
+    # standalone build bit-for-bit.
+    if coresident_regions:
+        regions = list(coresident_regions) + regions
+
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = regions
     cfg.region_pathways = pathways
+    # Region-scoped heterogeneity / OU-noise draws (default OFF -> byte-identical) make the whole slice invariant to
+    # the co-resident offset above (the merge seams named by 2026-08-13-per-region-param-het-cluster-GO.md).
+    cfg.per_region_parameter_heterogeneity = bool(per_region_param_het)
+    cfg.per_region_threshold_heterogeneity = bool(per_region_thresh)
+    cfg.per_region_ou_seed = bool(per_region_ou)
     cfg.dt_ms = 1.0
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"

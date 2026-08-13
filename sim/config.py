@@ -250,6 +250,41 @@ class CoreSimConfig:
     # DEFAULT-OFF preserves the legacy every-step, every-neuron update
     # bit-for-bit (the gating block is skipped entirely).
     per_region_homeostasis_isolation: bool = False
+    # PER-REGION OU-NOISE SEED (2026-08-13; the one-substrate merge's THIRD
+    # byte-identity cause -- the OPEN seam an organ read with enable_ou_process=True
+    # hits). The Ornstein-Uhlenbeck background drive draws its per-step white noise
+    # as ONE `size=n` cp.random.randn(n) sample over the WHOLE pool, so a region's
+    # noise slice is indexed by absolute pool position: merging an organ onto a
+    # shared substrate shifts that organ to a different stream position and its OU
+    # realization diverges (a valid but DIFFERENT noise trajectory than standalone).
+    # When ON, each brain region draws its per-step OU noise from its OWN PERSISTENT
+    # host RNG stream keyed on a stable zlib.crc32 hash of the region name (streams
+    # persist across steps so the OU temporal correlations are preserved), so a
+    # region's OU trajectory is invariant to its co-residents / its position in the
+    # shared pool. The legacy global draw still runs FIRST (so global-RNG
+    # consumption is preserved bit-for-bit and any neuron NOT owned by a region
+    # keeps its legacy value), then the region slices are OVERWRITTEN. DEFAULT-OFF
+    # preserves the legacy global draw bit-for-bit (no per-region streams are built,
+    # so the flag OFF is byte-identical to today). EXACTLY mirrors the per-region
+    # threshold / parameter heterogeneity seams (a name-keyed host substream per
+    # region), adapted to the per-STEP OU noise. Deterministic under cfg.ou_seed
+    # (else cfg.seed).
+    per_region_ou_seed: bool = False
+    # PER-REGION WIRING SEED (2026-08-13; the one-substrate merge's FOURTH
+    # byte-identity cause -- the co-residence ORDER dependence a fully-wired
+    # same-region_manager merge hits). build_wiring_plan (regions.py) samples EVERY
+    # region's sparse internal connectivity THEN every pathway from ONE shared
+    # random.Random(seed) in region-then-pathway ORDER, so a region's synapse
+    # placement depends on how much RNG the regions/pathways BEFORE it consumed:
+    # wiring a second organ onto the SAME region_manager shifts the first organ's
+    # pathway sampling (each organ's synapse placement moves with co-residence
+    # order). When ON, each region's internal-connectivity draw AND each pathway's
+    # draw use their OWN RNG seeded from a stable zlib.crc32 hash of the
+    # region/pathway name (keyed on cfg.seed), so a region's / pathway's synapse
+    # placement is invariant to co-residence order. DEFAULT-OFF preserves the single
+    # shared-stream ORDER-dependent draw bit-for-bit (the flag OFF is byte-identical
+    # to today). Deterministic under cfg.seed.
+    per_region_wiring_seed: bool = False
     # Diagnostic correction: draw every stochastic Izhikevich population field
     # from one host-side NumPy contract before transferring it to the backend.
     # Default-off preserves the established backend-native initialization path.

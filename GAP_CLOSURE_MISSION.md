@@ -285,6 +285,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   adds a THIRD seam — `build_wiring_plan`'s shared-RNG sparse-pathway ORDER dependence — solved by per-organ-plan
 >   remap or a per-region wiring seed (next rung). `2026-08-13-per-region-param-het-cluster-GO.md`; runners
 >   `_per_region_param_het_engine_verify.py` + `_per_region_param_het_cluster_verify.py`.
+> - **[PI] PER-REGION OU + WIRING `sim/` EDITS — AFFECT MERGE GO (2026-08-13):** built the two rung-2b-named engine
+>   seams `cfg.per_region_ou_seed` + `cfg.per_region_wiring_seed` (both guarded, default-off, additive). OU: each
+>   region draws its per-step OU noise from its OWN persistent name-keyed (`zlib.crc32`) host RNG stream AFTER the
+>   global `cp.random.randn(n)` draw, so a region's OU realization is co-residence-invariant; WIRING:
+>   `build_wiring_plan(per_region_seed=True)` seeds each region-internal + pathway draw per name, so synapse
+>   placement is co-residence-ORDER-invariant. **Engine 6/6 each:** position/order-INVARIANT with the flag ON
+>   (DIVERGE OFF — OU worst off-delta 2.03e2), determinism 6/6, OFF-path substrate+wiring hash BYTE-IDENTICAL to HEAD
+>   (git-stash all 3 `sim/` files). **AFFECT MERGE GO 6/6:** the REAL `AffectProductionOrgan` read (sign-aware ladder
+>   differential through `affect_out`, `enable_ou_process=True`) is BYTE-IDENTICAL (max delta **0.0**) merged-vs-
+>   co-resident for BOTH signs, faculty alive 6/6 (OFF diverges 5.6e-4…5.0e-3) → the 3rd cluster organ now shares the
+>   substrate byte-identically. **The rung-2b affect boundary was the OU seam ALONE:** the global neuromodulator
+>   subsystem is MEASURED not to diverge (it reads firing via `rm.indices` position-independently) → no per-region
+>   neuromod scoping needed; boundary REFINED to a GO. Zero regression: `test_determinism` 9/9, smoke byte-identical,
+>   `build_one_brain` DEFAULT path byte-identical, rung-1 + metacog/pragmatic guards inert (neither new flag set).
+>   `2026-08-13-per-region-ou-wiring-affect-GO.md`; runners `_per_region_ou_wiring_engine_verify.py` +
+>   `_per_region_ou_affect_merge_verify.py`. **Residual:** flags default-off (organ not yet flipped to build merged
+>   in production / wired to `/api/brain-chat`); `per_region_wiring_seed` proven at substrate level, not yet in a
+>   two-fully-wired-organ production merge (next rung).
 >
 > **🔴 LIVE LANES (owner-approved, concurrent):**
 > - **[GC] (iso):** GRADED/CONDUCTANCE mouth read — resolve the winner from the continuous signed conductance margin (not a

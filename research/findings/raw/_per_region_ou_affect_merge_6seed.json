@@ -1,0 +1,109 @@
+{
+  "mode": "per_region_ou_affect_merge",
+  "n_seeds": 6,
+  "results": [
+    {
+      "seed": 42,
+      "maxdelta_on": 0.0,
+      "maxdelta_off": 0.001388888888888891,
+      "byte_identical": true,
+      "alive": true,
+      "go": true,
+      "solo_pos": 0.049444444444444444,
+      "cor_pos": 0.049444444444444444,
+      "solo_neg": -0.05,
+      "cor_neg": -0.05
+    },
+    {
+      "seed": 43,
+      "maxdelta_on": 0.0,
+      "maxdelta_off": 0.0049999999999999975,
+      "byte_identical": true,
+      "alive": true,
+      "go": true,
+      "solo_pos": 0.050277777777777775,
+      "cor_pos": 0.050277777777777775,
+      "solo_neg": -0.04694444444444444,
+      "cor_neg": -0.04694444444444444
+    },
+    {
+      "seed": 44,
+      "maxdelta_on": 0.0,
+      "maxdelta_off": 0.0005555555555555591,
+      "byte_identical": true,
+      "alive": true,
+      "go": true,
+      "solo_pos": 0.051111111111111114,
+      "cor_pos": 0.051111111111111114,
+      "solo_neg": -0.05305555555555556,
+      "cor_neg": -0.05305555555555556
+    },
+    {
+      "seed": 100,
+      "maxdelta_on": 0.0,
+      "maxdelta_off": 0.002777777777777782,
+      "byte_identical": true,
+      "alive": true,
+      "go": true,
+      "solo_pos": 0.0475,
+      "cor_pos": 0.0475,
+      "solo_neg": -0.051666666666666666,
+      "cor_neg": -0.051666666666666666
+    },
+    {
+      "seed": 101,
+      "maxdelta_on": 0.0,
+      "maxdelta_off": 0.0025000000000000022,
+      "byte_identical": true,
+      "alive": true,
+      "go": true,
+      "solo_pos": 0.05277777777777778,
+      "cor_pos": 0.05277777777777778,
+      "solo_neg": -0.04888888888888889,
+      "cor_neg": -0.04888888888888889
+    },
+    {
+      "seed": 102,
+      "maxdelta_on": 0.0,
+      "maxdelta_off": 0.0005555555555555591,
+      "byte_identical": true,
+      "alive": true,
+      "go": true,
+      "solo_pos": 0.0475,
+      "cor_pos": 0.0475,
+      "solo_neg": -0.049444444444444444,
+      "cor_neg": -0.049444444444444444
+    }
+  ],
+  "n_byte_identical": 6,
+  "n_alive": 6,
+  "n_go": 6,
+  "worst_off_delta": 0.0049999999999999975,
+  "verdict": "GO",
+  "affect_verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "affect_read_byte_identical_on",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "affect production read (sign-aware ladder differential) max delta 0.0 merged-vs-co-resident, flags ON, both signs, all seeds"
+    },
+    {
+      "kind": "require",
+      "name": "affect_faculty_alive_merged",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "on the co-resident pool a positive appraisal holds a positive differential, negative a negative"
+    },
+    {
+      "kind": "control",
+      "name": "flags_load_bearing",
+      "ok": true,
+      "detail": "treatment=0.005 control=0 |sep|=0.005 > 0",
+      "note": "with the flags OFF the read DIVERGES (position-shifted OU + init) -> not a no-op"
+    }
+  ],
+  "undefined_reasons": [],
+  "note": "per_region_ou_seed (+ the landed param/threshold seams) makes the affect production read invariant to co-residence on one co-stepped pool (byte-identical); the neuromodulator subsystem is measured NOT to diverge -> affect closes on the OU seam alone (rung-2b boundary refined to a GO)"
+}

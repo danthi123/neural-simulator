@@ -2625,7 +2625,10 @@ class SimulationBridge:
                 if self.region_manager is not None:
                     self._log_console("Generating connections (brain-region framework)...")
                     seed_val = cfg.seed if cfg.seed >= 0 else 0
-                    plan = self.region_manager.build_wiring_plan(seed=seed_val)
+                    plan = self.region_manager.build_wiring_plan(
+                        seed=seed_val,
+                        per_region_seed=getattr(cfg, "per_region_wiring_seed", False),
+                    )
                     # inject_explicit_wiring wires + sets self.cp_connections,
                     # the plastic mask, and updates _synapse_count.
                     inh_indices_concat = []
@@ -3399,6 +3402,11 @@ class SimulationBridge:
     _PARAM_HET_REGION_SEED_STRIDE = 2_000_003
     _PARAM_HET_PER_PARAM_STRIDE = 1_000_003
 
+    # Stride for the per-region OU-noise substreams (opt-in via cfg.per_region_ou_seed).
+    # Distinct from the threshold / parameter strides so a region's OU substream never
+    # coincides with its threshold or parameter substream at the same resolved seed.
+    _OU_REGION_SEED_STRIDE = 3_000_017
+
     @staticmethod
     def _draw_region_het_param_host(rng, dist_spec, size):
         """Draw `size` host float32 samples for ONE heterogeneity parameter, reproducing
@@ -3776,6 +3784,75 @@ class SimulationBridge:
         
         # Store mean for convenience
         self.ou_mean = float(cfg.ou_mean_current_pA)
+
+        # PER-REGION OU noise streams (opt-in via cfg.per_region_ou_seed; DEFAULT
+        # OFF -> None -> the legacy global cp.random.randn(n) per-step draw stands
+        # byte-identical). When ON, each brain region gets its OWN PERSISTENT host
+        # RNG stream (seeded from a stable zlib.crc32 hash of the region name), so
+        # its per-step OU realization is invariant to its co-residents / absolute
+        # pool position -- the merge seam an organ read with enable_ou_process=True
+        # hits. Streams persist across steps to preserve the OU temporal
+        # correlations (a fresh per-step seed would give white noise, destroying
+        # the Ornstein-Uhlenbeck autocorrelation).
+        self._region_ou_streams = None
+        if getattr(cfg, "per_region_ou_seed", False) and self.region_manager is not None:
+            self._region_ou_streams = self._build_region_ou_streams(cfg, n)
+
+    def _build_region_ou_streams(self, cfg, n):
+        """Build the per-region OU host RNG streams (opt-in via cfg.per_region_ou_seed).
+
+        Returns a list of (backend_index_array, host_RandomState) pairs, one per
+        brain region that owns >=1 in-range neuron. Each region's stream is seeded
+        from a STABLE zlib.crc32 hash of the region name plus a per-region stride,
+        keyed on cfg.ou_seed (else cfg.seed), so a region's per-step OU noise
+        sequence is invariant to its co-residents / absolute pool position. Uses the
+        backend-neutral host RNG (like the threshold / parameter sibling seams) so
+        the region-scoped noise is identical on the numpy and cupy backends.
+        """
+        import zlib
+        ou_seed = cfg.ou_seed if cfg.ou_seed >= 0 else cfg.seed
+        resolved = ou_seed if ou_seed >= 0 else self.runtime_state.actual_seed_used
+        if resolved is None or resolved < 0:
+            resolved = 0
+        streams = []
+        for region in self.region_manager.regions():
+            indices = self.region_manager.indices(region.name)
+            if not indices:
+                continue
+            idx_arr = np.asarray(sorted(int(i) for i in indices), dtype=np.int64)
+            if idx_arr.size == 0 or int(idx_arr.max()) >= n:
+                continue
+            name_key = int(zlib.crc32(region.name.encode("utf-8"))) & 0xFFFFFFFF
+            region_seed = (
+                int(resolved) + name_key * self._OU_REGION_SEED_STRIDE
+            ) & 0xFFFFFFFF
+            region_rng = _backend_neutral_random_state(
+                region_seed, stream_name=f"OU noise[{region.name}]"
+            )
+            streams.append((cp.asarray(idx_arr), region_rng))
+        return streams
+
+    def _draw_ou_noise_samples(self, n):
+        """Draw the per-step OU white-noise vector N(0,1)^n for the background drive.
+
+        DEFAULT: ONE global cp.random.randn(n) draw over the whole pool (byte-
+        identical to the legacy inline draw). When cfg.per_region_ou_seed is ON and
+        the per-region streams were built, the global draw still runs FIRST (so
+        global-RNG consumption is preserved bit-for-bit and any neuron NOT owned by
+        a region keeps its legacy value), then each brain region's slice is
+        OVERWRITTEN from its OWN persistent host RNG stream -- so a region's OU
+        realization is invariant to its co-residents / its position in the shared
+        pool. Mirrors the per-region threshold / parameter heterogeneity overwrite
+        seams, adapted to the per-STEP OU noise.
+        """
+        noise_samples = cp.random.randn(n).astype(cp.float32)
+        streams = getattr(self, "_region_ou_streams", None)
+        if streams:
+            for idx_backend, region_rng in streams:
+                k = int(idx_backend.shape[0])
+                host = region_rng.standard_normal(k).astype(np.float32)
+                noise_samples[idx_backend] = cp.asarray(host, dtype=cp.float32)
+        return noise_samples
 
     def _calculate_distances_3d_gpu(self, pos_i_cp, pos_neighbors_cp):
         """Calculates Euclidean distances in 3D between a point and an array of other points using CuPy."""
@@ -7830,7 +7907,7 @@ class SimulationBridge:
         # --- OU noise: KEPT SEPARATE (the cp.random.randn draw preserves the bit-identical RNG stream).
         # Exact OU update lines from _run_one_simulation_step (Gillespie 1996). OU off -> zeros (x + 0.0 == x).
         if cfg.enable_ou_process and getattr(self, "cp_ou_current", None) is not None:
-            noise_samples = cp.random.randn(n).astype(cp.float32)
+            noise_samples = self._draw_ou_noise_samples(n)
             self.cp_ou_current[:] = (
                 self.cp_ou_current * self.ou_decay_factor
                 + self.ou_mean * (1.0 - self.ou_decay_factor)
@@ -8047,7 +8124,7 @@ class SimulationBridge:
 
         # --- OU noise: KEPT SEPARATE (identical lines to v1 / the Python step -> bit-identical RNG stream).
         if cfg.enable_ou_process and getattr(self, "cp_ou_current", None) is not None:
-            noise_samples = cp.random.randn(n).astype(cp.float32)
+            noise_samples = self._draw_ou_noise_samples(n)
             self.cp_ou_current[:] = (
                 self.cp_ou_current * self.ou_decay_factor
                 + self.ou_mean * (1.0 - self.ou_decay_factor)
@@ -9089,7 +9166,7 @@ class SimulationBridge:
                 # temporal correlations in OU process and improve performance.
 
                 # Exact OU update (Gillespie 1996)
-                noise_samples = cp.random.randn(n_neurons).astype(cp.float32)
+                noise_samples = self._draw_ou_noise_samples(n_neurons)
                 self.cp_ou_current[:] = (
                     self.cp_ou_current * self.ou_decay_factor +
                     self.ou_mean * (1.0 - self.ou_decay_factor) +
