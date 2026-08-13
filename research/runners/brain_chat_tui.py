@@ -331,6 +331,17 @@ class ChatBrain:
                                                  # (fixes the host-router keyword CONFAB, e.g. "what does fish fly?").
         if sub not in (None, "__ABSTAIN__"):     # anaphora abstain falls through: the WM referent may be noisy, so let
             return sub                           # the host router try (its keyword match masks a bad WM pick).
+        # (host router fallback + spiking VERIFY combination) — factored into `_gate_router_combine`; reached ONLY for
+        # the out-of-scope classes the substrate GNW ignition bus does NOT author (a self/identity turn routed by the
+        # host QuestionRouter, and the anaphora-abstain fall-through). Keeping it inline here is byte-identical.
+        return self._gate_router_combine(q)
+
+    def _gate_router_combine(self, q):
+        """The HOST QuestionRouter fallback + spiking VERIFY combination (`if recalled == p`), factored out of gate().
+        Reached for the classes the substrate ignition bus does NOT author: a self/identity turn (routed by the host
+        router) and the anaphora-abstain fall-through. Returns [a, v, p] on a VERIFIED match, else None. This is the
+        residual host combination the scaffold-retirement KEEPS for the out-of-scope classes (the COVERED-class
+        combination is retired in `gate_via_bus`, which never calls this on a routable factual recall)."""
         gate_svo, _score = self.router.match_fact(q, self.stored_facts)
         if gate_svo is None:
             return None
@@ -348,6 +359,38 @@ class ChatBrain:
                 self._note_referent(p)
             return [a, v, p]
         return None
+
+    def gate_extract(self, question):
+        """EXTRACTION + SIDE-EFFECT phase of gate(), WITHOUT the covered-class recall-COMBINATION verdict — so a
+        combiner (the host `if recalled == p`, OR the substrate GNW ignition bus) authors the verdict. Runs the SAME
+        open-ended / acquisition / anaphora side effects gate() runs, then returns a discriminated tuple:
+          ('done', svo)                      -- an OUT-OF-SCOPE class already produced its answer: an open-ended
+                                                HypothesisSVO guess, or an in-loop ACQUISITION (`svo` may be None =
+                                                honest abstain). The bus does not author these; the host mechanism did.
+          ('route', q, a, v, anaphora_used)  -- a ROUTABLE factual query: the COMBINER recalls (a, v) and commits the
+                                                ignited patient or abstains. THIS is the class the substrate bus authors
+                                                (in gate_via_bus the host `if recalled == p` is never computed for it).
+          ('decline', q, anaphora_used)      -- a factual-shaped question the on-brain parser DECLINED (comprehension
+                                                abstain): abstain unless anaphora, then the host router may try.
+          ('router', q)                      -- unroutable (self/identity/short): the HOST ROUTER owns it (out of scope).
+        Extraction/comprehension + every side effect stay the host's (unchanged); ONLY the recall-COMBINATION is
+        deferred to the combiner. gate() itself does not consume this (it stays byte-identical via `_substrate_recall`,
+        which the production lesion probe patches); the webapp bus wrapper consumes it via `gate_via_bus` (the
+        scaffold-retirement: the covered-class host combination is never computed)."""
+        oe = self._parse_open_ended(question)
+        if oe is not _NOT_OPEN_ENDED:
+            return ('done', self._generate_hypothesis(*oe))
+        acq = self._maybe_acquire(question)
+        if acq is not None:
+            return ('done', acq)
+        q = self._resolve_anaphora(question)
+        anaphora_used = (q != question)
+        route = self._extract_route(q)                       # (agent, action) comprehension ONLY — no recall verdict
+        if route == "__DECLINE__":
+            return ('decline', q, anaphora_used)
+        if isinstance(route, list):
+            return ('route', q, route[0], route[1], anaphora_used)
+        return ('router', q)
 
     # --- OPEN-ENDED GENERATION (#3E: the brain VOLUNTEERS novel grounded propositions via generative replay) ---
     def _parse_open_ended(self, question):
@@ -591,28 +634,30 @@ class ChatBrain:
             return None                                       # degenerate/lesioned parse -> let the caller fall back
         return a, v
 
-    def _substrate_recall(self, question):
-        """IN-LOOP LEARNING recall: resolve (agent, action) from the question and recall the patient FROM THE SPIKING
-        SUBSTRATE (`inner.what_does`), so a fact heard this conversation is answerable even though it is not in the
-        build-time host snapshot. Returns [a, v, p] or None. No confabulation: `what_does` returns nothing unless the
-        binding is genuinely stored. The (agent, action) COMPREHENSION is NEURAL (the on-brain BridgeParser) on the
-        onebrain default, with a host heuristic fallback (the rf escape path)."""
+    def _extract_route(self, question):
+        """COMPREHENSION-ONLY phase of `_substrate_recall`: resolve the routable (agent, action) of a factual SVO query
+        WITHOUT recalling the patient (no `what_does`). Returns [a, v] for a routable factual query (the caller — the
+        host `if recalled == p`, OR the substrate GNW ignition bus — then authors the recall verdict), None for a
+        self/identity/short/unextractable turn (the host router owns it), or the sentinel `"__DECLINE__"` when the
+        on-brain parser DECLINES a factual-shaped question (a comprehension abstain). Mirrors `_substrate_recall`'s
+        neural-parser-then-heuristic comprehension EXACTLY; it merely STOPS before the recall so the combination verdict
+        can be authored by the substrate ignition bus instead of host Python (the scaffold-retirement)."""
         _STOP = {"what", "who", "whom", "does", "do", "did", "is", "are", "was", "were", "the", "a", "an",
                  "to", "it", "that", "this", "they", "them", "of", "about"}
         toks = [t.lower().strip(".,!?") for t in question.split()]
         content = [t for t in toks if t and t not in _STOP]
         # CHOOSE (#1): the on-brain parser OWNS a factual-SVO-shaped question (>=2 content words, none a self-alias).
-        # When it comprehends -> (agent, action) on FIRING neurons; when it DECLINES on such a question -> honest
-        # "__ABSTAIN__" (do NOT fall to the host router's role-blind keyword confab). This makes the comprehension
-        # genuinely on the substrate + LESION-LOAD-BEARING: lesion the parser -> role_of returns junk -> the factual
-        # CHOOSE abstains (the answer CHANGES). A self/identity/short question (or the rf escape — NO parser) keeps the
-        # host heuristic (prefer a KNOWN agent/action, else STRUCTURAL position) + the router fallback in gate().
+        # When it comprehends -> (agent, action) on FIRING neurons; when it DECLINES on such a question -> "__DECLINE__"
+        # (do NOT fall to the host router's role-blind keyword confab). This makes the comprehension genuinely on the
+        # substrate + LESION-LOAD-BEARING: lesion the parser -> role_of returns junk -> the factual CHOOSE abstains. A
+        # self/identity/short question (or the rf escape — NO parser) keeps the host heuristic (prefer a KNOWN
+        # agent/action, else STRUCTURAL position) + the router fallback in gate().
         has_self_alias = any(t in self.router.self_aliases for t in content)
         parser_present = getattr(getattr(self.inner, "composer", None), "parser", None) is not None
         if parser_present and len(content) >= 2 and not has_self_alias:
             nq = self._neural_question_parse(content)
             if nq is None:
-                return "__ABSTAIN__"             # factual-shaped question the on-brain parser could not comprehend -> abstain
+                return "__DECLINE__"            # factual-shaped question the on-brain parser could not comprehend
             a, v = nq
         else:
             a = next((t for t in content if t in self.agents_set), None) or (content[0] if content else None)
@@ -622,6 +667,22 @@ class ChatBrain:
         # a self/identity query (a or v is a self-alias) is the host router's job, not the substrate's.
         if a in self.router.self_aliases or v in self.router.self_aliases:
             return None
+        return [a, v]
+
+    def _substrate_recall(self, question):
+        """IN-LOOP LEARNING recall: resolve (agent, action) from the question and recall the patient FROM THE SPIKING
+        SUBSTRATE (`inner.what_does`), so a fact heard this conversation is answerable even though it is not in the
+        build-time host snapshot. Returns [a, v, p], None, or the "__ABSTAIN__" sentinel. No confabulation: `what_does`
+        returns nothing unless the binding is genuinely stored. The (agent, action) COMPREHENSION is factored into
+        `_extract_route` (NEURAL BridgeParser on the onebrain default, host heuristic on the rf escape); this method
+        adds the host recall verdict on top of it. BYTE-IDENTICAL to the pre-factor code (the production lesion probe
+        patches this method, so gate() must keep calling it)."""
+        route = self._extract_route(question)
+        if route == "__DECLINE__":
+            return "__ABSTAIN__"                # a factual-shaped question the on-brain parser could not comprehend
+        if route is None:
+            return None                          # could not extract a query -> let the host router try (self/identity)
+        a, v = route
         try:
             p = self.inner.what_does(a, v)
         except Exception:

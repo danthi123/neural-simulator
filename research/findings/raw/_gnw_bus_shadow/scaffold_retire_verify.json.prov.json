@@ -1,0 +1,26 @@
+{
+ "run_id": "1786617591-1083242",
+ "runner": "research/runners/_gnw_bus_scaffold_retire_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gnw_bus_scaffold_retire_verify.py"
+ ],
+ "git_sha": "af920535c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T06:39:51",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 248112.7,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_gnw_bus_shadow/scaffold_retire_verify.json"
+}

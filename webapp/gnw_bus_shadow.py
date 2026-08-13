@@ -8,15 +8,20 @@ _gnw_norgan_bus_derisk.py`, finding `2026-08-13-gnw-norgan-ignition-bus-...`, 6/
 N>=3 subthreshold organ reads via consensus-ignition + shared-inhibition WTA + re-entry. This module routes that bus
 into production two ways:
 
-  (1) DEFAULT COMBINATION PATH (`install_bus_gate` / `bus_authored_svo`, 2026-08-13 FLIP). The handler installs a
-      wrapper on `chat.gate` so the SUBSTRATE — consensus-ignition + WTA — AUTHORS the organ-combination decision on
-      every turn: the ignited patient IS the gate answer, no ignition IS the abstain (the moat as a substrate
-      property). The host `if recalled == p` no longer decides. Extraction/comprehension (the parser/heuristic that
-      names the (agent, action) queried) is UNCHANGED — only the COMBINATION verdict moves to the substrate. Both the
-      single-fact path and the default rich path funnel their direct recall through `chat.gate`, so the flip covers
-      the default turn. It was EARNED on a broad real-query panel that is byte-identical to the host gate() on every
-      covered class (`research/runners/_gnw_bus_default_flip_verify.py`); the classes the bus does not cover (open-
-      ended generation, self/identity turns with no substrate query) fall back to the host gate() decision (scoped).
+  (1) DEFAULT COMBINATION PATH (`install_bus_gate` / `gate_via_bus`, 2026-08-13 FLIP -> SCAFFOLD-RETIREMENT). The
+      handler installs a wrapper on `chat.gate` so the SUBSTRATE — consensus-ignition + WTA — AUTHORS the organ-
+      combination decision on every turn: the ignited patient IS the gate answer, no ignition IS the abstain (the moat
+      as a substrate property). The host `if recalled == p` no longer decides. Extraction/comprehension (the
+      parser/heuristic that names the (agent, action) queried) is UNCHANGED — only the COMBINATION verdict moves to the
+      substrate. RETIREMENT (the follow-on to the flip): the wrapper runs `chat.gate_extract` (extraction + side
+      effects only) and `gate_via_bus` commits/vetoes the COVERED class WITHOUT EVER COMPUTING the host combination —
+      no `_substrate_recall`, no `_gate_router_combine` on a routable factual recall. (The superseded `bus_authored_svo`
+      remains as a read-only re-author for the shadow/flip verify; it computed the host verdict first, then overrode
+      it — `gate_via_bus` never computes it.) Both the single-fact path and the default rich path funnel their direct
+      recall through `chat.gate`, so the flip covers the default turn. EARNED on a broad real-query panel byte-identical
+      to the host gate() on every covered class (`research/runners/_gnw_bus_default_flip_verify.py`) + a call-count
+      retirement proof (`research/runners/_gnw_bus_scaffold_retire_verify.py`); the classes the bus does not cover
+      (open-ended generation, acquisition, self/identity turns with no substrate query) stay HOST-authored (scoped).
   (2) SHADOW/AUDIT read-out (`shadow_report`, unchanged). A read-only host-vs-bus comparison block, still available for
       observability.
 
@@ -109,8 +114,14 @@ def _organ_reads(composer, agent, action):
         cand_A = composer.query_patient(agent, action)
     except Exception:
         cand_A = None
+    # capture the FORWARD-recall trace RIGHT AFTER organ A (before the VERIFY/reverse probes overwrite it). This IS
+    # the trace the host `what_does` (= `composer.query_patient(agent, action)`) leaves for the surfaced "brain
+    # activity"; the retirement surfaces it so the covered-class activity stays byte-identical to the host (the bus's
+    # OWN forward read, not the reverse-binding probe). query_patient assigns a fresh trace object per call, so this
+    # reference is stable across organs B/C.
+    trace_A = getattr(composer, "last_trace", None)
     if cand_A is None:
-        return None, [None, None, None]
+        return None, [None, None, None], trace_A
     # organ B: the gate's own VERIFY re-read (the answer must be the spiking recall). Same call -> corroborates a
     # genuine recall; would diverge only if recall were nondeterministic (it is not) -> it withholds otherwise.
     try:
@@ -122,36 +133,47 @@ def _organ_reads(composer, agent, action):
         cand_C = cand_A if composer.query_agent(action, cand_A) == agent else None
     except Exception:
         cand_C = None
-    return cand_A, [cand_A, cand_B, cand_C]
+    return cand_A, [cand_A, cand_B, cand_C], trace_A
 
 
 def bus_combine(composer, agent: str, action: str, all_concepts, *, seed: int = 42,
-                lesion: bool = False, d_sub: Optional[float] = None) -> dict:
+                lesion: bool = False, d_sub: Optional[float] = None, surface_forward_trace: bool = False) -> dict:
     """Route the 3 real organ reads for (agent, action) through the spiking ignition bus and return the SUBSTRATE's
     committed decision. `committed` is the ignited patient (or None = abstain). NO host `if/else` selects it — the
     consensus-ignition threshold + shared-inhibition WTA do. Read-only; never mutates the composer or the answer.
 
     READ-ONLY CONTRACT: the corroboration/reverse-VERIFY organ reads (`query_patient`/`query_agent`) each OVERWRITE
     the composer's read-only `last_trace` (the per-turn "brain activity" the handler surfaces). The bus is a
-    combination read-out, not a new query, so it snapshots + restores `last_trace` around its reads: the surfaced
-    activity stays the gate's FORWARD-recall trace (byte-identical to the host path), never the bus's last probe."""
+    combination read-out, not a new query, so it snapshots `last_trace` around its reads.
+      * `surface_forward_trace=False` (default, the SHADOW / flip re-author) -> RESTORE the pre-bus `last_trace`: the
+        surfaced activity stays whatever the caller's forward recall already set, never the bus's last probe.
+      * `surface_forward_trace=True` (the SCAFFOLD-RETIREMENT `gate_via_bus` on the covered class, where the host
+        `what_does` no longer runs) -> leave `last_trace` = ORGAN A's forward-recall trace (the bus's OWN forward read,
+        which IS `composer.query_patient(agent, action)` == what the host `what_does` would have surfaced). The
+        reverse-binding probe never surfaces. This keeps the covered-class activity BYTE-IDENTICAL to the host path."""
     _has_trace = hasattr(composer, "last_trace")
     _saved_trace = getattr(composer, "last_trace", None) if _has_trace else None
+    info = None
     try:
-        return _bus_combine_inner(composer, agent, action, all_concepts, seed=seed, lesion=lesion, d_sub=d_sub)
+        info = _bus_combine_inner(composer, agent, action, all_concepts, seed=seed, lesion=lesion, d_sub=d_sub)
+        return info
     finally:
+        _fwd = info.pop("_forward_trace", None) if isinstance(info, dict) else None
         if _has_trace:
             try:
-                composer.last_trace = _saved_trace   # the bus reads must not perturb the surfaced activity
+                # surface organ A's forward-recall trace on the retirement path (== host); else restore the pre-bus trace
+                composer.last_trace = _fwd if surface_forward_trace else _saved_trace
             except Exception:
                 pass
 
 
 def _bus_combine_inner(composer, agent: str, action: str, all_concepts, *, seed: int = 42,
                        lesion: bool = False, d_sub: Optional[float] = None) -> dict:
-    cand_A, candidates = _organ_reads(composer, agent, action)
+    cand_A, candidates, trace_A = _organ_reads(composer, agent, action)
+    # `_forward_trace` is popped by `bus_combine` before returning (never surfaces in the JSON info block); it carries
+    # organ A's forward-recall trace so the retirement path can leave it as the surfaced "brain activity" (== host).
     info = {"organ_reads": list(candidates), "committed": None, "ignited": False, "n_ignited": 0,
-            "lesion": bool(lesion)}
+            "lesion": bool(lesion), "_forward_trace": trace_A}
     if cand_A is None:                                   # primary recall organ miss -> the moat abstains (no routing)
         info["abstain_reason"] = "primary_recall_miss"
         return info
@@ -308,27 +330,116 @@ def bus_authored_svo(chat, question: str, host_svo, *, seed: int = 42, lesion: b
     return bus_svo, info
 
 
+def gate_via_bus(chat, question: str, *, seed: int = 42, lesion: bool = False):
+    """AUTHOR the gate combination with the SUBSTRATE ignition bus WITHOUT ever computing the host `if recalled == p`
+    combination on the covered class — the scaffold-retirement follow-on to `bus_authored_svo` (which computed the host
+    verdict first, then overrode it). Runs `chat.gate_extract` (extraction + acquisition/anaphora/open-ended side
+    effects — all HOST, unchanged), then routes ONLY the covered class through the substrate ignition:
+      * ('done', svo)  -> an OUT-OF-SCOPE class (open-ended HypothesisSVO / acquisition) the host mechanism authored; the
+                          bus does not combine it -> return it unchanged.
+      * ('route', ...) -> the COVERED class: the bus recalls (agent, action) via 3 organ reads + consensus-ignites; the
+                          ignited patient IS the answer, no ignition IS the abstain (the moat). THE HOST RECALL VERDICT
+                          IS NEVER COMPUTED for this class (no `_substrate_recall`, no `_gate_router_combine`). A bus
+                          VETO on an ANAPHORA turn falls through to the host router (an out-of-COVERED-scope residual).
+      * ('decline' / 'router') -> out-of-scope (comprehension-decline / self/identity/short): the HOST router authors
+                          (kept — the honest residual: extraction, side effects, and out-of-scope classes stay host).
+    Returns (bus_svo, info). Read-only; never mutates the composer/answer (the bus organ reads save/restore last_trace).
+    `info['authored_by']` and `info['host_combination_computed']` make the retirement auditable per turn."""
+    mode_tuple = chat.gate_extract(question)
+    mode = mode_tuple[0]
+
+    if mode == 'done':                                       # out-of-scope: open-ended hypothesis / acquisition (host)
+        svo = mode_tuple[1]
+        _l = (list(svo) if svo is not None else None)
+        reason = ("open_ended_generation" if type(svo).__name__ == "HypothesisSVO" else "acquisition_or_abstain")
+        return svo, {"routable": False, "reason": reason, "agrees": None, "authored_by": "host_out_of_scope",
+                     "host_combination_computed": False, "host_svo": _l, "bus_svo": _l}
+
+    if mode == 'route':                                      # the COVERED class -> the SUBSTRATE authors the verdict
+        _, q, agent, action, anaphora_used = mode_tuple
+        composer = getattr(getattr(chat, "inner", None), "composer", None)
+        agents_set, actions_set, all_concepts = _chat_concepts(chat)
+        if composer is None:                                 # defensive: no composer -> degrade to the host router
+            svo = chat._gate_router_combine(q)
+            _l = (list(svo) if svo is not None else None)
+            return svo, {"routable": False, "reason": "no_composer", "agrees": None, "authored_by": "host_router",
+                         "host_combination_computed": True, "host_svo": _l, "bus_svo": _l}
+        # surface_forward_trace=True: the host `what_does` no longer runs on this covered turn, so the bus leaves its
+        # OWN forward-recall trace (organ A) as the surfaced "brain activity" -> byte-identical to the host path.
+        info = bus_combine(composer, agent, action, all_concepts, seed=seed, lesion=lesion, surface_forward_trace=True)
+        committed = info.get("committed")
+        if committed is not None:
+            # THE SUBSTRATE AUTHORS THE COMMIT: the ignited patient IS the answer. Preserve gate()'s anaphora WM write
+            # (a concrete patient that is itself an agent becomes the next-turn pronoun referent) — the ONLY side effect
+            # the covered-class host verdict used to carry, replicated here so the retirement is behaviour-identical.
+            if isinstance(committed, str) and committed in agents_set:
+                try:
+                    chat._note_referent(committed)
+                except Exception:
+                    pass
+            bus_svo = [agent, action, committed]
+            info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": anaphora_used,
+                         "authored_by": "bus", "host_combination_computed": False, "bus_svo": list(bus_svo)})
+            return bus_svo, info
+        # THE SUBSTRATE VETOES (no ignition = the moat). Match gate(): abstain unless anaphora, then the host router try.
+        if not anaphora_used:
+            info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": False,
+                         "authored_by": "bus", "host_combination_computed": False, "bus_svo": None})
+            return None, info
+        svo = chat._gate_router_combine(q)                   # anaphora-abstain fall-through -> host router (out of scope)
+        info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": True,
+                     "authored_by": "bus_veto_then_host_router", "host_combination_computed": True,
+                     "bus_svo": (list(svo) if svo is not None else None)})
+        return svo, info
+
+    if mode == 'decline':                                    # parser declined a factual-shaped Q (comprehension abstain)
+        _, q, anaphora_used = mode_tuple
+        if not anaphora_used:
+            return None, {"routable": False, "reason": "parser_decline_abstain", "agrees": None,
+                          "authored_by": "host_abstain", "host_combination_computed": False,
+                          "host_svo": None, "bus_svo": None}
+        svo = chat._gate_router_combine(q)
+        _l = (list(svo) if svo is not None else None)
+        return svo, {"routable": False, "reason": "parser_decline_anaphora_router", "agrees": None,
+                     "authored_by": "host_router", "host_combination_computed": True, "host_svo": _l, "bus_svo": _l}
+
+    # mode == 'router': unroutable (self/identity/short) -> the HOST router authors (out of scope, kept)
+    q = mode_tuple[1]
+    svo = chat._gate_router_combine(q)
+    _l = (list(svo) if svo is not None else None)
+    return svo, {"routable": False, "reason": "unroutable_self_or_short", "agrees": None, "authored_by": "host_router",
+                 "host_combination_computed": True, "host_svo": _l, "bus_svo": _l}
+
+
 def install_bus_gate(chat, *, seed: int = 42) -> bool:
-    """Idempotently wrap `chat.gate` so the SUBSTRATE ignition bus authors the organ-combination by DEFAULT. The
-    wrapper runs the original gate (extraction + recall + acquisition/open-ended/anaphora — all unchanged), then
-    re-authors the COMBINATION verdict through the bus. `BRAIN_GNW_BUS_HOST` reverts to the original gate per-call.
-    Preserves the original as `chat._gnw_orig_gate`; stashes this turn's bus info on `chat._last_gnw_bus`. Returns
-    True if it installed (False if already installed). No `sim/` edit; the ChatBrain instance is a host scaffold."""
+    """Idempotently wrap `chat.gate` so the SUBSTRATE ignition bus AUTHORS the organ-combination by DEFAULT and the
+    host `if recalled == p` combination is RETIRED on the covered class (the 2026-08-13 scaffold-retirement). The
+    wrapper runs `chat.gate_extract` (extraction + acquisition/open-ended/anaphora side effects — all unchanged) via
+    `gate_via_bus` and lets the substrate commit/veto WITHOUT ever computing the covered-class host verdict. Contrast
+    the earlier FLIP wrapper, which ran the full `orig_gate` (host combination) and then OVERRODE it — here the host
+    combination is not computed on the covered class at all. Escapes/safety are unchanged:
+      * `BRAIN_GNW_BUS_HOST` truthy -> revert to the ORIGINAL host gate() combination per-call (byte-identical).
+      * on any bus exception -> fall back to the original host gate() (a turn never crashes).
+    Preserves the original as `chat._gnw_orig_gate`; stashes this turn's bus info on `chat._last_gnw_bus`. Returns True
+    if it installed (False if already installed). No `sim/` edit; the ChatBrain instance is a host scaffold."""
     if getattr(chat, "_gnw_bus_installed", False):
         return False
     orig_gate = chat.gate
     chat._gnw_orig_gate = orig_gate
 
     def _bus_gate(question):
-        host_svo = orig_gate(question)                       # extraction + recall + teach/open-ended/anaphora (unchanged)
-        if bus_host_escape():                                # BRAIN_GNW_BUS_HOST -> revert to the host gate() combination
+        if bus_host_escape():                                # BRAIN_GNW_BUS_HOST -> the ORIGINAL host gate() combination
+            host_svo = orig_gate(question)                   # (extraction + recall + `if recalled == p` — pre-flip prod)
             chat._last_gnw_bus = {"routable": False, "reason": "escape_host", "agrees": None,
+                                  "authored_by": "host_escape", "host_combination_computed": True,
                                   "host_svo": (list(host_svo) if host_svo is not None else None)}
             return host_svo
         try:
-            bus_svo, info = bus_authored_svo(chat, question, host_svo, seed=seed, lesion=bus_lesion_on())
+            bus_svo, info = gate_via_bus(chat, question, seed=seed, lesion=bus_lesion_on())
         except Exception as e:                               # never let the bus crash a turn -> host authors, recorded
+            host_svo = orig_gate(question)
             chat._last_gnw_bus = {"routable": False, "reason": f"error:{type(e).__name__}: {e}", "agrees": None,
+                                  "authored_by": "host_fallback_on_error", "host_combination_computed": True,
                                   "host_svo": (list(host_svo) if host_svo is not None else None)}
             return host_svo
         chat._last_gnw_bus = info

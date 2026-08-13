@@ -21,7 +21,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > consolidate each lane as it lands, relaunch waves, never idle. Heartbeat Monitor b0hkwgbna is live.**
 >
 > **LANDED since the wave-3 block below (all on main + both remotes):** GNW keystone 6/6 GO + N-organ BUS 6/6 GO
-> (`ce18d59e`) + SHADOW-WIRED into production default-off (`2cce00cca`, substrate reproduces the host's organ-combination
+> (`ce18d59e`) + SHADOW-INSTALLED on the production chat, default-off (`2cce00cca`, substrate reproduces the host's organ-combination
 > via ignition 9/9, lesion-load-bearing — the first one-substrate step); causal forward-model GROUNDED in the real
 > fact-store 6/6 GO (`fed71f61`, wiring in flight); world-model object-permanence FIRST RUNG (`73b9f6b8`) + VoE-magnitude
 > boundary SURPASSED via divisive PC 6/6 (`d6cf5824`); A1 mouth few-spike READ dissolved via population coding 6/6
@@ -65,8 +65,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   organ-combination on /api/brain-chat — the substrate's consensus-ignition + WTA AUTHORS the combine verdict,
 >   replacing host `if recalled == p`. 22/22 byte-identical across query classes, moat holds, bus-lesion collapses the
 >   DELIVERED answer (attribution to ignition 1.0), escape `BRAIN_GNW_BUS_HOST=1`. §0.2 residual #1 PARTIALLY surpassed.
->   Honest: `scaffold_retired: NO` (host `gate()` runs computed-then-overridden; full retirement = `gate_via_bus`);
->   organs still one-composer reads (heterogeneous non-composer organ = named rung).
+>   Honest: `scaffold_retired: NO` (host `gate()` runs computed-then-overridden; full retirement = `gate_via_bus`) →
+>   **SURPASSED by WAVE-6 [Q] (SCOPED-RETIRED, see below): the covered-class host combination is now NEVER computed**;
+>   organs still one-composer reads (heterogeneous non-composer organ landed in WAVE-5 [N]).
 > - **[E] compose emergence→affect** → **BOUNDARY** (`27ca71e43`): deriving the affect opponent weights from the
 >   self-organized conditioning map (NO Warriner) RETIRES the seed for held-out VALENCE (r=+0.508, no-cond lesion→0);
 >   but graded-STRENGTH underperforms (salience r=+0.10 vs ridge 0.27; discrim 0.75). Soft residual; 3 levers tried;
@@ -99,16 +100,27 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   fire/silent 1.94 < 3.33) → next = SFA / FS-divisive-norm at the coincidence-vs-hold timescale + a supralinear NMDA
 >   coincidence amplifier (divisive-norm ALONE would worsen seed-100).
 >
+> **✅ WAVE-6 [Q] CONSOLIDATED (2026-08-13, on main + both remotes):**
+> - **[Q] GNW-bus SCAFFOLD-RETIREMENT** → **SCOPED-RETIRED** (finding `2026-08-13-gnw-bus-scaffold-retirement-SCOPED.md`):
+>   the flip residual #1 is surpassed. `install_bus_gate` now wraps `chat.gate` with `gate_via_bus`, which runs ONLY the
+>   extraction + side-effect phase (`ChatBrain.gate_extract`) and lets the substrate consensus-ignition commit/veto the
+>   COVERED class WITHOUT EVER COMPUTING the host `if recalled == p` — call-count PROOF: on a covered stored recall the
+>   two host-combination methods (`_substrate_recall`, `_gate_router_combine`) are called 0×, audit `authored_by='bus'`.
+>   Byte-identical 22/22, moat holds, bus-lesion collapses the delivered answer (attr 1.0), ESCAPE `BRAIN_GNW_BUS_HOST=1`
+>   byte-identical through the real handler (a `surface_forward_trace` fix keeps the surfaced activity identical without
+>   the host `what_does`). `gate()` factored byte-identical (production lesion probe intact). **SCOPED, not YES:** the
+>   host combination is KEPT — correctly — for the OUT-OF-SCOPE classes the bus never claimed (self/identity via the host
+>   router; open-ended generation; acquisition; anaphora-abstain fall-through); extraction/comprehension stays host.
+>   `scaffold_retired` for the COVERED-class combination = YES; module-level = SCOPED (out-of-scope classes host-authored).
+>   The named next rungs: a substrate self-model organ for identity, the emerge stream-cortex for open-ended prose.
+>
 > **🔴 LIVE LANES — WAVE-6 (staggered; consolidate each → checkout to main):**
-> - **[Q] (main, serial — ONLY agent on main):** GNW-bus FULL RETIREMENT — a `gate_via_bus` that NEVER computes the host
->   combination (the `scaffold_retired` step for the one-substrate flip). Gate: byte-identical STILL holds with the host
->   combination code removed + escape flag kept; honest boundary if any covered class regresses (do NOT force it).
 > - **[W] (iso):** W4 INFORMATIVENESS-WEIGHTED objective (Frank-Goodman 2012) — replace the intent-averaged M1 with an
 >   informativeness-weighted pragmatic objective so the graded belief's implicature signal is rewarded. Closes [M]-W4.
 > - **[A] (iso):** AFFECT GRADED reinforcement-strength third factor (DA-magnitude / non-saturating associative strength,
 >   Bayer-Glimcher 2005) — retire the Rescorla-Wagner saturation so graded valence-STRENGTH lifts to the ridge. Closes [M]-affect + [E].
 >
-> **SINGLE LITERAL NEXT:** consolidate WAVE-6 [Q]/[W]/[A] as each lands ([Q] owns main); then — prospective
+> **SINGLE LITERAL NEXT:** consolidate WAVE-6 [W]/[A] as each lands; then — prospective
 > SFA+NMDA coincidence amplifier (from [H]), surprise-organ homeostatic-gain (from [N]'s read-precision axis),
 > discrete-emotion production wire (after [A] lifts the graded bars), one-brain MERGE, self-initiation/DMN,
 > interoceptive affect, remaining Tier-2/3. RAG at every wall.

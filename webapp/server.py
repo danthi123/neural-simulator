@@ -3517,16 +3517,19 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _BRAIN_CHATS[cache_key] = chat
     source = getattr(chat, "_brain_chat_source", source)
 
-    # GNW N-ORGAN IGNITION BUS — DEFAULT ORGAN-COMBINATION (T1-1 Phase-B FLIP, 2026-08-13): promote the substrate
-    # ignition bus from SHADOW to the DEFAULT combination path. `install_bus_gate` idempotently wraps `chat.gate` so
-    # the SUBSTRATE (consensus-ignition + WTA) AUTHORS the organ-combination verdict — the ignited patient IS the
-    # answer, no ignition IS the abstain (the moat as a substrate property) — REPLACING the host `if recalled == p`.
-    # Both the single-fact path and the default rich path funnel their direct recall through `chat.gate`, so this
-    # covers the DEFAULT turn. Extraction/comprehension (the (agent, action) parse) is UNCHANGED — only the
-    # COMBINATION moves to the substrate. ESCAPE: `BRAIN_GNW_BUS_HOST=1` reverts to the original host gate() (byte-
-    # identical to pre-flip production). Honest-negative lever: `BRAIN_GNW_BUS_LESION=1` collapses the answer to
-    # abstain (ignition load-bearing). Guarded so a wiring failure can never crash a turn (degrades to host gate()).
-    # Earned on a broad byte-identical panel (_gnw_bus_default_flip_verify). See webapp/gnw_bus_shadow.py.
+    # GNW N-ORGAN IGNITION BUS — DEFAULT ORGAN-COMBINATION (T1-1 Phase-B FLIP -> SCAFFOLD-RETIREMENT, 2026-08-13):
+    # `install_bus_gate` idempotently wraps `chat.gate` so the SUBSTRATE (consensus-ignition + WTA) AUTHORS the organ-
+    # combination verdict — the ignited patient IS the answer, no ignition IS the abstain (the moat as a substrate
+    # property) — REPLACING the host `if recalled == p`. RETIREMENT: the wrapper runs `chat.gate_extract` (extraction +
+    # acquisition/anaphora/open-ended side effects only) and lets `gate_via_bus` commit/veto the COVERED class WITHOUT
+    # EVER COMPUTING the host combination (no `_substrate_recall` / `_gate_router_combine` on a routable factual
+    # recall) — the flip only OVERRODE the host verdict; this never computes it. Both the single-fact path and the
+    # default rich path funnel their direct recall through `chat.gate`, so this covers the DEFAULT turn.
+    # Extraction/comprehension + the OUT-OF-SCOPE classes (self/identity, open-ended, acquisition) stay HOST-authored.
+    # ESCAPE: `BRAIN_GNW_BUS_HOST=1` reverts to the original host gate() (byte-identical to pre-flip production).
+    # Honest-negative lever: `BRAIN_GNW_BUS_LESION=1` collapses the answer to abstain (ignition load-bearing). Guarded
+    # so a wiring failure can never crash a turn (degrades to host gate()). Earned on a broad byte-identical panel +
+    # a call-count retirement proof (_gnw_bus_default_flip_verify, _gnw_bus_scaffold_retire_verify). See gnw_bus_shadow.py.
     try:
         from webapp import gnw_bus_shadow as _gnw_bus_mod
         _gnw_bus_mod.install_bus_gate(chat)

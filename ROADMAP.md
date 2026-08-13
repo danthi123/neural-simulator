@@ -32,9 +32,14 @@ self-organizes from ~10 innate reinforcers instead of a 140-word human lexicon; 
 emotions + reappraisal; a cheaper mouth read (−3–5× spikes). Four hit honest, mapped boundaries. A tempting unifying hypothesis — that one
 "magnitude-preserving read-out" fixes them all — was TESTED and FALSIFIED the same night: the graded read-out closed
 neither, because the two walls only looked alike (the pragmatic one is limited by its scoring objective, the affect one
-by its weight source). Two distinct, separately-grounded next levers, not one shared fix. Honest bar unchanged: `scaffold_retired` still 0
-(the host combination code runs computed-then-overridden), organs are still one-composer reads, mouth still Qwen for open
-prose. The 3 missing north-star properties remain: FLUID mouth · ONE substrate · EMERGENT.
+by its weight source). Two distinct, separately-grounded next levers, not one shared fix. **UPDATE (later 2026-08-13):
+the bus combination is now SCOPED-SCAFFOLD-RETIRED** — a `gate_via_bus` replaced the "run the host combination then
+override it" wrapper, so on a routable factual recall the host `if recalled == p` is NEVER computed (call-count-proven:
+the two host-combination methods run 0×; the substrate ignition authors the verdict), still byte-identical 22/22 with a
+one-flag revert. The host combination is KEPT — correctly — only for the OUT-OF-SCOPE classes the bus never claimed
+(self/identity, open-ended generation, acquisition); so `scaffold_retired` for the covered-class combination = YES,
+module-level = SCOPED, and organs are still one-composer reads, mouth still Qwen for open prose. The 3 missing
+north-star properties remain: FLUID mouth · ONE substrate · EMERGENT.
 
 **2026-08-11 gap#4 ALL-IN — a wall turned out to be a hyperparameter.** The owner
 directed an all-in push on gap#4 (deep credit through a deep spiking net with a
@@ -134,9 +139,12 @@ Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain st
 MASTER ROADMAP `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §0, not this log).** The dated entries below record
 what LANDED — read them as HISTORY. The non-inflated state: ~12 spiking organ reads are default-on in production, but
 against the DONE bar (default-on **+ scaffold-retired**) the true tally is **~ONE integrated spiking family + a bench of
-unwired de-risks** — `scaffold_retired: 0`. Still **CO-RESIDENCY, not one substrate** (routing is host Python; cross-
-synaptic proven for one pathway; the GNW bus is now SHADOW-wired, default-off, reproducing the host's combination — not
-yet replacing it); the **open-prose mouth is still the external Qwen** (its read-regime wall fell to population coding, a
+unwired de-risks** — `scaffold_retired: ~0` (the FIRST scoped exception: the GNW-bus organ-COMBINATION is now
+scaffold-retired for the covered class — see below). Still **CO-RESIDENCY, not one substrate** (routing is host Python;
+cross-synaptic proven for one pathway; the GNW bus is now the DEFAULT combination AND scoped-scaffold-retired — on a
+routable factual recall the substrate ignition authors the verdict and the host `if recalled == p` is never computed,
+though the host combination is still kept for the out-of-scope self/identity / open-ended / acquisition classes); the
+**open-prose mouth is still the external Qwen** (its read-regime wall fell to population coding, a
 de-risked runner, not wired); several organ **internals are still host** (VSA recall algebra + hand-assigned assemblies,
 Warriner-seeded appraisal, the plausibility gate). The three properties still missing — **FLUID open-ended conversation ·
 ONE true substrate · EMERGENT-not-hand-wired** — are the real work ahead. (gap#4 is NOT the crux; the "solved learning
@@ -625,7 +633,10 @@ its controls and lesions, and is tested at the required seed coverage.
    single-compartment packet is therefore retired as a structural engineering
    NO-GO. Candidates 284 and 404 remain closed, and the heterogeneous 12-cell
    SK cohort remains unavailable. The next build is a source-bound fast-Na/Kv3,
-   soma/proximal-dendrite, local-Cav2.2-SK packet. Its seven-stage architecture-
+   soma/proximal-dendrite, local-Cav2.2-SK packet (a single-neuron BIOPHYSICAL
+   channel/compartment model — NOT the dendritic deep-credit-assignment rule,
+   which is separately tested-and-negative, see
+   `2026-07-22-gap4-real-issue-NOT-dendrites`). Its seven-stage architecture-
    first contract is filed in
    `research/specs/v14_snr_stageB_structural_successor_v2.json`; V1 was
    superseded before execution after an audit found that powered activation
