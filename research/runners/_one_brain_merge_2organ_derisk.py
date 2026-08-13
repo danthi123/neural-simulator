@@ -86,7 +86,8 @@ def build_merged_two_organ(seed, *, n_trained=8, n_novel=4, blk=24, cue_blk=24,
                            cue_to_expected_weight=0.8, asserted_to_surprise_weight=5.0,
                            expected_to_surprise_weight=14.0, gabab_prop=0.22,
                            gabab_tau_decay=150.0, hebbian_learning_rate=0.06,
-                           hebbian_max_weight=45.0, cross_weight=12.0):
+                           hebbian_max_weight=45.0, cross_weight=12.0,
+                           per_region_thresh=True):
     """ONE SimulationBridge holding BOTH organs (suffix _A = surprise, _B = recall) + the cross-organ
     synapse surprise_A -> cueB. Config is byte-identical to build_expectation_circuit (so each organ's
     slice matches its standalone build); only the region/pathway SETS are the union of the two organs."""
@@ -98,6 +99,12 @@ def build_merged_two_organ(seed, *, n_trained=8, n_novel=4, blk=24, cue_blk=24,
     n_concepts = n_trained + n_novel
     cfg = CoreSimConfig()
     cfg.seed = int(seed); cfg.heterogeneity_seed = int(seed); cfg.ou_seed = int(seed)
+    # PER-REGION threshold heterogeneity (the merge-closing fix): each region's
+    # firing-threshold slice is drawn from a name-keyed substream, so organ B (the
+    # SECOND organ in the merged pool) gets the SAME seeded thresholds it would get
+    # standalone -- byte-identity is invariant to co-residents. Default ON here;
+    # --legacy-global-thresh reproduces the 0/6 BOUNDARY (single global stream).
+    cfg.per_region_threshold_heterogeneity = bool(per_region_thresh)
     cfg.dt_ms = 1.0
     cfg.num_traits = 1
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -317,25 +324,42 @@ def _maxerr(m, s, keys):
     return e
 
 
-def _train_coresident(seed, n_reps, xp, build_kw, homog=None):
+def _train_coresident(seed, n_reps, xp, build_kw, homog=None, per_region_thresh=True, homeo=True):
     """Two SEPARATE standalone organ bridges (the co-resident baseline). homog!=None -> set every
-    threshold to that constant before training (the cause-isolation control)."""
-    brA, cfgA, metaA = build_expectation_circuit(seed, n_trained=8, n_novel=4, blk=24, cue_blk=24, **build_kw)
+    threshold to that constant before training (the cause-isolation control). homeo=False disables
+    the homeostatic threshold-adaptation companion process (the SECOND, activity-history-coupled
+    divergence source isolated 2026-08-13; static per-region thresholds are still heterogeneous).
+
+    Each standalone organ is built with the SAME region NAMES it carries in the merged bridge
+    (organ A -> `_A`, organ B -> `_B`), so with per-region threshold seeding ON a region's
+    name-keyed threshold slice matches its merged counterpart exactly -- the apples-to-apples
+    'this organ, alone vs merged' comparison. (With the legacy global stream the names are inert
+    to the draw, so this rename does not change the BOUNDARY baseline.)"""
+    brA, cfgA, metaA = build_expectation_circuit(seed, n_trained=8, n_novel=4, blk=24, cue_blk=24,
+                                                 region_suffix="_A", per_region_thresh=per_region_thresh,
+                                                 **build_kw)
     brA._blk = 24
-    brB, cfgB, metaB = build_expectation_circuit(seed, n_trained=8, n_novel=4, blk=24, cue_blk=24, **build_kw)
+    brB, cfgB, metaB = build_expectation_circuit(seed, n_trained=8, n_novel=4, blk=24, cue_blk=24,
+                                                 region_suffix="_B", per_region_thresh=per_region_thresh,
+                                                 **build_kw)
     brB._blk = 24
+    for c in (cfgA, cfgB):
+        c.enable_homeostasis = bool(homeo)
     if homog is not None:
         homogenize_thresholds(brA, homog); homogenize_thresholds(brB, homog)
-    idxA_solo = _idx_map(brA, "", xp); idxB_solo = _idx_map(brB, "", xp)
+    idxA_solo = _idx_map(brA, "_A", xp); idxB_solo = _idx_map(brB, "_B", xp)
     train_expectation(brA, cfgA, idxA_solo, metaA, xp, n_reps=n_reps); cfgA.enable_hebbian_learning = False
     train_expectation(brB, cfgB, idxB_solo, metaB, xp, n_reps=n_reps); cfgB.enable_hebbian_learning = False
     return (brA, cfgA, metaA, idxA_solo), (brB, cfgB, metaB, idxB_solo)
 
 
-def _train_merged(seed, cross_weight, n_reps, xp, build_kw, homog=None):
-    """One merged 2-organ bridge; homog!=None -> constant threshold (cause-isolation control)."""
-    merged, cfg_m, meta = build_merged_two_organ(seed, cross_weight=cross_weight, **build_kw)
+def _train_merged(seed, cross_weight, n_reps, xp, build_kw, homog=None, per_region_thresh=True, homeo=True):
+    """One merged 2-organ bridge; homog!=None -> constant threshold (cause-isolation control);
+    homeo=False -> homeostatic threshold adaptation OFF (isolates the companion-process residual)."""
+    merged, cfg_m, meta = build_merged_two_organ(seed, cross_weight=cross_weight,
+                                                 per_region_thresh=per_region_thresh, **build_kw)
     idxA = _idx_map(merged, "_A", xp); idxB = _idx_map(merged, "_B", xp)
+    cfg_m.enable_homeostasis = bool(homeo)
     if homog is not None:
         homogenize_thresholds(merged, homog)
     train_expectation(merged, cfg_m, idxA, meta, xp, n_reps=n_reps)
@@ -360,19 +384,60 @@ def _byte_identity(merged, cfg_m, meta, idxA, idxB, coA, coB, xp):
     return surprise_maxerr, abs(recall_m - recall_s), resA_m, resA_s, recall_m, recall_s
 
 
-def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose=True, **build_kw):
+_INIT_PER_NEURON_ARRAYS = (
+    "cp_neuron_firing_thresholds", "cp_izh_C", "cp_izh_k", "cp_izh_vr", "cp_izh_vt",
+    "cp_izh_vpeak", "cp_izh_a", "cp_izh_b", "cp_izh_c_reset", "cp_izh_d_increment",
+    "cp_membrane_potential_v", "cp_recovery_variable_u",
+)
+
+
+def _init_byte_identity(seed, xp, build_kw, per_region_thresh):
+    """INITIALIZATION byte-identity -- the axis the per-region threshold fix DIRECTLY closes, and
+    the mission's literal framing ('a merged organ's init is invariant to its co-residents').
+    Build the merged 2-organ bridge and each organ STANDALONE (same region names), compare EVERY
+    per-neuron array on each organ's slice BEFORE any training. With the fix ON this is EXACT 0.0
+    for both organs (the second organ no longer lands at a shifted global-RNG stream position);
+    with --legacy-global-thresh cp_neuron_firing_thresholds diverges (the mapped BOUNDARY). This
+    is build-only (cheap) and isolates the fix from the downstream homeostasis/training confounds."""
+    import numpy as np
+    merged, _, _ = build_merged_two_organ(seed, per_region_thresh=per_region_thresh, **build_kw)
+    brA, _, _ = build_expectation_circuit(seed, n_trained=8, n_novel=4, blk=24, cue_blk=24,
+                                          region_suffix="_A", per_region_thresh=per_region_thresh, **build_kw)
+    brB, _, _ = build_expectation_circuit(seed, n_trained=8, n_novel=4, blk=24, cue_blk=24,
+                                          region_suffix="_B", per_region_thresh=per_region_thresh, **build_kw)
+    err = 0.0
+    for suf, solo in (("_A", brA), ("_B", brB)):
+        for r in ("cue", "patient_expected", "patient_asserted", "surprise"):
+            mi = _idx(merged, r + suf); si = _idx(solo, r + suf)
+            for nm in _INIT_PER_NEURON_ARRAYS:
+                am = np.asarray(_host(getattr(merged, nm)))[mi]
+                aso = np.asarray(_host(getattr(solo, nm)))[si]
+                err = max(err, float(np.abs(am - aso).max()))
+    return err
+
+
+def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose=True,
+             per_region_thresh=True, **build_kw):
     from sim.backend import get_backend
     xp, _ = get_backend()
 
-    # ── DETERMINISM: build twice at the same seed, hash the substrate; identical => cfg.seed controls it. ──
-    b1, _, _ = build_merged_two_organ(seed, cross_weight=cross_weight, **build_kw)
-    b2, _, _ = build_merged_two_organ(seed, cross_weight=cross_weight, **build_kw)
+    # ── DETERMINISM: build twice at the same seed, hash the substrate; identical => cfg.seed controls it.
+    #    Includes cp_neuron_firing_thresholds so the NEW per-region draw is verified seed-deterministic. ──
+    b1, _, _ = build_merged_two_organ(seed, cross_weight=cross_weight, per_region_thresh=per_region_thresh, **build_kw)
+    b2, _, _ = build_merged_two_organ(seed, cross_weight=cross_weight, per_region_thresh=per_region_thresh, **build_kw)
     det_ok = (_arr_hash(b1.cp_membrane_potential_v) == _arr_hash(b2.cp_membrane_potential_v)
-              and _arr_hash(b1.cp_connections.tocsr().data) == _arr_hash(b2.cp_connections.tocsr().data))
+              and _arr_hash(b1.cp_connections.tocsr().data) == _arr_hash(b2.cp_connections.tocsr().data)
+              and _arr_hash(b1.cp_neuron_firing_thresholds) == _arr_hash(b2.cp_neuron_firing_thresholds))
+
+    # ── INIT byte-identity (the axis the per-region fix CLOSES): every per-neuron array of each
+    #    organ is identical merged-vs-standalone BEFORE training. Fix ON -> EXACT; legacy -> thresholds diverge. ──
+    init_err = _init_byte_identity(seed, xp, build_kw, per_region_thresh)
+    init_byte_id = bool(init_err <= 1e-6)
 
     # ── PRODUCTION-HETEROGENEOUS config (the real organs). ──
-    coA, coB = _train_coresident(seed, n_reps, xp, build_kw)
-    merged, cfg_m, meta, idxA, idxB = _train_merged(seed, cross_weight, n_reps, xp, build_kw)
+    coA, coB = _train_coresident(seed, n_reps, xp, build_kw, per_region_thresh=per_region_thresh)
+    merged, cfg_m, meta, idxA, idxB = _train_merged(seed, cross_weight, n_reps, xp, build_kw,
+                                                    per_region_thresh=per_region_thresh)
     n_all = int(merged.cp_membrane_potential_v.shape[0])
     n_A = sum(len(_host(idxA[r])) for r in idxA)
     n_B = sum(len(_host(idxB[r])) for r in idxB)
@@ -399,6 +464,18 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
     merged_h, cfgH, metaH, idxA_h, idxB_h = _train_merged(seed, cross_weight, n_reps, xp, build_kw, homog=homog_control)
     surp_err_h, recall_err_h, *_ = _byte_identity(merged_h, cfgH, metaH, idxA_h, idxB_h, coA_h, coB_h, xp)
 
+    # ── SECOND-CAUSE ATTRIBUTION (2026-08-13): with the per-region INIT fix ON, the remaining
+    #    production residual is the HOMEOSTATIC threshold-adaptation companion process (an
+    #    activity-history-coupled intrinsic plasticity), NOT the init RNG. Disabling homeostasis
+    #    (static, still per-region-HETEROGENEOUS thresholds) drives the full trained+read pipeline
+    #    to EXACT byte-identity -- the decisive control that the init fix closes the init-RNG cause
+    #    and homeostasis owns the rest. (Homeostasis is load-bearing for the surprise faculty, so
+    #    this is a cause-isolating control, not the production operating point.) ──
+    coA_n, coB_n = _train_coresident(seed, n_reps, xp, build_kw, per_region_thresh=per_region_thresh, homeo=False)
+    merged_n, cfgN, metaN, idxA_n, idxB_n = _train_merged(seed, cross_weight, n_reps, xp, build_kw,
+                                                          per_region_thresh=per_region_thresh, homeo=False)
+    surp_err_n, recall_err_n, *_ = _byte_identity(merged_n, cfgN, metaN, idxA_n, idxB_n, coA_n, coB_n, xp)
+
     # ATTRIBUTION (tools.lab): whose is the organ-B recall INTERACTION? treatment = intact interaction,
     # control = lesioned (cross zeroed). lesion ~0 -> the interaction is OWNED by the cross-organ synapse,
     # not a fixed input artifact (measuring both arms is not the same as asking whose the difference was).
@@ -411,12 +488,15 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
                         and (cross_frac is None or cross_frac >= 0.8))
     hetero_byte_id = bool(surp_err <= 1e-6 and recall_err <= 1e-6)
     homog_byte_id = bool(surp_err_h <= 1e-6 and recall_err_h <= 1e-6)
+    homeo_off_byte_id = bool(surp_err_n <= 1e-6 and recall_err_n <= 1e-6)
     res = {
         "seed": seed,
         "determinism_ok": bool(det_ok),
         "one_shared_pool": bool(one_pool),
         "n_all_neurons": n_all, "n_A": n_A, "n_B": n_B, "cross_edges_zeroed": int(nz),
-        # (a) PRODUCTION-hetero byte-identity (the characterized bounded delta)
+        # INIT byte-identity (the axis the per-region threshold fix directly closes)
+        "init_maxerr": float(init_err), "init_byte_identical": init_byte_id,
+        # (a) PRODUCTION-hetero byte-identity (homeostasis ON; residual = the companion process)
         "surprise_maxerr_hz": float(surp_err), "recall_maxerr_hz": float(recall_err),
         "surprise_separation_ratio": float(surp_sep),
         "surprise_merged": {k: resA_m[k] for k in ("confirm_hz", "contradict_hz", "novel_hz")},
@@ -425,6 +505,9 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
         # cause-isolation: homogeneous threshold -> EXACT byte-identity
         "homog_surprise_maxerr_hz": float(surp_err_h), "homog_recall_maxerr_hz": float(recall_err_h),
         "homog_byte_identical": homog_byte_id,
+        # second-cause attribution: homeostasis OFF (static per-region-heterogeneous thresholds) -> EXACT
+        "homeo_off_surprise_maxerr_hz": float(surp_err_n), "homeo_off_recall_maxerr_hz": float(recall_err_n),
+        "homeo_off_byte_identical": homeo_off_byte_id,
         # (b) load-bearing cross-organ synapse
         "recall_A_confirm_hz": float(rc_confirm), "recall_A_contra_hz": float(rc_contra),
         "interaction_intact_hz": float(interaction_intact),
@@ -433,14 +516,18 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
         "hetero_byte_identical": hetero_byte_id,
         "cross_load_bearing": load_bearing,
     }
-    # structural GO = one pool + determinism + a load-bearing cross synapse + the merge is byte-clean
-    # under shared per-organ heterogeneity (homog control). Exact byte-identity under PRODUCTION
-    # heterogeneity is the mapped residual (per-organ seeding), not required for the structural GO.
-    res["structural_go"] = bool(one_pool and det_ok and load_bearing and homog_byte_id)
+    # structural GO = one pool + determinism + a load-bearing cross synapse + INIT byte-identity
+    # (each organ's per-neuron init invariant to co-residents -- the per-region fix) + the merge is
+    # byte-clean once the homeostatic companion process is neutralised (homeo-off control). Exact
+    # byte-identity of the fully HOMEOSTATICALLY-ADAPTED production read is bounded by that companion
+    # process (+ a shared-numerical-context FP floor), not the init RNG -- see the finding.
+    res["structural_go"] = bool(one_pool and det_ok and load_bearing and init_byte_id
+                                and homog_byte_id and homeo_off_byte_id)
     if verbose:
         print(f"  [seed {seed}] pool={one_pool}(N={n_all}={n_A}A+{n_B}B) det={det_ok} | "
-              f"HETERO byte-id err surp={surp_err:.2e} recall={recall_err:.2e} (sep={surp_sep:.1f}x) | "
-              f"HOMOG-ctl err surp={surp_err_h:.2e} recall={recall_err_h:.2e} | "
+              f"INIT byte-id err={init_err:.2e}({init_byte_id}) | "
+              f"HOMEO-OFF byte-id surp={surp_err_n:.2e} recall={recall_err_n:.2e}({homeo_off_byte_id}) | "
+              f"PROD(homeo-on) surp={surp_err:.2e} recall={recall_err:.2e} (sep={surp_sep:.1f}x) | "
               f"cross intact={interaction_intact:+.2f} lesion={interaction_lesion:+.2f}Hz | "
               f"struct-GO={res['structural_go']}")
     return res
@@ -452,45 +539,64 @@ def main():
     ap.add_argument("--seeds", type=str, default=None)
     ap.add_argument("--n-reps", type=int, default=22)
     ap.add_argument("--cross-weight", type=float, default=12.0)
+    ap.add_argument("--legacy-global-thresh", action="store_true",
+                    help="Disable the per-region threshold-seeding fix (reproduces the 0/6 BOUNDARY: "
+                         "the single global RNG stream shifts organ B to a divergent stream position).")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
+    per_region_thresh = not args.legacy_global_thresh
     seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
     print("=== ONE-BRAIN MERGE (2 organs: surprise + recall) on ONE shared spiking substrate ===")
-    results = [run_seed(s, n_reps=args.n_reps, cross_weight=args.cross_weight) for s in seeds]
+    print(f"    per-region threshold heterogeneity: {'ON (merge-closing fix)' if per_region_thresh else 'OFF (legacy global stream -> BOUNDARY)'}")
+    results = [run_seed(s, n_reps=args.n_reps, cross_weight=args.cross_weight,
+                        per_region_thresh=per_region_thresh) for s in seeds]
 
     n = len(results)
     n_pool = sum(1 for r in results if r["one_shared_pool"])
     n_det = sum(1 for r in results if r["determinism_ok"])
     n_lb = sum(1 for r in results if r["cross_load_bearing"])
+    n_init = sum(1 for r in results if r["init_byte_identical"])
     n_homog = sum(1 for r in results if r["homog_byte_identical"])
+    n_homeo_off = sum(1 for r in results if r["homeo_off_byte_identical"])
     n_hetero = sum(1 for r in results if r["hetero_byte_identical"])
     n_struct = sum(1 for r in results if r["structural_go"])
     max_recall_err = max(r["recall_maxerr_hz"] for r in results)
     max_surp_err = max(r["surprise_maxerr_hz"] for r in results)
-    # STRUCTURAL GO: the merge is genuine, deterministic, its cross synapse load-bearing, and byte-clean
-    # under shared per-organ heterogeneity. Exact byte-identity under PRODUCTION heterogeneity is the
-    # mapped residual (per-organ seed streams) -> BOUNDARY on that axis.
-    struct = "GO" if ((n >= 6 and n_struct >= 5) or (n < 6 and n_struct == n)) else "BOUNDARY"
-    hetero_exact = "GO" if ((n >= 6 and n_hetero >= 5) or (n < 6 and n_hetero == n)) else "BOUNDARY"
+    max_init_err = max(r["init_maxerr"] for r in results)
+    _gate = lambda k: "GO" if ((n >= 6 and k >= 5) or (n < 6 and k == n)) else "BOUNDARY"
+    # INIT byte-identity is the axis the per-region fix closes (the mission's 'init invariant to
+    # co-residents'). STRUCTURAL GO now also requires it + the homeo-off byte-clean control. Exact
+    # byte-identity of the fully HOMEOSTATICALLY-ADAPTED production read is bounded by the homeostatic
+    # companion process (+ a shared-numerical-context FP floor) -> BOUNDARY on that one axis only.
+    struct = _gate(n_struct)
+    init_exact = _gate(n_init)
+    homeo_off_exact = _gate(n_homeo_off)
+    hetero_exact = _gate(n_hetero)
     print("\n=== VERDICT ===")
     print(f"  one shared neuron pool:                 {n_pool}/{n}")
-    print(f"  determinism (cfg.seed):                 {n_det}/{n}")
+    print(f"  determinism (cfg.seed incl. thresholds):{n_det}/{n}")
     print(f"  cross-organ synapse load-bearing:       {n_lb}/{n}")
-    print(f"  byte-identical under HOMOG threshold:   {n_homog}/{n}  (cause-isolation: threshold RNG is the sole breaker)")
-    print(f"  byte-identical under PRODUCTION hetero: {n_hetero}/{n}  (max err: surprise={max_surp_err:.2e} recall={max_recall_err:.2e} Hz)")
+    print(f"  INIT byte-identity (per-region fix):    {n_init}/{n}  ->  {init_exact}  (per-neuron init invariant to co-residents; max err {max_init_err:.2e}) <- the axis the fix CLOSES")
+    print(f"  byte-identical, HOMEOSTASIS-OFF:        {n_homeo_off}/{n}  ->  {homeo_off_exact}  (static-threshold regime byte-clean; with INIT exact this isolates the production residual to the homeostatic DYNAMICS)")
+    print(f"  byte-identical under HOMOG threshold:   {n_homog}/{n}  (cause-isolation: constant threshold)")
+    print(f"  byte-identical, PRODUCTION (homeo ON):  {n_hetero}/{n}  ->  {hetero_exact}  (residual = homeostatic companion; max err surp={max_surp_err:.2e} recall={max_recall_err:.2e} Hz)")
     print(f"  STRUCTURAL MERGE:                        {n_struct}/{n}  ->  {struct}")
-    print(f"  EXACT byte-identity (production):        {n_hetero}/{n}  ->  {hetero_exact}  (residual: per-organ heterogeneity seeding)")
+    print(f"  --> per-region INIT fix CLOSES the init-RNG divergence ({init_exact}); production homeostatic-adaptation residual is the mapped SECOND cause.")
 
     if args.out:
         os.makedirs(os.path.dirname(args.out), exist_ok=True)
         with open(args.out, "w") as f:
-            json.dump({"mode": "one_brain_merge_2organ", "results": results, "n_seeds": n,
+            json.dump({"mode": "one_brain_merge_2organ",
+                       "per_region_threshold_heterogeneity": per_region_thresh, "results": results, "n_seeds": n,
                        "n_one_shared_pool": n_pool, "n_determinism_ok": n_det,
-                       "n_cross_load_bearing": n_lb, "n_homog_byte_identical": n_homog,
+                       "n_cross_load_bearing": n_lb, "n_init_byte_identical": n_init,
+                       "n_homog_byte_identical": n_homog, "n_homeo_off_byte_identical": n_homeo_off,
                        "n_hetero_byte_identical": n_hetero, "n_structural_go": n_struct,
+                       "max_init_maxerr": max_init_err,
                        "max_recall_maxerr_hz": max_recall_err, "max_surprise_maxerr_hz": max_surp_err,
-                       "structural_verdict": struct, "exact_byteid_verdict": hetero_exact,
+                       "structural_verdict": struct, "init_byteid_verdict": init_exact,
+                       "homeo_off_byteid_verdict": homeo_off_exact, "exact_byteid_verdict": hetero_exact,
                        "cross_weight": args.cross_weight}, f, indent=2)
         print(f"  wrote {args.out}")
 

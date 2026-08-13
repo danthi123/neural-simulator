@@ -123,7 +123,8 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
                               cue_to_expected_weight=0.8, asserted_to_surprise_weight=5.0,
                               expected_to_surprise_weight=14.0, gabab_prop=0.22,
                               gabab_tau_decay=150.0, hebbian_learning_rate=0.06,
-                              hebbian_max_weight=45.0, enable_heterogeneity=False):
+                              hebbian_max_weight=45.0, enable_heterogeneity=False,
+                              region_suffix="", per_region_thresh=False):
     """Build cue -> patient_expected(FS, GABA_A) -> surprise <- patient_asserted(exc).
 
     cue->patient_expected is TOPOGRAPHIC + PLASTIC (Hebbian co-fire strengthens the recall).
@@ -137,8 +138,13 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
     from sim.enums import NeuronModel, NeuronType
 
     n_concepts = n_trained + n_novel
+    sfx = str(region_suffix)  # optional per-organ region-name suffix (default "" -> unchanged)
     cfg = CoreSimConfig()
     cfg.seed = int(seed); cfg.heterogeneity_seed = int(seed); cfg.ou_seed = int(seed)
+    # Region-scoped threshold heterogeneity (opt-in): a region's per-neuron firing
+    # thresholds are drawn from a name-keyed substream, so this organ's slice is
+    # invariant to any co-residents when it is later merged onto a shared pool.
+    cfg.per_region_threshold_heterogeneity = bool(per_region_thresh)
     cfg.dt_ms = 1.0
     cfg.num_traits = 1
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -190,37 +196,37 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
     # produced a WRONG-SIGN (net excitatory) effect here, and MSN-D1's high rheobase left the
     # learned recall near-silent (2 Hz) -> no effective prediction. FS + GABA_A is the choice.
     cfg.brain_regions = [
-        BrainRegion(name="cue", n_neurons=n_trained * cue_blk, exc_fraction=1.0,
+        BrainRegion(name="cue" + sfx, n_neurons=n_trained * cue_blk, exc_fraction=1.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
                     weight_jitter=0.0, plastic_internal=False, izh_neuron_type=RS),
         # The PREDICTION pool (inhibitory FS; delivers the subtractive GABA_A prediction).
-        BrainRegion(name="patient_expected", n_neurons=n_concepts * blk, exc_fraction=0.0,
+        BrainRegion(name="patient_expected" + sfx, n_neurons=n_concepts * blk, exc_fraction=0.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
                     weight_jitter=0.0, plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
                     syn_reversal_potential_i_override=-70.0),
-        BrainRegion(name="patient_asserted", n_neurons=n_concepts * blk, exc_fraction=1.0,
+        BrainRegion(name="patient_asserted" + sfx, n_neurons=n_concepts * blk, exc_fraction=1.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
                     weight_jitter=0.0, plastic_internal=False, izh_neuron_type=RS),
         # The ERROR / SURPRISE unit; its total firing rate IS the surprise signal.
-        BrainRegion(name="surprise", n_neurons=n_concepts * blk, exc_fraction=1.0,
+        BrainRegion(name="surprise" + sfx, n_neurons=n_concepts * blk, exc_fraction=1.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
                     weight_jitter=0.0, plastic_internal=False, izh_neuron_type=RS),
     ]
     cfg.region_pathways = [
         # The LEARNED prediction: cue (state) -> patient_expected. PLASTIC, all-to-all so
         # Hebbian co-fire SELECTS cue_i -> patient_i (others stay ~0).
-        RegionPathway(from_region="cue", to_region="patient_expected",
+        RegionPathway(from_region="cue" + sfx, to_region="patient_expected" + sfx,
                       density=1.0, weight_mean=float(cue_to_expected_weight),
                       weight_jitter=0.0, plastic=True),
         # The asserted feed-forward drive: patient_asserted -> surprise (exc). Built full,
         # masked block-diagonal after build (concept c -> surprise block c).
-        RegionPathway(from_region="patient_asserted", to_region="surprise",
+        RegionPathway(from_region="patient_asserted" + sfx, to_region="surprise" + sfx,
                       density=1.0, weight_mean=float(asserted_to_surprise_weight),
                       weight_jitter=0.0, plastic=False),
         # The subtractive prediction: patient_expected -> surprise (inh, GABA_A). Built full,
         # masked block-diagonal after build.
-        RegionPathway(from_region="patient_expected", to_region="surprise",
+        RegionPathway(from_region="patient_expected" + sfx, to_region="surprise" + sfx,
                       density=1.0, weight_mean=float(expected_to_surprise_weight),
                       weight_jitter=0.0, plastic=False),
     ]
@@ -233,16 +239,16 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
     meta = dict(n_trained=n_trained, n_novel=n_novel, n_concepts=n_concepts, blk=blk,
                 cue_blk=cue_blk, W_exc=float(asserted_to_surprise_weight),
                 W_inh=float(expected_to_surprise_weight))
-    _install_block_diagonal(bridge, "patient_asserted", "surprise", blk,
+    _install_block_diagonal(bridge, "patient_asserted" + sfx, "surprise" + sfx, blk,
                             float(asserted_to_surprise_weight))
-    _install_block_diagonal(bridge, "patient_expected", "surprise", blk,
+    _install_block_diagonal(bridge, "patient_expected" + sfx, "surprise" + sfx, blk,
                             float(expected_to_surprise_weight))
     # cue -> patient_expected is TOPOGRAPHIC (cue block i -> prediction block i) and PLASTIC:
     # the association STRENGTH is learned by Hebbian co-fire (untrained -> no recall), but the
     # WHICH-patient mapping is a topographic prior (selective by construction, sidestepping the
     # separate CA3 pattern-separation / competition problem that a fully-learned ALL-TO-ALL
     # mapping needs — 2026-06-05-D-cue-recall-RESOLVED; that is the characterized next rung).
-    _install_block_diagonal(bridge, "cue", "patient_expected", blk,
+    _install_block_diagonal(bridge, "cue" + sfx, "patient_expected" + sfx, blk,
                             float(cue_to_expected_weight))
     # Snapshot the resting state (v=vr, u=0, all conductances/firing 0) for hard resets between
     # trials — a 20-step settle cannot fully quiesce a 500 Hz FS pool, so residual firing of one

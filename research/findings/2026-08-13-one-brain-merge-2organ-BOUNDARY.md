@@ -1,9 +1,18 @@
 ---
 type: finding
-status: live
+status: superseded
 date: 2026-08-13
 mechanism: one-brain-merge
 ---
+
+> **STATUS 2026-08-13 — SUPERSEDED on the byte-identity axis by
+> [`2026-08-13-one-brain-merge-CLOSED-per-region-threshold.md`](2026-08-13-one-brain-merge-CLOSED-per-region-threshold.md).**
+> The named per-region-RNG `sim/` fix SHIPPED (opt-in `cfg.per_region_threshold_heterogeneity`, default-off
+> byte-identical): INIT byte-identity now **6/6 EXACT** (0/6 → 6/6) and the STRUCTURAL merge holds 6/6 GO. The
+> root-cause below ("SOLE differing array is `cp_neuron_firing_thresholds` from the init RNG") was **INCOMPLETE**:
+> that init cause is CLOSED, but a SECOND, load-bearing cause — homeostatic threshold adaptation coupling each
+> organ's operating point to pool activity history — owns the remaining production trained-read residual. See the
+> CLOSED finding for the full account.
 
 # One-brain MERGE de-risk: TWO organ bridges (surprise + recall) on ONE shared spiking substrate — structural GO, exact byte-identity gated on per-organ heterogeneity seeding (BOUNDARY)
 

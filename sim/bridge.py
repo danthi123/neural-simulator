@@ -2312,6 +2312,36 @@ class SimulationBridge:
                                 cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max,
                                 out=self.cp_neuron_firing_thresholds)
 
+                # PER-REGION threshold heterogeneity (opt-in; DEFAULT OFF -> this
+                # block is SKIPPED, so the global draw above stands byte-identical
+                # and the global RNG has been consumed exactly as before). When ON,
+                # OVERWRITE each brain region's slice with a draw from a
+                # REGION-SCOPED RNG keyed on a stable hash of the region name, so a
+                # region's threshold pattern is invariant to its co-residents / its
+                # position in the shared pool (the one-substrate 2-organ merge seam).
+                # The legacy draw already ran, so (a) global-RNG consumption is
+                # preserved bit-for-bit (any later global draw is unperturbed) and
+                # (b) any neuron NOT owned by a region keeps its legacy value.
+                if (n > 0
+                        and getattr(cfg, "per_region_threshold_heterogeneity", False)
+                        and self.region_manager is not None):
+                    host_thr = np.asarray(
+                        _backend_to_host(self.cp_neuron_firing_thresholds),
+                        dtype=np.float32,
+                    )
+                    self._overwrite_region_scoped_thresholds(
+                        cfg, n, host_thr, thresh_base, thresh_var
+                    )
+                    np.clip(
+                        host_thr,
+                        cfg.homeostasis_threshold_min,
+                        cfg.homeostasis_threshold_max,
+                        out=host_thr,
+                    )
+                    self.cp_neuron_firing_thresholds = cp.asarray(
+                        host_thr, dtype=cp.float32
+                    )
+
                 np_traits_host = _backend_to_host(self.cp_traits)
                 defined_izh2007_types = [
                     ntype for ntype in NeuronType
@@ -3296,6 +3326,57 @@ class SimulationBridge:
                         f"using HH parameter overrides {', '.join(applied)}"
                     )
             # AdEx per-region override likewise deferred.
+
+    # Stride between per-region threshold substreams. A large prime keeps
+    # adjacent regions' seeds far apart (no near-neighbour RNG correlation),
+    # mirroring _HET_PER_PARAM_SEED_STRIDE in _apply_parameter_heterogeneity.
+    _THRESHOLD_REGION_SEED_STRIDE = 1_000_003
+
+    def _overwrite_region_scoped_thresholds(self, cfg, n, host_thresholds,
+                                            thresh_base, thresh_var):
+        """OVERWRITE each brain region's slice of `host_thresholds` with a draw
+        from a REGION-SCOPED RNG (opt-in via cfg.per_region_threshold_heterogeneity).
+
+        The per-neuron firing-threshold heterogeneity is otherwise drawn as ONE
+        `size=n` uniform over the whole pool from the global RNG stream, so an
+        organ's slice depends on the total pool size and its absolute position:
+        merging a second organ onto one substrate shifts that organ to a
+        different (valid but divergent) stream position and it receives a
+        DIFFERENT seeded heterogeneity than it would standalone. Here each region
+        draws from its OWN substream reset to position 0, keyed on a STABLE hash
+        of the region name (zlib.crc32 -- process-independent, unlike the salted
+        builtin `hash`), so a region's threshold pattern is invariant to its
+        co-residents. The caller has already filled `host_thresholds` from the
+        legacy stream, so (a) global-RNG consumption is preserved bit-for-bit and
+        (b) any neuron NOT owned by a region keeps its legacy value.
+
+        Mirrors the per_parameter_heterogeneity_seed machinery: an independent
+        substream per slice, reset to position 0, keyed on a stable index.
+        """
+        import zlib
+        het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        resolved = het_seed if het_seed >= 0 else self.runtime_state.actual_seed_used
+        if resolved is None or resolved < 0:
+            resolved = 0
+        lo = thresh_base - thresh_var
+        hi = thresh_base + thresh_var
+        for region in self.region_manager.regions():
+            indices = self.region_manager.indices(region.name)
+            if not indices:
+                continue
+            idx_arr = np.asarray(sorted(int(i) for i in indices), dtype=np.int64)
+            if idx_arr.size == 0 or int(idx_arr.max()) >= n:
+                continue
+            name_key = int(zlib.crc32(region.name.encode("utf-8"))) & 0xFFFFFFFF
+            region_seed = (
+                int(resolved) + name_key * self._THRESHOLD_REGION_SEED_STRIDE
+            ) & 0xFFFFFFFF
+            region_rng = _backend_neutral_random_state(
+                region_seed, stream_name=f"threshold heterogeneity[{region.name}]"
+            )
+            host_thresholds[idx_arr] = region_rng.uniform(
+                lo, hi, idx_arr.size
+            ).astype(np.float32)
 
     def _apply_parameter_heterogeneity(self, cfg, n, *, backend_neutral=False):
         """Applies parameter heterogeneity by drawing per-neuron values from distributions.

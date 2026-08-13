@@ -200,6 +200,17 @@ class CoreSimConfig:
     # pre-existing neurons' values byte-identical -> the append-LAST seam is
     # invariant (arguably more correct: each param from an independent substream).
     per_parameter_heterogeneity_seed: bool = False
+    # Draw each brain region's per-neuron firing-threshold heterogeneity slice
+    # (cp_neuron_firing_thresholds) from a REGION-SCOPED RNG keyed on a stable
+    # hash of the region name, instead of the single global RNG stream indexed
+    # by absolute pool position. DEFAULT-OFF preserves the legacy global draw
+    # bit-for-bit (the region-scoped overwrite block is skipped entirely). When
+    # ON, a region's threshold pattern is invariant to its co-residents / its
+    # position in the shared pool -- so MERGING two organs onto one substrate no
+    # longer shifts the second organ's threshold heterogeneity to a different
+    # (valid but divergent) stream position. Mirrors per_parameter_heterogeneity_seed
+    # (each stream reset to position 0, keyed on a stable per-slice index).
+    per_region_threshold_heterogeneity: bool = False
     # Diagnostic correction: draw every stochastic Izhikevich population field
     # from one host-side NumPy contract before transferring it to the backend.
     # Default-off preserves the established backend-native initialization path.
