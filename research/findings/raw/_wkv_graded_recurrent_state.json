@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "arm": "core_probe",
+      "state_corr": 0.8701,
+      "state_corr_median": 0.8755,
+      "input_lin_corr": 0.8475,
+      "tau_rec_ms": 215.78
+    }
+  ],
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-a90bbcf12f5c5af8a/research/runners/_wkv_graded_recurrent_state_derisk.py",
+    "--probe",
+    "--seeds",
+    "42",
+    "--t-step",
+    "60",
+    "--drive-gain",
+    "30",
+    "--drive-bias",
+    "45",
+    "--syn-w",
+    "1.5",
+    "--ou-std",
+    "70",
+    "--carrier-pop",
+    "24"
+  ]
+}

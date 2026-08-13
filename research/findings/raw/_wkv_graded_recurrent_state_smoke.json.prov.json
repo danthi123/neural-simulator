@@ -1,0 +1,30 @@
+{
+ "run_id": "1786659239-1343623",
+ "runner": "research/runners/_wkv_graded_recurrent_state_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a90bbcf12f5c5af8a/research/runners/_wkv_graded_recurrent_state_derisk.py",
+  "--smoke",
+  "--seeds",
+  "42",
+  "--json",
+  "research/findings/raw/_wkv_graded_recurrent_state_smoke.json"
+ ],
+ "git_sha": "37e7f5206",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T18:13:59",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_graded_recurrent_state_smoke.json"
+}

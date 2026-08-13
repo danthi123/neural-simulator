@@ -1,0 +1,54 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "arm": "graded_recurrent_state",
+      "V": 1000,
+      "D": 128,
+      "F": 256,
+      "t_step": 40,
+      "carrier_pop": 24,
+      "tau_rec_ms": 143.86,
+      "decay_step": 0.9931,
+      "ssm_decay": 0.7573,
+      "drive_gain": 40.0,
+      "drive_bias": 40.0,
+      "syn_w": 2.0,
+      "n_positions": 62,
+      "state_corr": 0.7912,
+      "state_corr_min": 0.7268,
+      "state_corr_memoryless": 0.4458,
+      "input_lin_corr": 0.576,
+      "downstream_argmax_agree": 0.8065,
+      "downstream_argmax_scramble": 0.0806,
+      "downstream_argmax_zeroinput": 0.1,
+      "downstream_argmax_memoryless": 0.1917,
+      "carrier_lesion_move": 4e-05,
+      "deep_n": 10,
+      "deep_argmax_agree_vs_host": 1.0,
+      "deep_nll_sub": 5.5634,
+      "deep_nll_host": 5.4737,
+      "sub_vs_host_deep_nll_gap": 0.0897,
+      "chance_1_over_v": 0.001,
+      "checks": {
+        "state_corr_gt_0.70": true,
+        "recurrence_load_bearing": true,
+        "downstream_reproduces_host": true,
+        "downstream_above_zeroinput": true,
+        "downstream_above_scramble": true,
+        "deep_reproduces_host": true,
+        "carriers_load_bearing": true
+      },
+      "GO": true,
+      "secs": 27.0
+    }
+  ],
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-a90bbcf12f5c5af8a/research/runners/_wkv_graded_recurrent_state_derisk.py",
+    "--smoke",
+    "--seeds",
+    "42",
+    "--json",
+    "research/findings/raw/_wkv_graded_recurrent_state_smoke.json"
+  ]
+}
