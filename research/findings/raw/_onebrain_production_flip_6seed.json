@@ -1,0 +1,1142 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "one_pool": 6,
+  "byte_id_merge_vs_coresident": 6,
+  "answer_classes_preserved_vs_today": 6,
+  "residual_surp_hz_max": 1.1574074074074074,
+  "residual_wm_margin_max": 129.16666666666669,
+  "flip_go": 6,
+  "n": 6,
+  "rows": [
+    {
+      "seed": 42,
+      "one_pool": true,
+      "n_pool": 1584,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_surp_delta": 0.0,
+      "byte_id_wm_delta": 0.0,
+      "answer_classes_preserved_vs_today": true,
+      "surp_class_ok": true,
+      "wm_sign_ok": true,
+      "wm_surp_class_ok": true,
+      "residual_surp_hz_max": 0.6365740740740744,
+      "residual_wm_margin_max": 44.09722222222217,
+      "flip_go": true,
+      "surp_today": [
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.6134259259259265,
+          true
+        ],
+        [
+          "confirm",
+          0.1736111111111111,
+          false
+        ],
+        [
+          "surprise",
+          4.918981481481482,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.208333333333334,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.439814814814815,
+          true
+        ]
+      ],
+      "surp_merged": [
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          4.976851851851852,
+          true
+        ],
+        [
+          "confirm",
+          0.4050925925925926,
+          false
+        ],
+        [
+          "surprise",
+          5.439814814814815,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.150462962962964,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.266203703703703,
+          true
+        ]
+      ],
+      "wm_today": [
+        [
+          "exp",
+          1,
+          406.59722222222223,
+          446.875,
+          40.27777777777778
+        ],
+        [
+          "exp",
+          -1,
+          -432.2916666666667,
+          12.5,
+          444.7916666666667
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          24.305555555555554,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          49.30555555555556,
+          null,
+          null
+        ]
+      ],
+      "wm_merged": [
+        [
+          "exp",
+          1,
+          425.34722222222223,
+          435.4166666666667,
+          10.069444444444445
+        ],
+        [
+          "exp",
+          -1,
+          -388.1944444444445,
+          30.208333333333336,
+          418.4027777777778
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          44.44444444444444,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          34.72222222222223,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "seed": 43,
+      "one_pool": true,
+      "n_pool": 1584,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_surp_delta": 0.0,
+      "byte_id_wm_delta": 0.0,
+      "answer_classes_preserved_vs_today": true,
+      "surp_class_ok": true,
+      "wm_sign_ok": true,
+      "wm_surp_class_ok": true,
+      "residual_surp_hz_max": 1.0995370370370363,
+      "residual_wm_margin_max": 126.04166666666663,
+      "flip_go": true,
+      "surp_today": [
+        [
+          "confirm",
+          0.23148148148148148,
+          false
+        ],
+        [
+          "surprise",
+          4.398148148148149,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.208333333333334,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.3240740740740735,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.266203703703703,
+          true
+        ]
+      ],
+      "surp_merged": [
+        [
+          "confirm",
+          0.1736111111111111,
+          false
+        ],
+        [
+          "surprise",
+          5.497685185185185,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.671296296296297,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          4.918981481481482,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.729166666666667,
+          true
+        ]
+      ],
+      "wm_today": [
+        [
+          "exp",
+          1,
+          334.0277777777778,
+          334.0277777777778,
+          0.0
+        ],
+        [
+          "exp",
+          -1,
+          -420.8333333333333,
+          15.972222222222223,
+          436.80555555555554
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          46.18055555555556,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          45.48611111111111,
+          null,
+          null
+        ]
+      ],
+      "wm_merged": [
+        [
+          "exp",
+          1,
+          460.06944444444446,
+          460.06944444444446,
+          0.0
+        ],
+        [
+          "exp",
+          -1,
+          -416.31944444444446,
+          28.125,
+          444.44444444444446
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          47.56944444444444,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          48.26388888888889,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "seed": 44,
+      "one_pool": true,
+      "n_pool": 1584,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_surp_delta": 0.0,
+      "byte_id_wm_delta": 0.0,
+      "answer_classes_preserved_vs_today": true,
+      "surp_class_ok": true,
+      "wm_sign_ok": true,
+      "wm_surp_class_ok": true,
+      "residual_surp_hz_max": 0.8101851851851851,
+      "residual_wm_margin_max": 22.22222222222217,
+      "flip_go": true,
+      "surp_today": [
+        [
+          "confirm",
+          0.5208333333333334,
+          false
+        ],
+        [
+          "surprise",
+          5.787037037037037,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          4.976851851851852,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          6.018518518518519,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.0925925925925934,
+          true
+        ]
+      ],
+      "surp_merged": [
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.266203703703703,
+          true
+        ],
+        [
+          "confirm",
+          0.11574074074074074,
+          false
+        ],
+        [
+          "surprise",
+          5.439814814814815,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.208333333333334,
+          true
+        ],
+        [
+          "confirm",
+          0.4050925925925926,
+          false
+        ],
+        [
+          "surprise",
+          5.381944444444445,
+          true
+        ]
+      ],
+      "wm_today": [
+        [
+          "exp",
+          1,
+          378.12500000000006,
+          418.4027777777778,
+          40.27777777777778
+        ],
+        [
+          "exp",
+          -1,
+          -458.68055555555554,
+          0.0,
+          458.68055555555554
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          29.166666666666668,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          40.97222222222223,
+          null,
+          null
+        ]
+      ],
+      "wm_merged": [
+        [
+          "exp",
+          1,
+          394.09722222222223,
+          454.5138888888889,
+          60.41666666666667
+        ],
+        [
+          "exp",
+          -1,
+          -436.45833333333337,
+          31.25,
+          467.70833333333337
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          9.722222222222223,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          27.083333333333336,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "seed": 100,
+      "one_pool": true,
+      "n_pool": 1584,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_surp_delta": 0.0,
+      "byte_id_wm_delta": 0.0,
+      "answer_classes_preserved_vs_today": true,
+      "surp_class_ok": true,
+      "wm_sign_ok": true,
+      "wm_surp_class_ok": true,
+      "residual_surp_hz_max": 0.6944444444444446,
+      "residual_wm_margin_max": 22.22222222222222,
+      "flip_go": true,
+      "surp_today": [
+        [
+          "confirm",
+          0.23148148148148148,
+          false
+        ],
+        [
+          "surprise",
+          5.150462962962964,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.439814814814815,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          6.30787037037037,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          4.976851851851852,
+          true
+        ]
+      ],
+      "surp_merged": [
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.150462962962964,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.671296296296297,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.671296296296297,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.671296296296297,
+          true
+        ]
+      ],
+      "wm_today": [
+        [
+          "exp",
+          1,
+          433.68055555555554,
+          443.75,
+          10.069444444444445
+        ],
+        [
+          "exp",
+          -1,
+          -412.5,
+          0.0,
+          412.5
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          44.44444444444444,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          50.69444444444444,
+          null,
+          null
+        ]
+      ],
+      "wm_merged": [
+        [
+          "exp",
+          1,
+          420.4861111111111,
+          440.625,
+          20.13888888888889
+        ],
+        [
+          "exp",
+          -1,
+          -416.31944444444446,
+          31.25,
+          447.56944444444446
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          34.72222222222223,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          28.47222222222222,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "seed": 101,
+      "one_pool": true,
+      "n_pool": 1584,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_surp_delta": 0.0,
+      "byte_id_wm_delta": 0.0,
+      "answer_classes_preserved_vs_today": true,
+      "surp_class_ok": true,
+      "wm_sign_ok": true,
+      "wm_surp_class_ok": true,
+      "residual_surp_hz_max": 1.1574074074074074,
+      "residual_wm_margin_max": 38.888888888888914,
+      "flip_go": true,
+      "surp_today": [
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.150462962962964,
+          true
+        ],
+        [
+          "confirm",
+          0.11574074074074074,
+          false
+        ],
+        [
+          "surprise",
+          5.729166666666667,
+          true
+        ],
+        [
+          "confirm",
+          0.5208333333333334,
+          false
+        ],
+        [
+          "surprise",
+          4.74537037037037,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          4.224537037037037,
+          true
+        ]
+      ],
+      "surp_merged": [
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          4.8032407407407405,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          4.62962962962963,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.439814814814815,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.381944444444445,
+          true
+        ]
+      ],
+      "wm_today": [
+        [
+          "exp",
+          1,
+          431.94444444444446,
+          431.94444444444446,
+          0.0
+        ],
+        [
+          "exp",
+          -1,
+          -413.8888888888889,
+          40.27777777777778,
+          454.1666666666667
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          50.34722222222223,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          26.041666666666668,
+          null,
+          null
+        ]
+      ],
+      "wm_merged": [
+        [
+          "exp",
+          1,
+          393.05555555555554,
+          423.26388888888886,
+          30.208333333333336
+        ],
+        [
+          "exp",
+          -1,
+          -402.43055555555554,
+          0.0,
+          402.43055555555554
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          32.638888888888886,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          43.40277777777778,
+          null,
+          null
+        ]
+      ]
+    },
+    {
+      "seed": 102,
+      "one_pool": true,
+      "n_pool": 1584,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_surp_delta": 0.0,
+      "byte_id_wm_delta": 0.0,
+      "answer_classes_preserved_vs_today": true,
+      "surp_class_ok": true,
+      "wm_sign_ok": true,
+      "wm_surp_class_ok": true,
+      "residual_surp_hz_max": 0.40509259259259256,
+      "residual_wm_margin_max": 129.16666666666669,
+      "flip_go": true,
+      "surp_today": [
+        [
+          "confirm",
+          0.4050925925925926,
+          false
+        ],
+        [
+          "surprise",
+          5.266203703703703,
+          true
+        ],
+        [
+          "confirm",
+          0.1736111111111111,
+          false
+        ],
+        [
+          "surprise",
+          5.6134259259259265,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.0925925925925934,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.034722222222222,
+          true
+        ]
+      ],
+      "surp_merged": [
+        [
+          "confirm",
+          0.3472222222222222,
+          false
+        ],
+        [
+          "surprise",
+          5.381944444444445,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.381944444444445,
+          true
+        ],
+        [
+          "confirm",
+          0.28935185185185186,
+          false
+        ],
+        [
+          "surprise",
+          5.497685185185185,
+          true
+        ],
+        [
+          "confirm",
+          0.0,
+          false
+        ],
+        [
+          "surprise",
+          5.439814814814815,
+          true
+        ]
+      ],
+      "wm_today": [
+        [
+          "exp",
+          1,
+          454.1666666666667,
+          454.1666666666667,
+          0.0
+        ],
+        [
+          "exp",
+          -1,
+          -325.34722222222223,
+          40.97222222222223,
+          366.31944444444446
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          48.958333333333336,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          17.708333333333336,
+          null,
+          null
+        ]
+      ],
+      "wm_merged": [
+        [
+          "exp",
+          1,
+          430.5555555555556,
+          451.3888888888889,
+          20.833333333333336
+        ],
+        [
+          "exp",
+          -1,
+          -454.5138888888889,
+          2.430555555555556,
+          456.94444444444446
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          34.375,
+          null,
+          null
+        ],
+        [
+          "surp",
+          false,
+          0.0,
+          null,
+          null
+        ],
+        [
+          "surp",
+          true,
+          44.44444444444444,
+          null,
+          null
+        ]
+      ]
+    }
+  ]
+}

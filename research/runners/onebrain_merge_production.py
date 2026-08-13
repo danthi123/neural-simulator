@@ -18,11 +18,13 @@ expectation+Wong-Wang diffbuilder pair in `...-Norgan-GO.md`). Region names are 
 patient_expected / patient_asserted / surprise; worldmodel: state / pred_{pos,neg} / obs_{pos,neg} /
 surprise_{pos,neg}).
 
-GUARDED + DEFAULT-OFF. `BRAIN_ONEBRAIN_MERGE` (or `cfg.merge_production_organs`) default-OFF -> each organ builds
-its OWN bridge exactly as today (production byte-identical, no regression). ON -> both organs share ONE bridge
-built here, with the TWO merge flags ON (`per_region_threshold_heterogeneity=True`,
-`per_region_homeostasis_isolation=True`). No cross-organ synapse is added on this rung (the load-bearing claim is
-byte-identity of the two organs' reads merged-vs-co-resident; a genuine cross synapse is the named next step).
+GUARDED + PRODUCTION-DEFAULT (flipped ON 2026-08-13). `BRAIN_ONEBRAIN_MERGE` default-ON -> both organs share ONE
+bridge built here, with the TWO merge flags ON (`per_region_threshold_heterogeneity=True`,
+`per_region_homeostasis_isolation=True`). `BRAIN_ONEBRAIN_MERGE=0` is the ESCAPE -> each organ builds its OWN
+bridge, byte-identical to the pre-flip production. No cross-organ synapse is added on this rung (the load-bearing
+claim is byte-identity of the two organs' reads merged-vs-co-resident-with-flags + answer-preservation vs the
+pre-flip separate-bridge reads; a genuine cross synapse is the named next step). See `merge_enabled` /
+`_MERGE_DEFAULT_ON` + the flip verify `research/runners/_onebrain_production_flip_verify.py`.
 
 BYTE-IDENTITY, why it is EXACT. With both flags ON, each organ's per-neuron init is name-keyed (invariant to
 co-residents) and idle co-resident neurons are FROZEN by the homeostasis-isolation gate (they do not drift while
@@ -54,12 +56,24 @@ _SURPRISE_KW = dict(n_trained=8, n_novel=4, blk=24, cue_blk=24, cue_to_expected_
 _WORLDMODEL_KW = dict(n_states=6)
 
 
+# PRODUCTION DEFAULT (flipped ON 2026-08-13): the surprise + world-model production organs build on ONE shared
+# `SimulationBridge` (one `cp_membrane_potential_v`) by default. This is byte-identical to the co-resident-WITH-
+# merge-flags baseline (rung-1, 6/6 GO) and ANSWER-PRESERVING vs the pre-flip separate-bridge reads (every
+# `surprised` bool + `pred_sign` identical across a broad panel + 6 seeds; the numeric Hz/margin reads shift — the
+# inherent, characterized cost of a genuine shared pool, since one global RNG cannot reproduce BOTH organs'
+# standalone threshold draws — but NO classification crosses a threshold). `BRAIN_ONEBRAIN_MERGE=0` is the ESCAPE:
+# it reverts to two separate bridges, byte-identical to the pre-flip production. Verify:
+# research/runners/_onebrain_production_flip_verify.py (FLIP-GO 6/6). Ledger row: onebrain-merge-organs.
+_MERGE_DEFAULT_ON = True
+
+
 def merge_enabled() -> bool:
-    """Default-OFF opt-in. `BRAIN_ONEBRAIN_MERGE` in {1,true,yes,on} -> the surprise + worldmodel organs share
-    ONE spiking bridge. Absent / anything else -> each organ builds its own bridge exactly as today."""
+    """Production-DEFAULT (`_MERGE_DEFAULT_ON`). `BRAIN_ONEBRAIN_MERGE` in {1,true,yes,on} -> the surprise +
+    world-model organs share ONE spiking bridge; in {0,false,no,off} -> each builds its own bridge (the escape,
+    byte-identical to the pre-flip production); ABSENT -> the production default (`_MERGE_DEFAULT_ON`, ON)."""
     v = os.environ.get("BRAIN_ONEBRAIN_MERGE")
     if v is None:
-        return False
+        return _MERGE_DEFAULT_ON
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 

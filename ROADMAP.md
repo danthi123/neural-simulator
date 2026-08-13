@@ -133,6 +133,16 @@ gate holds with the abstain decided on SPIKES (lesion the spiking pool → novel
 byte-identical off). So both the plasticity-learned fact's ACQUISITION and its no-confab moat are now the brain's own.
 Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain step — next arc).
 (`2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md`)
+**2026-08-13 — the one-substrate MERGE is now a PRODUCTION DEFAULT (SCOPED, first down-payment on the burn-down above).**
+`BRAIN_ONEBRAIN_MERGE` default flipped ON: the D2 SURPRISE + E2 WORLD-MODEL production organs now build on ONE shared
+spiking bridge (one `cp_membrane_potential_v`, N=1584) in the live `/api/brain-chat` path by default — two bridges became
+one. It is byte-identical to the co-resident-with-flags baseline and ANSWER-PRESERVING vs the pre-flip reads (every
+surprise/expectation classification identical, 6 seeds × broad panel); the internal firing-rate numbers shift slightly
+(the unavoidable cost of a genuinely shared random-number pool — no answer changes). `BRAIN_ONEBRAIN_MERGE=0` reverts to
+separate bridges. SCOPED at 2 of the 5 proven organs: metacog/pragmatic/affect need a different global neuron config
+(parameter heterogeneity on; affect also noise on), which conflicts with this pair's — so they stay on their own bridges
+for now (a second shared pool for them is the named next step). Determinism 9/9, chat smoke unchanged.
+(`2026-08-13-onebrain-production-default-flip-SCOPED.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
 **⚖️ HONEST READING (2026-08-13 — square the celebratory batch log below with reality; the FORWARD plan is the refreshed
