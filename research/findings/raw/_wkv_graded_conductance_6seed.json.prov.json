@@ -1,0 +1,33 @@
+{
+ "run_id": "1786652423-1296545",
+ "runner": "research/runners/_wkv_graded_conductance_read_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-afcda04a6b88b8a96/research/runners/_wkv_graded_conductance_read_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--pops",
+  "4",
+  "--gen-tokens",
+  "30",
+  "--json",
+  "research/findings/raw/_wkv_graded_conductance_6seed.json"
+ ],
+ "git_sha": "d465449bc",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T16:20:23",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_graded_conductance_6seed.json"
+}
