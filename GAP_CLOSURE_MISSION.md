@@ -217,10 +217,20 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > - **3 missing north-star properties:** ONE substrate — big progress (bus flip + scoped retirement); EMERGENT — affect
 >   fully self-organizes; **FLUID mouth — least moved (still Qwen for open prose) = the standing top gap.**
 >
-> **🟢 NEXT (owner's morning / next session):** production-wire the surprise homeostat + prospective Hebbian binding (both
-> de-risked GO); discrete-emotion production wire; **one-brain MERGE** (co-resident bridges → one substrate — the deepest
-> one-substrate step); affect interoceptive/embodiment input; general pragmatic front-end; **the FLUID open-prose mouth**
-> (the least-moved property). RAG at every wall. No live lanes running at checkpoint; safe to `/clear` and resume here.
+> **✅ WAVE-10 also landed (post-checkpoint, on main + both remotes @ `917130c33`):** [SW] production-WIRED the surprise
+> homeostat (`2926d35da`, D2 notice precision → 8/8) + the prospective one-shot Hebbian binding (`f38f678d9`, prospective
+> `scaffold_retired` NO→PARTIAL — the content-binding is now LEARNED at formation). [OM] one-brain MERGE de-risk
+> (`917130c33`): **STRUCTURAL 2-organ merge = GO 6/6** (recall+surprise on ONE shared neuron pool, one step, one seed, a
+> load-bearing cross-organ synapse ≥42× — the first genuine cross-organ substrate interaction past co-residency); the ONLY
+> boundary is exact byte-identity under production heterogeneity (0/6), root-caused to ONE engine line
+> (`sim/bridge.py:2307` global-RNG threshold draw) with a precise named fix (a per-region RNG stream mirroring the existing
+> `per_parameter_heterogeneity_seed` machinery).
+>
+> **🟢 NEXT (owner-steer pending 2026-08-13 ~15:20Z):** **(1) CLOSE the one-substrate merge** — the scoped additive
+> `sim/bridge.py` per-region-RNG edit (flips the merge to byte-exact), then scale 2→N organs [HELD for owner green-light —
+> touches `sim/`]. **(2) The FLUID open-prose mouth** — the least-moved property (still the Qwen scaffold), the biggest
+> north-star gap; deserves a dedicated arc. Also queued: discrete-emotion production wire; affect interoceptive/embodiment
+> input; general pragmatic front-end; surprise online-Vogels plasticity. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
