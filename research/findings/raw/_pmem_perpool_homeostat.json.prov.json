@@ -1,0 +1,27 @@
+{
+ "run_id": "1786613853-1059830",
+ "runner": "research/runners/_pmem_perpool_homeostat_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a0b73bb38f0f6af2e/research/runners/_pmem_perpool_homeostat_derisk.py",
+  "--derisk"
+ ],
+ "git_sha": "5eef5b46c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T05:37:33",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1868.3,
+ "corpus_check_query": "prospective fire_on_cue amplitude spreads across seeds, constant tonic bias proxies per-pool homeostasis",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pmem_perpool_homeostat.json"
+}

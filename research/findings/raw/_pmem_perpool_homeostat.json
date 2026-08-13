@@ -1,0 +1,910 @@
+{
+  "probe": "pmem_perpool_homeostat",
+  "verdict": "BOUNDARY -- the homeostat lifted fire_on_cue 3/6 -> 4/6 and held every silence clause, but 4/6 seeds pass all clauses (need 5). Residual: ['fire_on_cue', 'separation']. per-seed fire ON={42: 0.2694, 43: 0.2561, 44: 0.1567, 100: 0.085, 101: 0.2372, 102: 0.2661}. Honest residual -- name the next single-variable mechanism, do NOT force GO.",
+  "go": false,
+  "task": "prospective-memory fire_on_cue amplitude closure: a per-pool intrinsic-plasticity homeostat (Turrigiano 2011 / Desai 1999) on each rel cue-monitor pool's tonic-inhibition bias, calibrated label-free on the pool's own cue drive to a sub-threshold set-point; normalizes the operating point so the coincidence clears a FIXED FIRE_THR on all seeds without lifting any single-input silence over threshold. ON vs OFF (parent constant bias) internal control. All reads cp_firing_states; NO sim/ edit; reuse-by-import of the parent ProspectiveMemory + frozen gate.",
+  "gate": {
+    "FIRE_THR": 0.2,
+    "SILENT_MAX": 0.06,
+    "HOLD_FLOOR": 0.05,
+    "LESION_HELD_MAX": 0.02,
+    "SEP_RATIO": 2.5,
+    "GO_MIN_SEEDS_FRAC": 0.8333333333333334
+  },
+  "homeostat": {
+    "r_set": 0.045,
+    "eta": 4000.0,
+    "iters": 15,
+    "window": 6,
+    "bias_min": -4000.0,
+    "bias_max": 0.0
+  },
+  "N_intervening": 5,
+  "n_distractors": 4,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "min_seeds_to_go": 5,
+  "ON": {
+    "n_pass": 4,
+    "per_clause_pass_counts": {
+      "fire_on_cue": 4,
+      "persistence": 6,
+      "no_fire_before": 6,
+      "no_fire_wrongcue": 6,
+      "no_intention_silent": 6,
+      "lesion_holds": 6,
+      "lesion_forgets": 6,
+      "separation": 5
+    },
+    "fire_per_seed": {
+      "42": 0.2694,
+      "43": 0.2561,
+      "44": 0.1567,
+      "100": 0.085,
+      "101": 0.2372,
+      "102": 0.2661
+    },
+    "max_silent_per_seed": {
+      "42": 0.0422,
+      "43": 0.0406,
+      "44": 0.0461,
+      "100": 0.0439,
+      "101": 0.0433,
+      "102": 0.0428
+    },
+    "mean_fire": 0.21175925925925929,
+    "mean_max_silent": 0.04314814814814815
+  },
+  "OFF": {
+    "n_pass": 3,
+    "per_clause_pass_counts": {
+      "fire_on_cue": 3,
+      "persistence": 6,
+      "no_fire_before": 6,
+      "no_fire_wrongcue": 6,
+      "no_intention_silent": 6,
+      "lesion_holds": 6,
+      "lesion_forgets": 6,
+      "separation": 5
+    },
+    "fire_per_seed": {
+      "42": 0.2667,
+      "43": 0.2106,
+      "44": 0.1644,
+      "100": 0.0006,
+      "101": 0.2167,
+      "102": 0.1983
+    },
+    "max_silent_per_seed": {
+      "42": 0.0378,
+      "43": 0.0183,
+      "44": 0.0483,
+      "100": 0.0,
+      "101": 0.0189,
+      "102": 0.0183
+    },
+    "mean_fire": 0.17620370370370367,
+    "mean_max_silent": 0.02361111111111111
+  },
+  "fire_on_cue_OFF_to_ON": [
+    3,
+    4
+  ],
+  "seed100_fire_OFF_to_ON": [
+    0.0006,
+    0.085
+  ],
+  "fire_lift_attributable_to_homeostat": 0.16790555312636668,
+  "silence_regressed": [],
+  "calibrated_state": {
+    "42": {
+      "bias_pA": {
+        "A": -1005.6,
+        "B": -973.3
+      },
+      "cue_alone_after": {
+        "A": {
+          "max_single": 0.045,
+          "cue": 0.045,
+          "held": 0.0308
+        },
+        "B": {
+          "max_single": 0.0433,
+          "cue": 0.0033,
+          "held": 0.0433
+        }
+      }
+    },
+    "43": {
+      "bias_pA": {
+        "A": -761.1,
+        "B": -938.9
+      },
+      "cue_alone_after": {
+        "A": {
+          "max_single": 0.0461,
+          "cue": 0.0461,
+          "held": 0.035
+        },
+        "B": {
+          "max_single": 0.045,
+          "cue": 0.045,
+          "held": 0.0
+        }
+      }
+    },
+    "44": {
+      "bias_pA": {
+        "A": -1116.7,
+        "B": -1416.7
+      },
+      "cue_alone_after": {
+        "A": {
+          "max_single": 0.05,
+          "cue": 0.0,
+          "held": 0.05
+        },
+        "B": {
+          "max_single": 0.045,
+          "cue": 0.0,
+          "held": 0.045
+        }
+      }
+    },
+    "100": {
+      "bias_pA": {
+        "A": -443.3,
+        "B": -245.6
+      },
+      "cue_alone_after": {
+        "A": {
+          "max_single": 0.045,
+          "cue": 0.045,
+          "held": 0.0275
+        },
+        "B": {
+          "max_single": 0.0456,
+          "cue": 0.0456,
+          "held": 0.0075
+        }
+      }
+    },
+    "101": {
+      "bias_pA": {
+        "A": -910.0,
+        "B": -1000.0
+      },
+      "cue_alone_after": {
+        "A": {
+          "max_single": 0.0442,
+          "cue": 0.0067,
+          "held": 0.0442
+        },
+        "B": {
+          "max_single": 0.0425,
+          "cue": 0.0189,
+          "held": 0.0425
+        }
+      }
+    },
+    "102": {
+      "bias_pA": {
+        "A": -723.3,
+        "B": -914.4
+      },
+      "cue_alone_after": {
+        "A": {
+          "max_single": 0.045,
+          "cue": 0.045,
+          "held": 0.0367
+        },
+        "B": {
+          "max_single": 0.045,
+          "cue": 0.045,
+          "held": 0.0108
+        }
+      }
+    }
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "silence held under homeostat: no_fire_before (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f1b44420540>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "silence held under homeostat: no_fire_wrongcue (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f1b44420540>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "silence held under homeostat: no_intention_silent (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f1b44420540>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "silence held under homeostat: lesion_holds (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f1b44420540>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "silence held under homeostat: lesion_forgets (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f1b44420540>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "silence held under homeostat: persistence (per-seed count)",
+      "ok": true,
+      "detail": "measured=6 expect=<function _derisk.<locals>.<lambda> at 0x7f1b44420540>",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "fire_on_cue pass-count: homeostat OFF -> ON",
+      "ok": true,
+      "detail": "before=3 after=4 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "mean correct-cue release: homeostat ON vs OFF",
+      "ok": true,
+      "detail": "treatment=0.211759 control=0.176204 |sep|=0.0355556 > 0.02",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / Hebbian / STP / OU-noise",
+      "why": "clean-hold WM config unchanged; the ONLY added mechanism is the per-pool intrinsic-plasticity set-point on the rel tonic-inhibition bias (Turrigiano 2011 / Desai 1999)"
+    }
+  ],
+  "verdict_status": "NO-GO",
+  "elapsed_seconds": 130.7,
+  "per_seed_ON": [
+    {
+      "seed": 42,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.042222222222222223,
+      "fire_min": 0.26944444444444443,
+      "held_min": 0.34125,
+      "fireA": {
+        "rel_A_on_cueA": 0.3055555555555556,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.34125,
+          0.34125,
+          0.34125,
+          0.34125,
+          0.34125
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0,
+          0.0025,
+          0.03166666666666667,
+          0.02
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.26944444444444443,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.03111111111111111,
+        "rel_B_on_cueB": 0.0011111111111111111
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.03833333333333333
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.33375,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.042222222222222223
+      }
+    },
+    {
+      "seed": 43,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.04055555555555555,
+      "fire_min": 0.2561111111111111,
+      "held_min": 0.325,
+      "fireA": {
+        "rel_A_on_cueA": 0.27111111111111114,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.33375,
+          0.325,
+          0.325,
+          0.325,
+          0.325
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0033333333333333335,
+          0.010833333333333334,
+          0.021666666666666667,
+          0.03
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.2561111111111111,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.02666666666666667,
+        "rel_B_on_cueB": 0.03888888888888889
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.03777777777777778
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.335,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.04055555555555555
+      }
+    },
+    {
+      "seed": 44,
+      "N": 5,
+      "passed": false,
+      "clauses": {
+        "fire_on_cue": false,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.04611111111111111,
+      "fire_min": 0.15666666666666668,
+      "held_min": 0.32625,
+      "fireA": {
+        "rel_A_on_cueA": 0.15666666666666668,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.33,
+          0.32625,
+          0.32625,
+          0.32625,
+          0.32625
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.015,
+          0.025,
+          0.0325,
+          0.035833333333333335
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.23166666666666666,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.04611111111111111,
+        "rel_B_on_cueB": 0.0
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32125,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "N": 5,
+      "passed": false,
+      "clauses": {
+        "fire_on_cue": false,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": false
+      },
+      "max_silent": 0.04388888888888889,
+      "fire_min": 0.085,
+      "held_min": 0.32375,
+      "fireA": {
+        "rel_A_on_cueA": 0.1761111111111111,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.33375,
+          0.33,
+          0.32375,
+          0.32375,
+          0.32375
+        ],
+        "rel_A_before_trace": [
+          0.006666666666666667,
+          0.008333333333333333,
+          0.015833333333333335,
+          0.014166666666666666,
+          0.024166666666666666
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.085,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.018333333333333333,
+        "rel_B_on_cueB": 0.03944444444444444
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.04111111111111111
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.34,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.04388888888888889
+      }
+    },
+    {
+      "seed": 101,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.043333333333333335,
+      "fire_min": 0.23722222222222222,
+      "held_min": 0.34625,
+      "fireA": {
+        "rel_A_on_cueA": 0.23722222222222222,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3475,
+          0.34625,
+          0.34625,
+          0.34625,
+          0.34625
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.02666666666666667,
+          0.041666666666666664,
+          0.041666666666666664,
+          0.043333333333333335
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.2761111111111111,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.03944444444444444,
+        "rel_B_on_cueB": 0.012222222222222223
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.002777777777777778
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.3275,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.005555555555555556
+      }
+    },
+    {
+      "seed": 102,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.042777777777777776,
+      "fire_min": 0.26611111111111113,
+      "held_min": 0.3175,
+      "fireA": {
+        "rel_A_on_cueA": 0.26611111111111113,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3175,
+          0.3275,
+          0.3275,
+          0.3275,
+          0.3275
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0016666666666666668,
+          0.014166666666666666,
+          0.021666666666666667,
+          0.030833333333333334
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.2872222222222222,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.02388888888888889,
+        "rel_B_on_cueB": 0.03722222222222222
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.03611111111111111
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.042777777777777776
+      }
+    }
+  ],
+  "per_seed_OFF": [
+    {
+      "seed": 42,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.03777777777777778,
+      "fire_min": 0.26666666666666666,
+      "held_min": 0.34,
+      "fireA": {
+        "rel_A_on_cueA": 0.295,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.34,
+          0.34,
+          0.34,
+          0.34,
+          0.34
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0,
+          0.010833333333333334,
+          0.004166666666666667,
+          0.013333333333333334
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.26666666666666666,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.018333333333333333,
+        "rel_B_on_cueB": 0.0
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.03111111111111111
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.33375,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.03777777777777778
+      }
+    },
+    {
+      "seed": 43,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.018333333333333333,
+      "fire_min": 0.21055555555555555,
+      "held_min": 0.33375,
+      "fireA": {
+        "rel_A_on_cueA": 0.21055555555555555,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.34125,
+          0.33375,
+          0.33375,
+          0.33375,
+          0.33375
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.2238888888888889,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.0,
+        "rel_B_on_cueB": 0.018333333333333333
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0022222222222222222
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.335,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0038888888888888888
+      }
+    },
+    {
+      "seed": 44,
+      "N": 5,
+      "passed": false,
+      "clauses": {
+        "fire_on_cue": false,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.04833333333333333,
+      "fire_min": 0.16444444444444445,
+      "held_min": 0.34,
+      "fireA": {
+        "rel_A_on_cueA": 0.16444444444444445,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.34375,
+          0.34,
+          0.34,
+          0.34,
+          0.34
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.010833333333333334,
+          0.04666666666666667,
+          0.04416666666666667,
+          0.04833333333333333
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.2688888888888889,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.04666666666666667,
+        "rel_B_on_cueB": 0.0
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32125,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "N": 5,
+      "passed": false,
+      "clauses": {
+        "fire_on_cue": false,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": false
+      },
+      "max_silent": 0.0,
+      "fire_min": 0.0005555555555555556,
+      "held_min": 0.34625,
+      "fireA": {
+        "rel_A_on_cueA": 0.05388888888888889,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.35375,
+          0.35375,
+          0.34625,
+          0.34625,
+          0.34625
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.0005555555555555556,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.0,
+        "rel_B_on_cueB": 0.0
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.34,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "N": 5,
+      "passed": true,
+      "clauses": {
+        "fire_on_cue": true,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.01888888888888889,
+      "fire_min": 0.21666666666666667,
+      "held_min": 0.3375,
+      "fireA": {
+        "rel_A_on_cueA": 0.21666666666666667,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.345,
+          0.3375,
+          0.3375,
+          0.3375,
+          0.3375
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0,
+          0.009166666666666667,
+          0.0016666666666666668,
+          0.0175
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.27555555555555555,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.01888888888888889,
+        "rel_B_on_cueB": 0.008333333333333333
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.0
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.3275,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "N": 5,
+      "passed": false,
+      "clauses": {
+        "fire_on_cue": false,
+        "persistence": true,
+        "no_fire_before": true,
+        "no_fire_wrongcue": true,
+        "no_intention_silent": true,
+        "lesion_holds": true,
+        "lesion_forgets": true,
+        "separation": true
+      },
+      "max_silent": 0.018333333333333333,
+      "fire_min": 0.19833333333333333,
+      "held_min": 0.3225,
+      "fireA": {
+        "rel_A_on_cueA": 0.19833333333333333,
+        "rel_B_on_cueA": 0.0,
+        "held_A_trace": [
+          0.3225,
+          0.33,
+          0.33,
+          0.33,
+          0.33
+        ],
+        "rel_A_before_trace": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "fireB": {
+        "rel_B_on_cueB": 0.24833333333333332,
+        "rel_A_on_cueB": 0.0
+      },
+      "wrongcue": {
+        "rel_A_on_cueB": 0.0,
+        "rel_B_on_cueB": 0.018333333333333333
+      },
+      "noint": {
+        "rel_A_on_cueA_no_intention": 0.005
+      },
+      "lesion": {
+        "held_A_pre_lesion": 0.32,
+        "held_A_post_lesion": 0.0,
+        "rel_A_on_cueA_lesioned": 0.007222222222222222
+      }
+    }
+  ],
+  "BIOLOGY": "Intrinsic homeostasis of excitability toward a firing-rate set-point (Turrigiano 2011; Desai, Rutherford & Turrigiano 1999); the excitability substrate is K-channel-set F-I / spike-freq adaptation (Kandel 6e). Realized as a per-pool adaptive tonic-inhibition set-point (the engine carries this natively as homeostasis_target_rate + threshold adaptation, but the default tau~5000-step timescale is too slow to converge in a short trial). A divisive-normalization FS partner (Carandini & Heeger 2012) was considered and rejected: the finding diagnosed a SUBTRACTIVE/threshold deficit, which a set-point shift fixes and gain division cannot."
+}
