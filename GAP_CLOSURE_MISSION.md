@@ -114,16 +114,28 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   `scaffold_retired` for the COVERED-class combination = YES; module-level = SCOPED (out-of-scope classes host-authored).
 >   The named next rungs: a substrate self-model organ for identity, the emerge stream-cortex for open-ended prose.
 >
-> **🔴 LIVE LANES — WAVE-6 (staggered; consolidate each → checkout to main):**
-> - **[W] (iso):** W4 INFORMATIVENESS-WEIGHTED objective (Frank-Goodman 2012) — replace the intent-averaged M1 with an
->   informativeness-weighted pragmatic objective so the graded belief's implicature signal is rewarded. Closes [M]-W4.
-> - **[A] (iso):** AFFECT GRADED reinforcement-strength third factor (DA-magnitude / non-saturating associative strength,
->   Bayer-Glimcher 2005) — retire the Rescorla-Wagner saturation so graded valence-STRENGTH lifts to the ridge. Closes [M]-affect + [E].
+> **✅ WAVE-6 [W]/[A] CONSOLIDATED (2026-08-13, on main + both remotes @ `d7ec3d3b0`):**
+> - **[W] W4 informativeness-objective** → **BOUNDARY** (`ac66102d9`): the RSA-informativeness-weighted objective
+>   (Frank-Goodman, zero-free-parameter, scramble still loses) REMOVED 86.8% of onehot's advantage (M1 −0.082/0/6 →
+>   −0.011/3/6). Residual relocated onto the BELIEF-SIDE: the graded belief's neural landscape OVERSHOOTS the analytic
+>   implicature ~2× (0.40 vs 0.20). Next = belief-magnitude calibration (the last W4 lever; detector→read-out→objective all surpassed).
+> - **[A] affect graded-strength third factor** → **BOUNDARY** (`d7ec3d3b0`): a graded DA-magnitude third factor does
+>   NOT close graded-STRENGTH — and an ORACLE arm (true |Warriner| US-intensity) also ceilings at +0.081, PROVING the
+>   residual is an INFORMATION boundary of the sparse ~10-primary channel, not a third-factor saturation. Sign retirement
+>   holds (r=+0.509). Redirect (not another tweak): a SEPARATE graded AROUSAL/intensity channel (LC-noradrenergic /
+>   interoceptive) — the valence⊥arousal circumplex separation. The affect-strength thread CONVERGES on a new-faculty need.
 >
-> **SINGLE LITERAL NEXT:** consolidate WAVE-6 [W]/[A] as each lands; then — prospective
-> SFA+NMDA coincidence amplifier (from [H]), surprise-organ homeostatic-gain (from [N]'s read-precision axis),
-> discrete-emotion production wire (after [A] lifts the graded bars), one-brain MERGE, self-initiation/DMN,
-> interoceptive affect, remaining Tier-2/3. RAG at every wall.
+> **🔴 LIVE LANES — WAVE-7 (staggered isolated de-risks; close three arcs; consolidate each → checkout to main):**
+> - **[B] (iso):** W4 BELIEF-MAGNITUDE calibration — calibrate the graded belief's neural landscape so its implicature
+>   cell lands on the analytic 0.20 instead of overshooting ~2×; the LAST W4 lever (closes the whole W4 / Task-#12 arc).
+> - **[R] (iso):** AFFECT AROUSAL channel — a SEPARATE graded arousal/intensity read (LC-noradrenergic / interoceptive,
+>   distinct from the valence-sign opponent) carrying the per-concept magnitude the sparse valence channel provably can't.
+> - **[S] (iso):** PROSPECTIVE SFA+NMDA amplifier — spike-frequency-adaptation / FS-divisive-norm at the coincidence-vs-hold
+>   timescale + a supralinear NMDA coincidence amplifier for the seed-100 gain deficit (from [H]); target fire_on_cue 6/6.
+>
+> **SINGLE LITERAL NEXT:** consolidate WAVE-7 [B]/[R]/[S] as each lands; then — surprise-organ homeostatic-gain (from
+> [N]), discrete-emotion production wire, one-brain MERGE (co-resident bridges → one substrate), self-initiation/DMN,
+> remaining Tier-2/3. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
