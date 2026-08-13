@@ -4185,7 +4185,24 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if _cu_suffix:
         answer = answer + _cu_suffix
 
-    return JSONResponse({
+    # GNW N-ORGAN IGNITION BUS (SHADOW, T1-1 Phase-C first wiring, 2026-08-13): when BRAIN_GNW_BUS is on, route the
+    # SAME real organ reads gate() combines (spiking recall + VERIFY re-check + reverse-binding VERIFY) through the
+    # de-risked spiking workspace and RECORD whether the SUBSTRATE's committed decision AGREES with the host's. This
+    # is the one-substrate audit lever T1-1: today the co-resident organs are fused by HOST Python (`if recalled==p`);
+    # the bus proves the substrate can do that combination via consensus-ignition + WTA. ADDITIVE + DEFAULT-OFF: with
+    # the flag OFF this block never runs (no import), the host gate() STILL authors the answer, and the response
+    # carries NO `gnw_bus` key -> byte-identical to today. The bus only RE-DERIVES the host decision (never a new
+    # answer, moat-safe). Guarded so it can never crash a turn (degrades to no gnw_bus block). See
+    # webapp/gnw_bus_shadow.py + research/runners/_gnw_norgan_bus_derisk.py.
+    gnw_bus_info = None
+    if os.environ.get("BRAIN_GNW_BUS", "").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            from webapp import gnw_bus_shadow as _gnw_bus_mod
+            gnw_bus_info = _gnw_bus_mod.shadow_report(chat, msg, gate_svo)
+        except Exception:
+            gnw_bus_info = None
+
+    _resp = {
         "answer": answer,
         "abstained": abstained,
         "recalled_svo": list(gate_svo) if gate_svo is not None else None,
@@ -4226,7 +4243,12 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         "reconsolidation": reconsolidation_info,
         # EPISODIC (Gate-B, D5): null on a non-referential turn (Hook A short-circuits referential turns above).
         "episodic": episodic_info,
-    })
+    }
+    # GNW BUS shadow block: attached ONLY when BRAIN_GNW_BUS is on (so the flag-off response is byte-identical, with
+    # no extra key). Carries the substrate's committed decision + host-vs-bus agreement for this turn.
+    if gnw_bus_info is not None:
+        _resp["gnw_bus"] = gnw_bus_info
+    return JSONResponse(_resp)
 
 
 class BrainChatResetRequest(BaseModel):

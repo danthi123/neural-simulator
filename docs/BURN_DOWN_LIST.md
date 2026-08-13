@@ -350,6 +350,26 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   transition-δ RNN (`multislot_rnn`, rate-learned), the boundary/connective detection + referent/verb parse are host; the
   register is co-resident (rides the one-brain merge, #1). **neural-render PARTIAL** — still not default-on (QUEUED).
 - **F4. Any host-computed reward / value / neuromodulator** on the live turn (audit D2 to confirm none are host-formula).
+- **F5. The co-resident organs are COMBINED by HOST PYTHON, not by the substrate** — `ChatBrain.gate()` (reached from
+  `webapp/server.py::brain_chat`) snapshots a spiking recall + a reverse-binding VERIFY + a router fallback and fuses
+  them with an `if recalled == p`. The organs are neural; their COMBINATION is host `if/else` — the audit's #1
+  structural lever. **Burn-down → the spiking GNW N-organ ignition bus IS the organ-combination.** STATUS: **SHADOW
+  WIRED / default-OFF (first step, 2026-08-13).** The de-risked N-organ bus (`_gnw_norgan_bus_derisk`, 6/6 GO) is now
+  wired into the `brain_chat` single-fact path as an ADDITIVE, DEFAULT-OFF verification/shadow path
+  (`webapp/gnw_bus_shadow.py::shadow_report`, reuse-by-import — NO `sim/` edit). With `BRAIN_GNW_BUS=1` the SUBSTRATE
+  re-derives the host `gate()` combination by routing the SAME real organ reads (recall + VERIFY re-check + reverse-
+  binding VERIFY) through ONE warm spiking workspace: three corroborating subthreshold votes ACCUMULATE + IGNITE the
+  patient slot (a decoy is WTA-suppressed; a recall-miss = no ignition = abstain). Verified numpy-CPU through the REAL
+  production ChatBrain + handler: AGREEMENT 9/9 (5 stored ignite the host's exact patient, 4 abstain withhold — the
+  moat as a substrate property); LESION-load-bearing (assembly self-recurrence zeroed → the bus collapses to abstain
+  while the forward-recall reflex survives); BYTE-IDENTICAL-when-off (real handler carries no `gnw_bus` key + host
+  fields unchanged). This PROVES the substrate can combine the live organs; the host orchestration is NOT removed yet
+  (flip-to-default is gated on the wiring design's §4 criterion). Files: `webapp/gnw_bus_shadow.py`,
+  `webapp/server.py brain_chat`, verify `research/runners/_gnw_bus_shadow_production_verify.py`; design
+  `docs/plans/2026-08-13-gnw-norgan-bus-production-wiring.md`; finding
+  `2026-08-13-gnw-norgan-bus-shadow-wired-into-production-brain-chat.md`. **RESIDUALS**: host `gate()` still authors
+  the answer (shadow only); organ B == organ A's forward recall (distinct consensus = recall + reverse-VERIFY,
+  faithful to gate()); single-fact path only (rich path follow-on); workspace bridge co-resident (rides #1).
 
 ---
 

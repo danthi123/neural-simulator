@@ -1,0 +1,293 @@
+{
+  "runner": "_gnw_bus_shadow_production_verify",
+  "go": true,
+  "status": "GO",
+  "agree_frac": 1.0,
+  "agree_n": 9,
+  "agree_tot": 9,
+  "byte_identical_when_off": true,
+  "lesion": {
+    "fact": [
+      "cat",
+      "eat",
+      "fish"
+    ],
+    "intact_committed": "fish",
+    "lesioned_committed": null,
+    "reflex": "fish",
+    "intact_answers": true,
+    "lesion_collapses": true,
+    "reflex_survives": true,
+    "attribution_to_ignition": 1.0
+  },
+  "direct": {
+    "agree_n": 9,
+    "agree_tot": 9,
+    "stored": [
+      {
+        "q": "what does dog chase?",
+        "host_recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "want": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "bus_committed": "cat",
+        "organ_reads": [
+          "cat",
+          "cat",
+          "cat"
+        ],
+        "agrees": true
+      },
+      {
+        "q": "what does cat eat?",
+        "host_recalled_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "want": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "bus_committed": "fish",
+        "organ_reads": [
+          "fish",
+          "fish",
+          "fish"
+        ],
+        "agrees": true
+      },
+      {
+        "q": "what does brain use?",
+        "host_recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "want": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "bus_committed": "spikes",
+        "organ_reads": [
+          "spikes",
+          "spikes",
+          "spikes"
+        ],
+        "agrees": true
+      },
+      {
+        "q": "what does brain learn?",
+        "host_recalled_svo": [
+          "brain",
+          "learn",
+          "words"
+        ],
+        "want": [
+          "brain",
+          "learn",
+          "words"
+        ],
+        "bus_committed": "words",
+        "organ_reads": [
+          "words",
+          "words",
+          "words"
+        ],
+        "agrees": true
+      },
+      {
+        "q": "what does brain store?",
+        "host_recalled_svo": [
+          "brain",
+          "store",
+          "memory"
+        ],
+        "want": [
+          "brain",
+          "store",
+          "memory"
+        ],
+        "bus_committed": "memory",
+        "organ_reads": [
+          "memory",
+          "memory",
+          "memory"
+        ],
+        "agrees": true
+      }
+    ],
+    "abstain": [
+      {
+        "q": "what does dog eat?",
+        "host_abstained": true,
+        "bus_abstained": true,
+        "organ_reads": [
+          null,
+          null,
+          null
+        ],
+        "agrees": true
+      },
+      {
+        "q": "what does cat chase?",
+        "host_abstained": true,
+        "bus_abstained": true,
+        "organ_reads": [
+          null,
+          null,
+          null
+        ],
+        "agrees": true
+      },
+      {
+        "q": "what does fish fly?",
+        "host_abstained": true,
+        "bus_abstained": true,
+        "organ_reads": [
+          null,
+          null,
+          null
+        ],
+        "agrees": true
+      },
+      {
+        "q": "what does ball roll?",
+        "host_abstained": true,
+        "bus_abstained": true,
+        "organ_reads": [
+          null,
+          null,
+          null
+        ],
+        "agrees": true
+      }
+    ],
+    "lesion": {
+      "fact": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "intact_committed": "fish",
+      "lesioned_committed": null,
+      "reflex": "fish",
+      "intact_answers": true,
+      "lesion_collapses": true,
+      "reflex_survives": true,
+      "attribution_to_ignition": 1.0
+    }
+  },
+  "handler": {
+    "ok": true,
+    "rows": [
+      {
+        "q": "what does dog chase?",
+        "off_has_no_bus_key": true,
+        "on_has_bus_key": true,
+        "host_fields_identical": true,
+        "on_gnw_bus": {
+          "enabled": true,
+          "note": "shadow verification only \u2014 the host gate() authored the answer; the bus RE-DERIVES the combination via spiking ignition and reports agreement (BRAIN-BASED-ONLY audit lever T1-1).",
+          "host_decision": "answer",
+          "host_patient": "cat",
+          "agent": "dog",
+          "action": "chase",
+          "routable": true,
+          "bus_decision": "answer",
+          "committed": "cat",
+          "organ_reads": [
+            "cat",
+            "cat",
+            "cat"
+          ],
+          "n_ignited": 1,
+          "agrees": true
+        }
+      },
+      {
+        "q": "what does fish fly?",
+        "off_has_no_bus_key": true,
+        "on_has_bus_key": true,
+        "host_fields_identical": true,
+        "on_gnw_bus": {
+          "enabled": true,
+          "note": "shadow verification only \u2014 the host gate() authored the answer; the bus RE-DERIVES the combination via spiking ignition and reports agreement (BRAIN-BASED-ONLY audit lever T1-1).",
+          "host_decision": "abstain",
+          "host_patient": null,
+          "agent": "fish",
+          "action": "fly",
+          "routable": true,
+          "bus_decision": "abstain",
+          "committed": null,
+          "organ_reads": [
+            null,
+            null,
+            null
+          ],
+          "n_ignited": 0,
+          "agrees": true
+        }
+      }
+    ]
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "bus-vs-host decision agreement == 1.0",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f8f1413d300>",
+      "note": "the substrate reproduces the host gate() combination on every panel turn (stored + abstain)"
+    },
+    {
+      "kind": "require",
+      "name": "byte-identical-when-off (real brain_chat handler)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "flag OFF -> no gnw_bus key + every host field identical to the flag-ON response"
+    },
+    {
+      "kind": "require",
+      "name": "intact bus answers the stored fact",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion collapses the bus (ignition load-bearing)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "forward-recall reflex survives the lesion (dissociation)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "lesion dissociation (bus decision needs the workspace ignition)",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "heavy Gate-B organs (affect/worldmodel/surprise/metacog/... = 0) in the byte-identical handler check",
+      "why": "disabled ONLY for speed; they run identically on both flag arms, so the comparison is unaffected"
+    }
+  ],
+  "undefined_reasons": []
+}
