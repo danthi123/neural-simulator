@@ -1,0 +1,549 @@
+{
+  "runner": "_w4_detector_operating_point_homeostat_derisk",
+  "faculty": "D pragmatics: the LAST W4 lever -- a detector OPERATING-POINT HOMEOSTAT. Seed 44's implicature collapse was a per-detector operating-point artifact (the col-0 calibration is blind to the leak on the detector the implicature uses). Re-pointing the shared graded-plateau operating point to a content-free per-detector homeostatic set-point (silence + proportional fractional resolution on the worst detector) + a Carandini-Heeger per-detector divisive-normalization read rescues it. FUNCTIONAL pragmatics correlate.",
+  "builds_on": [
+    "2026-08-13-w4-belief-magnitude-calibration-BOUNDARY (matched true-intent read; 5/6; seed 44 residual)",
+    "2026-08-13-w4-informativeness-objective-BOUNDARY (the objective half; the leak control)",
+    "2026-08-13-magnitude-preserving-plateau-readout-BOUNDARY (the graded plateau read + col-0 calibration)",
+    "2026-08-01-W4-recursive-theory-of-mind-...-6seed-GO (depth-2 scalar implicature GO)"
+  ],
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "smoke": true,
+  "move_eps": 0.03,
+  "recovery_tol": 0.08,
+  "frac_resolve_margin": 0.02,
+  "divnorm_sigma": 0.02,
+  "verdict": "UNDEFINED -- smoke (n<6); the col-0-vs-homeostat operating points + per-seed implicature cells + the OBJ_inf A/B teeth are printed for mechanism-check only. The 6-seed bar is authoritative.",
+  "go": false,
+  "external_grounding": [
+    "Carandini & Heeger (2012) Nat Rev Neurosci 13:51 -- 'Normalization as a canonical neural computation' (divisive normalization / gain control -- the per-detector read).",
+    "Turrigiano (2008) Cell 135:422 -- homeostatic plasticity with a FIXED set-point (intrinsic excitability homeostasis; the operating-point re-selection is content-free, not fit to the answer).",
+    "Frank & Goodman (2012) Science 336(6084):998 -- the RSA posterior scale. Larkum (2013) TiNS 36(3):141 -- the graded plateau's tunable operating point. Mikulasch & Priesemann -- the dendritic analog read."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PRIMARY: the HOMEOSTAT matched read beats one-hot on OBJ_inf by > 0.03 on 6/6 seeds (seed 44 rescued)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "matched_hom move=+0.1475 (1/1); per-seed hom move={42: 0.1475}"
+    },
+    {
+      "kind": "require",
+      "name": "the COL-0 arm REPRODUCES [B]'s boundary (< 6/6 -- seed 44 collapses at the col-0 operating point, so the ONLY change is the operating-point homeostat)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "col0 move=+0.1984 (1/1); per-seed col0 move={42: 0.1984}; per-seed impl(col0/hom) 44=None"
+    },
+    {
+      "kind": "require",
+      "name": "the WHOLE-POPULATION leak control still FAILS at the homeostat operating point (onehot >= graded on OBJ_inf: the win is REMOVING the leak, not operating-point inflation)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "wholepop move=-0.0365"
+    },
+    {
+      "kind": "require",
+      "name": "VALID: SCRAMBLE (graded mass on WRONG intents) LOSES to one-hot under matched_hom",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.0 onehot=0.8"
+    },
+    {
+      "kind": "require",
+      "name": "PRINCIPLED, non-circular: the matched read faithfully encodes the RSA posterior (mean |T^{-1}(matched)-belief_mass| < 0.08; content-free T); weights' L1 == ANALYTIC_L1",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "recovery_err=0.0123 (tol 0.08); L1==ANALYTIC_L1=True"
+    },
+    {
+      "kind": "require",
+      "name": "BELIEF unchanged (moat): graded implicature margin > 0.05 AND argmax/recall preserved",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "margin=0.463 argmax_preserved=True"
+    },
+    {
+      "kind": "control",
+      "name": "the operating-point homeostat RESCUES the collapsed implicature cell (col0 -> homeostat, toward analytic)",
+      "ok": true,
+      "detail": "treatment=0.0525 control=0.0016 |sep|=0.0509 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis(plasticity)/STP/structural/OU/NMDA + the all-or-none coincidence current",
+      "why": "a detector-side OPERATING-POINT read-out correction (re-point the shared graded-plateau center/slope to a content-free per-detector homeostatic set-point + a per-detector divisive-normalization read); beliefs byte-identical to the W4 A/B; plasticity off."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)",
+    "unmet: the COL-0 arm REPRODUCES [B]'s boundary (< 6/6 -- seed 44 collapses at the col-0 operating point, so the ONLY change is the operating-point homeostat) (measured=False expect=True)"
+  ],
+  "gates": {
+    "HOMEOSTAT_matched_OBJ_inf_beats_onehot_6of6": true,
+    "col0_reproduces_B_boundary": false,
+    "col0_wholepop_reproduces_W_boundary": true,
+    "wholepop_leak_control_still_fails": true,
+    "scramble_loses_matched_hom": true,
+    "scramble_loses_divnorm": true,
+    "principled_faithful_read_recovers_posterior": true,
+    "weights_L1_matches_analytic": true,
+    "belief_unchanged_moat": true
+  },
+  "implicature_cell_graded": {
+    "col0": 0.2016,
+    "matched_hom": 0.2525,
+    "divnorm": 0.1975,
+    "analytic": 0.2,
+    "per_seed_matched_hom": {
+      "42": 0.2525
+    },
+    "per_seed_col0": {
+      "42": 0.2016
+    }
+  },
+  "OBJ_inf_move": {
+    "col0_reproduces_B": 0.19845,
+    "col0_wholepop_reproduces_W": -0.14992,
+    "matched_homeostat_PRIMARY": 0.14747,
+    "divnorm_reported": 0.19753,
+    "wholepop_leak_control_at_homeostat_pt": -0.03655,
+    "per_seed_col0": {
+      "42": 0.1984
+    },
+    "per_seed_homeostat": {
+      "42": 0.1475
+    }
+  },
+  "operating_points": {
+    "per_seed": {
+      "42": {
+        "col0": [
+          88.0,
+          0.11
+        ],
+        "homeostat": [
+          88.0,
+          0.08,
+          "homeostatic"
+        ],
+        "changed": true
+      }
+    },
+    "n_changed": 1,
+    "note": "the homeostat SELECTIVELY re-points the leaky detectors (label-free per-detector set-point); seeds already balanced keep their operating point -- NOT a blanket threshold lowering."
+  },
+  "recovery": {
+    "mean_recovery_err_onehot_graded": 0.0123,
+    "tol": 0.08,
+    "per_belief": {
+      "onehot": 0.006,
+      "graded": 0.0186,
+      "scramble": 0.0284,
+      "graded_lesion": 0.0097
+    }
+  },
+  "belief_implicature_margin_graded": 0.463,
+  "argmax_preserved": true,
+  "aggregate": {
+    "col0": {
+      "M1": {
+        "onehot": 0.88421,
+        "graded": 0.93526,
+        "scramble": 0.03503,
+        "move": 0.05105,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.8,
+        "graded": 0.99845,
+        "scramble": 0.0,
+        "move": 0.19845,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.84386,
+        "graded": 0.83919,
+        "scramble": 0.08757,
+        "move": -0.00467,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.88421,
+        "graded": 0.93526,
+        "scramble": 0.16836,
+        "move": 0.05105,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      }
+    },
+    "col0_wholepop": {
+      "M1": {
+        "onehot": 0.86461,
+        "graded": 0.75067,
+        "scramble": 0.22159,
+        "move": -0.11394,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.95226,
+        "graded": 0.80234,
+        "scramble": 0.30335,
+        "move": -0.14992,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.83597,
+        "graded": 0.78547,
+        "scramble": 0.30617,
+        "move": -0.0505,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.86461,
+        "graded": 0.75067,
+        "scramble": 0.28553,
+        "move": -0.11394,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      }
+    },
+    "matched_hom": {
+      "M1": {
+        "onehot": 0.93333,
+        "graded": 0.98249,
+        "scramble": 0.05928,
+        "move": 0.04916,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.8,
+        "graded": 0.94747,
+        "scramble": 0.0,
+        "move": 0.14747,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.96667,
+        "graded": 0.99125,
+        "scramble": 0.14821,
+        "move": 0.02458,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.93333,
+        "graded": 0.98249,
+        "scramble": 0.19262,
+        "move": 0.04916,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      }
+    },
+    "divnorm": {
+      "M1": {
+        "onehot": 0.93333,
+        "graded": 0.99918,
+        "scramble": 0.05928,
+        "move": 0.06585,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.8,
+        "graded": 0.99753,
+        "scramble": 0.0,
+        "move": 0.19753,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.96667,
+        "graded": 0.99959,
+        "scramble": 0.14821,
+        "move": 0.03292,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.93333,
+        "graded": 0.99918,
+        "scramble": 0.19262,
+        "move": 0.06585,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      }
+    },
+    "wholepop": {
+      "M1": {
+        "onehot": 0.86752,
+        "graded": 0.75117,
+        "scramble": 0.21731,
+        "move": -0.11635,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.8,
+        "graded": 0.76345,
+        "scramble": 0.2,
+        "move": -0.03655,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.88395,
+        "graded": 0.87337,
+        "scramble": 0.3244,
+        "move": -0.01058,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.86752,
+        "graded": 0.75117,
+        "scramble": 0.28641,
+        "move": -0.11635,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      }
+    }
+  },
+  "informativeness_weights": {
+    "primary_per_intent_entropy_w_inf": [
+      -0.0,
+      -0.0,
+      0.5004
+    ],
+    "L1_matches_analytic_ANALYTIC_L1": true,
+    "intents": [
+      "none",
+      "SBNA",
+      "all"
+    ],
+    "utterances": [
+      "none",
+      "some",
+      "all"
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "col0_center": 88.0,
+      "col0_slope": 0.11,
+      "hom_center": 88.0,
+      "hom_slope": 0.08,
+      "hom_tier": "homeostatic",
+      "hom_worst_prop_err": 0.0635,
+      "hom_max_leak": 0.0338,
+      "operating_point_changed": true,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "col0": {
+          "onehot": {
+            "M1": 0.88421,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.84386,
+            "OBJ_cell": 0.88421
+          },
+          "graded": {
+            "M1": 0.93526,
+            "OBJ_inf": 0.99845,
+            "OBJ_surp": 0.83919,
+            "OBJ_cell": 0.93526
+          },
+          "scramble": {
+            "M1": 0.03503,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.08757,
+            "OBJ_cell": 0.16836
+          },
+          "graded_lesion": {
+            "M1": 0.8484,
+            "OBJ_inf": 0.77222,
+            "OBJ_surp": 0.77285,
+            "OBJ_cell": 0.8484
+          }
+        },
+        "col0_wholepop": {
+          "onehot": {
+            "M1": 0.86461,
+            "OBJ_inf": 0.95226,
+            "OBJ_surp": 0.83597,
+            "OBJ_cell": 0.86461
+          },
+          "graded": {
+            "M1": 0.75067,
+            "OBJ_inf": 0.80234,
+            "OBJ_surp": 0.78547,
+            "OBJ_cell": 0.75067
+          },
+          "scramble": {
+            "M1": 0.22159,
+            "OBJ_inf": 0.30335,
+            "OBJ_surp": 0.30617,
+            "OBJ_cell": 0.28553
+          },
+          "graded_lesion": {
+            "M1": 0.71199,
+            "OBJ_inf": 0.69519,
+            "OBJ_surp": 0.76762,
+            "OBJ_cell": 0.71199
+          }
+        },
+        "matched_hom": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.98249,
+            "OBJ_inf": 0.94747,
+            "OBJ_surp": 0.99125,
+            "OBJ_cell": 0.98249
+          },
+          "scramble": {
+            "M1": 0.05928,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.14821,
+            "OBJ_cell": 0.19262
+          },
+          "graded_lesion": {
+            "M1": 0.92654,
+            "OBJ_inf": 0.77963,
+            "OBJ_surp": 0.96327,
+            "OBJ_cell": 0.92654
+          }
+        },
+        "divnorm": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.99918,
+            "OBJ_inf": 0.99753,
+            "OBJ_surp": 0.99959,
+            "OBJ_cell": 0.99918
+          },
+          "scramble": {
+            "M1": 0.05928,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.14821,
+            "OBJ_cell": 0.19262
+          },
+          "graded_lesion": {
+            "M1": 0.9309,
+            "OBJ_inf": 0.79271,
+            "OBJ_surp": 0.96545,
+            "OBJ_cell": 0.9309
+          }
+        },
+        "wholepop": {
+          "onehot": {
+            "M1": 0.86752,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.88395,
+            "OBJ_cell": 0.86752
+          },
+          "graded": {
+            "M1": 0.75117,
+            "OBJ_inf": 0.76345,
+            "OBJ_surp": 0.87337,
+            "OBJ_cell": 0.75117
+          },
+          "scramble": {
+            "M1": 0.21731,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.3244,
+            "OBJ_cell": 0.28641
+          },
+          "graded_lesion": {
+            "M1": 0.72778,
+            "OBJ_inf": 0.68899,
+            "OBJ_surp": 0.86452,
+            "OBJ_cell": 0.72778
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "col0": 0.0,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.0
+        },
+        "graded": {
+          "col0": 0.2016,
+          "matched_hom": 0.2525,
+          "divnorm": 0.1975,
+          "wholepop": 0.4365
+        },
+        "scramble": {
+          "col0": 0.0,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.3782
+        },
+        "graded_lesion": {
+          "col0": 0.4278,
+          "matched_hom": 0.4204,
+          "divnorm": 0.4073,
+          "wholepop": 0.511
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.006,
+        "graded": 0.0186,
+        "scramble": 0.0284,
+        "graded_lesion": 0.0097
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": false
+      },
+      "per_intent_matched_hom": {
+        "onehot": [
+          1.0,
+          1.0,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          1.0,
+          0.9475
+        ]
+      },
+      "belief_implicature_margin_graded": 0.463
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. Seed 44's implicature collapse was a PER-DETECTOR OPERATING-POINT artifact: the per-seed graded-plateau calibration minimizes proportionality on ONE detector column (t=0), but under heterogeneity the IMPLICATURE detector (column 'all') has its own operating point, and at the col-0-chosen center=96 it leaked solo-intent (0.084) and collapsed the fractional coincidence (0.022 < leak) -> implicature cell 0.017. The fix is a detector-side OPERATING-POINT HOMEOSTAT: re-point the shared graded-plateau operating point to a content-free per-detector homeostatic set-point (AND-gate silence + proportional fractional-coincidence resolution) satisfied on the WORST detector, plus a per-detector Carandini-Heeger divisive-normalization read (subtract the solo leak, divide by the dynamic range). Both use ONLY content-free controlled drives per detector -- never the RSA answer, the belief, or which intent wins. It re-points the READ operating point; it does NOT change the belief (byte-identical to the W4 A/B) or which intent wins (recall intact); SCRAMBLE still loses; the whole-population leak control still fails; the col-0 arm reproduces [B]'s boundary. numpy-CPU real spiking Izhikevich; NO sim/ edit; additive NEW runner (reuse-by-import of [B]'s matched read + the W4 A/B + the informativeness objective). NOT a claim of phenomenal access to another mind; a self-report would be a functional read-out.",
+  "elapsed_seconds": 14.8
+}

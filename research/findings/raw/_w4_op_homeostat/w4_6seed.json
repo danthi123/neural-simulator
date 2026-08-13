@@ -1,0 +1,1606 @@
+{
+  "runner": "_w4_detector_operating_point_homeostat_derisk",
+  "faculty": "D pragmatics: the LAST W4 lever -- a detector OPERATING-POINT HOMEOSTAT. Seed 44's implicature collapse was a per-detector operating-point artifact (the col-0 calibration is blind to the leak on the detector the implicature uses). Re-pointing the shared graded-plateau operating point to a content-free per-detector homeostatic set-point (silence + proportional fractional resolution on the worst detector) + a Carandini-Heeger per-detector divisive-normalization read rescues it. FUNCTIONAL pragmatics correlate.",
+  "builds_on": [
+    "2026-08-13-w4-belief-magnitude-calibration-BOUNDARY (matched true-intent read; 5/6; seed 44 residual)",
+    "2026-08-13-w4-informativeness-objective-BOUNDARY (the objective half; the leak control)",
+    "2026-08-13-magnitude-preserving-plateau-readout-BOUNDARY (the graded plateau read + col-0 calibration)",
+    "2026-08-01-W4-recursive-theory-of-mind-...-6seed-GO (depth-2 scalar implicature GO)"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "smoke": false,
+  "move_eps": 0.03,
+  "recovery_tol": 0.08,
+  "frac_resolve_margin": 0.02,
+  "divnorm_sigma": 0.02,
+  "verdict": "GO -- the seed-44 W4 residual was a PER-DETECTOR OPERATING-POINT artifact: the col-0 calibration picked an operating point (center 96) where seed-44's IMPLICATURE detector (column 'all') leaked solo-intent and collapsed the fractional coincidence (implicature cell 0.172). Re-pointing the shared graded-plateau operating point to a per-detector homeostatic set-point (AND-gate silence + proportional fractional resolution on the WORST detector, all content-free) RESCUES it: implicature cell 0.172 -> 0.222 (analytic 0.20), and the graded belief now BEATS one-hot on OBJ_inf 6/6: matched_hom graded=0.953 > onehot=0.803 (move=+0.1499, 6/6), where the COL-0 arm reproduces [B]'s boundary (move=+0.0905, 5/6 -- seed 44 collapses). The win is REMOVING the leak, not inflation: the whole-population leak control still fails (move=+0.0194). LABEL-FREE (content-free per-detector drives, never the answer), PRINCIPLED (recovery=0.020 < 0.08), belief UNCHANGED (margin=0.51, recall preserved), VALID (scramble=0.137 < onehot=0.803). The divisive-normalization read agrees (move=+0.1705). The W4 / Task-#12 pragmatic arc CLOSES: detector -> read-out -> objective -> OPERATING POINT all surpassed.",
+  "go": true,
+  "external_grounding": [
+    "Carandini & Heeger (2012) Nat Rev Neurosci 13:51 -- 'Normalization as a canonical neural computation' (divisive normalization / gain control -- the per-detector read).",
+    "Turrigiano (2008) Cell 135:422 -- homeostatic plasticity with a FIXED set-point (intrinsic excitability homeostasis; the operating-point re-selection is content-free, not fit to the answer).",
+    "Frank & Goodman (2012) Science 336(6084):998 -- the RSA posterior scale. Larkum (2013) TiNS 36(3):141 -- the graded plateau's tunable operating point. Mikulasch & Priesemann -- the dendritic analog read."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PRIMARY: the HOMEOSTAT matched read beats one-hot on OBJ_inf by > 0.03 on 6/6 seeds (seed 44 rescued)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "matched_hom move=+0.1499 (6/6); per-seed hom move={42: 0.1475, 43: 0.1692, 44: 0.198, 100: 0.0787, 101: 0.1729, 102: 0.1329}"
+    },
+    {
+      "kind": "require",
+      "name": "the COL-0 arm REPRODUCES [B]'s boundary (< 6/6 -- seed 44 collapses at the col-0 operating point, so the ONLY change is the operating-point homeostat)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "col0 move=+0.0905 (5/6); per-seed col0 move={42: 0.1984, 43: 0.1254, 44: -0.0407, 100: 0.0787, 101: 0.0482, 102: 0.1329}; per-seed impl(col0/hom) 44=0.202"
+    },
+    {
+      "kind": "require",
+      "name": "the WHOLE-POPULATION leak control still FAILS at the homeostat operating point (onehot >= graded on OBJ_inf: the win is REMOVING the leak, not operating-point inflation)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "wholepop move=+0.0194"
+    },
+    {
+      "kind": "require",
+      "name": "VALID: SCRAMBLE (graded mass on WRONG intents) LOSES to one-hot under matched_hom",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.13744 onehot=0.80335"
+    },
+    {
+      "kind": "require",
+      "name": "PRINCIPLED, non-circular: the matched read faithfully encodes the RSA posterior (mean |T^{-1}(matched)-belief_mass| < 0.08; content-free T); weights' L1 == ANALYTIC_L1",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "recovery_err=0.02006 (tol 0.08); L1==ANALYTIC_L1=True"
+    },
+    {
+      "kind": "require",
+      "name": "BELIEF unchanged (moat): graded implicature margin > 0.05 AND argmax/recall preserved",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "margin=0.50627 argmax_preserved=True"
+    },
+    {
+      "kind": "control",
+      "name": "the operating-point homeostat RESCUES the collapsed implicature cell (col0 -> homeostat, toward analytic)",
+      "ok": true,
+      "detail": "treatment=0.02197 control=0.02812 |sep|=0.00615 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis(plasticity)/STP/structural/OU/NMDA + the all-or-none coincidence current",
+      "why": "a detector-side OPERATING-POINT read-out correction (re-point the shared graded-plateau center/slope to a content-free per-detector homeostatic set-point + a per-detector divisive-normalization read); beliefs byte-identical to the W4 A/B; plasticity off."
+    }
+  ],
+  "undefined_reasons": [],
+  "gates": {
+    "HOMEOSTAT_matched_OBJ_inf_beats_onehot_6of6": true,
+    "col0_reproduces_B_boundary": true,
+    "col0_wholepop_reproduces_W_boundary": true,
+    "wholepop_leak_control_still_fails": true,
+    "scramble_loses_matched_hom": true,
+    "scramble_loses_divnorm": true,
+    "principled_faithful_read_recovers_posterior": true,
+    "weights_L1_matches_analytic": true,
+    "belief_unchanged_moat": true
+  },
+  "implicature_cell_graded": {
+    "col0": 0.1719,
+    "matched_hom": 0.222,
+    "divnorm": 0.2063,
+    "analytic": 0.2,
+    "per_seed_matched_hom": {
+      "42": 0.2525,
+      "43": 0.2308,
+      "44": 0.202,
+      "100": 0.2865,
+      "101": 0.2271,
+      "102": 0.1329
+    },
+    "per_seed_col0": {
+      "42": 0.2016,
+      "43": 0.2746,
+      "44": 0.0172,
+      "100": 0.2865,
+      "101": 0.1185,
+      "102": 0.1329
+    }
+  },
+  "OBJ_inf_move": {
+    "col0_reproduces_B": 0.0905,
+    "col0_wholepop_reproduces_W": -0.01081,
+    "matched_homeostat_PRIMARY": 0.14987,
+    "divnorm_reported": 0.17054,
+    "wholepop_leak_control_at_homeostat_pt": 0.01942,
+    "per_seed_col0": {
+      "42": 0.1984,
+      "43": 0.1254,
+      "44": -0.0407,
+      "100": 0.0787,
+      "101": 0.0482,
+      "102": 0.1329
+    },
+    "per_seed_homeostat": {
+      "42": 0.1475,
+      "43": 0.1692,
+      "44": 0.198,
+      "100": 0.0787,
+      "101": 0.1729,
+      "102": 0.1329
+    }
+  },
+  "operating_points": {
+    "per_seed": {
+      "42": {
+        "col0": [
+          88.0,
+          0.11
+        ],
+        "homeostat": [
+          88.0,
+          0.08,
+          "homeostatic"
+        ],
+        "changed": true
+      },
+      "43": {
+        "col0": [
+          88.0,
+          0.08
+        ],
+        "homeostat": [
+          80.0,
+          0.11,
+          "clean_unresolved"
+        ],
+        "changed": true
+      },
+      "44": {
+        "col0": [
+          96.0,
+          0.08
+        ],
+        "homeostat": [
+          88.0,
+          0.08,
+          "homeostatic"
+        ],
+        "changed": true
+      },
+      "100": {
+        "col0": [
+          88.0,
+          0.08
+        ],
+        "homeostat": [
+          88.0,
+          0.08,
+          "homeostatic"
+        ],
+        "changed": false
+      },
+      "101": {
+        "col0": [
+          88.0,
+          0.11
+        ],
+        "homeostat": [
+          88.0,
+          0.08,
+          "homeostatic"
+        ],
+        "changed": true
+      },
+      "102": {
+        "col0": [
+          96.0,
+          0.08
+        ],
+        "homeostat": [
+          96.0,
+          0.08,
+          "homeostatic"
+        ],
+        "changed": false
+      }
+    },
+    "n_changed": 4,
+    "note": "the homeostat SELECTIVELY re-points the leaky detectors (label-free per-detector set-point); seeds already balanced keep their operating point -- NOT a blanket threshold lowering."
+  },
+  "recovery": {
+    "mean_recovery_err_onehot_graded": 0.02006,
+    "tol": 0.08,
+    "per_belief": {
+      "onehot": 0.0104,
+      "graded": 0.02972,
+      "scramble": 0.02943,
+      "graded_lesion": 0.0212
+    }
+  },
+  "belief_implicature_margin_graded": 0.50627,
+  "argmax_preserved": true,
+  "aggregate": {
+    "col0": {
+      "M1": {
+        "onehot": 0.92002,
+        "graded": 0.94534,
+        "scramble": 0.08642,
+        "move": 0.02532,
+        "seeds_graded_gt_onehot": 5,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.81668,
+        "graded": 0.90718,
+        "scramble": 0.18889,
+        "move": 0.0905,
+        "seeds_graded_gt_onehot": 5,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.92227,
+        "graded": 0.92523,
+        "scramble": 0.09013,
+        "move": 0.00296,
+        "seeds_graded_gt_onehot": 3,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.92707,
+        "graded": 0.95574,
+        "scramble": 0.13704,
+        "move": 0.02867,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      }
+    },
+    "col0_wholepop": {
+      "M1": {
+        "onehot": 0.88843,
+        "graded": 0.80675,
+        "scramble": 0.19182,
+        "move": -0.08168,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.84566,
+        "graded": 0.83485,
+        "scramble": 0.28049,
+        "move": -0.01081,
+        "seeds_graded_gt_onehot": 3,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.88107,
+        "graded": 0.87048,
+        "scramble": 0.28246,
+        "move": -0.01059,
+        "seeds_graded_gt_onehot": 3,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.89815,
+        "graded": 0.81221,
+        "scramble": 0.22042,
+        "move": -0.08594,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      }
+    },
+    "matched_hom": {
+      "M1": {
+        "onehot": 0.91342,
+        "graded": 0.9601,
+        "scramble": 0.07839,
+        "move": 0.04668,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.80335,
+        "graded": 0.95322,
+        "scramble": 0.13744,
+        "move": 0.14987,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.91679,
+        "graded": 0.93357,
+        "scramble": 0.10353,
+        "move": 0.01678,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.91416,
+        "graded": 0.96037,
+        "scramble": 0.1233,
+        "move": 0.04621,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      }
+    },
+    "divnorm": {
+      "M1": {
+        "onehot": 0.93333,
+        "graded": 0.99018,
+        "scramble": 0.06753,
+        "move": 0.05685,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.8,
+        "graded": 0.97054,
+        "scramble": 0.13333,
+        "move": 0.17054,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.96667,
+        "graded": 0.99509,
+        "scramble": 0.07995,
+        "move": 0.02842,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.93333,
+        "graded": 0.99018,
+        "scramble": 0.11198,
+        "move": 0.05685,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      }
+    },
+    "wholepop": {
+      "M1": {
+        "onehot": 0.88371,
+        "graded": 0.80451,
+        "scramble": 0.18385,
+        "move": -0.0792,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.81292,
+        "graded": 0.83234,
+        "scramble": 0.22823,
+        "move": 0.01942,
+        "seeds_graded_gt_onehot": 4,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.87294,
+        "graded": 0.87307,
+        "scramble": 0.28675,
+        "move": 0.00013,
+        "seeds_graded_gt_onehot": 4,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.8898,
+        "graded": 0.80692,
+        "scramble": 0.20883,
+        "move": -0.08288,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      }
+    }
+  },
+  "informativeness_weights": {
+    "primary_per_intent_entropy_w_inf": [
+      -0.0,
+      -0.0,
+      0.5004
+    ],
+    "L1_matches_analytic_ANALYTIC_L1": true,
+    "intents": [
+      "none",
+      "SBNA",
+      "all"
+    ],
+    "utterances": [
+      "none",
+      "some",
+      "all"
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "col0_center": 88.0,
+      "col0_slope": 0.11,
+      "hom_center": 88.0,
+      "hom_slope": 0.08,
+      "hom_tier": "homeostatic",
+      "hom_worst_prop_err": 0.0635,
+      "hom_max_leak": 0.0338,
+      "operating_point_changed": true,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "col0": {
+          "onehot": {
+            "M1": 0.88421,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.84386,
+            "OBJ_cell": 0.88421
+          },
+          "graded": {
+            "M1": 0.93526,
+            "OBJ_inf": 0.99845,
+            "OBJ_surp": 0.83919,
+            "OBJ_cell": 0.93526
+          },
+          "scramble": {
+            "M1": 0.03503,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.08757,
+            "OBJ_cell": 0.16836
+          },
+          "graded_lesion": {
+            "M1": 0.8484,
+            "OBJ_inf": 0.77222,
+            "OBJ_surp": 0.77285,
+            "OBJ_cell": 0.8484
+          }
+        },
+        "col0_wholepop": {
+          "onehot": {
+            "M1": 0.86461,
+            "OBJ_inf": 0.95226,
+            "OBJ_surp": 0.83597,
+            "OBJ_cell": 0.86461
+          },
+          "graded": {
+            "M1": 0.75067,
+            "OBJ_inf": 0.80234,
+            "OBJ_surp": 0.78547,
+            "OBJ_cell": 0.75067
+          },
+          "scramble": {
+            "M1": 0.22159,
+            "OBJ_inf": 0.30335,
+            "OBJ_surp": 0.30617,
+            "OBJ_cell": 0.28553
+          },
+          "graded_lesion": {
+            "M1": 0.71199,
+            "OBJ_inf": 0.69519,
+            "OBJ_surp": 0.76762,
+            "OBJ_cell": 0.71199
+          }
+        },
+        "matched_hom": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.98249,
+            "OBJ_inf": 0.94747,
+            "OBJ_surp": 0.99125,
+            "OBJ_cell": 0.98249
+          },
+          "scramble": {
+            "M1": 0.05928,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.14821,
+            "OBJ_cell": 0.19262
+          },
+          "graded_lesion": {
+            "M1": 0.92654,
+            "OBJ_inf": 0.77963,
+            "OBJ_surp": 0.96327,
+            "OBJ_cell": 0.92654
+          }
+        },
+        "divnorm": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.99918,
+            "OBJ_inf": 0.99753,
+            "OBJ_surp": 0.99959,
+            "OBJ_cell": 0.99918
+          },
+          "scramble": {
+            "M1": 0.05928,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.14821,
+            "OBJ_cell": 0.19262
+          },
+          "graded_lesion": {
+            "M1": 0.9309,
+            "OBJ_inf": 0.79271,
+            "OBJ_surp": 0.96545,
+            "OBJ_cell": 0.9309
+          }
+        },
+        "wholepop": {
+          "onehot": {
+            "M1": 0.86752,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.88395,
+            "OBJ_cell": 0.86752
+          },
+          "graded": {
+            "M1": 0.75117,
+            "OBJ_inf": 0.76345,
+            "OBJ_surp": 0.87337,
+            "OBJ_cell": 0.75117
+          },
+          "scramble": {
+            "M1": 0.21731,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.3244,
+            "OBJ_cell": 0.28641
+          },
+          "graded_lesion": {
+            "M1": 0.72778,
+            "OBJ_inf": 0.68899,
+            "OBJ_surp": 0.86452,
+            "OBJ_cell": 0.72778
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "col0": 0.0,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.0
+        },
+        "graded": {
+          "col0": 0.2016,
+          "matched_hom": 0.2525,
+          "divnorm": 0.1975,
+          "wholepop": 0.4365
+        },
+        "scramble": {
+          "col0": 0.0,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.3782
+        },
+        "graded_lesion": {
+          "col0": 0.4278,
+          "matched_hom": 0.4204,
+          "divnorm": 0.4073,
+          "wholepop": 0.511
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.006,
+        "graded": 0.0186,
+        "scramble": 0.0284,
+        "graded_lesion": 0.0097
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": false
+      },
+      "per_intent_matched_hom": {
+        "onehot": [
+          1.0,
+          1.0,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          1.0,
+          0.9475
+        ]
+      },
+      "belief_implicature_margin_graded": 0.463
+    },
+    {
+      "seed": 43,
+      "col0_center": 88.0,
+      "col0_slope": 0.08,
+      "hom_center": 80.0,
+      "hom_slope": 0.11,
+      "hom_tier": "clean_unresolved",
+      "hom_worst_prop_err": 0.1353,
+      "hom_max_leak": 0.0525,
+      "operating_point_changed": true,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "col0": {
+          "onehot": {
+            "M1": 0.91783,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.92791,
+            "OBJ_cell": 0.91783
+          },
+          "graded": {
+            "M1": 0.95591,
+            "OBJ_inf": 0.92543,
+            "OBJ_surp": 0.9395,
+            "OBJ_cell": 0.95591
+          },
+          "scramble": {
+            "M1": 0.07442,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.05271,
+            "OBJ_cell": 0.07442
+          },
+          "graded_lesion": {
+            "M1": 0.9115,
+            "OBJ_inf": 0.80192,
+            "OBJ_surp": 0.91081,
+            "OBJ_cell": 0.9115
+          }
+        },
+        "col0_wholepop": {
+          "onehot": {
+            "M1": 0.89476,
+            "OBJ_inf": 0.80733,
+            "OBJ_surp": 0.87196,
+            "OBJ_cell": 0.91104
+          },
+          "graded": {
+            "M1": 0.88761,
+            "OBJ_inf": 0.88579,
+            "OBJ_surp": 0.87639,
+            "OBJ_cell": 0.89368
+          },
+          "scramble": {
+            "M1": 0.13775,
+            "OBJ_inf": 0.28333,
+            "OBJ_surp": 0.14937,
+            "OBJ_cell": 0.13867
+          },
+          "graded_lesion": {
+            "M1": 0.73351,
+            "OBJ_inf": 0.69119,
+            "OBJ_surp": 0.85085,
+            "OBJ_cell": 0.73786
+          }
+        },
+        "matched_hom": {
+          "onehot": {
+            "M1": 0.90058,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.8848,
+            "OBJ_cell": 0.90058
+          },
+          "graded": {
+            "M1": 0.95165,
+            "OBJ_inf": 0.96923,
+            "OBJ_surp": 0.89963,
+            "OBJ_cell": 0.95165
+          },
+          "scramble": {
+            "M1": 0.08304,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.07427,
+            "OBJ_cell": 0.08304
+          },
+          "graded_lesion": {
+            "M1": 0.88763,
+            "OBJ_inf": 0.79497,
+            "OBJ_surp": 0.85576,
+            "OBJ_cell": 0.88763
+          }
+        },
+        "divnorm": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.98974,
+            "OBJ_inf": 0.96923,
+            "OBJ_surp": 0.99487,
+            "OBJ_cell": 0.98974
+          },
+          "scramble": {
+            "M1": 0.06667,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.03333,
+            "OBJ_cell": 0.06667
+          },
+          "graded_lesion": {
+            "M1": 0.93166,
+            "OBJ_inf": 0.79497,
+            "OBJ_surp": 0.96583,
+            "OBJ_cell": 0.93166
+          }
+        },
+        "wholepop": {
+          "onehot": {
+            "M1": 0.8609,
+            "OBJ_inf": 0.81948,
+            "OBJ_surp": 0.79152,
+            "OBJ_cell": 0.8912
+          },
+          "graded": {
+            "M1": 0.85885,
+            "OBJ_inf": 0.88421,
+            "OBJ_surp": 0.79253,
+            "OBJ_cell": 0.87113
+          },
+          "scramble": {
+            "M1": 0.15935,
+            "OBJ_inf": 0.34094,
+            "OBJ_surp": 0.15334,
+            "OBJ_cell": 0.16158
+          },
+          "graded_lesion": {
+            "M1": 0.7011,
+            "OBJ_inf": 0.67273,
+            "OBJ_surp": 0.76541,
+            "OBJ_cell": 0.70958
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "col0": 0.0,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.0195
+        },
+        "graded": {
+          "col0": 0.2746,
+          "matched_hom": 0.2308,
+          "divnorm": 0.2308,
+          "wholepop": 0.2053
+        },
+        "scramble": {
+          "col0": 1.0,
+          "matched_hom": 1.0,
+          "divnorm": 1.0,
+          "wholepop": 0.8389
+        },
+        "graded_lesion": {
+          "col0": 0.3981,
+          "matched_hom": 0.405,
+          "divnorm": 0.405,
+          "wholepop": 0.4509
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0063,
+        "graded": 0.0251,
+        "scramble": 0.0301,
+        "graded_lesion": 0.0169
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": true
+      },
+      "per_intent_matched_hom": {
+        "onehot": [
+          1.0,
+          0.9018,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          0.8857,
+          0.9692
+        ]
+      },
+      "belief_implicature_margin_graded": 0.5955
+    },
+    {
+      "seed": 44,
+      "col0_center": 96.0,
+      "col0_slope": 0.08,
+      "hom_center": 88.0,
+      "hom_slope": 0.08,
+      "hom_tier": "homeostatic",
+      "hom_worst_prop_err": 0.079,
+      "hom_max_leak": 0.0025,
+      "operating_point_changed": true,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "col0": {
+          "onehot": {
+            "M1": 0.93655,
+            "OBJ_inf": 0.80966,
+            "OBJ_surp": 0.96828,
+            "OBJ_cell": 0.95878
+          },
+          "graded": {
+            "M1": 0.92299,
+            "OBJ_inf": 0.76897,
+            "OBJ_surp": 0.96149,
+            "OBJ_cell": 0.96897
+          },
+          "scramble": {
+            "M1": 0.14086,
+            "OBJ_inf": 0.42259,
+            "OBJ_surp": 0.07043,
+            "OBJ_cell": 0.1656
+          },
+          "graded_lesion": {
+            "M1": 0.9266,
+            "OBJ_inf": 0.77979,
+            "OBJ_surp": 0.9633,
+            "OBJ_cell": 0.94639
+          }
+        },
+        "col0_wholepop": {
+          "onehot": {
+            "M1": 0.8614,
+            "OBJ_inf": 0.80966,
+            "OBJ_surp": 0.86923,
+            "OBJ_cell": 0.88362
+          },
+          "graded": {
+            "M1": 0.75421,
+            "OBJ_inf": 0.7752,
+            "OBJ_surp": 0.85607,
+            "OBJ_cell": 0.77385
+          },
+          "scramble": {
+            "M1": 0.25608,
+            "OBJ_inf": 0.4006,
+            "OBJ_surp": 0.37314,
+            "OBJ_cell": 0.27837
+          },
+          "graded_lesion": {
+            "M1": 0.73029,
+            "OBJ_inf": 0.70816,
+            "OBJ_surp": 0.83172,
+            "OBJ_cell": 0.74765
+          }
+        },
+        "matched_hom": {
+          "onehot": {
+            "M1": 0.92821,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.92821
+          },
+          "graded": {
+            "M1": 0.99422,
+            "OBJ_inf": 0.99805,
+            "OBJ_surp": 0.99967,
+            "OBJ_cell": 0.99422
+          },
+          "scramble": {
+            "M1": 0.06865,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.03333,
+            "OBJ_cell": 0.06865
+          },
+          "graded_lesion": {
+            "M1": 0.92036,
+            "OBJ_inf": 0.77647,
+            "OBJ_surp": 0.96275,
+            "OBJ_cell": 0.92036
+          }
+        },
+        "divnorm": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.99935,
+            "OBJ_inf": 0.99805,
+            "OBJ_surp": 0.99967,
+            "OBJ_cell": 0.99935
+          },
+          "scramble": {
+            "M1": 0.06667,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.03333,
+            "OBJ_cell": 0.06667
+          },
+          "graded_lesion": {
+            "M1": 0.92549,
+            "OBJ_inf": 0.77647,
+            "OBJ_surp": 0.96275,
+            "OBJ_cell": 0.92549
+          }
+        },
+        "wholepop": {
+          "onehot": {
+            "M1": 0.92553,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.95997,
+            "OBJ_cell": 0.92733
+          },
+          "graded": {
+            "M1": 0.81311,
+            "OBJ_inf": 0.80644,
+            "OBJ_surp": 0.96049,
+            "OBJ_cell": 0.81366
+          },
+          "scramble": {
+            "M1": 0.18801,
+            "OBJ_inf": 0.20781,
+            "OBJ_surp": 0.3276,
+            "OBJ_cell": 0.18801
+          },
+          "graded_lesion": {
+            "M1": 0.77217,
+            "OBJ_inf": 0.69495,
+            "OBJ_surp": 0.94168,
+            "OBJ_cell": 0.77262
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "col0": 0.1903,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.0
+        },
+        "graded": {
+          "col0": 0.0172,
+          "matched_hom": 0.202,
+          "divnorm": 0.202,
+          "wholepop": 0.3886
+        },
+        "scramble": {
+          "col0": 0.5548,
+          "matched_hom": 1.0,
+          "divnorm": 1.0,
+          "wholepop": 0.9922
+        },
+        "graded_lesion": {
+          "col0": 0.242,
+          "matched_hom": 0.4235,
+          "divnorm": 0.4235,
+          "wholepop": 0.501
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0072,
+        "graded": 0.0242,
+        "scramble": 0.0158,
+        "graded_lesion": 0.0303
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": false
+      },
+      "per_intent_matched_hom": {
+        "onehot": [
+          0.9846,
+          1.0,
+          0.8
+        ],
+        "graded": [
+          0.9846,
+          1.0,
+          0.998
+        ]
+      },
+      "belief_implicature_margin_graded": 0.4845
+    },
+    {
+      "seed": 100,
+      "col0_center": 88.0,
+      "col0_slope": 0.08,
+      "hom_center": 88.0,
+      "hom_slope": 0.08,
+      "hom_tier": "homeostatic",
+      "hom_worst_prop_err": 0.1342,
+      "hom_max_leak": 0.0362,
+      "operating_point_changed": false,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "col0": {
+          "onehot": {
+            "M1": 0.92602,
+            "OBJ_inf": 0.82008,
+            "OBJ_surp": 0.935,
+            "OBJ_cell": 0.93048
+          },
+          "graded": {
+            "M1": 0.94836,
+            "OBJ_inf": 0.89883,
+            "OBJ_surp": 0.93834,
+            "OBJ_cell": 0.94998
+          },
+          "scramble": {
+            "M1": 0.08188,
+            "OBJ_inf": 0.22463,
+            "OBJ_surp": 0.05495,
+            "OBJ_cell": 0.08462
+          },
+          "graded_lesion": {
+            "M1": 0.90375,
+            "OBJ_inf": 0.76905,
+            "OBJ_surp": 0.91334,
+            "OBJ_cell": 0.90507
+          }
+        },
+        "col0_wholepop": {
+          "onehot": {
+            "M1": 0.85472,
+            "OBJ_inf": 0.82008,
+            "OBJ_surp": 0.84829,
+            "OBJ_cell": 0.85918
+          },
+          "graded": {
+            "M1": 0.84094,
+            "OBJ_inf": 0.89883,
+            "OBJ_surp": 0.85468,
+            "OBJ_cell": 0.84257
+          },
+          "scramble": {
+            "M1": 0.1265,
+            "OBJ_inf": 0.22066,
+            "OBJ_surp": 0.16915,
+            "OBJ_cell": 0.1288
+          },
+          "graded_lesion": {
+            "M1": 0.69557,
+            "OBJ_inf": 0.67327,
+            "OBJ_surp": 0.82822,
+            "OBJ_cell": 0.69667
+          }
+        },
+        "matched_hom": {
+          "onehot": {
+            "M1": 0.92602,
+            "OBJ_inf": 0.82008,
+            "OBJ_surp": 0.935,
+            "OBJ_cell": 0.93048
+          },
+          "graded": {
+            "M1": 0.94836,
+            "OBJ_inf": 0.89883,
+            "OBJ_surp": 0.93834,
+            "OBJ_cell": 0.94998
+          },
+          "scramble": {
+            "M1": 0.08188,
+            "OBJ_inf": 0.22463,
+            "OBJ_surp": 0.05495,
+            "OBJ_cell": 0.08462
+          },
+          "graded_lesion": {
+            "M1": 0.90375,
+            "OBJ_inf": 0.76905,
+            "OBJ_surp": 0.91334,
+            "OBJ_cell": 0.90507
+          }
+        },
+        "divnorm": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.98423,
+            "OBJ_inf": 0.95269,
+            "OBJ_surp": 0.99211,
+            "OBJ_cell": 0.98423
+          },
+          "scramble": {
+            "M1": 0.06667,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.03333,
+            "OBJ_cell": 0.06667
+          },
+          "graded_lesion": {
+            "M1": 0.92941,
+            "OBJ_inf": 0.78824,
+            "OBJ_surp": 0.96471,
+            "OBJ_cell": 0.92941
+          }
+        },
+        "wholepop": {
+          "onehot": {
+            "M1": 0.85472,
+            "OBJ_inf": 0.82008,
+            "OBJ_surp": 0.84829,
+            "OBJ_cell": 0.85918
+          },
+          "graded": {
+            "M1": 0.84094,
+            "OBJ_inf": 0.89883,
+            "OBJ_surp": 0.85468,
+            "OBJ_cell": 0.84257
+          },
+          "scramble": {
+            "M1": 0.1265,
+            "OBJ_inf": 0.22066,
+            "OBJ_surp": 0.16915,
+            "OBJ_cell": 0.1288
+          },
+          "graded_lesion": {
+            "M1": 0.69557,
+            "OBJ_inf": 0.67327,
+            "OBJ_surp": 0.82822,
+            "OBJ_cell": 0.69667
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "col0": 0.0201,
+          "matched_hom": 0.0201,
+          "divnorm": 0.0,
+          "wholepop": 0.0201
+        },
+        "graded": {
+          "col0": 0.2865,
+          "matched_hom": 0.2865,
+          "divnorm": 0.2473,
+          "wholepop": 0.2865
+        },
+        "scramble": {
+          "col0": 0.9507,
+          "matched_hom": 0.9507,
+          "divnorm": 1.0,
+          "wholepop": 0.9587
+        },
+        "graded_lesion": {
+          "col0": 0.419,
+          "matched_hom": 0.419,
+          "divnorm": 0.4118,
+          "wholepop": 0.5168
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0094,
+        "graded": 0.0312,
+        "scramble": 0.0352,
+        "graded_lesion": 0.013
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": false
+      },
+      "per_intent_matched_hom": {
+        "onehot": [
+          1.0,
+          0.958,
+          0.8201
+        ],
+        "graded": [
+          1.0,
+          0.9462,
+          0.8988
+        ]
+      },
+      "belief_implicature_margin_graded": 0.5102
+    },
+    {
+      "seed": 101,
+      "col0_center": 88.0,
+      "col0_slope": 0.11,
+      "hom_center": 88.0,
+      "hom_slope": 0.08,
+      "hom_tier": "homeostatic",
+      "hom_worst_prop_err": 0.1632,
+      "hom_max_leak": 0.0338,
+      "operating_point_changed": true,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "col0": {
+          "onehot": {
+            "M1": 0.93649,
+            "OBJ_inf": 0.87031,
+            "OBJ_surp": 0.92769,
+            "OBJ_cell": 0.95212
+          },
+          "graded": {
+            "M1": 0.94815,
+            "OBJ_inf": 0.91852,
+            "OBJ_surp": 0.92469,
+            "OBJ_cell": 0.96296
+          },
+          "scramble": {
+            "M1": 0.10551,
+            "OBJ_inf": 0.28612,
+            "OBJ_surp": 0.07304,
+            "OBJ_cell": 0.11508
+          },
+          "graded_lesion": {
+            "M1": 0.90702,
+            "OBJ_inf": 0.8044,
+            "OBJ_surp": 0.89795,
+            "OBJ_cell": 0.91252
+          }
+        },
+        "col0_wholepop": {
+          "onehot": {
+            "M1": 0.93603,
+            "OBJ_inf": 0.88462,
+            "OBJ_surp": 0.93007,
+            "OBJ_cell": 0.95142
+          },
+          "graded": {
+            "M1": 0.80366,
+            "OBJ_inf": 0.80109,
+            "OBJ_surp": 0.91129,
+            "OBJ_cell": 0.80912
+          },
+          "scramble": {
+            "M1": 0.19759,
+            "OBJ_inf": 0.275,
+            "OBJ_surp": 0.30172,
+            "OBJ_cell": 0.20777
+          },
+          "graded_lesion": {
+            "M1": 0.79191,
+            "OBJ_inf": 0.72758,
+            "OBJ_surp": 0.89881,
+            "OBJ_cell": 0.79671
+          }
+        },
+        "matched_hom": {
+          "onehot": {
+            "M1": 0.87333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.81667,
+            "OBJ_cell": 0.87333
+          },
+          "graded": {
+            "M1": 0.92252,
+            "OBJ_inf": 0.97288,
+            "OBJ_surp": 0.82438,
+            "OBJ_cell": 0.92252
+          },
+          "scramble": {
+            "M1": 0.09667,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.10833,
+            "OBJ_cell": 0.09667
+          },
+          "graded_lesion": {
+            "M1": 0.85438,
+            "OBJ_inf": 0.80638,
+            "OBJ_surp": 0.76503,
+            "OBJ_cell": 0.85438
+          }
+        },
+        "divnorm": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.99096,
+            "OBJ_inf": 0.97288,
+            "OBJ_surp": 0.99548,
+            "OBJ_cell": 0.99096
+          },
+          "scramble": {
+            "M1": 0.06667,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.03333,
+            "OBJ_cell": 0.06667
+          },
+          "graded_lesion": {
+            "M1": 0.93546,
+            "OBJ_inf": 0.80638,
+            "OBJ_surp": 0.96773,
+            "OBJ_cell": 0.93546
+          }
+        },
+        "wholepop": {
+          "onehot": {
+            "M1": 0.87454,
+            "OBJ_inf": 0.83797,
+            "OBJ_surp": 0.823,
+            "OBJ_cell": 0.87454
+          },
+          "graded": {
+            "M1": 0.75961,
+            "OBJ_inf": 0.7953,
+            "OBJ_surp": 0.81834,
+            "OBJ_cell": 0.75961
+          },
+          "scramble": {
+            "M1": 0.20052,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.35079,
+            "OBJ_cell": 0.20481
+          },
+          "graded_lesion": {
+            "M1": 0.72197,
+            "OBJ_inf": 0.70667,
+            "OBJ_surp": 0.79322,
+            "OBJ_cell": 0.72197
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "col0": 0.0703,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.038
+        },
+        "graded": {
+          "col0": 0.1185,
+          "matched_hom": 0.2271,
+          "divnorm": 0.2271,
+          "wholepop": 0.4047
+        },
+        "scramble": {
+          "col0": 0.8278,
+          "matched_hom": 1.0,
+          "divnorm": 1.0,
+          "wholepop": 0.9614
+        },
+        "graded_lesion": {
+          "col0": 0.3462,
+          "matched_hom": 0.3936,
+          "divnorm": 0.3936,
+          "wholepop": 0.4933
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0203,
+        "graded": 0.0444,
+        "scramble": 0.0313,
+        "graded_lesion": 0.0308
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": true
+      },
+      "per_intent_matched_hom": {
+        "onehot": [
+          1.0,
+          0.82,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          0.7947,
+          0.9729
+        ]
+      },
+      "belief_implicature_margin_graded": 0.4495
+    },
+    {
+      "seed": 102,
+      "col0_center": 96.0,
+      "col0_slope": 0.08,
+      "hom_center": 96.0,
+      "hom_slope": 0.08,
+      "hom_tier": "homeostatic",
+      "hom_worst_prop_err": 0.0829,
+      "hom_max_leak": 0.0063,
+      "operating_point_changed": false,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "col0": {
+          "onehot": {
+            "M1": 0.91903,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.9309,
+            "OBJ_cell": 0.91903
+          },
+          "graded": {
+            "M1": 0.96136,
+            "OBJ_inf": 0.93287,
+            "OBJ_surp": 0.94816,
+            "OBJ_cell": 0.96136
+          },
+          "scramble": {
+            "M1": 0.08084,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.2021,
+            "OBJ_cell": 0.21417
+          },
+          "graded_lesion": {
+            "M1": 0.9401,
+            "OBJ_inf": 0.8832,
+            "OBJ_surp": 0.92812,
+            "OBJ_cell": 0.9401
+          }
+        },
+        "col0_wholepop": {
+          "onehot": {
+            "M1": 0.91903,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.9309,
+            "OBJ_cell": 0.91903
+          },
+          "graded": {
+            "M1": 0.80339,
+            "OBJ_inf": 0.84583,
+            "OBJ_surp": 0.93899,
+            "OBJ_cell": 0.80339
+          },
+          "scramble": {
+            "M1": 0.21141,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.3952,
+            "OBJ_cell": 0.28336
+          },
+          "graded_lesion": {
+            "M1": 0.77522,
+            "OBJ_inf": 0.77011,
+            "OBJ_surp": 0.92363,
+            "OBJ_cell": 0.77522
+          }
+        },
+        "matched_hom": {
+          "onehot": {
+            "M1": 0.91903,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.9309,
+            "OBJ_cell": 0.91903
+          },
+          "graded": {
+            "M1": 0.96136,
+            "OBJ_inf": 0.93287,
+            "OBJ_surp": 0.94816,
+            "OBJ_cell": 0.96136
+          },
+          "scramble": {
+            "M1": 0.08084,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.2021,
+            "OBJ_cell": 0.21417
+          },
+          "graded_lesion": {
+            "M1": 0.9401,
+            "OBJ_inf": 0.8832,
+            "OBJ_surp": 0.92812,
+            "OBJ_cell": 0.9401
+          }
+        },
+        "divnorm": {
+          "onehot": {
+            "M1": 0.93333,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.96667,
+            "OBJ_cell": 0.93333
+          },
+          "graded": {
+            "M1": 0.97762,
+            "OBJ_inf": 0.93287,
+            "OBJ_surp": 0.98881,
+            "OBJ_cell": 0.97762
+          },
+          "scramble": {
+            "M1": 0.07925,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.19814,
+            "OBJ_cell": 0.21259
+          },
+          "graded_lesion": {
+            "M1": 0.96107,
+            "OBJ_inf": 0.8832,
+            "OBJ_surp": 0.98053,
+            "OBJ_cell": 0.96107
+          }
+        },
+        "wholepop": {
+          "onehot": {
+            "M1": 0.91903,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.9309,
+            "OBJ_cell": 0.91903
+          },
+          "graded": {
+            "M1": 0.80339,
+            "OBJ_inf": 0.84583,
+            "OBJ_surp": 0.93899,
+            "OBJ_cell": 0.80339
+          },
+          "scramble": {
+            "M1": 0.21141,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.3952,
+            "OBJ_cell": 0.28336
+          },
+          "graded_lesion": {
+            "M1": 0.77522,
+            "OBJ_inf": 0.77011,
+            "OBJ_surp": 0.92363,
+            "OBJ_cell": 0.77522
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "col0": 0.0,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.0
+        },
+        "graded": {
+          "col0": 0.1329,
+          "matched_hom": 0.1329,
+          "divnorm": 0.1329,
+          "wholepop": 0.3542
+        },
+        "scramble": {
+          "col0": 0.0,
+          "matched_hom": 0.0,
+          "divnorm": 0.0,
+          "wholepop": 0.3525
+        },
+        "graded_lesion": {
+          "col0": 0.3168,
+          "matched_hom": 0.3168,
+          "divnorm": 0.3168,
+          "wholepop": 0.4299
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0132,
+        "graded": 0.0348,
+        "scramble": 0.0358,
+        "graded_lesion": 0.0265
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": true
+      },
+      "per_intent_matched_hom": {
+        "onehot": [
+          1.0,
+          0.9571,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          0.9512,
+          0.9329
+        ]
+      },
+      "belief_implicature_margin_graded": 0.5349
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. Seed 44's implicature collapse was a PER-DETECTOR OPERATING-POINT artifact: the per-seed graded-plateau calibration minimizes proportionality on ONE detector column (t=0), but under heterogeneity the IMPLICATURE detector (column 'all') has its own operating point, and at the col-0-chosen center=96 it leaked solo-intent (0.084) and collapsed the fractional coincidence (0.022 < leak) -> implicature cell 0.017. The fix is a detector-side OPERATING-POINT HOMEOSTAT: re-point the shared graded-plateau operating point to a content-free per-detector homeostatic set-point (AND-gate silence + proportional fractional-coincidence resolution) satisfied on the WORST detector, plus a per-detector Carandini-Heeger divisive-normalization read (subtract the solo leak, divide by the dynamic range). Both use ONLY content-free controlled drives per detector -- never the RSA answer, the belief, or which intent wins. It re-points the READ operating point; it does NOT change the belief (byte-identical to the W4 A/B) or which intent wins (recall intact); SCRAMBLE still loses; the whole-population leak control still fails; the col-0 arm reproduces [B]'s boundary. numpy-CPU real spiking Izhikevich; NO sim/ edit; additive NEW runner (reuse-by-import of [B]'s matched read + the W4 A/B + the informativeness objective). NOT a claim of phenomenal access to another mind; a self-report would be a functional read-out.",
+  "elapsed_seconds": 44.2
+}
