@@ -1,0 +1,29 @@
+{
+ "run_id": "1786621741-1109475",
+ "runner": "research/runners/_pmem_sfa_nmda_amplifier_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a4bce431028e73df1/research/runners/_pmem_sfa_nmda_amplifier_derisk.py",
+  "--derisk",
+  "--plateau-cap",
+  "2000"
+ ],
+ "git_sha": "7f0b9db24",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T07:49:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2195.7,
+ "corpus_check_query": "prospective coincidence-gain deficit, transient joint response too weak vs sustained single inputs",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pmem_sfa_nmda_amplifier.json"
+}
