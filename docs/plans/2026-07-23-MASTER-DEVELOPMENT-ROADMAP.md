@@ -43,6 +43,18 @@ date: 2026-07-23
 > landscape is mostly one-hot → next = an informativeness-weighted objective, Frank-Goodman 2012), while affect is
 > limited by the WEIGHT SOURCE (Rescorla-Wagner saturation; the read-out is provably not the bottleneck → next = a graded
 > reinforcement-strength third factor, Bayer-Glimcher 2005). Two DISTINCT residuals + levers, neither the refuted rule.
+> **🌙 WAVE-7 UPDATE (2026-08-13, later same night):** **Prospective-memory arc CLOSED** (de-risk GO, `02e7dce08`):
+> intention-latch + BA10 cue-monitor + an NMDA coincidence-PLATEAU amplifier → fire_on_cue 6/6, all silence 6/6 (an
+> ablation showed the NMDA plateau alone does it; SFA neither necessary nor sufficient). **W4 residual REFINED again**
+> (`99654d6fe`, 5/6 near-GO): reading the substrate overturned the "belief-magnitude" story — the ~2× overshoot is a
+> READ-TOPOGRAPHY artifact (whole-pop landscape leaks an off-target belief-only AND-gate); reading the true-intent
+> detector lands the implicature cell on 0.20 exactly (graded +0.0905, 5/6). The remaining W4 residual is ONE seed's
+> detector OPERATING-POINT → next = detector-side homeostatic gain. **Affect: valence⊥arousal EMERGES** (`4ccf4225b`,
+> near-GO): from the same stream, valence = reinforcer difference, arousal = engagement sum (predicts held-out arousal
+> r=+0.265, tracks intensity not sign); residual = the info-thin sum-proxy → next = a spiking-LC / bodily-state source.
+> **CROSS-CUTTING (do NOT over-claim a shared fix — see the FALSIFIED note above): the recurring last-mile residual is
+> HOMEOSTATIC-GAIN / divisive-normalization across heterogeneity** (the "missing companion process"), showing up in
+> prospective, affect, and the W4 detector — each a distinct de-risk, not a proven single primitive.
 
 ### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
 
