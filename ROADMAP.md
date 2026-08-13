@@ -160,6 +160,19 @@ moat-safe unless noted):
   abstains "I didn't follow that" on an un-comprehended transitive (moat-strengthening), D2 prepends an honest "that
   surprises me — I'd learned <stored>" notice when an assertion contradicts a stored expectation (both verified numpy-CPU
   through the real handler: D4 7/7, D2 8/8; findings 2026-08-12-GateB-comprehension/surprise-…-production-chat).
+- **FOUR MORE faculties WIRED into `/api/brain-chat` (Gate-B, 2026-08-12, default-on + lesion-load-bearing, verified numpy-CPU
+  through the real handler):** **D5 EPISODIC** — a genuinely-SPIKING hippocampal recall gate on a referential turn ("you
+  mentioned X"): a spoken topic BTSP-forms a CA3 assembly (Hook B), a later cue COMPLETES it via the apical dAP UP-state read
+  (Hook A) → honest "I recall / I don't recall discussing X" (never a confabulation; organ verify cue 0.909→0.000 lesion, and
+  through the handler in-memory cue 0.79 fire + lesion collapse; the BTSP write is cupy-gated, deferred on numpy). **D6
+  MULTI-REFERENT WM** — HOLD ≥2 discourse referents on a spiking multi-register bump-attractor buffer, read back off
+  `cp_firing_states` ("I'm holding 2 referents: dog and cat" — what a single-attractor store can't; k=2/3/4 recovered 1.000,
+  lesion 0.000). **B3 NON-CONTRADICTION** — REJECT a user assertion that contradicts the brain's stored polarity for the same
+  SVO (the spiking `ask_yes_no` polarity WTA; organ verify 6/6, 100% attributable; lesion→inert). **B4 RECONSOLIDATION** —
+  PE-gated IN-PLACE belief revision reusing the D2 surprise window ("actually south" rewrites the stored "north", ONE fact, no
+  duplicate; organ verify rf 6/6 + onebrain 3/3; an integration fix recruits a runtime-novel corrected patient before the
+  rewrite). Ten spiking co-resident reads now run on the default turn (D5+D6 add new bridges; B3+B4 reuse the recall composer /
+  D2 window). Findings 2026-08-12-D5-episodic / D6-multiref-WM / B3-noncontradiction / reconsolidation-production-organ.
 - **A1 open-prose deep-context — INCONCLUSIVE (not a GO, honest):** the controlled-lag credit task is TOO EASY to exhibit
   the wall — random AND sign-flipped feedback both tie/beat the BPTT ceiling (T=48), and at T=64 the BPTT ceiling is itself
   INVALID (vanishing-gradient: 0.599 < the forward-eligibility local rule 0.973). Bounded findings: the banked ~44% e-prop

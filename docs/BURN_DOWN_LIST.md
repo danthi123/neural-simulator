@@ -37,8 +37,44 @@ with the no-confab moat intact and the host/external piece deleted-or-demoted-to
   STATUS: RESEARCH-NEEDED (part of the spiking-generation de-risk).
 - **B2. The plausibility gate (#3E) = host** (selectional-preference over the brain's clean fact co-occurrence graph).
   **Burn-down → spiking plausibility.** STATUS: QUEUED.
-- **B3. Non-contradiction gate INERT on onebrain** (the onebrain composer doesn't store negations retrievably, so the
-  non-contradiction check only fires on rf). **Burn-down → onebrain negation storage.** STATUS: QUEUED.
+- **B3. Non-contradiction ASSERTION-gate. WIRED (Gate-B, 2026-08-12).** The generation-path non-contradiction check was
+  historically inert on onebrain; the B3 de-risk (`_burndown_B3_onebrain_negation_moat_derisk`, 6-seed GO D=128) showed the
+  onebrain composer DOES recall a stored NEGATE polarity on the substrate (`ask_yes_no` → `_spiking_select` over
+  `cp_firing_states`, `enable_spiking_cleanup=True`), so the USER-ASSERTION non-contradiction gate now fires there.
+  `/api/brain-chat`: when the user ASSERTS a transitive fact whose POLARITY contradicts the brain's stored polarity for the
+  EXACT same SVO ("the dog eats grass" vs a stored "a dog does NOT eat grass"), the brain REJECTS it instead of silently
+  overwriting a held belief (reuse-by-import from `research/runners/b3_noncontradiction_production_organ.py`; the gate runs
+  BEFORE the store so a reject returns before `_maybe_acquire` overwrites). STORE-SIDE wired too: `brain_chat_tui._maybe_acquire`
+  now acquires a heard assertion with its DETECTED polarity (a heard negation stores as NEGATE) via the organ's extractor, so
+  the gate has negations to fire against (guarded, legacy AFFIRM path when B3 disabled). Moat-INVERTING (an unknown SVO →
+  accept, never a fabricated rejection), MUTUALLY EXCLUSIVE with D2 surprise (patient-mismatch → "unknown" → accept). Default-ON
+  (`BRAIN_NONCONTRADICTION_GATE=0` → byte-identical), lesion-load-bearing (`BRAIN_NONCONTRADICTION_LESION=1` bypasses the spiking
+  polarity recall → every recall "unknown" → the gate goes INERT, contradictions slip through). Verified numpy-CPU: organ verify
+  6/6 ALL_OK (intact 12 rejections, recall-lesion 0 → 100% attributable) + through the REAL handler (reject on the contradiction,
+  lesion inert, flag-off no-op). **RESIDUALS** (declared, host upstream): negation DETECTION (`detect_polarity`) + verb
+  MORPHOLOGY (surface-first/lemma-fallback) are host input-tagging (the composer already RECALLS polarity on the substrate); a
+  learned spiking polarity classifier + the shared D4 lemmatizer are the next rungs. No co-resident bridge added (B3 reads the
+  ONE production recall composer directly). STATUS: **WIRED**. Finding `2026-08-12-B3-noncontradiction-production-organ-built-and-verified.md`.
+- **B4. Reconsolidation / belief revision (PE-gated in-place fact UPDATE). WIRED (Gate-B, 2026-08-12).** The production
+  memory was APPEND-ONLY (tell the brain "the dog went north" then "actually south" → two contradictory facts coexist, the
+  STALE one answered first). `/api/brain-chat` now RECONSOLIDATES: when the asserted patient CONTRADICTS the stored one (the
+  D2 spiking surprise window is OPEN), the stored fact is UPDATED IN PLACE — no contradictory duplicate. The window-open
+  decision REUSES the SAME `cp_firing_states[surprise]` read the D2 block just computed (Nader-Schafe-LeDoux reconsolidation;
+  PE-NECESSITY); the in-place rewrite reuses the composer's OWN `update_on_mismatch` (rf + onebrain,
+  `_write_block`+`_compose_phases`). Reuse-by-import from `research/runners/reconsolidation_production_organ.py`. Moat-safe:
+  ABSTAINS on a missing trace (never fabricates), NEVER writes on a re-statement (window closed), only rewrites a fact the
+  brain ALREADY HOLDS; it only PREPENDS an honest notice ("Updated — I'd stored that dog go north; I've revised it in place
+  to dog go south"). Default-ON (`BRAIN_RECONSOLIDATION=0` → append-only byte-identical), lesion-load-bearing
+  (`BRAIN_RECONSOLIDATION_LESION=1` fires the window but BLOCKS the update → append-only → recall returns the STALE fact).
+  **Integration fix (2026-08-12):** the organ's in-place rewrite now RECRUITS a runtime-novel corrected patient into a
+  vocab_headroom cleanup slot BEFORE the rewrite (the composer's own `_recruit_word`, the exact pattern `_store_fact` uses) —
+  without it `update_on_mismatch`→`_patient_prediction_error` KeyErrored on a word never seen this session ("actually south"
+  when only "north" was taught) and silently fell back to append-only. Verified numpy-CPU: organ verify GO (rf 6/6, onebrain
+  3/3, window 5.61 Hz open on contradict vs 0 Hz on re-statement, 100% attributable, flag-off byte-identical) + through the
+  REAL handler (INTACT novel-patient rewrite dog-go north→south, ONE fact, no duplicate; lesion → stale persists; flag-off
+  append-only). **RESIDUALS**: reactivation SELECTS the fact by the same host kb cue-match recall performs (rides the one-brain
+  merge); the synaptic-literal engram tag-and-capture tier + a cupy production-scale 6-seed onebrain sweep are the next rungs.
+  STATUS: **WIRED**. Finding `2026-08-12-reconsolidation-production-organ-belief-revision-wireable.md`.
 
 ## C. MOAT / VERIFY
 - **C1. `_verify` decomposition/coverage/entailment logic = host** (a legitimate verification HARNESS, like the existing
@@ -126,9 +162,45 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   (b) VOCAB CEILING — the cue lexicon is the toy 2-noun transitive scope; a graded/near-threshold battery + a LEARNED cue
   lexicon are the next rung; (c) structural malformedness (no verb/wrong arity) still a host arity check. Finding
   `2026-08-12-GateB-comprehension-monitor-production-chat.md`. Distinct from the E1 lane-C metacog BOUNDARY (a different faculty).
-- **D5. Episodic memory** (gap5 one-brain CAPSTONE 6/6 GO: converse→sleep-replay→converse). Wire → recall of PAST TURNS on the
-  live turn. STATUS: QUEUED.
-- **D6. Advanced WM binding** (wm-binding-advanced, de_risked YES). Wire → ≥2-referent anaphora / multi-slot. STATUS: QUEUED.
+- **D5. Episodic memory — recall of PAST TURNS. WIRED (Gate-B, 2026-08-12).** `/api/brain-chat` now runs a genuinely-SPIKING
+  hippocampal RECALL GATE on a referential turn ("you mentioned X", "earlier you told me about X"): a spoken TOPIC BTSP-forms
+  a CA3 assembly (Hook B, the WRITE); a later referential cue COMPLETES it cue-specifically via the two-compartment apical
+  dAP UP-state read (Hook A, the READ) — reuse-by-import from `research/runners/d5_episodic_production_organ.py` → the kt=8
+  `EpisodicDapMemory` (6/6-GO gap#5 dAP readout, n_ca3=2000). A completed assembly → honest disclosure ("my hippocampal
+  readout completes its assembly for it, dendritic dAP completion 0.91"); a non-completing cue → honest "I don't recall
+  discussing X" (a genuine spiking completion failure, NEVER a confabulation — the honesty floor). Runs FIRST (referential-
+  first, right after AFFECT) so the comprehension/surprise/B3 gates cannot pre-empt it. CONVERSATION-SCOPED (one memory per
+  session, cleared on reset — Hook C). Default-ON (`BRAIN_EPISODIC=0` → the referential turn falls through, byte-identical),
+  lesion-load-bearing (`BRAIN_EPISODIC_LESION=1` reads the UNFORMED baseline recurrent weights → completion collapses
+  0.909→0.000 → "not in memory"). Verified numpy-CPU: organ verify ALL_OK (intact cue=0.909 perm=nocue=lesion=0, attribution
+  1.0, wall 790s; 6-seed committed GO both backends) + through the REAL handler (referential-first + honest not-in-memory
+  disclosure + IN-MEMORY fire after a store + lesion collapse). **RESIDUALS** (declared, ride existing rows): (a) the fact
+  CONTENT surfaced on a completed topic is the host-oracle chat recall the moat already governs (the GATE is spiking; the
+  retrieved sentence is the next conversion); (b) temporal/recency ORDER is a host store-index (no spiking WHEN pool yet);
+  (c) the gap#5 converse→sleep→replay→converse CAPSTONE (a separate 6-seed GO) is OFFLINE consolidation, deliberately NOT on
+  this per-turn path; (d) LATENCY — a BTSP store is ~seconds on cupy but ~430–510s/topic on numpy@2000, so Hook B is GATED
+  behind cupy (`_episodic_store_ok`; `BRAIN_EPISODIC_STORE=1` forces it); on a numpy deployment the WRITE is DEFERRED (the
+  recall GATE stays spiking) — a declared latency residual; (e) CO-RESIDENT on its OWN dAP readout bridge (n_ca3=2000), rides
+  the one-brain merge (burn-down #1). STATUS: **WIRED**. Finding `2026-08-12-D5-episodic-production-organ-spiking-recall-gate-wireable.md`.
+- **D6. Advanced WM binding — HOLD >=2 discourse referents across a span. WIRED (Gate-B, 2026-08-12).** `/api/brain-chat` now
+  holds ≥2 discourse referents on a genuinely-SPIKING multi-register buffer (R disjoint slow-NMDA bistable banks on ONE
+  bridge sharing ONE FS pool; reuse-by-import from `research/runners/d6_multiref_wm_production_organ.py` → the 6-seed-GO
+  `MultiSlotHold` + RUNG6c HebbianBinder). MAINTAIN: a coordinated-NP turn ("the dog and the cat …") LOADS each referent into
+  its own register (role-by-position) and HOLDS across the intervening span (write-only, changes no reply). READ-OUT: an
+  explicit "who/what are we talking about / keeping in mind" query READS BACK every held referent off `cp_firing_states`
+  (what a single-attractor store CANNOT do — it ties to one) → honest functional read-out ("I'm holding 2 referents in
+  working memory at once: dog and cat"). PER-SESSION buffer (the organ singleton's referent codebook is process-global, so a
+  shared buffer would leak other sessions' referents; cleared on reset). Default-ON (`BRAIN_MULTIREF=0` → byte-identical),
+  lesion-load-bearing (`BRAIN_MULTIREF_LESION=1` builds recur=0 → the slow-NMDA hold dies → the ≥2 read-back collapses,
+  all_recovered 1.000→0.000). Verified numpy-CPU: organ verify PASS (k=2/3/4 all_recovered=1.000, lesion=0.000, 100%
+  attributable, superposed-single collides ~1/k) + through the REAL handler (MAINTAIN n=2 all_recovered; hold-query readout
+  holds dog+cat; lesion collapses; flag-off byte-identical). **RESIDUALS** (declared): (a) the learned SPIKING WRITE-GATE is
+  the open rung — register assignment is a role-by-position host MARKER (gap#4 credit-assignment); (b) referent EXTRACTION is
+  a host regex + small lexicon (vocab-ceiling, same class as the comprehension organ); (c) the register READ is a host argmax
+  over each bank's firing rates (read-out instrument), binder-capped at 6 distinct referents (ceiling k=5); (d) cross-turn
+  persistence of WHICH referents is a host codebook (the load-bearing spiking part is the within-span HOLD); (e) CO-RESIDENT
+  on its own `MultiSlotHold` bridge (rides the one-brain merge, burn-down #1). STATUS: **WIRED**. Finding
+  `2026-08-12-D6-multiref-WM-production-organ-holds-two-plus-referents-lesion-load-bearing.md`.
 
 ## E. MISSING MECHANISMS / BOUNDARIES (need RESEARCH before they can be wired — do NOT fake integration)
 - **E1. Self-model / metacognition — WIRED (Gate-B, 2026-08-12)** (was BOUNDARY -> DE-RISKED GO 6/6 -> now WIRED onto the
