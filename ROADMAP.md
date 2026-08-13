@@ -199,6 +199,16 @@ moat-safe unless noted):
   was capacity-confounded (BPTT itself only hit 0.931 = not a valid ceiling). So the feedback-alignment-at-scale hunt on
   this instrument is MOOT; the genuine mouth residual is the separate production-Izhikevich few-spike READ regime, not a
   rate-level credit wall. (Good example of "verify a refutation as hard as a confirmation" catching a phantom wall.)
+  **A1 few-spike-READ RESIDUAL DISSOLVED (2026-08-13, 6/6 GO): population coding IS the companion process.** The last A1
+  barrier was that fluent open-prose generation only had a HOST-argmax next-word read (over graded logits), while the
+  genuine few-spike Izhikevich WTA read only existed for single-clause SVO — the two were disjoint. Feeding the fluent
+  deep-context next-token distribution through a few-spike Izhikevich read: the NAIVE single-neuron read is 0/6 (recovers
+  ~50% of the distribution, garbles), but a POPULATION-CODED read (P≥8) hits read-fidelity ≥0.936 all 6 seeds at/above
+  ideal-sampler parity, and free generation stays FLUENT (real spike-read prose: "once upon a time there was a little boy
+  named tim… they both laughed and played together every day"). So the production few-spike read regime is NOT a wall —
+  population coding carries fluent open-prose onto it at parity. Remaining rungs to RETIRE the Qwen mouth: add the shared-
+  inhibitory FS-WTA (cut the spike budget below P=8) → route the state→logits projection through read-out neurons (retire
+  the host matmul) → local-credit the BPTT store → wire it. Honest: de-risked READ mechanism, runner-only, V=1000, not wired.
 - **GNW workspace bus (T1-1 keystone) — core primitive de-risked, clean 6-seed GO:** the first demonstration that the
   SUBSTRATE combines ≥2 organ reads via coincidence-IGNITION (not a host if/else) — two organs write SUBTHRESHOLD drive,
   only their agreement crosses the ignition knee, WTA suppresses a decoy, the committed winner re-enters as the next
