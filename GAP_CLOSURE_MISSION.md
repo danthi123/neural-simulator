@@ -13,7 +13,37 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-12 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-13 (READ FIRST — live resume point)
+
+> **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
+> SEVEN Tier-1 levers moved this session. Production `/api/brain-chat` now runs ~12 default-on spiking faculties.**
+> - **WIRED default-on this session (on top of affect/surprise/comprehension/metacog/worldmodel/curiosity + base recall/
+>   choose/learn/generate/moat):** D5 episodic recall (`72c4d2902`), D6 multi-referent WM, B3 non-contradiction, B4
+>   reconsolidation (in-place belief-revision), DR-2 appraisal-value biologized (`c50ff5a0a`, provenance step — gate+seeds
+>   still Warriner), T1-6 other-repair (`3c81d17a4`, targeted clarification). Ledger `default_on_spiking_faculties: 10` + B3/B4.
+> - **Tier-1 RESEARCH de-risked (on main):** T1-1 GNW keystone = clean 6/6 GO (`44bd33d4`→`f9d6a1b2`, the "3/6" was a
+>   MISDIAGNOSED shuffle-control instrument bug — verify-both-directions caught it); T1-4 causal forward-model 6/6 GO
+>   (`1bfc6959`) + GROUNDED in the real fact-store 6/6 GO (`fed71f61`, production-WIREABLE, a co-resident why/what-if organ,
+>   4-step spec); T1-7 intuitive world-model FIRST RUNG (`73b9f6b8`, spiking object-permanence + VoE, load-bearing 6/6,
+>   strict gate a mapped boundary); E3 BTSP lasting-trace GO; A1 deep-context "wall" self-CORRECTED to a capacity artifact.
+> - **Dev-tooling side-question answered:** NVIDIA Switchyard/Nemotron/data-flywheel = SKIP (flat-sub-no-API + Ampere/
+>   NVFP4 hardware + solo-scale all fail independently); keep our gates/RAG flywheel; one CPU-pool micro-experiment IF we
+>   ever test the quota lever. Report in the chat log.
+>
+> **🔴 LIVE LANES (do NOT double-launch; consolidate each — verify additive+pushed, GO→checkout to main+commit+push_both):**
+> - **w78m99gx0** (WORKFLOW, CPU): wire-ALL-GOs — enumerate/triage → parallel verify-first+build per candidate (isolated) →
+>   serial server.py integrate. The owner-requested big parallel wiring of the ready GOs. In prep/enumerate.
+> - **ab753941** (isolated, GPU): GNW N-organ ignition BUS (Phase-B) — parked on its 6-seed (3/6 so-far; SCRUTINIZE the full
+>   result like the keystone — a "3/6" may be a leaky control, not real fragility). This is the one-substrate lever.
+>
+> **SINGLE LITERAL NEXT:** consolidate the GNW-bus 6-seed (scrutinize) + the wire-all-GOs workflow (triage + integrate) as
+> they land. Then: WIRE the causal why/what-if organ (now grounded+wireable); WIRE the GNW bus into production (replace the
+> host organ-orchestration = the one-substrate step); deepen affect (discrete emotions + regulation, T1-5); surpass the
+> world-model VoE-magnitude boundary (divisive PC). Honest reckoning (unchanged): still CO-RESIDENCY not one substrate; the
+> open-prose mouth is still the external Qwen (A1); organ internals (VSA algebra, appraisal gate/seeds, plausibility gate)
+> still host — the faculty-map audit `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md` is the grounded truth.
+
+## ⭐ STATE OF THE PROJECT — 2026-08-12 (earlier this session — history below)
 
 > **🚨 STANDING OPERATING MODE (owner directive 2026-08-12, ultracode ON): WIRE + VALIDATE *ALL* the GOs into the
 > production single-substrate fully-spiking emergent onebrain (except host internals not easily biologized), and
