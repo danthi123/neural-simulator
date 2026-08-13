@@ -1,0 +1,414 @@
+{
+  "probe": "affect_arousal_channel (valence _|_ arousal circumplex, separate emergent intensity dimension)",
+  "verdict": "BOUNDARY / HONEST NEGATIVE (build-informative, 6-seed) -- the separate emergent arousal channel is characterized but does not clear the pre-registered bar. The PRIMARY interoceptive-salience read predicts held-out Warriner AROUSAL at r=+0.265 (min +0.120, all-reinf +0.224); the strongest of the four emergent sources is 'interoceptive_salience_raw_unbalanced' at r=+0.285. It IS orthogonal to valence sign (corr(A,sign)=-0.271) and emergent (no-source lesion +0.000; permute sig 5/6). Graded valence-STRENGTH combined=+0.235 vs sign-only +0.204 (lift +0.031). FAILED: ['G2_arousal_perp_valence_sign(|r|<0.30_all_seeds)', 'G4_permute_beaten(perm_p<0.05_all_seeds)']. The next mechanism is a RICHER interoceptive/bodily arousal signal (a spiking LC population driven by reinforcer magnitude; autonomic/bodily-state proxy) or broader reinforcer COVERAGE -- NOT the Warriner-arousal lookup, and NOT 'acceptable': the residual is the deliverable.",
+  "GO": false,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=24)",
+      "ok": true,
+      "detail": "vocab=139"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=15)",
+      "ok": true,
+      "detail": "min_n_held=64"
+    },
+    {
+      "name": "no_source_lesion_reads_zero(|r|<0.15)",
+      "ok": true,
+      "detail": "lesion_r=+0.0000"
+    },
+    {
+      "name": "arousal_read_warriner_arousal_free(byte-identical under corrupted gt)",
+      "ok": true,
+      "detail": "asserted in run_seed: every arousal-source fn has no arousal argument; corrupting a_true leaves the read byte-identical; the no-source lesion collapse gives the assertion teeth"
+    },
+    {
+      "name": "circumplex_present_in_labels(corr(Warriner arousal,|valence|)>0)",
+      "ok": true,
+      "detail": "corr(a_true,|val|)=+0.593"
+    }
+  ],
+  "verdict_earned": {
+    "label": "separate emergent arousal / intensity channel (valence _|_ arousal circumplex)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: G2 arousal _|_ valence SIGN (|corr|<0.30) in ALL seeds (measured=4 expect=<function main.<locals>.<lambda> at 0x7f2e3bf65da0>)",
+      "unmet: G4 permute beaten (perm-p<0.05) in ALL seeds (measured=5 expect=<function main.<locals>.<lambda> at 0x7f2e3bf65da0>)"
+    ],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "G1 held-out arousal-prediction r >= 0.25",
+        "ok": true,
+        "detail": "0.264948 vs floor 0.25",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G1 every seed arousal r >= 0.10",
+        "ok": true,
+        "detail": "measured=0.1196564533008817 expect=<function main.<locals>.<lambda> at 0x7f2e3bf65da0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G2 arousal _|_ valence SIGN (|corr|<0.30) in ALL seeds",
+        "ok": false,
+        "detail": "measured=4 expect=<function main.<locals>.<lambda> at 0x7f2e3bf65da0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G3 no-source lesion collapses the arousal read (|r|<0.15)",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f2e3bf65da0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G4 permute beaten (perm-p<0.05) in ALL seeds",
+        "ok": false,
+        "detail": "measured=5 expect=<function main.<locals>.<lambda> at 0x7f2e3bf65da0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "G5 arousal feature LIFTS graded valence-strength (combined vs sign-only)",
+        "ok": true,
+        "detail": "treatment=0.235076 control=0.204268 |sep|=0.0308084 > 0.03",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "Warriner AROUSAL rating as an INPUT -- RETIRED/FORBIDDEN: the arousal read is a pure function of the emergent reinforcer engagement + self-organized code; Warriner arousal is EVAL-only ground truth",
+        "why": "using it as input would be the exact Warriner cheat [A]/[E] retired for valence"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "G1_arousal_predicts_held_out(mean_r>=0.25)": true,
+    "G1_every_seed_r>=0.10": true,
+    "G2_arousal_perp_valence_sign(|r|<0.30_all_seeds)": false,
+    "G3_no_source_lesion_collapses(|r|<0.15)": true,
+    "G4_permute_beaten(perm_p<0.05_all_seeds)": false,
+    "G5_strength_lift(combined>=sign+0.03)": true
+  },
+  "means": {
+    "arousal_r": 0.26494751398231203,
+    "arousal_r_min": 0.1196564533008817,
+    "arousal_r_allreinf": 0.22412186804979073,
+    "corr_arousal_sign": -0.2710576219426342,
+    "corr_arousal_absval": 0.15379669560844875,
+    "corr_arotrue_absval": 0.5934002569289477,
+    "corr_arotrue_sign": -0.17637045607463306,
+    "arousal_perp_seeds_ok": 4,
+    "arousal_r_lesion": 0.0,
+    "permute_seeds_sig": 5,
+    "permute_null_mean": -0.005820365238832569,
+    "strength_signonly": 0.20426770682370676,
+    "strength_combined": 0.23507608237014935,
+    "strength_arousalonly": 0.15379669560844875,
+    "strength_lift": 0.030808375546442585,
+    "source_r_interoceptive": 0.26494751398231203,
+    "source_r_interoceptive_unbalanced": 0.2850901515731013,
+    "source_r_raw": -0.022847425652671963,
+    "source_r_codemag": 0.22736065613574272,
+    "source_r_dispersion": -0.16435233263342383
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 139,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "arousal_r": 0.256125298188699,
+      "arousal_r_allreinf": 0.26628341291174396,
+      "source_r": {
+        "interoceptive_salience_balanced": 0.256125298188699,
+        "interoceptive_salience_raw_unbalanced": 0.2577793907243019,
+        "reinforcer_drive_raw": 0.0583356715059253,
+        "code_magnitude": 0.2106810465627707,
+        "context_dispersion": -0.21647171456935665
+      },
+      "corr_arousal_sign": -0.2184131306962401,
+      "corr_arousal_absval": 0.227636234479948,
+      "corr_arotrue_absval": 0.5879929003375173,
+      "corr_arotrue_sign": -0.18083834582431685,
+      "arousal_r_lesion": 0.0,
+      "permute_perm_p": 0.029850746268656716,
+      "permute_null_mean": 0.004606007790264243,
+      "strength_signonly": 0.2959166389631083,
+      "strength_combined": 0.32987171596976883,
+      "strength_arousalonly": 0.227636234479948,
+      "strength_lift": 0.033955077006660506
+    },
+    {
+      "seed": 43,
+      "primaries": [
+        "hug",
+        "sweet",
+        "treat",
+        "candy",
+        "cake",
+        "hungry",
+        "pain",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 139,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "arousal_r": 0.31537211758047035,
+      "arousal_r_allreinf": 0.2057343307743619,
+      "source_r": {
+        "interoceptive_salience_balanced": 0.31537211758047035,
+        "interoceptive_salience_raw_unbalanced": 0.2813575819902645,
+        "reinforcer_drive_raw": 0.008498802899868627,
+        "code_magnitude": 0.2168043236282562,
+        "context_dispersion": -0.11843378722233279
+      },
+      "corr_arousal_sign": -0.3752408048626187,
+      "corr_arousal_absval": 0.17861650424823458,
+      "corr_arotrue_absval": 0.5862373125910255,
+      "corr_arotrue_sign": -0.1773585550713571,
+      "arousal_r_lesion": 0.0,
+      "permute_perm_p": 0.004975124378109453,
+      "permute_null_mean": 0.017179810106810918,
+      "strength_signonly": 0.022376393083541262,
+      "strength_combined": 0.15242585084667984,
+      "strength_arousalonly": 0.17861650424823458,
+      "strength_lift": 0.1300494577631386
+    },
+    {
+      "seed": 44,
+      "primaries": [
+        "cuddle",
+        "hug",
+        "cozy",
+        "candy",
+        "warm",
+        "pain",
+        "hungry",
+        "bite",
+        "cold",
+        "hurt"
+      ],
+      "n_vocab": 139,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "arousal_r": 0.1196564533008817,
+      "arousal_r_allreinf": 0.19719956029798244,
+      "source_r": {
+        "interoceptive_salience_balanced": 0.1196564533008817,
+        "interoceptive_salience_raw_unbalanced": 0.1412019058000862,
+        "reinforcer_drive_raw": -0.010601307921818614,
+        "code_magnitude": 0.21755053913849765,
+        "context_dispersion": -0.16940503598064063
+      },
+      "corr_arousal_sign": -0.2430943656304323,
+      "corr_arousal_absval": 0.12650856261948076,
+      "corr_arotrue_absval": 0.597371016133517,
+      "corr_arotrue_sign": -0.148614767865653,
+      "arousal_r_lesion": 0.0,
+      "permute_perm_p": 0.12437810945273632,
+      "permute_null_mean": -0.02455474139576062,
+      "strength_signonly": 0.11134183325371094,
+      "strength_combined": 0.168606881864294,
+      "strength_arousalonly": 0.12650856261948076,
+      "strength_lift": 0.05726504861058307
+    },
+    {
+      "seed": 100,
+      "primaries": [
+        "hug",
+        "food",
+        "candy",
+        "cozy",
+        "sweet",
+        "scared",
+        "cold",
+        "afraid",
+        "cry",
+        "hungry"
+      ],
+      "n_vocab": 139,
+      "n_reinforced": 128,
+      "n_train": 64,
+      "n_held": 64,
+      "arousal_r": 0.24826112089192723,
+      "arousal_r_allreinf": 0.30459760330052715,
+      "source_r": {
+        "interoceptive_salience_balanced": 0.24826112089192723,
+        "interoceptive_salience_raw_unbalanced": 0.2953260973305268,
+        "reinforcer_drive_raw": -0.06994524643508708,
+        "code_magnitude": 0.2180426986973322,
+        "context_dispersion": -0.10710568941614539
+      },
+      "corr_arousal_sign": -0.26232786444027495,
+      "corr_arousal_absval": 0.04599276719613697,
+      "corr_arotrue_absval": 0.6022858822223777,
+      "corr_arotrue_sign": -0.17796400908983084,
+      "arousal_r_lesion": 0.0,
+      "permute_perm_p": 0.009950248756218905,
+      "permute_null_mean": -0.016517637583647327,
+      "strength_signonly": 0.31581337216183647,
+      "strength_combined": 0.2557937217228556,
+      "strength_arousalonly": 0.04599276719613697,
+      "strength_lift": -0.06001965043898089
+    },
+    {
+      "seed": 101,
+      "primaries": [
+        "kiss",
+        "sweet",
+        "cozy",
+        "warm",
+        "cake",
+        "hungry",
+        "cold",
+        "bite",
+        "sick",
+        "pain"
+      ],
+      "n_vocab": 139,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "arousal_r": 0.18304174385756658,
+      "arousal_r_allreinf": 0.05157349847063771,
+      "source_r": {
+        "interoceptive_salience_balanced": 0.18304174385756658,
+        "interoceptive_salience_raw_unbalanced": 0.18615187133644362,
+        "reinforcer_drive_raw": -0.013111321824559796,
+        "code_magnitude": 0.15211588057543593,
+        "context_dispersion": -0.1373626469510955
+      },
+      "corr_arousal_sign": -0.1647904344581952,
+      "corr_arousal_absval": 0.23947991785368178,
+      "corr_arotrue_absval": 0.585801541420034,
+      "corr_arotrue_sign": -0.1786675346919418,
+      "arousal_r_lesion": 0.0,
+      "permute_perm_p": 0.04975124378109453,
+      "permute_null_mean": -0.009111474227718167,
+      "strength_signonly": 0.17682152464980105,
+      "strength_combined": 0.214684573197451,
+      "strength_arousalonly": 0.23947991785368178,
+      "strength_lift": 0.037863048547649936
+    },
+    {
+      "seed": 102,
+      "primaries": [
+        "sweet",
+        "candy",
+        "cuddle",
+        "kiss",
+        "cozy",
+        "scared",
+        "bite",
+        "cold",
+        "cry",
+        "fall"
+      ],
+      "n_vocab": 139,
+      "n_reinforced": 128,
+      "n_train": 64,
+      "n_held": 64,
+      "arousal_r": 0.46722835007432756,
+      "arousal_r_allreinf": 0.3193428025434912,
+      "source_r": {
+        "interoceptive_salience_balanced": 0.46722835007432756,
+        "interoceptive_salience_raw_unbalanced": 0.5487240622569848,
+        "reinforcer_drive_raw": -0.11026115214036021,
+        "code_magnitude": 0.3489694482121635,
+        "context_dispersion": -0.2373351216609721
+      },
+      "corr_arousal_sign": -0.362479131568044,
+      "corr_arousal_absval": 0.10454618725321041,
+      "corr_arotrue_absval": 0.6007128888692149,
+      "corr_arotrue_sign": -0.19477952390469877,
+      "arousal_r_lesion": 0.0,
+      "permute_perm_p": 0.004975124378109453,
+      "permute_null_mean": -0.0065241561229444625,
+      "strength_signonly": 0.3033364788302425,
+      "strength_combined": 0.2890737506198468,
+      "strength_arousalonly": 0.10454618725321041,
+      "strength_lift": -0.014262728210395703
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "held_frac": 0.5,
+    "n_perm": 200,
+    "r_go": 0.25,
+    "n_vocab": 139,
+    "appetitive_pool": [
+      "hug",
+      "kiss",
+      "cuddle",
+      "cake",
+      "candy",
+      "sweet",
+      "warm",
+      "treat",
+      "food",
+      "cozy"
+    ],
+    "aversive_pool": [
+      "hurt",
+      "pain",
+      "sick",
+      "cry",
+      "scared",
+      "afraid",
+      "cold",
+      "hungry",
+      "bite",
+      "fall"
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "SEPARATE emergent AROUSAL channel = the SUM channel of the innate-primary conditioning (valence is the DIFFERENCE/opponent). PRIMARY read: interoceptive-salience contingency A_c=(n_pos+n_neg)/total_ctx (sign-agnostic reinforcer engagement, frequency-robust). Evaluated vs held-out Warriner AROUSAL (EVAL-only). Orthogonality to valence sign measured; combined valence-SIGN + arousal tested for graded valence-STRENGTH recovery ([A]'s residual). Reported alt sources: reinforcer_drive_raw, code_magnitude (RAW PPMI L2), context_dispersion (hub-distribution entropy).",
+  "HONEST_RESIDUALS": "Warriner AROUSAL is EVAL-only, NEVER an input (asserted byte-identical). Rate-level numpy read (fully-spiking LC-like arousal population = next rung). ~2*n_each innate primary SIGNS host-supplied (faithful floor; world+body). Standalone de-risk bridge (build_one_brain fold-in pending).",
+  "sources": {
+    "circumplex": "Russell 1980; Barrett & Bliss-Moreau (valence _|_ arousal are separate dimensions)",
+    "arousal_system": "Kandel 6e Ch.40 -- noradrenergic locus ceruleus modulates overall arousal/alertness/attention (a separate ascending modulatory system from the dopaminergic reward pathways); phasic LC bursts precede responses to salient stimuli regardless of reward sign",
+    "valence_opponent": "Namburi-Tye 2015 opposing BLA valence populations (the DIFFERENCE channel)",
+    "graded_magnitude": "Bayer & Glimcher 2005 graded reward-magnitude DA (the intensity [A] ruled out of the SIGN channel)"
+  },
+  "builds_on": "2026-08-13-affect-graded-strength-third-factor-BOUNDARY.md (its named surpass #2)",
+  "elapsed_seconds": 1.7
+}

@@ -1,0 +1,27 @@
+{
+ "run_id": "1786620391-1100607",
+ "runner": "research/runners/_affect_arousal_channel_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a10f721ee17564ee6/research/runners/_affect_arousal_channel_derisk.py",
+  "--smoke"
+ ],
+ "git_sha": "7f0b9db24",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T07:26:31",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 369.2,
+ "corpus_check_query": "affect graded strength is an info-boundary of the sparse valence channel, need a separate emergent arousal dimension",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_arousal_channel.json"
+}

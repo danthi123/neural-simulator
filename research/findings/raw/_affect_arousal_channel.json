@@ -1,0 +1,212 @@
+{
+  "probe": "affect_arousal_channel (valence _|_ arousal circumplex, separate emergent intensity dimension)",
+  "verdict": "BOUNDARY / HONEST NEGATIVE (build-informative, SMOKE(1-seed)) -- the separate emergent arousal channel is characterized but does not clear the pre-registered bar. The PRIMARY interoceptive-salience read predicts held-out Warriner AROUSAL at r=+0.228 (min +0.228, all-reinf +0.238); the strongest of the four emergent sources is 'interoceptive_salience' at r=+0.228. It IS orthogonal to valence sign (corr(A,sign)=-0.233) and emergent (no-source lesion +0.000; permute sig 1/1). Graded valence-STRENGTH combined=+0.187 vs sign-only +0.036 (lift +0.151). FAILED: ['G1_arousal_predicts_held_out(mean_r>=0.25)']. The next mechanism is a RICHER interoceptive/bodily arousal signal (a spiking LC population driven by reinforcer magnitude; autonomic/bodily-state proxy) or broader reinforcer COVERAGE -- NOT the Warriner-arousal lookup, and NOT 'acceptable': the residual is the deliverable.",
+  "GO": false,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=24)",
+      "ok": true,
+      "detail": "vocab=137"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=15)",
+      "ok": true,
+      "detail": "min_n_held=62"
+    },
+    {
+      "name": "no_source_lesion_reads_zero(|r|<0.15)",
+      "ok": true,
+      "detail": "lesion_r=+0.0000"
+    },
+    {
+      "name": "arousal_read_warriner_arousal_free(byte-identical under corrupted gt)",
+      "ok": true,
+      "detail": "asserted in run_seed: every arousal-source fn has no arousal argument; corrupting a_true leaves the read byte-identical; the no-source lesion collapse gives the assertion teeth"
+    },
+    {
+      "name": "circumplex_present_in_labels(corr(Warriner arousal,|valence|)>0)",
+      "ok": true,
+      "detail": "corr(a_true,|val|)=+0.602"
+    }
+  ],
+  "verdict_earned": {
+    "label": "separate emergent arousal / intensity channel (valence _|_ arousal circumplex)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: G1 held-out arousal-prediction r >= 0.25 (0.227661 vs floor 0.25)"
+    ],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "G1 held-out arousal-prediction r >= 0.25",
+        "ok": false,
+        "detail": "0.227661 vs floor 0.25",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G1 every seed arousal r >= 0.10",
+        "ok": true,
+        "detail": "measured=0.2276613046669555 expect=<function main.<locals>.<lambda> at 0x7fcb0bb61da0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G2 arousal _|_ valence SIGN (|corr|<0.30) in ALL seeds",
+        "ok": true,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fcb0bb61da0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G3 no-source lesion collapses the arousal read (|r|<0.15)",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fcb0bb61da0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G4 permute beaten (perm-p<0.05) in ALL seeds",
+        "ok": true,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fcb0bb61da0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "G5 arousal feature LIFTS graded valence-strength (combined vs sign-only)",
+        "ok": true,
+        "detail": "treatment=0.18687 control=0.0363378 |sep|=0.150532 > 0.03",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "Warriner AROUSAL rating as an INPUT -- RETIRED/FORBIDDEN: the arousal read is a pure function of the emergent reinforcer engagement + self-organized code; Warriner arousal is EVAL-only ground truth",
+        "why": "using it as input would be the exact Warriner cheat [A]/[E] retired for valence"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "G1_arousal_predicts_held_out(mean_r>=0.25)": false,
+    "G1_every_seed_r>=0.10": true,
+    "G2_arousal_perp_valence_sign(|r|<0.30_all_seeds)": true,
+    "G3_no_source_lesion_collapses(|r|<0.15)": true,
+    "G4_permute_beaten(perm_p<0.05_all_seeds)": true,
+    "G5_strength_lift(combined>=sign+0.03)": true
+  },
+  "means": {
+    "arousal_r": 0.2276613046669555,
+    "arousal_r_min": 0.2276613046669555,
+    "arousal_r_allreinf": 0.2384322970428002,
+    "corr_arousal_sign": -0.233130852672519,
+    "corr_arousal_absval": 0.22963872332786442,
+    "corr_arotrue_absval": 0.6022707432385603,
+    "corr_arotrue_sign": -0.14931293389727412,
+    "arousal_perp_seeds_ok": 1,
+    "arousal_r_lesion": 0.0,
+    "permute_seeds_sig": 1,
+    "permute_null_mean": 0.0007354910656818069,
+    "strength_signonly": 0.036337792805328124,
+    "strength_combined": 0.18687012582005058,
+    "strength_arousalonly": 0.22963872332786442,
+    "strength_lift": 0.15053233301472246,
+    "source_r_interoceptive": 0.2276613046669555,
+    "source_r_raw": 0.01081354220913823,
+    "source_r_codemag": 0.18621468665547192,
+    "source_r_dispersion": -0.18559861723307092
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 137,
+      "n_reinforced": 125,
+      "n_train": 63,
+      "n_held": 62,
+      "arousal_r": 0.2276613046669555,
+      "arousal_r_allreinf": 0.2384322970428002,
+      "source_r": {
+        "interoceptive_salience": 0.2276613046669555,
+        "reinforcer_drive_raw": 0.01081354220913823,
+        "code_magnitude": 0.18621468665547192,
+        "context_dispersion": -0.18559861723307092,
+        "reinforcer_drive_norm_by_freq_r": 0.2276613046669555
+      },
+      "corr_arousal_sign": -0.233130852672519,
+      "corr_arousal_absval": 0.22963872332786442,
+      "corr_arotrue_absval": 0.6022707432385603,
+      "corr_arotrue_sign": -0.14931293389727412,
+      "arousal_r_lesion": 0.0,
+      "permute_perm_p": 0.03305785123966942,
+      "permute_null_mean": 0.0007354910656818069,
+      "strength_signonly": 0.036337792805328124,
+      "strength_combined": 0.18687012582005058,
+      "strength_arousalonly": 0.22963872332786442,
+      "strength_lift": 0.15053233301472246
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 8000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "held_frac": 0.5,
+    "n_perm": 120,
+    "r_go": 0.25,
+    "n_vocab": 137,
+    "appetitive_pool": [
+      "hug",
+      "kiss",
+      "cuddle",
+      "cake",
+      "candy",
+      "sweet",
+      "warm",
+      "treat",
+      "food",
+      "cozy"
+    ],
+    "aversive_pool": [
+      "hurt",
+      "pain",
+      "sick",
+      "cry",
+      "scared",
+      "afraid",
+      "cold",
+      "hungry",
+      "bite",
+      "fall"
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "SEPARATE emergent AROUSAL channel = the SUM channel of the innate-primary conditioning (valence is the DIFFERENCE/opponent). PRIMARY read: interoceptive-salience contingency A_c=(n_pos+n_neg)/total_ctx (sign-agnostic reinforcer engagement, frequency-robust). Evaluated vs held-out Warriner AROUSAL (EVAL-only). Orthogonality to valence sign measured; combined valence-SIGN + arousal tested for graded valence-STRENGTH recovery ([A]'s residual). Reported alt sources: reinforcer_drive_raw, code_magnitude (RAW PPMI L2), context_dispersion (hub-distribution entropy).",
+  "HONEST_RESIDUALS": "Warriner AROUSAL is EVAL-only, NEVER an input (asserted byte-identical). Rate-level numpy read (fully-spiking LC-like arousal population = next rung). ~2*n_each innate primary SIGNS host-supplied (faithful floor; world+body). Standalone de-risk bridge (build_one_brain fold-in pending).",
+  "sources": {
+    "circumplex": "Russell 1980; Barrett & Bliss-Moreau (valence _|_ arousal are separate dimensions)",
+    "arousal_system": "Kandel 6e Ch.40 -- noradrenergic locus ceruleus modulates overall arousal/alertness/attention (a separate ascending modulatory system from the dopaminergic reward pathways); phasic LC bursts precede responses to salient stimuli regardless of reward sign",
+    "valence_opponent": "Namburi-Tye 2015 opposing BLA valence populations (the DIFFERENCE channel)",
+    "graded_magnitude": "Bayer & Glimcher 2005 graded reward-magnitude DA (the intensity [A] ruled out of the SIGN channel)"
+  },
+  "builds_on": "2026-08-13-affect-graded-strength-third-factor-BOUNDARY.md (its named surpass #2)",
+  "elapsed_seconds": 0.9
+}
