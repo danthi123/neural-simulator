@@ -186,15 +186,41 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   pragmatic comprehension front-end (embedded/DE environments, non-lexical scalars, QUD) is the named next rung.
 >   finding `2026-08-13-w4-pragmatic-belief-production-scoped`.
 >
-> **🔴 LIVE LANES — WAVE-9 (staggered; consolidate each → checkout to main):**
-> - **[SH] (iso):** SURPRISE-ORGAN homeostatic-gain — close [N]'s het read-precision residual (0.9375; the surprise
->   organ's own boundary) with a per-pool homeostat, strengthening both the organ and the GNW-bus heterogeneous vote.
-> - **[HB] (iso):** PROSPECTIVE cue→action HEBBIAN binding — retire the [PW] content-binding scaffold via one-shot Hebbian
->   potentiation at intention-formation (Gollwitzer implementation-intentions) → toward `scaffold_retired: YES`.
+> **✅ WAVE-9 CONSOLIDATED (2026-08-13, all on main + both remotes @ `8916d9493`):**
+> - **[PB] W4 pragmatic belief** → **SCOPED-WIRED to production** (`c764d65dd`, organ #14): investigate-first found the
+>   speaking pipeline has NO pragmatic slot; did NOT fabricate one — wired the minimal genuine scalar-implicature turn
+>   ("some"→graded [0,.731,.269], margin 0.463, 13× better RSA calibration, real-handler verified, byte-identical-off,
+>   lesion flattens). Task-#12 CORE DONE (de-risk-closed 6/6 + scoped-wired). Gap = a general pragmatic front-end (QUD /
+>   embedded scalars). Emergent detail: quantifier competence read even on OOV content = structural, not lexical.
+> - **[HB] prospective Hebbian binding** → **GO** (`5d3dee0cf`): retires the cue→action content-binding scaffold — learned
+>   via one-shot Hebbian at formation (absent-before, Hebbian-lesion→no-fire, 100% attributable), reconstructs canonical
+>   EXACTLY (learned≡installed), 6/6. Toward prospective `scaffold_retired: YES` (wire the formation into the prod organ).
+> - **[SH] surprise-organ homeostat** → **GO** (`8916d9493`): het_vote_rate 0.9375→1.000 (8/8) all 6, end-to-end host
+>   parity restored, surprise specificity preserved by construction, all [N] controls held. Root cause was a per-block
+>   prediction-recall collapse (not global gain) → a per-block prediction-gain equalizer. De-risk (production-wire pending).
 >
-> **SINGLE LITERAL NEXT:** [PB] LANDED; consolidate WAVE-9 [SH]/[HB] as each lands; then — discrete-emotion production wire,
-> one-brain MERGE (co-resident bridges → one substrate), affect interoceptive/embodiment input, self-initiation/DMN,
-> remaining Tier-2/3. RAG at every wall.
+> ---
+> ## 🌙 NIGHT SUMMARY (2026-08-13 overnight, ~02:30→13:25Z) — clean checkpoint for the morning
+> **25 lanes across 7 waves (3–9), ALL consolidated + pushed; main @ `8916d9493`, board + roadmap synced.** Highlights:
+> - **Production integrations (the SPINE):** T1-4 causal why/what-if **WIRED**; prospective memory **WIRED** (organ #13);
+>   W4 pragmatic-implicature **SCOPED-WIRED** (organ #14). Default-on spiking faculties 12→14.
+> - **ONE-SUBSTRATE milestone:** the GNW ignition bus **FLIPPED to the DEFAULT** organ-combination (substrate authors the
+>   combine verdict, 22/22 byte-identical) + **SCOPED scaffold-retirement** (host combination NEVER computed on the covered
+>   path — `scaffold_retired` NO→YES there). The biggest move on the "one substrate" property to date.
+> - **Arcs closed/converged:** W4/Task-#12 (de-risk-CLOSED 6/6 + scoped-wired); prospective memory (closed + wired +
+>   binding-scaffold retirement de-risked); affect (origin+sign+arousal all EMERGENT; graded-STRENGTH proven an
+>   info-boundary → needs a bodily/interoceptive/embodiment input; valence⊥arousal established).
+> - **Method held throughout:** honest boundaries with precisely-relocated residuals + named next mechanisms; ONE
+>   cross-cutting hypothesis (magnitude-preservation) TESTED then FALSIFIED + corrected across all summary docs; the
+>   recurring last-mile = HOMEOSTATIC-GAIN across heterogeneity ("missing companion process") validated faculty-by-faculty
+>   (W4-detector, prospective, surprise) as DISTINCT de-risks, NOT a proven shared primitive.
+> - **3 missing north-star properties:** ONE substrate — big progress (bus flip + scoped retirement); EMERGENT — affect
+>   fully self-organizes; **FLUID mouth — least moved (still Qwen for open prose) = the standing top gap.**
+>
+> **🟢 NEXT (owner's morning / next session):** production-wire the surprise homeostat + prospective Hebbian binding (both
+> de-risked GO); discrete-emotion production wire; **one-brain MERGE** (co-resident bridges → one substrate — the deepest
+> one-substrate step); affect interoceptive/embodiment input; general pragmatic front-end; **the FLUID open-prose mouth**
+> (the least-moved property). RAG at every wall. No live lanes running at checkpoint; safe to `/clear` and resume here.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
