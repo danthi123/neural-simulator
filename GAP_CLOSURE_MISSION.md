@@ -237,11 +237,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > (`sim/bridge.py:2307` global-RNG threshold draw) with a precise named fix (a per-region RNG stream mirroring the existing
 > `per_parameter_heterogeneity_seed` machinery).
 >
-> **🟢 NEXT (owner-steer pending 2026-08-13 ~15:20Z):** **(1) CLOSE the one-substrate merge** — the scoped additive
-> `sim/bridge.py` per-region-RNG edit (flips the merge to byte-exact), then scale 2→N organs [HELD for owner green-light —
-> touches `sim/`]. **(2) The FLUID open-prose mouth** — the least-moved property (still the Qwen scaffold), the biggest
-> north-star gap; deserves a dedicated arc. Also queued: discrete-emotion production wire; affect interoceptive/embodiment
-> input; general pragmatic front-end; surprise online-Vogels plasticity. RAG at every wall.
+> **✅ ONE-SUBSTRATE MERGE CLOSED + FLUID-MOUTH ARC (2026-08-13 ~15:30–19:30Z, owner-directed):**
+> - **Merge CLOSED** (`fb27b610`/`529c104e`/`542d8518`): byte-EXACT end-to-end (init + trained/adapted via 2 guarded
+>   default-off flags `per_region_threshold_heterogeneity` + `per_region_homeostasis_isolation`) + SCALES to N organs +
+>   different builders; determinism 9/9, parent-verified. §0.2 residual #1 de-risked (organs CAN share one substrate).
+> - **Fluid mouth** (`223a2a5e`/`d465449b`): the SIGNED synaptic-projection read-out RETIRED the `head_w@h` logit matmul
+>   + top-K argmax onto spiking read-out neurons (read-fid 0.035→0.55, 16×; semi-coherent prose) — real biologization of
+>   the hardest gap. PARITY boundary root-caused (companions moved nothing): the sign is load-bearing only in the sparse
+>   ~1.5-spike regime → next = read in the GRADED/CONDUCTANCE domain (continuous margin).
+>
+> **🔴 LIVE LANES (owner-approved, concurrent):**
+> - **[GC] (iso):** GRADED/CONDUCTANCE mouth read — resolve the winner from the continuous signed conductance margin (not a
+>   1–2-spike count) to break the parity wall (graded dendritic plateau template). Toward the substrate carrying articulation.
+> - **[PI] (main, serial):** MERGE→PRODUCTION rung 1 — migrate the first TWO compatible co-resident production organs onto
+>   ONE shared bridge behind a default-off flag, byte-identical + no-regression (co-residency → shared substrate for 1 pair).
+>
+> **SINGLE LITERAL NEXT:** consolidate [GC]/[PI] as each lands (trust-but-verify [PI]'s guarded production wiring); then —
+> migrate the rest of the organ set onto the shared substrate; fluid-mouth next rung (LIP ramp accumulator / learned read
+> if graded-conductance falls short); discrete-emotion wire; general pragmatic front-end. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
