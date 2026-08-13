@@ -1,0 +1,42 @@
+{
+ "run_id": "1786643077-1232383",
+ "runner": "research/runners/_wkv_signed_shadow_read_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a79f2dd74e59e3941/research/runners/_wkv_signed_shadow_read_derisk.py",
+  "--smoke",
+  "--seeds",
+  "42",
+  "--pops",
+  "8",
+  "--n-eval-pos",
+  "60",
+  "--floor-pA",
+  "84",
+  "--ratio",
+  "3.5",
+  "--gen-tokens",
+  "0",
+  "--oracle-every",
+  "4",
+  "--json",
+  "research/findings/raw/_wkv_signed_shadow_f84.json"
+ ],
+ "git_sha": "fb27b6109",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T13:44:37",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_signed_shadow_f84.json"
+}

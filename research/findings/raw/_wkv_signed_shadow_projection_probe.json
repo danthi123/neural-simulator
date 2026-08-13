@@ -1,0 +1,38 @@
+{
+  "note": "projection-ranking probe for the signed-shadow read-out (seed 42, V=1000). The finding quotes these.",
+  "rate_limit_net_vs_logit_corr_mean": 0.987,
+  "rate_limit_net_vs_logit_corr_all": [
+    0.979,
+    0.989,
+    0.991,
+    0.988,
+    0.986,
+    0.985,
+    0.987,
+    0.986,
+    0.99,
+    0.988,
+    0.988,
+    0.989,
+    0.985,
+    0.983,
+    0.988,
+    0.991
+  ],
+  "rate_limit_argmax_match_frac": 0.812,
+  "shadow_rate_match_corr_mean": 0.958,
+  "spiking_current_vs_logit_corr_min": 0.893,
+  "spiking_current_vs_logit_corr_max": 0.922,
+  "spiking_current_winner_rank_all": [
+    0,
+    0,
+    1,
+    1,
+    1,
+    0
+  ],
+  "spiking_current_winner_always_rank0": false,
+  "reference_rung2_dale_shift_read_fid": 0.035,
+  "reference_rung2_source": "research/findings/2026-08-13-gap1-A1-fswta-lowers-spike-budget-3x-synaptic-logit-readout-boundary.md",
+  "top1_top2_logit_margin_frac_of_range_median": 0.035
+}

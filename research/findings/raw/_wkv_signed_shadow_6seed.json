@@ -1,0 +1,388 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "arm": "signed_shadow",
+      "V": 1000,
+      "pop": 8,
+      "hid_pop": 1,
+      "ratio": 6.5,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 120,
+      "silent_frac": 0.1417,
+      "hidden_active_frac": 0.8583,
+      "shadow_rate_match_corr": 0.9575,
+      "mean_spikes_per_read": 27.83,
+      "mean_spikes_total": 711.47,
+      "argmax_agree": 0.3167,
+      "top5_hit": 0.5583,
+      "nll_synaptic": 8.5914,
+      "mass_synaptic": 0.2038,
+      "mass_positive_only": 0.1297,
+      "mass_hostsample_ceiling": 0.3378,
+      "mass_argmax_ceiling": 0.4168,
+      "mass_scramble": 0.0006,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.0,
+      "mass_oracle_ceiling": 0.4167,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.6033,
+      "oracle_read_fidelity": 1.2336,
+      "positive_only_fidelity": 0.384,
+      "projection_recovery": 0.4891,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little girl named lucy wanted to <unk> her <unk> her <unk> her her mom told her mom <unk> her and told her mommy about <unk> her <unk>",
+          "self_nll": 6.82
+        },
+        "the little girl": {
+          "text": "the little girl nodded and continued running around the <unk> <unk> <unk> <unk> <unk> and <unk> her <unk> <unk> her toys and <unk> her <unk> her <unk> <unk> <unk> <unk> her head on",
+          "self_nll": 14.075
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were very happy to meet their diamond but he didn't know what to do it but it <unk> to get in the hole and he felt guilty for his <unk>",
+          "self_nll": 3.749
+        }
+      },
+      "go": false,
+      "checks": {
+        "projection_recovery_ge_0.85": false,
+        "read_fidelity_ge_0.40": true,
+        "signed_beats_positive_only": true,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": false,
+        "not_silent": false
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "signed_shadow",
+      "V": 1000,
+      "pop": 8,
+      "hid_pop": 1,
+      "ratio": 6.5,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 120,
+      "silent_frac": 0.1833,
+      "hidden_active_frac": 0.8167,
+      "shadow_rate_match_corr": 0.9592,
+      "mean_spikes_per_read": 24.63,
+      "mean_spikes_total": 738.44,
+      "argmax_agree": 0.4167,
+      "top5_hit": 0.6667,
+      "nll_synaptic": 7.4553,
+      "mass_synaptic": 0.2475,
+      "mass_positive_only": 0.2305,
+      "mass_hostsample_ceiling": 0.3597,
+      "mass_argmax_ceiling": 0.4405,
+      "mass_scramble": 0.0011,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.3247,
+      "mass_oracle_ceiling": 0.451,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.6881,
+      "oracle_read_fidelity": 1.2538,
+      "positive_only_fidelity": 0.6408,
+      "projection_recovery": 0.5488,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little boy named tim found a small dry leaf on the ground and it was filled with a big red ball <unk> in his mouth and felt",
+          "self_nll": 2.223
+        },
+        "the little girl": {
+          "text": "the little girl laughed and clapped their hands and laughed all day with his dad and they all played together in the park and had a big colorful star in the soft grass",
+          "self_nll": 1.688
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were very happy and all day long in his <unk> and <unk> <unk> <unk> <unk> <unk> and fell out in <unk> the water and started to laugh too hard and",
+          "self_nll": 7.704
+        }
+      },
+      "go": false,
+      "checks": {
+        "projection_recovery_ge_0.85": false,
+        "read_fidelity_ge_0.40": true,
+        "signed_beats_positive_only": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": false,
+        "provenance_no_host_draw": true,
+        "hidden_active": false,
+        "not_silent": false
+      }
+    },
+    {
+      "seed": 44,
+      "arm": "signed_shadow",
+      "V": 1000,
+      "pop": 8,
+      "hid_pop": 1,
+      "ratio": 6.5,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 120,
+      "silent_frac": 0.225,
+      "hidden_active_frac": 0.775,
+      "shadow_rate_match_corr": 0.9656,
+      "mean_spikes_per_read": 20.17,
+      "mean_spikes_total": 715.01,
+      "argmax_agree": 0.2667,
+      "top5_hit": 0.4917,
+      "nll_synaptic": 9.7853,
+      "mass_synaptic": 0.1698,
+      "mass_positive_only": 0.1044,
+      "mass_hostsample_ceiling": 0.3145,
+      "mass_argmax_ceiling": 0.3909,
+      "mass_scramble": 0.0004,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.0686,
+      "mass_oracle_ceiling": 0.4405,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.5399,
+      "oracle_read_fidelity": 1.4006,
+      "positive_only_fidelity": 0.332,
+      "projection_recovery": 0.3855,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little girl named lucy and her mom went outside to play in the living room with them and <unk> their toys and their toys were so much",
+          "self_nll": 2.214
+        },
+        "the little girl": {
+          "text": "the little girl felt sad for her mom to stop playing with him and listen to her mom's help people in the town and the dog were too scared to get away from",
+          "self_nll": 1.925
+        },
+        "tom and his dog": {
+          "text": "tom and his dog spot was very happy to be nice and share with the new toys every day and they were having fun and played together all day long in the warm sun",
+          "self_nll": 1.651
+        }
+      },
+      "go": false,
+      "checks": {
+        "projection_recovery_ge_0.85": false,
+        "read_fidelity_ge_0.40": true,
+        "signed_beats_positive_only": true,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": false,
+        "not_silent": false
+      }
+    },
+    {
+      "seed": 100,
+      "arm": "signed_shadow",
+      "V": 1000,
+      "pop": 8,
+      "hid_pop": 1,
+      "ratio": 6.5,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 120,
+      "silent_frac": 0.1333,
+      "hidden_active_frac": 0.8667,
+      "shadow_rate_match_corr": 0.9534,
+      "mean_spikes_per_read": 18.82,
+      "mean_spikes_total": 734.83,
+      "argmax_agree": 0.25,
+      "top5_hit": 0.5,
+      "nll_synaptic": 9.477,
+      "mass_synaptic": 0.1637,
+      "mass_positive_only": 0.188,
+      "mass_hostsample_ceiling": 0.317,
+      "mass_argmax_ceiling": 0.3962,
+      "mass_scramble": 0.0008,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.3982,
+      "mass_oracle_ceiling": 0.3846,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.5164,
+      "oracle_read_fidelity": 1.2132,
+      "positive_only_fidelity": 0.5931,
+      "projection_recovery": 0.4257,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a bright sun that was blue and green and the duck were safe and happy again and they all laughed together and played all day long in the",
+          "self_nll": 1.168
+        },
+        "the little girl": {
+          "text": "the little girl told lily why she did not want <unk> anyone to give her a big hug and told lily that even <unk> her <unk> was very <unk> and she danced in",
+          "self_nll": 5.642
+        },
+        "tom and his dog": {
+          "text": "tom and his dog spot liked to play with him but he did not go back to his his <unk> and told him to stay close to the tree and play with <unk> all",
+          "self_nll": 3.443
+        }
+      },
+      "go": false,
+      "checks": {
+        "projection_recovery_ge_0.85": false,
+        "read_fidelity_ge_0.40": true,
+        "signed_beats_positive_only": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": false,
+        "provenance_no_host_draw": true,
+        "hidden_active": false,
+        "not_silent": false
+      }
+    },
+    {
+      "seed": 101,
+      "arm": "signed_shadow",
+      "V": 1000,
+      "pop": 8,
+      "hid_pop": 1,
+      "ratio": 6.5,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 120,
+      "silent_frac": 0.2333,
+      "hidden_active_frac": 0.7667,
+      "shadow_rate_match_corr": 0.9658,
+      "mean_spikes_per_read": 15.72,
+      "mean_spikes_total": 758.84,
+      "argmax_agree": 0.2667,
+      "top5_hit": 0.4417,
+      "nll_synaptic": 11.7682,
+      "mass_synaptic": 0.1545,
+      "mass_positive_only": 0.1599,
+      "mass_hostsample_ceiling": 0.3521,
+      "mass_argmax_ceiling": 0.4335,
+      "mass_scramble": 0.0002,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.2612,
+      "mass_oracle_ceiling": 0.4471,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.4388,
+      "oracle_read_fidelity": 1.2698,
+      "positive_only_fidelity": 0.4541,
+      "projection_recovery": 0.3456,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little boy named tim went outside with his dad under the tree and the cat became <unk> and the blanket for the new cat to play with",
+          "self_nll": 2.365
+        },
+        "the little girl": {
+          "text": "the little girl was so happy and thanked lily for jane to bake a cake for her notebook to <unk> <unk> and <unk> her toys away from their <unk> and they felt happy",
+          "self_nll": 5.262
+        },
+        "tom and his dog": {
+          "text": "tom and his dog spot ran to the ball and jumped up and jumped up and down the kite down off the tree and clapped its wings and make more beautiful beautiful picture for",
+          "self_nll": 1.868
+        }
+      },
+      "go": false,
+      "checks": {
+        "projection_recovery_ge_0.85": false,
+        "read_fidelity_ge_0.40": true,
+        "signed_beats_positive_only": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": false,
+        "provenance_no_host_draw": true,
+        "hidden_active": false,
+        "not_silent": false
+      }
+    },
+    {
+      "seed": 102,
+      "arm": "signed_shadow",
+      "V": 1000,
+      "pop": 8,
+      "hid_pop": 1,
+      "ratio": 6.5,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 120,
+      "silent_frac": 0.2083,
+      "hidden_active_frac": 0.7917,
+      "shadow_rate_match_corr": 0.9708,
+      "mean_spikes_per_read": 16.18,
+      "mean_spikes_total": 729.59,
+      "argmax_agree": 0.2167,
+      "top5_hit": 0.4917,
+      "nll_synaptic": 10.1485,
+      "mass_synaptic": 0.1325,
+      "mass_positive_only": 0.1091,
+      "mass_hostsample_ceiling": 0.2536,
+      "mass_argmax_ceiling": 0.3566,
+      "mass_scramble": 0.0023,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.1434,
+      "mass_oracle_ceiling": 0.3612,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.5225,
+      "oracle_read_fidelity": 1.4243,
+      "positive_only_fidelity": 0.4302,
+      "projection_recovery": 0.3668,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little girl named lily went to the park and asked can i play with it too much again and became good friends and they played together all",
+          "self_nll": 0.991
+        },
+        "the little girl": {
+          "text": "the little girl nodded and smiled and said you're welcome mia and hugged max and said good job tim and sam became good friends and did not listen and kept looking at the",
+          "self_nll": 1.749
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were playing in the yard <unk> and <unk> their <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> in the whole house and shared her family with the toys",
+          "self_nll": 11.164
+        }
+      },
+      "go": false,
+      "checks": {
+        "projection_recovery_ge_0.85": false,
+        "read_fidelity_ge_0.40": true,
+        "signed_beats_positive_only": true,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": false,
+        "provenance_no_host_draw": true,
+        "hidden_active": false,
+        "not_silent": false
+      }
+    }
+  ],
+  "summary": {
+    "P8": {
+      "n_seeds": 6,
+      "go_count": 0,
+      "read_fidelity_mean": 0.5515,
+      "read_fidelity_min": 0.4388,
+      "oracle_mean": 1.2992,
+      "proj_recovery_mean": 0.4269,
+      "positive_only_mean": 0.4724,
+      "mean_spikes_per_read": 20.56
+    }
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "pops": [
+    8
+  ],
+  "hid_pop": 1,
+  "ratio": 6.5,
+  "topk": 64,
+  "read_window": 150,
+  "plasticity_off": true,
+  "elapsed_s": 874.1,
+  "backend": "cupy"
+}

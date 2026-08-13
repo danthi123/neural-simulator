@@ -1,0 +1,88 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "arm": "signed_shadow",
+      "V": 1000,
+      "pop": 8,
+      "hid_pop": 1,
+      "ratio": 6.5,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 60,
+      "silent_frac": 0.1667,
+      "hidden_active_frac": 0.8333,
+      "shadow_rate_match_corr": 0.9587,
+      "mean_spikes_per_read": 30.97,
+      "mean_spikes_total": 702.97,
+      "argmax_agree": 0.2333,
+      "top5_hit": 0.3833,
+      "nll_synaptic": 9.8692,
+      "mass_synaptic": 0.135,
+      "mass_positive_only": 0.1162,
+      "mass_hostsample_ceiling": 0.237,
+      "mass_argmax_ceiling": 0.3341,
+      "mass_scramble": 0.0025,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.0,
+      "mass_oracle_ceiling": 0.3712,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.5696,
+      "oracle_read_fidelity": 1.5662,
+      "positive_only_fidelity": 0.4903,
+      "projection_recovery": 0.3637,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time in a small town there lived a little girl named sally <unk> her shadow came into the room and saw tom's toy <unk> <unk> <unk> and <unk> <unk> them in <unk> with their toys and clothes and <unk> her <unk>",
+          "self_nll": 7.473
+        },
+        "the little girl": {
+          "text": "the little girl pretend she was <unk> her toys <unk> to <unk> her <unk> and told joe if she <unk> to <unk> it with her <unk> <unk> <unk> <unk> and <unk> her head down and said no <unk> what a brave bird came",
+          "self_nll": 10.152
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were very excited to take <unk> outside and started swimming running around <unk> <unk> her and <unk> <unk> her hair tight enough to put <unk> on her soft warm clothes and dry you can <unk> and <unk> them to <unk>",
+          "self_nll": 7.819
+        }
+      },
+      "go": false,
+      "checks": {
+        "projection_recovery_ge_0.85": false,
+        "read_fidelity_ge_0.40": true,
+        "signed_beats_positive_only": true,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": false,
+        "not_silent": false
+      }
+    }
+  ],
+  "summary": {
+    "P8": {
+      "n_seeds": 1,
+      "go_count": 0,
+      "read_fidelity_mean": 0.5696,
+      "read_fidelity_min": 0.5696,
+      "oracle_mean": 1.5662,
+      "proj_recovery_mean": 0.3637,
+      "positive_only_mean": 0.4903,
+      "mean_spikes_per_read": 30.97
+    }
+  },
+  "seeds": [
+    42
+  ],
+  "pops": [
+    8
+  ],
+  "hid_pop": 1,
+  "ratio": 6.5,
+  "topk": 64,
+  "read_window": 150,
+  "plasticity_off": true,
+  "elapsed_s": 135.8,
+  "backend": "cupy"
+}
