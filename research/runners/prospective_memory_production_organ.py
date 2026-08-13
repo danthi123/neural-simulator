@@ -33,12 +33,23 @@ RELEASE (the accumulator crossing threshold) are all done by spiking neurons + s
 gated by the HELD intention (the coincidence), not the cue alone — is proven by the lesion (zero the latch -> the
 held assembly collapses -> the same cue does NOT fire -> the intention is forgotten).
 
-HOST-SCAFFOLD, FLAGGED (the honest residual — declared, not hidden): the cue->action CONTENT binding is installed
-synaptically at build (the fixed cue_A/act_A outer-product edges, exactly like every SpikingLoopContextBuffer
-attractor), and the host maps arbitrary intention/cue TEXT onto the fixed slot-A assembly + derives cue-presence from
-the turn text (a language/sensory boundary, like the surprise organ's assertion extraction and curiosity's wh-frame).
-So `wired: YES / on_by_default: YES / scaffold_retired: NO`. The named follow-on LEARNS the binding via one-shot
-Hebbian potentiation at intention-formation (Gollwitzer implementation-intentions), replacing the synaptic install.
+CUE->ACTION BINDING — now LEARNED at formation (WIRED 2026-08-13, default-ON). The cue->action CONTENT binding is no
+longer INSTALLED synaptically at build: it is LEARNED via a ONE-SHOT HEBBIAN potentiation at intention-formation
+(Gollwitzer implementation-intention; de-risk GO 6/6, `2026-08-13-prospective-hebbian-binding-GO.md`,
+`_pmem_hebbian_binding_derisk.HebbianBindingProspectiveMemory`, reuse-by-import). At build the canonical binding is
+installed so the homeostat bias + plateau theta calibrate against it (a developmental operating-point tuning), then
+it is ZEROED — none exists before the formation turn; `form_intention` relearns it one-shot from the coincident
+cue+action+rel_X spiking (a saturating Hebbian outer product), load-bearing on the event. `BRAIN_PMEM_HEBBIAN=0`
+reverts to the build-time install (byte-identical to the pre-wiring organ). The BINDING lesion
+(`BRAIN_PMEM_HEBBIAN_LESION=1`) latches WITHOUT the event -> the binding stays absent -> the cue cannot fire.
+
+HOST-SCAFFOLD, FLAGGED (the honest residual — declared, narrowed): the host still maps arbitrary intention/cue TEXT
+onto the fixed slot-A assembly + derives cue-presence from the turn text (a language/sensory boundary, like the
+surprise organ's assertion extraction and curiosity's wh-frame), provides the formation goal-activation drive to
+rel_X, and calibrates the pool operating point against the canonical binding strength. The build-time synaptic
+INSTALL of the content binding is RETIRED; the engine-native STDP realization of the same local rule is the further
+step. So `wired: YES / on_by_default: YES` with the binding retirement rung CLOSED (the remaining scaffolds are the
+declared text/sensory boundary + operating-point calibration).
 
 FUNCTIONAL CORRELATE, NOT phenomenal: this measures + reports a prospective-memory CORRELATE (a held-intention x cue
 coincidence release). It makes NO claim of subjective intending.
@@ -109,6 +120,28 @@ def pmem_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def pmem_hebbian_enabled() -> bool:
+    """Default-ON. The cue->action CONTENT binding is LEARNED via a ONE-SHOT HEBBIAN potentiation at intention-
+    formation (Gollwitzer implementation-intention; de-risk GO 6/6, `2026-08-13-prospective-hebbian-binding-GO.md`)
+    instead of installed synaptically at build. `BRAIN_PMEM_HEBBIAN` in {0,false,no,off} -> the build-time install
+    (byte-identical to the pre-wiring production organ)."""
+    v = os.environ.get("BRAIN_PMEM_HEBBIAN")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+def pmem_hebbian_lesioned() -> bool:
+    """`BRAIN_PMEM_HEBBIAN_LESION` in {1,true,yes,on} -> latch the intention WITHOUT the one-shot Hebbian formation
+    event -> the cue->action binding stays ABSENT -> the correct cue cannot fire. The BINDING lesion (load-bearing:
+    the fire is caused by the learned formation event, not a residual install); DISTINCT from BRAIN_PMEM_LESION, which
+    zeroes the HELD assembly (the latch). Only meaningful when the Hebbian binding is enabled."""
+    v = os.environ.get("BRAIN_PMEM_HEBBIAN_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 def _cue_keywords(cue_clause: str) -> list[str]:
     """Reduce a cue clause to its salient content keyword(s) (a host language scaffold). Falls back to the raw
     tokens when everything is a stop-word (so a bare cue still has something to match)."""
@@ -157,12 +190,14 @@ class ProspectiveMemoryOrgan:
 
     def __init__(self, seed: int = 42):
         self.seed = int(seed)
-        self._pm = None                 # lazily-built SFANmdaProspectiveMemory (the de-risked GO substrate)
+        self._pm = None                 # lazily-built prospective-memory substrate (the de-risked GO)
+        self._hebbian = None            # is the cue->action binding LEARNED at formation (True) or installed (False)?
         self.action_text = None         # the deferred action (host content: what to remind of)
         self.cue_clause = None          # the cue phrase (host content: the trigger, for the reminder wording)
         self.cue_keywords = None        # the salient cue keyword(s) matched against later turns (host sensory)
         self.held = False               # is an intention currently latched?
-        self.lesioned = False           # was this intention formed under the load-bearing lesion?
+        self.lesioned = False           # was this intention formed under the latch lesion (BRAIN_PMEM_LESION)?
+        self.hebbian_lesioned = False   # was this intention formed under the binding lesion (BRAIN_PMEM_HEBBIAN_LESION)?
         self.calib = None               # the substrate's calibrated bias + plateau separation margin (debug)
         self.last_read = None           # the most recent read_turn result (held/rel/fired) — always current because
                                         # the handler's prospective block runs BEFORE any disjoint short-circuit, so
@@ -173,36 +208,73 @@ class ProspectiveMemoryOrgan:
 
     def _ensure_pm(self):
         if self._pm is None:
-            self._pm = SFANmdaProspectiveMemory(
-                _ACTIONS, list(_DISTRACTORS), seed=self.seed,
-                homeostat_on=True, sfa_on=True, plateau_on=True)   # the GO config (plateau owns the closure)
+            self._hebbian = pmem_hebbian_enabled()
+            if self._hebbian:
+                # LEARN the cue->action binding at formation (de-risk GO 6/6): reuse-by-import the validated
+                # HebbianBindingProspectiveMemory subclass (LAZY import — keeps the de-risk runner's env
+                # `setdefault`s off the default module-load path; only imported when the binding is learned). The GO
+                # config is unchanged; the canonical binding is installed at build so the homeostat bias + plateau
+                # theta CALIBRATE against it (a developmental operating-point tuning), then it is ZEROED — none
+                # exists before the formation turn, and `form_intention` relearns it one-shot from real spikes.
+                from research.runners._pmem_hebbian_binding_derisk import HebbianBindingProspectiveMemory
+                self._pm = HebbianBindingProspectiveMemory(
+                    _ACTIONS, list(_DISTRACTORS), seed=self.seed,
+                    homeostat_on=True, sfa_on=True, plateau_on=True)   # the GO config (plateau owns the closure)
+            else:
+                # ESCAPE (`BRAIN_PMEM_HEBBIAN=0`): the cue->action binding is INSTALLED synaptically at build
+                # (byte-identical to the pre-wiring production organ — the retired scaffold).
+                self._pm = SFANmdaProspectiveMemory(
+                    _ACTIONS, list(_DISTRACTORS), seed=self.seed,
+                    homeostat_on=True, sfa_on=True, plateau_on=True)
             self.calib = {"bias_pA": dict(getattr(self._pm, "_bias_trace", {})),
                           "plateau_diag": dict(getattr(self._pm, "_diag", {})),
                           "fire_thr": float(FIRE_THR), "silent_max": float(SILENT_MAX)}
         return self._pm
 
-    # ---- FORMATION: latch the deferred intention on slot A ----
-    def form_intention(self, action_text: str, cue_clause: str, cue_keywords, lesion: bool = False) -> dict:
-        """Latch a fresh deferred intention (a self-sustaining cortex<->dlpfc attractor). Under the load-bearing
-        lesion, zero the latch immediately after encoding so the held assembly collapses (the cue will not fire)."""
+    # ---- FORMATION: latch the deferred intention on slot A (LEARNING the cue->action binding one-shot) ----
+    def form_intention(self, action_text: str, cue_clause: str, cue_keywords,
+                       lesion: bool = False, hebbian_lesion: bool = False) -> dict:
+        """Form a fresh deferred intention. With the Hebbian binding (default), a ONE-SHOT HEBBIAN event at formation
+        (coincident cue+action+rel_X spiking -> a saturating potentiation of cue_Y->rel_X + act_X->rel_X, Gollwitzer
+        implementation-intention) LEARNS the cue->action binding, then latches the self-sustaining cortex<->dlpfc
+        attractor. Under the LATCH lesion (`lesion`) the held assembly is zeroed after encoding (the cue will not
+        fire); under the BINDING lesion (`hebbian_lesion`) the intention is latched WITHOUT the Hebbian event so the
+        binding stays absent (the cue cannot fire — the fire is caused by the learned formation event, not a residual
+        install)."""
         pm = self._ensure_pm()
         pm._reset_dynamics()                 # clean substrate state for a fresh latch (calibration is preserved)
-        pm.encode_intention(_SLOT)           # SPIKING: latch the intention assembly = the held intention
+        binding_learned = None
+        if self._hebbian:
+            if hebbian_lesion:
+                # BINDING LESION (load-bearing): latch WITHOUT the one-shot Hebbian event -> binding stays absent.
+                pm.form_intention_no_hebbian(_SLOT)
+            else:
+                # LEARN the cue->action binding ONE-SHOT at formation, then latch (retires the build-time install).
+                pm.form_intention_hebbian(_SLOT)
+            binding_learned = dict(getattr(pm, "_last_form", {}) or {})
+        else:
+            pm.encode_intention(_SLOT)       # ESCAPE: SPIKING latch on the build-time-INSTALLED binding
         self.action_text = action_text
         self.cue_clause = cue_clause
         self.cue_keywords = list(cue_keywords or [])
         self.held = True
         self.lesioned = bool(lesion)
+        self.hebbian_lesioned = bool(hebbian_lesion)
         self._turn_i = 0                     # fresh intervening-turn cycle for this intention
         held_after = None
         if lesion:
-            # LOAD-BEARING LESION: destroy the latch at the substrate level (zero the attractor edges + reset
+            # LOAD-BEARING LATCH LESION: destroy the latch at the substrate level (zero the attractor edges + reset
             # dynamics) so the held assembly collapses and the cue coincidence can no longer fire.
             pm.lesion_latch(_SLOT)
             held_after = float(pm._read(window=20, cue=None)["held"][_SLOT])
-        return {"held": True, "action": action_text, "cue_clause": cue_clause,
-                "cue_keywords": self.cue_keywords, "lesioned": bool(lesion),
-                "held_after_lesion": held_after, "calib": self.calib}
+        out = {"held": True, "action": action_text, "cue_clause": cue_clause,
+               "cue_keywords": self.cue_keywords, "lesioned": bool(lesion),
+               "held_after_lesion": held_after, "calib": self.calib}
+        if self._hebbian:
+            out["hebbian"] = True
+            out["hebbian_lesioned"] = bool(hebbian_lesion)
+            out["binding_learned"] = binding_learned
+        return out
 
     def clear(self):
         """Consume/forget the held intention (fired once, or a fresh conversation)."""

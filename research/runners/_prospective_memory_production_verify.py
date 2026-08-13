@@ -19,6 +19,13 @@ holds the intention BETWEEN turns):
       responses are byte-identical (no held intention -> the block is a pure no-op -> no `prospective` key on either);
       and a "remind me..." FORMATION-phrased turn with the flag OFF carries NO `prospective` key and is NOT the
       acknowledgement (it falls through to the normal path). Proves ADDITIVE + default-ON escape + no regression.
+  (E) LEARNED CUE->ACTION BINDING (the retirement rung, 2026-08-13): the cue->action content binding is LEARNED via a
+      ONE-SHOT HEBBIAN potentiation at intention-formation (Gollwitzer implementation-intention), NOT installed at
+      build. (E1) the binding is ABSENT before formation (live |w|~0 read off the substrate CSR), LEARNED to ~canonical
+      by the formation event, and the cue FIRES. (E2) the BINDING lesion (`BRAIN_PMEM_HEBBIAN_LESION=1`, latch WITHOUT
+      the Hebbian event) leaves the binding absent -> the cue does NOT fire (load-bearing: the fire is caused by the
+      learned formation event, not a residual install). (E3) the `BRAIN_PMEM_HEBBIAN=0` escape reverts to the
+      build-time install (fires; no hebbian markers) — byte-identical to the pre-wiring organ.
 
 Run (numpy-CPU, fast rf recall path):
   SIM_BACKEND=numpy BRAIN_COMPOSER_KIND=rf python -u -m research.runners._prospective_memory_production_verify
@@ -188,7 +195,67 @@ def main():
     bi_ok = bi_ok and off_form_falls_through
     rows["D_byte_identical"] = {"rows": bi_rows, "off_formation_falls_through": off_form_falls_through, "ok": bi_ok}
 
-    go = bool(a_ok and b_ok and lesion_ok and bi_ok and intact_vs_lesion_ok)
+    # ── (E) LEARNED CUE->ACTION BINDING (the retirement rung, 2026-08-13) — the binding is LEARNED one-shot at
+    # formation (Gollwitzer implementation-intention), NOT installed at build: ABSENT before formation, PRESENT
+    # (canonical) after, load-bearing (the BINDING lesion -> no fire), and the BRAIN_PMEM_HEBBIAN=0 escape reverts to
+    # the build-time install (byte-identical fire, no hebbian markers). Verified through the REAL handler. ──────────
+    import webapp.server as S
+    # E1: absent-before / present-after + fires (default: the Hebbian binding is ON). The live binding norm is read
+    # off the organ's own substrate (the SAME CSR read the de-risk anti-cheat uses).
+    _setup_session("pm_hebb")
+    _ck_h = ("pm_hebb", "tiny-demo", "stub")
+    porg_h = S._get_pmem_organ(_ck_h)
+    pm_h = porg_h._ensure_pm()
+    norm_before = float(pm_h.binding_weight_norm()) if hasattr(pm_h, "binding_weight_norm") else None
+    t_hform = _turn("pm_hebb", _REMIND)
+    ph = t_hform.get("prospective", {})
+    learned_norm = float((ph.get("binding_learned") or {}).get("learned_norm", 0.0))
+    norm_after = float(pm_h.binding_weight_norm()) if hasattr(pm_h, "binding_weight_norm") else None
+    for d in _DISTRACTORS:
+        _turn("pm_hebb", d)
+    t_hcue = _turn("pm_hebb", _CUE_TURN)
+    pch = t_hcue.get("prospective", {})
+    e1_ok = bool(ph.get("hebbian") is True
+                 and norm_before is not None and norm_before <= 1e-3            # binding ABSENT before formation
+                 and learned_norm > 0.0                                        # the Hebbian event LEARNED it
+                 and norm_after is not None and norm_after > 0.5 * learned_norm  # present (~canonical) after
+                 and pch.get("fired") is True and float(pch.get("rel", 0.0)) >= FIRE_THR
+                 and t_hcue["answer"].startswith("(Reminder"))
+    # E2: BINDING LESION (BRAIN_PMEM_HEBBIAN_LESION=1) — latch WITHOUT the Hebbian event -> binding absent -> no fire.
+    _setup_session("pm_hebb_les")
+    os.environ["BRAIN_PMEM_HEBBIAN_LESION"] = "1"
+    try:
+        _turn("pm_hebb_les", _REMIND)
+        for d in _DISTRACTORS:
+            _turn("pm_hebb_les", d)
+        t_hles_cue = _turn("pm_hebb_les", _CUE_TURN)
+    finally:
+        os.environ.pop("BRAIN_PMEM_HEBBIAN_LESION", None)
+    phl = t_hles_cue.get("prospective", {})
+    e2_ok = bool(phl.get("fired") is False and (not t_hles_cue["answer"].startswith("(Reminder")))
+    # E3: ESCAPE (BRAIN_PMEM_HEBBIAN=0) -> the build-time install path fires with NO hebbian/binding_learned markers.
+    _setup_session("pm_install")
+    os.environ["BRAIN_PMEM_HEBBIAN"] = "0"
+    try:
+        t_iform = _turn("pm_install", _REMIND)
+        for d in _DISTRACTORS:
+            _turn("pm_install", d)
+        t_icue = _turn("pm_install", _CUE_TURN)
+    finally:
+        os.environ.pop("BRAIN_PMEM_HEBBIAN", None)
+    pif, pic = t_iform.get("prospective", {}), t_icue.get("prospective", {})
+    e3_ok = bool(("hebbian" not in pif) and ("binding_learned" not in pif)      # install path: no hebbian markers
+                 and pic.get("fired") is True and float(pic.get("rel", 0.0)) >= FIRE_THR
+                 and t_icue["answer"].startswith("(Reminder"))
+    e_ok = bool(e1_ok and e2_ok and e3_ok)
+    rows["E_learned_binding"] = {
+        "e1_learned_fires": {"norm_before": norm_before, "learned_norm": learned_norm, "norm_after": norm_after,
+                             "hebbian": ph.get("hebbian"), "cue_fired": pch.get("fired"), "ok": e1_ok},
+        "e2_binding_lesion_silent": {"fired": phl.get("fired"), "answer": t_hles_cue["answer"], "ok": e2_ok},
+        "e3_install_escape_fires": {"install_no_hebbian_keys": ("hebbian" not in pif),
+                                    "cue_fired": pic.get("fired"), "ok": e3_ok}, "ok": e_ok}
+
+    go = bool(a_ok and b_ok and lesion_ok and bi_ok and intact_vs_lesion_ok and e_ok)
 
     # EARN the verdict (tools.verdict.Verdict -> the preconditions travel with the result).
     from tools.verdict import Verdict
@@ -198,10 +265,16 @@ def main():
     v.require("LESION-LOAD-BEARING: latch zeroed at formation -> held collapses -> the cue does NOT fire", lesion_ok, expect=True)
     v.require("INTACT fires vs LESION silent (the fire is caused by the spiking latch)", intact_vs_lesion_ok, expect=True)
     v.require("BYTE-IDENTICAL-when-off (real handler) + formation-phrased flag-off no key/no ack", bi_ok, expect=True)
-    v.disabled("learned cue->action content binding", why="the cue->action CONTENT is installed SYNAPTICALLY at build "
-               "(the fixed slot-A outer-product edges) + the intention/cue TEXT + cue-presence are host-derived (a "
-               "language/sensory boundary); one-shot Hebbian potentiation at intention-formation (Gollwitzer "
-               "implementation-intentions) is the named next rung. The HOLD + coincidence-gated RELEASE are spiking.")
+    v.require("LEARNED cue->action binding: absent before formation, ~canonical after, fires on cue", e1_ok, expect=True)
+    v.require("BINDING lesion (latch without the Hebbian event) -> binding absent -> the cue does NOT fire", e2_ok, expect=True)
+    v.require("BRAIN_PMEM_HEBBIAN=0 escape reverts to the build-time install (fires; no hebbian markers)", e3_ok, expect=True)
+    v.disabled("engine-native STDP realization of the local Hebbian rule",
+               why="the cue->action CONTENT binding is now LEARNED one-shot at formation (a host-applied local pre x "
+               "post outer product on real cp_firing_states; Gollwitzer implementation-intention) — the build-time "
+               "synaptic INSTALL is RETIRED. What remains host: the intention/cue TEXT->slot mapping + cue-presence "
+               "(a language/sensory boundary), the formation goal-activation drive, and the operating-point "
+               "calibration. The HOLD + coincidence-gated RELEASE are spiking; the engine-native STDP form of the "
+               "same local rule is the further step.")
     decided = v.decide(go=go, verbose=False)
     go = bool(decided["go"])
 
@@ -223,12 +296,21 @@ def main():
     for r in bi_rows:
         print(f"        {r['q']:22s} identical={r['identical']} no_prospective_key={r['no_prospective_key']}", flush=True)
     print(f"        formation-phrased flag-off falls through (no key, no ack): {off_form_falls_through}", flush=True)
+    print(f"  (E) LEARNED CUE->ACTION BINDING ok={e_ok}", flush=True)
+    print(f"        E1 learned+fires ({e1_ok}): |w| before={norm_before} -> learned={learned_norm} "
+          f"after={norm_after}; cue fired={pch.get('fired')}", flush=True)
+    print(f"        E2 binding-lesion silent ({e2_ok}): {rows['E_learned_binding']['e2_binding_lesion_silent']['answer']}", flush=True)
+    print(f"        E3 install escape fires ({e3_ok}): no-hebbian-keys={('hebbian' not in pif)} "
+          f"cue fired={pic.get('fired')}", flush=True)
     verdict = "GO" if go else "NO-GO"
     print(f"\n  VERDICT: {verdict}\n" + "=" * 104, flush=True)
 
     out = {"runner": "_prospective_memory_production_verify", "go": go, "status": decided["status"],
            "a_fire_on_cue_ok": a_ok, "b_wrong_cue_ok": b_ok, "lesion_ok": lesion_ok,
            "intact_vs_lesion_ok": intact_vs_lesion_ok, "byte_identical_ok": bi_ok,
+           "learned_binding_ok": e_ok, "e1_learned_fires_ok": e1_ok,
+           "e2_binding_lesion_silent_ok": e2_ok, "e3_install_escape_ok": e3_ok,
+           "binding_norm_before": norm_before, "binding_learned_norm": learned_norm, "binding_norm_after": norm_after,
            "intact_fire_rel": intact_fire_rel, "lesion_fire_rel": lesion_fire_rel,
            "fire_attribution": fire_attribution, "rows": rows,
            "preconditions": decided["preconditions"], "disabled_processes": decided["disabled_processes"],

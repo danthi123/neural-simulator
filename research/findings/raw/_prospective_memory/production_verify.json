@@ -7,6 +7,13 @@
   "lesion_ok": true,
   "intact_vs_lesion_ok": true,
   "byte_identical_ok": true,
+  "learned_binding_ok": true,
+  "e1_learned_fires_ok": true,
+  "e2_binding_lesion_silent_ok": true,
+  "e3_install_escape_ok": true,
+  "binding_norm_before": 0.0,
+  "binding_learned_norm": 17760.0,
+  "binding_norm_after": 17759.999656677246,
   "intact_fire_rel": 0.34055555555555556,
   "lesion_fire_rel": 0.04055555555555555,
   "fire_attribution": 0.8809135399673735,
@@ -48,6 +55,15 @@
             },
             "fire_thr": 0.2,
             "silent_max": 0.06
+          },
+          "hebbian": true,
+          "hebbian_lesioned": false,
+          "binding_learned": {
+            "pre_act_rate": 0.4433,
+            "pre_cue_rate": 0.4567,
+            "post_rel_rate": 0.2556,
+            "learned_norm": 17760.0,
+            "canonical_norm_per_action": 17760.0
           },
           "kind": "formation"
         },
@@ -169,6 +185,27 @@
       ],
       "off_formation_falls_through": true,
       "ok": true
+    },
+    "E_learned_binding": {
+      "e1_learned_fires": {
+        "norm_before": 0.0,
+        "learned_norm": 17760.0,
+        "norm_after": 17759.999656677246,
+        "hebbian": true,
+        "cue_fired": true,
+        "ok": true
+      },
+      "e2_binding_lesion_silent": {
+        "fired": false,
+        "answer": "I don't know about that.",
+        "ok": true
+      },
+      "e3_install_escape_fires": {
+        "install_no_hebbian_keys": true,
+        "cue_fired": true,
+        "ok": true
+      },
+      "ok": true
     }
   },
   "preconditions": [
@@ -206,12 +243,33 @@
       "ok": true,
       "detail": "measured=True expect=True",
       "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LEARNED cue->action binding: absent before formation, ~canonical after, fires on cue",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BINDING lesion (latch without the Hebbian event) -> binding absent -> the cue does NOT fire",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BRAIN_PMEM_HEBBIAN=0 escape reverts to the build-time install (fires; no hebbian markers)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
     }
   ],
   "disabled_processes": [
     {
-      "process": "learned cue->action content binding",
-      "why": "the cue->action CONTENT is installed SYNAPTICALLY at build (the fixed slot-A outer-product edges) + the intention/cue TEXT + cue-presence are host-derived (a language/sensory boundary); one-shot Hebbian potentiation at intention-formation (Gollwitzer implementation-intentions) is the named next rung. The HOLD + coincidence-gated RELEASE are spiking."
+      "process": "engine-native STDP realization of the local Hebbian rule",
+      "why": "the cue->action CONTENT binding is now LEARNED one-shot at formation (a host-applied local pre x post outer product on real cp_firing_states; Gollwitzer implementation-intention) \u2014 the build-time synaptic INSTALL is RETIRED. What remains host: the intention/cue TEXT->slot mapping + cue-presence (a language/sensory boundary), the formation goal-activation drive, and the operating-point calibration. The HOLD + coincidence-gated RELEASE are spiking; the engine-native STDP form of the same local rule is the further step."
     }
   ],
   "undefined_reasons": []

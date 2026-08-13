@@ -3680,10 +3680,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # lesion. Placed right after AFFECT so a "remind me..." formation is not mis-read as a recall/assertion by the
     # episodic/comprehension/surprise gates below. Default-ON; `BRAIN_PMEM=0` -> the whole block is skipped and no
     # `prospective` key is added (byte-identical oracle). `BRAIN_PMEM_LESION=1` -> the latch is zeroed after formation
-    # (the held assembly collapses -> the SAME cue does NOT fire -> NO reminder; load-bearing). HOST-SCAFFOLD (flagged):
-    # the cue->action CONTENT binding is synaptically installed at build + the intention/cue TEXT and cue-presence are
-    # host-derived (a language/sensory boundary, like curiosity's wh-frame + novelty); the HOLD + coincidence-gated
-    # RELEASE are spiking (wired/on-by-default; scaffold NOT retired — one-shot Hebbian cue->action is the named rung).
+    # (the held assembly collapses -> the SAME cue does NOT fire -> NO reminder; load-bearing). The cue->action CONTENT
+    # binding is now LEARNED via a ONE-SHOT HEBBIAN potentiation at formation (Gollwitzer implementation-intention;
+    # `BRAIN_PMEM_HEBBIAN=1` default; `=0` reverts to the build-time install; `BRAIN_PMEM_HEBBIAN_LESION=1` latches
+    # without the event -> binding absent -> no fire). HOST-SCAFFOLD (flagged, narrowed): the intention/cue TEXT->slot
+    # mapping + cue-presence are host-derived (a language/sensory boundary, like curiosity's wh-frame + novelty); the
+    # HOLD + coincidence-gated RELEASE + the cue->action BINDING are spiking (wired/on-by-default; the build-time
+    # binding install is RETIRED — the text/sensory boundary + operating-point calibration remain).
     pmem_prefix = ""
     prospective_info = None
     try:
@@ -3699,7 +3702,8 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                 # (i) FORMATION: latch the deferred intention (a disjoint acknowledgement turn class).
                 porg = _get_pmem_organ(cache_key)
                 finfo = porg.form_intention(_pm_formation["action"], _pm_formation["cue_clause"],
-                                            _pm_formation["cue_keywords"], lesion=_PM.pmem_lesioned())
+                                            _pm_formation["cue_keywords"], lesion=_PM.pmem_lesioned(),
+                                            hebbian_lesion=_PM.pmem_hebbian_lesioned())
                 return JSONResponse({
                     "answer": _PM.acknowledgement_text(_pm_formation["action"], _pm_formation["cue_clause"]),
                     "abstained": False, "recalled_svo": None, "verified": True,
