@@ -959,9 +959,13 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
         # referents (the D3 arc's validated K=6 scale; a larger register is best-effort). numpy (spiking=False).
         ev_reg = None
         try:
-            from research.runners._d3_event_pair_agent_derisk import PairEventRegister
+            import research.runners.d3_discourse_event_register_production_organ as _DR
             reg_refs = referents[:6] if len(referents) >= 6 else (referents + ["dog", "cat", "fish", "bird", "worm", "ball"])[:6]
-            ev_reg = PairEventRegister(reg_refs, seed=seed, spiking=False)
+            # D3 discourse-event register (F2 wire, 2026-08-13): default-ON -> the validated genuinely-SPIKING twin
+            # (who-was-before read off cp_firing_states). BRAIN_DISCOURSE_REGISTER=0 -> today's spiking=False rate
+            # register (byte-identical). BRAIN_DISCOURSE_REGISTER_LESION=1 -> the prev-slot-silence spiking register
+            # (load-bearing). ~76s one-time build at agent load (speed secondary).
+            ev_reg = _DR.make_discourse_register(reg_refs, seed=seed)
         except Exception as _e:
             print(f"[tui] discourse event register unavailable ({_e!r}); who-was-before disabled.", flush=True)
         # defer_planner=True: the persistent discourse WM loop is built lazily on the first multi-turn referent
@@ -1018,8 +1022,11 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="r
         # The labelled PairEventRegister (0.928, its validated animal referents), numpy (spiking=False) for the CPU path.
         ev_reg = None
         try:
-            from research.runners._d3_event_pair_agent_derisk import PairEventRegister
-            ev_reg = PairEventRegister(["dog", "cat", "fish", "bird", "worm", "ball"], seed=seed, spiking=False)
+            import research.runners.d3_discourse_event_register_production_organ as _DR
+            # D3 discourse-event register (F2 wire, 2026-08-13): default-ON -> the genuinely-SPIKING twin;
+            # BRAIN_DISCOURSE_REGISTER=0 -> today's spiking=False (byte-identical); BRAIN_DISCOURSE_REGISTER_LESION=1
+            # -> the prev-slot-silence spiking register (load-bearing).
+            ev_reg = _DR.make_discourse_register(["dog", "cat", "fish", "bird", "worm", "ball"], seed=seed)
         except Exception as _e:
             print(f"[tui] discourse event register unavailable ({_e!r}); who-was-before disabled.", flush=True)
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts, seed=seed,

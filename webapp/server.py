@@ -2934,6 +2934,13 @@ def _get_curiosity_organ():
 # ChatBrain cache; cleared on reset. See research/runners/d6_multiref_wm_production_organ.py. ────────────────────
 _SESSION_MULTIREF: dict = {}
 
+# ─── DISCOURSE EVENT REGISTER (Gate-B, D3): the running "who-was-doing-it-BEFORE across a connective" turn STATE
+# (boundary_seen / heard_any), keyed identically to the ChatBrain cache. The spiking register OBJECT itself is built
+# once with the agent (attached as _event_register); only this small per-conversation fold state lives here so a
+# before-answer is surfaced ONLY after a connective actually opened a boundary this conversation. Cleared on reset.
+# See research/runners/d3_discourse_event_register_production_organ.py. ───────────────────────────────────────────
+_SESSION_DISCOURSE: dict = {}
+
 
 def _get_multiref_organ(cache_key):
     """The PER-SESSION spiking multi-referent WM buffer (lazy build ~0.46s on the first >=2-referent turn). NOT a
@@ -3474,6 +3481,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
         _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
         _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
+        _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
         try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
             import research.runners.d5_episodic_production_organ as _EP_reset
             _EP_reset.reset_episodic_organ(cache_key)
@@ -3737,6 +3745,43 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                     multiref_info = dict(jm, kind="maintain")
         except Exception as _d6e:                            # never crash a turn -> degrade to the normal answer
             multiref_info = {"on": True, "error": f"{type(_d6e).__name__}: {_d6e}"}
+
+    # ── DISCOURSE EVENT REGISTER (Gate-B, D3, 2026-08-13) — who-was-doing-it-BEFORE across a connective, on spikes ──
+    # Holds the running (a_curr,p_curr | a_prev,p_prev) event PAIR on the co-resident four-FS-WTA spiking register
+    # (reuse-by-import from `d3_discourse_event_register_production_organ` -> the validated PairEventRegister spiking
+    # twin, 6-seed GO). Two paths: (i) an ADDITIVE FOLD — an SVO discourse clause (a connective marks an event
+    # BOUNDARY -> SHIFT) updates the running pair as a pure side-effect (does NOT store a fact or change the reply, so
+    # the turn stays byte-identical; the normal assertion path remains the sole writer); (ii) a DISJOINT QUERY
+    # short-circuit — 'who was doing it before/now?' is answered off the held spiking slot (read off cp_firing_states),
+    # with the moat abstain (a before-answer is surfaced ONLY after a connective boundary actually opened this
+    # conversation; a single-event register structurally abstains). Placed after D6 so the affect/episodic/worldmodel/
+    # multiref read-out short-circuits keep precedence; the before/now query class is DISJOINT (no other organ handles
+    # it), so every non-discourse turn is byte-identical. Default-ON; `BRAIN_DISCOURSE_REGISTER=0` -> the register is
+    # built spiking=False AND this block is skipped (byte-identical). `BRAIN_DISCOURSE_REGISTER_LESION=1` -> the
+    # prev-slot-silence spiking register (who-was-before collapses; NOW preserved — load-bearing).
+    try:
+        import research.runners.d3_discourse_event_register_production_organ as _DR
+        _dr_on = _DR.discourse_register_enabled()
+    except Exception:
+        _DR = None
+        _dr_on = False
+    if _dr_on and getattr(chat.agent, "_event_register", None) is not None:
+        try:
+            dstate = _SESSION_DISCOURSE.setdefault(cache_key, _DR.new_state())
+            # (i) additive fold (side-effect; reply stays byte-identical): a discourse SVO clause updates the pair.
+            _DR.note_turn(msg, chat.agent, dstate, actions=chat.actions_set)
+            # (ii) disjoint query short-circuit: 'who was doing it before/now?' -> read off the register + moat abstain.
+            dr_reply = _DR.maybe_answer(msg, chat.agent, dstate)
+            if dr_reply is not None:
+                return JSONResponse({
+                    "answer": dr_reply["answer"], "abstained": bool(dr_reply["abstained"]),
+                    "recalled_svo": None, "verified": (not bool(dr_reply["abstained"])),
+                    "renderer": rname, "brain": req.brain, "source": source, "rich": False,
+                    "activity": None, "affect": affect_info,
+                    "discourse_register": dict(dr_reply, kind=dr_reply.get("kind")), "inner_state_readout": True,
+                })
+        except Exception as _dre:
+            pass   # never let the discourse read crash a turn — fall through to the normal path
 
     # ── COMPREHENSION MEASUREMENT gate (Gate-B, D4, 2026-08-12) ─────────────────────────────────────────────
     # BEFORE acting on an incoming TRANSITIVE ASSERTION, read a genuinely-SPIKING signal of whether the brain's
