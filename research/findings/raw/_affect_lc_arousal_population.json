@@ -1,0 +1,196 @@
+{
+  "probe": "affect_lc_arousal_population (richer emergent arousal: spiking LC multi-afferent salience integrator)",
+  "verdict": "GO (SMOKE(1-seed)) -- a RICHER EMERGENT arousal source STRENGTHENS the channel. A spiking LC-like population (N_lc=64) integrating the CONVERGENT salience afferents (interoceptive engagement + cortical drive magnitude) of the self-organized code predicts held-out Warriner AROUSAL at r=+0.272 (every seed >= +0.272; all-reinf +0.303) -- BEATING [R]'s single-afferent engagement-SUM r=+0.228 (paired delta +0.044, 1/1 seeds). It tracks INTENSITY (corr(LC,|val|)=+0.115), is EMERGENT (no-source lesion +0.000; permute sig 1/1), and LIFTS graded valence-STRENGTH MORE than [R]: combined +0.111 vs sign-only +0.036 (lift +0.074 > [R]'s +0.031). Supervised-afferent ceiling r=+0.174. Warriner arousal EVAL-only (byte-identical). Brain-based spiking LIF population; NO sim/ edit. RESIDUAL: full sign-orthogonality remains label-limited (corr(a_true,sign)=-0.149); ~10 innate primary signs host-supplied (the faithful floor). Report: bodily-magnitude proxy r=+0.204.",
+  "GO": true,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=24)",
+      "ok": true,
+      "detail": "vocab=137"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=15)",
+      "ok": true,
+      "detail": "min_n_held=62"
+    },
+    {
+      "name": "no_source_lesion_reads_zero(|r|<0.15)",
+      "ok": true,
+      "detail": "lc_lesion_r=+0.0000"
+    },
+    {
+      "name": "lc_read_warriner_arousal_free(byte-identical under corrupted gt)",
+      "ok": true,
+      "detail": "asserted in run_seed: every afferent fn has no arousal argument; corrupting a_true leaves the read byte-identical; the no-source lesion collapse gives the assertion teeth"
+    },
+    {
+      "name": "lc_is_a_spiking_population(LIF, N_lc neurons)",
+      "ok": true,
+      "detail": "heterogeneous-threshold LIF population, N_lc=64, tonic+phasic input current"
+    }
+  ],
+  "verdict_earned": {
+    "label": "richer emergent arousal: spiking LC-like population (multi-afferent salience integrator)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "G1 held-out arousal r >= 0.27 (BEAT [R]'s engagement-sum 0.265)",
+        "ok": true,
+        "detail": "0.271509 vs floor 0.27",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G1 every seed LC r >= 0.12",
+        "ok": true,
+        "detail": "measured=0.2715089884829698 expect=<function main.<locals>.<lambda> at 0x7fbce8372980>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G1b LC beats [R] engagement-sum paired in ALL seeds",
+        "ok": true,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fbce8372980>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G3 no-source lesion collapses the LC read (|r|<0.15)",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fbce8372980>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "G5 LC feature LIFTS graded valence-strength MORE than [R]'s +0.031",
+        "ok": true,
+        "detail": "treatment=0.11082 control=0.0363378 |sep|=0.0744817 > 0.031",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "Warriner AROUSAL rating as an INPUT -- RETIRED/FORBIDDEN: the LC read is a pure function of the emergent salience afferents; Warriner arousal is EVAL-only ground truth",
+        "why": "using it as input would be the exact Warriner cheat [A]/[E]/[R] retired"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "G1_lc_predicts_held_out(mean_r>=0.27)": true,
+    "G1_every_seed_r>=0.12": true,
+    "G1b_beats_[R]_engage_paired(all_seeds)": true,
+    "G3_no_source_lesion_collapses(|r|<0.15)": true,
+    "G5_strength_lift(combined>=sign+0.031)": true
+  },
+  "reported_characterization": {
+    "G2_arousal_perp_sign_seeds_ok(/S)": 0,
+    "G4_permute_beaten_seeds_ok(/S)": 1
+  },
+  "means": {
+    "lc_r": 0.2715089884829698,
+    "lc_r_min": 0.2715089884829698,
+    "engage_r_[R]": 0.2277358131075318,
+    "lc_minus_engage": 0.043773175375437984,
+    "seeds_beating_[R]": 1,
+    "lc_r_allreinf": 0.30343359522062985,
+    "corr_lc_sign": -0.3303866540294322,
+    "corr_lc_absval": 0.11512933720482031,
+    "corr_arotrue_sign": -0.14931293389727412,
+    "arousal_perp_seeds_ok": 0,
+    "lc_r_lesion": 0.0,
+    "permute_seeds_sig": 1,
+    "permute_null_mean": 0.0015874325854588866,
+    "strength_signonly": 0.036337792805328124,
+    "strength_combined": 0.11081950285836185,
+    "strength_arousalonly": 0.11512933720482031,
+    "strength_lift": 0.07448171005303372,
+    "src_lc_2afferent": 0.2715089884829698,
+    "src_lc_3afferent": 0.2721694243885093,
+    "src_drive2_linear": 0.27188707936591766,
+    "src_engage_[R]": 0.2277358131075318,
+    "src_code_magnitude": 0.18621468665547192,
+    "src_supervised_ceiling": 0.17422704245841258,
+    "src_bodily_magnitude": 0.20357251579332694,
+    "src_bodily_binary": 0.07932035705882876,
+    "src_lc_plus_bodily": 0.2722303266202113
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 137,
+      "n_reinforced": 125,
+      "n_train": 63,
+      "n_held": 62,
+      "lc_r": 0.2715089884829698,
+      "lc_r_allreinf": 0.30343359522062985,
+      "engage_r": 0.2277358131075318,
+      "lc_minus_engage": 0.043773175375437984,
+      "source_r": {
+        "lc_pop_2afferent": 0.2715089884829698,
+        "lc_pop_3afferent": 0.2721694243885093,
+        "drive2_linear": 0.27188707936591766,
+        "engage_only_[R]": 0.2277358131075318,
+        "code_magnitude": 0.18621468665547192,
+        "supervised_ceiling": 0.17422704245841258,
+        "bodily_magnitude": 0.20357251579332694,
+        "bodily_binary": 0.07932035705882876,
+        "lc_plus_bodily": 0.2722303266202113
+      },
+      "corr_lc_sign": -0.3303866540294322,
+      "corr_lc_absval": 0.11512933720482031,
+      "corr_arotrue_sign": -0.14931293389727412,
+      "lc_r_lesion": 0.0,
+      "permute_perm_p": 0.01652892561983471,
+      "permute_null_mean": 0.0015874325854588866,
+      "bodily_leak": 0.3789980100026149,
+      "strength_signonly": 0.036337792805328124,
+      "strength_combined": 0.11081950285836185,
+      "strength_arousalonly": 0.11512933720482031,
+      "strength_lift": 0.07448171005303372
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 8000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "held_frac": 0.5,
+    "n_perm": 120,
+    "n_lc": 64,
+    "r_go": 0.27,
+    "n_vocab": 137,
+    "backend": "numpy"
+  },
+  "mechanism": "A spiking LC-like (locus coeruleus) POPULATION integrates the CONVERGENT salience afferents of the self-organized code -- interoceptive ENGAGEMENT ([R]'s balanced (n_pos+n_neg)/total_ctx) + cortical DRIVE magnitude (RAW-PPMI L2) [+ distinctiveness = -context-entropy, reported] -- each population-z-scored (equal-gain), summed with FIXED +weights (biological role, NOT fit to arousal), min-max mapped to a tonic..phasic input CURRENT, fed to a heterogeneous-threshold LIF population; the graded POPULATION spike-rate is the arousal read (phasic-to-salient + tonic baseline). Reported: supervised-afferent CEILING (train-fit, held-eval), a host body-floor BODILY-MAGNITUDE proxy (innate per-primary autonomic-activation magnitude, the analog of the +-1 sign), and LC+bodily.",
+  "HONEST_RESIDUALS": "Warriner AROUSAL is EVAL-only, NEVER an input (asserted byte-identical). The LC read is a spiking LIF population (the named next rung from [R]'s rate-level read) but the AFFERENTS are rate-level numpy reads of the code. Full sign-orthogonality remains label-limited (labels' own corr(a_true,sign)<0). ~2*n_each innate primary SIGNS host-supplied (faithful floor). The BODILY-MAGNITUDE proxy adds a host per-primary autonomic magnitude (a legitimate world/body floor, the analog of the sign) -- reported with its leak vs the primaries' own Warriner arousal made transparent. Standalone de-risk (build_one_brain fold-in pending).",
+  "sources": {
+    "circumplex": "Russell 1980; Barrett & Bliss-Moreau (valence _|_ arousal are separate dimensions)",
+    "lc_arousal": "Kandel 6e Ch.40 -- the noradrenergic locus coeruleus is the ascending AROUSAL population (low tonic rate when drowsy, graded tonic in alert states; PHASIC bursts to SALIENT stimuli regardless of reward sign)",
+    "adaptive_gain": "Aston-Jones & Cohen 2005 (Annu Rev Neurosci 28:403-450) -- the LC integrates convergent afferents signaling salience/utility; phasic vs tonic MODES; adaptive gain",
+    "valence_opponent": "Namburi-Tye 2015 opposing BLA valence populations (the DIFFERENCE channel)"
+  },
+  "builds_on": "2026-08-13-affect-arousal-channel-BOUNDARY.md (its named surpass #1: a richer LC/bodily source)",
+  "elapsed_seconds": 1.0
+}
