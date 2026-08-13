@@ -240,6 +240,14 @@ moat-safe unless noted):
   magnitude ≥2× (4/6 — needs divisive/gain predictive-coding, Spratling) + FS-WTA cleanliness (needs stronger competitive
   normalization). Instrument lesson banked: a naive short-occlusion VoE is mostly presentation-history residual — only
   occlusion ≥110 ms + a recur=0 lesion isolates the genuine maintained-object signal. A real first rung on the biggest gap.
+  **BOUNDARY SURPASSED (2026-08-13, 6/6 GO):** switching the predictive-coding error from SUBTRACTIVE to DIVISIVE/gain
+  (shunting inhibition — Carandini-Heeger / Spratling biased-competition, a conductance whose reversal divides gain instead
+  of subtracting current) lifts the VoE magnitude → the strict gate now passes 6/6 (was 1/6). The DECISIVE anti-over-tuning
+  control: at the IDENTICAL operating point, flipping ONLY the error reversal from subtractive→shunting moves VoE≥2× from
+  2/6→6/6 — so it's the READ, not the tuning, that closes it; the no-maintenance lesion is kept + strengthened. Runner-level
+  (a new runner reusing the object-file machinery; NO `sim/` edit — an additive default-None kwarg on the runner's build
+  function, byte-identical off). Next rung: self-organized object-file binding (still doesn't bootstrap). Two Tier-1
+  world-model rungs now cleared.
 - **E3 deeper-LEARN — BTSP plateau LASTING trace — 6/6 GO (with a host caveat):** a real on-bridge BTSP plateau write +
   spiking recall + a synaptic TAG-AND-CAPTURE persistence model — the plateau write still recalls after a 200-step decay
   window (54–92 Hz) where transient/static/moat writes decay below recall; lesion-load-bearing (95% of persistence

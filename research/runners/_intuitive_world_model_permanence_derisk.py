@@ -129,7 +129,17 @@ def _host(a):
 def build_world_model(seed, *, K=K_OBJECTS, n_s=20, n_w=20, n_ipred=12, n_err=16, n_fs=24,
                       n_alarm=30, recur=26.0, load_w=18.0, wm_to_fs=1.3, fs_to_wm=9.0,
                       wm_to_ipred=16.0, ipred_to_err=26.0, sens_to_err=40.0, err_to_alarm=12.0,
-                      nmda=True):
+                      nmda=True, err_reversal_i=None, wm_reversal_i=None):
+    """err_reversal_i / wm_reversal_i (ADDITIVE, default None = byte-identical to the subtractive
+    build): a per-region GABA_A reversal OVERRIDE (mV). None -> global cfg.syn_reversal_potential_i
+    (-75 mV, hyperpolarizing = SUBTRACTIVE inhibition). A value near the operating point (~ -60 mV)
+    makes the inhibition SHUNTING/DIVISIVE (Carandini-Heeger; the biological substrate of divisive
+    normalization / Spratling biased-competition PC). Setting err_reversal_i shunts the ipred_k->err_k
+    prediction (the maintained prediction DIVIDES the sensory reveal instead of subtracting it ->
+    scale-robust cancellation on a match, full response on a violation = the divisive/gain PC READ).
+    Setting wm_reversal_i shunts the fs->wm competition (biased-competition WTA -> a cleaner one-of-K
+    winner). Both are runner-side region config; NO sim/ edit (BrainRegion.syn_reversal_potential_i_
+    override + the engine's conductance-based I_syn = g_i*(E_i - v), bridge.py:7744)."""
     """K per-object slots (sens_k, wm_k, ipred_k, err_k) + shared fs (WTA) + a single alarm pool.
     Slow-NMDA recurrent self-excitation on wm_k = the persistence attractor (Wang 2002).
     Surprise is a canonical PREDICTIVE-CODING microcircuit (Rao-Ballard; Bastos et al. 2012):
@@ -162,15 +172,16 @@ def build_world_model(seed, *, K=K_OBJECTS, n_s=20, n_w=20, n_ipred=12, n_err=16
     cfg.nmda_recurrent_tau_decay_ms = 100.0
 
     regions, pathways = [], []
-    def _reg(name, n, exc_frac):
+    def _reg(name, n, exc_frac, rev_i=None):
         regions.append(BrainRegion(name=name, n_neurons=n, exc_fraction=exc_frac,
                                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
-                                   weight_jitter=0.0, plastic_internal=False))
+                                   weight_jitter=0.0, plastic_internal=False,
+                                   syn_reversal_potential_i_override=rev_i))
     for k in range(K):
         _reg(f"sens{k}", n_s, 1.0)
-        _reg(f"wm{k}", n_w, 1.0)
+        _reg(f"wm{k}", n_w, 1.0, rev_i=wm_reversal_i)   # optional SHUNTING fs->wm competition (biased-comp WTA)
         _reg(f"ipred{k}", n_ipred, 0.0)   # inhibitory-trait: the top-down PREDICTION relay -> cancels err_k
-        _reg(f"err{k}", n_err, 1.0)        # RECTIFIED prediction-error unit (sens exc - prediction inh)
+        _reg(f"err{k}", n_err, 1.0, rev_i=err_reversal_i)  # RECTIFIED err unit; rev_i=~-60 -> DIVISIVE (shunting) PC
     _reg("fs", n_fs, 0.0)                  # shared FS inhibitory pool (WM one-of-K competition)
     _reg("alarm", n_alarm, 1.0)            # summed prediction-error / surprise read-out
 

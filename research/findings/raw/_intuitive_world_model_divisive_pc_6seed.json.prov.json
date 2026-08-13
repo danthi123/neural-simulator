@@ -1,0 +1,30 @@
+{
+ "run_id": "1786599510-961000",
+ "runner": "research/runners/_intuitive_world_model_divisive_pc_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9cd9b64bc7b69174/research/runners/_intuitive_world_model_divisive_pc_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--learn-control",
+  "--out",
+  "research/findings/raw/_intuitive_world_model_divisive_pc_6seed.json"
+ ],
+ "git_sha": "ce18d59ec",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T01:38:30",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_intuitive_world_model_divisive_pc_6seed.json"
+}

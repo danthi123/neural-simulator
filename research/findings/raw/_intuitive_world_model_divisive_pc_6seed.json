@@ -1,0 +1,302 @@
+{
+  "mode": "intuitive_world_model_divisive_pc",
+  "rows": [
+    {
+      "seed": 42,
+      "perm_hold_rate": 0.1324,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 132.39,
+      "hold_correct": 1.0,
+      "held_hold_correct": 1.0,
+      "train_match_alarm": 0.0039,
+      "train_viol_alarm": 0.0142,
+      "train_voe_ratio": 3.675,
+      "held_match_alarm": 0.0084,
+      "held_viol_alarm": 0.021,
+      "held_voe_ratio": 2.511,
+      "lesion_voe_ratio": 0.855,
+      "lesion_held_voe_ratio": 1.082,
+      "subtractive_train_voe_ratio": 2.168,
+      "subtractive_held_voe_ratio": 2.177,
+      "voe_attributable_to_persistence": 1.1306306306306306,
+      "learn_naive_voe_ratio": 0.99,
+      "learn_trained_voe_ratio": 0.99,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "wta_clean": true,
+      "attributable": true,
+      "lesion_floor_ok": true,
+      "go": true
+    },
+    {
+      "seed": 43,
+      "perm_hold_rate": 0.2105,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 210.45,
+      "hold_correct": 1.0,
+      "held_hold_correct": 1.0,
+      "train_match_alarm": 0.002,
+      "train_viol_alarm": 0.0105,
+      "train_voe_ratio": 5.357,
+      "held_match_alarm": 0.0051,
+      "held_viol_alarm": 0.0136,
+      "held_voe_ratio": 2.679,
+      "lesion_voe_ratio": 1.045,
+      "lesion_held_voe_ratio": 0.878,
+      "subtractive_train_voe_ratio": 3.113,
+      "subtractive_held_voe_ratio": 1.502,
+      "voe_attributable_to_persistence": 0.9617486338797816,
+      "learn_naive_voe_ratio": 1.496,
+      "learn_trained_voe_ratio": 1.474,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "wta_clean": true,
+      "attributable": true,
+      "lesion_floor_ok": true,
+      "go": true
+    },
+    {
+      "seed": 44,
+      "perm_hold_rate": 0.1447,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 144.66,
+      "hold_correct": 1.0,
+      "held_hold_correct": 1.0,
+      "train_match_alarm": 0.0073,
+      "train_viol_alarm": 0.0168,
+      "train_voe_ratio": 2.299,
+      "held_match_alarm": 0.0017,
+      "held_viol_alarm": 0.014,
+      "held_voe_ratio": 8.108,
+      "lesion_voe_ratio": 0.801,
+      "lesion_held_voe_ratio": 1.157,
+      "subtractive_train_voe_ratio": 1.412,
+      "subtractive_held_voe_ratio": 3.09,
+      "voe_attributable_to_persistence": 1.1666666666666667,
+      "learn_naive_voe_ratio": 1.3,
+      "learn_trained_voe_ratio": 1.299,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "wta_clean": true,
+      "attributable": true,
+      "lesion_floor_ok": false,
+      "go": true
+    },
+    {
+      "seed": 100,
+      "perm_hold_rate": 0.205,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 205.0,
+      "hold_correct": 1.0,
+      "held_hold_correct": 1.0,
+      "train_match_alarm": 0.0014,
+      "train_viol_alarm": 0.0116,
+      "train_voe_ratio": 8.3,
+      "held_match_alarm": 0.0041,
+      "held_viol_alarm": 0.0134,
+      "held_voe_ratio": 3.236,
+      "lesion_voe_ratio": 1.068,
+      "lesion_held_voe_ratio": 0.961,
+      "subtractive_train_voe_ratio": 2.218,
+      "subtractive_held_voe_ratio": 1.603,
+      "voe_attributable_to_persistence": 0.954337899543379,
+      "learn_naive_voe_ratio": 1.461,
+      "learn_trained_voe_ratio": 1.458,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "wta_clean": true,
+      "attributable": true,
+      "lesion_floor_ok": true,
+      "go": true
+    },
+    {
+      "seed": 101,
+      "perm_hold_rate": 0.2165,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 216.48,
+      "hold_correct": 1.0,
+      "held_hold_correct": 1.0,
+      "train_match_alarm": 0.0021,
+      "train_viol_alarm": 0.0124,
+      "train_voe_ratio": 5.911,
+      "held_match_alarm": 0.003,
+      "held_viol_alarm": 0.0126,
+      "held_voe_ratio": 4.25,
+      "lesion_voe_ratio": 1.316,
+      "lesion_held_voe_ratio": 0.76,
+      "subtractive_train_voe_ratio": 2.164,
+      "subtractive_held_voe_ratio": 2.382,
+      "voe_attributable_to_persistence": 0.7511312217194569,
+      "learn_naive_voe_ratio": 1.711,
+      "learn_trained_voe_ratio": 1.709,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "wta_clean": true,
+      "attributable": true,
+      "lesion_floor_ok": false,
+      "go": true
+    },
+    {
+      "seed": 102,
+      "perm_hold_rate": 0.2019,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 201.93,
+      "hold_correct": 1.0,
+      "held_hold_correct": 1.0,
+      "train_match_alarm": 0.0035,
+      "train_viol_alarm": 0.011,
+      "train_voe_ratio": 3.105,
+      "held_match_alarm": 0.0078,
+      "held_viol_alarm": 0.0199,
+      "held_voe_ratio": 2.557,
+      "lesion_voe_ratio": 1.043,
+      "lesion_held_voe_ratio": 0.934,
+      "subtractive_train_voe_ratio": 3.825,
+      "subtractive_held_voe_ratio": 1.605,
+      "voe_attributable_to_persistence": 0.9562500000000002,
+      "learn_naive_voe_ratio": 1.329,
+      "learn_trained_voe_ratio": 1.328,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "wta_clean": true,
+      "attributable": true,
+      "lesion_floor_ok": true,
+      "go": true
+    }
+  ],
+  "operating_point": {
+    "err_reversal_i": -56.0,
+    "wm_reversal_i": -60.0,
+    "load_w": 36.0,
+    "fs_to_wm": 16.0
+  },
+  "isolation_op": {
+    "wm_reversal_i": -60.0,
+    "load_w": 36.0,
+    "fs_to_wm": 16.0
+  },
+  "n_go": 6,
+  "n_seeds": 6,
+  "verdict": "GO",
+  "verdict_label": "GO",
+  "perm_ratio_min": 132.39,
+  "wta_clean": 6,
+  "voe_train": [
+    3.675,
+    5.357,
+    2.299,
+    8.3,
+    5.911,
+    3.105
+  ],
+  "voe_heldout": [
+    2.511,
+    2.679,
+    8.108,
+    3.236,
+    4.25,
+    2.557
+  ],
+  "voe_lesion_train": [
+    0.855,
+    1.045,
+    0.801,
+    1.068,
+    1.316,
+    1.043
+  ],
+  "voe_lesion_held": [
+    1.082,
+    0.878,
+    1.157,
+    0.961,
+    0.76,
+    0.934
+  ],
+  "voe_present": 6,
+  "voe_ge2": 6,
+  "subtractive_ge2_isolation": 2,
+  "attributable": 6,
+  "lesion_floor_ok": 4,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "PERMANENCE holds (ratio>=5, min over seeds)",
+      "ok": true,
+      "detail": "measured=132.39 expect=<function main.<locals>.<lambda> at 0x7fd7d22dd800>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "WTA-CLEAN: hold_correct=1.0 on train AND held (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fd7d22dd800>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "VoE PRESENT + GENERALIZES (>=1.3 train AND held, all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fd7d22dd800>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "VoE MAGNITUDE >=2x on train AND held (all seeds \u2014 the boundary this closes)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fd7d22dd800>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "VoE PERSISTENCE-ATTRIBUTABLE: intact - lesion >= 0.3 (train AND held, all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fd7d22dd800>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "intact strict GO on all seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fd7d22dd800>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "divisive VoE intact vs no-maintenance lesion (persistence load-bearing)",
+      "ok": true,
+      "detail": "treatment=4.7745 control=1.02133 |sep|=3.75317 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "VoE magnitude: SUBTRACTIVE read vs DIVISIVE read @ fixed op-point (the fix)",
+      "ok": true,
+      "detail": "treatment=4.7745 control=2.48333 |sep|=2.29117 > 0.25",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "OU background process",
+      "why": "deterministic regime for a controllable operating point"
+    },
+    {
+      "process": "conductance noise",
+      "why": "deterministic regime"
+    },
+    {
+      "process": "absolute lesion floor <=1.15 (SECONDARY characterization, not gated)",
+      "why": "reported 4/6: noise-limited exactly as the first rung (attributability, not the absolute floor, is the load-bearing collapse read; the divisive read makes the INTACT VoE larger -> the attributable separation is LARGER than the first rung, so the lesion control is STRENGTHENED, not weakened)"
+    },
+    {
+      "process": "self-organized object-file BINDING",
+      "why": "the comparator is a topographic template (object-independent -> it generalizes, the anti-cheat); self-organizing the binding from experience is the named next rung"
+    },
+    {
+      "process": "occlusion/reveal EVENT grounding",
+      "why": "the occlusion + reveal events + presented object are sensory drive (the environment boundary, as E2's valence + T1-4's events); grounding them in the emergent code follows"
+    }
+  ],
+  "verdict_status": "GO"
+}
