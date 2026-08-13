@@ -1,0 +1,35 @@
+{
+ "run_id": "1786616184-1075267",
+ "runner": "research/runners/_w4_informativeness_objective_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-afa11a23b86eead06/research/runners/_w4_informativeness_objective_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--json",
+  "research/findings/raw/_w4_informativeness/w4_6seed.json"
+ ],
+ "git_sha": "af920535c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T06:16:24",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 643.3,
+ "corpus_check_query": "W4 pragmatic metric intent-averaging rewards onehot; graded off-diagonal mass hurts clean intents",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_w4_informativeness/w4_6seed.json"
+}

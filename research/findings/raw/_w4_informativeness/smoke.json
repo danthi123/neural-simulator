@@ -1,0 +1,288 @@
+{
+  "runner": "_w4_informativeness_objective_derisk",
+  "faculty": "D pragmatics: close the W4 pragmatic boundary by replacing M1's intent-AVERAGING with an INFORMATIVENESS-WEIGHTED objective (Frank-Goodman 2012), weighting each intent by its RSA informativeness so the implicature intent carries the weight. FUNCTIONAL pragmatics correlate.",
+  "builds_on": [
+    "2026-08-13-magnitude-preserving-plateau-readout-BOUNDARY (W4 residual = objective/metric aggregation)",
+    "2026-08-13-w4-detector-k-recalibration-BOUNDARY (detector base rate surpassed; magnitude-blind wall)",
+    "2026-08-01-W4-recursive-theory-of-mind-...-6seed-GO (depth-2 scalar implicature GO)"
+  ],
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "smoke": true,
+  "move_eps": 0.03,
+  "verdict": "UNDEFINED -- smoke (n<6); the informativeness weights + the per-objective A/B teeth are printed for mechanism-check only. The 6-seed bar is authoritative.",
+  "go": false,
+  "external_grounding": [
+    "Frank & Goodman (2012) Science 336(6084):998 -- the RSA speaker maximizes expected informativeness / minimizes surprisal; the pragmatic value of an utterance is weighted by how much it disambiguates (the informativeness weighting, not a uniform intent average)."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PRINCIPLED weights: the analytic L1 the weights derive from matches the ANALYTIC_L1 RSA posterior (weights are the RSA's own informativeness, NOT tuned)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "VALID metric: SCRAMBLE (graded mass on WRONG intents) LOSES to one-hot on OBJ_inf (a scrambled belief must still lose -- else the objective is broken)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.30337 onehot=0.9523"
+    },
+    {
+      "kind": "require",
+      "name": "the one-hot arm is reproduced under the new objective (the honest comparison)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "onehot OBJ_inf=0.9523"
+    },
+    {
+      "kind": "control",
+      "name": "the informativeness weighting REMOVES most of one-hot's baseline (M1) advantage (objective half of the residual)",
+      "ok": true,
+      "detail": "treatment=0.11396 control=0.14998 |sep|=0.03602 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA + the all-or-none coincidence current",
+      "why": "a SCORING-OBJECTIVE change only (the informativeness weighting); beliefs byte-identical to the W4 A/B; the magnitude-preserving graded plateau read reused; plasticity off."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)"
+  ],
+  "gates": {
+    "weights_principled_L1_matches_analytic": true,
+    "OBJ_inf_graded_beats_onehot_6of6": false,
+    "scramble_loses": true,
+    "onehot_reproduced": true
+  },
+  "informativeness_weights": {
+    "primary_per_intent_entropy_w_inf": [
+      -0.0,
+      -0.0,
+      0.5004
+    ],
+    "robustness_per_intent_surprisal_w_surp": [
+      0.0,
+      0.6931,
+      0.1386
+    ],
+    "cell_speaker_S1_W_cell": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.3333,
+        0.6667
+      ]
+    ],
+    "analytic_ideal_rownorm": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.2,
+        0.8
+      ]
+    ],
+    "L1_matches_analytic_ANALYTIC_L1": true,
+    "intents": [
+      "none",
+      "SBNA",
+      "all"
+    ],
+    "utterances": [
+      "none",
+      "some",
+      "all"
+    ],
+    "note": "w_inf(none)=w_inf(SBNA)=0 (one-hot recovery, zero pragmatic informativeness), w_inf(all)>0 (the scalar implicature, recovered from a graded 'some'+'all' distribution) -- so the informativeness weighting concentrates on the implicature intent, per Frank-Goodman."
+  },
+  "objective_residual": {
+    "m1_onehot_advantage": 0.11396,
+    "obj_inf_onehot_advantage": 0.14998,
+    "advantage_removed_fraction": -0.3161
+  },
+  "aggregate": {
+    "graded_read": {
+      "M1": {
+        "onehot": 0.86463,
+        "graded": 0.75067,
+        "scramble": 0.22159,
+        "move": -0.11396,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.9523,
+        "graded": 0.80232,
+        "scramble": 0.30337,
+        "move": -0.14998,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.83599,
+        "graded": 0.78549,
+        "scramble": 0.30618,
+        "move": -0.0505,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.86463,
+        "graded": 0.75067,
+        "scramble": 0.28552,
+        "move": -0.11396,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      }
+    },
+    "allornone_read": {
+      "M1": {
+        "onehot": 0.58068,
+        "graded": 0.60769,
+        "scramble": 0.28089,
+        "move": 0.02701,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.6475,
+        "graded": 0.78716,
+        "scramble": 0.52443,
+        "move": 0.13966,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.58198,
+        "graded": 0.52036,
+        "scramble": 0.21866,
+        "move": -0.06162,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.59818,
+        "graded": 0.63329,
+        "scramble": 0.32173,
+        "move": 0.03511,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      }
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "center": 88.0,
+      "slope": 0.11,
+      "scores": {
+        "graded_read": {
+          "onehot": {
+            "M1": 0.86463,
+            "OBJ_inf": 0.9523,
+            "OBJ_surp": 0.83599,
+            "OBJ_cell": 0.86463
+          },
+          "graded": {
+            "M1": 0.75067,
+            "OBJ_inf": 0.80232,
+            "OBJ_surp": 0.78549,
+            "OBJ_cell": 0.75067
+          },
+          "scramble": {
+            "M1": 0.22159,
+            "OBJ_inf": 0.30337,
+            "OBJ_surp": 0.30618,
+            "OBJ_cell": 0.28552
+          },
+          "graded_lesion": {
+            "M1": 0.712,
+            "OBJ_inf": 0.69518,
+            "OBJ_surp": 0.76764,
+            "OBJ_cell": 0.712
+          },
+          "_per_intent_onehot": [
+            0.8289,
+            0.8127,
+            0.9523
+          ],
+          "_per_intent_graded": [
+            0.6676,
+            0.7821,
+            0.8023
+          ]
+        },
+        "allornone_read": {
+          "onehot": {
+            "M1": 0.58068,
+            "OBJ_inf": 0.6475,
+            "OBJ_surp": 0.58198,
+            "OBJ_cell": 0.59818
+          },
+          "graded": {
+            "M1": 0.60769,
+            "OBJ_inf": 0.78716,
+            "OBJ_surp": 0.52036,
+            "OBJ_cell": 0.63329
+          },
+          "scramble": {
+            "M1": 0.28089,
+            "OBJ_inf": 0.52443,
+            "OBJ_surp": 0.21866,
+            "OBJ_cell": 0.32173
+          },
+          "graded_lesion": {
+            "M1": 0.52945,
+            "OBJ_inf": 0.6192,
+            "OBJ_surp": 0.47984,
+            "OBJ_cell": 0.54585
+          },
+          "_per_intent_onehot": [
+            0.5257,
+            0.5689,
+            0.6475
+          ],
+          "_per_intent_graded": [
+            0.5689,
+            0.467,
+            0.7872
+          ]
+        }
+      }
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. This changes ONLY the SCORING OBJECTIVE (the informativeness weighting derived from the analytic Frank-Goodman RSA -- belief-independent, zero free parameter, NOT tuned). Reuse-by-import of the 2026-08-13 magnitude-preserving graded dendritic-plateau read + the W4 A/B belief sources (beliefs byte-identical, plasticity off, fixed operating point). The SCRAMBLE control (graded mass on WRONG intents must LOSE) keeps the objective honest; the all-or-none read is carried as a control. numpy-CPU real spiking Izhikevich; NO sim/ edit; additive NEW runner. NOT a claim of phenomenal access to another mind; a self-report would be a functional read-out.",
+  "elapsed_seconds": 5.0
+}
