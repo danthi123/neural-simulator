@@ -158,15 +158,33 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > `wired:YES / on_by_default:YES / scaffold_retired:NO` (residual: cue→action content is synaptically installed →
 > one-shot Hebbian / Gollwitzer is the retirement rung). ~13 default-on spiking faculties now.
 >
-> **🔴 LIVE LANES — WAVE-8 (staggered; consolidate each → checkout to main):**
-> - **[WH] (iso):** W4 DETECTOR operating-point homeostatic gain — stabilize the fractional-implicature response across
->   heterogeneity so seed-44 doesn't fall out; targets the W4 arc's last seed → 6/6 GO (from [B]).
-> - **[AL] (iso):** AFFECT richer arousal source — a spiking LC-like arousal population / autonomic bodily-state proxy to
->   lift the info-thin arousal read (from [R]).
+> **✅ WAVE-8 CONSOLIDATED (2026-08-13, all on main + both remotes @ `5f19f5297`):**
+> - **[PW] prospective memory** → **WIRED to production** (`bcd53cf36`, default-on organ #13): the HOLD (PFC latch) +
+>   coincidence-gated RELEASE (BA10 NMDA-plateau) are spiking, real-handler verified across a multi-turn conversation
+>   (fires-on-cue after distractors, silent-before/wrong-cue, lesion collapses 88.1%-attributable, byte-identical-off).
+>   `scaffold_retired: NO` (cue→action content binding + text→slot mapping host; rung = one-shot Hebbian/Gollwitzer).
+> - **[WH] W4 detector operating-point homeostat** → **GO — W4 / Task-#12 ARC CLOSED 6/6** (`5f19f5297`): a content-free
+>   per-detector homeostatic set-point (Turrigiano + Carandini-Heeger) rescues seed-44 (−0.041→+0.198, implicature cell
+>   0.017→0.202); graded beats onehot on all 4 objectives 6/6 (mean +0.150), same-grid controls prove it's the selection
+>   criterion not a finer grid. Detector→read-out→objective→operating-point ALL surpassed. **The homeostatic-gain theme
+>   was validated HERE (W4-specific), not as a shared primitive.** De-risk CLOSED; production-wiring the belief = remaining step.
+> - **[AL] affect richer arousal (spiking LC)** → **GO w/ caveat** (`79117d79e`): an LC-like population (multi-afferent
+>   salience integrator) predicts held-out arousal r=+0.311 (beats [R]'s 0.265 6/6, emergent, lesion→0). Caveats: the LIF
+>   transfer is rank-neutral (win = multi-afferent CONVERGENCE in a spiking pop), orthogonality REGRESSED (drive afferent
+>   leaks sign), corpus arousal plateaus ~0.31 → deeper resolution + clean ⊥ need a genuine BODILY/INTEROCEPTIVE input
+>   (an embodiment requirement, legitimately host — the body provides interoception, the brain reads it).
 >
-> **SINGLE LITERAL NEXT:** [PW] LANDED (prospective wired); consolidate WAVE-8 [WH]/[AL] as each lands; then —
-> surprise-organ homeostatic-gain (from [N]), discrete-emotion production wire, prospective cue→action Hebbian binding
-> (the [PW] retirement rung), one-brain MERGE, self-initiation/DMN, remaining Tier-2/3. RAG at every wall.
+> **🔴 LIVE LANES — WAVE-9 (staggered; consolidate each → checkout to main):**
+> - **[PB] (main, serial — ONLY agent on main):** PRODUCTION-WIRE the W4 graded-implicature pragmatic belief into the
+>   speaking pipeline (Task-#12's actual wiring — the de-risk pipeline now beats onehot 6/6 end-to-end).
+> - **[SH] (iso):** SURPRISE-ORGAN homeostatic-gain — close [N]'s het read-precision residual (0.9375; the surprise
+>   organ's own boundary) with a per-pool homeostat, strengthening both the organ and the GNW-bus heterogeneous vote.
+> - **[HB] (iso):** PROSPECTIVE cue→action HEBBIAN binding — retire the [PW] content-binding scaffold via one-shot Hebbian
+>   potentiation at intention-formation (Gollwitzer implementation-intentions) → toward `scaffold_retired: YES`.
+>
+> **SINGLE LITERAL NEXT:** consolidate WAVE-9 [PB]/[SH]/[HB] as each lands; then — discrete-emotion production wire,
+> one-brain MERGE (co-resident bridges → one substrate), affect interoceptive/embodiment input, self-initiation/DMN,
+> remaining Tier-2/3. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
