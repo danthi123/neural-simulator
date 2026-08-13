@@ -1,0 +1,660 @@
+{
+  "runner": "_gnw_bus_default_flip_verify",
+  "go": true,
+  "status": "GO",
+  "n_identical": 22,
+  "n_total": 22,
+  "byte_identical_frac": 1.0,
+  "per_class": {
+    "stored": {
+      "n": 5,
+      "identical": 5
+    },
+    "self": {
+      "n": 3,
+      "identical": 3
+    },
+    "unstored": {
+      "n": 4,
+      "identical": 4
+    },
+    "inconsistent": {
+      "n": 4,
+      "identical": 4
+    },
+    "open_ended": {
+      "n": 2,
+      "identical": 2
+    },
+    "acquisition": {
+      "n": 2,
+      "identical": 2
+    },
+    "anaphora": {
+      "n": 2,
+      "identical": 2
+    }
+  },
+  "moat_ok": true,
+  "host_correct": true,
+  "lesion": {
+    "q": "what does dog chase?",
+    "intact": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "lesioned": null,
+    "reflex": "cat",
+    "intact_answers": true,
+    "lesion_collapses": true,
+    "reflex_survives": true,
+    "attribution_to_ignition": 1.0
+  },
+  "handler_escape_byte_identical": {
+    "ok": true,
+    "rows": [
+      {
+        "q": "what does dog chase?",
+        "identical": true,
+        "no_gnw_bus_key": true,
+        "answer": "The dog chases cat.",
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "abstained": false
+      },
+      {
+        "q": "what does cat eat?",
+        "identical": true,
+        "no_gnw_bus_key": true,
+        "answer": "The cat eats fish.",
+        "recalled_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "abstained": false
+      },
+      {
+        "q": "what does brain use?",
+        "identical": true,
+        "no_gnw_bus_key": true,
+        "answer": "The brain uses spikes.",
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "abstained": false
+      },
+      {
+        "q": "what does fish fly?",
+        "identical": true,
+        "no_gnw_bus_key": true,
+        "answer": "I don't know about that.",
+        "recalled_svo": null,
+        "abstained": true
+      },
+      {
+        "q": "what does dog eat?",
+        "identical": true,
+        "no_gnw_bus_key": true,
+        "answer": "I don't know about that.",
+        "recalled_svo": null,
+        "abstained": true
+      },
+      {
+        "q": "what are you",
+        "identical": true,
+        "no_gnw_bus_key": true,
+        "answer": "The brain uses spikes.",
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "abstained": false
+      }
+    ]
+  },
+  "stateless": [
+    {
+      "cls": "stored",
+      "q": "what does dog chase?",
+      "want": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "host_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "bus_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "organ_reads": [
+        "cat",
+        "cat",
+        "cat"
+      ],
+      "n_ignited": 1,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": true
+    },
+    {
+      "cls": "stored",
+      "q": "what does cat eat?",
+      "want": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "host_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "bus_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "organ_reads": [
+        "fish",
+        "fish",
+        "fish"
+      ],
+      "n_ignited": 1,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": true
+    },
+    {
+      "cls": "stored",
+      "q": "what does brain use?",
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "host_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "bus_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "organ_reads": [
+        "spikes",
+        "spikes",
+        "spikes"
+      ],
+      "n_ignited": 1,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": true
+    },
+    {
+      "cls": "stored",
+      "q": "what does brain learn?",
+      "want": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "host_svo": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "bus_svo": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "organ_reads": [
+        "words",
+        "words",
+        "words"
+      ],
+      "n_ignited": 1,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": true
+    },
+    {
+      "cls": "stored",
+      "q": "what does brain store?",
+      "want": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "host_svo": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "bus_svo": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "organ_reads": [
+        "memory",
+        "memory",
+        "memory"
+      ],
+      "n_ignited": 1,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": true
+    },
+    {
+      "cls": "self",
+      "q": "what are you",
+      "want": null,
+      "host_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "bus_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "organ_reads": [
+        "spikes",
+        "spikes",
+        "spikes"
+      ],
+      "n_ignited": 1,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": null
+    },
+    {
+      "cls": "self",
+      "q": "what do you use",
+      "want": null,
+      "host_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "bus_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "organ_reads": [
+        "spikes",
+        "spikes",
+        "spikes"
+      ],
+      "n_ignited": 1,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": null
+    },
+    {
+      "cls": "self",
+      "q": "how do you learn",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": null
+    },
+    {
+      "cls": "unstored",
+      "q": "what does fish fly?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "unstored",
+      "q": "what does ball roll?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "unstored",
+      "q": "what does bird sing?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "unstored",
+      "q": "what does dragon breathe?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "inconsistent",
+      "q": "what does dog eat?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "inconsistent",
+      "q": "what does cat chase?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "inconsistent",
+      "q": "what does brain chase?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "inconsistent",
+      "q": "what does dog use?",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": [
+        null,
+        null,
+        null
+      ],
+      "n_ignited": 0,
+      "routable": true,
+      "reason": null,
+      "byte_identical": true,
+      "moat_ok": true,
+      "host_correct": null
+    },
+    {
+      "cls": "open_ended",
+      "q": "what might a dog do",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": null,
+      "n_ignited": null,
+      "routable": false,
+      "reason": "unroutable_self_or_short",
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": null
+    },
+    {
+      "cls": "open_ended",
+      "q": "tell me something new about brain",
+      "want": null,
+      "host_svo": null,
+      "bus_svo": null,
+      "organ_reads": null,
+      "n_ignited": null,
+      "routable": false,
+      "reason": "unroutable_self_or_short",
+      "byte_identical": true,
+      "moat_ok": null,
+      "host_correct": null
+    }
+  ],
+  "stateful": [
+    {
+      "cls": "acquisition",
+      "q": "sky hold cloud",
+      "want": null,
+      "host_svo": [
+        "sky",
+        "hold",
+        "cloud"
+      ],
+      "bus_svo": [
+        "sky",
+        "hold",
+        "cloud"
+      ],
+      "byte_identical": true
+    },
+    {
+      "cls": "acquisition",
+      "q": "what does sky hold?",
+      "want": [
+        "sky",
+        "hold",
+        "cloud"
+      ],
+      "host_svo": [
+        "sky",
+        "hold",
+        "cloud"
+      ],
+      "bus_svo": [
+        "sky",
+        "hold",
+        "cloud"
+      ],
+      "byte_identical": true
+    },
+    {
+      "cls": "anaphora",
+      "q": "what does dog chase?",
+      "want": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "host_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "bus_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "byte_identical": true
+    },
+    {
+      "cls": "anaphora",
+      "q": "what does it eat?",
+      "want": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "host_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "bus_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "byte_identical": true
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "byte-identical bus-vs-host on EVERY covered panel query",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "22/22 \u2014 the substrate reproduces the host gate() decision on every class"
+    },
+    {
+      "kind": "require",
+      "name": "no moat regression (unstored/inconsistent still abstain, host+bus)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "stored host decisions are correct (byte-identical => bus reproduces a CORRECT decision)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion collapses the combined ANSWER to abstain (ignition load-bearing)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "forward-recall reflex survives the lesion (dissociation)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "intact bus answers the stored fact",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ESCAPE flag BRAIN_GNW_BUS_HOST=1 byte-identical to bus default (real handler)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the owner can revert instantly to today's production"
+    },
+    {
+      "kind": "control",
+      "name": "lesion dissociation (combined answer needs the workspace ignition)",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "heavy Gate-B organs (affect/worldmodel/... = 0) in the escape byte-identical handler check",
+      "why": "disabled ONLY for speed; they run identically on both flag arms, so the comparison is unaffected"
+    }
+  ],
+  "undefined_reasons": []
+}

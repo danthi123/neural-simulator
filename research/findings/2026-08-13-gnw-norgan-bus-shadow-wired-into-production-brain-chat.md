@@ -9,6 +9,8 @@ mechanism: gnw-workspace
 
 # GNW N-organ ignition bus — a default-OFF SHADOW path added to production `brain_chat` (the one-substrate first wiring, host NOT yet replaced)
 
+> **PROMOTED 2026-08-13 (same day):** this default-OFF SHADOW step was flipped to the DEFAULT organ-combination — the substrate now AUTHORS the combination on `brain_chat` (default-ON, `BRAIN_GNW_BUS_HOST` escape), earned on a broad byte-identical panel. See `research/findings/2026-08-13-gnw-bus-default-flip-substrate-authors-organ-combination.md`. This finding remains the accurate record of the shadow rung; the "host NOT removed yet" language below describes that shadow state.
+
 ## What this closes (faculty-map T1-1, Phase-C first wiring)
 The audit's #1 structural lever is that the co-resident organs in the production chat are combined by HOST PYTHON, not by the substrate: `ChatBrain.gate()` (reached from `webapp/server.py::brain_chat`) snapshots a spiking recall, a reverse-binding VERIFY and a router fallback and fuses them with an `if recalled == p` (design: `docs/plans/2026-08-13-gnw-norgan-bus-production-wiring.md`). The de-risked GNW N-organ ignition bus (`research/runners/_gnw_norgan_bus_derisk.py`, finding `2026-08-13-gnw-norgan-ignition-bus-substrate-combines-N-organ-reads.md`, 6/6 GO) proved the SUBSTRATE can combine N>=3 subthreshold organ reads via consensus-ignition + shared-inhibition WTA + re-entry. This finding WIRES that bus into production — as the SAFE FIRST step: a default-OFF SHADOW path that re-derives the host decision and reports agreement, WITHOUT removing the host orchestration.
 

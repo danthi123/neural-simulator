@@ -3517,6 +3517,22 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _BRAIN_CHATS[cache_key] = chat
     source = getattr(chat, "_brain_chat_source", source)
 
+    # GNW N-ORGAN IGNITION BUS — DEFAULT ORGAN-COMBINATION (T1-1 Phase-B FLIP, 2026-08-13): promote the substrate
+    # ignition bus from SHADOW to the DEFAULT combination path. `install_bus_gate` idempotently wraps `chat.gate` so
+    # the SUBSTRATE (consensus-ignition + WTA) AUTHORS the organ-combination verdict — the ignited patient IS the
+    # answer, no ignition IS the abstain (the moat as a substrate property) — REPLACING the host `if recalled == p`.
+    # Both the single-fact path and the default rich path funnel their direct recall through `chat.gate`, so this
+    # covers the DEFAULT turn. Extraction/comprehension (the (agent, action) parse) is UNCHANGED — only the
+    # COMBINATION moves to the substrate. ESCAPE: `BRAIN_GNW_BUS_HOST=1` reverts to the original host gate() (byte-
+    # identical to pre-flip production). Honest-negative lever: `BRAIN_GNW_BUS_LESION=1` collapses the answer to
+    # abstain (ignition load-bearing). Guarded so a wiring failure can never crash a turn (degrades to host gate()).
+    # Earned on a broad byte-identical panel (_gnw_bus_default_flip_verify). See webapp/gnw_bus_shadow.py.
+    try:
+        from webapp import gnw_bus_shadow as _gnw_bus_mod
+        _gnw_bus_mod.install_bus_gate(chat)
+    except Exception:
+        pass
+
     # B3 per-turn "brain activity": flip the composer's READ-ONLY trace flag ON (default-off in the composer; a
     # post-construction attribute flip only GATES the read-only `last_trace` recording, so it stays answer-identical +
     # the no-confab moat is unchanged). After the gate runs the spiking recall (`what_does` -> composer.query_patient),
@@ -4225,6 +4241,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _cu_suffix, resp["curiosity"] = _curiosity_followup(bool(r["abstained"]) and not is_hyp)
         if _cu_suffix:
             resp["answer"] = resp["answer"] + _cu_suffix
+        # GNW BUS observability (rich path): the rich composer's DIRECT recall runs through the bus-authored
+        # `chat.gate` too, so attach the last bus decision when BRAIN_GNW_BUS is on. Default-OFF -> no key (byte-
+        # identical). The bus AUTHORS the combination regardless of this flag (the flag only gates the debug block).
+        if os.environ.get("BRAIN_GNW_BUS", "").strip().lower() in ("1", "true", "on", "yes"):
+            _rich_bus = getattr(chat, "_last_gnw_bus", None)
+            if _rich_bus is not None:
+                resp["gnw_bus"] = _rich_bus
         return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -4271,22 +4294,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if _cu_suffix:
         answer = answer + _cu_suffix
 
-    # GNW N-ORGAN IGNITION BUS (SHADOW, T1-1 Phase-C first wiring, 2026-08-13): when BRAIN_GNW_BUS is on, route the
-    # SAME real organ reads gate() combines (spiking recall + VERIFY re-check + reverse-binding VERIFY) through the
-    # de-risked spiking workspace and RECORD whether the SUBSTRATE's committed decision AGREES with the host's. This
-    # is the one-substrate audit lever T1-1: today the co-resident organs are fused by HOST Python (`if recalled==p`);
-    # the bus proves the substrate can do that combination via consensus-ignition + WTA. ADDITIVE + DEFAULT-OFF: with
-    # the flag OFF this block never runs (no import), the host gate() STILL authors the answer, and the response
-    # carries NO `gnw_bus` key -> byte-identical to today. The bus only RE-DERIVES the host decision (never a new
-    # answer, moat-safe). Guarded so it can never crash a turn (degrades to no gnw_bus block). See
-    # webapp/gnw_bus_shadow.py + research/runners/_gnw_norgan_bus_derisk.py.
+    # GNW N-ORGAN IGNITION BUS — observability block (T1-1 Phase-B, 2026-08-13): the substrate ignition bus now
+    # AUTHORS this turn's organ-combination by DEFAULT (installed above; `gate_svo` above IS the bus's committed
+    # decision unless BRAIN_GNW_BUS_HOST reverted it). When BRAIN_GNW_BUS is on, attach the per-turn bus info the
+    # wrapper stashed (`chat._last_gnw_bus`: committed patient, organ reads, host-vs-bus agreement, routable/reason).
+    # ADDITIVE + DEFAULT-OFF: with the flag OFF the response carries NO `gnw_bus` key -> byte-identical. Guarded.
     gnw_bus_info = None
     if os.environ.get("BRAIN_GNW_BUS", "").strip().lower() in ("1", "true", "on", "yes"):
-        try:
-            from webapp import gnw_bus_shadow as _gnw_bus_mod
-            gnw_bus_info = _gnw_bus_mod.shadow_report(chat, msg, gate_svo)
-        except Exception:
-            gnw_bus_info = None
+        gnw_bus_info = getattr(chat, "_last_gnw_bus", None)
 
     _resp = {
         "answer": answer,

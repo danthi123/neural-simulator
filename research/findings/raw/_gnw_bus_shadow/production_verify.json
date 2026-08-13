@@ -195,22 +195,30 @@
         "on_has_bus_key": true,
         "host_fields_identical": true,
         "on_gnw_bus": {
-          "enabled": true,
-          "note": "shadow verification only \u2014 the host gate() authored the answer; the bus RE-DERIVES the combination via spiking ignition and reports agreement (BRAIN-BASED-ONLY audit lever T1-1).",
-          "host_decision": "answer",
-          "host_patient": "cat",
-          "agent": "dog",
-          "action": "chase",
-          "routable": true,
-          "bus_decision": "answer",
-          "committed": "cat",
           "organ_reads": [
             "cat",
             "cat",
             "cat"
           ],
+          "committed": "cat",
+          "ignited": true,
           "n_ignited": 1,
-          "agrees": true
+          "lesion": false,
+          "decoy": "learn",
+          "routable": true,
+          "agent": "dog",
+          "action": "chase",
+          "agrees": true,
+          "host_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "bus_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
         }
       },
       {
@@ -219,22 +227,22 @@
         "on_has_bus_key": true,
         "host_fields_identical": true,
         "on_gnw_bus": {
-          "enabled": true,
-          "note": "shadow verification only \u2014 the host gate() authored the answer; the bus RE-DERIVES the combination via spiking ignition and reports agreement (BRAIN-BASED-ONLY audit lever T1-1).",
-          "host_decision": "abstain",
-          "host_patient": null,
-          "agent": "fish",
-          "action": "fly",
-          "routable": true,
-          "bus_decision": "abstain",
-          "committed": null,
           "organ_reads": [
             null,
             null,
             null
           ],
+          "committed": null,
+          "ignited": false,
           "n_ignited": 0,
-          "agrees": true
+          "lesion": false,
+          "abstain_reason": "primary_recall_miss",
+          "routable": true,
+          "agent": "fish",
+          "action": "fly",
+          "agrees": true,
+          "host_svo": null,
+          "bus_svo": null
         }
       }
     ]
@@ -244,7 +252,7 @@
       "kind": "require",
       "name": "bus-vs-host decision agreement == 1.0",
       "ok": true,
-      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f8f1413d300>",
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7ad2543a60>",
       "note": "the substrate reproduces the host gate() combination on every panel turn (stored + abstain)"
     },
     {

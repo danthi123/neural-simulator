@@ -377,23 +377,26 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
 - **F5. The co-resident organs are COMBINED by HOST PYTHON, not by the substrate** — `ChatBrain.gate()` (reached from
   `webapp/server.py::brain_chat`) snapshots a spiking recall + a reverse-binding VERIFY + a router fallback and fuses
   them with an `if recalled == p`. The organs are neural; their COMBINATION is host `if/else` — the audit's #1
-  structural lever. **Burn-down → the spiking GNW N-organ ignition bus IS the organ-combination.** STATUS: **SHADOW
-  WIRED / default-OFF (first step, 2026-08-13).** The de-risked N-organ bus (`_gnw_norgan_bus_derisk`, 6/6 GO) is now
-  wired into the `brain_chat` single-fact path as an ADDITIVE, DEFAULT-OFF verification/shadow path
-  (`webapp/gnw_bus_shadow.py::shadow_report`, reuse-by-import — NO `sim/` edit). With `BRAIN_GNW_BUS=1` the SUBSTRATE
-  re-derives the host `gate()` combination by routing the SAME real organ reads (recall + VERIFY re-check + reverse-
-  binding VERIFY) through ONE warm spiking workspace: three corroborating subthreshold votes ACCUMULATE + IGNITE the
-  patient slot (a decoy is WTA-suppressed; a recall-miss = no ignition = abstain). Verified numpy-CPU through the REAL
-  production ChatBrain + handler: AGREEMENT 9/9 (5 stored ignite the host's exact patient, 4 abstain withhold — the
-  moat as a substrate property); LESION-load-bearing (assembly self-recurrence zeroed → the bus collapses to abstain
-  while the forward-recall reflex survives); BYTE-IDENTICAL-when-off (real handler carries no `gnw_bus` key + host
-  fields unchanged). This PROVES the substrate can combine the live organs; the host orchestration is NOT removed yet
-  (flip-to-default is gated on the wiring design's §4 criterion). Files: `webapp/gnw_bus_shadow.py`,
-  `webapp/server.py brain_chat`, verify `research/runners/_gnw_bus_shadow_production_verify.py`; design
-  `docs/plans/2026-08-13-gnw-norgan-bus-production-wiring.md`; finding
-  `2026-08-13-gnw-norgan-bus-shadow-wired-into-production-brain-chat.md`. **RESIDUALS**: host `gate()` still authors
-  the answer (shadow only); organ B == organ A's forward recall (distinct consensus = recall + reverse-VERIFY,
-  faithful to gate()); single-fact path only (rich path follow-on); workspace bridge co-resident (rides #1).
+  structural lever. **Burn-down → the spiking GNW N-organ ignition bus IS the organ-combination.** STATUS: **FLIPPED
+  to the DEFAULT combination / default-ON (2026-08-13).** `webapp/server.py::brain_chat` installs
+  `gnw_bus_shadow.install_bus_gate` on the ChatBrain, so the wrapper re-authors the organ-COMBINATION verdict through
+  the substrate ignition bus (consensus + WTA) on every routable turn — covering BOTH the single-fact path AND the
+  DEFAULT rich path (both funnel their direct recall through `chat.gate`). The SAME real organ reads (recall + VERIFY
+  re-check + reverse-binding VERIFY) write subthreshold votes into ONE warm spiking workspace: three corroborating
+  votes ACCUMULATE + IGNITE the patient slot (a decoy WTA-suppressed) → the ignited patient IS the answer; no ignition
+  IS the abstain (the moat as a substrate property). The host `if recalled == p` verdict is OVERRIDDEN. EARNED on a
+  BROAD real-query panel through the REAL handler (`_gnw_bus_default_flip_verify` GO): BYTE-IDENTICAL bus-vs-host
+  **22/22** across stored/self/unstored/inconsistent/open-ended/acquisition/anaphora (the flip changes the MECHANISM,
+  not the behaviour); MOAT holds (unstored/inconsistent still abstain); LESION collapses the ANSWER (BRAIN_GNW_BUS_LESION=1
+  → the consensus cannot ignite → abstain) while the forward-recall reflex survives (attribution 1.0); ESCAPE
+  `BRAIN_GNW_BUS_HOST=1` reverts to the original host gate() byte-identically (instant revert). Files:
+  `webapp/gnw_bus_shadow.py` (`install_bus_gate`/`bus_authored_svo`), `webapp/server.py brain_chat`, verify
+  `research/runners/_gnw_bus_default_flip_verify.py`; design `docs/plans/2026-08-13-gnw-norgan-bus-production-wiring.md`;
+  finding `2026-08-13-gnw-bus-default-flip-substrate-authors-organ-combination.md`. **RESIDUALS**: the host `gate()`
+  CODE still runs (extraction + a now-overridden `if recalled == p`) — full retirement = a `gate_via_bus` that never
+  computes the host combination (design §3); organ B == organ A's forward recall (distinct consensus = recall +
+  reverse-VERIFY, faithful to gate()); a fact with an AMBIGUOUS reverse binding could veto (organ C) → scope to host
+  (none in the tiny-demo; a mapped follow-on); workspace bridge co-resident (rides #1).
 
 ---
 
