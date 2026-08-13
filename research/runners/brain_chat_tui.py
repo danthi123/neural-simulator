@@ -507,6 +507,33 @@ class ChatBrain:
         if "?" in q or ql.split()[:1] and ql.split()[0] in (
                 "what", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "does", "do", "did"):
             return None
+        # ── NON-CONTRADICTION STORE-SIDE (Gate-B, B3, 2026-08-12) ──────────────────────────────────────────
+        # So the non-contradiction gate has NEGATIONS to fire against (today the console stores ZERO negations — the
+        # legacy path below hard-codes polarity="AFFIRM" and only acquires an EXACTLY-3-whitespace-token input),
+        # acquire a heard assertion with its DETECTED polarity via the B3 organ's extractor: it strips negation cues +
+        # function words to expose the 3-token SVO content and tags a heard negation ("the dog does not eat grass") as
+        # NEGATE, using the SAME function-word-strip the gate's recall uses (so store + recall AGREE). Additive +
+        # guarded: falls back to the EXACT legacy 3-token / AFFIRM path when B3 is unavailable OR disabled
+        # (BRAIN_NONCONTRADICTION_GATE=0) -> byte-identical acquisition. (This edits the host conversational scaffold,
+        # NOT sim/.)
+        try:
+            import research.runners.b3_noncontradiction_production_organ as _b3nc
+            _b3nc_on = _b3nc.noncontradiction_enabled()
+        except Exception:
+            _b3nc = None
+            _b3nc_on = False
+        if _b3nc_on:
+            parsed = _b3nc.extract_polar_assertion(q)   # (agent, action, patient, polarity) or None (out of scope)
+            if parsed is None:
+                return None
+            a, v, p, pol = parsed
+            try:
+                self.inner.hear("%s %s %s" % (a, v, p), polarity=pol)   # a heard NEGATION stores as NEGATE
+            except Exception:
+                return None
+            self._refresh_facts()
+            return [a, v, p]
+        # (B3 unavailable / disabled) — the EXACT legacy path (byte-identical acquisition)
         toks = [t.strip(".,!?") for t in q.split() if t.strip(".,!?")]
         if len(toks) != 3:                       # the minimal SVO assertion the parser handles
             return None

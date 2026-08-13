@@ -2928,6 +2928,55 @@ def _get_curiosity_organ():
     return get_organ(seed=42)
 
 
+# ─── MULTI-REFERENT WORKING MEMORY (Gate-B, D6): a spiking multi-register discourse buffer that HOLDS >=2 referents
+# across a span. The organ's process singleton accumulates a referent codebook across ALL sessions, so a hold-query
+# would re-materialize other conversations' referents — the buffer MUST be per-session. Keyed identically to the
+# ChatBrain cache; cleared on reset. See research/runners/d6_multiref_wm_production_organ.py. ────────────────────
+_SESSION_MULTIREF: dict = {}
+
+
+def _get_multiref_organ(cache_key):
+    """The PER-SESSION spiking multi-referent WM buffer (lazy build ~0.46s on the first >=2-referent turn). NOT a
+    process singleton: the organ's own get_organ() shares a referent codebook across sessions, which would leak
+    other conversations' referents into a hold-query read-back; one MultiReferentWMOrgan per cache_key isolates it."""
+    org = _SESSION_MULTIREF.get(cache_key)
+    if org is None:
+        from research.runners.d6_multiref_wm_production_organ import MultiReferentWMOrgan
+        org = MultiReferentWMOrgan(seed=42)
+        _SESSION_MULTIREF[cache_key] = org
+    return org
+
+
+def _get_reconsolidation_organ():
+    """The process-shared reconsolidation (belief-revision) organ. Its D2 window gate IS the shared surprise organ,
+    so warming surprise warms it (built once on first use). See research/runners/reconsolidation_production_organ.py."""
+    from research.runners.reconsolidation_production_organ import get_organ
+    return get_organ(seed=42)
+
+
+def _get_noncontradiction_organ():
+    """The process-shared non-contradiction assertion-gate organ (stateless; reads the ONE production recall composer
+    directly — no co-resident bridge added). See research/runners/b3_noncontradiction_production_organ.py."""
+    from research.runners.b3_noncontradiction_production_organ import get_organ
+    return get_organ(seed=42)
+
+
+def _episodic_store_ok() -> bool:
+    """Whether the D5 episodic BTSP WRITE (Hook B) may run this turn. A BTSP store is ~seconds on cupy (the
+    production substrate) but ~510s/topic on numpy@2000 — so on numpy the write is DEFERRED (a declared latency
+    residual: the recall GATE is still spiking + load-bearing; only the WRITE is amortized to the cupy deployment).
+    `BRAIN_EPISODIC_STORE` (1/true/on force-ON, 0/off force-OFF) overrides the backend gate for tests/deployments."""
+    import os as _os
+    v = _os.environ.get("BRAIN_EPISODIC_STORE")
+    if v is not None:
+        return v.strip().lower() not in ("0", "false", "no", "off", "")
+    try:
+        from sim.backend import get_backend
+        return get_backend()[1] == "cupy"
+    except Exception:
+        return False
+
+
 def _brain_vocab(chat) -> set:
     """The set of words the brain KNOWS (agents ∪ actions ∪ patients of its stored facts), lowercased. Used to
     scope the comprehension monitor: a real word the brain knows but that is not in the toy cue lexicon is OUT of
@@ -3424,6 +3473,12 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
         _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
         _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
+        _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
+        try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
+            import research.runners.d5_episodic_production_organ as _EP_reset
+            _EP_reset.reset_episodic_organ(cache_key)
+        except Exception:
+            pass
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
@@ -3531,6 +3586,58 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
         })
 
+    # ── EPISODIC RECALL of PAST TURNS — Hook A: REFERENTIAL RECALL (Gate-B, D5, 2026-08-12) ──────────────────
+    # On a referential turn ("earlier you told me about X", "you mentioned a cat"), decide whether topic X was
+    # actually discussed THIS conversation by a genuinely-SPIKING hippocampal pattern-completion — NOT a host list
+    # scan. `recall` drives the referential cue and reads the two-compartment apical dAP UP-state completion after
+    # real bridge steps (reuse-by-import from `d5_episodic_production_organ` -> the kt=8 EpisodicDapMemory, 6/6-GO).
+    # A completed assembly -> honest disclosure (with the host-oracle fact CONTENT the moat already governs, surfaced
+    # ONLY on a completion); a non-completing cue -> honest "I don't recall discussing X" (a genuine spiking completion
+    # failure, NEVER a confabulation). This owns a DISJOINT turn class (no other organ fires on 'you mentioned X') and
+    # runs FIRST (referential-first, right after AFFECT) so it is NOT pre-empted by the comprehension/surprise/B3 gates
+    # (which would otherwise mis-read 'you mentioned the dog' as an incomprehensible assertion). Conversation-scoped
+    # (memory ACCUMULATES). LESION (`BRAIN_EPISODIC_LESION=1`): read through the UNFORMED baseline recurrent weights ->
+    # every completion collapses to 0 -> the gate falls to 'not in memory' (load-bearing). Default-ON;
+    # `BRAIN_EPISODIC=0` -> the referential turn falls through to the normal path (byte-identical oracle).
+    episodic_info = None
+    try:
+        import research.runners.d5_episodic_production_organ as _EP
+        _episodic_on = _EP.episodic_enabled()
+    except Exception:
+        _EP = None
+        _episodic_on = False
+    if _episodic_on and _EP.is_referential(msg):
+        try:
+            _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
+            ref = _EP.extract_referent(msg, _ep_topics)
+            if ref is not None:
+                eorg = _EP.get_episodic_organ(cache_key, 42, _ep_topics)
+                rec = eorg.recall(ref, lesion=_EP.episodic_lesioned())
+                episodic_info = dict(rec)
+                # CONTENT (a DECLARED host-oracle residual): surface a fact the brain holds about `ref`, rendered
+                # through the SAME governed render path the moat covers — ONLY when the spiking assembly COMPLETED.
+                content = None
+                if rec.get("in_memory"):
+                    try:
+                        _comp = getattr(getattr(chat, "inner", None), "composer", None)
+                        for _f, _h in (getattr(_comp, "kb", []) or []):
+                            if (str(_f.get("agent", "")).lower() == ref
+                                    and _f.get("action") and _f.get("patient")):
+                                content = chat.render([_f.get("agent"), _f.get("action"), _f.get("patient")])
+                                break
+                    except Exception:
+                        content = None
+                return JSONResponse({
+                    "answer": _EP.recall_disclosure(rec, content),
+                    "abstained": (not bool(rec.get("in_memory"))),
+                    "recalled_svo": None, "verified": bool(rec.get("in_memory")),
+                    "renderer": rname, "brain": req.brain, "source": source,
+                    "rich": False, "activity": None, "affect": affect_info,
+                    "episodic": dict(episodic_info, kind="recall"), "referential": True,
+                })
+        except Exception as _epe:  # never let the episodic read crash a turn — fall through to the normal path
+            episodic_info = {"on": True, "error": f"{type(_epe).__name__}: {_epe}"}
+
     # ── INTERNAL WORLDVIEW / AFFECTIVE WORLD-MODEL (Gate-B, E2, 2026-08-12) ──────────────────────────────────
     # The brain maintains a spiking affective FORWARD MODEL: from the current affective context it PREDICTS the
     # next-turn valence (QUERYABLE — "what do you expect / how is this going?"), and fires a genuinely-SPIKING
@@ -3591,6 +3698,46 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as _we:  # never let the world-model read crash a turn — degrade to the normal answer
             worldmodel_info = {"on": True, "error": f"{type(_we).__name__}: {_we}"}
 
+    # ── MULTI-REFERENT WORKING MEMORY (Gate-B, D6, 2026-08-12) ───────────────────────────────────────────────
+    # Hold >=2 discourse referents ACROSS a turn/span on a genuinely-SPIKING multi-register buffer (R disjoint
+    # slow-NMDA bistable banks on ONE bridge, ONE shared FS pool; reuse-by-import from
+    # `d6_multiref_wm_production_organ`, the 6-seed-GO MultiSlotHold + RUNG6c HebbianBinder). Two paths, mirroring
+    # is_feel_query / is_expectation_query: (a) READ-OUT — an explicit "who/what are we talking about / keeping in
+    # mind" query READS BACK every held referent off the buffer (what a single-attractor store can't do — it ties
+    # to one) and short-circuits with an honest functional read-out; (b) MAINTAIN — an input introducing >=2 named
+    # referents LOADS each into its own register and HOLDS (write-only; the turn falls through unchanged). The buffer
+    # is PER-SESSION (the organ singleton's referent codebook is process-global, so a shared buffer would leak other
+    # conversations' referents into a hold-query). Out-of-scope (<2 referents, no hold-query) -> None -> byte-identical.
+    # LESION (BRAIN_MULTIREF_LESION=1): recur=0 kills the slow-NMDA hold -> the >=2 read-back collapses (load-bearing).
+    # Additive + moat-safe: it only reads/reports ITS OWN buffer (no invented referent, no fact, no abstain flip).
+    # Default-ON; `BRAIN_MULTIREF=0` -> fully skipped (byte-identical oracle).
+    multiref_info = None
+    try:
+        import research.runners.d6_multiref_wm_production_organ as _D6
+        _multiref_on = _D6.multiref_enabled()
+    except Exception:
+        _D6 = None
+        _multiref_on = False
+    if _multiref_on:
+        try:
+            d6org = _get_multiref_organ(cache_key)
+            d6les = _D6.multiref_lesioned()
+            if _D6.is_hold_query(msg):                       # READ-OUT: 'who/what are we talking about / keeping in mind'
+                jq = d6org.judge(msg, lesion=d6les)
+                if jq is not None and jq.get("is_hold_query") and "readout" in jq:
+                    return JSONResponse({
+                        "answer": jq["readout"], "abstained": False, "recalled_svo": None, "verified": True,
+                        "renderer": rname, "brain": req.brain, "source": source, "rich": False, "activity": None,
+                        "affect": affect_info, "worldmodel": worldmodel_info,
+                        "multiref": dict(jq, kind="query"), "inner_state_readout": True,
+                    })
+            else:                                            # MAINTAIN: a turn introducing >=2 referents -> LOAD+HOLD
+                jm = d6org.judge(msg, lesion=d6les)          # None when out-of-scope (<2 referents) -> byte-identical
+                if jm is not None:
+                    multiref_info = dict(jm, kind="maintain")
+        except Exception as _d6e:                            # never crash a turn -> degrade to the normal answer
+            multiref_info = {"on": True, "error": f"{type(_d6e).__name__}: {_d6e}"}
+
     # ── COMPREHENSION MEASUREMENT gate (Gate-B, D4, 2026-08-12) ─────────────────────────────────────────────
     # BEFORE acting on an incoming TRANSITIVE ASSERTION, read a genuinely-SPIKING signal of whether the brain's
     # role-binding RESOLVED (the co-resident `SpikingRoleCompetition` sel-pool margin off cp_firing_states,
@@ -3647,12 +3794,20 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # Default-ON; `BRAIN_SURPRISE=0` -> fully skipped (byte-identical oracle).
     surprise_info = None
     surprise_prefix = ""
+    # RECONSOLIDATION (F-lane) inits — beside the surprise inits so BOTH response branches see them even when
+    # the block is skipped (belief revision hooks INSIDE the surprise block below, reusing its ONE spiking read).
+    reconsolidation_info = None
+    reconsolidation_prefix = ""
     try:
         import research.runners.surprise_production_organ as _SO
         _surprise_on = _SO.surprise_enabled()
     except Exception:
         _SO = None
         _surprise_on = False
+    try:
+        import research.runners.reconsolidation_production_organ as _RC
+    except Exception:
+        _RC = None
     if _surprise_on:
         try:
             asrt = _SO.extract_assertion(msg)
@@ -3670,8 +3825,73 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                     surprise_info = dict(sj)
                     if sj["surprised"]:
                         surprise_prefix = _SO.surprise_notice(a_s, v_s, str(p_stored))
+                    # ── RECONSOLIDATION / belief revision (Gate-B, F-lane, 2026-08-12) ───────────────────────
+                    # When the asserted patient CONTRADICTS the stored one (the D2 spiking surprise window is OPEN),
+                    # UPDATE the stored fact IN PLACE instead of appending a contradictory duplicate. The window-open
+                    # decision reuses the SAME spiking `cp_firing_states[surprise]` read just computed (`sj` passed in —
+                    # ZERO extra spiking reads); the in-place rewrite reuses the composer's OWN de-risked store path
+                    # (rf `update_on_mismatch`; onebrain SAME-slot `_write_block`+`_compose_phases`). Reuse-by-import
+                    # from `reconsolidation_production_organ` (verify-first GO: rf 6/6, onebrain 3/3, 100% attributable).
+                    # Moat-safe: it only rewrites a fact the brain ALREADY HOLDS (guarded by p_stored + p_asserted!=
+                    # p_stored), NEVER on a re-statement (window closed -> not surprised), NEVER fabricates a fact; it
+                    # only PREPENDS an honest notice. Default-ON; `BRAIN_RECONSOLIDATION=0` -> append-only (byte-identical).
+                    # LESION (`BRAIN_RECONSOLIDATION_LESION=1`): window fires but the in-place update is BLOCKED ->
+                    # append-only fallback -> recall returns the STALE fact (load-bearing).
+                    try:
+                        _rc_on = (_RC is not None) and _RC.reconsolidation_enabled()
+                    except Exception:
+                        _rc_on = False
+                    if (_rc_on and sj.get("surprised")
+                            and str(p_asserted).lower() != str(p_stored).lower()):
+                        try:
+                            composer = getattr(chat.inner, "composer", None)
+                            res = _get_reconsolidation_organ().reconsolidate(
+                                composer, a_s, v_s, str(p_stored), str(p_asserted),
+                                sj=surprise_info, lesion=_RC.reconsolidation_lesioned())
+                            reconsolidation_info = res
+                            if res.get("action") == "rewrite":
+                                reconsolidation_prefix = _RC.reconsolidation_notice(
+                                    a_s, v_s, str(p_stored), str(p_asserted))
+                        except Exception as _rce:  # never let belief revision crash a turn — keep append-only
+                            reconsolidation_info = {"on": True, "error": f"{type(_rce).__name__}: {_rce}"}
         except Exception as _se:  # never let the surprise read crash a turn — degrade to the un-noticed answer
             surprise_info = {"on": True, "error": f"{type(_se).__name__}: {_se}"}
+
+    # ── NON-CONTRADICTION ASSERTION-GATE (Gate-B, B3, 2026-08-12) ────────────────────────────────────────────
+    # When the user ASSERTS a transitive fact whose POLARITY contradicts the brain's stored polarity for the EXACT
+    # SAME SVO ("the dog eats grass" vs a stored "a dog does NOT eat grass"), REJECT the assertion instead of
+    # silently overwriting a held belief. The load-bearing recall is a genuinely-SPIKING polarity WTA on the ONE
+    # production composer (`chat.inner.is_it_true` == `OneBrainComposer.ask_yes_no` -> `_spiking_select` over
+    # `cp_firing_states`); the gate proper is the ONE host boolean `stored != asserted` (the accepted no-confab moat
+    # pattern). Reuse-by-import from `b3_noncontradiction_production_organ` (6-seed-GO de-risk gate, NOT reimplemented).
+    # It runs BEFORE the store/gate so a reject returns before `_maybe_acquire` overwrites the held belief. Moat-safe:
+    # an UNKNOWN SVO -> accept (never a fabricated rejection); MUTUALLY EXCLUSIVE with D2 surprise (ask_yes_no is
+    # "unknown" unless the asserted PATIENT matches the stored one, so B3 fires only same-SVO/opposite-polarity).
+    # LESION (`BRAIN_NONCONTRADICTION_LESION=1`): bypass the spiking recall -> every recall "unknown" -> the gate goes
+    # INERT (contradictions slip through). Default-ON; `BRAIN_NONCONTRADICTION_GATE=0` -> fully skipped (byte-identical).
+    noncontradiction_info = None
+    try:
+        import research.runners.b3_noncontradiction_production_organ as _NC
+        _nc_on = _NC.noncontradiction_enabled()
+    except Exception:
+        _NC = None
+        _nc_on = False
+    if _nc_on:
+        try:
+            nres = _get_noncontradiction_organ().check(
+                chat.inner.is_it_true, msg, lesion=_NC.noncontradiction_lesioned())
+            if nres is not None:
+                noncontradiction_info = dict(nres)
+                if nres["reject"]:
+                    return JSONResponse({
+                        "answer": _NC.rejection_message(nres["svo"], nres["stored_polarity"]),
+                        "abstained": False, "recalled_svo": nres["svo"], "verified": True,
+                        "renderer": rname, "brain": req.brain, "source": source,
+                        "rich": False, "activity": _read_activity(), "affect": affect_info,
+                        "noncontradiction": noncontradiction_info, "rejected_contradiction": True,
+                    })
+        except Exception as _nce:  # never crash a turn -> degrade to the normal answer (gate goes silent)
+            noncontradiction_info = {"on": True, "error": f"{type(_nce).__name__}: {_nce}"}
 
     # ── SELF-MODEL / METACOGNITION confidence read-out (Gate-B, E1, 2026-08-12) ──────────────────────────────
     # AFTER the gate/moat produces (or refuses) an answer, read a genuinely-SPIKING confidence of that answer off
@@ -3767,6 +3987,17 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as e:
             raise HTTPException(500, f"rich chat turn failed: {type(e).__name__}: {e}")
         facts = [list(f) for f in r.get("facts", [])]
+        # EPISODIC STORE (Gate-B, D5, Hook B): a normal answered turn with a VERIFIED SVO BTSP-forms the answered
+        # topic's (subject/agent) CA3 assembly (write-only; changes NO reply text). The spiking BTSP write is
+        # ~seconds on cupy but ~510s/topic on numpy@2000, so it is GATED behind cupy (`_episodic_store_ok`) — on a
+        # numpy deployment the write is DEFERRED (a declared latency residual: the recall GATE stays spiking + load-
+        # bearing; only the WRITE is amortized to the cupy deployment). Guarded so it never crashes the turn.
+        if _episodic_on and (not r["abstained"]) and facts and _episodic_store_ok():
+            try:
+                _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
+                _EP.get_episodic_organ(cache_key, 42, _ep_topics).note_topic(facts[0][0])
+            except Exception:
+                pass
         # OPEN-ENDED GENERATION (#3E): a generated HYPOTHESIS turn returns NO supporting facts (a guess is not a
         # recalled fact) but carries `hypothesis`/`hypothesis_svo`. Surface those so the client can render the
         # guess distinctly + so the SVO the fluent prose asserts is checkable, WITHOUT reporting it as recalled.
@@ -3774,7 +4005,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # SURPRISE (Gate-B, D2): if the asserted fact violated a stored expectation (a firing mismatch), PREPEND the
         # honest functional notice to the turn's answer. Additive; empty prefix when not surprised / disabled.
         resp = {
-            "answer": worldmodel_prefix + surprise_prefix + r["answer"],
+            "answer": worldmodel_prefix + surprise_prefix + reconsolidation_prefix + r["answer"],
             "abstained": bool(r["abstained"]),
             # the direct recall (the first supporting fact) is the gate hit,
             # surfaced for parity with the single-fact path's recalled_svo.
@@ -3806,6 +4037,17 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # WORLD-MODEL (Gate-B, E2): the spiking affective forward-model read for this turn (kind=update with the
             # predicted next-turn valence, or kind=violation with the fired surprise); null when disabled/neutral.
             "worldmodel": worldmodel_info,
+            # MULTI-REFERENT WM (Gate-B, D6): the spiking multi-register HOLD read on a >=2-referent MAINTAIN turn
+            # (recovered/hold_alive_min/all_recovered); null out of scope (<2 referents) or disabled (BRAIN_MULTIREF=0).
+            "multiref": multiref_info,
+            # NON-CONTRADICTION (Gate-B, B3): the spiking polarity-recall read for an in-scope assertion (svo/
+            # asserted/stored polarity/reject); null out of scope or disabled (BRAIN_NONCONTRADICTION_GATE=0).
+            "noncontradiction": noncontradiction_info,
+            # RECONSOLIDATION (Gate-B, F): the belief-revision decision (action=rewrite/restabilize/abstain/lesioned);
+            # null when no stored contradicting expectation or disabled (BRAIN_RECONSOLIDATION=0).
+            "reconsolidation": reconsolidation_info,
+            # EPISODIC (Gate-B, D5): null on a non-referential turn (Hook A short-circuits referential turns above).
+            "episodic": episodic_info,
         }
         if is_hyp:
             # additive markers (present ONLY on a generated-hypothesis turn): the guess flag, the (a,v,p) the fluent
@@ -3843,10 +4085,20 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
-    # WORLD-MODEL (Gate-B, E2) + SURPRISE (Gate-B, D2): PREPEND the honest affect-trajectory-violation notice
-    # (world-model) then the expectation-violation notice (surprise). Additive; empty prefixes when not firing.
-    if worldmodel_prefix or surprise_prefix:
-        answer = worldmodel_prefix + surprise_prefix + answer
+    # EPISODIC STORE (Gate-B, D5, Hook B — single-fact path): mirror the rich-path write (gated behind cupy; on a
+    # numpy deployment the write is DEFERRED). Write-only; changes NO reply text. Guarded so it never crashes a turn.
+    if _episodic_on and gate_svo is not None and _episodic_store_ok():
+        try:
+            _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
+            _EP.get_episodic_organ(cache_key, 42, _ep_topics).note_topic(gate_svo[0])
+        except Exception:
+            pass
+
+    # WORLD-MODEL (Gate-B, E2) + SURPRISE (Gate-B, D2) + RECONSOLIDATION (Gate-B, F): PREPEND the honest affect-
+    # trajectory-violation notice (world-model), then the expectation-violation notice (surprise), then the
+    # belief-revision notice (reconsolidation). Additive; empty prefixes when not firing.
+    if worldmodel_prefix or surprise_prefix or reconsolidation_prefix:
+        answer = worldmodel_prefix + surprise_prefix + reconsolidation_prefix + answer
 
     # METACOG (Gate-B, E1): read the spiking confidence of this recall answer; a LOW-confidence answer gets an
     # honest functional hedge PREPENDED (skip an abstain — no answer to qualify). Additive; null when disabled.
@@ -3891,6 +4143,17 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # CURIOSITY (Gate-B, D3): the spiking ASK-pool crave read on an abstain (want_hz/threshold/curious/topic);
         # null when disabled or not an abstain. A follow-up QUESTION is appended to the answer when curious.
         "curiosity": curiosity_info,
+        # MULTI-REFERENT WM (Gate-B, D6): the spiking multi-register HOLD read on a >=2-referent MAINTAIN turn; null
+        # out of scope or disabled (BRAIN_MULTIREF=0).
+        "multiref": multiref_info,
+        # NON-CONTRADICTION (Gate-B, B3): the spiking polarity-recall read for an in-scope assertion; null out of
+        # scope or disabled (BRAIN_NONCONTRADICTION_GATE=0). An accepted assertion attaches its read here.
+        "noncontradiction": noncontradiction_info,
+        # RECONSOLIDATION (Gate-B, F): the belief-revision decision for a contradicting assertion; null when no
+        # stored contradicting expectation or disabled (BRAIN_RECONSOLIDATION=0).
+        "reconsolidation": reconsolidation_info,
+        # EPISODIC (Gate-B, D5): null on a non-referential turn (Hook A short-circuits referential turns above).
+        "episodic": episodic_info,
     })
 
 

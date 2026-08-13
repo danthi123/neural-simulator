@@ -110,14 +110,28 @@ class ReconsolidationProductionOrgan:
     @staticmethod
     def _inplace_rewrite(composer, idx, agent, action, new_patient):
         """Rewrite the reactivated fact's patient IN PLACE, reusing the composer's OWN de-risked store path.
-        rf: `update_on_mismatch` (the SPIKING gate already opened the window, so pe_labile=0.0 defers the write
-        decision entirely to the window). onebrain: the corrected composite is written into the SAME persistent
-        store slot via the composer's own `_write_block` + `_compose_phases` (the device-synapse fact store)."""
-        # rf composer: the Option-A de-risked reactivate+rewrite (6/6 GO). The spiking window already gated this
+        rf + onebrain (production default): `update_on_mismatch` (the SPIKING gate already opened the window, so
+        pe_labile=0.0 defers the write decision entirely to the window -> it recomposes the fact with the new patient
+        and OVERWRITES the SAME store block via `_write_block`+`_compose_phases`; NO contradictory duplicate). A bare
+        composer without that method falls back to the direct compose+write below."""
+        # RECRUIT a RUNTIME-NOVEL corrected patient into a reserved cleanup slot BEFORE the rewrite — the composer's
+        # OWN recruit path (the exact pattern `_store_fact` uses for hear()/store()), so a revision to a word never
+        # seen THIS session (e.g. "actually, south" when only "north" was taught) has a codebook entry. Without it,
+        # `update_on_mismatch` -> `_patient_prediction_error` / `_compose_phases` KeyErrors on the un-coded word and
+        # the rewrite silently falls back to append-only. Idempotent no-op for an already-coded word / no headroom;
+        # guarded for composers without the recruit hook. NOT a mechanism change — it is the same new-word recruitment
+        # the initial store already performs, applied to the corrected filler the in-place rewrite composes.
+        if isinstance(new_patient, str) and hasattr(composer, "_recruit_word"):
+            try:
+                if composer._recruit_word(new_patient) and hasattr(composer, "_csr_cache"):
+                    composer._csr_cache.clear()   # the cleanup operator changed -> rebuild on the next batched read
+            except Exception:
+                pass
+        # rf + onebrain: the Option-A de-risked reactivate+rewrite (6/6 GO). The spiking window already gated this
         # call, so pe_labile=0.0 -> the host cosine does NOT re-gate the decision (the D2 spike read is the gate).
         if hasattr(composer, "update_on_mismatch"):
             return composer.update_on_mismatch(agent, action, new_patient, pe_labile=0.0)
-        # onebrain (production default): rewrite the SAME substrate store slot using the composer's own compose+write.
+        # (bare composer without update_on_mismatch): rewrite the SAME store slot via the composer's own compose+write.
         fact2 = dict(composer.kb[idx][0])
         fact2["patient"] = new_patient
         roles = [r for r in composer.bind_roles if r in fact2]
