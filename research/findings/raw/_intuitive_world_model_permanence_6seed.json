@@ -1,0 +1,263 @@
+{
+  "mode": "intuitive_world_model_permanence",
+  "rows": [
+    {
+      "seed": 42,
+      "perm_hold_rate": 0.1428,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 142.84,
+      "hold_correct": 1.0,
+      "train_match_alarm": 0.0084,
+      "train_viol_alarm": 0.021,
+      "train_voe_ratio": 2.511,
+      "held_match_alarm": 0.012,
+      "held_viol_alarm": 0.0307,
+      "held_voe_ratio": 2.562,
+      "held_hold_correct": 1.0,
+      "lesion_voe_ratio": 0.843,
+      "lesion_held_voe_ratio": 1.092,
+      "lesion_match_alarm": 0.01,
+      "lesion_viol_alarm": 0.0085,
+      "voe_attributable_to_persistence": 1.125,
+      "learn_naive_voe_ratio": 1.181,
+      "learn_trained_voe_ratio": 1.181,
+      "learn_naive_wm_ipred": 1.0,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "go": true
+    },
+    {
+      "seed": 43,
+      "perm_hold_rate": 0.1986,
+      "perm_off_rate": 0.0718,
+      "perm_ratio": 2.77,
+      "hold_correct": 0.75,
+      "train_match_alarm": 0.01,
+      "train_viol_alarm": 0.0177,
+      "train_voe_ratio": 1.767,
+      "held_match_alarm": 0.0164,
+      "held_viol_alarm": 0.0253,
+      "held_voe_ratio": 1.544,
+      "held_hold_correct": 1.0,
+      "lesion_voe_ratio": 1.108,
+      "lesion_held_voe_ratio": 0.907,
+      "lesion_match_alarm": 0.0073,
+      "lesion_viol_alarm": 0.0081,
+      "voe_attributable_to_persistence": 0.8969696969696969,
+      "learn_naive_voe_ratio": 1.709,
+      "learn_trained_voe_ratio": 1.723,
+      "learn_naive_wm_ipred": 1.0,
+      "voe_ge2_train": false,
+      "voe_ge2_held": false,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "perm_hold_rate": 0.1552,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 155.23,
+      "hold_correct": 1.0,
+      "train_match_alarm": 0.0121,
+      "train_viol_alarm": 0.0251,
+      "train_voe_ratio": 2.077,
+      "held_match_alarm": 0.0068,
+      "held_viol_alarm": 0.0241,
+      "held_voe_ratio": 3.531,
+      "held_hold_correct": 1.0,
+      "lesion_voe_ratio": 0.803,
+      "lesion_held_voe_ratio": 1.194,
+      "lesion_match_alarm": 0.0083,
+      "lesion_viol_alarm": 0.0066,
+      "voe_attributable_to_persistence": 1.125,
+      "learn_naive_voe_ratio": 1.657,
+      "learn_trained_voe_ratio": 1.657,
+      "learn_naive_wm_ipred": 1.0,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "go": false
+    },
+    {
+      "seed": 100,
+      "perm_hold_rate": 0.2059,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 205.91,
+      "hold_correct": 1.0,
+      "train_match_alarm": 0.0096,
+      "train_viol_alarm": 0.0221,
+      "train_voe_ratio": 2.306,
+      "held_match_alarm": 0.019,
+      "held_viol_alarm": 0.0286,
+      "held_voe_ratio": 1.51,
+      "held_hold_correct": 0.75,
+      "lesion_voe_ratio": 1.031,
+      "lesion_held_voe_ratio": 0.935,
+      "lesion_match_alarm": 0.0075,
+      "lesion_viol_alarm": 0.0078,
+      "voe_attributable_to_persistence": 0.9814126394052045,
+      "learn_naive_voe_ratio": 1.993,
+      "learn_trained_voe_ratio": 2.02,
+      "learn_naive_wm_ipred": 1.0,
+      "voe_ge2_train": true,
+      "voe_ge2_held": false,
+      "go": false
+    },
+    {
+      "seed": 101,
+      "perm_hold_rate": 0.2157,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 215.68,
+      "hold_correct": 1.0,
+      "train_match_alarm": 0.0096,
+      "train_viol_alarm": 0.0258,
+      "train_voe_ratio": 2.694,
+      "held_match_alarm": 0.0108,
+      "held_viol_alarm": 0.0246,
+      "held_voe_ratio": 2.27,
+      "held_hold_correct": 0.75,
+      "lesion_voe_ratio": 1.307,
+      "lesion_held_voe_ratio": 0.766,
+      "lesion_match_alarm": 0.0082,
+      "lesion_viol_alarm": 0.0107,
+      "voe_attributable_to_persistence": 0.8452722063037249,
+      "learn_naive_voe_ratio": 2.444,
+      "learn_trained_voe_ratio": 2.402,
+      "learn_naive_wm_ipred": 1.0,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "go": false
+    },
+    {
+      "seed": 102,
+      "perm_hold_rate": 0.1989,
+      "perm_off_rate": 0.0,
+      "perm_ratio": 198.86,
+      "hold_correct": 0.75,
+      "train_match_alarm": 0.0069,
+      "train_viol_alarm": 0.0197,
+      "train_voe_ratio": 2.858,
+      "held_match_alarm": 0.0138,
+      "held_viol_alarm": 0.0314,
+      "held_voe_ratio": 2.276,
+      "held_hold_correct": 1.0,
+      "lesion_voe_ratio": 1.006,
+      "lesion_held_voe_ratio": 0.961,
+      "lesion_match_alarm": 0.0081,
+      "lesion_viol_alarm": 0.0082,
+      "voe_attributable_to_persistence": 0.9963636363636363,
+      "learn_naive_voe_ratio": 1.456,
+      "learn_trained_voe_ratio": 1.456,
+      "learn_naive_wm_ipred": 1.0,
+      "voe_ge2_train": true,
+      "voe_ge2_held": true,
+      "go": false
+    }
+  ],
+  "n_go": 1,
+  "n_seeds": 6,
+  "verdict": "UNDEFINED",
+  "verdict_label": "BOUNDARY",
+  "perm_ratio_min": 2.77,
+  "voe_train": [
+    2.511,
+    1.767,
+    2.077,
+    2.306,
+    2.694,
+    2.858
+  ],
+  "voe_heldout": [
+    2.562,
+    1.544,
+    3.531,
+    1.51,
+    2.27,
+    2.276
+  ],
+  "voe_lesion_train": [
+    0.843,
+    1.108,
+    0.803,
+    1.031,
+    1.307,
+    1.006
+  ],
+  "voe_lesion_held": [
+    1.092,
+    0.907,
+    1.194,
+    0.935,
+    0.766,
+    0.961
+  ],
+  "voe_present": 6,
+  "attributable": 6,
+  "lesion_collapse": 4,
+  "voe_ge2_boundary": 4,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "PERMANENCE holds (correct object self-sustains, ratio>=5, min over seeds)",
+      "ok": false,
+      "detail": "measured=2.77 expect=<function main.<locals>.<lambda> at 0x7f3ba0ad56c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "VoE PRESENT on train AND held-out (ratio>=1.3, all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f3ba0ad56c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "VoE PERSISTENCE-ATTRIBUTABLE: intact - lesion >= 0.3 on train AND held (all)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f3ba0ad56c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION (no-maintenance recur=0) COLLAPSES VoE (<=1.15 train+held, all seeds)",
+      "ok": false,
+      "detail": "measured=4 expect=<function main.<locals>.<lambda> at 0x7f3ba0ad56c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "intact GO on >=5/6 seeds",
+      "ok": false,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f3ba0ad56c0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "VoE intact vs no-maintenance lesion (persistence load-bearing)",
+      "ok": true,
+      "detail": "treatment=2.36883 control=1.01633 |sep|=1.3525 > 0.25",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "OU background process",
+      "why": "deterministic regime for a controllable operating point"
+    },
+    {
+      "process": "conductance noise",
+      "why": "deterministic regime"
+    },
+    {
+      "process": "VoE MAGNITUDE >=2x (the mapped BOUNDARY, first-class)",
+      "why": "the confound-free VoE is ~1.5-1.9x, NOT >=2x: a SUBTRACTIVE single predictive-coding relay cannot both (i) fully cancel a strong matched sensory transient and (ii) leave the violation response large; the missing COMPANION is DIVISIVE/gain (shunting) control + attentional amplification of the maintained prediction -> the named next rung. A naive short-occlusion VoE reads 3-5x but is mostly a PRESENTATION-HISTORY residual, not the maintained model (instrument lesson)"
+    },
+    {
+      "process": "self-organized object-file BINDING",
+      "why": "the sens_k<->wm_k<->ipred_k<->err_k comparator is a TOPOGRAPHIC template (object-independent -> it GENERALIZES to a held-out object, the anti-cheat); self-organizing that binding from experience is the named next rung (a learned developmental-acquisition control is reported but not GO-gated)"
+    },
+    {
+      "process": "occlusion/reveal EVENT grounding",
+      "why": "the occlusion + reveal events and the presented object are delivered as sensory drive (the environment boundary, as E2's valence + T1-4's events were); grounding them in the emergent relational/spatial code is the follow-on"
+    }
+  ],
+  "verdict_status": "UNDEFINED"
+}

@@ -211,6 +211,14 @@ moat-safe unless noted):
   The grounding-lesion (drop a fact from the composer → its event vanishes → the causal edge never forms) is load-bearing
   (real grounding, not relabeling); moat 0-confab; corr-only/shuffle collapse. Production-WIREABLE (a co-resident why/what-if
   organ, 4-step spec). Honest residual: grounding-BY-DERIVATION, not yet by a shared merged substrate; DA sign teacher-delivered.
+- **Intuitive world-model / core common-sense (T1-7, the hardest Tier-1) — first rung de-risked, mapped BOUNDARY:** a
+  spiking OBJECT FILE (slow-NMDA recurrent attractor maintains an object through occlusion with ZERO input) + a
+  predictive-coding surprise read gives a real OBJECT-PERMANENCE primitive (the Spelke/Baillargeon signature). Load-bearing
+  claim is 6/6: the violation-of-expectation is PERSISTENCE-CAUSED (a no-maintenance lesion collapses it) AND GENERALIZES to
+  held-out objects — not sensory novelty. Strict gate 1/6 only due to two precisely-mapped SURPASSABLE boundaries: VoE
+  magnitude ≥2× (4/6 — needs divisive/gain predictive-coding, Spratling) + FS-WTA cleanliness (needs stronger competitive
+  normalization). Instrument lesson banked: a naive short-occlusion VoE is mostly presentation-history residual — only
+  occlusion ≥110 ms + a recur=0 lesion isolates the genuine maintained-object signal. A real first rung on the biggest gap.
 - **E3 deeper-LEARN — BTSP plateau LASTING trace — 6/6 GO (with a host caveat):** a real on-bridge BTSP plateau write +
   spiking recall + a synaptic TAG-AND-CAPTURE persistence model — the plateau write still recalls after a 200-step decay
   window (54–92 Hz) where transient/static/moat writes decay below recall; lesion-load-bearing (95% of persistence

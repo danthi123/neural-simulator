@@ -1,0 +1,30 @@
+{
+ "run_id": "1786597398-944371",
+ "runner": "research/runners/_intuitive_world_model_permanence_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8e6ae443fbee10e7/research/runners/_intuitive_world_model_permanence_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_intuitive_world_model_permanence_6seed.json"
+ ],
+ "git_sha": "3c81d17a4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T01:03:18",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2272.5,
+ "corpus_check_query": "intuitive world model naive physics core knowledge",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_intuitive_world_model_permanence_6seed.json"
+}
