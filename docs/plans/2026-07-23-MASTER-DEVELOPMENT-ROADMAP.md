@@ -22,6 +22,26 @@ date: 2026-07-23
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🌙 2026-08-13 OVERNIGHT WAVE (updates §0.1/§0.2 below — read this first):** A 7-lane wave-3 + 3-lane wave-4 landed
+> (all on main + both remotes @ `789481fc2`). **ONE-SUBSTRATE step:** the GNW N-organ ignition BUS was FLIPPED from
+> shadow to the DEFAULT organ-combination on `/api/brain-chat` (`789481fc2`) — the substrate's consensus-ignition + WTA
+> now AUTHORS the combination verdict, replacing host `if recalled == p`, 22/22 byte-identical across query classes,
+> moat-holding, lesion-collapses-the-ANSWER, escape `BRAIN_GNW_BUS_HOST=1`. So §0.2 residual #1 ("combination is HOST
+> control flow") is PARTIALLY surpassed: combination is now substrate-ignition on the default path (routing/sequencing +
+> the host `gate()` code still run computed-then-overridden → `scaffold_retired: NO`; full retirement = a `gate_via_bus`
+> that never computes the host combination). **WIRED:** T1-4 causal why/what-if organ (`79223e8c1`, DO-probe + forward-sim,
+> moat-confirmed). **GO de-risks:** emergence — appraisal VALUE-ORIGIN self-organizes from evaluative conditioning,
+> retiring DR-2's 140-word Warriner lexicon to ~10 innate signs (`5f72570c5`); affect-deepen — spiking opponent retires
+> the Warriner SALIENCE GATE + 4 discrete emotions + vmPFC reappraisal (`629e94500`); mouth FS-WTA −3–5× spike budget
+> (`105616524`). **BOUNDARIES (mapped, next mechanism named):** W4 pragmatic belief de-risked but the alignment metric
+> needs a magnitude-preserving read; prospective-memory latch bulletproof but fire_on_cue amplitude needs a per-pool
+> homeostat; compose-emergence→affect retired the Warriner seed for the valence READ (r=+0.508) but graded-STRENGTH
+> underperforms; W4 detector-k SURPASSED the base-rate wall (detector reads the fractional mass) but the all-or-none
+> plateau is a THRESHOLD, not a magnitude read. **CROSS-CUTTING INSIGHT:** two independent faculties (affect salience,
+> pragmatic belief) hit the SAME residual — the substrate reads SIGN/present-absent robustly but graded MAGNITUDE weakly;
+> the shared surpass is a magnitude-preserving read-out (the GO'd `enable_graded_dendritic_plateau` / a graded-DA third
+> factor) — the top next lever.
+
 ### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
 
 The default chat turn builds the genuinely-spiking `composer_kind="onebrain"` recall (resonate-and-fire on firing

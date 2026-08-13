@@ -23,6 +23,18 @@ Axon's CaP−CaD rule NO-GO (which validated our own SST-microcircuit). The gap#
 deep-credit-on-spikes frontier is a mapped, deprioritized boundary (the tool
 alarm that implied otherwise was retired).
 
+**2026-08-13 OVERNIGHT PRODUCTION-WIRING WAVE.** A one-substrate milestone + a faculty wave landed (all on main + both
+remotes). The **GNW ignition bus was promoted to the DEFAULT** way the brain combines its organ reads on the live chat
+turn — the spiking substrate itself now authors the combine-and-decide step that host Python used to do, verified
+byte-identical to the old behaviour on every test query, moat intact, with a one-flag revert (`BRAIN_GNW_BUS_HOST=1`).
+The causal "why did X / what if X" organ is now WIRED default-on. Three de-risks went GO: affect valence now
+self-organizes from ~10 innate reinforcers instead of a 140-word human lexicon; a spiking opponent drives 4 discrete
+emotions + reappraisal; a cheaper mouth read (−3–5× spikes). Four hit honest, mapped boundaries whose common cause is
+one thing — the substrate reads a SIGN robustly but a graded MAGNITUDE weakly — so the shared next lever is a
+magnitude-preserving dendritic read-out spanning affect and pragmatics. Honest bar unchanged: `scaffold_retired` still 0
+(the host combination code runs computed-then-overridden), organs are still one-composer reads, mouth still Qwen for open
+prose. The 3 missing north-star properties remain: FLUID mouth · ONE substrate · EMERGENT.
+
 **2026-08-11 gap#4 ALL-IN — a wall turned out to be a hyperparameter.** The owner
 directed an all-in push on gap#4 (deep credit through a deep spiking net with a
 local, transport-free rule — the gate on fluent conversation). Wave-1 found two
