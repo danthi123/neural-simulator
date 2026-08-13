@@ -56,7 +56,9 @@ import numpy as np
 from research.runners._spiking_comprehension_monitor_derisk import (
     _build_comp,
     _evs_for,
+    _agent_evidence_from_spikes,
     semantic_sel_margin,
+    SEMANTIC_CUES,
     build_battery,
     ANIMATE,
     INANIM,
@@ -82,6 +84,20 @@ _WORD_RE = re.compile(r"[a-zA-Z']+")
 
 # Read window for the sel-pool settle (matches the de-risk's default read_steps=60; ~0.1-0.3 s/turn on CPU).
 READ_STEPS = 60
+
+# ── OTHER-REPAIR targeting thresholds (T1-6) — calibrated at build from the well-formed pair-max commitment ──
+# The repair reads the per-noun agent-evidence (a0, a1) off the SAME spiking sel-pools the D4 margin uses, to
+# name WHICH thematic role the substrate could not resolve. Two calibrated scalars, both a fraction of the
+# well-formed per-noun role commitment (so they track the substrate's own scale, per seed):
+#   * ROLE_FLOOR_FRAC * mean_well_pairmax  -> the commitment-present floor. A covered transitive's roles are
+#     ACTIVE when max(|a0|,|a1|) clears it; under the D4 lesion (learned cue->role synapses zeroed) both
+#     collapse to ~0 -> below the floor -> NO role target -> the bare abstain (the load-bearing fallback).
+#   * lean_margin = mean_well_pairmax      -> the net-lean confidence. sign(a0+a1) names the OVER-subscribed
+#     role only when |a0+a1| clears it: a two-inanimate transitive (both nouns lean PATIENT, animacy+verbfit
+#     agree) yields a strong negative net lean -> the AGENT slot is the unresolved one; a two-animate
+#     transitive (symmetric verb, weak/ambiguous direction) stays within the margin -> a generic role-swap
+#     clarification (honest: the substrate cannot confidently say which role is over-subscribed).
+ROLE_FLOOR_FRAC = 0.2
 
 
 def comprehension_enabled() -> bool:
@@ -158,6 +174,8 @@ class ComprehensionProductionOrgan:
         self.comp = None
         self.comp_lesion = None
         self.threshold = None
+        self.role_floor = None   # (T1-6) commitment-present floor for the other-repair role read
+        self.lean_margin = None  # (T1-6) net-lean confidence for naming the over-subscribed role
         self.calib = None
         self._rest = {}          # comp-bridge id -> (rest_v, rest_u) resting snapshot for a hard per-turn reset
 
@@ -196,9 +214,18 @@ class ComprehensionProductionOrgan:
         # the production read regime, not the de-risk's sequential-read regime.
         items = build_battery(self.seed, n_per_cond=6)
         well, ill = [], []
+        # OTHER-REPAIR (T1-6) calibration is folded INTO this SAME loop (no extra reads): `_read_per_noun` performs
+        # the byte-identical hard-reset + two `_agent_evidence_from_spikes` calls that `_read`/`semantic_sel_margin`
+        # do, so `abs(a0 - a1)` reproduces the D4 margin EXACTLY and consumes the substrate RNG IDENTICALLY — the
+        # D4 threshold (and every later production margin read) is unchanged. A SEPARATE read pass would advance the
+        # bridge's stochastic state and perturb the production margins, so we must reuse this one.
+        well_pairmax = []
         for (lab, _tag, n0, v, n1) in items:
-            m = self._read(self.comp, n0, v, n1)
+            a0, a1 = self._read_per_noun(self.comp, n0, v, n1)
+            m = abs(a0 - a1)                             # == self._read(...) byte-identical (same call sequence)
             (well if lab == 1 else ill).append(m)
+            if lab == 1:
+                well_pairmax.append(max(abs(a0), abs(a1)))
         mean_well = float(np.mean(well)) if well else 0.30
         min_well = float(np.min(well)) if well else 0.30
         mean_ill = float(np.mean(ill)) if ill else 0.12
@@ -206,6 +233,11 @@ class ComprehensionProductionOrgan:
         # place the threshold in the GAP, biased toward the ill side so a well-formed input reliably passes:
         # midway between the well FLOOR and the ill CEILING when they separate, else the class-mean midpoint.
         self.threshold = 0.5 * (min_well + max_ill) if min_well > max_ill else 0.5 * (mean_well + mean_ill)
+        # the repair thresholds set the substrate's own role-evidence scale (a fraction of the well-formed pair-max
+        # commitment). Kept OFF `self.calib` (which is echoed in the D4 `comprehension` response) so D4 is byte-identical.
+        mean_well_pm = float(np.mean(well_pairmax)) if well_pairmax else 0.15
+        self.role_floor = float(ROLE_FLOOR_FRAC * mean_well_pm)
+        self.lean_margin = float(mean_well_pm)
         self.calib = {"mean_well": mean_well, "min_well": min_well, "mean_ill": mean_ill,
                       "max_ill": max_ill, "read_steps": READ_STEPS, "n_calib": len(items)}
         self._built = True
@@ -222,6 +254,18 @@ class ComprehensionProductionOrgan:
         """Hard-reset `comp` to rest, then read the SEMANTIC sel-pool margin off cp_firing_states."""
         self._hard_reset(comp)
         return float(semantic_sel_margin(comp, _evs_for(n0, v, n1), READ_STEPS))
+
+    def _read_per_noun(self, comp, n0: str, v: str, n1: str):
+        """(T1-6) Hard-reset `comp` to rest, then read the PER-NOUN agent-evidence (a0, a1) = (sel_agent -
+        sel_patient) firing for each noun off cp_firing_states, driven by the SEMANTIC (content) cues only —
+        the SAME spiking reads whose |a0 - a1| is the D4 comprehension margin. `a_i > 0` = noun i leans AGENT,
+        `< 0` = leans PATIENT. Their signs/magnitudes localise WHICH thematic role failed to resolve (the
+        repair target). Under the learned-cue lesion both collapse to ~0 (no role activity)."""
+        self._hard_reset(comp)
+        evs = _evs_for(n0, v, n1)
+        a0 = float(_agent_evidence_from_spikes(comp, evs[0], SEMANTIC_CUES, READ_STEPS))
+        a1 = float(_agent_evidence_from_spikes(comp, evs[1], SEMANTIC_CUES, READ_STEPS))
+        return a0, a1
 
     def read_margin(self, n0: str, v: str, n1: str, lesion: bool = False) -> float:
         """The SPIKING comprehension margin for a transitive (n0, v, n1): |agentEv_0 - agentEv_1| from the
@@ -265,6 +309,63 @@ class ComprehensionProductionOrgan:
             "svo": [n0, v, n1], "margin": float(margin), "threshold": float(self.threshold),
             "comprehended": comprehended, "calib": self.calib,
         }
+
+    def repair_target(self, text: str, brain_vocab=None, lesion: bool = False) -> dict | None:
+        """(OTHER-REPAIR, T1-6) Given the SAME in-scope transitive the D4 gate abstained on, localise WHICH
+        element the substrate could not resolve, so the turn can ask a TARGETED clarification instead of a bare
+        abstain. Returns None when nothing can be targeted (-> the caller keeps the bare abstain). Two branches:
+
+          * OOV (host-lexical scaffold, NOT load-bearing on the spiking read — a declared residual, exactly like
+            curiosity's host topic extractor): when a content token is genuinely out of the brain's vocabulary,
+            name it. The identity of the unknown word is a lexical fact, not a role-competition read.
+
+          * ROLE (fully spiking, LESION-LOAD-BEARING): for a FULLY cue-covered transitive whose roles did not
+            separate, read the per-noun agent-evidence (a0, a1) off cp_firing_states. `max(|a0|,|a1|)` must clear
+            the calibrated commitment floor (roles are ACTIVE) — under the D4 lesion both collapse to ~0, so this
+            fails -> None -> the bare abstain. When active, the net lean sign(a0+a1) names the OVER-subscribed
+            role (so the OTHER role is the unresolved one) when |a0+a1| clears the lean margin; otherwise a
+            generic role-swap target (the substrate cannot confidently say which role is over-subscribed)."""
+        tr = extract_transitive(text)
+        if tr is None:
+            return None
+        n0, v, n1 = tr
+        if not self.competent(n0, v, n1, brain_vocab=brain_vocab):
+            return None
+        self.ensure_built()
+        base = {"on": True, "lesioned": bool(lesion), "svo": [n0, v, n1]}
+
+        # ── OOV branch (host lexical): name the token(s) the brain does not know. ──
+        bv = brain_vocab or set()
+        oov_tokens = [n for n in (n0, n1) if (n not in ANIMACY) and (n not in bv)]
+        if v not in VERB_SELECTS and v not in bv:
+            oov_tokens.append(v)
+        if oov_tokens:
+            base.update(kind="oov", oov_tokens=oov_tokens, role=None, word=None,
+                        loadbearing="host_lexical")
+            return base
+
+        # ── ROLE branch (spiking, load-bearing): the roles are covered but did not separate. ──
+        comp = self._lesion_comp() if lesion else self.comp
+        a0, a1 = self._read_per_noun(comp, n0, v, n1)
+        pair_max = max(abs(a0), abs(a1))
+        net_lean = a0 + a1
+        base.update(a0=float(a0), a1=float(a1), pair_max=float(pair_max), net_lean=float(net_lean),
+                    role_floor=float(self.role_floor), lean_margin=float(self.lean_margin),
+                    loadbearing="spiking_role_evidence")
+        if pair_max < self.role_floor:
+            # no role activity at all (the D4 lesion collapses both a_i to ~0) -> nothing to target.
+            base.update(kind="none", role=None, word=None)
+            return None
+        if net_lean < -self.lean_margin:
+            # both nouns over-claim PATIENT -> the AGENT slot is the unresolved one.
+            base.update(kind="role", role="agent", word=None)
+        elif net_lean > self.lean_margin:
+            # both nouns over-claim AGENT -> the PATIENT slot is the unresolved one.
+            base.update(kind="role", role="patient", word=None)
+        else:
+            # roles are active but the direction is not confidently one-sided -> a generic role-swap target.
+            base.update(kind="role", role="either", word=None)
+        return base
 
 
 _ORGAN: ComprehensionProductionOrgan | None = None

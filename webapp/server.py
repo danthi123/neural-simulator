@@ -3773,13 +3773,40 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                 if (not cj["comprehended"]) and (not known):
                     # LOW margin + not a known binding -> the brain did not comprehend the roles -> honest abstain.
                     comprehension_info["abstained"] = True
-                    return JSONResponse({
-                        "answer": _CO.didnt_follow_message(cj["svo"]),
+                    # ── OTHER-REPAIR (T1-6): instead of a DEAD-END abstain, ask a TARGETED clarification that
+                    # NAMES what did not resolve — the unresolved thematic ROLE (from the SAME D4 spiking sel-pool
+                    # per-noun read, `repair_target()`) or the OOV token. The repair is TRIGGERED by the spiking
+                    # comprehension signal and (for the role branch) SHAPED by it: under the D4 lesion the per-noun
+                    # evidence collapses -> no target -> the byte-identical bare abstain. Moat-safe (a QUESTION,
+                    # never a fact; the turn stays an abstain). Default-ON; `BRAIN_REPAIR=0` -> the bare abstain.
+                    answer = _CO.didnt_follow_message(cj["svo"])
+                    repair_info = None
+                    try:
+                        import research.runners.repair_production_organ as _RP
+                        if _RP.repair_enabled():
+                            tgt = corg.repair_target(
+                                msg, brain_vocab=_brain_vocab(chat),
+                                lesion=_CO.comprehension_lesioned())
+                            q = _RP.clarification_question(tgt) if tgt is not None else None
+                            if q:
+                                answer = q
+                                repair_info = dict(tgt)
+                                repair_info["repaired"] = True
+                            else:
+                                repair_info = {"on": True, "repaired": False,
+                                               "target": (dict(tgt) if tgt is not None else None)}
+                    except Exception as _re:  # never let the repair read crash a turn -> the bare abstain
+                        repair_info = {"on": True, "error": f"{type(_re).__name__}: {_re}"}
+                    payload = {
+                        "answer": answer,
                         "abstained": True, "recalled_svo": None, "verified": False,
                         "renderer": rname, "brain": req.brain, "source": source,
                         "rich": False, "activity": None, "affect": affect_info,
                         "comprehension": comprehension_info, "not_understood": True,
-                    })
+                    }
+                    if repair_info is not None:      # BRAIN_REPAIR=0 -> key absent -> byte-identical bare abstain
+                        payload["repair"] = repair_info
+                    return JSONResponse(payload)
         except Exception as _ce:  # never let the comprehension read crash a turn — degrade to the normal answer
             comprehension_info = {"on": True, "error": f"{type(_ce).__name__}: {_ce}"}
 

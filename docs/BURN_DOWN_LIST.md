@@ -171,6 +171,27 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   (b) VOCAB CEILING — the cue lexicon is the toy 2-noun transitive scope; a graded/near-threshold battery + a LEARNED cue
   lexicon are the next rung; (c) structural malformedness (no verb/wrong arity) still a host arity check. Finding
   `2026-08-12-GateB-comprehension-monitor-production-chat.md`. Distinct from the E1 lane-C metacog BOUNDARY (a different faculty).
+- **T1-6. Conversational OTHER-REPAIR** (a TARGETED clarification, not a dead-end abstain). **WIRED (Gate-B, 2026-08-13).**
+  On a low-comprehension turn the D4 gate would ABSTAIN on, `/api/brain-chat` now asks a TARGETED clarification that NAMES
+  what did not resolve, instead of the bare "I didn't follow that". It COMPOSES the D4 monitor: the SAME co-resident
+  `SpikingRoleCompetition` per-noun agent-evidence (`a0,a1 = sel_agent−sel_patient` off `cp_firing_states`,
+  `ComprehensionProductionOrgan.repair_target`, reuse-by-import) localises the failure — `sign(a0+a1)` names the
+  OVER-subscribed role (a two-inanimate transitive → both nouns claim PATIENT → the **AGENT** slot is unresolved:
+  "my role-binding didn't resolve the AGENT — which of them is doing the 'carry', the book or the cup?"; a symmetric
+  two-animate → near-zero net lean → an honest GENERIC role-swap question), `max(|a0|,|a1|)` confirms the roles are ACTIVE.
+  An OOV transitive names the unknown token (a declared HOST-LEXICAL scaffold, like curiosity's topic extractor — NOT
+  load-bearing). Default-ON (`BRAIN_REPAIR=0` escape → the bare abstain, byte-identical), lesion-load-bearing (the D4
+  spiking signal zeroed → pair-max 0.000 → no target → the bare abstain). MOAT-SAFE: a clarification is unambiguously a
+  QUESTION (never asserts/confabulates a fact; the turn stays an abstain). Verified SYNCHRONOUSLY numpy-CPU through the real
+  handler (6/6: 2-inanim → role=AGENT clarification; 2-animate → generic role-swap; fully-OOV → token naming;
+  comprehensible → NO false repair; lesion → bare abstain; flag-off → bare abstain no-key) + a 9-turn pristine-vs-modified
+  byte-identical regression (flag-off IDENTICAL across all 9; default-ON changes ONLY the turns D4 already abstained on —
+  recall/moat-abstain/anaphora/D2/comprehensible-D4 byte-identical). NO `sim/` edit. STATUS: **WIRED**. **RESIDUALS** (ride
+  existing rows): (a) the OOV token branch is a HOST-LEXICAL scaffold (not load-bearing on spikes) — a spiking unknown-word
+  read is the next rung; (b) two-animate direction is UNDETERMINED by the substrate → the generic question is the honest
+  read; (c) the clarification WORDING is a host language template (only the DECISION + ROLE TARGET are brain-surfaced);
+  (d) D4-SCOPE INHERITANCE — the repair fires on exactly the D4-abstain set (inherits D4's OOV-transitive edge cases);
+  (e) CO-RESIDENT — reuses D4's own bridge (rides the one-brain merge, §). Finding `2026-08-13-T1-6-other-repair-production-chat.md`.
 - **D5. Episodic memory — recall of PAST TURNS. WIRED (Gate-B, 2026-08-12).** `/api/brain-chat` now runs a genuinely-SPIKING
   hippocampal RECALL GATE on a referential turn ("you mentioned X", "earlier you told me about X"): a spoken TOPIC BTSP-forms
   a CA3 assembly (Hook B, the WRITE); a later referential cue COMPLETES it cue-specifically via the two-compartment apical
