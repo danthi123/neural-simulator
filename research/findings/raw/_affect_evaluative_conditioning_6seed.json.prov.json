@@ -1,0 +1,38 @@
+{
+ "run_id": "1786607154-1014339",
+ "runner": "research/runners/_affect_evaluative_conditioning_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aff06cc6eb55d41f2/research/runners/_affect_evaluative_conditioning_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--max-stories",
+  "60000",
+  "--ablation",
+  "--out",
+  "research/findings/raw/_affect_evaluative_conditioning_6seed.json"
+ ],
+ "git_sha": "8e1329d46",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T03:45:54",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1852.7,
+ "corpus_check_query": "self-organized structure emergence learning substrate",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_evaluative_conditioning_6seed.json"
+}

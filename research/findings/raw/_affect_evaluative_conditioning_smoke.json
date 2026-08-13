@@ -1,0 +1,154 @@
+{
+  "probe": "affect_evaluative_conditioning (DR-2b, P0.1 emergence)",
+  "verdict": "GO (1-seed) -- THE ORIGIN OF VALENCE SELF-ORGANIZES FROM REINFORCEMENT. Anchored by only ~10 INNATE primary reinforcers (a genome-cheap sign per US, NOT a graded lexicon), a LOCAL three-factor (DA-gated Hebbian) rule grows a concept->valence map from the evaluative-conditioning stream. Held-out concepts (their OWN experienced reinforcement WITHHELD from the map) recover valence at Pearson r=+0.613 (every seed >= +0.613) with Warriner ground-truth (mean >= 0.45; sign-acc 0.75, pooled binomial p=1.0e-04) PURELY via their learned code geometry. NO-LEARNING collapses (+0.000); the UNPAIRED-US (non-contingent) permutation control is beaten in 1/1 seeds (perm-p<0.05, null~-0.087); PERMUTE-CODE in 1/1 (null~+0.000) -> the self-organized STRUCTURE (codes + reinforcement), not a lookup, carries the affect. Value _|_ plausibility holds (1/1 seeds |perp|<0.30). The innate signal itself is honest: corr(acquired s_c, Warriner)=+0.515. => DR-2's Warriner-seed residual is RETIRED to ~10 innate signs. numpy-CPU; NO sim/ edit; the fully-spiking opponent-population appraisal is the next rung.",
+  "GO": true,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=30)",
+      "ok": true,
+      "detail": "vocab=138"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=20)",
+      "ok": true,
+      "detail": "min_n_held=63"
+    },
+    {
+      "name": "null_instrument_reads_zero(|no-learning r|<=0.05)",
+      "ok": true,
+      "detail": "no_learning_r=+0.0000"
+    },
+    {
+      "name": "innate_US_signal_present(corr(s_c,Warriner)>0)",
+      "ok": true,
+      "detail": "corr_s_c_warriner=+0.515"
+    }
+  ],
+  "r_go_preregistered": 0.45,
+  "checks": {
+    "G1_generalize_mean_r>=go": true,
+    "G1_every_seed_r>=min": true,
+    "G1_sign_acc_sig(pooled_p<0.05)": true,
+    "G2_no_learning_collapses(<=0.10)": true,
+    "G3_shuffle_us_perm_p<0.05_all_seeds": true,
+    "G4_permute_code_perm_p<0.05_all_seeds": true,
+    "G5_value_perp_relatedness(|r|<0.30)_all_seeds": true,
+    "opponent_separation(pos>neg)": true
+  },
+  "means": {
+    "r_real": 0.6128705726610392,
+    "r_real_min": 0.6128705726610392,
+    "r_no_learning": 0.0,
+    "shuffle_us_null_mean": -0.08733458746312628,
+    "shuffle_us_seeds_sig": 1,
+    "permute_code_null_mean": 0.00017592285194253487,
+    "permute_code_seeds_sig": 1,
+    "held_sign_acc": 0.7457627118644068,
+    "pooled_sign_k": 44,
+    "pooled_sign_n": 59,
+    "pooled_binom_p": 0.00010186092870392849,
+    "value_perp_relatedness": 0.08918887845002445,
+    "value_perp_seeds_ok": 1,
+    "net_sep": 0.5315887002939098,
+    "corr_s_c_warriner": 0.5151637542912623
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 138,
+      "n_reinforced": 126,
+      "n_train": 63,
+      "n_held": 63,
+      "r_real": 0.6128705726610392,
+      "held_sign_acc": 0.7457627118644068,
+      "held_sign_k": 44,
+      "held_sign_n": 59,
+      "held_sign_binom_p": 0.00010186092870392849,
+      "net_sep_pos_minus_neg": 0.5315887002939098,
+      "r_value_perp_relatedness": 0.08918887845002445,
+      "r_no_learning": 0.0,
+      "shuffle_us_null_mean": -0.08733458746312628,
+      "shuffle_us_null_p95": 0.39470799853126315,
+      "shuffle_us_perm_p": 0.009950248756218905,
+      "permute_code_null_mean": 0.00017592285194253487,
+      "permute_code_null_p95": 0.28164396857566765,
+      "permute_code_perm_p": 0.009900990099009901,
+      "corr_s_c_warriner": 0.5151637542912623
+    }
+  ],
+  "primary_count_ablation": [
+    {
+      "n_each": 2,
+      "n_primaries": 4,
+      "held_r": 0.48309248703035146,
+      "n_held": 67,
+      "held_sign_acc": 0.734375
+    },
+    {
+      "n_each": 3,
+      "n_primaries": 6,
+      "held_r": 0.5995976926658362,
+      "n_held": 65,
+      "held_sign_acc": 0.7580645161290323
+    },
+    {
+      "n_each": 5,
+      "n_primaries": 10,
+      "held_r": 0.6128705726610392,
+      "n_held": 63,
+      "held_sign_acc": 0.7457627118644068
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 12000,
+    "n_hub": 500,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "n_vocab": 138,
+    "appetitive_pool": [
+      "hug",
+      "kiss",
+      "cuddle",
+      "cake",
+      "candy",
+      "sweet",
+      "warm",
+      "treat",
+      "food",
+      "cozy"
+    ],
+    "aversive_pool": [
+      "hurt",
+      "pain",
+      "sick",
+      "cry",
+      "scared",
+      "afraid",
+      "cold",
+      "hungry",
+      "bite",
+      "fall"
+    ]
+  },
+  "mechanism": "learned PPMI stream-cortex code [pre] x US-driven opponent V+/V- pool [post] gated by DA/US sign [third factor] -> outer-product Hebbian associative map W=sum_c code_c*s_c; s_c = Rescorla-Wagner asymptote of co-occurrence with ~2*n_each INNATE primary reinforcers; read v(x)=code_x.W = similarity-weighted vote of experienced reinforcement.",
+  "HONEST_NOTE": "numpy-CPU read (spiking opponent-population confirm = GPU follow-on). The ONLY host-supplied affect anchor is the ~2*n_each innate primary SIGNS (unconditioned stimuli; world+body boundary). Warriner graded norms are used ONLY as external held-out ground-truth, never seeded. Held-out = the DR-2 leave-out split: the held concept's OWN experienced reinforcement is WITHHELD from the Hebbian map; its valence is predicted purely from code.W (its code-geometry resemblance to the train concepts). Each seed draws a different innate-primary subset (robustness to the genome's choice).",
+  "elapsed_seconds": 2.4
+}
