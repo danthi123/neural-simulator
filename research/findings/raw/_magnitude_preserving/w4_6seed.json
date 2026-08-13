@@ -1,0 +1,2847 @@
+{
+  "runner": "_magnitude_preserving_plateau_readout_derisk",
+  "part": "A (W4 detector)",
+  "faculty": "graded dendritic-plateau (magnitude-preserving) read-out on the W4 coincidence detector; does it move the VALID intent-averaged magnitude-fidelity M1 where the all-or-none plateau cannot? FUNCTIONAL pragmatics correlate.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "smoke": false,
+  "verdict": "BOUNDARY (PART A) -- M1-MOVE (graded move=-0.0817, 0/6 seeds); graded move (-0.0817) not > all-or-none move (-0.0353). The graded read reads the magnitude (M2 S[all|some] graded=0.316 vs onehot=0.076) but does not clear the 6/6 M1 GO bar. Honest residual + next mechanism in the finding; the refuted deep-credit/BDSP rule is NOT re-proposed.",
+  "go": false,
+  "external_grounding": [
+    "Mikulasch & Priesemann -- dendritic ANALOG/graded read-out (the graded plateau is the point-neuron's magnitude-blindness surpass).",
+    "Larkum (2013) TiNS 36(3):141 -- the plateau's tunable coinciding-input threshold.",
+    "Frank & Goodman (2012) Science 336(6084):998 -- the RSA objective is a graded MAGNITUDE, not an argmax."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "M1 is a VALID instrument: SCRAMBLE (graded mass on WRONG intents) LOSES to onehot on the graded read (so a graded<=onehot result would be a real NEGATIVE, not an instrument failure)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.19182 onehot=0.88843"
+    },
+    {
+      "kind": "require",
+      "name": "the ALL-OR-NONE read reproduces the 2026-08-13 negative (M1 move <= MOVE_EPS: onehot >= graded)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "all-or-none M1 move=-0.0353"
+    },
+    {
+      "kind": "control",
+      "name": "the graded read-out is MAGNITUDE-PRESERVING (r(.27)/r(1) << the all-or-none's ~1.0 saturation)",
+      "ok": true,
+      "detail": "treatment=1 control=0.2396 |sep|=0.7604 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA + the all-or-none coincidence current (coincidence_plateau_strength=0)",
+      "why": "a fixed-operating-point READ-OUT nonlinearity (the graded dendritic plateau); belief byte-identical to the W4 A/B; NOT a learning rule."
+    }
+  ],
+  "undefined_reasons": [],
+  "gates": {
+    "instrument_magnitude_preserving_6seed": true,
+    "M1_graded_beats_onehot_6of6": false,
+    "scramble_loses": true,
+    "allornone_reproduces_negative": true,
+    "graded_read_specific": false
+  },
+  "M1": {
+    "graded_read": {
+      "onehot": 0.88843,
+      "graded": 0.80675,
+      "scramble": 0.19182,
+      "move": -0.08168,
+      "seeds_graded_gt_onehot": 0
+    },
+    "allornone_read": {
+      "onehot": 0.65318,
+      "graded": 0.6179,
+      "move": -0.03528
+    }
+  },
+  "M2_implicature_recovery_graded_read": {
+    "onehot": 0.0758,
+    "graded": 0.316,
+    "scramble": 0.6622
+  },
+  "calibration": {
+    "n_clean": 6,
+    "n_seeds": 6,
+    "mean_max_solo": 0.0042,
+    "mean_prop_err": 0.0476,
+    "mean_sat_ratio": 0.2396,
+    "all_monotonic": true,
+    "center_per_seed": {
+      "42": 88.0,
+      "43": 88.0,
+      "44": 96.0,
+      "100": 88.0,
+      "101": 88.0,
+      "102": 96.0
+    },
+    "slope_per_seed": {
+      "42": 0.11,
+      "43": 0.08,
+      "44": 0.08,
+      "100": 0.08,
+      "101": 0.11,
+      "102": 0.08
+    },
+    "response_curve_per_seed": {
+      "42": [
+        0.0,
+        0.0112,
+        0.0563,
+        0.155,
+        0.2263,
+        0.3088
+      ],
+      "43": [
+        0.0,
+        0.0238,
+        0.07,
+        0.2387,
+        0.23,
+        0.3125
+      ],
+      "44": [
+        0.0,
+        0.0112,
+        0.0788,
+        0.1638,
+        0.2162,
+        0.3038
+      ],
+      "100": [
+        0.0,
+        0.0112,
+        0.0725,
+        0.1938,
+        0.2437,
+        0.2938
+      ],
+      "101": [
+        0.0,
+        0.015,
+        0.075,
+        0.1875,
+        0.2338,
+        0.3137
+      ],
+      "102": [
+        0.0,
+        0.045,
+        0.0712,
+        0.1837,
+        0.2013,
+        0.2487
+      ]
+    },
+    "per_seed": [
+      {
+        "seed": 42,
+        "center": 88.0,
+        "slope": 0.11,
+        "calibration_clean": true,
+        "picked": {
+          "center": 88.0,
+          "slope": 0.11,
+          "r_curve": [
+            0.0,
+            0.0112,
+            0.0563,
+            0.155,
+            0.2263,
+            0.3088
+          ],
+          "solo_i": 0.0,
+          "solo_b": 0.0,
+          "silent": true,
+          "clean": true,
+          "r_full": 0.30875,
+          "max_solo": 0.0,
+          "monotonic": true,
+          "prop_err": 0.0343,
+          "sat_ratio": 0.1822,
+          "dyn_range": 0.3088
+        },
+        "table": [
+          {
+            "center": 80.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0088,
+              0.1087,
+              0.1812,
+              0.2325,
+              0.2963,
+              0.3212
+            ],
+            "solo_i": 0.0088,
+            "solo_b": 0.0737,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32125,
+            "max_solo": 0.07375,
+            "monotonic": true,
+            "prop_err": 0.1535,
+            "sat_ratio": 0.5642,
+            "dyn_range": 0.3125
+          },
+          {
+            "center": 80.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0725,
+              0.1363,
+              0.2325,
+              0.275,
+              0.3225
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0112,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.3225,
+            "max_solo": 0.01125,
+            "monotonic": true,
+            "prop_err": 0.0943,
+            "sat_ratio": 0.4225,
+            "dyn_range": 0.3225
+          },
+          {
+            "center": 80.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0,
+              0.0575,
+              0.0988,
+              0.2288,
+              0.2725,
+              0.3237
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32375,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0626,
+            "sat_ratio": 0.305,
+            "dyn_range": 0.3237
+          },
+          {
+            "center": 88.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.0475,
+              0.0638,
+              0.1888,
+              0.24,
+              0.31
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.31,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0359,
+            "sat_ratio": 0.2056,
+            "dyn_range": 0.31
+          },
+          {
+            "center": 88.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0112,
+              0.0563,
+              0.155,
+              0.2263,
+              0.3088
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.30875,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0343,
+            "sat_ratio": 0.1822,
+            "dyn_range": 0.3088
+          },
+          {
+            "center": 88.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.05,
+              0.01,
+              0.0387,
+              0.1412,
+              0.2313,
+              0.3162
+            ],
+            "solo_i": 0.05,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": false,
+            "r_full": 0.31625,
+            "max_solo": 0.05,
+            "monotonic": false,
+            "prop_err": 0.0802,
+            "sat_ratio": 0.1225,
+            "dyn_range": 0.2662
+          },
+          {
+            "center": 96.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0112,
+              0.0,
+              0.015,
+              0.1163,
+              0.2188,
+              0.285
+            ],
+            "solo_i": 0.0112,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.285,
+            "max_solo": 0.01125,
+            "monotonic": true,
+            "prop_err": 0.0836,
+            "sat_ratio": 0.0526,
+            "dyn_range": 0.2737
+          },
+          {
+            "center": 96.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.13,
+              0.0,
+              0.0,
+              0.065,
+              0.2137,
+              0.2812
+            ],
+            "solo_i": 0.13,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.28125,
+            "max_solo": 0.13,
+            "monotonic": false,
+            "prop_err": 0.191,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.1512
+          },
+          {
+            "center": 96.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1275,
+              0.0,
+              0.0,
+              0.06,
+              0.1975,
+              0.2812
+            ],
+            "solo_i": 0.1275,
+            "solo_b": 0.055,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.28125,
+            "max_solo": 0.1275,
+            "monotonic": false,
+            "prop_err": 0.1988,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.1537
+          }
+        ]
+      },
+      {
+        "seed": 43,
+        "center": 88.0,
+        "slope": 0.08,
+        "calibration_clean": true,
+        "picked": {
+          "center": 88.0,
+          "slope": 0.08,
+          "r_curve": [
+            0.0,
+            0.0238,
+            0.07,
+            0.2387,
+            0.23,
+            0.3125
+          ],
+          "solo_i": 0.0,
+          "solo_b": 0.025,
+          "silent": true,
+          "clean": true,
+          "r_full": 0.3125,
+          "max_solo": 0.025,
+          "monotonic": true,
+          "prop_err": 0.0638,
+          "sat_ratio": 0.224,
+          "dyn_range": 0.3125
+        },
+        "table": [
+          {
+            "center": 80.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0037,
+              0.1363,
+              0.1525,
+              0.2275,
+              0.3113,
+              0.3225
+            ],
+            "solo_i": 0.0037,
+            "solo_b": 0.1588,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.3225,
+            "max_solo": 0.15875,
+            "monotonic": true,
+            "prop_err": 0.1538,
+            "sat_ratio": 0.4729,
+            "dyn_range": 0.3188
+          },
+          {
+            "center": 80.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0225,
+              0.0663,
+              0.2162,
+              0.2963,
+              0.3225
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0525,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.3225,
+            "max_solo": 0.0525,
+            "monotonic": true,
+            "prop_err": 0.0782,
+            "sat_ratio": 0.2054,
+            "dyn_range": 0.3225
+          },
+          {
+            "center": 80.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1087,
+              0.0125,
+              0.0638,
+              0.21,
+              0.2875,
+              0.3237
+            ],
+            "solo_i": 0.1087,
+            "solo_b": 0.0225,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.32375,
+            "max_solo": 0.10875,
+            "monotonic": false,
+            "prop_err": 0.132,
+            "sat_ratio": 0.1969,
+            "dyn_range": 0.215
+          },
+          {
+            "center": 88.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.0238,
+              0.07,
+              0.2387,
+              0.23,
+              0.3125
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.025,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.3125,
+            "max_solo": 0.025,
+            "monotonic": true,
+            "prop_err": 0.0638,
+            "sat_ratio": 0.224,
+            "dyn_range": 0.3125
+          },
+          {
+            "center": 88.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.1338,
+              0.0,
+              0.015,
+              0.1325,
+              0.2112,
+              0.3088
+            ],
+            "solo_i": 0.1338,
+            "solo_b": 0.0175,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.30875,
+            "max_solo": 0.13375,
+            "monotonic": false,
+            "prop_err": 0.1544,
+            "sat_ratio": 0.0486,
+            "dyn_range": 0.175
+          },
+          {
+            "center": 88.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1275,
+              0.0,
+              0.0075,
+              0.11,
+              0.2087,
+              0.3063
+            ],
+            "solo_i": 0.1275,
+            "solo_b": 0.0063,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.30625,
+            "max_solo": 0.1275,
+            "monotonic": false,
+            "prop_err": 0.1677,
+            "sat_ratio": 0.0245,
+            "dyn_range": 0.1788
+          },
+          {
+            "center": 96.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.1288,
+              0.0,
+              0.0175,
+              0.1025,
+              0.2112,
+              0.265
+            ],
+            "solo_i": 0.1288,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.265,
+            "max_solo": 0.12875,
+            "monotonic": false,
+            "prop_err": 0.1642,
+            "sat_ratio": 0.066,
+            "dyn_range": 0.1363
+          },
+          {
+            "center": 96.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.1113,
+              0.0825,
+              0.0,
+              0.07,
+              0.1862,
+              0.27
+            ],
+            "solo_i": 0.1113,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.27,
+            "max_solo": 0.11125,
+            "monotonic": false,
+            "prop_err": 0.1923,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.1588
+          },
+          {
+            "center": 96.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1037,
+              0.1388,
+              0.0,
+              0.035,
+              0.1688,
+              0.2737
+            ],
+            "solo_i": 0.1037,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.27375,
+            "max_solo": 0.10375,
+            "monotonic": false,
+            "prop_err": 0.2544,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.17
+          }
+        ]
+      },
+      {
+        "seed": 44,
+        "center": 96.0,
+        "slope": 0.08,
+        "calibration_clean": true,
+        "picked": {
+          "center": 96.0,
+          "slope": 0.08,
+          "r_curve": [
+            0.0,
+            0.0112,
+            0.0788,
+            0.1638,
+            0.2162,
+            0.3038
+          ],
+          "solo_i": 0.0,
+          "solo_b": 0.0,
+          "silent": true,
+          "clean": true,
+          "r_full": 0.30375,
+          "max_solo": 0.0,
+          "monotonic": true,
+          "prop_err": 0.031,
+          "sat_ratio": 0.2593,
+          "dyn_range": 0.3038
+        },
+        "table": [
+          {
+            "center": 80.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0338,
+              0.115,
+              0.2087,
+              0.2575,
+              0.3075,
+              0.3212
+            ],
+            "solo_i": 0.0338,
+            "solo_b": 0.0425,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32125,
+            "max_solo": 0.0425,
+            "monotonic": true,
+            "prop_err": 0.2028,
+            "sat_ratio": 0.6498,
+            "dyn_range": 0.2875
+          },
+          {
+            "center": 80.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0088,
+              0.08,
+              0.1913,
+              0.2475,
+              0.305,
+              0.3225
+            ],
+            "solo_i": 0.0088,
+            "solo_b": 0.0075,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.3225,
+            "max_solo": 0.00875,
+            "monotonic": true,
+            "prop_err": 0.1544,
+            "sat_ratio": 0.593,
+            "dyn_range": 0.3138
+          },
+          {
+            "center": 80.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0037,
+              0.0988,
+              0.185,
+              0.25,
+              0.2913,
+              0.3237
+            ],
+            "solo_i": 0.0037,
+            "solo_b": 0.0037,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32375,
+            "max_solo": 0.00375,
+            "monotonic": true,
+            "prop_err": 0.1508,
+            "sat_ratio": 0.5714,
+            "dyn_range": 0.32
+          },
+          {
+            "center": 88.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0025,
+              0.1025,
+              0.12,
+              0.2013,
+              0.255,
+              0.32
+            ],
+            "solo_i": 0.0025,
+            "solo_b": 0.0025,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32,
+            "max_solo": 0.0025,
+            "monotonic": true,
+            "prop_err": 0.079,
+            "sat_ratio": 0.375,
+            "dyn_range": 0.3175
+          },
+          {
+            "center": 88.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0225,
+              0.0925,
+              0.1825,
+              0.2487,
+              0.3187
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.31875,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0313,
+            "sat_ratio": 0.2902,
+            "dyn_range": 0.3187
+          },
+          {
+            "center": 88.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0,
+              0.0238,
+              0.075,
+              0.1787,
+              0.225,
+              0.3287
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32875,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0357,
+            "sat_ratio": 0.2281,
+            "dyn_range": 0.3287
+          },
+          {
+            "center": 96.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.0112,
+              0.0788,
+              0.1638,
+              0.2162,
+              0.3038
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.30375,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.031,
+            "sat_ratio": 0.2593,
+            "dyn_range": 0.3038
+          },
+          {
+            "center": 96.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.08,
+              0.0037,
+              0.0275,
+              0.1212,
+              0.225,
+              0.3075
+            ],
+            "solo_i": 0.08,
+            "solo_b": 0.0825,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.3075,
+            "max_solo": 0.0825,
+            "monotonic": false,
+            "prop_err": 0.1146,
+            "sat_ratio": 0.0894,
+            "dyn_range": 0.2275
+          },
+          {
+            "center": 96.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1138,
+              0.0,
+              0.0163,
+              0.0988,
+              0.1975,
+              0.31
+            ],
+            "solo_i": 0.1138,
+            "solo_b": 0.1375,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.31,
+            "max_solo": 0.1375,
+            "monotonic": false,
+            "prop_err": 0.169,
+            "sat_ratio": 0.0524,
+            "dyn_range": 0.1962
+          }
+        ]
+      },
+      {
+        "seed": 100,
+        "center": 88.0,
+        "slope": 0.08,
+        "calibration_clean": true,
+        "picked": {
+          "center": 88.0,
+          "slope": 0.08,
+          "r_curve": [
+            0.0,
+            0.0112,
+            0.0725,
+            0.1938,
+            0.2437,
+            0.2938
+          ],
+          "solo_i": 0.0,
+          "solo_b": 0.0,
+          "silent": true,
+          "clean": true,
+          "r_full": 0.29375,
+          "max_solo": 0.0,
+          "monotonic": true,
+          "prop_err": 0.0599,
+          "sat_ratio": 0.2468,
+          "dyn_range": 0.2938
+        },
+        "table": [
+          {
+            "center": 80.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.1275,
+              0.1562,
+              0.24,
+              0.3025,
+              0.3262
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.09,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.32625,
+            "max_solo": 0.09,
+            "monotonic": true,
+            "prop_err": 0.1463,
+            "sat_ratio": 0.4789,
+            "dyn_range": 0.3262
+          },
+          {
+            "center": 80.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0788,
+              0.14,
+              0.2112,
+              0.29,
+              0.325
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0262,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.325,
+            "max_solo": 0.02625,
+            "monotonic": true,
+            "prop_err": 0.0934,
+            "sat_ratio": 0.4308,
+            "dyn_range": 0.325
+          },
+          {
+            "center": 80.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0,
+              0.0225,
+              0.0875,
+              0.2213,
+              0.2875,
+              0.32
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0025,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32,
+            "max_solo": 0.0025,
+            "monotonic": true,
+            "prop_err": 0.068,
+            "sat_ratio": 0.2734,
+            "dyn_range": 0.32
+          },
+          {
+            "center": 88.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.0112,
+              0.0725,
+              0.1938,
+              0.2437,
+              0.2938
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.29375,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0599,
+            "sat_ratio": 0.2468,
+            "dyn_range": 0.2938
+          },
+          {
+            "center": 88.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0813,
+              0.0,
+              0.05,
+              0.1663,
+              0.2225,
+              0.3088
+            ],
+            "solo_i": 0.0813,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.30875,
+            "max_solo": 0.08125,
+            "monotonic": false,
+            "prop_err": 0.0957,
+            "sat_ratio": 0.1619,
+            "dyn_range": 0.2275
+          },
+          {
+            "center": 88.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1263,
+              0.0,
+              0.0213,
+              0.15,
+              0.2125,
+              0.3038
+            ],
+            "solo_i": 0.1263,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.30375,
+            "max_solo": 0.12625,
+            "monotonic": false,
+            "prop_err": 0.1345,
+            "sat_ratio": 0.07,
+            "dyn_range": 0.1775
+          },
+          {
+            "center": 96.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.1075,
+              0.0,
+              0.0125,
+              0.1113,
+              0.2313,
+              0.2675
+            ],
+            "solo_i": 0.1075,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.2675,
+            "max_solo": 0.1075,
+            "monotonic": false,
+            "prop_err": 0.1598,
+            "sat_ratio": 0.0467,
+            "dyn_range": 0.16
+          },
+          {
+            "center": 96.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.1275,
+              0.0,
+              0.0,
+              0.0625,
+              0.1938,
+              0.2775
+            ],
+            "solo_i": 0.1275,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.2775,
+            "max_solo": 0.1275,
+            "monotonic": false,
+            "prop_err": 0.1985,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.15
+          },
+          {
+            "center": 96.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.12,
+              0.0375,
+              0.0,
+              0.0462,
+              0.175,
+              0.2775
+            ],
+            "solo_i": 0.12,
+            "solo_b": 0.005,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.2775,
+            "max_solo": 0.12,
+            "monotonic": false,
+            "prop_err": 0.1925,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.1575
+          }
+        ]
+      },
+      {
+        "seed": 101,
+        "center": 88.0,
+        "slope": 0.11,
+        "calibration_clean": true,
+        "picked": {
+          "center": 88.0,
+          "slope": 0.11,
+          "r_curve": [
+            0.0,
+            0.015,
+            0.075,
+            0.1875,
+            0.2338,
+            0.3137
+          ],
+          "solo_i": 0.0,
+          "solo_b": 0.0,
+          "silent": true,
+          "clean": true,
+          "r_full": 0.31375,
+          "max_solo": 0.0,
+          "monotonic": true,
+          "prop_err": 0.0368,
+          "sat_ratio": 0.239,
+          "dyn_range": 0.3137
+        },
+        "table": [
+          {
+            "center": 80.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.01,
+              0.0988,
+              0.1938,
+              0.2313,
+              0.285,
+              0.3113
+            ],
+            "solo_i": 0.01,
+            "solo_b": 0.0138,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.31125,
+            "max_solo": 0.01375,
+            "monotonic": true,
+            "prop_err": 0.1626,
+            "sat_ratio": 0.6225,
+            "dyn_range": 0.3013
+          },
+          {
+            "center": 80.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0825,
+              0.1625,
+              0.2325,
+              0.27,
+              0.3162
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.31625,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.1181,
+            "sat_ratio": 0.5138,
+            "dyn_range": 0.3162
+          },
+          {
+            "center": 80.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0,
+              0.0825,
+              0.15,
+              0.2238,
+              0.2662,
+              0.3125
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.3125,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.1095,
+            "sat_ratio": 0.48,
+            "dyn_range": 0.3125
+          },
+          {
+            "center": 88.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.0587,
+              0.1062,
+              0.21,
+              0.2225,
+              0.3162
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.31625,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0545,
+            "sat_ratio": 0.336,
+            "dyn_range": 0.3162
+          },
+          {
+            "center": 88.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.015,
+              0.075,
+              0.1875,
+              0.2338,
+              0.3137
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.31375,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0368,
+            "sat_ratio": 0.239,
+            "dyn_range": 0.3137
+          },
+          {
+            "center": 88.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.015,
+              0.005,
+              0.0525,
+              0.1775,
+              0.22,
+              0.3013
+            ],
+            "solo_i": 0.015,
+            "solo_b": 0.0525,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.30125,
+            "max_solo": 0.0525,
+            "monotonic": true,
+            "prop_err": 0.0621,
+            "sat_ratio": 0.1743,
+            "dyn_range": 0.2863
+          },
+          {
+            "center": 96.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.0025,
+              0.0338,
+              0.1462,
+              0.2175,
+              0.275
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.275,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0577,
+            "sat_ratio": 0.1227,
+            "dyn_range": 0.275
+          },
+          {
+            "center": 96.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.105,
+              0.0,
+              0.0138,
+              0.0963,
+              0.2112,
+              0.2712
+            ],
+            "solo_i": 0.105,
+            "solo_b": 0.13,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.27125,
+            "max_solo": 0.13,
+            "monotonic": false,
+            "prop_err": 0.1526,
+            "sat_ratio": 0.0507,
+            "dyn_range": 0.1663
+          },
+          {
+            "center": 96.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1263,
+              0.0,
+              0.0063,
+              0.0775,
+              0.2125,
+              0.295
+            ],
+            "solo_i": 0.1263,
+            "solo_b": 0.1275,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.295,
+            "max_solo": 0.1275,
+            "monotonic": false,
+            "prop_err": 0.1798,
+            "sat_ratio": 0.0212,
+            "dyn_range": 0.1687
+          }
+        ]
+      },
+      {
+        "seed": 102,
+        "center": 96.0,
+        "slope": 0.08,
+        "calibration_clean": true,
+        "picked": {
+          "center": 96.0,
+          "slope": 0.08,
+          "r_curve": [
+            0.0,
+            0.045,
+            0.0712,
+            0.1837,
+            0.2013,
+            0.2487
+          ],
+          "solo_i": 0.0,
+          "solo_b": 0.0,
+          "silent": true,
+          "clean": true,
+          "r_full": 0.24875,
+          "max_solo": 0.0,
+          "monotonic": true,
+          "prop_err": 0.06,
+          "sat_ratio": 0.2864,
+          "dyn_range": 0.2487
+        },
+        "table": [
+          {
+            "center": 80.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.13,
+              0.1388,
+              0.1862,
+              0.2288,
+              0.255,
+              0.3
+            ],
+            "solo_i": 0.13,
+            "solo_b": 0.1275,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.3,
+            "max_solo": 0.13,
+            "monotonic": true,
+            "prop_err": 0.2457,
+            "sat_ratio": 0.6208,
+            "dyn_range": 0.17
+          },
+          {
+            "center": 80.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0725,
+              0.1225,
+              0.1938,
+              0.2112,
+              0.2338,
+              0.3013
+            ],
+            "solo_i": 0.0725,
+            "solo_b": 0.0575,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.30125,
+            "max_solo": 0.0725,
+            "monotonic": true,
+            "prop_err": 0.1854,
+            "sat_ratio": 0.6432,
+            "dyn_range": 0.2288
+          },
+          {
+            "center": 80.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0387,
+              0.1113,
+              0.1875,
+              0.2025,
+              0.2175,
+              0.295
+            ],
+            "solo_i": 0.0387,
+            "solo_b": 0.0375,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.295,
+            "max_solo": 0.03875,
+            "monotonic": true,
+            "prop_err": 0.1564,
+            "sat_ratio": 0.6356,
+            "dyn_range": 0.2562
+          },
+          {
+            "center": 88.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0088,
+              0.0925,
+              0.135,
+              0.205,
+              0.21,
+              0.27
+            ],
+            "solo_i": 0.0088,
+            "solo_b": 0.0088,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.27,
+            "max_solo": 0.00875,
+            "monotonic": true,
+            "prop_err": 0.1262,
+            "sat_ratio": 0.5,
+            "dyn_range": 0.2613
+          },
+          {
+            "center": 88.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0887,
+              0.1212,
+              0.1913,
+              0.2075,
+              0.275
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.275,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0931,
+            "sat_ratio": 0.4409,
+            "dyn_range": 0.275
+          },
+          {
+            "center": 88.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0,
+              0.0663,
+              0.1275,
+              0.2062,
+              0.1963,
+              0.27
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.27,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0999,
+            "sat_ratio": 0.4722,
+            "dyn_range": 0.27
+          },
+          {
+            "center": 96.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.045,
+              0.0712,
+              0.1837,
+              0.2013,
+              0.2487
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.24875,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.06,
+            "sat_ratio": 0.2864,
+            "dyn_range": 0.2487
+          },
+          {
+            "center": 96.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0063,
+              0.0625,
+              0.1663,
+              0.1938,
+              0.2412
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.24125,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0604,
+            "sat_ratio": 0.2591,
+            "dyn_range": 0.2412
+          },
+          {
+            "center": 96.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0213,
+              0.0,
+              0.065,
+              0.16,
+              0.1963,
+              0.235
+            ],
+            "solo_i": 0.0213,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": false,
+            "r_full": 0.235,
+            "max_solo": 0.02125,
+            "monotonic": false,
+            "prop_err": 0.083,
+            "sat_ratio": 0.2766,
+            "dyn_range": 0.2137
+          }
+        ]
+      }
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "center": 88.0,
+      "slope": 0.11,
+      "graded_read": {
+        "onehot": {
+          "mag_fidelity": 0.86461,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10292,
+              0.01542,
+              0.00583
+            ],
+            [
+              0.00875,
+              0.10125,
+              0.01458
+            ],
+            [
+              0.0,
+              0.01542,
+              0.08583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8289,
+            0.8127,
+            0.9523
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.75067,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10292,
+              0.04542,
+              0.00583
+            ],
+            [
+              0.00875,
+              0.08375,
+              0.01458
+            ],
+            [
+              0.0,
+              0.05667,
+              0.08583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6676,
+            0.7821,
+            0.8023
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.71199,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10292,
+              0.0475,
+              0.00583
+            ],
+            [
+              0.00875,
+              0.08375,
+              0.01458
+            ],
+            [
+              0.0,
+              0.0875,
+              0.08583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6587,
+            0.7821,
+            0.6952
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.22159,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.00583,
+              0.08542,
+              0.01542
+            ],
+            [
+              0.01458,
+              0.05125,
+              0.10125
+            ],
+            [
+              0.08583,
+              0.04792,
+              0.01542
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0547,
+            0.3067,
+            0.3034
+          ]
+        }
+      },
+      "allornone_read": {
+        "onehot": {
+          "mag_fidelity": 0.58069,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.06792,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.10667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.06583,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5257,
+            0.5689,
+            0.6475
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.60769,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.0525,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.07083,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.0225,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5689,
+            0.467,
+            0.7872
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.52945,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10667,
+              0.07125,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.06667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.07708,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5172,
+            0.452,
+            0.6192
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.2809,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.02833,
+              0.08,
+              0.06792
+            ],
+            [
+              0.04042,
+              0.0275,
+              0.10667
+            ],
+            [
+              0.07458,
+              0.0625,
+              0.06583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.1608,
+            0.1575,
+            0.5244
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0
+    },
+    {
+      "seed": 43,
+      "center": 88.0,
+      "slope": 0.08,
+      "graded_read": {
+        "onehot": {
+          "mag_fidelity": 0.89476,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10417,
+              0.00083,
+              0.0
+            ],
+            [
+              0.01083,
+              0.1025,
+              0.0025
+            ],
+            [
+              0.00833,
+              0.00083,
+              0.10458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.9921,
+            0.8849,
+            0.8073
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.88761,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10417,
+              0.01125,
+              0.0
+            ],
+            [
+              0.01083,
+              0.09292,
+              0.0025
+            ],
+            [
+              0.00833,
+              0.03958,
+              0.10458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.9025,
+            0.8745,
+            0.8858
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.73351,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10417,
+              0.06208,
+              0.0
+            ],
+            [
+              0.01083,
+              0.10042,
+              0.0025
+            ],
+            [
+              0.00833,
+              0.1,
+              0.10458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6266,
+            0.8828,
+            0.6912
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.13775,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.00083,
+              0.00875,
+              0.10417
+            ],
+            [
+              0.1025,
+              0.01583,
+              0.01083
+            ],
+            [
+              0.00083,
+              0.09083,
+              0.00833
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0073,
+            0.1226,
+            0.2833
+          ]
+        }
+      },
+      "allornone_read": {
+        "onehot": {
+          "mag_fidelity": 0.64502,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.05292,
+              0.08625
+            ],
+            [
+              0.0,
+              0.105,
+              0.0425
+            ],
+            [
+              0.02792,
+              0.03708,
+              0.09917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4191,
+            0.7119,
+            0.8041
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.60372,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.09417,
+              0.08625
+            ],
+            [
+              0.0,
+              0.08583,
+              0.0425
+            ],
+            [
+              0.02792,
+              0.0425,
+              0.09917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3576,
+            0.6688,
+            0.7848
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.58179,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.08792,
+              0.08625
+            ],
+            [
+              0.0,
+              0.0825,
+              0.0425
+            ],
+            [
+              0.02792,
+              0.06375,
+              0.09917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3657,
+            0.66,
+            0.7197
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.27417,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.05292,
+              0.06625,
+              0.10042
+            ],
+            [
+              0.105,
+              0.02375,
+              0.0
+            ],
+            [
+              0.03708,
+              0.07667,
+              0.02792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.241,
+            0.1845,
+            0.3971
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5955,
+      "belief_implicature_margin_lesion": 0.0029
+    },
+    {
+      "seed": 44,
+      "center": 96.0,
+      "slope": 0.08,
+      "graded_read": {
+        "onehot": {
+          "mag_fidelity": 0.8614,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10125,
+              0.0,
+              0.01208
+            ],
+            [
+              0.0,
+              0.08958,
+              0.01208
+            ],
+            [
+              0.02792,
+              0.02792,
+              0.09083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8934,
+            0.8811,
+            0.8097
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.75421,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10125,
+              0.05125,
+              0.01208
+            ],
+            [
+              0.0,
+              0.0825,
+              0.01208
+            ],
+            [
+              0.02792,
+              0.03917,
+              0.09083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6152,
+            0.8722,
+            0.7752
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.73029,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10125,
+              0.04833,
+              0.01208
+            ],
+            [
+              0.0,
+              0.07208,
+              0.01208
+            ],
+            [
+              0.02792,
+              0.06,
+              0.09083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6263,
+            0.8564,
+            0.7082
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.25608,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.0,
+              0.05042,
+              0.10125
+            ],
+            [
+              0.08958,
+              0.05208,
+              0.0
+            ],
+            [
+              0.02792,
+              0.08333,
+              0.02792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0,
+            0.3676,
+            0.4006
+          ]
+        }
+      },
+      "allornone_read": {
+        "onehot": {
+          "mag_fidelity": 0.56322,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.1075,
+              0.05583,
+              0.07292
+            ],
+            [
+              0.02833,
+              0.10625,
+              0.04458
+            ],
+            [
+              0.06917,
+              0.06833,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.455,
+            0.593,
+            0.6416
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.53833,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.1075,
+              0.05208,
+              0.07292
+            ],
+            [
+              0.02833,
+              0.07375,
+              0.04458
+            ],
+            [
+              0.06917,
+              0.01958,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4624,
+            0.5028,
+            0.6498
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.5538,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.1075,
+              0.07292,
+              0.07292
+            ],
+            [
+              0.02833,
+              0.08917,
+              0.04458
+            ],
+            [
+              0.06917,
+              0.04542,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4243,
+            0.5501,
+            0.6869
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.32853,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.05583,
+              0.01958,
+              0.1075
+            ],
+            [
+              0.10625,
+              0.02667,
+              0.02833
+            ],
+            [
+              0.06833,
+              0.08208,
+              0.06917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3052,
+            0.1654,
+            0.515
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.4845,
+      "belief_implicature_margin_lesion": -0.006
+    },
+    {
+      "seed": 100,
+      "center": 88.0,
+      "slope": 0.08,
+      "graded_read": {
+        "onehot": {
+          "mag_fidelity": 0.85472,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.09792,
+              0.0,
+              0.01208
+            ],
+            [
+              0.00208,
+              0.095,
+              0.01417
+            ],
+            [
+              0.00208,
+              0.00208,
+              0.09958
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8902,
+            0.8539,
+            0.8201
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.84094,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.09792,
+              0.01583,
+              0.01208
+            ],
+            [
+              0.00208,
+              0.08917,
+              0.01417
+            ],
+            [
+              0.00208,
+              0.04083,
+              0.09958
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.7781,
+            0.8458,
+            0.8988
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.69557,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.09792,
+              0.06667,
+              0.01208
+            ],
+            [
+              0.00208,
+              0.09917,
+              0.01417
+            ],
+            [
+              0.00208,
+              0.10875,
+              0.09958
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5542,
+            0.8592,
+            0.6733
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.1265,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.0,
+              0.01917,
+              0.09792
+            ],
+            [
+              0.095,
+              0.01833,
+              0.00208
+            ],
+            [
+              0.00208,
+              0.09667,
+              0.00208
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0,
+            0.1588,
+            0.2207
+          ]
+        }
+      },
+      "allornone_read": {
+        "onehot": {
+          "mag_fidelity": 0.70987,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.09,
+              0.04542
+            ],
+            [
+              0.00958,
+              0.09833,
+              0.0125
+            ],
+            [
+              0.0,
+              0.0475,
+              0.09792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4397,
+            0.8166,
+            0.8734
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.67103,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.08708,
+              0.04542
+            ],
+            [
+              0.00958,
+              0.07208,
+              0.0125
+            ],
+            [
+              0.0,
+              0.06458,
+              0.09792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.445,
+            0.7655,
+            0.8026
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.60828,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10625,
+              0.08792,
+              0.04542
+            ],
+            [
+              0.00958,
+              0.04792,
+              0.0125
+            ],
+            [
+              0.0,
+              0.09917,
+              0.09792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4435,
+            0.6845,
+            0.6968
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.31365,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.09,
+              0.04625,
+              0.10625
+            ],
+            [
+              0.09833,
+              0.06333,
+              0.00958
+            ],
+            [
+              0.0475,
+              0.08167,
+              0.0
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3711,
+            0.3698,
+            0.2
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5102,
+      "belief_implicature_margin_lesion": 0.0028
+    },
+    {
+      "seed": 101,
+      "center": 88.0,
+      "slope": 0.11,
+      "graded_read": {
+        "onehot": {
+          "mag_fidelity": 0.93603,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10458,
+              0.00167,
+              0.0
+            ],
+            [
+              0.00333,
+              0.10292,
+              0.00333
+            ],
+            [
+              0.0075,
+              0.00917,
+              0.09167
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.9843,
+            0.9392,
+            0.8846
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.80366,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10458,
+              0.05,
+              0.0
+            ],
+            [
+              0.00333,
+              0.09333,
+              0.00333
+            ],
+            [
+              0.0075,
+              0.05333,
+              0.09167
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6765,
+            0.9333,
+            0.8011
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.79191,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10458,
+              0.04167,
+              0.0
+            ],
+            [
+              0.00333,
+              0.09292,
+              0.00333
+            ],
+            [
+              0.0075,
+              0.07458,
+              0.09167
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.7151,
+            0.9331,
+            0.7276
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.19759,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.00167,
+              0.04958,
+              0.10458
+            ],
+            [
+              0.10292,
+              0.04708,
+              0.00333
+            ],
+            [
+              0.00917,
+              0.08333,
+              0.0075
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0107,
+            0.3071,
+            0.275
+          ]
+        }
+      },
+      "allornone_read": {
+        "onehot": {
+          "mag_fidelity": 0.64003,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.03667,
+              0.0275
+            ],
+            [
+              0.04458,
+              0.10375,
+              0.00083
+            ],
+            [
+              0.08542,
+              0.05083,
+              0.09125
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6235,
+            0.6955,
+            0.6011
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.5908,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.075,
+              0.0275
+            ],
+            [
+              0.04458,
+              0.08875,
+              0.00083
+            ],
+            [
+              0.08542,
+              0.03792,
+              0.09125
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.509,
+            0.6615,
+            0.6019
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.60322,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.05833,
+              0.0275
+            ],
+            [
+              0.04458,
+              0.08667,
+              0.00083
+            ],
+            [
+              0.08542,
+              0.05125,
+              0.09125
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5531,
+            0.6562,
+            0.6004
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.33076,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03667,
+              0.02,
+              0.10625
+            ],
+            [
+              0.10375,
+              0.0275,
+              0.04458
+            ],
+            [
+              0.05083,
+              0.07167,
+              0.08542
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2251,
+            0.1564,
+            0.6108
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.4495,
+      "belief_implicature_margin_lesion": 0.0377
+    },
+    {
+      "seed": 102,
+      "center": 96.0,
+      "slope": 0.08,
+      "graded_read": {
+        "onehot": {
+          "mag_fidelity": 0.91903,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08292,
+              0.0,
+              0.0
+            ],
+            [
+              0.00208,
+              0.09292,
+              0.00208
+            ],
+            [
+              0.0,
+              0.0,
+              0.10333
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            1.0,
+            0.9571,
+            0.8
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.80339,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08292,
+              0.05375,
+              0.0
+            ],
+            [
+              0.00208,
+              0.09417,
+              0.00208
+            ],
+            [
+              0.0,
+              0.05667,
+              0.10333
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6067,
+            0.9576,
+            0.8458
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.77522,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08292,
+              0.055,
+              0.0
+            ],
+            [
+              0.00208,
+              0.08708,
+              0.00208
+            ],
+            [
+              0.0,
+              0.07792,
+              0.10333
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6012,
+            0.9543,
+            0.7701
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.21141,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.0,
+              0.07833,
+              0.0
+            ],
+            [
+              0.00208,
+              0.07292,
+              0.09292
+            ],
+            [
+              0.10333,
+              0.05625,
+              0.0
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0,
+            0.4342,
+            0.2
+          ]
+        }
+      },
+      "allornone_read": {
+        "onehot": {
+          "mag_fidelity": 0.78026,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08458,
+              0.0,
+              0.02958
+            ],
+            [
+              0.00042,
+              0.10542,
+              0.03
+            ],
+            [
+              0.02958,
+              0.02958,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.7409,
+            0.7761,
+            0.8238
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.69581,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08458,
+              0.0425,
+              0.02958
+            ],
+            [
+              0.00042,
+              0.08875,
+              0.03
+            ],
+            [
+              0.02958,
+              0.04208,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5399,
+            0.7448,
+            0.8028
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.647,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08458,
+              0.04917,
+              0.02958
+            ],
+            [
+              0.00042,
+              0.08292,
+              0.03
+            ],
+            [
+              0.02958,
+              0.08292,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5179,
+            0.7316,
+            0.6915
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.32154,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.02958,
+              0.07667,
+              0.0
+            ],
+            [
+              0.03,
+              0.07125,
+              0.10542
+            ],
+            [
+              0.10875,
+              0.07083,
+              0.02958
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2784,
+            0.3448,
+            0.3414
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5349,
+      "belief_implicature_margin_lesion": -0.0028
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. This is a READ-OUT nonlinearity ONLY (how the detector READS a fractional coincidence -- the graded dendritic plateau vs the all-or-none switch), NOT a learning rule and NOT a belief change (belief byte-identical to the W4 A/B). Per-seed center/slope calibrated on the ignition CURVE (controlled fractional/solo drives), a detector PROPERTY independent of the RSA content; the SCRAMBLE control (graded mass on WRONG intents must LOSE) and the ALL-OR-NONE control (must reproduce the onehot>=graded negative) keep it honest. Plasticity off. numpy-CPU real spiking Izhikevich; NO sim/ edit (enable_graded_dendritic_plateau via config); reuse-by-import of the W4 A/B + the Leg-1 detector. NOT a claim of phenomenal access to another mind.",
+  "elapsed_seconds": 17.2
+}

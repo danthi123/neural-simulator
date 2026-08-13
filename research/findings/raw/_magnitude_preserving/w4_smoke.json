@@ -1,0 +1,559 @@
+{
+  "runner": "_magnitude_preserving_plateau_readout_derisk",
+  "part": "A (W4 detector)",
+  "faculty": "graded dendritic-plateau (magnitude-preserving) read-out on the W4 coincidence detector; does it move the VALID intent-averaged magnitude-fidelity M1 where the all-or-none plateau cannot? FUNCTIONAL pragmatics correlate.",
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "smoke": true,
+  "verdict": "UNDEFINED -- smoke (n<6); the graded vs all-or-none response curve + the A/B teeth are printed for mechanism-check only. The 6-seed bar is authoritative.",
+  "go": false,
+  "external_grounding": [
+    "Mikulasch & Priesemann -- dendritic ANALOG/graded read-out (the graded plateau is the point-neuron's magnitude-blindness surpass).",
+    "Larkum (2013) TiNS 36(3):141 -- the plateau's tunable coinciding-input threshold.",
+    "Frank & Goodman (2012) Science 336(6084):998 -- the RSA objective is a graded MAGNITUDE, not an argmax."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "M1 is a VALID instrument: SCRAMBLE (graded mass on WRONG intents) LOSES to onehot on the graded read (so a graded<=onehot result would be a real NEGATIVE, not an instrument failure)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.22159 onehot=0.86461"
+    },
+    {
+      "kind": "require",
+      "name": "the ALL-OR-NONE read reproduces the 2026-08-13 negative (M1 move <= MOVE_EPS: onehot >= graded)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "all-or-none M1 move=+0.0270"
+    },
+    {
+      "kind": "control",
+      "name": "the graded read-out is MAGNITUDE-PRESERVING (r(.27)/r(1) << the all-or-none's ~1.0 saturation)",
+      "ok": true,
+      "detail": "treatment=1 control=0.1822 |sep|=0.8178 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA + the all-or-none coincidence current (coincidence_plateau_strength=0)",
+      "why": "a fixed-operating-point READ-OUT nonlinearity (the graded dendritic plateau); belief byte-identical to the W4 A/B; NOT a learning rule."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)"
+  ],
+  "gates": {
+    "instrument_magnitude_preserving_6seed": false,
+    "M1_graded_beats_onehot_6of6": false,
+    "scramble_loses": true,
+    "allornone_reproduces_negative": true,
+    "graded_read_specific": false
+  },
+  "M1": {
+    "graded_read": {
+      "onehot": 0.86461,
+      "graded": 0.75067,
+      "scramble": 0.22159,
+      "move": -0.11394,
+      "seeds_graded_gt_onehot": 0
+    },
+    "allornone_read": {
+      "onehot": 0.58069,
+      "graded": 0.60769,
+      "move": 0.027
+    }
+  },
+  "M2_implicature_recovery_graded_read": {
+    "onehot": 0.1523,
+    "graded": 0.3977,
+    "scramble": 0.3212
+  },
+  "calibration": {
+    "n_clean": 1,
+    "n_seeds": 1,
+    "mean_max_solo": 0.0,
+    "mean_prop_err": 0.0343,
+    "mean_sat_ratio": 0.1822,
+    "all_monotonic": true,
+    "center_per_seed": {
+      "42": 88.0
+    },
+    "slope_per_seed": {
+      "42": 0.11
+    },
+    "response_curve_per_seed": {
+      "42": [
+        0.0,
+        0.0112,
+        0.0563,
+        0.155,
+        0.2263,
+        0.3088
+      ]
+    },
+    "per_seed": [
+      {
+        "seed": 42,
+        "center": 88.0,
+        "slope": 0.11,
+        "calibration_clean": true,
+        "picked": {
+          "center": 88.0,
+          "slope": 0.11,
+          "r_curve": [
+            0.0,
+            0.0112,
+            0.0563,
+            0.155,
+            0.2263,
+            0.3088
+          ],
+          "solo_i": 0.0,
+          "solo_b": 0.0,
+          "silent": true,
+          "clean": true,
+          "r_full": 0.30875,
+          "max_solo": 0.0,
+          "monotonic": true,
+          "prop_err": 0.0343,
+          "sat_ratio": 0.1822,
+          "dyn_range": 0.3088
+        },
+        "table": [
+          {
+            "center": 80.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0088,
+              0.1087,
+              0.1812,
+              0.2325,
+              0.2963,
+              0.3212
+            ],
+            "solo_i": 0.0088,
+            "solo_b": 0.0737,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32125,
+            "max_solo": 0.07375,
+            "monotonic": true,
+            "prop_err": 0.1535,
+            "sat_ratio": 0.5642,
+            "dyn_range": 0.3125
+          },
+          {
+            "center": 80.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0725,
+              0.1363,
+              0.2325,
+              0.275,
+              0.3225
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0112,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.3225,
+            "max_solo": 0.01125,
+            "monotonic": true,
+            "prop_err": 0.0943,
+            "sat_ratio": 0.4225,
+            "dyn_range": 0.3225
+          },
+          {
+            "center": 80.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.0,
+              0.0575,
+              0.0988,
+              0.2288,
+              0.2725,
+              0.3237
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.32375,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0626,
+            "sat_ratio": 0.305,
+            "dyn_range": 0.3237
+          },
+          {
+            "center": 88.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0,
+              0.0475,
+              0.0638,
+              0.1888,
+              0.24,
+              0.31
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.31,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0359,
+            "sat_ratio": 0.2056,
+            "dyn_range": 0.31
+          },
+          {
+            "center": 88.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.0,
+              0.0112,
+              0.0563,
+              0.155,
+              0.2263,
+              0.3088
+            ],
+            "solo_i": 0.0,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.30875,
+            "max_solo": 0.0,
+            "monotonic": true,
+            "prop_err": 0.0343,
+            "sat_ratio": 0.1822,
+            "dyn_range": 0.3088
+          },
+          {
+            "center": 88.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.05,
+              0.01,
+              0.0387,
+              0.1412,
+              0.2313,
+              0.3162
+            ],
+            "solo_i": 0.05,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": false,
+            "r_full": 0.31625,
+            "max_solo": 0.05,
+            "monotonic": false,
+            "prop_err": 0.0802,
+            "sat_ratio": 0.1225,
+            "dyn_range": 0.2662
+          },
+          {
+            "center": 96.0,
+            "slope": 0.08,
+            "r_curve": [
+              0.0112,
+              0.0,
+              0.015,
+              0.1163,
+              0.2188,
+              0.285
+            ],
+            "solo_i": 0.0112,
+            "solo_b": 0.0,
+            "silent": true,
+            "clean": true,
+            "r_full": 0.285,
+            "max_solo": 0.01125,
+            "monotonic": true,
+            "prop_err": 0.0836,
+            "sat_ratio": 0.0526,
+            "dyn_range": 0.2737
+          },
+          {
+            "center": 96.0,
+            "slope": 0.11,
+            "r_curve": [
+              0.13,
+              0.0,
+              0.0,
+              0.065,
+              0.2137,
+              0.2812
+            ],
+            "solo_i": 0.13,
+            "solo_b": 0.0,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.28125,
+            "max_solo": 0.13,
+            "monotonic": false,
+            "prop_err": 0.191,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.1512
+          },
+          {
+            "center": 96.0,
+            "slope": 0.14,
+            "r_curve": [
+              0.1275,
+              0.0,
+              0.0,
+              0.06,
+              0.1975,
+              0.2812
+            ],
+            "solo_i": 0.1275,
+            "solo_b": 0.055,
+            "silent": false,
+            "clean": false,
+            "r_full": 0.28125,
+            "max_solo": 0.1275,
+            "monotonic": false,
+            "prop_err": 0.1988,
+            "sat_ratio": 0.0,
+            "dyn_range": 0.1537
+          }
+        ]
+      }
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "center": 88.0,
+      "slope": 0.11,
+      "graded_read": {
+        "onehot": {
+          "mag_fidelity": 0.86461,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10292,
+              0.01542,
+              0.00583
+            ],
+            [
+              0.00875,
+              0.10125,
+              0.01458
+            ],
+            [
+              0.0,
+              0.01542,
+              0.08583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8289,
+            0.8127,
+            0.9523
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.75067,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10292,
+              0.04542,
+              0.00583
+            ],
+            [
+              0.00875,
+              0.08375,
+              0.01458
+            ],
+            [
+              0.0,
+              0.05667,
+              0.08583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6676,
+            0.7821,
+            0.8023
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.71199,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10292,
+              0.0475,
+              0.00583
+            ],
+            [
+              0.00875,
+              0.08375,
+              0.01458
+            ],
+            [
+              0.0,
+              0.0875,
+              0.08583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6587,
+            0.7821,
+            0.6952
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.22159,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.00583,
+              0.08542,
+              0.01542
+            ],
+            [
+              0.01458,
+              0.05125,
+              0.10125
+            ],
+            [
+              0.08583,
+              0.04792,
+              0.01542
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0547,
+            0.3067,
+            0.3034
+          ]
+        }
+      },
+      "allornone_read": {
+        "onehot": {
+          "mag_fidelity": 0.58069,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.06792,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.10667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.06583,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5257,
+            0.5689,
+            0.6475
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.60769,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.0525,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.07083,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.0225,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5689,
+            0.467,
+            0.7872
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.52945,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10667,
+              0.07125,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.06667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.07708,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5172,
+            0.452,
+            0.6192
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.2809,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.02833,
+              0.08,
+              0.06792
+            ],
+            [
+              0.04042,
+              0.0275,
+              0.10667
+            ],
+            [
+              0.07458,
+              0.0625,
+              0.06583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.1608,
+            0.1575,
+            0.5244
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. This is a READ-OUT nonlinearity ONLY (how the detector READS a fractional coincidence -- the graded dendritic plateau vs the all-or-none switch), NOT a learning rule and NOT a belief change (belief byte-identical to the W4 A/B). Per-seed center/slope calibrated on the ignition CURVE (controlled fractional/solo drives), a detector PROPERTY independent of the RSA content; the SCRAMBLE control (graded mass on WRONG intents must LOSE) and the ALL-OR-NONE control (must reproduce the onehot>=graded negative) keep it honest. Plasticity off. numpy-CPU real spiking Izhikevich; NO sim/ edit (enable_graded_dendritic_plateau via config); reuse-by-import of the W4 A/B + the Leg-1 detector. NOT a claim of phenomenal access to another mind.",
+  "elapsed_seconds": 3.5
+}

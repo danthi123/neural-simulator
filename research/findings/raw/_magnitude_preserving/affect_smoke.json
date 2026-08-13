@@ -1,0 +1,223 @@
+{
+  "runner": "_magnitude_preserving_plateau_readout_derisk",
+  "part": "B (affect salience)",
+  "faculty": "graded dendritic-plateau (magnitude-preserving) read-out on the affect opponent code_in->vplus/vminus FF; does it lift the C-A2 |differential|~valence-strength correlation toward the ridge's 0.27? 4-cell (weights x read-out) design isolates read-out vs weight-source. FUNCTIONAL correlate.",
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "smoke": true,
+  "verdict": "UNDEFINED -- smoke (n<6); the 4-cell salience table is printed for mechanism-check only.",
+  "go": false,
+  "external_grounding": [
+    "Mikulasch & Priesemann -- dendritic ANALOG/graded read-out.",
+    "Bayer & Glimcher (2005) Neuron -- graded-magnitude reward-prediction error (the named weight-source surpass IF the read-out is not the bottleneck).",
+    "Namburi/Tye et al. (2015) Nature -- the innate V+/V- opponent channel."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the point-soma control reproduces the ~0.10 affect-salience boundary (composed point-soma < 0.18)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "composed point-soma salience_r=+0.146"
+    },
+    {
+      "kind": "control",
+      "name": "the graded read lifts the COMPOSED opponent salience (vs the point-soma read on the SAME weights)",
+      "ok": true,
+      "detail": "treatment=0.0325 control=0.1458 |sep|=0.1133 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "read-out isolation: the ridge (magnitude-supervised) weights already reach ~0.27 with the POINT-SOMA read -- if the read-out were the bottleneck the ridge would be limited too",
+      "ok": true,
+      "detail": "treatment=0.288 control=0 |sep|=0.288 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU + the all-or-none coincidence current",
+      "why": "a fixed-operating-point READ-OUT nonlinearity on the code_in->vplus/vminus FF; weights unchanged."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)"
+  ],
+  "gates": {
+    "point_soma_reproduces_boundary": true,
+    "graded_lifts_toward_ridge": false,
+    "sign_read_intact": true
+  },
+  "salience_r": {
+    "composed_pointsoma": 0.1458,
+    "composed_graded": 0.0325,
+    "ridge_pointsoma": 0.288,
+    "ridge_graded": 0.3108,
+    "lift_composed": -0.1133,
+    "lift_ridge": 0.0228,
+    "seeds_composed_lift": 0,
+    "ridge_target": 0.27
+  },
+  "sign_r": {
+    "composed_pointsoma": 0.5139,
+    "composed_graded": 0.2771
+  },
+  "calibration": {
+    "center_per_seed": {
+      "42": 42.73
+    },
+    "slope_per_seed": {
+      "42": 0.02
+    },
+    "per_seed": [
+      {
+        "seed": 42,
+        "scale": 213.64,
+        "center": 42.73,
+        "slope": 0.02,
+        "picked": {
+          "frac": 0.2,
+          "center": 42.73,
+          "slope": 0.02,
+          "r_sign": 0.2873842995527098,
+          "salience_r": 0.035550946931603176,
+          "intact_diff_abs": 0.03,
+          "lesion_diff_abs": 0.013932291666666666
+        },
+        "table": [
+          {
+            "frac": 0.2,
+            "center": 42.73,
+            "slope": 0.02,
+            "r_sign": 0.2873842995527098,
+            "salience_r": 0.035550946931603176,
+            "intact_diff_abs": 0.03,
+            "lesion_diff_abs": 0.013932291666666666
+          },
+          {
+            "frac": 0.2,
+            "center": 42.73,
+            "slope": 0.05,
+            "r_sign": 0.14438509777797706,
+            "salience_r": -0.289311908862975,
+            "intact_diff_abs": 0.12651692708333334,
+            "lesion_diff_abs": 0.025625
+          },
+          {
+            "frac": 0.2,
+            "center": 42.73,
+            "slope": 0.1,
+            "r_sign": 0.1425644019750096,
+            "salience_r": -0.3453209763721841,
+            "intact_diff_abs": 0.12252604166666665,
+            "lesion_diff_abs": 0.03015625
+          },
+          {
+            "frac": 0.35,
+            "center": 74.77,
+            "slope": 0.02,
+            "r_sign": -0.10062033413328826,
+            "salience_r": 0.012468901598286534,
+            "intact_diff_abs": 0.03296875,
+            "lesion_diff_abs": 0.015364583333333333
+          },
+          {
+            "frac": 0.35,
+            "center": 74.77,
+            "slope": 0.05,
+            "r_sign": 0.29588425754720854,
+            "salience_r": -0.08436835631713442,
+            "intact_diff_abs": 0.06402994791666666,
+            "lesion_diff_abs": 0.013489583333333333
+          },
+          {
+            "frac": 0.35,
+            "center": 74.77,
+            "slope": 0.1,
+            "r_sign": 0.20712397123249962,
+            "salience_r": -0.07447697039512198,
+            "intact_diff_abs": 0.05186848958333334,
+            "lesion_diff_abs": 0.020130208333333333
+          },
+          {
+            "frac": 0.5,
+            "center": 106.82,
+            "slope": 0.02,
+            "r_sign": -0.17661111562595766,
+            "salience_r": -0.16189718560337776,
+            "intact_diff_abs": 0.05194010416666667,
+            "lesion_diff_abs": 0.01671875
+          },
+          {
+            "frac": 0.5,
+            "center": 106.82,
+            "slope": 0.05,
+            "r_sign": -0.1969554729644743,
+            "salience_r": -0.09686224847366566,
+            "intact_diff_abs": 0.05301432291666666,
+            "lesion_diff_abs": 0.014114583333333333
+          },
+          {
+            "frac": 0.5,
+            "center": 106.82,
+            "slope": 0.1,
+            "r_sign": -0.23644857174954892,
+            "salience_r": -0.04654916406256097,
+            "intact_diff_abs": 0.045553385416666675,
+            "lesion_diff_abs": 0.014869791666666667
+          }
+        ],
+        "valid": true
+      }
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "center": 42.73,
+      "slope": 0.02,
+      "n_held": 62,
+      "composed_pointsoma": {
+        "r_sign": 0.5139297009626693,
+        "salience_r": 0.14581320234536954,
+        "intact_diff_abs": 0.019186197916666668,
+        "lesion_diff_abs": 0.0007552083333333333
+      },
+      "composed_graded": {
+        "r_sign": 0.27705629736753773,
+        "salience_r": 0.032487974771200745,
+        "intact_diff_abs": 0.030286458333333332,
+        "lesion_diff_abs": 0.01390625
+      },
+      "ridge_pointsoma": {
+        "r_sign": 0.726035126362053,
+        "salience_r": 0.2879627906751153,
+        "intact_diff_abs": 0.01688151041666667,
+        "lesion_diff_abs": 0.0
+      },
+      "ridge_graded": {
+        "r_sign": 0.01977376585248588,
+        "salience_r": 0.3107581203844868,
+        "intact_diff_abs": 0.027024739583333336,
+        "lesion_diff_abs": 0.006067708333333334
+      }
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL affect-salience correlate. The graded plateau is applied ONLY to the opponent read-out (the code_in->vplus/vminus FF), weights unchanged; the point-soma cell is the byte-comparable control. The 4-cell (weights x read-out) design isolates the read-out from the weight source. Warriner is EVAL-only ground-truth. Plasticity off. numpy-CPU real spiking Izhikevich; NO sim/ edit; reuse-by-import of the affect-deepen circuit + the composed self-organized opponent. NOT a claim of phenomenal experience.",
+  "elapsed_seconds": 17.2,
+  "config": {
+    "max_stories": 8000,
+    "n_hub": 64,
+    "n_vocab": 137
+  }
+}

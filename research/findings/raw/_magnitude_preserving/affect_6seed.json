@@ -1,0 +1,881 @@
+{
+  "runner": "_magnitude_preserving_plateau_readout_derisk",
+  "part": "B (affect salience)",
+  "faculty": "graded dendritic-plateau (magnitude-preserving) read-out on the affect opponent code_in->vplus/vminus FF; does it lift the C-A2 |differential|~valence-strength correlation toward the ridge's 0.27? 4-cell (weights x read-out) design isolates read-out vs weight-source. FUNCTIONAL correlate.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "smoke": false,
+  "verdict": "BOUNDARY (PART B) -- the graded plateau read-out does NOT close the affect salience gap: composed point-soma 0.081 -> composed graded 0.096 (lift +0.0150, 3/6 seeds); ridge point-soma 0.327 -> ridge graded -0.048. The read-out is NOT the affect bottleneck: the ridge (magnitude-supervised) weights already reach 0.327 with the POINT-SOMA read, so the point-soma read is magnitude-preserving ENOUGH -- the boundary is the WEIGHT SOURCE (the Rescorla-Wagner s_c SATURATES; the named surpass is a GRADED reinforcement-STRENGTH third factor -- Bayer & Glimcher 2005 -- NOT a read-out). This DISTINGUISHES the two boundaries: W4 is read-out-limited (Part A), affect is weight-source-limited.",
+  "go": false,
+  "external_grounding": [
+    "Mikulasch & Priesemann -- dendritic ANALOG/graded read-out.",
+    "Bayer & Glimcher (2005) Neuron -- graded-magnitude reward-prediction error (the named weight-source surpass IF the read-out is not the bottleneck).",
+    "Namburi/Tye et al. (2015) Nature -- the innate V+/V- opponent channel."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the point-soma control reproduces the ~0.10 affect-salience boundary (composed point-soma < 0.18)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "composed point-soma salience_r=+0.081"
+    },
+    {
+      "kind": "control",
+      "name": "the graded read lifts the COMPOSED opponent salience (vs the point-soma read on the SAME weights)",
+      "ok": true,
+      "detail": "treatment=0.0958 control=0.0808 |sep|=0.015 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "read-out isolation: the ridge (magnitude-supervised) weights already reach ~0.27 with the POINT-SOMA read -- if the read-out were the bottleneck the ridge would be limited too",
+      "ok": true,
+      "detail": "treatment=0.3272 control=0 |sep|=0.3272 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU + the all-or-none coincidence current",
+      "why": "a fixed-operating-point READ-OUT nonlinearity on the code_in->vplus/vminus FF; weights unchanged."
+    }
+  ],
+  "undefined_reasons": [],
+  "gates": {
+    "point_soma_reproduces_boundary": true,
+    "graded_lifts_toward_ridge": false,
+    "sign_read_intact": true
+  },
+  "salience_r": {
+    "composed_pointsoma": 0.0808,
+    "composed_graded": 0.0958,
+    "ridge_pointsoma": 0.3272,
+    "ridge_graded": -0.0481,
+    "lift_composed": 0.015,
+    "lift_ridge": -0.3753,
+    "seeds_composed_lift": 3,
+    "ridge_target": 0.27
+  },
+  "sign_r": {
+    "composed_pointsoma": 0.5217,
+    "composed_graded": 0.2893
+  },
+  "calibration": {
+    "center_per_seed": {
+      "42": 52.54,
+      "43": 78.41,
+      "44": 98.71,
+      "100": 89.57,
+      "101": 45.56,
+      "102": 130.75
+    },
+    "slope_per_seed": {
+      "42": 0.1,
+      "43": 0.1,
+      "44": 0.05,
+      "100": 0.05,
+      "101": 0.1,
+      "102": 0.1
+    },
+    "per_seed": [
+      {
+        "seed": 42,
+        "scale": 262.72,
+        "center": 52.54,
+        "slope": 0.1,
+        "picked": {
+          "frac": 0.2,
+          "center": 52.54,
+          "slope": 0.1,
+          "r_sign": 0.2270863055209863,
+          "salience_r": -0.07009202153301124,
+          "intact_diff_abs": 0.15145182291666667,
+          "lesion_diff_abs": 0.020859375
+        },
+        "table": [
+          {
+            "frac": 0.2,
+            "center": 52.54,
+            "slope": 0.02,
+            "r_sign": 0.18988963332113368,
+            "salience_r": 0.022079535413081195,
+            "intact_diff_abs": 0.06327473958333334,
+            "lesion_diff_abs": 0.012682291666666666
+          },
+          {
+            "frac": 0.2,
+            "center": 52.54,
+            "slope": 0.05,
+            "r_sign": 0.143822550896192,
+            "salience_r": -0.03763425329772054,
+            "intact_diff_abs": 0.14430338541666668,
+            "lesion_diff_abs": 0.018229166666666668
+          },
+          {
+            "frac": 0.2,
+            "center": 52.54,
+            "slope": 0.1,
+            "r_sign": 0.2270863055209863,
+            "salience_r": -0.07009202153301124,
+            "intact_diff_abs": 0.15145182291666667,
+            "lesion_diff_abs": 0.020859375
+          },
+          {
+            "frac": 0.35,
+            "center": 91.95,
+            "slope": 0.02,
+            "r_sign": 0.18364911189460947,
+            "salience_r": 0.025315632118055306,
+            "intact_diff_abs": 0.05115885416666666,
+            "lesion_diff_abs": 0.014687500000000001
+          },
+          {
+            "frac": 0.35,
+            "center": 91.95,
+            "slope": 0.05,
+            "r_sign": 0.16563472910994753,
+            "salience_r": 0.04972486730877781,
+            "intact_diff_abs": 0.06811197916666667,
+            "lesion_diff_abs": 0.019114583333333334
+          },
+          {
+            "frac": 0.35,
+            "center": 91.95,
+            "slope": 0.1,
+            "r_sign": 0.09054459269561983,
+            "salience_r": 0.0935290422291725,
+            "intact_diff_abs": 0.05809895833333333,
+            "lesion_diff_abs": 0.018802083333333334
+          },
+          {
+            "frac": 0.5,
+            "center": 131.36,
+            "slope": 0.02,
+            "r_sign": 0.11066476070305993,
+            "salience_r": 0.0023989941200776655,
+            "intact_diff_abs": 0.04233723958333333,
+            "lesion_diff_abs": 0.014140624999999999
+          },
+          {
+            "frac": 0.5,
+            "center": 131.36,
+            "slope": 0.05,
+            "r_sign": -0.03396885310461908,
+            "salience_r": -0.14012792334508375,
+            "intact_diff_abs": 0.03699869791666667,
+            "lesion_diff_abs": 0.015052083333333334
+          },
+          {
+            "frac": 0.5,
+            "center": 131.36,
+            "slope": 0.1,
+            "r_sign": -0.08645396459269422,
+            "salience_r": -0.22193389380784675,
+            "intact_diff_abs": 0.041874999999999996,
+            "lesion_diff_abs": 0.015234375000000001
+          }
+        ],
+        "valid": true
+      },
+      {
+        "seed": 43,
+        "scale": 224.04,
+        "center": 78.41,
+        "slope": 0.1,
+        "picked": {
+          "frac": 0.35,
+          "center": 78.41,
+          "slope": 0.1,
+          "r_sign": 0.27223966937184135,
+          "salience_r": 0.07317983652187843,
+          "intact_diff_abs": 0.06503255208333333,
+          "lesion_diff_abs": 0.002447916666666666
+        },
+        "table": [
+          {
+            "frac": 0.2,
+            "center": 44.81,
+            "slope": 0.02,
+            "r_sign": 0.23126256804278195,
+            "salience_r": 0.027649755223716366,
+            "intact_diff_abs": 0.03421223958333333,
+            "lesion_diff_abs": 0.0023437500000000008
+          },
+          {
+            "frac": 0.2,
+            "center": 44.81,
+            "slope": 0.05,
+            "r_sign": 0.32194417646122436,
+            "salience_r": -0.044352389098149175,
+            "intact_diff_abs": 0.11828776041666667,
+            "lesion_diff_abs": 0.004270833333333332
+          },
+          {
+            "frac": 0.2,
+            "center": 44.81,
+            "slope": 0.1,
+            "r_sign": 0.28890785934237284,
+            "salience_r": -0.07961699910399603,
+            "intact_diff_abs": 0.11834635416666668,
+            "lesion_diff_abs": 0.0049479166666666664
+          },
+          {
+            "frac": 0.35,
+            "center": 78.41,
+            "slope": 0.02,
+            "r_sign": 0.049598282858696774,
+            "salience_r": 0.14490071931533763,
+            "intact_diff_abs": 0.03445963541666667,
+            "lesion_diff_abs": 0.003020833333333334
+          },
+          {
+            "frac": 0.35,
+            "center": 78.41,
+            "slope": 0.05,
+            "r_sign": 0.1866391330656299,
+            "salience_r": 0.09453554276789415,
+            "intact_diff_abs": 0.06304687499999999,
+            "lesion_diff_abs": 0.0028125000000000003
+          },
+          {
+            "frac": 0.35,
+            "center": 78.41,
+            "slope": 0.1,
+            "r_sign": 0.27223966937184135,
+            "salience_r": 0.07317983652187843,
+            "intact_diff_abs": 0.06503255208333333,
+            "lesion_diff_abs": 0.002447916666666666
+          },
+          {
+            "frac": 0.5,
+            "center": 112.02,
+            "slope": 0.02,
+            "r_sign": -0.17420563715267914,
+            "salience_r": -0.1389050206938894,
+            "intact_diff_abs": 0.04967447916666667,
+            "lesion_diff_abs": 0.006432291666666667
+          },
+          {
+            "frac": 0.5,
+            "center": 112.02,
+            "slope": 0.05,
+            "r_sign": -0.16548254855888522,
+            "salience_r": -0.19077063330012956,
+            "intact_diff_abs": 0.06089843749999999,
+            "lesion_diff_abs": 0.0077083333333333335
+          },
+          {
+            "frac": 0.5,
+            "center": 112.02,
+            "slope": 0.1,
+            "r_sign": -0.15328405809926338,
+            "salience_r": -0.054899805690963185,
+            "intact_diff_abs": 0.05412760416666667,
+            "lesion_diff_abs": 0.009635416666666665
+          }
+        ],
+        "valid": true
+      },
+      {
+        "seed": 44,
+        "scale": 282.03,
+        "center": 98.71,
+        "slope": 0.05,
+        "picked": {
+          "frac": 0.35,
+          "center": 98.71,
+          "slope": 0.05,
+          "r_sign": 0.38328916352273157,
+          "salience_r": 0.20607685688999425,
+          "intact_diff_abs": 0.05670572916666666,
+          "lesion_diff_abs": 0.014817708333333334
+        },
+        "table": [
+          {
+            "frac": 0.2,
+            "center": 56.41,
+            "slope": 0.02,
+            "r_sign": 0.3716025141608999,
+            "salience_r": 0.018591827090073454,
+            "intact_diff_abs": 0.06089192708333333,
+            "lesion_diff_abs": 0.004973958333333335
+          },
+          {
+            "frac": 0.2,
+            "center": 56.41,
+            "slope": 0.05,
+            "r_sign": 0.2979377112816095,
+            "salience_r": 0.10267253607533686,
+            "intact_diff_abs": 0.1396484375,
+            "lesion_diff_abs": 0.00640625
+          },
+          {
+            "frac": 0.2,
+            "center": 56.41,
+            "slope": 0.1,
+            "r_sign": 0.36748621464683395,
+            "salience_r": 0.11029730380884685,
+            "intact_diff_abs": 0.12774088541666664,
+            "lesion_diff_abs": 0.007916666666666667
+          },
+          {
+            "frac": 0.35,
+            "center": 98.71,
+            "slope": 0.02,
+            "r_sign": 0.2149642265125954,
+            "salience_r": 0.04309697741057766,
+            "intact_diff_abs": 0.045436197916666664,
+            "lesion_diff_abs": 0.010130208333333333
+          },
+          {
+            "frac": 0.35,
+            "center": 98.71,
+            "slope": 0.05,
+            "r_sign": 0.38328916352273157,
+            "salience_r": 0.20607685688999425,
+            "intact_diff_abs": 0.05670572916666666,
+            "lesion_diff_abs": 0.014817708333333334
+          },
+          {
+            "frac": 0.35,
+            "center": 98.71,
+            "slope": 0.1,
+            "r_sign": 0.42304145335203586,
+            "salience_r": 0.1596152598288456,
+            "intact_diff_abs": 0.058509114583333334,
+            "lesion_diff_abs": 0.017760416666666667
+          },
+          {
+            "frac": 0.5,
+            "center": 141.02,
+            "slope": 0.02,
+            "r_sign": 0.08570849224124745,
+            "salience_r": -0.08277238149453484,
+            "intact_diff_abs": 0.07080729166666666,
+            "lesion_diff_abs": 0.010208333333333335
+          },
+          {
+            "frac": 0.5,
+            "center": 141.02,
+            "slope": 0.05,
+            "r_sign": 0.02345721224996547,
+            "salience_r": -0.061504479803154,
+            "intact_diff_abs": 0.0446484375,
+            "lesion_diff_abs": 0.009557291666666667
+          },
+          {
+            "frac": 0.5,
+            "center": 141.02,
+            "slope": 0.1,
+            "r_sign": 0.057231039374395574,
+            "salience_r": -0.09085513102526331,
+            "intact_diff_abs": 0.049401041666666666,
+            "lesion_diff_abs": 0.013046875
+          }
+        ],
+        "valid": true
+      },
+      {
+        "seed": 100,
+        "scale": 255.92,
+        "center": 89.57,
+        "slope": 0.05,
+        "picked": {
+          "frac": 0.35,
+          "center": 89.57,
+          "slope": 0.05,
+          "r_sign": 0.2063547619728489,
+          "salience_r": 0.15291731237588718,
+          "intact_diff_abs": 0.04472005208333333,
+          "lesion_diff_abs": 0.0032031250000000007
+        },
+        "table": [
+          {
+            "frac": 0.2,
+            "center": 51.18,
+            "slope": 0.02,
+            "r_sign": 0.051363998165595524,
+            "salience_r": 0.2082573486682189,
+            "intact_diff_abs": 0.027454427083333333,
+            "lesion_diff_abs": 0.004895833333333333
+          },
+          {
+            "frac": 0.2,
+            "center": 51.18,
+            "slope": 0.05,
+            "r_sign": 0.3305500734708864,
+            "salience_r": 0.004677405958058366,
+            "intact_diff_abs": 0.09293619791666667,
+            "lesion_diff_abs": 0.0018750000000000006
+          },
+          {
+            "frac": 0.2,
+            "center": 51.18,
+            "slope": 0.1,
+            "r_sign": 0.25470985885161374,
+            "salience_r": 0.08074706043517874,
+            "intact_diff_abs": 0.09942708333333333,
+            "lesion_diff_abs": 0.0032552083333333326
+          },
+          {
+            "frac": 0.35,
+            "center": 89.57,
+            "slope": 0.02,
+            "r_sign": -0.349067945000915,
+            "salience_r": 0.3101251402095692,
+            "intact_diff_abs": 0.0323828125,
+            "lesion_diff_abs": 0.0030729166666666665
+          },
+          {
+            "frac": 0.35,
+            "center": 89.57,
+            "slope": 0.05,
+            "r_sign": 0.2063547619728489,
+            "salience_r": 0.15291731237588718,
+            "intact_diff_abs": 0.04472005208333333,
+            "lesion_diff_abs": 0.0032031250000000007
+          },
+          {
+            "frac": 0.35,
+            "center": 89.57,
+            "slope": 0.1,
+            "r_sign": 0.21970171094917534,
+            "salience_r": 0.10864017435108106,
+            "intact_diff_abs": 0.04711588541666667,
+            "lesion_diff_abs": 0.005859374999999999
+          },
+          {
+            "frac": 0.5,
+            "center": 127.96,
+            "slope": 0.02,
+            "r_sign": -0.2712732668142268,
+            "salience_r": 0.05487624565723354,
+            "intact_diff_abs": 0.059173177083333334,
+            "lesion_diff_abs": 0.0006770833333333332
+          },
+          {
+            "frac": 0.5,
+            "center": 127.96,
+            "slope": 0.05,
+            "r_sign": -0.12638991472338917,
+            "salience_r": -0.1475097967996594,
+            "intact_diff_abs": 0.05271484375,
+            "lesion_diff_abs": 0.0008593749999999999
+          },
+          {
+            "frac": 0.5,
+            "center": 127.96,
+            "slope": 0.1,
+            "r_sign": -0.03485846634634749,
+            "salience_r": -0.20752774873360308,
+            "intact_diff_abs": 0.04020182291666667,
+            "lesion_diff_abs": 0.0016927083333333327
+          }
+        ],
+        "valid": true
+      },
+      {
+        "seed": 101,
+        "scale": 227.81,
+        "center": 45.56,
+        "slope": 0.1,
+        "picked": {
+          "frac": 0.2,
+          "center": 45.56,
+          "slope": 0.1,
+          "r_sign": 0.5704602444052366,
+          "salience_r": 0.0025254696887170905,
+          "intact_diff_abs": 0.15333984375,
+          "lesion_diff_abs": 0.011796875
+        },
+        "table": [
+          {
+            "frac": 0.2,
+            "center": 45.56,
+            "slope": 0.02,
+            "r_sign": -0.11870980446969912,
+            "salience_r": 0.12905695115205784,
+            "intact_diff_abs": 0.046263020833333335,
+            "lesion_diff_abs": 0.016744791666666665
+          },
+          {
+            "frac": 0.2,
+            "center": 45.56,
+            "slope": 0.05,
+            "r_sign": 0.4875267893625782,
+            "salience_r": -0.06667618377122354,
+            "intact_diff_abs": 0.14662760416666668,
+            "lesion_diff_abs": 0.009114583333333334
+          },
+          {
+            "frac": 0.2,
+            "center": 45.56,
+            "slope": 0.1,
+            "r_sign": 0.5704602444052366,
+            "salience_r": 0.0025254696887170905,
+            "intact_diff_abs": 0.15333984375,
+            "lesion_diff_abs": 0.011796875
+          },
+          {
+            "frac": 0.35,
+            "center": 79.74,
+            "slope": 0.02,
+            "r_sign": -0.24707594337895825,
+            "salience_r": -0.024983731429147428,
+            "intact_diff_abs": 0.052167968749999995,
+            "lesion_diff_abs": 0.013125
+          },
+          {
+            "frac": 0.35,
+            "center": 79.74,
+            "slope": 0.05,
+            "r_sign": 0.03867253525193979,
+            "salience_r": 0.09558731791083712,
+            "intact_diff_abs": 0.06360677083333334,
+            "lesion_diff_abs": 0.014739583333333334
+          },
+          {
+            "frac": 0.35,
+            "center": 79.74,
+            "slope": 0.1,
+            "r_sign": 0.09057845029412998,
+            "salience_r": 0.1599654761622499,
+            "intact_diff_abs": 0.05846354166666667,
+            "lesion_diff_abs": 0.008984375000000001
+          },
+          {
+            "frac": 0.5,
+            "center": 113.91,
+            "slope": 0.02,
+            "r_sign": -0.3910093995513974,
+            "salience_r": -0.20633589800744145,
+            "intact_diff_abs": 0.0606640625,
+            "lesion_diff_abs": 0.008333333333333333
+          },
+          {
+            "frac": 0.5,
+            "center": 113.91,
+            "slope": 0.05,
+            "r_sign": -0.0350506004693301,
+            "salience_r": -0.2408549156712451,
+            "intact_diff_abs": 0.05543619791666667,
+            "lesion_diff_abs": 0.010963541666666667
+          },
+          {
+            "frac": 0.5,
+            "center": 113.91,
+            "slope": 0.1,
+            "r_sign": 0.024213558366927106,
+            "salience_r": 0.05958699466828819,
+            "intact_diff_abs": 0.044752604166666675,
+            "lesion_diff_abs": 0.010598958333333333
+          }
+        ],
+        "valid": true
+      },
+      {
+        "seed": 102,
+        "scale": 261.5,
+        "center": 130.75,
+        "slope": 0.1,
+        "picked": {
+          "frac": 0.5,
+          "center": 130.75,
+          "slope": 0.1,
+          "r_sign": 0.08751068277794623,
+          "salience_r": 0.23927801500420584,
+          "intact_diff_abs": 0.05450520833333334,
+          "lesion_diff_abs": 0.013671875
+        },
+        "table": [
+          {
+            "frac": 0.2,
+            "center": 52.3,
+            "slope": 0.02,
+            "r_sign": -0.06508740709879324,
+            "salience_r": 0.021713450544589338,
+            "intact_diff_abs": 0.18563802083333333,
+            "lesion_diff_abs": 0.020338541666666668
+          },
+          {
+            "frac": 0.2,
+            "center": 52.3,
+            "slope": 0.05,
+            "r_sign": -0.1291558097394866,
+            "salience_r": -0.23355549181676008,
+            "intact_diff_abs": 0.22440104166666666,
+            "lesion_diff_abs": 0.028932291666666665
+          },
+          {
+            "frac": 0.2,
+            "center": 52.3,
+            "slope": 0.1,
+            "r_sign": -0.1493450206521305,
+            "salience_r": -0.1817708377924453,
+            "intact_diff_abs": 0.2585221354166667,
+            "lesion_diff_abs": 0.030859375000000005
+          },
+          {
+            "frac": 0.35,
+            "center": 91.53,
+            "slope": 0.02,
+            "r_sign": -0.11607947447793125,
+            "salience_r": -0.13128954865117828,
+            "intact_diff_abs": 0.15026041666666665,
+            "lesion_diff_abs": 0.01734375
+          },
+          {
+            "frac": 0.35,
+            "center": 91.53,
+            "slope": 0.05,
+            "r_sign": -0.2125375918030349,
+            "salience_r": -0.04241251657298511,
+            "intact_diff_abs": 0.15388671875,
+            "lesion_diff_abs": 0.019192708333333332
+          },
+          {
+            "frac": 0.35,
+            "center": 91.53,
+            "slope": 0.1,
+            "r_sign": -0.20825184114604567,
+            "salience_r": -0.1584217619502887,
+            "intact_diff_abs": 0.10236328125000001,
+            "lesion_diff_abs": 0.017421875
+          },
+          {
+            "frac": 0.5,
+            "center": 130.75,
+            "slope": 0.02,
+            "r_sign": 0.017932081831090244,
+            "salience_r": -0.29831295860744017,
+            "intact_diff_abs": 0.027421875000000002,
+            "lesion_diff_abs": 0.013984375
+          },
+          {
+            "frac": 0.5,
+            "center": 130.75,
+            "slope": 0.05,
+            "r_sign": 0.1830099102080746,
+            "salience_r": 0.10130116437999133,
+            "intact_diff_abs": 0.011022135416666667,
+            "lesion_diff_abs": 0.013828124999999998
+          },
+          {
+            "frac": 0.5,
+            "center": 130.75,
+            "slope": 0.1,
+            "r_sign": 0.08751068277794623,
+            "salience_r": 0.23927801500420584,
+            "intact_diff_abs": 0.05450520833333334,
+            "lesion_diff_abs": 0.013671875
+          }
+        ],
+        "valid": false
+      }
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "center": 52.54,
+      "slope": 0.1,
+      "n_held": 64,
+      "composed_pointsoma": {
+        "r_sign": 0.51409785656285,
+        "salience_r": 0.2673516280550158,
+        "intact_diff_abs": 0.02858723958333333,
+        "lesion_diff_abs": 0.0
+      },
+      "composed_graded": {
+        "r_sign": 0.21189278429003877,
+        "salience_r": -0.04727331572422015,
+        "intact_diff_abs": 0.15151041666666668,
+        "lesion_diff_abs": 0.020833333333333332
+      },
+      "ridge_pointsoma": {
+        "r_sign": 0.6698090446796469,
+        "salience_r": 0.3318639620884136,
+        "intact_diff_abs": 0.018802083333333334,
+        "lesion_diff_abs": 0.0
+      },
+      "ridge_graded": {
+        "r_sign": 0.10599857555109703,
+        "salience_r": -0.03739362265015855,
+        "intact_diff_abs": 0.11492838541666667,
+        "lesion_diff_abs": 0.014843750000000001
+      }
+    },
+    {
+      "seed": 43,
+      "center": 78.41,
+      "slope": 0.1,
+      "n_held": 64,
+      "composed_pointsoma": {
+        "r_sign": 0.5718932914173978,
+        "salience_r": 0.02491652883316816,
+        "intact_diff_abs": 0.018815104166666666,
+        "lesion_diff_abs": 0.0
+      },
+      "composed_graded": {
+        "r_sign": 0.2777463118520151,
+        "salience_r": 0.08683279451617587,
+        "intact_diff_abs": 0.06498046875,
+        "lesion_diff_abs": 0.0025
+      },
+      "ridge_pointsoma": {
+        "r_sign": 0.8275986929244471,
+        "salience_r": 0.39141823726505176,
+        "intact_diff_abs": 0.02001953125,
+        "lesion_diff_abs": 0.0
+      },
+      "ridge_graded": {
+        "r_sign": 0.05910610442712724,
+        "salience_r": 0.03720537787365434,
+        "intact_diff_abs": 0.058437499999999996,
+        "lesion_diff_abs": 0.017760416666666667
+      }
+    },
+    {
+      "seed": 44,
+      "center": 98.71,
+      "slope": 0.05,
+      "n_held": 64,
+      "composed_pointsoma": {
+        "r_sign": 0.6600716355452363,
+        "salience_r": 0.13973835510373028,
+        "intact_diff_abs": 0.022552083333333334,
+        "lesion_diff_abs": 0.0
+      },
+      "composed_graded": {
+        "r_sign": 0.38031026058030043,
+        "salience_r": 0.1930399878808694,
+        "intact_diff_abs": 0.05658854166666668,
+        "lesion_diff_abs": 0.015026041666666668
+      },
+      "ridge_pointsoma": {
+        "r_sign": 0.7754735397063918,
+        "salience_r": 0.320729782856011,
+        "intact_diff_abs": 0.0191015625,
+        "lesion_diff_abs": 0.0
+      },
+      "ridge_graded": {
+        "r_sign": -0.13123549245740856,
+        "salience_r": -0.16383281605719724,
+        "intact_diff_abs": 0.03996744791666667,
+        "lesion_diff_abs": 0.013984375
+      }
+    },
+    {
+      "seed": 100,
+      "center": 89.57,
+      "slope": 0.05,
+      "n_held": 64,
+      "composed_pointsoma": {
+        "r_sign": 0.6544899032690856,
+        "salience_r": 0.23617435532342437,
+        "intact_diff_abs": 0.01895833333333333,
+        "lesion_diff_abs": 2.604166666666667e-05
+      },
+      "composed_graded": {
+        "r_sign": 0.2084154617632798,
+        "salience_r": 0.1529829680532325,
+        "intact_diff_abs": 0.044355468749999995,
+        "lesion_diff_abs": 0.0032031250000000007
+      },
+      "ridge_pointsoma": {
+        "r_sign": 0.7287594745883539,
+        "salience_r": 0.2715167414935525,
+        "intact_diff_abs": 0.017916666666666668,
+        "lesion_diff_abs": 0.0
+      },
+      "ridge_graded": {
+        "r_sign": 0.12319689397445803,
+        "salience_r": 0.24297399063928488,
+        "intact_diff_abs": 0.05377604166666666,
+        "lesion_diff_abs": 0.011458333333333334
+      }
+    },
+    {
+      "seed": 101,
+      "center": 45.56,
+      "slope": 0.1,
+      "n_held": 64,
+      "composed_pointsoma": {
+        "r_sign": 0.5642660552513566,
+        "salience_r": 0.1756525980031002,
+        "intact_diff_abs": 0.020911458333333337,
+        "lesion_diff_abs": 0.0
+      },
+      "composed_graded": {
+        "r_sign": 0.5704154899471753,
+        "salience_r": -0.050217004263947596,
+        "intact_diff_abs": 0.153828125,
+        "lesion_diff_abs": 0.011588541666666667
+      },
+      "ridge_pointsoma": {
+        "r_sign": 0.70146025983027,
+        "salience_r": 0.29033674306761137,
+        "intact_diff_abs": 0.015039062499999999,
+        "lesion_diff_abs": 0.0
+      },
+      "ridge_graded": {
+        "r_sign": 0.15031142586096774,
+        "salience_r": -0.41848263159309423,
+        "intact_diff_abs": 0.14328125,
+        "lesion_diff_abs": 0.00984375
+      }
+    },
+    {
+      "seed": 102,
+      "center": 130.75,
+      "slope": 0.1,
+      "n_held": 64,
+      "composed_pointsoma": {
+        "r_sign": 0.16528531877902117,
+        "salience_r": -0.3592830718850304,
+        "intact_diff_abs": 0.03919921875000001,
+        "lesion_diff_abs": 0.0
+      },
+      "composed_graded": {
+        "r_sign": 0.08731875930741977,
+        "salience_r": 0.2392520810492788,
+        "intact_diff_abs": 0.05449869791666667,
+        "lesion_diff_abs": 0.013671875
+      },
+      "ridge_pointsoma": {
+        "r_sign": 0.6889820188318819,
+        "salience_r": 0.3572753367540222,
+        "intact_diff_abs": 0.018697916666666668,
+        "lesion_diff_abs": 0.0
+      },
+      "ridge_graded": {
+        "r_sign": -0.23056662162179817,
+        "salience_r": 0.051078284941656824,
+        "intact_diff_abs": 0.0448828125,
+        "lesion_diff_abs": 0.011406250000000001
+      }
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL affect-salience correlate. The graded plateau is applied ONLY to the opponent read-out (the code_in->vplus/vminus FF), weights unchanged; the point-soma cell is the byte-comparable control. The 4-cell (weights x read-out) design isolates the read-out from the weight source. Warriner is EVAL-only ground-truth. Plasticity off. numpy-CPU real spiking Izhikevich; NO sim/ edit; reuse-by-import of the affect-deepen circuit + the composed self-organized opponent. NOT a claim of phenomenal experience.",
+  "elapsed_seconds": 103.7,
+  "config": {
+    "max_stories": 60000,
+    "n_hub": 64,
+    "n_vocab": 139
+  }
+}
