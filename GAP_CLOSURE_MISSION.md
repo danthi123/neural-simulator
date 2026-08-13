@@ -32,18 +32,46 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > matmul-retirement = a mapped boundary); organ internals still host. The 3 missing properties = FLUID mouth · ONE
 > substrate · EMERGENT.
 >
-> **🔴 LIVE LANES (do NOT double-launch; consolidate each as it lands → checkout to main + commit + push_both + sync docs):**
-> - **ae1fc527** (main worktree): WIRE the causal why/what-if organ into brain_chat (grounded, per the 4-step spec).
-> - **aff06cc6** (iso, GPU): EMERGENCE — self-organize a host-designed organ internal (the deepest bar).
-> - **ae0f0585** (iso, GPU): AFFECT deepening — fully-spiking appraisal (retire Warriner gate) + discrete emotions + reappraisal (T1-5).
-> - **a282bb4e** (iso, CPU): PROSPECTIVE MEMORY (Tier-2) — hold an intention across turns, fire on cue.
-> - **a7dc2b64** (iso, GPU): W4 scalar-implicature ToM — genuinely-spiking belief source (closes pending Task #12).
-> - **DEFERRED CONSOLIDATION (banked on branch, main-was-busy):** mouth-rung `e62cc02c6` (FS-WTA read-budget −3–5× 6/6 GO +
->   the state→logits matmul-retirement mapped BOUNDARY, next lever = inhibitory shadow interneurons) — consolidate when main frees.
+> **✅ WAVE-3 CONSOLIDATED (2026-08-13 overnight, all on main + both remotes @ `629e94500`):**
+> - **causal-wire (ae1fc527)** → **WIRED** (`6e97883fb`/`79223e8c1`): T1-4 why/what-if causal organ on the default
+>   /api/brain-chat — default-ON, moat-safe, lesion-load-bearing, byte-identical-off, real-handler verified. Residuals:
+>   grounding-by-derivation (not a spike-merge), DA-sign + causal-order teacher-delivered — NOT scaffold_retired.
+> - **emergence (aff06cc6)** → **6/6 GO** (`5f72570c5`): the appraisal VALUE-ORIGIN self-organizes from evaluative
+>   conditioning (three-factor DA-gated Hebbian over the self-organized PPMI code), anchored by ~10 innate primaries —
+>   retires DR-2's 140-word Warriner LEXICON to a genome-plausible sign floor. Held-out r=+0.551 (each seed ≥0.316);
+>   permute-code→0.016, no-learning→0. A real emergence-bar step.
+> - **affect-deepen (ae0f0585)** → **6/6 GO** (`629e94500`): spiking opponent retires the Warriner SALIENCE GATE
+>   (held-out r=+0.745; |differential|→emergent salience) + 4 discrete emotions (SEEKING/CARE/FEAR/RAGE, discrim 0.833)
+>   + vmPFC reappraisal (−83%). Residuals: opponent weights STILL Warriner-seeded ridge-fits; relay-not-attractor
+>   (spontaneous floor); runner-only, NOT wired.
+> - **W4-ToM (a7dc2b64)** → **BOUNDARY** (`f76e2d6e9`): spiking graded belief DE-RISKED as a valid read (implicature
+>   margin +0.506, 98.9% attributable); the host argmax was in the METRIC, not the belief. But the pragmatic-alignment
+>   metric doesn't move (−0.035) — localized to the coincidence detector's k-threshold being too high for fractional
+>   coincidence (confirms the 2026-08-11 re-diagnosis). Task #12 = belief de-risked; the wire is GATED on the detector-k recal.
+> - **prospective (a282bb4e)** → **BOUNDARY 3/6** (`871e61d62`): intention-latch + BA10 cue-monitor; every specificity
+>   clause 6/6 (persistence, no-fire-before, wrong-cue, both lesions; 95.7% attributable), only fire_on_cue amplitude
+>   fails on 1 hypo-excitable seed — the constant tonic bias proxies per-pool homeostatic gain (missing companion process).
+> - **mouth-rung (e62cc02c6)** → **6/6 GO** (`105616524`): FS-WTA cuts the few-spike read budget ~3-5×; the state→logits
+>   synaptic-logit read-out is a mapped BOUNDARY (next lever = inhibitory shadow interneurons).
 >
-> **SINGLE LITERAL NEXT:** consolidate ae1fc527 + the 4 iso lanes + the deferred mouth-rung as each lands; relaunch a fresh
-> wave to keep compute full (next candidates: bus host-REPLACEMENT [after shadow], mouth signed-read-out [shadow interneurons],
-> one-brain MERGE, discrete-emotion wiring, self-initiation/DMN, interoceptive affect, remaining Tier-2/3). RAG at every wall.
+> **HONEST SYNTHESIS (do NOT double-count Warriner):** emergence retired the Warriner *origin*; affect-deepen retired the
+> *salience gate + read* but re-introduced a Warriner-seeded ridge-fit in its opponent weights. Net: Warriner is retired
+> AT THE ORIGIN, still present in the discrete-emotion circuit's weights — composing the two (feed emergence's learned
+> valence into affect's opponent weights) is the clean next rung. Reckoning UNCHANGED: still CO-RESIDENCY (GNW bus
+> shadow-wired, not replacing); mouth still Qwen for open prose. The 3 missing properties = FLUID mouth · ONE substrate · EMERGENT.
+>
+> **🔴 LIVE LANES — WAVE-4 (staggered; do NOT double-launch; consolidate each → checkout to main + commit + push_both):**
+> - **[E] (iso de-risk):** COMPOSE emergence→affect — replace affect's Warriner-seeded ridge-fit opponent weights with
+>   emergence's self-organized valence (retire the seed; emergent bar).
+> - **[K] (iso de-risk):** W4 DETECTOR-K recalibration — recalibrate coincidence_k_threshold to fractional graded
+>   coincident drive (Larkum 2013 / Frank & Goodman 2012 grounded) to unblock the pragmatic-alignment metric.
+> - **[P] (main, serial — ONLY agent on main):** promote the GNW N-organ ignition BUS from shadow to the DEFAULT
+>   organ-combination on /api/brain-chat (substrate ignition REPLACES host gate() — the one-substrate step). Gate:
+>   byte-identical answers on a broad real-query panel + no moat regression + lesion-load-bearing + escape flag.
+>
+> **SINGLE LITERAL NEXT:** consolidate [E]/[K]/[P] as each lands; then next candidates — discrete-emotion production wire
+> (after [E] retires the seed), prospective per-pool homeostat, mouth shadow-interneuron signed read, one-brain MERGE,
+> self-initiation/DMN, interoceptive affect, remaining Tier-2/3. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's
