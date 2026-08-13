@@ -1,0 +1,832 @@
+{
+  "mode": "causal_forward_model",
+  "intact": [
+    {
+      "seed": 42,
+      "mode": "intact",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 163888888.89,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 161.11
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 211.11
+          }
+        ],
+        "directed_fwd_BtoD": 163.89,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 163888888.89
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 9.973,
+      "w_CY": 10.261,
+      "w_XY": 0.492,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": true
+    },
+    {
+      "seed": 43,
+      "mode": "intact",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 166.67
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 191.67
+          }
+        ],
+        "directed_fwd_BtoD": 166.67,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 166666666.67
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 10.032,
+      "w_CY": 10.274,
+      "w_XY": 0.473,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": true
+    },
+    {
+      "seed": 44,
+      "mode": "intact",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 166.67
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 219.44
+          }
+        ],
+        "directed_fwd_BtoD": 166.67,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 166666666.67
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 10.034,
+      "w_CY": 10.26,
+      "w_XY": 0.563,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": true
+    },
+    {
+      "seed": 100,
+      "mode": "intact",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 163888888.89,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 166.67
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 222.22
+          }
+        ],
+        "directed_fwd_BtoD": 163.89,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 163888888.89
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 166.67,
+        "cause_separation": 166.67,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 9.982,
+      "w_CY": 10.263,
+      "w_XY": 0.593,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": true
+    },
+    {
+      "seed": 101,
+      "mode": "intact",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 158333333.33,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 166.67
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 186.11
+          }
+        ],
+        "directed_fwd_BtoD": 158.33,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 158333333.33
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 163.89,
+        "cause_separation": 163.89,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 10.038,
+      "w_CY": 10.282,
+      "w_XY": 0.546,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": true
+    },
+    {
+      "seed": 102,
+      "mode": "intact",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 166.67
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 225.0
+          }
+        ],
+        "directed_fwd_BtoD": 166.67,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 166666666.67
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 163.89,
+        "cause_separation": 163.89,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 9.991,
+      "w_CY": 10.264,
+      "w_XY": 0.679,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": true
+    }
+  ],
+  "lesion": [
+    {
+      "seed": 42,
+      "mode": "lesion",
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "fwd": {
+        "acc": 0.5,
+        "n_correct": 1,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 0.0
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "A",
+            "ok": 0,
+            "succ_rate": 0.0
+          }
+        ],
+        "directed_fwd_BtoD": 0.0,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 0.0
+      },
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 9.973,
+      "w_CY": 10.261,
+      "w_XY": 0.492,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "lesion",
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "fwd": {
+        "acc": 0.5,
+        "n_correct": 1,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 0.0
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "A",
+            "ok": 0,
+            "succ_rate": 0.0
+          }
+        ],
+        "directed_fwd_BtoD": 0.0,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 0.0
+      },
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 10.032,
+      "w_CY": 10.274,
+      "w_XY": 0.473,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "lesion",
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 0.0,
+      "fwd": {
+        "acc": 0.5,
+        "n_correct": 1,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 0.0
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "A",
+            "ok": 0,
+            "succ_rate": 0.0
+          }
+        ],
+        "directed_fwd_BtoD": 0.0,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 0.0
+      },
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 10.034,
+      "w_CY": 10.26,
+      "w_XY": 0.563,
+      "w_YX": 0.0,
+      "w_AD": 0.2,
+      "go": false
+    }
+  ],
+  "corr_only": [
+    {
+      "seed": 42,
+      "mode": "corr_only",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 163888888.89,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 161.11
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 211.11
+          }
+        ],
+        "directed_fwd_BtoD": 163.89,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 163888888.89
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 98.33,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 166.67,
+        "Y_rate_do_C": 155.56,
+        "cause_separation": -11.11,
+        "X_not_cause_of_Y": false
+      },
+      "w_AB": 9.973,
+      "w_CY": 10.261,
+      "w_XY": 9.984,
+      "w_YX": 0.168,
+      "w_AD": 0.2,
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "corr_only",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 166.67
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 191.67
+          }
+        ],
+        "directed_fwd_BtoD": 166.67,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 166666666.67
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "do": {
+        "Y_rate_do_X": 166.67,
+        "Y_rate_do_C": 155.56,
+        "cause_separation": -11.11,
+        "X_not_cause_of_Y": false
+      },
+      "w_AB": 10.032,
+      "w_CY": 10.274,
+      "w_XY": 9.991,
+      "w_YX": 0.183,
+      "w_AD": 0.2,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "corr_only",
+      "fwd_acc": 1.0,
+      "fwd_directed_ratio": 166666666.67,
+      "fwd": {
+        "acc": 1.0,
+        "n_correct": 2,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "B",
+            "ok": 1,
+            "succ_rate": 166.67
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 219.44
+          }
+        ],
+        "directed_fwd_BtoD": 166.67,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 166666666.67
+      },
+      "unseen": {
+        "predicts_D": true,
+        "D_rate": 100.0,
+        "B_rate": 150.0,
+        "offchain_max": 0.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 161.11,
+        "Y_rate_do_C": 152.78,
+        "cause_separation": -8.33,
+        "X_not_cause_of_Y": false
+      },
+      "w_AB": 10.034,
+      "w_CY": 10.26,
+      "w_XY": 9.947,
+      "w_YX": 0.171,
+      "w_AD": 0.2,
+      "go": false
+    }
+  ],
+  "shuffle": [
+    {
+      "seed": 42,
+      "mode": "shuffle",
+      "fwd_acc": 0.0,
+      "fwd_directed_ratio": 0.0,
+      "fwd": {
+        "acc": 0.0,
+        "n_correct": 0,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "Y",
+            "ok": 0,
+            "succ_rate": 0.0
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "A",
+            "ok": 0,
+            "succ_rate": 0.0
+          }
+        ],
+        "directed_fwd_BtoD": 0.0,
+        "directed_rev_DtoB": 13.89,
+        "directed_ratio": 0.0
+      },
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 76.67,
+        "offchain_max": 148.33,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 0.2,
+      "w_CY": 0.454,
+      "w_XY": 0.2,
+      "w_YX": 0.2,
+      "w_AD": 0.2,
+      "go": false
+    },
+    {
+      "seed": 43,
+      "mode": "shuffle",
+      "fwd_acc": 0.0,
+      "fwd_directed_ratio": 0.0,
+      "fwd": {
+        "acc": 0.0,
+        "n_correct": 0,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "X",
+            "ok": 0,
+            "succ_rate": 0.0
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "C",
+            "ok": 0,
+            "succ_rate": 0.0
+          }
+        ],
+        "directed_fwd_BtoD": 0.0,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 0.0
+      },
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 150.0,
+        "w_AD_direct": 0.20000003278255463
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 0.2,
+      "w_CY": 0.2,
+      "w_XY": 0.2,
+      "w_YX": 0.2,
+      "w_AD": 0.2,
+      "go": false
+    },
+    {
+      "seed": 44,
+      "mode": "shuffle",
+      "fwd_acc": 0.5,
+      "fwd_directed_ratio": 202777777.78,
+      "fwd": {
+        "acc": 0.5,
+        "n_correct": 1,
+        "per": [
+          {
+            "src": "A",
+            "tgt": "B",
+            "pred": "Y",
+            "ok": 0,
+            "succ_rate": 0.0
+          },
+          {
+            "src": "B",
+            "tgt": "D",
+            "pred": "D",
+            "ok": 1,
+            "succ_rate": 166.67
+          }
+        ],
+        "directed_fwd_BtoD": 202.78,
+        "directed_rev_DtoB": 0.0,
+        "directed_ratio": 202777777.78
+      },
+      "unseen": {
+        "predicts_D": false,
+        "D_rate": 0.0,
+        "B_rate": 0.0,
+        "offchain_max": 150.0,
+        "w_AD_direct": 0.20000001788139343
+      },
+      "do": {
+        "Y_rate_do_X": 0.0,
+        "Y_rate_do_C": 0.0,
+        "cause_separation": 0.0,
+        "X_not_cause_of_Y": true
+      },
+      "w_AB": 0.2,
+      "w_CY": 0.153,
+      "w_XY": 0.2,
+      "w_YX": 0.2,
+      "w_AD": 0.2,
+      "go": false
+    }
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "verdict": "GO",
+  "verdict_label": "GO",
+  "forward_acc_min": 1.0,
+  "unseen_go": 6,
+  "cause_correct": 6,
+  "lesion_collapse": 3,
+  "corr_only_wrong": 3,
+  "shuffle_fail": 3,
+  "intact_cause_separation": 166.67,
+  "corr_cause_separation": -10.183333333333334,
+  "cause_attributable_to_do_prune": 1.0610987780244396,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "intact GO on >=5/6 seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "forward-prediction accuracy 1.0 (min over seeds)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "predicts UNSEEN 2-step consequence D (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "cause-vs-correlation: X not a cause of Y (all seeds)",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion collapses forward prediction (3/3)",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "corr_only WRONGLY makes X cause Y \u2014 DO-prune load-bearing (3/3)",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "shuffle fails to reproduce true chain (3/3)",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "DO-intervention separation vs corr_only",
+      "ok": true,
+      "detail": "treatment=166.67 control=-10.1833 |sep|=176.853 > 1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "cause separation attributable to DO-prune (>=0.8)",
+      "ok": true,
+      "detail": "measured=1.0610987780244396 expect=<function main.<locals>.<lambda> at 0x7f21433f9b20>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "OU background process",
+      "why": "deterministic regime for a controllable operating point"
+    },
+    {
+      "process": "conductance noise",
+      "why": "deterministic regime"
+    },
+    {
+      "process": "spiking-mismatch-driven DA",
+      "why": "the DA sign is delivered by the teacher (the environment boundary, per T1-4 'teacher DO-interventions'); driving it from a SPIKING mismatch unit (E2's surprise read -> from_reward DA) so the prediction-error is itself neural is the named next rung"
+    },
+    {
+      "process": "high-order (history-dependent) transitions",
+      "why": "the model is FIRST-ORDER (state -> next); ambiguous-given-history states need the HTM-TM high-order predictor (EMERGE-15 GO) \u2014 the named next rung"
+    },
+    {
+      "process": "learned event GROUNDING",
+      "why": "events are delivered as block drive (the environment boundary); grounding them in the emergent relational/spatial code (2026-08-11 GO) is the follow-on"
+    }
+  ],
+  "verdict_status": "GO"
+}

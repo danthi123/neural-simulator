@@ -195,6 +195,16 @@ moat-safe unless noted):
   seed, mechanism untouched. Now a clean GO. Wiring path (organs write subthreshold into a shared workspace, ignition
   replaces the host combine, re-entry loop, ACC-gated deliberation, STN veto) documented; a stronger wrong-concept-shuffle
   averaged over N is an optional rigor follow-up. NEXT: wire the bus into production (replace host organ-orchestration).
+- **Causal forward-model (T1-4, the reasoning bottleneck) — 6/6 GO:** a directed, queryable n-way STATE forward model
+  (generalizes E2's valence predictor). Temporal-order STDP sets edge DIRECTION, three-factor phasic DA gates
+  consolidation, a teacher DO-intervention prunes confounded edges (cause-vs-correlation via invariance-across-
+  interventions, on spikes). Predicts an UNSEEN consequence by forward-simulation (hold A → the 2-step D fires 98 Hz via
+  the substrate's own dynamics though the direct A→D edge stays unlearned — a host triple-JOIN can't do this); cause-vs-
+  correlation clean (do(X)→Y=0 vs do(C)→Y=164, X→Y pruned; corr-only control WRONGLY asserts X→Y, 106% attributable);
+  lesion/shuffle collapse 3/3. Surpassed the run-away-potentiation wall (the missing COMPETITION companion) via low-gain
+  learning + uniform read gain. Next rungs (declared): teacher-delivered DA sign → drive from a spiking mismatch unit;
+  first-order → compose HTM-TM high-order; ground events in the emergent relational code. Wireable → a production spiking
+  "what happens if <state>?" / "why did <state>?" that the host JOIN can't serve. TWO Tier-1 levers now de-risked (with GNW).
 - **E3 deeper-LEARN — BTSP plateau LASTING trace — 6/6 GO (with a host caveat):** a real on-bridge BTSP plateau write +
   spiking recall + a synaptic TAG-AND-CAPTURE persistence model — the plateau write still recalls after a 200-step decay
   window (54–92 Hz) where transient/static/moat writes decay below recall; lesion-load-bearing (95% of persistence
