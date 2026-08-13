@@ -1,12 +1,12 @@
 ---
 type: finding
-status: de-risk-SEED-FRAGILE-3of6
+status: de-risk-GO-6of6
 date: 2026-08-12
 mechanism: gnw-workspace
-verdict: PROMISING but SEED-FRAGILE (3/6). The core primitive — the SUBSTRATE combines two subthreshold organ reads via coincidence-ignition + 2-hop re-entry — WORKS on all 6 seeds (mean coincidence_2hop_acc 1.000), but the full anti-cheat GATE passes on only 3/6 seeds (3 fail on the spreading-floor control, whose mean sits above the required ~0). NOT a clean 6-seed GO. The mechanism is real; robustifying the operating point (the spreading-floor margin) across seeds is the next rung. Keystone-relevant partial: it is the first demonstration that ≥2 organ reads combine by the substrate's ignition threshold (not a host if/else), on the seeds where the controls hold.
+verdict: GO (6/6). The SUBSTRATE combines two subthreshold organ reads via coincidence-ignition + 2-hop re-entry — mean coincidence_2hop_acc 1.000 on all six seeds (host query_chain parity), full anti-cheat gate now 6/6 (all_go=True). The prior SEED-FRAGILE-3/6 was a MISDIAGNOSED CONTROL: the only failing gate term was the SHUFFLE control (NOT the spreading-floor), which leaked because r==c collapses the field to two slots, so a random-slot reroute landed back on slot(r) — byte-identical to the intact arm. Runner-only fix: route the shuffled organ-C vote to an EMPTY slot so no coincidence forms → shuffle 0.000 on every seed, mechanism untouched (coincidence still 1.000/6). D_SUB was never mis-set (single-organ controls 0.000 on all six ⇒ one d_sub subthreshold everywhere).
 ---
 
-# GNW coincidence-integrator — the SUBSTRATE combines two subthreshold organ reads via coincidence-ignition + re-entry (seed-42 GO; 6-seed SEED-FRAGILE 3/6)
+# GNW coincidence-integrator — the SUBSTRATE combines two subthreshold organ reads via coincidence-ignition + re-entry (6-seed GO)
 
 ## The claim being de-risked (the T1-1 missing rung, NOT a re-derivation of P1.2)
 The 2026-08-12 faculty-map audit names a WIRED Global-Neuronal-Workspace bus the highest-leverage next build, and calls the GNW stack "multiple de-risked GOs, unwired". The corpus already de-risks: spiking IGNITION (rung-1, 6-seed GO), MUTUAL EXCLUSION / single-content access (rung-2, 6-seed GO), BROADCAST + report==reasoning (rung-3/3b/3c/4), and RE-ENTRY over 3 hops (P1.2, 6-seed GO). What is NOT de-risked is the mission's exact load-bearing question: can the SUBSTRATE'S ignition dynamics COMBINE >=2 organ reads (an AND/consensus), rather than a host if/else?
@@ -28,16 +28,66 @@ Solo-drive ignition curve: subthreshold (rate <0.05) up to 1800 pA, sharp knee a
 - RE-ENTRY (onecycle=0): the current PRODUCTION host pipeline (snapshot organs once, combine once, emit) cannot reach hop-2; the broadcast-back re-entry is load-bearing.
 - IGNITION (lesion=0) + SHUFFLE=0: the sustained attractor and the congruence (not slot position) are both load-bearing.
 
-## 6-SEED RESULT (`research/findings/raw/_gnw_coincidence_integrator/summary.json`, GPU cupy) — SEED-FRAGILE 3/6
+## 6-SEED RESULT (`research/findings/raw/_gnw_coincidence_integrator/summary.json`, GPU cupy) — clean 6/6 GO
 <!--derived-->
-The 6-seed run (42/43/44/100/101/102) landed: **all_go=False, n_go=3/6.** The CORE primitive is robust — **mean
-coincidence_2hop_acc = 1.000 across all six seeds** (= mean query_chain 1.000), i.e. the substrate combines the two
-organ reads via coincidence-ignition on every seed. What is seed-fragile is a CONTROL: **mean_spreading_floor = 0.083**
-(the pass gate wants it ~0) — on 3 of 6 seeds the "spreading" leakage does not fully collapse, failing the strict
-anti-cheat gate. So this is **NOT a clean 6-seed GO** — it is a real mechanism with a seed-fragile margin on one control.
-**Next rung (robustify, then it is a GO):** tighten the spreading-floor operating point across seeds (a stronger
-inhibitory-pool gain / a per-seed-invariant D_SUB relative to the measured knee / a homeostatic normalization of the
-workspace drive) so the leakage collapses on all six. This is an operating-point robustness rung, not a mechanism wall.
+The robustified 6-seed run (42/43/44/100/101/102) lands **all_go=True, n_go=6/6.** Every gate term holds on every
+seed: **mean coincidence_2hop_acc 1.000** (= mean query_chain 1.000, host parity) and ALL ablations collapse to
+**0.000** — R_only, C_only, disagree, **shuffle**, onecycle, lesion — with single-hop reflex 1.000 (the dissociation),
+moat abstaining on both probes, and single-content mutual-exclusion 1.000. mean_spreading_floor is 0.083 (per-seed
+≤0.125) and is NOT a gate failure: the term is `coincidence >= spreading_floor + 0.5`, and coincidence 1.000 clears
+its per-seed bound (≤0.625) by a wide margin on every seed.
+
+### The prior SEED-FRAGILE-3/6 was a MISDIAGNOSED CONTROL, not an operating-point wall
+The earlier write-up blamed the spreading-floor. That was wrong. Re-reading the gate against the per-seed data: the
+seed_go values matched the **shuffle** control EXACTLY (fail on 43/101/102, where shuffle read 1.000/0.125/1.000; pass
+on 42/44/100 at 0.000). The spreading-floor never trips the gate — with coincidence 1.000 the margin term clears by
+0.4+. And D_SUB was never mis-set relative to the per-seed ignition knee: the single-organ controls (R_only, C_only)
+and the disagree control are 0.000 on ALL SIX seeds, which PROVES a single d_sub is subthreshold on every seed. So the
+mission's "D_SUB sits at different points on the knee per seed" hypothesis is empirically ruled out — the knee is fine.
+
+### Why the shuffle leaked, and the honest fix ("the instrument is part of the emulation")
+The shuffle control writes organ C's drive to a "random slot" to prove the combination is spatial CONGRUENCE (both
+votes in the SAME slot), not just organ C having the right content. But in the consistent world r_cand == c_cand, so
+`_assign_slots` collapses the field to just two slots {slot(r), slot(decoy)} and the reroute (drawn over the assigned
+slots) landed back on slot(r) about half the time — producing the drive vector {slot_r: 2·d_sub, decoy: d_sub}, which
+is BYTE-IDENTICAL to the intact arm. No ignition mechanism can distinguish them, so the substrate correctly ignited r
+and the shuffle "succeeded" (the leak). Because each chain was re-seeded with the SAME rng, this was effectively ONE
+per-seed coin flip replicated across all 8 chains → a wildly bimodal 0.000/1.000 control.
+
+**The fix (runner-only, additive, NO `sim/` edit):** route the shuffled organ-C vote to an EMPTY workspace slot (one
+holding no other vote), so it cannot coincide with organ R at slot(r); that slot receives only a single subthreshold
+d_sub → NO slot reaches the 2·d_sub ignition knee → the workspace withholds (abstains). This tests the SLOT-POSITION
+claim honestly and is distinct from the `disagree` CONTENT test. It collapses shuffle to 0.000 on every seed WITHOUT
+touching the mechanism (intact coincidence stays 1.000/6) or any other arm (shuffle_rng is None everywhere else).
+Instrument verified adversarially: routing onto slot(r) reproduces the intact coincidence exactly (the byte-identical
+case); routing onto the single-vote DECOY slot doubles it to 2·d_sub and leaves a residual 1/8=0.125 leak (the chase
+commits the decoy and runs one more hop, occasionally matching by luck); ONLY the empty-slot target collapses cleanly.
+The change zeroes the control by making it HONEST, not by breaking the mechanism — coincidence_2hop is still 1.000/6.
+
+### Is this a gate-weakening (the forbidden anti-pattern)? No — three checks
+1. **No gate threshold or criterion changed.** `git diff` touches ONLY the two-line `shuffle_rng is not None` branch
+   of `coincidence_hop`; the `seed_go` gate, every bar (`max(2·chance, 0.10)`, `spread_floor + 0.5`, the
+   `coincidence >= query_chain` parity) and `spreading_predict` are byte-for-byte unchanged.
+2. **The mechanism is untouched and every OTHER control still collapses.** coincidence_2hop is 1.000 on all six seeds
+   (before AND after); R_only, C_only, disagree, onecycle, lesion are 0.000 on all six — the anti-host-if-else battery
+   (single-organ + disagree) is intact. Only the shuffle number moved, and only on the 3 seeds where the OLD shuffle
+   had reproduced the intact arm.
+3. **The OLD shuffle could NOT be fixed by any mechanism change — it was mis-specified.** When it drew slot(r) it
+   presented the drive vector {slot_r: 2·d_sub, decoy: d_sub}, BYTE-IDENTICAL to the intact arm; no ignition dynamics
+   can treat identical current differently, so no mechanism robustification could ever make that draw collapse. The
+   only possible fix is to stop the control from reproducing the intact input — route off-slot. A CORRECTION, not a
+   weakening.
+
+**The spreading-floor was never the failing control** (the original finding misread it). Smoking gun from the OLD 3/6
+run: seed 44 was GO **with** spreading_floor=0.125, while seed 101 was NO-GO with the SAME spreading_floor=0.125.
+Identical floor, opposite verdicts ⇒ spreading_floor cannot be the discriminator; shuffle was (44: 0.000 pass, 101:
+0.125 fail). spreading_floor is a NAIVE co-occurrence BASELINE the chase must BEAT (gate term `coin >= floor + 0.5`),
+NOT a leak that must reach 0 — it is unchanged before/after because `spreading_predict` is independent of the
+workspace and of my fix.
+
+**BEFORE → AFTER (the only metric that moved is shuffle_acc):** seed 42 0.000→0.000 · 43 1.000→0.000 · 44 0.000→0.000 ·
+100 0.000→0.000 · 101 0.125→0.000 · 102 1.000→0.000. coincidence_2hop 1.000→1.000 and spreading_floor unchanged on all
+six seeds.
 
 ## Honest scope + boundary (this LAUNCHES the next rung; it is not a stop)
 1. **Both organ reads come from the composer** (recall organ under two relations = two evidence streams). This is a deliberate simplification: the de-risked CLAIM is the SUBSTRATE-COMBINATION mechanism (coincidence-ignition + consensus-veto + re-entry), which is organ-agnostic — any two organs that write subthreshold drive to the bus integrate identically. A genuinely distinct second organ (a spiking surprise/familiarity monitor, or the P0.3 affect/value organ) is the immediate next rung.
@@ -49,7 +99,7 @@ workspace drive) so the leakage collapses on all six. This is an operating-point
 Today the production one-brain (`research/runners/brain_chat_tui.py::ChatBrain`, orchestrated by `webapp/server.py::_build_chat_brain`) is a HOST pipeline: organs (recall/composer, moat, renderer) are read and combined by Python. Wiring the bus means: (a) each organ writes its read as a subthreshold drive vector into a persistent shared `workspace` region (this de-risk shows the write+integrate primitive); (b) the host per-turn combine step is replaced by ignition (the substrate decides the broadcast content); (c) a re-entrant cycle feeds the ignited partial conclusion back as the next premise; (d) metacog/conflict (ACC) reads `n_ignited`/disagreement to gate an extra cycle or raise the abstain threshold; (e) a hyperdirect STN->GPi STOP-SIGNAL as the veto effector. This de-risk covers (a)+(b)+(c) as a mechanism; (d)+(e) and the genuinely-distinct second organ are the next rungs, and the byte-identical additive-default-off integration into `ChatBrain` is the closure step.
 
 ## Files
-- Runner: `research/runners/_gnw_coincidence_integrator_derisk.py` (reuse-by-import of P1.2 `build_workspace_bridge`/`_ignite_and_read`; `from tools.lab import attributable_to, void_if`; NO `sim/` edit).
+- Runner: `research/runners/_gnw_coincidence_integrator_derisk.py` (reuse-by-import of P1.2 `build_workspace_bridge`/`_ignite_and_read`; `from tools.lab import attributable_to, void_if`; NO `sim/` edit). The 2026-08-12 robustification touches ONE branch — `coincidence_hop` routes the shuffled organ-C vote to an EMPTY slot (off-slot ⇒ no coincidence can form) — additive, no other arm affected.
 - Calibration (ignition knee): `research/findings/raw/_gnw_coincidence_integrator/calibration_seed42.json`.
 - Seed-42 GO (full per-seed gate): `research/findings/raw/_gnw_coincidence_integrator/smoke_seed42.json`.
-- 6-seed (in flight, pid 834799, backend cupy): outputs land in the `research/findings/raw/_gnw_coincidence_integrator/` dir (the aggregate `summary.json` + its run log); this finding will be updated with the 6-seed verdict on completion.
+- 6-seed GO (backend cupy): `research/findings/raw/_gnw_coincidence_integrator/summary.json` (aggregate all_go=True, n_go=6) + run log `research/findings/raw/_gnw_coincidence_integrator/run6seed_fix.log`.

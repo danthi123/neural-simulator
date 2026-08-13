@@ -124,8 +124,24 @@ def coincidence_hop(bridge, xp, slots_dev, snap, r_cand, c_cand, decoy, d_sub,
         drives[slot_of[r_cand]] += d_sub
     if organ_c and c_cand in slot_of:
         tgt = slot_of[c_cand]
-        if shuffle_rng is not None:                       # shuffle: organ C votes for a random slot (off-target)
-            tgt = int(shuffle_rng.integers(max(1, len(order))))
+        if shuffle_rng is not None:                       # shuffle: organ C's (correct-content) drive to a WRONG SLOT
+            # The shuffle tests SLOT-POSITION congruence: organ C keeps the right content but writes its drive to a
+            # workspace slot that holds NO other vote (an EMPTY slot beyond the assigned {r, decoy}), so it cannot
+            # coincide with organ R at slot(r). Two target choices were WRONG and both leaked (seed-fragile 3/6):
+            #   • slot(r_cand): in the consistent world r_cand == c_cand, so this is the SAME slot organ R drives ->
+            #     the drive vector becomes {slot_r: 2*d_sub, decoy: d_sub}, BYTE-IDENTICAL to the intact arm. No
+            #     coincidence mechanism can distinguish them, so the substrate (correctly) ignites r and the shuffle
+            #     "succeeds" (leak). Verified: routing onto slot(r) reproduced intact coincidence exactly.
+            #   • the single-vote DECOY slot: doubles the decoy to 2*d_sub -> the decoy ignites, the chase COMMITS it
+            #     and CONTINUES a hop -> occasional lucky terminal match (the residual 0.125 = 1/8 single-realization).
+            # An EMPTY slot receives only organ C's single d_sub -> NO slot reaches the 2*d_sub ignition knee (a single
+            # d_sub is subthreshold on every seed: the r_only/c_only/disagree controls are 0.000 on all six) -> the
+            # workspace withholds (abstains). This proves the AND-over-organs requires BOTH votes in the SAME slot
+            # (spatial congruence), not merely organ C carrying the right content (that is the CONTENT test = the
+            # `disagree`/consensus-veto control). Deterministic collapse on every seed; mechanism + all other arms
+            # untouched (shuffle_rng is None everywhere else).
+            empty = [i for i in range(len(order), n)]
+            tgt = int(empty[int(shuffle_rng.integers(len(empty)))]) if empty else tgt
         drives[tgt] += d_sub
     if decoy in slot_of:
         drives[slot_of[decoy]] += d_sub                   # the single-vote competitor (always present)

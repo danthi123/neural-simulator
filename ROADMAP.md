@@ -184,15 +184,17 @@ moat-safe unless noted):
   was capacity-confounded (BPTT itself only hit 0.931 = not a valid ceiling). So the feedback-alignment-at-scale hunt on
   this instrument is MOOT; the genuine mouth residual is the separate production-Izhikevich few-spike READ regime, not a
   rate-level credit wall. (Good example of "verify a refutation as hard as a confirmation" catching a phantom wall.)
-- **GNW workspace bus (T1-1 keystone) — core primitive de-risked, SEED-FRAGILE 3/6:** the first demonstration that the
+- **GNW workspace bus (T1-1 keystone) — core primitive de-risked, clean 6-seed GO:** the first demonstration that the
   SUBSTRATE combines ≥2 organ reads via coincidence-IGNITION (not a host if/else) — two organs write SUBTHRESHOLD drive,
   only their agreement crosses the ignition knee, WTA suppresses a decoy, the committed winner re-enters as the next
-  premise (2-hop). Mean coincidence_2hop_acc 1.000 ALL 6 seeds (the mechanism works everywhere); every ablation collapses
-  (single-organ / disagree / shuffle / single-cycle / lesion → 0), 100% attributable to BOTH organs. But the full
-  anti-cheat gate passes only 3/6 (the spreading-floor control is seed-fragile, mean 0.083). Next rung: robustify the
-  spreading-floor operating point (stronger inhibitory gain / homeostatic drive normalization) → then it's a clean GO, and
-  the wiring path (organs write subthreshold into a shared workspace, ignition replaces the host combine, re-entry loop,
-  ACC-gated deliberation, STN veto) is documented for the production bus.
+  premise (2-hop). Mean coincidence_2hop_acc 1.000 all 6 seeds; every ablation collapses (single-organ / disagree /
+  shuffle / single-cycle / lesion → 0), 100% attributable to BOTH organs. The earlier "SEED-FRAGILE 3/6" was a MISDIAGNOSED
+  INSTRUMENT BUG (verify-both-directions caught it): the failing term was the SHUFFLE control, not the spreading-floor —
+  because r==c collapses the field to two slots, the old random-slot reroute landed back on slot(r), byte-identical to the
+  intact arm, so the "control" leaked. Runner-only fix: route the shuffled vote to an EMPTY slot → shuffle 0.000 on every
+  seed, mechanism untouched. Now a clean GO. Wiring path (organs write subthreshold into a shared workspace, ignition
+  replaces the host combine, re-entry loop, ACC-gated deliberation, STN veto) documented; a stronger wrong-concept-shuffle
+  averaged over N is an optional rigor follow-up. NEXT: wire the bus into production (replace host organ-orchestration).
 - **E3 deeper-LEARN — BTSP plateau LASTING trace — 6/6 GO (with a host caveat):** a real on-bridge BTSP plateau write +
   spiking recall + a synaptic TAG-AND-CAPTURE persistence model — the plateau write still recalls after a 200-step decay
   window (54–92 Hz) where transient/static/moat writes decay below recall; lesion-load-bearing (95% of persistence
