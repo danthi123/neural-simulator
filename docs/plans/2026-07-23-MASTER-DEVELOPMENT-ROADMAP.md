@@ -37,10 +37,12 @@ date: 2026-07-23
 > needs a magnitude-preserving read; prospective-memory latch bulletproof but fire_on_cue amplitude needs a per-pool
 > homeostat; compose-emergence→affect retired the Warriner seed for the valence READ (r=+0.508) but graded-STRENGTH
 > underperforms; W4 detector-k SURPASSED the base-rate wall (detector reads the fractional mass) but the all-or-none
-> plateau is a THRESHOLD, not a magnitude read. **CROSS-CUTTING INSIGHT:** two independent faculties (affect salience,
-> pragmatic belief) hit the SAME residual — the substrate reads SIGN/present-absent robustly but graded MAGNITUDE weakly;
-> the shared surpass is a magnitude-preserving read-out (the GO'd `enable_graded_dendritic_plateau` / a graded-DA third
-> factor) — the top next lever.
+> plateau is a THRESHOLD, not a magnitude read. **CROSS-CUTTING INSIGHT — TESTED then FALSIFIED (`e503d8552`):** the
+> hypothesis that ONE magnitude-preserving read-out closes both boundaries is WRONG. Applying the GO'd graded dendritic
+> plateau (verified magnitude-preserving) closed NEITHER: W4 is limited by the OBJECTIVE/METRIC aggregation (the RSA
+> landscape is mostly one-hot → next = an informativeness-weighted objective, Frank-Goodman 2012), while affect is
+> limited by the WEIGHT SOURCE (Rescorla-Wagner saturation; the read-out is provably not the bottleneck → next = a graded
+> reinforcement-strength third factor, Bayer-Glimcher 2005). Two DISTINCT residuals + levers, neither the refuted rule.
 
 ### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
 

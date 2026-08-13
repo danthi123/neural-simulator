@@ -76,10 +76,16 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   and the anti-cheat refused M2 (failed scramble). Root cause: the all-or-none plateau is a THRESHOLD, not a
 >   magnitude-preserving read (saturated output overshoots the RSA magnitude). Next = the GO'd `enable_graded_dendritic_plateau`.
 >
-> **⭐ CROSS-CUTTING INSIGHT (bank it):** [E] and [K] independently hit the SAME wall — the substrate reads
-> SIGN/present-absent robustly but graded MAGNITUDE weakly (affect salience-strength; pragmatic belief magnitude). The
-> shared surpass is a MAGNITUDE-PRESERVING read-out (the GO'd `enable_graded_dendritic_plateau` / a graded-DA third
-> factor) — one lane closes both boundaries. This is the top next lever.
+> **⭐ CROSS-CUTTING INSIGHT — FALSIFIED by [M] (`e503d8552`, BOUNDARY), correction banked:** the "one
+> magnitude-preserving read-out closes both" hypothesis is WRONG. [M] applied the GO'd graded dendritic plateau (verified
+> magnitude-preserving, sat_ratio 0.24) and it closed NEITHER boundary — the two walls only LOOKED alike. **W4:** the
+> graded read SURPASSED the detector's magnitude-blindness (absolute fidelity 0.65→0.89) but M1 still loses (−0.082)
+> because the residual is the OBJECTIVE/METRIC aggregation (the RSA landscape is mostly one-hot; graded off-diagonal mass
+> hurts clean intents) → next = an INFORMATIVENESS-WEIGHTED objective (Frank-Goodman 2012). **AFFECT:** the ridge+point-soma
+> cell already hits 0.327 ≥ target, so the read-out is NOT the bottleneck — the residual is the WEIGHT SOURCE
+> (Rescorla-Wagner saturation) → next = a GRADED reinforcement-strength third factor (Bayer-Glimcher 2005). Two DISTINCT
+> residuals, two named levers, neither the refuted credit rule. (Lesson: an adversarial de-risk killed a plausible
+> unifying summary claim — this is why the insight was tested, not wired.)
 >
 > **🔴 LIVE LANES — WAVE-5 (staggered isolated de-risks; do NOT double-launch; consolidate each → checkout to main):**
 > - **[M] (iso):** MAGNITUDE-PRESERVING read-out — apply the GO'd graded dendritic plateau (`enable_graded_dendritic_plateau`,
@@ -89,9 +95,10 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > - **[N] (iso):** GNW-bus HETEROGENEOUS organ — add a spiking surprise/affect (non-composer) organ as one of the N
 >   ignition votes → deepen the one-substrate claim (the named bus follow-on rung).
 >
-> **SINGLE LITERAL NEXT:** consolidate [M]/[H]/[N] as each lands; then — GNW-bus full retirement (`gate_via_bus`,
-> scaffold_retired step), discrete-emotion production wire (after [M] lifts the graded bars), one-brain MERGE,
-> self-initiation/DMN, interoceptive affect, remaining Tier-2/3. RAG at every wall.
+> **SINGLE LITERAL NEXT:** consolidate [H]/[N] as each lands ([M] BOUNDARY landed `e503d8552`); then the two DISTINCT
+> post-[M] levers — W4 INFORMATIVENESS-WEIGHTED objective (Frank-Goodman 2012) + affect GRADED reinforcement-strength
+> third factor (Bayer-Glimcher 2005); plus GNW-bus full retirement (`gate_via_bus`, scaffold_retired step), one-brain
+> MERGE, self-initiation/DMN, interoceptive affect, remaining Tier-2/3. RAG at every wall.
 
 
 > **🟢🟢🟢🟢 LATEST (2026-08-13, FULL-COMPUTE WAVE — owner freed the whole box + pushed for pace). Six of the audit's

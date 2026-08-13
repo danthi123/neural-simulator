@@ -29,9 +29,10 @@ turn — the spiking substrate itself now authors the combine-and-decide step th
 byte-identical to the old behaviour on every test query, moat intact, with a one-flag revert (`BRAIN_GNW_BUS_HOST=1`).
 The causal "why did X / what if X" organ is now WIRED default-on. Three de-risks went GO: affect valence now
 self-organizes from ~10 innate reinforcers instead of a 140-word human lexicon; a spiking opponent drives 4 discrete
-emotions + reappraisal; a cheaper mouth read (−3–5× spikes). Four hit honest, mapped boundaries whose common cause is
-one thing — the substrate reads a SIGN robustly but a graded MAGNITUDE weakly — so the shared next lever is a
-magnitude-preserving dendritic read-out spanning affect and pragmatics. Honest bar unchanged: `scaffold_retired` still 0
+emotions + reappraisal; a cheaper mouth read (−3–5× spikes). Four hit honest, mapped boundaries. A tempting unifying hypothesis — that one
+"magnitude-preserving read-out" fixes them all — was TESTED and FALSIFIED the same night: the graded read-out closed
+neither, because the two walls only looked alike (the pragmatic one is limited by its scoring objective, the affect one
+by its weight source). Two distinct, separately-grounded next levers, not one shared fix. Honest bar unchanged: `scaffold_retired` still 0
 (the host combination code runs computed-then-overridden), organs are still one-composer reads, mouth still Qwen for open
 prose. The 3 missing north-star properties remain: FLUID mouth · ONE substrate · EMERGENT.
 
