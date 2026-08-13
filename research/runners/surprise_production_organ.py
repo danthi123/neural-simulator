@@ -34,9 +34,15 @@ the discrimination is caused by the learned spiking prediction, not a fixed inpu
 HONEST RESIDUALS (declared, ride existing burn-down items):
   * CO-RESIDENT: the mismatch unit runs on ITS OWN circuit bridge, ALONGSIDE the recall composer, not merged onto
     the ONE recall bridge — rides on the one-brain merge (burn-down #1), exactly as the affect organ does.
-  * PRECISION BOUNDARY (the de-risk's mapped residual): at LOW prediction gain the GO drops to 3/6 (the
-    divisive-normalization / gain-match companion process is proxied by a fixed weight). We wire at the ROBUST
-    operating point (cue_to_expected_weight=0.8), where the separation is 6/6-GO with headroom.
+  * PRECISION COMPANION (WIRED 2026-08-13, default-ON): the per-block HOMEOSTATIC PREDICTION-GAIN equalizer
+    (`_homeostat`, de-risk GO 6/6, `2026-08-13-surprise-organ-homeostat-GO.md`) now runs in `ensure_built`, lifting
+    the single-read confirm precision (`het_vote_rate` 0.9375 -> 1.0: every FAMILIAR edge reads reliably below
+    threshold) while surprise specificity holds BY CONSTRUCTION (the topographic block-diagonal prediction inhibits
+    only its own confirm block, so contradict/novel are untouched). `BRAIN_SURPRISE_HOMEOSTAT=0` reverts to the
+    uniform-0.8-gain circuit (byte-identical to the pre-wiring organ). RESIDUAL: the equalizer is a BUILD-TIME
+    host-orchestrated calibration loop (like the organ's existing threshold + Hebbian `train_expectation` loops); an
+    ONLINE spiking inhibitory/homeostatic-plasticity rule (Vogels 2011) is the further step. The which-patient
+    MAPPING is still a topographic prior (a fully-learned all-to-all CA3 recall is the unchanged separate rung).
   * TOPOGRAPHIC prior: the which-patient mapping is a topographic prior with Hebbian-learned STRENGTH; a
     fully-learned all-to-all CA3 recall + homeostatic gain precision are the named next rungs.
   * INFLECTION: the (agent,action) recall + patient-block mapping key on surface tokens (light base-form
@@ -49,12 +55,15 @@ from __future__ import annotations
 import os
 import re
 
+import numpy as np
+
 from research.runners._spiking_expectation_rpe_derisk import (
     build_expectation_circuit,
     train_expectation,
     measure_conditions,
     _drive_read,
     _hard_reset,
+    _host,
     _idx,
     _install_block_diagonal,
 )
@@ -87,6 +96,53 @@ def surprise_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def surprise_homeostat_enabled() -> bool:
+    """Default-ON. The per-block HOMEOSTATIC PREDICTION-GAIN equalizer (the precision companion, de-risk GO 6/6,
+    `2026-08-13-surprise-organ-homeostat-GO.md`) runs at build. `BRAIN_SURPRISE_HOMEOSTAT` in {0,false,no,off} ->
+    the PRE-HOMEOSTAT circuit (uniform 0.8 prediction gain), byte-identical to the pre-wiring surprise organ."""
+    v = os.environ.get("BRAIN_SURPRISE_HOMEOSTAT")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+def _install_block_gains(bridge, meta, src, dst, gains):
+    """Set the TOPOGRAPHIC (block-diagonal) src->dst weights to a PER-BLOCK gain vector `gains[block]` (concept c of
+    src -> concept c of dst), zeroing cross-concept edges. Operates on the CSR weight matrix (orientation-robust);
+    the per-block generalization of `_spiking_expectation_rpe_derisk._install_block_diagonal`. This is the equalizer's
+    write path — the de-risk (`_surprise_organ_homeostat_derisk`) validated the identical routine 6/6."""
+    import scipy.sparse as sp
+    src_idx = set(int(i) for i in _idx(bridge, src))
+    dst_idx = set(int(i) for i in _idx(bridge, dst))
+    src_base = min(src_idx); dst_base = min(dst_idx)
+    blk = meta["blk"]
+    M = bridge.cp_connections.tocsr()
+    indptr = np.asarray(_host(M.indptr)); indices = np.asarray(_host(M.indices))
+    data = np.asarray(_host(M.data)).astype(np.float32)
+    # orientation: is a CSR row the post (dst) or the pre (src)? (same probe as _install_block_diagonal)
+    row_is_dst = row_is_src = 0
+    for r in range(M.shape[0]):
+        r_in_dst = r in dst_idx; r_in_src = r in src_idx
+        if not (r_in_dst or r_in_src):
+            continue
+        for off in range(int(indptr[r]), int(indptr[r + 1])):
+            c = int(indices[off])
+            if r_in_dst and c in src_idx:
+                row_is_dst += 1
+            if r_in_src and c in dst_idx:
+                row_is_src += 1
+    row_is_post = row_is_dst >= row_is_src
+    for r in range(M.shape[0]):
+        for off in range(int(indptr[r]), int(indptr[r + 1])):
+            c = int(indices[off])
+            post, pre = (r, c) if row_is_post else (c, r)
+            if pre in src_idx and post in dst_idx:
+                sc = (pre - src_base) // blk
+                dc = (post - dst_base) // blk
+                data[off] = float(gains[dc]) if sc == dc else 0.0
+    bridge.cp_connections = sp.csr_matrix((data, indices, indptr), shape=M.shape)
+
+
 def extract_assertion(text: str):
     """Return (agent, action, patient) surface tokens when `text` is a 3-content-token declarative SVO assertion,
     else None (a WH-question / non-assertion has the patient as the query -> not an expectation-bearing assertion)."""
@@ -109,10 +165,20 @@ class SurpriseProductionOrgan:
     blocks on demand (stored patients -> the cue-addressable blocks; novel asserted patients -> the spare blocks).
     Each read drives the prediction (cue) then the assertion (cue + asserted patient) and reads surprise firing."""
 
-    def __init__(self, seed: int = 42, cue_to_expected_weight: float = 0.8, n_reps: int = 22):
+    def __init__(self, seed: int = 42, cue_to_expected_weight: float = 0.8, n_reps: int = 22,
+                 hz_target: float = 0.5, gain_eta: float = 0.18, gain_max: float = 3.0, homeo_reps: int = 12):
         self.seed = int(seed)
         self.cue_w = float(cue_to_expected_weight)     # 0.8 = the robust 6/6-GO operating point (de-risk)
         self.n_reps = int(n_reps)
+        # ── the per-block HOMEOSTATIC PREDICTION-GAIN equalizer (the precision companion; de-risk GO 6/6) ──
+        self.hz_target = float(hz_target)      # per-block confirm set-point (well below any contradict/novel)
+        self.gain_eta = float(gain_eta)        # homeostatic step: weight per Hz of confirm error over target
+        self.gain_max = float(gain_max)        # cap on the per-block prediction gain (no runaway)
+        self.homeo_reps = int(homeo_reps)
+        self.pred_gains = None                 # per-trained-block cue->expected gain (the equalized precision)
+        self.homeo_trace = []                  # per-rep max confirm error (convergence record)
+        self.confirm_before = None             # per-block confirm at base gain (the residual, for transparency)
+        self.confirm_after = None              # per-block confirm after equalization
         self._built = False
         self.bridge = self.cfg = self.meta = self.xp = self.idx_map = None
         self.les = None                                # lazily-built lesioned twin (edges zeroed)
@@ -140,17 +206,68 @@ class SurpriseProductionOrgan:
             _install_block_diagonal(bridge, "patient_expected", "surprise", meta["blk"], 0.0)  # remove prediction
         return bridge, cfg, meta, xp, idx_map
 
+    def _confirm_per_block(self):
+        """Per-stored-block CONFIRM surprise rate (Hz): drive cue i (prediction phase) then cue i + asserted i, read
+        the surprise pool — the organ's OWN read path (identical to `measure_conditions`' confirm branch)."""
+        nt = self.meta["n_trained"]
+        rates = []
+        for i in range(nt):
+            _hard_reset(self.bridge)
+            r = _drive_read(self.bridge, self.idx_map,
+                            {"cue": (i, 600.0), "patient_asserted": (i, 600.0)},
+                            60, self.xp, ["surprise"], pre_drives={"cue": (i, 600.0)}, pre_steps=60)
+            rates.append(r["surprise"])
+        return np.asarray(rates)
+
+    def _homeostat(self):
+        """THE COMPANION PROCESS — an iterative per-block prediction-gain equalizer (precision-weighted predictive
+        coding: the gain that cancels an expected input is set by a homeostatic / divisive-normalization control;
+        Vogels-Sprekeler-Zenke-Ganguli-Gerstner 2011; Feldman & Friston 2010). Where a stored block's CONFIRM error
+        (the surprise pool's firing on a FAMILIAR assertion) exceeds the target, strengthen THAT block's top-down
+        prediction gain (cue->patient_expected); iterate until every familiar read is at target (or the cap is hit).
+        Specificity is preserved BY CONSTRUCTION: the topographic block-diagonal prediction inhibits ONLY its own
+        confirm block, so contradict/novel reads (a DIFFERENT block) are untouched. Validated 6/6 by the de-risk."""
+        nt = self.meta["n_trained"]
+        base = self.cue_w
+        gains = np.full(nt, base, dtype=np.float64)
+        self.confirm_before = self._confirm_per_block()
+        conf = self.confirm_before
+        for _ in range(self.homeo_reps):
+            over = np.maximum(0.0, conf - self.hz_target)
+            self.homeo_trace.append(float(over.max()))
+            if over.max() <= 0.0:
+                break
+            gains = np.clip(gains + self.gain_eta * over, base, self.gain_max)  # only strengthen (E/I balance)
+            _install_block_gains(self.bridge, self.meta, "cue", "patient_expected", gains)
+            conf = self._confirm_per_block()
+        self.confirm_after = conf
+        self.pred_gains = gains
+        return gains
+
     def ensure_built(self):
         if self._built:
             return
         self.bridge, self.cfg, self.meta, self.xp, self.idx_map = self._build_one(lesion=False)
         self._novel_next = self.meta["n_trained"]
-        # calibrate the confirm-vs-contradict threshold from the trained concepts (the de-risk's measure).
+        # THE PRECISION COMPANION (default-ON): equalize the per-block prediction gain BEFORE calibrating the
+        # threshold, so every familiar (confirm) edge reads reliably below threshold (het_vote_rate -> 1.0) while
+        # surprise specificity holds by construction. `BRAIN_SURPRISE_HOMEOSTAT=0` skips it (byte-identical oracle).
+        homeostat_on = surprise_homeostat_enabled()
+        if homeostat_on:
+            self._homeostat()
+        # calibrate the confirm-vs-contradict threshold on the (homeostatted) circuit (the de-risk's measure).
         res = measure_conditions(self.bridge, self.cfg, self.idx_map, self.meta, self.xp)
         conf, contra, nov = res["confirm_hz"], res["contradict_hz"], res["novel_hz"]
         self.threshold = 0.5 * (conf + min(contra, nov))   # midpoint of confirm and the weaker violation
         self.calib = {"confirm_hz": float(conf), "contradict_hz": float(contra), "novel_hz": float(nov),
                       "cue_to_expected_weight": self.cue_w}
+        if homeostat_on:
+            self.calib.update({
+                "homeostat": True,
+                "pred_gain_min": float(self.pred_gains.min()), "pred_gain_max": float(self.pred_gains.max()),
+                "confirm_before_max": float(self.confirm_before.max()),
+                "confirm_after_max": float(self.confirm_after.max()),
+            })
         self._built = True
 
     def _ensure_les(self):

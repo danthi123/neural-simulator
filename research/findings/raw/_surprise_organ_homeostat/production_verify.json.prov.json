@@ -1,0 +1,26 @@
+{
+ "run_id": "1786629614-1160053",
+ "runner": "research/runners/_surprise_organ_homeostat_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_surprise_organ_homeostat_production_verify.py"
+ ],
+ "git_sha": "5629f580e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T10:00:14",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 260049.6,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_surprise_organ_homeostat/production_verify.json"
+}

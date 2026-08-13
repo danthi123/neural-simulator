@@ -1,0 +1,235 @@
+{
+  "runner": "_surprise_organ_homeostat_production_verify",
+  "go": true,
+  "status": "GO",
+  "a_organ_precision_ok": true,
+  "b_real_handler_ok": true,
+  "rows": {
+    "A_organ_precision": {
+      "on": [
+        {
+          "seed": 42,
+          "homeostat_flag": true,
+          "calib_homeostat": true,
+          "threshold": 2.658,
+          "confirm_max": 0.174,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": [
+            0.8,
+            1.11
+          ]
+        },
+        {
+          "seed": 43,
+          "homeostat_flag": true,
+          "calib_homeostat": true,
+          "threshold": 2.557,
+          "confirm_max": 0.231,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": [
+            0.8,
+            0.8
+          ]
+        },
+        {
+          "seed": 44,
+          "homeostat_flag": true,
+          "calib_homeostat": true,
+          "threshold": 2.619,
+          "confirm_max": 0.521,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": [
+            0.8,
+            1.31
+          ]
+        },
+        {
+          "seed": 100,
+          "homeostat_flag": true,
+          "calib_homeostat": true,
+          "threshold": 2.684,
+          "confirm_max": 0.231,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": [
+            0.8,
+            1.72
+          ]
+        },
+        {
+          "seed": 101,
+          "homeostat_flag": true,
+          "calib_homeostat": true,
+          "threshold": 2.532,
+          "confirm_max": 0.521,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": [
+            0.8,
+            1.41
+          ]
+        },
+        {
+          "seed": 102,
+          "homeostat_flag": true,
+          "calib_homeostat": true,
+          "threshold": 2.724,
+          "confirm_max": 0.521,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": [
+            0.8,
+            1.12
+          ]
+        }
+      ],
+      "off": [
+        {
+          "seed": 42,
+          "homeostat_flag": false,
+          "calib_homeostat": false,
+          "threshold": 2.731,
+          "confirm_max": 1.331,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": null
+        },
+        {
+          "seed": 43,
+          "homeostat_flag": false,
+          "calib_homeostat": false,
+          "threshold": 2.564,
+          "confirm_max": 0.521,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": null
+        },
+        {
+          "seed": 44,
+          "homeostat_flag": false,
+          "calib_homeostat": false,
+          "threshold": 2.875,
+          "confirm_max": 3.877,
+          "vote_rate": 0.875,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": null
+        },
+        {
+          "seed": 100,
+          "homeostat_flag": false,
+          "calib_homeostat": false,
+          "threshold": 2.687,
+          "confirm_max": 5.671,
+          "vote_rate": 0.875,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": null
+        },
+        {
+          "seed": 101,
+          "homeostat_flag": false,
+          "calib_homeostat": false,
+          "threshold": 2.488,
+          "confirm_max": 4.34,
+          "vote_rate": 0.875,
+          "novel_registers": 0.875,
+          "contradict_registers": 1.0,
+          "pred_gain": null
+        },
+        {
+          "seed": 102,
+          "homeostat_flag": false,
+          "calib_homeostat": false,
+          "threshold": 2.868,
+          "confirm_max": 2.083,
+          "vote_rate": 1.0,
+          "novel_registers": 1.0,
+          "contradict_registers": 1.0,
+          "pred_gain": null
+        }
+      ],
+      "on_vote_rate_all_1": true,
+      "on_specificity_all": true,
+      "on_calib_homeostat_all": true,
+      "off_calib_homeostat_none": true,
+      "off_residual_real": true,
+      "ok": true
+    },
+    "B_real_handler": {
+      "confirm_not_surprised": true,
+      "confirm_hz": 0.0,
+      "contradict_surprised": true,
+      "contradict_hz": 5.6134259259259265,
+      "handler_homeostat_on": true,
+      "lesion_confirm_fires": true,
+      "lesion_confirm_hz": 4.918981481481482,
+      "escape_off_confirm_not_surprised": true,
+      "escape_off_contradict_surprised": true,
+      "escape_off_calib_homeostat_absent": true,
+      "ok": true
+    }
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "ORGAN PRECISION: homeostat-ON vote_rate==1.0 (8/8) on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "SURPRISE SPECIFICITY: novel + contradict still register on all 6 seeds (ON)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the equalizer is LOAD-BEARING: >=1 seed drops below 1.0 with the homeostat OFF",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "REAL HANDLER: CONFIRM not-surprised + CONTRADICT surprised + D2 organ homeostat-on by default",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION-LOAD-BEARING: the SAME confirm FIRES under BRAIN_SURPRISE_LESION=1",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ESCAPE BRAIN_SURPRISE_HOMEOSTAT=0: same confirm/contradict verdicts (no regression)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "online spiking homeostatic-plasticity rule",
+      "why": "the equalizer is a BUILD-TIME host-orchestrated calibration loop (like the organ's existing threshold + Hebbian train_expectation loops); an ONLINE spiking inhibitory/homeostatic-plasticity rule (Vogels 2011) is the further step. The which-patient MAPPING is still a topographic prior (a fully-learned all-to-all CA3 recall is the unchanged separate rung)."
+    }
+  ],
+  "undefined_reasons": []
+}
