@@ -125,8 +125,13 @@ class MetacogProductionOrgan:
     margin threshold from a synthetic high/low-evidence battery. Each read maps the answer's evidence scalar to
     a graded workspace drive, settles the WTA, and reads the balance margin off cp_firing_states."""
 
-    def __init__(self, seed: int = 42):
+    def __init__(self, seed: int = 42, shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE pool #2 (opt-in, default per BRAIN_ONEBRAIN_MERGE2): when a MergedSubstrate2 is injected,
+        # this organ's workspace/meta_schema slice lives on the SHARED spiking bridge it co-inhabits with the
+        # pragmatic organ (one cp_membrane_potential_v) instead of its own bridge. See
+        # research/runners/onebrain_merge_production2.py.
+        self._shared = shared
         self._built = False
         self.bridge = self.xp = self.idx = self.snap = None
         self.threshold = None
@@ -135,8 +140,15 @@ class MetacogProductionOrgan:
     def ensure_built(self):
         if self._built:
             return
-        self.bridge, self.xp, self.idx, self.snap = build_metacog_bridge(
-            seed=self.seed, confidence_read="balance")
+        if self._shared is not None:
+            # ONE-BRAIN MERGE pool #2: read this organ's slice of the SHARED bridge (built by MergedSubstrate2).
+            # No training (frozen balance operating point); the threshold below self-calibrates on the shared slice.
+            self._shared.ensure_built()
+            self.bridge, self.xp = self._shared.bridge, self._shared.xp
+            self.idx, self.snap = self._shared.metacog_idx(), self._shared.snap
+        else:
+            self.bridge, self.xp, self.idx, self.snap = build_metacog_bridge(
+                seed=self.seed, confidence_read="balance")
         # CALIBRATE the confident/uncertain threshold from a synthetic high- vs low-evidence battery (the same
         # workspace read the production turn uses). Place the threshold in the gap, biased toward the low side so a
         # clearly-high-evidence answer reliably reads confident (no spurious hedge); else the class-mean midpoint.
@@ -182,10 +194,14 @@ _ORGAN: MetacogProductionOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> MetacogProductionOrgan:
-    """The process-shared metacog organ (built once on first use)."""
+    """The process-shared metacog organ (built once on first use). When the ONE-BRAIN MERGE pool-#2 flag is ON
+    (`BRAIN_ONEBRAIN_MERGE2`, default per _MERGE2_DEFAULT_ON) the organ is backed by the process-shared
+    MergedSubstrate2 it co-inhabits with the pragmatic organ (ONE spiking bridge); OFF -> its own bridge as today."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = MetacogProductionOrgan(seed=seed)
+        from research.runners.onebrain_merge_production2 import merge2_enabled, get_merged_substrate2
+        shared = get_merged_substrate2(seed) if merge2_enabled() else None
+        _ORGAN = MetacogProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 
 

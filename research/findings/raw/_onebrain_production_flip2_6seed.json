@@ -1,0 +1,1001 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "one_pool": 6,
+  "byte_id_merge_vs_coresident": 6,
+  "merge_go": 6,
+  "metacog_answer_preserved": 1,
+  "pragmatic_answer_preserved": 6,
+  "answer_classes_preserved_vs_today": 1,
+  "residual_metacog_balance_max": 0.0021875,
+  "residual_pragmatic_belief_max": 0.06580000000000003,
+  "flip_go": 1,
+  "n": 6,
+  "rows": [
+    {
+      "seed": 42,
+      "one_pool": true,
+      "n_pool": 450,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_metacog_delta": 0.0,
+      "byte_id_pragmatic_delta": 0.0,
+      "answer_classes_preserved_vs_today": false,
+      "metacog_class_ok": false,
+      "pragmatic_class_ok": true,
+      "residual_metacog_balance_max": 0.0018593750000000008,
+      "residual_pragmatic_belief_max": 0.02510000000000001,
+      "merge_go": true,
+      "flip_go": false,
+      "mc_today": [
+        [
+          0.0,
+          0.0006718750000000006,
+          false
+        ],
+        [
+          0.15,
+          0.0006875000000000006,
+          false
+        ],
+        [
+          0.3,
+          0.0007343749999999989,
+          false
+        ],
+        [
+          0.45,
+          0.000953125,
+          false
+        ],
+        [
+          0.6,
+          0.0015624999999999988,
+          true
+        ],
+        [
+          0.75,
+          0.001875,
+          true
+        ],
+        [
+          0.9,
+          0.0027968750000000016,
+          true
+        ],
+        [
+          1.0,
+          0.002203125000000001,
+          true
+        ]
+      ],
+      "mc_merged": [
+        [
+          0.0,
+          0.0010624999999999992,
+          true
+        ],
+        [
+          0.15,
+          0.00048437499999999956,
+          false
+        ],
+        [
+          0.3,
+          0.0006249999999999997,
+          false
+        ],
+        [
+          0.45,
+          0.001093750000000001,
+          true
+        ],
+        [
+          0.6,
+          0.0008749999999999999,
+          false
+        ],
+        [
+          0.75,
+          0.0008750000000000008,
+          false
+        ],
+        [
+          0.9,
+          0.0009375000000000008,
+          true
+        ],
+        [
+          1.0,
+          0.001125000000000001,
+          true
+        ]
+      ],
+      "pr_today": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7315,
+            0.2685
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ],
+      "pr_merged": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7064,
+            0.2936
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ]
+    },
+    {
+      "seed": 43,
+      "one_pool": true,
+      "n_pool": 450,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_metacog_delta": 0.0,
+      "byte_id_pragmatic_delta": 0.0,
+      "answer_classes_preserved_vs_today": false,
+      "metacog_class_ok": false,
+      "pragmatic_class_ok": true,
+      "residual_metacog_balance_max": 0.002171875000000003,
+      "residual_pragmatic_belief_max": 0.06580000000000003,
+      "merge_go": true,
+      "flip_go": false,
+      "mc_today": [
+        [
+          0.0,
+          0.0006562500000000006,
+          false
+        ],
+        [
+          0.15,
+          0.0008593750000000008,
+          false
+        ],
+        [
+          0.3,
+          0.00048437499999999956,
+          false
+        ],
+        [
+          0.45,
+          0.0005625000000000005,
+          false
+        ],
+        [
+          0.6,
+          0.0007656250000000007,
+          false
+        ],
+        [
+          0.75,
+          0.000812499999999999,
+          false
+        ],
+        [
+          0.9,
+          0.002171875000000001,
+          true
+        ],
+        [
+          1.0,
+          0.0024062500000000013,
+          true
+        ]
+      ],
+      "mc_merged": [
+        [
+          0.0,
+          0.0008749999999999999,
+          false
+        ],
+        [
+          0.15,
+          0.0016875000000000015,
+          false
+        ],
+        [
+          0.3,
+          0.0015468750000000005,
+          false
+        ],
+        [
+          0.45,
+          0.0021562499999999993,
+          true
+        ],
+        [
+          0.6,
+          0.0018281249999999999,
+          false
+        ],
+        [
+          0.75,
+          0.002984375000000002,
+          true
+        ],
+        [
+          0.9,
+          0.0026718749999999998,
+          true
+        ],
+        [
+          1.0,
+          0.003953125,
+          true
+        ]
+      ],
+      "pr_today": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7978,
+            0.2022
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ],
+      "pr_merged": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.732,
+            0.268
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ]
+    },
+    {
+      "seed": 44,
+      "one_pool": true,
+      "n_pool": 450,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_metacog_delta": 0.0,
+      "byte_id_pragmatic_delta": 0.0,
+      "answer_classes_preserved_vs_today": true,
+      "metacog_class_ok": true,
+      "pragmatic_class_ok": true,
+      "residual_metacog_balance_max": 0.0015624999999999997,
+      "residual_pragmatic_belief_max": 0.0474,
+      "merge_go": true,
+      "flip_go": true,
+      "mc_today": [
+        [
+          0.0,
+          0.00045312499999999954,
+          false
+        ],
+        [
+          0.15,
+          0.0004999999999999996,
+          false
+        ],
+        [
+          0.3,
+          0.0007812500000000007,
+          false
+        ],
+        [
+          0.45,
+          0.0007187499999999998,
+          false
+        ],
+        [
+          0.6,
+          0.0013437500000000003,
+          true
+        ],
+        [
+          0.75,
+          0.0015000000000000005,
+          true
+        ],
+        [
+          0.9,
+          0.0018750000000000008,
+          true
+        ],
+        [
+          1.0,
+          0.001968750000000001,
+          true
+        ]
+      ],
+      "mc_merged": [
+        [
+          0.0,
+          0.0006562500000000006,
+          false
+        ],
+        [
+          0.15,
+          0.0012187499999999993,
+          false
+        ],
+        [
+          0.3,
+          0.0006874999999999997,
+          false
+        ],
+        [
+          0.45,
+          0.0014531250000000004,
+          false
+        ],
+        [
+          0.6,
+          0.0024218749999999995,
+          true
+        ],
+        [
+          0.75,
+          0.002093750000000002,
+          true
+        ],
+        [
+          0.9,
+          0.003250000000000002,
+          true
+        ],
+        [
+          1.0,
+          0.0035312500000000005,
+          true
+        ]
+      ],
+      "pr_today": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7423,
+            0.2577
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ],
+      "pr_merged": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.6949,
+            0.3051
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ]
+    },
+    {
+      "seed": 100,
+      "one_pool": true,
+      "n_pool": 450,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_metacog_delta": 0.0,
+      "byte_id_pragmatic_delta": 0.0,
+      "answer_classes_preserved_vs_today": false,
+      "metacog_class_ok": false,
+      "pragmatic_class_ok": true,
+      "residual_metacog_balance_max": 0.0008593749999999964,
+      "residual_pragmatic_belief_max": 0.030600000000000016,
+      "merge_go": true,
+      "flip_go": false,
+      "mc_today": [
+        [
+          0.0,
+          0.00109375,
+          false
+        ],
+        [
+          0.15,
+          0.0017187499999999972,
+          false
+        ],
+        [
+          0.3,
+          0.0013281249999999994,
+          false
+        ],
+        [
+          0.45,
+          0.0017500000000000007,
+          false
+        ],
+        [
+          0.6,
+          0.0018906250000000008,
+          true
+        ],
+        [
+          0.75,
+          0.0022500000000000003,
+          true
+        ],
+        [
+          0.9,
+          0.0024375000000000013,
+          true
+        ],
+        [
+          1.0,
+          0.003171875000000001,
+          true
+        ]
+      ],
+      "mc_merged": [
+        [
+          0.0,
+          0.0013750000000000012,
+          false
+        ],
+        [
+          0.15,
+          0.0008593750000000008,
+          false
+        ],
+        [
+          0.3,
+          0.001875,
+          true
+        ],
+        [
+          0.45,
+          0.0016406250000000006,
+          false
+        ],
+        [
+          0.6,
+          0.00209375,
+          true
+        ],
+        [
+          0.75,
+          0.001687499999999999,
+          false
+        ],
+        [
+          0.9,
+          0.0031406249999999993,
+          true
+        ],
+        [
+          1.0,
+          0.003687499999999999,
+          true
+        ]
+      ],
+      "pr_today": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7551,
+            0.2449
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ],
+      "pr_merged": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7245,
+            0.2755
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ]
+    },
+    {
+      "seed": 101,
+      "one_pool": true,
+      "n_pool": 450,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_metacog_delta": 0.0,
+      "byte_id_pragmatic_delta": 0.0,
+      "answer_classes_preserved_vs_today": false,
+      "metacog_class_ok": false,
+      "pragmatic_class_ok": true,
+      "residual_metacog_balance_max": 0.0021875,
+      "residual_pragmatic_belief_max": 0.013900000000000023,
+      "merge_go": true,
+      "flip_go": false,
+      "mc_today": [
+        [
+          0.0,
+          0.0011562499999999993,
+          false
+        ],
+        [
+          0.15,
+          0.0015468750000000014,
+          false
+        ],
+        [
+          0.3,
+          0.002062500000000001,
+          false
+        ],
+        [
+          0.45,
+          0.002187500000000001,
+          false
+        ],
+        [
+          0.6,
+          0.0024531250000000013,
+          true
+        ],
+        [
+          0.75,
+          0.003000000000000002,
+          true
+        ],
+        [
+          0.9,
+          0.003984375,
+          true
+        ],
+        [
+          1.0,
+          0.004421875000000001,
+          true
+        ]
+      ],
+      "mc_merged": [
+        [
+          0.0,
+          0.0008906250000000008,
+          false
+        ],
+        [
+          0.15,
+          0.001171875000000001,
+          false
+        ],
+        [
+          0.3,
+          0.0016562499999999989,
+          true
+        ],
+        [
+          0.45,
+          0.0019375,
+          true
+        ],
+        [
+          0.6,
+          0.0016562499999999997,
+          true
+        ],
+        [
+          0.75,
+          0.0015468750000000005,
+          true
+        ],
+        [
+          0.9,
+          0.0017968749999999999,
+          true
+        ],
+        [
+          1.0,
+          0.0023593750000000004,
+          true
+        ]
+      ],
+      "pr_today": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7248,
+            0.2752
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ],
+      "pr_merged": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7387,
+            0.2613
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ]
+    },
+    {
+      "seed": 102,
+      "one_pool": true,
+      "n_pool": 450,
+      "byte_id_merge_vs_coresident": true,
+      "byte_id_metacog_delta": 0.0,
+      "byte_id_pragmatic_delta": 0.0,
+      "answer_classes_preserved_vs_today": false,
+      "metacog_class_ok": false,
+      "pragmatic_class_ok": true,
+      "residual_metacog_balance_max": 0.0009687499999999991,
+      "residual_pragmatic_belief_max": 0.04579999999999998,
+      "merge_go": true,
+      "flip_go": false,
+      "mc_today": [
+        [
+          0.0,
+          0.0008281249999999981,
+          true
+        ],
+        [
+          0.15,
+          0.0006093750000000005,
+          false
+        ],
+        [
+          0.3,
+          0.0004687499999999987,
+          false
+        ],
+        [
+          0.45,
+          0.0005468749999999996,
+          false
+        ],
+        [
+          0.6,
+          0.0008593749999999999,
+          true
+        ],
+        [
+          0.75,
+          0.0005000000000000004,
+          false
+        ],
+        [
+          0.9,
+          0.0008906249999999999,
+          true
+        ],
+        [
+          1.0,
+          0.0014843749999999987,
+          true
+        ]
+      ],
+      "mc_merged": [
+        [
+          0.0,
+          0.0007656249999999981,
+          false
+        ],
+        [
+          0.15,
+          0.000953125,
+          false
+        ],
+        [
+          0.3,
+          0.001015625,
+          false
+        ],
+        [
+          0.45,
+          0.001156250000000001,
+          false
+        ],
+        [
+          0.6,
+          0.0012499999999999994,
+          false
+        ],
+        [
+          0.75,
+          0.0014687499999999996,
+          true
+        ],
+        [
+          0.9,
+          0.0015312499999999996,
+          true
+        ],
+        [
+          1.0,
+          0.0018281249999999999,
+          true
+        ]
+      ],
+      "pr_today": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7674,
+            0.2326
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ],
+      "pr_merged": [
+        [
+          "none",
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ],
+        [
+          "some",
+          [
+            0.0,
+            0.7216,
+            0.2784
+          ],
+          true,
+          "some but not all"
+        ],
+        [
+          "all",
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          false,
+          "undetermined (implicature collapsed)"
+        ]
+      ]
+    }
+  ]
+}

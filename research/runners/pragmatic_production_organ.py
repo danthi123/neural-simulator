@@ -62,7 +62,7 @@ from research.runners._pragmatic_graded_belief_source_derisk import (
     onehot_belief_sources,
     ANALYTIC_L1,
 )
-from research.runners._recursive_tom_rsa_derisk import STATES, UTTS
+from research.runners._recursive_tom_rsa_derisk import STATES, UTTS, TRUTH, _rsa_recursion
 
 # surface scalar-quantifier token -> the RSA utterance {none, some, all}. "some" is the implicature-bearing term
 # (its graded belief is non-degenerate); "all"/"none" are handled but degenerate (one-hot regardless of belief source).
@@ -144,8 +144,14 @@ class PragmaticProductionOrgan:
     as {utterance: distribution over states}. The normalization-lesion belief (flat) is built on first lesioned read.
     A read INTERPRETS a scalar utterance -> the graded (or lesioned) listener-belief + the enriched pragmatic reading."""
 
-    def __init__(self, seed: int = 42):
+    def __init__(self, seed: int = 42, shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE pool #2 (opt-in, default per BRAIN_ONEBRAIN_MERGE2): when a MergedSubstrate2 is injected,
+        # the load-bearing GRADED belief is read from this organ's item/item_fs slice of the SHARED spiking bridge
+        # it co-inhabits with the metacog organ (one cp_membrane_potential_v) instead of its own bridge. The one-hot
+        # comparison arm (a separate speaker circuit) + the normalization-lesion belief stay standalone (diagnostics).
+        # See research/runners/onebrain_merge_production2.py.
+        self._shared = shared
         self._built = False
         self.graded = None      # {utt: np.array over STATES} -- the W4 faithful graded posterior (default belief)
         self.onehot = None      # {utt: np.array} -- the leg2_v2 WTA one-hot baseline (the A/B comparison arm)
@@ -154,9 +160,28 @@ class PragmaticProductionOrgan:
     def ensure_built(self):
         if self._built:
             return
-        self.graded = graded_belief_sources(self.seed, normalize=True)   # spiking substrate, frozen
+        if self._shared is not None:
+            self.graded = self._graded_from_shared()                    # spiking substrate, frozen, on pool #2
+        else:
+            self.graded = graded_belief_sources(self.seed, normalize=True)   # spiking substrate, frozen
         self.onehot = onehot_belief_sources(self.seed)                   # the WTA one-hot baseline
         self._built = True
+
+    def _graded_from_shared(self):
+        """Compute the graded RSA L1 posterior on the SHARED pool-#2 bridge's item slice -- byte-identical to
+        graded_belief_sources(seed, normalize=True) minus the standalone build (the recursion + state-normalize logic
+        is reproduced verbatim). This routes the load-bearing spiking pragmatic read through the merged pool."""
+        self._shared.ensure_built()
+        b, xp = self._shared.bridge, self._shared.xp
+        item_dev, snap = self._shared.pragmatic_item_dev(), self._shared.snap
+        _L0, S1, _L1 = _rsa_recursion(b, xp, item_dev, snap, TRUTH, 25)
+        out = {}
+        for j, u in enumerate(UTTS):
+            v = np.asarray(S1[j], dtype=np.float64).copy()
+            if v.sum() <= 1e-9:
+                v = np.array([TRUTH[u][s] for s in STATES], dtype=np.float64)
+            out[u] = v / v.sum()
+        return out
 
     def _ensure_lesion(self):
         if self.lesion is None:
@@ -207,10 +232,15 @@ _ORGAN: PragmaticProductionOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> PragmaticProductionOrgan:
-    """The process-shared pragmatic organ (built once on first use)."""
+    """The process-shared pragmatic organ (built once on first use). When the ONE-BRAIN MERGE pool-#2 flag is ON
+    (`BRAIN_ONEBRAIN_MERGE2`, default per _MERGE2_DEFAULT_ON) the organ's graded belief is read from the
+    process-shared MergedSubstrate2 it co-inhabits with the metacog organ (ONE spiking bridge); OFF -> its own
+    bridge as today."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = PragmaticProductionOrgan(seed=seed)
+        from research.runners.onebrain_merge_production2 import merge2_enabled, get_merged_substrate2
+        shared = get_merged_substrate2(seed) if merge2_enabled() else None
+        _ORGAN = PragmaticProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 
 
