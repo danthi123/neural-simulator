@@ -1,0 +1,704 @@
+{
+  "runner": "_w4_detector_k_recalibration_derisk",
+  "faculty": "D pragmatics TASK#12: recalibrate the coincidence detector k-threshold to the fractional (graded) coincident drive so the dendritic plateau reads graded coincidence, then re-run the W4 A/B on the spiking magnitude-fidelity pragmatic-alignment metric. FUNCTIONAL correlate only.",
+  "builds_on": [
+    "2026-08-13-W4-spiking-graded-implicature-belief-magnitude-metric-detector-baserate-wall-6seed (the wall + its NAMED next lever)",
+    "2026-07-08-riii-onsubstrate-dendritic-dAP-completion-SURPASS-6seed (the Rung-0 detector-threshold recalibration precedent)"
+  ],
+  "external_grounding": [
+    "Larkum (2013), Trends in Neurosciences 36(3):141 -- the plateau's tunable coinciding-input threshold ('lower the amount of coinciding spikes required to initiate a plateau').",
+    "Frank & Goodman (2012), Science 336(6084):998 -- the RSA objective is a graded magnitude, not an argmax."
+  ],
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "chance": 0.3333333333333333,
+  "smoke": true,
+  "frac_target": 0.27,
+  "silent_floor": 0.05,
+  "ignite_min": 0.06,
+  "kthr_grid": [
+    34.0,
+    36.0,
+    38.0,
+    40.0,
+    42.0,
+    44.0,
+    46.0
+  ],
+  "default_kthr": 44.0,
+  "move_eps": 0.03,
+  "verdict": "UNDEFINED -- smoke (n<6); ignition curve + A/B teeth printed for mechanism-check only. The 6-seed bar is authoritative (a single-seed smoke was a false positive last time).",
+  "go": false,
+  "gates": {
+    "instrument_clean_6seed": false,
+    "metric_moved_recal": false,
+    "recal_beats_default": false,
+    "default_reproduces_negative": true,
+    "scramble_loses": true
+  },
+  "calibration": {
+    "n_clean": 1,
+    "n_seeds": 1,
+    "mean_picked_max_solo": 0.0125,
+    "mean_picked_margin": 0.1912,
+    "mean_picked_r_frac": 0.2037,
+    "kthr_picked_per_seed": {
+      "42": 34.0
+    },
+    "clean_per_seed": {
+      "42": true
+    },
+    "per_seed": [
+      {
+        "seed": 42,
+        "kthr_picked": 34.0,
+        "calibration_clean": true,
+        "picked_solo_intent": 0.0,
+        "picked_solo_belief": 0.0125,
+        "picked_max_solo": 0.0125,
+        "picked_r_frac": 0.2037,
+        "picked_r_full": 0.325,
+        "picked_margin": 0.1912,
+        "ignition_table": [
+          {
+            "kthr": 34.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0125,
+            "r_frac": 0.2037,
+            "r_full": 0.325,
+            "max_solo": 0.0125,
+            "margin": 0.1912,
+            "gate_ok": true
+          },
+          {
+            "kthr": 36.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0112,
+            "r_frac": 0.1375,
+            "r_full": 0.3225,
+            "max_solo": 0.0112,
+            "margin": 0.1263,
+            "gate_ok": true
+          },
+          {
+            "kthr": 38.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0025,
+            "r_frac": 0.1138,
+            "r_full": 0.3225,
+            "max_solo": 0.0025,
+            "margin": 0.1113,
+            "gate_ok": true
+          },
+          {
+            "kthr": 40.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0,
+            "r_frac": 0.0825,
+            "r_full": 0.3337,
+            "max_solo": 0.0,
+            "margin": 0.0825,
+            "gate_ok": true
+          },
+          {
+            "kthr": 42.0,
+            "solo_intent": 0.0838,
+            "solo_belief": 0.0,
+            "r_frac": 0.035,
+            "r_full": 0.3212,
+            "max_solo": 0.0838,
+            "margin": -0.0488,
+            "gate_ok": false
+          },
+          {
+            "kthr": 44.0,
+            "solo_intent": 0.085,
+            "solo_belief": 0.0,
+            "r_frac": 0.0175,
+            "r_full": 0.32,
+            "max_solo": 0.085,
+            "margin": -0.0675,
+            "gate_ok": false
+          },
+          {
+            "kthr": 46.0,
+            "solo_intent": 0.085,
+            "solo_belief": 0.0838,
+            "r_frac": 0.0063,
+            "r_full": 0.2913,
+            "max_solo": 0.085,
+            "margin": -0.0788,
+            "gate_ok": false
+          }
+        ],
+        "frac_target": 0.27
+      }
+    ]
+  },
+  "recalibrated_ab": {
+    "metric_moved": false,
+    "plateau_move": -0.03668,
+    "seeds_graded_gt_onehot": 0,
+    "instrument_valid": false,
+    "gates": {
+      "G1_graded": true,
+      "G2_calibrated": true,
+      "G3_metric_moves_plateau": false,
+      "G4_argmax_metric_flat": true,
+      "G5a_lesion_collapses": true,
+      "G5b_scramble_loses": true,
+      "G5c_plateau_load_bearing": false
+    },
+    "aggregate": {
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.037,
+      "plateau_mag_fidelity_onehot": 0.70105,
+      "plateau_mag_fidelity_graded": 0.66437,
+      "plateau_mag_fidelity_graded_lesion": 0.59276,
+      "plateau_mag_fidelity_scramble": 0.30934,
+      "plateau_argmax_align_onehot": 1.0,
+      "plateau_argmax_align_graded": 1.0,
+      "plateau_move_graded_minus_onehot": -0.03668,
+      "plateau_seeds_graded_gt_onehot": 0,
+      "plateau_implicature_recovery_onehot": 0.12945,
+      "plateau_implicature_recovery_graded": 0.33614,
+      "plateau_implicature_recovery_scramble": 0.184,
+      "linear_mag_fidelity_onehot": 0.34848,
+      "linear_mag_fidelity_graded": 0.3534,
+      "linear_mag_fidelity_graded_lesion": 0.35886,
+      "linear_mag_fidelity_scramble": 0.41641,
+      "linear_argmax_align_onehot": 0.0,
+      "linear_argmax_align_graded": 0.0,
+      "linear_move_graded_minus_onehot": 0.00492,
+      "linear_seeds_graded_gt_onehot": 1,
+      "linear_implicature_recovery_onehot": 0.35689,
+      "linear_implicature_recovery_graded": 0.36398,
+      "linear_implicature_recovery_scramble": 0.40142
+    }
+  },
+  "default_k44_control_ab": {
+    "metric_moved": false,
+    "plateau_move": 0.027,
+    "seeds_graded_gt_onehot": 1,
+    "aggregate": {
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.037,
+      "plateau_mag_fidelity_onehot": 0.58069,
+      "plateau_mag_fidelity_graded": 0.60769,
+      "plateau_mag_fidelity_graded_lesion": 0.52945,
+      "plateau_mag_fidelity_scramble": 0.2809,
+      "plateau_argmax_align_onehot": 1.0,
+      "plateau_argmax_align_graded": 1.0,
+      "plateau_move_graded_minus_onehot": 0.027,
+      "plateau_seeds_graded_gt_onehot": 1,
+      "plateau_implicature_recovery_onehot": 0.395,
+      "plateau_implicature_recovery_graded": 0.18244,
+      "plateau_implicature_recovery_scramble": 0.30802,
+      "linear_mag_fidelity_onehot": 0.34848,
+      "linear_mag_fidelity_graded": 0.3534,
+      "linear_mag_fidelity_graded_lesion": 0.35886,
+      "linear_mag_fidelity_scramble": 0.41641,
+      "linear_argmax_align_onehot": 0.0,
+      "linear_argmax_align_graded": 0.0,
+      "linear_move_graded_minus_onehot": 0.00492,
+      "linear_seeds_graded_gt_onehot": 1,
+      "linear_implicature_recovery_onehot": 0.35689,
+      "linear_implicature_recovery_graded": 0.36398,
+      "linear_implicature_recovery_scramble": 0.40142
+    }
+  },
+  "per_seed_recal": [
+    {
+      "seed": 42,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7315,
+          0.2685
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5,
+          0.5
+        ],
+        "scramble": [
+          0.7315,
+          0.2685,
+          0.0
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.70105,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10833,
+              0.0,
+              0.06167
+            ],
+            [
+              0.00417,
+              0.10875,
+              0.06167
+            ],
+            [
+              0.02375,
+              0.01958,
+              0.10792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6373,
+            0.6229,
+            0.843
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.66437,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10833,
+              0.00792,
+              0.06167
+            ],
+            [
+              0.00417,
+              0.11708,
+              0.06167
+            ],
+            [
+              0.02375,
+              0.06667,
+              0.10792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6089,
+            0.6401,
+            0.7441
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.59276,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10833,
+              0.05542,
+              0.06167
+            ],
+            [
+              0.00417,
+              0.12875,
+              0.06167
+            ],
+            [
+              0.02375,
+              0.11583,
+              0.10792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4806,
+            0.6617,
+            0.636
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.30934,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.06167,
+              0.11833,
+              0.0
+            ],
+            [
+              0.06167,
+              0.065,
+              0.10875
+            ],
+            [
+              0.10792,
+              0.02875,
+              0.01958
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3426,
+            0.2761,
+            0.3093
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34848,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04083,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03208,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2873,
+            0.2831,
+            0.4751
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.3534,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.045,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03667,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04125,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2772,
+            0.311,
+            0.4721
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35886,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03292,
+              0.05292,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.04292,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04167,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2599,
+            0.3456,
+            0.4711
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.41641,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04083,
+              0.03833,
+              0.04083
+            ],
+            [
+              0.04,
+              0.0425,
+              0.03208
+            ],
+            [
+              0.03083,
+              0.0475,
+              0.04
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3403,
+            0.3709,
+            0.538
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.037
+    }
+  ],
+  "per_seed_default": [
+    {
+      "seed": 42,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7315,
+          0.2685
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5,
+          0.5
+        ],
+        "scramble": [
+          0.7315,
+          0.2685,
+          0.0
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.58069,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.06792,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.10667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.06583,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5257,
+            0.5689,
+            0.6475
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.60769,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.0525,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.07083,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.0225,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5689,
+            0.467,
+            0.7872
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.52945,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10667,
+              0.07125,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.06667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.07708,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5172,
+            0.452,
+            0.6192
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.2809,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.02833,
+              0.08,
+              0.06792
+            ],
+            [
+              0.04042,
+              0.0275,
+              0.10667
+            ],
+            [
+              0.07458,
+              0.0625,
+              0.06583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.1608,
+            0.1575,
+            0.5244
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34848,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04083,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03208,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2873,
+            0.2831,
+            0.4751
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.3534,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.045,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03667,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04125,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2772,
+            0.311,
+            0.4721
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35886,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03292,
+              0.05292,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.04292,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04167,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2599,
+            0.3456,
+            0.4711
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.41641,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04083,
+              0.03833,
+              0.04083
+            ],
+            [
+              0.04,
+              0.0425,
+              0.03208
+            ],
+            [
+              0.03083,
+              0.0475,
+              0.04
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3403,
+            0.3709,
+            0.538
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.037
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. This is a READOUT-threshold recalibration ONLY (how the detector READS a fractional coincidence), NOT a learning rule and NOT a belief change (the belief is byte-identical to the W4 runner). The per-seed kthr is calibrated on the ignition CURVE (controlled fractional/solo drives), NOT on the graded-vs-onehot A/B -- so it is a detector PROPERTY, independent of the RSA content; the scramble control (graded mass on WRONG intents must LOSE, at the SAME kthr) keeps it honest against 'any gradedness wins'. A lone/single-afferent input must NOT ignite (the solo-silence anti-cheat catches 'lower kthr until everything ignites'). Plasticity off (fixed operating point). numpy-CPU real spiking Izhikevich; additive NEW runner (reuse-by-import of the W4 A/B + the Leg-1 detector); NO sim/ edit. NOT a claim of phenomenal access to another mind; self-report would be a functional read-out.",
+  "elapsed_seconds": 2.0
+}

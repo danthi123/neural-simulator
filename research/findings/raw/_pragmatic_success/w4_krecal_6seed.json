@@ -1,0 +1,3606 @@
+{
+  "runner": "_w4_detector_k_recalibration_derisk",
+  "faculty": "D pragmatics TASK#12: recalibrate the coincidence detector k-threshold to the fractional (graded) coincident drive so the dendritic plateau reads graded coincidence, then re-run the W4 A/B on the spiking magnitude-fidelity pragmatic-alignment metric. FUNCTIONAL correlate only.",
+  "builds_on": [
+    "2026-08-13-W4-spiking-graded-implicature-belief-magnitude-metric-detector-baserate-wall-6seed (the wall + its NAMED next lever)",
+    "2026-07-08-riii-onsubstrate-dendritic-dAP-completion-SURPASS-6seed (the Rung-0 detector-threshold recalibration precedent)"
+  ],
+  "external_grounding": [
+    "Larkum (2013), Trends in Neurosciences 36(3):141 -- the plateau's tunable coinciding-input threshold ('lower the amount of coinciding spikes required to initiate a plateau').",
+    "Frank & Goodman (2012), Science 336(6084):998 -- the RSA objective is a graded magnitude, not an argmax."
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "smoke": false,
+  "frac_target": 0.27,
+  "silent_floor": 0.05,
+  "ignite_min": 0.06,
+  "kthr_grid": [
+    34.0,
+    36.0,
+    38.0,
+    40.0,
+    42.0,
+    44.0,
+    46.0
+  ],
+  "default_kthr": 44.0,
+  "move_eps": 0.03,
+  "verdict": "BOUNDARY -- INSTRUMENT (only 5/6 seeds cleanly calibratable; mean max_solo=0.0444); METRIC-MOVE (recal averaged move=-0.0461 0/6; M2 implicature-recovery move=+0.2242 6/6); recal move (-0.0461) not > default move (-0.0353). The recalibration reads the fractional mass for the cleanly-calibrated seeds (M2 implicature-recovery move=+0.2242, 6/6 seeds) but does not clear the 6/6 GO bar. Honest residual + next mechanism in the finding; the refuted deep-credit/BDSP rule is NOT re-proposed.",
+  "go": false,
+  "detector_wall_surpassed": false,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "M1 (intent-averaged magnitude-fidelity) is a VALID instrument: SCRAMBLE (graded mass on WRONG intents) LOSES to onehot -- so a graded<=onehot result is a real NEGATIVE, not an instrument failure",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.25007 onehot=0.72695"
+    },
+    {
+      "kind": "require",
+      "name": "DEFAULT-k44 control reproduces the 2026-08-13 negative (M1 move <= MOVE_EPS: the base-rate wall is real without recalibration)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "default M1 move=-0.0353"
+    },
+    {
+      "kind": "control",
+      "name": "recalibration READS the fractional mass on the implicature cell (recal S[all|some] vs default k44)",
+      "ok": true,
+      "detail": "treatment=0.3598 control=0.2233 |sep|=0.1365 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA",
+      "why": "a fixed-operating-point READ-OUT-threshold recalibration (build_success_bridge kthr arg); the belief + RSA normalizer + detector read at a fixed operating point, as in the W4/leg2 GOs."
+    }
+  ],
+  "undefined_reasons": [],
+  "gates": {
+    "instrument_clean_6seed": false,
+    "M1_averaged_fidelity_moved_recal": false,
+    "M2_implicature_recovery_surpassed": false,
+    "recal_beats_default": false,
+    "default_reproduces_negative": true,
+    "scramble_loses": true
+  },
+  "M2_implicature_recovery": {
+    "note": "the finding's re-diagnosis-named quantity: S[all|some] per-intent-normalized = the listener's graded posterior mass on the true intent read through the neural coincidence rate (NOT an intent-averaged TV). The DIRECT test of whether the recalibrated detector reads the graded fractional mass; scramble (graded mass on WRONG intents) is the anti-cheat.",
+    "recalibrated": {
+      "onehot": 0.1355,
+      "graded": 0.3598,
+      "scramble": 0.5521,
+      "move": 0.2242,
+      "seeds_graded_gt_onehot": 6,
+      "seeds_graded_gt_scramble": 2
+    },
+    "default_k44": {
+      "onehot": 0.2708,
+      "graded": 0.2233,
+      "scramble": 0.4231,
+      "move": -0.0475,
+      "seeds_graded_gt_onehot": 3,
+      "seeds_graded_gt_scramble": 0
+    },
+    "surpassed": false
+  },
+  "calibration": {
+    "n_clean": 5,
+    "n_seeds": 6,
+    "mean_picked_max_solo": 0.0444,
+    "mean_picked_margin": 0.1294,
+    "mean_picked_r_frac": 0.1738,
+    "kthr_picked_per_seed": {
+      "42": 34.0,
+      "43": 34.0,
+      "44": 34.0,
+      "100": 38.0,
+      "101": 34.0,
+      "102": 40.0
+    },
+    "clean_per_seed": {
+      "42": true,
+      "43": false,
+      "44": true,
+      "100": true,
+      "101": true,
+      "102": true
+    },
+    "per_seed": [
+      {
+        "seed": 42,
+        "kthr_picked": 34.0,
+        "calibration_clean": true,
+        "picked_solo_intent": 0.0,
+        "picked_solo_belief": 0.0125,
+        "picked_max_solo": 0.0125,
+        "picked_r_frac": 0.2037,
+        "picked_r_full": 0.325,
+        "picked_margin": 0.1912,
+        "ignition_table": [
+          {
+            "kthr": 34.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0125,
+            "r_frac": 0.2037,
+            "r_full": 0.325,
+            "max_solo": 0.0125,
+            "margin": 0.1912,
+            "gate_ok": true
+          },
+          {
+            "kthr": 36.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0112,
+            "r_frac": 0.1375,
+            "r_full": 0.3225,
+            "max_solo": 0.0112,
+            "margin": 0.1263,
+            "gate_ok": true
+          },
+          {
+            "kthr": 38.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0025,
+            "r_frac": 0.1138,
+            "r_full": 0.3225,
+            "max_solo": 0.0025,
+            "margin": 0.1113,
+            "gate_ok": true
+          },
+          {
+            "kthr": 40.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0,
+            "r_frac": 0.0825,
+            "r_full": 0.3337,
+            "max_solo": 0.0,
+            "margin": 0.0825,
+            "gate_ok": true
+          },
+          {
+            "kthr": 42.0,
+            "solo_intent": 0.0838,
+            "solo_belief": 0.0,
+            "r_frac": 0.035,
+            "r_full": 0.3212,
+            "max_solo": 0.0838,
+            "margin": -0.0488,
+            "gate_ok": false
+          },
+          {
+            "kthr": 44.0,
+            "solo_intent": 0.085,
+            "solo_belief": 0.0,
+            "r_frac": 0.0175,
+            "r_full": 0.32,
+            "max_solo": 0.085,
+            "margin": -0.0675,
+            "gate_ok": false
+          },
+          {
+            "kthr": 46.0,
+            "solo_intent": 0.085,
+            "solo_belief": 0.0838,
+            "r_frac": 0.0063,
+            "r_full": 0.2913,
+            "max_solo": 0.085,
+            "margin": -0.0788,
+            "gate_ok": false
+          }
+        ],
+        "frac_target": 0.27
+      },
+      {
+        "seed": 43,
+        "kthr_picked": 34.0,
+        "calibration_clean": false,
+        "picked_solo_intent": 0.0,
+        "picked_solo_belief": 0.1762,
+        "picked_max_solo": 0.1762,
+        "picked_r_frac": 0.1388,
+        "picked_r_full": 0.3312,
+        "picked_margin": -0.0375,
+        "ignition_table": [
+          {
+            "kthr": 34.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.1762,
+            "r_frac": 0.1388,
+            "r_full": 0.3312,
+            "max_solo": 0.1762,
+            "margin": -0.0375,
+            "gate_ok": false
+          },
+          {
+            "kthr": 36.0,
+            "solo_intent": 0.15,
+            "solo_belief": 0.1575,
+            "r_frac": 0.065,
+            "r_full": 0.3225,
+            "max_solo": 0.1575,
+            "margin": -0.0925,
+            "gate_ok": false
+          },
+          {
+            "kthr": 38.0,
+            "solo_intent": 0.1313,
+            "solo_belief": 0.025,
+            "r_frac": 0.03,
+            "r_full": 0.3325,
+            "max_solo": 0.1313,
+            "margin": -0.1013,
+            "gate_ok": false
+          },
+          {
+            "kthr": 40.0,
+            "solo_intent": 0.1313,
+            "solo_belief": 0.0187,
+            "r_frac": 0.0125,
+            "r_full": 0.325,
+            "max_solo": 0.1313,
+            "margin": -0.1188,
+            "gate_ok": false
+          },
+          {
+            "kthr": 42.0,
+            "solo_intent": 0.1313,
+            "solo_belief": 0.0,
+            "r_frac": 0.0,
+            "r_full": 0.305,
+            "max_solo": 0.1313,
+            "margin": -0.1313,
+            "gate_ok": false
+          },
+          {
+            "kthr": 44.0,
+            "solo_intent": 0.1313,
+            "solo_belief": 0.0,
+            "r_frac": 0.0,
+            "r_full": 0.3013,
+            "max_solo": 0.1313,
+            "margin": -0.1313,
+            "gate_ok": false
+          },
+          {
+            "kthr": 46.0,
+            "solo_intent": 0.1212,
+            "solo_belief": 0.0,
+            "r_frac": 0.0063,
+            "r_full": 0.285,
+            "max_solo": 0.1212,
+            "margin": -0.115,
+            "gate_ok": false
+          }
+        ],
+        "frac_target": 0.27
+      },
+      {
+        "seed": 44,
+        "kthr_picked": 34.0,
+        "calibration_clean": true,
+        "picked_solo_intent": 0.0262,
+        "picked_solo_belief": 0.015,
+        "picked_max_solo": 0.0262,
+        "picked_r_frac": 0.2225,
+        "picked_r_full": 0.3287,
+        "picked_margin": 0.1963,
+        "ignition_table": [
+          {
+            "kthr": 34.0,
+            "solo_intent": 0.0262,
+            "solo_belief": 0.015,
+            "r_frac": 0.2225,
+            "r_full": 0.3287,
+            "max_solo": 0.0262,
+            "margin": 0.1963,
+            "gate_ok": true
+          },
+          {
+            "kthr": 36.0,
+            "solo_intent": 0.0063,
+            "solo_belief": 0.0025,
+            "r_frac": 0.1888,
+            "r_full": 0.3275,
+            "max_solo": 0.0063,
+            "margin": 0.1825,
+            "gate_ok": true
+          },
+          {
+            "kthr": 38.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0025,
+            "r_frac": 0.1975,
+            "r_full": 0.3262,
+            "max_solo": 0.0025,
+            "margin": 0.195,
+            "gate_ok": true
+          },
+          {
+            "kthr": 40.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0275,
+            "r_frac": 0.1375,
+            "r_full": 0.3262,
+            "max_solo": 0.0275,
+            "margin": 0.11,
+            "gate_ok": true
+          },
+          {
+            "kthr": 42.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.085,
+            "r_frac": 0.0838,
+            "r_full": 0.3275,
+            "max_solo": 0.085,
+            "margin": -0.0013,
+            "gate_ok": false
+          },
+          {
+            "kthr": 44.0,
+            "solo_intent": 0.085,
+            "solo_belief": 0.085,
+            "r_frac": 0.0338,
+            "r_full": 0.3225,
+            "max_solo": 0.085,
+            "margin": -0.0513,
+            "gate_ok": false
+          },
+          {
+            "kthr": 46.0,
+            "solo_intent": 0.085,
+            "solo_belief": 0.0862,
+            "r_frac": 0.02,
+            "r_full": 0.3275,
+            "max_solo": 0.0862,
+            "margin": -0.0662,
+            "gate_ok": false
+          }
+        ],
+        "frac_target": 0.27
+      },
+      {
+        "seed": 100,
+        "kthr_picked": 38.0,
+        "calibration_clean": true,
+        "picked_solo_intent": 0.0,
+        "picked_solo_belief": 0.04,
+        "picked_max_solo": 0.04,
+        "picked_r_frac": 0.0838,
+        "picked_r_full": 0.3287,
+        "picked_margin": 0.0438,
+        "ignition_table": [
+          {
+            "kthr": 34.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0963,
+            "r_frac": 0.23,
+            "r_full": 0.3212,
+            "max_solo": 0.0963,
+            "margin": 0.1338,
+            "gate_ok": false
+          },
+          {
+            "kthr": 36.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.085,
+            "r_frac": 0.185,
+            "r_full": 0.325,
+            "max_solo": 0.085,
+            "margin": 0.1,
+            "gate_ok": false
+          },
+          {
+            "kthr": 38.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.04,
+            "r_frac": 0.0838,
+            "r_full": 0.3287,
+            "max_solo": 0.04,
+            "margin": 0.0438,
+            "gate_ok": true
+          },
+          {
+            "kthr": 40.0,
+            "solo_intent": 0.0825,
+            "solo_belief": 0.0,
+            "r_frac": 0.055,
+            "r_full": 0.3237,
+            "max_solo": 0.0825,
+            "margin": -0.0275,
+            "gate_ok": false
+          },
+          {
+            "kthr": 42.0,
+            "solo_intent": 0.1275,
+            "solo_belief": 0.0,
+            "r_frac": 0.0175,
+            "r_full": 0.32,
+            "max_solo": 0.1275,
+            "margin": -0.11,
+            "gate_ok": false
+          },
+          {
+            "kthr": 44.0,
+            "solo_intent": 0.1275,
+            "solo_belief": 0.0,
+            "r_frac": 0.0,
+            "r_full": 0.3187,
+            "max_solo": 0.1275,
+            "margin": -0.1275,
+            "gate_ok": false
+          },
+          {
+            "kthr": 46.0,
+            "solo_intent": 0.1275,
+            "solo_belief": 0.0,
+            "r_frac": 0.0,
+            "r_full": 0.3075,
+            "max_solo": 0.1275,
+            "margin": -0.1275,
+            "gate_ok": false
+          }
+        ],
+        "frac_target": 0.27
+      },
+      {
+        "seed": 101,
+        "kthr_picked": 34.0,
+        "calibration_clean": true,
+        "picked_solo_intent": 0.01,
+        "picked_solo_belief": 0.0088,
+        "picked_max_solo": 0.01,
+        "picked_r_frac": 0.2238,
+        "picked_r_full": 0.32,
+        "picked_margin": 0.2137,
+        "ignition_table": [
+          {
+            "kthr": 34.0,
+            "solo_intent": 0.01,
+            "solo_belief": 0.0088,
+            "r_frac": 0.2238,
+            "r_full": 0.32,
+            "max_solo": 0.01,
+            "margin": 0.2137,
+            "gate_ok": true
+          },
+          {
+            "kthr": 36.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0,
+            "r_frac": 0.2025,
+            "r_full": 0.325,
+            "max_solo": 0.0,
+            "margin": 0.2025,
+            "gate_ok": true
+          },
+          {
+            "kthr": 38.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0,
+            "r_frac": 0.1512,
+            "r_full": 0.3237,
+            "max_solo": 0.0,
+            "margin": 0.1512,
+            "gate_ok": true
+          },
+          {
+            "kthr": 40.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0,
+            "r_frac": 0.0988,
+            "r_full": 0.3225,
+            "max_solo": 0.0,
+            "margin": 0.0988,
+            "gate_ok": true
+          },
+          {
+            "kthr": 42.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0838,
+            "r_frac": 0.0437,
+            "r_full": 0.3225,
+            "max_solo": 0.0838,
+            "margin": -0.04,
+            "gate_ok": false
+          },
+          {
+            "kthr": 44.0,
+            "solo_intent": 0.0825,
+            "solo_belief": 0.1313,
+            "r_frac": 0.03,
+            "r_full": 0.3187,
+            "max_solo": 0.1313,
+            "margin": -0.1013,
+            "gate_ok": false
+          },
+          {
+            "kthr": 46.0,
+            "solo_intent": 0.0838,
+            "solo_belief": 0.13,
+            "r_frac": 0.0088,
+            "r_full": 0.3063,
+            "max_solo": 0.13,
+            "margin": -0.1212,
+            "gate_ok": false
+          }
+        ],
+        "frac_target": 0.27
+      },
+      {
+        "seed": 102,
+        "kthr_picked": 40.0,
+        "calibration_clean": true,
+        "picked_solo_intent": 0.0013,
+        "picked_solo_belief": 0.0,
+        "picked_max_solo": 0.0013,
+        "picked_r_frac": 0.17,
+        "picked_r_full": 0.3013,
+        "picked_margin": 0.1688,
+        "ignition_table": [
+          {
+            "kthr": 34.0,
+            "solo_intent": 0.1525,
+            "solo_belief": 0.1562,
+            "r_frac": 0.2087,
+            "r_full": 0.3212,
+            "max_solo": 0.1562,
+            "margin": 0.0525,
+            "gate_ok": false
+          },
+          {
+            "kthr": 36.0,
+            "solo_intent": 0.1275,
+            "solo_belief": 0.12,
+            "r_frac": 0.1938,
+            "r_full": 0.325,
+            "max_solo": 0.1275,
+            "margin": 0.0663,
+            "gate_ok": false
+          },
+          {
+            "kthr": 38.0,
+            "solo_intent": 0.0437,
+            "solo_belief": 0.0688,
+            "r_frac": 0.165,
+            "r_full": 0.3088,
+            "max_solo": 0.0688,
+            "margin": 0.0963,
+            "gate_ok": false
+          },
+          {
+            "kthr": 40.0,
+            "solo_intent": 0.0013,
+            "solo_belief": 0.0,
+            "r_frac": 0.17,
+            "r_full": 0.3013,
+            "max_solo": 0.0013,
+            "margin": 0.1688,
+            "gate_ok": true
+          },
+          {
+            "kthr": 42.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0,
+            "r_frac": 0.1588,
+            "r_full": 0.2863,
+            "max_solo": 0.0,
+            "margin": 0.1588,
+            "gate_ok": true
+          },
+          {
+            "kthr": 44.0,
+            "solo_intent": 0.0,
+            "solo_belief": 0.0,
+            "r_frac": 0.12,
+            "r_full": 0.2537,
+            "max_solo": 0.0,
+            "margin": 0.12,
+            "gate_ok": true
+          },
+          {
+            "kthr": 46.0,
+            "solo_intent": 0.0988,
+            "solo_belief": 0.0,
+            "r_frac": 0.0862,
+            "r_full": 0.2412,
+            "max_solo": 0.0988,
+            "margin": -0.0125,
+            "gate_ok": false
+          }
+        ],
+        "frac_target": 0.27
+      }
+    ]
+  },
+  "recalibrated_ab": {
+    "metric_moved": false,
+    "plateau_move": -0.04615,
+    "seeds_graded_gt_onehot": 0,
+    "instrument_valid": false,
+    "gates": {
+      "G1_graded": true,
+      "G2_calibrated": true,
+      "G3_metric_moves_plateau": false,
+      "G4_argmax_metric_flat": false,
+      "G5a_lesion_collapses": true,
+      "G5b_scramble_loses": true,
+      "G5c_plateau_load_bearing": false
+    },
+    "aggregate": {
+      "belief_implicature_margin_graded": 0.5063,
+      "belief_implicature_margin_lesion": 0.0058,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0406,
+      "plateau_mag_fidelity_onehot": 0.72695,
+      "plateau_mag_fidelity_graded": 0.6808,
+      "plateau_mag_fidelity_graded_lesion": 0.60717,
+      "plateau_mag_fidelity_scramble": 0.25007,
+      "plateau_argmax_align_onehot": 1.0,
+      "plateau_argmax_align_graded": 0.9444,
+      "plateau_move_graded_minus_onehot": -0.04615,
+      "plateau_seeds_graded_gt_onehot": 0,
+      "plateau_implicature_recovery_onehot": 0.13554,
+      "plateau_implicature_recovery_graded": 0.35978,
+      "plateau_implicature_recovery_scramble": 0.55213,
+      "linear_mag_fidelity_onehot": 0.34293,
+      "linear_mag_fidelity_graded": 0.3519,
+      "linear_mag_fidelity_graded_lesion": 0.35648,
+      "linear_mag_fidelity_scramble": 0.42657,
+      "linear_argmax_align_onehot": 0.0,
+      "linear_argmax_align_graded": 0.0,
+      "linear_move_graded_minus_onehot": 0.00897,
+      "linear_seeds_graded_gt_onehot": 6,
+      "linear_implicature_recovery_onehot": 0.36217,
+      "linear_implicature_recovery_graded": 0.36409,
+      "linear_implicature_recovery_scramble": 0.33976
+    }
+  },
+  "default_k44_control_ab": {
+    "metric_moved": false,
+    "plateau_move": -0.03528,
+    "seeds_graded_gt_onehot": 1,
+    "aggregate": {
+      "belief_implicature_margin_graded": 0.5063,
+      "belief_implicature_margin_lesion": 0.0058,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0406,
+      "plateau_mag_fidelity_onehot": 0.65318,
+      "plateau_mag_fidelity_graded": 0.6179,
+      "plateau_mag_fidelity_graded_lesion": 0.58726,
+      "plateau_mag_fidelity_scramble": 0.30826,
+      "plateau_argmax_align_onehot": 1.0,
+      "plateau_argmax_align_graded": 1.0,
+      "plateau_move_graded_minus_onehot": -0.03528,
+      "plateau_seeds_graded_gt_onehot": 1,
+      "plateau_implicature_recovery_onehot": 0.27076,
+      "plateau_implicature_recovery_graded": 0.22326,
+      "plateau_implicature_recovery_scramble": 0.4231,
+      "linear_mag_fidelity_onehot": 0.34293,
+      "linear_mag_fidelity_graded": 0.3519,
+      "linear_mag_fidelity_graded_lesion": 0.35648,
+      "linear_mag_fidelity_scramble": 0.42657,
+      "linear_argmax_align_onehot": 0.0,
+      "linear_argmax_align_graded": 0.0,
+      "linear_move_graded_minus_onehot": 0.00897,
+      "linear_seeds_graded_gt_onehot": 6,
+      "linear_implicature_recovery_onehot": 0.36217,
+      "linear_implicature_recovery_graded": 0.36409,
+      "linear_implicature_recovery_scramble": 0.33976
+    }
+  },
+  "per_seed_recal": [
+    {
+      "seed": 42,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7315,
+          0.2685
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5,
+          0.5
+        ],
+        "scramble": [
+          0.7315,
+          0.2685,
+          0.0
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.70105,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10833,
+              0.0,
+              0.06167
+            ],
+            [
+              0.00417,
+              0.10875,
+              0.06167
+            ],
+            [
+              0.02375,
+              0.01958,
+              0.10792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6373,
+            0.6229,
+            0.843
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.66437,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10833,
+              0.00792,
+              0.06167
+            ],
+            [
+              0.00417,
+              0.11708,
+              0.06167
+            ],
+            [
+              0.02375,
+              0.06667,
+              0.10792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6089,
+            0.6401,
+            0.7441
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.59276,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10833,
+              0.05542,
+              0.06167
+            ],
+            [
+              0.00417,
+              0.12875,
+              0.06167
+            ],
+            [
+              0.02375,
+              0.11583,
+              0.10792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4806,
+            0.6617,
+            0.636
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.30934,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.06167,
+              0.11833,
+              0.0
+            ],
+            [
+              0.06167,
+              0.065,
+              0.10875
+            ],
+            [
+              0.10792,
+              0.02875,
+              0.01958
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3426,
+            0.2761,
+            0.3093
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34848,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04083,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03208,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2873,
+            0.2831,
+            0.4751
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.3534,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.045,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03667,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04125,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2772,
+            0.311,
+            0.4721
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35886,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03292,
+              0.05292,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.04292,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04167,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2599,
+            0.3456,
+            0.4711
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.41641,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04083,
+              0.03833,
+              0.04083
+            ],
+            [
+              0.04,
+              0.0425,
+              0.03208
+            ],
+            [
+              0.03083,
+              0.0475,
+              0.04
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3403,
+            0.3709,
+            0.538
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.037
+    },
+    {
+      "seed": 43,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7978,
+          0.2022
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5015,
+          0.4985
+        ],
+        "scramble": [
+          0.2022,
+          0.0,
+          0.7978
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.66391,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.11042,
+              0.01,
+              0.0
+            ],
+            [
+              0.10708,
+              0.10875,
+              0.04833
+            ],
+            [
+              0.06542,
+              0.01667,
+              0.11208
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.917,
+            0.4117,
+            0.6631
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.64864,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.11042,
+              0.01625,
+              0.0
+            ],
+            [
+              0.10708,
+              0.11458,
+              0.04833
+            ],
+            [
+              0.06542,
+              0.07167,
+              0.11208
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8717,
+            0.4244,
+            0.6498
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.56091,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.11042,
+              0.05542,
+              0.0
+            ],
+            [
+              0.10708,
+              0.12583,
+              0.04833
+            ],
+            [
+              0.06542,
+              0.12583,
+              0.11208
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6658,
+            0.4474,
+            0.5695
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.27235,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.01,
+              0.0375,
+              0.11042
+            ],
+            [
+              0.10875,
+              0.06,
+              0.10708
+            ],
+            [
+              0.01667,
+              0.1125,
+              0.06542
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0633,
+            0.2175,
+            0.5362
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34331,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03417,
+              0.04375,
+              0.04333
+            ],
+            [
+              0.04417,
+              0.03125,
+              0.04125
+            ],
+            [
+              0.04458,
+              0.04208,
+              0.03375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2818,
+            0.2679,
+            0.4803
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.35386,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03417,
+              0.04958,
+              0.04333
+            ],
+            [
+              0.04417,
+              0.03917,
+              0.04125
+            ],
+            [
+              0.04458,
+              0.04292,
+              0.03375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2689,
+            0.3144,
+            0.4784
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.36002,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03417,
+              0.05417,
+              0.04333
+            ],
+            [
+              0.04417,
+              0.045,
+              0.04125
+            ],
+            [
+              0.04458,
+              0.04417,
+              0.03375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2595,
+            0.345,
+            0.4755
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.43262,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04375,
+              0.045,
+              0.03417
+            ],
+            [
+              0.03125,
+              0.0475,
+              0.04417
+            ],
+            [
+              0.04208,
+              0.03875,
+              0.04458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3559,
+            0.3864,
+            0.5555
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5955,
+      "belief_implicature_margin_lesion": 0.0029,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0955
+    },
+    {
+      "seed": 44,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7423,
+          0.2577
+        ],
+        "graded_lesion": [
+          0.0,
+          0.497,
+          0.503
+        ],
+        "scramble": [
+          0.2577,
+          0.0,
+          0.7423
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.74729,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10958,
+              0.01208,
+              0.00875
+            ],
+            [
+              0.04208,
+              0.10625,
+              0.03708
+            ],
+            [
+              0.005,
+              0.00333,
+              0.10833
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8403,
+            0.573,
+            0.8286
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.73136,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10958,
+              0.01583,
+              0.00875
+            ],
+            [
+              0.04208,
+              0.10792,
+              0.03708
+            ],
+            [
+              0.005,
+              0.06708,
+              0.10833
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8168,
+            0.5768,
+            0.8005
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.6101,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10958,
+              0.06542,
+              0.00875
+            ],
+            [
+              0.04208,
+              0.11833,
+              0.03708
+            ],
+            [
+              0.005,
+              0.13583,
+              0.10833
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5964,
+            0.5992,
+            0.6348
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.17873,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.01208,
+              0.08083,
+              0.10958
+            ],
+            [
+              0.10625,
+              0.04625,
+              0.04208
+            ],
+            [
+              0.00333,
+              0.12042,
+              0.005
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.0597,
+            0.2377,
+            0.2388
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34204,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03458,
+              0.04375,
+              0.04375
+            ],
+            [
+              0.04333,
+              0.03167,
+              0.04292
+            ],
+            [
+              0.04375,
+              0.04333,
+              0.03292
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2833,
+            0.2686,
+            0.4743
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.35134,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03458,
+              0.04583,
+              0.04375
+            ],
+            [
+              0.04333,
+              0.03667,
+              0.04292
+            ],
+            [
+              0.04375,
+              0.04208,
+              0.03292
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2785,
+            0.2983,
+            0.4772
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35519,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03458,
+              0.05375,
+              0.04375
+            ],
+            [
+              0.04333,
+              0.04292,
+              0.04292
+            ],
+            [
+              0.04375,
+              0.04458,
+              0.03292
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2618,
+            0.3323,
+            0.4715
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.43077,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04375,
+              0.04458,
+              0.03458
+            ],
+            [
+              0.03167,
+              0.04792,
+              0.04333
+            ],
+            [
+              0.04333,
+              0.03917,
+              0.04375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3559,
+            0.3898,
+            0.5465
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.4845,
+      "belief_implicature_margin_lesion": -0.006,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0155
+    },
+    {
+      "seed": 100,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7551,
+          0.2449
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5014,
+          0.4986
+        ],
+        "scramble": [
+          0.2449,
+          0.0,
+          0.7551
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.75464,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10958,
+              0.02875,
+              0.01917
+            ],
+            [
+              0.02333,
+              0.10792,
+              0.02917
+            ],
+            [
+              0.01583,
+              0.03125,
+              0.1075
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6958,
+            0.6727,
+            0.8954
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.74026,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10958,
+              0.00875,
+              0.01917
+            ],
+            [
+              0.02333,
+              0.09125,
+              0.02917
+            ],
+            [
+              0.01583,
+              0.05917,
+              0.1075
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.797,
+            0.6348,
+            0.789
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.63022,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10958,
+              0.06,
+              0.01917
+            ],
+            [
+              0.02333,
+              0.09583,
+              0.02917
+            ],
+            [
+              0.01583,
+              0.10833,
+              0.1075
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5806,
+            0.6461,
+            0.664
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.21109,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.02875,
+              0.01,
+              0.10958
+            ],
+            [
+              0.10792,
+              0.01875,
+              0.02333
+            ],
+            [
+              0.03125,
+              0.09125,
+              0.01583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.1938,
+            0.125,
+            0.3145
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34517,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04417,
+              0.04292
+            ],
+            [
+              0.04333,
+              0.03458,
+              0.045
+            ],
+            [
+              0.0425,
+              0.04542,
+              0.03417
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2743,
+            0.2814,
+            0.4799
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.3521,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04958,
+              0.04292
+            ],
+            [
+              0.04333,
+              0.04167,
+              0.045
+            ],
+            [
+              0.0425,
+              0.04833,
+              0.03417
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2625,
+            0.3205,
+            0.4733
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35711,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03292,
+              0.055,
+              0.04292
+            ],
+            [
+              0.04333,
+              0.04625,
+              0.045
+            ],
+            [
+              0.0425,
+              0.04708,
+              0.03417
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2516,
+            0.3437,
+            0.4761
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.42759,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.04417,
+              0.04542,
+              0.03292
+            ],
+            [
+              0.03458,
+              0.04958,
+              0.04333
+            ],
+            [
+              0.04542,
+              0.03958,
+              0.0425
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3605,
+            0.3889,
+            0.5333
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5102,
+      "belief_implicature_margin_lesion": 0.0028,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0102
+    },
+    {
+      "seed": 101,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7248,
+          0.2752
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5188,
+          0.4812
+        ],
+        "scramble": [
+          0.2752,
+          0.0,
+          0.7248
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.61227,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.04667,
+              0.04542
+            ],
+            [
+              0.06125,
+              0.10917,
+              0.10042
+            ],
+            [
+              0.00333,
+              0.04375,
+              0.10833
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5367,
+            0.4031,
+            0.8971
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.52796,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10667,
+              0.06,
+              0.04542
+            ],
+            [
+              0.06125,
+              0.10833,
+              0.10042
+            ],
+            [
+              0.00333,
+              0.11417,
+              0.10833
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5029,
+            0.4012,
+            0.6797
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.53244,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10667,
+              0.05917,
+              0.04542
+            ],
+            [
+              0.06125,
+              0.12875,
+              0.10042
+            ],
+            [
+              0.00333,
+              0.12958,
+              0.10833
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5049,
+            0.4433,
+            0.6491
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.26238,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.04667,
+              0.11208,
+              0.10667
+            ],
+            [
+              0.10917,
+              0.10958,
+              0.06125
+            ],
+            [
+              0.04375,
+              0.12,
+              0.00333
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.1758,
+            0.3914,
+            0.22
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.3402,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.0325,
+              0.0425,
+              0.04208
+            ],
+            [
+              0.0425,
+              0.0325,
+              0.04208
+            ],
+            [
+              0.04208,
+              0.04208,
+              0.03042
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2776,
+            0.2776,
+            0.4655
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.35419,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.0325,
+              0.04667,
+              0.04208
+            ],
+            [
+              0.0425,
+              0.04167,
+              0.04208
+            ],
+            [
+              0.04208,
+              0.0425,
+              0.03042
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.268,
+            0.33,
+            0.4645
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35488,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.0325,
+              0.05125,
+              0.04208
+            ],
+            [
+              0.0425,
+              0.04375,
+              0.04208
+            ],
+            [
+              0.04208,
+              0.04208,
+              0.03042
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2583,
+            0.3409,
+            0.4655
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.42984,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.0425,
+              0.04417,
+              0.0325
+            ],
+            [
+              0.0325,
+              0.04875,
+              0.0425
+            ],
+            [
+              0.04208,
+              0.04,
+              0.04208
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3566,
+            0.3939,
+            0.5389
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.4495,
+      "belief_implicature_margin_lesion": 0.0377,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0505
+    },
+    {
+      "seed": 102,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7674,
+          0.2326
+        ],
+        "graded_lesion": [
+          0.0,
+          0.4986,
+          0.5014
+        ],
+        "scramble": [
+          0.7674,
+          0.2326,
+          0.0
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.88253,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.00083,
+              0.01125
+            ],
+            [
+              0.00292,
+              0.11083,
+              0.01375
+            ],
+            [
+              0.01083,
+              0.01125,
+              0.10917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.8926,
+            0.8693,
+            0.8857
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.77223,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.04292,
+              0.01125
+            ],
+            [
+              0.00292,
+              0.10292,
+              0.01375
+            ],
+            [
+              0.01083,
+              0.06,
+              0.10917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6496,
+            0.8606,
+            0.8065
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.7166,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.05792,
+              0.01125
+            ],
+            [
+              0.00292,
+              0.10042,
+              0.01375
+            ],
+            [
+              0.01083,
+              0.09833,
+              0.10917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5921,
+            0.8577,
+            0.7
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.26655,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.01125,
+              0.07208,
+              0.00083
+            ],
+            [
+              0.01375,
+              0.08125,
+              0.11083
+            ],
+            [
+              0.10917,
+              0.0375,
+              0.01125
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.1337,
+            0.3947,
+            0.2712
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.33836,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03375,
+              0.04625,
+              0.04667
+            ],
+            [
+              0.04667,
+              0.03583,
+              0.04792
+            ],
+            [
+              0.04708,
+              0.04792,
+              0.03583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2664,
+            0.2748,
+            0.4739
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.34649,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03375,
+              0.04958,
+              0.04667
+            ],
+            [
+              0.04667,
+              0.04083,
+              0.04792
+            ],
+            [
+              0.04708,
+              0.04583,
+              0.03583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2596,
+            0.3015,
+            0.4783
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35282,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03375,
+              0.05667,
+              0.04667
+            ],
+            [
+              0.04667,
+              0.04875,
+              0.04792
+            ],
+            [
+              0.04708,
+              0.04875,
+              0.03583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2462,
+            0.3401,
+            0.4722
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.42217,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04667,
+              0.04083,
+              0.04625
+            ],
+            [
+              0.04792,
+              0.04833,
+              0.03583
+            ],
+            [
+              0.03583,
+              0.0525,
+              0.04792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3489,
+            0.3659,
+            0.5517
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5349,
+      "belief_implicature_margin_lesion": -0.0028,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0349
+    }
+  ],
+  "per_seed_default": [
+    {
+      "seed": 42,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7315,
+          0.2685
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5,
+          0.5
+        ],
+        "scramble": [
+          0.7315,
+          0.2685,
+          0.0
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.58069,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.06792,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.10667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.06583,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5257,
+            0.5689,
+            0.6475
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.60769,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10667,
+              0.0525,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.07083,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.0225,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5689,
+            0.467,
+            0.7872
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.52945,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10667,
+              0.07125,
+              0.02833
+            ],
+            [
+              0.04042,
+              0.06667,
+              0.04042
+            ],
+            [
+              0.02625,
+              0.07708,
+              0.07458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5172,
+            0.452,
+            0.6192
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.2809,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.02833,
+              0.08,
+              0.06792
+            ],
+            [
+              0.04042,
+              0.0275,
+              0.10667
+            ],
+            [
+              0.07458,
+              0.0625,
+              0.06583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.1608,
+            0.1575,
+            0.5244
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34848,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04083,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03208,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2873,
+            0.2831,
+            0.4751
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.3534,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.045,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.03667,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04125,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2772,
+            0.311,
+            0.4721
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35886,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03292,
+              0.05292,
+              0.04083
+            ],
+            [
+              0.04125,
+              0.04292,
+              0.04
+            ],
+            [
+              0.04125,
+              0.04167,
+              0.03083
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2599,
+            0.3456,
+            0.4711
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.41641,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04083,
+              0.03833,
+              0.04083
+            ],
+            [
+              0.04,
+              0.0425,
+              0.03208
+            ],
+            [
+              0.03083,
+              0.0475,
+              0.04
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3403,
+            0.3709,
+            0.538
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.463,
+      "belief_implicature_margin_lesion": 0.0,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.037
+    },
+    {
+      "seed": 43,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7978,
+          0.2022
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5015,
+          0.4985
+        ],
+        "scramble": [
+          0.2022,
+          0.0,
+          0.7978
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.64502,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.05292,
+              0.08625
+            ],
+            [
+              0.0,
+              0.105,
+              0.0425
+            ],
+            [
+              0.02792,
+              0.03708,
+              0.09917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4191,
+            0.7119,
+            0.8041
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.60372,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.09417,
+              0.08625
+            ],
+            [
+              0.0,
+              0.08583,
+              0.0425
+            ],
+            [
+              0.02792,
+              0.0425,
+              0.09917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3576,
+            0.6688,
+            0.7848
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.58179,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10042,
+              0.08792,
+              0.08625
+            ],
+            [
+              0.0,
+              0.0825,
+              0.0425
+            ],
+            [
+              0.02792,
+              0.06375,
+              0.09917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3657,
+            0.66,
+            0.7197
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.27417,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.05292,
+              0.06625,
+              0.10042
+            ],
+            [
+              0.105,
+              0.02375,
+              0.0
+            ],
+            [
+              0.03708,
+              0.07667,
+              0.02792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.241,
+            0.1845,
+            0.3971
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34331,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03417,
+              0.04375,
+              0.04333
+            ],
+            [
+              0.04417,
+              0.03125,
+              0.04125
+            ],
+            [
+              0.04458,
+              0.04208,
+              0.03375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2818,
+            0.2679,
+            0.4803
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.35386,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03417,
+              0.04958,
+              0.04333
+            ],
+            [
+              0.04417,
+              0.03917,
+              0.04125
+            ],
+            [
+              0.04458,
+              0.04292,
+              0.03375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2689,
+            0.3144,
+            0.4784
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.36002,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03417,
+              0.05417,
+              0.04333
+            ],
+            [
+              0.04417,
+              0.045,
+              0.04125
+            ],
+            [
+              0.04458,
+              0.04417,
+              0.03375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2595,
+            0.345,
+            0.4755
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.43262,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04375,
+              0.045,
+              0.03417
+            ],
+            [
+              0.03125,
+              0.0475,
+              0.04417
+            ],
+            [
+              0.04208,
+              0.03875,
+              0.04458
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3559,
+            0.3864,
+            0.5555
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5955,
+      "belief_implicature_margin_lesion": 0.0029,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0955
+    },
+    {
+      "seed": 44,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7423,
+          0.2577
+        ],
+        "graded_lesion": [
+          0.0,
+          0.497,
+          0.503
+        ],
+        "scramble": [
+          0.2577,
+          0.0,
+          0.7423
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.56322,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.1075,
+              0.05583,
+              0.07292
+            ],
+            [
+              0.02833,
+              0.10625,
+              0.04458
+            ],
+            [
+              0.06917,
+              0.06833,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.455,
+            0.593,
+            0.6416
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.53833,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.1075,
+              0.05208,
+              0.07292
+            ],
+            [
+              0.02833,
+              0.07375,
+              0.04458
+            ],
+            [
+              0.06917,
+              0.01958,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4624,
+            0.5028,
+            0.6498
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.5538,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.1075,
+              0.07292,
+              0.07292
+            ],
+            [
+              0.02833,
+              0.08917,
+              0.04458
+            ],
+            [
+              0.06917,
+              0.04542,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4243,
+            0.5501,
+            0.6869
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.32853,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.05583,
+              0.01958,
+              0.1075
+            ],
+            [
+              0.10625,
+              0.02667,
+              0.02833
+            ],
+            [
+              0.06833,
+              0.08208,
+              0.06917
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3052,
+            0.1654,
+            0.515
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34204,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03458,
+              0.04375,
+              0.04375
+            ],
+            [
+              0.04333,
+              0.03167,
+              0.04292
+            ],
+            [
+              0.04375,
+              0.04333,
+              0.03292
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2833,
+            0.2686,
+            0.4743
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.35134,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03458,
+              0.04583,
+              0.04375
+            ],
+            [
+              0.04333,
+              0.03667,
+              0.04292
+            ],
+            [
+              0.04375,
+              0.04208,
+              0.03292
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2785,
+            0.2983,
+            0.4772
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35519,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03458,
+              0.05375,
+              0.04375
+            ],
+            [
+              0.04333,
+              0.04292,
+              0.04292
+            ],
+            [
+              0.04375,
+              0.04458,
+              0.03292
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2618,
+            0.3323,
+            0.4715
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.43077,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04375,
+              0.04458,
+              0.03458
+            ],
+            [
+              0.03167,
+              0.04792,
+              0.04333
+            ],
+            [
+              0.04333,
+              0.03917,
+              0.04375
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3559,
+            0.3898,
+            0.5465
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.4845,
+      "belief_implicature_margin_lesion": -0.006,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0155
+    },
+    {
+      "seed": 100,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7551,
+          0.2449
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5014,
+          0.4986
+        ],
+        "scramble": [
+          0.2449,
+          0.0,
+          0.7551
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.70987,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.09,
+              0.04542
+            ],
+            [
+              0.00958,
+              0.09833,
+              0.0125
+            ],
+            [
+              0.0,
+              0.0475,
+              0.09792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4397,
+            0.8166,
+            0.8734
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.67103,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.08708,
+              0.04542
+            ],
+            [
+              0.00958,
+              0.07208,
+              0.0125
+            ],
+            [
+              0.0,
+              0.06458,
+              0.09792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.445,
+            0.7655,
+            0.8026
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.60828,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.10625,
+              0.08792,
+              0.04542
+            ],
+            [
+              0.00958,
+              0.04792,
+              0.0125
+            ],
+            [
+              0.0,
+              0.09917,
+              0.09792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.4435,
+            0.6845,
+            0.6968
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.31365,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.09,
+              0.04625,
+              0.10625
+            ],
+            [
+              0.09833,
+              0.06333,
+              0.00958
+            ],
+            [
+              0.0475,
+              0.08167,
+              0.0
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3711,
+            0.3698,
+            0.2
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.34517,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04417,
+              0.04292
+            ],
+            [
+              0.04333,
+              0.03458,
+              0.045
+            ],
+            [
+              0.0425,
+              0.04542,
+              0.03417
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2743,
+            0.2814,
+            0.4799
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.3521,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03292,
+              0.04958,
+              0.04292
+            ],
+            [
+              0.04333,
+              0.04167,
+              0.045
+            ],
+            [
+              0.0425,
+              0.04833,
+              0.03417
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2625,
+            0.3205,
+            0.4733
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35711,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03292,
+              0.055,
+              0.04292
+            ],
+            [
+              0.04333,
+              0.04625,
+              0.045
+            ],
+            [
+              0.0425,
+              0.04708,
+              0.03417
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2516,
+            0.3437,
+            0.4761
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.42759,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.04417,
+              0.04542,
+              0.03292
+            ],
+            [
+              0.03458,
+              0.04958,
+              0.04333
+            ],
+            [
+              0.04542,
+              0.03958,
+              0.0425
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3605,
+            0.3889,
+            0.5333
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5102,
+      "belief_implicature_margin_lesion": 0.0028,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0102
+    },
+    {
+      "seed": 101,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7248,
+          0.2752
+        ],
+        "graded_lesion": [
+          0.0,
+          0.5188,
+          0.4812
+        ],
+        "scramble": [
+          0.2752,
+          0.0,
+          0.7248
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.64003,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.03667,
+              0.0275
+            ],
+            [
+              0.04458,
+              0.10375,
+              0.00083
+            ],
+            [
+              0.08542,
+              0.05083,
+              0.09125
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.6235,
+            0.6955,
+            0.6011
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.5908,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.075,
+              0.0275
+            ],
+            [
+              0.04458,
+              0.08875,
+              0.00083
+            ],
+            [
+              0.08542,
+              0.03792,
+              0.09125
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.509,
+            0.6615,
+            0.6019
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.60322,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.10625,
+              0.05833,
+              0.0275
+            ],
+            [
+              0.04458,
+              0.08667,
+              0.00083
+            ],
+            [
+              0.08542,
+              0.05125,
+              0.09125
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5531,
+            0.6562,
+            0.6004
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.33076,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03667,
+              0.02,
+              0.10625
+            ],
+            [
+              0.10375,
+              0.0275,
+              0.04458
+            ],
+            [
+              0.05083,
+              0.07167,
+              0.08542
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2251,
+            0.1564,
+            0.6108
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.3402,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.0325,
+              0.0425,
+              0.04208
+            ],
+            [
+              0.0425,
+              0.0325,
+              0.04208
+            ],
+            [
+              0.04208,
+              0.04208,
+              0.03042
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2776,
+            0.2776,
+            0.4655
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.35419,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.0325,
+              0.04667,
+              0.04208
+            ],
+            [
+              0.0425,
+              0.04167,
+              0.04208
+            ],
+            [
+              0.04208,
+              0.0425,
+              0.03042
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.268,
+            0.33,
+            0.4645
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35488,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.0325,
+              0.05125,
+              0.04208
+            ],
+            [
+              0.0425,
+              0.04375,
+              0.04208
+            ],
+            [
+              0.04208,
+              0.04208,
+              0.03042
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2583,
+            0.3409,
+            0.4655
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.42984,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.0425,
+              0.04417,
+              0.0325
+            ],
+            [
+              0.0325,
+              0.04875,
+              0.0425
+            ],
+            [
+              0.04208,
+              0.04,
+              0.04208
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3566,
+            0.3939,
+            0.5389
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.4495,
+      "belief_implicature_margin_lesion": 0.0377,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0505
+    },
+    {
+      "seed": 102,
+      "belief_some": {
+        "onehot": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "graded": [
+          0.0,
+          0.7674,
+          0.2326
+        ],
+        "graded_lesion": [
+          0.0,
+          0.4986,
+          0.5014
+        ],
+        "scramble": [
+          0.7674,
+          0.2326,
+          0.0
+        ]
+      },
+      "plateau": {
+        "onehot": {
+          "mag_fidelity": 0.78026,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08458,
+              0.0,
+              0.02958
+            ],
+            [
+              0.00042,
+              0.10542,
+              0.03
+            ],
+            [
+              0.02958,
+              0.02958,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.7409,
+            0.7761,
+            0.8238
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.69581,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08458,
+              0.0425,
+              0.02958
+            ],
+            [
+              0.00042,
+              0.08875,
+              0.03
+            ],
+            [
+              0.02958,
+              0.04208,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5399,
+            0.7448,
+            0.8028
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.647,
+          "argmax_align": 1.0,
+          "S": [
+            [
+              0.08458,
+              0.04917,
+              0.02958
+            ],
+            [
+              0.00042,
+              0.08292,
+              0.03
+            ],
+            [
+              0.02958,
+              0.08292,
+              0.10875
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.5179,
+            0.7316,
+            0.6915
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.32154,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.02958,
+              0.07667,
+              0.0
+            ],
+            [
+              0.03,
+              0.07125,
+              0.10542
+            ],
+            [
+              0.10875,
+              0.07083,
+              0.02958
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2784,
+            0.3448,
+            0.3414
+          ]
+        }
+      },
+      "linear": {
+        "onehot": {
+          "mag_fidelity": 0.33836,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03375,
+              0.04625,
+              0.04667
+            ],
+            [
+              0.04667,
+              0.03583,
+              0.04792
+            ],
+            [
+              0.04708,
+              0.04792,
+              0.03583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2664,
+            0.2748,
+            0.4739
+          ]
+        },
+        "graded": {
+          "mag_fidelity": 0.34649,
+          "argmax_align": 0.0,
+          "S": [
+            [
+              0.03375,
+              0.04958,
+              0.04667
+            ],
+            [
+              0.04667,
+              0.04083,
+              0.04792
+            ],
+            [
+              0.04708,
+              0.04583,
+              0.03583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2596,
+            0.3015,
+            0.4783
+          ]
+        },
+        "graded_lesion": {
+          "mag_fidelity": 0.35282,
+          "argmax_align": 0.3333,
+          "S": [
+            [
+              0.03375,
+              0.05667,
+              0.04667
+            ],
+            [
+              0.04667,
+              0.04875,
+              0.04792
+            ],
+            [
+              0.04708,
+              0.04875,
+              0.03583
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.2462,
+            0.3401,
+            0.4722
+          ]
+        },
+        "scramble": {
+          "mag_fidelity": 0.42217,
+          "argmax_align": 0.6667,
+          "S": [
+            [
+              0.04667,
+              0.04083,
+              0.04625
+            ],
+            [
+              0.04792,
+              0.04833,
+              0.03583
+            ],
+            [
+              0.03583,
+              0.0525,
+              0.04792
+            ]
+          ],
+          "mag_fidelity_per_intent": [
+            0.3489,
+            0.3659,
+            0.5517
+          ]
+        }
+      },
+      "belief_implicature_margin_graded": 0.5349,
+      "belief_implicature_margin_lesion": -0.0028,
+      "belief_calib_l1_some_onehot": 0.5,
+      "belief_calib_l1_some_graded": 0.0349
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. This is a READOUT-threshold recalibration ONLY (how the detector READS a fractional coincidence), NOT a learning rule and NOT a belief change (the belief is byte-identical to the W4 runner). The per-seed kthr is calibrated on the ignition CURVE (controlled fractional/solo drives), NOT on the graded-vs-onehot A/B -- so it is a detector PROPERTY, independent of the RSA content; the scramble control (graded mass on WRONG intents must LOSE, at the SAME kthr) keeps it honest against 'any gradedness wins'. A lone/single-afferent input must NOT ignite (the solo-silence anti-cheat catches 'lower kthr until everything ignites'). Plasticity off (fixed operating point). numpy-CPU real spiking Izhikevich; additive NEW runner (reuse-by-import of the W4 A/B + the Leg-1 detector); NO sim/ edit. NOT a claim of phenomenal access to another mind; self-report would be a functional read-out."
+}
