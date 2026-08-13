@@ -1,0 +1,31 @@
+{
+ "run_id": "1786606514-1008234",
+ "runner": "research/runners/_pragmatic_spiking_graded_belief_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a7dc2b6450898e76d/research/runners/_pragmatic_spiking_graded_belief_derisk.py",
+  "--smoke",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/_pragmatic_success/spiking_graded_belief_smoke.json"
+ ],
+ "git_sha": "8e1329d46",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T03:35:14",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1168.2,
+ "corpus_check_query": "scalar implicature RSA graded belief spiking",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pragmatic_success/spiking_graded_belief_smoke.json"
+}
