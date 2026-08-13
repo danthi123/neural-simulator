@@ -1,0 +1,700 @@
+{
+  "probe": "affect_composed_selforganized_opponent (emergence-bar composition)",
+  "verdict": "BOUNDARY / HONEST NEGATIVE (build-informative, 6-seed) -- the composed Warriner-free opponent reads held-out r=+0.508 (min +0.251); the retired ridge-to-Warriner baseline reads +0.728 (RESIDUAL GAP +0.220). no-conditioning +0.000; permute-code sig 5/6; unpaired-US sig 6/6; rung-b acc 0.75, reappraisal 83%, WTA margin 0.200->0.175. FAILED: ['C_A2_salience_magnitude_tracks_valence_and_input_lesion_collapses', 'C_A4_permute_code_perm_p<0.05_all_seeds', 'C_B1_emotion_discrimination>=0.75_and_distinct', 'C_B3_WTA_lesion_collapses_margin>=35%', 'C_B5_mismatched_collapses_discrimination']. The residual is the self-organized weight's fidelity vs the Warriner ridge; the next mechanism is a richer/spiking three-factor write (or more innate primaries), NOT a wall -- and NOT 'acceptable': the gap is the deliverable.",
+  "GO": false,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=24)",
+      "ok": true,
+      "detail": "vocab=139"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=20)",
+      "ok": true,
+      "detail": "min_n_held=64"
+    },
+    {
+      "name": "no_conditioning_reads_zero(|r|<0.15)",
+      "ok": true,
+      "detail": "no_conditioning_r=+0.0000"
+    },
+    {
+      "name": "innate_US_signal_present(corr(s_c,Warriner)>0)",
+      "ok": true,
+      "detail": "corr_s_c_warriner=+0.503"
+    },
+    {
+      "name": "weights_warriner_free(no-cond collapse is load-bearing)",
+      "ok": true,
+      "detail": "asserted in run_seed: selforg_opponent_weights has no Warriner argument; corrupting s_true leaves the weights byte-identical; C-A3 collapse confirms weights come from conditioning"
+    }
+  ],
+  "verdict_earned": {
+    "label": "composed self-organized affect opponent (Warriner-seed RETIRED)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: C-A2 |differential| tracks valence strength (r > 0.2) (measured=0.10168131451273481 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>)",
+      "unmet: C-A4 permute-code beaten (perm-p<0.05) in ALL seeds (measured=5 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>)",
+      "unmet: C-B3 WTA-lesion collapses the categorical margin (treatment=0.199588 control=0.175487 |sep|=0.0241006 > 0.0698556)",
+      "unmet: C-B5 mismatched appraisal collapses discrimination (treatment=0.75 control=0.458333 |sep|=0.291667 > 0.4)"
+    ],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "C-A1 held-out spiking opponent r >= 0.45",
+        "ok": true,
+        "detail": "0.507887 vs floor 0.45",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A1 every seed r >= 0.25",
+        "ok": true,
+        "detail": "measured=0.2505226818945699 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A2 |differential| tracks valence strength (r > 0.2)",
+        "ok": false,
+        "detail": "measured=0.10168131451273481 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-A2 input-lesion collapses the opponent differential",
+        "ok": true,
+        "detail": "treatment=0.0250033 control=0 |sep|=0.0250033 > 0.0125016",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-A3 no-conditioning lesion collapses the read (weights are self-organized from experience)",
+        "ok": true,
+        "detail": "treatment=0.507887 control=0 |sep|=0.507887 > 0.357887",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A4 permute-code beaten (perm-p<0.05) in ALL seeds",
+        "ok": false,
+        "detail": "measured=5 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A5 unpaired-US beaten (perm-p<0.05) in ALL seeds",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-B1 emotion discrimination >= 0.75",
+        "ok": true,
+        "detail": "measured=0.75 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-B2 reappraisal down-regulates the amygdala >= 25%",
+        "ok": true,
+        "detail": "measured=0.8332750000000001 expect=<function main.<locals>.<lambda> at 0x7f6d6a9779c0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-B3 WTA-lesion collapses the categorical margin",
+        "ok": false,
+        "detail": "treatment=0.199588 control=0.175487 |sep|=0.0241006 > 0.0698556",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-B5 mismatched appraisal collapses discrimination",
+        "ok": false,
+        "detail": "treatment=0.75 control=0.458333 |sep|=0.291667 > 0.4",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "Warriner appraisal SEED (ridge target) -- RETIRED: opponent weights derive from the self-organized conditioning map (three-factor Hebbian over the learned code, ~10 innate primary signs)",
+        "why": "this composition's whole point; Warriner is EVAL-only ground-truth, never a weight input"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "C_A1_held_out_spiking_r>=0.45": true,
+    "C_A1_every_seed_r>=0.25": true,
+    "C_A2_salience_magnitude_tracks_valence_and_input_lesion_collapses": false,
+    "C_A3_no_conditioning_collapses(<0.15)": true,
+    "C_A4_permute_code_perm_p<0.05_all_seeds": false,
+    "C_A5_unpaired_US_perm_p<0.05_all_seeds": true,
+    "C_B1_emotion_discrimination>=0.75_and_distinct": false,
+    "C_B2_reappraisal_downregulates>=25%": true,
+    "C_B3_WTA_lesion_collapses_margin>=35%": false,
+    "C_B4_reap_lesion_abolishes_downreg": true,
+    "C_B5_mismatched_collapses_discrimination": false
+  },
+  "means": {
+    "a_r_real": 0.5078873184653256,
+    "a_r_real_min": 0.2505226818945699,
+    "a_abs_r": 0.10168131451273481,
+    "a_intact_diff_abs": 0.025003255208333335,
+    "a_lesion_diff_abs": 0.0,
+    "a_r_no_conditioning": 0.0,
+    "a_r_perp": -0.07747140230653789,
+    "a_permcode_seeds_sig": 5,
+    "a_unpaired_seeds_sig": 6,
+    "a_permcode_null_mean": 0.015719438772124544,
+    "a_unpaired_null_mean": -0.007071757513649881,
+    "a_r_shuffled_spiking_diag": -0.01700225859784212,
+    "a_r_baseline_warriner": 0.7278810638507215,
+    "corr_s_c_warriner": 0.5029612958493183,
+    "b_accuracy": 0.75,
+    "b_vminus_drop_frac": 0.8332750000000001,
+    "b_vminus_drop_frac_reap_lesioned": 0.026899999999999997,
+    "b_margin_intact": 0.1995875,
+    "b_margin_wta_lesion": 0.17548687394575033,
+    "b_accuracy_mismatched": 0.4583333333333333
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.49577212922541014,
+      "a_abs_r": 0.19638365285682288,
+      "a_intact_diff_abs": 0.029635416666666664,
+      "a_lesion_diff_abs": 0.0,
+      "a_r_perp": 0.034704097550349304,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_r_real": 0.5182852374578188,
+      "a_permcode_perm_p": 0.029850746268656716,
+      "a_unpaired_perm_p": 0.004975124378109453,
+      "a_permcode_null_mean": 0.036214278763048204,
+      "a_unpaired_null_mean": -0.03190932613964862,
+      "a_r_shuffled_spiking_diag": 0.20672012741374068,
+      "a_r_baseline_warriner": 0.6587285401708123,
+      "corr_s_c_warriner": 0.5031642683017103,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.2103,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.0736,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_care",
+          "margin": 0.1525,
+          "ok": false
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.1733,
+          "ok": true
+        }
+      ],
+      "b_vminus_drop_frac": 0.7662,
+      "b_vminus_drop_frac_reap_lesioned": 0.1539,
+      "b_margin_intact": 0.152425,
+      "b_margin_wta_lesion": 0.1749298599402905,
+      "b_accuracy_mismatched": 0.75
+    },
+    {
+      "seed": 43,
+      "primaries": [
+        "hug",
+        "sweet",
+        "treat",
+        "candy",
+        "cake",
+        "hungry",
+        "pain",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.6013943860438214,
+      "a_abs_r": -0.022794718831442944,
+      "a_intact_diff_abs": 0.01966145833333333,
+      "a_lesion_diff_abs": 0.0,
+      "a_r_perp": 0.035144137374665874,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_r_real": 0.5687014271072762,
+      "a_permcode_perm_p": 0.004975124378109453,
+      "a_unpaired_perm_p": 0.004975124378109453,
+      "a_permcode_null_mean": -0.023822748878576876,
+      "a_unpaired_null_mean": -0.006139186744532883,
+      "a_r_shuffled_spiking_diag": -0.13994725454341758,
+      "a_r_baseline_warriner": 0.8625760829803194,
+      "corr_s_c_warriner": 0.4372296459129802,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.4074,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.0114,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.3846,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.1148,
+          "ok": true
+        }
+      ],
+      "b_vminus_drop_frac": 0.82135,
+      "b_vminus_drop_frac_reap_lesioned": 0.027299999999999998,
+      "b_margin_intact": 0.22955,
+      "b_margin_wta_lesion": 0.22597926567209575,
+      "b_accuracy_mismatched": 0.5
+    },
+    {
+      "seed": 44,
+      "primaries": [
+        "cuddle",
+        "hug",
+        "cozy",
+        "candy",
+        "warm",
+        "pain",
+        "hungry",
+        "bite",
+        "cold",
+        "hurt"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.6618392904188398,
+      "a_abs_r": 0.2584601800019201,
+      "a_intact_diff_abs": 0.023352864583333337,
+      "a_lesion_diff_abs": 0.0,
+      "a_r_perp": -0.2645411148571844,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_r_real": 0.6287295132577572,
+      "a_permcode_perm_p": 0.009950248756218905,
+      "a_unpaired_perm_p": 0.004975124378109453,
+      "a_permcode_null_mean": 0.039854361059040395,
+      "a_unpaired_null_mean": -0.06022332785708434,
+      "a_r_shuffled_spiking_diag": 0.021123707182435805,
+      "a_r_baseline_warriner": 0.7475820050332336,
+      "corr_s_c_warriner": 0.5665130703924804,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.2834,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_seeking",
+          "margin": 0.0204,
+          "ok": false
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.3495,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.2358,
+          "ok": true
+        }
+      ],
+      "b_vminus_drop_frac": 0.9012,
+      "b_vminus_drop_frac_reap_lesioned": -0.0872,
+      "b_margin_intact": 0.222275,
+      "b_margin_wta_lesion": 0.2688636436859148,
+      "b_accuracy_mismatched": 0.25
+    },
+    {
+      "seed": 100,
+      "primaries": [
+        "hug",
+        "food",
+        "candy",
+        "cozy",
+        "sweet",
+        "scared",
+        "cold",
+        "afraid",
+        "cry",
+        "hungry"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 128,
+      "n_train": 64,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.6745270490350291,
+      "a_abs_r": 0.29142860481684096,
+      "a_intact_diff_abs": 0.01847005208333333,
+      "a_lesion_diff_abs": 0.0,
+      "a_r_perp": 0.019863670315783132,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_r_real": 0.6656124429175088,
+      "a_permcode_perm_p": 0.004975124378109453,
+      "a_unpaired_perm_p": 0.004975124378109453,
+      "a_permcode_null_mean": 0.02670245960695039,
+      "a_unpaired_null_mean": 0.09391228591511354,
+      "a_r_shuffled_spiking_diag": -0.21018273408991106,
+      "a_r_baseline_warriner": 0.7223244972925408,
+      "corr_s_c_warriner": 0.5574506884477208,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.4259,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.0617,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.3924,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.1638,
+          "ok": true
+        }
+      ],
+      "b_vminus_drop_frac": 0.936,
+      "b_vminus_drop_frac_reap_lesioned": -0.093,
+      "b_margin_intact": 0.26095,
+      "b_margin_wta_lesion": 0.1643601941198298,
+      "b_accuracy_mismatched": 0.5
+    },
+    {
+      "seed": 101,
+      "primaries": [
+        "kiss",
+        "sweet",
+        "cozy",
+        "warm",
+        "cake",
+        "hungry",
+        "cold",
+        "bite",
+        "sick",
+        "pain"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.36326837417428337,
+      "a_abs_r": 0.10846257295745018,
+      "a_intact_diff_abs": 0.020917968749999998,
+      "a_lesion_diff_abs": 0.0,
+      "a_r_perp": -0.09551583861903289,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_r_real": 0.4854527647119926,
+      "a_permcode_perm_p": 0.004975124378109453,
+      "a_unpaired_perm_p": 0.014925373134328358,
+      "a_permcode_null_mean": 0.0014188031109012723,
+      "a_unpaired_null_mean": -0.08828816339648395,
+      "a_r_shuffled_spiking_diag": 0.1907401682937091,
+      "a_r_baseline_warriner": 0.6920401739946448,
+      "corr_s_c_warriner": 0.4563309246434333,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3421,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.0282,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.088,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.2183,
+          "ok": true
+        }
+      ],
+      "b_vminus_drop_frac": 0.7595000000000001,
+      "b_vminus_drop_frac_reap_lesioned": 0.1835,
+      "b_margin_intact": 0.16915000000000002,
+      "b_margin_wta_lesion": 0.122795605777633,
+      "b_accuracy_mismatched": 0.75
+    },
+    {
+      "seed": 102,
+      "primaries": [
+        "sweet",
+        "candy",
+        "cuddle",
+        "kiss",
+        "cozy",
+        "scared",
+        "bite",
+        "cold",
+        "cry",
+        "fall"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 128,
+      "n_train": 64,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_real": 0.2505226818945699,
+      "a_abs_r": -0.22185240472518244,
+      "a_intact_diff_abs": 0.03798177083333334,
+      "a_lesion_diff_abs": 0.0,
+      "a_r_perp": -0.1944833656038083,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_r_real": 0.34896834629666046,
+      "a_permcode_perm_p": 0.19402985074626866,
+      "a_unpaired_perm_p": 0.009950248756218905,
+      "a_permcode_null_mean": 0.013949478971383877,
+      "a_unpaired_null_mean": 0.050217173140736975,
+      "a_r_shuffled_spiking_diag": -0.17046756584360967,
+      "a_r_baseline_warriner": 0.684035083632778,
+      "corr_s_c_warriner": 0.49707917739758417,
+      "b_accuracy": 0.0,
+      "b_distinct_winners": 2,
+      "b_distinct": false,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_rage",
+          "margin": 0.3946,
+          "ok": false
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_rage",
+          "margin": 0.0222,
+          "ok": false
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_rage",
+          "margin": 0.2288,
+          "ok": false
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_fear",
+          "margin": 0.0071,
+          "ok": false
+        }
+      ],
+      "b_vminus_drop_frac": 0.8154,
+      "b_vminus_drop_frac_reap_lesioned": -0.0231,
+      "b_margin_intact": 0.163175,
+      "b_margin_wta_lesion": 0.095992674478738,
+      "b_accuracy_mismatched": 0.0
+    }
+  ],
+  "primary_count_ablation": [
+    {
+      "n_each": 4,
+      "n_primaries": 8,
+      "held_r_mean": 0.4943428558062446,
+      "held_r_min": 0.25088423280697836,
+      "salience_r_mean": 0.08054480040994326,
+      "salience_r_min": -0.21029027880388548,
+      "permute_code_beat": "4/6"
+    },
+    {
+      "n_each": 5,
+      "n_primaries": 10,
+      "held_r_mean": 0.5359582886248359,
+      "held_r_min": 0.3489683462966606,
+      "salience_r_mean": 0.10315554721362602,
+      "salience_r_min": -0.3033364788302423,
+      "permute_code_beat": "5/6"
+    },
+    {
+      "n_each": 6,
+      "n_primaries": 12,
+      "held_r_mean": 0.5522648196885939,
+      "held_r_min": 0.442047945000919,
+      "salience_r_mean": 0.17039991148476916,
+      "salience_r_min": 0.06803432362120829,
+      "permute_code_beat": "6/6"
+    },
+    {
+      "n_each": 8,
+      "n_primaries": 16,
+      "held_r_mean": 0.5616736739165814,
+      "held_r_min": 0.5043338536172631,
+      "salience_r_mean": 0.1990827216744778,
+      "salience_r_min": 0.10689897635347975,
+      "permute_code_beat": "6/6"
+    },
+    {
+      "n_each": 10,
+      "n_primaries": 20,
+      "held_r_mean": 0.5089228804829741,
+      "held_r_min": 0.2977791897342714,
+      "salience_r_mean": 0.05510972806895762,
+      "salience_r_min": -0.10405982937845719,
+      "permute_code_beat": "5/6"
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "seed_frac": 0.5,
+    "n_perm": 200,
+    "rung_b": true,
+    "n_vocab": 139,
+    "appetitive_pool": [
+      "hug",
+      "kiss",
+      "cuddle",
+      "cake",
+      "candy",
+      "sweet",
+      "warm",
+      "treat",
+      "food",
+      "cozy"
+    ],
+    "aversive_pool": [
+      "hurt",
+      "pain",
+      "sick",
+      "cry",
+      "scared",
+      "afraid",
+      "cold",
+      "hungry",
+      "bite",
+      "fall"
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "opponent V+/V- weight = self-organized three-factor Hebbian map w=sum_{c in train} code_read_c * s_c (s_c = Rescorla-Wagner asymptote of co-occurrence with ~2*n_each INNATE primary reinforcers), rectified split W+=g*max(w,0)/W-=g*max(-w,0), injected as the code_in->vplus/vminus FF; the spiking differential rate(vplus)-rate(vminus) off cp_firing_states = valence. REPLACES the affect-deepen ridge-fit-to-Warriner. Rung-b: composed opponent -> appraisal-dim WTA -> 4 Panksepp emotions + vmPFC->amygdala reappraisal (valence cue chosen by s_c, not Warriner).",
+  "HONEST_RESIDUALS": "Warriner is EVAL-only ground-truth, NEVER a weight input (asserted). Residuals: (1) ~2*n_each innate primary SIGNS host-supplied (the faithful floor; 140->~10 compression, not removal); (2) the outer-product Hebbian map is a rate-level numpy matrix (a fully-spiking three-factor write is the next rung); (3) agency/certainty conditions set as sensory drive; (4) standalone de-risk bridge (build_one_brain fold-in pending).",
+  "elapsed_seconds": 38.3
+}

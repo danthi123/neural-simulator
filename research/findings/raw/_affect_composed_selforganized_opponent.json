@@ -1,0 +1,278 @@
+{
+  "probe": "affect_composed_selforganized_opponent (emergence-bar composition)",
+  "verdict": "GO (SMOKE(1-seed)) -- THE WARRINER-SEEDED RIDGE-FIT IS RETIRED. The spiking affect opponent V+/V- weights are DERIVED FROM the self-organized valence map (a three-factor Hebbian outer-product over the learned stream-cortex code, anchored by ~10 innate primary signs) -- ZERO Warriner supervision in the weights. Held-out concepts (own reinforcement WITHHELD from the map) appraise to a SPIKING opponent differential correlating r=+0.600 with true valence (every seed >= +0.600; the retired ridge-to-Warriner baseline reads +0.825, a gap of +0.226). The salience gate is EMERGENT (|differential| tracks valence strength r=+0.377; input-lesion collapses it 0.018->0.000). The weights are self-organized FROM EXPERIENCE: removing the conditioning stream collapses the read to +0.000; permute-code beaten in 1/1 seeds and unpaired-US in 1/1 (perm-p<0.05). corr(acquired s_c, Warriner)=+0.481 (the innate signal is honest). RUNG-B (composed opponent, valence cue chosen by s_c not Warriner): the 4 appraisal conditions select their intended emotion at accuracy 1.00; reappraisal down-regulates the amygdala 83%; WTA-lesion collapses the margin 0.259->0.155. => the WHOLE affect appraisal now traces to innate primaries + experience, not a human-rated lexicon. Brain-based (reads off cp_firing_states); NO sim/ edit. RESIDUAL: ~10 innate primary SIGNS (the faithful floor); rate-level Hebbian map (spiking three-factor write = next rung).",
+  "GO": true,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=24)",
+      "ok": true,
+      "detail": "vocab=137"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=20)",
+      "ok": true,
+      "detail": "min_n_held=62"
+    },
+    {
+      "name": "no_conditioning_reads_zero(|r|<0.15)",
+      "ok": true,
+      "detail": "no_conditioning_r=+0.0000"
+    },
+    {
+      "name": "innate_US_signal_present(corr(s_c,Warriner)>0)",
+      "ok": true,
+      "detail": "corr_s_c_warriner=+0.481"
+    },
+    {
+      "name": "weights_warriner_free(no-cond collapse is load-bearing)",
+      "ok": true,
+      "detail": "asserted in run_seed: selforg_opponent_weights has no Warriner argument; corrupting s_true leaves the weights byte-identical; C-A3 collapse confirms weights come from conditioning"
+    }
+  ],
+  "verdict_earned": {
+    "label": "composed self-organized affect opponent (Warriner-seed RETIRED)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "C-A1 held-out spiking opponent r >= 0.45",
+        "ok": true,
+        "detail": "0.599909 vs floor 0.45",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A1 every seed r >= 0.25",
+        "ok": true,
+        "detail": "measured=0.5999088586759301 expect=<function main.<locals>.<lambda> at 0x7f2a953b5ee0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A2 |differential| tracks valence strength (r > 0.2)",
+        "ok": true,
+        "detail": "measured=0.3771471707514643 expect=<function main.<locals>.<lambda> at 0x7f2a953b5ee0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-A2 input-lesion collapses the opponent differential",
+        "ok": true,
+        "detail": "treatment=0.0183333 control=0 |sep|=0.0183333 > 0.00916667",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-A3 no-conditioning lesion collapses the read (weights are self-organized from experience)",
+        "ok": true,
+        "detail": "treatment=0.599909 control=0 |sep|=0.599909 > 0.449909",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A4 permute-code beaten (perm-p<0.05) in ALL seeds",
+        "ok": true,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f2a953b5ee0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-A5 unpaired-US beaten (perm-p<0.05) in ALL seeds",
+        "ok": true,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f2a953b5ee0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-B1 emotion discrimination >= 0.75",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f2a953b5ee0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "C-B2 reappraisal down-regulates the amygdala >= 25%",
+        "ok": true,
+        "detail": "measured=0.8283 expect=<function main.<locals>.<lambda> at 0x7f2a953b5ee0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-B3 WTA-lesion collapses the categorical margin",
+        "ok": true,
+        "detail": "treatment=0.258575 control=0.155019 |sep|=0.103556 > 0.0905012",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "C-B5 mismatched appraisal collapses discrimination",
+        "ok": true,
+        "detail": "treatment=1 control=0.5 |sep|=0.5 > 0.4",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "Warriner appraisal SEED (ridge target) -- RETIRED: opponent weights derive from the self-organized conditioning map (three-factor Hebbian over the learned code, ~10 innate primary signs)",
+        "why": "this composition's whole point; Warriner is EVAL-only ground-truth, never a weight input"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "C_A1_held_out_spiking_r>=0.45": true,
+    "C_A1_every_seed_r>=0.25": true,
+    "C_A2_salience_magnitude_tracks_valence_and_input_lesion_collapses": true,
+    "C_A3_no_conditioning_collapses(<0.15)": true,
+    "C_A4_permute_code_perm_p<0.05_all_seeds": true,
+    "C_A5_unpaired_US_perm_p<0.05_all_seeds": true,
+    "C_B1_emotion_discrimination>=0.75_and_distinct": true,
+    "C_B2_reappraisal_downregulates>=25%": true,
+    "C_B3_WTA_lesion_collapses_margin>=35%": true,
+    "C_B4_reap_lesion_abolishes_downreg": true,
+    "C_B5_mismatched_collapses_discrimination": true
+  },
+  "means": {
+    "a_r_real": 0.5999088586759301,
+    "a_r_real_min": 0.5999088586759301,
+    "a_abs_r": 0.3771471707514643,
+    "a_intact_diff_abs": 0.018333333333333337,
+    "a_lesion_diff_abs": 0.0,
+    "a_r_no_conditioning": 0.0,
+    "a_r_perp": 0.08064363785531985,
+    "a_permcode_seeds_sig": 1,
+    "a_unpaired_seeds_sig": 1,
+    "a_permcode_null_mean": -0.008914551699431951,
+    "a_unpaired_null_mean": -0.12801947640008213,
+    "a_r_shuffled_spiking_diag": 0.061053733253756425,
+    "a_r_baseline_warriner": 0.8254421642672847,
+    "corr_s_c_warriner": 0.48117772106871454,
+    "b_accuracy": 1.0,
+    "b_vminus_drop_frac": 0.8283,
+    "b_vminus_drop_frac_reap_lesioned": -0.0606,
+    "b_margin_intact": 0.25857499999999994,
+    "b_margin_wta_lesion": 0.15501910892326676,
+    "b_accuracy_mismatched": 0.5
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 137,
+      "code_dim": 64,
+      "n_reinforced": 125,
+      "n_train": 63,
+      "n_held": 62,
+      "n_held_probe": 48,
+      "a_r_real": 0.5999088586759301,
+      "a_abs_r": 0.3771471707514643,
+      "a_intact_diff_abs": 0.018333333333333337,
+      "a_lesion_diff_abs": 0.0,
+      "a_r_perp": 0.08064363785531985,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_r_real": 0.5592650422976987,
+      "a_permcode_perm_p": 0.049586776859504134,
+      "a_unpaired_perm_p": 0.01652892561983471,
+      "a_permcode_null_mean": -0.008914551699431951,
+      "a_unpaired_null_mean": -0.12801947640008213,
+      "a_r_shuffled_spiking_diag": 0.061053733253756425,
+      "a_r_baseline_warriner": 0.8254421642672847,
+      "corr_s_c_warriner": 0.48117772106871454,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.4432,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.1749,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.4113,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.0049,
+          "ok": true
+        }
+      ],
+      "b_vminus_drop_frac": 0.8283,
+      "b_vminus_drop_frac_reap_lesioned": -0.0606,
+      "b_margin_intact": 0.25857499999999994,
+      "b_margin_wta_lesion": 0.15501910892326676,
+      "b_accuracy_mismatched": 0.5
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 8000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "seed_frac": 0.5,
+    "n_perm": 120,
+    "rung_b": true,
+    "n_vocab": 137,
+    "appetitive_pool": [
+      "hug",
+      "kiss",
+      "cuddle",
+      "cake",
+      "candy",
+      "sweet",
+      "warm",
+      "treat",
+      "food",
+      "cozy"
+    ],
+    "aversive_pool": [
+      "hurt",
+      "pain",
+      "sick",
+      "cry",
+      "scared",
+      "afraid",
+      "cold",
+      "hungry",
+      "bite",
+      "fall"
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "opponent V+/V- weight = self-organized three-factor Hebbian map w=sum_{c in train} code_read_c * s_c (s_c = Rescorla-Wagner asymptote of co-occurrence with ~2*n_each INNATE primary reinforcers), rectified split W+=g*max(w,0)/W-=g*max(-w,0), injected as the code_in->vplus/vminus FF; the spiking differential rate(vplus)-rate(vminus) off cp_firing_states = valence. REPLACES the affect-deepen ridge-fit-to-Warriner. Rung-b: composed opponent -> appraisal-dim WTA -> 4 Panksepp emotions + vmPFC->amygdala reappraisal (valence cue chosen by s_c, not Warriner).",
+  "HONEST_RESIDUALS": "Warriner is EVAL-only ground-truth, NEVER a weight input (asserted). Residuals: (1) ~2*n_each innate primary SIGNS host-supplied (the faithful floor; 140->~10 compression, not removal); (2) the outer-product Hebbian map is a rate-level numpy matrix (a fully-spiking three-factor write is the next rung); (3) agency/certainty conditions set as sensory drive; (4) standalone de-risk bridge (build_one_brain fold-in pending).",
+  "elapsed_seconds": 3.6
+}
