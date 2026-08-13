@@ -10520,6 +10520,30 @@ class SimulationBridge:
                         cfg.homeostasis_threshold_min, cfg.homeostasis_threshold_max
                     )
                     update_mask = self.cp_homeostasis_update_neuron_mask
+                    # PER-REGION HOMEOSTASIS ISOLATION (2026-08-13; opt-in, DEFAULT
+                    # OFF -> this block is SKIPPED and the update is byte-identical
+                    # to the legacy every-neuron path). Homeostatic threshold
+                    # adaptation is a CONTINUOUS process (it pulls even a SILENT
+                    # neuron's threshold toward its target rate every step), so on
+                    # ONE shared, continuously-stepped substrate an IDLE co-resident
+                    # region's thresholds drift while another region trains -- an
+                    # evolution the separate standalone bridge never undergoes,
+                    # which is the residual that breaks byte-identity of the merged
+                    # trained read. GATE the update to neurons that PARTICIPATED
+                    # this step (fired OR received nonzero external drive): idle
+                    # co-resident neurons are FROZEN (threshold + activity EMA held),
+                    # so a region's homeostatic state is invariant to how long it
+                    # co-resides idle. During-training / during-read adaptation
+                    # (driven or firing neurons) is untouched -- the operating point
+                    # the faculty depends on is preserved. Combined (AND) with any
+                    # existing static per-region homeostasis-update mask.
+                    if getattr(cfg, "per_region_homeostasis_isolation", False):
+                        _participated = fired_this_step
+                        _ext = getattr(self, "cp_external_input_current", None)
+                        if _ext is not None:
+                            _participated = _participated | (_ext != 0)
+                        update_mask = (_participated if update_mask is None
+                                       else (update_mask & _participated))
                     if update_mask is None:
                         self.cp_neuron_activity_ema = updated_activity
                         self.cp_neuron_firing_thresholds = updated_thresholds

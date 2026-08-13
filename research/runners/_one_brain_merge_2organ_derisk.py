@@ -324,11 +324,14 @@ def _maxerr(m, s, keys):
     return e
 
 
-def _train_coresident(seed, n_reps, xp, build_kw, homog=None, per_region_thresh=True, homeo=True):
+def _train_coresident(seed, n_reps, xp, build_kw, homog=None, per_region_thresh=True, homeo=True,
+                      homeo_iso=False):
     """Two SEPARATE standalone organ bridges (the co-resident baseline). homog!=None -> set every
     threshold to that constant before training (the cause-isolation control). homeo=False disables
     the homeostatic threshold-adaptation companion process (the SECOND, activity-history-coupled
     divergence source isolated 2026-08-13; static per-region thresholds are still heterogeneous).
+    homeo_iso=True enables per_region_homeostasis_isolation (the merge-closing fix for the SECOND
+    cause: freeze an idle region's homeostatic threshold drift so it is invariant to co-residence).
 
     Each standalone organ is built with the SAME region NAMES it carries in the merged bridge
     (organ A -> `_A`, organ B -> `_B`), so with per-region threshold seeding ON a region's
@@ -345,6 +348,7 @@ def _train_coresident(seed, n_reps, xp, build_kw, homog=None, per_region_thresh=
     brB._blk = 24
     for c in (cfgA, cfgB):
         c.enable_homeostasis = bool(homeo)
+        c.per_region_homeostasis_isolation = bool(homeo_iso)
     if homog is not None:
         homogenize_thresholds(brA, homog); homogenize_thresholds(brB, homog)
     idxA_solo = _idx_map(brA, "_A", xp); idxB_solo = _idx_map(brB, "_B", xp)
@@ -353,13 +357,16 @@ def _train_coresident(seed, n_reps, xp, build_kw, homog=None, per_region_thresh=
     return (brA, cfgA, metaA, idxA_solo), (brB, cfgB, metaB, idxB_solo)
 
 
-def _train_merged(seed, cross_weight, n_reps, xp, build_kw, homog=None, per_region_thresh=True, homeo=True):
+def _train_merged(seed, cross_weight, n_reps, xp, build_kw, homog=None, per_region_thresh=True, homeo=True,
+                  homeo_iso=False):
     """One merged 2-organ bridge; homog!=None -> constant threshold (cause-isolation control);
-    homeo=False -> homeostatic threshold adaptation OFF (isolates the companion-process residual)."""
+    homeo=False -> homeostatic threshold adaptation OFF (isolates the companion-process residual);
+    homeo_iso=True -> per_region_homeostasis_isolation ON (freeze idle-region homeostatic drift)."""
     merged, cfg_m, meta = build_merged_two_organ(seed, cross_weight=cross_weight,
                                                  per_region_thresh=per_region_thresh, **build_kw)
     idxA = _idx_map(merged, "_A", xp); idxB = _idx_map(merged, "_B", xp)
     cfg_m.enable_homeostasis = bool(homeo)
+    cfg_m.per_region_homeostasis_isolation = bool(homeo_iso)
     if homog is not None:
         homogenize_thresholds(merged, homog)
     train_expectation(merged, cfg_m, idxA, meta, xp, n_reps=n_reps)
@@ -476,6 +483,42 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
                                                           per_region_thresh=per_region_thresh, homeo=False)
     surp_err_n, recall_err_n, *_ = _byte_identity(merged_n, cfgN, metaN, idxA_n, idxB_n, coA_n, coB_n, xp)
 
+    # ── THE FIX (2026-08-13): per_region_homeostasis_isolation ON, homeostasis STILL ON (the
+    #    production operating point -- faculty stays alive). Root cause of the homeostatic residual
+    #    (this arc): homeostatic threshold adaptation is a CONTINUOUS companion process that pulls
+    #    even a SILENT neuron's threshold toward its target rate EVERY step, so on ONE shared,
+    #    continuously-stepped substrate an IDLE co-resident region idle-drifts (~0.08 mV over a
+    #    co-resident's training phase) -- an evolution the SEPARATE standalone bridge never undergoes.
+    #    It is NOT pooled activity (the update is strictly per-neuron; an idle organ's activity EMA
+    #    stays exactly 0.0) and NOT floating-point order -- it is a deterministic shared-CLOCK drift.
+    #    The fix GATES the homeostatic threshold+EMA update to neurons that PARTICIPATED this step
+    #    (fired OR received nonzero external drive), freezing idle co-resident drift while leaving the
+    #    during-train / during-read adaptation (driven / firing neurons) untouched -> the operating
+    #    point the faculty depends on is preserved. Closes the SURPRISE organ's read to byte-EXACT
+    #    (its read has no B->A dependence). The RECALL organ retains a ~1-spike residual = the
+    #    LOAD-BEARING cross synapse (surprise_A->cueB) firing cueB during organ A's surprise read
+    #    (measure_conditions precedes read_recall), which nudges cueB's homeostatic threshold -- i.e.
+    #    the cross synapse DOING ITS JOB leaking into the continuous companion process, not pool
+    #    co-residence (see the finding's read-order control: reading recall BEFORE organ A's read is
+    #    byte-exact). ──
+    coA_i, coB_i = _train_coresident(seed, n_reps, xp, build_kw, per_region_thresh=per_region_thresh, homeo_iso=True)
+    merged_i, cfgI, metaI, idxA_i, idxB_i = _train_merged(seed, cross_weight, n_reps, xp, build_kw,
+                                                          per_region_thresh=per_region_thresh, homeo_iso=True)
+    # READ-ORDER DECOMPOSITION of the recall organ's residual. read_recall drives ONLY cueB (organ A
+    # undriven), and there is no B->A synapse, so reading recall FIRST leaves organ A's surprise read
+    # untouched. recall_BEFORE = the pool-co-residence read (the cross has not yet fired) -> byte-EXACT
+    # proves the MERGE ITSELF (init + trained + homeostatically-adapted) is byte-clean. recall_AFTER
+    # (inside _byte_identity, which runs organ A's surprise read first) carries the cross synapse's own
+    # LOAD-BEARING homeostatic footprint (surprise_A->cueB fired cueB during A's contradict/novel read),
+    # NOT a co-residence defect.
+    recall_before_m = read_recall(merged_i, idxB_i, metaI, xp)
+    recall_before_s = read_recall(coB_i[0], coB_i[3], coB_i[2], xp)
+    recall_before_err_i = abs(recall_before_m - recall_before_s)
+    surp_err_i, recall_err_i, resA_mi, _, recall_mi, recall_si = _byte_identity(
+        merged_i, cfgI, metaI, idxA_i, idxB_i, coA_i, coB_i, xp)
+    recall_after_err_i = recall_err_i
+    surp_sep_i = resA_mi["contradict_hz"] / max(resA_mi["confirm_hz"], 1e-6)
+
     # ATTRIBUTION (tools.lab): whose is the organ-B recall INTERACTION? treatment = intact interaction,
     # control = lesioned (cross zeroed). lesion ~0 -> the interaction is OWNED by the cross-organ synapse,
     # not a fixed input artifact (measuring both arms is not the same as asking whose the difference was).
@@ -489,6 +532,13 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
     hetero_byte_id = bool(surp_err <= 1e-6 and recall_err <= 1e-6)
     homog_byte_id = bool(surp_err_h <= 1e-6 and recall_err_h <= 1e-6)
     homeo_off_byte_id = bool(surp_err_n <= 1e-6 and recall_err_n <= 1e-6)
+    # THE FIX: with per_region_homeostasis_isolation ON (homeostasis STILL ON -> faculty alive),
+    # POOL CO-RESIDENCE is byte-identical for BOTH organs -- surprise EXACT and recall EXACT when
+    # read before the load-bearing cross fires. The faculty must still separate (else exact-of-a-
+    # dead-organ). The recall_AFTER residual is the cross synapse's own footprint, tracked separately.
+    homeo_iso_surp_exact = bool(surp_err_i <= 1e-6)
+    homeo_iso_pool_byte_id = bool(surp_err_i <= 1e-6 and recall_before_err_i <= 1e-6)
+    homeo_iso_alive = bool(surp_sep_i >= 5.0)
     res = {
         "seed": seed,
         "determinism_ok": bool(det_ok),
@@ -508,6 +558,16 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
         # second-cause attribution: homeostasis OFF (static per-region-heterogeneous thresholds) -> EXACT
         "homeo_off_surprise_maxerr_hz": float(surp_err_n), "homeo_off_recall_maxerr_hz": float(recall_err_n),
         "homeo_off_byte_identical": homeo_off_byte_id,
+        # THE FIX: per_region_homeostasis_isolation ON, homeostasis STILL ON (faculty alive).
+        # POOL CO-RESIDENCE byte-exact (surprise + recall-before-cross); recall-after-cross residual
+        # = the load-bearing cross synapse's homeostatic footprint (read-order control).
+        "homeo_iso_surprise_maxerr_hz": float(surp_err_i),
+        "homeo_iso_recall_before_maxerr_hz": float(recall_before_err_i),
+        "homeo_iso_recall_after_maxerr_hz": float(recall_after_err_i),
+        "homeo_iso_separation_ratio": float(surp_sep_i),
+        "homeo_iso_surprise_byte_identical": homeo_iso_surp_exact,
+        "homeo_iso_pool_byte_identical": homeo_iso_pool_byte_id,
+        "homeo_iso_faculty_alive": homeo_iso_alive,
         # (b) load-bearing cross-organ synapse
         "recall_A_confirm_hz": float(rc_confirm), "recall_A_contra_hz": float(rc_contra),
         "interaction_intact_hz": float(interaction_intact),
@@ -523,11 +583,14 @@ def run_seed(seed, *, n_reps=22, cross_weight=12.0, homog_control=-42.0, verbose
     # process (+ a shared-numerical-context FP floor), not the init RNG -- see the finding.
     res["structural_go"] = bool(one_pool and det_ok and load_bearing and init_byte_id
                                 and homog_byte_id and homeo_off_byte_id)
+    res["homeo_iso_go"] = bool(homeo_iso_pool_byte_id and homeo_iso_alive)
     if verbose:
         print(f"  [seed {seed}] pool={one_pool}(N={n_all}={n_A}A+{n_B}B) det={det_ok} | "
               f"INIT byte-id err={init_err:.2e}({init_byte_id}) | "
               f"HOMEO-OFF byte-id surp={surp_err_n:.2e} recall={recall_err_n:.2e}({homeo_off_byte_id}) | "
-              f"PROD(homeo-on) surp={surp_err:.2e} recall={recall_err:.2e} (sep={surp_sep:.1f}x) | "
+              f"PROD(homeo-on,no-iso) surp={surp_err:.2e} recall={recall_err:.2e} (sep={surp_sep:.1f}x) | "
+              f"HOMEO-ISO surp={surp_err_i:.2e} recall_before={recall_before_err_i:.2e} "
+              f"recall_after={recall_after_err_i:.2e} (sep={surp_sep_i:.1f}x) pool-byte-id={homeo_iso_pool_byte_id} | "
               f"cross intact={interaction_intact:+.2f} lesion={interaction_lesion:+.2f}Hz | "
               f"struct-GO={res['structural_go']}")
     return res
@@ -561,8 +624,15 @@ def main():
     n_homeo_off = sum(1 for r in results if r["homeo_off_byte_identical"])
     n_hetero = sum(1 for r in results if r["hetero_byte_identical"])
     n_struct = sum(1 for r in results if r["structural_go"])
+    n_iso_surp = sum(1 for r in results if r["homeo_iso_surprise_byte_identical"])
+    n_iso_pool = sum(1 for r in results if r["homeo_iso_pool_byte_identical"])
+    n_iso_alive = sum(1 for r in results if r["homeo_iso_faculty_alive"])
+    n_iso_go = sum(1 for r in results if r["homeo_iso_go"])
     max_recall_err = max(r["recall_maxerr_hz"] for r in results)
     max_surp_err = max(r["surprise_maxerr_hz"] for r in results)
+    max_iso_surp_err = max(r["homeo_iso_surprise_maxerr_hz"] for r in results)
+    max_iso_recall_before_err = max(r["homeo_iso_recall_before_maxerr_hz"] for r in results)
+    max_iso_recall_after_err = max(r["homeo_iso_recall_after_maxerr_hz"] for r in results)
     max_init_err = max(r["init_maxerr"] for r in results)
     _gate = lambda k: "GO" if ((n >= 6 and k >= 5) or (n < 6 and k == n)) else "BOUNDARY"
     # INIT byte-identity is the axis the per-region fix closes (the mission's 'init invariant to
@@ -573,6 +643,9 @@ def main():
     init_exact = _gate(n_init)
     homeo_off_exact = _gate(n_homeo_off)
     hetero_exact = _gate(n_hetero)
+    iso_surp_exact = _gate(n_iso_surp)
+    iso_pool_exact = _gate(n_iso_pool)
+    iso_go = _gate(n_iso_go)
     print("\n=== VERDICT ===")
     print(f"  one shared neuron pool:                 {n_pool}/{n}")
     print(f"  determinism (cfg.seed incl. thresholds):{n_det}/{n}")
@@ -580,9 +653,14 @@ def main():
     print(f"  INIT byte-identity (per-region fix):    {n_init}/{n}  ->  {init_exact}  (per-neuron init invariant to co-residents; max err {max_init_err:.2e}) <- the axis the fix CLOSES")
     print(f"  byte-identical, HOMEOSTASIS-OFF:        {n_homeo_off}/{n}  ->  {homeo_off_exact}  (static-threshold regime byte-clean; with INIT exact this isolates the production residual to the homeostatic DYNAMICS)")
     print(f"  byte-identical under HOMOG threshold:   {n_homog}/{n}  (cause-isolation: constant threshold)")
-    print(f"  byte-identical, PRODUCTION (homeo ON):  {n_hetero}/{n}  ->  {hetero_exact}  (residual = homeostatic companion; max err surp={max_surp_err:.2e} recall={max_recall_err:.2e} Hz)")
+    print(f"  byte-identical, PRODUCTION (homeo ON, NO isolation):  {n_hetero}/{n}  ->  {hetero_exact}  (residual = homeostatic idle-drift; max err surp={max_surp_err:.2e} recall={max_recall_err:.2e} Hz)")
+    print(f"  --- THE FIX: per_region_homeostasis_isolation ON (homeostasis STILL ON; faculty alive {n_iso_alive}/{n}) ---")
+    print(f"  homeo-ISO surprise byte-identical:      {n_iso_surp}/{n}  ->  {iso_surp_exact}  (surprise organ EXACT; max err {max_iso_surp_err:.2e} Hz)")
+    print(f"  homeo-ISO POOL CO-RESIDENCE byte-id:    {n_iso_pool}/{n}  ->  {iso_pool_exact}  (surprise + recall-BEFORE-cross both EXACT; recall-before max err {max_iso_recall_before_err:.2e} Hz) <- the MERGE is byte-clean")
+    print(f"  homeo-ISO recall-AFTER-cross residual:  max {max_iso_recall_after_err:.2e} Hz  (the LOAD-BEARING cross synapse's OWN homeostatic footprint -- read-order control -- NOT a co-residence defect)")
+    print(f"  --> HOMEO-ISO merge verdict:            {n_iso_go}/{n}  ->  {iso_go}  (pool co-residence byte-exact AND faculty alive)")
     print(f"  STRUCTURAL MERGE:                        {n_struct}/{n}  ->  {struct}")
-    print(f"  --> per-region INIT fix CLOSES the init-RNG divergence ({init_exact}); production homeostatic-adaptation residual is the mapped SECOND cause.")
+    print(f"  --> per-region INIT fix CLOSES the init-RNG divergence ({init_exact}); the homeostatic idle-drift SECOND cause is CLOSED by per_region_homeostasis_isolation ({iso_pool_exact}); the recall-after-cross residual is the cross synapse's load-bearing footprint (characterized).")
 
     if args.out:
         os.makedirs(os.path.dirname(args.out), exist_ok=True)
@@ -593,10 +671,18 @@ def main():
                        "n_cross_load_bearing": n_lb, "n_init_byte_identical": n_init,
                        "n_homog_byte_identical": n_homog, "n_homeo_off_byte_identical": n_homeo_off,
                        "n_hetero_byte_identical": n_hetero, "n_structural_go": n_struct,
+                       "n_homeo_iso_surprise_byte_identical": n_iso_surp,
+                       "n_homeo_iso_pool_byte_identical": n_iso_pool,
+                       "n_homeo_iso_faculty_alive": n_iso_alive, "n_homeo_iso_go": n_iso_go,
                        "max_init_maxerr": max_init_err,
                        "max_recall_maxerr_hz": max_recall_err, "max_surprise_maxerr_hz": max_surp_err,
+                       "max_homeo_iso_surprise_maxerr_hz": max_iso_surp_err,
+                       "max_homeo_iso_recall_before_maxerr_hz": max_iso_recall_before_err,
+                       "max_homeo_iso_recall_after_maxerr_hz": max_iso_recall_after_err,
                        "structural_verdict": struct, "init_byteid_verdict": init_exact,
                        "homeo_off_byteid_verdict": homeo_off_exact, "exact_byteid_verdict": hetero_exact,
+                       "homeo_iso_surprise_byteid_verdict": iso_surp_exact,
+                       "homeo_iso_pool_byteid_verdict": iso_pool_exact, "homeo_iso_go_verdict": iso_go,
                        "cross_weight": args.cross_weight}, f, indent=2)
         print(f"  wrote {args.out}")
 

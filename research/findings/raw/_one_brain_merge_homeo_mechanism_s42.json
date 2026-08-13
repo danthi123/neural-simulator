@@ -1,0 +1,23 @@
+{
+  "mode": "one_brain_merge_homeostasis_mechanism_diagnostic",
+  "seed": 42,
+  "n_reps": 22,
+  "backend": "numpy",
+  "idle_drift": {
+    "organ_B_threshold_drift_max_mV": 0.08056640625,
+    "organ_B_threshold_drift_mean_mV": 0.07958204299211502,
+    "organ_B_thresholds_drifted_count": 1056,
+    "organ_B_thresholds_total": 1056,
+    "organ_B_activity_ema_max_after_A_training": 0.0,
+    "merged_vs_standalone_build_threshold_maxdiff": 0.0,
+    "organ_B_thr_at_start_of_training_vs_standalone_maxdiff_mV": 0.08056640625
+  },
+  "reverse_order_forward_baseline": {
+    "surprise_maxerr_hz": 0.05787,
+    "recall_maxerr_hz": 0.9983
+  },
+  "reverse_order_B_first": {
+    "surprise_A_maxerr_hz": 3.1250000000000004,
+    "recall_B_maxerr_hz": 0.12297453703703631
+  }
+}

@@ -198,6 +198,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > - **[SH] surprise-organ homeostat** → **GO** (`8916d9493`): het_vote_rate 0.9375→1.000 (8/8) all 6, end-to-end host
 >   parity restored, surprise specificity preserved by construction, all [N] controls held. Root cause was a per-block
 >   prediction-recall collapse (not global gain) → a per-block prediction-gain equalizer. De-risk (production-wire pending).
+> - **[merge] one-brain 2-organ MERGE — 2nd byte-identity cause** → **GO 6/6** (this commit): the merged trained-read
+>   residual left open by `2026-08-13-one-brain-merge-CLOSED-per-region-threshold.md` is root-caused + CLOSED. It is NOT
+>   pooled activity (the homeostasis kernel is strictly per-neuron; an idle organ's activity EMA stays 0.0) and NOT
+>   floating-point — it is a deterministic shared-CLOCK homeostatic IDLE-DRIFT (an idle co-resident region's thresholds
+>   drift ~0.08 mV while the other organ trains; reverse-order training FLIPS the divergent organ). Additive guarded
+>   `sim/` flag `cfg.per_region_homeostasis_isolation` (default-off byte-identical: determinism 9/9 + flag-on build+step
+>   identical): gate the homeostatic threshold+EMA update to neurons that PARTICIPATED this step (fired OR driven) → idle
+>   drift frozen, during-train/read adaptation intact. Result 6/6: POOL CO-RESIDENCE byte-EXACT (surprise organ +
+>   recall-before-cross both 0.0), faculty ALIVE (separations 7.8×–49.5×). Residual = the LOAD-BEARING cross synapse's own
+>   homeostatic footprint (≤~0.19 Hz, read-order control), a functional interaction not a merge defect. Still CO-RESIDENCY
+>   in production (opt-in flag, NOT integrated). Finding `2026-08-13-one-brain-merge-homeostasis-GO.md`.
 >
 > ---
 > ## 🌙 NIGHT SUMMARY (2026-08-13 overnight, ~02:30→13:25Z) — clean checkpoint for the morning

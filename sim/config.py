@@ -211,6 +211,30 @@ class CoreSimConfig:
     # (valid but divergent) stream position. Mirrors per_parameter_heterogeneity_seed
     # (each stream reset to position 0, keyed on a stable per-slice index).
     per_region_threshold_heterogeneity: bool = False
+    # PER-REGION HOMEOSTASIS ISOLATION (2026-08-13; the one-substrate 2-organ
+    # merge's SECOND byte-identity cause). Homeostatic threshold adaptation is a
+    # CONTINUOUS companion process: `fused_homeostasis_update` pulls every
+    # neuron's threshold toward its target rate EVERY step, so a SILENT neuron
+    # drifts its threshold down (error = 0 - target < 0) even when idle. On ONE
+    # shared, continuously-stepped substrate this couples co-resident organs
+    # THROUGH THE SHARED CLOCK: while organ A trains, organ B's neurons are
+    # stepped too and their thresholds idle-drift (~0.08 mV over an A-training
+    # phase) -- an evolution the SEPARATE standalone organ-B bridge never
+    # undergoes (it simply does not run during A's training). That idle-drift is
+    # the residual that keeps the fully-adapted MERGED trained read from being
+    # byte-identical to the standalone read. It is NOT a pooled-activity effect
+    # (the update is already strictly per-neuron; an idle organ's activity EMA
+    # stays exactly 0.0) and NOT a floating-point-order effect -- it is a real,
+    # fully-deterministic shared-clock drift. When ON, the homeostatic threshold
+    # + activity-EMA update is GATED to neurons that PARTICIPATED this step
+    # (fired OR received nonzero external drive), so an idle co-resident region's
+    # homeostatic state is FROZEN and stays invariant to how long it co-resides
+    # beside a training co-resident. During-training and during-read adaptation
+    # (driven / firing neurons) is preserved unchanged -- the operating point the
+    # faculty depends on is set by that adaptation, so the faculty stays alive.
+    # DEFAULT-OFF preserves the legacy every-step, every-neuron update
+    # bit-for-bit (the gating block is skipped entirely).
+    per_region_homeostasis_isolation: bool = False
     # Diagnostic correction: draw every stochastic Izhikevich population field
     # from one host-side NumPy contract before transferring it to the backend.
     # Default-off preserves the established backend-native initialization path.
