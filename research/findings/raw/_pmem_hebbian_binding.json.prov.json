@@ -1,0 +1,25 @@
+{
+ "run_id": "1786626798-1142025",
+ "runner": "research/runners/_pmem_hebbian_binding_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-afd2ad2f16cabe34f/research/runners/_pmem_hebbian_binding_derisk.py",
+  "--derisk"
+ ],
+ "git_sha": "eddcf8798",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T09:13:18",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1371.3,
+ "corpus_check_query": "prospective cue-action binding is host-installed at build, retire via one-shot Hebbian at formation",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pmem_hebbian_binding.json"
+}
