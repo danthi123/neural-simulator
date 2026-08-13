@@ -1,0 +1,37 @@
+{
+ "run_id": "1786605110-995948",
+ "runner": "research/runners/_wkv_fswta_synaptic_read_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ac0dba87af6644aeb/research/runners/_wkv_fswta_synaptic_read_derisk.py",
+  "--rungs",
+  "1,2",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--n-eval-pos",
+  "200",
+  "--pops",
+  "2,4",
+  "--gen-tokens",
+  "40",
+  "--json",
+  "research/findings/raw/_wkv_fswta_synaptic_6seed.json"
+ ],
+ "git_sha": "a0e2bae78",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T03:11:50",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_fswta_synaptic_6seed.json"
+}

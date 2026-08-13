@@ -1,0 +1,886 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 2,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9373,
+      "argmax_agree": 0.835,
+      "top5_hit": 0.94,
+      "nll_fewspike": 1.5867,
+      "mass_fewspike": 0.3764,
+      "mass_hostsample_ceiling": 0.3314,
+      "mass_argmax_ceiling": 0.4284,
+      "mass_scramble": 0.0214,
+      "argmax_agree_scramble": 0.03,
+      "mass_equal_drive": 0.0544,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.1358,
+      "mean_spikes_per_read": 11.23,
+      "mean_spikes_total": 14.28,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 4,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9373,
+      "argmax_agree": 0.925,
+      "top5_hit": 0.975,
+      "nll_fewspike": 1.2677,
+      "mass_fewspike": 0.4117,
+      "mass_hostsample_ceiling": 0.3314,
+      "mass_argmax_ceiling": 0.4284,
+      "mass_scramble": 0.028,
+      "argmax_agree_scramble": 0.04,
+      "mass_equal_drive": 0.041,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.2423,
+      "mean_spikes_per_read": 18.54,
+      "mean_spikes_total": 24.21,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little boy named tim was very excited and wanted my dog to play with the ball but it was too high for tim to play with his toy ball and it was a very long but the",
+          "self_nll": 1.361
+        },
+        "the little girl": {
+          "text": "the little girl was very sad and cried for her mom to go to the park and play with his friends and they both laughed and played together every day and had lots of fun in the park it was a big red",
+          "self_nll": 1.198
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were very surprised and happy to help him feel better but he was very happy and excited to see what was inside the box he found a big red ball in the yard with his friends and the little dog",
+          "self_nll": 1.142
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "arm": "rung2_synaptic",
+      "V": 1000,
+      "pop": 1,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "hidden_active_frac": 1.0,
+      "mean_spikes_per_read": 25.73,
+      "mean_spikes_total": 83.25,
+      "argmax_agree": 0.015,
+      "top5_hit": 0.065,
+      "nll_synaptic": 9.7021,
+      "mass_synaptic": 0.0095,
+      "mass_hostsample_ceiling": 0.3352,
+      "mass_argmax_ceiling": 0.4284,
+      "mass_scramble": 0.0153,
+      "argmax_agree_scramble": 0.02,
+      "mass_readout_lesion": 0.0,
+      "mass_oracle_ceiling": 0.2207,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.0283,
+      "oracle_read_fidelity": 0.6584,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time was bird one to loved help toy for for she was mom so home all and did saw friends she it but when sam tim mom in to tom she it time she and she mom he said were but",
+          "self_nll": 10.021
+        },
+        "the little girl": {
+          "text": "the little girl are lucy asked can on and to so can up his it it it said one they but had you to big tim day time once can race he started at help laughed want it said saw but saw she",
+          "self_nll": 9.388
+        },
+        "tom and his dog": {
+          "text": "tom and his dog to each his loved sara was not to tom their and dog stories start a bird can playing but they but girl time once once to drink to it to a what tom her help were sounds saw had to",
+          "self_nll": 8.728
+        }
+      },
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": false,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 2,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.93,
+      "argmax_agree": 0.715,
+      "top5_hit": 0.825,
+      "nll_fewspike": 2.2349,
+      "mass_fewspike": 0.3106,
+      "mass_hostsample_ceiling": 0.3128,
+      "mass_argmax_ceiling": 0.407,
+      "mass_scramble": 0.0188,
+      "argmax_agree_scramble": 0.035,
+      "mass_equal_drive": 0.0478,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.993,
+      "mean_spikes_per_read": 10.88,
+      "mean_spikes_total": 13.84,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 4,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.93,
+      "argmax_agree": 0.905,
+      "top5_hit": 1.0,
+      "nll_fewspike": 1.1221,
+      "mass_fewspike": 0.4029,
+      "mass_hostsample_ceiling": 0.3128,
+      "mass_argmax_ceiling": 0.407,
+      "mass_scramble": 0.0193,
+      "argmax_agree_scramble": 0.03,
+      "mass_equal_drive": 0.0676,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.288,
+      "mean_spikes_per_read": 18.82,
+      "mean_spikes_total": 24.41,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little dog named spot went for a walk in the park with his mom and dad a dog named spot went for a walk in the park with his mom and dad a big dog running and",
+          "self_nll": 0.831
+        },
+        "the little girl": {
+          "text": "the little girl was very excited and wanted to see what was it so he could not find it anymore and it was time to go out and play with it all day long in the water and the water was calm and",
+          "self_nll": 1.201
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were playing in the park with his mom and dad were very happy and played together all day long having a lot of fun playing with his yard every day and his big mouth and the dog became best friends",
+          "self_nll": 1.347
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 43,
+      "arm": "rung2_synaptic",
+      "V": 1000,
+      "pop": 1,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "hidden_active_frac": 1.0,
+      "mean_spikes_per_read": 26.8,
+      "mean_spikes_total": 82.89,
+      "argmax_agree": 0.015,
+      "top5_hit": 0.07,
+      "nll_synaptic": 9.688,
+      "mass_synaptic": 0.0105,
+      "mass_hostsample_ceiling": 0.3091,
+      "mass_argmax_ceiling": 0.407,
+      "mass_scramble": 0.0145,
+      "argmax_agree_scramble": 0.015,
+      "mass_readout_lesion": 0.0062,
+      "mass_oracle_ceiling": 0.2252,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.034,
+      "oracle_read_fidelity": 0.7286,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time she found the the kitty would with they was were big they you happy little mom their he but was upon but one one max day i of they had their something she play down it at put to together",
+          "self_nll": 9.241
+        },
+        "the little girl": {
+          "text": "the little girl two his go to started he he the is the one the one endoftext very is at that played for endoftext girl went happy mom spot can played day girl you time and room his felt day the big their",
+          "self_nll": 10.853
+        },
+        "tom and his dog": {
+          "text": "tom and his dog on i to they she and and go help tim had endoftext there they had in on very town park big big look not they go other can then went his was help him a one will not mom endoftext",
+          "self_nll": 9.986
+        }
+      },
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": false,
+        "readout_lesion_collapses": false,
+        "provenance_no_host_draw": true,
+        "hidden_active": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 44,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 2,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9241,
+      "argmax_agree": 0.915,
+      "top5_hit": 0.97,
+      "nll_fewspike": 1.3346,
+      "mass_fewspike": 0.3754,
+      "mass_hostsample_ceiling": 0.3189,
+      "mass_argmax_ceiling": 0.3911,
+      "mass_scramble": 0.0157,
+      "argmax_agree_scramble": 0.02,
+      "mass_equal_drive": 0.1379,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.1772,
+      "mean_spikes_per_read": 10.21,
+      "mean_spikes_total": 13.88,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 44,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 4,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9241,
+      "argmax_agree": 0.915,
+      "top5_hit": 0.975,
+      "nll_fewspike": 1.3636,
+      "mass_fewspike": 0.3693,
+      "mass_hostsample_ceiling": 0.3189,
+      "mass_argmax_ceiling": 0.3911,
+      "mass_scramble": 0.0139,
+      "argmax_agree_scramble": 0.015,
+      "mass_equal_drive": 0.0442,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.158,
+      "mean_spikes_per_read": 21.23,
+      "mean_spikes_total": 26.58,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little girl named lily was very sad and wanted to help her mom to go to the park with his mom and dad said no mom i want to go to the park to play with his",
+          "self_nll": 0.857
+        },
+        "the little girl": {
+          "text": "the little girl was sad and asked the frog to help the bird to help your old man feel better and said thank you for helping me find my family to be friends with each other and daddy what that night mom can",
+          "self_nll": 1.323
+        },
+        "tom and his dog": {
+          "text": "tom and his dog spot was very happy to have food and water and everyone was having fun and loved to play with his friends in the park with his mom and dad said no we need to stop the dog to play with",
+          "self_nll": 1.304
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 44,
+      "arm": "rung2_synaptic",
+      "V": 1000,
+      "pop": 1,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "hidden_active_frac": 1.0,
+      "mean_spikes_per_read": 26.03,
+      "mean_spikes_total": 82.72,
+      "argmax_agree": 0.005,
+      "top5_hit": 0.05,
+      "nll_synaptic": 9.9231,
+      "mass_synaptic": 0.0067,
+      "mass_hostsample_ceiling": 0.3062,
+      "mass_argmax_ceiling": 0.3911,
+      "mass_scramble": 0.0051,
+      "argmax_agree_scramble": 0.005,
+      "mass_readout_lesion": 0.0017,
+      "mass_oracle_ceiling": 0.204,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.0219,
+      "oracle_read_fidelity": 0.6662,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time one he cat big he with house box to close to friends in the it and a it day friends other they found bunny had all it had so friends on cat a said back did bowl endoftext see and",
+          "self_nll": 9.171
+        },
+        "the little girl": {
+          "text": "the little girl mom her had tom had wanted they said said tim it to a so was one and still big not is inside asked wanted big to to in in for you was let's from was were very very is shiny",
+          "self_nll": 10.744
+        },
+        "tom and his dog": {
+          "text": "tom and his dog was a house amy was to said she read not said played lucy she the something be can very watch one out he had things i were were had was there there the with and you were again you day",
+          "self_nll": 10.048
+        }
+      },
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_10x_chance": false,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 100,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 2,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.928,
+      "argmax_agree": 0.805,
+      "top5_hit": 0.88,
+      "nll_fewspike": 1.7665,
+      "mass_fewspike": 0.3367,
+      "mass_hostsample_ceiling": 0.3087,
+      "mass_argmax_ceiling": 0.401,
+      "mass_scramble": 0.0096,
+      "argmax_agree_scramble": 0.01,
+      "mass_equal_drive": 0.0337,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.0907,
+      "mean_spikes_per_read": 10.62,
+      "mean_spikes_total": 13.81,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 100,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 4,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.928,
+      "argmax_agree": 0.915,
+      "top5_hit": 0.98,
+      "nll_fewspike": 1.2278,
+      "mass_fewspike": 0.3879,
+      "mass_hostsample_ceiling": 0.3087,
+      "mass_argmax_ceiling": 0.401,
+      "mass_scramble": 0.0113,
+      "argmax_agree_scramble": 0.01,
+      "mass_equal_drive": 0.0422,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.2566,
+      "mean_spikes_per_read": 18.98,
+      "mean_spikes_total": 25.21,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little boy named tim found a big box of the park with his mom and dad came to the park with his mom and dad took the book and ran to the park with his mom and",
+          "self_nll": 1.02
+        },
+        "the little girl": {
+          "text": "the little girl was happy and said thank you doctor and they shared the food with their friends and had lots of fun together and became good friends and played together every day and they all lived happily ever after in the park",
+          "self_nll": 1.004
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were very happy and surprised to see the man pick a big box of the cake and put the cake on the oven door and put the oven on the wall and it made a loud noise and a big",
+          "self_nll": 1.239
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 100,
+      "arm": "rung2_synaptic",
+      "V": 1000,
+      "pop": 1,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "hidden_active_frac": 1.0,
+      "mean_spikes_per_read": 27.5,
+      "mean_spikes_total": 82.95,
+      "argmax_agree": 0.015,
+      "top5_hit": 0.055,
+      "nll_synaptic": 9.3759,
+      "mass_synaptic": 0.0126,
+      "mass_hostsample_ceiling": 0.3123,
+      "mass_argmax_ceiling": 0.401,
+      "mass_scramble": 0.011,
+      "argmax_agree_scramble": 0.015,
+      "mass_readout_lesion": 0.0032,
+      "mass_oracle_ceiling": 0.2307,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.0403,
+      "oracle_read_fidelity": 0.7387,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time upon there they the is to was pretty mom spot star with we had max cat she girl on one inside can a looked together max time and it not said she she went said he endoftext told up she",
+          "self_nll": 9.833
+        },
+        "the little girl": {
+          "text": "the little girl it he on said together for to her endoftext smart leaves were were it she can for with and park liked day the max the high very down for saw he he once once you in all like her him",
+          "self_nll": 9.247
+        },
+        "tom and his dog": {
+          "text": "tom and his dog flew do there his sad could their with that in but they mom his found all a to little she said big for to bob cat saw tom she max ben they they for was other little tim girl back",
+          "self_nll": 10.928
+        }
+      },
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": false,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 101,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 2,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9383,
+      "argmax_agree": 0.695,
+      "top5_hit": 0.835,
+      "nll_fewspike": 1.9716,
+      "mass_fewspike": 0.3156,
+      "mass_hostsample_ceiling": 0.3147,
+      "mass_argmax_ceiling": 0.3973,
+      "mass_scramble": 0.0138,
+      "argmax_agree_scramble": 0.01,
+      "mass_equal_drive": 0.0376,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.0029,
+      "mean_spikes_per_read": 11.8,
+      "mean_spikes_total": 14.68,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 101,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 4,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9383,
+      "argmax_agree": 0.93,
+      "top5_hit": 0.995,
+      "nll_fewspike": 1.1697,
+      "mass_fewspike": 0.3922,
+      "mass_hostsample_ceiling": 0.3147,
+      "mass_argmax_ceiling": 0.3973,
+      "mass_scramble": 0.0193,
+      "argmax_agree_scramble": 0.01,
+      "mass_equal_drive": 0.0248,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.2463,
+      "mean_spikes_per_read": 19.2,
+      "mean_spikes_total": 24.9,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little girl named sue went to the park to play with her mom and her mom went to the kitchen and saw the mess in the park she saw a big tree with lots of leaves and",
+          "self_nll": 0.786
+        },
+        "the little girl": {
+          "text": "the little girl was so happy to have a new friend to play with her friends and they all went home to play with his dance party too but she did not know what to do but she did not know what to",
+          "self_nll": 1.134
+        },
+        "tom and his dog": {
+          "text": "tom and his dog spot went to the park to play with his friends and they all went home to play with his friends and they all lived happily ever after the party the bird and the dog became good friends and they became",
+          "self_nll": 0.866
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 101,
+      "arm": "rung2_synaptic",
+      "V": 1000,
+      "pop": 1,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "hidden_active_frac": 1.0,
+      "mean_spikes_per_read": 26.93,
+      "mean_spikes_total": 84.44,
+      "argmax_agree": 0.02,
+      "top5_hit": 0.045,
+      "nll_synaptic": 10.1281,
+      "mass_synaptic": 0.0126,
+      "mass_hostsample_ceiling": 0.3109,
+      "mass_argmax_ceiling": 0.3973,
+      "mass_scramble": 0.0039,
+      "argmax_agree_scramble": 0.0,
+      "mass_readout_lesion": 0.0026,
+      "mass_oracle_ceiling": 0.177,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.0405,
+      "oracle_read_fidelity": 0.5693,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time i endoftext tim asked the max was for in was then was yes they they it day tree she he spot it after look started there on was in in together tom was but with looked big she she there",
+          "self_nll": 11.093
+        },
+        "the little girl": {
+          "text": "the little girl down they there his down liked friends mom waved endoftext lily made wanted not she he the splash there there i i on big her her had not he sad in one her upon tom can flowers like time her",
+          "self_nll": 10.485
+        },
+        "tom and his dog": {
+          "text": "tom and his dog her away her was play they big day you that endoftext like time time to to in there day big big who new day his she one was be lily big in i he in toy to not you mom",
+          "self_nll": 10.866
+        }
+      },
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": true,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 102,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 2,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9281,
+      "argmax_agree": 0.775,
+      "top5_hit": 0.89,
+      "nll_fewspike": 1.8354,
+      "mass_fewspike": 0.3203,
+      "mass_hostsample_ceiling": 0.2655,
+      "mass_argmax_ceiling": 0.3747,
+      "mass_scramble": 0.0151,
+      "argmax_agree_scramble": 0.01,
+      "mass_equal_drive": 0.0358,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.2064,
+      "mean_spikes_per_read": 10.44,
+      "mean_spikes_total": 13.52,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 102,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 4,
+      "topk": 64,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9281,
+      "argmax_agree": 0.91,
+      "top5_hit": 0.99,
+      "nll_fewspike": 1.2806,
+      "mass_fewspike": 0.3662,
+      "mass_hostsample_ceiling": 0.2655,
+      "mass_argmax_ceiling": 0.3747,
+      "mass_scramble": 0.0135,
+      "argmax_agree_scramble": 0.01,
+      "mass_equal_drive": 0.0928,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.3793,
+      "mean_spikes_per_read": 19.66,
+      "mean_spikes_total": 25.57,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little silly dog named spot was a happy dog named max was a big dog named max was a big red ball that he could not get out of the cake and the dog were best friends",
+          "self_nll": 1.326
+        },
+        "the little girl": {
+          "text": "the little girl was so happy and thanked the girl but then the bird flew away and the big bear and the little girl were best friends and the dog were best friends forever the big cat and the dog were best friends",
+          "self_nll": 1.21
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were playing in the garden and the house were happy and they all lived happily ever after the time they found a big red cheese in the yard outside to play with his friends and they were happy and they",
+          "self_nll": 1.283
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 102,
+      "arm": "rung2_synaptic",
+      "V": 1000,
+      "pop": 1,
+      "topk_ceiling": 64,
+      "plasticity_off": true,
+      "n_positions": 200,
+      "silent_frac": 0.0,
+      "hidden_active_frac": 1.0,
+      "mean_spikes_per_read": 29.33,
+      "mean_spikes_total": 86.81,
+      "argmax_agree": 0.02,
+      "top5_hit": 0.09,
+      "nll_synaptic": 9.3704,
+      "mass_synaptic": 0.0124,
+      "mass_hostsample_ceiling": 0.293,
+      "mass_argmax_ceiling": 0.3747,
+      "mass_scramble": 0.0158,
+      "argmax_agree_scramble": 0.025,
+      "mass_readout_lesion": 0.002,
+      "mass_oracle_ceiling": 0.2082,
+      "chance_1_over_v": 0.001,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.0423,
+      "oracle_read_fidelity": 0.7106,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time she upon we fun his endoftext and was away play not endoftext day named tim teddy a her wanted but his of had they a her and said so magic this felt sam the only a time on a max",
+          "self_nll": 9.852
+        },
+        "the little girl": {
+          "text": "the little girl grabbed friends you big what ben lily but tree his them ran them loved in upon he played put i they around day she endoftext but her away mom ben with he wanted they to they lily is box girl",
+          "self_nll": 10.71
+        },
+        "tom and his dog": {
+          "text": "tom and his dog it in back upon day fun their had boy surprised a a be they next one of dog his mom heard have not i looked to feet mom the her of they they endoftext wanted but no upon to milk",
+          "self_nll": 9.931
+        }
+      },
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_10x_chance": true,
+        "scramble_at_chance": false,
+        "readout_lesion_collapses": true,
+        "provenance_no_host_draw": true,
+        "hidden_active": true,
+        "not_silent": true
+      }
+    }
+  ],
+  "summary": {
+    "rung1_fswta_P2": {
+      "n_seeds": 6,
+      "go_count": 6,
+      "read_fidelity_mean": 1.101,
+      "read_fidelity_min": 0.993,
+      "argmax_agree_mean": 0.79,
+      "mean_spikes_per_read": 10.86
+    },
+    "rung1_fswta_P4": {
+      "n_seeds": 6,
+      "go_count": 6,
+      "read_fidelity_mean": 1.2617,
+      "read_fidelity_min": 1.158,
+      "argmax_agree_mean": 0.9167,
+      "mean_spikes_per_read": 19.41
+    },
+    "rung2_synaptic_P1": {
+      "n_seeds": 6,
+      "go_count": 0,
+      "read_fidelity_mean": 0.0346,
+      "read_fidelity_min": 0.0219,
+      "argmax_agree_mean": 0.015,
+      "mean_spikes_per_read": 27.05
+    }
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "rungs": [
+    "1",
+    "2"
+  ],
+  "pops": [
+    2,
+    4
+  ],
+  "topk": 64,
+  "read_window": 20,
+  "sample_temp": 0.8,
+  "plasticity_off": true,
+  "elapsed_s": 99.8,
+  "backend": "numpy"
+}

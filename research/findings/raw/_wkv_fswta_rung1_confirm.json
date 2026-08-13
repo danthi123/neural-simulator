@@ -1,0 +1,125 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 2,
+      "topk": 64,
+      "n_positions": 120,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9355,
+      "argmax_agree": 0.8417,
+      "top5_hit": 0.925,
+      "nll_fewspike": 1.5868,
+      "mass_fewspike": 0.3693,
+      "mass_hostsample_ceiling": 0.3057,
+      "mass_argmax_ceiling": 0.4168,
+      "mass_scramble": 0.0195,
+      "argmax_agree_scramble": 0.0333,
+      "mass_equal_drive": 0.0433,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.208,
+      "mean_spikes_per_read": 11.24,
+      "mean_spikes_total": 14.43,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "arm": "rung1_fswta",
+      "read_window": 20,
+      "pop": 4,
+      "topk": 64,
+      "n_positions": 120,
+      "silent_frac": 0.0,
+      "topk_coverage": 0.9355,
+      "argmax_agree": 0.95,
+      "top5_hit": 0.9833,
+      "nll_fewspike": 1.2237,
+      "mass_fewspike": 0.4047,
+      "mass_hostsample_ceiling": 0.3057,
+      "mass_argmax_ceiling": 0.4168,
+      "mass_scramble": 0.0202,
+      "argmax_agree_scramble": 0.0333,
+      "mass_equal_drive": 0.0479,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.3238,
+      "mean_spikes_per_read": 18.4,
+      "mean_spikes_total": 23.98,
+      "fs_to_exc": 12.0,
+      "n_fs": 24,
+      "generation": {
+        "once upon a time": {
+          "text": "once upon a time there was a little boy named tim was very excited and wanted my dog to play with the ball but it was too high for tim to play with his toy ball and it was a very long but the",
+          "self_nll": 1.361
+        },
+        "the little girl": {
+          "text": "the little girl was very sad and cried for her mom to go to the park and play with his friends and they both laughed and played together every day and had lots of fun in the park it was a big red",
+          "self_nll": 1.198
+        },
+        "tom and his dog": {
+          "text": "tom and his dog were very surprised and happy to help him feel better but he was very happy and excited to see what was inside the box he found a big red ball in the yard with his friends and the little dog",
+          "self_nll": 1.142
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_at_chance": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    }
+  ],
+  "summary": {
+    "rung1_fswta_P2": {
+      "n_seeds": 1,
+      "go_count": 1,
+      "read_fidelity_mean": 1.208,
+      "read_fidelity_min": 1.208,
+      "argmax_agree_mean": 0.8417,
+      "mean_spikes_per_read": 11.24
+    },
+    "rung1_fswta_P4": {
+      "n_seeds": 1,
+      "go_count": 1,
+      "read_fidelity_mean": 1.3238,
+      "read_fidelity_min": 1.3238,
+      "argmax_agree_mean": 0.95,
+      "mean_spikes_per_read": 18.4
+    }
+  },
+  "seeds": [
+    42
+  ],
+  "rungs": [
+    "1"
+  ],
+  "pops": [
+    2,
+    4
+  ],
+  "topk": 64,
+  "read_window": 20,
+  "sample_temp": 0.8,
+  "elapsed_s": 2.2,
+  "backend": "numpy"
+}
