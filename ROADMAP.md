@@ -116,6 +116,19 @@ byte-identical off). So both the plasticity-learned fact's ACQUISITION and its n
 Remaining #7 burn-down: merge the co-resident bridges into ONE (the one-brain step — next arc).
 (`2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
+
+**⚖️ HONEST READING (2026-08-13 — square the celebratory batch log below with reality; the FORWARD plan is the refreshed
+MASTER ROADMAP `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §0, not this log).** The dated entries below record
+what LANDED — read them as HISTORY. The non-inflated state: ~12 spiking organ reads are default-on in production, but
+against the DONE bar (default-on **+ scaffold-retired**) the true tally is **~ONE integrated spiking family + a bench of
+unwired de-risks** — `scaffold_retired: 0`. Still **CO-RESIDENCY, not one substrate** (routing is host Python; cross-
+synaptic proven for one pathway; the GNW bus is now SHADOW-wired, default-off, reproducing the host's combination — not
+yet replacing it); the **open-prose mouth is still the external Qwen** (its read-regime wall fell to population coding, a
+de-risked runner, not wired); several organ **internals are still host** (VSA recall algebra + hand-assigned assemblies,
+Warriner-seeded appraisal, the plausibility gate). The three properties still missing — **FLUID open-ended conversation ·
+ONE true substrate · EMERGENT-not-hand-wired** — are the real work ahead. (gap#4 is NOT the crux; the "solved learning
+without backprop" reading is wrong — it is a de-risk using existing plausible methods at our scale, not a solution at scale.)
+
 The master worklist for it is now `docs/BURN_DOWN_LIST.md` (every host shortcut / un-wired GO / missing mechanism
 between the production default and the all-spiking one-brain goal). **The forward-looking FACULTY map — what a complete
 faithful human-brain emulation still needs, prioritized (a 12-agent grounded audit): `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md`.**
