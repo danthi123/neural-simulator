@@ -1,0 +1,32 @@
+{
+ "run_id": "1786659592-1347494",
+ "runner": "research/runners/_wkv_mouth_endtoend_substrate_read_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a6549b15628ebe223/research/runners/_wkv_mouth_endtoend_substrate_read_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--n-eval-pos",
+  "200",
+  "--json",
+  "research/findings/raw/_wkv_endtoend_substrate_read_6seed.json"
+ ],
+ "git_sha": "37e7f5206",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T18:19:52",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2804.8,
+ "corpus_check_query": "compose mouth graded read-out + output projection end-to-end, wire head_b as tonic bias population",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_endtoend_substrate_read_6seed.json"
+}
