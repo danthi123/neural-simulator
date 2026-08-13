@@ -1858,6 +1858,17 @@ async def _warm_chat_brain() -> None:
                     print("[webapp] startup: world-model organ (co-resident valence forward model) WARM", flush=True)
             except Exception as _we:
                 print(f"[webapp] startup: world-model organ warm skipped ({type(_we).__name__}: {_we})", flush=True)
+            # PRAGMATIC (Task-#12, D): pre-build the co-resident spiking W4 graded scalar-implicature listener-belief
+            # so the first scalar-quantity turn's pragmatic read is fast. Best-effort + guarded (default-ON;
+            # BRAIN_PRAGMATIC=0 skips it).
+            try:
+                from research.runners.pragmatic_production_organ import pragmatic_enabled
+                if pragmatic_enabled():
+                    _get_pragmatic_organ().ensure_built()
+                    print("[webapp] startup: pragmatic organ (co-resident W4 graded scalar-implicature belief) WARM",
+                          flush=True)
+            except Exception as _pe:
+                print(f"[webapp] startup: pragmatic organ warm skipped ({type(_pe).__name__}: {_pe})", flush=True)
             dt = round(_t.time() - t0, 1)
             print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
@@ -2928,6 +2939,12 @@ def _get_curiosity_organ():
     return get_organ(seed=42)
 
 
+def _get_pragmatic_organ():
+    """The process-shared spiking scalar-implicature organ (built once; the W4 depth-2 graded RSA listener-belief)."""
+    from research.runners.pragmatic_production_organ import get_organ
+    return get_organ(seed=42)
+
+
 # ─── MULTI-REFERENT WORKING MEMORY (Gate-B, D6): a spiking multi-register discourse buffer that HOLDS >=2 referents
 # across a span. The organ's process singleton accumulates a referent codebook across ALL sessions, so a hold-query
 # would re-materialize other conversations' referents — the buffer MUST be per-session. Keyed identically to the
@@ -3967,6 +3984,41 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as _cae:  # never let the causal read crash a turn — fall through to the normal path
             causal_info = {"on": True, "error": f"{type(_cae).__name__}: {_cae}"}
 
+    # ── SCALAR-IMPLICATURE PRAGMATIC BELIEF (D-pragmatics, Task-#12, 2026-08-13) ─────────────────────────────
+    # When the user makes a SCALAR-QUANTITY claim/probe ("I ate some of the cookies", "not all of them"), FORM the
+    # brain's graded listener-belief over the interpretations {none, SBNA, all} for that utterance and PREPEND an
+    # honest functional pragmatic reading ("some" +> "some but not all", with "all" left ~0.27-possible). This wires
+    # the de-risk-CLOSED W4 depth-2 RSA GRADED-implicature belief (2026-08-13-w4-detector-operating-point-homeostat-GO,
+    # 6/6) in as the production BELIEF SOURCE, replacing the leg2_v2 WTA ONE-HOT collapse that falsely rules "all" out.
+    # The belief is a spiking read of the real Izhikevich RSA substrate (plasticity off, fixed operating point), built
+    # once + frozen (reuse-by-import from `pragmatic_production_organ`). SCOPED: this is the MINIMAL genuine end-to-end
+    # path — a single scalar-implicature turn class; the pipeline had NO pragmatic-implicature slot before (a general
+    # pragmatic comprehension front-end is the mapped gap). Moat-safe + additive: it fires ONLY on a scalar-quantity
+    # context (partitive "<scalar> of" / "not all" / a some-vs-all probe), never manufactures a fact, never flips an
+    # abstain, never enters the certainty band — only PREPENDS a reading. Placed BEFORE comprehension: the scalar
+    # implicature is a STRUCTURAL property of the quantifier, independent of whether the brain knows the content words,
+    # so the reading is surfaced on WHATEVER path the turn takes (the comprehension-repair early-return below carries
+    # it too). Default-ON; `BRAIN_PRAGMATIC=0` -> fully skipped (byte-identical oracle). LESION
+    # (`BRAIN_PRAGMATIC_LESION=1`): the normalization-lesion belief (flat [0,0.5,0.5]) -> the implicature margin
+    # collapses to ~0 -> no reading (load-bearing: the graded content is the substrate's FS divisive normalization,
+    # not host-injected). Guarded so a read failure can never crash a turn.
+    pragmatic_info = None
+    pragmatic_prefix = ""
+    try:
+        import research.runners.pragmatic_production_organ as _PR
+        _pragmatic_on = _PR.pragmatic_enabled()
+    except Exception:
+        _PR = None
+        _pragmatic_on = False
+    if _pragmatic_on:
+        try:
+            pj = _get_pragmatic_organ().judge_text(msg, lesion=_PR.pragmatic_lesioned())
+            if pj is not None:                      # a scalar-implicature turn class was detected (else byte-identical)
+                pragmatic_info = dict(pj)
+                pragmatic_prefix = _PR.pragmatic_notice(pj)
+        except Exception as _pe:  # never let the pragmatic read crash a turn -> the un-noticed answer
+            pragmatic_info = {"on": True, "error": f"{type(_pe).__name__}: {_pe}"}
+
     # ── COMPREHENSION MEASUREMENT gate (Gate-B, D4, 2026-08-12) ─────────────────────────────────────────────
     # BEFORE acting on an incoming TRANSITIVE ASSERTION, read a genuinely-SPIKING signal of whether the brain's
     # role-binding RESOLVED (the co-resident `SpikingRoleCompetition` sel-pool margin off cp_firing_states,
@@ -4027,11 +4079,16 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                     except Exception as _re:  # never let the repair read crash a turn -> the bare abstain
                         repair_info = {"on": True, "error": f"{type(_re).__name__}: {_re}"}
                     payload = {
-                        "answer": answer,
+                        # PRAGMATIC (Task-#12): the scalar-implicature reading is STRUCTURAL (independent of the OOV
+                        # content words), so it is PREPENDED here too — a scalar-quantity turn whose content words are
+                        # unknown still surfaces the graded reading + attaches the `pragmatic` block. Empty prefix /
+                        # null block when out of scope or disabled -> byte-identical bare repair.
+                        "answer": pragmatic_prefix + answer,
                         "abstained": True, "recalled_svo": None, "verified": False,
                         "renderer": rname, "brain": req.brain, "source": source,
                         "rich": False, "activity": None, "affect": affect_info,
                         "comprehension": comprehension_info, "not_understood": True,
+                        "pragmatic": pragmatic_info,
                     }
                     if repair_info is not None:      # BRAIN_REPAIR=0 -> key absent -> byte-identical bare abstain
                         payload["repair"] = repair_info
@@ -4261,7 +4318,8 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # SURPRISE (Gate-B, D2): if the asserted fact violated a stored expectation (a firing mismatch), PREPEND the
         # honest functional notice to the turn's answer. Additive; empty prefix when not surprised / disabled.
         resp = {
-            "answer": pmem_prefix + worldmodel_prefix + surprise_prefix + reconsolidation_prefix + r["answer"],
+            "answer": (pmem_prefix + worldmodel_prefix + surprise_prefix + reconsolidation_prefix
+                       + pragmatic_prefix + r["answer"]),
             "abstained": bool(r["abstained"]),
             # the direct recall (the first supporting fact) is the gate hit,
             # surfaced for parity with the single-fact path's recalled_svo.
@@ -4302,6 +4360,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # RECONSOLIDATION (Gate-B, F): the belief-revision decision (action=rewrite/restabilize/abstain/lesioned);
             # null when no stored contradicting expectation or disabled (BRAIN_RECONSOLIDATION=0).
             "reconsolidation": reconsolidation_info,
+            # PRAGMATIC (Task-#12, D): the W4 graded scalar-implicature listener-belief for a scalar-quantity turn
+            # (belief over {none,SBNA,all} + enriched reading); null out of scope or disabled (BRAIN_PRAGMATIC=0).
+            "pragmatic": pragmatic_info,
             # EPISODIC (Gate-B, D5): null on a non-referential turn (Hook A short-circuits referential turns above).
             "episodic": episodic_info,
         }
@@ -4369,8 +4430,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # WORLD-MODEL (Gate-B, E2) + SURPRISE (Gate-B, D2) + RECONSOLIDATION (Gate-B, F): PREPEND the honest affect-
     # trajectory-violation notice (world-model), then the expectation-violation notice (surprise), then the
     # belief-revision notice (reconsolidation). Additive; empty prefixes when not firing.
-    if pmem_prefix or worldmodel_prefix or surprise_prefix or reconsolidation_prefix:
-        answer = pmem_prefix + worldmodel_prefix + surprise_prefix + reconsolidation_prefix + answer
+    if pmem_prefix or worldmodel_prefix or surprise_prefix or reconsolidation_prefix or pragmatic_prefix:
+        answer = (pmem_prefix + worldmodel_prefix + surprise_prefix + reconsolidation_prefix
+                  + pragmatic_prefix + answer)
 
     # METACOG (Gate-B, E1): read the spiking confidence of this recall answer; a LOW-confidence answer gets an
     # honest functional hedge PREPENDED (skip an abstain — no answer to qualify). Additive; null when disabled.
@@ -4433,6 +4495,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # RECONSOLIDATION (Gate-B, F): the belief-revision decision for a contradicting assertion; null when no
         # stored contradicting expectation or disabled (BRAIN_RECONSOLIDATION=0).
         "reconsolidation": reconsolidation_info,
+        # PRAGMATIC (Task-#12, D): the W4 graded scalar-implicature listener-belief for a scalar-quantity turn
+        # (belief over {none,SBNA,all} + enriched reading); null out of scope or disabled (BRAIN_PRAGMATIC=0).
+        "pragmatic": pragmatic_info,
         # EPISODIC (Gate-B, D5): null on a non-referential turn (Hook A short-circuits referential turns above).
         "episodic": episodic_info,
     }

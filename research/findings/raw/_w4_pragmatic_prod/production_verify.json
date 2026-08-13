@@ -1,0 +1,152 @@
+{
+  "runner": "_w4_pragmatic_belief_production_verify",
+  "go": true,
+  "status": "GO",
+  "graded_read_ok": true,
+  "lesion_ok": true,
+  "additive_ok": true,
+  "byte_identical_ok": true,
+  "rows": {
+    "A_default_graded": {
+      "answer": "(Pragmatically I read \"some\" as \"some but not all\" -- my listener model puts that at 0.73, though strictly \"all\" stays 0.27-possible.) I followed the shape of that, but I don't know the words 'ate' or 'cookies' yet \u2014 what do they refer to?",
+      "pragmatic": {
+        "on": true,
+        "lesioned": false,
+        "utterance": "some",
+        "belief_source": "graded",
+        "states": [
+          "none",
+          "SBNA",
+          "all"
+        ],
+        "belief": [
+          0.0,
+          0.7315,
+          0.2685
+        ],
+        "onehot_belief": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "enriched_interpretation": "some but not all",
+        "literal_interpretation": "at least some (possibly all)",
+        "implicature_margin": 0.463,
+        "residual_all_prob": 0.2685,
+        "onehot_residual_all_prob": 0.0,
+        "implicature_represented": true,
+        "calib_l1_to_analytic": 0.037,
+        "calib_l1_to_analytic_onehot": 0.5
+      },
+      "abstained": true,
+      "ok": true
+    },
+    "C_lesion": {
+      "answer": "I followed the shape of that, but I don't know the words 'ate' or 'cookies' yet \u2014 what do they refer to?",
+      "pragmatic": {
+        "on": true,
+        "lesioned": true,
+        "utterance": "some",
+        "belief_source": "graded_lesioned",
+        "states": [
+          "none",
+          "SBNA",
+          "all"
+        ],
+        "belief": [
+          0.0,
+          0.5,
+          0.5
+        ],
+        "onehot_belief": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "enriched_interpretation": "undetermined (implicature collapsed)",
+        "literal_interpretation": "at least some (possibly all)",
+        "implicature_margin": 0.0,
+        "residual_all_prob": 0.5,
+        "onehot_residual_all_prob": 0.0,
+        "implicature_represented": false,
+        "calib_l1_to_analytic": 0.5,
+        "calib_l1_to_analytic_onehot": 0.5
+      },
+      "ok": true
+    },
+    "D_additive": {
+      "on_answer": "(Pragmatically I read \"some\" as \"some but not all\" -- my listener model puts that at 0.73, though strictly \"all\" stays 0.27-possible.) I followed the shape of that, but I don't know the words 'ate' or 'cookies' yet \u2014 what do they refer to?",
+      "off_answer": "I followed the shape of that, but I don't know the words 'ate' or 'cookies' yet \u2014 what do they refer to?",
+      "same_recall": true,
+      "off_pragmatic_null": true,
+      "ok": true
+    },
+    "B_byte_identical": {
+      "rows": [
+        {
+          "q": "what does dog eat?",
+          "identical": true,
+          "no_pragmatic_read": true
+        },
+        {
+          "q": "what does cat chase?",
+          "identical": true,
+          "no_pragmatic_read": true
+        },
+        {
+          "q": "what does fish fly?",
+          "identical": true,
+          "no_pragmatic_read": true
+        },
+        {
+          "q": "what does bird build?",
+          "identical": true,
+          "no_pragmatic_read": true
+        }
+      ],
+      "filler_out_of_scope": true,
+      "ok": true
+    }
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "DEFAULT-ON GRADED belief source: some->[~0,~0.73,~0.27], implicature represented, better-calibrated than one-hot, retains the residual 'all' hedge, reading reaches the surface",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT / BYTE-IDENTICAL-when-off (real handler) on a non-scalar panel + the 'some' filler out-of-scope",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION: normalization-lesion flattens the belief -> implicature collapses -> reading suppressed (the graded content is the substrate's FS divisive normalization)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ADDITIVE / moat-safe: the scalar turn's recall (abstained/recalled_svo/verified) matches flag-off; only the reading + the pragmatic block differ",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "a general pragmatic comprehension front-end (embedded/downward-entailing environments, non-lexical scalars, Q-under-discussion)",
+      "why": "SCOPED: one lexical scalar-quantity turn class {none,some,all} in a partitive/probe context; a general front-end that lets this belief drive arbitrary pragmatic responses is the mapped gap"
+    },
+    {
+      "process": "a live per-turn spiking re-read",
+      "why": "the graded belief is a BUILD-TIME spiking read at a frozen operating point (plasticity off, as the W4 GO specifies) cached per process; a live per-turn re-read is IDENTICAL because there is no learning -- the same build-once-freeze pattern as the affect/surprise organs"
+    }
+  ],
+  "undefined_reasons": []
+}

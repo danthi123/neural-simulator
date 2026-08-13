@@ -174,15 +174,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   leaks sign), corpus arousal plateaus ~0.31 → deeper resolution + clean ⊥ need a genuine BODILY/INTEROCEPTIVE input
 >   (an embodiment requirement, legitimately host — the body provides interoception, the brain reads it).
 >
+> **🟢 WAVE-9 [PB] LANDED (2026-08-13, on main) — W4 pragmatic belief PRODUCTION-WIRED (SCOPED):** investigate-first
+>   found the production speaking pipeline has NO pragmatic-implicature slot (leg2_v2 is a de-risk runner, never wired;
+>   the composer forms no belief over interpretations), so per the brief this is the honest SCOPED deliverable, NOT a
+>   forced wiring: the de-risk-CLOSED W4 graded belief is wired as the production belief source for a SINGLE
+>   scalar-quantity turn class via `pragmatic_production_organ.py` (default-ON `BRAIN_PRAGMATIC`, escape/lesion,
+>   byte-identical-off; NO sim/ edit). Real-handler verified `_w4_pragmatic_belief_production_verify` GO: "some" ->
+>   graded [0,0.731,0.269] (implicature margin 0.463, calib_l1 0.037 vs one-hot 0.5, residual "all" 0.269 vs one-hot
+>   0.0); normalization-lesion collapses to flat [0,0.5,0.5] (margin 0, reading suppressed); byte-identical-off +
+>   additive (never flips the abstain). Organ #14 (ledger row `pragmatic-implicature`). GAP mapped: a general
+>   pragmatic comprehension front-end (embedded/DE environments, non-lexical scalars, QUD) is the named next rung.
+>   finding `2026-08-13-w4-pragmatic-belief-production-scoped`.
+>
 > **🔴 LIVE LANES — WAVE-9 (staggered; consolidate each → checkout to main):**
-> - **[PB] (main, serial — ONLY agent on main):** PRODUCTION-WIRE the W4 graded-implicature pragmatic belief into the
->   speaking pipeline (Task-#12's actual wiring — the de-risk pipeline now beats onehot 6/6 end-to-end).
 > - **[SH] (iso):** SURPRISE-ORGAN homeostatic-gain — close [N]'s het read-precision residual (0.9375; the surprise
 >   organ's own boundary) with a per-pool homeostat, strengthening both the organ and the GNW-bus heterogeneous vote.
 > - **[HB] (iso):** PROSPECTIVE cue→action HEBBIAN binding — retire the [PW] content-binding scaffold via one-shot Hebbian
 >   potentiation at intention-formation (Gollwitzer implementation-intentions) → toward `scaffold_retired: YES`.
 >
-> **SINGLE LITERAL NEXT:** consolidate WAVE-9 [PB]/[SH]/[HB] as each lands; then — discrete-emotion production wire,
+> **SINGLE LITERAL NEXT:** [PB] LANDED; consolidate WAVE-9 [SH]/[HB] as each lands; then — discrete-emotion production wire,
 > one-brain MERGE (co-resident bridges → one substrate), affect interoceptive/embodiment input, self-initiation/DMN,
 > remaining Tier-2/3. RAG at every wall.
 
