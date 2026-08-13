@@ -194,7 +194,13 @@ moat-safe unless noted):
   intact arm, so the "control" leaked. Runner-only fix: route the shuffled vote to an EMPTY slot → shuffle 0.000 on every
   seed, mechanism untouched. Now a clean GO. Wiring path (organs write subthreshold into a shared workspace, ignition
   replaces the host combine, re-entry loop, ACC-gated deliberation, STN veto) documented; a stronger wrong-concept-shuffle
-  averaged over N is an optional rigor follow-up. NEXT: wire the bus into production (replace host organ-orchestration).
+  averaged over N is an optional rigor follow-up.
+  **N-ORGAN BUS — 6/6 GO (2026-08-13, Phase-B):** the keystone GENERALIZES from 2 organs to N≥3 — the workspace combines
+  N=3 subthreshold organ reads via consensus-ignition (consensus_2hop 1.000 all 6 seeds; EVERY ablation collapses —
+  single-organ / LEAVE-ONE-OUT [all 3 load-bearing] / disagree / shuffle-off-slot / onecycle / lesion → 0; reflex
+  dissociates; majority-override 1.000; parent-scrutinized per-seed). A production-bus WIRING DESIGN exists
+  (`docs/plans/2026-08-13-gnw-norgan-bus-production-wiring.md`). **NEXT (the one-substrate step): wire the bus into
+  production `brain_chat` to REPLACE the host organ-orchestration** — the biggest single move toward one true substrate.
 - **Causal forward-model (T1-4, the reasoning bottleneck) — 6/6 GO:** a directed, queryable n-way STATE forward model
   (generalizes E2's valence predictor). Temporal-order STDP sets edge DIRECTION, three-factor phasic DA gates
   consolidation, a teacher DO-intervention prunes confounded edges (cause-vs-correlation via invariance-across-

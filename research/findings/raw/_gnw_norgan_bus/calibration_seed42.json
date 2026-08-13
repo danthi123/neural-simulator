@@ -1,0 +1,30 @@
+{
+  "runner": "_gnw_norgan_bus_derisk",
+  "mode": "calibrate",
+  "seed": 42,
+  "n_organs": 3,
+  "THR": 0.167,
+  "d_sub": 1000.0,
+  "knee_pA": 2400,
+  "solo_rate_by_drive": {
+    "600": 0.005,
+    "800": 0.009,
+    "1000": 0.044,
+    "1200": 0.037,
+    "1400": 0.027,
+    "1500": 0.024,
+    "1700": 0.03,
+    "1800": 0.028,
+    "2000": 0.03,
+    "2100": 0.007,
+    "2400": 0.333,
+    "2800": 0.333,
+    "3000": 0.333
+  },
+  "rate_Nm1_votes": 0.03,
+  "rate_N_votes": 0.333,
+  "unanimity_in_window": true,
+  "rate_maj1": 0.027,
+  "rate_maj2": 0.333,
+  "majority_in_window": true
+}

@@ -1,0 +1,36 @@
+{
+ "run_id": "1786596182-934879",
+ "runner": "research/runners/_gnw_norgan_bus_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ab753941461e669fd/research/runners/_gnw_norgan_bus_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--backend",
+  "cupy",
+  "--json",
+  "research/findings/raw/_gnw_norgan_bus/summary.json"
+ ],
+ "git_sha": "3c81d17a4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T00:43:02",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_gnw_norgan_bus/summary.json"
+}
